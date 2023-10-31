@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    17-Dec-22 at 22:04:19
-;; Last-Mod:     18-Feb-23 at 10:31:45 by Mats Lidell
+;; Last-Mod:     31-Oct-23 at 15:00:34 by Mats Lidell
 ;;
 ;; Copyright (C) 2023  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
@@ -21,6 +21,7 @@
 
 (require 'gnus-sum)
 (require 'gnus-art)
+(require 'hmail)
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -30,7 +31,7 @@
 (defun Gnus-mail-init ()
   "Initialize Hyperbole support for Gnus mail reading."
   (interactive)
-  (setq hmail:compose-mail-func 'hgnus-mail--message-mail-other-window
+  (setq hmail:compose-mail-function 'hgnus-mail--message-mail-other-window
         hmail:composer  'message-mode
 	hmail:lister    'gnus-summary-mode
 	hmail:modifier  'message-mode
