@@ -1,3 +1,9 @@
+2023-10-30  Mats Lidell  <matsl@gnu.org>
+
+* hversion.el (hyperb:mouse-buttons):
+  hpath.el (hpath:get-external-display-alist): Add mac as possible
+    window-system on Mac OS.
+
 2023-10-25  Mats Lidell  <matsl@gnu.org>
 
 * test/hui-tests.el (hui--ibut-link-directly-to-file)
