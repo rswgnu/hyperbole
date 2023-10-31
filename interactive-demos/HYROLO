@@ -1,0 +1,112 @@
+* HyRolo
+
+Think of HyRolo as a contact book, it keeps your contacts in an easy to read
+file with plenty of built in functions for things such as find, adding, and
+editing entries, to name a few.
+
+
+Let's start by creating our own entry with {C-h h r a}, which will prompt you
+for a name. Feel free to put anything in there. After you put in a name it will
+take you to ~/.rolo.otl, where you can see the entry you just created. Each entry
+must begin with at least one "*" at the beginning of their line. Entries are
+usually arranged in a hierarchy, where each child's line starts with one more
+"*" than the previous one. After these delimiters, the entries are free-form text.
+Ideally you want to put entries in "lastname, firstname" so that HyRolo will
+automatically alphabetize them. That being said, if you prefer "firstname, lastname"
+then alphabetizing them is a simple command away, # <(hyrolo-sort)>. Also note
+that when each contact is added, a date is automatically added underneath.
+
+
+Your rolo file is probably looking something like
+* Name
+      <date>
+
+ which is fairly basic. Let's go ahead and add a header to that to tell us that
+ this is a person HyRolo file, as apposed to a professional one. This is done
+ by adding in at least three equal signs above, and below the name you
+ want for the HyRolo. It should look something like this
+ 
+=====================
+Personal
+=====================
+* Name
+      <date>
+
+** String Searches
+Now let's say that you either don't want to add in a header or don't like the
+idea of maintaining multiple HyRolo files for Personal, Professional, etc. Good news
+is, we can just add a small tag to each contact (personal, professional, etc),
+and use string searches to find them. 
+
+
+There are a few ways to do string searching in HyRolo, and a few commands you
+can use. The first being the hyrolo-grep command which will find all entries
+containing a regular expression. Try this with the current date, and you will
+see that it picks up the line(s) with the current date, but nothing else. That
+being said, if you type in part of the name you used in your entry, you will see
+that pop up and be highlighted.
+
+
+Another option is the hyrolo-word command which will look for full words. Unlike
+the grep command, if the word isn't a complete match, it won't show up. Take the first
+three letters of a name in your rolo and search for that with hyrolo-word, and
+you'll notice that the mini-buffer says "No matching entries found in rolo".
+
+
+The final option is hyrolo-fgrep which can search for strings or logical expressions.
+Essentially, it can do what grep does, but with an added twist for logical expressions.
+Speaking of logical searches...
+
+** Logical Searches
+Similar to the regular string search, we can add logical expressions to our
+searches to help find what we're looking for. For now, let's add a few more
+entries to our rolo, such as the name Linus Torvalds, Richard Stallman, and
+Ken Thompson. Now that we have a more populated rolo, let's look at some
+uses of logical expressions in our searches. Below is a table of the kinds
+of logical expressions you can use.
+
+
+Operator Name   Number of Arguments    Description
+=====================================================================
+and             two or more            Match entries with all args
+or              two or more            Match entries with any args
+xor             two or more            Match entries with 1 arg only
+not             one                    Match entries without the arg
+=====================================================================
+
+Let's say we want to look for Linus, and Ken. We would run hyolo-fgrep-logical
+and our input would be (or linus ken), and that will pull up both Linus and Ken,
+and whatever information we have for them. Keep in mind, you need the parenthesis
+for the function to work.
+
+
+Now that you know how the logical searches work, try searching your rolo for
+everything except Linus.
+
+
+** Keys
+Now that we have a firm understanding of how to perform searches, what do we do
+with these results? That's where keys come in to play.
+
+
+After you preform a search, you get your results in a "rolo match buffer",
+'*Hyperbole Rolo', which uses 'hyrolo-mode' to simplify browsing many HyRolo
+matches. Let's try, and preform a search with hyrolo-grep, and when the results
+get pulled up, press {?}. That will pull up a summary of the available keys.
+
+
+Now that we know how to view our keys, let's start with {r}, which will allow
+us to start a new regular expression query. Let's preform a <(search)> for
+Linus. Now that we have our results we realize that we didn't want the information
+for Linus, we wanted it for Ken. Press the {r} key in the '*Hyperbole Rolo'
+buffer. It will prompt you for a new regular expression, type in Ken.
+
+
+Great, now that we have an understanding of how to use these keys, try
+making a search, and within that search hide the subtree for our entries. Once
+that is done, use the key to show them all.
+
+
+Once you are done with your query, and are ready to leave the rolo match buffer,
+use {q} to quit. This will restore your current frame to its state prior to the
+rolo search.
