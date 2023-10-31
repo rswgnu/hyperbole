@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:      6-Oct-23 at 00:22:25 by Mats Lidell
+# Last-Mod:     31-Oct-23 at 12:24:18 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -178,7 +178,7 @@ EMACS_PLAIN_BATCH=$(EMACS) $(BATCHFLAGS)
 VPATH = kotl man
 
 EL_COMPILE = hact.el hactypes.el hargs.el hbdata.el hbmap.el hbut.el \
-	     hgnus.el hhist.el hib-debbugs.el hib-doc-id.el hib-kbd.el \
+	     hgnus.el hgnus-mail.el hhist.el hib-debbugs.el hib-doc-id.el hib-kbd.el \
 	     hib-social.el hibtypes.el \
 	     hinit.el hload-path.el hmail.el hmh.el hmoccur.el hmouse-info.el \
 	     hmouse-drv.el hmouse-key.el hmouse-mod.el hmouse-sh.el hmouse-tag.el \

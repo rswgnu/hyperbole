@@ -1,3 +1,16 @@
+2023-10-31  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (EL_COMPILE, MANIFEST): Add hgnus-mail.
+
+* hmail.el (hmail:init-function): Add Gnus-mail-init as an init option.
+    (hmail:compose-mail-function): Add email interface function.
+
+* hibtypes.el (mail-address): Use hmail:compose-mail-func.
+
+* hgnus-mail.el: Mail definitions for Gnus as a mail reader.
+
+* hui-mini.el (hui:menu-choose): Use hui:menu-exit-hyperbole
+
 2023-10-30  Mats Lidell  <matsl@gnu.org>
 
 * hversion.el (hyperb:mouse-buttons):
