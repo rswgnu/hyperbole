@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     29-Oct-23 at 23:45:02 by Bob Weiner
+;; Last-Mod:     30-Oct-23 at 22:13:11 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1677,7 +1677,7 @@ programs, such as a pdf reader.  The cdr of each element may be:
   or a function of one filename argument.
 See also `hpath:internal-display-alist' for internal,
 `window-system' independent display settings."
-  (cond ((memq window-system '(dps ns))
+  (cond ((memq window-system '(mac dps ns))
 	 hpath:external-display-alist-macos)
 	(hyperb:microsoft-os-p
 	 hpath:external-display-alist-mswindows)

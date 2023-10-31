@@ -84,6 +84,66 @@
       (when (file-writable-p hbmap:dir-user)
 	(delete-directory hbmap:dir-user t)))))
 
+(ert-deftest hui-gbut-number-of-gbuts-with-no-buttons ()
+  "Verify number of gbuts with no buttons created."
+  (defvar global-but-file)
+  (let ((global-but-file (make-temp-file "gbut" nil ".txt")))
+    (unwind-protect
+        (mocklet ((gbut:file => global-but-file))
+          (should (= 0 (length (gbut:key-list)))))
+      (hy-delete-file-and-buffer global-but-file))))
+
+(ert-deftest hui-gbut-number-of-gibuts-when-one-button ()
+  "Verify number of ibuts when one button is created."
+  (defvar file)
+  (let ((file (make-temp-file "gbut" nil ".txt")))
+    (unwind-protect
+        (with-mock
+          (stub gbut:file => file)
+          (hui:gibut-create "global" "/tmp")
+          (should (= 1 (length (gbut:ibut-key-list)))))
+      (hy-delete-file-and-buffer file))))
+
+(ert-deftest hui-gbut-number-of-gebuts-when-one-button ()
+  "Verify number of ebuts when one button is created."
+  (defvar global-but-file)
+  (let ((global-but-file (make-temp-file "gbut" nil ".txt")))
+    (unwind-protect
+        (mocklet ((gbut:file => global-but-file)
+                  (hpath:find-noselect => (find-file-noselect global-but-file)))
+          (gbut:ebut-program "label" 'link-to-directory "/tmp")
+          (should (= 1 (length (gbut:ebut-key-list)))))
+      (hy-delete-file-and-buffer global-but-file))))
+
+(ert-deftest hui-gbut-number-of-gibuts-from-mail-mode ()
+  "Verify number of global ibuts from within Hyperbole mail mode."
+  (defvar global-but-file)
+  (let ((global-but-file (make-temp-file "gbut" nil ".txt"))
+        (message-mode-file (make-temp-file "gbut" nil ".txt")))
+    (unwind-protect
+        (mocklet ((gbut:file => global-but-file))
+          (hui:gibut-create "global" "/tmp")
+          (find-file message-mode-file)
+          (message-mode)
+          (should (= 1 (length (gbut:ibut-key-list)))))
+      (hy-delete-file-and-buffer global-but-file)
+      (hy-delete-file-and-buffer message-mode-file))))
+
+(ert-deftest hui-gbut-number-of-gebuts-from-mail-mode ()
+  "Verify number of global ebuts from within Hyperbole mail mode."
+  (defvar global-but-file)
+  (let ((global-but-file (make-temp-file "gbut" nil ".txt"))
+        (message-mode-file (make-temp-file "gbut" nil ".txt")))
+    (unwind-protect
+        (mocklet ((gbut:file => global-but-file)
+                  (hpath:find-noselect => (find-file-noselect global-but-file)))
+          (gbut:ebut-program "label" 'link-to-directory "/tmp")
+          (find-file message-mode-file)
+          (message-mode)
+          (should (= 1 (length (gbut:ebut-key-list)))))
+      (hy-delete-file-and-buffer global-but-file)
+      (hy-delete-file-and-buffer message-mode-file))))
+
 (ert-deftest hui-ibut-label-create ()
   "Create a label for an implicit button."
   (with-temp-buffer
@@ -710,6 +770,59 @@ With point on label suggest that ibut for rename."
     (hui:ebut-rename "label" "new")
     (goto-char (point-min))
     (should (looking-at-p "<(new)><(new)>"))))
+
+(ert-deftest hui--ibut-link-directly-to-file ()
+  "Create a direct link to a file."
+  (let ((filea (make-temp-file "hypb" nil ".txt"))
+        (fileb (make-temp-file "hypb" nil ".txt" "1234567890")))
+    (unwind-protect
+        (progn
+          (delete-other-windows)
+          (find-file fileb)
+          (goto-char (point-max))
+          (split-window)
+          (find-file filea)
+          (hui:ibut-link-directly (get-buffer-window)
+           (get-buffer-window (get-file-buffer fileb)))
+          (should (string= (buffer-string) (concat "\"" fileb ":1:10\""))))
+      (hy-delete-file-and-buffer filea)
+      (hy-delete-file-and-buffer fileb))))
+
+(ert-deftest hui--ibut-link-directly-to-dired ()
+  "Create a direct link to a directory in dired."
+  :expected-result :failed
+  (let* ((file (make-temp-file "hypb" nil ".txt"))
+         (dir (file-name-parent-directory file))
+         dir-buf)
+    (unwind-protect
+        (progn
+          (delete-other-windows)
+          (setq dir-buf (dired dir))
+          (split-window)
+          (find-file file)
+          (hui:ibut-link-directly (get-buffer-window) (get-buffer-window dir-buf))
+          ;; Was expecting here an ibut "/tmp" but <link-to-directory
+          ;; /tmp> could be possible too. Seems a link to the file the
+          ;; point in the dired buffer is on!? Is that expected?
+          (should (string= (buffer-string) (concat "\"" dir "\""))))
+      (hy-delete-file-and-buffer file))))
+
+(ert-deftest hui--ibut-link-directly-with-label ()
+  "Create a direct link with a label."
+  (let ((filea (make-temp-file "hypb" nil ".txt"))
+        (fileb (make-temp-file "hypb" nil ".txt" "1234567890")))
+    (unwind-protect
+        (progn
+          (delete-other-windows)
+          (find-file fileb)
+          (goto-char (point-max))
+          (split-window)
+          (find-file filea)
+          (with-simulated-input "label RET"
+            (hui:ibut-link-directly (get-buffer-window) (get-buffer-window (get-file-buffer fileb)) 4))
+          (should (string= (buffer-string) (concat "<[label]> - " "\"" fileb ":1:10\""))))
+      (hy-delete-file-and-buffer filea)
+      (hy-delete-file-and-buffer fileb))))
 
 ;; This file can't be byte-compiled without `with-simulated-input' which
 ;; is not part of the actual dependencies, so:

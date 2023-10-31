@@ -1,3 +1,9 @@
+2023-10-30  Mats Lidell  <matsl@gnu.org>
+
+* hversion.el (hyperb:mouse-buttons):
+  hpath.el (hpath:get-external-display-alist): Add mac as possible
+    window-system on Mac OS.
+
 2023-10-29  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:find):
@@ -57,6 +63,30 @@
   kotl/kotl-mode.el (kotl-mode:goto-cell-ref): Add for use in kotl anchored
     pathname refs and in 'link-to-kcell' actype.
 
+2023-10-25  Mats Lidell  <matsl@gnu.org>
+
+* test/hui-tests.el (hui--ibut-link-directly-to-file)
+    (hui--ibut-link-directly-to-dired)
+    (hui--ibut-link-directly-with-label): Test cases for
+    ibut-link-directly
+
+2023-10-22  Mats Lidell  <matsl@gnu.org>
+
+* hui-select.el (hui-java-defun-prompt-regexp): Add prompt regexp as
+    separate defconst. Update provided by Alan Mackenzie. Thanks.
+    (hui-select-initialize): Use new java regexp.
+
+* test/hui-tests.el (hui-gbut-number-of-gebuts-from-mail-mode): Remove
+    expected to fail.
+
+* hbut.el (gbut:ebut-key-list): Use hbdata:to-entry-in-file for global
+    button file data.
+
+* hbdata.el (hbdata:is-but-data-stored-in-buffer)
+    (hbdata:to-entry-in-buffer, hbdata:to-entry-in-file): Refactor into
+    three methods to separate out button data stored in a file.
+    (hbdata:to-entry-buf): Use new methods.
+
 2023-10-22  Bob Weiner  <rsw@gnu.org>
 
 * hbut.el (gbut:save-buffer): Add function to use after global button file is
@@ -78,6 +108,15 @@
     xref because this function turned on xref-etags-mode in Elisp files
     rather than using its elisp backend.  Remove that code.
                 (tags-fix): Remove optional load of this very old file.
+
+2023-10-11  Mats Lidell  <matsl@gnu.org>
+
+* test/hui-tests.el (hui-gbut-number-of-gbuts-with-no-buttons)
+    (hui-gbut-number-of-gibuts-when-one-button)
+    (hui-gbut-number-of-gebuts-when-one-button)
+    (hui-gbut-number-of-gibuts-from-mail-mode)
+    (hui-gbut-number-of-gebuts-from-mail-mode): Verify number of global
+    ibuts and ebuts.
 
 2023-10-09  Mats Lidell  <matsl@gnu.org>
 
