@@ -1,0 +1,361 @@
+* GNU Hyperbole Interactive Demo
+
+    Table of Contents
+    ------------------
+    * Introduction
+    * Implicit Buttons
+    * Explicit Buttons
+    * Button Files
+    * Global Buttons
+
+* Introduction
+
+Welcome to GNU Hyperbole.  Hyperbole will super-charge your GNU Emacs
+experience, allowing you to work faster, utilize fewer key bindings, recall
+more information and link it all together by learning just a few concepts and
+keys.  Invest an hour learning Hyperbole now and speed your daily information
+management for years to come.
+
+If you simply want to know what Hyperbole is, see the file "${hyperb:dir}/HY-ABOUT".
+Hyperbole displays that file when you press {C-h h d a}.  Hyperbole assumes
+you know how to use Emacs.  Otherwise, run the Emacs tutorial by pressing
+{C-h t} first.
+
+You should be looking at this file within Emacs and Hyperbole should already
+be installed within your copy of Emacs.  To be sure, press 'C-h h' and you
+should see the Hyperbole menu in your minibuffer window at the bottom of
+your current Emacs frame.  Press 'q' to quit out of this menu and we can
+begin.  If Hyperbole is not installed, see the "${hyperb:dir}/INSTALL" file, in the
+same directory as this file, for instructions on installing it.
+
+This demo illustrates simple usage of the basic Hyperbole button-action types
+and shows how Hyperbole can support a style of self-documenting, interactive
+files.  See the glossary in the Hyperbole Manual, "(hyperbole)Glossary", if
+terms used here are unfamiliar to you.
+
+Once you read the next section on "#Smart Keys", you can then browse any
+other sections individually as you like.  Many people initially use Hyperbole
+for its "#Implicit Buttons" capabilities, so you may want to jump to that
+section.
+
+* Implicit Buttons
+
+** Paths
+Hyperbole can recognize a wide variety of links embedded within Emacs
+buffers, turning your unmodified text files into hypertexts via its
+incredibly powerful feature: implicit buttons. An example of an implicit
+button would be a path, such as ~/.emacs you can also put parenthesis around
+the path, to make it a bit more clear, like "~/.emacs".
+
+If you put your cursor over the above path and hit {M-RET} (also called
+a Smart Key in Hyperbole), you will see that it should take you to your
+.emacs file. Nothing needs to be added and nothing changes on your end,
+your just simply put in a valid path and it will take you there. Let's
+try another example to open up your Music directory with ~/Music/. Again,
+just hit {M-RET} on the path and it'll open up a buffer with the contents
+of the directory.
+
+One can also link to a specific line in a file such as ~/.emacs:10 which
+will take you to line 10. You can specify columns as well with ~/.emacs:10:9
+The numbers just need to be split by a colon.
+
+Now that you have a basic understanding on how the path implicit buttons work,
+make one that takes you to your favorite project.
+
+** Labels
+Implicit buttons can also have labels attached to them, such as the one
+below:
+
+<[My Emacs Files]>: "~/.emacs.d"
+
+You see that the label is delimited by '<[' and ']>'.  It must be at least 2
+characters in length and can be followed by any number of :, - or = characters,
+including none, and then a whitespace character.  You can activate the button
+either from its label or its pattern text.  With point on an implicit button,
+you can label it by using {C-h h i l}.
+
+Now that you know how labeling works, let's take the path you made to your favorite,
+project and add a label to it.
+
+** Key Series Buttons
+Another type of implicit but is key sequences which are delimited by curly
+braces, such as {M-X}. When using your Smart Key (M-RET) on the key sequence
+it will act as if you hit the keys on your keyboard.
+
+Hyperbole's minibuffer menu items may also be activated as a key series. For
+example, {C-h h d i} displays the online browsable Info version of the Hyperbole
+Manual.
+
+Another example is you can see your global buttons (of which we haven't created)
+with {C-h h g a}.
+
+We can see the buttons that have labels with the command {C-h h a}, and by using
+the Smart Key on there, you should see the label you created above.
+
+** URL Buttons
+URLs are another type of implicit button. Setting this up is as simple as typing
+in a URL such as http://www.gnu.org and use the Smart Key on the URL. Full,
+abbreviated, and FTP URLs are all recognized with or without quotes.
+
+** Email Addresses
+An Action Key press on an email address of any common domain name will
+start composing an email message to that name within Emacs.  This is
+limited to major modes listed in the variable, mail-address-mode-list.
+If that variable is nil, then email addresses are active in every
+buffer.
+
+Try composing a message to <hyperbole-users@gnu.org> and tell us what
+you think of Hyperbole.  Even better, a press of or on {C-h h m c}
+composes mail to the list that includes your system information.
+
+** Action Buttons
+Action Buttons are a very exciting feature in Hyperbole as they give a universal
+syntax for creating implicit buttons known as Action Buttons. These buttons execute
+any existing action types or Emacs Lisp functions. They are delimited by angle
+brackets, < >, and come in three types:
+
+    1. Action type invocations - these begin with an action type name (found by
+       running {C-h h d t a RET}) and are follow by any needed arguments to form the
+       action such as:
+
+           <link-to-file-line "${hyperb:dir}/hact.el" 41>
+
+    2. Function calls - these are similar to action type invocations but begin
+       with an Elisp function name rather than an action type name. These may contain
+       any number of levels of embedded List s-expressions, such as:
+
+       	   <find-file-other-window (expand-file-name "kotl/EXAMPLE.kotl" hyperb:dir)>
+
+    3. Variable displays - these consist of an Elisp variable name on and display
+       a message with the variable name and value, such as:
+
+           <fill-column>
+
+       If there is a function binding with the same name as the variable you wish to
+       display, to prevent interpretation as a function call action button, precede
+       the name with a '$' such as:
+
+           <$hbut:max-len>
+
+** Defining New Action Button Types
+As useful as the current action keys are, sometimes you need something that you can define
+yourself, and does exactly what you want. For this you just need to understand basic
+regular expression-based pattern replacement, which isn't as bad as it sounds.
+
+
+In your ~/.emacs file, add a line in the form:
+
+
+    (defal TYPE LINK-EXPR &optional DOC)
+
+    
+where:
+
+    TYPE is the name of the new type you want to create;
+
+    LINK-EXPR in a regular expression containing a %s replacement string
+    into which Hyperbole will substitute the button text following the TYPE
+    from each button activated of this type. Alternatively, LINK-EXPR maybe be
+    the name of a function of one argument, the button text sans the function name;
+
+    Hyperbole automatically creates a doc string for the type but you can
+    override this by providing an optional DOC string.
+
+When the button is activated, the text following the type is substituted into
+LINK-EXPR. After which, the button is activated in one of 4 ways:
+    (1) brace-delimited key series;
+    (2) URL/web link;
+    (3) path (possibly with trailing colon-separated line and column numbers);
+    (4) a function or action type of one argument, the button text sans the function name.
+
+    
+That's kind of a lot to take in so here is an example:
+
+
+(defal elsearch "https://www.google.com/search?q=%s+filetype:el" "Find Elisp libraries via a Google file type search")
+
+
+<elsearch burly>
+
+
+Or for those of us who prefer DuckDuckGo,
+
+
+(defal ddgsearch "https://www.duckduckgo.com/?q=%s" "DuckDuckGo search")
+
+
+<ddgsearch searching>
+
+
+Where in both scenario's you can replace the second word with whatever you're looking for.
+It even works with multi-word arguments such as:
+
+
+<ddgsearch searching movie>
+
+
+Feel free to fill out the below example for a DDG search:
+
+
+<ddgsearch  insert term/s here>
+
+
+For more advanced regular expression-based link type creation, see 'defil' expression in
+"(hypberbole)Implicit Button Link Types". For any type of implicit button type creation using
+ELisp, see 'defib' in "(hyperbole)Programmatic Implicit Button Types".
+
+** GitHub/GitLab (Remote) References
+For software developers who use GitHub/Lab for publishing and version control,
+GitHub/Lab links are very straight forward.
+
+    github#/rswgnu/hyperbole
+    gitlab#/mobian1/callaudiod
+    
+which can also work with gh and gl shortcut for GitHub and GitLab respectively.
+
+    gh#/rswgnu/hyperbole
+    gl#/mobian1/callaudiod
+
+Try adding in a GitHub/Lab project of your below:
+
+    gh#/<name>/<project>
+    gl#/<name>/<project>    
+    
+There are a plethora of custom commands for both GitHub, and GitLab which can be found in
+the Hyperbole DEMO file (~/.emacs.d/elpa/hyperbole-8.0.0/DEMO).
+
+* Explicit Buttons
+Now that we've covered the implicit buttons, let's move on to explicit buttons. These are
+buttons that you can create, and embed within documents. Explicit buttons have a very
+distinct look which makes them easier to find in your documents, <(fake button)>. Though
+they are quickly recognizable, they are also discrete enough that they aren't distracting.
+Explicit buttons can link to local, and remote files or to a section within a document;
+they can calculate things or query databases. Unlike an HTML hyperbutton, there is no markup
+language to learn or specific document format required. You can create an explicit button with
+simple keyboard presses or mouse drags from one window to another.
+
+
+As an example, this button price the # <(factorial)> of 5 in the minibuffer when activated.
+This works by have the button run =eval-elisp= in the background, and essentially running
+=5*4*3*2*1=.
+
+Hyperbole is pretty forgiving when it comes to the formatting of explicit buttons. As an
+example, the buttons below all do the same thing when activated.
+
+ <(factorial button)>
+
+ <(factorial         button)>
+
+  Pam>  <(factorial
+  Pam>    button)>
+
+  ;; <(factorial
+  ;;   button)>
+
+  /* <( factorial      */
+  /*    button )> */
+
+
+** Creating and Editing Explicit Buttons
+Creating explicit buttons is fun, and easy. You can always try them out
+immediately after creating them. There are two ways to create explicit buttons:
+by dragging them between windows with the Action Mouse Key or by using Hyperbole menus.
+
+
+*** Creation via Dragging
+
+An efficient way to create an explicit button interactively is
+to use the Action Mouse Key to drag from a button source window to a
+window showing its link referent.  More specifically, you should split
+your current Emacs frame into two windows: one which contains the
+point at which you want a button to be inserted and another which
+shows the point to which you want to link, the referent.  Depress the
+Action Mouse Key at the source point for the button (anywhere but on a
+paired delimiter such as double quotes or parentheses).  Then drag to
+the other window and release the Action Mouse Key at the start point
+of the link referent.  The process becomes quite simple with a little
+practice.
+
+*** Creation via Ace Window
+
+For the fastest link button creation, use the Emacs package
+'ace-window' (see "(hyperbole)Keyboard Drags" for setup).  Once this
+is configured, then {M-o w <window id>} may be used to quickly create
+an explicit link button in the selected window that links to any other
+window chosen via the Ace Window.
+
+*** Creation via Menu
+
+You may instead use the Hyperbole menus to create explicit buttons.  First,
+mark/highlight a short region of text in any fashion allowed by Emacs and
+then select the Hyperbole menu item sequence, Ebut/Create {C-h h e c}.  You
+will be prompted for the button's label with the marked region as the
+default.  If you accept the default and enter the rest of the information you
+are prompted for, the button will be created within the current buffer and
+Hyperbole will surround the marked region with explicit button delimiters to
+indicate success.
+
+If you do not mark a region before invoking the button create command, you
+will be prompted for both a label and a target buffer for the button and the
+delimited label text will be inserted into the target buffer after a
+successful button creation.
+
+
+
+Now that we have a few ways of making a button, lets try it. I prefer to use the creation
+via the menu {C-h h e c}. Try making one over this text "Test1", and a second button
+that you create the words for yourself. A good example would be to your current project
+you are working on or your .emacs file. Or you can create a button that utilizes the
+shell to launch something, like the # <(Firefox browser)>.
+
+* Button Files
+Button files are a useful way of keeping track of your buttons. Hyperbole
+creates a button file by default which is "${hbmap:dir-user}/HYPB" which can
+be accessed with {C-h h d p}. Per-directory button files are stored in their
+respective directories, and are also named "HYPB". You can access your current
+directory button file with {C-h h b d}.
+
+
+Head to your default button file "${hbmap:dir-user}/HYPB", and try creating a
+few explicit buttons. Use this as a place to setup anything you want to do, or
+get to quickly.
+
+* Global Buttons
+Global buttons are labeled Hyperbole buttons in your personal button
+file. All global buttons are activated by name with completion provided,
+independent of which buffers are on-screen. Global buttons can be either
+explicit or implicit buttons.
+
+
+The Hyperbole Gbut menu, {C-h h g}, creates, modifies and activates
+global buttons by name.  Each button created by this menu is stored as
+an explicit button near the end of your personal button file.  But any
+buttons you create in other ways within this file also become global
+buttons, for example labeled/named implicit buttons.
+
+
+Since implicit buttons can be labeled with a name and placed in the
+global button file for invocation by name, you can give short names to
+any such buttons you want to invoke frequently.  For example, to
+create a labeled implicit global button that displays a personal todo
+file maintained with the Koutliner, activate the following key series
+by pressing M-RET within the first few characters:
+
+
+          {C-h h b p M-> <[td]>: <find-file "~/Todos.kotl"> RET}
+
+	  
+From then on, you can jump to your todos with:
+
+
+          {C-h h g a td RET}
+
+	  
+Call your global buttons with {C-h h g a}, those buttons should look familiar.
+That's because they are the explicit buttons you created in the previous section
+in your default button file. When you get used to using this you will find that
+essentially anywhere you want to go, online or offline, is a global button call away.
+
+ /* Local Variables:  */
+ /* mode: Text        */
+ /* End:              */
