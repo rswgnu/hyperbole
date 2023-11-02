@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     22-Oct-23 at 08:46:02 by Bob Weiner
+;; Last-Mod:      1-Nov-23 at 22:44:25 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1889,8 +1889,8 @@ Buffer without File      link-to-buffer-tmp"
 					     (setq val (hargs:at-p t)))
 					   (list 'link-to-directory val))
 					  ((let ((hargs:reading-type 'file))
-					     (setq val (hargs:at-p t)))
-					   (list 'link-to-file val (point)))
+					     (setq val (hargs:at-p)))
+					   (list 'link-to-file val))
 					  ((derived-mode-p #'kotl-mode)
 					   (list 'link-to-kcell buffer-file-name (kcell-view:idstamp)))
 					  ;; If link is within an outline-regexp prefix, use
