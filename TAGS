@@ -1573,7 +1573,7 @@ hui.el,2336
 (defun hui:ebut-link-create 1742,69541
 (defun hui:ibut-link-create 1765,70740
 (defun hui:link-possible-types 1802,72367
-(defun hui:list-remove-text-properties 1938,77873
+(defun hui:list-remove-text-properties 1942,78040
 
 hvar.el,272
 (defvar var::append-list 34,1095
@@ -1785,62 +1785,62 @@ hyrolo.el,4988
 (defun hyrolo-bbdb-entry-format 1111,45862
 (defun hyrolo-google-contacts-fgrep 1120,46201
 (defun hyrolo-google-contacts-grep 1127,46491
-(defun hyrolo-google-contacts-grep-file 1152,47486
-(defun hyrolo-google-contacts-insert-data 1165,48283
-(defun hyrolo-google-contacts-insert-generic-list 1261,54090
-(defun hyrolo-retrieve-google-contacts 1276,54691
-(defun hyrolo-helm-org-rifle 1300,55764
-(defun hyrolo-helm-org-rifle-directory 1323,56728
-(defun hyrolo-helm-org-rifle-directories 1342,57508
-(defun hyrolo-org 1352,58010
-(defun hyrolo-org-roam 1366,58640
-(defun hyrolo-back-to-visible-point 1387,59630
-(defun hyrolo-backward-same-level 1395,59992
-(defun hyrolo-consult-grep 1402,60260
-(defun hyrolo-fgrep-directories 1438,61856
-(defun hyrolo-fgrep-file 1442,62067
-(defun hyrolo-forward-same-level 1456,62779
-(defun hyrolo-grep-directories 1463,63043
-(defun hyrolo-next-regexp-match 1467,63244
-(defun hyrolo-grep-file 1474,63505
-(defun hyrolo-map-level 1574,67407
-(defun hyrolo-map-single-subtree 1611,69185
-(defun hyrolo-mode 1640,70220
-(defun hyrolo-next-visible-heading 1663,71020
-(defun hyrolo-previous-visible-heading 1671,71318
-(defun hyrolo-to 1679,71620
-(defun hyrolo-to-entry-beginning 1731,73728
-(defun hyrolo-to-entry-end 1746,74306
-(defun hyrolo-up-heading 1771,75128
-(defun hyrolo-add-match 1782,75618
-(defun hyrolo-buffer-exists-p 1794,76162
-(defun hyrolo-current-date 1802,76444
-(defun hyrolo-display-to-entry-end 1806,76598
-(defun hyrolo-format-name 1815,76882
-(defun hyrolo-get-consult-version 1822,77196
-(defun hyrolo-highlight-matches 1833,77664
-(defun hyrolo-isearch-for-regexp 1844,78067
-(defun hyrolo-kill-buffer 1855,78559
-(defun hyrolo-name-and-email 1862,78881
-(defun hyrolo-name-at 1897,80076
-(defun hyrolo-save-buffer 1910,80560
-(defun hyrolo-set-date 1918,80945
-(defun hyrolo-min-matched-level 1937,81664
-(defun hyrolo-search-directories 1945,81962
-(defun hyrolo-show-levels 1952,82319
-(defun hyrolo-shrink-window 1989,83723
-(defun hyrolo-to-buffer 2002,84168
-(defun hyrolo-move-backward 2006,84300
-(defun hyrolo-move-forward 2018,84744
-(defun hyrolo-mode-outline-level 2033,85202
-(defvar hyrolo-entry-group-number 2054,86076
-(defvar hyrolo-entry-trailing-space-group-number 2058,86213
-(defconst hyrolo-hdr-format2061,86339
-(defconst hyrolo-hdr-regexp 2069,86698
-(defconst hyrolo-match-regexp 2074,86909
-(defvar hyrolo--wconfig 2079,87133
-(defvar hyrolo-mode-syntax-table 2082,87226
-(defvar hyrolo-mode-map 2092,87612
+(defun hyrolo-google-contacts-grep-file 1152,47490
+(defun hyrolo-google-contacts-insert-data 1165,48287
+(defun hyrolo-google-contacts-insert-generic-list 1261,54094
+(defun hyrolo-retrieve-google-contacts 1276,54695
+(defun hyrolo-helm-org-rifle 1300,55768
+(defun hyrolo-helm-org-rifle-directory 1323,56732
+(defun hyrolo-helm-org-rifle-directories 1342,57512
+(defun hyrolo-org 1352,58014
+(defun hyrolo-org-roam 1366,58644
+(defun hyrolo-back-to-visible-point 1387,59634
+(defun hyrolo-backward-same-level 1395,59996
+(defun hyrolo-consult-grep 1402,60264
+(defun hyrolo-fgrep-directories 1438,61860
+(defun hyrolo-fgrep-file 1442,62071
+(defun hyrolo-forward-same-level 1456,62783
+(defun hyrolo-grep-directories 1463,63047
+(defun hyrolo-next-regexp-match 1467,63248
+(defun hyrolo-grep-file 1474,63509
+(defun hyrolo-map-level 1574,67415
+(defun hyrolo-map-single-subtree 1611,69193
+(defun hyrolo-mode 1640,70228
+(defun hyrolo-next-visible-heading 1663,71028
+(defun hyrolo-previous-visible-heading 1671,71326
+(defun hyrolo-to 1679,71628
+(defun hyrolo-to-entry-beginning 1731,73736
+(defun hyrolo-to-entry-end 1746,74314
+(defun hyrolo-up-heading 1771,75136
+(defun hyrolo-add-match 1782,75626
+(defun hyrolo-buffer-exists-p 1794,76170
+(defun hyrolo-current-date 1802,76452
+(defun hyrolo-display-to-entry-end 1806,76606
+(defun hyrolo-format-name 1815,76890
+(defun hyrolo-get-consult-version 1822,77204
+(defun hyrolo-highlight-matches 1833,77672
+(defun hyrolo-isearch-for-regexp 1844,78075
+(defun hyrolo-kill-buffer 1855,78567
+(defun hyrolo-name-and-email 1862,78889
+(defun hyrolo-name-at 1897,80084
+(defun hyrolo-save-buffer 1910,80568
+(defun hyrolo-set-date 1918,80953
+(defun hyrolo-min-matched-level 1937,81672
+(defun hyrolo-search-directories 1945,81970
+(defun hyrolo-show-levels 1952,82327
+(defun hyrolo-shrink-window 1989,83731
+(defun hyrolo-to-buffer 2002,84176
+(defun hyrolo-move-backward 2006,84308
+(defun hyrolo-move-forward 2018,84752
+(defun hyrolo-mode-outline-level 2033,85210
+(defvar hyrolo-entry-group-number 2054,86084
+(defvar hyrolo-entry-trailing-space-group-number 2058,86221
+(defconst hyrolo-hdr-format2061,86347
+(defconst hyrolo-hdr-regexp 2069,86706
+(defconst hyrolo-match-regexp 2074,86917
+(defvar hyrolo--wconfig 2079,87141
+(defvar hyrolo-mode-syntax-table 2082,87234
+(defvar hyrolo-mode-map 2092,87620
 
 hywconfig.el,642
 (define-obsolete-variable-alias 'wconfig-ring-max wconfig-ring-max61,2094
@@ -1974,24 +1974,24 @@ hvm.el,874
 (defvar Vm-msg-start-regexp 537,19555
 
 kotl/kexport.el,796
-(defvar kexport:input-filename 40,1318
-(defvar kexport:output-filename 43,1428
-(defcustom kexport:html-description46,1539
-(defcustom kexport:html-keywords 53,1830
-(defvar kexport:kcell-reference-regexp61,2050
-(defvar kexport:kcell-partial-reference-regexp64,2140
-(defvar kexport:html-replacement-alist67,2225
-(defconst kexport:font-awesome-css-url111,4017
-(defconst kexport:font-awesome-css-include116,4243
-(defconst kexport:font-awesome-css-include-with-menus190,5133
-(defconst kexport:font-awesome-collapsible-javascript-btn325,7732
-(defun kexport:koutline 369,8968
-(defun kexport:display 383,9571
-(defun kexport:html 397,10165
-(defun kexport:princ-cell 535,15226
-(defun kexport:html-file-klink 562,16520
-(defun kexport:html-markup 576,17069
-(defun kexport:html-url 584,17332
+(defvar kexport:input-filename 40,1317
+(defvar kexport:output-filename 43,1427
+(defcustom kexport:html-description46,1538
+(defcustom kexport:html-keywords 53,1829
+(defvar kexport:kcell-reference-regexp61,2049
+(defvar kexport:kcell-partial-reference-regexp64,2139
+(defvar kexport:html-replacement-alist67,2224
+(defconst kexport:font-awesome-css-url111,4016
+(defconst kexport:font-awesome-css-include116,4242
+(defconst kexport:font-awesome-css-include-with-menus190,5132
+(defconst kexport:font-awesome-collapsible-javascript-btn325,7731
+(defun kexport:koutline 369,8967
+(defun kexport:display 385,9726
+(defun kexport:html 399,10320
+(defun kexport:princ-cell 537,15381
+(defun kexport:html-file-klink 564,16675
+(defun kexport:html-markup 578,17224
+(defun kexport:html-url 586,17487
 
 kotl/kfile.el,623
 (defconst kfile:version 28,873
@@ -2776,7 +2776,7 @@ test/hui-tests.el,3218
 (ert-deftest hui--ebut-rename-all-copies 761,30294
 (ert-deftest hui--ibut-link-directly-to-file 774,30718
 (ert-deftest hui--ibut-link-directly-to-dired 791,31371
-(ert-deftest hui--ibut-link-directly-with-label 812,32159
+(ert-deftest hui--ibut-link-directly-with-label 812,32165
 
 test/hypb-tests.el,88
 (ert-deftest hypb:installation-type-test 26,562
@@ -2794,11 +2794,11 @@ test/hyrolo-tests.el,570
 (ert-deftest hyrolo-demo-tab-jump-to-first-match 60,1835
 (ert-deftest hyrolo-demo-toggle-visibility 72,2253
 (ert-deftest hyrolo-demo-show-overview 98,3102
-(ert-deftest hyrolo-demo-move-to-beginning-and-end-of-file 124,3956
-(ert-deftest hyrolo-demo-move-between-entries-on-same-level 151,4929
-(ert-deftest hyrolo-demo-no-following-same-level-heading 175,5785
-(ert-deftest hyrolo-sort-test 203,6747
-(ert-deftest hyrolo-sort-records-at-different-levels 234,7905
+(ert-deftest hyrolo-demo-move-to-beginning-and-end-of-file 125,3974
+(ert-deftest hyrolo-demo-move-between-entries-on-same-level 152,4947
+(ert-deftest hyrolo-demo-no-following-same-level-heading 176,5803
+(ert-deftest hyrolo-sort-test 204,6765
+(ert-deftest hyrolo-sort-records-at-different-levels 235,7923
 
 test/kcell-tests.el,136
 (defconst kcell-tests--ref-to-id-tests31,800
@@ -2806,13 +2806,13 @@ test/kcell-tests.el,136
 (ert-deftest kcell-tests--ref-to-id 81,2083
 
 test/kexport-tests.el,407
-(ert-deftest kexport:html-creates-html-file 26,633
-(ert-deftest kexport:html-sets-title-and-header 43,1231
-(ert-deftest kexport:html-contains-each-cell 64,2080
-(ert-deftest kexport:html-creates-hierarchy 84,2791
-(ert-deftest kexport:html-creates-list-hierarchy 110,3778
-(ert-deftest kexport:display-creates-html-file-and-displays-it 133,4743
-(ert-deftest kexport:koutline-calls-kexport:html 152,5509
+(ert-deftest kexport:html-creates-html-file 26,632
+(ert-deftest kexport:html-sets-title-and-header 43,1230
+(ert-deftest kexport:html-contains-each-cell 64,2079
+(ert-deftest kexport:html-creates-hierarchy 84,2790
+(ert-deftest kexport:html-creates-list-hierarchy 110,3777
+(ert-deftest kexport:display-creates-html-file-and-displays-it 133,4742
+(ert-deftest kexport:koutline-calls-kexport:html 152,5508
 
 test/kimport-tests.el,327
 (ert-deftest kimport--aug-post-outline 23,492

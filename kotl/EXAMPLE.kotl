@@ -1,564 +1,564 @@
 ;; -*- Mode: kotl -*- 
 "Kotl-4.0" ;; file-format
 
-  1. The Koutliner is a part of the Hyperbole information management system.
-
-  2. The Koutliner produces hierarchically structured files consisting of
-     trees of cells.
-
-    2a. A cell is an element of the outline which has its own display label
-        and unique, permanent identifier (idstamp).
-
-    2b. Idstamps support the creation of hyperlinks to cells which are
-        maintained as the structure of an outline changes.
-
-  3. Features implemented include:
-
-    3a. Full on screen editing (just like a Macintosh).  Click to type in a
-        node (we call them cells) and just enter text.  Structure is
-        automatically maintained for you.  All of the standard Emacs editor
-        command set is supported both through keyboard, menu and mouse
-        interaction.  Menu usage is documented in the Hyperbole Manual; this
-        document discusses features and their associated keyboard commands
-        only.
-
-    3b. Advanced outline processing
-
-      3b1. Autonumbering: Full auto-numbering in Augment (1a2) or legal
-           (1.1.2) formats.  Augment style is the default.  Use {C-c C-l ?}
-           to see the full set of label types and to select a different
-           label type.
-
-      3b2. Label Separators: By default, the Koutliner separates labels from
-           cell contents by two spaces.  If you want to change the separator
-           for the current outline, use {C-c M-l}.  {C-u C-c M-l} will
-           additionally change the default separator value used when new
-           outlines are created.  For example, use the value ". " to get a
-           trailing period after each cell label.  The separator must be at
-           least two characters long.
-
-      3b3. Cell Creation: {C-j} adds a new cell as a sibling following the
-           current cell.  A non-negative prefix argument, {C-u C-j} or {C-c
-           a} adds the cell as a child of the current cell.  {C-c p} adds the
-           cell as the sibling of the current cell's parent.
-
-      3b4. Cell and Tree Deletion: {C-c C-k} kills the current cell and its
-           entire subtree.  {C-c k} kills the contents of a cell from point
-           through the end of the cell.  {C-u C-c k} kills the entire
-           contents of the cell regardless of the location of point.  You may
-           then yank the contents into another cell with {C-y}.
-
-      3b5. Tree Demotion and Promotion: Trees may be demoted pressing {TAB}
-           or promoted by pressing {M-TAB}.  {M-0 TAB} and {M-0 M-TAB} will
-           demote and promote trees and will additionally refill each cell
-           that has not been specially marked to prevent refilling.
-           
-           {M-1 TAB} behaves specially.  It toggles the function of {TAB} and
-           {M-TAB} so that they insert a tab character and remove the
-           previous character, respectively.  Use {M-1 TAB} to toggle them
-           back to promoting and demoting trees.
-           
-           To insert a literal tab character, use {C-q TAB}.
-
-      3b6. Cell and Tree Filling: {M-q} or {M-j} refills a paragraph within a
-           cell so that its lines wrap within the current margin settings.
-           {C-c M-q} or {C-c M-j} refills all paragraphs within a cell.
-           {C-M-q} or {C-M-j} refills all cells within a tree.
-           
-           Set the variable, kotl-mode:refill-flag, to t if you want moving,
-           promoting, demoting, exchanging, splitting and appending cells to
-           also automatically refill each cell.
-
-      3b7. Cursor Movement:  In addition to normal Emacs movement commands,
-           you can move within a cell or from one cell or tree to another.
-           
-            {C-c ,}       - Move to the beginning of the current cell.
-            {C-c .}       - Move to the end of the current cell.
-           
-            {C-c C-n}     - Move to the next visible cell, regardless of level.
-            {C-c C-p}     - Move to the prev visible cell, regardless of level.
-           
-            {C-c C-f}     - Move forward  to this cell's successor, if any.
-            {C-c C-b}     - Move backward to this cell's predecessor, if any.
-           
-            {C-c C-d}     - Move to first child of current cell, if any.
-           
-            {C-c C-u}     - Move to parent cell of current cell, if any.
-           
-            {C-c <}       - Move to the first sibling at the current level.
-            {C-c >}       - Move to the last  sibling at the current level.
-           
-            {C-c ^}       - Move to the level 1 root of the current tree.
-            {C-c $}       - Move to the last cell in the tree rooted at point.
-
-      3b8. Tree Movement and Copying: Entire outline trees can be moved or
-           copied within an outline with single commands.  Simply invoke
-           the desired command and then double click/press with the Action
-           Key on the desired root cell for each argument for which you are
-           prompted.
-           
-           Copying and moving only work within a single outline right now, so
-           don't try to move or copy trees to another Koutline file.
-           
-            {M-<down>}    - Move current tree past prefix arg same level trees.
-            {M-<up>}      - Move current tree back prefix arg same level trees.
-           
-            {C-c c}       - Copy <tree> to follow as sibling of <cell>.
-            {C-u C-c c}   - Copy <tree> to follow as first child of <cell>.
-           
-            {C-c C-c}     - Copy <tree> to precede <cell>.
-            {C-u C-c C-c} - Copy <tree> as first child of the parent of <cell>.
-           
-            {C-c m}       - Move <tree> to follow as sibling of <cell>.
-            {C-u C-c m}   - Move <tree> to follow as first child of <cell>.
-           
-            {C-c C-m}     - Move <tree> to precede <cell>.
-            {C-u C-c C-m} - Move <tree> as first child of the parent of <cell>.
-           
-           If you have mouse support under Hyperbole, you can move entire
-           trees with mouse clicks.  Simply click the Assist Key within the
-           indentation to the left of a cell text and you will be prompted
-           for a tree to move.  Double click the Action Key within the body
-           of the root cell of the tree to move and then double click within
-           the body of the root cell of the tree you want it to follow.
-
-      3b9. Tree Text or Region Copying to a Non-Koutline Buffer:
-            {C-c M-c} - Copy <tree> text or active region to a non-Koutline buffer.
-            {C-c C-@} - Copy <tree> text to an outgoing mail message.
-           
-           Each above command prompts for whether or not to include
-           hidden/invisible text when copying.  If yes, all invisible text
-           is expanded before copying.
-
-     3b10. Cell Transposition:  The move and copy commands rearrange entire
-           trees.  The following two commands exchange the locations of two
-           cells.
-
-       3b10a. {C-c e} prompts for two cell addresses and exchanges the cells.
-
-       3b10b. {C-c t} does not prompt.  It exchanges the current and
-              preceding cells.  If there is no preceding cell it exchanges
-              the current and next cell.
-              
-              {C-c t} with a prefix argument of zero exchanges the cells in
-              which point and mark fall.
-              
-              {C-c t} with a non-zero numeric prefix argument, N, moves
-              the current tree past maximally the next N visible cells.  If
-              there are fewer visible, it makes the current cell the last
-              cell in the outline.
-
-     3b11. Cell Splitting: You can split one cell into two adjacent cells
-           with {C-c s}.  This leaves the cell contents preceding point in
-           the current cell, minus any trailing whitespace, and moves the
-           contents following point to a new sibling cell which is inserted
-           into the outline.  {C-u C-c s} adds the new cell as the first
-           child of the original cell, rather than as its sibling.
-           
-           All cell attributes in the original cell are propagated to the new
-           one.
-
-     3b12. Cell Appending:  {C-c +} appends the contents of a specified cell
-           to the end of another cell.
-
-     3b13. Hiding and Showing:  Individual cells, branches, or particular
-           levels in the outline may be hidden or shown.  These commands work
-           even when an outline buffer is read-only, e.g. when its file is
-           not checked out of a version control system yet.
-
-       3b13a. {C-c C-h}  - Hide (collapse) tree rooted at point.
-              {C-c C-s}  - Show (expand)   tree rooted at point.
-              
-              {C-c C-a}  - Show (expand) all cells in the outline.
-              {C-x $}    - Show all cells down to a particular level.  The
-                           user is prompted for the level or a prefix
-                           argument may be given. 
-                           
-              {C-M-h}    - Hide subtree at point, excluding root. 
-              {M-x kotl-mode:show-subtree RET} - Show subtree at point.
-              
-              {C-c C-o}  - Overview, show only first line of outline
-                           cells.
-              {C-c C-t}  - Top-level, hide all cells below level 1 and show
-                           only the first line of each level 1 cell.
-              Give a prefix argument to either of the above two commands to
-              toggle display of blank lines between cells as well,
-              e.g. {C-u C-c C-o}.  Try it now.
-
-       3b13b. A click or press of the Action Key within a cell's body, but
-              not on a button, toggles between hiding and showing the tree
-              rooted at point.
-
-     3b14. Cell Identifiers: Permanent ids are associated with each cell
-           and can be used in hyperlinks that are maintained as cells are
-           reordered in a file.  (These ids may also be displayed in place
-           of the outline level relative ids.  Use {C-c C-l id RET}).
-           Permanent ids are numbered from 0, where 0 is the root node of
-           the entire outline.  This node is never visible within the
-           outline.  Permanent ids always begin with a 0, as in 012, to
-           distinguish them from relative ids.
-
-     3b15. Cell Attributes: Each cell has its own attribute list.  The
-           attribute lists for the cells in the tree rooted at point can be
-           displayed by pressing the Assist Key.  {C-c h} prompts for a kcell
-           id and displays its attributes.  {C-u C-c h} prompts for a kcell
-           id and displays the attributes for it and its subtree; use 0 as
-           the kcell id to see attributes for all visible cells in the
-           outline, including the invisible 0 cell that is the root of
-           all first-level cells.
-           
-           {C-c C-i} sets an attribute of the cell at point.
-           {C-u C-c C-i} removes an attribute of the cell at point.
-           {C-0 C-c C-i} sets an attribute of the invisible 0 root cell.
-           {C--1 C-c C-i} removes an attribute of the invisible 0 root cell.
-
-     3b16. File Insertion: The elements of another buffer or file may be
-           inserted into a koutline as a set of cells by using the {C-x i}
-           command.  When prompted, you may use a buffer name or file name
-           from which to insert.
-
-       3b16a. The cells will be inserted as the successors of the current
-              cell unless {C-u C-x i} is used and then they are inserted as
-              the initial children of the current cell.
-
-       3b16b. See the documentation for the variables, kimport:mode-alist and
-              kimport:suffix-alist, for information on mode and
-              suffix-specific conversions performed on files before they are
-              inserted.  This same conversion process applies if you invoke
-              {M-x kotl-mode RET} in a non-koutline buffer or if you perform
-              a generic file import as described in <@ 3b16=063>.
-
-       3b16c. Use {M-x kimport:insert-file-contents RET} to insert the
-              entire contents of a file into the current cell at the
-              location of point.  {M-x kimport:insert-buffer RET} does the
-              same for an existing buffer.  {C-x r i} does the same with the
-              contents of a text register that you specify.
-
-     3b17. File Importing: The Koutliner supports conversion of three
-           types of files into koutline files.  You can choose to
-           import a file into an existing koutline, following the tree
-           at point, or to create a new koutline of the imported file
-           contents.  {M-x kimport:file RET} will select the
-           importation type based on the buffer or file name suffix of
-           the file to import.  Use one of the following commands if
-           you want to control the type of importation explicitly.
-
-       3b17a. Text Files
-
-         3b17a1. In a text buffer, use {M-x kotl-mode RET} to convert the
-                 buffer into a koutline in-place.  You will lose the old
-                 format of the buffer when you do this.
-
-         3b17a2. Use {M-x kimport:text RET} and you will be prompted for a
-                 text buffer or file to import and the new koutline buffer or
-                 file to create from its text.  It will also import the
-                 contents, attributes and level structure of cells from a
-                 koutline.
-                 
-                 With this command, your original file remains intact.
-
-       3b17b. Star Outline Files: Star outlines are standard Emacs outlines
-              where each entry begins with one or more asterisk characters.
-              Use {M-x kimport:star-outline RET} and you will be prompted
-              for the star outline buffer or file to import and the new
-              koutline buffer or file to create.
-
-       3b17c. Augment Files Numbered on the Right-Side: (Skip this if you are
-              unfamiliar with this sort of file).  Files exported from the
-              Augment system as text often have alphanumeric statement
-              identifiers on the right side.
-              
-              Use {M-x kimport:aug-post-outline RET} and you will be prompted
-              for the augment buffer or file to import and the koutline to
-              create.
-
-     3b18. File Exporting: The Koutliner can produce a nicely indented HTML
-           version of an outline with hyperlinks and hyperlink anchors
-           intact.  Use {M-x kexport:html RET} to export a koutline file or
-           existing buffer.
-
-     3b19. View Specification: Flexible views of outlines may be specified
-           with succinct single character codes.
-
-       3b19a. The current view spec is shown in the modeline after the buffer
-              name, delimited by <|>.
-
-       3b19b. The current view spec is saved whenever the outline is saved.
-              The next time the outline is read in, this will be the initial
-              view.  The standard initial viewspec is <|ben>.
-
-       3b19c. {C-c C-v} prompts for a view spec string in which the following
-              codes are valid.  Any invalid characters in a view spec are
-              ignored.
-
-         3b19c1. a:  Show all cell levels and all lines in cells.
-
-         3b19c2. b: Turn on blank lines between cells.  Without this code,
-                 blank lines will be turned off.  You can also use the {C-c
-                 b} key binding to toggle line numbers on and off
-                 independent of any other view settings.
-
-         3b19c3. cN: Hide any lines greater than N in each cell.  0 means
-                 don't cutoff any lines.
-
-         3b19c4. e: Show ellipses when some content is hidden (This is
-                 always on in modern versions of Emacs; it cannot be
-                 turned off).
-
-         3b19c5. lN: Hide cells at levels deeper than N.  0 means don't hide
-                 any cells.
-
-         3b19c6. n:  Turn on the default label type.
-                 n0: Display idstamps.
-                 n1: Display alpha labels.
-                 n.: Display legal labels.
-
-       3b19d. Press the Action Key on this view spec of <|c2l1> to turn off
-              blank lines, to clip each cell after its second line, and to
-              hide all cells below level one.  Use {C-u C-c C-a} to restore a
-              view of all cells.
-
-    3c. Klinks: Hyperlinks may be embedded in cells and may refer to other
-        cells.  Explicit Hyperbole buttons may be created as usual via
-        mouse drags, see "(hyperbole)By Dragging".  A klink is a special
-        implicit link button that jumps to a specific outline cell.
-
-      3c1. Here are three klink examples:
-
-        3c1a. <#3b=06> or <@ 3b=06> jumps to the cell within this outline
-              which has permanent id `06' and relative id `3b'.  <@ 06> does
-              the same thing, as does <@ 3b>, though this latter form will
-              not maintain the link properly if the cell is moved elsewhere
-              within the outline.
-
-        3c1b. <EXAMPLE.kotl#4=012|c1e> or <EXAMPLE.kotl, 4=012 |c1e> displays
-              the named file, starting at the unimplemented features section
-              whose permanent identifer is 012, with the view specification
-              of: blank lines turned off, cutoff after one line per cell, and
-              show ellipses for cells or trees which are clipped.
-
-        3c1c. <|ben> is a klink consisting of just a view specification.
-              When activated, it sets the view in the current outline to
-              display blank lines, ellipses following collapsed lines and
-              standard alphanumeric numbering.
-
-      3c2. There are a number of easy ways to insert klinks into koutlines.
-           If you have mouse support under Hyperbole, simply click the Action
-           Key within the indentation to the left of a cell text.  If you
-           then double click on some cell, a link to that cell will be
-           inserted where you started.  From a keyboard, use {C-c l} when in
-           a koutline or {C-h h k l} when not in a koutline to insert a
-           klink.
-
-      3c3. If you prefer the standard copy and yank model that Emacs
-           provides, place point within a klink when there is no active
-           region and use {M-w} to copy the klink.  Then {C-y} will yank it
-           into any buffer you desire.
-
-      3c4. To instead copy a reference to the current Koutline cell, use
-           {M-w} outside of a klink when no region is active.
-
-      3c5. {C-x r s} prompts for an Emacs register and saves either the
-           current klink or the current cell reference to the register.  {C-x
-           r i} with the same register then inserts the Koutline reference at
-           point.
-
-    3d. Org table editing is supported.
-
-      3d1. You must use the first line of the cell to label your table
-           as tables require only blanks to the left of each row.
-
-      3d2. Here are two table examples:
-           
-           |----------------------------+---------------------------|
-           | Promotion Inside Org Table | Demotion Inside Org Table |
-           |----------------------------+---------------------------|
-           | {M-0 M-TAB}                | {M-0 TAB}                 |
-           | {C-c C-,}                  | {C-c C-.}                 |
-           | {C-c C-<}                  | {C-c C->}                 |
-           |----------------------------+---------------------------|
-                      
-           |-----------------------------+----------------------------|
-           | Promotion Outside Org Table | Demotion Outside Org Table |
-           |-----------------------------+----------------------------|
-           | {M-TAB} or {Shift-TAB}      | {TAB}                      |
-           | {M-<left>}                  | {M-<right>}                |
-           | {C-c C-,}                   | {C-c C-.}                  |
-           | {C-c C-<}                   | {C-c C->}                  |
-           |-----------------------------+----------------------------|
-           
-           To toggle table editing mode on or off, press the Action
-           Key on any of the table | symbols and then edit as you
-           would any Org table.  Note how the above tables show how
-           TAB and Shift-TAB behave differently in and outside of
-           tables; use M-TAB rather than Shift-TAB for tree promotion
-           consistency anywhere.  See "(Org)Tables" for help on utilizing
-           tables.
-
-    3e. The Koutliner code runs on any system that supports Emacs,
-        whether under a window system or from a dumb terminal display.
-
-  4. Major features left to be implemented:
-
-    4a. Branch handling commands (all cells at same level).
-
-    4b. Copying a single cell without its subtree.
-
-    4c. Replacing one cell or one tree with another.
-
-    4d. Transposing two trees, rather than two cells.
-
-    4e. A small amount of work remains to enable setting different per
-        level fonts and colors, so that outline levels are visually easy to
-        distinguish.
-
-    4f. Flexible view handling has been only partially implemented.
+   1. The Koutliner is a part of the Hyperbole information management system.
+
+   2. The Koutliner produces hierarchically structured files consisting of
+      trees of cells.
+
+     2a. A cell is an element of the outline which has its own display label
+         and unique, permanent identifier (idstamp).
+
+     2b. Idstamps support the creation of hyperlinks to cells which are
+         maintained as the structure of an outline changes.
+
+   3. Features implemented include:
+
+     3a. Full on screen editing (just like a Macintosh).  Click to type in a
+         node (we call them cells) and just enter text.  Structure is
+         automatically maintained for you.  All of the standard Emacs editor
+         command set is supported both through keyboard, menu and mouse
+         interaction.  Menu usage is documented in the Hyperbole Manual; this
+         document discusses features and their associated keyboard commands
+         only.
+
+     3b. Advanced outline processing
+
+       3b1. Autonumbering: Full auto-numbering in Augment (1a2) or legal
+            (1.1.2) formats.  Augment style is the default.  Use {C-c C-l ?}
+            to see the full set of label types and to select a different
+            label type.
+
+       3b2. Label Separators: By default, the Koutliner separates labels from
+            cell contents by two spaces.  If you want to change the separator
+            for the current outline, use {C-c M-l}.  {C-u C-c M-l} will
+            additionally change the default separator value used when new
+            outlines are created.  For example, use the value ". " to get a
+            trailing period after each cell label.  The separator must be at
+            least two characters long.
+
+       3b3. Cell Creation: {C-j} adds a new cell as a sibling following the
+            current cell.  A non-negative prefix argument, {C-u C-j} or {C-c
+            a} adds the cell as a child of the current cell.  {C-c p} adds the
+            cell as the sibling of the current cell's parent.
+
+       3b4. Cell and Tree Deletion: {C-c C-k} kills the current cell and its
+            entire subtree.  {C-c k} kills the contents of a cell from point
+            through the end of the cell.  {C-u C-c k} kills the entire
+            contents of the cell regardless of the location of point.  You may
+            then yank the contents into another cell with {C-y}.
+
+       3b5. Tree Demotion and Promotion: Trees may be demoted pressing {TAB}
+            or promoted by pressing {M-TAB}.  {M-0 TAB} and {M-0 M-TAB} will
+            demote and promote trees and will additionally refill each cell
+            that has not been specially marked to prevent refilling.
+            
+            {M-1 TAB} behaves specially.  It toggles the function of {TAB} and
+            {M-TAB} so that they insert a tab character and remove the
+            previous character, respectively.  Use {M-1 TAB} to toggle them
+            back to promoting and demoting trees.
+            
+            To insert a literal tab character, use {C-q TAB}.
+
+       3b6. Cell and Tree Filling: {M-q} or {M-j} refills a paragraph within a
+            cell so that its lines wrap within the current margin settings.
+            {C-c M-q} or {C-c M-j} refills all paragraphs within a cell.
+            {C-M-q} or {C-M-j} refills all cells within a tree.
+            
+            Set the variable, kotl-mode:refill-flag, to t if you want moving,
+            promoting, demoting, exchanging, splitting and appending cells to
+            also automatically refill each cell.
+
+       3b7. Cursor Movement:  In addition to normal Emacs movement commands,
+            you can move within a cell or from one cell or tree to another.
+            
+             {C-c ,}       - Move to the beginning of the current cell.
+             {C-c .}       - Move to the end of the current cell.
+            
+             {C-c C-n}     - Move to the next visible cell, regardless of level.
+             {C-c C-p}     - Move to the prev visible cell, regardless of level.
+            
+             {C-c C-f}     - Move forward  to this cell's successor, if any.
+             {C-c C-b}     - Move backward to this cell's predecessor, if any.
+            
+             {C-c C-d}     - Move to first child of current cell, if any.
+            
+             {C-c C-u}     - Move to parent cell of current cell, if any.
+            
+             {C-c <}       - Move to the first sibling at the current level.
+             {C-c >}       - Move to the last  sibling at the current level.
+            
+             {C-c ^}       - Move to the level 1 root of the current tree.
+             {C-c $}       - Move to the last cell in the tree rooted at point.
+
+       3b8. Tree Movement and Copying: Entire outline trees can be moved or
+            copied within an outline with single commands.  Simply invoke
+            the desired command and then double click/press with the Action
+            Key on the desired root cell for each argument for which you are
+            prompted.
+            
+            Copying and moving only work within a single outline right now, so
+            don't try to move or copy trees to another Koutline file.
+            
+             {M-<down>}    - Move current tree past prefix arg same level trees.
+             {M-<up>}      - Move current tree back prefix arg same level trees.
+            
+             {C-c c}       - Copy <tree> to follow as sibling of <cell>.
+             {C-u C-c c}   - Copy <tree> to follow as first child of <cell>.
+            
+             {C-c C-c}     - Copy <tree> to precede <cell>.
+             {C-u C-c C-c} - Copy <tree> as first child of the parent of <cell>.
+            
+             {C-c m}       - Move <tree> to follow as sibling of <cell>.
+             {C-u C-c m}   - Move <tree> to follow as first child of <cell>.
+            
+             {C-c C-m}     - Move <tree> to precede <cell>.
+             {C-u C-c C-m} - Move <tree> as first child of the parent of <cell>.
+            
+            If you have mouse support under Hyperbole, you can move entire
+            trees with mouse clicks.  Simply click the Assist Key within the
+            indentation to the left of a cell text and you will be prompted
+            for a tree to move.  Double click the Action Key within the body
+            of the root cell of the tree to move and then double click within
+            the body of the root cell of the tree you want it to follow.
+
+       3b9. Tree Text or Region Copying to a Non-Koutline Buffer:
+             {C-c M-c} - Copy <tree> text or active region to a non-Koutline buffer.
+             {C-c C-@} - Copy <tree> text to an outgoing mail message.
+            
+            Each above command prompts for whether or not to include
+            hidden/invisible text when copying.  If yes, all invisible text
+            is expanded before copying.
+
+      3b10. Cell Transposition:  The move and copy commands rearrange entire
+            trees.  The following two commands exchange the locations of two
+            cells.
+
+        3b10a. {C-c e} prompts for two cell addresses and exchanges the cells.
+
+        3b10b. {C-c t} does not prompt.  It exchanges the current and
+               preceding cells.  If there is no preceding cell it exchanges
+               the current and next cell.
+               
+               {C-c t} with a prefix argument of zero exchanges the cells in
+               which point and mark fall.
+               
+               {C-c t} with a non-zero numeric prefix argument, N, moves
+               the current tree past maximally the next N visible cells.  If
+               there are fewer visible, it makes the current cell the last
+               cell in the outline.
+
+      3b11. Cell Splitting: You can split one cell into two adjacent cells
+            with {C-c s}.  This leaves the cell contents preceding point in
+            the current cell, minus any trailing whitespace, and moves the
+            contents following point to a new sibling cell which is inserted
+            into the outline.  {C-u C-c s} adds the new cell as the first
+            child of the original cell, rather than as its sibling.
+            
+            All cell attributes in the original cell are propagated to the new
+            one.
+
+      3b12. Cell Appending:  {C-c +} appends the contents of a specified cell
+            to the end of another cell.
+
+      3b13. Hiding and Showing:  Individual cells, branches, or particular
+            levels in the outline may be hidden or shown.  These commands work
+            even when an outline buffer is read-only, e.g. when its file is
+            not checked out of a version control system yet.
+
+        3b13a. {C-c C-h}  - Hide (collapse) tree rooted at point.
+               {C-c C-s}  - Show (expand)   tree rooted at point.
+               
+               {C-c C-a}  - Show (expand) all cells in the outline.
+               {C-x $}    - Show all cells down to a particular level.  The
+                            user is prompted for the level or a prefix
+                            argument may be given. 
+                            
+               {C-M-h}    - Hide subtree at point, excluding root. 
+               {M-x kotl-mode:show-subtree RET} - Show subtree at point.
+               
+               {C-c C-o}  - Overview, show only first line of outline
+                            cells.
+               {C-c C-t}  - Top-level, hide all cells below level 1 and show
+                            only the first line of each level 1 cell.
+               Give a prefix argument to either of the above two commands to
+               toggle display of blank lines between cells as well,
+               e.g. {C-u C-c C-o}.  Try it now.
+
+        3b13b. A click or press of the Action Key within a cell's body, but
+               not on a button, toggles between hiding and showing the tree
+               rooted at point.
+
+      3b14. Cell Identifiers: Permanent ids are associated with each cell
+            and can be used in hyperlinks that are maintained as cells are
+            reordered in a file.  (These ids may also be displayed in place
+            of the outline level relative ids.  Use {C-c C-l id RET}).
+            Permanent ids are numbered from 0, where 0 is the root node of
+            the entire outline.  This node is never visible within the
+            outline.  Permanent ids always begin with a 0, as in 012, to
+            distinguish them from relative ids.
+
+      3b15. Cell Attributes: Each cell has its own attribute list.  The
+            attribute lists for the cells in the tree rooted at point can be
+            displayed by pressing the Assist Key.  {C-c h} prompts for a kcell
+            id and displays its attributes.  {C-u C-c h} prompts for a kcell
+            id and displays the attributes for it and its subtree; use 0 as
+            the kcell id to see attributes for all visible cells in the
+            outline, including the invisible 0 cell that is the root of
+            all first-level cells.
+            
+            {C-c C-i} sets an attribute of the cell at point.
+            {C-u C-c C-i} removes an attribute of the cell at point.
+            {C-0 C-c C-i} sets an attribute of the invisible 0 root cell.
+            {C--1 C-c C-i} removes an attribute of the invisible 0 root cell.
+
+      3b16. File Insertion: The elements of another buffer or file may be
+            inserted into a koutline as a set of cells by using the {C-x i}
+            command.  When prompted, you may use a buffer name or file name
+            from which to insert.
+
+        3b16a. The cells will be inserted as the successors of the current
+               cell unless {C-u C-x i} is used and then they are inserted as
+               the initial children of the current cell.
+
+        3b16b. See the documentation for the variables, kimport:mode-alist and
+               kimport:suffix-alist, for information on mode and
+               suffix-specific conversions performed on files before they are
+               inserted.  This same conversion process applies if you invoke
+               {M-x kotl-mode RET} in a non-koutline buffer or if you perform
+               a generic file import as described in <@ 3b16=063>.
+
+        3b16c. Use {M-x kimport:insert-file-contents RET} to insert the
+               entire contents of a file into the current cell at the
+               location of point.  {M-x kimport:insert-buffer RET} does the
+               same for an existing buffer.  {C-x r i} does the same with the
+               contents of a text register that you specify.
+
+      3b17. File Importing: The Koutliner supports conversion of three
+            types of files into koutline files.  You can choose to
+            import a file into an existing koutline, following the tree
+            at point, or to create a new koutline of the imported file
+            contents.  {M-x kimport:file RET} will select the
+            importation type based on the buffer or file name suffix of
+            the file to import.  Use one of the following commands if
+            you want to control the type of importation explicitly.
+
+        3b17a. Text Files
+
+          3b17a1. In a text buffer, use {M-x kotl-mode RET} to convert the
+                  buffer into a koutline in-place.  You will lose the old
+                  format of the buffer when you do this.
+
+          3b17a2. Use {M-x kimport:text RET} and you will be prompted for a
+                  text buffer or file to import and the new koutline buffer or
+                  file to create from its text.  It will also import the
+                  contents, attributes and level structure of cells from a
+                  koutline.
+                  
+                  With this command, your original file remains intact.
+
+        3b17b. Star Outline Files: Star outlines are standard Emacs outlines
+               where each entry begins with one or more asterisk characters.
+               Use {M-x kimport:star-outline RET} and you will be prompted
+               for the star outline buffer or file to import and the new
+               koutline buffer or file to create.
+
+        3b17c. Augment Files Numbered on the Right-Side: (Skip this if you are
+               unfamiliar with this sort of file).  Files exported from the
+               Augment system as text often have alphanumeric statement
+               identifiers on the right side.
+               
+               Use {M-x kimport:aug-post-outline RET} and you will be prompted
+               for the augment buffer or file to import and the koutline to
+               create.
+
+      3b18. File Exporting: The Koutliner can produce a nicely indented HTML
+            version of an outline with hyperlinks and hyperlink anchors
+            intact.  Use {M-x kexport:html RET} to export a koutline file or
+            existing buffer.
+
+      3b19. View Specification: Flexible views of outlines may be specified
+            with succinct single character codes.
+
+        3b19a. The current view spec is shown in the modeline after the buffer
+               name, delimited by <|>.
+
+        3b19b. The current view spec is saved whenever the outline is saved.
+               The next time the outline is read in, this will be the initial
+               view.  The standard initial viewspec is <|ben>.
+
+        3b19c. {C-c C-v} prompts for a view spec string in which the following
+               codes are valid.  Any invalid characters in a view spec are
+               ignored.
+
+          3b19c1. a:  Show all cell levels and all lines in cells.
+
+          3b19c2. b: Turn on blank lines between cells.  Without this code,
+                  blank lines will be turned off.  You can also use the {C-c
+                  b} key binding to toggle line numbers on and off
+                  independent of any other view settings.
+
+          3b19c3. cN: Hide any lines greater than N in each cell.  0 means
+                  don't cutoff any lines.
+
+          3b19c4. e: Show ellipses when some content is hidden (This is
+                  always on in modern versions of Emacs; it cannot be
+                  turned off).
+
+          3b19c5. lN: Hide cells at levels deeper than N.  0 means don't hide
+                  any cells.
+
+          3b19c6. n:  Turn on the default label type.
+                  n0: Display idstamps.
+                  n1: Display alpha labels.
+                  n.: Display legal labels.
+
+        3b19d. Press the Action Key on this view spec of <|c2l1> to turn off
+               blank lines, to clip each cell after its second line, and to
+               hide all cells below level one.  Use {C-u C-c C-a} to restore a
+               view of all cells.
+
+     3c. Klinks: Hyperlinks may be embedded in cells and may refer to other
+         cells.  Explicit Hyperbole buttons may be created as usual via
+         mouse drags, see "(hyperbole)By Dragging".  A klink is a special
+         implicit link button that jumps to a specific outline cell.
+
+       3c1. Here are three klink examples:
+
+         3c1a. <#3b=08> or <@ 3b=08> jumps to the cell within this outline
+               which has permanent id `08' and relative id `3b'.  <#08> does
+               the same thing, as does <#3b>, though this latter form will
+               not maintain the link properly if the cell is moved elsewhere
+               within the outline.
+
+         3c1b. <EXAMPLE.kotl#4=012|c1e> or <EXAMPLE.kotl, 4=012 |c1e> displays
+               the named file, starting at the unimplemented features section
+               whose permanent identifer is 012, with the view specification
+               of: blank lines turned off, cutoff after one line per cell, and
+               show ellipses for cells or trees which are clipped.
+
+         3c1c. <|ben> is a klink consisting of just a view specification.
+               When activated, it sets the view in the current outline to
+               display blank lines, ellipses following collapsed lines and
+               standard alphanumeric numbering.
+
+       3c2. There are a number of easy ways to insert klinks into koutlines.
+            If you have mouse support under Hyperbole, simply click the Action
+            Key within the indentation to the left of a cell text.  If you
+            then double click on some cell, a link to that cell will be
+            inserted where you started.  From a keyboard, use {C-c l} when in
+            a koutline or {C-h h k l} when not in a koutline to insert a
+            klink.
+
+       3c3. If you prefer the standard copy and yank model that Emacs
+            provides, place point within a klink when there is no active
+            region and use {M-w} to copy the klink.  Then {C-y} will yank it
+            into any buffer you desire.
+
+       3c4. To instead copy a reference to the current Koutline cell, use
+            {M-w} outside of a klink when no region is active.
+
+       3c5. {C-x r s} prompts for an Emacs register and saves either the
+            current klink or the current cell reference to the register.  {C-x
+            r i} with the same register then inserts the Koutline reference at
+            point.
+
+     3d. Org table editing is supported.
+
+       3d1. You must use the first line of the cell to label your table
+            as tables require only blanks to the left of each row.
+
+       3d2. Here are two table examples:
+            
+            |----------------------------+---------------------------|
+            | Promotion Inside Org Table | Demotion Inside Org Table |
+            |----------------------------+---------------------------|
+            | {M-0 M-TAB}                | {M-0 TAB}                 |
+            | {C-c C-,}                  | {C-c C-.}                 |
+            | {C-c C-<}                  | {C-c C->}                 |
+            |----------------------------+---------------------------|
+                       
+            |-----------------------------+----------------------------|
+            | Promotion Outside Org Table | Demotion Outside Org Table |
+            |-----------------------------+----------------------------|
+            | {M-TAB} or {Shift-TAB}      | {TAB}                      |
+            | {M-<left>}                  | {M-<right>}                |
+            | {C-c C-,}                   | {C-c C-.}                  |
+            | {C-c C-<}                   | {C-c C->}                  |
+            |-----------------------------+----------------------------|
+            
+            To toggle table editing mode on or off, press the Action
+            Key on any of the table | symbols and then edit as you
+            would any Org table.  Note how the above tables show how
+            TAB and Shift-TAB behave differently in and outside of
+            tables; use M-TAB rather than Shift-TAB for tree promotion
+            consistency anywhere.  See "(Org)Tables" for help on utilizing
+            tables.
+
+     3e. The Koutliner code runs on any system that supports Emacs,
+         whether under a window system or from a dumb terminal display.
+
+   4. Major features left to be implemented:
+
+     4a. Branch handling commands (all cells at same level).
+
+     4b. Copying a single cell without its subtree.
+
+     4c. Replacing one cell or one tree with another.
+
+     4d. Transposing two trees, rather than two cells.
+
+     4e. A small amount of work remains to enable setting different per
+         level fonts and colors, so that outline levels are visually easy to
+         distinguish.
+
+     4f. Flexible view handling has been only partially implemented.
 
 
 "ben" ;; kvspec:current
-150 ;; id-counter
+69 ;; id-counter
 alpha ;; label-type
-3 ;; label-min-width
+4 ;; label-min-width
 ". " ;; label-separator
 3 ;; level-indent
 
 ;; depth-first kcell attributes
 [[0
-  (idstamp 0 creator "rsw@gnu.org" create-time "20220117:22:23:52" id-counter 150 file "/Users/bk/Dropbox/emacs/hyperbole/kotl/EXAMPLE.kotl")]
- [20
-  (creator "rsw@gnu.org" create-time "19940104:17:38:28" no-fill t)]
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07" id-counter 69)]
  [2
-  (creator "rsw@gnu.org" create-time "19940104:17:38:28" no-fill t)]
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [3
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [4
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [5
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [6
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [7
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [8
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [9
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [10
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [11
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [12
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [13
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [14
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [15
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [16
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [17
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [18
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [19
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [20
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [21
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [22
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [23
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [24
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [25
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [26
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [27
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [28
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [29
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [30
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [31
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [32
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [33
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
  [34
-  (creator "rsw@gnu.org" create-time "19940610:16:43:55")]
- [86
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [87
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [88
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [89
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [90
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [91
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [92
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [93
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [94
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [95
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [96
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [97
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [98
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [99
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [100
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [101
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [102
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [103
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [104
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [105
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [106
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [107
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [108
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [109
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [110
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [111
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [112
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [113
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [114
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [115
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [116
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [117
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [118
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [119
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [120
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [121
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [122
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [123
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [124
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [125
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [126
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [127
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [128
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [129
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [130
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [131
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [132
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [133
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [134
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [135
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [136
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [137
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [138
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [139
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [140
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [141
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [142
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [143
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [144
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [145
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [146
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [147
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [148
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [149
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- [150
-  (creator "rsw@gnu.org" create-time "20231030:06:08:35")]
- nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil]
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [35
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [36
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [37
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [38
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [39
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [40
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [41
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [42
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [43
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [44
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [45
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [46
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [47
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [48
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [49
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [50
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [51
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [52
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [53
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [54
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [55
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [56
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [57
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [58
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [59
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [60
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [61
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [62
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [63
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [64
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [65
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [66
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [67
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [68
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [69
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ nil]

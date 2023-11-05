@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-98
-;; Last-Mod:      4-Oct-23 at 19:23:08 by Mats Lidell
+;; Last-Mod:      5-Nov-23 at 11:45:00 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -376,7 +376,9 @@ used.  Also converts Urls and Klinks into Html hyperlinks."
   (interactive "P")
   (let ((export-from buffer-file-name)
   	(output-to (concat (file-name-sans-extension buffer-file-name) ".html")))
-    (kexport:html export-from output-to soft-newlines-flag)
+    (if (and buffer-file-name (string-match "\\.kotl?\\'" buffer-file-name))
+	(kexport:html export-from output-to soft-newlines-flag)
+      (error "(kexport:koutline): current buffer must be a Koutline .kotl file"))
     output-to))
 
 ;;;###autoload

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     29-Oct-23 at 16:27:08 by Bob Weiner
+;; Last-Mod:      5-Nov-23 at 10:08:50 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1143,7 +1143,7 @@ Output looks like so:
 	(current-prefix-arg))
     (call-interactively (if arg 'hyrolo-fgrep 'hyrolo-grep))
     (read-only-mode 0)
-    (let (case-fold-search)
+    (let ((case-fold-search t))
       (re-search-forward hyrolo-entry-regexp nil t))
     (beginning-of-line)
     (set-buffer-modified-p nil)
@@ -1524,7 +1524,7 @@ Return number of matching entries found."
 		      (when (re-search-forward hyrolo-hdr-regexp nil t 2)
 			(forward-line)
 			(setq hdr-pos (cons (point-min) (point))))
-		      (let (case-fold-search
+		      (let ((case-fold-search t)
 			    opoint)
 			(re-search-forward hyrolo-entry-regexp nil t)
 			(while (and (or (null max-matches) (< num-found max-matches))

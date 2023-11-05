@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:      1-Nov-23 at 22:44:25 by Bob Weiner
+;; Last-Mod:      4-Nov-23 at 11:56:05 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1824,9 +1824,10 @@ File Name                link-to-file
 Koutline Cell            link-to-kcell
 Outline Heading          link-to-string-match
 Buffer attached to File  link-to-file
+EOL in Dired Buffer      link-to-directory (dired dir)
 Buffer without File      link-to-buffer-tmp"
-  ;; Elisp Buffer at Start
-  ;; or End of Sexpression    eval-elisp
+;; Elisp Buffer at Start
+;; or End of Sexpression    eval-elisp
 
   (let (val
 	hbut-sym
@@ -1918,6 +1919,9 @@ Buffer without File      link-to-buffer-tmp"
 						     heading occur buffer-file-name))))
 					  (buffer-file-name
 					   (list 'link-to-file buffer-file-name (point)))
+					  ((derived-mode-p 'dired-mode)
+					   (list 'link-to-directory
+						 (expand-file-name default-directory)))
 					  (t (list 'link-to-buffer-tmp (buffer-name)))))
 				      ;;
 				      ;; Deleted link to elisp possibility as it can embed

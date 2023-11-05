@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     29-Oct-23 at 17:52:38 by Bob Weiner
+@c Last-Mod:      5-Nov-23 at 17:10:22 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.1pre
-Printed October 29, 2023.
+Printed November 5, 2023.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.1pre
-October 29, 2023
+Novemeber 5, 2023
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -5689,21 +5689,21 @@ There are three forms of klinks:
 @cindex klink, internal
 @cindex <@@ klink>
 @item internal
-@samp{<@@ 2b=06>} is an internal klink, since it refers to the koutline in
-which it is embedded.  When activated, it jumps to the cell within the
-current outline which has permanent id `06' and relative id
-`2b'.  @samp{<@@ 06>} does the same thing, as does @samp{<@@ 2b>},
-though this latter form will not maintain the link properly if the
-cell is moved elsewhere within the outline.  The form,
-@samp{<@@ 2b=06 |ben>} additionally sets the view spec of the current
-outline back to the default value, with a blank line between each cell
-and the whole outline visible.
+@samp{<#2b=06>} is an internal klink, since it refers to the koutline
+in which it is embedded.  When activated, it jumps to the cell within
+the current outline which has permanent id `06' and relative id `2b'.
+@samp{<#06>} does the same thing, as does @samp{<#2b>}, though this
+latter form will not maintain the link properly if the cell is moved
+elsewhere within the outline.  The form, @samp{<#2b=06|ben>}
+additionally sets the view spec of the current outline back to the
+default value, with a blank line between each cell and the whole
+outline visible.
 
 @cindex external klink
 @cindex klink, external
 @item external
 The second klink format is an external link to another koutline, such
-as, @samp{<EXAMPLE.kotl, 3=012 |c1e>}, which displays the named file,
+as, @samp{<EXAMPLE.kotl#3=012|c1e>}, which displays the named file,
 starting at the cell 3 (whose permanent identifier is 012), with the
 view specification of: blank lines turned off, cutoff after one line
 per cell, and showing ellipses for cells or trees which are collapsed.
@@ -6342,8 +6342,8 @@ The files used in any rolo search are given by the
 @code{hyrolo-file-list} variable, whose default value is typically
 @code{"~/.rolo.otl"}, in which case, searches scan only your personal
 rolo file.  Any entries added to this list should be absolute
-filenames and can be any of the following formats: Emacs outlines
-(.otl), Koutlines (.kotl), Markdown files (.md), or Org files (.org).
+filenames and can be any of the following formats: Org files (.org),
+Emacs outlines (.otl), Koutlines (.kotl), or Markdown files (.md).
 
 If a file in the list does not exist or is not readable, it is
 skipped.  Files are searched in the order in which they appear in the
@@ -9300,7 +9300,7 @@ for valid values of NEW-TYPE.
 @item kvspec:activate  @bkbd{C-c C-v}
 Activate optional VIEW-SPEC or existing view specification over the
 current koutline.  VIEW-SPEC must be a string.  See
-@samp{<@code{$@{hyperb:dir@}}/kotl/EXAMPLE.kotl, 2b17=048>} for details
+@samp{<@code{$@{hyperb:dir@}}/kotl/EXAMPLE.kotl#2b17=048>} for details
 on valid view specs.
 
 @findex kvspec:toggle-blank-lines

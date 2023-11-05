@@ -1,3 +1,21 @@
+2023-11-05  Bob Weiner  <rsw@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-demo-show-overview): Fix by adding
+    needed (forward-line 1) before testing for a collapsed node.
+
+* test/kexport-tests.el (kexport:koutline-calls-kexport:html): Fix to
+    have proper file suffixes, now required.
+
+* kotl/kexport.el (kexport:koutline): Trigger proper error if called
+    outside of .kotl file.
+
+* hyrolo.el (hyrolo-google-contacts-grep, hyrolo-grep-file): Ignore case.
+
+2023-11-04  Bob Weiner  <rsw@gnu.org>
+
+* hui.el (hui:link-possible-types): At end of any line in a dired buffer,
+    return (link-to-directory default-directory).
+
 2023-11-01  Bob Weiner  <rsw@gnu.org>
 
 * test/hui-tests.el (hui--ibut-link-directly-to-dired): Fix to be

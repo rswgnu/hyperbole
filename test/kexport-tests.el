@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    10-Oct-21 at 17:30:00
-;; Last-Mod:     28-May-23 at 23:15:39 by Mats Lidell
+;; Last-Mod:      5-Nov-23 at 16:55:35 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -151,8 +151,8 @@
 
 (ert-deftest kexport:koutline-calls-kexport:html ()
   "kexport:koutline calls kexport:html and returns html buffer name."
-  (let* ((kotl-file (make-temp-file "hypb"))
-         (html-file (concat kotl-file ".html")))
+  (let* ((kotl-file (make-temp-file "hypb" nil ".kotl"))
+         (html-file (concat (file-name-sans-extension kotl-file) ".html")))
     (unwind-protect
         (cl-letf (((symbol-function 'kexport:html)
                    (lambda (export-from output-to &optional soft-newlines-flag)

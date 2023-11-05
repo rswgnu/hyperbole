@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:      2-Nov-23 at 01:55:44 by Bob Weiner
+;; Last-Mod:      5-Nov-23 at 16:48:49 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -803,8 +803,8 @@ With point on label suggest that ibut for rename."
           (split-window)
           (find-file file)
           (hui:ibut-link-directly (get-buffer-window) (get-buffer-window dir-buf))
-	  ;; Implicit link should be the dired directory, possibly
-	  ;; minus the final directory '/'.
+	  ;; Implicit link should be the `dir' dired directory,
+	  ;; possibly minus the final directory '/'.
 	  (goto-char (point-min))
           (should (string-prefix-p (read (current-buffer)) dir)))
       (hy-delete-file-and-buffer file))))

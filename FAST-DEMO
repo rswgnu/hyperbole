@@ -308,7 +308,7 @@ pspell-config(1)         - prints information about a libpspell installation
        All three of the above do essentially the same thing, displaying the
        file.
 
-    <kotl/EXAMPLE.kotl, 3b10 |c2en>
+    <kotl/EXAMPLE.kotl#3b10|c2en>
 
        Display a Hyperbole Koutline starting from cell 3b10 with lines per
        cell clipped to 2.
