@@ -488,6 +488,11 @@
   *** (kotl-mode:goto-heading): Added to go to a string heading at the
       beginning of a cell.  Must end with a colon or a newline.
 
+  *** (hui:link-possible-types): At end of any line in a dired buffer,
+    return (link-to-directory default-directory), so when using any
+    link-directly command, always have a way to link to the dired buffer
+    itself.
+
 
 ** ORG MODE INTEGRATION (See "(hyperbole)Smart Key - Org Mode").
 

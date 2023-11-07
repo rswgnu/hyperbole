@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     30-Oct-23 at 22:13:56 by Bob Weiner
+;; Last-Mod:      5-Nov-23 at 17:15:31 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2552,22 +2552,22 @@ Summary of operations based on inputs (name arg comes from \\='hbut:current attr
        (if (eq arg3 0)
 	   (insert (format "\"%s:%d\"" (hpath:shorten arg1) arg2))
 	 (insert (format "\"%s:%d:%d\"" (hpath:shorten arg1) arg2 arg3))))
-      ('actypes::link-to-file (insert
-			       (if (/= (length args) 2)
-				   ;; filename only
-				   (format "\"%s\"" (hpath:shorten arg1))
-				 ;; includes buffer pos that we translate to line:col
-				 (with-current-buffer (find-file-noselect arg1)
-				   (save-excursion
-				     (goto-char arg2)
-				     (if (zerop (current-column))
-					 (format "\"%s:%d\""
-						 (hpath:shorten arg1)
-						 (line-number-at-pos (point) t))
-				       (format "\"%s:%d:%d\""
-					       (hpath:shorten arg1)
-					       (line-number-at-pos (point) t)
-					       (current-column))))))))
+      ('actypes::link-to-file
+       (let ((short-path (hpath:shorten arg1)))
+	 (insert
+	  (if (/= (length args) 2)
+	      ;; filename only
+	      (format "\"%s\"" short-path)
+	    ;; includes buffer pos that we translate to line:col
+	    (with-current-buffer (find-file-noselect arg1)
+	      (save-excursion
+		(goto-char arg2)
+		(if (zerop (current-column))
+		    (format "\"%s:%d\"" short-path (line-number-at-pos (point) t))
+		  (format "\"%s:%d:%d\""
+			  short-path
+			  (line-number-at-pos (point) t)
+			  (current-column)))))))))
       ('actypes::link-to-string-match
        (insert (format "<%s \"%s\" %d \"%s\">" (actype:def-symbol actype) arg1 arg2
 		       (hpath:shorten arg3))))

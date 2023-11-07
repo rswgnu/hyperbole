@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     30-Oct-23 at 02:02:00 by Bob Weiner
+;; Last-Mod:      6-Nov-23 at 19:39:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -790,21 +790,24 @@ With point on label suggest that ibut for rename."
 
 (ert-deftest hui--ibut-link-directly-to-dired ()
   "Create a direct link to a directory in dired."
-  :expected-result :failed
   (let* ((file (make-temp-file "hypb" nil ".txt"))
-         (dir (file-name-parent-directory file))
+         (dir hyperb:dir)
          dir-buf)
     (unwind-protect
         (progn
           (delete-other-windows)
           (setq dir-buf (dired dir))
+	  (goto-char (point-min))
+	  ;; Move to last char of first dired directory line
+	  (goto-char (1- (line-end-position)))
           (split-window)
           (find-file file)
           (hui:ibut-link-directly (get-buffer-window) (get-buffer-window dir-buf))
-          ;; Was expecting here an ibut "/tmp" but <link-to-directory
-          ;; /tmp> could be possible too. Seems a link to the file the
-          ;; point in the dired buffer is on!? Is that expected?
-          (should (string= (buffer-string) (concat "\"" dir "\""))))
+	  ;; Implicit link should be the `dir' dired directory,
+	  ;; possibly minus the final directory '/'.
+	  (goto-char (point-min))
+          (should (and (looking-at "\"")
+		       (string-prefix-p (read (current-buffer)) dir))))
       (hy-delete-file-and-buffer file))))
 
 (ert-deftest hui--ibut-link-directly-with-label ()

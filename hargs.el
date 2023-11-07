@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:      3-Oct-23 at 23:28:59 by Mats Lidell
+;; Last-Mod:      2-Nov-23 at 00:03:43 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -33,7 +33,7 @@
 (require 'hypb)
 (require 'set)
 (require 'info)
-(require 'hmouse-drv)
+(require 'hmouse-drv) ;; loads hui-mouse and hmouse-key
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -657,7 +657,8 @@ Handles all of the interactive argument types that `hargs:iform-read' does."
 	       ((buffer-file-name))))
 	((eq hargs:reading-type 'directory)
 	 (cond ((derived-mode-p 'dired-mode)
-		(let ((dir (dired-get-filename nil t)))
+		(let ((dir (or (smart-dired-pathname-up-to-point t)
+			       (dired-get-filename nil t))))
 		  (and dir (setq dir (hpath:absolute-to dir))
 		       (file-directory-p dir) dir)))
 	       ;; Delimited directory name.

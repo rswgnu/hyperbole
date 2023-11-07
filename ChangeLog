@@ -1,3 +1,55 @@
+2023-11-06  Bob Weiner  <rsw@gnu.org>
+
+* hui.el (hui:link-possible-types): Fix CI/CD build error where
+    ilink was inserted when pathname was expected due to batch
+    diff when referent is in dired-mode.  Fix to skip button type
+    clauses it this case.
+  test/hui-tests.el (hui--ibut-link-directly-to-dired): Check that
+    looking at a string before trying to (read (current-buffer));
+    otherwise, 'read' will fail.
+
+2023-11-05  Bob Weiner  <rsw@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-demo-show-overview): Fix by adding
+    needed (forward-line 1) before testing for a collapsed node.
+
+* test/kexport-tests.el (kexport:koutline-calls-kexport:html): Fix to
+    have proper file suffixes, now required.
+
+* kotl/kexport.el (kexport:koutline): Trigger proper error if called
+    outside of .kotl file.
+
+* hyrolo.el (hyrolo-google-contacts-grep, hyrolo-grep-file): Ignore case.
+
+2023-11-04  Bob Weiner  <rsw@gnu.org>
+
+* hui.el (hui:link-possible-types): At end of any line in a dired buffer,
+    return (link-to-directory default-directory).
+
+2023-11-01  Bob Weiner  <rsw@gnu.org>
+
+* test/hui-tests.el (hui--ibut-link-directly-to-dired): Fix to be
+    compatible with Emacs 27.1 and dependable regardless of what
+    is in the dired buffer.
+
+* hpath.el (hpath:substitute-var-name): Fix to not elide variable name
+    from path unless path contains an Emacs loadable file name suffix.
+
+* hui-mouse.el (smart-dired): If hit default cond clause and no filename
+    on the current line, run dired on the current directory rather than
+    triggering an error with a null filename value.
+               (smart-dired-pathname-up-to-point): Always return dir
+    as a full path ending in a forward slash.  Add optional 'no-default'
+    arg and use in 'hargs:at-p' when reading a directory and in 'dired-mode'.
+
+* hui.el (hui:link-possible-types): Fix so when checking if a file ref
+    at point, link to the file without any position arg and don't default
+    to the current 'buffer-file-name', instead drop through to further
+    conditional clauses.
+
+* hbut.el (ibut:insert-text): Fix 'actypes::link-to-file' to shorten arg1
+    path relative to source dir, not referent dir.
+
 2023-10-30  Mats Lidell  <matsl@gnu.org>
 
 * hversion.el (hyperb:mouse-buttons):

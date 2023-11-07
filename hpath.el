@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     30-Oct-23 at 22:13:11 by Bob Weiner
+;; Last-Mod:      5-Nov-23 at 17:16:31 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2586,10 +2586,12 @@ If PATH is modified, return PATH, otherwise return nil."
 				    (or var-dir-val default-directory)))
 		     ;; Remove matching path rather than adding the
 		     ;; variable to the path when the variable is one
-		     ;; for Elisp files.  These can be resolved
-		     ;; without the variable being included in the
-		     ;; path.
-		     (if (memq var-symbol '(hyperb:dir load-path))
+		     ;; for Elisp file paths and path is to an Elisp
+		     ;; file.  These can be resolved without the
+		     ;; variable being included in the path.
+		     (if (and (memq var-symbol '(hyperb:dir load-path))
+			      (delq nil (mapcar (lambda (suffix) (string-suffix-p suffix path))
+						(get-load-suffixes))))
 			 ""
 		       (concat "$\{" (symbol-name var-symbol) "\}/"))
 		     path t t)))

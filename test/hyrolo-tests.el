@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     24-Sep-22 at 12:27:35 by Bob Weiner
+;; Last-Mod:      5-Nov-23 at 17:07:36 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -108,6 +108,7 @@
 
         (should (hact 'kbd-key "o"))
         (hy-test-helpers:consume-input-events)
+	(forward-line 1)
         (end-of-line)
         (should (get-char-property (point) 'invisible))
 

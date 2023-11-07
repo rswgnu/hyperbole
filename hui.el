@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     22-Oct-23 at 08:46:02 by Bob Weiner
+;; Last-Mod:      6-Nov-23 at 19:36:33 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1824,9 +1824,10 @@ File Name                link-to-file
 Koutline Cell            link-to-kcell
 Outline Heading          link-to-string-match
 Buffer attached to File  link-to-file
+EOL in Dired Buffer      link-to-directory (dired dir)
 Buffer without File      link-to-buffer-tmp"
-  ;; Elisp Buffer at Start
-  ;; or End of Sexpression    eval-elisp
+;; Elisp Buffer at Start
+;; or End of Sexpression    eval-elisp
 
   (let (val
 	hbut-sym
@@ -1851,14 +1852,17 @@ Buffer without File      link-to-buffer-tmp"
 
 			     ;; Next clause forces use of any ibut name in the link
 			     ;; and sets hbut:current button attributes.
-			     (t (cond ((and (prog1 (setq hbut-sym (hbut:at-p))
+			     (t (cond ((and (not (derived-mode-p 'dired-mode))
+					    (prog1 (setq hbut-sym (hbut:at-p))
 					      (save-excursion (ibut:at-to-name-p hbut-sym)))
 					    (setq lbl-key (hattr:get hbut-sym 'lbl-key))
 					    (eq (current-buffer) (get-file-buffer (gbut:file))))
 				       (list 'link-to-gbut lbl-key))
-				      ((and hbut-sym (eq (hattr:get hbut-sym 'categ) 'explicit))
+				      ((and hbut-sym lbl-key (eq (hattr:get hbut-sym 'categ) 'explicit))
 				       (list 'link-to-ebut lbl-key))
-				      (hbut-sym
+				      ((and hbut-sym lbl-key)
+				       ;; On an implicit button, so link to it
+				       ;; (message "%S" (hattr:list hbut-sym))
 				       (list 'link-to-ibut lbl-key (or buffer-file-name (buffer-name))))
 				      ((and (require 'bookmark)
 					    (derived-mode-p 'bookmark-bmenu-mode)
@@ -1889,8 +1893,8 @@ Buffer without File      link-to-buffer-tmp"
 					     (setq val (hargs:at-p t)))
 					   (list 'link-to-directory val))
 					  ((let ((hargs:reading-type 'file))
-					     (setq val (hargs:at-p t)))
-					   (list 'link-to-file val (point)))
+					     (setq val (hargs:at-p)))
+					   (list 'link-to-file val))
 					  ((derived-mode-p #'kotl-mode)
 					   (list 'link-to-kcell buffer-file-name (kcell-view:idstamp)))
 					  ;; If link is within an outline-regexp prefix, use
@@ -1918,6 +1922,9 @@ Buffer without File      link-to-buffer-tmp"
 						     heading occur buffer-file-name))))
 					  (buffer-file-name
 					   (list 'link-to-file buffer-file-name (point)))
+					  ((derived-mode-p 'dired-mode)
+					   (list 'link-to-directory
+						 (expand-file-name default-directory)))
 					  (t (list 'link-to-buffer-tmp (buffer-name)))))
 				      ;;
 				      ;; Deleted link to elisp possibility as it can embed
