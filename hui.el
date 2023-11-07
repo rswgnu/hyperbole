@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:      6-Nov-23 at 19:16:42 by Bob Weiner
+;; Last-Mod:      6-Nov-23 at 19:36:33 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1852,7 +1852,8 @@ Buffer without File      link-to-buffer-tmp"
 
 			     ;; Next clause forces use of any ibut name in the link
 			     ;; and sets hbut:current button attributes.
-			     (t (cond ((and (prog1 (setq hbut-sym (hbut:at-p))
+			     (t (cond ((and (not (derived-mode-p 'dired-mode))
+					    (prog1 (setq hbut-sym (hbut:at-p))
 					      (save-excursion (ibut:at-to-name-p hbut-sym)))
 					    (setq lbl-key (hattr:get hbut-sym 'lbl-key))
 					    (eq (current-buffer) (get-file-buffer (gbut:file))))
@@ -1861,7 +1862,7 @@ Buffer without File      link-to-buffer-tmp"
 				       (list 'link-to-ebut lbl-key))
 				      ((and hbut-sym lbl-key)
 				       ;; On an implicit button, so link to it
-				       (message "%S" (hattr:list hbut-sym))
+				       ;; (message "%S" (hattr:list hbut-sym))
 				       (list 'link-to-ibut lbl-key (or buffer-file-name (buffer-name))))
 				      ((and (require 'bookmark)
 					    (derived-mode-p 'bookmark-bmenu-mode)

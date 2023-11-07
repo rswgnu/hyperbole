@@ -1,3 +1,13 @@
+2023-11-06  Bob Weiner  <rsw@gnu.org>
+
+* hui.el (hui:link-possible-types): Fix CI/CD build error where
+    ilink was inserted when pathname was expected due to batch
+    diff when referent is in dired-mode.  Fix to skip button type
+    clauses it this case.
+  test/hui-tests.el (hui--ibut-link-directly-to-dired): Check that
+    looking at a string before trying to (read (current-buffer));
+    otherwise, 'read' will fail.
+
 2023-11-05  Bob Weiner  <rsw@gnu.org>
 
 * test/hyrolo-tests.el (hyrolo-demo-show-overview): Fix by adding
