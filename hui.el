@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:      4-Nov-23 at 11:56:05 by Bob Weiner
+;; Last-Mod:      6-Nov-23 at 19:16:42 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1857,9 +1857,11 @@ Buffer without File      link-to-buffer-tmp"
 					    (setq lbl-key (hattr:get hbut-sym 'lbl-key))
 					    (eq (current-buffer) (get-file-buffer (gbut:file))))
 				       (list 'link-to-gbut lbl-key))
-				      ((and hbut-sym (eq (hattr:get hbut-sym 'categ) 'explicit))
+				      ((and hbut-sym lbl-key (eq (hattr:get hbut-sym 'categ) 'explicit))
 				       (list 'link-to-ebut lbl-key))
-				      (hbut-sym
+				      ((and hbut-sym lbl-key)
+				       ;; On an implicit button, so link to it
+				       (message "%S" (hattr:list hbut-sym))
 				       (list 'link-to-ibut lbl-key (or buffer-file-name (buffer-name))))
 				      ((and (require 'bookmark)
 					    (derived-mode-p 'bookmark-bmenu-mode)
