@@ -532,7 +532,7 @@
       to a cons of (<entry-name> . <entry-source>).  If no entry delimiters,
       use the current, non-empty line as <entry-name> and add a 'hyrolo-line-entry
       text property to it.
-  
+
   *** (hyrolo-to): Add support for non-delimited single line entries.
 
   *** (hyrolo-helm-org-rifle): Filter out any non-file buffers.
@@ -564,11 +564,8 @@
   *** (hpath:expand-list): Add to recursively expand matching files within a list of
       directories.
 
-
-2023-11-07  Bob Weiner  <rsw@gnu.org>
-
-* test/hui-tests.el (hui--ibut-link-directly-to-dired): Fix to handle
-    alternative dired formats with text after the last colon on the first
+  *** (hui--ibut-link-directly-to-dired): Handle alternative dired formats with text
+      after the last colon on the first
 
 
 ** ORG MODE INTEGRATION (See "(hyperbole)Smart Key - Org Mode").
