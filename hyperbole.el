@@ -7,7 +7,7 @@
 ;; Author:       Bob Weiner
 ;; Maintainer:   Bob Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:      06-Oct-92 at 11:52:51
-;; Last-Mod:      3-Oct-23 at 16:57:55 by Mats Lidell
+;; Last-Mod:     11-Nov-23 at 16:34:14 by Bob Weiner
 ;; Released:     03-Dec-22
 ;; Version:      8.0.1pre
 ;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -98,7 +98,7 @@
   "Hyperbole keyboard and mouse key customizations."
   :group 'hyperbole)
 
-;; defgroup hyperbole-rolo is in "hyrolo.el".
+;; defgroup hyperbole-hyrolo is in "hyrolo.el".
 
 (defgroup hyperbole-screen nil
   "Hyperbole screen/display customizations, typically frame or window-related."

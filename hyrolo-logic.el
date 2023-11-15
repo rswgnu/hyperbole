@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    13-Jun-89 at 22:57:33
-;; Last-Mod:      3-Oct-23 at 17:29:18 by Mats Lidell
+;; Last-Mod:     11-Nov-23 at 11:27:25 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -181,7 +181,7 @@ Return the number of evaluations of SEXP that match entries."
 				   (funcall hyrolo-find-file-noselect-function buf-or-file)))
 	     (hyrolo-map-logic sexp buf-or-file count-only include-sub-entries
 			       no-sub-entries-out whole-buffer-flag))
-	   (cond ((null in-bufs) hyrolo-file-list)
+	   (cond ((null in-bufs) (hyrolo-get-file-list))
 		 ((listp in-bufs) in-bufs)
 		 ((list in-bufs)))))
 	 (total-matches (apply '+ result)))

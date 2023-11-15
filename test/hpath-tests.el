@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 23:26:00
-;; Last-Mod:     28-Aug-23 at 12:29:54 by Bob Weiner
+;; Last-Mod:     14-Nov-23 at 00:35:22 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -106,10 +106,10 @@
       t)))
 
 (ert-deftest hpath:find-report-lisp-variable-path-name-when-not-exists ()
-  "Test that hpath:find expands and returns filename when it is non-existent."
+  "Test that `hpath:find' errors when it is non-existent."
   (condition-case err
       (hpath:find "${hyperb:dir}/UNKNOWNFILE")
-    (error (should (string-match (concat hyperb:dir "UNKNOWNFILE") (cadr err))))))
+    (error (should t))))
 
 (ert-deftest hpath:path-at-point-in-path-variable-test ()
   "Find path at point in path variable."

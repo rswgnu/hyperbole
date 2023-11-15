@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:      3-Oct-23 at 17:46:53 by Mats Lidell
+;; Last-Mod:     11-Nov-23 at 11:27:25 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1746,7 +1746,7 @@ columns (rightmost) of the grid."
 (defun hycontrol-windows-grid-by-file-pattern (arg pattern &optional full-flag)
   "Display up to an abs(prefix ARG)-sized window grid of files matching PATTERN.
 Use absolute file paths if called interactively or optional
-FULL-FLAG is non-nil.  PATTERN is a shell glob pattern.
+FULL-FLAG is non-nil.  PATTERN is a shell file glob pattern.
 
 Left digit of ARG is the number of grid rows and the right digit
 is the number of grid columns.  If ARG is nil, 0, 1, less than
