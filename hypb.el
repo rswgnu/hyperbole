@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:      3-Oct-23 at 23:30:29 by Mats Lidell
+;; Last-Mod:      8-Nov-23 at 06:01:04 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -68,7 +68,8 @@ This should end with a space.")
 
 (defvar hypb:mail-address-mode-list
   '(fundamental-mode prog-mode text-mode)
-  "List of major modes in which mail address implicit buttons are active.")
+  "List of major modes in which mail address implicit buttons are active.
+Also active in any Decendent modes of those listed.")
 
 (defconst hypb:mail-address-tld-regexp
   (format "\\.%s\\'"

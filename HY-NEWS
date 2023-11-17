@@ -153,6 +153,25 @@
 
 ** HYROLO  (See "(hyperbole)HyRolo").
 
+  *** Koutline and Markdown File Support: The `hyrolo-file-list' can now
+      contain Koutline or Markdown files and will search their outline entries
+      just like it does for Org and Emacs outline files.  See
+      "(hyperbole)HyRolo Concepts".
+
+  *** hyrolo-file-list Support for Dirs, File Wildcards and Variables:
+
+      If you include an existing directory (invalid ones are ignored) in your
+      hyrolo list, hyrolo will search recursively across all of its files
+      that match `hyrolo-file-suffix-regexp'.  See `hpath.el#hpath:expand-list'.
+
+      If you include file wildcards in pathnames, they will be expanded into
+      matching files internally by HyRolo.  See "(emacs)Wildcards".
+
+      If you include an Environment variable or Emacs Lisp variable with the
+      ${var} format in a path, it will be resolved prior to searching the path.
+      Variables with values that include multiple paths, e.g. PATH, are resolved
+      to the first existing entry that matches.  See "(hyperbole)pathname".
+
   *** HyRolo Match Buffer Key Bindings: Improved movement keys:
 
         - {b} Move backward at the same outline level
@@ -164,11 +183,6 @@
         - {.} Move to the end of the current entry
 
       See "(hyperbole)HyRolo Keys".
-
-  *** Koutline and Markdown File Support: The `hyrolo-file-list' can now
-      contain Koutline or Markdown files and will search their outline entries
-      just like it does for Org and Emacs outline files.  See
-      "(hyperbole)HyRolo Concepts".
 
   *** Koutline Fast Search: Koutlines may now be included in
       `hyrolo-file-list' and individual cells extracted properly with any
@@ -489,9 +503,69 @@
       beginning of a cell.  Must end with a colon or a newline.
 
   *** (hui:link-possible-types): At end of any line in a dired buffer,
-    return (link-to-directory default-directory), so when using any
-    link-directly command, always have a way to link to the dired buffer
-    itself.
+      return (link-to-directory default-directory), so when using any
+      link-directly command, always have a way to link to the dired buffer
+      itself.
+
+  *** (hyrolo-expand-list): Added to expand `hyrolo-file-list', filtering
+      to matches of `hyrolo-file-suffix-regexp'.  See documentation for
+      `hpath:expand-list' for the kinds of expansions performed.
+
+  *** (hpath:expand-list): Added to expand paths, filtering final list
+      to files with match-regexp.  Paths expansion substitutes up to one
+      ${variable} per path, expands file wildcards and recursively walks
+      directory trees for files with match-regexp.
+
+  *** (hyrolo-map-level, hyrolo-sort-level): Remove 'hyrolo-file' arg
+      since had already been using current buffer instead.
+
+  *** (hpath:file-position-to-line-and-column): Add to translate
+      character positions to an implicit link to line and column.
+
+  *** (hyrolo-next-match-function, hyrolo-next-regexp-match): Change to return
+      position of the beginning of the match rather than the end.
+
+  *** (hyrolo-grep-file): Handle when no entry delimiters, then use
+      the current line as the entry.
+
+  *** (hyrolo-name-at): Rename to 'hyrolo-name-at-p'; change return value
+      to a cons of (<entry-name> . <entry-source>).  If no entry delimiters,
+      use the current, non-empty line as <entry-name> and add a 'hyrolo-line-entry
+      text property to it.
+
+  *** (hyrolo-to): Add support for non-delimited single line entries.
+
+  *** (hyrolo-helm-org-rifle): Filter out any non-file buffers.
+
+  *** (hpath:expand, hpath:expand-list): Add optional exists-flag to return
+      nil if expanded path does not exist.
+
+  *** (hyrolo--expanded-file-list, hyrolo-set-file-list,
+       hyrolo-file-list-changed): Finish support for recursively searching dirs
+       and expanding file wildcards in 'hyrolo-file-list' by adding the above
+       and caching the expanded list in 'hyrolo--expanded-file-list'.
+
+  *** (hyrolo-edit): Improve 'completing-read' prompt.
+
+  *** (rolo-display-buffer, rolo-file-list, rolo-entry-regexp): Remove all of
+      these variables that have been obsolete since V6.  Use hyrolo- prefix instead.
+
+  *** (hyrolo-initialize-file-list): Completely remove this function, obsolete since
+      V8.0.1.  Use `hyrolo--initialize-file-list' instead.
+
+  *** (defgroup 'hyperbole-hyrolo): Change from 'hyperbole and 'hyperbole-hyrolo.
+
+  *** (hyrolo-get-file-list): Add and change refs to `hyrolo-file-list' to use
+      this instead, so can get the expanded version of the file list.
+
+  *** (hyrolo-expand-path-list): Add to expand a list of paths containing env or lisp
+      variables, directories and file patterns with wildcards into a final list of files.
+
+  *** (hpath:expand-list): Add to recursively expand matching files within a list of
+      directories.
+
+  *** (hui--ibut-link-directly-to-dired): Handle alternative dired formats with text
+      after the last colon on the first
 
 
 ** ORG MODE INTEGRATION (See "(hyperbole)Smart Key - Org Mode").

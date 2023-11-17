@@ -1,12 +1,109 @@
+2023-11-17  Bob Weiner  <rsw@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-sort-records-at-different-levels): Add
+    'hyrolo-find-file' call to ensure current buffer is the first hyrolo file.
+                       (hyrolo-sort-test): Change to use 'hyrolo-find-file'.
+
+* hyrolo.el (hyrolo-mode-outline-level): Fix to handle all file formats that
+    HyRolo now supports but ignore Emacs outline entry matches without trailing
+    whitespace or of formfeeds, as these can cause a hang in HyRolo search.
+            (hyrolo-outline-level): Add to handle 'outline-level' calculation
+    unique to standard HyRolo entries (asterisk with a following whitespace
+    character).
+            (hyrolo-find-file): Improve 'outline-regexp' handling and set
+    'outline-level' function if an Emacs outline.
+	    (hyrolo-add): Compare entry-regexp against default-value of
+    'hyrolo-entry-regexp' rather than a literal string.
+
+2023-11-14  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-sort): Fix bug where 'hyrolo-sort-level' had assumed
+    the file to sort was in the current buffer but 'hyrolo-sort' had not
+    read in that file.
+            (hyrolo-map-level, hyrolo-sort-level): Remove 'hyrolo-file' arg
+    since had already been using current buffer instead.
+
+* test/hpath-tests.el (hpath:find-report-lisp-variable-path-name-when-not-exists):
+    Update test and doc to simply verify that 'hpath:find' errors when called
+    with a non-existent path.
+
+2023-11-13  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (hbut:source): Add save-excursion so does not move point
+    to the beginning of the source name.
+
+2023-11-12  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:file-position-to-line-and-column): Add to translate
+    character positions to an implicit link to line and column.
+  hbut.el (ibut:insert-text): Simplify using the above function.
+
+* hui-mouse.el (hkey-alist): Comment out unreleased hynote-mode clause.
+
+* hyrolo.el (hyrolo-buffer-exists-p): Fix for improved buffer-name matching
+    by using 'get-buffer' instead of 'get-file-buffer'.
+            (hyrolo-next-match-function): Update to require return of the
+    position of the beginning of the match.
+            (hyrolo-next-regexp-match): Change to return (match-beginning 0)
+    rather than the end.
+            (hyrolo-grep-file): Fix to handle when no entry delimiters, then use
+    the current line as the entry.
+            (hyrolo-name-at): Rename to 'hyrolo-name-at-p'; change return value
+    to a cons of (<entry-name> . <entry-source>).  If no entry delimiters,
+    use the current, non-empty line as <entry-name> and add a 'hyrolo-line-entry
+    text property to it.
+            (hyrolo-to): Add support for non-delimited single line entries.
+            (hyolo-edit): Fix to search only over a specified file.
+            (hyrolo-helm-org-rifle): Fix to filter out any non-file buffers.
+            (hyrolo-kill): Change to not switch buffers since shows whether the
+    record was killed or not.
+
+* hpath.el (hpath:expand, hpath:expand-list): Add optional exists-flag to return
+    nil if expanded path does not exist.
+
+* hyrolo.el (hyrolo--expanded-file-list, hyrolo-set-file-list,
+             hyrolo-file-list-changed): Finish support for recursively
+    searching dirs and expanding file wildcards in 'hyrolo-file-list' by
+    adding the above and caching the expanded list in 'hyrolo--expanded-file-list'.
+  HY-NEWS (HYROLO): Document the above new feature.
+            (hyrolo-edit): Improve 'completing-read' prompt.
+	    (rolo-display-buffer, rolo-file-list, rolo-entry-regexp): Remove all
+  of these variables that have been obsolete since V6.  Use hyrolo- prefix instead.
+            (hyrolo-grep): Rewrote for compatibility with new caching scheme.
+
+2023-11-11  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-initialize-file-list): Completely remove this function,
+    obsolete since V8.0.1.  Use `hyrolo--initialize-file-list' instead.
+            (:group 'hyperbole-hyrolo): Change from 'hyperbole and 'hyperbole-hyrolo.
+	    (hyrolo-get-file-list): Add and change refs to `hyrolo-file-list' to use
+    this instead, so can get the expanded version of the file list.
+            (hyrolo-expand-path-list): Add to expand a list of paths containing env
+    or lisp variables, directories and file patterns with wildcards into a final list
+    of files.
+
+2023-11-08  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:expand): Add doc for ${variable} expansion.
+           (hpath:expand-list): Add to recursively expand matching files within a
+    list of directories.
+
+2023-11-07  Bob Weiner  <rsw@gnu.org>
+
+* test/hui-tests.el (hui--ibut-link-directly-to-dired): Fix to handle
+    alternative dired formats with text after the last colon on the first
+    line.
+
+* hbut.el (hbut:at-p): Document interactive call help display.
+
 2023-11-06  Bob Weiner  <rsw@gnu.org>
 
-* hui.el (hui:link-possible-types): Fix CI/CD build error where
-    ilink was inserted when pathname was expected due to batch
-    diff when referent is in dired-mode.  Fix to skip button type
-    clauses it this case.
-  test/hui-tests.el (hui--ibut-link-directly-to-dired): Check that
-    looking at a string before trying to (read (current-buffer));
-    otherwise, 'read' will fail.
+* hui.el (hui:link-possible-types): Fix CI/CD build error where ilink was
+    inserted when pathname was expected due to batch diff when referent is
+    in dired-mode.  Fix to skip button type clauses in this case.
+  test/hui-tests.el (hui--ibut-link-directly-to-dired): Check that looking
+    at a string before trying to (read (current-buffer)); otherwise,
+    'read' will fail.
 
 2023-11-05  Bob Weiner  <rsw@gnu.org>
 
@@ -2596,7 +2693,9 @@ name with 'name' and 'name-key'.
 2022-08-20  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-grep): Add support for 'outline-regexp' and
-    'outline-level' variables from multiple file types.
+    'outline-level' variables from multiple file types.  This includes
+    adding 'hyrolo-hdr-regexp' to both 'hyrolo-entry-regexp' and
+   'outline-regexp' within the *HyRolo* match buffer.
             (hyrolo-mode): Set local value of 'outline-level' to
     'hyrolo-mode-outline-level' and define that function to support
     star outlines and Koutlines.  Also, make 'hyrolo-entry-regexp'

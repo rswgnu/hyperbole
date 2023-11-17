@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:      2-Nov-23 at 00:09:22 by Bob Weiner
+;; Last-Mod:     15-Nov-23 at 01:52:38 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -504,8 +504,8 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
      . ((w3-follow-link) . (w3-goto-last-buffer)))
     ;;
     ;; Future Hyperbole mode, not yet released
-    ((eq major-mode 'hynote-mode)
-     . ((smart-hynote) . (smart-hynote-assist)))
+    ;; ((eq major-mode 'hynote-mode)
+    ;; . ((smart-hynote) . (smart-hynote-assist)))
     ;;
     ((eq major-mode 'hyrolo-mode)
      . ((smart-hyrolo) . (smart-hyrolo-assist)))

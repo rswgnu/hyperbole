@@ -1875,8 +1875,9 @@ If CELL-REF is nil, show the first cell in the view."
 
 (defun kotl-mode:goto-heading (heading)
   "Move to a Koutline cell HEADING (a string) at the start of a cell.
-The matched heading must be followed by a colon or newline.
-Return t if found, else nil (in which case, point does not move)."
+The matched heading must be followed by either a colon or a
+newline.  Return t if found, else nil (in which case, point does
+not move)."
   (let ((opoint (point))
 	npoint
 	match-flag)

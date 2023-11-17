@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      5-Nov-23 at 17:15:31 by Bob Weiner
+;; Last-Mod:     15-Nov-23 at 01:52:15 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1068,7 +1068,9 @@ Default is the symbol hbut:current."
 
 (defun    hbut:at-p ()
   "Return symbol for explicit or implicit Hyperbole button at point or nil.
-Then use (hbut:act) to activate the button."
+Then use (hbut:act) to activate the button.
+
+When called interactively, display help for the button at point as well."
   (interactive)
   (if (called-interactively-p 'interactive)
       (let ((hbut (or (ebut:at-p) (ibut:at-p))))
@@ -1600,17 +1602,18 @@ Return number of buttons reported on or nil if none."
 (defun    hbut:source (&optional full-flag)
   "Return Hyperbole source buffer or file given at point.
 If a file, always return a full path if optional FULL-FLAG is non-nil."
-  (goto-char (match-end 0))
-  (cond ((looking-at "#<buffer \"?\\([^\n\"]+\\)\"?>")
-	 (get-buffer (match-string 1)))
-	((looking-at "\".+\"")
-	 (let* ((file (buffer-substring-no-properties
-		       (1+ (match-beginning 0))
-		       (1- (match-end 0))))
-		(absolute (file-name-absolute-p file)))
-	   (if (and full-flag (not absolute))
-	       (expand-file-name file default-directory)
-	     file)))))
+  (save-excursion
+    (goto-char (match-end 0))
+    (cond ((looking-at "#<buffer \"?\\([^\n\"]+\\)\"?>")
+	   (get-buffer (match-string 1)))
+	  ((looking-at "\".+\"")
+	   (let* ((file (buffer-substring-no-properties
+			 (1+ (match-beginning 0))
+			 (1- (match-end 0))))
+		  (absolute (file-name-absolute-p file)))
+	     (if (and full-flag (not absolute))
+		 (expand-file-name file default-directory)
+	       file))))))
 
 (defalias 'hbut:summarize #'hbut:report)
 
@@ -2290,10 +2293,13 @@ move to the first occurrence of the button."
 (defun    ibut:operate (&optional new-name edit-flag)
   "Insert/modify an ibutton based on `hbut:current' in current buffer.
 
+IMPORTANT:
 Caller must either call `hbut:at-p' or manually set the attributes of
-`hbut:current' prior to invoking this function.  If point is on an existing
-Hyperbole button, `edit-flag' must be set to t; otherwise, this may create
-a new ibutton inserted within the prior one, making the prior one unusable.
+`hbut:current' prior to invoking this function, i.e. there must be an
+ibutton stored in memory in `hbut:current prior to invocation.  If point
+is on an existing Hyperbole button, `edit-flag' must be set to t; otherwise,
+this may create a new ibutton inserted within the prior one, making the
+prior one unusable.
 
 Optional non-nil NEW-NAME is new name to give button.  With optional
 EDIT-FLAG non-nil, modify an existing in-buffer ibutton rather
@@ -2549,25 +2555,17 @@ Summary of operations based on inputs (name arg comes from \\='hbut:current attr
       ('actypes::link-to-file-line (insert (format "\"%s:%d\""
 						   (hpath:shorten arg1) arg2)))
       ('actypes::link-to-file-line-and-column
-       (if (eq arg3 0)
-	   (insert (format "\"%s:%d\"" (hpath:shorten arg1) arg2))
-	 (insert (format "\"%s:%d:%d\"" (hpath:shorten arg1) arg2 arg3))))
+       (insert
+	(if (eq arg3 0)
+	    (format "\"%s:%d\"" (hpath:shorten arg1) arg2)
+	  (format "\"%s:%d:%d\"" (hpath:shorten arg1) arg2 arg3))))
       ('actypes::link-to-file
-       (let ((short-path (hpath:shorten arg1)))
-	 (insert
-	  (if (/= (length args) 2)
-	      ;; filename only
-	      (format "\"%s\"" short-path)
-	    ;; includes buffer pos that we translate to line:col
-	    (with-current-buffer (find-file-noselect arg1)
-	      (save-excursion
-		(goto-char arg2)
-		(if (zerop (current-column))
-		    (format "\"%s:%d\"" short-path (line-number-at-pos (point) t))
-		  (format "\"%s:%d:%d\""
-			  short-path
-			  (line-number-at-pos (point) t)
-			  (current-column)))))))))
+       (insert (format "\"%s\""
+		       (if (/= (length args) 2)
+			   ;; filename only
+			   (hpath:shorten arg1)
+			 ;; includes buffer pos that we translate to line:col
+			 (hpath:file-position-to-line-and-column arg1 arg2)))))
       ('actypes::link-to-string-match
        (insert (format "<%s \"%s\" %d \"%s\">" (actype:def-symbol actype) arg1 arg2
 		       (hpath:shorten arg3))))
@@ -2887,7 +2885,7 @@ type for ibtype is presently undefined."
 
 (defmacro defil (type start-delim end-delim text-regexp link-expr
 		 &optional start-regexp-flag end-regexp-flag doc)
-  "Create an implicit button link type.
+  "Create Hyperbole implicit button link TYPE.
 Use: TYPE (an unquoted symbol), START-DELIM and END-DELIM (strings),
 TEXT-REGEXP and LINK-EXPR.
 
@@ -2983,8 +2981,8 @@ commit changes."
 			(if (stringp ,link-expr) (regexp-quote ,link-expr) ,link-expr)))))))
 
 (defmacro defal (type link-expr &optional doc)
-  "Create an action button link TYPE (an unquoted symbol).
-The buttons look like: <TYPE link-text> where link-text is
+  "Create Hyperbole action button link TYPE (an unquoted symbol).
+Buttons of the type look like: <TYPE link-text> where link-text is
 substituted into LINK-EXPR as grouping 1 (specified either as %s
 or \\\\1).  Hyperbole automatically creates a doc string for the
 type but you can override this by providing an optional DOC

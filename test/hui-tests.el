@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:      6-Nov-23 at 19:39:45 by Bob Weiner
+;; Last-Mod:     15-Nov-23 at 01:57:15 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -798,8 +798,12 @@ With point on label suggest that ibut for rename."
           (delete-other-windows)
           (setq dir-buf (dired dir))
 	  (goto-char (point-min))
-	  ;; Move to last char of first dired directory line
-	  (goto-char (1- (line-end-position)))
+	  ;; Move point just prior to last colon on the first dired directory line;
+	  ;; With some dired formats, there may be text after the last colon.
+	  (goto-char (line-end-position))
+	  (skip-chars-backward "^:")
+	  (when (/= (point) (point-min))
+	    (goto-char (1- (point))))
           (split-window)
           (find-file file)
           (hui:ibut-link-directly (get-buffer-window) (get-buffer-window dir-buf))

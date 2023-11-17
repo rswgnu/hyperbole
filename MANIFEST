@@ -59,7 +59,7 @@ hpath.el             - GNU Hyperbole support routines for handling UNIX paths
 htz.el               - Timezone-based time and date support for GNU Hyperbole
 hypb.el              - Miscellaneous GNU Hyperbole support features
 hypb-ert.el          - Hyperbole test runner action button types
-hyrolo.el            - Hierarchical, multi-file, easy-to-use contact management system
+hyrolo.el            - Hierarchical, multi-file, easy-to-use record management system
 hyrolo-logic.el      - Logic functions for GNU Hyperbole Rolo files
 hywconfig.el         - Save ring of window configurations
 set.el               - General mathematical operators for unordered sets

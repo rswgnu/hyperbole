@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:      5-Nov-23 at 17:16:31 by Bob Weiner
+;; Last-Mod:     15-Nov-23 at 01:52:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -66,7 +66,7 @@ Default is nil since this can slow down normal file finding."
   :group 'hyperbole-buttons)
 
 (defconst hpath:line-and-column-regexp
-  ":\\([-+]?[0-9]+\\)\\(:\\([-+]?[0-9]+\\)\\)?\\s-*\\'"
+  ":L?\\([-+]?[0-9]+\\)\\(:C?\\([-+]?[0-9]+\\)\\)?\\s-*\\'"
   "Regexp matching a trailing line number with an optional column number.
 Path, line number and column are colon separated.
 Group 1 is the line number.  Group 3 is the column number.")
@@ -1200,56 +1200,62 @@ Optionally use symbol DISPLAY-WHERE or `hpath:display-where'."
 Optionally use symbol DISPLAY-WHERE or `hpath:display-where'."
   (hpath:display-where-function display-where hpath:display-where-alist))
 
-(defun hpath:resolve (path)
-  "Resolve variables in PATH or prepend path from `hpath:auto-variable-alist'.
-Path variable are prepended from the first PATH matching regexp
-in `hpath:auto-variable-alist'.  Return any absolute or invalid
-PATH unchanged."
-  (when (stringp path)
-    (unless (string-match-p hpath:variable-regexp path)
-      (setq path (substitute-in-file-name path)))
-    (let (variable-path
-	  substituted-path)
-      (setq variable-path (hpath:expand-with-variable path)
-	    substituted-path (hpath:substitute-value variable-path))
-      (cond ((or (null substituted-path) (string-empty-p substituted-path))
-	     path)
-	    ((and (string-match-p hpath:variable-regexp variable-path)
-		  (string-match-p hpath:variable-regexp substituted-path))
-	     ;; If a path is invalid, then a variable may have been prepended but
-	     ;; it will remain unresolved in `substituted-path', in which case we
-	     ;; want to return `path' without any further changes.
-	     path)
-	    (t substituted-path)))))
-
-(defun hpath:expand (path)
+(defun hpath:expand (path &optional exists-flag)
   "Expand relative PATH using match in `hpath:auto-variable-alist'.
-The path variable is expanded from the first file matching regexp
-in `hpath:auto-variable-alist'.  Return any absolute or invalid
-PATH unchanged."
+Any single ${variable} within PATH is resolved.  Then PATH is
+expanded from the first file matching regexp in
+`hpath:auto-variable-alist'.
+
+Return any absolute or invalid PATH unchanged unless optional
+EXISTS-FLAG is non-nil in which case, return the expanded path
+only if it exists, otherwise, return nil."
+
   (when (stringp path)
     (unless (string-match-p hpath:variable-regexp path)
       (setq path (substitute-in-file-name path)))
     (let (variable-path
-	  substituted-path)
+	  substituted-path
+	  expanded-path)
       (setq variable-path (hpath:expand-with-variable path)
-	    substituted-path (hpath:substitute-value variable-path))
-      (cond ((or (null substituted-path) (string-empty-p substituted-path))
-	     path)
-	    ((and (string-match-p hpath:variable-regexp variable-path)
-		  (string-match-p hpath:variable-regexp substituted-path))
-	     ;; If a path is invalid, then a variable may have been prepended but
-	     ;; it will remain unresolved in `substituted-path', in which case we
-	     ;; want to return `path' without any further changes.
-	     path)
-	    ;; For compressed Elisp libraries, add any found compressed suffix to the path.
-	    ((string-match-p "\\.el\\(\\.\\|\\'\\)" substituted-path)
-	     (or (locate-library substituted-path t) path))
-	    ((or (string-match-p "\\`\\(#[^#+.]\\|([^\)\\/]+)\\|[^.\\/].*\\.[^.\\/]\\)" substituted-path)
-		 (string-match-p "[\\/~]" substituted-path))
-	     ;; Don't expand if an Info path, URL, #anchor or has a directory prefix
-	     substituted-path)
-	    (t (expand-file-name substituted-path))))))
+	    substituted-path (hpath:substitute-value variable-path)
+	    expanded-path
+	    (cond ((or (null substituted-path) (string-empty-p substituted-path))
+		   path)
+		  ((and (string-match-p hpath:variable-regexp variable-path)
+			(string-match-p hpath:variable-regexp substituted-path))
+		   ;; If a path is invalid, then a variable may have been prepended but
+		   ;; it will remain unresolved in `substituted-path', in which case we
+		   ;; want to return `path' without any further changes.
+		   path)
+		  ;; For compressed Elisp libraries, add any found compressed suffix to the path.
+		  ((string-match-p "\\.el\\(\\.\\|\\'\\)" substituted-path)
+		   (or (locate-library substituted-path t) path))
+		  ((or (string-match-p "\\`\\(#[^#+.]\\|([^\)\\/]+)\\|[^.\\/].*\\.[^.\\/]\\)" substituted-path)
+		       (string-match-p "[\\/~]" substituted-path))
+		   ;; Don't expand if an Info path, URL, #anchor or has a directory prefix
+		   substituted-path)
+		  (t (expand-file-name substituted-path))))
+      (if (file-exists-p expanded-path)
+	  expanded-path
+	(unless exists-flag
+	  path)))))
+
+(defun hpath:expand-list (paths match-regexp &optional exists-flag)
+  "Return expansions of PATHS, a list of dirs or wildcarded file patterns.
+PATHS expansion filters out non-strings, expands file wildcards,
+substitutes up to one ${variable} per path, and recursively walks
+directory trees for files with MATCH-REGEXP."
+  (mapcan (lambda (path)
+	    (when (setq path (or (file-expand-wildcards path) (list path)))
+	      (if (= (length path) 1)
+		  (setq path (car path))
+		(setq paths (nconc (cdr path) paths)
+		      path (car path)))
+	      (setq path (hpath:expand path exists-flag))
+	      (if (file-directory-p path)
+		  (directory-files-recursively path match-regexp)
+		(list path))))
+	  (seq-filter #'stringp paths)))
 
 (defun hpath:prepend-shell-directory (&optional filename)
   "Prepend subdir to a filename in an \\='ls'-file listing.
@@ -1343,6 +1349,19 @@ Parse out the parts and return a list, else nil."
 		(list file line-num col-num)
 	      (list file line-num))
 	  (list file))))))
+
+(defun hpath:file-position-to-line-and-column (path position)
+  "Return \"path:line-num:col-num\" given PATH and character POSITION.
+The path in the result is abbreviated when possible."
+  (with-current-buffer (find-file-noselect path)
+    (save-excursion
+      (goto-char position)
+      (if (zerop (current-column))
+	  (format "%s:%d" (hpath:shorten path) (line-number-at-pos (point) t))
+	(format "%s:%d:%d"
+		(hpath:shorten path)
+		(line-number-at-pos (point) t)
+		(current-column))))))
 
 (defun hpath:find-noselect (filename)
   "Find but don't display FILENAME.
@@ -1842,6 +1861,28 @@ valid path."
 			   (string-equal (substring path 0 end-dir) default-dir))
 		    (concat "../../" (substring path end-dir)))
 		   (t path))))))))
+
+(defun hpath:resolve (path)
+  "Resolve variables in PATH or prepend path from `hpath:auto-variable-alist'.
+Path variable are prepended from the first PATH matching regexp
+in `hpath:auto-variable-alist'.  Return any absolute or invalid
+PATH unchanged."
+  (when (stringp path)
+    (unless (string-match-p hpath:variable-regexp path)
+      (setq path (substitute-in-file-name path)))
+    (let (variable-path
+	  substituted-path)
+      (setq variable-path (hpath:expand-with-variable path)
+	    substituted-path (hpath:substitute-value variable-path))
+      (cond ((or (null substituted-path) (string-empty-p substituted-path))
+	     path)
+	    ((and (string-match-p hpath:variable-regexp variable-path)
+		  (string-match-p hpath:variable-regexp substituted-path))
+	     ;; If a path is invalid, then a variable may have been prepended but
+	     ;; it will remain unresolved in `substituted-path', in which case we
+	     ;; want to return `path' without any further changes.
+	     path)
+	    (t substituted-path)))))
 
 (defun hpath:rfc (rfc-num)
   "Return pathname to textual rfc document indexed by RFC-NUM.

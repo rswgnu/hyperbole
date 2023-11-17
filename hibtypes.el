@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     21-Oct-23 at 19:50:25 by Bob Weiner
+;; Last-Mod:     11-Nov-23 at 11:27:23 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -303,7 +303,7 @@ display options."
            (match-string-no-properties 1)))))
 
 (defib mail-address ()
-  "If on an e-mail address compose mail to that address in another window.
+  "If on an e-mail address, compose mail to that address in another window.
 
 Applies to any major mode in `hypb:mail-address-mode-list', the HyRolo match
 buffer, any buffer attached to a file in `hyrolo-file-list', or any buffer with
@@ -329,7 +329,7 @@ in all buffers."
            (and buffer-file-name
                 (boundp 'hyrolo-file-list)
                 (set:member (current-buffer)
-                            (mapcar #'get-file-buffer hyrolo-file-list)))))
+                            (mapcar #'get-file-buffer (hyrolo-get-file-list))))))
     (let ((address (mail-address-at-p)))
       (when address
         (ibut:label-set address (match-beginning 1) (match-end 1))

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      3-Oct-23 at 23:19:51 by Mats Lidell
+;; Last-Mod:      7-Nov-23 at 21:38:28 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -487,10 +487,10 @@ If no action body and actype is a bound function symbol, return that."
 	  ((fboundp actype) actype))))
 
 (defmacro defact (type params doc &rest default-action)
-  "Create an action TYPE (an unquoted symbol) with PARAMS, described by DOC.
+  "Create Hyperbole action TYPE (unquoted symbol) with PARAMS, described by DOC.
 The type uses PARAMS to perform DEFAULT-ACTION (list of the rest of the
 arguments).  A call to this function is syntactically the same as for
-`defun',  but a doc string is required.
+`defun', but a doc string is required.
 Return symbol created when successful, else nil."
   (declare (doc-string 3))
   `(progn
