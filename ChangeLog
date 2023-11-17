@@ -1,3 +1,20 @@
+2023-11-17  Bob Weiner  <rsw@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-sort-records-at-different-levels): Add
+    'hyrolo-find-file' call to ensure current buffer is the first hyrolo file.
+                       (hyrolo-sort-test): Change to use 'hyrolo-find-file'.
+
+* hyrolo.el (hyrolo-mode-outline-level): Fix to handle all file formats that
+    HyRolo now supports but ignore Emacs outline entry matches without trailing
+    whitespace or of formfeeds, as these can cause a hang in HyRolo search.
+            (hyrolo-outline-level): Add to handle 'outline-level' calculation
+    unique to standard HyRolo entries (asterisk with a following whitespace
+    character).
+            (hyrolo-find-file): Improve 'outline-regexp' handling and set
+    'outline-level' function if an Emacs outline.
+	    (hyrolo-add): Compare entry-regexp against default-value of
+    'hyrolo-entry-regexp' rather than a literal string.
+
 2023-11-14  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-sort): Fix bug where 'hyrolo-sort-level' had assumed

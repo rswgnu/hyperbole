@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     15-Nov-23 at 01:57:48 by Bob Weiner
+;; Last-Mod:     17-Nov-23 at 10:48:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -206,7 +206,7 @@ and {b} the previous same level cell."
   (let ((hyrolo-file (make-temp-file "hypb" nil ".otl")))
     (unwind-protect
         (let ((hyrolo-file-list (list hyrolo-file)))
-          (find-file (car (hyrolo-get-file-list)))
+          (hyrolo-find-file (car (hyrolo-get-file-list)))
           (insert "===\nHdr\n===\n")
           (goto-char (point-min))
           (should (looking-at "==="))
@@ -265,7 +265,8 @@ and {b} the previous same level cell."
                                      "*** 1\n\t2022-03-20\n"
                                      "*** 2\n\t2022-03-20\n")))
     (unwind-protect
-	(progn (hyrolo-sort hyrolo-file)
+	(progn (hyrolo-find-file hyrolo-file)
+	       (hyrolo-sort hyrolo-file)
                (should (string= (buffer-string) sorted-hyrolo-file)))
       (hy-delete-file-and-buffer hyrolo-file))))
 

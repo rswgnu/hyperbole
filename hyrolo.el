@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     15-Nov-23 at 01:56:40 by Bob Weiner
+;; Last-Mod:     17-Nov-23 at 10:41:58 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -159,28 +159,24 @@ their matches."
 		(when (hyrolo-google-contacts-p) google-contacts-buffer-name)))))
 
 (defcustom hyrolo-file-list nil
-  "List of files containing rolo entries.
-The first file should be a user-specific rolo file, typically in the home
+  "List of files containing hyrolo entries.
+The first file should be a user-specific hyrolo file, typically in the home
 directory.
 
 A hyrolo-file consists of:
    (1) an optional header beginning with and ending with a line which matches
-       hyrolo-hdr-regexp;
+       `hyrolo-hdr-regexp';
    (2) one or more rolo entries which each begin with
-       hyrolo-entry-regexp and may be nested."
+       `hyrolo-entry-regexp' and may be nested."
   :type '(repeat file)
   :initialize #'custom-initialize-default
   :set #'hyrolo-set-file-list
-  :group 'hyperbole-hyrolo)
+  :group 'hyperbbole-hyrolo)
 
 (defun hyrolo-file-list-changed (symbol set-to-value operation _where)
-  ;; (unless (hyperb:stack-frame '(custom-declare-variable
-  ;;				customize-set-variable customize-set-value))
-  (if (eq operation 'let) ;; not setting global value
+  (if (memq operation '(let unlet)) ;; not setting global value
       (hyrolo-let-file-list symbol set-to-value)
-    (hyrolo-set-file-list symbol set-to-value))
-    ;; )
-  )
+    (hyrolo-set-file-list symbol set-to-value)))
 
 ;; This next line is needed to invoke `hyrolo-set-file-list' when
 ;; `hyrolo-file-list' is changed via `setq' rather than
@@ -192,7 +188,8 @@ A hyrolo-file consists of:
 This pattern must match the beginning of a line.
 `hyrolo-entry-group-number' must capture the entry's level in the
 hierarchy.  `hyrolo-entry-trailing-space-group-number' must capture
-the whitespace following the entry hierarchy level.")
+the entire single line whitespace following the entry hierarchy
+level.")
 
 ;; Support hyrolo searches in markdown files
 (add-hook 'markdown-mode-hook
@@ -360,7 +357,7 @@ entry which begins with the parent string."
       ;; entry by moving to an entry with the same (or nearest) first character
       ;; to that of `name'.
       (if (and (= level-len 1)
-	       (equal entry-regexp "^\\(\\*+\\)\\([ \t]+\\)"))
+	       (equal entry-regexp (default-value 'hyrolo-entry-regexp)))
 	  (let ((case-fold-search))
 	    (goto-char (point-min))
 	    (if (re-search-forward (concat entry-regexp
@@ -592,9 +589,14 @@ select it."
 	(prog1 (setq buf (apply (or find-function hyrolo-find-file-function) file args))
 	  (when buf
 	    (with-current-buffer buf
-	      (when (equal outline-regexp "[*]+")
-		;; Prevent matching to *word* at the beginning of lines
-		(setq-local outline-regexp "\\*+[ \t]\\|+"))
+	      (when (equal outline-regexp (default-value 'outline-regexp))
+		;; Prevent matching to *word* at the beginning of
+		;; lines and hanging hyrolo search functions but this
+		;; change adds one to the default `outline-level' function,
+		;; so 'hyrolo-mode' overrides that as well to get the correct
+		;; calculation.  -- rsw, 2023-11-17
+		(setq-local outline-regexp "\\*+[ \t]\\|+"
+			    outline-level #'hyrolo-outline-level))
 	      (setq buffer-read-only nil))))))))
 
 ;;;###autoload
@@ -607,6 +609,8 @@ It uses the setting of `hyrolo-find-file-noselect-function'."
 	  (hyrolo-find-file file hyrolo-find-file-noselect-function nil t))
       (hyrolo-find-file file hyrolo-find-file-noselect-function))))
 
+;; This wraps forward-visible-line, making its ARG optional, making
+;; its calling convention match that of forward-line.
 (defun hyrolo-forward-visible-line (&optional arg)
   "Move forward by optional ARG lines (default = 1).
 Ignore currently invisible newlines only.
@@ -623,7 +627,6 @@ If ARG is zero, move to the beginning of the current line."
     ;; lexical-binding is enabled and there is a local binding of
     ;; `hyrolo-file-list', so expand it.
     (hyrolo-expand-path-list hyrolo-file-list)))
-
 
 ;;;###autoload
 (defun hyrolo-grep (regexp &optional max-matches hyrolo-file-or-bufs count-only headline-only no-display)
@@ -985,15 +988,14 @@ any rolo entry of the given level, not the beginning of a line (^); an
 example, might be (regexp-quote \"**\") to match level two.  Return number
 of groupings sorted."
   (interactive "sRegexp for level's entries: \nP")
+  ;; Divide by 2 in next line because each asterisk character is preceded
+  ;; by a regexp-quote backslash character.
   (outline-hide-sublevels (/ (length level-regexp) 2))
   (let ((sort-fold-case t))
     (hyrolo-map-level
      (lambda (start end) (hyrolo-sort-lines nil start end))
      level-regexp
      max-groupings)))
-
-;; This wraps forward-visible-line, making its ARG optional, making
-;; its calling convention match that of forward-line.
 
 ;; Derived from `sort-lines' in "sort.el" since through at least Emacs 25.0
 ;; invisible lines are not grouped with the prior visible line, making
@@ -1716,6 +1718,7 @@ Calls the functions given by `hyrolo-mode-hook'.
   (interactive)
   (unless (eq major-mode 'hyrolo-mode)
     (make-local-variable 'outline-regexp)
+    ;; This next local value is dynamically overridden in `hyrolo-grep'.
     (setq outline-regexp (default-value 'outline-regexp))
     (make-local-variable 'hyrolo-entry-regexp)
     (setq hyrolo-entry-regexp (default-value 'hyrolo-entry-regexp))
@@ -2138,11 +2141,22 @@ Return final point."
 
 (defun hyrolo-mode-outline-level ()
   "Heuristically determine `outline-level' function to use in HyRolo match buffer."
-  (cond ((looking-at (default-value 'outline-regexp))
-	 ;; on an entry from a star-outline
-	 (funcall (default-value #'outline-level)))
-	((looking-at hyrolo-hdr-regexp)
+  (cond	((looking-at hyrolo-hdr-regexp)
 	 0)
+
+	;; Org entry (asterisk with a following space; handles some standard
+	;; HyRolo entries and some Emacs outline entries
+	((and (boundp 'org-outline-regexp)
+	      (fboundp #'org-outline-level)
+	      (looking-at org-outline-regexp))
+	 (org-outline-level))
+
+	;; Standard HyRolo entry (when Org is not loaded or with a
+	;; trailing tab character)
+	((looking-at hyrolo-entry-regexp)
+	 (hyrolo-outline-level))
+
+	;; Koutline entry
 	((and (featurep 'kview)
 	      (looking-at kview:outline-regexp))
 	 ;; Assume on an entry from an alpha or legal Koutline
@@ -2150,8 +2164,30 @@ Return final point."
 	 (let ((lbl-sep-len (length kview:default-label-separator)))
 	   (floor (/ (- (or (kcell-view:indent nil lbl-sep-len)) lbl-sep-len)
 		     kview:default-level-indent))))
+
+	;; Markdown entry
+	((and (boundp 'markdown-regex-header)
+	      (fboundp #'markdown-outline-level)
+	      (looking-at markdown-regex-header))
+	 (markdown-outline-level))
+
+	;; Ignore Emacs outline entry matches without trailing
+	;; whitespace or of formfeeds, as these can cause a hang in
+	;; HyRolo search.  -- rsw, 2023-11-17
+	;; ((looking-at (default-value 'outline-regexp))
+	;;  (funcall (default-value #'outline-level)))
+
 	;; Just default to top-level if no other outline type is found
 	(t 1)))
+
+(defun hyrolo-outline-level ()
+  "Return the depth to which an entry is nested in the outline.
+Point must be at the beginning of a header line.
+This is actually either the level specified in `outline-heading-alist'
+or else the number of characters matched by `outline-regexp' minus
+trailing periods and whitespace."
+  (or (cdr (assoc (match-string 0) outline-heading-alist))
+      (1- (- (match-end 0) (match-beginning 0)))))
 
 ;;; ************************************************************************
 ;;; Private variables
