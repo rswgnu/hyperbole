@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     29-Oct-23 at 18:59:47 by Bob Weiner
+;; Last-Mod:     19-Nov-23 at 13:18:47 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2732,6 +2732,8 @@ With optional universal ARG, {C-u}, the new cell is added as the child of
 the current cell.  Non-read-only attributes from the current cell are
 replicated in the new cell."
   (interactive "*P")
+  ;; delete any surrounding whitespace
+  (delete-horizontal-space)
   (let ((new-cell-contents (kotl-mode:kill-region
 			    (point) (kcell-view:end-contents) 'string))
 	(start (kcell-view:start))
@@ -2748,8 +2750,7 @@ replicated in the new cell."
       (unless (memq prop kcell:read-only-attributes)
 	(setq plist (cons prop (cons val plist)))))
 
-    ;; delete any preceding whitespace
-    (skip-chars-backward " \t\n\r" start)
+    ;; delete copied text from prior cell
     (delete-region (max start (point)) (kcell-view:end-contents))
     (kotl-mode:add-cell arg new-cell-contents
 			plist

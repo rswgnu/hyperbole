@@ -7,19 +7,23 @@ Subject: GNU Hyperbole Major Release 9
 ========================================================================
 
 GNU Hyperbole 9.0.0, the Rhapsody release, is now available on GNU ELPA.
+And oh what a release it is: extensive new features, new video demos,
+org and org roam integration, Markdown and Org file support in HyRolo,
+recursive directory and wildcard file scanning in HyRolo and much more.
+
 Hyperbole is a unique hypertextual information management Emacs package
 that works across all Emacs modes, letting the computer do the hard work
 while you benefit from its sophisticated context-sensitive linking and
 navigation capabilities.  Hyperbole has always been one of the best
-documented Emacs packages.  With Version 8 comes excellent test coverage:
-over 200 automated tests to ensure quality. We hope you'll give it a try.
+documented Emacs packages.  With Version 9 comes excellent test coverage:
+over 340 automated tests to ensure quality.  We hope you'll give it a try.
 
 What's new in this release is described here:
 
   www.gnu.org/s/hyperbole/HY-NEWS.html
 
-  Everything back until release 8.0.0 is new since the last major
-  release announcement (almost a year ago), so updates are extensive.
+  Everything back until release 8.0.0 is new since the last major release
+  announcement (almost a year and a half ago), so updates are extensive.
 
 If you prefer video introductions, visit the videos linked to below; otherwise,
 skip to the next section.

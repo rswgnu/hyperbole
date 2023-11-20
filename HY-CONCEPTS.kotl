@@ -19,37 +19,72 @@
      1c. The "HY-ABOUT" file on {C-h h d a} is a gentler, less detailed
          introduction to what Hyperbole offers.
 
-   2. GNU Hyperbole is a single turnkey Emacs package with no external package
+     1d. To see what is new in Hyperbole from the Doc/News item, you use the
+         key series, {C-h h d n}.
+
+   2. GNU Hyperbole is a turnkey Emacs package with no external package
       requirements that offers an extensive, extensible, hypertextual
       information management system. It works with all kinds of file formats,
-      including Org mode.
+      including Org mode.  The core of Hyperbole supplies a default
+      set of hyperbutton types, each of which performs a specific action.
 
-   3. Hyperbole action types determine what Hyperbole's hyperbuttons do;
-      links are one set of actions that display referents, but an action
-      type can implement any Lisp behavior and is similar to a regular Lisp
-      function.  Action types, however, live in their own namespace (prefixed
-      with `actypes::') so their names do not conflict with Lisp functions.
-      
-      Any kind of Hyperbole button can invoke any action type or regular Lisp
+   3. Hyperbole's Action {M-RET} and Assist Keys {C-u M-RET}, collectively
+      known as the Smart Keys, provide context-sensitive activation of
+      hyperbuttons and many other actions.  Hyperbole hyperbuttons can span
+      multiple lines but you must activate them with a press on the first
+      line of each button.
+
+   4. There are three broad categories of Hyperbole button types:
+
+     4a. Implicit Buttons - recognized by context without heavyweight markup;
+         no meta-data other than the button text and optional name; its
+         button types are defined using `defib' with a form similar to
+         `defun'; each type can have a different textual appearance.
+
+     4b. Explicit Buttons - context-independent buttons that all look the
+         same (like <(button)>); have meta-data defined by the parameters of
+         its specified action type and no other typing information, so an
+         explicit button's type is its action type; the values of the action
+         type's parameters are prompted for when the button is created and
+         the meta-data is stored in a ".hypb" file in the same directory as
+         the button source file.
+
+     4c. Global Buttons - implicit or global buttons with names stored in
+         your personal button file; the file is edited with {C-h h b p}.
+         Hyperbole then reads all the button names in this file and prompts
+         with completion to activate any such button with {C-h h g a}.
+
+   5. Hyperbole action types determine what Hyperbole's hyperbuttons do; they
+      are defined with the `defact' macro, similar to `defun'.  Links are one
+      set of actions that display referents, but an action type can implement
+      any Lisp behavior and is similar to a regular Lisp function.  Any
+      category of Hyperbole button can invoke any action type or regular Lisp
       function.
 
-   4. Hyperbole's Action {M-RET} and Assist Keys {C-u M-RET}, collectively
-      known as the Smart Keys, provide context-sensitive activation of
-      hyperbuttons and many other actions.  Hyperbuttons can span multiple
-      lines but you must activate them with a press on the first line of each
-      button.
+   6. Let's explore implicit buttons a bit more since they are the most
+      widely used category of Hyperbole buttons.  Implicit buttons are
+      recognized within a buffer context without the need to add any special
+      markup as Org mode and Markdown do.  Implicit buttons are built from an
+      implicit button type that runs an action type when activated with the
+      Action Key.
 
-   5. Implicit buttons represent one category of Hyperbole buttons.  They are
-      built from an implicit button type that runs an action type when
-      activated with the Action Key.
-
-   6. Implicit button types and Action Key contexts recognize all sorts of
+   7. Implicit button types and Action Key contexts recognize all sorts of
       cross-references embedded in files, e.g. URLs, Org IDs or email
-      addresses, without the need for any markup, and trigger associated action
-      types.  Optionally you can add a delimited <[name]> in front of an
-      implicit button so that it can be activated by name.
+      addresses, without any additional markup, and trigger associated action
+      types.
 
-     6a. Brace-delimited key series (any series of Emacs key sequences strung
+     7a. To see all of the builtin implicit button types, use {C-h h i t RET}.
+         This shows them in decreasing priority order.  The first type matched
+         at any point is the type used.
+
+     7b. Optionally, you can add a delimited <[name]> in front of an implicit
+         button so that it can be activated by name via {C-h h i a}, or you
+         can press the Action Key on the button name or its text.  If you put
+         named implicit buttons in your personal button file, edited with
+         {C-h h b p}, they become global buttons as mentioned before,
+         activated by name with {C-h h g a}.
+
+     7c. Brace-delimited key series (any series of Emacs key sequences strung
          together in braces) is one type of implicit button, e.g. {C-u C-n
          C-e}.  You can embed such sequences in any file and activate them
          instantly with an Action Key press within the braces.  These let you
@@ -57,51 +92,58 @@
          keys for reuse any time in the future.  No need to learn about Emacs'
          keyboard macros or how to save them to files.
 
-     6b. Action Buttons are a generalized form of implicit buttons that are
+     7d. Action Buttons are a generalized form of implicit buttons that are
          delimited by angle brackets.  Such buttons allow invocation of any
-         Emacs function or action type by name, followed by any needed
+         action type or Emacs function by name, followed by any needed
          arguments, when the Action Key is pressed within the button:
 
-       6b1. Count windows in the selected frame:
+       7d1. Count windows in the selected frame:
               <message "This frame has %d windows" (count-windows)>
 
-       6b2. Display the early Internet standard mail specification:
+       7d2. Display the early Internet standard mail specification:
               <link-to-rfc 822>
 
-       6b3. See more examples here: "FAST-DEMO#Action Buttons".
+       7d3. See more examples here: "FAST-DEMO#Action Buttons".
 
-   7. Much of Hyperbole's functionality is accessed with its keyboard-driven
-      minibuffer menu where each item can be selected by typing its first
-      capitalized letter.  {C-h h} displays the top-level minibuffer menu.
-      You can then embed any menu command into a key series you store in
-      any file.  Then an Action Key press will run it.  To see what is new
-      in Hyperbole from the Doc/News item, you use the key series, {C-h h d
-      n}.
+   8. Much of Hyperbole's functionality is accessed with its keyboard-driven
+      minibuffer menu.
 
-   8. <(Explicit buttons)> can be created and embedded in most any type of
+     8a. {C-h h} displays the top-level minibuffer menu.  Any item can be
+         selected by typing its first capitalized letter or you can press the
+         Action Key on the item to activate it.  The Assist Key will display
+         the item's action in a help buffer.  Press the Action Key on the
+         action name to display its definition/source code; the Assist Key
+         will display its full documentation.
+
+     8b. The keystrokes to access any menu command may be added to any file
+         surrounded by curly braces as a key series.  Then an Action Key
+         press will run it; put it in your personal button file, give it a
+         short name and then you can access it anywhere.
+
+   9. <(Explicit buttons)> can be created and embedded in most any type of
       file or buffer; each sends a set of given parameters to an action
       type when activated with an Action Key press.  See also "DEMO#Explicit
       Buttons".
 
-   9. "HYPB" files serve as convenient home pages for embedding Hyperbole
+  10. "HYPB" files serve as convenient home pages for embedding Hyperbole
       buttons.  Each user has a personal button file accessed with {C-h h b
       p} and each directory can have a local button file accessed with {C-h
       h b d}.  See "DEMO#Button Files".
 
-  10. Global buttons are either explicit or named implicit buttons that are
+  11. Global buttons are either explicit or named implicit buttons that are
       activated by choosing from a list of names, without the need to have
       the button source buffer on screen, thus they are available globally.
       All global buttons are stored in a user's personal "HYPB" file.  See
       "DEMO#Global Buttons" for how to use these.
 
-  11. Hyperbole lets you set and control which windows or frames you want
+  12. Hyperbole lets you set and control which windows or frames you want
       all of your hyperlink referents displayed in.  Each time you activate
       a Hyperbole button, it stores your current frame configuration on a
       stack.  You can pop back to a prior one with {C-h h h}.  You can also
       store per-frame window configurations in a ring or store and retrieve
       them by name utilizing the Hyperbole Win/ menu on {C-h h w}.
 
-  12. You access Hyperbole's HyControl subsystem from the Screen/ menu on {C-h
+  13. You access Hyperbole's HyControl subsystem from the Screen/ menu on {C-h
       h s}.  This lets you rapidly control the set of, location of and size of
       per-frame windows (choose 'w' for WindowsControl) or frames (choose 'f'
       for FramesControl) on your screen.  Use 't' to toggle between these two
@@ -110,59 +152,70 @@
       at any scale you like, e.g. widen a window by 20 characters at a time.
       See "DEMO#HyControl".
 
-  13. Hyperbole's Koutliner subsystem on {C-h h k} is a powerful,
+  14. Hyperbole's Koutliner subsystem on {C-h h k} is a powerful,
       hierarchically auto-numbered outliner with automatic permanent hyperlink
       ids for each outline node (called cells).  Any type of Hyperbole button
       can be embedded within Koutlines and external links can be made to
       specific cells together with a specific view of the outline using an
       implicit link type call a klink.
 
-    13a. {C-h h k e} creates a personal copy of an example Koutline file that
+    14a. {C-h h k e} creates a personal copy of an example Koutline file that
          you can edit as you like; the content of that file explains Koutliner
          concepts and commands.
 
-    13b. Like magic, {C-h h k f d}, converts this Koutline to HTML and displays
+    14b. Like magic, {C-h h k f d}, converts this Koutline to HTML and displays
          it in your web browser, with each tree fully collapsible and
          expandable with your mouse.
 
-  14. Hyperbole's HyRolo subsystem on {C-h h r} can be used just as a contact
-      manager but it really is a generalized, record-oriented retrieval system
-      for files.  Simply set hyrolo-file-list to any list of Koutline, Emacs
-      Outline, Org, or Markdown files, any of which can contain any type of
-      Hyperbole button, and it will rapidly display string, word, regular
-      expression or logical query matches within each hierarchical entry of
-      each file.  Try it here: "DEMO#HyRolo".
+  15. Hyperbole's HyRolo subsystem on {C-h h r} can be used just as a contact
+      manager but it really is a generalized, hierarchical record retrieval
+      system for files.
 
-  15. Hyperbole's Find/ menu on {C-h h f} unifies finding and filtering through
+    15a. Simply set hyrolo-file-list to any list of Emacs Outline, Koutline,
+         Markdown or Org files, any of which can contain any type of
+         Hyperbole button, and HyRolo will perform full-text searches and
+         rapidly display string, word, regular expression or logical query
+         matches within each hierarchical record of each file (showing the
+         full-text of the record, not just the matching line).
+
+    15b. You can also include directories in the list and HyRolo will
+         recursively scan them for files of the supported types.
+
+    15c. File wildcards with asterisk matches, e.g. myfiles*.org and
+         character sets, [abc]*.org also work.
+
+    15d. Try it here: "DEMO#HyRolo".
+
+  16. Hyperbole's Find/ menu on {C-h h f} unifies finding and filtering through
       lists of files and lines within those files.  It simplifies access to
       Emacs and Posix utilities without the need to remember specific command
       names.
 
-  16. Hyperbole's Find/Web menu on {C-h h f w} gives you ready access to many
+  17. Hyperbole's Find/Web menu on {C-h h f w} gives you ready access to many
       structured web searches without having to remember site URLs or query
       parameters.  It also offers access to Emacs' webjump package (type {j}
       for Jump) to quickly jump to specific websites, similar to what {C-x r b}
       does for Emacs Bookmarks.
 
-  17. In summary, Hyperbole integrates many disparate information management
-      capabilities spread throughout Emacs and the web and augments them with a
-      new set of hyperbutton types and control systems, all easily accessible
-      from a unified, keyboard driven minibuffer menu.
+  18. In summary, Hyperbole integrates many information management
+      capabilities spread throughout Emacs and the web.  It augments them
+      with a new set of hyperbutton types and control systems, all easily
+      accessible from a unified, keyboard driven minibuffer menu.
 
-    17a. Hyperbole lets you rapidly get to information whether local or remote,
+    18a. Hyperbole lets you rapidly get to information whether local or remote,
          whether via search or filtering, and then interlink it with other
          information, display it where you need on your screen, and edit it
          rapidly using multiple views in the Koutliner or via its Org mode
          compatibility.
 
-    17b. If you learn to use just the implicit button types in Hyperbole, those
+    18b. If you learn to use just the implicit button types in Hyperbole, those
          alone should greatly improve your Emacs productivity.  Then as you
          learn more of Hyperbole's concepts, you can accelerate your
          information management further across time.
 
 
 "ben" ;; kvspec:current
-38 ;; id-counter
+67 ;; id-counter
 alpha ;; label-type
 4 ;; label-min-width
 ". " ;; label-separator
@@ -170,7 +223,7 @@ alpha ;; label-type
 
 ;; depth-first kcell attributes
 [[0
-  (creator "rsw@gnu.org" create-time "20230513:18:17:42" id-counter 38)]
+  (creator "rsw@gnu.org" create-time "20230513:18:17:42" id-counter 67)]
  [1
   (creator "rsw@gnu.org" create-time "20230513:18:17:42")]
  [25
@@ -179,16 +232,30 @@ alpha ;; label-type
   (creator "rsw@gnu.org" create-time "20230513:18:35:46")]
  [27
   (creator "rsw@gnu.org" create-time "20230513:18:45:15")]
+ [63
+  (creator "rsw@gnu.org" create-time "20231119:12:33:28")]
  [23
   (creator "rsw@gnu.org" create-time "20230513:18:33:50")]
- [3
-  (creator "rsw@gnu.org" create-time "20230513:18:17:42")]
  [4
+  (creator "rsw@gnu.org" create-time "20230513:18:17:42")]
+ [39
+  (creator "rsw@gnu.org" create-time "20231119:11:25:23")]
+ [41
+  (creator "rsw@gnu.org" create-time "20231119:11:25:51")]
+ [42
+  (creator "rsw@gnu.org" create-time "20231119:11:25:58")]
+ [43
+  (creator "rsw@gnu.org" create-time "20231119:11:26:07")]
+ [3
   (creator "rsw@gnu.org" create-time "20230513:18:17:42")]
  [32
   (creator "rsw@gnu.org" create-time "20230513:19:22:15")]
  [5
   (creator "rsw@gnu.org" create-time "20230513:18:17:42")]
+ [47
+  (creator "rsw@gnu.org" create-time "20231119:11:44:58")]
+ [45
+  (creator "rsw@gnu.org" create-time "20231119:11:44:54")]
  [18
   (creator "rsw@gnu.org" create-time "20230513:18:22:23")]
  [19
@@ -201,6 +268,10 @@ alpha ;; label-type
   (creator "rsw@gnu.org" create-time "20230513:20:13:11")]
  [6
   (creator "rsw@gnu.org" create-time "20230513:18:17:42")]
+ [51
+  (creator "rsw@gnu.org" create-time "20231119:11:56:10")]
+ [49
+  (creator "rsw@gnu.org" create-time "20231119:11:55:55")]
  [7
   (creator "rsw@gnu.org" create-time "20230513:18:17:42")]
  [8
@@ -219,6 +290,14 @@ alpha ;; label-type
   (creator "rsw@gnu.org" create-time "20230513:19:50:14")]
  [13
   (creator "rsw@gnu.org" create-time "20230513:18:17:42")]
+ [64
+  (creator "rsw@gnu.org" create-time "20231119:12:40:08")]
+ [66
+  (creator "rsw@gnu.org" create-time "20231119:12:40:38")]
+ [67
+  (creator "rsw@gnu.org" create-time "20231119:12:41:14")]
+ [65
+  (creator "rsw@gnu.org" create-time "20231119:12:40:26")]
  [14
   (creator "rsw@gnu.org" create-time "20230513:18:17:42")]
  [15
@@ -229,4 +308,4 @@ alpha ;; label-type
   (creator "rsw@gnu.org" create-time "20230513:19:08:35")]
  [29
   (creator "rsw@gnu.org" create-time "20230513:19:06:51")]
- nil nil nil nil nil nil nil nil nil]
+ nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil]

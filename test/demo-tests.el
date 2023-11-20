@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:      2-Oct-23 at 05:04:10 by Bob Weiner
+;; Last-Mod:     20-Nov-23 at 02:27:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -550,21 +550,21 @@ enough files with matching mode loaded."
   (skip-unless (not noninteractive))
   (let* ((shell-file-name (executable-find "sh"))
          (shell-buffer-name "*shell*")
-	 (existing-shell-flag (get-buffer-process shell-buffer-name)))
+	 (existing-shell-flag (get-buffer-process shell-buffer-name))
+	 (prompt "\nPWD=")
+	 success)
     (unwind-protect
         (with-temp-buffer
-          (insert "{ M-x shell RET M-> (cd ${hyperb:dir} && echo \"PWD=$(pwd)\") RET }")
+          (insert "{ M-x shell RET M-> (cd ${hyperb:dir} && echo && echo \"PWD=$(pwd)\") RET }")
           (goto-char 5)
           (action-key)
           (hy-test-helpers:consume-input-events)
           (with-current-buffer shell-buffer-name
-            (goto-char (point-min))
-            (end-of-line)
-            (with-timeout (5 (ert-fail "Test timed out"))
-              (while (not (search-forward "PWD=" nil t))
-                (accept-process-output (get-buffer-process shell-buffer-name))))
-            (should (looking-at-p (directory-file-name hyperb:dir)))))
-      (unless existing-shell-flag
+            (goto-char (point-max))
+            (accept-process-output (get-buffer-process shell-buffer-name) 1)
+            (search-backward prompt nil t)
+            (setq success (should (looking-at-p (concat prompt (directory-file-name hyperb:dir)))))))
+      (unless (and existing-shell-flag success)
 	(when (get-buffer-process shell-buffer-name)
 	  (set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
 	  (hy-test-helpers:kill-buffer shell-buffer-name))))))
@@ -618,22 +618,22 @@ enough files with matching mode loaded."
   (skip-unless (not noninteractive))
   (let* ((shell-file-name (executable-find "sh"))
          (shell-buffer-name "*shell*")
-	 (existing-shell-flag (get-buffer-process shell-buffer-name)))
+	 (existing-shell-flag (get-buffer-process shell-buffer-name))
+	 (prompt "\nPWD=")
+	 success)
     (unwind-protect
         (with-temp-buffer
-          (insert "{ M-x shell RET M-> (cd ${hyperb:dir} && echo \"PWD=$(pwd)\") RET }")
+          (insert "{ M-x shell RET M-> (cd ${hyperb:dir} && echo && echo \"PWD=$(pwd)\") RET }")
           (goto-char 5)
           (view-mode)
           (action-key)
           (hy-test-helpers:consume-input-events)
           (with-current-buffer shell-buffer-name
-            (goto-char (point-min))
-            (end-of-line)
-            (with-timeout (5 (ert-fail "Test timed out"))
-              (while (not (search-forward "PWD=" nil t))
-                (accept-process-output (get-buffer-process shell-buffer-name))))
-            (should (looking-at-p (directory-file-name hyperb:dir)))))
-      (unless existing-shell-flag
+            (goto-char (point-max))
+            (accept-process-output (get-buffer-process shell-buffer-name) 1)
+            (search-backward prompt nil t)
+            (setq success (should (looking-at-p (concat prompt (directory-file-name hyperb:dir)))))))
+      (unless (and existing-shell-flag success)
 	(when (get-buffer-process shell-buffer-name)
 	  (set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
 	  (hy-test-helpers:kill-buffer shell-buffer-name))))))
@@ -653,7 +653,8 @@ enough files with matching mode loaded."
           (hy-test-helpers:consume-input-events)
           (with-current-buffer shell-buffer-name
             (with-timeout (5 (ert-fail "Test timed out"))
-              (while (not (string-match-p "\n.*\\.el:[0-9]+:.*defun.*gbut:label-list ()" (buffer-substring-no-properties (point-min) (point-max))))
+              (while (not (string-match-p "\n.*\\.el:[0-9]+:.*defun.*gbut:label-list ()"
+					  (buffer-substring-no-properties (point-min) (point-max))))
                 (accept-process-output (get-buffer-process shell-buffer-name))))
             (should (string-match-p "\n.*\\.el:[0-9]+:.*defun.*gbut:label-list ()" (buffer-substring-no-properties (point-min) (point-max))))))
       (unless existing-shell-flag
