@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:     20-Nov-23 at 02:03:13 by Bob Weiner
+;; Last-Mod:     21-Nov-23 at 03:01:07 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1644,7 +1644,11 @@ buffers whose names start with a space are ignored.
 
 When done, this resets the persistent HyControl prefix argument to
 1 to prevent following commands from using the often large grid size
-argument."
+argument.
+
+If the key that invokes this command in `hyperbole-minor-mode' is also
+bound in the current major mode map, then interactively invoke that
+command instead.  Typically prevents clashes over {C-c @}."
   (interactive "P")
   (let ((numeric-arg (prefix-numeric-value current-prefix-arg)))
     (if (or (<= numeric-arg 0) (> numeric-arg 11))
@@ -1652,20 +1656,23 @@ argument."
 	;; this range, so ignore other key bindings.
 	(hycontrol--windows-grid-internal arg)
       (let* ((key (hypb:cmd-key-vector #'hycontrol-windows-grid hyperbole-mode-map))
+	     (mode-binding (lookup-key (current-local-map) key))
 	     (this-key-flag (and (called-interactively-p 'interactive)
 				 (equal (this-single-command-keys) key))))
-	(cond ((and this-key-flag (derived-mode-p 'org-mode)
-		    (lookup-key org-mode-map key))
-	       ;; Prevent a conflict with binding in Org mode
-	       (call-interactively (lookup-key org-mode-map key)))
-	      ((and (not arg) this-key-flag (derived-mode-p 'outline-mode)
-		    (lookup-key outline-mode-map key))
-	       ;; Prevent a conflict with binding in Outline mode
-	       (call-interactively (lookup-key outline-mode-map key)))
-	      ((and (not arg) this-key-flag (boundp 'outline-minor-mode)
-		    outline-minor-mode (lookup-key outline-minor-mode-map key))
-	       ;; Prevent a conflict with binding in Outline minor mode
-	       (call-interactively (lookup-key outline-minor-mode-map key)))
+	(cond ((and mode-binding (not (integerp mode-binding))
+		    this-key-flag (if (eq major-mode #'outline-mode) (not arg) t))
+	       ;; If the key that invokes this command in `hyperbole-minor-mode'
+	       ;; is also bound in the current major mode map, then
+	       ;; interactively invoke that command instead.  Typically
+	       ;; prevents clashes over {C-c @}.
+	       (call-interactively mode-binding))
+	      ((and (not arg) this-key-flag
+		    (boundp 'outline-minor-mode) outline-minor-mode
+		    (setq mode-binding (lookup-key outline-minor-mode-map key))
+		    (not (integerp mode-binding))
+		    (keymapp mode-binding))
+	       ;; Prevent a conflict with keymap binding in Outline minor mode
+	       (kbd-key:key-series-to-events key))
 	      ;;
 	      ;; No key conflicts, display window grid
 	      (t (hycontrol--windows-grid-internal arg)))))))

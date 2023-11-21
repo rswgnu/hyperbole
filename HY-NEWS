@@ -121,6 +121,11 @@
       buffer when creating a Hyperbole button.  Always use the current
       buffer and point.  See "(hyperbole)Creation".
 
+  *** Hyperbole Keys Defer to Current Modes: Hyperbole bindings of {C-c RET},
+      {C-c .}, {C-c @}, and {C-c /} defer to any major mode, like org-mode,
+      outline-mode or kotl-mode that binds them to other commands.  This also
+      works for outline-minor-mode.
+
   *** Improved Button Help: {C-h A} now says whether a button is explicit or
       implicit.  For implicit buttons, it displays the doc from both its
       implicit button type and its associated action type.
@@ -603,7 +608,7 @@
   *** {C-c /}: The Hyperbole {C-c /} web search binding defers to the org-mode
       binding, `org-show-todo-tree', when in Org mode, but uses the improved
       Hyperbole command version, `hsys-org-todo-occur', which allows filtering
-      to spec"ific todo states.
+      to specific todo states.
 
 
 ** SMART (ACTION AND ASSIST) KEYS  (See "(hyperbole)Smart Keys").

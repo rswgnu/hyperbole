@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     20-Nov-23 at 02:22:04 by Bob Weiner
+@c Last-Mod:     21-Nov-23 at 03:27:45 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.1pre
-Printed November 19, 2023.
+Printed November 21, 2023.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.1pre
-November 19, 2023
+November 21, 2023
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -1395,6 +1395,9 @@ the same or lesser indentation).  Use @bkbd{C-g} to unmark the region when
 done.  Use, @code{hui-select-thing-with-mouse} if you want to bind this to
 a different mouse key to use single clicks instead of double clicks.
 
+This key defers to any currently active @code{major-mode} which also
+binds it.
+
 @kindex C-c .
 @findex hui-select-goto-matching-tag
 The second convenience key is bound in HTML/XML/SGML/web
@@ -1404,6 +1407,9 @@ the tag paired with the closest tag that point is within or which it
 precedes.  A second press moves point to the matching tag of the pair,
 allowing you to quickly jump back and forth between opening and
 closing tags.
+
+This key defers to any currently active @code{major-mode} which also
+binds it.
 
 @node Smart Mouse Key Modeline Clicks, Smart Mouse Key Drags, Smart Key Thing Selection, Smart Keys
 @section   Smart Mouse Key Modeline Clicks
@@ -8589,9 +8595,12 @@ is made only if the key is not bound prior to initializing Hyperbole.
 @kitem C-c /
 Search the Web: Display a minibuffer menu of web search engines.  Once
 an engine is selected, prompt for a search term and perform the
-associated search.  This binding is made only if the key is not bound
-prior to initializing Hyperbole; otherwise, the Find/Web minibuffer menu
-item, @bkbd{C-h h f w}, will do the same thing.
+associated search.
+
+This binding is made only if the key is not bound prior to
+initializing Hyperbole; it also defers to any @code{major-mode}
+binding.  When needed, the Find/Web minibuffer menu item, @bkbd{C-h
+h f w}, will do the same thing.
 
 @kindex C-c @@
 @cindex key binding, C-c @@
@@ -8603,18 +8612,22 @@ item, @bkbd{C-h h f w}, will do the same thing.
 @cindex restore window configuration
 @cindex window configuration, restore
 @kitem C-c @@
-Display a grid of windows in the selected frame, sized according to the
-prefix argument.  The left digit of the argument is the number of grid rows
-and the right digit is the number of grid columns.  Use @bkbd{C-h h h} to
-restore the prior frame configuration.
+Display a grid of windows in the selected frame, sized according to
+the prefix argument.  The left digit of the argument is the number
+of grid rows and the right digit is the number of grid columns.  Use
+@bkbd{C-h h h} to restore the prior frame configuration.
 
-If the argument is 0, prompt for a major mode whose buffers should be
-displayed first in the grid windows, then prompt for the grid size.
+If the argument is 0, prompt for a major mode whose buffers should
+be displayed first in the grid windows, then prompt for the grid
+size.
 
-If the argument is < 0, prompt for a shell glob-type file pattern and display
-files that match the pattern in an auto-sized windows grid.
+If the argument is < 0, prompt for a shell glob-type file pattern
+and display files that match the pattern in an auto-sized windows
+grid.
 
-This binding is made only if the key is not bound prior to initializing Hyperbole.
+This binding is made only if the key is not bound prior to
+initializing Hyperbole; it also defers to any @code{major-mode}
+binding and when @code{outline-minor-mode} is active.
 
 For further details, see the @bkbd{@@} key binding description
 in @ref{HyControl}.
@@ -8623,11 +8636,12 @@ in @ref{HyControl}.
 @kitem M-o
 Drag Operation: Keyboard emulation of the start and stop of mouse
 drags to invoke Smart Key actions.  This binding is made only if the
-key is not bound prior to initializing Hyperbole and if Emacs is run under
-a window system.  If the Ace Window package is loaded, then Ace Window
-commands are typically bound to @bkbd{M-o} instead.  Then @bkbd{M-o w}
-may be used to quickly create an explicit link button in the selected window
-that links to any other window chosen via the Ace Window prompt.
+key is not bound prior to initializing Hyperbole and if Emacs is run
+under a window system.  If the Ace Window package is loaded, then
+Ace Window commands are typically bound to @bkbd{M-o} instead.  Then
+@bkbd{M-o w} may be used to quickly create an explicit link button
+in the selected window that links to any other window chosen via the
+Ace Window prompt.
 
 @cindex key binding, C-h h
 @kitem C-h h
@@ -8652,16 +8666,20 @@ Assist Key Help: Show what the Assist Key will do in the same context.
 Mark Things: Mark larger and larger syntactical units in a buffer
 when invoked repeatedly, showing in the minibuffer the type of unit
 marked each time.  For example, if on an opening brace at the start of
-a C, Java or Javascript function, this marks the whole function.  This
-binding is made only if the key is not bound prior to initializing
-Hyperbole.
+a C, Java or Javascript function, this marks the whole function.
+
+This binding is made only if the key is not bound prior to
+initializing Hyperbole; it also defers to any @code{major-mode}
+binding.
 
 @cindex key binding, C-c .
 @kitem C-c .
 Delimited Thing Jump: Jump between the start and end of a delimited
-thing, which may be an HTML tag pair.  This binding is made only if
-the key is not bound prior to initializing Hyperbole.  @xref{Smart Key
-Thing Selection}, for more information.
+thing, which may be an HTML tag pair.
+
+This binding is made only if the key is not bound prior to
+initializing Hyperbole; it also defers to any @code{major-mode}
+binding.  @xref{Smart Key Thing Selection}, for more information.
 
 @cindex key binding, M-w
 @vindex mark-even-if-inactive
@@ -8699,9 +8717,9 @@ to @samp{t} (true) by default in @file{hyperbole.el}.  This setting
 means all Hyperbole key bindings will be initialized when Hyperbole is
 loaded.  If you want to disable these bindings permanently, simply add
 @code{(setq hkey-init nil)} to your @file{~/.emacs} file prior to the
-point at which you load Hyperbole; then restart Emacs.  Henceforth, you will
-have to choose the Hyperbole commands that you want to use and bind those to
-keys.
+point at which you load Hyperbole; then restart Emacs.  Henceforth,
+you will have to choose the Hyperbole commands that you want to use
+and bind those to keys.
 
 @vindex file, .emacs
 @findex hyperbole-mode
@@ -8726,8 +8744,8 @@ press the Action Key to see the source of the failure.  Full testing is
 supported under POSIX systems only.
 
 With Hyperbole active, you can also define implicit buttons that run
-individual or sets of Hyperbole tests.  The file @file{hypb-ert.el} contains
-two action link types:
+individual or sets of Hyperbole tests.  The file @file{hypb-ert.el}
+contains two action link types:
 
 @example
 @code{hyperbole-run-test}  - run a single Hyperbole test by name

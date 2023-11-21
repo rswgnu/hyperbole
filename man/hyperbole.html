@@ -382,7 +382,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.1pre
-Printed November 19, 2023.
+Printed November 21, 2023.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -1985,6 +1985,9 @@ the same or lesser indentation).  Use <kbd>{C-g}</kbd> to unmark the region when
 done.  Use, <code>hui-select-thing-with-mouse</code> if you want to bind this to
 a different mouse key to use single clicks instead of double clicks.
 </p>
+<p>This key defers to any currently active <code>major-mode</code> which also
+binds it.
+</p>
 <a name="index-C_002dc-_002e"></a>
 <a name="index-hui_002dselect_002dgoto_002dmatching_002dtag"></a>
 <p>The second convenience key is bound in HTML/XML/SGML/web
@@ -1994,6 +1997,9 @@ the tag paired with the closest tag that point is within or which it
 precedes.  A second press moves point to the matching tag of the pair,
 allowing you to quickly jump back and forth between opening and
 closing tags.
+</p>
+<p>This key defers to any currently active <code>major-mode</code> which also
+binds it.
 </p>
 <hr>
 <a name="Smart-Mouse-Key-Modeline-Clicks"></a>
@@ -10181,9 +10187,12 @@ is made only if the key is not bound prior to initializing Hyperbole.
 <dt><kbd>{C-c /}</kbd></dt>
 <dd><p>Search the Web: Display a minibuffer menu of web search engines.  Once
 an engine is selected, prompt for a search term and perform the
-associated search.  This binding is made only if the key is not bound
-prior to initializing Hyperbole; otherwise, the Find/Web minibuffer menu
-item, <kbd>{C-h h f w}</kbd>, will do the same thing.
+associated search.
+</p>
+<p>This binding is made only if the key is not bound prior to
+initializing Hyperbole; it also defers to any <code>major-mode</code>
+binding.  When needed, the Find/Web minibuffer menu item, <kbd>{C-h
+h f w}</kbd>, will do the same thing.
 </p>
 <a name="index-C_002dc-_0040"></a>
 <a name="index-key-binding_002c-C_002dc-_0040"></a>
@@ -10197,18 +10206,22 @@ item, <kbd>{C-h h f w}</kbd>, will do the same thing.
 <a name="index-C_002dc-_0040-1"></a>
 </dd>
 <dt><kbd>{C-c @}</kbd></dt>
-<dd><p>Display a grid of windows in the selected frame, sized according to the
-prefix argument.  The left digit of the argument is the number of grid rows
-and the right digit is the number of grid columns.  Use <kbd>{C-h h h}</kbd> to
-restore the prior frame configuration.
+<dd><p>Display a grid of windows in the selected frame, sized according to
+the prefix argument.  The left digit of the argument is the number
+of grid rows and the right digit is the number of grid columns.  Use
+<kbd>{C-h h h}</kbd> to restore the prior frame configuration.
 </p>
-<p>If the argument is 0, prompt for a major mode whose buffers should be
-displayed first in the grid windows, then prompt for the grid size.
+<p>If the argument is 0, prompt for a major mode whose buffers should
+be displayed first in the grid windows, then prompt for the grid
+size.
 </p>
-<p>If the argument is &lt; 0, prompt for a shell glob-type file pattern and display
-files that match the pattern in an auto-sized windows grid.
+<p>If the argument is &lt; 0, prompt for a shell glob-type file pattern
+and display files that match the pattern in an auto-sized windows
+grid.
 </p>
-<p>This binding is made only if the key is not bound prior to initializing Hyperbole.
+<p>This binding is made only if the key is not bound prior to
+initializing Hyperbole; it also defers to any <code>major-mode</code>
+binding and when <code>outline-minor-mode</code> is active.
 </p>
 <p>For further details, see the <kbd>{@}</kbd> key binding description
 in <a href="#HyControl">HyControl</a>.
@@ -10219,11 +10232,12 @@ in <a href="#HyControl">HyControl</a>.
 <dt><kbd>{M-o}</kbd></dt>
 <dd><p>Drag Operation: Keyboard emulation of the start and stop of mouse
 drags to invoke Smart Key actions.  This binding is made only if the
-key is not bound prior to initializing Hyperbole and if Emacs is run under
-a window system.  If the Ace Window package is loaded, then Ace Window
-commands are typically bound to <kbd>{M-o}</kbd> instead.  Then <kbd>{M-o w}</kbd>
-may be used to quickly create an explicit link button in the selected window
-that links to any other window chosen via the Ace Window prompt.
+key is not bound prior to initializing Hyperbole and if Emacs is run
+under a window system.  If the Ace Window package is loaded, then
+Ace Window commands are typically bound to <kbd>{M-o}</kbd> instead.  Then
+<kbd>{M-o w}</kbd> may be used to quickly create an explicit link button
+in the selected window that links to any other window chosen via the
+Ace Window prompt.
 </p>
 <a name="index-key-binding_002c-C_002dh-h"></a>
 <a name="index-C_002dh-h-2"></a>
@@ -10258,17 +10272,22 @@ minibuffer menu and disable Hyperbole minor mode.
 <dd><p>Mark Things: Mark larger and larger syntactical units in a buffer
 when invoked repeatedly, showing in the minibuffer the type of unit
 marked each time.  For example, if on an opening brace at the start of
-a C, Java or Javascript function, this marks the whole function.  This
-binding is made only if the key is not bound prior to initializing
-Hyperbole.
+a C, Java or Javascript function, this marks the whole function.
+</p>
+<p>This binding is made only if the key is not bound prior to
+initializing Hyperbole; it also defers to any <code>major-mode</code>
+binding.
 </p>
 <a name="index-key-binding_002c-C_002dc-_002e"></a>
 <a name="index-C_002dc-_002e-2"></a>
 </dd>
 <dt><kbd>{C-c .}</kbd></dt>
 <dd><p>Delimited Thing Jump: Jump between the start and end of a delimited
-thing, which may be an HTML tag pair.  This binding is made only if
-the key is not bound prior to initializing Hyperbole.  See <a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a>, for more information.
+thing, which may be an HTML tag pair.
+</p>
+<p>This binding is made only if the key is not bound prior to
+initializing Hyperbole; it also defers to any <code>major-mode</code>
+binding.  See <a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a>, for more information.
 </p>
 <a name="index-key-binding_002c-M_002dw"></a>
 <a name="index-mark_002deven_002dif_002dinactive"></a>
@@ -10311,9 +10330,9 @@ to &lsquo;<samp>t</samp>&rsquo; (true) by default in <samp>hyperbole.el</samp>. 
 means all Hyperbole key bindings will be initialized when Hyperbole is
 loaded.  If you want to disable these bindings permanently, simply add
 <code>(setq hkey-init nil)</code> to your <samp>~/.emacs</samp> file prior to the
-point at which you load Hyperbole; then restart Emacs.  Henceforth, you will
-have to choose the Hyperbole commands that you want to use and bind those to
-keys.
+point at which you load Hyperbole; then restart Emacs.  Henceforth,
+you will have to choose the Hyperbole commands that you want to use
+and bind those to keys.
 </p>
 <a name="index-file_002c-_002eemacs-4"></a>
 <a name="index-hyperbole_002dmode-1"></a>
@@ -10344,8 +10363,8 @@ press the Action Key to see the source of the failure.  Full testing is
 supported under POSIX systems only.
 </p>
 <p>With Hyperbole active, you can also define implicit buttons that run
-individual or sets of Hyperbole tests.  The file <samp>hypb-ert.el</samp> contains
-two action link types:
+individual or sets of Hyperbole tests.  The file <samp>hypb-ert.el</samp>
+contains two action link types:
 </p>
 <div class="example">
 <pre class="example"><code>hyperbole-run-test</code>  - run a single Hyperbole test by name

@@ -1,3 +1,21 @@
+2023-11-21  Bob Weiner  <rsw@gnu.org>
+
+* hui-select.el (hui-select-initialize): Fix to set 'syntax-table-sym'
+    and 'keymap-sym' locally within the function rather than globally
+    which would affect modes beyond those in 'hui-select-markup-modes'.
+                (hui-select-goto-matching-delimiter): If the key that
+    invokes this command in hyperbole-minor-mode is also bound in the
+    current major mode map, then interactively invoke that command
+    instead.  Typically prevents clashes over {C-c .}.  Previously
+    did this only for 'org-mode' but 'kotl-mode' also has a conflict
+    that this fixes.
+                (hui-select-thing): Apply the same above fix for
+    {C-c RET}, {C-c C-m}.
+  hui-mini.el (hui-search-web): Apply the same above fix for {C-c /}.
+  hycontrol.el (hycontrol-windows-grid): Apply the same above fix for
+    {C-c @} and fix 'outline-minor-mode' handling as a prefix keymap.
+  HY-NEWS (HYPERBOLE SYSTEM): Document the above fix.
+
 2023-11-19  Bob Weiner  <rsw@gnu.org>
 
 * test/demo-tests.el: Fix a number of these tests to be a bit more
