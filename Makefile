@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:      6-Oct-23 at 00:22:25 by Mats Lidell
+# Last-Mod:     19-Nov-23 at 14:18:10 by Bob Weiner
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -329,7 +329,7 @@ eln: src
 
 tags: TAGS
 TAGS: $(EL_TAGS)
-	$(ETAGS) --regex='/(ert-deftest[ \t]+\([^ \t\n\r\f()]+\) ?/' $(EL_TAGS)
+	$(ETAGS) --regex='{lisp}/(ert-deftest[ \t]+\([^ \t\n\r\f()]+\)/' $(EL_TAGS)
 
 clean:
 	$(RM) hyperbole-autoloads.el kotl/kotl-autoloads.el $(ELC_COMPILE) $(ELC_KOTL) TAGS
@@ -464,6 +464,9 @@ packageclean:
 tests: test
 test: test-ert
 
+# enable-local-variables setting needed so local-variables set in files like
+# FAST-DEMO are automatically obeyed without prompting when testing.
+LET_VARIABLES = (auto-save-default) (enable-local-variables :all)
 LOAD_TEST_ERT_FILES=$(patsubst %,(load-file \"%\"),${TEST_ERT_FILES})
 
 test-ert:
@@ -479,16 +482,16 @@ ifneq (,$(findstring .apple.,$(DISPLAY)))
 	TERM=xterm-256color $(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ((auto-save-default)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"
 else
         # Not found, set TERM so tests will at least run within parent Emacs session
-	TERM=vt100 $(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ((auto-save-default)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"
+	TERM=vt100 $(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ($(LET_VARIABLES)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"
 endif
 else
         # Typical case, run emacs normally
-	$(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ((auto-save-default)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"
+	$(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ($(LET_VARIABLES)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"
 endif
 
 batch-tests: test-all-output
 test-all-output:
-	$(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ((auto-save-default) (ert-quiet t)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t) (with-current-buffer \"*ert*\" (append-to-file (point-min) (point-max) \"ERT-OUTPUT\")) (kill-emacs))"
+	$(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ($(LET_VARIABLES) (ert-quiet t)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t) (with-current-buffer \"*ert*\" (append-to-file (point-min) (point-max) \"ERT-OUTPUT\")) (kill-emacs))"
 	@echo "# Results written to file: ERT-OUTPUT"
 
 # Hyperbole install tests - Verify that hyperbole can be installed

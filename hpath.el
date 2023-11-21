@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     15-Nov-23 at 01:52:26 by Bob Weiner
+;; Last-Mod:     19-Nov-23 at 18:56:31 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1242,11 +1242,14 @@ only if it exists, otherwise, return nil."
 
 (defun hpath:expand-list (paths match-regexp &optional exists-flag)
   "Return expansions of PATHS, a list of dirs or wildcarded file patterns.
-PATHS expansion filters out non-strings, expands file wildcards,
-substitutes up to one ${variable} per path, and recursively walks
-directory trees for files with MATCH-REGEXP."
+PATHS expansion filters out non-strings, expand file wildcards
+when `find-file-wildcards' is non-nil (the default), substitute
+up to one ${variable} per path, and recursively walk directory
+trees for files with MATCH-REGEXP."
   (mapcan (lambda (path)
-	    (when (setq path (or (file-expand-wildcards path) (list path)))
+	    (when (setq path (or (when find-file-wildcards
+				   (file-expand-wildcards path))
+				 (list path)))
 	      (if (= (length path) 1)
 		  (setq path (car path))
 		(setq paths (nconc (cdr path) paths)

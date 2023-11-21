@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     30-Oct-23 at 02:02:21 by Bob Weiner
+;; Last-Mod:     20-Nov-23 at 02:06:48 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -678,9 +678,12 @@ Use `hpath:display-buffer' to show definition or documentation."
 	   (cond ((fboundp tag-sym) (describe-function tag-sym))
 		 ((and tag-sym (boundp tag-sym)) (describe-variable tag-sym))
 		 ((facep tag-sym) (describe-face tag-sym))
-		 ;; (t (error "(smart-lisp): `%s' unbound symbol definition not found" tag))
+		 (tag-sym
+		  ;; Handles ert test definitions, as one example.
+		  (describe-symbol tag-sym))
 		 ;; Ignore unbound symbols if displaying doc.
 		 (t nil)))
+
 	  ((and elisp-flag (fboundp 'find-function-noselect)
 		(let ((result (smart-lisp-bound-symbol-def tag-sym)))
 		  (when (and (cdr result)
@@ -688,17 +691,33 @@ Use `hpath:display-buffer' to show definition or documentation."
 		    (widen)
 		    (goto-char (cdr result))
 		    t))))
-	  ;; If elisp-flag is true, then make xref use `smart-emacs-tags-file'.
-	  ;; Otherwise, just use standard xref backends for the current language.
-	  (t (condition-case ()
-		 ;; Tag of any language
-		 (when (featurep 'etags)
-		   (smart-tags-display tag show-doc))
-	       (error (unless (and elisp-flag (stringp smart-emacs-tags-file)
-				   (ignore-errors
-				     (smart-tags-display
-				      tag show-doc (list smart-emacs-tags-file))))
-			(error "(smart-lisp): No definition found for `%s'" tag))))))))
+
+	  ;; If elisp-flag is true and tag-sym is a bound ert test
+	  ;; symbol, then make xref use tags tables rather than its
+	  ;; elisp backend since that does not support ert test
+	  ;; symbols.  Otherwise, use standard xref backends for the
+	  ;; current language.
+	  (t (let ((etags-mode (and elisp-flag
+				    (fboundp 'ert-test-boundp)
+				    (ert-test-boundp tag-sym)
+				    (boundp 'xref-etags-mode)
+				    xref-etags-mode)))
+	       (unwind-protect
+		   (progn
+		     (and (not etags-mode) elisp-flag (fboundp 'xref-etags-mode)
+			  (xref-etags-mode 1))
+		     (condition-case ()
+			 ;; Tag of any language
+			 (when (featurep 'etags)
+			   (smart-tags-display tag show-doc))
+		       (error (unless (and elisp-flag (stringp smart-emacs-tags-file)
+					   (condition-case ()
+					       (smart-tags-display
+						tag show-doc (list smart-emacs-tags-file))
+					     (error nil)))
+				(error "(smart-lisp): No definition found for `%s'" tag)))))
+		 (and (not etags-mode) elisp-flag (fboundp 'xref-etags-mode)
+		      (xref-etags-mode 0))))))))
 
 (defun smart-lisp-at-definition-p ()
   "Return non-nil if point is on the first line of a non-alias Lisp definition.
@@ -707,7 +726,7 @@ Apply only to non-help buffers and return nil in others."
       (save-excursion
 	(beginning-of-line)
 	;; Exclude any define- lines.
-	(and (looking-at "\\(;*[ \t]*\\)?(def[[:alnum:]]+[[:space:]]")
+	(and (looking-at "\\(;*[ \t]*\\)?(\\(ert-\\)?def[[:alnum:]]+[[:space:]]")
 	     ;; Ignore alias definitions since those typically have symbol tags to lookup.
 	     (not (looking-at "\\(;*[ \t]*\\)?(def[^ \t\n\r]*alias"))
 	     ;; Ignore lines that start with (default
@@ -1155,7 +1174,9 @@ known Emacs Lisp identifier."
     (setq hkey-value (smart-lisp-at-tag-p t))
     (let* ((tag hkey-value)
 	   (tag-sym (intern-soft tag)))
-      (cond ((when (and (fboundp 'find-function-noselect) tag-sym)
+      (cond ((and (fboundp 'ert-test-boundp) (ert-test-boundp tag-sym))
+	     tag)
+	    ((when (and (fboundp 'find-function-noselect) tag-sym)
 	       (let ((result (smart-lisp-bound-symbol-def tag-sym)))
 		 (when (cdr result)
 		   tag))))
@@ -1174,8 +1195,7 @@ variable or face."
 
 (defun smart-tags-find-p (tag)
   "Return non-nil if TAG is found within a tags table, else nil."
-  (let* ((tags-table-list (or (and (boundp 'tags-table-list) tags-table-list)
-			      (smart-tags-file-list)))
+  (let* ((tags-table-list (smart-entire-tags-table-list))
 	 (func (smart-tags-noselect-function))
 	 (tags-file-name (if tags-table-list
 			     nil
@@ -1374,13 +1394,20 @@ See the \"${hyperb:dir}/smart-clib-sym\" script for more information."
       (kill-buffer buf)
       found)))
 
+(defun smart-entire-tags-table-list ()
+  "Return entire smart `tags-table-list' which includes `(smart-tags-file-list)."
+  (or (and (boundp 'tags-table-list)
+	   (not (smart-tags-org-src-block-p))
+	   (progn (mapc (lambda (tags-table)
+			  (add-to-list 'tags-table-list tags-table))
+			(smart-tags-file-list))
+		  tags-table-list))
+      (smart-tags-file-list)))
+
 (defun smart-tags-display (tag next &optional list-of-tags-tables)
   (when next (setq tag nil))
   (let* ((tags-table-list (or list-of-tags-tables
-			      (and (boundp 'tags-table-list)
-				   (not (smart-tags-org-src-block-p))
-				   (nconc (smart-tags-file-list) tags-table-list))
-			      (smart-tags-file-list)))
+			      (smart-entire-tags-table-list)))
 	 ;; Identifier searches should almost always be case-sensitive today
 	 (tags-case-fold-search nil)
 	 (func (smart-tags-noselect-function))

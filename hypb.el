@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:      8-Nov-23 at 06:01:04 by Bob Weiner
+;; Last-Mod:     20-Nov-23 at 00:49:09 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1025,17 +1025,17 @@ If FILE is not an absolute path, expand it relative to `hyperb:dir'."
     ;; A stub for this function is defined in hversion.el when not running in InfoDock.
     (id-browse-file file)
     (unless existing-buf
-      (hypb:insert-hyperbole-banner)
+      (let ((buffer-read-only))
+	(hypb:insert-hyperbole-banner))
       (goto-char (point-min))
       (skip-syntax-forward "-")
       (set-window-start (selected-window) 1)
       (set-buffer-modified-p nil)
-      ;; (org-mode)
       (view-mode)
       ;; On some versions of Emacs like Emacs28, need a slight delay
       ;; for file loading before searches will work properly.
       ;; Otherwise, "test/demo-tests.el" may fail.
-      (sit-for 0.05))))
+      (sit-for 0.10))))
 
 (defun hypb:browse-home-page ()
   "Visit the web home page for Hyperbole."

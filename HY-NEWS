@@ -31,6 +31,10 @@
 
 ** DOCUMENTATION
 
+  *** Hyperbole Concepts: New writeup in Koutline format for those who
+      want a quick read about how Hyperbole concepts all interrelate.
+      View it with {C-h h d c}.
+
   *** Action Types: Added newer types and updated existing doc summaries
       in the Hyperbole manual.  See "(hyperbole)Action Types".
 
@@ -46,14 +50,10 @@
         - Build a Zettelkasten with HyRolo: The video is at
           "https://emacsconf.org/2022/talks/rolodex/".
 
-  *** Hyperbole Concepts: New writeup in Koutline format for those who
-      want a quick read about how Hyperbole concepts all interrelate.
-      View it with {C-h h d c}.
-
-  *** Doc Viewing: Updated to display many files from the Doc> menu in Org
-      mode and view minor mode, so can expand and collapse entries to view
-      just the sections of interest.  This includes DEMO, FAST-DEMO, HY-ABOUT,
-      HY-NEWS and MANIFEST.
+  *** Doc Viewing: Updated to display many files from the Doc> menu in view
+      minor mode, so can expand and collapse entries to view just the
+      sections of interest.  This includes DEMO, FAST-DEMO, HY-ABOUT,
+      HY-NEWS and the Hyperbole Files MANIFEST.
 
   *** New Menu Key Doc: Documented these Hyperbole minibuffer menu keys:
 
@@ -64,17 +64,22 @@
           entry/exit commands".
 
   *** Extensive 150-page Reference Manual: Includes multiple indexes for easy
-      cross-referencing, Info viewer version and PDF for printing.  Some of
-      the updates include:
+      cross-referencing, Info viewer version and PDF for printing. View it:
+
+        - with the Emacs Info reader: {C-h h d i}.
+        - locally with a web browser: <browse-url "man/hyperbole.html">
+        - in pdf form:                "man/hyperbole.pdf".
+
+      Some of the updates include:
+
+  **** Ibut Menu: Documented in the manual, notably the new Ibut/Create menu
+       item.  See "(hyperbole)menu, Ibut/Create".  For the Ibut/Link menu
+       item, see "(hyperbole)menu, Ibut/Link".
 
   **** Link Menu Items: With two windows on screen, link from source window
        point to referent window point.  Do a similar thing when more windows
        are on screen via an Action Mouse Key drag between windows.  See
        "(hyperbole)Smart Mouse Drags between Windows".
-
-  **** Ibut Menu: Documented in the manual, notably the new Ibut/Create menu
-       item.  See "(hyperbole)menu, Ibut/Create".  For the Ibut/Link menu
-       item, see "(hyperbole)menu, Ibut/Link".
 
   **** Manual Glossary: Added Ace Window, Consult, Org Mode, and Org Roam
        entries.  See "(hyperbole)Glossary".
@@ -115,6 +120,11 @@
   *** Create Buttons in Current Buffer: Stopped prompting for a source
       buffer when creating a Hyperbole button.  Always use the current
       buffer and point.  See "(hyperbole)Creation".
+
+  *** Hyperbole Keys Defer to Current Modes: Hyperbole bindings of {C-c RET},
+      {C-c .}, {C-c @}, and {C-c /} defer to any major mode, like org-mode,
+      outline-mode or kotl-mode that binds them to other commands.  This also
+      works for outline-minor-mode.
 
   *** Improved Button Help: {C-h A} now says whether a button is explicit or
       implicit.  For implicit buttons, it displays the doc from both its
@@ -158,19 +168,20 @@
       just like it does for Org and Emacs outline files.  See
       "(hyperbole)HyRolo Concepts".
 
-  *** hyrolo-file-list Support for Dirs, File Wildcards and Variables:
+  *** hyrolo-file-list Support for File Wildcards, Variables and Dirs:
 
-      If you include an existing directory (invalid ones are ignored) in your
-      hyrolo list, hyrolo will search recursively across all of its files
-      that match `hyrolo-file-suffix-regexp'.  See `hpath.el#hpath:expand-list'.
-
-      If you include file wildcards in pathnames, they will be expanded into
-      matching files internally by HyRolo.  See "(emacs)Wildcards".
+      If you include file wildcards in pathnames and `find-file-wildcards' is
+      non-nil (the default), they will be expanded into matching files
+      internally by HyRolo.  See "(emacs)Wildcards".
 
       If you include an Environment variable or Emacs Lisp variable with the
       ${var} format in a path, it will be resolved prior to searching the path.
       Variables with values that include multiple paths, e.g. PATH, are resolved
       to the first existing entry that matches.  See "(hyperbole)pathname".
+
+      If you include an existing directory (invalid ones are ignored) in your
+      hyrolo list, hyrolo will search recursively across all of its files
+      that match `hyrolo-file-suffix-regexp'.  See `hpath.el#hpath:expand-list'.
 
   *** HyRolo Match Buffer Key Bindings: Improved movement keys:
 
@@ -184,9 +195,9 @@
 
       See "(hyperbole)HyRolo Keys".
 
-  *** Koutline Fast Search: Koutlines may now be included in
-      `hyrolo-file-list' and individual cells extracted properly with any
-      HyRolo query.  Then the interactive commands:
+  *** Koutline Fast Search: Koutlines may now be included in `hyrolo-file-list'
+      and individual cells extracted properly with any HyRolo query.  Then the
+      interactive commands:
 
         {t} show the top-level matches
         {o} show an outline of matches
@@ -298,6 +309,9 @@
   *** {M-S-<left>} and {M-S-<right>}: Org compatibility - Add tree promote and
       demote commands to these keys (same as existing {M-<left>} and
       {M-<right>} keys).  See "(hyperbole)Promoting and Demoting".
+
+  *** {C-c s} Deletes Surrounding Whitespace: When a cell is split, it now deletes
+      surrounding whitespace before performing the split.
 
   *** Star Outline Import Indented Headings: Added support for Emacs/Org
       star-based headings whose stars do not start at the beginning of a line,
@@ -513,8 +527,9 @@
 
   *** (hpath:expand-list): Added to expand paths, filtering final list
       to files with match-regexp.  Paths expansion substitutes up to one
-      ${variable} per path, expands file wildcards and recursively walks
-      directory trees for files with match-regexp.
+      ${variable} per path, expands file wildcards when 'find-file-wildcards'
+      is non-nil (the default),  and recursively walks directory trees for files
+      with match-regexp.
 
   *** (hyrolo-map-level, hyrolo-sort-level): Remove 'hyrolo-file' arg
       since had already been using current buffer instead.
@@ -593,7 +608,7 @@
   *** {C-c /}: The Hyperbole {C-c /} web search binding defers to the org-mode
       binding, `org-show-todo-tree', when in Org mode, but uses the improved
       Hyperbole command version, `hsys-org-todo-occur', which allows filtering
-      to spec"ific todo states.
+      to specific todo states.
 
 
 ** SMART (ACTION AND ASSIST) KEYS  (See "(hyperbole)Smart Keys").
@@ -656,6 +671,13 @@
   *** The Hyperbole team's CI/CD process automatically runs all test cases
       against Emacs major versions 27, 28 and 29 and the current master
       branch tip whenever a Hyperbole code change is checked in against git.
+
+  *** ERT Test Case Symbols Jump to Definition: In Elisp and Lisp interaction
+      buffers, the Action Key jumps to the definition of any such symbol while
+      the Assist Key displays the symbol's documentation.  This requires that
+      a TAGS table be built in the project root directory with the following
+      etags command-line option:
+         etags --regex={lisp}'/(ert-deftest[ \t]+\([^ \t\n\r\f()]+\)/' <src-files>
 
   *** QA: Many quality improvements across Hyperbole and integration with
       Emacs updates with backward compatibility from Emacs 27 through Emacs

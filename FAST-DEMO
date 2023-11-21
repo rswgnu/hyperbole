@@ -1,9 +1,13 @@
+;;; -*- Mode: org; org-cycle-global-at-bob: t; hsys-org-enable-smart-keys: t -*-
+
 * GNU Hyperbole Fast Demo by Bob Weiner
 
   Send an email or a testimonial if you like Hyperbole to <rsw@gnu.org>.
 
   This demo is the fast way to get started with Hyperbole after installation.
   The prior, lengthier Hyperbole demo/tutorial can be found in this file: "DEMO".
+  For a non-interactive introduction to Hyperbole concepts, see "HY-CONCEPTS.kotl".
+
 
 * Introductory Videos
 
@@ -113,12 +117,23 @@
   You can simply type implicit buttons into a buffer or you can use {C-h h i
   c} to create them and give them names.  To create an implicit link button
   from a buffer in one window to another, simply depress the Assist Mouse
-  Key where you want the new button (but not within a draggable item), drag
-  to a point in another Emacs window and release.  An implicit link button
-  of an appropriate type for the release context will be inserted at the
-  original depress point.
+  Key (not the Action Mouse Key) where you want the new button (but not
+  within a draggable item), drag to a point in another Emacs window and
+  release.  An implicit link button of an appropriate type for the release
+  context will be inserted at the original depress point.
 
-* Pathname Implicit Buttons
+  If you have exactly two Emacs windows in your current frame or exactly two
+  windows visible across two Emacs frames, there is an even simpler way to
+  create implicit links.  Use the Link menu item, {C-h h i l}, to create a
+  new unnamed implicit link button or to edit the one at point.  {C-u C-h h
+  i l} will additionally prompt to add a name or rename the button at
+  point.  With more than two windows, Hyperbole will prompt you to choose
+  the referent window and its associated point to which to link.  If the Ace
+  Window package is installed and active, this will be used to choose the
+  window; otherwise, you will be prompted to select it by mouse.
+
+
+** Pathname Implicit Buttons
 
     "HY-NEWS#ORG MODE:2:6"   - outline section anchor & relative line number
 
@@ -164,7 +179,7 @@
        be more Info links below.
 
 
-* Key Series Implicit Buttons
+** Key Series Implicit Buttons
 
     A key series is an arbitrary length set of Emacs keystrokes surrounded by
     braces, like a visual keyboard macro.  RET, SPC and ESC are translated
@@ -215,7 +230,7 @@
        Buffer list of directory buffers only
 
 
-* Posix/Linux Shell Command Implicit Buttons
+** Posix/Linux Shell Command Implicit Buttons
 
     Some of the below commands require recursive use of the minibuffer, so let's
     ensure that is enabled:
@@ -252,20 +267,20 @@
        command.
 
 
-* Grep Messages, Stack Traces, Man Page Apropos Implicit Buttons
+** Grep Messages, Stack Traces, Man Page Apropos Implicit Buttons
 
   These implicit buttons typically appear in shell buffers.  You issue a
   shell command and then use {M-RET} or SHIFT-MIDDLE-MOUSE on the output
   lines of the command to display the associated reference.
 
-** grep -n gbut:label-list *.el
+*** grep -n gbut:label-list *.el
 hactypes.el:454:					      (mapcar #'list (gbut:label-list))
 hbut.el:605:				       (mapcar #'list (gbut:label-list))
 
        An Action Key press anywhere on the text of the two above output lines
        from a grep -n or a ripgrep command jumps to the referenced line.
 
-** python topwin.py
+*** python topwin.py
 Traceback (most recent call last):
   File "topwin.py", line 18, in <module>
     import Quartz
@@ -274,7 +289,7 @@ Traceback (most recent call last):
        the source of the error.  You can jump into any stack frame this way
        when debugging from pretty much any language, even in a regular shell.
 
-** man -k spell
+*** man -k spell
 aspell(1)                - interactive spell checker
 aspell-import(1)         - import old personal dictionaries into GNU Aspell
 pspell-config(1)         - prints information about a libpspell installation
@@ -283,7 +298,7 @@ pspell-config(1)         - prints information about a libpspell installation
        the associated man documentation page.
 
 
-* Action Buttons
+** Action Buttons
 
   These are a generalized form of implicit buttons.
 
@@ -314,7 +329,7 @@ pspell-config(1)         - prints information about a libpspell installation
        cell clipped to 2.
 
 
-* Many More Implicit Button Types to Learn Across Time
+** Many More Implicit Button Types to Learn Across Time
 
   Activate this button, <emacs-lisp-mode>, to set this buffer into Emacs Lisp
   mode.  Then an Action Key press on each of the implicit button types below
@@ -362,8 +377,11 @@ learn how to create new kinds of implicit button and action types, see:
     hyperbuttons, there is no markup language to learn nor specific document
     format required.  You can create explicit buttons with simple keyboard
     presses or mouse drags from one window to another (when not on a draggable
-    item).  See the {C-h h e} menu for explicit button commands.  See
-    "DEMO#Explicit Buttons" or "(hyperbole)Explicit Buttons" for more detail.
+    item).  See the {C-h h e} menu for explicit button commands.
+    {C-h h e c} creates an explicit button and {C-h h e l} creates an explicit
+    link button between two windows, just like their counterparts for implicit
+    butons.  See "DEMO#Explicit Buttons" or "(hyperbole)Explicit Buttons" for
+    more detail.
 
     `Global buttons' are labeled Hyperbole buttons in your personal button
     file, {C-h h b p}.  All global buttons are activated by name with
@@ -415,7 +433,10 @@ learn how to create new kinds of implicit button and action types, see:
 * Reference Documentation
 
   As noted at the start, "DEMO" provides a more extensive, interactive look
-  into Hyperbole.
+  into Hyperbole, {C-h h d d}.
+
+  For a quick, non-interactive introduction to Hyperbole concepts, use
+  "HY-CONCEPTS.kotl" available with {C-h h d c}.
 
   For those who want the deepest knowledge of Hyperbole, there is the long
   Hyperbole reference manual that you can read in sections.  This covers in
@@ -429,4 +450,3 @@ learn how to create new kinds of implicit button and action types, see:
     "man/hyperbole.html"   - web HTML version
     "man/hyperbole.pdf"    - printable version
     "man/hyperbole.texi"   - source form
-

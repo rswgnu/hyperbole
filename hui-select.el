@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     22-Oct-23 at 17:26:49 by Mats Lidell
+;; Last-Mod:     21-Nov-23 at 02:41:17 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -109,8 +109,8 @@
 
 (require 'hvar)
 (eval-when-compile
-  (require 'mhtml-mode) ;; for MHTML mode
-  (require 'sgml-mode)  ;; for HTML mode
+  (require 'mhtml-mode) ;; for MHTML and HTML modes
+  (require 'sgml-mode)  ;; for SGML mode
   (require 'nxml-mode)  ;; for XML mode
   (require 'web-mode nil t))
 
@@ -245,9 +245,7 @@ Used to include a final line when marking indented code.")
 (defvar hkey-init)                      ; "hyperbole.el"
 (defvar hkey-value)                     ; "hui-mouse.el"
 (defvar hyperbole-mode-map)             ; "hyperbole.el"
-(defvar keymap-sym)                     ; "???"
 (defvar org-mode-map)                   ; "org.el"
-(defvar syntax-table-sym)               ; "???"
 
 (declare-function kview:valid-position-p "kotl/kview")
 (declare-function hkey-set-key "hyperbole")
@@ -353,19 +351,27 @@ returned is the function to call to select that syntactic unit."
 
 ;;;###autoload
 (defun hui-select-goto-matching-delimiter ()
-  "Jump back and forth between the start and end delimiters of a thing."
+  "Jump back and forth between the start and end delimiters of a thing.
+
+If the key that invokes this command in `hyperbole-minor-mode' is
+also bound in the current major mode map, then interactively
+invoke that command instead.  Typically prevents clashes over
+{C-c .}."
   (interactive)
   (if (memq major-mode hui-select-markup-modes)
       (hui-select-goto-matching-tag)
     (let* ((key (hypb:cmd-key-vector #'hui-select-goto-matching-delimiter
 				     hyperbole-mode-map))
-	   (org-key-cmd (and (derived-mode-p 'org-mode)
-			     (called-interactively-p 'any)
-			     (equal (this-single-command-keys) key)
-			     (lookup-key org-mode-map key))))
-      (cond (org-key-cmd
-	     ;; Prevent a conflict with {C-c .} binding in Org mode
-	     (call-interactively org-key-cmd))
+	   (major-mode-binding (lookup-key (current-local-map) key))
+	   (this-key-flag (and (called-interactively-p 'any)
+			       (equal (this-single-command-keys) key))))
+      (cond ((and major-mode-binding (not (integerp major-mode-binding))
+		  this-key-flag)
+	     ;; If the key that invokes this command in `hyperbole-minor-mode'
+	     ;; is also bound in the current major mode map, then
+	     ;; interactively invoke that command instead.  Typically
+	     ;; prevents clashes over {C-c .}.
+	     (call-interactively major-mode-binding))
 	    ((and (preceding-char) (or (= ?\) (char-syntax (preceding-char)))
 				       (= ?\" (preceding-char))))
 	     (backward-sexp))
@@ -411,7 +417,10 @@ Also, add language-specific syntax setups to aid in thing selection."
   ;;
   ;; Make tag begin and end delimiters act like grouping characters,
   ;; for easy syntactical selection of tags.
-  (let (hook-sym mode-str)
+  (let (hook-sym
+	mode-str
+	syntax-table-sym
+	keymap-sym)
     (mapc (lambda (mode)
             (setq mode-str (symbol-name mode)
                   hook-sym (intern (concat mode-str "-hook"))
@@ -457,7 +466,12 @@ Also, add language-specific syntax setups to aid in thing selection."
   "Select a region based on the syntax of the thing at point.
 If invoked repeatedly, this selects bigger and bigger things.
 If `hui-select-display-type' is non-nil and this is called
-interactively, the type of selection is displayed in the minibuffer."
+interactively, the type of selection is displayed in the minibuffer.
+
+If the key that invokes this command in `hyperbole-minor-mode' is
+also bound in the current major mode map, then interactively
+invoke that command instead.  Typically prevents clashes over
+{C-c RET}, {C-c C-m}."
   (interactive
    (cond ((and (fboundp 'use-region-p) (use-region-p))
 	  nil)
@@ -468,13 +482,16 @@ interactively, the type of selection is displayed in the minibuffer."
 	  (hui-select-reset)
 	  nil)))
   (let* ((key (hypb:cmd-key-vector #'hui-select-thing hyperbole-mode-map))
-	 (org-key-cmd (and (derived-mode-p 'org-mode)
-			   (called-interactively-p 'any)
-			   (equal (this-single-command-keys) key)
-			   (lookup-key org-mode-map key))))
-    (cond (org-key-cmd
-	   ;; Prevent a conflict with {C-c RET} binding in Org mode
-	   (call-interactively org-key-cmd))
+	 (major-mode-binding (lookup-key (current-local-map) key))
+	 (this-key-flag (and (called-interactively-p 'any)
+			     (equal (this-single-command-keys) key))))
+    (cond ((and major-mode-binding (not (integerp major-mode-binding))
+		this-key-flag)
+	   ;; If the key that invokes this command in `hyperbole-minor-mode'
+	   ;; is also bound in the current major mode map, then
+	   ;; interactively invoke that command instead.  Typically
+	   ;; prevents clashes over {C-c RET}, {C-c C-m}.
+	   (call-interactively major-mode-binding))
 	  ;;
 	  ;; No key conflicts, perform normal Hyperbole operation
 	  (t (let ((region (hui-select-get-region-boundaries)))

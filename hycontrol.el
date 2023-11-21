@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:     11-Nov-23 at 11:27:25 by Bob Weiner
+;; Last-Mod:     21-Nov-23 at 03:01:07 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1615,10 +1615,10 @@ buffers by major-mode, then ignore any marked items."
 ;;; column count, displaying different buffers in each window.
 ;;;###autoload
 (defun hycontrol-windows-grid (arg)
-  "Display a grid of windows in the selected frame, sized according to prefix ARG.
-Left digit of ARG is the number of grid rows and the right digit is
-the number of grid columns.  Use {C-h h h} to restore the prior frame
-configuration after a grid is displayed.
+  "Display a grid of windows in the selected frame, sized to prefix ARG.
+Left digit of ARG is the number of grid rows and the right digit
+is the number of grid columns.  Use {C-h h h} to restore the
+prior frame configuration after a grid is displayed.
 
 If ARG is 0, prompt for a major mode whose buffers should be
 displayed in the grid windows, then prompt for the grid size.
@@ -1628,50 +1628,65 @@ files that match the pattern in an abs(ARG) sized windows grid
 or an autosized one if the ARG value is invalid.
 
 Otherwise, prompt for the grid size if ARG is an invalid size
-(positive and more than two digits).
+\(positive and more than two digits).
 
 With a current buffer in Dired, Buffer Menu or IBuffer mode that
 contains marked items, the buffers associated with those items
 are displayed in the grid (unless ARG is 0).
 
-By default, the most recently used buffers are displayed in each window,
-first selecting only those buffers which match any of the
+By default, the most recently used buffers are displayed in each
+window, first selecting only those buffers which match any of the
 predicate expressions in `hycontrol-display-buffer-predicate-list'.
 \(The default predicate list chooses buffers with attached files).
 Then, if there are not enough buffers for all windows, the buffers
-that failed to match to any predicate are used.  In all cases, buffers
-whose names start with a space are ignored.
+that failed to match to any predicate are used.  In all cases,
+buffers whose names start with a space are ignored.
 
-When done, this resets the persistent HyControl prefix argument to 1
-to prevent following commands from using the often large grid size
-argument."
-  (interactive "p")
-  (let* ((key (hypb:cmd-key-vector #'hycontrol-windows-grid hyperbole-mode-map))
-	 (this-key-flag (and (called-interactively-p 'interactive)
-			     (equal (this-single-command-keys) key))))
-    (cond ((and this-key-flag (derived-mode-p 'org-mode)
-		(lookup-key org-mode-map key))
-	   ;; Prevent a conflict with binding in Org mode
-	   (call-interactively (lookup-key org-mode-map key)))
-	  ((and this-key-flag (derived-mode-p 'outline-mode)
-		(lookup-key outline-mode-map key))
-	   ;; Prevent a conflict with binding in Outline mode
-	   (call-interactively (lookup-key outline-mode-map key)))
-	  ((and this-key-flag (boundp 'outline-minor-mode)
-		outline-minor-mode (lookup-key outline-minor-mode-map key))
-	   ;; Prevent a conflict with binding in Outline minor mode
-	   (call-interactively (lookup-key outline-minor-mode-map key)))
-	  ;;
-	  ;; No key conflicts, display window grid
-	  (t (setq arg (prefix-numeric-value (or arg current-prefix-arg)))
-	     (cond ((> arg 0)
-		    (hycontrol-make-windows-grid arg))
-		   ((< arg 0)
-		    (setq current-prefix-arg (abs arg))
-		    (call-interactively #'hycontrol-windows-grid-by-file-pattern))
-		   (t
-		    (setq current-prefix-arg 0)
-		    (call-interactively #'hycontrol-windows-grid-by-major-mode)))))))
+When done, this resets the persistent HyControl prefix argument to
+1 to prevent following commands from using the often large grid size
+argument.
+
+If the key that invokes this command in `hyperbole-minor-mode' is also
+bound in the current major mode map, then interactively invoke that
+command instead.  Typically prevents clashes over {C-c @}."
+  (interactive "P")
+  (let ((numeric-arg (prefix-numeric-value current-prefix-arg)))
+    (if (or (<= numeric-arg 0) (> numeric-arg 11))
+	;; Very unlikely other mode commands could use prefix arg in
+	;; this range, so ignore other key bindings.
+	(hycontrol--windows-grid-internal arg)
+      (let* ((key (hypb:cmd-key-vector #'hycontrol-windows-grid hyperbole-mode-map))
+	     (mode-binding (lookup-key (current-local-map) key))
+	     (this-key-flag (and (called-interactively-p 'interactive)
+				 (equal (this-single-command-keys) key))))
+	(cond ((and mode-binding (not (integerp mode-binding))
+		    this-key-flag (if (eq major-mode #'outline-mode) (not arg) t))
+	       ;; If the key that invokes this command in `hyperbole-minor-mode'
+	       ;; is also bound in the current major mode map, then
+	       ;; interactively invoke that command instead.  Typically
+	       ;; prevents clashes over {C-c @}.
+	       (call-interactively mode-binding))
+	      ((and (not arg) this-key-flag
+		    (boundp 'outline-minor-mode) outline-minor-mode
+		    (setq mode-binding (lookup-key outline-minor-mode-map key))
+		    (not (integerp mode-binding))
+		    (keymapp mode-binding))
+	       ;; Prevent a conflict with keymap binding in Outline minor mode
+	       (kbd-key:key-series-to-events key))
+	      ;;
+	      ;; No key conflicts, display window grid
+	      (t (hycontrol--windows-grid-internal arg)))))))
+
+(defun hycontrol--windows-grid-internal (arg)
+  (setq arg (prefix-numeric-value (or arg current-prefix-arg)))
+  (cond ((> arg 0)
+	 (hycontrol-make-windows-grid arg))
+	((< arg 0)
+	 (setq current-prefix-arg (abs arg))
+	 (call-interactively #'hycontrol-windows-grid-by-file-pattern))
+	(t
+	 (setq current-prefix-arg 0)
+	 (call-interactively #'hycontrol-windows-grid-by-major-mode))))
 
 (defun hycontrol-windows-grid-validate (arg)
   "Return the closest valid windows grid size from the two digit numeric abs(ARG).
@@ -1762,13 +1777,18 @@ grid size to the closest valid size."
   (let* ((find-file-wildcards t)
 	 (files (file-expand-wildcards pattern full-flag))
 	 (num-files (length files))
-	 (grid-size (if arg
-			(hycontrol-windows-grid-validate arg)
-		      (hycontrol-windows-grid-minimum-size num-files)))
-	 (num-windows (hycontrol-windows-grid-number-of-windows (or arg grid-size)))
-	 (max-files (min num-files num-windows)))
+	 grid-size
+	 num-windows
+	 max-files)
     (when (zerop num-files)
       (error "(hycontrol-windows-grid-by-file-pattern): '%s' pattern did not match any files" pattern))
+    (setq grid-size (if arg
+			(hycontrol-windows-grid-validate arg)
+		      (hycontrol-windows-grid-minimum-size num-files)))
+    (when (zerop grid-size)
+      (error "(hycontrol-windows-grid-by-file-pattern): '%s' pattern produced invalid zero window grid size" pattern))
+    (setq num-windows (hycontrol-windows-grid-number-of-windows (or arg grid-size))
+	  max-files (min num-files num-windows))
     (when (> num-files max-files)
       ;; Cut off list at max-files items
       (setq files (cl-loop repeat max-files for files in files collect files)))

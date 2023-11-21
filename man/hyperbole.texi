@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:      5-Nov-23 at 17:10:22 by Bob Weiner
+@c Last-Mod:     21-Nov-23 at 03:27:45 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.1pre
-Printed November 5, 2023.
+Printed November 21, 2023.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.1pre
-Novemeber 5, 2023
+November 21, 2023
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -1395,6 +1395,9 @@ the same or lesser indentation).  Use @bkbd{C-g} to unmark the region when
 done.  Use, @code{hui-select-thing-with-mouse} if you want to bind this to
 a different mouse key to use single clicks instead of double clicks.
 
+This key defers to any currently active @code{major-mode} which also
+binds it.
+
 @kindex C-c .
 @findex hui-select-goto-matching-tag
 The second convenience key is bound in HTML/XML/SGML/web
@@ -1404,6 +1407,9 @@ the tag paired with the closest tag that point is within or which it
 precedes.  A second press moves point to the matching tag of the pair,
 allowing you to quickly jump back and forth between opening and
 closing tags.
+
+This key defers to any currently active @code{major-mode} which also
+binds it.
 
 @node Smart Mouse Key Modeline Clicks, Smart Mouse Key Drags, Smart Key Thing Selection, Smart Keys
 @section   Smart Mouse Key Modeline Clicks
@@ -2779,10 +2785,10 @@ whose names begin with a ` ' or `*' character.
 @item mail-address
 If on an e-mail address in a specific buffer type, compose mail to that
 address in another window. Applies to any major mode descended from those
-in @code{hypb:mail-address-mode-list}, the rolo match buffer, any buffer
-attached to a file in @code{hyrolo-file-list}, or any buffer with
+in @code{hypb:mail-address-mode-list}, the HyRolo match buffer, any buffer
+attached to a file included in @code{hyrolo-file-list}, or any buffer with
 @file{mail} or @file{rolo} (case-insensitive) within its name.  If
-@code{hypb:mail-address-mode-list} is set to nil, this button type is
+@code{hypb:mail-address-mode-list} is set to @samp{nil}, this button type is
 active in all buffers.
 
 @findex ibtypes www-url
@@ -5687,7 +5693,7 @@ There are three forms of klinks:
 @table @emph
 @cindex internal klink
 @cindex klink, internal
-@cindex <@@ klink>
+@cindex <#klink>
 @item internal
 @samp{<#2b=06>} is an internal klink, since it refers to the koutline
 in which it is embedded.  When activated, it jumps to the cell within
@@ -5759,7 +5765,7 @@ copy the region as it does normally in Emacs.
 @cindex klink, to/from Emacs register
 @cindex register, klinks
 @findex kotl-mode:copy-absolute-klink-to-register
-Similarly, you can copy to an Emacs register rather than the kill ring.
+Similarly, you can copy to an Emacs register rather than to the kill ring.
 When no region is active/highlighted, @bkbd{C-x r s} prompts for an Emacs
 register and saves to it either the current klink or, when outside of a
 klink, a reference to the current cell.  @bkbd{M-x
@@ -5775,8 +5781,8 @@ region instead.
 @findex kotl-mode:copy-absolute-klink-to-register
 @findex kotl-mode:copy-relative-klink-to-register
 @cindex cell reference, copying
-There are also commands not bound to keys that always copy a klink reference
-to the current cell:
+There are also commands without any builtin key bindings that always
+copy a klink reference to the current cell:
 @example
 @group
 kotl-mode:copy-absolute-klink-to-kill-ring
@@ -6092,12 +6098,12 @@ The 'File' menu item displays and edits the first file listed in
 @code{hyrolo-file-list} unless given a prefix argument, in which case
 it prompts with completion for the file to edit.
 
-A prefix argument used with any of the above menu items with 'Find' in
-their names limits the search to a maximum number of matches given by
-the argument.  The search is terminated whenever that number of
-matches is found.
+A prefix argument used with any of the above menu items that have 'Find'
+in their names limits the search to a maximum number of matches given by
+the argument.  The search is terminated whenever that number of matches
+is found.
 
-For any of the above commands that prompt for a HyRolo name, such as
+With any of the above commands that prompt for a HyRolo name, such as
 Edit or Add (not the Find commands), you may use the form parent/child
 to locate a child entry below a specific parent.  Hence, for a HyRolo
 which looks like so:
@@ -6341,15 +6347,34 @@ current frame to its state prior to the rolo search.
 The files used in any rolo search are given by the
 @code{hyrolo-file-list} variable, whose default value is typically
 @code{"~/.rolo.otl"}, in which case, searches scan only your personal
-rolo file.  Any entries added to this list should be absolute
-filenames and can be any of the following formats: Org files (.org),
-Emacs outlines (.otl), Koutlines (.kotl), or Markdown files (.md).
+rolo file.  But you can customize this to include files with variables
+in them, wildcard patterns and directories, as explained below.  Any
+paths added to this list should be absolute.
 
-If a file in the list does not exist or is not readable, it is
-skipped.  Files are searched in the order in which they appear in the
-list.  You should leave your personal rolo file as the first entry in
-the list, since this is the only file to which the Add command on the
-rolo menu adds entries.
+If you include file wildcards in paths for this variable and
+@code{find-file-wildcards} is non-nil (the default), then any files
+matching the pattern (which can include [char-matches] or * wildcards
+and regular text) when the variable is set will be included in HyRolo
+searches.  For more on wildcards, see @ref{Wildcards,,,emacs,the GNU
+Emacs Manual}.
+
+If you include an Environment variable or Emacs Lisp variable with the
+@code{$@{var@}} format in a path, they also are resolved when
+@code{hyrolo-file-list} is set.  Variables with values that include
+multiple paths, e.g. PATH, are resolved to the first existing entry
+that matches.
+
+If you include an existing directory (invalid ones are ignored) in
+your @code{hyrolo-file-list}, HyRolo will expand it recursively across
+all of its files that match @code{hyrolo-file-suffix-regexp}.  By
+default, this is Org files (.org), Emacs outlines (.otl), Koutlines
+(.kotl), or Markdown files (.md).  See @file{hpath.el#hpath:expand-list}.
+
+Once expanded, if a file in the list does not exist or is not
+readable, it is dropped.  Paths are searched in the order in which
+they appear in the list.  You should leave your personal rolo file as
+the first entry in the list, since this is the only file to which the
+HyRolo menu Add command adds entries.
 
 Hyperbole releases earlier than 4.17 used a different filename for the
 personal rolo.  If such a file exists, you will be prompted to rename
@@ -6363,7 +6388,7 @@ following to your Emacs initialization file:
 	  (lambda ()
 	    (require 'org)
 	    (setq hyrolo-file-list (append (hyrolo-initialize-file-list)
-					   (cddr (directory-files org-directory))))))
+                                           (list org-directory)))))
 @end format
 
 @cindex BBDB
@@ -8570,9 +8595,12 @@ is made only if the key is not bound prior to initializing Hyperbole.
 @kitem C-c /
 Search the Web: Display a minibuffer menu of web search engines.  Once
 an engine is selected, prompt for a search term and perform the
-associated search.  This binding is made only if the key is not bound
-prior to initializing Hyperbole; otherwise, the Find/Web minibuffer menu
-item, @bkbd{C-h h f w}, will do the same thing.
+associated search.
+
+This binding is made only if the key is not bound prior to
+initializing Hyperbole; it also defers to any @code{major-mode}
+binding.  When needed, the Find/Web minibuffer menu item, @bkbd{C-h
+h f w}, will do the same thing.
 
 @kindex C-c @@
 @cindex key binding, C-c @@
@@ -8584,18 +8612,22 @@ item, @bkbd{C-h h f w}, will do the same thing.
 @cindex restore window configuration
 @cindex window configuration, restore
 @kitem C-c @@
-Display a grid of windows in the selected frame, sized according to the
-prefix argument.  The left digit of the argument is the number of grid rows
-and the right digit is the number of grid columns.  Use @bkbd{C-h h h} to
-restore the prior frame configuration.
+Display a grid of windows in the selected frame, sized according to
+the prefix argument.  The left digit of the argument is the number
+of grid rows and the right digit is the number of grid columns.  Use
+@bkbd{C-h h h} to restore the prior frame configuration.
 
-If the argument is 0, prompt for a major mode whose buffers should be
-displayed first in the grid windows, then prompt for the grid size.
+If the argument is 0, prompt for a major mode whose buffers should
+be displayed first in the grid windows, then prompt for the grid
+size.
 
-If the argument is < 0, prompt for a shell glob-type file pattern and display
-files that match the pattern in an auto-sized windows grid.
+If the argument is < 0, prompt for a shell glob-type file pattern
+and display files that match the pattern in an auto-sized windows
+grid.
 
-This binding is made only if the key is not bound prior to initializing Hyperbole.
+This binding is made only if the key is not bound prior to
+initializing Hyperbole; it also defers to any @code{major-mode}
+binding and when @code{outline-minor-mode} is active.
 
 For further details, see the @bkbd{@@} key binding description
 in @ref{HyControl}.
@@ -8604,11 +8636,12 @@ in @ref{HyControl}.
 @kitem M-o
 Drag Operation: Keyboard emulation of the start and stop of mouse
 drags to invoke Smart Key actions.  This binding is made only if the
-key is not bound prior to initializing Hyperbole and if Emacs is run under
-a window system.  If the Ace Window package is loaded, then Ace Window
-commands are typically bound to @bkbd{M-o} instead.  Then @bkbd{M-o w}
-may be used to quickly create an explicit link button in the selected window
-that links to any other window chosen via the Ace Window prompt.
+key is not bound prior to initializing Hyperbole and if Emacs is run
+under a window system.  If the Ace Window package is loaded, then
+Ace Window commands are typically bound to @bkbd{M-o} instead.  Then
+@bkbd{M-o w} may be used to quickly create an explicit link button
+in the selected window that links to any other window chosen via the
+Ace Window prompt.
 
 @cindex key binding, C-h h
 @kitem C-h h
@@ -8633,16 +8666,20 @@ Assist Key Help: Show what the Assist Key will do in the same context.
 Mark Things: Mark larger and larger syntactical units in a buffer
 when invoked repeatedly, showing in the minibuffer the type of unit
 marked each time.  For example, if on an opening brace at the start of
-a C, Java or Javascript function, this marks the whole function.  This
-binding is made only if the key is not bound prior to initializing
-Hyperbole.
+a C, Java or Javascript function, this marks the whole function.
+
+This binding is made only if the key is not bound prior to
+initializing Hyperbole; it also defers to any @code{major-mode}
+binding.
 
 @cindex key binding, C-c .
 @kitem C-c .
 Delimited Thing Jump: Jump between the start and end of a delimited
-thing, which may be an HTML tag pair.  This binding is made only if
-the key is not bound prior to initializing Hyperbole.  @xref{Smart Key
-Thing Selection}, for more information.
+thing, which may be an HTML tag pair.
+
+This binding is made only if the key is not bound prior to
+initializing Hyperbole; it also defers to any @code{major-mode}
+binding.  @xref{Smart Key Thing Selection}, for more information.
 
 @cindex key binding, M-w
 @vindex mark-even-if-inactive
@@ -8680,9 +8717,9 @@ to @samp{t} (true) by default in @file{hyperbole.el}.  This setting
 means all Hyperbole key bindings will be initialized when Hyperbole is
 loaded.  If you want to disable these bindings permanently, simply add
 @code{(setq hkey-init nil)} to your @file{~/.emacs} file prior to the
-point at which you load Hyperbole; then restart Emacs.  Henceforth, you will
-have to choose the Hyperbole commands that you want to use and bind those to
-keys.
+point at which you load Hyperbole; then restart Emacs.  Henceforth,
+you will have to choose the Hyperbole commands that you want to use
+and bind those to keys.
 
 @vindex file, .emacs
 @findex hyperbole-mode
@@ -8707,8 +8744,8 @@ press the Action Key to see the source of the failure.  Full testing is
 supported under POSIX systems only.
 
 With Hyperbole active, you can also define implicit buttons that run
-individual or sets of Hyperbole tests.  The file @file{hypb-ert.el} contains
-two action link types:
+individual or sets of Hyperbole tests.  The file @file{hypb-ert.el}
+contains two action link types:
 
 @example
 @code{hyperbole-run-test}  - run a single Hyperbole test by name

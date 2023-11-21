@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:      7-Oct-23 at 00:56:25 by Mats Lidell
+;; Last-Mod:     21-Nov-23 at 02:42:53 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -611,16 +611,23 @@ The menu is a menu of commands from MENU-ALIST."
     web-mini-menu))
 
 (defun hui-search-web ()
-  "Prompt for a web search engine and search term and then perform the search."
+  "Prompt for a web search engine and search term and then perform the search.
+
+If the key that invokes this command in `hyperbole-minor-mode' is also
+bound in the current major mode map, then interactively invoke that
+command instead.  Typically prevents clashes over {C-c /}."
   (interactive)
   (let* ((key (hypb:cmd-key-vector #'hui-search-web hyperbole-mode-map))
-	 (org-key-cmd (and (derived-mode-p 'org-mode)
-			   (called-interactively-p 'any)
-			   (equal (this-single-command-keys) key)
-			   (lookup-key org-mode-map key))))
-    (if org-key-cmd
-	;; Prevent a conflict with {C-c /} binding in Org mode
-	(call-interactively org-key-cmd)
+	 (major-mode-binding (lookup-key (current-local-map) key))
+	 (this-key-flag (and (called-interactively-p 'any)
+			     (equal (this-single-command-keys) key))))
+    (if (and major-mode-binding (not (integerp major-mode-binding))
+	     this-key-flag)
+	;; If the key that invokes this command in `hyperbole-minor-mode'
+	;; is also bound in the current major mode map, then
+	;; interactively invoke that command instead.  Typically
+	;; prevents clashes over {C-c /}.
+	(call-interactively major-mode-binding)
       ;;
       ;; No key conflicts, perform normal Hyperbole operation
       (hyperbole 'web))))

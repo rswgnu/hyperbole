@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    29-Jun-16 at 14:39:33
-;; Last-Mod:     28-Aug-23 at 01:45:24 by Bob Weiner
+;; Last-Mod:     19-Nov-23 at 23:18:02 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -47,8 +47,9 @@ Use `hyperb:wsl-os-p' to test if running under WSL.")
 			    ""))
 		       (error
 			"(Hyperbole): Failed to set hyperb:dir.  Try setting it manually"))
-  "Directory where the Hyperbole executable code is kept.
-Valid values end with a directory separator character.")
+  "Absolute directory where the Hyperbole executable code is kept.
+Absolute path should be fully expanded.  Valid values end with a
+directory separator character.")
 
 ;; Add hyperb:dir to load-path so other Hyperbole libraries can be
 ;; found unless it is already there since the Emacs Package Manager

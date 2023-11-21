@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     17-Nov-23 at 10:41:58 by Bob Weiner
+;; Last-Mod:     19-Nov-23 at 18:11:33 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -148,9 +148,10 @@ If PATHS is nil, return a default set of hyrolo files to use.
 Single ${env-or-lisp-variable} references are resolved within
 each path using `hpath:expand'; this also expands paths to
 absolute paths.  Then directories are expanded into the files
-they contain that match `hyrolo-file-suffix-regexp'.  Then any
-files containing [char-matches] or * wildcards are expanded to
-their matches."
+they contain that match `hyrolo-file-suffix-regexp'.  Then, if
+`find-file-wildcards' is non-nil (the default), any files
+containing [char-matches] or * wildcards are expanded to their
+matches."
   (if paths
       (hpath:expand-list paths hyrolo-file-suffix-regexp)
     (delq nil

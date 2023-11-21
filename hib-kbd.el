@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    22-Nov-91 at 01:37:57
-;; Last-Mod:      3-Oct-23 at 23:32:20 by Mats Lidell
+;; Last-Mod:     19-Nov-23 at 17:55:29 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -196,7 +196,7 @@ Return t if KEY-SERIES is a valid key series that is executed, else nil."
 
 (defun kbd-key:execute-special-series (key-series)
   "Execute key series."
-  (if (memq (key-binding [?\M-x]) #'(execute-extended-command counsel-M-x))
+  (if (memq (key-binding [?\M-x]) '(execute-extended-command counsel-M-x))
       (kbd-key:key-series-to-events key-series)
     ;; Disable helm while processing M-x commands; helm
     ;; gobbles final RET key.  Counsel works without modification.

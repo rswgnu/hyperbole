@@ -1,3 +1,72 @@
+2023-11-21  Bob Weiner  <rsw@gnu.org>
+
+* hui-select.el (hui-select-initialize): Fix to set 'syntax-table-sym'
+    and 'keymap-sym' locally within the function rather than globally
+    which would affect modes beyond those in 'hui-select-markup-modes'.
+                (hui-select-goto-matching-delimiter): If the key that
+    invokes this command in hyperbole-minor-mode is also bound in the
+    current major mode map, then interactively invoke that command
+    instead.  Typically prevents clashes over {C-c .}.  Previously
+    did this only for 'org-mode' but 'kotl-mode' also has a conflict
+    that this fixes.
+                (hui-select-thing): Apply the same above fix for
+    {C-c RET}, {C-c C-m}.
+  hui-mini.el (hui-search-web): Apply the same above fix for {C-c /}.
+  hycontrol.el (hycontrol-windows-grid): Apply the same above fix for
+    {C-c @} and fix 'outline-minor-mode' handling as a prefix keymap.
+  HY-NEWS (HYPERBOLE SYSTEM): Document the above fix.
+
+2023-11-19  Bob Weiner  <rsw@gnu.org>
+
+* test/demo-tests.el: Fix a number of these tests to be a bit more
+    robust and/or simpler.
+
+* TAGS: Remove from git but keep including in packages and tarballs.
+
+* hycontrol.el (hycontrol-windows-grid): Update to defer to outline
+    mode keybindings in much fewer contexts.  Most windows-grid prefix
+    args cannot be used by these modes, so execute the windows-grid
+    command rather than deferring to these modes.
+
+* hypb.el (hypb:display-file-with-logo): Fix banner insertion if buffer
+    is read-only when created.
+
+* hycontrol.el (hycontrol-windows-grid-by-file-pattern): Fix to error
+    when num-files or grid-size is zero.
+
+* FAST-DEMO (Implicit Buttons, Hyperbole Explicit and Global Buttons):
+    Update to document implicit and explicit link button creation with
+    two or more windows on screen.
+
+* man/hyperbole.texi (HyRolo Settings): Document hyrolo-file-list
+    support for wildcards, variables and directories.
+
+* hyrolo.el (hyrolo-expand-path-list):
+  hpath.el (hpath:expand-list): Expand file wildcards only when
+    'find-file-wildcards' is non-nil and document this.
+
+* hmouse-tag.el (smart-lisp-at-known-identifier-p,
+                 smart-lisp-find-tag,
+                 smart-lisp-at-definition-p): Add support for 'ert-deftest'
+    definitions.
+                (smart-entire-tags-table-list): Add to compute full list
+    of tags tables to use.  Use in 'smart-tags-display' and in
+    'smart-tags-find-p'.
+                (smart-tags-find-p): Fix that an existing 'tags-table-list'
+    was overriding 'smart-tags-file-list'.
+  HY-NEWS (ERT Test Case Symbols Jump to Definition): Document new smart
+    tags support for ert test case symbols.
+
+* Makefile (LET_VARIABLES): Add to batch tests to automatically enable
+    local variables in Hyperbole files that are tested.
+
+* kotl/kotl-mode.el (kotl-mode:split-cell): Remove any whitespace around
+    point before splitting the cell.
+
+* HY-CONCEPTS.kotl: Expand and improve button descriptions
+  FAST-DEMO: Add pointers to "HY-CONCEPTS.kotl", default to Org mode with
+    Smart Keys active.
+
 2023-11-17  Bob Weiner  <rsw@gnu.org>
 
 * test/hyrolo-tests.el (hyrolo-sort-records-at-different-levels): Add
