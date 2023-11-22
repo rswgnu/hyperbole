@@ -1,3 +1,8 @@
+2023-11-22  Mats Lidell  <matsl@gnu.org>
+
+* test/demo-tests.el (fast-demo-key-series-dired-other-window): Add test
+    from demo key series.
+
 2023-11-21  Bob Weiner  <rsw@gnu.org>
 
 * hui-select.el (hui-select-initialize): Fix to set 'syntax-table-sym'
