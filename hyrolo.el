@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     19-Nov-23 at 18:11:33 by Bob Weiner
+;; Last-Mod:     23-Nov-23 at 02:02:12 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2231,10 +2231,7 @@ String search expressions are converted to regular expressions.")
 
 (if hyrolo-mode-syntax-table
     ()
-  (setq hyrolo-mode-syntax-table (make-syntax-table text-mode-syntax-table))
-  ;; Support syntactic selection of delimited e-mail addresses.
-  (modify-syntax-entry ?\<  "(>" hyrolo-mode-syntax-table)
-  (modify-syntax-entry ?\>  ")<" hyrolo-mode-syntax-table))
+  (setq hyrolo-mode-syntax-table (make-syntax-table text-mode-syntax-table)))
 
 (defvar hyrolo-mode-map nil
   "Keymap for the hyrolo match buffer.")

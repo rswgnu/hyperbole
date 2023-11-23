@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     20-Nov-23 at 02:06:48 by Bob Weiner
+;; Last-Mod:     22-Nov-23 at 00:15:24 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -90,6 +90,34 @@
 ;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************
+
+(defconst find-defact-regexp "^\\s-*(defact\\s-+%s\\s-"
+  "The regexp used to search for a Hyperbole action type definition.
+Note it must contain a ‘%s’ at the place where ‘format’
+should insert the action type definition name.")
+
+(defconst find-defal-regexp "^\\s-*(defal\\s-+%s\\s-"
+  "The regexp used to search for a Hyperbole action link type definition.
+Note it must contain a ‘%s’ at the place where ‘format’
+should insert the action link type definition name.")
+
+(defconst find-defib-regexp "^\\s-*(defib\\s-+%s\\s-"
+  "The regexp used to search for a Hyperbole implicit button type definition.
+Note it must contain a ‘%s’ at the place where ‘format’
+should insert the implicit button type definition name.")
+
+(defconst find-defil-regexp "^\\s-*(defil\\s-+%s\\s-"
+  "The regexp used to search for a Hyperbole implicit link type definition.
+Note it must contain a ‘%s’ at the place where ‘format’
+should insert the implicit link type definition name.")
+
+;; Add Hyperbole def types to `find-function-regexp-alist'.
+(mapc (lambda (item)
+	(add-to-list 'find-function-regexp-alist item))
+      '((defact . find-defact-regexp)
+	(defal  . find-defal-regexp)
+	(defib  . find-defib-regexp)
+	(defil  . find-defil-regexp)))
 
 (define-obsolete-variable-alias 'smart-asm-include-dirs
   'smart-asm-include-path "06.00")
@@ -1189,7 +1217,19 @@ The buffer may be attached to a .elc file.  TAG-SYM may be a function,
 variable or face."
   (save-excursion
     ;; Bound Emacs Lisp function, variable and face definition display.
-    (ignore-errors (or (find-function-noselect tag-sym)
+    (ignore-errors (or (let ((func-lib (find-function-library tag-sym nil t))
+			     tag-type ;; nil means regular Lisp function
+			     tag-name)
+			 (when func-lib
+			   (setq tag-sym (car func-lib)
+				 tag-name (symbol-name tag-sym))
+			   (cond ((string-prefix-p "ibtypes::" tag-name)
+				  (setq tag-type 'defib
+					tag-sym (ibtype:def-symbol tag-sym)))
+				 ((string-prefix-p "actypes::" tag-name)
+				  (setq tag-type 'defact
+					tag-sym (actype:def-symbol tag-sym))))
+			   (find-function-search-for-symbol tag-sym tag-type (cdr func-lib))))
 		       (find-variable-noselect tag-sym)
 		       (find-definition-noselect tag-sym 'defface)))))
 

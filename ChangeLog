@@ -1,3 +1,44 @@
+2023-11-23  Bob Weiner  <rsw@gnu.org>
+
+* hui-select.el (hui-select-syntax-table): Change to copy syntax
+    table so changes do not affect the parent.
+
+* hbut.el (hbut:modify-syntax): Add <> and {} pair support in text
+    and fundamental modes.
+          (require 'mode-local): Use in 'hbut:modify-syntax'.
+  hib-kbd.el (defib kbd-key): Remove explicit syntax setting of braces
+    and just temporarily use Hyperbole-modified text-mode syntax table.
+  hyrolo.el (hyrolo-mode-syntax-table): Remove explicit syntax setting
+    of < > delimiters; inherit from 'text-mode-syntax-table' instead.
+
+* test/hui-select-tests.el (hui-select--thing): Fix to skip 'indent-def
+    by removing final newline.  Label each test section with the type
+    of match expected.
+    (hui-select--thing-interactive-prints-type-of-match): Make similar
+    fixes as in above function.
+
+2023-11-22  Bob Weiner  <rsw@gnu.org>
+
+* hui-mouse.el (hkey-alist): Add clause to handle Smart Key when in
+    a vertico minibuffer window; make it behave like standard vertico
+    which exits and selects the first minibuffer line, not the candidate
+    presently selected.
+
+* hargs.el (hargs:delimited):
+           (require 'thingatpt): For 'bounds-of-thing-at-point'
+    used in 'hargs:delimited' on single char matching delims.
+
+* hui-select.el (hui-select-scan-sexps): Add to fix brace handling
+    as a matching pair when selecting things by using previously
+    unused 'hui-select-syntax-table'.
+
+* hmouse-tag.el (smart-lisp-bound-symbol-def): Rewrite to support
+    Hyperbole type defs like defib, etc.  This improves finding
+    the proper definition of a Hyperbole type.
+                (find-defact-regexp, find-defal-regexp,
+                 find-defib-regexp, find-defil-regexp): Add these
+    entries to 'find-function-regexp-alist'.
+
 2023-11-21  Bob Weiner  <rsw@gnu.org>
 
 * hui-select.el (hui-select-initialize): Fix to set 'syntax-table-sym'

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     15-Nov-23 at 01:52:15 by Bob Weiner
+;; Last-Mod:     23-Nov-23 at 03:29:51 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1507,18 +1507,22 @@ calls `hbut:modify-syntax'.")
 
 ;;;###autoload
 (defun    hbut:modify-syntax ()
-  "Modify syntactic character pairs in syntax tables.
-Modify `hbut:syntax-table' and `help-mode-syntax-table'.  For use
-with implicit button activations."
-  ;; Treat angle brackets as opening and closing delimiters for ease
-  ;; of matching.
+  "Make <> and {} behave as syntactic character pairs in major syntax tables.
+Modify `hbut:syntax-table', `help-mode-syntax-table',`text-mode-syntax-table',
+and `fundamental-mode's syntax table.  For use with implicit button
+activations."
+  ;; Treat angle brackets and braces as opening and closing delimiters
+  ;; for ease  of matching.
   (mapc (lambda (syntax-table)
 	  (modify-syntax-entry ?\< "(>" syntax-table)
 	  (modify-syntax-entry ?\> ")<" syntax-table)
 	  ;; Treat braces as opening and closing delimiters for ease of matching.
 	  (modify-syntax-entry ?\{ "(}" syntax-table)
 	  (modify-syntax-entry ?\} "){" syntax-table))
-	(list hbut:syntax-table help-mode-syntax-table))
+	(list hbut:syntax-table help-mode-syntax-table
+	      text-mode-syntax-table
+	      ;; fundamental-mode syntax table
+	      (standard-syntax-table)))
   nil)
 
 (defun    hbut:outside-comment-p ()

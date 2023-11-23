@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     21-Nov-23 at 02:41:17 by Bob Weiner
+;; Last-Mod:     23-Nov-23 at 03:07:22 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -256,10 +256,12 @@ Used to include a final line when marking indented code.")
 ;;; ************************************************************************
 
 (defconst hui-select-syntax-table
-  (let ((st (make-syntax-table emacs-lisp-mode-syntax-table)))
+  (let ((st (copy-syntax-table emacs-lisp-mode-syntax-table)))
     ;; Make braces be thing delimiters, not punctuation.
     (modify-syntax-entry ?\{ "(}" st)
     (modify-syntax-entry ?\} "){" st)
+    (modify-syntax-entry ?< "(>" st)
+    (modify-syntax-entry ?> ")<" st)
     st)
   "Syntax table to use when selecting delimited things.")
 
@@ -460,6 +462,11 @@ Also, add language-specific syntax setups to aid in thing selection."
   (let ((region-bounds (hui-select-get-region-boundaries)))
     (when region-bounds
       (buffer-substring-no-properties (car region-bounds) (cdr region-bounds)))))
+
+(defun hui-select-scan-sexps (from count)
+  "Scan FROM point across COUNT sexpressions."
+  (with-syntax-table hui-select-syntax-table
+    (scan-sexps from count)))
 
 ;;;###autoload
 (defun hui-select-thing ()
@@ -1006,7 +1013,7 @@ language must be included in the list, hui-select-brace-modes."
 		      (ignore-errors
 			;; Leave point at opening brace.
 			(goto-char
-			 (scan-sexps (1+ (point)) -1))
+			 (hui-select-scan-sexps (1+ (point)) -1))
 			;; Test if these are defun braces.
 			(save-excursion
 			  (beginning-of-line)
@@ -1072,7 +1079,7 @@ language must be included in the list, hui-select-brace-modes."
 			  (error (point-max)))))
 	    (when (= (following-char) ?\})
 	      ;; Leave point at opening brace.
-	      (goto-char (scan-sexps (1+ (point)) -1)))
+	      (goto-char (hui-select-scan-sexps (1+ (point)) -1)))
 	    (when (= (following-char) ?\{)
 	      (while (and (zerop (forward-line -1))
 			  (not (hui-select-at-blank-line-or-comment))))
@@ -1148,9 +1155,9 @@ list, hui-select-indent-modes."
 	          '(?w ?_))
 	  (setq hui-select-previous 'symbol)
 	  (condition-case ()
-	      (let ((end (scan-sexps pos 1)))
+	      (let ((end (hui-select-scan-sexps pos 1)))
 		(hui-select-set-region
-		 (min pos (scan-sexps end -1)) end))
+		 (min pos (hui-select-scan-sexps end -1)) end))
 	    (error nil))))))
 
 (defun hui-select-sexp-start (pos)
@@ -1159,14 +1166,14 @@ list, hui-select-indent-modes."
       (hui-select-brace-def-or-declaration pos)
       (save-excursion
 	(setq hui-select-previous 'sexp-start)
-	(ignore-errors (hui-select-set-region pos (scan-sexps pos 1))))))
+	(ignore-errors (hui-select-set-region pos (hui-select-scan-sexps pos 1))))))
 
 (defun hui-select-sexp-end (pos)
   "Return (start . end) of sexp ending at POS."
   (or (hui-select-brace-def-or-declaration pos)
       (save-excursion
 	(setq hui-select-previous 'sexp-end)
-	(ignore-errors (hui-select-set-region (scan-sexps (1+ pos) -1) (1+ pos))))))
+	(ignore-errors (hui-select-set-region (hui-select-scan-sexps (1+ pos) -1) (1+ pos))))))
 
 (defun hui-select-sexp (pos)
   "Return (start . end) of the sexp that POS is within."

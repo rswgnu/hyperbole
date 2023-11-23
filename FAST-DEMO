@@ -1,4 +1,4 @@
-;;; -*- Mode: org; org-cycle-global-at-bob: t; hsys-org-enable-smart-keys: t -*-
+-*- Mode: org; org-cycle-global-at-bob: t; hsys-org-enable-smart-keys: t -*-
 
 * GNU Hyperbole Fast Demo by Bob Weiner
 
@@ -191,11 +191,11 @@
        Press {C-h A} when over any Hyperbole button for an explanation of
        what it does.
 
-    {M-x dired-other-window RET ${hyperb:dir}/*.el RET}
+    {M-x dired-other-window RET ${hyperb:dir}/*.el M-RET}
 
        Hyperbole home directory Dired listing of Emacs Lisp files only
 
-    {C-c @ 22 RET}
+    {C-22 C-c @}
 
        Display a 2x2 windows grid in the current frame of the 4 most recently
        used buffers.  Before you try this, remember the binding {C-h h h} for
@@ -207,7 +207,7 @@
        Find the Hyperbole Koutliner source files that begin with 'kotl' and
        display them in an auto-sized grid of windows.
 
-    {C-u 0 C-c @ emacs-lisp-mode RET 33 RET}
+    {C-0 C-c @ emacs-lisp-mode RET 33 RET}
 
        Display the 9 mostly recently used Emacs Lisp buffers in a 3x3 grid.
        A BLANK buffer fills in the grid if there are not enough Emacs Lisp
@@ -215,7 +215,8 @@
 
     {C-x 4 d ${hyperb:dir} RET}
 
-       Dired the Hyperbole home directory based on its variable.
+       Dired the Hyperbole home directory based on its variable.  {M-RET} on
+       the directory itself will display the directory's value in the minibuffer.
 
        Within this dired buffer, mark a few files with {m} and then press {@}
        to display a window grid of those files only.  That works in Buffer

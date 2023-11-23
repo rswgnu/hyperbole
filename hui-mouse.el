@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     15-Nov-23 at 01:52:38 by Bob Weiner
+;; Last-Mod:     23-Nov-23 at 03:45:24 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -227,14 +227,26 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
      . ((smart-push-button nil (mouse-event-p last-command-event))
 	. (smart-push-button-help nil (mouse-event-p last-command-event))))
     ;;
-    ;; If click in the minibuffer and reading an argument (aside from
+    ;; If in the minibuffer and reading an argument with vertico
+    ;; run the vertico command on {M-RET} which accepts the first
+    ;; line of minibuffer input, rather than any candidate.
+    ((and hargs:reading-type
+	  (> (minibuffer-depth) 0)
+	  (eq (selected-window) (minibuffer-window))
+	  (not (bound-and-true-p ivy-mode))
+	  (and (bound-and-true-p vertico-mode)
+	       ;; Is vertico prompting for an argument?
+	       (vertico--command-p nil (current-buffer))))
+     . ((vertico-exit-input) . (vertico-exit-input)))
+    ;;
+    ;; If in the minibuffer and reading an argument (aside from
     ;; with vertico or ivy), accept argument or give completion help.
     ((and hargs:reading-type
 	  (> (minibuffer-depth) 0)
 	  (eq (selected-window) (minibuffer-window))
 	  (not (bound-and-true-p ivy-mode))
 	  (not (and (bound-and-true-p vertico-mode)
-		    ;; Is vertico is prompting for an argument?
+		    ;; Is vertico prompting for an argument?
 		    (vertico--command-p nil (current-buffer))))
 	  (not (eq hargs:reading-type 'hmenu))
 	  (not (smart-helm-alive-p)))
