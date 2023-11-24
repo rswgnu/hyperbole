@@ -1,5 +1,8 @@
 2023-11-25  Mats Lidell  <matsl@gnu.org>
 
+* test/hyrolo-tests.el (hyrolo-fgrep-find-all-types-of-files): Test that
+    all files types are searched, matches and give proper @loc>-header.
+
 * hyrolo.el: Move private variables before their first use to remove
     warnings.
 
