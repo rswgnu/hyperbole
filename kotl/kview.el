@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     29-Oct-23 at 08:55:55 by Bob Weiner
+;; Last-Mod:     25-Nov-23 at 16:34:27 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -44,6 +44,7 @@
 (declare-function kotl-mode:beginning-of-line "kotl-mode")
 (declare-function kotl-mode:fill-cell "kotl-mode")
 (declare-function kotl-mode:goto-cell "kotl-mode")
+(declare-function kotl-mode:goto-heading "kotl/kotl-mode")
 (declare-function kotl-mode:hide-subtree "kotl-mode")
 (declare-function kotl-mode:to-end-of-line "kotl-mode")
 (declare-function kotl-mode:to-visible-position "kotl-mode")

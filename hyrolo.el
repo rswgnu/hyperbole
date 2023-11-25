@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     19-Nov-23 at 18:11:33 by Bob Weiner
+;; Last-Mod:     25-Nov-23 at 17:09:20 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -96,6 +96,13 @@
 (declare-function outline-previous-visible-heading "outline")
 (declare-function outline-show-all "outline")
 (declare-function outline-up-heading "outline")
+
+(declare-function hmouse-pulse-line "hui-window")
+(declare-function hpath:find "hpath")
+(declare-function hpath:expand-list "hpath")
+(declare-function hbut:get-key-src "hbut")
+(declare-function markdown-outline-level "ext:markdown-mode")
+(declare-function org-outline-level "org")
 
 (defvar org-directory)                  ; "org.el"
 (defvar markdown-regex-header)          ; "markdown-mode.el"

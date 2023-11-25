@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:     21-Nov-23 at 03:01:07 by Bob Weiner
+;; Last-Mod:     25-Nov-23 at 16:47:02 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -147,6 +147,8 @@
 (defvar org-mode-map)                   ; "org.el"
 (defvar outline-mode-map)               ; "outline.el"
 (defvar outline-minor-mode-map)         ; "outline.el"
+
+(declare-function kbd-key:key-series-to-events "hib-kbd")
 
 ;;; ************************************************************************
 ;;; Public variables
