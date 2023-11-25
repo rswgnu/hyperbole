@@ -3,9 +3,6 @@
 * hyrolo.el: Move private variables before their first use to remove
     warnings.
 
-* hibtypes.el (annot-bib):
-* hbut.el (hbut:comment): Call derived-mode-p with a list of symbols.
-
 * Remove warnings for unknown functions by using declare-function.
 
 2023-11-21  Bob Weiner  <rsw@gnu.org>

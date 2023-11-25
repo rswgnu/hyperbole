@@ -376,7 +376,7 @@ attached file."
        buffer-file-name
        (let ((chr (aref (buffer-name) 0)))
          (not (or (eq chr ?\ ) (eq chr ?*))))
-       (not (apply #'derived-mode-p '((prog-mode c-mode objc-mode c++-mode java-mode markdown-mode org-mode))))
+       (not (apply #'derived-mode-p '(prog-mode c-mode objc-mode c++-mode java-mode markdown-mode org-mode)))
        (let ((ref (hattr:get 'hbut:current 'lbl-key))
 	     (lbl-start (hattr:get 'hbut:current 'lbl-start)))
          (and ref
