@@ -1,5 +1,8 @@
 2023-11-25  Mats Lidell  <matsl@gnu.org>
 
+* hyrolo.el: Move private variables before their first use to remove
+    warnings.
+
 * hibtypes.el (annot-bib):
 * hbut.el (hbut:comment): Call derived-mode-p with a list of symbols.
 
