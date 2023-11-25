@@ -1088,7 +1088,7 @@ When called interactively, display help for the button at point as well."
 Comment only when major mode is derived from `prog-mode' or `sgml-mode' and
 `comment-start' is non-nil.  Ignore email-related buffers."
   (when (and comment-start (not (memq major-mode '(mail-mode message-mode)))
-	     (derived-mode-p 'prog-mode 'sgml-mode) (not (hmail:mode-is-p)) )
+	     (derived-mode-p (list 'prog-mode 'sgml-mode)) (not (hmail:mode-is-p)) )
     (save-excursion
       (if (or (equal comment-end "")
 	      (null comment-end))
