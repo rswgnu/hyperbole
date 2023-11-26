@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     19-Nov-23 at 18:56:31 by Bob Weiner
+;; Last-Mod:     25-Nov-23 at 16:42:29 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -127,6 +127,9 @@ The format is ${variable}.  Match grouping 1 is the name of the variable.")
 (declare-function hargs:delimited "hargs")
 (declare-function hypb:object-p "hypb")
 (declare-function Info-find-node "info")
+
+(declare-function kcell-view:indent "kcell-view")
+(declare-function klink:act "klink")
 
 ;;; ************************************************************************
 ;;; MS WINDOWS PATH CONVERSIONS

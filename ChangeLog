@@ -1,3 +1,10 @@
+2023-11-25  Mats Lidell  <matsl@gnu.org>
+
+* hyrolo.el: Move private variables before their first use to remove
+    warnings.
+
+* Remove warnings for unknown functions by using declare-function.
+
 2023-11-21  Bob Weiner  <rsw@gnu.org>
 
 * hui-select.el (hui-select-initialize): Fix to set 'syntax-table-sym'

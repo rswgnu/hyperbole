@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:      2-Nov-23 at 00:03:43 by Bob Weiner
+;; Last-Mod:     25-Nov-23 at 16:38:50 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -62,6 +62,8 @@
 (declare-function kcell-view:label "kview")
 (declare-function kcell-view:reference "kview")
 (declare-function rmail:msg-id-get "hmail")
+
+(declare-function smart-dired-pathname-up-to-point "hui-mouse")
 
 ;;; ************************************************************************
 ;;; Public variables
