@@ -3,9 +3,11 @@
 * test/hyrolo-tests.el (hyrolo-fgrep-and-goto-next-visible-org-heading)
     (hyrolo-fgrep-and-goto-next-visible-kotl-heading)
     (hyrolo-fgrep-and-goto-next-visible-outl-heading)
-    (hyrolo-fgrep-and-goto-next-visible-md-heading): Add test for moving
-    to next header and that action-key then brings you to the matching
-    record.
+    (hyrolo-fgrep-and-goto-next-visible-md-heading)
+    (hyrolo-fgrep-and-goto-next-visible-kotl-heading-level-2)
+    (hyrolo-fgrep-and-goto-next-visible-kotl-heading-cell-2): Add test for
+    moving to next header and that action-key then brings you to the
+    matching record.
 
 2023-11-25  Mats Lidell  <matsl@gnu.org>
 

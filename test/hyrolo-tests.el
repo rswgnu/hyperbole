@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     29-Nov-23 at 22:13:01 by Mats Lidell
+;; Last-Mod:     29-Nov-23 at 23:22:15 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -382,6 +382,65 @@ and {b} the previous same level cell."
       (kill-buffer "*HyRolo*")
       (delete-directory temporary-file-directory))))
 
+(ert-deftest hyrolo-fgrep-and-goto-next-visible-kotl-heading-level-2 ()
+  "Verify move to next heading, then action-key to go to record for kotl mode.
+Match a string in a level 2 child cell."
+  (let* ((temporary-file-directory (make-temp-file "hypb" t))
+         (kotl-file (make-temp-file "hypb" nil ".kotl"))
+         (hyrolo-file-list (list temporary-file-directory)))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (insert "first")
+          (kotl-mode:add-child)
+          (insert "heading")
+          (kotl-mode:newline 1)
+          (insert "string")
+          (kotl-mode:newline 1)
+          (insert "more")
+          (hyrolo-fgrep "string")
+          (with-current-buffer "*HyRolo*"
+            (should (= (how-many "@loc>") 1))
+            (should (looking-at-p "==="))
+            (hyrolo-next-visible-heading 1)
+            (should (looking-at-p ".*1a\\. heading")))
+          (with-simulated-input "y RET" ; Do you want to revisit the file normally now?
+            (action-key)
+            (should (equal (current-buffer) (find-buffer-visiting kotl-file)))
+            (should (looking-at-p "heading"))))
+      (hy-delete-file-and-buffer kotl-file)
+      (kill-buffer "*HyRolo*")
+      (delete-directory temporary-file-directory))))
+
+(ert-deftest hyrolo-fgrep-and-goto-next-visible-kotl-heading-cell-2 ()
+  "Verify move to next heading, then action-key to go to record for kotl mode.
+Match a string in the second cell."
+  (let* ((temporary-file-directory (make-temp-file "hypb" t))
+         (kotl-file (make-temp-file "hypb" nil ".kotl"))
+         (hyrolo-file-list (list temporary-file-directory)))
+    (unwind-protect
+        (progn
+          (find-file kotl-file)
+          (insert "first")
+          (kotl-mode:add-cell)
+          (insert "heading")
+          (kotl-mode:newline 1)
+          (insert "string")
+          (kotl-mode:newline 1)
+          (insert "more")
+          (hyrolo-fgrep "string")
+          (with-current-buffer "*HyRolo*"
+            (should (= (how-many "@loc>") 1))
+            (should (looking-at-p "==="))
+            (hyrolo-next-visible-heading 1)
+            (should (looking-at-p ".*2\\. heading")))
+          (with-simulated-input "y RET" ; Do you want to revisit the file normally now?
+            (action-key)
+            (should (equal (current-buffer) (find-buffer-visiting kotl-file)))
+            (should (looking-at-p "heading"))))
+      (hy-delete-file-and-buffer kotl-file)
+      (kill-buffer "*HyRolo*")
+      (delete-directory temporary-file-directory))))
 
 (provide 'hyrolo-tests)
 ;;; hyrolo-tests.el ends here
