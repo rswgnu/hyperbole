@@ -5,7 +5,21 @@
     (hui--gbut-link-directly-ibut, hui--gbut-link-directly-ebut): Add
     tests for ebut-link-directly. 
 
+2023-11-29  Mats Lidell  <matsl@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-fgrep-and-goto-next-visible-org-heading)
+    (hyrolo-fgrep-and-goto-next-visible-kotl-heading)
+    (hyrolo-fgrep-and-goto-next-visible-outl-heading)
+    (hyrolo-fgrep-and-goto-next-visible-md-heading)
+    (hyrolo-fgrep-and-goto-next-visible-kotl-heading-level-2)
+    (hyrolo-fgrep-and-goto-next-visible-kotl-heading-cell-2): Add test for
+    moving to next header and that action-key then brings you to the
+    matchi
+
 2023-11-25  Mats Lidell  <matsl@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-fgrep-find-all-types-of-files): Test that
+    all files types are searched, matches and give proper @loc>-header.
 
 * hyrolo.el: Move private variables before their first use to remove
     warnings.
