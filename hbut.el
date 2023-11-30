@@ -3,11 +3,11 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     30-Nov-23 at 23:20:52 by Bob Weiner
+;; Last-Mod:     30-Nov-23 at 23:23:53 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2023  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -1503,16 +1503,16 @@ non-nil)."
     (nreverse result)))
 
 (defvar   hbut:syntax-table (copy-syntax-table emacs-lisp-mode-syntax-table)
-  "Modified Elisp syntax table for use with Action and Key Series buttons.
-Makes < > and { } into syntactically matching pairs after `hyperb:init'
+  "Syntax table copied from Elisp for use with Action and Key Series buttons.
+Make < > and { } into syntactically matching pairs after `hyperb:init'
 calls `hbut:modify-syntax'.")
 
 ;;;###autoload
 (defun    hbut:modify-syntax ()
   "Make <> and {} behave as syntactic character pairs in major syntax tables.
-Modify `hbut:syntax-table', `help-mode-syntax-table',`text-mode-syntax-table',
-and `fundamental-mode's syntax table.  For use with implicit button
-activations."
+Modify `hbut:syntax-table' and `help-mode-syntax-table' to include <> and {}.
+Modify `text-mode-syntax-table' and `fundamental-mode's syntax table
+to include {} only.  For use with implicit button activations."
   ;; Treat angle brackets and braces as opening and closing delimiters
   ;; for ease  of matching.
   (mapc (lambda (syntax-table)
@@ -1521,8 +1521,12 @@ activations."
 	  ;; Treat braces as opening and closing delimiters for ease of matching.
 	  (modify-syntax-entry ?\{ "(}" syntax-table)
 	  (modify-syntax-entry ?\} "){" syntax-table))
-	(list hbut:syntax-table help-mode-syntax-table
-	      text-mode-syntax-table
+	(list hbut:syntax-table help-mode-syntax-table))
+  (mapc (lambda (syntax-table)
+	  ;; Treat braces as opening and closing delimiters for ease of matching.
+	  (modify-syntax-entry ?\{ "(}" syntax-table)
+	  (modify-syntax-entry ?\} "){" syntax-table))
+	(list text-mode-syntax-table
 	      ;; fundamental-mode syntax table
 	      (standard-syntax-table)))
   nil)

@@ -1,3 +1,13 @@
+2023-11-30  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-grep-file): Add 'backward-search-limit' to minimize
+    backward searches to the end of the last match and to prevent
+    forward search stalls in some contexts.
+
+* hypb.el (hypb:insert-hyperbole-banner): Keep any initial line of
+    variable settings (starts with -*-, e.g. for Org mode as the first
+    line.
+
 2023-11-30  Mats Lidell  <matsl@gnu.org>
 
 * test/hui-tests.el (hui--ebut-link-directly-to-file)

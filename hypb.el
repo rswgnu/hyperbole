@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     20-Nov-23 at 00:49:09 by Bob Weiner
+;; Last-Mod:     30-Nov-23 at 11:18:54 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1069,9 +1069,13 @@ Without file, the banner is prepended to the current buffer."
 	     (buffer-read-only)
 	     button)
 	(goto-char (point-min))
+	;; Keep any initial line of variable settings, e.g. for Org
+	;; mode as the first line.
+	(when (looking-at (regexp-quote "-*- "))
+	  (forward-line 1))
 	(insert "\n")
 	(insert-image hyperbole-banner)
-	(insert "\n\n")
+	(insert "\n")
 	(setq button (make-button (- (point) 3) (- (point) 2) :type 'hyperbole-banner))
 	(button-put button 'help-echo (concat "Click to visit " hypb:home-page))
 	(button-put button 'action #'hypb:browse-home-page)

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     30-Nov-23 at 23:21:05 by Bob Weiner
+;; Last-Mod:     30-Nov-23 at 23:31:44 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -335,10 +335,7 @@ String search expressions are converted to regular expressions.")
 
 (if hyrolo-mode-syntax-table
     ()
-  (setq hyrolo-mode-syntax-table (make-syntax-table text-mode-syntax-table))
-  ;; Support syntactic selection of delimited e-mail addresses.
-  (modify-syntax-entry ?\<  "(>" hyrolo-mode-syntax-table)
-  (modify-syntax-entry ?\>  ")<" hyrolo-mode-syntax-table))
+  (setq hyrolo-mode-syntax-table (make-syntax-table text-mode-syntax-table)))
 
 (defvar hyrolo-mode-map nil
   "Keymap for the hyrolo match buffer.")
@@ -1683,14 +1680,17 @@ Return number of matching entries found."
 		      (when (re-search-forward hyrolo-hdr-regexp nil t 2)
 			(forward-line)
 			(setq hdr-pos (cons (point-min) (point))))
-		      (let ((case-fold-search t)
-			    match-end)
+		      (let* ((case-fold-search t)
+			     (backward-search-limit (if (re-search-forward hyrolo-entry-regexp nil t)
+							(match-beginning 0)
+						      (point)))
+			     match-end)
 			(re-search-forward hyrolo-entry-regexp nil t)
 			(while (and (or (null max-matches) (< num-found max-matches))
 				    (funcall hyrolo-next-match-function pattern headline-only))
 			  (setq match-end (point))
 			  ;; If no entry delimiters found, just return the line of the match alone.
-			  (unless (re-search-backward hyrolo-entry-regexp nil t)
+			  (unless (re-search-backward hyrolo-entry-regexp backward-search-limit t)
 			    (goto-char (line-beginning-position)))
 			  (setq entry-start (point))
 			  (unless (re-search-forward hyrolo-entry-regexp nil t)
@@ -1729,7 +1729,8 @@ Return number of matching entries found."
 				  (set-buffer actual-buf))))
 			  (setq num-found (1+ num-found))
 			  (or count-only
-			      (hyrolo-add-match hyrolo-display-buffer pattern entry-start (point)))))))
+			      (hyrolo-add-match hyrolo-display-buffer pattern entry-start (point)))
+			  (setq backward-search-limit (point))))))
 		  num-found))
 	  (when (< stuck-negative-point 0)
 	    (pop-to-buffer (current-buffer))
@@ -2278,88 +2279,6 @@ trailing periods and whitespace."
   (or (cdr (assoc (match-string 0) outline-heading-alist))
       (1- (- (match-end 0) (match-beginning 0)))))
 
-<<<<<<< HEAD
-;;; ************************************************************************
-;;; Private variables
-;;; ************************************************************************
-
-(defvar hyrolo--expanded-file-list nil
-  "List of hyrolo files after directory and file wildcard expansions.
-Hyrolo sets this internally; never set it yourself.")
-
-(defvar hyrolo-entry-group-number 1
-  "Group number whose length represents the level of any entry matched.
-See `hyrolo-entry-regexp'")
-
-(defvar hyrolo-entry-trailing-space-group-number 2
-  "Group number within `hyrolo-entry-regexp; containing trailing space.")
-
-(defconst hyrolo-hdr-format
-  (concat
-   "===============================================================================\n"
-   "%s\n"
-   "===============================================================================\n")
-  "Header to insert preceding a file's first hyrolo entry match when
-file has none of its own.  Used with one argument, the file name.")
-
-(defconst hyrolo-hdr-regexp "^==="
-  "Regular expression to match the first and last lines of hyrolo file headers.
-This header is inserted into hyrolo-display-buffer before any entries from the
-file are added.")
-
-(defconst hyrolo-match-regexp nil
-  "Last regular expression used to search the hyrolo.
-Nil before a search is done, including after a logical search is done.
-String search expressions are converted to regular expressions.")
-
-(defvar hyrolo--wconfig nil
-  "Saves frame's window configuration prior to a hyrolo search.")
-
-(defvar hyrolo-mode-syntax-table nil
-  "Syntax table used while in hyrolo match mode.")
-
-(if hyrolo-mode-syntax-table
-    ()
-  (setq hyrolo-mode-syntax-table (make-syntax-table text-mode-syntax-table)))
-
-(defvar hyrolo-mode-map nil
-  "Keymap for the hyrolo match buffer.")
-
-(if hyrolo-mode-map
-    nil
-  (setq hyrolo-mode-map (make-keymap))
-  (if (fboundp 'set-keymap-name)
-      (set-keymap-name hyrolo-mode-map 'hyrolo-mode-map))
-  (suppress-keymap hyrolo-mode-map)
-  (define-key hyrolo-mode-map ","        'hyrolo-to-entry-beginning)
-  (define-key hyrolo-mode-map "."        'hyrolo-to-entry-end)
-  (define-key hyrolo-mode-map "<"        'beginning-of-buffer)
-  (define-key hyrolo-mode-map ">"        'end-of-buffer)
-  (define-key hyrolo-mode-map "?"        'describe-mode)
-  (define-key hyrolo-mode-map "\177"     'scroll-down)
-  (define-key hyrolo-mode-map " "        'scroll-up)
-  (define-key hyrolo-mode-map "a"        'outline-show-all)
-  (define-key hyrolo-mode-map "b"        'hyrolo-backward-same-level)
-  (define-key hyrolo-mode-map "e"        'hyrolo-edit-entry)
-  (define-key hyrolo-mode-map "f"        'hyrolo-forward-same-level)
-  (define-key hyrolo-mode-map "h"        'hyrolo-hide-subtree)
-  (define-key hyrolo-mode-map "l"        'hyrolo-locate)
-  (define-key hyrolo-mode-map "m"        'hyrolo-mail-to)
-  (define-key hyrolo-mode-map "n"        'hyrolo-next-visible-heading)
-  (define-key hyrolo-mode-map "o"        'hyrolo-overview)
-  (define-key hyrolo-mode-map "p"        'hyrolo-previous-visible-heading)
-  (define-key hyrolo-mode-map "q"        'hyrolo-quit)
-  (define-key hyrolo-mode-map "r"        'hyrolo-grep-or-fgrep)
-  (define-key hyrolo-mode-map "s"        'outline-show-subtree)
-  (define-key hyrolo-mode-map "\M-s"     'hyrolo-isearch)
-  (define-key hyrolo-mode-map "t"        'hyrolo-top-level)
-  (define-key hyrolo-mode-map "\C-i"     'hyrolo-next-match)      ;; {TAB}
-  (define-key hyrolo-mode-map "\M-\C-i"  'hyrolo-previous-match)  ;; {M-TAB}
-  (define-key hyrolo-mode-map [backtab]  'hyrolo-previous-match)  ;; {Shift-TAB}
-  (define-key hyrolo-mode-map "u"        'hyrolo-up-heading))
-
-=======
->>>>>>> master
 (provide 'hyrolo)
 
 ;;; hyrolo.el ends here

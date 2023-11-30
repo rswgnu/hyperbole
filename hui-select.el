@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     23-Nov-23 at 03:07:22 by Bob Weiner
+;; Last-Mod:     30-Nov-23 at 11:33:09 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -432,8 +432,8 @@ Also, add language-specific syntax setups to aid in thing selection."
 			          `(lambda ()
                                      (let ((syntax-table (symbol-value ',syntax-table-sym))
                                            (keymap (symbol-value ',keymap-sym)))
-			               (modify-syntax-entry ?\< "(>" syntax-table)
-			               (modify-syntax-entry ?\> ")<" syntax-table)
+			               ;; (modify-syntax-entry ?\< "(>" syntax-table)
+			               ;; (modify-syntax-entry ?\> ")<" syntax-table)
 			               (modify-syntax-entry ?\{ "(}" syntax-table)
 			               (modify-syntax-entry ?\} "){" syntax-table)
 			               (modify-syntax-entry ?\" "\"" syntax-table)
@@ -541,6 +541,7 @@ displayed in the minibuffer."
 ;;;###autoload
 (defun hui-select-goto-matching-tag ()
   "Move point to start of the tag paired with closest tag point is at or precedes.
+Tag in this context is an sgml-like tag surrounded by angle brackets, <>.
 Enabled in major modes in `hui-select-markup-modes'.  Returns t if
 point is moved, else nil.  Signals an error if no tag is found
 following point or if the closing tag does not have a `>'

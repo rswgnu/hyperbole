@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     4-Nov-17 at 13:56:47
-;; Last-Mod:      7-Oct-22 at 00:16:24 by Mats Lidell
+;; Last-Mod:     30-Nov-23 at 11:55:28 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -46,8 +46,13 @@ Returns number of entries matched.  See also documentation for
 the function `hyrolo-demo-fgrep-logical' for documentation on the
 logical sexpression matching."
   (interactive "sFind rolo string (or logical sexpression): \nP")
-  (let ((hyrolo-file-list (list (expand-file-name "DEMO-ROLO.otl" hyperb:dir))))
-    (hyrolo-fgrep string max-matches)))
+  (let* ((hyrolo-file-list (list (expand-file-name "DEMO-ROLO.otl" hyperb:dir)))
+	 (match-count (hyrolo-fgrep string max-matches)))
+    (when (and (called-interactively-p 'interactive)
+	       (zerop match-count))
+      ;; Let user know that they invoked the demo version of hyrolo-fgrep
+      (message "(hyrolo-demo-fgrep): No demo matches found for '%s'" string))
+    match-count))
 
 ;;;###autoload
 (defun hyrolo-demo-fgrep-logical (expr &optional count-only include-sub-entries no-sub-entries-out)
