@@ -1,3 +1,10 @@
+2023-11-30  Mats Lidell  <matsl@gnu.org>
+
+* test/hui-tests.el (hui--ebut-link-directly-to-file)
+    (hui--ebut-link-directly-to-dired, hui--buf-writable-err)
+    (hui--gbut-link-directly-ibut, hui--gbut-link-directly-ebut): Add
+    tests for ebut-link-directly. 
+
 2023-11-29  Mats Lidell  <matsl@gnu.org>
 
 * test/hyrolo-tests.el (hyrolo-fgrep-and-goto-next-visible-org-heading)
@@ -7,7 +14,7 @@
     (hyrolo-fgrep-and-goto-next-visible-kotl-heading-level-2)
     (hyrolo-fgrep-and-goto-next-visible-kotl-heading-cell-2): Add test for
     moving to next header and that action-key then brings you to the
-    matching record.
+    matchi
 
 2023-11-25  Mats Lidell  <matsl@gnu.org>
 
