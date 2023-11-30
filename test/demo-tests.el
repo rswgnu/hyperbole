@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     20-Nov-23 at 02:27:10 by Bob Weiner
+;; Last-Mod:     22-Nov-23 at 23:22:33 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -437,6 +437,17 @@
               (should (get-buffer help-buffer))
 	    (should (print (current-buffer)))))
       (hy-test-helpers:kill-buffer help-buffer))))
+
+(ert-deftest fast-demo-key-series-dired-other-window ()
+  "Action key on `dired-other-window' brings up Dired in the other window."
+  (skip-unless (not noninteractive))
+  (with-temp-buffer
+    (insert "{M-x dired-other-window RET ${hyperb:dir}/*.el RET}")
+    (goto-char 5)
+    (action-key)
+    (hy-test-helpers:consume-input-events)
+    (should (equal 'dired-mode major-mode))
+    (should (equal hyperb:dir (expand-file-name default-directory)))))
 
 (ert-deftest fast-demo-key-series-window-grid-22 ()
   "Action key on window grid key series creates a grid."
