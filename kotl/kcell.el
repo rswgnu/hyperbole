@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-May-93
-;; Last-Mod:     29-Oct-23 at 09:16:43 by Bob Weiner
+;; Last-Mod:     25-Nov-23 at 16:33:20 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -32,6 +32,12 @@
 ;;; ************************************************************************
 
 (eval-and-compile (mapc #'require '(hinit htz kview kproperty)))
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function kotl-mode:goto-heading "kotl/kotl-mode")
 
 ;;; ************************************************************************
 ;;; Public variables

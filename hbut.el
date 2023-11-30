@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     23-Nov-23 at 03:29:51 by Bob Weiner
+;; Last-Mod:     30-Nov-23 at 23:20:52 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -63,6 +63,8 @@ Use the function, (hbut:max-len), to read the proper value.")
 (declare-function kbd-key:act "hib-kbd")
 (declare-function kbd-key:is-p "hib-kbd")
 (declare-function org-context "org")
+
+(declare-function hpath:file-position-to-line-and-column "hpath")
 
 ;;; ************************************************************************
 ;;; Private variables
