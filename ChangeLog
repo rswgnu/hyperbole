@@ -1,3 +1,8 @@
+2023-11-30  Mats Lidell  <matsl@gnu.org>
+
+* test/hui-tests.el (hui--ebut-link-directly-to-file)
+    (hui--ebut-link-directly-to-dired): Add tests for ebut-link-directly.
+
 2023-11-25  Mats Lidell  <matsl@gnu.org>
 
 * hyrolo.el: Move private variables before their first use to remove
