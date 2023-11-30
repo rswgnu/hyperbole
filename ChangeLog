@@ -1,7 +1,9 @@
 2023-11-30  Mats Lidell  <matsl@gnu.org>
 
 * test/hui-tests.el (hui--ebut-link-directly-to-file)
-    (hui--ebut-link-directly-to-dired): Add tests for ebut-link-directly.
+    (hui--ebut-link-directly-to-dired, hui--buf-writable-err)
+    (hui--gbut-link-directly-ibut, hui--gbut-link-directly-ebut): Add
+    tests for ebut-link-directly. 
 
 2023-11-25  Mats Lidell  <matsl@gnu.org>
 

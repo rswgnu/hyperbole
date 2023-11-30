@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     30-Nov-23 at 18:39:54 by Mats Lidell
+;; Last-Mod:     30-Nov-23 at 19:53:31 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -880,6 +880,56 @@ With point on label suggest that ibut for rename."
                                                :args (list (directory-file-name hyperb:dir)) ; Remove trailing slash!?
                                                :loc file
                                                :lbl-key "button")))
+      (hy-delete-file-and-buffer file))))
+
+(ert-deftest hui--buf-writable-err ()
+  "Verify error is signaled if buffer is not writable."
+  (with-temp-buffer
+    (read-only-mode)
+    (condition-case err
+        (hui:buf-writable-err (current-buffer) "func")
+      (error
+       (progn
+         (should (equal (car err) 'error))
+         (should (string-match
+                  "(func) Read-only error in Hyperbole button buffer"
+                  (cadr err))))))))
+
+(ert-deftest hui--gbut-link-directly-ibut ()
+  "Verify an ibut is created last in the global but file."
+  (defvar global-but-file)
+  (let ((global-but-file (make-temp-file "gbut" nil ".txt" "First\n"))
+        (file (make-temp-file "hypb" nil ".txt")))
+    (unwind-protect
+        (mocklet ((gbut:file => global-but-file))
+          (delete-other-windows)
+          (find-file file)
+          (with-simulated-input "button RET"
+            (hui:gbut-link-directly t)
+            (with-current-buffer (find-buffer-visiting global-but-file)
+              (should (string= (buffer-string)
+                               (concat "First\n<[button]> - \"" file ":1\""))))))
+      (hy-delete-file-and-buffer global-but-file)
+      (hy-delete-file-and-buffer file))))
+
+(ert-deftest hui--gbut-link-directly-ebut ()
+  "Verify an ebut is created last in the global but file."
+  (defvar global-but-file)
+  (let ((global-but-file (make-temp-file "gbut" nil ".txt" "First\n"))
+        (file (make-temp-file "hypb" nil ".txt")))
+    (unwind-protect
+        (mocklet ((gbut:file => global-but-file))
+          (delete-other-windows)
+          (find-file file)
+          (with-simulated-input "button RET"
+            (hui:gbut-link-directly)
+            (with-current-buffer (find-buffer-visiting global-but-file)
+              (should (string= (buffer-string) "First\n<(button)>\n"))
+              (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-file
+                                                 :args (list file 1)
+                                                 :loc global-but-file
+                                                 :lbl-key "button"))))
+      (hy-delete-file-and-buffer global-but-file)
       (hy-delete-file-and-buffer file))))
 
 ;; This file can't be byte-compiled without `with-simulated-input' which
