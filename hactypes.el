@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     29-Oct-23 at 23:46:32 by Bob Weiner
+;; Last-Mod:     25-Nov-23 at 16:36:26 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -26,6 +26,9 @@
 
 (declare-function kotl-mode:goto-cell "kotl-mode")
 (declare-function kotl-mode:beginning-of-buffer "kotl-mode")
+(declare-function kotl-mode:goto-cell-ref "kotl-mode")
+(declare-function kcell-view:indent "kcell-view")
+
 (declare-function rmail:msg-to-p "hrmail")
 (declare-function org-roam-id-find "‎ext:org-roam-id")
 

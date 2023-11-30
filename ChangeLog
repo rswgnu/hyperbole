@@ -1,3 +1,10 @@
+2023-11-25  Mats Lidell  <matsl@gnu.org>
+
+* hyrolo.el: Move private variables before their first use to remove
+    warnings.
+
+* Remove warnings for unknown functions by using declare-function.
+
 2023-11-22  Mats Lidell  <matsl@gnu.org>
 
 * test/demo-tests.el (fast-demo-key-series-dired-other-window): Add test

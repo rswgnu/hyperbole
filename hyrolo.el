@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     19-Nov-23 at 18:11:33 by Bob Weiner
+;; Last-Mod:     25-Nov-23 at 17:09:20 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -97,6 +97,13 @@
 (declare-function outline-show-all "outline")
 (declare-function outline-up-heading "outline")
 
+(declare-function hmouse-pulse-line "hui-window")
+(declare-function hpath:find "hpath")
+(declare-function hpath:expand-list "hpath")
+(declare-function hbut:get-key-src "hbut")
+(declare-function markdown-outline-level "ext:markdown-mode")
+(declare-function org-outline-level "org")
+
 (defvar org-directory)                  ; "org.el"
 (defvar markdown-regex-header)          ; "markdown-mode.el"
 (defvar google-contacts-buffer-name)    ; "ext:google-contacts.el"
@@ -129,35 +136,6 @@ The google-contact package must be loaded and a gpg encryption
 executable must be found as well (for Oauth security)."
   :type 'boolean
   :group 'hyperbole-hyrolo)
-
-(defun hyrolo-google-contacts-p ()
-  "Non-nil means google contacts package is available and feature is enabled.
-Requires `hyrolo-google-contacts-flag' set as non-nil and
-google-contacts package and gpg executables to be available for
-use."
-  (and hyrolo-google-contacts-flag
-       (featurep 'google-contacts)
-       (boundp 'google-contacts-buffer-name)
-       ;; If no gpg encryption executable, Oauth login to Google will fail.
-       (or (executable-find "gpg2") (executable-find "gpg"))))
-
-(defun hyrolo-expand-path-list (paths)
-  "Expand and return non-nil PATHS's dirs, file variables and file wildcards.
-If PATHS is nil, return a default set of hyrolo files to use.
-
-Single ${env-or-lisp-variable} references are resolved within
-each path using `hpath:expand'; this also expands paths to
-absolute paths.  Then directories are expanded into the files
-they contain that match `hyrolo-file-suffix-regexp'.  Then, if
-`find-file-wildcards' is non-nil (the default), any files
-containing [char-matches] or * wildcards are expanded to their
-matches."
-  (if paths
-      (hpath:expand-list paths hyrolo-file-suffix-regexp)
-    (delq nil
-	  (list "~/.rolo.otl"
-		(if (and (boundp 'bbdb-file) (stringp bbdb-file)) bbdb-file)
-		(when (hyrolo-google-contacts-p) google-contacts-buffer-name)))))
 
 (defcustom hyrolo-file-list nil
   "List of files containing hyrolo entries.
@@ -286,6 +264,117 @@ Only unmodified buffers are killed."
   "*A function of two arguments, START and END, invoked after a `hyrolo-yank'.
 It should reformat the region given by the arguments to some preferred style.
 Default value is to perform no reformatting.")
+
+(defun hyrolo-google-contacts-p ()
+  "Non-nil means google contacts package is available and feature is enabled.
+Requires `hyrolo-google-contacts-flag' set as non-nil and
+google-contacts package and gpg executables to be available for
+use."
+  (and hyrolo-google-contacts-flag
+       (featurep 'google-contacts)
+       (boundp 'google-contacts-buffer-name)
+       ;; If no gpg encryption executable, Oauth login to Google will fail.
+       (or (executable-find "gpg2") (executable-find "gpg"))))
+
+(defun hyrolo-expand-path-list (paths)
+  "Expand and return non-nil PATHS's dirs, file variables and file wildcards.
+If PATHS is nil, return a default set of hyrolo files to use.
+
+Single ${env-or-lisp-variable} references are resolved within
+each path using `hpath:expand'; this also expands paths to
+absolute paths.  Then directories are expanded into the files
+they contain that match `hyrolo-file-suffix-regexp'.  Then, if
+`find-file-wildcards' is non-nil (the default), any files
+containing [char-matches] or * wildcards are expanded to their
+matches."
+  (if paths
+      (hpath:expand-list paths hyrolo-file-suffix-regexp)
+    (delq nil
+	  (list "~/.rolo.otl"
+		(if (and (boundp 'bbdb-file) (stringp bbdb-file)) bbdb-file)
+		(when (hyrolo-google-contacts-p) google-contacts-buffer-name)))))
+
+;;; ************************************************************************
+;;; Private variables
+;;; ************************************************************************
+
+(defvar hyrolo--expanded-file-list nil
+  "List of hyrolo files after directory and file wildcard expansions.
+Hyrolo sets this internally; never set it yourself.")
+
+(defvar hyrolo-entry-group-number 1
+  "Group number whose length represents the level of any entry matched.
+See `hyrolo-entry-regexp'")
+
+(defvar hyrolo-entry-trailing-space-group-number 2
+  "Group number within `hyrolo-entry-regexp; containing trailing space.")
+
+(defconst hyrolo-hdr-format
+  (concat
+   "===============================================================================\n"
+   "%s\n"
+   "===============================================================================\n")
+  "Header to insert preceding a file's first hyrolo entry match when
+file has none of its own.  Used with one argument, the file name.")
+
+(defconst hyrolo-hdr-regexp "^==="
+  "Regular expression to match the first and last lines of hyrolo file headers.
+This header is inserted into hyrolo-display-buffer before any entries from the
+file are added.")
+
+(defconst hyrolo-match-regexp nil
+  "Last regular expression used to search the hyrolo.
+Nil before a search is done, including after a logical search is done.
+String search expressions are converted to regular expressions.")
+
+(defvar hyrolo--wconfig nil
+  "Saves frame's window configuration prior to a hyrolo search.")
+
+(defvar hyrolo-mode-syntax-table nil
+  "Syntax table used while in hyrolo match mode.")
+
+(if hyrolo-mode-syntax-table
+    ()
+  (setq hyrolo-mode-syntax-table (make-syntax-table text-mode-syntax-table))
+  ;; Support syntactic selection of delimited e-mail addresses.
+  (modify-syntax-entry ?\<  "(>" hyrolo-mode-syntax-table)
+  (modify-syntax-entry ?\>  ")<" hyrolo-mode-syntax-table))
+
+(defvar hyrolo-mode-map nil
+  "Keymap for the hyrolo match buffer.")
+
+(if hyrolo-mode-map
+    nil
+  (setq hyrolo-mode-map (make-keymap))
+  (if (fboundp 'set-keymap-name)
+      (set-keymap-name hyrolo-mode-map 'hyrolo-mode-map))
+  (suppress-keymap hyrolo-mode-map)
+  (define-key hyrolo-mode-map ","        'hyrolo-to-entry-beginning)
+  (define-key hyrolo-mode-map "."        'hyrolo-to-entry-end)
+  (define-key hyrolo-mode-map "<"        'beginning-of-buffer)
+  (define-key hyrolo-mode-map ">"        'end-of-buffer)
+  (define-key hyrolo-mode-map "?"        'describe-mode)
+  (define-key hyrolo-mode-map "\177"     'scroll-down)
+  (define-key hyrolo-mode-map " "        'scroll-up)
+  (define-key hyrolo-mode-map "a"        'outline-show-all)
+  (define-key hyrolo-mode-map "b"        'hyrolo-backward-same-level)
+  (define-key hyrolo-mode-map "e"        'hyrolo-edit-entry)
+  (define-key hyrolo-mode-map "f"        'hyrolo-forward-same-level)
+  (define-key hyrolo-mode-map "h"        'hyrolo-hide-subtree)
+  (define-key hyrolo-mode-map "l"        'hyrolo-locate)
+  (define-key hyrolo-mode-map "m"        'hyrolo-mail-to)
+  (define-key hyrolo-mode-map "n"        'hyrolo-next-visible-heading)
+  (define-key hyrolo-mode-map "o"        'hyrolo-overview)
+  (define-key hyrolo-mode-map "p"        'hyrolo-previous-visible-heading)
+  (define-key hyrolo-mode-map "q"        'hyrolo-quit)
+  (define-key hyrolo-mode-map "r"        'hyrolo-grep-or-fgrep)
+  (define-key hyrolo-mode-map "s"        'outline-show-subtree)
+  (define-key hyrolo-mode-map "\M-s"     'hyrolo-isearch)
+  (define-key hyrolo-mode-map "t"        'hyrolo-top-level)
+  (define-key hyrolo-mode-map "\C-i"     'hyrolo-next-match)      ;; {TAB}
+  (define-key hyrolo-mode-map "\M-\C-i"  'hyrolo-previous-match)  ;; {M-TAB}
+  (define-key hyrolo-mode-map [backtab]  'hyrolo-previous-match)  ;; {Shift-TAB}
+  (define-key hyrolo-mode-map "u"        'hyrolo-up-heading))
 
 ;;; ************************************************************************
 ;;; Commands
@@ -1595,11 +1684,10 @@ Return number of matching entries found."
 			(forward-line)
 			(setq hdr-pos (cons (point-min) (point))))
 		      (let ((case-fold-search t)
-			    match-start
 			    match-end)
 			(re-search-forward hyrolo-entry-regexp nil t)
 			(while (and (or (null max-matches) (< num-found max-matches))
-				    (setq match-start (funcall hyrolo-next-match-function pattern headline-only)))
+				    (funcall hyrolo-next-match-function pattern headline-only))
 			  (setq match-end (point))
 			  ;; If no entry delimiters found, just return the line of the match alone.
 			  (unless (re-search-backward hyrolo-entry-regexp nil t)
@@ -2189,88 +2277,6 @@ or else the number of characters matched by `outline-regexp' minus
 trailing periods and whitespace."
   (or (cdr (assoc (match-string 0) outline-heading-alist))
       (1- (- (match-end 0) (match-beginning 0)))))
-
-;;; ************************************************************************
-;;; Private variables
-;;; ************************************************************************
-
-(defvar hyrolo--expanded-file-list nil
-  "List of hyrolo files after directory and file wildcard expansions.
-Hyrolo sets this internally; never set it yourself.")
-
-(defvar hyrolo-entry-group-number 1
-  "Group number whose length represents the level of any entry matched.
-See `hyrolo-entry-regexp'")
-
-(defvar hyrolo-entry-trailing-space-group-number 2
-  "Group number within `hyrolo-entry-regexp; containing trailing space.")
-
-(defconst hyrolo-hdr-format
-  (concat
-   "===============================================================================\n"
-   "%s\n"
-   "===============================================================================\n")
-  "Header to insert preceding a file's first hyrolo entry match when
-file has none of its own.  Used with one argument, the file name.")
-
-(defconst hyrolo-hdr-regexp "^==="
-  "Regular expression to match the first and last lines of hyrolo file headers.
-This header is inserted into hyrolo-display-buffer before any entries from the
-file are added.")
-
-(defconst hyrolo-match-regexp nil
-  "Last regular expression used to search the hyrolo.
-Nil before a search is done, including after a logical search is done.
-String search expressions are converted to regular expressions.")
-
-(defvar hyrolo--wconfig nil
-  "Saves frame's window configuration prior to a hyrolo search.")
-
-(defvar hyrolo-mode-syntax-table nil
-  "Syntax table used while in hyrolo match mode.")
-
-(if hyrolo-mode-syntax-table
-    ()
-  (setq hyrolo-mode-syntax-table (make-syntax-table text-mode-syntax-table))
-  ;; Support syntactic selection of delimited e-mail addresses.
-  (modify-syntax-entry ?\<  "(>" hyrolo-mode-syntax-table)
-  (modify-syntax-entry ?\>  ")<" hyrolo-mode-syntax-table))
-
-(defvar hyrolo-mode-map nil
-  "Keymap for the hyrolo match buffer.")
-
-(if hyrolo-mode-map
-    nil
-  (setq hyrolo-mode-map (make-keymap))
-  (if (fboundp 'set-keymap-name)
-      (set-keymap-name hyrolo-mode-map 'hyrolo-mode-map))
-  (suppress-keymap hyrolo-mode-map)
-  (define-key hyrolo-mode-map ","        'hyrolo-to-entry-beginning)
-  (define-key hyrolo-mode-map "."        'hyrolo-to-entry-end)
-  (define-key hyrolo-mode-map "<"        'beginning-of-buffer)
-  (define-key hyrolo-mode-map ">"        'end-of-buffer)
-  (define-key hyrolo-mode-map "?"        'describe-mode)
-  (define-key hyrolo-mode-map "\177"     'scroll-down)
-  (define-key hyrolo-mode-map " "        'scroll-up)
-  (define-key hyrolo-mode-map "a"        'outline-show-all)
-  (define-key hyrolo-mode-map "b"        'hyrolo-backward-same-level)
-  (define-key hyrolo-mode-map "e"        'hyrolo-edit-entry)
-  (define-key hyrolo-mode-map "f"        'hyrolo-forward-same-level)
-  (define-key hyrolo-mode-map "h"        'hyrolo-hide-subtree)
-  (define-key hyrolo-mode-map "l"        'hyrolo-locate)
-  (define-key hyrolo-mode-map "m"        'hyrolo-mail-to)
-  (define-key hyrolo-mode-map "n"        'hyrolo-next-visible-heading)
-  (define-key hyrolo-mode-map "o"        'hyrolo-overview)
-  (define-key hyrolo-mode-map "p"        'hyrolo-previous-visible-heading)
-  (define-key hyrolo-mode-map "q"        'hyrolo-quit)
-  (define-key hyrolo-mode-map "r"        'hyrolo-grep-or-fgrep)
-  (define-key hyrolo-mode-map "s"        'outline-show-subtree)
-  (define-key hyrolo-mode-map "\M-s"     'hyrolo-isearch)
-  (define-key hyrolo-mode-map "t"        'hyrolo-top-level)
-  (define-key hyrolo-mode-map "\C-i"     'hyrolo-next-match)      ;; {TAB}
-  (define-key hyrolo-mode-map "\M-\C-i"  'hyrolo-previous-match)  ;; {M-TAB}
-  (define-key hyrolo-mode-map [backtab]  'hyrolo-previous-match)  ;; {Shift-TAB}
-  (define-key hyrolo-mode-map "u"        'hyrolo-up-heading))
 
 (provide 'hyrolo)
 

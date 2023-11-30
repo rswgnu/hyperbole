@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     29-Oct-23 at 16:14:28 by Bob Weiner
+;; Last-Mod:     25-Nov-23 at 16:45:25 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -41,6 +41,8 @@
 ;;; ************************************************************************
 ;;; Public declarations
 ;;; ************************************************************************
+
+(declare-function consult-grep "ext:consult")
 
 (defcustom hsys-org-consult-grep-func #'consult-grep
   "Function for consult grep searching over files."
