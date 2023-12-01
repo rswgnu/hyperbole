@@ -1,5 +1,7 @@
 2023-12-01  Mats Lidell  <matsl@gnu.org>
 
+* hmouse-tag.el (ibtype:def-symbol): Declare function to silence warning.
+
 * test/hyrolo-tests.el (hyrolo-sort-test): Set default date format so the
     format used is well defined.
     (hyrolo-fgrep-and-goto-next-visible-md-heading): Use level one heading
