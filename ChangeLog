@@ -1,3 +1,10 @@
+2023-12-01  Mats Lidell  <matsl@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-sort-test): Set default date format so the
+    format used is well defined.
+    (hyrolo-fgrep-and-goto-next-visible-md-heading): Use level one heading
+    so that heading hierarchy is respected.
+
 2023-12-01  Bob Weiner  <rsw@gnu.org>
 
 * hargs.el (hargs:delimited): Remove use of 'bounds-of-thing-at-point'
