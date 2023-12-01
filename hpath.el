@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     25-Nov-23 at 16:42:29 by Mats Lidell
+;; Last-Mod:      1-Dec-23 at 01:11:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1209,47 +1209,60 @@ Any single ${variable} within PATH is resolved.  Then PATH is
 expanded from the first file matching regexp in
 `hpath:auto-variable-alist'.
 
+Return expanded path if it exists or it contains file wildcards of
+'[]', '*', or '?'.
+
 Return any absolute or invalid PATH unchanged unless optional
 EXISTS-FLAG is non-nil in which case, return the expanded path
 only if it exists, otherwise, return nil."
 
   (when (stringp path)
     (unless (string-match-p hpath:variable-regexp path)
+      ;; Replace any $VAR environment variable references
       (setq path (substitute-in-file-name path)))
     (let (variable-path
 	  substituted-path
 	  expanded-path)
-      (setq variable-path (hpath:expand-with-variable path)
-	    substituted-path (hpath:substitute-value variable-path)
-	    expanded-path
-	    (cond ((or (null substituted-path) (string-empty-p substituted-path))
-		   path)
-		  ((and (string-match-p hpath:variable-regexp variable-path)
-			(string-match-p hpath:variable-regexp substituted-path))
-		   ;; If a path is invalid, then a variable may have been prepended but
-		   ;; it will remain unresolved in `substituted-path', in which case we
-		   ;; want to return `path' without any further changes.
-		   path)
-		  ;; For compressed Elisp libraries, add any found compressed suffix to the path.
-		  ((string-match-p "\\.el\\(\\.\\|\\'\\)" substituted-path)
-		   (or (locate-library substituted-path t) path))
-		  ((or (string-match-p "\\`\\(#[^#+.]\\|([^\)\\/]+)\\|[^.\\/].*\\.[^.\\/]\\)" substituted-path)
-		       (string-match-p "[\\/~]" substituted-path))
-		   ;; Don't expand if an Info path, URL, #anchor or has a directory prefix
-		   substituted-path)
-		  (t (expand-file-name substituted-path))))
-      (if (file-exists-p expanded-path)
+      (setq
+       ;; Expand relative path from appropriate multi-path prefix variables
+       variable-path (hpath:expand-with-variable path)
+       ;; Substitute values for Emacs Lisp variables and environment variables in PATH.
+       substituted-path (hpath:substitute-value variable-path)
+       expanded-path
+       (cond ((or (null substituted-path) (string-empty-p substituted-path))
+	      path)
+	     ((and (string-match-p hpath:variable-regexp variable-path)
+		   (string-match-p hpath:variable-regexp substituted-path))
+	      ;; If a path is invalid, then a variable may have been prepended but
+	      ;; it will remain unresolved in `substituted-path', in which case we
+	      ;; want to return `path' without any further changes.
+	      path)
+	     ;; For compressed Elisp libraries, add any found compressed suffix to the path.
+	     ((string-match-p "\\.el\\(\\.\\|\\'\\)" substituted-path)
+	      (or (locate-library substituted-path t) path))
+	     ((or (string-match-p "\\`\\(#[^#+.]\\|([^\)\\/]+)\\|[^.\\/].*\\.[^.\\/]\\)" substituted-path)
+		  (string-match-p "[\\/~]" substituted-path))
+	      ;; Don't expand if an Info path, URL, #anchor or has a directory prefix
+	      substituted-path)
+	     (t (expand-file-name substituted-path))))
+      (if (and (stringp expanded-path)
+	       (or (file-exists-p expanded-path)
+		   (string-match "[[*?]" (file-local-name expanded-path))))
 	  expanded-path
 	(unless exists-flag
 	  path)))))
 
-(defun hpath:expand-list (paths match-regexp &optional exists-flag)
+(defun hpath:expand-list (paths &optional match-regexp exists-flag)
   "Return expansions of PATHS, a list of dirs or wildcarded file patterns.
-PATHS expansion filters out non-strings, expand file wildcards
-when `find-file-wildcards' is non-nil (the default), substitute
-up to one ${variable} per path, and recursively walk directory
-trees for files with MATCH-REGEXP."
+PATHS expansion recursively walks directory trees to include
+files with names matching optional MATCH-REGEXP (otherwise, all
+files), filters out non-strings and non-existent filenames when
+optional EXISTS-FLAG is non-nil, expands file wildcards when
+`find-file-wildcards' is non-nil (the default), substitutes for
+multipled $VAR environment variables, substitutes up to one
+${variable} per path."
   (mapcan (lambda (path)
+	    (setq path (hpath:expand path exists-flag))
 	    (when (setq path (or (when find-file-wildcards
 				   (file-expand-wildcards path))
 				 (list path)))
@@ -1257,9 +1270,8 @@ trees for files with MATCH-REGEXP."
 		  (setq path (car path))
 		(setq paths (nconc (cdr path) paths)
 		      path (car path)))
-	      (setq path (hpath:expand path exists-flag))
 	      (if (file-directory-p path)
-		  (directory-files-recursively path match-regexp)
+		  (directory-files-recursively path (or match-regexp ""))
 		(list path))))
 	  (seq-filter #'stringp paths)))
 

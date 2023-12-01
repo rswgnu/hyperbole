@@ -1,3 +1,20 @@
+2023-12-01  Bob Weiner  <rsw@gnu.org>
+
+* hargs.el (hargs:delimited): Remove use of 'bounds-of-thing-at-point'
+    and (require 'thingatpt) since it doesn't use the delimiters given
+    and returns wrong results.  This fixes defal tests that were failing.
+
+* hyrolo.el (hyrolo-grep): Fix to ensure 'outline-regexp' setting for all
+    matching file types is set locally in the match buffer only.
+            (hyrolo-mode): Use 'setq-local' instead of 'make-local-variable'.
+	    (require 'outline): Add and remove its function declarations.
+
+* hpath.el (hpath:expand): Fix to allow return of paths with file wildcards
+    that are not yet expanded.  Use 'hpath:expand-list' to expand them.
+           (hpath:expand-list): Fix to call 'hpath:expand' before resolving
+    wildcards, so that variables are resolved first.  Also make 'match-regexp'
+    argument optional, in which case all files are matched.  Improve doc string.
+
 2023-11-30  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-grep-file): Add 'backward-search-limit' to minimize
