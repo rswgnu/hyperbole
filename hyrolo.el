@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     25-Nov-23 at 17:09:20 by Mats Lidell
+;; Last-Mod:      1-Dec-23 at 02:24:49 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -31,6 +31,7 @@
 (require 'hversion)
 (require 'hmail)
 (require 'hypb)  ;; For 'hypb:mail-address-regexp'.
+(require 'outline)
 (require 'package)
 (require 'set)
 (require 'sort)
@@ -83,19 +84,6 @@
 (declare-function hui:hbut-act "hui")
 (declare-function ibut:at-p "hbut")
 (declare-function kcell-view:indent "kotl/kview")
-(declare-function outline-back-to-heading "outline")
-(declare-function outline-backward-same-level "outline")
-(declare-function outline-end-of-subtree "outline")
-(declare-function outline-forward-same-level "outline")
-(declare-function outline-hide-sublevels "outline")
-(declare-function outline-hide-subtree "outline")
-(declare-function outline-level "outline")
-(declare-function outline-next-heading "outline")
-(declare-function outline-next-visible-heading "outline")
-(declare-function outline-previous-heading "outline")
-(declare-function outline-previous-visible-heading "outline")
-(declare-function outline-show-all "outline")
-(declare-function outline-up-heading "outline")
 
 (declare-function hmouse-pulse-line "hui-window")
 (declare-function hpath:find "hpath")
@@ -335,10 +323,7 @@ String search expressions are converted to regular expressions.")
 
 (if hyrolo-mode-syntax-table
     ()
-  (setq hyrolo-mode-syntax-table (make-syntax-table text-mode-syntax-table))
-  ;; Support syntactic selection of delimited e-mail addresses.
-  (modify-syntax-entry ?\<  "(>" hyrolo-mode-syntax-table)
-  (modify-syntax-entry ?\>  ")<" hyrolo-mode-syntax-table))
+  (setq hyrolo-mode-syntax-table (make-syntax-table text-mode-syntax-table)))
 
 (defvar hyrolo-mode-map nil
   "Keymap for the hyrolo match buffer.")
@@ -681,7 +666,7 @@ select it."
 	    (with-current-buffer buf
 	      (when (equal outline-regexp (default-value 'outline-regexp))
 		;; Prevent matching to *word* at the beginning of
-		;; lines and hanging hyrolo search functions but this
+		;; lines and hanging hyrolo search functions.  Note this
 		;; change adds one to the default `outline-level' function,
 		;; so 'hyrolo-mode' overrides that as well to get the correct
 		;; calculation.  -- rsw, 2023-11-17
@@ -786,9 +771,9 @@ Return number of entries matched.  See also documentation for the variable
 	(unless (string-prefix-p hyrolo-hdr-regexp hyrolo-entry-regexp)
 	  (setq hyrolo-entry-regexp (concat hyrolo-hdr-regexp "\\|" hyrolo-entry-regexp))))
       (when outline-regexps
-	(setq outline-regexp (string-join outline-regexps "\\|"))
+	(setq-local outline-regexp (string-join outline-regexps "\\|"))
 	(unless (string-prefix-p hyrolo-hdr-regexp outline-regexp)
-	  (setq outline-regexp (concat hyrolo-hdr-regexp "\\|" outline-regexp))))
+	  (setq-local outline-regexp (concat hyrolo-hdr-regexp "\\|" outline-regexp))))
       (hyrolo-display-matches display-buf))
     (when (called-interactively-p 'interactive)
       (message "%s matching entr%s found in rolo."
@@ -1683,14 +1668,18 @@ Return number of matching entries found."
 		      (when (re-search-forward hyrolo-hdr-regexp nil t 2)
 			(forward-line)
 			(setq hdr-pos (cons (point-min) (point))))
-		      (let ((case-fold-search t)
-			    match-end)
+		      (let* ((case-fold-search t)
+			     (backward-search-limit (save-excursion
+						      (if (re-search-forward hyrolo-entry-regexp nil t)
+							  (match-beginning 0)
+							(point))))
+			     match-end)
 			(re-search-forward hyrolo-entry-regexp nil t)
 			(while (and (or (null max-matches) (< num-found max-matches))
 				    (funcall hyrolo-next-match-function pattern headline-only))
 			  (setq match-end (point))
 			  ;; If no entry delimiters found, just return the line of the match alone.
-			  (unless (re-search-backward hyrolo-entry-regexp nil t)
+			  (unless (re-search-backward hyrolo-entry-regexp backward-search-limit t)
 			    (goto-char (line-beginning-position)))
 			  (setq entry-start (point))
 			  (unless (re-search-forward hyrolo-entry-regexp nil t)
@@ -1729,7 +1718,8 @@ Return number of matching entries found."
 				  (set-buffer actual-buf))))
 			  (setq num-found (1+ num-found))
 			  (or count-only
-			      (hyrolo-add-match hyrolo-display-buffer pattern entry-start (point)))))))
+			      (hyrolo-add-match hyrolo-display-buffer pattern entry-start (point)))
+			  (setq backward-search-limit (point))))))
 		  num-found))
 	  (when (< stuck-negative-point 0)
 	    (pop-to-buffer (current-buffer))
@@ -1806,13 +1796,10 @@ Calls the functions given by `hyrolo-mode-hook'.
 \\{hyrolo-mode-map}"
   (interactive)
   (unless (eq major-mode 'hyrolo-mode)
-    (make-local-variable 'outline-regexp)
     ;; This next local value is dynamically overridden in `hyrolo-grep'.
-    (setq outline-regexp (default-value 'outline-regexp))
-    (make-local-variable 'hyrolo-entry-regexp)
-    (setq hyrolo-entry-regexp (default-value 'hyrolo-entry-regexp))
-    (make-local-variable 'outline-level)
-    (setq outline-level #'hyrolo-mode-outline-level)
+    (setq-local outline-regexp (default-value 'outline-regexp)
+		hyrolo-entry-regexp (default-value 'hyrolo-entry-regexp)
+		outline-level #'hyrolo-mode-outline-level)
     (reveal-mode 1)) ;; Expose hidden text as move into it.
   (setq major-mode 'hyrolo-mode
 	mode-name "HyRolo")

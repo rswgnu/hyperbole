@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-may-21 at 09:33:00
-;; Last-Mod:     19-Aug-23 at 01:12:57 by Bob Weiner
+;; Last-Mod:     23-Nov-23 at 01:44:46 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -323,7 +323,7 @@ Needed since hyperbole expands all links to absolute paths and
 		     (save-excursion
 		       (apply #'actype:act actype args)
 		       (setq actype (hattr:get 'hbut:current 'actype))))
-		   ;; These shoulds show the value of these variables when you
+		   ;; These should show the value of these variables when you
 		   ;; use the {l} command on failure, allowing quick debugging.
 		   (should expected-ibtype)
 		   (should expected-actype)

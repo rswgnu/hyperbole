@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Oct-95 at 15:17:07
-;; Last-Mod:      4-Oct-23 at 19:10:12 by Mats Lidell
+;; Last-Mod:     21-Nov-23 at 13:20:57 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -104,7 +104,7 @@ characters at run-time.")
 (defun kvspec:activate (&optional view-spec)
   "Activate optional VIEW-SPEC or existing view spec in the current koutline.
 VIEW-SPEC is a string or t, which means recompute the current view spec.  See
-<${hyperb:dir}/kotl/EXAMPLE.kotl, 2b17=048> for details on valid view specs."
+${hyperb:dir}/kotl/EXAMPLE.kotl#3b19c=042 for details on valid view specs."
   (interactive (list (read-string "Set view spec: " kvspec:current)))
   (kotl-mode:is-p)
   (kfile:narrow-to-kcells)
@@ -169,8 +169,7 @@ display all levels of cells."
 VIEW-SPEC is a string or t, which means recompute the current view
 spec.  A nil value of VIEW-SPEC updates the modeline viewspec display
 to be current but does not recompute the viewspec itself.  See
-<${hyperb:dir}/kotl/EXAMPLE.kotl, 3b18=048> for details on valid
-view specs."
+${hyperb:dir}/kotl/EXAMPLE.kotl#3b19c=042 for details on valid view specs."
   (cond ((stringp view-spec)
 	 ;; Use given view-spec after removing extraneous characters.
 	 (setq view-spec

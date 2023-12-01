@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:     25-Nov-23 at 16:38:50 by Mats Lidell
+;; Last-Mod:      1-Dec-23 at 11:23:52 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -128,7 +128,9 @@ START-DELIM is treated as a regular expression.  END-REGEXP-FLAG
 is similar.  With optional LIST-POSITIONS-FLAG, return list
 of (string-matched start-pos end-pos).  Optional
 EXCLUDE-REGEXP is compared against the match string with its delimiters
-included; any string that matches this regexp is ignored."
+included; any string that matches this regexp is ignored.  Optional
+AS-KEY non-nil means return the string normalized as a Hyperbole
+button key (no spaces)."
   (let* ((opoint (point))
 	 ;; This initial limit is the forward search limit for start delimiters
 	 (limit (if start-regexp-flag
@@ -140,12 +142,13 @@ included; any string that matches this regexp is ignored."
 	 (end-search-func   (if end-regexp-flag   're-search-forward 'search-forward))
 	 (count 0)
 	 first
-	 start
-	 end
+	 start ;; excludes delimiter
+	 end   ;; excludes delimiter
 	 start-pos
 	 end-pos
 	 start-with-delim
 	 end-with-delim)
+
     (if (string-equal start-delim end-delim)
 	(save-excursion
 	  (beginning-of-line)
@@ -205,14 +208,16 @@ included; any string that matches this regexp is ignored."
 	(goto-char opoint)
 	(and (funcall end-search-func end-delim limit t)
 	     (setq end (match-beginning 0)
-		   end-with-delim (match-end 0))
+		   end-with-delim (match-end 0)))))
 
-	     ;; Ignore any preceding backslash, e.g. when a double-quoted
-	     ;; string is embedded within a doc string, except when
-	     ;; the string starts with 2 backslashes or an MSWindows
-	     ;; disk drive prefix, in which case the backslash is
-	     ;; considered part of a pathname.
-	     (if (and (> end (point-min))
+    (when (and start end)
+      (save-excursion
+	;; Ignore any preceding backslash, e.g. when a double-quoted
+	;; string is embedded within a doc string, except when
+	;; the string starts with 2 backslashes or an MSWindows
+	;; disk drive prefix, in which case the backslash is
+	;; considered part of a pathname.
+	(and (if (and (> end (point-min))
 		      (= (char-before end) ?\\)
 		      (not (string-match (concat "\\(\\`[\\][\\]\\)\\|"
 						 hpath:mswindows-mount-prefix)

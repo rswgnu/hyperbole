@@ -1,9 +1,36 @@
+2023-12-01  Bob Weiner  <rsw@gnu.org>
+
+* hargs.el (hargs:delimited): Remove use of 'bounds-of-thing-at-point'
+    and (require 'thingatpt) since it doesn't use the delimiters given
+    and returns wrong results.  This fixes defal tests that were failing.
+
+* hyrolo.el (hyrolo-grep): Fix to ensure 'outline-regexp' setting for all
+    matching file types is set locally in the match buffer only.
+            (hyrolo-mode): Use 'setq-local' instead of 'make-local-variable'.
+	    (require 'outline): Add and remove its function declarations.
+
+* hpath.el (hpath:expand): Fix to allow return of paths with file wildcards
+    that are not yet expanded.  Use 'hpath:expand-list' to expand them.
+           (hpath:expand-list): Fix to call 'hpath:expand' before resolving
+    wildcards, so that variables are resolved first.  Also make 'match-regexp'
+    argument optional, in which case all files are matched.  Improve doc string.
+
+2023-11-30  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-grep-file): Add 'backward-search-limit' to minimize
+    backward searches to the end of the last match and to prevent
+    forward search stalls in some contexts.
+
+* hypb.el (hypb:insert-hyperbole-banner): Keep any initial line of
+    variable settings (starts with -*-, e.g. for Org mode as the first
+    line.
+
 2023-11-30  Mats Lidell  <matsl@gnu.org>
 
 * test/hui-tests.el (hui--ebut-link-directly-to-file)
     (hui--ebut-link-directly-to-dired, hui--buf-writable-err)
     (hui--gbut-link-directly-ibut, hui--gbut-link-directly-ebut): Add
-    tests for ebut-link-directly. 
+    tests for ebut-link-directly.
 
 2023-11-29  Mats Lidell  <matsl@gnu.org>
 
@@ -26,10 +53,51 @@
 
 * Remove warnings for unknown functions by using declare-function.
 
+2023-11-23  Bob Weiner  <rsw@gnu.org>
+
+* hui-select.el (hui-select-syntax-table): Change to copy syntax
+    table so changes do not affect the parent.
+
+* hbut.el (hbut:modify-syntax): Add <> and {} pair support in text
+    and fundamental modes.
+          (require 'mode-local): Use in 'hbut:modify-syntax'.
+  hib-kbd.el (defib kbd-key): Remove explicit syntax setting of braces
+    and just temporarily use Hyperbole-modified text-mode syntax table.
+  hyrolo.el (hyrolo-mode-syntax-table): Remove explicit syntax setting
+    of < > delimiters; inherit from 'text-mode-syntax-table' instead.
+
+* test/hui-select-tests.el (hui-select--thing): Fix to skip 'indent-def
+    by removing final newline.  Label each test section with the type
+    of match expected.
+    (hui-select--thing-interactive-prints-type-of-match): Make similar
+    fixes as in above function.
+
 2023-11-22  Mats Lidell  <matsl@gnu.org>
 
 * test/demo-tests.el (fast-demo-key-series-dired-other-window): Add test
     from demo key series.
+
+2023-11-22  Bob Weiner  <rsw@gnu.org>
+
+* hui-mouse.el (hkey-alist): Add clause to handle Smart Key when in
+    a vertico minibuffer window; make it behave like standard vertico
+    which exits and selects the first minibuffer line, not the candidate
+    presently selected.
+
+* hargs.el (hargs:delimited):
+           (require 'thingatpt): For 'bounds-of-thing-at-point'
+    used in 'hargs:delimited' on single char matching delims.
+
+* hui-select.el (hui-select-scan-sexps): Add to fix brace handling
+    as a matching pair when selecting things by using previously
+    unused 'hui-select-syntax-table'.
+
+* hmouse-tag.el (smart-lisp-bound-symbol-def): Rewrite to support
+    Hyperbole type defs like defib, etc.  This improves finding
+    the proper definition of a Hyperbole type.
+                (find-defact-regexp, find-defal-regexp,
+                 find-defib-regexp, find-defil-regexp): Add these
+    entries to 'find-function-regexp-alist'.
 
 2023-11-21  Bob Weiner  <rsw@gnu.org>
 

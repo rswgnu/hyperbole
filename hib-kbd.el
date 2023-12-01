@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    22-Nov-91 at 01:37:57
-;; Last-Mod:     19-Nov-23 at 17:55:29 by Bob Weiner
+;; Last-Mod:     23-Nov-23 at 01:51:41 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -117,50 +117,44 @@ Any key sequence within the series must be a string of one of the following:
 	      (and (looking-at "[{}]") (/= ?\\ (preceding-char))))
     ;; Temporarily make open and close braces have list syntax for
     ;; matching purposes.
-    (let ((open-brace-syntax (hypb:get-raw-syntax-descriptor ?\{))
-	  (close-brace-syntax (hypb:get-raw-syntax-descriptor ?\})))
-      (unwind-protect
-	  (progn (modify-syntax-entry ?\{ "(}" (syntax-table))
-		 (modify-syntax-entry ?\} "){" (syntax-table))
-		 ;; Handle long series, e.g. eval-elisp actions
-		 (let* ((hbut:max-len (max 3000 (hbut:max-len)))
-			(seq-and-pos (or
-				      ;; (kbd) calls but only if point is between double quotes
- 				      (and (hbut:label-p t "(kbd \"" "\"\)" t)
-					   (hbut:label-p t "\"" "\"\)" t))
-				      ;; braces delimiters
-				      (hbut:label-p t "{`" "'}" t)
-				      (hbut:label-p t "{" "}" t)
-				      ;; Regular dual single quotes (Texinfo smart quotes)
-				      (hbut:label-p t "``" "''" t)
-				      ;; Typical GNU manual key sequences; note
-				      ;; these are special quote marks, not the
-				      ;; standard ASCII characters.
-				      (hbut:label-p t "‘" "’" t)))
-			;; This excludes delimiters
-			(key-series (car seq-and-pos))
-			(start (cadr seq-and-pos))
-			binding)
-		   ;; Match only when start delimiter is preceded by whitespace,
-		   ;; double quotes or is the 1st buffer character, so do not
-		   ;; match to things like ${variable}.
-		   (when (memq (char-before start) '(nil ?\ ?\t ?\n ?\r ?\f ?\"))
-		     (when (and (stringp key-series)
-				(not (string-equal key-series "")))
-		       ;; Replace any ${} internal or env vars; leave
-		       ;; $VAR untouched for the shell to evaluate.
-		       (let ((hpath:variable-regexp "\\${\\([^}]+\\)}"))
-			 (setq key-series (hpath:substitute-value key-series)))
+    (with-syntax-table text-mode-syntax-table
+      ;; Handle long series, e.g. eval-elisp actions
+      (let* ((hbut:max-len (max 3000 (hbut:max-len)))
+	     (seq-and-pos (or
+			   ;; (kbd) calls but only if point is between double quotes
+ 			   (and (hbut:label-p t "(kbd \"" "\"\)" t)
+				(hbut:label-p t "\"" "\"\)" t))
+			   ;; braces delimiters
+			   (hbut:label-p t "{`" "'}" t)
+			   (hbut:label-p t "{" "}" t)
+			   ;; Regular dual single quotes (Texinfo smart quotes)
+			   (hbut:label-p t "``" "''" t)
+			   ;; Typical GNU manual key sequences; note
+			   ;; these are special quote marks, not the
+			   ;; standard ASCII characters.
+			   (hbut:label-p t "‘" "’" t)))
+	     ;; This excludes delimiters
+	     (key-series (car seq-and-pos))
+	     (start (cadr seq-and-pos))
+	     binding)
+	;; Match only when start delimiter is preceded by whitespace,
+	;; double quotes or is the 1st buffer character, so do not
+	;; match to things like ${variable}.
+	(when (memq (char-before start) '(nil ?\ ?\t ?\n ?\r ?\f ?\"))
+	  (when (and (stringp key-series)
+		     (not (string-equal key-series "")))
+	    ;; Replace any ${} internal or env vars; leave
+	    ;; $VAR untouched for the shell to evaluate.
+	    (let ((hpath:variable-regexp "\\${\\([^}]+\\)}"))
+	      (setq key-series (hpath:substitute-value key-series)))
 
-		       (setq key-series (kbd-key:normalize key-series)
-			     binding (kbd-key:binding key-series)))
-		     (and (stringp key-series)
-			  (or (and binding (not (integerp binding)))
-			      (kbd-key:special-sequence-p key-series))
-			  (ibut:label-set seq-and-pos)
-			  (hact 'kbd-key key-series)))))
-	(hypb:set-raw-syntax-descriptor ?\{ open-brace-syntax)
-	(hypb:set-raw-syntax-descriptor ?\} close-brace-syntax)))))
+	    (setq key-series (kbd-key:normalize key-series)
+		  binding (kbd-key:binding key-series)))
+	  (and (stringp key-series)
+	       (or (and binding (not (integerp binding)))
+		   (kbd-key:special-sequence-p key-series))
+	       (ibut:label-set seq-and-pos)
+	       (hact 'kbd-key key-series)))))))
 
 ;;; ************************************************************************
 ;;; Public functions

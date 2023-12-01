@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    14-Apr-22 at 23:45:52
-;; Last-Mod:     11-Jul-22 at 23:29:45 by Mats Lidell
+;; Last-Mod:     23-Nov-23 at 02:12:38 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -85,27 +85,40 @@
   (skip-unless (not noninteractive))
   (hui-select-reset)
   (with-temp-buffer
-    (insert "Buffer\n\nParagraph\nline.  One word.\n")
+    (insert "Buffer\n\nParagraph\nline.  One word.")
     (forward-char -3)
 
-    (should (hui-select-thing))
-    (should (string= (buffer-substring-no-properties (region-beginning) (region-end)) "word"))
-
-    (should (hui-select-thing))
-    (should (string= (buffer-substring-no-properties (region-beginning) (region-end)) "One word."))
-
+    ;; word
     (should (hui-select-thing))
     (should (string= (buffer-substring-no-properties (region-beginning) (region-end))
-                     "line.  One word.\n"))
+		     "word"))
 
+    ;; symbol
     (should (hui-select-thing))
     (should (string= (buffer-substring-no-properties (region-beginning) (region-end))
-                     "\nParagraph\nline.  One word.\n"))
+		     "word."))
 
+    ;; sentence
     (should (hui-select-thing))
     (should (string= (buffer-substring-no-properties (region-beginning) (region-end))
-                     "Buffer\n\nParagraph\nline.  One word.\n"))
+		     "One word."))
 
+    ;; line
+    (should (hui-select-thing))
+    (should (string= (buffer-substring-no-properties (region-beginning) (region-end))
+                     "line.  One word."))
+
+    ;; paragraph
+    (should (hui-select-thing))
+    (should (string= (buffer-substring-no-properties (region-beginning) (region-end))
+                     "\nParagraph\nline.  One word."))
+
+    ;; buffer
+    (should (hui-select-thing))
+    (should (string= (buffer-substring-no-properties (region-beginning) (region-end))
+                     "Buffer\n\nParagraph\nline.  One word."))
+
+    ;; error
     (should-not (hui-select-thing))
     (hy-test-helpers:should-last-message
      "(hui-select-boundaries): ‘buffer’ is the largest selectable region")))
@@ -117,11 +130,16 @@ Verifies right type of match is printed when `hui-select-display-type' is set to
   (let ((hui-select-display-type t))
     (hui-select-reset)
     (with-temp-buffer
-      (insert "Buffer\n\nParagraph\nline.  One word.\n")
+      (insert "Buffer\n\nParagraph\nline.  One word.")
       (forward-char -3)
+
       (should (call-interactively 'hui-select-thing))
       (hy-test-helpers:should-last-message "word")
       (should (string= (buffer-substring-no-properties (region-beginning) (region-end)) "word"))
+
+      (should (call-interactively 'hui-select-thing))
+      (hy-test-helpers:should-last-message "symbol")
+      (should (string= (buffer-substring-no-properties (region-beginning) (region-end)) "word."))
 
       (should (call-interactively 'hui-select-thing))
       (hy-test-helpers:should-last-message "sentence")
@@ -130,17 +148,17 @@ Verifies right type of match is printed when `hui-select-display-type' is set to
       (should (call-interactively 'hui-select-thing))
       (hy-test-helpers:should-last-message "line")
       (should (string= (buffer-substring-no-properties (region-beginning) (region-end))
-                       "line.  One word.\n"))
+                       "line.  One word."))
 
       (should (call-interactively 'hui-select-thing))
       (hy-test-helpers:should-last-message "paragraph")
       (should (string= (buffer-substring-no-properties (region-beginning) (region-end))
-                       "\nParagraph\nline.  One word.\n"))
+                       "\nParagraph\nline.  One word."))
 
       (should (call-interactively 'hui-select-thing))
       (hy-test-helpers:should-last-message "Buffer")
       (should (string= (buffer-substring-no-properties (region-beginning) (region-end))
-                       "Buffer\n\nParagraph\nline.  One word.\n"))
+                       "Buffer\n\nParagraph\nline.  One word."))
 
       (should-not (call-interactively 'hui-select-thing))
       (hy-test-helpers:should-last-message
