@@ -3,7 +3,7 @@
 ;; Author:       Masanobu Umeda             / Bob Weiner
 ;;
 ;; Orig-Date:    14-Oct-91 at 07:22:08
-;; Last-Mod:      3-Oct-23 at 23:26:02 by Mats Lidell
+;; Last-Mod:      2-Dec-23 at 23:27:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -132,8 +132,7 @@ prepended.  Timezone in DATE is optional, it defaults to the
 value of `htz:local'.
 
 Recognizes the following styles:
- (1) \"(1 30 1999)\" or \"(1 30 1999)\"  `calendar-julian-date'
-     requires PARSED-CURRENT-DATE arg
+ (1) \"(1 30 1999)\" `calendar-julian-date' requires PARSED-CURRENT-DATE arg
  (2) \"14 Apr 89 03:20[:12] [GMT]\"
  (3) \"Fri, 17 Mar [19]89 4:01[:33] [GMT]\"
  (4) \"Mon Jan 16 16:12[:37] [GMT] 1989\"

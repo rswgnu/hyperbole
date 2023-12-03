@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     19-Nov-23 at 13:18:47 by Bob Weiner
+;; Last-Mod:      2-Dec-23 at 17:28:41 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -234,7 +234,7 @@ Hyperbole EXAMPLE."
   (interactive
    (list (when current-prefix-arg
 	   (read-file-name "Path to replace and save EXAMPLE.kotl file: "
-			   nil nil nil "EXAMPLE.kotl"))))
+			   "~/" nil nil "EXAMPLE.kotl"))))
   (when (and current-prefix-arg (called-interactively-p 'interactive))
     (setq replace-flag t))
   (let (personal-example

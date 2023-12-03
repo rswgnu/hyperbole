@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      1-Dec-23 at 02:24:49 by Bob Weiner
+;; Last-Mod:      2-Dec-23 at 22:00:29 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -75,6 +75,7 @@
 (declare-function helm-org-rifle-files "ext:helm-org-rifle")
 (declare-function helm-org-rifle-org-directory "ext:helm-org-rifle")
 (declare-function helm-org-rifle-show-full-contents "ext:helm-org-rifle")
+(declare-function kotl-mode:to-valid-position "kotl/kotl-mode")
 (declare-function org-roam-db-autosync-mode "ext:org-roam")
 (declare-function xml-node-child-string "ext:google-contacts")
 (declare-function xml-node-get-attribute-type "ext:google-contacts")
@@ -172,6 +173,8 @@ level.")
 
 (defcustom hyrolo-date-format "%m/%d/%Y"
   "Format of date string used in Rolo automatic date stamps.
+An empty string disables adding or updating HyRolo dates.
+
 Default is American style.  See documentation of the function
 `format-time-string' for format options."
   :type 'string
@@ -246,7 +249,7 @@ Only unmodified buffers are killed."
 
 ;; Insert or update the entry date each time an entry is added or edited.
 (add-hook 'hyrolo-add-hook  #'hyrolo-set-date)
-(add-hook 'hyrolo-edit-hook #'hyrolo-set-date)
+(add-hook 'hyrolo-edit-hook #'hyrolo-edit-date)
 
 (defvar hyrolo-yank-reformat-function #'ignore
   "*A function of two arguments, START and END, invoked after a `hyrolo-yank'.
@@ -276,7 +279,7 @@ they contain that match `hyrolo-file-suffix-regexp'.  Then, if
 containing [char-matches] or * wildcards are expanded to their
 matches."
   (if paths
-      (hpath:expand-list paths hyrolo-file-suffix-regexp)
+      (hpath:expand-list paths hyrolo-file-suffix-regexp t)
     (delq nil
 	  (list "~/.rolo.otl"
 		(if (and (boundp 'bbdb-file) (stringp bbdb-file)) bbdb-file)
@@ -419,7 +422,8 @@ entry which begins with the parent string."
 	  (setq level (match-string-no-properties hyrolo-entry-group-number))
 	(error "(hyrolo-add): Insertion failed, `%s' parent entry not found in \"%s\""
 	       parent file)))
-    (narrow-to-region (point) (progn (hyrolo-to-entry-end t) (point)))
+    (when (looking-at hyrolo-entry-regexp)
+      (narrow-to-region (point) (progn (hyrolo-to-entry-end t) (point))))
     (let* ((name-level (concat level "*"))
 	   (level-len (length name-level))
 	   (first-char (aref name 0))
@@ -458,6 +462,8 @@ entry which begins with the parent string."
 		(setq again nil))))
 	(goto-char (point-min)))
 
+      (when again
+	(goto-char (point-min)))
       (while (and again (re-search-forward entry-regexp nil 'end))
 	(setq entry-level-len (length (match-string-no-properties hyrolo-entry-group-number)))
 	(if (/= entry-level-len level-len)
@@ -1102,11 +1108,11 @@ With optional ARG, turn them on iff ARG is positive."
 	       (boundp 'hyrolo-add-hook) (listp hyrolo-add-hook)
 	       (memq 'hyrolo-set-date hyrolo-add-hook)))
       (progn (remove-hook 'hyrolo-add-hook #'hyrolo-set-date)
-	     (remove-hook 'hyrolo-edit-hook #'hyrolo-set-date)
+	     (remove-hook 'hyrolo-edit-hook #'hyrolo-edit-date)
 	     (message "Rolo date stamps are now off."))
     (add-hook 'hyrolo-add-hook  #'hyrolo-set-date)
-    (add-hook 'hyrolo-edit-hook #'hyrolo-set-date)
-    (message "Rolo date stamps are now on.")))
+    (add-hook 'hyrolo-edit-hook #'hyrolo-edit-date)
+    (message "HyRolo date stamps are now on.")))
 
 (defun hyrolo-toggle-narrow-to-entry ()
   "Toggle between display of current entry and display of all matched entries.
@@ -1887,12 +1893,22 @@ nil if not found."
 				(save-excursion
 				  (hyrolo-to-entry-end t) (point)))))
 	  (goto-char (point-min))
-	  (while (and (search-forward name nil t)
-		      (not (save-excursion
-			     (forward-line 0)
-			     (setq found
-				   (when (looking-at (concat hyrolo-entry-regexp (regexp-quote name)))
-				     (point)))))))))
+	  (while (and
+		  ;; Search for just the leaf part of a name
+		  (search-forward name nil t)
+		  (not (save-excursion
+			 (forward-line 0)
+			 (setq found
+			       (when (or (looking-at (buffer-local-value
+						      'outline-regexp
+						      (get-buffer hyrolo-display-buffer)))
+					 ;; Jump to non-first line
+					 ;; within an entry
+					 (progn (back-to-indentation)
+						(looking-at (regexp-quote name))))
+				 (when (derived-mode-p 'kotl-mode)
+				   (kotl-mode:to-valid-position))
+				 (point)))))))))
       (unless found
 	(hyrolo-kill-buffer))) ;; conditionally kill
     (hyrolo-widen)
@@ -1977,10 +1993,18 @@ HYROLO-BUF may be a file-name, `buffer-name', or buffer."
   "Go to end of current entry, ignoring sub-entries."
   (let (case-fold-search)
     (if (re-search-forward (concat hyrolo-hdr-regexp "\\|"
-				   hyrolo-entry-regexp) nil t)
+				   hyrolo-entry-regexp)
+			   nil t)
 	(progn (beginning-of-line) (point))
       (goto-char (point-max)))))
 
+(defun hyrolo-edit-date ()
+  "Replace an existing date at the end of the current hyrolo entry.
+Suitable for use as an entry in `hyrolo-edit-hook'.
+
+The date format is determined by the setting, `hyrolo-date-format', with
+a default of MM/DD/YYYY."
+  (hyrolo-set-date t))
 
 (defun hyrolo-format-name (name-str first last)
   "Reverse order of NAME-STR field given my regexp match field FIRST and LAST."
@@ -2100,24 +2124,32 @@ Default is current buffer.  Used, for example, after a rolo entry is killed."
   (and hyrolo-save-buffers-after-use (buffer-modified-p hyrolo-buf)
        (set-buffer hyrolo-buf) (save-buffer)))
 
-(defun hyrolo-set-date ()
+(defun hyrolo-set-date (&optional edit-only-flag)
   "Add a line with the current date at the end of the current hyrolo entry.
-Does not add a date if in a Koutline buffer.
+With optional non-nil EDIT-ONLY-FLAG, edit an existing date but do
+not add one if the entry lacks one.
+
+Do nothing if in a Koutline buffer or if `hyrolo-date-format' is an
+empty string.
 
 Suitable for use as an entry in `hyrolo-add-hook' and `hyrolo-edit-hook'.
 The date format is determined by the setting, `hyrolo-date-format', with
 a default of MM/DD/YYYY."
-  (unless (derived-mode-p 'kotl-mode)
+  (unless (or (string-empty-p hyrolo-date-format) (null hyrolo-date-format)
+	      (derived-mode-p 'kotl-mode))
     (save-excursion
       (skip-chars-forward "*")
       (hyrolo-to-entry-end)
       (skip-chars-backward " \t\n\r\f")
       (skip-chars-backward "^\n\r\f")
       (if (looking-at "\\s-+[-0-9./]+\\s-*$") ;; a date
+	  ;; edit date
 	  (progn (delete-region (point) (match-end 0))
 		 (insert "\t" (hyrolo-current-date)))
-	(end-of-line)
-	(insert "\n\t" (hyrolo-current-date))))))
+	(unless edit-only-flag
+	  ;; add date
+	  (end-of-line)
+	  (insert "\n\t" (hyrolo-current-date)))))))
 
 (defun hyrolo-min-matched-level ()
   "Return the minimum hyrolo level within a single file of matches."

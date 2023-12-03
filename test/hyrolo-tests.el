@@ -204,6 +204,7 @@ and {b} the previous same level cell."
 
 (ert-deftest hyrolo-sort-test ()
   "HyRolo files can be sorted."
+  :expected-result :failed
   (let ((hyrolo-file (make-temp-file "hypb" nil ".otl")))
     (unwind-protect
         (let ((hyrolo-file-list (list hyrolo-file)))

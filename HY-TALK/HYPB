@@ -9,6 +9,8 @@
         ;; org-present-startup-folded nil
 	org-hide-emphasis-markers nil)
 
+  (setq org-present-text-scale 3)
+
   ;; Show only top-level headlines
   (org-overview)
 
@@ -20,6 +22,15 @@
 
 (add-hook 'org-present-after-navigate-functions 'rsw-org-present-setup)
 
+(add-hook 'org-present-mode-hook
+          (lambda ()
+            (org-present-big)
+            (org-display-inline-images)))
+
+(add-hook 'org-present-mode-quit-hook
+          (lambda ()
+            (org-present-small)
+            (org-remove-inline-images)))
 
 * Enable all Hyperbole keys including {M-RET} in Org mode
 
@@ -47,7 +58,7 @@ or interactively after loading Hyperbole:
   Deactivate: <interaction-log-mode 0>
 
 ** ALTERNATIVE: Keypression - overlaying parts of buffer (shows trail of keys)
-   Used for EmacsNYC talk
+  Used for EmacsNYC talk
 
   Install:    <unless (package-installed-p 'keypression) (package-install 'keypression)>
   Activate:   <keypression-mode 1>
@@ -71,9 +82,9 @@ or interactively after loading Hyperbole:
 
     "!${PATH}/date"                  - execute 'date' shell command
 
-    "&Preview.app ${hyperb:dir}/man/hyperbole.pdf"
+    "&open ${hyperb:dir}/man/hyperbole.pdf"
 
-    "-subr.elc"                      - load an Elisp library
+    "-subr"                      - load an Elisp library
 
 * Programming Buttons
 
@@ -93,7 +104,7 @@ Emacs Yank Bug: bug#5320
 
 "${hyperb:dir}/DEMO"
 
-"${hyperb:dir}/README.md#Programmer Quick Reference"
+"${hyperb:dir}/README.md#Programmer Quick Reference:4:2"
 "${hyperb:dir}/README.md#programmer-quick-reference:4:2"
 
 <hpath:find "${hyperb:dir}">

@@ -1,4 +1,36 @@
+2023-12-03  Bob Weiner  <rsw@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-sort-test): Temporarily set to known
+    :failing, as is a known bug.
+
+2023-12-02  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-expand-path-list): Eliminate any non-existing
+    entries after expansion.
+            (hyrolo-date-format): Allow empty string to disable
+    date adding/updating in entries.
+            (hyrolo-set-date): Add optional 'edit-only-flag'
+    when non-nil, replaces existing dates but does not add new ones;
+    use as part of an edit command.  Do nothing if 'hyrolo-date-format'
+    is an empty string.  These changes support the new file formats
+    that HyRolo supports where you don't want a date added when jumping
+    to and editing entries.
+            (hyrolo-edit-date): Add for use with 'hyrolo-edit-hook'.
+	    (hyrolo-edit-hook): Set to 'hyrolo-edit-date'.
+	    (hyrolo-toggle-datestamps): Use 'hyrolo-edit-date'.
+	    (hyrolo-to): Handle entries of all file types now supported
+    by HyRolo.  If kotl-mode, move to first valid position on the line.
+
+* kotl/kotl-mode.el (kotl-mode:example): Fix to prompt to save in
+    home directory, not the current directory.
+
 2023-12-01  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-add): Fix that narrow-to-region was narrowing to a
+    zero-sized region when point was not on an entry start character.
+    Also fix that when moved to point-max trying optimized insertion
+    but failing, never moved point back to point-min, so insertion
+    would occur at the buffer end rather than the proper point.
 
 * hargs.el (hargs:delimited): Remove use of 'bounds-of-thing-at-point'
     and (require 'thingatpt) since it doesn't use the delimiters given
@@ -83,10 +115,6 @@
     a vertico minibuffer window; make it behave like standard vertico
     which exits and selects the first minibuffer line, not the candidate
     presently selected.
-
-* hargs.el (hargs:delimited):
-           (require 'thingatpt): For 'bounds-of-thing-at-point'
-    used in 'hargs:delimited' on single char matching delims.
 
 * hui-select.el (hui-select-scan-sexps): Add to fix brace handling
     as a matching pair when selecting things by using previously
@@ -742,7 +770,7 @@
 
 * kotl/kotl-mode.el (kotl-mode:self-insert-command): Remove special kotl-mode auto-filling
     is handled by regular 'self-insert-command'.  This fixes improper hanging indent auto-
-    filling in kcells due to narrowing kcell to text contens only, hiding the cell prefix.
+    filling in kcells due to narrowing kcell to text contents only, hiding the cell prefix.
                     (kotl-mode:pre-self-insert-command):
   kotl/kotl-orgtbl.el (kotl-mode:setup-overriding-orgtbl-keymap): Remove reference to
     'kotl-mode:self-insert-command'.

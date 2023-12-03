@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:      1-Dec-23 at 01:11:32 by Bob Weiner
+;; Last-Mod:      2-Dec-23 at 19:05:05 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1259,13 +1259,13 @@ files with names matching optional MATCH-REGEXP (otherwise, all
 files), filters out non-strings and non-existent filenames when
 optional EXISTS-FLAG is non-nil, expands file wildcards when
 `find-file-wildcards' is non-nil (the default), substitutes for
-multipled $VAR environment variables, substitutes up to one
+multiple $var environment variables, and substitutes up to one
 ${variable} per path."
   (mapcan (lambda (path)
 	    (setq path (hpath:expand path exists-flag))
 	    (when (setq path (or (when find-file-wildcards
 				   (file-expand-wildcards path))
-				 (list path)))
+				 (unless exists-flag (list path))))
 	      (if (= (length path) 1)
 		  (setq path (car path))
 		(setq paths (nconc (cdr path) paths)
