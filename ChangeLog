@@ -1,3 +1,11 @@
+2023-12-26  Mats Lidell  <matsl@gnu.org>
+
+* test/hy-test-helpers.el (hy-delete-dir-and-buffer): Add test helper for
+    removing buffers for temp folders.
+
+* test/hui-tests.el (hui--link-possible-types): Add test for
+    hui:link-possible-types.
+
 2023-12-26  Bob Weiner  <rsw@gnu.org>
 
 * test/hyrolo-tests.el: Fix with-simulated-input where prompting for 'y'.

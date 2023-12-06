@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     31-Oct-23 at 22:48:26 by Mats Lidell
+;; Last-Mod:     22-Dec-23 at 16:03:21 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -80,6 +80,13 @@ Checks ACTYPE, ARGS, LOC and LBL-KEY."
         (set-buffer-modified-p nil)
         (kill-buffer))))
   (delete-file file))
+
+(defun hy-delete-dir-and-buffer (dir)
+  "Delete DIR and buffer visiting directory."
+  (let ((buf (find-buffer-visiting dir)))
+    (when buf
+      (kill-buffer buf))
+    (delete-directory dir)))
 
 (provide 'hy-test-helpers)
 ;;; hy-test-helpers.el ends here
