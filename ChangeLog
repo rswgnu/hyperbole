@@ -15,6 +15,12 @@
     (hywconfig--get-not-existing-config-fails, hywconfig--add-by-name)
     (hywconfig--delete-by-name): Tests.
 
+* test/hy-test-helpers.el (hy-delete-dir-and-buffer): Add test helper for
+    removing buffers for temp folders.
+
+* test/hui-tests.el (hui--link-possible-types): Add test for
+    hui:link-possible-types.
+
 2023-12-01  Mats Lidell  <matsl@gnu.org>
 
 * hmouse-tag.el (ibtype:def-symbol): Declare function to silence warning.
