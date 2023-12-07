@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      1-Dec-23 at 02:24:49 by Bob Weiner
+;; Last-Mod:      7-Dec-23 at 09:33:48 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -138,7 +138,7 @@ A hyrolo-file consists of:
   :type '(repeat file)
   :initialize #'custom-initialize-default
   :set #'hyrolo-set-file-list
-  :group 'hyperbbole-hyrolo)
+  :group 'hyperbole-hyrolo)
 
 (defun hyrolo-file-list-changed (symbol set-to-value operation _where)
   (if (memq operation '(let unlet)) ;; not setting global value
