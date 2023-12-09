@@ -1,3 +1,15 @@
+2023-12-07  Mats Lidell  <matsl@gnu.org>
+
+* test/hywconfig-tests.el (hywconfig-tests--remove-ring)
+    (hywconfig-tests--remove-names): Support functions for clearing the
+    window config per frame.
+    (hywconfig--inital-ring-is-empty, hywconfig--not-empty-if-ring-save)
+    (hywconfig--number-of-configs-are-store-up-to-a-max)
+    (hywconfig--empty-after-pop-ring-with-one-config)
+    (hywconfig--max-minus-one-after-pop-ring-with-max-config)
+    (hywconfig--get-not-existing-config-fails, hywconfig--add-by-name)
+    (hywconfig--delete-by-name): Tests.
+
 2023-12-01  Mats Lidell  <matsl@gnu.org>
 
 * hmouse-tag.el (ibtype:def-symbol): Declare function to silence warning.
