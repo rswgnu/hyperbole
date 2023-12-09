@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
-;; Last-Mod:      9-Apr-23 at 11:44:06 by Bob Weiner
+;; Last-Mod:     10-Dec-23 at 19:07:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -65,16 +65,16 @@
      ["To-Beginning"           beginning-of-buffer                      t]
      ["To-End"                 end-of-buffer                            t]
      "----"
-     ["To-Next-Entry"          outline-next-visible-heading             t]
-     ["To-Next-Same-Level"     outline-forward-same-level               t]
-     ["To-Previous-Entry"      outline-previous-visible-heading         t]
-     ["To-Previous-Same-Level" outline-backward-same-level              t]
-     ["Up-a-Level"             outline-up-heading                       t])
+     ["To-Next-Entry"          hyrolo-outline-next-visible-heading      t]
+     ["To-Next-Same-Level"     hyrolo-outline-forward-same-level        t]
+     ["To-Previous-Entry"      hyrolo-outline-previous-visible-heading  t]
+     ["To-Previous-Same-Level" hyrolo-outline-backward-same-level       t]
+     ["Up-a-Level"             hyrolo-outline-up-heading                t])
     ("Outline"
-     ["Hide (Collapse)"        outline-hide-subtree                     t]
-     ["Show (Expand)"          outline-show-subtree                     t]
-     ["Show-All"               outline-show-all                         t]
-     ["Show-Only-First-Line"   outline-hide-body                        t]))
+     ["Hide (Collapse)"        hyrolo-outline-hide-subtree              t]
+     ["Show (Expand)"          hyrolo-outline-show-subtree              t]
+     ["Show-All"               hyrolo-outline-show-all                  t]
+     ["Show-Only-First-Line"   hyrolo-outline-hide-body                 t]))
   "The middle menu entries common to all HyRolo menus.")
 
 (defconst id-popup-hyrolo-menu

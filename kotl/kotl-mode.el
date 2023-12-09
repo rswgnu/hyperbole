@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:      2-Dec-23 at 17:28:41 by Bob Weiner
+;; Last-Mod:     11-Dec-23 at 01:32:59 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -20,8 +20,8 @@
 ;;; ************************************************************************
 
 (eval-when-compile '(require 'klink)) ;; hibtypes.el loads this at run-time
-(eval-and-compile (mapc #'require '(cl-lib delsel hsettings hmail hypb kfile klabel
-				    outline org org-table kotl-orgtbl)))
+(eval-and-compile (mapc #'require '(cl-lib delsel hsettings hmail hypb hyrolo
+				    kfile klabel outline org org-table kotl-orgtbl)))
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -191,31 +191,37 @@ It provides the following keys:
 
   (setq auto-fill-function 'kfill:do-auto-fill)
 
-  ;; If buffer has not yet been formatted for editing, format it.
-  (let (version)
-    ;; Koutline file that has been loaded but not yet formatted for editing.
-    (if (setq version (kfile:is-p))
-        ;; Koutline file that has been loaded and formatted for editing.
-	(if (kview:is-p kotl-kview)
-	    ;; The buffer might have been widened for inspection, so narrow to cells
-	    ;; only.
-	    (kfile:narrow-to-kcells)
-	  (kfile:read
-	   (current-buffer)
-	   (and buffer-file-name (file-exists-p buffer-file-name))
-	   version)
-	  (kvspec:activate))
-      ;; New koutline buffer or a foreign text buffer that must be converted to
-      ;; koutline format.
-      (kfile:create (current-buffer))
-      (kvspec:activate)))
-  ;; We have been converting a buffer from a foreign format to a koutline.
-  ;; Now that it is converted, ensure that `kotl-previous-mode' is set to
-  ;; koutline.
-  (hyperb:with-suppressed-warnings ((free-vars kotl-previous-mode))
-    (setq kotl-previous-mode 'kotl-mode))
-  (run-hooks 'kotl-mode-hook)
-  (add-hook 'change-major-mode-hook #'kotl-mode:show-all nil t))
+  ;; May be a portion of a Koutline in a HyRolo match buffer; we set
+  ;; kotl-mode then to use its local variable settings but don't want
+  ;; to do any of the following formatting.
+  (if (string-prefix-p hyrolo-display-buffer (buffer-name))
+      (unless (and (boundp 'kotl-kview) (kview:is-p kotl-kview))
+	(kview:create (buffer-name))) ;; sets buffer-local `kotl-kview'
+    ;; If buffer has not yet been formatted for editing, format it.
+    (let (version)
+      ;; Koutline file that has been loaded but not yet formatted for editing.
+      (if (setq version (kfile:is-p))
+          ;; Koutline file that has been loaded and formatted for editing.
+	  (if (kview:is-p kotl-kview)
+	      ;; The buffer might have been widened for inspection, so narrow to cells
+	      ;; only.
+	      (kfile:narrow-to-kcells)
+	    (kfile:read
+	     (current-buffer)
+	     (and buffer-file-name (file-exists-p buffer-file-name))
+	     version)
+	    (kvspec:activate))
+	;; New koutline buffer or a foreign text buffer that must be converted to
+	;; koutline format.
+	(kfile:create (current-buffer))
+	(kvspec:activate)))
+    ;; We have been converting a buffer from a foreign format to a koutline.
+    ;; Now that it is converted, ensure that `kotl-previous-mode' is set to
+    ;; koutline.
+    (hyperb:with-suppressed-warnings ((free-vars kotl-previous-mode))
+      (setq kotl-previous-mode 'kotl-mode))
+    (run-hooks 'kotl-mode-hook)
+    (add-hook 'change-major-mode-hook #'kotl-mode:show-all nil t)))
 
 ;;;###autoload
 (defun kotl-mode:example (&optional example replace-flag)
@@ -3458,36 +3464,42 @@ but always operates upon the current view."
 		9999
 	      (current-column)))))
 
-(defun kotl-mode:to-visible-position (&optional backward-p)
+(defun kotl-mode:to-visible-position (&optional backward-flag)
   "Move point to nearest visible and editable position within current koutline.
-With optional BACKWARD-P, move backward if possible to get to valid position."
+With optional BACKWARD-FLAG, move backward if possible to get to valid position."
   ;; Empty, visible cell
   (unless (and (kotl-mode:bocp) (kotl-mode:eocp) (not (kcell-view:invisible-p (point))))
-    (if (if backward-p
+    (if (if backward-flag
 	    (invisible-p (1- (point)))
 	  (invisible-p (point)))
-	(goto-char (if backward-p
+	(goto-char (if backward-flag
 		       (kview:previous-visible-point)
 		     (kview:first-visible-point))))
-    (kotl-mode:to-valid-position backward-p)))
+    (kotl-mode:to-valid-position backward-flag)))
 
 ;;;###autoload
-(defun kotl-mode:to-valid-position (&optional backward-p)
+(defun kotl-mode:to-valid-position (&optional backward-flag)
   "Move point to the nearest editable position within the current koutline view.
-With optional BACKWARD-P, move backward if possible to get to valid position."
+With optional BACKWARD-FLAG, move backward if possible to get to valid position."
   (unless (kview:valid-position-p)
     (let ((lbl-sep-len (kview:label-separator-length kotl-kview)))
-      (cond ((kotl-mode:bobp)
-	     (goto-char (kcell-view:start nil lbl-sep-len)))
-	    ((kotl-mode:eobp)
-	     (skip-chars-backward "\n\r"))
-	    (t (when (bolp)
-		 (if backward-p
-		     (skip-chars-backward "\n\r")
-		   (skip-chars-forward "\n\r")))
-	       (let ((indent (kcell-view:indent nil lbl-sep-len)))
-		 (when (< (current-column) indent)
-		   (move-to-column indent))))))))
+      (condition-case ()
+	  (cond ((kotl-mode:bobp)
+		 (goto-char (kcell-view:start nil lbl-sep-len)))
+		((kotl-mode:eobp)
+		 (skip-chars-backward "\n\r"))
+		(t (when (bolp)
+		     (if backward-flag
+			 (skip-chars-backward "\n\r")
+		       (skip-chars-forward "\n\r")))
+		   (let ((indent (kcell-view:indent nil lbl-sep-len)))
+		     (when (< (current-column) indent)
+		       (move-to-column indent)))))
+	(error
+	 ;; May be on a file header in *HyRolo* match buffer; then
+	 ;; move to next cell
+	 (unless backward-flag
+	   (kcell-view:next nil lbl-sep-len)))))))
 
 (defun kotl-mode:transpose-lines-internal (start end)
   "Transpose lines at START and END markers within an outline.

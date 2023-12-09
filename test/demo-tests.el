@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     22-Nov-23 at 23:22:33 by Mats Lidell
+;; Last-Mod:     11-Dec-23 at 01:58:53 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -67,7 +67,7 @@
         (re-search-forward " \\* Koutl")
         (action-key)
         (should (bolp))
-        (should (looking-at "^* Koutliner")))
+        (should (looking-at "^[ \t]*\\* Koutliner")))
     (hy-test-helpers:kill-buffer "DEMO")))
 
 ;; Smart scrolling

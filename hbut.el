@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     30-Nov-23 at 23:23:53 by Bob Weiner
+;; Last-Mod:     11-Dec-23 at 01:02:18 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -974,7 +974,7 @@ Suitable for use as part of `write-file-functions'."
 	 (buf (and (stringp default-directory)
 		   (get-file-buffer bd-file))))
     (if (and ebut:hattr-save buf (not (eq buf (current-buffer))))
-	(let ((ebut:hattr-save));; Prevents `write-file-functions' from looping.
+	(let ((ebut:hattr-save)) ;; Prevents `write-file-functions' from looping.
 	  (and (buffer-modified-p buf)
 	       (with-current-buffer buf (save-buffer)
 		 ;; Unlock button attribute file; kill buffer so user is
@@ -1246,7 +1246,7 @@ is given."
 			    (file-name-nondirectory buffer-file-name)))
 			 ;; Handle any preceding @loc hyp-source implicit button location references.
 			 ;; This is used in report buffers of explicit buttons, i.e. hui:hbut-report
-			 ;; and the *HyRolo* abd *HyNote* output buffers.
+			 ;; as well as the *HyRolo* and *HyNote* output buffers.
 			 ((save-excursion
 			    (save-restriction
 			      (widen)

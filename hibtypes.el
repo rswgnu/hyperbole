@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     25-Nov-23 at 17:18:25 by Mats Lidell
+;; Last-Mod:      3-Dec-23 at 23:55:11 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -338,6 +338,33 @@ in all buffers."
         (hact 'mail-other-window nil address)))))
 
 ;;; ========================================================================
+;;; Handles internal references within an annotated bibliography, delimiters=[]
+;;; ========================================================================
+
+(defib annot-bib ()
+  "Display annotated bibliography entries referenced internally.
+References must be delimited by square brackets, must begin with a word
+constituent character, not contain @ or # characters, must not be
+in buffers whose names begin with a space or asterisk character, must
+not be in a programming mode, Markdown or Org buffer and must have an
+attached file."
+  (and (not (bolp))
+       buffer-file-name
+       (let ((chr (aref (buffer-name) 0)))
+         (not (or (eq chr ?\ ) (eq chr ?*))))
+       (not (apply #'derived-mode-p '(prog-mode c-mode objc-mode c++-mode java-mode markdown-mode org-mode)))
+       (let ((ref (hattr:get 'hbut:current 'lbl-key))
+	     (lbl-start (hattr:get 'hbut:current 'lbl-start)))
+         (and ref
+	      lbl-start
+	      (eq ?w (char-syntax (aref ref 0)))
+              (not (string-match "[#@]" ref))
+	      (save-excursion
+		(goto-char lbl-start)
+		(ibut:label-p t "[" "]" t))
+              (hact 'annot-bib ref)))))
+
+;;; ========================================================================
 ;;; Follows Org links that are in non-Org mode buffers
 ;;; ========================================================================
 
@@ -360,33 +387,6 @@ handle any links they recognize first."
       (when start-end
         (hsys-org-set-ibut-label start-end)
         (hact #'org-open-at-point-global)))))
-
-;;; ========================================================================
-;;; Handles internal references within an annotated bibliography, delimiters=[]
-;;; ========================================================================
-
-(defib annot-bib ()
-  "Display annotated bibliography entries referenced internally.
-References must be delimited by square brackets, must begin with a word
-constituent character, not contain @ or # characters, must not be
-in buffers whose names begin with a space or asterisk character, must
-not be in a programming mode, Markdown or Org buffers and must have an
-attached file."
-  (and (not (bolp))
-       buffer-file-name
-       (let ((chr (aref (buffer-name) 0)))
-         (not (or (eq chr ?\ ) (eq chr ?*))))
-       (not (apply #'derived-mode-p '(prog-mode c-mode objc-mode c++-mode java-mode markdown-mode org-mode)))
-       (let ((ref (hattr:get 'hbut:current 'lbl-key))
-	     (lbl-start (hattr:get 'hbut:current 'lbl-start)))
-         (and ref
-	      lbl-start
-	      (eq ?w (char-syntax (aref ref 0)))
-              (not (string-match "[#@]" ref))
-	      (save-excursion
-		(goto-char lbl-start)
-		(ibut:label-p t "[" "]" t))
-              (hact 'annot-bib ref)))))
 
 ;;; ========================================================================
 ;;; Displays in-file Markdown link referents.

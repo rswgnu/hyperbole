@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 22:52:00
-;; Last-Mod:      2-Oct-23 at 05:03:07 by Bob Weiner
+;; Last-Mod:     11-Dec-23 at 01:57:54 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -461,10 +461,10 @@
       (progn
         (hypb:display-file-with-logo "DEMO")
         (goto-char (point-min))
-        (re-search-forward " \* Koutl")
+        (re-search-forward "^[ \t]*\\* Koutl")
         (action-key)
         (should (bolp))
-        (should (looking-at "^* Koutliner")))
+        (should (looking-at "^[ \t]*\\* Koutliner")))
     (hy-test-helpers:kill-buffer "DEMO")))
 
 ;; dir-summary

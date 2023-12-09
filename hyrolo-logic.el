@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    13-Jun-89 at 22:57:33
-;; Last-Mod:     11-Nov-23 at 11:27:25 by Bob Weiner
+;; Last-Mod:     10-Dec-23 at 17:24:59 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -153,7 +153,7 @@ single argument."
 	   (setq total-matches (hyrolo-fgrep expr))))
 
     (if (called-interactively-p 'interactive)
-	(message "%s matching entr%s found in rolo."
+	(message "%s matching entr%s found in HyRolo."
 		 (if (= total-matches 0) "No" total-matches)
 		 (if (= total-matches 1) "y" "ies")))
     total-matches))

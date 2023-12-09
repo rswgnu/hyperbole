@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     25-Nov-23 at 16:34:27 by Mats Lidell
+;; Last-Mod:     11-Dec-23 at 01:47:48 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -524,7 +524,15 @@ Cell is at optional POS or point."
 Point is set at end of cell's label but before the label separator.
 If between kcells, move to the previous one.  The current cell may be hidden."
   (when pos (goto-char pos))
+  (when (eq (current-buffer) (get-buffer hyrolo-display-buffer))
+    ;; May need to move past header to a valid position in HyRolo
+    ;; display match buffer
+    (while (save-excursion (forward-line 0)
+			   (or (looking-at hyrolo-hdr-regexp)
+			       (looking-at hbut:source-prefix)))
+      (forward-line 1)))
   (kview:end-of-actual-line)
+
   (let (found)
     (unless (setq found (kproperty:get (1- (point)) 'kcell))
       ;; If not at beginning of cell contents, move there.

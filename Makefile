@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     19-Nov-23 at 14:18:10 by Bob Weiner
+# Last-Mod:      4-Dec-23 at 01:18:04 by Bob Weiner
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -85,7 +85,7 @@
 
 # This ver setup won't work under any make except GNU make, so set it manually.
 #HYPB_VERSION = "`head -3 hversion.el | tail -1 | sed -e 's/.*|\(.*\)|.*/\1/'`"
-HYPB_VERSION = 8.0.1pre
+HYPB_VERSION = 9.0.0
 
 # Emacs executable used to byte-compile .el files into .elc's.
 # To override which executable is used from the commandline, do something like this:
@@ -199,7 +199,7 @@ ELC_COMPILE = $(EL_COMPILE:.el=.elc)
 
 ELC_KOTL = $(EL_KOTL:.el=.elc)
 
-HY-TALK  = HY-TALK/.hypb HY-TALK/HYPB HY-TALK/HY-TALK.org
+HY-TALK  = HY-TALK/.hypb HY-TALK/HYPB HY-TALK/HY-TALK.org HY-TALK/HYPERAMP.org HY-TALK/HYPERORG.org
 
 HYPERBOLE_FILES = dir info html $(EL_SRC) $(EL_KOTL) \
 	$(ELC_COMPILE) $(HY-TALK) ChangeLog COPYING Makefile HY-ABOUT HY-ANNOUNCE \

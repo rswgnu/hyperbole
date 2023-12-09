@@ -12,7 +12,8 @@ programming identifiers, Texinfo and Info cross-references, Org links,
 Markdown links and on and on.  All you do is load Hyperbole and then your
 text comes to life with no extra effort or complex formatting.
 
-Install Hyperbole:  (progn (add-to-list 'package-archives
+Install Hyperbole:  (progn (require 'package)
+                           (add-to-list 'package-archives
                                         '("elpa-devel" . "https://elpa.gnu.org/devel/"))
                            (package-install 'hyperbole))
 

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     25-Nov-23 at 16:45:25 by Mats Lidell
+;; Last-Mod:      4-Dec-23 at 00:04:31 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -104,8 +104,12 @@ with different settings of this option.  For example, a nil value makes
   "Follow an optional Org mode LINK to its target.
 If LINK is nil, follow any link at point.  Otherwise, trigger an error."
   (if (stringp link)
+      ;; open as if in Org mode even if not
       (org-link-open-from-string link)
-    (org-open-at-point))) ;; autoloaded
+    ;; autoloaded, open link at point whether in or out of Org mode
+    (if (derived-mode-p 'org-mode)
+	(org-open-at-point)
+      (org-open-at-point-global))))
 
 (defact org-internal-target-link (&optional internal-target)
   "Follow an optional Org mode <<INTERNAL-TARGET>> back to any first link to it.

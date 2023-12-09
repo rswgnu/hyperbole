@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:      6-Nov-23 at 19:36:33 by Bob Weiner
+;; Last-Mod:     10-Dec-23 at 16:18:24 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1854,7 +1854,8 @@ Buffer without File      link-to-buffer-tmp"
 			     ;; and sets hbut:current button attributes.
 			     (t (cond ((and (not (derived-mode-p 'dired-mode))
 					    (prog1 (setq hbut-sym (hbut:at-p))
-					      (save-excursion (ibut:at-to-name-p hbut-sym)))
+					      (when (ibut:is-p hbut-sym)
+						(save-excursion (ibut:at-to-name-p hbut-sym))))
 					    (setq lbl-key (hattr:get hbut-sym 'lbl-key))
 					    (eq (current-buffer) (get-file-buffer (gbut:file))))
 				       (list 'link-to-gbut lbl-key))
@@ -1893,7 +1894,7 @@ Buffer without File      link-to-buffer-tmp"
 					     (setq val (hargs:at-p t)))
 					   (list 'link-to-directory val))
 					  ((let ((hargs:reading-type 'file))
-					     (setq val (hargs:at-p)))
+					     (setq val (hargs:at-p t)))
 					   (list 'link-to-file val))
 					  ((derived-mode-p #'kotl-mode)
 					   (list 'link-to-kcell buffer-file-name (kcell-view:idstamp)))

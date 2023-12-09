@@ -7,12 +7,12 @@
 ;; Author:       Bob Weiner
 ;; Maintainer:   Bob Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:      06-Oct-92 at 11:52:51
-;; Last-Mod:     11-Nov-23 at 16:34:14 by Bob Weiner
-;; Released:     03-Dec-22
-;; Version:      8.0.1pre
+;; Last-Mod:      3-Dec-23 at 09:46:12 by Bob Weiner
+;; Released:     03-Dec-23
+;; Version:      9.0.0
 ;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
 ;; Package:      hyperbole
-;; Package-Requires: ((emacs "27.0"))
+;; Package-Requires: ((emacs "27.1"))
 ;; URL:          http://www.gnu.org/software/hyperbole
 
 ;; See the "HY-COPY" file for license information.

@@ -1,4 +1,92 @@
+2023-12-11  Bob Weiner  <rsw@gnu.org>
+
+* test/hibtypes-tests.el (ibtypes::text-toc-test): Regexp-quote * and allow
+    for preceding whitespace.
+
+* kotl/kotl-mode.el (require 'hyrolo): Add.
+
+* hyrolo.el (hyrolo-grep-file): Change 'insert-buffer-substring-no-properties'
+    to 'insert-buffer-substring' to keep properties, as need Koutline
+    'kcell properties to navigate them properly.
+
+* kotl/kview.el (kcell-view:to-label-end):
+  kotl/kotl-mode.el (kotl-mode:to-valid-position): Fix to handle file headers
+    in HyRolo display match buffer when displaying parts of Koutlines.
+
+* hyrolo.el (hyrolo-cache-set-major-mode): Move to this function the
+    addition of 'hyrolo-hdr-regexp' to both 'hyrolo-entry-regexp' and
+    'outline-regexp' within the *HyRolo* display match buffer.
+            (hyrolo-markdown-outline-level, hyrolo-cache-set-major-mode):
+    Fix markdown 'outline-level' function to always return a non-nil level.
+
+2023-12-10  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-grep): Remove unused local 'hyrolo-buf'.
+            (hyrolo-outline-minor-mode): Define and enable in 'hyrolo-mode'.
+
+* hyrolo-menu.el (hyrolo-menu-common-body):
+  hyrolo.el (hyrolo-mode-map): Change to 'make-sparse-keymap', name it and inherit
+    from a copy of 'outline-mode-prefix-map' where its command bindings are overriden
+    with hyrolo- prefixed ones.
+
+* hyrolo.el (hyrolo-move-backward): Change 'outline-previous-heading' call to
+    'hyrolo-outline-previous-heading'.
+
+2023-12-09  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-funcall-match, hyrolo-map-matches): Add these functions to
+    wrap function calls in the HyRolo display matches buffer that require the
+    original major mode of the location, e.g. outline commands.
+
+* hyrolo.el (hyrolo-outline-show-subtree): Add to replace usage of
+    'outline-show-subtree'.
+	    (hyrolo-outline-hide-subtree): Rename from 'hyrolo-hide-subtree'.
+            (hyrolo-outline-hide-subtree, hyrolo-overview,
+             hyrolo-top-level, hyrolo-move-backward, hyrolo-move-forward):
+    Add a wrapper call to 'hyrolo-funcall-match' or 'hyrolo-map-matches'
+    which sets appropriate major mode per location in the match buffer.
+            (hyrolo-outline-*): Add new functions emulating all 'outline-minor-mode'
+    key bindings with above wrapper calls and add to 'hyrolo-mode-map' keys.
+* hyrolo-*.el (outline): Change all (outline-*) calls to (hyrolo-outline-*) calls.
+    This supports different major modes within the HyRolo match display buffer.
+
+2023-12-08  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode): Update to be usable in `hyrolo-display-buffer'.
+
+2023-12-07  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo--cache-*): Add caching of each 'major-mode' to use for the buffer
+    from which a matching HyRolo record is drawn.
+    (hyrolo-let-file-list, hyrolo-set-file-list): Add calls to
+    `hyrolo--cache-initialize'.
+    (hyrolo-grep): Add calls to 'hyrolo--cache-initialize' and to
+       'hyrolo--cache-post-display-buffer' when not 'count-only'.
+    (hyrolo-grep-file): Add call to 'hyrolo--cache-locals'.
+    (hyrolo-grep): Remove concatenated 'outline-regexps' and 'hyrolo-entry-regexps'.
+       They are no longer used.  Move header matching in `outline-regexp' and
+       `hyrolo-entry-regexp' to 'hyrolo--cache-matched-buffer'.
+
+2023-12-04  Bob Weiner  <rsw@gnu.org>
+
+* Makefile (HY-TALK/HYPER*.org): Add Hyperbole talk slides from EmacsConf
+    presentations.
+  MANIFEST: Update with org files used in talks.
+
+* hsys-org.el (org-link): Expand this actype to open Org links that are in
+    non-Org-mode buffers.
+
 2023-12-03  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (annot-bib): Lower priority below 'org-link-outside-org-mode'
+    as this can be mistaken for an org link outside an org buffer.
+
+* hactypes.el (link-to-regexp-match): Fix typo.
+
+* hui.el (hui:link-possible-types): Set no-default when checking if
+    at a filename; otherwise, will match at any point in a file-based
+    buffer, which is only supposed to trigger at the end of the possible
+    matches when 'buffer-file-name' is checked.
 
 * test/hyrolo-tests.el (hyrolo-sort-test): Temporarily set to known
     :failing, as is a known bug.
