@@ -1,0 +1,177 @@
+-*- Mode: org; org-cycle-global-at-bob: t; hsys-org-enable-smart-keys: t -*-
+
+#+TITLE:  Top 10 Ways Hyperbole Amps Up Emacs
+#+AUTHOR:  Robert Weiner <rsw@gnu.org>
+
+`GNU Hyperbole' (pronounced Ga-new Hi-per-bo-lee), or just `Hyperbole', is
+like Markdown for hypertext.  Hyperbole automatically recognizes dozens of
+common, pre-existing patterns in any buffer regardless of mode and can
+instantly activate them as hyperbuttons with a single key: email addresses,
+URLs, grep -n outputs, programming backtraces, sequences of Emacs keys,
+programming identifiers, Texinfo and Info cross-references, Org links,
+Markdown links and on and on.  All you do is load Hyperbole and then your
+text comes to life with no extra effort or complex formatting.
+
+Install Hyperbole:  (progn (add-to-list 'package-archives
+                                        '("elpa-devel" . "https://elpa.gnu.org/devel/"))
+                           (package-install 'hyperbole))
+
+Activate Hyperbole: {C-h h} - displays minibuffer menu
+Reference Manual:   "(hyperbole)Top"
+
+Hyperbole Demo:     {C-h h d d} - interactive demo/tutorial as introduction
+
+Display Keys:       <keycast-log-mode 1>
+Hide Keys:          <keycast-log-mode 0>
+Erase Key Log:      <keycast-log-erase-buffer>
+
+Let's countdown the top 10 ways Hyperbole can help you.  We'll move
+fast as we have a lot to cover in a short time.  We'll answer
+questions after the talk.
+
+* 10. Key Series - in-buffer automation for everything
+
+**    Key series are curly brace, {}, delimited hyperbuttons that are an
+      in-buffer substitute for keyboard macros.
+
+      Place them in any file (in comment lines for programming files).
+
+      Then press {M-RET} within one to activate it.
+
+      {M-x shell RET M-> (export HYPERBOLE_DIR=${hyperb:dir} && 
+       cd $HYPERBOLE_DIR && grep -n gbut:label-list *.el) RET}
+
+	Use both a Hyperbole resolved variable, ${hyperb:dir}, and a
+	shell-resolved environment variable, $HYPERBOLE_DIR, to grep through
+	Lisp files.
+
+      {C-h h h} will restore your windows after invoking the above key series.
+
+**    FYI, Hyperbole offers a simpler way to recursively grep your current directory
+      for just Elisp files.  Use 'hypb:rgrep' when in an Elisp buffer and it will
+      match to only Elisp files.
+
+        {C-x 1 C-x 3 C-x o C-x C-f hibtypes.el RET C-x o C-n C-n}
+
+        {C-x o M-x hypb:rgrep RET gbut:label-list RET C-x o C-x 1 C-x 3 C-x b HYPERAMP RET}
+
+*  9. Existing pathnames with Environment or Lisp variables are hyperbuttons too
+
+      ${PATH}/rgrep
+
+      "${hyperb:dir}/README.md#Programmer Quick Reference:5:5"
+      "${hyperb:dir}/README.md#programmer-quick-reference:4:2"
+
+      ~/.bashrc#Alias
+
+      "${hyperb:dir}/kotl/EXAMPLE.kotl#3c"
+      "${hyperb:dir}/kotl/EXAMPLE.kotl#3c|c2ben"
+
+*  8. File prefixes for special handling
+
+      "-subr"                                     - load an Elisp library
+
+      "!${PATH}/date"                             - execute 'date' shell command
+
+      "&xdg-open ${hyperb:dir}/man/hyperbole.pdf" - run a graphical PDF viewer
+
+*  7. Bookmarks on Steroids
+
+      {C-x 2 C-x o C-h h b p} - Your personal home page of buttons and bookmarks
+
+      {C-h h g a} - Activate by name
+
+*  6. Instant test case running and debugging
+
+      {M-RET} on the first line of an <(ERT test)> runs it.
+
+      {C-u M-RET} steps through it with the edebugger.
+
+*  5. Instant 2-window typed hyperlink creation
+
+      Place 2 windows on screen; place point where you want to link to in one
+      window and then move to the window where you want the hyperlink placed.
+
+      {C-h h i l} will create a typed implicit link at point.
+      {C-h h e l} will create an explicit link instead.
+      {C-h h g l} will create a global named implicit link that works like a bookmark.
+
+*  4. Koutliner - Instant collapsible outlines on the web
+
+      {C-x 1 C-x 2}
+      {C-h h k e}
+
+      {C-x o C-h h k} - Koutliner menu
+
+      {f d} - Format menu, then display in browser
+
+*  3. HyControl - Zoom font size across all faces, windows and frames at once
+
+      {C-x 1 C-x 3 M-x list-faces-display RET C-x o}
+
+      {C-h h s f}  - {z} zoom out all frames; {Z} zoom in all frames
+
+      {C-h h s w}  - {z} zoom out all frames; {Z} zoom in all frames
+
+*  2. HyRolo - Simple, fast, flexible hierarchical record management
+
+** Search across Org, Emacs outline, Markdown and Koutline files and multiple dirs
+
+      <setq hyrolo-file-list '("${hyperb:dir}/DEMO-ROLO.otl" "~/org"
+                               "${hyperb:dir}/README.md" "${hyperb:dir}/kotl/*.kotl")>
+
+      {C-h h r s button RET}
+
+** Dynamic line-level filtering with Consult
+
+      {C-x 1 C-x 3 C-x o}
+
+      <hyrolo-consult-grep "button">
+
+*  1. Custom Implicit Button Types - solve your own problems
+
+  
+** defal - Create new button types with no programming knowledge
+
+      (defal ddg "https://duckduckgo.com/?q=\"%s\"")
+
+      <ddg "emacs news">
+
+** defil - Control the way your link buttons look
+
+      Here is a sample use case.  Create a button type whose buttons
+      perform a grep-like function over a current repository’s git
+      log entries.  The buttons use this format: [<text to match>].
+
+      The following defines the button type called search-git-log which
+      calls hypb:fgrep-git-log with the text of the button as an argument:
+      
+        (defil search-git-log "[<" ">]" ".*" #'hypb:fgrep-git-log)
+
+        [<test release>]
+
+** defib - Use full Emacs Lisp to define button types (see "hibtypes.el")
+
+      (progn
+	(require 'thingatpt)
+	(defib dow ()
+	  "Display a message with DATE's (YYYY-MM-DD) day of the week."
+	  (let ((date (thing-at-point 'sexp)))
+	    (when (and (stringp date)
+		       (string-match-p "[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}"
+				       date))
+	      (cl-destructuring-bind (_ignore _ignore _ignore day month year _ignore _ignore _ignore) (parse-time-string date)
+		(hact #'message "%s falls on %s" date
+		      (calendar-day-name (list month day year))))))))
+
+      2023-12-03
+      2023-12-05
+
+* Thanks
+
+      - To my co-maintainer Mats Lidell
+
+      - To all the hard-working volunteers and speakers at EmacsConf
+
+-- The End --
+
