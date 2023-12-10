@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:      7-Dec-23 at 00:32:03 by Mats Lidell
+;; Last-Mod:     10-Dec-23 at 21:11:07 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -958,9 +958,7 @@ With point on label suggest that ibut for rename."
   ;; Explicit Button          link-to-ebut
   (with-temp-buffer
     (ebut:program "label" 'link-to-directory "/tmp")
-    (should (equal (hattr:get (hbut:at-p) 'categ) 'explicit))
-    ;; BUG!? SHOULD BE LINK TO EBUT HERE
-    (should (equal (caar (hui:link-possible-types)) 'link-to-ibut)))
+    (should (equal (caar (hui:link-possible-types)) 'link-to-ebut)))
 
   ;; Implicit Button          link-to-ibut
   (with-temp-buffer
