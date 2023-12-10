@@ -1,3 +1,8 @@
+2023-12-09  Mats Lidell  <matsl@gnu.org>
+
+* test/hy-test-helpers.el (hy-test-helpers:consume-input-events): Remove
+    not needed recursion-depth check.
+
 2023-12-07  Mats Lidell  <matsl@gnu.org>
 
 * test/hywconfig-tests.el (hywconfig-tests--remove-ring)
