@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:      6-Nov-23 at 19:36:33 by Bob Weiner
+;; Last-Mod:     10-Dec-23 at 19:10:29 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1850,14 +1850,15 @@ Buffer without File      link-to-buffer-tmp"
 						  (when (looking-at "\\bid:")
 						    (list 'link-to-org-id id)))))))))
 
-			     ;; Next clause forces use of any ibut name in the link
-			     ;; and sets hbut:current button attributes.
-			     (t (cond ((and (not (derived-mode-p 'dired-mode))
-					    (prog1 (setq hbut-sym (hbut:at-p))
-					      (save-excursion (ibut:at-to-name-p hbut-sym)))
-					    (setq lbl-key (hattr:get hbut-sym 'lbl-key))
-					    (eq (current-buffer) (get-file-buffer (gbut:file))))
-				       (list 'link-to-gbut lbl-key))
+                             ;; Next clause forces use of any ibut name in the link
+                             ;; and sets hbut:current button attributes.
+                             (t (cond ((and (not (derived-mode-p 'dired-mode))
+                                            (prog1 (setq hbut-sym (hbut:at-p))
+                                              (when (ibut:is-p hbut-sym)
+                                                (save-excursion (ibut:at-to-name-p hbut-sym))))
+                                            (setq lbl-key (hattr:get hbut-sym 'lbl-key))
+                                            (eq (current-buffer) (get-file-buffer (gbut:file))))
+                                       (list 'link-to-gbut lbl-key))
 				      ((and hbut-sym lbl-key (eq (hattr:get hbut-sym 'categ) 'explicit))
 				       (list 'link-to-ebut lbl-key))
 				      ((and hbut-sym lbl-key)
