@@ -994,10 +994,44 @@ With point on label suggest that ibut for rename."
         (should (equal (caar (hui:link-possible-types)) 'link-to-mail)))))
 
   ;; Directory Name           link-to-directory
-  ;; TBD
+  (let ((dir (make-temp-file "hypb" t)))
+    (unwind-protect
+        (let ((hargs:reading-type 'directory))
+          ;; The dired case looks identical to the general dired case
+          ;; below i.e. (let ((hargs:reading-type 'directory))
+          ;; (hui:link-possible-types)) with cursor on a line with a
+          ;; file in dired returns 'link-to-file. What is the expected
+          ;; behavior?
+          (with-current-buffer (dired dir)
+            (goto-char 1)
+            (should (equal (caar (hui:link-possible-types)) 'link-to-directory)))
+          (with-temp-buffer
+            (insert dir)
+            (goto-char 4)
+            (should (equal (caar (hui:link-possible-types)) 'link-to-ibut))) ;; Expected: link-to-directory
+          (with-temp-buffer
+            (insert "/ssh:user@host.org:/home/user/file\n")
+            (goto-char 4)
+            (should (equal (caar (hui:link-possible-types)) 'link-to-ibut)))) ;; Expected: link-to-directory
+      (hy-delete-dir-and-buffer dir)))
 
   ;; File Name                link-to-file
-  ;; TBD
+  (let* ((temporary-file-directory (make-temp-file "hypb" t))
+         (file (make-temp-file "hypb")))
+    (unwind-protect
+        (let ((hargs:reading-type 'file))
+          (with-current-buffer (dired temporary-file-directory)
+            (should (equal (caar (hui:link-possible-types)) 'link-to-file)))
+          (with-temp-buffer
+            (insert temporary-file-directory)
+            (goto-char 4)
+            (should (equal (caar (hui:link-possible-types)) 'link-to-ibut))) ;; Expected: link-to-file
+          (with-temp-buffer
+            (insert "/ssh:user@host.org:/home/user/\n")
+            (goto-char 4)
+            (should (equal (caar (hui:link-possible-types)) 'link-to-ibut)))) ;; Expected: link-to-file
+      (hy-delete-file-and-buffer file)
+      (hy-delete-dir-and-buffer temporary-file-directory)))
 
   ;; Koutline Cell            link-to-kcell
   (let ((file (make-temp-file "hypb" nil ".kotl")))
@@ -1015,7 +1049,7 @@ With point on label suggest that ibut for rename."
           (find-file file)
           (outline-mode)
           (goto-char 1)
-          ;; BUG!? SHOULD link-to-string-match
+          ;; BUG!? Should be link-to-string-match?
           (should (equal (caar (hui:link-possible-types)) 'link-to-file)))
       (hy-delete-file-and-buffer file)))
 
@@ -1031,6 +1065,7 @@ With point on label suggest that ibut for rename."
   (let ((dir (make-temp-file "hypb" t)))
     (unwind-protect
         (with-current-buffer (dired dir)
+          (goto-char 1) ;; EOL does not seem to matter!?
           (should (equal (caar (hui:link-possible-types)) 'link-to-directory)))
       (hy-delete-dir-and-buffer dir)))
 
