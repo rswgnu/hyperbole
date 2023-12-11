@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     29-Nov-23 at 23:22:15 by Mats Lidell
+;; Last-Mod:      1-Dec-23 at 23:20:39 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -207,7 +207,8 @@ and {b} the previous same level cell."
   :expected-result :failed
   (let ((hyrolo-file (make-temp-file "hypb" nil ".otl")))
     (unwind-protect
-        (let ((hyrolo-file-list (list hyrolo-file)))
+        (let ((hyrolo-file-list (list hyrolo-file))
+              (hyrolo-date-format "%m/%d/%Y"))
           (hyrolo-find-file (car (hyrolo-get-file-list)))
           (insert "===\nHdr\n===\n")
           (goto-char (point-min))
@@ -365,7 +366,7 @@ and {b} the previous same level cell."
   "Verify move to next heading, then action-key to go to record for markdown mode."
   :expected-result :failed
   (let* ((temporary-file-directory (make-temp-file "hypb" t))
-         (md-file (make-temp-file "hypb" nil ".md" "## heading\nstring\nmore\n"))
+         (md-file (make-temp-file "hypb" nil ".md" "# heading\nstring\nmore\n"))
          (hyrolo-file-list (list temporary-file-directory)))
     (unwind-protect
         (progn
@@ -378,7 +379,7 @@ and {b} the previous same level cell."
           (with-simulated-input "y RET" ; Do you want to revisit the file normally now?
             (action-key)
             (should (equal (current-buffer) (find-buffer-visiting md-file)))
-            (should (looking-at-p "## heading"))))
+            (should (looking-at-p "# heading"))))
       (hy-delete-file-and-buffer md-file)
       (kill-buffer "*HyRolo*")
       (delete-directory temporary-file-directory))))

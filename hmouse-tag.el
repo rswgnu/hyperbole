@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     22-Nov-23 at 00:15:24 by Bob Weiner
+;; Last-Mod:      1-Dec-23 at 23:32:23 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -80,6 +80,7 @@
 
 (declare-function hsys-org-get-value "hsys-org")
 (declare-function org-in-src-block-p "org")
+(declare-function ibtype:def-symbol "hbut")
 
 ;; Forward declare needed? Because of optional defined above? Can we
 ;; skip checking if xref is available since it has been at least since

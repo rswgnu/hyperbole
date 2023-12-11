@@ -32,6 +32,11 @@
 * hyrolo.el (hyrolo-move-backward): Change 'outline-previous-heading' call to
     'hyrolo-outline-previous-heading'.
 
+2023-12-09  Mats Lidell  <matsl@gnu.org>
+
+* test/hy-test-helpers.el (hy-test-helpers:consume-input-events): Remove
+    not needed recursion-depth check.
+
 2023-12-09  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-funcall-match, hyrolo-map-matches): Add these functions to
@@ -66,6 +71,18 @@
     (hyrolo-grep): Remove concatenated 'outline-regexps' and 'hyrolo-entry-regexps'.
        They are no longer used.  Move header matching in `outline-regexp' and
        `hyrolo-entry-regexp' to 'hyrolo--cache-matched-buffer'.
+
+2023-12-07  Mats Lidell  <matsl@gnu.org>
+
+* test/hywconfig-tests.el (hywconfig-tests--remove-ring)
+    (hywconfig-tests--remove-names): Support functions for clearing the
+    window config per frame.
+    (hywconfig--inital-ring-is-empty, hywconfig--not-empty-if-ring-save)
+    (hywconfig--number-of-configs-are-store-up-to-a-max)
+    (hywconfig--empty-after-pop-ring-with-one-config)
+    (hywconfig--max-minus-one-after-pop-ring-with-max-config)
+    (hywconfig--get-not-existing-config-fails, hywconfig--add-by-name)
+    (hywconfig--delete-by-name): Tests.
 
 2023-12-04  Bob Weiner  <rsw@gnu.org>
 
@@ -111,6 +128,15 @@
 
 * kotl/kotl-mode.el (kotl-mode:example): Fix to prompt to save in
     home directory, not the current directory.
+
+2023-12-01  Mats Lidell  <matsl@gnu.org>
+
+* hmouse-tag.el (ibtype:def-symbol): Declare function to silence warning.
+
+* test/hyrolo-tests.el (hyrolo-sort-test): Set default date format so the
+    format used is well defined.
+    (hyrolo-fgrep-and-goto-next-visible-md-heading): Use level one heading
+    so that heading hierarchy is respected.
 
 2023-12-01  Bob Weiner  <rsw@gnu.org>
 
