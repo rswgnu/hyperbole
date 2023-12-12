@@ -1,4 +1,20 @@
+2023-12-12  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-mode): Add trailing space to default `outline-regexp'.
+            (hyrolo-org-mode): Add quick enable of basic Org mode for use
+    in HyRolo display match searches and use in 'hyrolo-helm-org-rifle'.
+            (hyrolo-org-outline-level): Add to not widen the buffer when
+    computing the Org outline level when in the display match buffer.
+
+* kotl/kotl-mode.el (kotl-mode):
+  hyrolo.el (hyrolo-mode): Change 'run-hooks' to 'run-mode-hooks'.
+
 2023-12-11  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-mode): Add 'hbut:source-prefix' and 'hyrolo-hdr-regexp'
+    as level 1 outline entries in outline-heading-alist.
+            (hyrolo-mode-outline-level): Delete, use default 'hyrolo-outline-level'
+    or per matched file function in 'outline-level'.
 
 * test/hibtypes-tests.el (ibtypes::text-toc-test): Regexp-quote * and allow
     for preceding whitespace.

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     11-Dec-23 at 01:32:59 by Bob Weiner
+;; Last-Mod:     12-Dec-23 at 00:12:16 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -220,7 +220,7 @@ It provides the following keys:
     ;; koutline.
     (hyperb:with-suppressed-warnings ((free-vars kotl-previous-mode))
       (setq kotl-previous-mode 'kotl-mode))
-    (run-hooks 'kotl-mode-hook)
+    (run-mode-hooks 'kotl-mode-hook)
     (add-hook 'change-major-mode-hook #'kotl-mode:show-all nil t)))
 
 ;;;###autoload
