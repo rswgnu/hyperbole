@@ -1,3 +1,33 @@
+2023-12-14  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-grep): Remove '(set-buffer display-buf)' since call to
+    'hyrolo-display-matches' does this.
+            (hyrolo-mode-map): Fix bindings of hyrolo-* overloads of
+    'outline-mode-prefix-map' (outline-minor-mode).
+
+2023-12-13  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo-logic.el (hyrolo-map-logic): Add doc for last arg,
+    whole-buffer-flag.
+                  (hyrolo-logic): Add calls to 'hyrolo--cache-initialize' and
+    'hyrolo--cache-post-display-buffer'.
+    Also add temporary disabling of 'magit-auto-revert-mode-enable-in-buffers'
+    in 'after-change-major-mode-hook' to speed file processing.
+                  (hyrolo-map-entries, hyrolo-map-kotl): Add call to
+    'hyrolo--cache-major-mode'.
+  hyrolo.el (hyrolo-grep-file): Change 'delq' to 'remove' so does not
+    permanently modify the 'after-change-major-mode-hook'.
+
+* hyrolo.el (hyrolo--cache-initialize, hyrolo--cache-major-mode): Ensure
+    all settings apply to `hyrolo-display-buffer' local variables.
+            (hyrolo-find-file): Fix doc string.
+	    (hyrolo-set-file-list, hyrolo-let-file-list): Remove call to
+    'hyrolo--cache-initialize'.
+
+* test/hyrolo-tests.el (hyrolo-demo-move-to-beginning-and-end-of-file):
+    Move to {,} and {.} tests to sep test,
+    'hyrolo-demo-move-to-beginning-and-end-of-entry'.
+
 2023-12-12  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-mode): Add trailing space to default `outline-regexp'.

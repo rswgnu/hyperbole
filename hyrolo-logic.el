@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    13-Jun-89 at 22:57:33
-;; Last-Mod:     10-Dec-23 at 17:24:59 by Bob Weiner
+;; Last-Mod:     14-Dec-23 at 00:22:05 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -171,9 +171,13 @@ is nil and optional NO-SUB-ENTRIES-OUT flag is non-nil.  SEXP should utilize the
 free variables `start' and `end' as the region on which to operate.
 Return the number of evaluations of SEXP that match entries."
   (let* ((display-buf (unless count-only
-		       (prog1 (hyrolo-set-display-buffer)
-			 (setq buffer-read-only nil)
-			 (erase-buffer))))
+			(prog1 (hyrolo-set-display-buffer)
+			  (erase-buffer)
+			  (hyrolo--cache-initialize))))
+	 ;; Temporarily disable magit-auto-revert-mode-enable-in-buffers for hyrolo
+	 ;; buffers; not needed and can slow/hang file loading
+	 (after-change-major-mode-hook
+	  (remove 'magit-auto-revert-mode-enable-in-buffers after-change-major-mode-hook))
 	 (result
 	  (mapcar
 	   (lambda (buf-or-file)
@@ -186,8 +190,9 @@ Return the number of evaluations of SEXP that match entries."
 		 ((list in-bufs)))))
 	 (total-matches (apply '+ result)))
     (unless (or count-only (= total-matches 0))
+      (hyrolo--cache-post-display-buffer)
       (hyrolo-display-matches display-buf))
-    total-matches))
+  total-matches))
 
 (defun hyrolo-map-logic (sexp hyrolo-buf &optional count-only
 			 include-sub-entries _no-sub-entries-out
@@ -200,17 +205,19 @@ flag is non-nil, apply SEXP across all sub-entries at once.
 Default is to apply SEXP to each entry and sub-entry separately.
 Entries are displayed with all of their sub-entries unless
 INCLUDE-SUB-ENTRIES is nil and optional NO-SUB-ENTRIES-OUT flag
-is non-nil.  SEXP should utilize the free variables `start' and
-`end' as the region on which to operate.  Return the number of
-evaluations of SEXP that match entries."
+is non-nil.  With optional WHOLE-BUFFER-FLAG, map entries with
+`hyrolo-map-kotl' rather than `hyrolo-map-entries'.
+
+SEXP should utilize the free variables `start' and `end' as the
+region on which to operate.  Return the number of evaluations of
+SEXP that match entries."
   (setq hyrolo-buf (or (get-buffer hyrolo-buf) hyrolo-buf))
   (if (or (bufferp hyrolo-buf)
 	  (when (file-exists-p hyrolo-buf)
 	    (setq hyrolo-buf (find-file-noselect hyrolo-buf t))))
-      (let* ((display-buf (hyrolo-set-display-buffer))
-	     (buffer-read-only)
-	     (hdr-pos)
-	     (num-found 0))
+      (let ((display-buf (hyrolo-set-display-buffer))
+	    (hdr-pos)
+	    (num-found 0))
 	  (set-buffer hyrolo-buf)
 	  (save-excursion
 	    (save-restriction
@@ -267,8 +274,9 @@ evaluations of SEXP that match entries."
 	(if result
 	    (progn (goto-char end)
 		   (setq num-found (1+ num-found))
-		   (or count-only
-		       (append-to-buffer display-buf start end)))
+		   (unless count-only
+		     (append-to-buffer display-buf start end)
+		     (hyrolo--cache-major-mode hyrolo-buf)))
 	  (goto-char end-entry-hdr))))
     num-found))
 
@@ -306,8 +314,9 @@ evaluations of SEXP that match entries."
 	      (if result
 		  (progn (goto-char end)
 			 (setq num-found (1+ num-found))
-			 (or count-only
-			     (append-to-buffer display-buf start end)))
+			 (unless count-only
+			   (append-to-buffer display-buf start end)
+			   (hyrolo--cache-major-mode (current-buffer))))
 		(goto-char end-entry-hdr))))
 	  sexp)
     num-found))

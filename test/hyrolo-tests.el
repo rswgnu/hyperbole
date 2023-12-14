@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:      1-Dec-23 at 23:20:39 by Mats Lidell
+;; Last-Mod:     13-Dec-23 at 00:53:18 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -124,8 +124,7 @@
     (hyrolo-demo-quit)))
 
 (ert-deftest hyrolo-demo-move-to-beginning-and-end-of-file ()
-  "*HyRolo* keys {<} and {>} move to beginning and end of file, respectively.
-{,} and {.} move to beginning and end of current entry, respectively."
+  "*HyRolo* keys {<} and {>} move to begin and end of file, respectively."
   (skip-unless (not noninteractive))
   (unwind-protect
       (progn
@@ -139,7 +138,18 @@
         (should (equal (point) (point-min)))
 
         (should (hact 'kbd-key ">"))
-        (should (equal (point) (point-max)))
+        (should (equal (point) (point-max))))
+    (hyrolo-demo-quit)))
+
+(ert-deftest hyrolo-demo-move-to-beginning-and-end-of-entry ()
+  "*HyRolo* keys {,} and {.} move to begin and end of an entry, respectively."
+  (skip-unless (not noninteractive))
+  (unwind-protect
+      (progn
+        (load "../hyrolo-demo")
+        (should (hact 'kbd-key "C-x 4r work RET TAB"))
+        (hy-test-helpers:consume-input-events)
+        (should (string= (buffer-name) hyrolo-display-buffer))
 
         (should (hact 'kbd-key "\C-u,n"))
         (hy-test-helpers:consume-input-events)
