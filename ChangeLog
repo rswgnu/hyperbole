@@ -1,3 +1,24 @@
+2023-12-15  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode): Fix check of 'kotl-previous-mode' to not set local
+    vars if prior mode was the same, i.e. kotl-mode.
+
+* hyrolo.el (hyrolo-hdr-move-after-p): Add to move after any hdr lines in any buffer.
+            (hyrolo-grep-file, hyrolo-map-level, hyrolo-map-level, hyrolo-show-levels:
+    Change to call 'hyrolo-hdr-move-after-p'.
+            (hyrolo-move-forward, hyrolo-move-backward): Rewrite.
+	    (hyrolo-up-heading): Remove, use 'hyrolo-outline-up-heading'.
+	    (hyrolo-map-matches, hyrolo-funcall-match): Add optional 'narrow-flag' to
+    narrow to the current file of matches.
+            (hyrolo-outline-previous-heading): Add.
+	    (hyrolo--cache-major-mode): Fix so stored matched buffer major-mode rather
+    than hyrolo-mode from the display matches buffer.  Also, reused cached major-mode-index
+    values when the major-mode is the same and increment index only when not reused.
+            (hyrolo-map-matches, hyrolo-funcall-match): Eliminate save-restriction calls.
+	    (hyrolo-cache-get-major-mode-from-pos): Add and use in 'hyrolo-cace-set-major-mode'.
+	    (hyrolo-previous-visible-heading): Remove, use
+    'hyrolo-outline-previous-visible-heading'.
+
 2023-12-14  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-grep): Remove '(set-buffer display-buf)' since call to

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     12-Dec-23 at 00:12:16 by Bob Weiner
+;; Last-Mod:     15-Dec-23 at 21:59:34 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -144,7 +144,8 @@ It provides the following keys:
   ;; from save-some-buffers, {C-x s}.
   (add-hook 'write-file-functions #'kotl-mode:update-buffer nil 'local)
   ;; Used by kimport.el functions.
-  (unless (and (boundp 'kotl-previous-mode) kotl-previous-mode)
+  (unless (and (boundp 'kotl-previous-mode) kotl-previous-mode
+	       (eq kotl-previous-mode #'kotl-mode))
     (setq hyrolo-entry-regexp (concat "^" kview:outline-regexp)
 	  kotl-previous-mode major-mode
 	  ;; Override orgtbl-mode keys with kotl-mode-specific ones.

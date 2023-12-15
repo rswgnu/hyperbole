@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     11-Dec-23 at 01:02:18 by Bob Weiner
+;; Last-Mod:     15-Dec-23 at 12:04:33 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -102,6 +102,8 @@ text.")
 
 (defconst hbut:source-prefix moccur-source-prefix
   "String found at start of a buffer containing only a hyper-button menu.
+It should not contain any characters needing regular expression quoting.
+
 This expression should be followed immediately by a file-name indicating the
 source file for the buttons in the menu, if any.")
 
