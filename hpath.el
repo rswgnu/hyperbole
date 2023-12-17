@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:      2-Dec-23 at 19:05:05 by Bob Weiner
+;; Last-Mod:     16-Dec-23 at 16:47:24 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1263,7 +1263,7 @@ multiple $var environment variables, and substitutes up to one
 ${variable} per path."
   (mapcan (lambda (path)
 	    (setq path (hpath:expand path exists-flag))
-	    (when (setq path (or (when find-file-wildcards
+	    (when (setq path (or (when (and path find-file-wildcards)
 				   (file-expand-wildcards path))
 				 (unless exists-flag (list path))))
 	      (if (= (length path) 1)

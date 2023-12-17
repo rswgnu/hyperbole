@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     15-Dec-23 at 22:25:35 by Bob Weiner
+;; Last-Mod:     17-Dec-23 at 21:16:02 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2122,11 +2122,9 @@ beginning of the highest ancestor level.  Return final point."
   (interactive "P")
   (hyrolo-move-backward
    (lambda (include-sub-entries)
-     ;; Prevent error when calling 'outline-back-to-heading' when
-     ;; within a file header.
-     (hyrolo-outline-back-to-heading)
+     (outline-back-to-heading)
      (when include-sub-entries
-       (unless (<= (funcall hyrolo-outline-level) 1)
+       (unless (<= (hyrolo-outline-level) 1)
 	 (outline-up-heading 80))))
    include-sub-entries))
 
@@ -2317,6 +2315,10 @@ Any non-nil value returned is a cons of (<entry-name> . <entry-source>)."
 (define-derived-mode hyrolo-org-mode outline-mode "HyRoloOrg"
   "Basic Org mode for use in HyRolo display match searches."
   (require 'org)
+  ;; Don't actually derive from org-mode to avoid its costly setup but
+  ;; set its parent mode property to org-mode so can `derived-mode-p'
+  ;; checks will pass.
+  (put hyrolo-org-mode 'derived-mode-parent 'org-mode)
   (setq-local outline-regexp org-outline-regexp
 	      outline-level #'hyrolo-org-outline-level)
   (use-local-map org-mode-map)
@@ -2457,13 +2459,17 @@ Return final point."
 		(hyrolo-outline-previous-heading)))
     (when (/= (point) opoint)
       (forward-line 1))
-    (hyrolo-funcall-match (lambda () (apply func args)))
-    (when (or (looking-at hyrolo-hdr-regexp)
-	      (looking-at hbut:source-prefix))
-      (forward-line 1)
-      (re-search-backward hyrolo-hdr-regexp nil t 2))
-    (when (> (point) opoint)
-      (goto-char opoint)))
+    (hyrolo-funcall-match
+     (lambda ()
+       (apply func args)
+       (when (or (looking-at hyrolo-hdr-regexp)
+		 (looking-at hbut:source-prefix))
+	 (forward-line 1)
+	 (re-search-backward hyrolo-hdr-regexp nil t 2))
+       (when (> (point) opoint)
+	 (goto-char opoint))
+       (when (derived-mode-p 'kotl-mode)
+	 (kotl-mode:to-valid-position)))))
   (point))
 
 (defun hyrolo-move-forward (func &rest args)
@@ -2471,7 +2477,11 @@ Return final point."
 Return final point."
   (hyrolo-hdr-to-last-line-p)
   (condition-case nil
-      (hyrolo-funcall-match (lambda () (apply func args)))
+      (hyrolo-funcall-match
+       (lambda ()
+	 (apply func args)
+	 (when (derived-mode-p 'kotl-mode)
+	   (kotl-mode:to-valid-position))))
     ;; Prevent error and move past file header.
     (error (hyrolo-hdr-move-after-p)))
   (point))
@@ -2496,17 +2506,26 @@ First entry represents the start of the first matched buffer and the
 remaining entries are the end points of each matched buffer with the
 HyRolo display matches buffer.")
 
+;; Next line prevents `kill-all-local-variables' run on each major
+;; mode change in the HyRolo display buffer from removing the given
+;; cache variable.
+(put 'hyrolo--cache-loc-match-bounds 'permanent-local t)
+
 (defvar-local hyrolo--cache-major-mode-indexes '(0)
   "Ordered list of major-mode-indexes `hyrolo--cache-loc-match-bounds' positions.")
+(put 'hyrolo--cache-major-mode-indexes 'permanent-local t)
 
 (defvar-local hyrolo--cache-major-mode-index 1
   "Next index value to use when caching buffer-local values.")
+(put 'hyrolo--cache-major-mode-index 'permanent-local t)
 
 (defvar-local hyrolo--cache-major-mode-to-index-hasht nil
   "Hash table with `major-mode' name keys and integer major-mode index values.")
+(put 'hyrolo--cache-major-mode-to-index-hasht 'permanent-local t)
 
 (defvar-local hyrolo--cache-index-to-major-mode-hasht nil
   "Hash table with integer major-mode index keys and `major-mode' values.")
+(put 'hyrolo--cache-index-to-major-mode-hasht 'permanent-local t)
 
 (defun hyrolo-map-matches (func &optional narrow-flag)
   "Map FUNC with no arguments over the current buffer of entries.
@@ -2608,24 +2627,6 @@ Both positions may be nil if there are no matches yet found."
 	      (nth end-seq-pos hyrolo--cache-loc-match-bounds))
       (list nil nil))))
 
-(defun hyrolo-cache-set-major-mode (pos)
-  "Set the `major-mode' for POS in the current HyRolo display buffer.
-Add `hyrolo-hdr-regexp' to `hyrolo-entry-regexp' and `outline-regexp'."
-  (funcall (hyrolo-cache-get-major-mode-from-pos pos))
-  (let ((source-prefix (if (boundp 'hbut:source-prefix) hbut:source-prefix "@loc> ")))
-    (unless (or (string-prefix-p hyrolo-hdr-regexp hyrolo-entry-regexp)
-		(string-prefix-p source-prefix hyrolo-entry-regexp))
-      (setq-local hyrolo-entry-regexp (concat hyrolo-hdr-regexp "\\|"
-					      "^" source-prefix "\\|"
-					      hyrolo-entry-regexp)))
-    (unless (or (string-prefix-p hyrolo-hdr-regexp outline-regexp)
-		(string-prefix-p source-prefix outline-regexp))
-      (setq-local outline-regexp (concat hyrolo-hdr-regexp "\\|"
-					 "^" source-prefix "\\|"
-					 outline-regexp))))
-  (when (eq outline-level #'markdown-outline-level)
-    (setq-local outline-level #'hyrolo-markdown-outline-level)))
-
 (defun hyrolo--cache-get-major-mode-from-index (major-mode-index)
   "Return `major-mode' key from hash table entry with key MAJOR-MODE-INDEX, else nil."
   (gethash major-mode-index hyrolo--cache-index-to-major-mode-hasht))
@@ -2686,6 +2687,24 @@ Ensure MATCHED-BUF's `major-mode' is stored in the hash table."
     (setq-local hyrolo--cache-loc-match-bounds   (nreverse hyrolo--cache-loc-match-bounds)
 		hyrolo--cache-major-mode-indexes (nreverse hyrolo--cache-major-mode-indexes))))
 
+(defun hyrolo-cache-set-major-mode (pos)
+  "Set the `major-mode' for POS in the current HyRolo display buffer.
+Add `hyrolo-hdr-regexp' to `hyrolo-entry-regexp' and `outline-regexp'."
+  (funcall (hyrolo-cache-get-major-mode-from-pos pos))
+  (let ((source-prefix (if (boundp 'hbut:source-prefix) hbut:source-prefix "@loc> ")))
+    (unless (or (string-prefix-p hyrolo-hdr-regexp hyrolo-entry-regexp)
+		(string-prefix-p source-prefix hyrolo-entry-regexp))
+      (setq-local hyrolo-entry-regexp (concat hyrolo-hdr-regexp "\\|"
+					      "^" source-prefix "\\|"
+					      hyrolo-entry-regexp)))
+    (unless (or (string-prefix-p hyrolo-hdr-regexp outline-regexp)
+		(string-prefix-p source-prefix outline-regexp))
+      (setq-local outline-regexp (concat hyrolo-hdr-regexp "\\|"
+					 "^" source-prefix "\\|"
+					 outline-regexp))))
+  (when (eq outline-level #'markdown-outline-level)
+    (setq-local outline-level #'hyrolo-markdown-outline-level)))
+
 ;;; ************************************************************************
 ;;; hyrolo-mode key bindings - set after all library functions have
 ;;; been defined
@@ -2720,9 +2739,9 @@ Ensure MATCHED-BUF's `major-mode' is stored in the hash table."
   (define-key hyrolo-mode-map "s"        'hyrolo-outline-show-subtree)
   (define-key hyrolo-mode-map "\M-s"     'hyrolo-isearch)
   (define-key hyrolo-mode-map "t"        'hyrolo-top-level)
-  (define-key hyrolo-mode-map "\C-i"     'hyrolo-next-match)      ;; {TAB}
-  (define-key hyrolo-mode-map "\M-\C-i"  'hyrolo-previous-match)  ;; {M-TAB}
-  (define-key hyrolo-mode-map [backtab]  'hyrolo-previous-match)  ;; {Shift-TAB}
+  (define-key hyrolo-mode-map "\C-i"     'hyrolo-next-match) ;; {TAB}
+  (define-key hyrolo-mode-map "\M-\C-i"  'hyrolo-previous-match) ;; {M-TAB}
+  (define-key hyrolo-mode-map [backtab]  'hyrolo-previous-match) ;; {Shift-TAB}
   (define-key hyrolo-mode-map "u"        'hyrolo-outline-up-heading)
 
   (let (otl-cmd-name
