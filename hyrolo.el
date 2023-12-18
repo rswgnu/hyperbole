@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     17-Dec-23 at 21:16:02 by Bob Weiner
+;; Last-Mod:     18-Dec-23 at 11:20:19 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1674,7 +1674,7 @@ Return number of matching entries found."
 			  (unless (re-search-forward hyrolo-entry-regexp nil t)
 			    (goto-char (line-end-position)))
 			  (setq curr-entry-level-len (length (buffer-substring-no-properties entry-start (point))))
-			  (unless (hyrolo-to-entry-end t curr-entry-level-len)
+			  (unless (hyrolo-to-entry-end t)
 			    ;; If at the end of a line, move to the next line;
 			    ;; otherwise, move forward a character if possible.
 			    (if (eolp)
@@ -1853,10 +1853,11 @@ When found, return the mnatch starting position."
     (match-beginning 0)))
 
 (defun hyrolo-next-visible-heading (arg)
-  "Move to the next visible heading line.
+  "Move to the next visible heading or match buffer header.
 With ARG, repeats or can move backward if negative.
-A heading line is one that starts with a `*' (or that
-`outline-regexp' matches)."
+
+A heading is one that starts with an `outline-regexp' match.
+A match buffer header is one that starts with `hyrolo-hdr-regexp'."
   (interactive "p")
   (hyrolo-move-forward #'outline-next-visible-heading arg))
 
@@ -1984,10 +1985,11 @@ A heading line is one that starts with a `*' (or that
   (hyrolo-funcall-match #'outline-previous-heading))
 
 (defun hyrolo-outline-previous-visible-heading (arg)
-  "Move to the previous heading line.
+  "Move to the previous visible heading or match buffer header.
 With ARG, repeats or can move forward if negative.
-A heading line is one that starts with a `*' (or that
-`outline-regexp' matches)."
+
+A heading is one that starts with an `outline-regexp' match.
+A match buffer header is one that starts with `hyrolo-hdr-regexp'."
   (interactive "p")
   (hyrolo-move-backward #'outline-previous-visible-heading arg))
 
@@ -2128,17 +2130,13 @@ beginning of the highest ancestor level.  Return final point."
 	 (outline-up-heading 80))))
    include-sub-entries))
 
-(defun hyrolo-to-entry-end (&optional include-sub-entries _curr-entry-level-len)
+(defun hyrolo-to-entry-end (&optional include-sub-entries)
   "Move point past the end of the current entry.
-oWith optional prefix arg INCLUDE-SUB-ENTRIES non-nil, move past
+With optional prefix arg INCLUDE-SUB-ENTRIES non-nil, move past
 the end of the entire subtree.  Return final point.
 
-CURR-ENTRY-LEVEL-LEN is the integer length of the last entry
-header found.  If INCLUDE-SUB-ENTRIES is nil,
-CURR-ENTRY-LEVEL-LEN is not needed.
-
-When called interactively, leave point one character earlier, before
-the final newline of the entry.
+When called interactively, leave point one character earlier,
+before the final newline of the entry.
 
 Return current point."
   (interactive "P")
@@ -2147,8 +2145,8 @@ Return current point."
      (if (not include-sub-entries)
 	 (outline-next-heading)
        (outline-end-of-subtree)
-       (goto-char (1+ (point)))))
-   include-sub-entries)
+       (goto-char (1+ (point))))
+     include-sub-entries))
   (when (called-interactively-p 'any)
     (goto-char (1- (point))))
   (point))
@@ -2318,7 +2316,7 @@ Any non-nil value returned is a cons of (<entry-name> . <entry-source>)."
   ;; Don't actually derive from org-mode to avoid its costly setup but
   ;; set its parent mode property to org-mode so can `derived-mode-p'
   ;; checks will pass.
-  (put hyrolo-org-mode 'derived-mode-parent 'org-mode)
+  (put 'hyrolo-org-mode 'derived-mode-parent 'org-mode)
   (setq-local outline-regexp org-outline-regexp
 	      outline-level #'hyrolo-org-outline-level)
   (use-local-map org-mode-map)
@@ -2469,11 +2467,16 @@ Return final point."
        (when (> (point) opoint)
 	 (goto-char opoint))
        (when (derived-mode-p 'kotl-mode)
-	 (kotl-mode:to-valid-position)))))
+	 (kotl-mode:to-valid-position)))
+     ;; Narrow to current match buffer when given a lambda func.
+     (not (symbolp func))))
   (point))
 
 (defun hyrolo-move-forward (func &rest args)
   "Move forward past any file header and apply FUNC to ARGS.
+If FUNC is a lambda (not a function symbol), then temporarily
+narrow to the current match buffer before applying FUNC.
+
 Return final point."
   (hyrolo-hdr-to-last-line-p)
   (condition-case nil
@@ -2481,7 +2484,9 @@ Return final point."
        (lambda ()
 	 (apply func args)
 	 (when (derived-mode-p 'kotl-mode)
-	   (kotl-mode:to-valid-position))))
+	   (kotl-mode:to-valid-position)))
+       ;; Narrow to current match buffer when given a lambda func.
+       (not (symbolp func)))
     ;; Prevent error and move past file header.
     (error (hyrolo-hdr-move-after-p)))
   (point))
@@ -2755,6 +2760,7 @@ Add `hyrolo-hdr-regexp' to `hyrolo-entry-regexp' and `outline-regexp'."
 			hyrolo-cmd (intern-soft hyrolo-cmd-name)))
 	 (substitute-key-definition otl-cmd hyrolo-cmd hyrolo-mode-map)))
      outline-mode-prefix-map)))
+
 
 (provide 'hyrolo)
 

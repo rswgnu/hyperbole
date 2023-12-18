@@ -1,3 +1,13 @@
+2023-12-18  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-move-backward, hyrolo-move-forward): If FUNC is a lambda
+    (not a function symbol), then temporarily narrow to the current match buffer
+     before applying FUNC.
+     (hyrolo-to-entry-end): Remove unused arg '_curr-entry-level-len'.
+     (hyrolo-grep-file): Remove unneeded passing of 'curr-entry-level-len' arg to
+     (hyrolo-outline-previous-visible-heading, hyrolo-next-visible-heading): Fix
+     doc strings to mention stops at match buffer headers.
+
 2023-12-17  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-move-backward, hyrolo-move-forward): If on a kotl-mode entry,
