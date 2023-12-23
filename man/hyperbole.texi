@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:      3-Dec-23 at 09:46:58 by Bob Weiner
+@c Last-Mod:     21-Dec-23 at 13:10:20 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.0
-Printed December 3, 2023.
+Printed December 21, 2023.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.0
-December 3, 2023
+December 21, 2023
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -2498,6 +2498,14 @@ Jump to the source line associated with a debugger stack frame or
 breakpoint line.  This works with gdb, dbx, and xdb.  Such lines are
 recognized in any buffer.
 
+@findex ibtypes hib-python-traceback
+@cindex pdb
+@cindex python traceback
+@cindex python error
+@cindex source line
+@item hib-python-traceback
+Test for and jump to line referenced in Python pdb, traceback, or pytype error.
+
 @findex ibtypes grep-msg
 @cindex grep
 @cindex compiler error
@@ -2505,6 +2513,12 @@ recognized in any buffer.
 @item grep-msg
 Jump to the line associated with a grep or compilation error message.
 Messages are recognized in any buffer.
+
+@findex hyrolo-stuck-msg
+@cindex hyrolo error
+@item hyrolo-stuck-msg
+Jump to the position where a HyRolo search has become stuck from the error.
+Such errors are recognized in any buffer.
 
 @findex ibtypes ripgrep-msg
 @cindex grep

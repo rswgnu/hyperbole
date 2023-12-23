@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     15-Dec-23 at 12:04:33 by Bob Weiner
+;; Last-Mod:     21-Dec-23 at 13:12:49 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1248,7 +1248,7 @@ is given."
 			    (file-name-nondirectory buffer-file-name)))
 			 ;; Handle any preceding @loc hyp-source implicit button location references.
 			 ;; This is used in report buffers of explicit buttons, i.e. hui:hbut-report
-			 ;; as well as the *HyRolo* and *HyNote* output buffers.
+			 ;; as well as the *HyRolo* display matches buffer.
 			 ((save-excursion
 			    (save-restriction
 			      (widen)

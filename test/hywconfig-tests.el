@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:      7-Dec-23 at 23:17:36 by Mats Lidell
+;; Last-Mod:     23-Dec-23 at 01:21:53 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -27,7 +27,7 @@
 
 (defun hywconfig-tests--remove-names ()
   "Remove names from frame parameters."
-  (set-frame-parameter nil 'hywconfig-names nil))
+  (set-frame-parameter nil 'named-hywconfigs nil))
 
 (ert-deftest hywconfig--inital-ring-is-empty ()
   "Verify an initial ring is empty."
@@ -74,27 +74,19 @@
 
 (ert-deftest hywconfig--add-by-name ()
   "Verify config is added by name."
-  :expected-result :failed
-  ;; See backtrace for the error -  (wrong-type-argument listp #<window-configuration>)
-  ;; set:member("config" (#<window-configuration>))
-  ;; set:get("config" (#<window-configuration>))
-  ;; (let ((wconfig (set:get name (hywconfig-get-names)))) (if wconfig (progn (hywconfig-set-window-configuration wconfig) (if (called-interactively-p 'interactive) (progn (message "Window configuration `%s' is now active." name)))) (error "(hywconfig-restore-by-name): No window configuration for this frame named `%s'" name)))
-  ;; (cond ((null name) (message "There is no named window configuration to restore.")) ((not (stringp name)) (error "(hywconfig-restore-by-name): `name' argument is not a string: %s" name)) (t (let ((wconfig (set:get name (hywconfig-get-names)))) (if wconfig (progn (hywconfig-set-window-configuration wconfig) (if (called-interactively-p 'interactive) (progn (message "Window configuration `%s' is now active." name)))) (error "(hywconfig-restore-by-name): No window configuration for this frame named `%s'" name)))))
-  ;; hywconfig-restore-by-name("config")
-  ;; [...]
   (hywconfig-tests--remove-names)
   (hywconfig-add-by-name "config")
+  (should (hywconfig-named-get "config"))
   (should (hywconfig-restore-by-name "config")))
 
 (ert-deftest hywconfig--delete-by-name ()
   "Verify config can be deleted by name."
-  :expected-result :failed
   ;; Same error as above
   (hywconfig-tests--remove-names)
-  (hywconfig-add-by-name "config")
-  (hywconfig-delete-by-name "config")
+  (should (hywconfig-add-by-name "config"))
+  (should (hywconfig-delete-by-name "config"))
   (let ((err (should-error (hywconfig-restore-by-name "config") :type 'error)))
-    (should (string--p "No window configuration for this frame named" (cadr err)))))
+    (should (string-match-p "No window configuration for this frame named" (cadr err)))))
 
 (provide 'hywconfig-tests)
 ;;; hywconfig-tests.el ends here

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Mar-89
-;; Last-Mod:      5-Feb-23 at 16:51:16 by Bob Weiner
+;; Last-Mod:     23-Dec-23 at 01:21:23 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -50,9 +50,8 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(require 'hargs)
+(require 'hargs) ;; this requires 'hypb
 (require 'ring)
-(require 'set)
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -75,58 +74,63 @@
 (defun hywconfig-add-by-name (name)
   "Save the current window configuration under the string NAME.
 When called interactively and a window configuration already exists under
-NAME, confirms whether or not to replace it."
+NAME, confirm whether or not to replace it.
+
+Return t if name is added or replaced, else nil."
   (interactive "sName for current window configuration: ")
   (unless (stringp name)
     (error "(hywconfig-add-by-name): `name' argument is not a string: %s" name))
-  (let ((set:equal-op  (lambda (key elt) (equal key (car elt))))
-	(wconfig-names (hywconfig-get-names)))
-    (when (or (not (called-interactively-p 'interactive))
-	      (not (set:member name wconfig-names))
-	      (y-or-n-p
-	       (format "Replace existing `%s' window configuration? " name)))
-      (hywconfig-set-names (set:replace name (current-window-configuration)
-					wconfig-names))
-      (when (called-interactively-p 'interactive)
-	(message
-	 (substitute-command-keys
-	  (format "Window configuration `%s' saved.  Use {\\[hywconfig-restore-by-name]} to restore." name)))))))
+  (when (or (not (called-interactively-p 'interactive))
+	    (not (member name (hywconfig-named-get-names)))
+	    (y-or-n-p
+	     (format "Replace existing `%s' window configuration? " name)))
+    (hywconfig-named-put name (current-window-configuration))
+    (when (called-interactively-p 'interactive)
+      (message
+       (substitute-command-keys
+	(format "Window configuration `%s' saved.  Use {\\[hywconfig-restore-by-name]} to restore." name))))
+    t))
 
 ;;;###autoload
 (defun hywconfig-delete-by-name (name)
-  "Deletes frame-specific window configuration saved under NAME."
+  "Delete frame-specific window configuration saved with NAME.
+
+Return t if name exists and is deleted, else nil."
   (interactive (list (hargs:read-match "Delete window configuration named: "
-				       (hywconfig-get-names) nil t)))
+				       (hywconfig-named-get-names) nil t)))
   (cond ((null name)
 	 (message "There is no named window configuration to delete."))
 	((not (stringp name))
 	 (error "(hywconfig-delete-by-name): `name' argument is not a string: %s" name))
-	(t (let ((set:equal-op (lambda (key elt) (equal key (car elt)))))
-	     (hywconfig-set-names (set:remove name (hywconfig-get-names)))
-	     (when (called-interactively-p 'interactive)
-	       (message "Window configuration `%s' has been deleted." name))))))
+	(t (let ((removed-flag (hywconfig-named-remove name)))
+	     (when (and removed-flag (called-interactively-p 'interactive))
+	       (message "Window configuration `%s' has been deleted." name))
+	     removed-flag))))
 
 ;;;###autoload
 (defun hywconfig-restore-by-name (name)
-  "Restore frame-specific window configuration saved under NAME."
+  "Restore frame-specific window configuration saved with NAME.
+
+Return t if name exists and is restored, else nil."
   (interactive (list (hargs:read-match "Restore window configuration named: "
-				       (hywconfig-get-names) nil t)))
+				       (hywconfig-named-get-names) nil t)))
   (cond ((null name)
 	 (message "There is no named window configuration to restore."))
 	((not (stringp name))
 	 (error "(hywconfig-restore-by-name): `name' argument is not a string: %s" name))
-	(t (let ((wconfig (set:get name (hywconfig-get-names))))
+	(t (let ((wconfig (hywconfig-named-get name)))
 	     (if wconfig
 		 (progn (hywconfig-set-window-configuration wconfig)
 			(when (called-interactively-p 'interactive)
-			  (message "Window configuration `%s' is now active." name)))
+			  (message "Window configuration `%s' is now active." name))
+			t)
 	       (error "(hywconfig-restore-by-name): No window configuration for this frame named `%s'" name))))))
 
 ;;; Window configuration ring management (like text kill ring).
 ;;;###autoload
 (defun hywconfig-delete-pop ()
-  "Replace the current frame's window configuration with the most recently saved.
-Then deletes this new configuration from the ring."
+  "Replace the selected frame's window configuration with the most recently saved.
+Then delete this new configuration from the ring."
   (interactive)
   (let ((ring (hywconfig-get-ring)))
     (if (ring-empty-p ring)
@@ -138,8 +142,8 @@ Then deletes this new configuration from the ring."
 
 ;;;###autoload
 (defun hywconfig-delete-pop-continue ()
-  "Replace current frame's window configuration with the most recently saved.
-Delete this new configuration from the ring.  If the hywconfig
+  "Replace selected frame's window configuration with the most recently saved.
+Then delete this new configuration from the ring.  If the hywconfig
 ring is not empty, then stay in the hywconfig menu."
   (interactive)
   (hywconfig-delete-pop)
@@ -148,12 +152,12 @@ ring is not empty, then stay in the hywconfig menu."
 
 ;;;###autoload
 (defun hywconfig-ring-empty-p ()
-  "Return t if the wconfig ring for the current frame is empty; nil otherwise."
+  "Return t if the wconfig ring for the selected frame is empty; nil otherwise."
   (ring-empty-p (hywconfig-get-ring)))
 
 ;;;###autoload
 (defun hywconfig-ring-save ()
-  "Save the current frame's window configuration onto the save ring.
+  "Save the selected frame's window configuration onto the save ring.
 Use {\\[hywconfig-yank-pop]} to restore it at a later time."
   (interactive)
   (ring-insert (hywconfig-get-ring) (current-window-configuration))
@@ -164,7 +168,7 @@ Use {\\[hywconfig-yank-pop]} to restore it at a later time."
 
 ;;;###autoload
 (defun hywconfig-yank-pop (n)
-  "Replace current frame's window config with prefix arg Nth prior one in ring.
+  "Replace selected frame's window config with prefix arg Nth prior one in ring.
 Interactively, default value of N = 1, means the last saved window
 configuration is displayed.
 
@@ -181,7 +185,7 @@ oldest one comes the newest one."
 
 ;;;###autoload
 (defun hywconfig-yank-pop-continue (n)
-  "Replace current frame's window config with prefix arg Nth prior one in ring.
+  "Replace selected frame's window config with prefix arg Nth prior one in ring.
 If there are more than one entries in the ring, then stay in the hywconfig menu.
 
 Interactively, default value of N = 1, means the last saved window
@@ -198,20 +202,34 @@ oldest one comes the newest one."
 ;;; Private functions
 ;;; ************************************************************************
 
-(defun hywconfig-get-names ()
-  "Return the current frame's list of named window configurations."
-  (let* ((frame (selected-frame))
-	 (names (frame-parameter frame 'hywconfig-names)))
-    (unless names
-      (set-frame-parameter frame 'hywconfig-names (setq names (set:create))))
-    names))
+(defun hywconfig-named-get (name)
+  "Return the selected frame's window configuration with NAME."
+  (lax-plist-get (hywconfig-named-get-entries) name))
 
-(defun hywconfig-set-names (names)
-  "Set the current frame's list of named window configurations."
-  (set-frame-parameter (selected-frame) 'hywconfig-names names))
+(defun hywconfig-named-get-names ()
+  "Return the selected frame's list of window configuration names."
+  (hypb:map-plist (lambda (name _wconfig) name) (hywconfig-named-get-entries)))
+
+(defun hywconfig-named-get-entries ()
+  "Get the selected frame's plist of named window configurations."
+  (frame-parameter (selected-frame) 'named-hywconfigs))
+
+(defun hywconfig-named-put (name wconfig)
+  "Add NAMEd WCONFIG to selected frame's plist of named window configurations."
+  (hywconfig-named-set-entries (lax-plist-put (hywconfig-named-get-entries) name wconfig)))
+
+(defun hywconfig-named-remove (name)
+  "Remove the selected frame's stored window configuration with NAME."
+  (let ((plist (hywconfig-named-get-entries)))
+    (prog1 (hypb:remove-from-plist plist name)
+      (hywconfig-named-set-entries plist))))
+
+(defun hywconfig-named-set-entries (entries)
+  "Set the selected frame's plist of named window configuration ENTRIES."
+  (set-frame-parameter (selected-frame) 'named-hywconfigs entries))
 
 (defun hywconfig-get-ring ()
-  "Return the current frame's window configuration ring."
+  "Return the selected frame's window configuration ring."
   (let* ((frame (selected-frame))
 	 (ring (frame-parameter frame 'hywconfig-ring)))
     (unless ring
@@ -219,6 +237,7 @@ oldest one comes the newest one."
     ring))
 
 (defun hywconfig-set-window-configuration (wconfig)
+  "Return window configureation WCONFIG within the selected frame."
   (when (window-configuration-p wconfig)
     (condition-case nil
 	(progn (set-window-configuration wconfig) t)

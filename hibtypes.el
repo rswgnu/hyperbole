@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      3-Dec-23 at 23:55:11 by Bob Weiner
+;; Last-Mod:     21-Dec-23 at 13:12:35 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -869,7 +869,7 @@ See `hpath:find' function documentation for special file display options."
 
 ;;; ========================================================================
 ;;; Jumps to source line associated with ipython, ripgrep, grep or
-;;; compilation errors.
+;;; compilation errors or HyRolo stuck position error messages.
 ;;; ========================================================================
 
 (defib ipython-stack-frame ()
@@ -960,6 +960,23 @@ than a helm completion buffer)."
                 (ibut:label-set but-label)
                 (hact 'link-to-file-line file line-num)))))))))
 
+(defib hyrolo-stuck-msg ()
+  "Jump to the position where a HyRolo search has become stuck from the error.
+Such errors are recognized in any buffer (other than a helm completion
+buffer)."
+  (unless (derived-mode-p 'helm-major-mode)
+    (save-excursion
+      (beginning-of-line)
+      ;; HyRolo stuck error
+      (when (looking-at ".*(hyrolo-grep-file): Stuck looping in buffer \\\\?\"\\([^\\\t\n\r\f\"'`]+\\)\\\\?\" at position \\([0-9]+\\)")
+        (let* ((buffer-name (match-string-no-properties 1))
+               (pos  (or (match-string-no-properties 2) "1"))
+               (but-label (concat buffer-name ":P" pos)))
+	  (when (buffer-live-p (get-buffer buffer-name))
+            (setq pos (string-to-number pos))
+            (ibut:label-set but-label)
+            (hact 'link-to-buffer-tmp buffer-name pos)))))))
+
 (defib grep-msg ()
   "Jump to the line associated with line numbered grep or compilation error msgs.
 Messages are recognized in any buffer (other than a helm completion
@@ -971,6 +988,8 @@ in grep and shell buffers."
     (save-excursion
       (beginning-of-line)
       (when (or
+             ;; HyRolo stuck error
+             (looking-at ".*(hyrolo-grep-file): Stuck looping in \\(buffer\\) \\\\?\"\\([^\\\t\n\r\f\"'`]+\\)\\\\?\" at position \\([0-9]+\\)")
 	     ;; Emacs native compiler file lines
 	     (looking-at "Compiling \\(\\S-+\\)\\.\\.\\.$")
 	     (looking-at "Loading \\(\\S-+\\) (\\S-+)\\.\\.\\.$")
@@ -1025,7 +1044,7 @@ in grep and shell buffers."
 
 ;;; ========================================================================
 ;;; Jumps to source line associated with debugger stack frame or breakpoint
-;;; lines.  Supports gdb, dbx, and xdb.
+;;; lines.  Supports pdb, gdb, dbx, and xdb.
 ;;; ========================================================================
 
 (defun hib-python-traceback ()
@@ -1374,7 +1393,8 @@ Activates only if point is within the first line of the Info-node name."
                                (hbut:label-p t "`" "'" t t)))
          (ref (car node-ref-and-pos))
          (node-ref (and (stringp ref)
-                        (string-match-p "\\`([^\): \t\n\r\f]+)" ref)
+                        (or (string-match-p "\\`([^\): \t\n\r\f]+)\\'" ref)
+                            (string-match-p "\\`([^\): \t\n\r\f]+)[^ :;\"'`]" ref))
                         (hpath:is-p ref nil t))))
     (and node-ref
          (ibut:label-set node-ref-and-pos)

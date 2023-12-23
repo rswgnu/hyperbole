@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     13-Dec-23 at 00:53:18 by Bob Weiner
+;; Last-Mod:     23-Dec-23 at 01:25:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -173,7 +173,7 @@ and {b} the previous same level cell."
         (should (hact 'kbd-key "<"))
         (should (equal (point) (point-min)))
 
-	(re-search-forward hyrolo-hdr-regexp nil t 2)
+	(hyrolo-hdr-move-after-p)
         (should (hact 'kbd-key "n"))
         (should (looking-at "\\*\\*\\s-+Strong"))
 
@@ -197,7 +197,7 @@ and {b} the previous same level cell."
         (should (hact 'kbd-key "<"))
         (should (equal (point) (point-min)))
 
-	(re-search-forward hyrolo-hdr-regexp nil t 2)
+	(hyrolo-hdr-move-after-p)
         (should (hact 'kbd-key "n"))
         (should (looking-at "\\*\\*\\s-+Strong"))
 
@@ -286,10 +286,10 @@ and {b} the previous same level cell."
 (ert-deftest hyrolo-fgrep-find-all-types-of-files ()
   "Verify that all types of files are found in an fgrep search."
   (let* ((temporary-file-directory (make-temp-file "hypb" t))
-         (org-file (make-temp-file "hypb" nil ".org" "string\n"))
-         (kotl-file (make-temp-file "hypb" nil ".kotl" "string"))
-         (md-file (make-temp-file "hypb" nil ".md" "string\n"))
-         (outl-file (make-temp-file "hypb" nil ".otl" "string\n"))
+         (org-file (make-temp-file "hypb" nil ".org" "* string\n"))
+         (kotl-file (make-temp-file "hypb" nil ".kotl" "1.  string"))
+         (md-file (make-temp-file "hypb" nil ".md" "# string\n"))
+         (outl-file (make-temp-file "hypb" nil ".otl" "* string\n"))
          (hyrolo-file-list (list temporary-file-directory)))
     (unwind-protect
         (progn
@@ -374,7 +374,6 @@ and {b} the previous same level cell."
 
 (ert-deftest hyrolo-fgrep-and-goto-next-visible-md-heading ()
   "Verify move to next heading, then action-key to go to record for markdown mode."
-  :expected-result :failed
   (let* ((temporary-file-directory (make-temp-file "hypb" t))
          (md-file (make-temp-file "hypb" nil ".md" "# heading\nstring\nmore\n"))
          (hyrolo-file-list (list temporary-file-directory)))
@@ -385,7 +384,7 @@ and {b} the previous same level cell."
             (should (= (how-many "@loc>") 1))
             (should (looking-at-p "==="))
             (hyrolo-next-visible-heading 1)
-            (should (looking-at-p "## heading")))
+            (should (looking-at-p "# heading")))
           (with-simulated-input "y RET" ; Do you want to revisit the file normally now?
             (action-key)
             (should (equal (current-buffer) (find-buffer-visiting md-file)))

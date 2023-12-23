@@ -1,3 +1,81 @@
+2023-12-23  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode): Ensure local vars are set if current buffer
+    is HyRolo display matches buffer.
+
+* hypb.el (hypb:remove-from-plist, hypb:do-remove-from-plist): Add for use in
+    "hywconfig.el".
+  hywconfig.el (hywconfig-add-by-name, hywconfig-delete-by-name,
+                hywconfig-restore-by-name): Fix all wconfig by name functions
+    which were storing only unnamed window configs.  Change all to return a
+    boolean value based on whether the operation succeeds or not.
+               (hywconfig-set-names): Replace with 'hywconfig-named-set-entries'.
+               (hywconfig-named-get-entries, hywconfig-named-put,
+                hywconfig-named-get): Add.
+	       (hywconfig-get-names): Replace with 'hywconfig-named-get-names'.
+	       (hywconfig-set-window-configuration): Add doc.
+	       (require 'set): Remove, no longer used.
+
+* kotl/kotl-mode.el (kotl-mode): Disable 'change-major-mode-hook' addition of
+    'kotl-mode:show-all' if in the HyRolo display buffer.
+
+* hyrolo.el (hyrolo-entry-regexp): Add 'hyrolo-hdr-regexp' and 'hbut:source-prefix'
+    so are not skipped during hide/show operations.  Also do this in
+    'markdown-mode-hook' and 'kotl-mode'.
+
+* test/hyrolo-tests.el (hyrolo-demo-move-between-entries-on-same-level,
+                        hyrolo-demo-no-following-same-level-heading): Fix
+    header skipping by using 'hyrolo-hdr-move-after-p'.
+                       (hyrolo-fgrep-find-all-types-of-files): Fix by adding
+    proper headling structure to each file type.
+                       (hyrolo-fgrep-and-goto-next-visible-md-heading): Fix
+    by removing one '#' from expected heading level.
+
+* kotl/kotl-mode.el (kotl-mode:reveal-toggle-invisible): May be in the
+    'hyrolo-display-buffer', so wrap a 'hyrolo-funcall-match' call around
+    'outline-reveal-toggle-invisible' call to ensure proper match buffer mode
+    is set for koutline matches.
+
+* hyrolo.el (hyrolo-grep-file): Remove 'backward-search-limit' as may miss prior
+    entry starting positions.
+            (hyrolo-add-match): Remove first arg, 'hyrolo-matches-buffer' and
+    use global 'hyrolo-display-buffer' instead.
+            (hyrolo-grep-file): Remove first arg from call to 'hyrolo-add-match'.
+    Remove unused local 'curr-entry-level-len' which would not work for Markdown
+    'outline-regexp' anyway.
+
+2023-12-21  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-funcall-match, hyrolo-map-matches): Use (1- (point-max))
+    when 'end' is nil, i.e. only a single file has been found and the start of
+    of the next one used to determine the end of this one has not yet been added.
+
+* man/hyperbole.texi (Implicit Button Types): Add doc for 'hib-python-traceback'
+    and 'hyrolo-stuck-msg'.
+
+* hibtypes.el (Info-node): Tighten match to limit valid chars after closing paren.
+              (hyrolo-stuck-msg): Add to jump to the position where a HyRolo match
+    became stuck, if ever happens, when point is on the error.
+  hyrolo.el (hyrolo-grep-file): Update 'Stuck looping in buffer' msg so can be
+    used in 'hyrolo-stuck-msg' ibtype.
+
+* hyperbole.el: The 'describe-package' function fails under Emacs 28 when multiple
+    maintainers are listed under the 'Maintainer' header but later Emacs versions
+    support a 'Maintainers' header, so include both.  Change to using 'Authors'
+    instead of 'Author'.
+
+2023-12-20  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-edit-entry, hyrolo-locate): Wrap in 'hyrolo-funcall-match' call
+    to fix these functions to work with multiple modes.
+            (hyrolo-funcall-match): Ensure 'unwind-protect' end forms are run within
+    'hyrolo-display-buffer'.
+
+* kotl/kview.el (kview:outline-regexp): Add grouping for kcell label matches; used
+    in `hyrolo-display-buffer'.
+  kotl/kotl-mode.el (kotl-mode): Add local settings of 'hyrolo-entry-group-number'
+    and 'hyrolo-entry-trailing-space-group-number'.
+
 2023-12-18  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-move-backward, hyrolo-move-forward): If FUNC is a lambda

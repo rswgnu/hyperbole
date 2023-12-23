@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     15-Dec-23 at 21:59:34 by Bob Weiner
+;; Last-Mod:     23-Dec-23 at 01:28:38 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -103,6 +103,8 @@ It provides the following keys:
   (interactive)
   (mapc #'make-local-variable
 	'(hyrolo-entry-regexp
+	  hyrolo-entry-group-number
+	  hyrolo-entry-trailing-space-group-number
 	  indent-line-function
 	  indent-region-function
 	  kotl-previous-mode
@@ -145,8 +147,15 @@ It provides the following keys:
   (add-hook 'write-file-functions #'kotl-mode:update-buffer nil 'local)
   ;; Used by kimport.el functions.
   (unless (and (boundp 'kotl-previous-mode) kotl-previous-mode
-	       (eq kotl-previous-mode #'kotl-mode))
-    (setq hyrolo-entry-regexp (concat "^" kview:outline-regexp)
+	       (eq kotl-previous-mode #'kotl-mode)
+	       (not (string-prefix-p hyrolo-display-buffer (buffer-name))))
+    (setq hyrolo-entry-regexp
+	  (concat hyrolo-hdr-regexp
+	  "\\|^" (if (boundp 'hbut:source-prefix) hbut:source-prefix "@loc> ")
+	  "\\|^" kview:outline-regexp)
+	  hyrolo-entry-group-number 2
+	  hyrolo-entry-trailing-space-group-number 3
+
 	  kotl-previous-mode major-mode
 	  ;; Override orgtbl-mode keys with kotl-mode-specific ones.
 	  minor-mode-overriding-map-alist (list (cons 'orgtbl-mode
@@ -222,7 +231,8 @@ It provides the following keys:
     (hyperb:with-suppressed-warnings ((free-vars kotl-previous-mode))
       (setq kotl-previous-mode 'kotl-mode))
     (run-mode-hooks 'kotl-mode-hook)
-    (add-hook 'change-major-mode-hook #'kotl-mode:show-all nil t)))
+    (unless (string-prefix-p hyrolo-display-buffer (buffer-name))
+      (add-hook 'change-major-mode-hook #'kotl-mode:show-all nil t))))
 
 ;;;###autoload
 (defun kotl-mode:example (&optional example replace-flag)
@@ -3414,8 +3424,14 @@ but always operates upon the current view."
   (kotl-mode:show-tree))
 ;; Adapted from outline-reveal-toggle-invisible; called by isearch.
 (defun kotl-mode:reveal-toggle-invisible (o hidep)
-  (if (not (eq major-mode 'kotl-mode))
-      (outline-reveal-toggle-invisible o hidep)
+  (if (not (derived-mode-p 'kotl-mode))
+      (if (and (eq (current-buffer) hyrolo-display-buffer)
+	       (eq (hyrolo-cache-get-major-mode-from-pos (point))
+		   'kotl-mode))
+	  (hyrolo-funcall-match
+	   (lambda () (outline-reveal-toggle-invisible o hidep))
+	   t)
+	(outline-reveal-toggle-invisible o hidep))
     (save-excursion
       (goto-char (overlay-start o))
       (if hidep
