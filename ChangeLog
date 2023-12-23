@@ -1,5 +1,7 @@
 2023-12-23  Bob Weiner  <rsw@gnu.org>
 
+* hactypes.el (link-to-regexp-match): Fix to use arg 'n' in the regexp search.
+
 * kotl/kotl-mode.el (kotl-mode): Ensure local vars are set if current buffer
     is HyRolo display matches buffer.
 

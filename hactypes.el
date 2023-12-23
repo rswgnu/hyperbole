@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:      3-Dec-23 at 11:37:36 by Bob Weiner
+;; Last-Mod:     23-Dec-23 at 02:17:41 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -651,7 +651,7 @@ Return t if found, signal an error if not."
       (hpath:display-buffer source)
       (widen)
       (goto-char (point-min))
-      (if (re-search-forward regexp nil t)
+      (if (re-search-forward regexp nil t n)
 	  (progn (beginning-of-line) (recenter 0) t)
 	(hypb:error
 	 "(link-to-regexp-match): Pattern not found: `%s'" regexp)))))
