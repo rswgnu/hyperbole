@@ -14,6 +14,15 @@
   hyrolo.el (hyrolo-file-list): Update doc to specify allowable file suffixes
     and types.
 
+2023-12-23  Mats Lidell  <matsl@gnu.org>
+
+* test/hpath-tests.el (hpath--expand-no-wildcards-existing-path)
+    (hpath--expand-variations-non-existing-path)
+    (hpath--expand-elisp-variable, hpath--expand-environment-variable)
+    (hpath--expand-auto-variable-alist, hpath--resolve-auto-variable-alist)
+    (hpath--expand-list-return-a-list, hpath--expand-list-match-regexp):
+    Add tests for hpath:expand and hpath:expand-list.
+
 2023-12-23  Bob Weiner  <rsw@gnu.org>
 
 * hypb.el (hypb:major-mode-from-file-name): Add for initial use in "hyrolo.el".
