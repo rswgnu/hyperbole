@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 23:26:00
-;; Last-Mod:     17-Dec-23 at 19:35:06 by Mats Lidell
+;; Last-Mod:     24-Dec-23 at 03:30:04 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -363,20 +363,21 @@
 
 (ert-deftest hpath--expand-list-match-regexp ()
   "Verify expand-list selects files using match regexp."
-  (let* ((temporary-file-directory (make-temp-file "hypb" t))
-         (org1-file (make-temp-file "hypb" nil ".org"))
-         (org2-file (make-temp-file "hypb" nil ".org"))
-         (kotl-file (make-temp-file "hypb" nil ".kotl")))
+  (let* ((temp-dir (make-temp-file "hypb-dir" t))
+	 (file-prefix (expand-file-name "hypb" temp-dir))
+         (org1-file (make-temp-file file-prefix nil ".org"))
+         (org2-file (make-temp-file file-prefix nil ".org"))
+         (kotl-file (make-temp-file file-prefix nil ".kotl")))
     (unwind-protect
         (progn
-          (should (= (length (hpath:expand-list (list temporary-file-directory))) 3))
-          (should (= (length (hpath:expand-list (list temporary-file-directory) ".*")) 3))
-          (should (= (length (hpath:expand-list (list temporary-file-directory) ".org")) 2))
-          (should (= (length (hpath:expand-list (list temporary-file-directory) ".kotl")) 1))
-          (should (= (length (hpath:expand-list (list temporary-file-directory) ".md")) 0)))
+          (should (= (length (hpath:expand-list (list temp-dir))) 3))
+          (should (= (length (hpath:expand-list (list temp-dir) ".*")) 3))
+          (should (= (length (hpath:expand-list (list temp-dir) ".org")) 2))
+          (should (= (length (hpath:expand-list (list temp-dir) ".kotl")) 1))
+          (should (= (length (hpath:expand-list (list temp-dir) ".md")) 0)))
       (dolist (f (list org1-file org2-file kotl-file))
         (hy-delete-file-and-buffer f))
-      (delete-directory temporary-file-directory))))
+      (delete-directory temp-dir))))
 
 (provide 'hpath-tests)
 ;;; hpath-tests.el ends here
