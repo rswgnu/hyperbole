@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     22-Dec-23 at 22:44:50 by Bob Weiner
+;; Last-Mod:     24-Dec-23 at 02:38:06 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -17,7 +17,8 @@
 ;;  This is Hyperbole's advanced rolo system, HyRolo, for convenient
 ;;  management of hierarchical, record-oriented information.  Most
 ;;  often this is used for contact management but it can quickly be
-;;  adapted to most any record-oriented lookup task, for fast retrieval.
+;;  adapted to most any record-oriented lookup task, for fast, full-text
+;;  retrieval.
 ;;
 ;;  See all the autoloaded functions herein for interactive commands.
 ;;  See the Info manual entry "(hyperbole)HyRolo" for usage information.
@@ -134,7 +135,9 @@ executable must be found as well (for Oauth security)."
 (defcustom hyrolo-file-list nil
   "List of files containing hyrolo entries.
 The first file should be a user-specific hyrolo file, typically in the home
-directory.
+directory and must have a suffix of either .org (Org mode) or .otl (Emacs
+Outline mode).  Other files in the list may use suffixes of .org, .otl, .md
+(Markdown mode) or .kotl (Koutline mode).
 
 A hyrolo-file consists of:
    (1) an optional header beginning with and ending with a line which matches
@@ -970,7 +973,9 @@ Raise an error if a match is not found."
 ;;;###autoload
 (defun hyrolo-let-file-list (symbol value)
   (set symbol value)
-  (setq hyrolo--expanded-file-list (hyrolo-expand-path-list value)))
+  (setq hyrolo--expanded-file-list (hyrolo-expand-path-list value))
+  (when (hyrolo-any-file-type-problem-p)
+    (error "(HyRolo): Invalid files used in `hyrolo-file-list'; see the *HyRolo Errors* buffer")))
 
 ;;;###autoload
 (defun hyrolo-set-file-list (symbol value)
@@ -978,6 +983,8 @@ Raise an error if a match is not found."
   (setq hyrolo--expanded-file-list (hyrolo-expand-path-list value))
   (unless (symbol-value symbol)
     (set-default symbol hyrolo--expanded-file-list))
+  (when (hyrolo-any-file-type-problem-p)
+    (error "(HyRolo): Invalid files used in `hyrolo-file-list'; see the *HyRolo Errors* buffer"))
   ;; Prompt user to rename old personal rolo file to new name, if necessary.
   (unless (or noninteractive (hyperb:stack-frame '(hyrolo-rename)))
     (call-interactively 'hyrolo-rename)))
@@ -1416,7 +1423,7 @@ otherwise just use the cdr of the item."
 (defun hyrolo-helm-org-rifle (&optional context-only-flag)
   "Search with helm and interactively show all matches from `hyrolo-file-list'.
 Prompt for the search pattern.
-Search only readable .org and .otl files.  With optional prefix
+Search readable .org and .otl files only.  With optional prefix
 arg CONTEXT-ONLY-FLAG, show one extra line only of context around
 a matching line, rather than entire entries."
   (interactive "P")
@@ -1460,9 +1467,9 @@ entries."
 ;;;###autoload
 (defun hyrolo-helm-org-rifle-directories (&optional context-only-flag &rest dirs)
   "Interactively search over Emacs outline format files in rest of DIRS.
-Only readable .org and .otl files are searched.  With optional
-prefix arg CONTEXT-ONLY-FLAG, show one extra line only of context
-around a matching line, rather than entire entries."
+Search readable .org and .otl files only.  With optional prefix
+arg CONTEXT-ONLY-FLAG, show one extra line only of context around
+a matching line, rather than entire entries."
   (interactive "P")
   (let ((hyrolo-file-list (hypb:filter-directories "\\.\\(org\\|otl\\)$" dirs)))
     (hyrolo-helm-org-rifle context-only-flag)))
@@ -2171,6 +2178,58 @@ Entry is inserted before point.  The region is between START to END."
     (insert (funcall hyrolo-display-format-function hyrolo-entry))
     (hyrolo-highlight-matches regexp opoint (point))
     (set-buffer hyrolo-buf)))
+
+(defun hyrolo-any-file-type-problem-p ()
+  "Return t if any file from `hyrolo-file-list' has an unusable format.
+The list of unusable files is displayed in a HyRolo error window.
+This will install `markdown-mode' if any Markdown files are specified and the
+package is not installed."
+  ;;  1. Ignore files without suffixes
+  (let ((file-suffixes
+	 (delq nil (mapcar (lambda (filename) (file-name-extension filename))
+			   (hyrolo-get-file-list))))
+	file-and-major-mode-list
+	files-no-mode-list
+	package-archives)
+
+    ;;  2. If any `hyrolo-file-list' file has a markdown file suffix,
+    (when (delq nil (mapcar (lambda (suffix)
+			      (string-match "\\(?:md\\|markdown\\|mkd\\|mdown\\|mkdn\\|mdwn\\)\\'"
+					    suffix))
+			    file-suffixes))
+
+      ;;  3. ensure the markdown-mode package is installed from melpa.
+      (unless (package-installed-p 'markdown-mode)
+	;;  4. if not, ensure melpa is temporarily added to package
+	;;     source list and then install markdown-mode.
+	(unless (assoc "melpa" package-archives)
+	  (setq package-archives (cl-copy-list package-archives))
+	  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
+	(package-install 'markdown-mode)))
+
+    ;;  5. Check that each suffix has an entry in auto-mode-alist,
+    (setq file-and-major-mode-list
+	  (mapcar (lambda (filename) (cons filename
+					   (hypb:major-mode-from-file-name filename)))
+		  (hyrolo-get-file-list))
+	  files-no-mode-list
+	  (delq nil (mapcar (lambda (item) (when (null (cdr item)) (car item)))
+			    file-and-major-mode-list)))
+    ;;  6. if not, display a buffer with the invalid file types and return t
+    (when files-no-mode-list
+      (with-help-window "*HyRolo Errors*"
+	(princ "hyrolo-file-list specifies invalid HyRolo files:\n")
+	(mapc (lambda (spec) (princ (format "\t%S" spec)) (terpri))
+	      hyrolo-file-list)
+	(terpri)
+	(princ "When expanded, includes these files that HyRolo cannot process\n")
+	(princ "because their file suffixes are not in `auto-mode-alist':\n")
+	(mapc (lambda (file) (princ (format "\t%S" file)) (terpri))
+	      files-no-mode-list)
+	(terpri)
+	(princ "Please either remove the above files from `hyrolo-file-list'\n")
+	(princ "or add appropriate entries for them to `auto-mode-alist'.\n"))
+      t)))
 
 (defun hyrolo-buffer-exists-p (hyrolo-buf)
   "Return buffer given by HYROLO-BUF or nil.

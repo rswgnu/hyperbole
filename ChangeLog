@@ -1,4 +1,22 @@
+2023-12-24  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-any-file-type-problem-p): Add to handle file suffixes
+    that HyRolo cannot handle and to install the markdown-mode package as
+    necessary when a Markdown file is specified in 'hyrolo-file-list'.
+            (hyrolo-let-file-list, hyrolo-set-file-list): Call above function.
+    This fixes failures with Markdown files improperly put into fundamental-mode
+    which means their headings are not recognized properly.
+
+* hload-path.el (auto-mode-alist): Setup to invoke 'outline-mode' on ".otl"
+    suffixed files.
+
+* man/hyperbole.texi (HyRolo Concepts):
+  hyrolo.el (hyrolo-file-list): Update doc to specify allowable file suffixes
+    and types.
+
 2023-12-23  Bob Weiner  <rsw@gnu.org>
+
+* hypb.el (hypb:major-mode-from-file-name): Add for initial use in "hyrolo.el".
 
 * hactypes.el (link-to-regexp-match): Fix to use arg 'n' in the regexp search.
 

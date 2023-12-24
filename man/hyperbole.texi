@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     21-Dec-23 at 13:10:20 by Bob Weiner
+@c Last-Mod:     24-Dec-23 at 00:20:35 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.0
-Printed December 21, 2023.
+Printed December 24, 2023.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.0
-December 21, 2023
+December 24, 2023
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -5956,12 +5956,22 @@ tool.
 
 @cindex rolo file
 @cindex rolo entry
-HyRolo manages and searches rolo files.  A @dfn{rolo file} consists of
+@vindex hyrolo-file-list
+HyRolo manages and searches a list of rolo files stored in the
+@code{hyrolo-file-list} custom option.  A @dfn{rolo file} consists of
 an optional header that starts and ends with a line of equal signs (at
 least three equal signs starting at the beginning of a line), followed
-by zero or more rolo records which we call entries.  You must manually
-add a header to any rolo file if you want it to have one.  Rolo files
-may be Emacs outline files, Org files, Markdown files or Koutline files.
+by zero or more rolo records which we call entries.
+
+@cindex Org mode
+@cindex Markdown mode
+@cindex Emacs Outline mode
+@cindex Koutline mode
+The first file in the list should be a user-specific hyrolo file,
+typically in the home directory and must have a suffix of either .org
+(Org mode) or .otl (Emacs Outline mode).  Other files in the list may
+use suffixes of .org, .otl, .md (Markdown mode) or .kotl (Koutline
+mode).
 
 Rolo @dfn{entries} begin with optional space, followed by a delimiter of
 one or more special characters followed by another space.  Delimiters

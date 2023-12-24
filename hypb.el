@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     23-Dec-23 at 01:16:28 by Bob Weiner
+;; Last-Mod:     23-Dec-23 at 23:57:52 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -719,6 +719,51 @@ then `locate-post-command-hook'."
 		     nil
 		     current-prefix-arg))
   (locate search-string filter arg))
+
+
+;; Adapted from `set-auto-mode' in "files.el".
+;;;###autoload
+(defun hypb:major-mode-from-file-name (name)
+  "Return `major-mode' function for file NAME from file name alone.
+If no matching rule in `auto-mode-alist' or NAME is invalid,
+return nil."
+  (when (stringp name)
+    (let ((remote-id (file-remote-p name))
+	  (case-insensitive-p (file-name-case-insensitive-p
+			       name))
+	  mode)
+      ;; Remove backup-suffixes from file name.
+      (setq name (file-name-sans-versions name))
+      ;; Remove remote file name identification.
+      (when (and (stringp remote-id)
+		 (string-match (regexp-quote remote-id) name))
+	(setq name (substring name (match-end 0))))
+      (while name
+	;; Find first matching alist entry.
+	(setq mode
+	      (if case-insensitive-p
+		  ;; Filesystem is case-insensitive.
+		  (let ((case-fold-search t))
+		    (assoc-default name auto-mode-alist
+				   'string-match))
+		;; Filesystem is case-sensitive.
+		(or
+		 ;; First match case-sensitively.
+		 (let ((case-fold-search nil))
+		   (assoc-default name auto-mode-alist
+				  'string-match))
+		 ;; Fallback to case-insensitive match.
+		 (and auto-mode-case-fold
+		      (let ((case-fold-search t))
+			(assoc-default name auto-mode-alist
+				       'string-match))))))
+	(if (and mode
+		 (consp mode)
+		 (cadr mode))
+	    (setq mode (car mode)
+		  name (substring name 0 (match-beginning 0)))
+	  (setq name nil)))
+      mode)))
 
 ;;;###autoload
 (defun hypb:map-plist (func plist)

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    29-Jun-16 at 14:39:33
-;; Last-Mod:     19-Nov-23 at 23:18:02 by Bob Weiner
+;; Last-Mod:     24-Dec-23 at 00:41:54 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -57,15 +57,19 @@ directory separator character.")
 (add-to-list 'load-path (directory-file-name hyperb:dir))
 
 ;;; ************************************************************************
-;;; Koutliner mode and file suffix importation settings
+;;; Koutliner mode and file suffix settings
 ;;; ************************************************************************
-
-;; Perform Koutliner initializations.
 
 (add-to-list 'load-path (expand-file-name "kotl" hyperb:dir))
 ;; Invoke kotl-mode for files ending in ".kotl".
 ;; Also allow ".kot" for DOS and Windows users.
 (add-to-list 'auto-mode-alist '("\\.kotl?\\'" . kotl-mode))
+
+;;; ************************************************************************
+;;; Emacs Outline settings for .otl files
+;;; ************************************************************************
+
+(add-to-list 'auto-mode-alist '("\\.otl\\'" . outline-mode))
 
 ;;; ************************************************************************
 ;;; Hyperbole test importation settings

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-Mar-94 at 23:37:28
-;; Last-Mod:      3-Oct-23 at 23:25:31 by Mats Lidell
+;; Last-Mod:     24-Dec-23 at 00:06:07 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -147,9 +147,9 @@ Jump to chosen buffer."
     "----"
     ["Name-Configuration" hywconfig-add-by-name     t]
     ["Delete-Name"        hywconfig-delete-by-name
-     (frame-parameter nil 'hywconfig-names)]
+     (frame-parameter nil 'named-hywconfigs)]
     ["Restore-Name"       hywconfig-restore-by-name
-     (frame-parameter nil 'hywconfig-names)]
+     (frame-parameter nil 'named-hywconfigs)]
     "----"
     ["Pop-from-Ring"      hywconfig-delete-pop      (not (hywconfig-ring-empty-p))]
     ["Save-to-Ring"       hywconfig-ring-save       t]
