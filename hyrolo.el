@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     24-Dec-23 at 02:38:06 by Bob Weiner
+;; Last-Mod:     25-Dec-23 at 03:05:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -108,6 +108,7 @@
 (defvar hyrolo-entry-trailing-space-group-number)
 (defvar hyrolo-hdr-format)
 (defvar hyrolo-hdr-regexp)
+(defvar hyrolo-hdr-prefix-regexp)
 (defvar hyrolo-match-regexp)
 (defvar hyrolo-mode-map)
 (defvar hyrolo-mode-prefix-map)
@@ -179,10 +180,15 @@ See `hyrolo-entry-regexp'")
 (defvar hyrolo-entry-trailing-space-group-number 2
   "Group number within `hyrolo-entry-regexp' containing trailing space.")
 
-(defvar hyrolo-entry-regexp
+(defvar hyrolo-hdr-prefix-regexp
   (concat hyrolo-hdr-regexp
 	  "\\|^" (if (boundp 'hbut:source-prefix) hbut:source-prefix "@loc> ")
-	  "\\|^\\(\\*+\\)\\([ \t]+\\)")
+	  "\\|")
+  "Regular expression to prefix to `hyrolo-entry-regexp' and `outline-regexp'.
+It must not contain any parenthesized match groupings.")
+
+(defvar hyrolo-entry-regexp
+  (concat hyrolo-hdr-prefix-regexp "^\\(\\*+\\)\\([ \t]+\\)")
   "Regular expression to match the beginning of a HyRolo entry.
 This pattern must match the beginning of a line.
 `hyrolo-entry-group-number' must capture the entry's level in the
@@ -193,15 +199,24 @@ level.")
 ;; Support hyrolo searches in markdown files
 (add-hook 'markdown-mode-hook
 	  (lambda ()
-	    (setq-local hyrolo-entry-regexp
-			(concat hyrolo-hdr-regexp
-				"\\|^" (if (boundp 'hbut:source-prefix) hbut:source-prefix "@loc> ")
-				"\\|^\\(#+\\)\\([ 	]+\\)")
+	    (setq-local hyrolo-entry-regexp (concat hyrolo-hdr-prefix-regexp "^\\(#+\\)\\([ \t\n\r]+\\)")
 			hyrolo-entry-group-number 1
 			;; `hyrolo-add' handles removing # prefix from
 			;; trailing-space grouping below
 			hyrolo-entry-trailing-space-group-number 2
+			outline-regexp (concat hyrolo-hdr-prefix-regexp markdown-regex-header)
 			outline-level #'hyrolo-markdown-outline-level)))
+
+;; Support hyrolo searches in Emacs outline files
+(add-hook 'outline-mode-hook
+	  (lambda ()
+	    (setq-local hyrolo-entry-regexp (concat hyrolo-hdr-prefix-regexp "^\\([*\^L]+\\)\\([ \t\n\r]+\\)")
+			hyrolo-entry-group-number 1
+			;; `hyrolo-add' handles removing # prefix from
+			;; trailing-space grouping below
+			hyrolo-entry-trailing-space-group-number 2
+			outline-regexp hyrolo-entry-regexp
+			outline-level #'hyrolo-outline-level)))
 
 (defcustom hyrolo-date-format "%m/%d/%Y"
   "Format of date string used in HyRolo automatic date stamps.
@@ -228,7 +243,11 @@ It must contain a %s indicating where to put the entry name and a second
 (defvar hyrolo-entry-name-regexp "[-_a-zA-Z0-9@.]+\\( ?, ?[-_a-zA-Z0-9@.]+\\)?"
   "*Regexp matching a hyrolo entry name after matching to `hyrolo-entry-regexp'.")
 
-(defcustom hyrolo-file-suffix-regexp "\\.\\(kotl\\|md\\|org\\|otl\\)$"
+(defconst hyrolo-markdown-suffix-regexp "md\\|markdown\\|mkd\\|mdown\\|mkdn\\|mdwn"
+  "Regexp matching Markdown file suffixes.")
+
+(defcustom hyrolo-file-suffix-regexp (concat "\\.\\(kotl?\\|org\\|otl\\|"
+					     hyrolo-markdown-suffix-regexp "\\)$")
   "File suffix regexp used to select files to search with HyRolo."
   :type 'string
   :group 'hyperbole-hyrolo)
@@ -664,7 +683,7 @@ select it."
 		;; change adds one to the default `outline-level' function,
 		;; so `hyrolo-outline-level' overrides that as well
 		;; to get the correct calculation.  -- rsw, 2023-11-17
-		(setq-local outline-regexp "[*\^L]+[ \t\n\r]"
+		(setq-local outline-regexp "\\([*\^L]+\\)\\([ \t\n\r]\\)"
 			    outline-level #'hyrolo-outline-level))
 	      (setq buffer-read-only nil))))))))
 
@@ -1586,7 +1605,7 @@ Stop at the first and last subheadings of a superior heading."
   (hyrolo-move-forward #'outline-forward-same-level arg))
 
 (defun hyrolo-hdr-to-last-line-p ()
-  "If point is at the start of a hdr line, move to the start of its last line.
+  "If point is on a file hdr separator/loc line, move to start of its last line.
 Return t in such cases.  Otherwise, don't move and return nil.
 
 The header includes lines matching both `hyrolo-hdr-regexp' and
@@ -1596,15 +1615,17 @@ The header includes lines matching both `hyrolo-hdr-regexp' and
     t))
 
 (defun hyrolo-hdr-move-after-p ()
-  "If point is at the start of a hdr line, move past the hdr and return t.
+  "If point is on a file hdr separator/loc line, move past the hdr and return t.
 Otherwise, don't move and return nil."
   (let ((opoint (point))
 	(hdr-delim-count 0)
 	(loc-count 0))
-    (while (or (when (looking-at hyrolo-hdr-regexp)
-		 (cl-incf hdr-delim-count))
-	       (when (looking-at hbut:source-prefix)
-		 (cl-incf loc-count)))
+    (while (save-excursion
+	     (beginning-of-line)
+	     (or (when (looking-at hyrolo-hdr-regexp)
+		   (cl-incf hdr-delim-count))
+		 (when (looking-at hbut:source-prefix)
+		   (cl-incf loc-count))))
       (forward-line 1))
     (when (and (/= (point) opoint) (< hdr-delim-count 2) (zerop loc-count))
       (if (looking-at hyrolo-hdr-regexp)
@@ -1837,7 +1858,7 @@ Calls the functions given by `hyrolo-mode-hook'.
 		;; the end of the match.  Note this change adds one
 		;; level to the level count, so `hyrolo-outline-level'
 		;; decrements it by one.  -- rsw, 2023-11-17
-		outline-regexp "[*\^L]+[ \t\n\r]"
+		outline-regexp "\\([*\^L]+\\)\\([ \t\n\r]\\)"
 		outline-level #'hyrolo-outline-level
 		;; Can't cycle because {TAB} moves to next match
 		outline-minor-mode-cycle nil
@@ -2138,7 +2159,9 @@ beginning of the highest ancestor level.  Return final point."
      (outline-back-to-heading)
      (when include-sub-entries
        (unless (<= (hyrolo-outline-level) 1)
-	 (outline-up-heading 80))))
+	 (outline-up-heading 80)))
+     (when (hyrolo-hdr-move-after-p)
+       (hyrolo-next-visible-heading 1)))
    include-sub-entries))
 
 (defun hyrolo-to-entry-end (&optional include-sub-entries)
@@ -2152,7 +2175,8 @@ before the final newline of the entry.
 Return current point."
   (interactive "P")
   (hyrolo-move-forward (lambda () (hyrolo-move-to-entry-end include-sub-entries)))
-  (when (called-interactively-p 'any)
+  (when (and (called-interactively-p 'any)
+	     (not (eolp)))
     (goto-char (1- (point))))
   (point))
 
@@ -2162,6 +2186,25 @@ Return current point."
     (outline-end-of-subtree)
     (goto-char (1+ (point))))
   include-sub-entries)
+
+(defun hyrolo-to-next-loc ()
+  "Move to next file/buffer location header in HyRolo display matches buffer."
+  (interactive)
+  (if (re-search-forward (concat "^" hbut:source-prefix) nil t
+			 (if (looking-at hbut:source-prefix) 2 1))
+      (goto-char (match-beginning 0))
+    (when (called-interactively-p 'interactive)
+      (message "No next file/buffer location") (beep))))
+
+(defun hyrolo-to-previous-loc ()
+  "Move to previous file/buffer location header in HyRolo display matches buffer."
+  (interactive)
+  (let ((opoint (point)))
+    (beginning-of-line)
+    (unless (re-search-backward (concat "^" hbut:source-prefix) nil t)
+      (goto-char opoint)
+      (when (called-interactively-p 'interactive)
+	(message "No previous file/buffer location") (beep)))))
 
 ;;; ************************************************************************
 ;;; Private functions
@@ -2184,18 +2227,19 @@ Entry is inserted before point.  The region is between START to END."
 The list of unusable files is displayed in a HyRolo error window.
 This will install `markdown-mode' if any Markdown files are specified and the
 package is not installed."
-  ;;  1. Ignore files without suffixes
+  ;;  1. Ignore files without suffixes in step 2
   (let ((file-suffixes
 	 (delq nil (mapcar (lambda (filename) (file-name-extension filename))
 			   (hyrolo-get-file-list))))
 	file-and-major-mode-list
 	files-no-mode-list
+	files-invalid-suffix-list
 	package-archives)
 
     ;;  2. If any `hyrolo-file-list' file has a markdown file suffix,
     (when (delq nil (mapcar (lambda (suffix)
-			      (string-match "\\(?:md\\|markdown\\|mkd\\|mdown\\|mkdn\\|mdwn\\)\\'"
-					    suffix))
+			      (string-match-p (concat "\\(?:" hyrolo-markdown-suffix-regexp "\\)$")
+					      suffix))
 			    file-suffixes))
 
       ;;  3. ensure the markdown-mode package is installed from melpa.
@@ -2207,28 +2251,48 @@ package is not installed."
 	  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
 	(package-install 'markdown-mode)))
 
-    ;;  5. Check that each suffix has an entry in auto-mode-alist,
+    ;;  5. Check that each file has an entry in auto-mode-alist,
     (setq file-and-major-mode-list
 	  (mapcar (lambda (filename) (cons filename
 					   (hypb:major-mode-from-file-name filename)))
 		  (hyrolo-get-file-list))
+
+	  files-invalid-suffix-list
+	  (delq nil (mapcar (lambda (item) (when (not (string-match-p hyrolo-file-suffix-regexp (car item)))
+					     (car item)))
+			    file-and-major-mode-list))
+
 	  files-no-mode-list
-	  (delq nil (mapcar (lambda (item) (when (null (cdr item)) (car item)))
-			    file-and-major-mode-list)))
+	  (cl-set-difference
+	   (delq nil (mapcar (lambda (item) (when (null (cdr item)) (car item)))
+			     file-and-major-mode-list))
+	   files-invalid-suffix-list))
+
     ;;  6. if not, display a buffer with the invalid file types and return t
-    (when files-no-mode-list
+    (when (or files-invalid-suffix-list files-no-mode-list)
       (with-help-window "*HyRolo Errors*"
-	(princ "hyrolo-file-list specifies invalid HyRolo files:\n")
-	(mapc (lambda (spec) (princ (format "\t%S" spec)) (terpri))
+	(princ "`hyrolo-file-list' gets its files from these patterns:\n")
+	(mapc (lambda (spec) (princ (format "\t%S\n" spec)))
 	      hyrolo-file-list)
 	(terpri)
-	(princ "When expanded, includes these files that HyRolo cannot process\n")
-	(princ "because their file suffixes are not in `auto-mode-alist':\n")
-	(mapc (lambda (file) (princ (format "\t%S" file)) (terpri))
-	      files-no-mode-list)
-	(terpri)
-	(princ "Please either remove the above files from `hyrolo-file-list'\n")
-	(princ "or add appropriate entries for them to `auto-mode-alist'.\n"))
+	(princ "When expanded, it includes the following files that HyRolo cannot process:\n\n")
+
+	(when files-invalid-suffix-list
+	  (princ (format "Files with invalid or no suffixes:\n  (valid suffixes: %S)\n"
+			 hyrolo-file-suffix-regexp))
+	  (mapc (lambda (file) (princ (format "\t%S\n" file)))
+		files-invalid-suffix-list)
+	  (terpri)
+	  (princ "Please remove the above files from `hyrolo-file-list'.\n")
+	  (terpri))
+
+	(when files-no-mode-list
+	  (princ "Files with invalid modes (file suffixes not in `auto-mode-alist'):\n")
+	  (mapc (lambda (file) (princ (format "\t%S\n" file)))
+		files-no-mode-list)
+	  (terpri)
+	  (princ "Please add appropriate entries for the above files to `auto-mode-alist'.\n")
+	  (terpri)))
       t)))
 
 (defun hyrolo-buffer-exists-p (hyrolo-buf)
@@ -2246,9 +2310,7 @@ HYROLO-BUF may be a file-name, `buffer-name', or buffer."
 (defun hyrolo-display-to-entry-end ()
   "Go to end of current entry, ignoring sub-entries."
   (let (case-fold-search)
-    (if (re-search-forward (concat hyrolo-hdr-regexp "\\|"
-				   hyrolo-entry-regexp)
-			   nil t)
+    (if (re-search-forward hyrolo-entry-regexp nil t)
 	(progn (beginning-of-line) (point))
       (goto-char (point-max)))))
 
@@ -2381,7 +2443,12 @@ Any non-nil value returned is a cons of (<entry-name> . <entry-source>)."
   ;; set its parent mode property to org-mode so can `derived-mode-p'
   ;; checks will pass.
   (put 'hyrolo-org-mode 'derived-mode-parent 'org-mode)
-  (setq-local outline-regexp org-outline-regexp
+  (setq-local hyrolo-entry-regexp (concat hyrolo-hdr-prefix-regexp "^\\(\\*+\\)\\([ 	]+\\)")
+	      hyrolo-entry-group-number 1
+	      ;; `hyrolo-add' handles removing # prefix from
+	      ;; trailing-space grouping below
+	      hyrolo-entry-trailing-space-group-number 2
+	      outline-regexp (concat hyrolo-hdr-prefix-regexp "^\\(\\*+\\)\\( \\)")
 	      outline-level #'hyrolo-org-outline-level)
   (use-local-map org-mode-map)
   ;; Modify a few syntax entries
@@ -2556,7 +2623,8 @@ This is actually either the level specified in `outline-heading-alist'
 or else the number of characters matched by `outline-regexp' minus
 trailing periods and whitespace.
 
-Point must be at the beginning of a heading line."
+Point must be at the beginning of a heading line and a regexp match to
+`outline-regexp' must have been done prior to calling this."
   (or (cdr (assoc (match-string-no-properties 0) outline-heading-alist))
       (1- (- (match-end 0) (match-beginning 0)))))
 
@@ -2722,8 +2790,6 @@ Call whenever `hyrolo-display-buffer' is changed."
 		hyrolo--cache-major-mode-indexes (list 0)
 		hyrolo--cache-major-mode-index 1)))
 
-;; TODO: !! Lookup hyrolo-entry-regexp like outline-regexp.
-
 (defun hyrolo--cache-major-mode (matched-buf)
   "Cache buffer `major-mode' for MATCHED-BUF with point in HyRolo display buffer.
 MATCHED-BUF must be a live buffer, not a buffer name.
@@ -2755,17 +2821,10 @@ Ensure MATCHED-BUF's `major-mode' is stored in the hash table."
   "Set the `major-mode' for POS in the current HyRolo display buffer.
 Add `hyrolo-hdr-regexp' to `hyrolo-entry-regexp' and `outline-regexp'."
   (funcall (hyrolo-cache-get-major-mode-from-pos pos))
-  (let ((source-prefix (if (boundp 'hbut:source-prefix) hbut:source-prefix "@loc> ")))
-    (unless (or (string-prefix-p hyrolo-hdr-regexp hyrolo-entry-regexp)
-		(string-prefix-p source-prefix hyrolo-entry-regexp))
-      (setq-local hyrolo-entry-regexp (concat hyrolo-hdr-regexp "\\|"
-					      "^" source-prefix "\\|"
-					      hyrolo-entry-regexp)))
-    (unless (or (string-prefix-p hyrolo-hdr-regexp outline-regexp)
-		(string-prefix-p source-prefix outline-regexp))
-      (setq-local outline-regexp (concat hyrolo-hdr-regexp "\\|"
-					 "^" source-prefix "\\|"
-					 outline-regexp))))
+  (unless (string-prefix-p hyrolo-hdr-regexp hyrolo-entry-regexp)
+    (setq-local hyrolo-entry-regexp (concat hyrolo-hdr-prefix-regexp hyrolo-entry-regexp)))
+  (unless (string-prefix-p hyrolo-hdr-regexp outline-regexp)
+    (setq-local outline-regexp (concat hyrolo-hdr-prefix-regexp outline-regexp)))
   (when (eq outline-level #'markdown-outline-level)
     (setq-local outline-level #'hyrolo-markdown-outline-level)))
 
@@ -2785,6 +2844,8 @@ Add `hyrolo-hdr-regexp' to `hyrolo-entry-regexp' and `outline-regexp'."
   (define-key hyrolo-mode-map "."        'hyrolo-to-entry-end)
   (define-key hyrolo-mode-map "<"        'beginning-of-buffer)
   (define-key hyrolo-mode-map ">"        'end-of-buffer)
+  (define-key hyrolo-mode-map "["        'hyrolo-to-previous-loc)
+  (define-key hyrolo-mode-map "]"        'hyrolo-to-next-loc)
   (define-key hyrolo-mode-map "?"        'describe-mode)
   (define-key hyrolo-mode-map "\177"     'scroll-down)
   (define-key hyrolo-mode-map " "        'scroll-up)
@@ -2819,7 +2880,6 @@ Add `hyrolo-hdr-regexp' to `hyrolo-entry-regexp' and `outline-regexp'."
 			hyrolo-cmd (intern-soft hyrolo-cmd-name)))
 	 (substitute-key-definition otl-cmd hyrolo-cmd hyrolo-mode-map)))
      outline-mode-prefix-map)))
-
 
 (provide 'hyrolo)
 

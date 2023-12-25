@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     21-Dec-23 at 13:12:49 by Bob Weiner
+;; Last-Mod:     25-Dec-23 at 01:59:28 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -95,17 +95,16 @@ others who use a different value!")
 (defvar   ibut:label-separator " - "
   "Default separator string inserted between implicit button name and its text.
 
-This separates it from the implicit button text.  See also
-`ibut:label-separator-regexp' for all valid characters that may be
-manually inserted to separate an implicit button label from its
-text.")
+See also `ibut:label-separator-regexp' for all valid characters that may be
+inserted manually to separate an implicit button label from its text.")
 
 (defconst hbut:source-prefix moccur-source-prefix
-  "String found at start of a buffer containing only a hyper-button menu.
+  "String prefix for lines indicating the source of the matches.
+
 It should not contain any characters needing regular expression quoting.
 
-This expression should be followed immediately by a file-name indicating the
-source file for the buttons in the menu, if any.")
+This expression should be followed immediately by a buffer or file name
+indicating the source of any of its Hyperbole buttons.")
 
 ;;; ************************************************************************
 ;;; Public definitions

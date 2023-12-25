@@ -1,3 +1,28 @@
+2023-12-25  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-hdr-move-after-p): Modify to handle when point is not at
+    the start of but is on a hdr separator or loc line.
+    (hyrolo-to-entry-beginning): Fix to move past any file hdr.
+
+* man/hyperbole.texi (HyRolo Keys): Document [ and ] keys to move to prev and
+    next buffer/file @loc> line.
+
+* hyrolo.el (hyrolo-to-entry-end): Don't move back one char if on end of line.
+
+* hbut.el (hbut:source-prefix):
+  hmoccur.el (moccur-source-prefix): Clarify doc.
+
+* hyrolo.el (hyrolo-markdown-suffix-regexp): Add and use in `hyrolo-file-suffix-regexp'
+    to capture all Markdown suffixes.
+            (hyrolo-any-file-type-problem-p): Use above regexp here.  Separate out
+    invalid files due to invalid suffixes from files with invalid major modes due
+    to not being in 'auto-mode-alist'.
+            (outline-mode-hook): Add to configure outline-mode for use with HyRolo.
+	    (hyrolo-org-mode): Update to set all local hyrolo variables.
+
+* kotl/kotl-mode.el (kotl-mode): Set 'outline-regexp' to match 'hyrolo-entry-regexp'
+    to account for file headers in 'hyrolo-mode' (multi-format major-mode).
+
 2023-12-24  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-any-file-type-problem-p): Add to handle file suffixes
@@ -6,6 +31,10 @@
             (hyrolo-let-file-list, hyrolo-set-file-list): Call above function.
     This fixes failures with Markdown files improperly put into fundamental-mode
     which means their headings are not recognized properly.
+            (hyrolo-to-previous-loc, hyrolo-to-next-loc): Add and
+    bind to [ and ] keys in 'hyrolo-mode-map'.
+    (hyrolo-hdr-prefix-regexp): Add so do not repeat expression multiple places
+       and add this to `outline-regexp' in all major-modes supported by HyRolo.
 
 * hload-path.el (auto-mode-alist): Setup to invoke 'outline-mode' on ".otl"
     suffixed files.

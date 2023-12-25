@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     23-Dec-23 at 01:28:38 by Bob Weiner
+;; Last-Mod:     25-Dec-23 at 00:22:31 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -149,10 +149,7 @@ It provides the following keys:
   (unless (and (boundp 'kotl-previous-mode) kotl-previous-mode
 	       (eq kotl-previous-mode #'kotl-mode)
 	       (not (string-prefix-p hyrolo-display-buffer (buffer-name))))
-    (setq hyrolo-entry-regexp
-	  (concat hyrolo-hdr-regexp
-	  "\\|^" (if (boundp 'hbut:source-prefix) hbut:source-prefix "@loc> ")
-	  "\\|^" kview:outline-regexp)
+    (setq hyrolo-entry-regexp (concat hyrolo-hdr-prefix-regexp "^" kview:outline-regexp)
 	  hyrolo-entry-group-number 2
 	  hyrolo-entry-trailing-space-group-number 3
 
@@ -171,7 +168,7 @@ It provides the following keys:
 	  mode-line-format (copy-sequence mode-line-format)
 	  mode-line-format (set:remove "%n" mode-line-format)
 	  outline-level  #'kcell-view:level
-	  outline-regexp kview:outline-regexp))
+	  outline-regexp hyrolo-entry-regexp))
   ;;
   (when (fboundp 'add-to-invisibility-spec)
     (add-to-invisibility-spec '(outline . t)))
