@@ -1049,8 +1049,7 @@ With point on label suggest that ibut for rename."
           (find-file file)
           (outline-mode)
           (goto-char 1)
-          ;; BUG!? Should be link-to-string-match?
-          (should (equal (caar (hui:link-possible-types)) 'link-to-file)))
+          (should (equal (caar (hui:link-possible-types)) 'link-to-string-match)))
       (hy-delete-file-and-buffer file)))
 
   ;; Buffer attached to File  link-to-file
