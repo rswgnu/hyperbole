@@ -1,3 +1,11 @@
+2023-12-26  Mats Lidell  <matsl@gnu.org>
+
+* test/hmouse-drv-tests.el:
+  test/hibtypes-tests.el:
+  test/hib-kbd-tests.el:
+  test/demo-tests.el: Set enable-local-variables to nil for test cases
+    where DEMO and FAST-DEMO is loaded to avoid getting queried.
+
 2023-12-26  Bob Weiner  <rsw@gnu.org>
 
 * test/hy-test-helpers.el (hy-test-helpers:ensure-link-possible-type): Add.
