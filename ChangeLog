@@ -1,8 +1,46 @@
+2023-12-26  Bob Weiner  <rsw@gnu.org>
+
+* test/hyrolo-tests.el: Fix with-simulated-input where prompting for 'y'.
+
+* hyrolo.el (hyrolo-map-matches, hyrolo-funcall-match): Ensure point ends up
+    on a visible point so that reveal-mode does not force and unhide of the entry.
+    Remove the above logic from 'hyrolo-show-levels' since it calls
+    'hyrolo-map-matches'.
+            (hyrolo-mode): For now, stop enabling 'reveal-mode'  until can get it
+     working right with the enabling of 'outline-minor-mode' when switch major modes
+     in "*HyRolo*", typically using 'hyrolo-funcall-match' or 'hyrolo-map-matches'.
+
+* test/hyrolo-tests.el (hyrolo-sort-test): Enable this test.
+  hyrolo.el (hyrolo-add): Fix this function to insert sub-entries in the right
+    location so 'hyrolo-sort-test' passes.
+
 2023-12-25  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-entry-regexp): Rename to 'hyrolo-hdr-and-entry-regexp' and
+    in 'hyrolo-mode' extend its value to include all multiple trailing whitespace
+    chars after the entry delimiter.
+  Add new variable `hyrolo-entry-regexp' which does not match to file headers.
+
+* hyrolo.el (require 'reveal): Add since overload its functions now.
+
+* kotl/kotl-mode.el (kotl-mode:reveal-toggle-invisible): Fix by adding
+    'get-buffer' call around 'hyrolo-display-buffer'.  Otherwise, the buffer
+    comparison would always fail.
 
 * hyrolo.el (hyrolo-hdr-move-after-p): Modify to handle when point is not at
     the start of but is on a hdr separator or loc line.
-    (hyrolo-to-entry-beginning): Fix to move past any file hdr.
+            (hyrolo-to-entry-beginning): Fix to move past any file hdr.
+            (hyrolo-map-matches): Fix calls to this that are mode-specific by adding
+       second arg of t.
+            (hyrolo-show-levels): Rewrite so handles all behavior for {t} and {o}
+       key bindings.
+            (hyrolo-overview, hyrolo-top-level): Simplify for new version of
+       'hyrolo-show-levels'.
+            (outline-mode-hook): Fix to apture only one whitespace char in
+       'outline-regexp' so 'hyrolo-outline-level' function works properly.
+            (hyrolo-grep-file): Require a final blank line so that
+       'outline-hide-sublevels' won't hide it and combine with any next file header.
+       (hyrolo-min-matched-level): Fix to start with max val rather than min val.
 
 * man/hyperbole.texi (HyRolo Keys): Document [ and ] keys to move to prev and
     next buffer/file @loc> line.
@@ -20,7 +58,7 @@
             (outline-mode-hook): Add to configure outline-mode for use with HyRolo.
 	    (hyrolo-org-mode): Update to set all local hyrolo variables.
 
-* kotl/kotl-mode.el (kotl-mode): Set 'outline-regexp' to match 'hyrolo-entry-regexp'
+* kotl/kotl-mode.el (kotl-mode): Set 'outline-regexp' to match 'hyrolo-hdr-and-entry-regexp'
     to account for file headers in 'hyrolo-mode' (multi-format major-mode).
 
 2023-12-24  Bob Weiner  <rsw@gnu.org>
@@ -77,7 +115,7 @@
 * kotl/kotl-mode.el (kotl-mode): Disable 'change-major-mode-hook' addition of
     'kotl-mode:show-all' if in the HyRolo display buffer.
 
-* hyrolo.el (hyrolo-entry-regexp): Add 'hyrolo-hdr-regexp' and 'hbut:source-prefix'
+* hyrolo.el (hyrolo-hdr-and-entry-regexp): Add 'hyrolo-hdr-regexp' and 'hbut:source-prefix'
     so are not skipped during hide/show operations.  Also do this in
     'markdown-mode-hook' and 'kotl-mode'.
 
@@ -237,7 +275,7 @@
     in HyRolo display match buffer when displaying parts of Koutlines.
 
 * hyrolo.el (hyrolo-cache-set-major-mode): Move to this function the
-    addition of 'hyrolo-hdr-regexp' to both 'hyrolo-entry-regexp' and
+    addition of 'hyrolo-hdr-regexp' to both 'hyrolo-hdr-and-entry-regexp' and
     'outline-regexp' within the *HyRolo* display match buffer.
             (hyrolo-markdown-outline-level, hyrolo-cache-set-major-mode):
     Fix markdown 'outline-level' function to always return a non-nil level.
@@ -293,7 +331,7 @@
     (hyrolo-grep-file): Add call to 'hyrolo--cache-locals'.
     (hyrolo-grep): Remove concatenated 'outline-regexps' and 'hyrolo-entry-regexps'.
        They are no longer used.  Move header matching in `outline-regexp' and
-       `hyrolo-entry-regexp' to 'hyrolo--cache-matched-buffer'.
+       `hyrolo-hdr-and-entry-regexp' to 'hyrolo--cache-matched-buffer'.
 
 2023-12-07  Mats Lidell  <matsl@gnu.org>
 
@@ -548,7 +586,7 @@
             (hyrolo-find-file): Improve 'outline-regexp' handling and set
     'outline-level' function if an Emacs outline.
 	    (hyrolo-add): Compare entry-regexp against default-value of
-    'hyrolo-entry-regexp' rather than a literal string.
+    'hyrolo-hdr-and-entry-regexp' rather than a literal string.
 
 2023-11-14  Bob Weiner  <rsw@gnu.org>
 
@@ -3170,7 +3208,7 @@ name with 'name' and 'name-key'.
              hyrolo-google-contacts-grep, hyrolo-grep-file,
              hyrolo-display-to-entry-end, hyrolo-name-at):
   kotl/kimport.el (kimport:star-entries): Don't fold case when searching
-    for 'hyrolo-entry-regexp'.
+    for 'hyrolo-hdr-and-entry-regexp'.
     (hyrolo-isearch-for-regexp): Add 2nd parameter, 'fold-search-flag'
   used to set 'case-fold-search'.
 
@@ -3229,11 +3267,11 @@ name with 'name' and 'name-key'.
 
 * hyrolo.el (hyrolo-grep): Add support for 'outline-regexp' and
     'outline-level' variables from multiple file types.  This includes
-    adding 'hyrolo-hdr-regexp' to both 'hyrolo-entry-regexp' and
+    adding 'hyrolo-hdr-regexp' to both 'hyrolo-hdr-and-entry-regexp' and
    'outline-regexp' within the *HyRolo* match buffer.
             (hyrolo-mode): Set local value of 'outline-level' to
     'hyrolo-mode-outline-level' and define that function to support
-    star outlines and Koutlines.  Also, make 'hyrolo-entry-regexp'
+    star outlines and Koutlines.  Also, make 'hyrolo-hdr-and-entry-regexp'
     local and set it to its default value, after which it may be
     modified.
             (hyrolo-previous-match): Change so can be used in a
@@ -3241,7 +3279,7 @@ name with 'name' and 'name-key'.
             (hyrolo-mode-outline-level): Add and use in 'hyrolo-mode'.
 
 * kotl/kotl-mode.el (kotl-mode): Add local settings of:
-    'hyrolo-entry-regexp', 'outline-level', and 'outline-regexp'
+    'hyrolo-hdr-and-entry-regexp', 'outline-level', and 'outline-regexp'
      specific to Koutlines.
   kotl/kview.el (kview:outline-regexp): Regexp quote
     use of 'kview:default-label-separator'.
@@ -6436,7 +6474,7 @@ Delete knode.el and integrate functionality into kcell.el.
     This makes behavior across magit lines consistent and pathnames can still
     be displayed using the Assist Key (invokes magit {RET} key).
 
-* hyrolo.el (hyrolo-to-entry-end): Default to using entire hyrolo-entry-regexp
+* hyrolo.el (hyrolo-to-entry-end): Default to using entire hyrolo-hdr-and-entry-regexp
     to determine the outline depth when no hyrolo-entry-group-number is
     included in the expression.  Fixes issue that could call (goto-char nil).
 
@@ -7643,7 +7681,7 @@ V7.1.0 test release changes ^^^^:
     using {q} to quit from the hyrolo match buffer.
 
 * hyrolo-logic.el (hyrolo-map-logic): Fixed function call.
-    Changed: (match-string-no-properties hyrolo-entry-regexp
+    Changed: (match-string-no-properties hyrolo-hdr-and-entry-regexp
          To: (match-string-no-properties hyrolo-entry-group-number)
 
 * hsys-org.el (inhibit-hsys-org): Added customization to allow disabling all Smart Key support when in an
@@ -7675,7 +7713,7 @@ V7.1.0 test release changes ^^^^:
             (hyrolo-to):
             (hyrolo-to-entry-end): Fixed bug that caused addition of new entries at the end of the hyrolo file,
     rather than in sorted order.  Also caused hyrolo-logic functions to fail.
-    The issue was that 'hyrolo-entry-regexp' had been updated to include the whitespace following the entry prefix
+    The issue was that 'hyrolo-hdr-and-entry-regexp' had been updated to include the whitespace following the entry prefix
     and this whitespace was improperly included when computing the hierarchy level of the entry.  Also, changed
     'curr-entry-level' parameter from a string to an integer to reduce length comparisons.
             (hyrolo-r-not): Fixed typo 'path' should be 'pat'.
@@ -8380,7 +8418,7 @@ for expanded Org mode reference handling.
 2019-06-16  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el: Replaced buffer-substring-no-properties with match-string-no-properties where possible.
-             (hyrolo-entry-regexp): Changed to require whitespace following the entry prefix.
+             (hyrolo-hdr-and-entry-regexp): Changed to require whitespace following the entry prefix.
              (hyrolo-entry-group-number): Added.
 
 2019-06-12  Bob Weiner  <rsw@gnu.org>

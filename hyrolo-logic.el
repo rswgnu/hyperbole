@@ -246,7 +246,7 @@ SEXP that match entries."
 	 (end)
 	 (end-entry-hdr)
 	 (num-found 0))
-    (while (re-search-forward hyrolo-entry-regexp nil t)
+    (while (re-search-forward hyrolo-hdr-and-entry-regexp nil t)
       (setq end-entry-hdr (match-end hyrolo-entry-group-number)
 	    start (match-beginning hyrolo-entry-group-number)
 	    end (hyrolo-to-entry-end include-sub-entries))

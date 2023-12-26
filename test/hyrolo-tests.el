@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     23-Dec-23 at 01:25:40 by Bob Weiner
+;; Last-Mod:     26-Dec-23 at 01:57:38 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -23,6 +23,7 @@
 (require 'hyrolo)
 (require 'hyrolo-demo)
 (require 'hy-test-helpers "test/hy-test-helpers")
+(require 'hib-kbd)
 (require 'with-simulated-input)
 
 (declare-function hy-test-helpers:consume-input-events "hy-test-helpers")
@@ -214,7 +215,6 @@ and {b} the previous same level cell."
 
 (ert-deftest hyrolo-sort-test ()
   "HyRolo files can be sorted."
-  :expected-result :failed
   (let ((hyrolo-file (make-temp-file "hypb" nil ".otl")))
     (unwind-protect
         (let ((hyrolo-file-list (list hyrolo-file))
@@ -316,10 +316,10 @@ and {b} the previous same level cell."
             (should (looking-at-p "==="))
             (hyrolo-next-visible-heading 1)
             (should (looking-at-p "* heading")))
-          (with-simulated-input "y RET" ; Do you want to revisit the file normally now?
-            (action-key)
-            (should (equal (current-buffer) (find-buffer-visiting org-file)))
-            (should (looking-at-p "* heading"))))
+	  (kbd-key:key-series-to-events "y C-f")
+          (action-key)
+          (should (equal (current-buffer) (find-buffer-visiting org-file)))
+          (should (looking-at-p "* heading")))
       (hy-delete-file-and-buffer org-file)
       (kill-buffer "*HyRolo*")
       (delete-directory temporary-file-directory))))
@@ -343,7 +343,7 @@ and {b} the previous same level cell."
             (should (looking-at-p "==="))
             (hyrolo-next-visible-heading 1)
             (should (looking-at-p ".*1\\. heading")))
-          (with-simulated-input "y RET" ; Do you want to revisit the file normally now?
+          (with-simulated-input "y C-f" ; Do you want to revisit the file normally now?
             (action-key)
             (should (equal (current-buffer) (find-buffer-visiting kotl-file)))
             (should (looking-at-p "heading"))))
@@ -364,10 +364,9 @@ and {b} the previous same level cell."
             (should (looking-at-p "==="))
             (hyrolo-next-visible-heading 1)
             (should (looking-at-p "* heading")))
-          (with-simulated-input "y RET" ; Do you want to revisit the file normally now?
-            (action-key)
-            (should (equal (current-buffer) (find-buffer-visiting outl-file)))
-            (should (looking-at-p "* heading"))))
+          (action-key)
+          (should (equal (current-buffer) (find-buffer-visiting outl-file)))
+          (should (looking-at-p "* heading")))
       (hy-delete-file-and-buffer outl-file)
       (kill-buffer "*HyRolo*")
       (delete-directory temporary-file-directory))))
@@ -385,10 +384,9 @@ and {b} the previous same level cell."
             (should (looking-at-p "==="))
             (hyrolo-next-visible-heading 1)
             (should (looking-at-p "# heading")))
-          (with-simulated-input "y RET" ; Do you want to revisit the file normally now?
-            (action-key)
-            (should (equal (current-buffer) (find-buffer-visiting md-file)))
-            (should (looking-at-p "# heading"))))
+          (action-key)
+          (should (equal (current-buffer) (find-buffer-visiting md-file)))
+          (should (looking-at-p "# heading")))
       (hy-delete-file-and-buffer md-file)
       (kill-buffer "*HyRolo*")
       (delete-directory temporary-file-directory))))
@@ -415,10 +413,9 @@ Match a string in a level 2 child cell."
             (should (looking-at-p "==="))
             (hyrolo-next-visible-heading 1)
             (should (looking-at-p ".*1a\\. heading")))
-          (with-simulated-input "y RET" ; Do you want to revisit the file normally now?
-            (action-key)
-            (should (equal (current-buffer) (find-buffer-visiting kotl-file)))
-            (should (looking-at-p "heading"))))
+          (action-key)
+          (should (equal (current-buffer) (find-buffer-visiting kotl-file)))
+          (should (looking-at-p "heading")))
       (hy-delete-file-and-buffer kotl-file)
       (kill-buffer "*HyRolo*")
       (delete-directory temporary-file-directory))))
@@ -445,10 +442,9 @@ Match a string in the second cell."
             (should (looking-at-p "==="))
             (hyrolo-next-visible-heading 1)
             (should (looking-at-p ".*2\\. heading")))
-          (with-simulated-input "y RET" ; Do you want to revisit the file normally now?
-            (action-key)
-            (should (equal (current-buffer) (find-buffer-visiting kotl-file)))
-            (should (looking-at-p "heading"))))
+          (action-key)
+          (should (equal (current-buffer) (find-buffer-visiting kotl-file)))
+          (should (looking-at-p "heading")))
       (hy-delete-file-and-buffer kotl-file)
       (kill-buffer "*HyRolo*")
       (delete-directory temporary-file-directory))))

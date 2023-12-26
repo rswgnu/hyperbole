@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     25-Dec-23 at 02:39:36 by Bob Weiner
+@c Last-Mod:     25-Dec-23 at 22:39:22 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -6504,9 +6504,9 @@ regular expression variable, @code{hyrolo-hdr-regexp}, whose default value
 is "^===".  This allows lines of all equal signs to visually separate
 matching entries retrieved from multiple files during a single search.
 
-@item hyrolo-entry-regexp
+@item hyrolo-hdr-and-entry-regexp
 The rolo entry start delimiter is given by the regular expression
-variable, @code{hyrolo-entry-regexp}, whose default value is "^\*+", i.e.@: 
+variable, @code{hyrolo-hdr-and-entry-regexp}, whose default value is "^\*+", i.e.@: 
 one or more asterisks at the beginning of a line.
 
 @item hyrolo-display-format-function

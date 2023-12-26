@@ -134,7 +134,7 @@ an error."
 	(delim-doc-id (concat doc-id-start doc-id doc-id-end)))
     (cond ((null doc-id-indices)
 	   (error "(doc-id-index-entry): You must set the `doc-id-indices' variable first"))
-	  ((let ((hyrolo-entry-regexp doc-id-index-entry-regexp))
+	  ((let ((hyrolo-hdr-and-entry-regexp doc-id-index-entry-regexp))
 	     (zerop (hyrolo-grep (funcall doc-id-match doc-id)
 				 1 doc-id-indices nil nil 'no-display)))
 	   (error "(doc-id-index-entry): %s not found in document index"
@@ -175,7 +175,7 @@ match the function stored in `doc-id-p'."
 (defun doc-id:help (but)
   "Display site-specific document index entry given by doc-id BUT.
 Also display standard Hyperbole help for implicit button BUT."
-  (let ((hyrolo-entry-regexp doc-id-index-entry-regexp)
+  (let ((hyrolo-hdr-and-entry-regexp doc-id-index-entry-regexp)
 	(hyrolo-display-buffer (hypb:help-buf-name "Doc ID"))
 	(doc-id (hbut:key-to-label (hattr:get but 'lbl-key))))
     (cond ((null doc-id-indices)

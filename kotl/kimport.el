@@ -673,19 +673,19 @@ IMPORT-FROM so far (initially 0).
 Return a cons of MAX-POS and COUNT."
   (set-buffer import-from)
   (let ((start (point))
-	(hyrolo-entry-regexp kimport:star-heading)
+	(hyrolo-hdr-and-entry-regexp kimport:star-heading)
 	(case-fold-search)
 	max-pos-and-count
 	subtree-p end contents node-level child-label)
     ;; While find cells at import-level or deeper ...
-    (while (and (re-search-forward hyrolo-entry-regexp nil t)
+    (while (and (re-search-forward hyrolo-hdr-and-entry-regexp nil t)
 		(<= import-level
 		    (setq node-level
 			  (length (match-string 1)))))
       (skip-chars-forward " \t")
       (setq start (point)
 	    end (hyrolo-to-entry-end)
-	    subtree-p (if (looking-at hyrolo-entry-regexp)
+	    subtree-p (if (looking-at hyrolo-hdr-and-entry-regexp)
 			  (< node-level
 			     (length (match-string 1)))))
       (skip-chars-backward "\n\r")

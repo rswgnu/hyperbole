@@ -486,7 +486,7 @@
 
       (hyrolo-mode): Set the local value of `outline-level' to
       `hyrolo-mode-outline-level' and define that function to support star
-      outlines and Koutlines.  Also, made `hyrolo-entry-regexp' local and set
+      outlines and Koutlines.  Also, made `hyrolo-hdr-and-entry-regexp' local and set
       it to its default value, after which it may be modified.
 
   *** (hyrolo-fgrep-file, hyrolo-grep-file, hyrolo-fgrep, hyrolo-grep,

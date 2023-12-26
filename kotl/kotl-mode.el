@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     25-Dec-23 at 00:22:31 by Bob Weiner
+;; Last-Mod:     25-Dec-23 at 23:33:09 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -103,6 +103,7 @@ It provides the following keys:
   (interactive)
   (mapc #'make-local-variable
 	'(hyrolo-entry-regexp
+	  hyrolo-hdr-and-entry-regexp
 	  hyrolo-entry-group-number
 	  hyrolo-entry-trailing-space-group-number
 	  indent-line-function
@@ -149,7 +150,8 @@ It provides the following keys:
   (unless (and (boundp 'kotl-previous-mode) kotl-previous-mode
 	       (eq kotl-previous-mode #'kotl-mode)
 	       (not (string-prefix-p hyrolo-display-buffer (buffer-name))))
-    (setq hyrolo-entry-regexp (concat hyrolo-hdr-prefix-regexp "^" kview:outline-regexp)
+    (setq hyrolo-entry-regexp (concat "^" kview:outline-regexp)
+	  hyrolo-hdr-and-entry-regexp (concat hyrolo-hdr-prefix-regexp hyrolo-entry-regexp)
 	  hyrolo-entry-group-number 2
 	  hyrolo-entry-trailing-space-group-number 3
 
@@ -168,7 +170,7 @@ It provides the following keys:
 	  mode-line-format (copy-sequence mode-line-format)
 	  mode-line-format (set:remove "%n" mode-line-format)
 	  outline-level  #'kcell-view:level
-	  outline-regexp hyrolo-entry-regexp))
+	  outline-regexp hyrolo-hdr-and-entry-regexp))
   ;;
   (when (fboundp 'add-to-invisibility-spec)
     (add-to-invisibility-spec '(outline . t)))
@@ -3422,7 +3424,7 @@ but always operates upon the current view."
 ;; Adapted from outline-reveal-toggle-invisible; called by isearch.
 (defun kotl-mode:reveal-toggle-invisible (o hidep)
   (if (not (derived-mode-p 'kotl-mode))
-      (if (and (eq (current-buffer) hyrolo-display-buffer)
+      (if (and (eq (current-buffer) (get-buffer hyrolo-display-buffer))
 	       (eq (hyrolo-cache-get-major-mode-from-pos (point))
 		   'kotl-mode))
 	  (hyrolo-funcall-match
