@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     30-Nov-23 at 19:53:31 by Mats Lidell
+;; Last-Mod:     10-Dec-23 at 21:11:07 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -931,6 +931,146 @@ With point on label suggest that ibut for rename."
                                                  :lbl-key "button"))))
       (hy-delete-file-and-buffer global-but-file)
       (hy-delete-file-and-buffer file))))
+
+(ert-deftest hui--link-possible-types ()
+  "Verify right type is selected from referent buffer."
+
+  ;; Org Roam or Org Id       link-to-org-id
+  (let ((file (make-temp-file "hypb" nil ".org")))
+    (unwind-protect
+        (progn
+          (find-file file)
+          (org-id-get-create nil)
+          (re-search-forward ":ID:")
+          (should (equal (caar (hui:link-possible-types)) 'link-to-org-id)))
+      (hy-delete-file-and-buffer file)))
+
+  ;; Global Button            link-to-gbut
+  (defvar global-but-file)
+  (let ((global-but-file (make-temp-file "gbut" nil ".txt")))
+    (unwind-protect
+        (mocklet ((gbut:file => global-but-file))
+          (hui:gibut-create "global" "/tmp")
+          (find-file global-but-file)
+          (should (equal (caar (hui:link-possible-types)) 'link-to-gbut)))
+      (hy-delete-file-and-buffer global-but-file)))
+
+  ;; Explicit Button          link-to-ebut
+  (with-temp-buffer
+    (ebut:program "label" 'link-to-directory "/tmp")
+    (should (equal (caar (hui:link-possible-types)) 'link-to-ebut)))
+
+  ;; Implicit Button          link-to-ibut
+  (with-temp-buffer
+    (insert "<[ibut]> - \"/tmp\"")
+    (goto-char 5)
+    (should (equal (caar (hui:link-possible-types)) 'link-to-ibut)))
+
+  ;; Bookmarks List           link-to-bookmark
+  (with-temp-buffer
+    (insert "   bookmark    ~/bookmarked\n")
+    (bookmark-bmenu-mode)
+    (should (equal (caar (hui:link-possible-types)) 'link-to-bookmark)))
+
+  ;; Info Node                link-to-Info-node
+  (with-temp-buffer
+    (insert "(info)node\n")
+    (goto-char 5)
+    (Info-mode)
+    (should (equal (caar (hui:link-possible-types)) 'link-to-Info-node)))
+
+  ;; Texinfo Node             link-to-texinfo-node
+  (with-temp-buffer
+    (insert "@node node\n")
+    (goto-char 5)
+    (texinfo-mode)
+    (should (equal (caar (hui:link-possible-types)) 'link-to-texinfo-node)))
+
+  ;; Mail Reader Message      link-to-mail
+  (let ((hmail:reader 'gnus-article-mode))
+    (with-temp-buffer
+      (gnus-article-mode)
+      (mocklet ((rmail:msg-id-get => "msg-id"))
+        (should (equal (caar (hui:link-possible-types)) 'link-to-mail)))))
+
+  ;; Directory Name           link-to-directory
+  (let ((dir (make-temp-file "hypb" t)))
+    (unwind-protect
+        (let ((hargs:reading-type 'directory))
+          ;; The dired case looks identical to the general dired case
+          ;; below i.e. (let ((hargs:reading-type 'directory))
+          ;; (hui:link-possible-types)) with cursor on a line with a
+          ;; file in dired returns 'link-to-file. What is the expected
+          ;; behavior?
+          (with-current-buffer (dired dir)
+            (goto-char 1)
+            (should (equal (caar (hui:link-possible-types)) 'link-to-directory)))
+          (with-temp-buffer
+            (insert dir)
+            (goto-char 4)
+            (should (equal (caar (hui:link-possible-types)) 'link-to-ibut))) ;; Expected: link-to-directory
+          (with-temp-buffer
+            (insert "/ssh:user@host.org:/home/user/file\n")
+            (goto-char 4)
+            (should (equal (caar (hui:link-possible-types)) 'link-to-ibut)))) ;; Expected: link-to-directory
+      (hy-delete-dir-and-buffer dir)))
+
+  ;; File Name                link-to-file
+  (let* ((temporary-file-directory (make-temp-file "hypb" t))
+         (file (make-temp-file "hypb")))
+    (unwind-protect
+        (let ((hargs:reading-type 'file))
+          (with-current-buffer (dired temporary-file-directory)
+            (should (equal (caar (hui:link-possible-types)) 'link-to-file)))
+          (with-temp-buffer
+            (insert temporary-file-directory)
+            (goto-char 4)
+            (should (equal (caar (hui:link-possible-types)) 'link-to-ibut))) ;; Expected: link-to-file
+          (with-temp-buffer
+            (insert "/ssh:user@host.org:/home/user/\n")
+            (goto-char 4)
+            (should (equal (caar (hui:link-possible-types)) 'link-to-ibut)))) ;; Expected: link-to-file
+      (hy-delete-file-and-buffer file)
+      (hy-delete-dir-and-buffer temporary-file-directory)))
+
+  ;; Koutline Cell            link-to-kcell
+  (let ((file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (progn
+          (find-file file)
+          (insert "first")
+          (should (equal (caar (hui:link-possible-types)) 'link-to-kcell)))
+      (hy-delete-file-and-buffer file)))
+
+  ;; Outline Heading          link-to-string-match
+  (let ((file (make-temp-file "hypb" nil ".outl" "* heading\nbody\n")))
+    (unwind-protect
+        (progn
+          (find-file file)
+          (outline-mode)
+          (goto-char 1)
+          (should (equal (caar (hui:link-possible-types)) 'link-to-string-match)))
+      (hy-delete-file-and-buffer file)))
+
+  ;; Buffer attached to File  link-to-file
+  (let ((file (make-temp-file "hypb" nil ".txt")))
+    (unwind-protect
+        (progn
+          (find-file file)
+          (should (equal (caar (hui:link-possible-types)) 'link-to-file)))
+      (hy-delete-file-and-buffer file)))
+
+  ;; EOL in Dired Buffer      link-to-directory (dired dir)
+  (let ((dir (make-temp-file "hypb" t)))
+    (unwind-protect
+        (with-current-buffer (dired dir)
+          (goto-char 1) ;; EOL does not seem to matter!?
+          (should (equal (caar (hui:link-possible-types)) 'link-to-directory)))
+      (hy-delete-dir-and-buffer dir)))
+
+  ;; Buffer without File      link-to-buffer-tmp"
+  (with-temp-buffer
+    (should (equal (caar (hui:link-possible-types)) 'link-to-buffer-tmp))))
 
 ;; This file can't be byte-compiled without `with-simulated-input' which
 ;; is not part of the actual dependencies, so:
