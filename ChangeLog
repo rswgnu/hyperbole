@@ -1,3 +1,9 @@
+2023-12-26  Bob Weiner  <rsw@gnu.org>
+
+* test/hy-test-helpers.el (hy-test-helpers:ensure-link-possible-type): Add.
+  test/hui-tests.el (hui--link-possible-types): Use above function to ensure
+    'hui:link-possible-types' returns one given type only for each test herein.
+
 2023-12-26  Mats Lidell  <matsl@gnu.org>
 
 * test/hy-test-helpers.el (hy-delete-dir-and-buffer): Add test helper for

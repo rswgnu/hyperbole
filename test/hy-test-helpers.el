@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     22-Dec-23 at 16:03:21 by Mats Lidell
+;; Last-Mod:     26-Dec-23 at 11:55:42 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -26,6 +26,13 @@
   "Use recusive-edit to consume the events kbd-key generates."
   (run-with-timer 0.1 nil (lambda () (exit-recursive-edit)))
   (recursive-edit))
+
+(defun hy-test-helpers:ensure-link-possible-type (type)
+  "At point, ensure `hui:link-possible-types' returns a single TYPE."
+  (let* ((possible-types (hui:link-possible-types))
+	 (first-type (caar possible-types)))
+    (should (= (length possible-types) 1))
+    (should (equal (caar (hui:link-possible-types)) type))))
 
 (defun hy-test-helpers:should-last-message (msg)
   "Verify last message is MSG."
