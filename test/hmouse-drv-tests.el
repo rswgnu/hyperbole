@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 22:52:00
-;; Last-Mod:     11-Dec-23 at 01:57:54 by Bob Weiner
+;; Last-Mod:     26-Dec-23 at 22:44:10 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -105,7 +105,8 @@
 
 (ert-deftest hbut-defil-it ()
   (defil defil-path-it "<<<" ">>>" ".*" "${hyperb:dir}/\\&")
-  (let ((vc-follow-symlinks nil))
+  (let ((vc-follow-symlinks nil)
+        (enable-local-variables nil))
     (unwind-protect
 	(with-temp-buffer
           (insert "<<<DEMO>>>")
@@ -239,7 +240,8 @@
       (with-temp-buffer
         (insert (format "\"%s\"" (expand-file-name "DEMO" hyperb:dir)))
         (goto-char 2)
-        (action-key)
+	(let ((enable-local-variables nil))
+          (action-key))
         (should (string= "DEMO" (buffer-name))))
     (hy-test-helpers:kill-buffer "DEMO")))
 
@@ -248,7 +250,8 @@
       (with-temp-buffer
         (insert "\"${hyperb:dir}/DEMO\"")
         (goto-char 2)
-        (action-key)
+	(let ((enable-local-variables nil))
+          (action-key))
         (should (string= "DEMO" (buffer-name))))
     (hy-test-helpers:kill-buffer "DEMO")))
 
@@ -458,7 +461,7 @@
 ;; text-toc
 (ert-deftest hbut-text-toc-test ()
   (unwind-protect
-      (progn
+      (let ((enable-local-variables nil))
         (hypb:display-file-with-logo "DEMO")
         (goto-char (point-min))
         (re-search-forward "^[ \t]*\\* Koutl")

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     26-Mar-22 at 11:25:43 by Mats Lidell
+;; Last-Mod:     25-Dec-23 at 23:30:20 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -37,7 +37,7 @@
 (ert-deftest kbd-key-hy-demo-factorial-test ()
   (skip-unless (not noninteractive))
   (unwind-protect
-      (progn
+      (let ((enable-local-variables nil))
         ;; Preload demo files to avoid race with *ert* buffer and set
         ;; *ert* buffer current
         (hypb:display-file-with-logo "DEMO")

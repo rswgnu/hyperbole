@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     11-Dec-23 at 01:58:53 by Bob Weiner
+;; Last-Mod:     25-Dec-23 at 23:30:20 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -39,7 +39,7 @@
 (ert-deftest demo-smart-mouse-keys-ref-test ()
   "Go to the header from a #ref."
   (unwind-protect
-      (progn
+      (let ((enable-local-variables nil))
         (hypb:display-file-with-logo "DEMO")
         (goto-char (point-min))
         (re-search-forward "#Smart Keys")
@@ -50,7 +50,7 @@
 
 (ert-deftest demo-smart-mouse-keys-ebut-test ()
   (unwind-protect
-      (progn
+      (let ((enable-local-variables nil))
         (hypb:display-file-with-logo "DEMO")
         (goto-char (point-min))
         (re-search-forward "<(Smart")
@@ -61,7 +61,7 @@
 
 (ert-deftest demo-table-of-contents-test ()
   (unwind-protect
-      (progn
+      (let ((enable-local-variables nil))
         (hypb:display-file-with-logo "DEMO")
         (goto-char (point-min))
         (re-search-forward " \\* Koutl")
@@ -74,7 +74,7 @@
 (ert-deftest demo-smart-scrolling-proportional-test ()
   (skip-unless (not noninteractive))
   (unwind-protect
-      (progn
+      (let ((enable-local-variables nil))
         (hypb:display-file-with-logo "DEMO")
         (goto-char (point-min))
         (re-search-forward "Table of Contents")
@@ -88,7 +88,7 @@
 
 (ert-deftest demo-smart-scrolling-non-proportional-test ()
   (unwind-protect
-      (progn
+      (let ((enable-local-variables nil))
         (hypb:display-file-with-logo "DEMO")
         (goto-char (point-min))
         (re-search-forward "Table of Contents")
@@ -127,7 +127,7 @@
 (ert-deftest demo-window-grid-22-test ()
   (skip-unless (not noninteractive))
   (unwind-protect
-      (progn
+      (let ((enable-local-variables nil))
         (hypb:display-file-with-logo "DEMO")
         (should (hact 'kbd-key "C-h h s f @ 22 RET Q"))
         (hy-test-helpers:consume-input-events)
@@ -137,7 +137,7 @@
 (ert-deftest demo-window-grid-33-test ()
   (skip-unless (not noninteractive))
   (unwind-protect
-      (progn
+      (let ((enable-local-variables nil))
         (hypb:display-file-with-logo "DEMO")
         (should (hact 'kbd-key "C-h h s f @ 33 RET Q"))
         (hy-test-helpers:consume-input-events)
@@ -190,7 +190,8 @@
       (with-temp-buffer
         (insert (format "\"%s\"" (expand-file-name "DEMO" hyperb:dir)))
         (goto-char 2)
-        (action-key)
+	(let ((enable-local-variables nil))
+          (action-key))
         (should (string= "DEMO" (buffer-name))))
     (hy-test-helpers:kill-buffer "DEMO")))
 
@@ -199,7 +200,8 @@
       (with-temp-buffer
         (insert "<link-to-file-line \"${hyperb:dir}/DEMO\" 5>")
         (goto-char 5)
-        (action-key)
+	(let ((enable-local-variables nil))
+          (action-key))
         (should (string= "DEMO" (buffer-name)))
         (should (= 5 (line-number-at-pos (point)))))
     (hy-test-helpers:kill-buffer "DEMO")))
@@ -382,7 +384,7 @@
 (ert-deftest demo-occur-test ()
   (skip-unless (not noninteractive))
   (unwind-protect
-      (progn
+      (let ((enable-local-variables nil))
         (hypb:display-file-with-logo "DEMO")
         (should (hact 'kbd-key "C-h h f o Hyperbole RET"))
         (hy-test-helpers:consume-input-events)
@@ -405,7 +407,7 @@
 (ert-deftest demo-factorial-test ()
   (skip-unless (not noninteractive))
   (unwind-protect
-      (progn
+      (let ((enable-local-variables nil))
         (hypb:display-file-with-logo "DEMO")
         (should (hact 'kbd-key "C-h h a factorial RET"))
         (hy-test-helpers:consume-input-events)
@@ -415,7 +417,7 @@
 (ert-deftest demo-factorial-ebutton-test ()
   (skip-unless (not noninteractive))
   (unwind-protect
-      (progn
+      (let ((enable-local-variables nil))
         (hypb:display-file-with-logo "DEMO")
         (re-search-forward "<(factorial)>")
         (forward-char -5)
@@ -465,7 +467,7 @@ Note: Depends on key series in FAST-DEMO and how many files in
 hyberbole folder that starts with kotl."
   (skip-unless (not noninteractive))
   (unwind-protect
-      (progn
+      (let ((enable-local-variables nil))
         (hypb:display-file-with-logo "FAST-DEMO")
 	(goto-char (point-min))
         (search-forward "{C--1 C-c @")
