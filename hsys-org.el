@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:      4-Dec-23 at 00:04:31 by Bob Weiner
+;; Last-Mod:     26-Dec-23 at 12:05:46 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -267,7 +267,7 @@ Return the (start . end) buffer positions of the region."
       (cons start-point (next-single-property-change start-point property)))))
 
 (defun hsys-org-agenda-item-at-p ()
-  "Return non-nil if point is on an Org Agenda item line, else nil."
+  "Return non-nil if point is on an Org Agenda view item line, else nil."
   (and (derived-mode-p 'org-agenda-mode)
        (org-get-at-bol 'org-marker)))
 

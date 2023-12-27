@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     30-Nov-23 at 11:33:09 by Bob Weiner
+;; Last-Mod:     26-Dec-23 at 21:57:18 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -465,8 +465,10 @@ Also, add language-specific syntax setups to aid in thing selection."
 
 (defun hui-select-scan-sexps (from count)
   "Scan FROM point across COUNT sexpressions."
-  (with-syntax-table hui-select-syntax-table
-    (scan-sexps from count)))
+  (if (memq major-mode hui-select-ignore-quoted-sexp-modes)
+      (scan-sexps from count)
+    (with-syntax-table hui-select-syntax-table
+      (scan-sexps from count))))
 
 ;;;###autoload
 (defun hui-select-thing ()
@@ -542,10 +544,9 @@ displayed in the minibuffer."
 (defun hui-select-goto-matching-tag ()
   "Move point to start of the tag paired with closest tag point is at or precedes.
 Tag in this context is an sgml-like tag surrounded by angle brackets, <>.
-Enabled in major modes in `hui-select-markup-modes'.  Returns t if
-point is moved, else nil.  Signals an error if no tag is found
-following point or if the closing tag does not have a `>'
-terminator character."
+Enabled in major modes contained in the list, `hui-select-markup-modes'.
+Return t if point is moved, else nil.  Signal an error if no tag is found
+following point or if the closing tag does not have a `>' terminator character."
   (interactive)
   (when (memq major-mode hui-select-markup-modes)
     (let ((result)
@@ -790,7 +791,7 @@ Ignores any match if on an Emacs button and instead returns nil."
 
 (defun hui-select-delimited-thing ()
   "Select a markup pair, list, array/vector, set, comment or string at point.
-Return t is selected, else nil."
+Return t if selected, else nil."
   (interactive)
   (prog1 (and (hui-select-delimited-thing-call #'hui-select-thing) t)
     ;; If selected region is followed by only whitespace and then a

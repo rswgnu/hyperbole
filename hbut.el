@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     25-Dec-23 at 01:59:28 by Bob Weiner
+;; Last-Mod:     26-Dec-23 at 23:32:56 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1251,6 +1251,7 @@ is given."
 			 ((save-excursion
 			    (save-restriction
 			      (widen)
+			      (hyrolo-hdr-move-after-p)
 			      (end-of-visible-line)
 			      (when (and (search-backward hbut:source-prefix nil t)
 					 (or (memq (preceding-char) '(?\n ?\r))
@@ -2484,11 +2485,6 @@ Summary of operations based on inputs (name arg comes from \\='hbut:current attr
     (ibut:at-p)
 
     (let ((lbl-key (hattr:get 'hbut:current 'lbl-key)))
-      ;; (unless lbl-key
-      ;; 	(when (or (and (ibut:set-name-and-label-key-p)
-      ;; 		       (hattr:get 'hbut:current 'lbl-key))
-      ;; 		  (ibut:at-p)) ;; Sets lbl-key for non-delimited ibtypes
-      ;; 	  (setq lbl-key (hattr:get 'hbut:current 'lbl-key))))
       (unless (and (stringp lbl-key) (not (string-empty-p lbl-key)))
 	(hypb:error "(ibut:operate): hbut:current lbl-key must be non-nil")))
 
@@ -2578,8 +2574,10 @@ Summary of operations based on inputs (name arg comes from \\='hbut:current attr
 			 ;; includes buffer pos that we translate to line:col
 			 (hpath:file-position-to-line-and-column arg1 arg2)))))
       ('actypes::link-to-string-match
-       (insert (format "<%s \"%s\" %d \"%s\">" (actype:def-symbol actype) arg1 arg2
-		       (hpath:shorten arg3))))
+       (if (= arg2 1)
+	   (insert (format "\"%s#%s\"" (hpath:shorten arg3) arg1))
+	 (insert (format "<%s \"%s\" %d \"%s\">" (actype:def-symbol actype) arg1 arg2
+			 (hpath:shorten arg3)))))
       ('nil (error "(ibut:insert-text): actype must be a Hyperbole actype or Lisp function symbol, not '%s'" orig-actype))
       ;; Generic action button type						      
       (_ (insert (format "<%s%s%s>" (actype:def-symbol actype) (if args " " "")

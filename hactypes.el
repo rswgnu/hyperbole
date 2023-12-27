@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     23-Dec-23 at 02:17:41 by Bob Weiner
+;; Last-Mod:     26-Dec-23 at 14:19:50 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -562,7 +562,7 @@ on the implicit button to which to link."
   "Display FILE with kcell given by CELL-REF at window top.
 See documentation for `kcell:ref-to-id' for valid cell-ref formats.
 
-If FILE is nil, use the current buffer.
+If FILE is nil, use any source location or the current buffer.
 If CELL-REF is nil, show the first cell in the view."
   (interactive (hargs:iform-read '(interactive "fKotl file to link to: \n+KKcell to link to: ")))
   (require 'kfile)
@@ -581,9 +581,12 @@ If CELL-REF is nil, show the first cell in the view."
 		   (string-empty-p file)
 		   (equal (file-name-nondirectory file)
 			  (file-name-nondirectory buffer-file-name))))
+    (when (or (null file) (string-empty-p file))
+      (setq file (hbut:get-key-src t)))
     (if (stringp file)
 	(hpath:find file)
-      (hpath:display-buffer (current-buffer))))
+      ;; file can be a buffer from get-key-src call
+      (hpath:display-buffer (or file (current-buffer)))))
   (kotl-mode:goto-cell-ref cell-ref))
 
 (defact link-to-mail (mail-msg-id &optional mail-file)

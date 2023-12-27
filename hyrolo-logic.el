@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    13-Jun-89 at 22:57:33
-;; Last-Mod:     14-Dec-23 at 00:22:05 by Bob Weiner
+;; Last-Mod:     26-Dec-23 at 20:46:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -51,7 +51,7 @@
 ;;
 ;;     (hyrolo-logic (hyrolo-and (hyrolo-not "Tool-And-Die") "secretary"))
 ;;
-;;   would find all non-Tool-And-Die Corp. secretaries in your rolo.
+;;   would find all non-Tool-And-Die Corporation secretaries in your rolo.
 ;;
 ;;   The logical matching routines are not at all optimal, but then most
 ;;   rolo files are not terribly lengthy either, so results are often
@@ -76,7 +76,7 @@
 
 ;;;###autoload
 (defun hyrolo-fgrep-logical (expr &optional count-only include-sub-entries no-sub-entries-out
-				  whole-buffer-flag)
+				  koutline-flag)
   "Display rolo entries matching EXPR.
 EXPR is a string that may contain sexpression logical prefix operators.
 If optional COUNT-ONLY is non-nil, don't display entries, return
@@ -85,30 +85,30 @@ flag is non-nil, SEXP will be applied across all sub-entries at
 once.  Default is to apply SEXP to each entry and sub-entry
 separately.  Entries are displayed with all of their sub-entries
 unless INCLUDE-SUB-ENTRIES is nil and optional NO-SUB-ENTRIES-OUT
-flag is non-nil.
+flag is non-nil.  With optional KOUTLINE-FLAG, map entries with
+`hyrolo-map-kotl' rather than `hyrolo-map-entries'.
 
 A complex example of EXPR might be:
-  (and (or (not time card) (xor (and french balloons) spanish)) teacher pet)
+  (and (or (not time card) (xor (and french \"red balloons\") spanish)) teacher pet)
 which means:
-  Match neither `time' nor `card'
-    or
-  Match exactly one of (`french' and `balloons') or (`spanish').
+  (Match neither `time' nor `card'
+     or
+   Match exactly one of (`french' and `red balloons') or (`spanish'))
     and
-  Match `teacher' and `pet'.
+  must include the terms `teacher' as well as `pet' to match.
 
-Either double quotes or parentheses may be used to group multiple words as a
-single argument."
+Double quotes may be used to group multiple words as a single argument."
   (interactive "sLogical rolo search: \nP\nP")
   (when (called-interactively-p 'any)
     (setq no-sub-entries-out (not no-sub-entries-out)))
   (let* ((case-fold-search t)
 	 (total-matches))
-    (cond (whole-buffer-flag
+    (cond (koutline-flag
 	   (setq expr (format "(hyrolo-logic (quote %S) nil %s %s %s %s)"
-			      expr count-only include-sub-entries
+			      (read expr) count-only include-sub-entries
 			      no-sub-entries-out t))
 	   (setq total-matches (eval (read expr))))
-	  ((string-match "\(\\(and\\|or\\|xor\\|not\\)\\>" expr)
+	  ((string-match-p "\(\\(r-\\)?\\(and\\|or\\|xor\\|not\\)\\>" expr)
 	   (setq expr (replace-regexp-in-string "\(or " "\(| " expr nil t))
 	   (setq expr (replace-regexp-in-string "\(xor " "\(@ " expr nil t))
 	   (setq expr (replace-regexp-in-string "\(not " "\(! " expr nil t))
@@ -121,14 +121,12 @@ single argument."
 
 	   (setq expr (replace-regexp-in-string
 		       "\"\\([^\"]*\\)\"" "{\\1}" expr nil nil))
-	   (setq expr (replace-regexp-in-string
-		       "\(\\([^@|!&()][^()\"]*\\)\)" "{\\1}" expr nil nil))
 	   (let ((saved-expr expr))
 	     (while
 		 (not (equal
 		       saved-expr
 		       (setq expr (replace-regexp-in-string
-				   "\\(\\s-\\)\\([^{}()\" \t\n\r]+\\)\\([^{}()]*[()]\\)"
+				   "\\(\\s-\\)\\([^{}()\" \t\n\r]+\\)\\([^{}()]*\\([()]\\|\\s-\\)\\)"
 				   "\\1\"\\2\"\\3" expr nil nil))))
 	       (setq saved-expr expr)))
 	   (setq expr (replace-regexp-in-string
@@ -144,8 +142,8 @@ single argument."
 	   (setq expr (replace-regexp-in-string "\(r-& " "\(hyrolo-r-and start end " expr nil t))
 
 	   (setq expr (format "(hyrolo-logic (quote %S) nil %s %s %s %s)"
-			      expr count-only include-sub-entries
-			      no-sub-entries-out whole-buffer-flag))
+			      (read expr) count-only include-sub-entries
+			      no-sub-entries-out koutline-flag))
 	   (setq total-matches (eval (read expr))))
 	  (t
 	   ;; Search string does not contain embedded logic
@@ -159,16 +157,21 @@ single argument."
     total-matches))
 
 (defun hyrolo-logic (sexp &optional in-bufs count-only include-sub-entries no-sub-entries-out
-			  whole-buffer-flag)
-  "Apply SEXP to all entries in optional IN-BUFS.
+			  koutline-flag)
+  "Apply SEXP to all entries in optional buffer list, IN-BUFS.
 Display entries where SEXP is non-nil.
 If IN-BUFS is nil, `hyrolo-file-list' is used.  If optional COUNT-ONLY is
 non-nil, don't display entries, return count of matching entries only.  If
 optional INCLUDE-SUB-ENTRIES flag is non-nil, apply SEXP across all sub-entries
 at once.  Default is to apply SEXP to each entry and sub-entry separately.
 Entries are displayed with all of their sub-entries unless INCLUDE-SUB-ENTRIES
-is nil and optional NO-SUB-ENTRIES-OUT flag is non-nil.  SEXP should utilize the
-free variables `start' and `end' as the region on which to operate.
+is nil and optional NO-SUB-ENTRIES-OUT flag is non-nil.  With optional
+KOUTLINE-FLAG, map entries with `hyrolo-map-kotl' rather than
+`hyrolo-map-entries'.
+
+SEXP should utilize the free variables `start' and `end' as the region on which
+to operate.
+
 Return the number of evaluations of SEXP that match entries."
   (let* ((display-buf (unless count-only
 			(prog1 (hyrolo-set-display-buffer)
@@ -184,7 +187,7 @@ Return the number of evaluations of SEXP that match entries."
 	     (setq buf-or-file (or (get-buffer buf-or-file)
 				   (funcall hyrolo-find-file-noselect-function buf-or-file)))
 	     (hyrolo-map-logic sexp buf-or-file count-only include-sub-entries
-			       no-sub-entries-out whole-buffer-flag))
+			       no-sub-entries-out koutline-flag))
 	   (cond ((null in-bufs) (hyrolo-get-file-list))
 		 ((listp in-bufs) in-bufs)
 		 ((list in-bufs)))))
@@ -196,7 +199,7 @@ Return the number of evaluations of SEXP that match entries."
 
 (defun hyrolo-map-logic (sexp hyrolo-buf &optional count-only
 			 include-sub-entries _no-sub-entries-out
-			 whole-buffer-flag)
+			 koutline-flag)
   "Apply logical SEXP to each entry in HYROLO-BUF.
 Write out matching entries to `hyrolo-display-buffer'.  If
 optional COUNT-ONLY is non-nil, don't display entries, return
@@ -204,13 +207,14 @@ count of matching entries only.  If optional INCLUDE-SUB-ENTRIES
 flag is non-nil, apply SEXP across all sub-entries at once.
 Default is to apply SEXP to each entry and sub-entry separately.
 Entries are displayed with all of their sub-entries unless
-INCLUDE-SUB-ENTRIES is nil and optional NO-SUB-ENTRIES-OUT flag
-is non-nil.  With optional WHOLE-BUFFER-FLAG, map entries with
+INCLUDE-SUB-ENTRIES is nil and optional _NO-SUB-ENTRIES-OUT flag
+is non-nil.  With optional KOUTLINE-FLAG, map entries with
 `hyrolo-map-kotl' rather than `hyrolo-map-entries'.
 
 SEXP should utilize the free variables `start' and `end' as the
-region on which to operate.  Return the number of evaluations of
-SEXP that match entries."
+region on which to operate.
+
+Return the number of evaluations of SEXP that match entries."
   (setq hyrolo-buf (or (get-buffer hyrolo-buf) hyrolo-buf))
   (if (or (bufferp hyrolo-buf)
 	  (when (file-exists-p hyrolo-buf)
@@ -228,7 +232,7 @@ SEXP that match entries."
 	      (when (re-search-forward hyrolo-hdr-regexp nil t 2)
 		(forward-line)
 		(setq hdr-pos (cons (point-min) (point))))
-	      (setq num-found (if whole-buffer-flag
+	      (setq num-found (if koutline-flag
 				  (hyrolo-map-kotl
 				   sexp hyrolo-buf display-buf hdr-pos count-only include-sub-entries)
 				(hyrolo-map-entries
@@ -242,6 +246,22 @@ SEXP that match entries."
 ;;
 
 (defun hyrolo-map-entries (sexp hyrolo-buf display-buf hdr-pos &optional count-only include-sub-entries)
+  "Apply logical SEXP to each entry in HYROLO-BUF.
+Write out matching entries to DISPLAY-BUF.  HDR-POS is a cons of
+\(start . end) positions of HYROLO-BUF's file header, if any;
+otherwise, nil.
+
+If optional COUNT-ONLY is non-nil, don't display entries, return
+count of matching entries only.  If optional INCLUDE-SUB-ENTRIES
+flag is non-nil, apply SEXP across all sub-entries at once.
+Default is to apply SEXP to each entry and sub-entry separately.
+Entries are displayed with all of their sub-entries unless
+INCLUDE-SUB-ENTRIES is nil.
+
+SEXP should utilize the free variables `start' and `end' as the
+region on which to operate.
+
+Return the number of evaluations of SEXP that match entries."
   (let* ((start)
 	 (end)
 	 (end-entry-hdr)
@@ -281,6 +301,22 @@ SEXP that match entries."
     num-found))
 
 (defun hyrolo-map-kotl (sexp hyrolo-buf display-buf hdr-pos &optional count-only include-sub-entries)
+  "Apply logical SEXP to each entry in HYROLO-BUF.
+Write out matching entries to DISPLAY-BUF.  HDR-POS is a cons of
+\(start . end) positions of HYROLO-BUF's file header, if any;
+otherwise, nil.
+
+If optional COUNT-ONLY is non-nil, don't display entries, return
+count of matching entries only.  If optional INCLUDE-SUB-ENTRIES
+flag is non-nil, apply SEXP across all sub-entries at once.
+Default is to apply SEXP to each entry and sub-entry separately.
+Entries are displayed with all of their sub-entries unless
+INCLUDE-SUB-ENTRIES is nil.
+
+SEXP should utilize the free variables `start' and `end' as the
+region on which to operate.
+
+Return the number of evaluations of SEXP that match entries."
   (let* ((start)
 	 (end)
 	 (end-entry-hdr)
@@ -325,8 +361,9 @@ SEXP that match entries."
 ;; Send them as parts of an expression to `hyrolo-logic'.
 
 (defun hyrolo-not (start end &rest pat-list)
-  "Logical <not> rolo entry filter.  PAT-LIST is a list of pattern elements.
-Each element may be t, nil, or a string."
+  "Logical <not> rolo entry filter applied between START and END positions.
+PAT-LIST is a list of pattern elements.  Each element may be t, nil, or a
+string."
   (save-restriction
     (narrow-to-region start end)
     (let ((pat))
@@ -339,8 +376,9 @@ Each element may be t, nil, or a string."
       (not pat-list))))
 
 (defun hyrolo-or (start end &rest pat-list)
-  "Logical <or> rolo entry filter.  PAT-LIST is a list of pattern elements.
-Each element may be t, nil, or a string."
+  "Logical <or> rolo entry filter applied between START and END positions.
+PAT-LIST is a list of pattern elements.  Each element may be t, nil, or a
+string."
   (if (memq t pat-list)
       t
     (save-restriction
@@ -355,8 +393,9 @@ Each element may be t, nil, or a string."
 	(if pat-list t nil)))))
 
 (defun hyrolo-xor (start end &rest pat-list)
-  "Logical <xor> rolo entry filter.  PAT-LIST is a list of pattern elements.
-Each element may be t, nil, or a string."
+  "Logical <xor> rolo entry filter applied between START and END positions.
+PAT-LIST is a list of pattern elements.  Each element may be t, nil, or a
+string."
   (save-restriction
     (narrow-to-region start end)
     (let ((pat)
@@ -373,8 +412,9 @@ Each element may be t, nil, or a string."
       (= matches 1))))
 
 (defun hyrolo-and (start end &rest pat-list)
-  "Logical <and> rolo entry filter.  PAT-LIST is a list of pattern elements.
-Each element may be t, nil, or a string."
+  "Logical <and> rolo entry filter applied between START and END positions.
+PAT-LIST is a list of pattern elements.  Each element may be t, nil, or a
+string."
   (unless (memq nil pat-list)
     (save-restriction
       (narrow-to-region start end)
@@ -390,8 +430,9 @@ Each element may be t, nil, or a string."
 ;; Work with regular expression patterns rather than strings
 
 (defun hyrolo-r-not (start end &rest pat-list)
-  "Logical <not> rolo entry filter.  PAT-LIST is a list of pattern elements.
-Each element may be t, nil, or a regular expression."
+  "Logical <not> rolo entry filter applied between START and END positions.
+PAT-LIST is a list of pattern elements.  Each element may be t, nil, or a
+regular expression."
   (save-restriction
     (narrow-to-region start end)
     (let ((pat))
@@ -404,8 +445,9 @@ Each element may be t, nil, or a regular expression."
       (not pat-list))))
 
 (defun hyrolo-r-or (start end &rest pat-list)
-  "Logical <or> rolo entry filter.  PAT-LIST is a list of pattern elements.
-Each element may be t, nil, or a regular expression."
+  "Logical <or> rolo entry filter applied between START and END positions.
+PAT-LIST is a list of pattern elements.  Each element may be t, nil, or a
+regular expression."
   (if (memq t pat-list)
       t
     (save-restriction
@@ -420,8 +462,9 @@ Each element may be t, nil, or a regular expression."
 	(if pat-list t nil)))))
 
 (defun hyrolo-r-xor (start end &rest pat-list)
-  "Logical <xor> rolo entry filter.  PAT-LIST is a list of pattern elements.
-Each element may be t, nil, or a regular expression."
+  "Logical <xor> rolo entry filter applied between START and END positions.
+PAT-LIST is a list of pattern elements.  Each element may be t, nil, or a
+regular expression."
   (save-restriction
     (narrow-to-region start end)
     (let ((pat)
@@ -438,8 +481,9 @@ Each element may be t, nil, or a regular expression."
       (= matches 1))))
 
 (defun hyrolo-r-and (start end &rest pat-list)
-  "Logical <and> rolo entry filter.  PAT-LIST is a list of pattern elements.
-Each element may be t, nil, or a regular expression."
+  "Logical <and> rolo entry filter applied between START and END positions.
+PAT-LIST is a list of pattern elements.  Each element may be t, nil, or a
+regular expression."
   (unless (memq nil pat-list)
     (save-restriction
       (narrow-to-region start end)

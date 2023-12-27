@@ -1,5 +1,68 @@
 2023-12-26  Bob Weiner  <rsw@gnu.org>
 
+* hpath.el (hpath:to-markup-anchor): If referent-regexp starts with '^', add
+    "[ \t]*" instead of "[ \t]+" to the expression in case it matches the whole line.
+
+* hui.el (hui:link-possible-types): Change outline heading line link to trigger only
+    for outline, org and kotl modes when point is anywhere on the heading line.
+    Include non-zero column in pathname so returns to the original point.  Produce a
+    link-to-string-match type.
+  hbut.el (ibut:insert-text): Change 'actypes::link-to-string-match' to use a pathname
+    format ibut rather than a <link-to-string-match> action button when the occurrence
+    number is 1.
+
+* hui-select.el (hui-select-scan-sexps): Don't use 'hui-select-syntax-table' in Lisp
+    modes as its use of matching angle brackets prevents proper sexp selection when
+    on the opening parentheses of anything with angle brackets inside, e.g. (< 2 3).
+
+* hyrolo-logic.el (hyrolo-fgrep-logical): Fix quoting for Lisp read and regexp
+    operator handling.
+  hyrolo.el (hyrolo-fgrep): Fix to handle 'r-<operator>' regexp logic operators.
+  man/hyperbole.texi (HyRolo Searching): Add doc for regular expression-based
+    logic operators.
+
+* hyrolo-logic.el (hyrolo-map-logic): Update to handle multi-file formats
+    in 'hyrolo-display-buffer'.
+                  (hyrolo-map-entries, hyrolo-map-kotl): Add doc string.
+		  (hyrolo-fgrep-logical): Rename arg 'whole-buffer-flag' to
+    'koutline-flag' to match its purpose.  Does not seem to be sent as true
+    anywhere in the existing code base.
+
+* hyrolo.el (hyrolo-hdr-in-p): Add to test if in a HyRolo file header.
+            (hyrolo-hdr-to-first-line-p): Add to move to file header start.
+	    (hyrolo-outline-hide-subtree): If point is on a file header in the
+    'hyrolo-display-buffer', then collapse the entire file from the current
+    end-of-line forward.  This makes {h} work within file headers.
+            (hyrolo-hdr-move-after-p): Handle point on single text line between
+    header delimiters.
+            (hyrolo-outline-show-subtree): If point is on a file header in the
+    'hyrolo-display-buffer', then show/expand the entire file.  This makes {s}
+    work within file headers.
+  man/hyperbole.texi (HyRolo Keys): Update to document latest {h} and {s} behavior.
+  hbut.el (hbut:get-key-src): Call (hyrolo-hdr-move-after-p) so if in a file
+    hdr, backwards search finds its @loc line rather than going to prior one.
+
+* hyrolo.el (hyrolo-outline-level): Fix to return level 1 when on a file header
+    separator or @loc> line.
+            (hyrolo-outline-up-heading): Rewrite and fix to handle edge cases.
+	    (hyrolo-name-at-p): Fix to store the current line and col in a text
+    property when possibly hierarchical name is found/used so can jump to the
+    specific line within an entry when editing.
+            (hyrolo-to): Fix to jump to stored current line and col after finding
+    a possibly hierarchical name in HyRolo.
+
+* man/hyperbole.texi (HyRolo Keys): Update doc for 'hyrolo-edit', {e} key, and
+    how it handles datestamps.  Mention 'hyrolo-date-format'.
+
+* hactypes.el (link-to-kcell): Fix to use any source location, e.g. in HyRolo
+    display matches buffer.
+
+* hsys-org.el (hsys-org-agenda-item-at-p):
+  hui-mouse.el (smart-org):
+  man/hyperbole.texi (Smart Key - Org Mode): Update doc to note the context is
+   an Org agenda item within an Org agenda view, not the item in its source
+   context.
+
 * test/hy-test-helpers.el (hy-test-helpers:ensure-link-possible-type): Add.
   test/hui-tests.el (hui--link-possible-types): Use above function to ensure
     'hui:link-possible-types' returns one given type only for each test herein.
@@ -522,7 +585,7 @@
     and 'keymap-sym' locally within the function rather than globally
     which would affect modes beyond those in 'hui-select-markup-modes'.
                 (hui-select-goto-matching-delimiter): If the key that
-    invokes this command in hyperbole-minor-mode is also bound in the
+    invokes this command in hyperbole's minor-mode is also bound in the
     current major mode map, then interactively invoke that command
     instead.  Typically prevents clashes over {C-c .}.  Previously
     did this only for 'org-mode' but 'kotl-mode' also has a conflict

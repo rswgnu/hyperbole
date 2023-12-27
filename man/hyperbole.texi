@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     25-Dec-23 at 22:39:22 by Bob Weiner
+@c Last-Mod:     26-Dec-23 at 20:39:20 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.0
-Printed December 25, 2023.
+Printed December 26, 2023.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.0
-December 25, 2023
+December 26, 2023
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -2302,7 +2302,7 @@ If on an Org todo keyword, cycle through the keywords in
 that set or if final done keyword, remove it.
 
 @item
-If on an Org agenda item, jump to the item for editing.
+If on an Org agenda view item, jump to the item for editing.
 
 @item
 Within a radio or internal target or a link to it, jump between
@@ -2345,7 +2345,7 @@ If on an Org todo keyword, move to the first todo keyword in
 the next set, if any.
 
 @item
-If on an Org mode link or agenda item, display Hyperbole
+If on an Org mode link or agenda view item, display Hyperbole
 context-sensitive help.
 
 @item
@@ -6183,12 +6183,17 @@ logical operators.
 
 @example
 @group
-Operator Name   Number of Arguments    Description
+Operator Name   Num of Args   Description
 =====================================================================
-and             two or more            Match entries with all args
-or              two or more            Match entries with any args
-xor             two or more            Match entries with 1 arg only
-not             one                    Match entries without the arg
+and             two or more   Match entries with all str args
+or              two or more   Match entries with any str args
+xor             two or more   Match entries with exactly 1 str arg
+not             one           Match entries without the str arg
+
+r-and           two or more   Match entries with all regexp args
+r-or            two or more   Match entries with any regexp args
+r-xor           two or more   Match entries with exactly 1 regexp arg
+r-not           one           Match entries without the regexp arg
 =====================================================================
 @end group
 @end example
@@ -6212,9 +6217,22 @@ the 408 area code have been contacted and you want to see who else
 you should contact.
 
 @example
-(xor 408- client)
+(xor client 408- )
 @end example
 
+When using the regular expression operators, your operands are sent as
+regular expressions without the need to quote single words or
+special regular expression characters like '*' and '?'.  Use double
+quote marks to include a phrase or multi-word regular expression pattern
+to match.  For example:
+
+@example
+(r-and HyRolo "Red Buttons?")
+@end example
+
+@noindent
+would match entries that contain both "HyRolo" and either "Red Button" or
+"Red Buttons".
 
 @node HyRolo Keys, HyRolo Settings, HyRolo Searching, HyRolo
 @section   HyRolo Keys
@@ -6289,12 +6307,21 @@ will work.
 @cindex rolo, auto-expanding entries
 @cindex rolo, hiding entries
 @cindex rolo, showing entries
-Press @bkbd{s} to show (expand) the entry at point.  Use @bkbd{h} to hide
-(collapse) the entry.  Press @bkbd{a} to expand all entries in the
-buffer.  If an entry is collapsed/hidden, moving to any hidden part
-auto-expands it and then re-collapses it when point is moved to another
-entry (just like isearch).  A side-effect of this is that the @bkbd{h}
-hide entry subtree command now moves to the beginning of the entry.
+Press @bkbd{s} to show (expand) the entry at point if it is hidden
+(collapsed).  If point is on a file header, this will expand the header
+and show the entire set of matched entries for the file.  The @bkbd{h}
+does the reverse and hides entries.  Within file headers it hides the
+file from the end of the current line forward, so you can leave parts of
+the header displayed, if desired.  Press @bkbd{a} to expand all entries
+in the buffer across all matched files.
+
+@c If an entry is collapsed/hidden, moving to any hidden part auto-expands
+@c it and then re-collapses it when point is moved to another entry (just
+@c like isearch).
+
+Please note that to facilitate further use of movement by entry commands,
+the @bkbd{h} hide entry subtree command leaves point at the beginning of
+the entry (does not apply in file headers).
 
 @noindent
 Other keys are defined to help you work with matching entries.
@@ -6347,6 +6374,7 @@ Scroll forward a windowful.
 @kindex rolo, e
 @cindex rolo, editing
 @cindex datestamps
+@cindex date format
 @cindex rolo, datestamps
 @cindex customize, rolo datestamps
 @cindex menu item, Rolo/Toggle-Rolo-Dates
@@ -6354,14 +6382,15 @@ Scroll forward a windowful.
 @cindex customize, rolo additions
 @vindex hyrolo-edit-hook
 @vindex hyrolo-add-hook
-Use the @bkbd{e} key to edit the current entry within your personal
-rolo file.  A datestamp will automatically be added or updated at the end
-of the entry, unless this feature has been turned off via the
+@vindex hyrolo-date-format
+Use the @bkbd{e} key to jump to and edit the current line in its original
+source file.  If on a rolo entry and it contains a datestamp at its end,
+update the datestamp, unless this feature has been turned off via the
 Cust/Toggle-Rolo-Dates menu item.  The variable, @code{hyrolo-edit-hook},
-is evaluated after the update of the entry datestamp.  This allows
-programmed modification of the way rolo edits work.  The variable,
-@code{hyrolo-add-hook}, works the same way but is evaluated when a new
-entry is first added.
+performs this update.  This allows programmed modification of the way
+rolo edits work.  The variable, @code{hyrolo-add-hook}, works the same
+way but is evaluated when a new entry is first added.  The format of the
+datestamp is specified by @code{hyrolo-date-format}.
 
 @kindex rolo, q
 @cindex rolo, quitting
@@ -9834,7 +9863,7 @@ When in an Org mode context and @code{hsys-org-enable-smart-keys} is non-nil:
      (1) If on an Org todo keyword, cycle through the keywords in
          that set or if final done keyword, remove it.
 
-     (2) If on an Org agenda item, jump to the item for editing.
+     (2) If on an Org agenda view item, jump to the item for editing.
 
      (3) Within a radio or internal target or a link to it, jump between
          the target and the first link to it, allowing two-way navigation.
@@ -9868,8 +9897,8 @@ When in an Org mode context and @code{hsys-org-enable-smart-keys} is non-nil:
      (1) If on an Org todo keyword, move to the first todo keyword in
          the next set, if any.
 
-     (2) If on an Org mode link, ID reference or agenda item, display Hyperbole
-         context-sensitive help.
+     (2) If on an Org mode link, ID reference or agenda view item, display
+         Hyperbole context-sensitive help.
 
      (3) On a Hyperbole button, perform the Assist Key function, generally
          showing help for the button.

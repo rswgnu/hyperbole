@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     23-Nov-23 at 03:45:24 by Bob Weiner
+;; Last-Mod:     26-Dec-23 at 12:06:25 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1737,7 +1737,7 @@ When the Action Key is pressed:
   1. If on an Org todo keyword, cycle through the keywords in
      that set or if final done keyword, remove it.
 
-  2. If on an Org agenda item, jump to the item for editing.
+  2. If on an Org agenda view item, jump to the item for editing.
 
   3. Within a radio or internal target or a link to it, jump between
      the target and the first link to it, allowing two-way navigation.
@@ -1767,7 +1767,7 @@ in these contexts:
   1. If on an Org todo keyword, move to the first todo keyword in
      the next set, if any.
 
-  2. If on an Org mode link or agenda item, display Hyperbole
+  2. If on an Org mode link or agenda view item, display Hyperbole
      context-sensitive help.
 
   3. On a Hyperbole button, perform the Assist Key function, generally

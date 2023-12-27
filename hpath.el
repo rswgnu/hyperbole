@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     17-Dec-23 at 23:01:29 by Mats Lidell
+;; Last-Mod:     26-Dec-23 at 22:42:39 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1624,7 +1624,7 @@ Move point to beginning of buffer if HASH is non-nil and ANCHOR is null."
 				    (referent-leading-spaces-regexp
 				     (when (and (not (string-empty-p referent-regexp))
 						(= (aref referent-regexp 0) ?^))
-				       (concat "^[ \t]+" (substring referent-regexp 1)))))
+				       (concat "^[ \t]*" (substring referent-regexp 1)))))
 			       (goto-char (point-min))
 			       (if (or (re-search-forward referent-regexp nil t)
 				       (and referent-leading-spaces-regexp

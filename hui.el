@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     25-Dec-23 at 22:28:16 by Mats Lidell
+;; Last-Mod:     26-Dec-23 at 23:43:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1898,29 +1898,29 @@ Buffer without File      link-to-buffer-tmp"
 					   (list 'link-to-file val))
 					  ((derived-mode-p #'kotl-mode)
 					   (list 'link-to-kcell buffer-file-name (kcell-view:idstamp)))
-					  ;; If link is within an outline-regexp prefix, use
+					  ;;
+					  ;; If current line starts with an outline-regexp prefix, use
 					  ;; a link-to-string-match.
-					  ((and (boundp 'outline-regexp)
+					  ((and (derived-mode-p 'outline-mode 'org-mode 'kotl-mode)
 						(stringp outline-regexp)
 						(save-excursion
-						  (<= (point)
-						      (progn
-							(beginning-of-line)
-							(if (looking-at outline-regexp)
+						  (beginning-of-line)
+						  (looking-at outline-regexp)))
+					   (let ((heading (string-trim
+							   (buffer-substring-no-properties
 							    (match-end 0)
-							  0)))))
-					   (save-excursion
-					     (let ((heading (string-trim
-							     (buffer-substring-no-properties
-							      (point)
-							      (line-end-position))))
-						   (occur 0))
+							    (line-end-position))))
+						 (occur 0))
+					     (save-excursion
 					       (end-of-line)
 					       (while (and (not (string-empty-p heading))
 							   (search-backward heading nil t))
-						 (setq occur (1+ occur)))
-					       (list 'link-to-string-match
-						     heading occur buffer-file-name))))
+						 (setq occur (1+ occur))))
+					     (list 'link-to-string-match
+						   (if (zerop (current-column))
+						       heading
+						     (format "%s:L1:C%d" heading (current-column)))
+						   occur buffer-file-name)))
 					  (buffer-file-name
 					   (list 'link-to-file buffer-file-name (point)))
 					  ((derived-mode-p 'dired-mode)

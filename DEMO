@@ -542,7 +542,7 @@ the Action Key is pressed.
   1. If on an Org todo keyword, cycle through the keywords in
      that set or if final done keyword, remove it.
 
-  2. If on an Org agenda item, jump to the item for editing.
+  2. If on an Org agenda view item, jump to the item for editing.
 
   3. Within a radio or internal target or a link to it, jump between
      the target and the first link to it, allowing two-way navigation.

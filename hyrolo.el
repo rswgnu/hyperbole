@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     26-Dec-23 at 01:45:22 by Bob Weiner
+;; Last-Mod:     26-Dec-23 at 22:03:08 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -646,7 +646,7 @@ the logical sexpression matching."
   (interactive "sFind rolo string (or logical sexpression): \nP")
   (setq string (string-trim string "\"" "\""))
   (let ((total-matches 0))
-    (if (string-match "\(\\(and\\|or\\|xor\\|not\\)\\>" string)
+    (if (string-match-p "\(\\(r-\\)?\\(and\\|or\\|xor\\|not\\)\\>" string)
 	(progn
 	  ;; Search string contains embedded logic operators.
 	  ;; First try to match logical sexpression within a single
@@ -804,9 +804,8 @@ With optional prefix ARG, do an fgrep string match instead of a regexp match."
 
 (defun hyrolo-isearch (&optional arg)
   "Interactively search forward for the next occurrence of current match string.
-Then add characters to further narrow the search.  With optional
-prefix ARG non-nil, search for the current match regular
-expression rather than string."
+Then add characters to further narrow the search.  With optional prefix ARG
+non-nil, search for the current match regular expression rather than string."
   (interactive "P")
   (if arg
       (hyrolo-isearch-for-regexp hyrolo-match-regexp t)
@@ -820,9 +819,8 @@ expression rather than string."
 
 (defun hyrolo-isearch-regexp (&optional arg)
   "Interactively search forward for the next occurrence of current match string.
-Then add characters to further narrow the search.  With optional
-prefix ARG non-nil, search for the current match regular
-expression rather than string."
+Then add characters to further narrow the search.  With optional prefix ARG
+non-nil, search for the current match regular expression rather than string."
   (interactive "P")
   (if arg
       (hyrolo-isearch-for-regexp hyrolo-match-regexp t)
@@ -1604,8 +1602,18 @@ Stop at the first and last subheadings of a superior heading."
   (interactive "p")
   (hyrolo-move-forward #'outline-forward-same-level arg))
 
+(defun hyrolo-hdr-to-first-line-p ()
+  "If point is on a file hdr single text/sep/loc line, go to its first line.
+Return t in such cases.  Otherwise, don't move and return nil.
+
+The header includes lines matching both `hyrolo-hdr-regexp' and
+`hbut:source-prefix'."
+  (when (and (hyrolo-hdr-move-after-p)
+	     (re-search-backward hyrolo-hdr-regexp nil t 2))
+    t))
+
 (defun hyrolo-hdr-to-last-line-p ()
-  "If point is on a file hdr separator/loc line, move to start of its last line.
+  "If point is on a file hdr single text/sep/loc line, go to its last line.
 Return t in such cases.  Otherwise, don't move and return nil.
 
 The header includes lines matching both `hyrolo-hdr-regexp' and
@@ -1613,6 +1621,10 @@ The header includes lines matching both `hyrolo-hdr-regexp' and
   (when (hyrolo-hdr-move-after-p)
     (forward-line -1)
     t))
+
+(defun hyrolo-hdr-in-p ()
+  "If point is on a file hdr single text/separator/loc line, return t, else nil."
+  (save-excursion (hyrolo-hdr-move-after-p)))
 
 (defun hyrolo-hdr-move-after-p ()
   "If point is on a file hdr separator/loc line, move past the hdr and return t.
@@ -1625,6 +1637,13 @@ Otherwise, don't move and return nil."
 	     (or (when (looking-at hyrolo-hdr-regexp)
 		   (cl-incf hdr-delim-count))
 		 (when (looking-at hbut:source-prefix)
+		   (cl-incf loc-count))
+		 ;; Handle textual single line between header delimiter lines
+		 (when (and (forward-line -1)
+			    (looking-at hyrolo-hdr-regexp)
+			    (forward-line 2)
+			    (looking-at hyrolo-hdr-regexp))
+		   (forward-line -1)
 		   (cl-incf loc-count))))
       (forward-line 1))
     (when (and (/= (point) opoint) (< hdr-delim-count 2) (zerop loc-count))
@@ -1985,20 +2004,29 @@ of the current heading, or to 1 if the current line is not a heading."
 
 (defun hyrolo-outline-hide-subtree ()
   "Move back to the start of current subtree and hide everything after the heading.
+If within a file header, hide the whole file after the end of the current line.
 
 Necessary, since with reveal-mode active, outline-hide-subtree works
 only if on the heading line of the subtree."
   (interactive)
-  (hyrolo-funcall-match
-   (lambda ()
-     (let ((opoint (point)))
-       (forward-line 0)
-       (unless (looking-at outline-regexp)
-	 (outline-previous-visible-heading 1))
-       (if (looking-at outline-regexp)
-	   (outline-hide-subtree)
-	 (goto-char opoint))))
-   t))
+  (if (and (hyrolo-hdr-in-p)
+	   (eq (current-buffer) (get-buffer hyrolo-display-buffer)))
+      (cl-destructuring-bind (start end)
+	  (hyrolo-cache-location-start-and-end)
+	(setq start (line-end-position)
+	      end (1- (or end (point-max))))
+	;; Hide region
+	(outline-flag-region start end t))
+    (hyrolo-funcall-match
+     (lambda ()
+       (let ((opoint (point)))
+	 (forward-line 0)
+	 (unless (looking-at outline-regexp)
+	   (outline-previous-visible-heading 1))
+	 (if (looking-at outline-regexp)
+	     (outline-hide-subtree)
+	   (goto-char opoint))))
+     t)))
 
 (defun hyrolo-outline-insert-heading ()
   "Insert a new heading at same depth at point."
@@ -2075,24 +2103,60 @@ Show the heading too, if it is currently invisible."
   (hyrolo-funcall-match #'outline-show-entry t))
 
 (defun hyrolo-outline-show-subtree ()
-  "Show everything after this heading at deeper levels."
+  "Show everything after this heading at deeper levels.
+If within a file header, show the whole file starting with the header."
   (interactive)
-  (hyrolo-funcall-match #'outline-show-subtree t))
+  (if (and (hyrolo-hdr-in-p)
+	   (eq (current-buffer) (get-buffer hyrolo-display-buffer)))
+      (cl-destructuring-bind (start end)
+	  (hyrolo-cache-location-start-and-end)
+	(setq start (or start (line-beginning-position))
+	      end (1- (or end (point-max))))
+	;; Hide region
+	(outline-flag-region start end nil))
+    (hyrolo-funcall-match #'outline-show-subtree t)))
 
 (defun hyrolo-outline-up-heading (arg &optional invisible-ok)
   "Move to the visible heading line of which the present line is a subheading.
 With argument, move up ARG levels.
 If INVISIBLE-OK is non-nil, also consider invisible lines."
   (interactive "p")
-  (hyrolo-move-backward #'outline-up-heading arg invisible-ok))
+  (hyrolo-funcall-match
+   (lambda ()
+     (and (eq this-command 'hyrolo-outline-up-heading)
+	  (or (eq last-command 'hyrolo-outline-up-heading) (push-mark)))
+     (outline-back-to-heading invisible-ok)
+     (let ((start-level (funcall outline-level))
+	   (start-point (point)))
+       (when (<= start-level 1)
+	 (error "Already at top level of this outline tree"))
+       (while (and (> start-level 1) (> arg 0) (not (bobp)))
+	 (let ((level start-level)
+	       (opoint (point)))
+	   (while (not (or (< level start-level) (bobp)))
+	     (if invisible-ok
+		 (outline-previous-heading)
+	       (outline-previous-visible-heading 1))
+	     (setq level (funcall outline-level))
+	     (when (not (looking-at hyrolo-entry-regexp))
+	       ;; Have moved into a file header; move back to opoint and stop
+	       (goto-char opoint)
+	       ;; Exit
+	       (when (= opoint start-point)
+		 (error "Already at top level of this outline tree"))
+	       (setq level -1)))
+	   (setq start-level level))
+	 (setq arg (- arg 1))))
+     (looking-at outline-regexp))
+   t))
 
 (defun hyrolo-to (name &optional file-or-buf-list)
   "Move point to entry for NAME within optional FILE-OR-BUF-LIST.
 \(hyrolo-get-file-or-buf-list) provides the default when
-FILE-OR-BUF-LIST is nil.  Leave point immediately after match for
-NAME within an entry.  Switches internal current buffer but does
-not alter the frame.  Return point where matching entry begins or
-nil if not found."
+FILE-OR-BUF-LIST is nil.  Leave point immediately after the first
+match of NAME within an entry.  Switches internal current buffer
+but does not alter the frame.  Return point where matching entry
+begins or nil if not found."
   (when (or (not (stringp name)) (string-blank-p name))
     (error "(hyrolo-to): Invalid name: `%s'" name))
   (unless file-or-buf-list
@@ -2115,13 +2179,14 @@ nil if not found."
 		      (or (get-file-buffer file-or-buf) (hyrolo-find-file-noselect file-or-buf))
 		    ;; must be a buffer
 		    file-or-buf))
-      (let ((case-fold-search t) (real-name name) (parent "") (level) end)
+      (let ((case-fold-search t) (real-name name) (parent "") (level)
+	    col-num end line line-and-col)
 	(hyrolo-widen)
 	(goto-char (point-min))
-	(if (get-text-property 0 'hyrolo-line-entry name)
+	(if (setq col-num (get-text-property 0 'hyrolo-line-entry name))
 	    ;; this is a whole line to find without any entry delimiters
 	    (when (search-forward name nil t)
-	      (forward-line 0)
+	      (move-to-column col-num)
 	      (setq found (point)))
 	  (while (string-match "\\`[^\]\[<>{}\"]*/" name)
 	    (setq end (1- (match-end 0))
@@ -2158,6 +2223,12 @@ nil if not found."
 					 ;; Jump to non-first line within an entry
 					 (progn (back-to-indentation)
 						(looking-at (regexp-quote name))))
+				 (when (setq line-and-col (get-text-property 0 'hyrolo-name-entry name))
+				   ;; this is a whole line to find except for leading whitespace
+				   (setq line (car line-and-col)
+					 col-num (cdr line-and-col))
+				   (when (search-forward line nil t)
+				     (move-to-column col-num)))
 				 (when (derived-mode-p 'kotl-mode)
 				   (kotl-mode:to-valid-position))
 				 (point)))))))))
@@ -2429,11 +2500,15 @@ Name is returned as `last, first-and-middle'."
   "Iff point is at or within an entry in `hyrolo-display-buffer', return non-nil.
 Any non-nil value returned is a cons of (<entry-name> . <entry-source>)."
   (let ((entry-source (hbut:get-key-src t))
-	(opoint (point)))
+	(col-num (current-column))
+	(line-start (line-beginning-position))
+	(line-end (line-end-position)))
     (when entry-source
       (save-excursion
 	(forward-line 0)
-	(let (case-fold-search)
+	(let (case-fold-search
+	      entry-line
+	      entry-name)
 	  (if (and (or (looking-at hyrolo-hdr-and-entry-regexp)
 		       (re-search-backward hyrolo-hdr-and-entry-regexp nil t))
 		   (save-match-data (not (looking-at hyrolo-hdr-regexp))))
@@ -2441,17 +2516,21 @@ Any non-nil value returned is a cons of (<entry-name> . <entry-source>)."
 		     (skip-chars-forward " \t")
 		     (when (or (looking-at "[^ \t\n\r]+ ?, ?[^ \t\n\r]+")
 			       (looking-at "\\( ?[^ \t\n\r]+\\)+"))
-		       (cons (match-string-no-properties 0) entry-source)))
+		       (setq entry-name (match-string-no-properties 0)
+			     entry-line (buffer-substring-no-properties line-start line-end))
+		       ;; Add a text-property of 'hyrolo-name-entry with
+		       ;; value of (entry-line . current-column) to entry-name.
+		       (put-text-property 0 1 'hyrolo-name-entry
+					  (cons entry-line col-num)
+					  entry-name)
+		       (cons entry-name entry-source)))
 	    ;; If not blank, return the current line as the name with
-	    ;; a text-property of 'hyrolo-line-entry with value t.
-	    (goto-char opoint)
-	    (forward-line 0)
+	    ;; a text-property of 'hyrolo-line-entry with value of (current-column).
+	    (goto-char line-start)
 	    (when (not (looking-at "[ \t\f]*$"))
-	      (let* ((line-start (point))
-		     (line-end   (line-end-position))
-		     (entry-name (buffer-substring line-start line-end)))
-		(put-text-property 0 1 'hyrolo-line-entry t entry-name)
-		(cons entry-name entry-source)))))))))
+	      (setq entry-line (buffer-substring-no-properties line-start line-end))
+	      (put-text-property 0 1 'hyrolo-line-entry col-num entry-line)
+	      (cons entry-line entry-source))))))))
 
 (define-derived-mode hyrolo-org-mode outline-mode "HyRoloOrg"
   "Basic Org mode for use in HyRolo display match searches."
@@ -2631,6 +2710,8 @@ trailing periods and whitespace.
 Point must be at the beginning of a heading line and a regexp match to
 `outline-regexp' must have been done prior to calling this."
   (or (cdr (assoc (match-string-no-properties 0) outline-heading-alist))
+      (when (looking-at-p hyrolo-hdr-regexp) 1)
+      (when (looking-at-p hbut:source-prefix) 1)
       (1- (- (match-end 0) (match-beginning 0)))))
 
 ;;; ************************************************************************
@@ -2901,6 +2982,8 @@ Add `hyrolo-hdr-regexp' to `hyrolo-hdr-and-entry-regexp' and `outline-regexp'."
      outline-mode-prefix-map)))
 
 ;;; Integrate reveal-mode with HyRolo.
+;;; NOTE: !! TODO: This does not yet work so is not enabled in `hyrolo-mode' yet,
+;;; thus the `reveal-post-command' below is not yet used.
 
 ;; Note that `outline-reveal-toggle-invisible' is the function
 ;; stored in the `outline' `reveal-toggle-invisible' property.  It

@@ -382,7 +382,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.0
-Printed December 25, 2023.
+Printed December 26, 2023.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -2983,7 +2983,7 @@ Key is pressed:
 <li> If on an Org todo keyword, cycle through the keywords in
 that set or if final done keyword, remove it.
 
-</li><li> If on an Org agenda item, jump to the item for editing.
+</li><li> If on an Org agenda view item, jump to the item for editing.
 
 </li><li> Within a radio or internal target or a link to it, jump between
 the target and the first link to it, allowing two-way navigation.
@@ -3015,7 +3015,7 @@ except in these contexts:
 <li> If on an Org todo keyword, move to the first todo keyword in
 the next set, if any.
 
-</li><li> If on an Org mode link or agenda item, display Hyperbole
+</li><li> If on an Org mode link or agenda view item, display Hyperbole
 context-sensitive help.
 
 </li><li> On a Hyperbole button, performs the Assist Key function, generally
@@ -7374,12 +7374,17 @@ simple parenthesis delimited prefix format is used with the following
 logical operators.
 </p>
 <div class="example">
-<pre class="example">Operator Name   Number of Arguments    Description
+<pre class="example">Operator Name   Num of Args   Description
 =====================================================================
-and             two or more            Match entries with all args
-or              two or more            Match entries with any args
-xor             two or more            Match entries with 1 arg only
-not             one                    Match entries without the arg
+and             two or more   Match entries with all str args
+or              two or more   Match entries with any str args
+xor             two or more   Match entries with exactly 1 str arg
+not             one           Match entries without the str arg
+
+r-and           two or more   Match entries with all regexp args
+r-or            two or more   Match entries with any regexp args
+r-xor           two or more   Match entries with exactly 1 regexp arg
+r-not           one           Match entries without the regexp arg
 =====================================================================
 </pre></div>
 
@@ -7400,10 +7405,22 @@ the 408 area code have been contacted and you want to see who else
 you should contact.
 </p>
 <div class="example">
-<pre class="example">(xor 408- client)
+<pre class="example">(xor client 408- )
 </pre></div>
 
+<p>When using the regular expression operators, your operands are sent as
+regular expressions without the need to quote single words or
+special regular expression characters like &rsquo;*&rsquo; and &rsquo;?&rsquo;.  Use double
+quote marks to include a phrase or multi-word regular expression pattern
+to match.  For example:
+</p>
+<div class="example">
+<pre class="example">(r-and HyRolo &quot;Red Buttons?&quot;)
+</pre></div>
 
+<p>would match entries that contain both &quot;HyRolo&quot; and either &quot;Red Button&quot; or
+&quot;Red Buttons&quot;.
+</p>
 <hr>
 <a name="HyRolo-Keys"></a>
 <div class="header">
@@ -7483,12 +7500,18 @@ will work.
 <a name="index-rolo_002c-auto_002dexpanding-entries"></a>
 <a name="index-rolo_002c-hiding-entries"></a>
 <a name="index-rolo_002c-showing-entries"></a>
-<p>Press <kbd>{s}</kbd> to show (expand) the entry at point.  Use <kbd>{h}</kbd> to hide
-(collapse) the entry.  Press <kbd>{a}</kbd> to expand all entries in the
-buffer.  If an entry is collapsed/hidden, moving to any hidden part
-auto-expands it and then re-collapses it when point is moved to another
-entry (just like isearch).  A side-effect of this is that the <kbd>{h}</kbd>
-hide entry subtree command now moves to the beginning of the entry.
+<p>Press <kbd>{s}</kbd> to show (expand) the entry at point if it is hidden
+(collapsed).  If point is on a file header, this will expand the header
+and show the entire set of matched entries for the file.  The <kbd>{h}</kbd>
+does the reverse and hides entries.  Within file headers it hides the
+file from the end of the current line forward, so you can leave parts of
+the header displayed, if desired.  Press <kbd>{a}</kbd> to expand all entries
+in the buffer across all matched files.
+</p>
+
+<p>Please note that to facilitate further use of movement by entry commands,
+the <kbd>{h}</kbd> hide entry subtree command leaves point at the beginning of
+the entry (does not apply in file headers).
 </p>
 <p>Other keys are defined to help you work with matching entries.
 </p>
@@ -7567,6 +7590,7 @@ move to the end of the entire subtree.
 <a name="index-rolo_002c-e"></a>
 <a name="index-rolo_002c-editing"></a>
 <a name="index-datestamps"></a>
+<a name="index-date-format"></a>
 <a name="index-rolo_002c-datestamps"></a>
 <a name="index-customize_002c-rolo-datestamps"></a>
 <a name="index-menu-item_002c-Rolo_002fToggle_002dRolo_002dDates"></a>
@@ -7574,14 +7598,15 @@ move to the end of the entire subtree.
 <a name="index-customize_002c-rolo-additions"></a>
 <a name="index-hyrolo_002dedit_002dhook"></a>
 <a name="index-hyrolo_002dadd_002dhook"></a>
-<p>Use the <kbd>{e}</kbd> key to edit the current entry within your personal
-rolo file.  A datestamp will automatically be added or updated at the end
-of the entry, unless this feature has been turned off via the
+<a name="index-hyrolo_002ddate_002dformat"></a>
+<p>Use the <kbd>{e}</kbd> key to jump to and edit the current line in its original
+source file.  If on a rolo entry and it contains a datestamp at its end,
+update the datestamp, unless this feature has been turned off via the
 Cust/Toggle-Rolo-Dates menu item.  The variable, <code>hyrolo-edit-hook</code>,
-is evaluated after the update of the entry datestamp.  This allows
-programmed modification of the way rolo edits work.  The variable,
-<code>hyrolo-add-hook</code>, works the same way but is evaluated when a new
-entry is first added.
+performs this update.  This allows programmed modification of the way
+rolo edits work.  The variable, <code>hyrolo-add-hook</code>, works the same
+way but is evaluated when a new entry is first added.  The format of the
+datestamp is specified by <code>hyrolo-date-format</code>.
 </p>
 <a name="index-rolo_002c-q"></a>
 <a name="index-rolo_002c-quitting"></a>
@@ -11662,7 +11687,7 @@ Next: <a href="#Smart-Key-_002d-Ivy" accesskey="n" rel="next">Smart Key - Ivy</a
      (1) If on an Org todo keyword, cycle through the keywords in
          that set or if final done keyword, remove it.
 
-     (2) If on an Org agenda item, jump to the item for editing.
+     (2) If on an Org agenda view item, jump to the item for editing.
 
      (3) Within a radio or internal target or a link to it, jump between
          the target and the first link to it, allowing two-way navigation.
@@ -11694,8 +11719,8 @@ Next: <a href="#Smart-Key-_002d-Ivy" accesskey="n" rel="next">Smart Key - Ivy</a
      (1) If on an Org todo keyword, move to the first todo keyword in
          the next set, if any.
 
-     (2) If on an Org mode link, ID reference or agenda item, display Hyperbole
-         context-sensitive help.
+     (2) If on an Org mode link, ID reference or agenda view item, display
+         Hyperbole context-sensitive help.
 
      (3) On a Hyperbole button, perform the Assist Key function, generally
          showing help for the button.
@@ -14563,6 +14588,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-hyrolo_002dadd_002dhook">hyrolo-add-hook</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Keys">HyRolo Keys</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hyrolo_002dadd_002dhook-1">hyrolo-add-hook</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hook-Variables">Hook Variables</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hyrolo_002dconsult_002dgrep"><code>hyrolo-consult-grep</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hyrolo_002ddate_002dformat">hyrolo-date-format</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Keys">HyRolo Keys</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hyrolo_002ddisplay_002dformat_002dfunction">hyrolo-display-format-function</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Settings">HyRolo Settings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hyrolo_002ddisplay_002dhook">hyrolo-display-hook</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hook-Variables">Hook Variables</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hyrolo_002ddisplay_002dmatches"><code>hyrolo-display-matches</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
@@ -15206,6 +15232,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function</a>, Up: <a href
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th><a name="Concept-Index_cp_letter-D">D</a></th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-database">database</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-RDB-Mode">Smart Key - RDB Mode</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-date-format">date format</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Keys">HyRolo Keys</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-datestamps">datestamps</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Keys">HyRolo Keys</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-dbx">dbx</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-debugging-Smart-Keys">debugging Smart Keys</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Debugging">Smart Key Debugging</a></td></tr>
