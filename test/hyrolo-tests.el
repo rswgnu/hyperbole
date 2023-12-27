@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     27-Dec-23 at 16:52:20 by Mats Lidell
+;; Last-Mod:     28-Dec-23 at 12:01:34 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -316,8 +316,9 @@ and {b} the previous same level cell."
           (should (looking-at-p "==="))
           (hyrolo-next-visible-heading 1)
           (should (looking-at-p "* heading"))
-          (with-simulated-input "y RET"
-            (action-key))
+          (let ((revisit-normally (concat "y" (if noninteractive " RET"))))
+            (with-simulated-input revisit-normally
+              (action-key)))
           (should (equal (current-buffer) (find-buffer-visiting org-file)))
           (should (looking-at-p "* heading")))
       (hy-delete-file-and-buffer org-file)
