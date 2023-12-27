@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     26-Dec-23 at 01:57:38 by Bob Weiner
+;; Last-Mod:     27-Dec-23 at 16:52:20 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -294,10 +294,10 @@ and {b} the previous same level cell."
     (unwind-protect
         (progn
           (hyrolo-fgrep "string")
-          (with-current-buffer "*HyRolo*"
-            (should (= (how-many "@loc>") 4))
-            (dolist (f (list org-file kotl-file md-file outl-file))
-              (should (= (how-many (concat "@loc> \"" f "\"")) 1)))))
+          (should (string= (buffer-name) "*HyRolo*"))
+          (should (= (how-many "@loc>") 4))
+          (dolist (f (list org-file kotl-file md-file outl-file))
+            (should (= (how-many (concat "@loc> \"" f "\"")) 1))))
       (dolist (f (list org-file kotl-file md-file outl-file))
         (hy-delete-file-and-buffer f))
       (kill-buffer "*HyRolo*")
@@ -311,13 +311,13 @@ and {b} the previous same level cell."
     (unwind-protect
         (progn
           (hyrolo-fgrep "string")
-          (with-current-buffer "*HyRolo*"
-            (should (= (how-many "@loc>") 1))
-            (should (looking-at-p "==="))
-            (hyrolo-next-visible-heading 1)
-            (should (looking-at-p "* heading")))
-	  (kbd-key:key-series-to-events "y C-f")
-          (action-key)
+          (should (string= (buffer-name) "*HyRolo*"))
+          (should (= (how-many "@loc>") 1))
+          (should (looking-at-p "==="))
+          (hyrolo-next-visible-heading 1)
+          (should (looking-at-p "* heading"))
+          (with-simulated-input "y RET"
+            (action-key))
           (should (equal (current-buffer) (find-buffer-visiting org-file)))
           (should (looking-at-p "* heading")))
       (hy-delete-file-and-buffer org-file)
@@ -338,15 +338,14 @@ and {b} the previous same level cell."
           (kotl-mode:newline 1)
           (insert "more")
           (hyrolo-fgrep "string")
-          (with-current-buffer "*HyRolo*"
-            (should (= (how-many "@loc>") 1))
-            (should (looking-at-p "==="))
-            (hyrolo-next-visible-heading 1)
-            (should (looking-at-p ".*1\\. heading")))
-          (with-simulated-input "y C-f" ; Do you want to revisit the file normally now?
-            (action-key)
-            (should (equal (current-buffer) (find-buffer-visiting kotl-file)))
-            (should (looking-at-p "heading"))))
+          (should (string= (buffer-name) "*HyRolo*"))
+          (should (= (how-many "@loc>") 1))
+          (should (looking-at-p "==="))
+          (hyrolo-next-visible-heading 1)
+          (should (looking-at-p ".*1\\. heading"))
+          (action-key)
+          (should (equal (current-buffer) (find-buffer-visiting kotl-file)))
+          (should (looking-at-p "heading")))
       (hy-delete-file-and-buffer kotl-file)
       (kill-buffer "*HyRolo*")
       (delete-directory temporary-file-directory))))
@@ -359,11 +358,11 @@ and {b} the previous same level cell."
     (unwind-protect
         (progn
           (hyrolo-fgrep "string")
-          (with-current-buffer "*HyRolo*"
-            (should (= (how-many "@loc>") 1))
-            (should (looking-at-p "==="))
-            (hyrolo-next-visible-heading 1)
-            (should (looking-at-p "* heading")))
+          (should (string= (buffer-name) "*HyRolo*"))
+          (should (= (how-many "@loc>") 1))
+          (should (looking-at-p "==="))
+          (hyrolo-next-visible-heading 1)
+          (should (looking-at-p "* heading"))
           (action-key)
           (should (equal (current-buffer) (find-buffer-visiting outl-file)))
           (should (looking-at-p "* heading")))
@@ -372,18 +371,18 @@ and {b} the previous same level cell."
       (delete-directory temporary-file-directory))))
 
 (ert-deftest hyrolo-fgrep-and-goto-next-visible-md-heading ()
-  "Verify move to next heading, then action-key to go to record for markdown mode."
+  "verify move to next heading, then action-key to go to record for markdown mode."
   (let* ((temporary-file-directory (make-temp-file "hypb" t))
          (md-file (make-temp-file "hypb" nil ".md" "# heading\nstring\nmore\n"))
          (hyrolo-file-list (list temporary-file-directory)))
     (unwind-protect
         (progn
           (hyrolo-fgrep "string")
-          (with-current-buffer "*HyRolo*"
-            (should (= (how-many "@loc>") 1))
-            (should (looking-at-p "==="))
-            (hyrolo-next-visible-heading 1)
-            (should (looking-at-p "# heading")))
+          (should (string= (buffer-name) "*HyRolo*"))
+          (should (= (how-many "@loc>") 1))
+          (should (looking-at-p "==="))
+          (hyrolo-next-visible-heading 1)
+          (should (looking-at-p "# heading"))
           (action-key)
           (should (equal (current-buffer) (find-buffer-visiting md-file)))
           (should (looking-at-p "# heading")))
@@ -408,11 +407,11 @@ Match a string in a level 2 child cell."
           (kotl-mode:newline 1)
           (insert "more")
           (hyrolo-fgrep "string")
-          (with-current-buffer "*HyRolo*"
-            (should (= (how-many "@loc>") 1))
-            (should (looking-at-p "==="))
-            (hyrolo-next-visible-heading 1)
-            (should (looking-at-p ".*1a\\. heading")))
+          (should (string= (buffer-name) "*HyRolo*"))
+          (should (= (how-many "@loc>") 1))
+          (should (looking-at-p "==="))
+          (hyrolo-next-visible-heading 1)
+          (should (looking-at-p ".*1a\\. heading"))
           (action-key)
           (should (equal (current-buffer) (find-buffer-visiting kotl-file)))
           (should (looking-at-p "heading")))
@@ -437,11 +436,11 @@ Match a string in the second cell."
           (kotl-mode:newline 1)
           (insert "more")
           (hyrolo-fgrep "string")
-          (with-current-buffer "*HyRolo*"
-            (should (= (how-many "@loc>") 1))
-            (should (looking-at-p "==="))
-            (hyrolo-next-visible-heading 1)
-            (should (looking-at-p ".*2\\. heading")))
+          (should (string= (buffer-name) "*HyRolo*"))
+          (should (= (how-many "@loc>") 1))
+          (should (looking-at-p "==="))
+          (hyrolo-next-visible-heading 1)
+          (should (looking-at-p ".*2\\. heading"))
           (action-key)
           (should (equal (current-buffer) (find-buffer-visiting kotl-file)))
           (should (looking-at-p "heading")))

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:     2-Nov-21 at 17:04:30
-;; Last-Mod:      1-Mar-22 at 23:24:01 by Mats Lidell
+;; Last-Mod:     27-Dec-23 at 16:54:00 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -61,7 +61,7 @@
           (should (hact 'kbd-key "RET |field1|field2| RET"))
           (hy-test-helpers:consume-input-events)
 
-          (left-char 1)
+          (kotl-mode:backward-char 1)
           (action-key)
           (should-not orgtbl-mode)
           (action-key)
