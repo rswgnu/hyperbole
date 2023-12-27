@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:45:00
-;; Last-Mod:     11-Dec-23 at 02:08:38 by Bob Weiner
+;; Last-Mod:     25-Dec-23 at 23:30:20 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -57,7 +57,8 @@
       (with-temp-buffer
         (insert (format "\"%s\"" (expand-file-name "DEMO" hyperb:dir)))
         (goto-char 2)
-        (ibtypes::pathname)
+	(let ((enable-local-variables nil))
+          (ibtypes::pathname))
         (should (string= "DEMO" (buffer-name))))
     (kill-buffer "DEMO")))
 
@@ -66,7 +67,8 @@
       (with-temp-buffer
         (insert "\"${hyperb:dir}/DEMO\"")
         (goto-char 2)
-        (ibtypes::pathname)
+	(let ((enable-local-variables nil))
+	  (ibtypes::pathname))
         (should (string= "DEMO" (buffer-name))))
     (kill-buffer "DEMO")))
 
@@ -98,7 +100,8 @@
       (with-temp-buffer
         (insert "\"${hyperb:dir}/DEMO#Smart Keys\"")
         (goto-char 2)
-        (ibtypes::pathname)
+        (let ((enable-local-variables nil))
+	  (ibtypes::pathname))
         (should (string= "DEMO" (buffer-name)))
         (should (looking-at "\* Smart Keys")))
     (kill-buffer "DEMO")))
@@ -121,7 +124,8 @@
       (with-temp-buffer
         (insert "\"${hyperb:dir}/DEMO:3:45\"")
         (goto-char 2)
-        (ibtypes::pathname-line-and-column)
+	(let ((enable-local-variables nil))
+          (ibtypes::pathname-line-and-column))
         (should (string= "DEMO" (buffer-name)))
         (should (= (line-number-at-pos) 3))
         (should (= (current-column) 45)))
@@ -234,7 +238,7 @@
 ;; text-toc
 (ert-deftest ibtypes::text-toc-test ()
   (unwind-protect
-      (progn
+      (let ((enable-local-variables nil))
         (hypb:display-file-with-logo "DEMO")
         (goto-char (point-min))
         (re-search-forward " \\* Koutl")
