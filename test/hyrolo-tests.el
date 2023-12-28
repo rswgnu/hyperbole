@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     28-Dec-23 at 12:48:26 by Mats Lidell
+;; Last-Mod:     28-Dec-23 at 22:16:53 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -294,13 +294,13 @@ and {b} the previous same level cell."
     (unwind-protect
         (progn
           (hyrolo-fgrep "string")
-          (should (string= (buffer-name) "*HyRolo*"))
+          (should (string= (buffer-name) hyrolo-display-buffer))
           (should (= (how-many "@loc>") 4))
           (dolist (f (list org-file kotl-file md-file outl-file))
             (should (= (how-many (concat "@loc> \"" f "\"")) 1))))
       (dolist (f (list org-file kotl-file md-file outl-file))
         (hy-delete-file-and-buffer f))
-      (kill-buffer "*HyRolo*")
+      (kill-buffer hyrolo-display-buffer)
       (delete-directory temporary-file-directory))))
 
 (ert-deftest hyrolo-fgrep-and-goto-next-visible-org-heading ()
@@ -311,7 +311,7 @@ and {b} the previous same level cell."
     (unwind-protect
         (progn
           (hyrolo-fgrep "string")
-          (should (string= (buffer-name) "*HyRolo*"))
+          (should (string= (buffer-name) hyrolo-display-buffer))
           (should (= (how-many "@loc>") 1))
           (should (looking-at-p "==="))
           (hyrolo-next-visible-heading 1)
@@ -322,7 +322,7 @@ and {b} the previous same level cell."
           (should (equal (current-buffer) (find-buffer-visiting org-file)))
           (should (looking-at-p "* heading")))
       (hy-delete-file-and-buffer org-file)
-      (kill-buffer "*HyRolo*")
+      (kill-buffer hyrolo-display-buffer)
       (delete-directory temporary-file-directory))))
 
 (ert-deftest hyrolo-fgrep-and-goto-next-visible-kotl-heading ()
@@ -339,7 +339,7 @@ and {b} the previous same level cell."
           (kotl-mode:newline 1)
           (insert "more")
           (hyrolo-fgrep "string")
-          (should (string= (buffer-name) "*HyRolo*"))
+          (should (string= (buffer-name) hyrolo-display-buffer))
           (should (= (how-many "@loc>") 1))
           (should (looking-at-p "==="))
           (hyrolo-next-visible-heading 1)
@@ -348,7 +348,7 @@ and {b} the previous same level cell."
           (should (equal (current-buffer) (find-buffer-visiting kotl-file)))
           (should (looking-at-p "heading")))
       (hy-delete-file-and-buffer kotl-file)
-      (kill-buffer "*HyRolo*")
+      (kill-buffer hyrolo-display-buffer)
       (delete-directory temporary-file-directory))))
 
 (ert-deftest hyrolo-fgrep-and-goto-next-visible-outl-heading ()
@@ -359,7 +359,7 @@ and {b} the previous same level cell."
     (unwind-protect
         (progn
           (hyrolo-fgrep "string")
-          (should (string= (buffer-name) "*HyRolo*"))
+          (should (string= (buffer-name) hyrolo-display-buffer))
           (should (= (how-many "@loc>") 1))
           (should (looking-at-p "==="))
           (hyrolo-next-visible-heading 1)
@@ -368,7 +368,7 @@ and {b} the previous same level cell."
           (should (equal (current-buffer) (find-buffer-visiting outl-file)))
           (should (looking-at-p "* heading")))
       (hy-delete-file-and-buffer outl-file)
-      (kill-buffer "*HyRolo*")
+      (kill-buffer hyrolo-display-buffer)
       (delete-directory temporary-file-directory))))
 
 (ert-deftest hyrolo-fgrep-and-goto-next-visible-md-heading ()
@@ -379,7 +379,7 @@ and {b} the previous same level cell."
     (unwind-protect
         (progn
           (hyrolo-fgrep "string")
-          (should (string= (buffer-name) "*HyRolo*"))
+          (should (string= (buffer-name) hyrolo-display-buffer))
           (should (= (how-many "@loc>") 1))
           (should (looking-at-p "==="))
           (hyrolo-next-visible-heading 1)
@@ -388,7 +388,7 @@ and {b} the previous same level cell."
           (should (equal (current-buffer) (find-buffer-visiting md-file)))
           (should (looking-at-p "# heading")))
       (hy-delete-file-and-buffer md-file)
-      (kill-buffer "*HyRolo*")
+      (kill-buffer hyrolo-display-buffer)
       (delete-directory temporary-file-directory))))
 
 (ert-deftest hyrolo-fgrep-and-goto-next-visible-kotl-heading-level-2 ()
@@ -408,7 +408,7 @@ Match a string in a level 2 child cell."
           (kotl-mode:newline 1)
           (insert "more")
           (hyrolo-fgrep "string")
-          (should (string= (buffer-name) "*HyRolo*"))
+          (should (string= (buffer-name) hyrolo-display-buffer))
           (should (= (how-many "@loc>") 1))
           (should (looking-at-p "==="))
           (hyrolo-next-visible-heading 1)
@@ -417,7 +417,7 @@ Match a string in a level 2 child cell."
           (should (equal (current-buffer) (find-buffer-visiting kotl-file)))
           (should (looking-at-p "heading")))
       (hy-delete-file-and-buffer kotl-file)
-      (kill-buffer "*HyRolo*")
+      (kill-buffer hyrolo-display-buffer)
       (delete-directory temporary-file-directory))))
 
 (ert-deftest hyrolo-fgrep-and-goto-next-visible-kotl-heading-cell-2 ()
@@ -437,7 +437,7 @@ Match a string in the second cell."
           (kotl-mode:newline 1)
           (insert "more")
           (hyrolo-fgrep "string")
-          (should (string= (buffer-name) "*HyRolo*"))
+          (should (string= (buffer-name) hyrolo-display-buffer))
           (should (= (how-many "@loc>") 1))
           (should (looking-at-p "==="))
           (hyrolo-next-visible-heading 1)
@@ -446,7 +446,7 @@ Match a string in the second cell."
           (should (equal (current-buffer) (find-buffer-visiting kotl-file)))
           (should (looking-at-p "heading")))
       (hy-delete-file-and-buffer kotl-file)
-      (kill-buffer "*HyRolo*")
+      (kill-buffer hyrolo-display-buffer)
       (delete-directory temporary-file-directory))))
 
 (provide 'hyrolo-tests)
