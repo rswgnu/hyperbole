@@ -1,3 +1,9 @@
+2023-12-29  Mats Lidell  <matsl@gnu.org>
+
+* test/demo-tests.el
+    (fast-demo-outline-section-anchor-and-relative-line-number-test): Add
+    test for outline section with line and column.
+
 2023-12-28  Bob Weiner  <rsw@gnu.org>
 
 * hypb-ert.el (hypb-ert-def-at-p): Add support for `ert-deftest-async' from the

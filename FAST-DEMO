@@ -135,11 +135,11 @@
 
 ** Pathname Implicit Buttons
 
-    "HY-NEWS#ORG MODE:2:6"   - outline section anchor & relative line number
+    "HY-NEWS#ORG MODE:3:6"   - outline section anchor & relative line number
 
        Display the file, "HY-NEWS", go to the star-outline section 'ORG
-       MODE', move 2 lines into that section and then move 6 characters
-       forward.  "HY-NEWS#ORG MODE:L2:C6" with the line and column numbers
+       MODE', move 3 lines into that section and then move 6 characters
+       forward.  "HY-NEWS#ORG MODE:L3:C6" with the line and column numbers
        labeled works as well.
 
        Existing files and pathnames without spaces are also recognized without

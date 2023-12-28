@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     25-Dec-23 at 23:30:20 by Mats Lidell
+;; Last-Mod:     28-Dec-23 at 18:58:46 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -424,6 +424,21 @@
         (action-key)
         (hy-test-helpers:should-last-message "Factorial of 5 = 120"))
     (hy-test-helpers:kill-buffer "DEMO")))
+
+;;; Fast demo
+;; Implicit Buttons
+(ert-deftest fast-demo-outline-section-anchor-and-relative-line-number-test ()
+  "Verify star outline section links with line and column works."
+  (dolist (link '("\"HY-NEWS#ORG MODE:3:6\"" "\"HY-NEWS#ORG MODE:L3:C6\""))
+    (unwind-protect
+        (let ((default-directory hyperb:dir))
+          (with-temp-buffer
+            (insert link)
+            (goto-char 3)
+            (action-key)
+            (should (string= (buffer-name (current-buffer)) "HY-NEWS"))
+            (should (looking-at-p "M-RET: Reworked"))))
+      (hy-test-helpers:kill-buffer "HY-NEWS"))))
 
 ;; Fast demo key series
 (ert-deftest fast-demo-key-series-help-buffer ()
