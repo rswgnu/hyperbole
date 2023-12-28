@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 23:26:00
-;; Last-Mod:     24-Dec-23 at 03:30:04 by Bob Weiner
+;; Last-Mod:     28-Dec-23 at 22:41:51 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -348,7 +348,7 @@
 		     (hpath:expand "dired.elc")))))
 
 (ert-deftest hpath--expand-list-return-a-list ()
-  "Verify expand-list should return a list of paths."
+  "Verify expand-list returns a list of paths."
   (let ((file (make-temp-file "hypb")))
     (unwind-protect
         (progn
@@ -372,9 +372,9 @@
         (progn
           (should (= (length (hpath:expand-list (list temp-dir))) 3))
           (should (= (length (hpath:expand-list (list temp-dir) ".*")) 3))
-          (should (= (length (hpath:expand-list (list temp-dir) ".org")) 2))
-          (should (= (length (hpath:expand-list (list temp-dir) ".kotl")) 1))
-          (should (= (length (hpath:expand-list (list temp-dir) ".md")) 0)))
+          (should (= (length (hpath:expand-list (list temp-dir) "\\.org$")) 2))
+          (should (= (length (hpath:expand-list (list temp-dir) "\\.kotl$")) 1))
+          (should (= (length (hpath:expand-list (list temp-dir) "\\.md$")) 0)))
       (dolist (f (list org1-file org2-file kotl-file))
         (hy-delete-file-and-buffer f))
       (delete-directory temp-dir))))
