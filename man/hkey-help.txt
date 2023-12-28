@@ -53,7 +53,7 @@ Mouse-only Control
     but/buffer/file menu item   Displays ref/buffer/file   <- same
                                   in window of button release 
     buffer/file menu 1st line   Moves buffer/file menu     <- same
-    anywhere else               Creates an ebut link       Creates an ibut link
+    anywhere else               Creates an ibut link       Creates an ebut link
 
   Drag outside of Emacs from:
     but/buffer/file menu item   Displays ref/buffer/file   Moves window to new frame

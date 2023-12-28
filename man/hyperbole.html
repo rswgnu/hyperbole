@@ -382,7 +382,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.0
-Printed December 26, 2023.
+Printed December 28, 2023.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -1154,12 +1154,13 @@ window&rsquo;s buffer by pressing <kbd>{C-h h e l}</kbd>.
 <dt><em>Implicit buttons</em></dt>
 <dd><p>are patterns automatically recognized within existing text that perform
 actions, e.g. bug#24568 displays the bug status information for that Emacs
-bug number, without the need for any additional markup.
+bug number, without the need for any additional markup.  Implicit link
+buttons can be added to documents with a simple drag between windows too.
 </p>
-<p>With two windows on screen, an implicit link button can be created at point
-in the current buffer linking to the position in the other window&rsquo;s buffer by
-pressing <kbd>{C-h h i l}</kbd>.  Use <kbd>{C-u C-h h i l}</kbd> instead to be prompted
-for a name for the implicit button.
+<p>Or from the keyboard, With two windows on screen, an implicit link button
+can be created at point in the current buffer linking to the position in
+the other window&rsquo;s buffer by pressing <kbd>{C-h h i l}</kbd>.  Use <kbd>{M-1
+C-h h i l}</kbd> instead to be prompted for a name for the implicit button.
 </p>
 </dd>
 <dt><em>Global buttons</em></dt>
@@ -1186,7 +1187,9 @@ Assist Key, that perform an extensive array of context-sensitive operations
 across emacs usage, including activating and showing help for Hyperbole
 buttons.  In many popular Emacs modes, they allow you to perform common,
 sometimes complex operations without having to use a different key for each
-operation.  Just press a Smart Key and the right thing happens.  See <a href="#Smart-Keys">Smart Keys</a>.
+operation.  Just press a Smart Key and the right thing happens.  The
+mouse versions of these keys additionally allow for drag actions.  We
+call these the Action Mouse and Action Assist keys or buttons.  See <a href="#Smart-Keys">Smart Keys</a>.
 </p>
 </dd>
 <dt><em>HyRolo</em></dt>
@@ -1683,7 +1686,7 @@ Mouse-only Control
     but/buffer/file menu item   Displays ref/buffer/file   &lt;- same
                                   in window of button release 
     buffer/file menu 1st line   Moves buffer/file menu     &lt;- same
-    anywhere else               Creates an ebut link       Creates an ibut link
+    anywhere else               Creates an ibut link       Creates an ebut link
 
   Drag outside of Emacs from:
     but/buffer/file menu item   Displays ref/buffer/file   Moves window to new frame
@@ -2426,12 +2429,12 @@ Previous: <a href="#Displaying-Items" accesskey="p" rel="prev">Displaying Items<
 <p>If you run Emacs under a window system and there is no prior key binding
 on <kbd>{M-o}</kbd> when you load Hyperbole, then many Action Key drags can be
 emulated from the keyboard.  To do so, press <kbd>{M-o}</kbd>, the
-<code>hkey-operate</code> command, at the button source location, move
-to the link destination, e.g. with <kbd>{C-x o}</kbd>, and then press
-<kbd>{M-o}</kbd> again.  This simulates a depress and release of the
-Action Key.  <kbd>{C-u M-o}</kbd> emulates drags of the Assist Key.
-This will not work when Hyperbole is run from a dumb terminal Emacs
-session since drag actions are not supported without a window system.
+<code>hkey-operate</code> command, at the button source location, move to the
+link destination, e.g. with <kbd>{C-x o}</kbd>, and then press <kbd>{M-o}</kbd>
+again.  This simulates a depress and release of the Action Key.
+<kbd>{C-u M-o}</kbd> emulates drags of the Assist Key.  This will not work when
+Hyperbole is run from a dumb terminal Emacs session since drag actions
+are not supported without a window system.
 </p>
 <a name="index-ace_002dwindow-1"></a>
 <a name="index-hkey_002dace_002dwindow_002dsetup"></a>
@@ -2443,19 +2446,20 @@ session since drag actions are not supported without a window system.
 use the Emacs package <code>ace-window</code>
 (see <a href="https://elpa.gnu.org/packages/ace-window.html">https://elpa.gnu.org/packages/ace-window.html</a>).
 </p>
-<p>The ace-window package assigns short letter IDs to each Emacs window and lets
-you jump to or operate upon a specific window by giving its ID.  Hyperbole can
-add commands to ace-window that replace the two-step drag emulation key
-described above with a single key sequence that does not require moving to
-the drag target window since it is specified by ID as part of the command.
+<p>The <em>ace-window</em> package assigns short letter IDs to each Emacs
+window and lets you jump to or operate upon a specific window by giving
+its ID.  Hyperbole can add commands to ace-window that replace the
+two-step drag emulation key described above with a single key sequence
+that does not require moving to the drag target window since it is
+specified by ID as part of the command.
 </p>
-<p>To enable this feature, in your Emacs initialization file after
-Hyperbole is initialized, if you do not have a key bound for
-<code>ace-window</code>, then call: <code>(hkey-ace-window-setup \&quot;\M-o\&quot;)</code>
-to bind it to <kbd>{M-o}</kbd>, replacing Hyperbole&rsquo;s
-default <code>hkey-operate</code> command there (because ace-window can emulate
-the drags performed by <code>hkey-operate</code>).  If you already have a key bound
-for <code>ace-window</code>, then just ensure it is initialized by calling
+<p>To enable this feature, in your Emacs initialization file after Hyperbole
+is initialized, if you do not have a key bound for <code>ace-window</code>,
+then call: <code>(hkey-ace-window-setup \&quot;\M-o\&quot;)</code> to bind it to
+<kbd>{M-o}</kbd>, replacing Hyperbole&rsquo;s default <code>hkey-operate</code> command
+there (because ace-window can emulate the drags performed by
+<code>hkey-operate</code>).  If you already have a key bound for
+<code>ace-window</code>, then just ensure it is initialized by calling
 <code>(hkey-ace-window-setup)</code> without a key argument.
 </p>
 <a name="index-M_002do-i-_003cwindow_002did_003e"></a>
@@ -2484,24 +2488,28 @@ selected window&rsquo;s buffer with that of another window, use <kbd>{M-o m
 &lt;id-of-window-to-swap-with&gt;}</kbd>.
 </p>
 <a name="index-M_002do-w-_003cwindow_002did_003e"></a>
+<a name="index-M_002d1-M_002do-w-_003cwindow_002did_003e"></a>
 <a name="index-create-link-button"></a>
 <a name="index-link-button"></a>
-<a name="index-hui_003aebut_002dlink_002ddirectly"></a>
-<p>And finally, to create an explicit link between the selected window
-and another window, use <kbd>{M-o w &lt;id-of-referent-window&gt;}</kbd>.
-<code>hui:ebut-link-directly</code> determines the link type by using
-the referent context.  
-</p>
-
-<a name="index-C_002du-M_002do-w-_003cwindow_002did_003e"></a>
-<a name="index-M_002d1-M_002do-w-_003cwindow_002did_003e"></a>
 <a name="index-hui_003aibut_002dlink_002ddirectly"></a>
-<p><kbd>{C-u M-o w &lt;window&gt;}</kbd> creates a new, <em>unnamed</em> implicit
-button in the selected (current) window that links to point in the
-referent &lt;window&gt;.  <code>hui:ibut-link-directly</code> determines the link
-type by using the referent context.  <kbd>{M-1 M-o w &lt;window&gt;}</kbd> creates
-a new, <em>named</em> implicit button in the selected (current) window
-that links to point in the referent &lt;window&gt;.
+<p>And finally, to create a new, <em>unnamed</em> implicit link in the
+selected window that refers to the location in the other window, use
+<kbd>{M-o w &lt;referent-window-id&gt;}</kbd>.  This executes <code>hui:ibut-link-directly</code>
+which determines the link type by using the referent context.  To create
+a <em>named</em> implicit link button in the selected window, use
+<kbd>{M-1 M-o w &lt;window&gt;}</kbd>.  It prompts for the name and then links to
+the referent window location.  If you highlight a region
+before invoking this, Hyperbole will use that as the name for the
+implicit button.
+</p>
+<a name="index-C_002du-M_002do-w-_003cwindow_002did_003e"></a>
+<a name="index-hui_003aebut_002dlink_002ddirectly"></a>
+<p>To create an explicit button the same way, use <kbd>{C-u M-o w
+&lt;window-id&gt;}</kbd>.  This executes <code>hui:ebut-link-directly</code>, prompts for
+any needed arguments, determines the link type by using the referent
+context and then creates the explicit button.  If you highlight a region
+before invoking this, Hyperbole will use that as the name for the
+explicit button.
 </p>
 <a name="index-M_002do-t-_003cwindow_002did_003e"></a>
 <a name="index-item-throw"></a>
@@ -2537,18 +2545,20 @@ trigger an error
 </p>
 </dd>
 <dt>M-o w &lt;window&gt;</dt>
-<dd><p>window link, create a new <em>explicit button</em> in the selected
+<dd><p>window link, create a new <em>unnamed implicit button</em> in the selected
 (current) window, linking to point in the referent &lt;window&gt;.
 </p>
 </dd>
-<dt>C-u M-o w &lt;window&gt;</dt>
-<dd><p>window link, create a new, <em>unnamed implicit button</em> in the
-selected (current) window, linking to point in the referent &lt;window&gt;.
+<dt>M-1 M-o w &lt;window&gt;</dt>
+<dd><p>window link, create a new <em>named implicit button</em> in the selected
+(current) window, linking to point in the referent &lt;window&gt;.  Use region,
+if any, as the button name.
 </p>
 </dd>
-<dt>M-1 M-o w &lt;window&gt;</dt>
-<dd><p>window link, create a new, <em>named implicit button</em> in the
-selected (current) window, linking to point in the referent &lt;window&gt;.
+<dt>C-u M-o w &lt;window&gt;</dt>
+<dd><p>window link, create a new <em>explicit button</em> in the selected
+(current) window, linking to point in the referent &lt;window&gt;.  Use region,
+if any, as the button name.
 </p></dd>
 </dl>
 
@@ -11432,8 +11442,8 @@ Next: <a href="#Smart-Mouse-Drags-within-a-Window" accesskey="n" rel="next">Smar
          See <code>hmouse-drag-item-mode-forms</code> for how to allow for draggable
          items in other modes.
      (2) Otherwise, creates a new link button at the drag start location,
-         linked to the drag end location.  Action Key creates an explicit button;
-         Assist Key creates an implicit button.
+         linked to the drag end location.  Action Key creates an ixplicit button;
+         Assist Key creates an emplicit button.
 
          In Hyperbole versions prior to 9, Assist Key drags between windows would
          swap buffers.  In version 9 and above, start or end the drag between

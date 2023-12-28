@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     26-Dec-23 at 23:43:32 by Bob Weiner
+;; Last-Mod:     27-Dec-23 at 23:57:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1241,7 +1241,7 @@ With optional NAME-ARG-FLAG (interactively, the prefix argument set to
 anything other than a single C-u (list 4)), prompt for a name to precede
 the implicit button.
 
-An Assist Mouse Key drag between windows runs this command.
+An Action Mouse Key drag between windows runs this command.
 Alternatively, to swap buffers between two windows, Assist Mouse Key
 drag from a window to another window's modeline."
   (interactive (progn

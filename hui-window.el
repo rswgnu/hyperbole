@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Sep-92
-;; Last-Mod:      3-Oct-23 at 17:04:04 by Mats Lidell
+;; Last-Mod:     27-Dec-23 at 23:59:25 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -227,9 +227,8 @@ and release to register a diagonal drag.")
 	      . ((hmouse-drag-item-to-display) . (hmouse-drag-item-to-display)))
 	     ;; Drag between windows not on an item
 	     ((hmouse-drag-between-windows)
-	      ;; Note that `hui:ebut-link-directly' uses any active
-	      ;; region as the label of the button to create.
-	      . ((hui:ebut-link-directly) . (hui:ibut-link-directly)))
+	      ;; Note that functions on next line use any region as button name
+	      . ((hui:ibut-link-directly) . (hui:ebut-link-directly)))
 	     ((hmouse-drag-region-active)
 	      . ((hmouse-drag-not-allowed) . (hmouse-drag-not-allowed)))
 	     ((setq hkey-value (hmouse-drag-horizontally))

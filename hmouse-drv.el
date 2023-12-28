@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:      4-Oct-23 at 20:04:08 by Mats Lidell
+;; Last-Mod:     27-Dec-23 at 00:52:16 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -651,9 +651,9 @@ The selected window does not change."
 RELEASE-WINDOW is interactively selected via the `ace-window' command.
 The selected window does not change.
 
-With no prefix argument, create an explicit button.
-With a C-u \\='(4) prefix argument, create an unnamed implicit button.
-With a M-1 prefix argument, create an named implicit button."
+With no prefix argument, create an unnamed implicit button.
+With a single C-u \\='(4) prefix argument, create an explicit button.
+With any other prefix argument, like M-1, create an named implicit button."
   (interactive
    (list (let ((mode-line-text (concat " Ace - Hyperbole: " (nth 2 (assq ?w aw-dispatch-alist)))))
 	   (aw-select mode-line-text))))
@@ -662,9 +662,9 @@ With a M-1 prefix argument, create an named implicit button."
   (let ((start-window (selected-window)))
     (unwind-protect
 	(progn
-	  (funcall (if current-prefix-arg
-		       #'hui:ibut-link-directly
-		     #'hui:ebut-link-directly)
+	  (funcall (if (equal current-prefix-arg '(4))
+		       #'hui:ebut-link-directly
+		     #'hui:ibut-link-directly)
 		   start-window release-window)
 	  release-window)
       ;; Leave start-window selected

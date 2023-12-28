@@ -116,16 +116,16 @@
 
   You can simply type implicit buttons into a buffer or you can use {C-h h i
   c} to create them and give them names.  To create an implicit link button
-  from a buffer in one window to another, simply depress the Assist Mouse
-  Key (not the Action Mouse Key) where you want the new button (but not
-  within a draggable item), drag to a point in another Emacs window and
-  release.  An implicit link button of an appropriate type for the release
-  context will be inserted at the original depress point.
+  from a buffer in one window to another, simply depress the Action Mouse
+  Key where you want the new button (but not within a draggable item), drag
+  to a point in another Emacs window and release.  An implicit link button
+  of an appropriate type for the release context will be inserted at the
+  original depress point.
 
   If you have exactly two Emacs windows in your current frame or exactly two
   windows visible across two Emacs frames, there is an even simpler way to
   create implicit links.  Use the Link menu item, {C-h h i l}, to create a
-  new unnamed implicit link button or to edit the one at point.  {C-u C-h h
+  new unnamed implicit link button or to edit the one at point.  {M-1 C-h h
   i l} will additionally prompt to add a name or rename the button at
   point.  With more than two windows, Hyperbole will prompt you to choose
   the referent window and its associated point to which to link.  If the Ace
@@ -139,10 +139,11 @@
 
        Display the file, "HY-NEWS", go to the star-outline section 'ORG
        MODE', move 2 lines into that section and then move 6 characters
-       forward.
+       forward.  "HY-NEWS#ORG MODE:L2:C6" with the line and column numbers
+       labeled works as well.
 
-       Existing files and pathnames are recognized without double quotes as
-       well.
+       Existing files and pathnames without spaces are also recognized without
+       double quotes.
 
        The variable, <hpath:display-where>, determines where Hyperbole
        displays all button referents, whether in another window or frame.

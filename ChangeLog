@@ -1,3 +1,16 @@
+2023-12-27  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hkey-window-link): Invert the meaning of the prefix arg, so without
+    one, creates implicit buttons and with creates explicit buttons.  This is the new
+    V9 standard as then by default there is no need to prompt for a button name.
+  hui-window.el (hmouse-alist-add-window-handlers): Invert drag between windows so
+    without a prefix arg, creates implicit buttons and with, creates explicit ones.
+  hui.el (hui:ibut-link-directly):
+  FAST-DEMO (Implicit Buttons):
+  DEMO (Creation via Dragging, Creation via Ace Window):
+  man/hyperbole.texi (Keyboard Drags, Smart Mouse Drags between Windows):
+  man/hkey-help.txt: Update doc on above.
+
 2023-12-26  Mats Lidell  <matsl@gnu.org>
 
 * test/hmouse-drv-tests.el:
