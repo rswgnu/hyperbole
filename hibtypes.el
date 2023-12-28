@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     21-Dec-23 at 13:12:35 by Bob Weiner
+;; Last-Mod:     28-Dec-23 at 18:27:19 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1465,14 +1465,16 @@ original DEMO file."
 (defib action ()
   "The Action Button type.
 At point, activate any of: an Elisp variable, a Hyperbole
-action-type, or an Elisp function call surrounded by <> rather
-than ().
+action-type, an Elisp function call or an Ert test name
+surrounded by <> rather than ().
+
 If an Elisp variable, display a message showing its value.
 
 There may not be any <> characters within the expression.  The
 first identifier in the expression must be an Elisp variable,
-action type or a function symbol to call, i.e. '<'actype-or-elisp-symbol
-arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
+action type, function symbol to call or test to execute, i.e.
+'<'actype-or-elisp-symbol arg1 ... argN '>'.  For example,
+<mail nil \"user@somewhere.org\">."
   (let ((hbut:max-len 0)
 	(lbl-key (hattr:get 'hbut:current 'lbl-key))
 	(start-pos (hattr:get 'hbut:current 'lbl-start))
@@ -1510,7 +1512,8 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
 			    actype-sym)
 		       (and (setq actype-sym (intern-soft actype))
 			    (or (fboundp actype-sym) (boundp actype-sym)
-				(special-form-p actype-sym))
+				(special-form-p actype-sym)
+				(ert-test-boundp actype-sym))
 			    actype-sym)))
       (when actype
 	;; For <hynote> buttons, need to double quote each argument so
@@ -1539,6 +1542,10 @@ arg1 ... argN '>'.  For example, <mail nil \"user@somewhere.org\">."
 		 ;; Is a variable, display its value as the action
 		 (setq args `(',actype)
 		       actype #'display-variable))
+		((and (null args) (symbolp actype) (ert-test-boundp actype))
+		 ;; Is an ert-deftest, display the value from executing it
+		 (setq actype #'display-value
+		       args `('(hypb-ert-run-test ,lbl))))
 		(t
 		 ;; All other expressions, display the action result in the minibuffer
 		 (setq actype #'display-value

@@ -828,6 +828,13 @@ brackets, < >, and come in three types:
 
           <$hbut:max-len>
 
+  4. ert-deftest tests - these consist of the test name only as tests take
+     no arguments, e.g.
+
+          <hbut-tests-ibut-insert-kbd-key>
+
+     This runs one of the Hyperbole regression tests.
+
 An Action Button is recognized only if the first name within the angle
 brackets is an existing action type or Emacs Lisp symbol.  Otherwise, other
 implicit button types will be tested and may activate instead.

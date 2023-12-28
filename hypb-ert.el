@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org> and Bob Weiner <rsw@gnu.org>
 ;;
 ;; Orig-Date:    31-Mar-21 at 21:11:00
-;; Last-Mod:     16-Jul-23 at 23:47:09 by Bob Weiner
+;; Last-Mod:     28-Dec-23 at 15:33:38 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -52,7 +52,8 @@
       (user-error "Invalid test name: %s" test-name))))
 
 (defun hypb-ert-run-tests (test-selector)
-  "Run the specified TEST-SELECTOR defined ert test."
+  "Run the specified TEST-SELECTOR defined ert test.
+See documentation for `ert-select-tests' for TEST-SELECTOR types."
   (hypb-ert-require-libraries)
   (hypb-ert (regexp-quote test-selector)))
 
@@ -65,8 +66,12 @@
 (defun hypb-ert-require-libraries ()
   (mapc #'require (hypb-ert-get-require-symbols)))
 
-(defal hyperbole-run-test  "hypb-ert-run-test")
-(defal hyperbole-run-tests "hypb-ert-run-tests")
+(defal hyperbole-run-test  "hypb-ert-run-test"
+  "Run a Hyperbole regression test by double-quoted string name.")
+
+(defal hyperbole-run-tests "hypb-ert-run-tests"
+  "Run a set of Hyperbole regression tests given by TEST-SELECTOR.
+See documentation for `ert-select-tests' for TEST-SELECTOR types.")
 
 (defun hypb-ert-run-all-tests ()
   "Run every ert test."
@@ -85,11 +90,11 @@
 		    '(?\( ?\) ?\[ ?\] ?{ ?} ?< ?>)))
     (save-excursion
       (forward-line 0)
-      (when (looking-at (concat "(ert-deftest[ \t]+\\("
-				lisp-mode-symbol-regexp
-				"\\)[ \t]+("))
+      (when (looking-at (concat "(ert-deftest\\(-async\\)?[ \t]+"
+				"\\(" lisp-mode-symbol-regexp "\\)"
+				"\\s-*("))
 	(if start-end-flag
-	    (list (match-string-no-properties 1) (match-beginning 1) (match-end 1))
+	    (list (match-string-no-properties 2) (match-beginning 2) (match-end 2))
 	  (match-string-no-properties 1))))))
 
 (defun hypb-ert-run-test-at-definition (test-name &optional debug-it)

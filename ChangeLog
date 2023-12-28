@@ -1,3 +1,24 @@
+2023-12-28  Bob Weiner  <rsw@gnu.org>
+
+* hypb-ert.el (hypb-ert-def-at-p): Add support for `ert-deftest-async' from the
+    "ert-async.el" package.
+
+* hactypes.el (text-toc): Tighten section matching by ensuring it matches to the
+    beginning of the text of the line aside from any initial whitespace.
+    Previously, it could match to any part of the line and was not regexp-quoted,
+    leading to occasional mis-matches.
+
+* hmouse-tag.el (smart-lisp-at-non-htype-tag-p): Fix to remove any action button
+    trailing '>' character.  Already removed any leading '<'.  Match to symbol
+    and word chars between <> to handle all action button labels.
+  hibtypes.el (action): Add support for executing ert-deftests and update doc
+    string for this.
+  man/hyperbole.texi (Action Buttons):
+  DEMO (Using Action Buttons):
+  FAST-DEMO (Action Buttons): Add example action button of a Hyperbole ert test.
+  man/hyperbole.texi (By Dragging): Eliminate repeated paragraph and update mouse
+    key references.
+
 2023-12-27  Bob Weiner  <rsw@gnu.org>
 
 * hmouse-drv.el (hkey-window-link): Invert the meaning of the prefix arg, so without

@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     28-Dec-23 at 00:49:57 by Bob Weiner
+@c Last-Mod:     28-Dec-23 at 21:47:55 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -342,9 +342,9 @@ Utilizing Explicit Buttons
 
 Creation
 
-* By Menu::                     Creation Via Menus
+* By Menu::
 * By Link::                     Creation Via Buffer Link
-* By Dragging::                 Creation Via Action Key Drags
+* By Dragging::                 Creation Via Assist Key Drags
 
 Koutliner
 
@@ -1744,7 +1744,7 @@ needed, @pxref{Keyboard Drags}.
 So now you can put a bunch of buffers and files on your screen wherever
 you like.  Typically, a brief visual pulse is shown first at the source
 item and then in the destination window, to help you see that the transfer
-has been made.  An Assist Key Drag will move the the item list buffer to
+has been made.  An Assist Key drag will move the the item list buffer to
 the destination (swapping buffers), just as it does with other buffers.
 
 @node Keyboard Drags,  , Displaying Items, Dragging Buffers
@@ -1758,7 +1758,7 @@ the destination (swapping buffers), just as it does with other buffers.
 @cindex emulation, drag
 @cindex keyboard drags
 If you run Emacs under a window system and there is no prior key binding
-on @bkbd{M-o} when you load Hyperbole, then many Action Key drags can be
+on @bkbd{M-o} when you load Hyperbole, then many Smart Key drags can be
 emulated from the keyboard.  To do so, press @bkbd{M-o}, the
 @code{hkey-operate} command, at the button source location, move to the
 link destination, e.g.@: with @bkbd{C-x o}, and then press @bkbd{M-o}
@@ -2126,10 +2126,11 @@ If you have exactly two Emacs windows in your current frame or exactly
 two windows visible across two Emacs frames, then the link referent will
 be to the point in the other, non-selected window.
 
-With more than two windows on screen, Hyperbole will prompt you to choose
-the referent window and its associated point to which to link.  If the
-Ace Window package is installed and active, this will be used to choose
-the window; otherwise, you will be prompted to select it by mouse.
+With more than two windows on screen, Hyperbole will prompt you to
+choose the referent window and its associated point to which to link.
+If the Ace Window package is installed and active, this will be used
+to choose the window via keyboard; otherwise, you will be prompted to
+select it by mouse.
 
 Global buttons are actually explicit buttons stored at the end of your
 personal button file, @pxref{Button Files}.  You can always go into that
@@ -2212,8 +2213,8 @@ C-h h i l} will additionally prompt to add a name or rename the button
 at point.  With more than two windows, Hyperbole will prompt you to
 choose the referent window and its associated point to which to link.
 If the Ace Window package is installed and active, this will be used
-to choose the window; otherwise, you will be prompted to select it by
-mouse.
+to choose the window via keyboard; otherwise, you will be prompted to
+select it by mouse.
 
 @cindex activating implicit button
 @cindex menu item, Ibut/Act
@@ -2879,11 +2880,12 @@ e.g. @file{::} represent the current directory, @file{.}.  Must have at
 least four paths within the variable value for this to work.
 
 @findex ibtypes hyperbole-run-test-definition
-@cindex edebug a test
+@cindex edebugging tests
 @cindex debugging tests
+@cindex executing tests
 @cindex running tests
 @cindex testing
-@cindex ert
+@cindex ert tests
 @cindex Emacs Regression Test framework
 @item hyperbole-run-test-definition
 With an Action Key press on the name in the first line of an ert test
@@ -2920,10 +2922,11 @@ For times when you need a cross between the two, with a universal
 button syntax and all button data stored in the button source file,
 there are @emph{action buttons}.
 
-@dfn{Action Buttons} are a form of implicit buttons that can execute
-any existing action types, Emacs Lisp functions or display the values
-of Emacs Lisp variables and constants.  Such buttons are delimited by
-angle brackets, < >, and come in three types:
+@cindex ert tests
+@dfn{Action Buttons} are a form of implicit buttons that can execute any
+existing action types, Emacs Lisp functions, Emacs Regression Tests (ERT
+tests) or display the values of Emacs Lisp variables and constants.  Such
+buttons are delimited by angle brackets, < >, and come in four types:
 
 @table @dfn
 @item action type invocations
@@ -2946,6 +2949,17 @@ Generally, such functions are invoked for their side-effects and their
 return value is silently ignored.  But if a function is a boolean
 predicate whose name ends in @samp{-p}, then the result is displayed
 in the minibuffer.
+
+@item test executions
+Each of these consists solely of the name of an ERT test defined with
+@code{ert-deftest} and surrounded by angle brackets, e.g.
+
+@example
+<hbut-tests-ibut-insert-kbd-key>
+@end example
+
+The above example runs a Hyperbole regression test when activated and
+shows the pass/fail result in a pop-up buffer.
 
 @item variable displays
 These consist of an Emacs Lisp variable name only.  They display
@@ -3519,9 +3533,10 @@ Creating explicit buttons is fun and easy.  You can always try them out
 immediately after creating them or can utilize the Assist Key to verify
 what buttons do.
 
-If you want to create an explicit link button to somewhere within an Emacs
-window, then simply drag with the Action Mouse Key from an editable buffer
-(outside of a draggable item) to the target buffer.
+If you want to create an explicit link button to somewhere within an
+Emacs window, then simply drag with the Assist Mouse Key from an
+editable buffer (outside of a draggable item) to the target buffer.
+Note, the same Action Mouse Key drag creates an implicit button.
 
 Alternatively, the Hyperbole minibuffer menu item, Ebut/Create, will
 create any type of explicit button, but requires a few steps.
@@ -3530,16 +3545,14 @@ The next two subsections examine explicit button creation and
 modification in detail.
 
 @menu
-* By Menu::                     Creation Via Menus
+* By Menu::
 * By Link::                     Creation Via Buffer Link
-* By Dragging::                 Creation Via Action Key Drags
+* By Dragging::                 Creation Via Assist Key Drags
 @end menu
 
 @node By Menu, By Link, Creation, Creation
 @subsubsection Creation Via Menus
 
-@cindex link creation
-@cindex creating explicit links
 @cindex explicit button creation
 @cindex menu, Ebut
 @cindex menu item, Explicit-Button
@@ -3576,6 +3589,8 @@ delimited label within a buffer as the same button.
 @node By Link, By Dragging, By Menu, Creation
 @subsubsection Creation Via Buffer Link
 
+@cindex link creation
+@cindex creating explicit links
 @cindex explicit link creation
 @cindex menu item, Ebut/Link
 @cindex source point
@@ -3594,58 +3609,48 @@ or create a new one.
 With more than two windows on screen, Hyperbole will prompt you to choose
 the referent window and its associated point to which to link.  If the
 Ace Window package is installed and active, this will be used to choose
-the window; otherwise, you will be prompted to select it by mouse.
+the window via keyboard; otherwise, you will be prompted to select
+it by mouse.
 
 @node By Dragging,  , By Link, Creation
-@subsubsection Creation Via Action Key Drags
+@subsubsection Creation Via Assist Key Drags
 
-@cindex mouse drag, explicit link creation
-@cindex drag
-@cindex Assist Key drag
-Alternatively, to create an explicit link button to something
-displayed within an Emacs window (the referent), simply drag with the
-Assist (not the Action) Mouse Key depressed from an editable source
-window to another window with the desired link referent and then
-release.  The drag must start outside of a draggable item,
-@pxref{Displaying Items}.  Hyperbole will either automatically select
-the button type based on the referent context or will prompt you to
-select from one of a few possible link types.
-
-@cindex explicit button creation
-@cindex link creation
 @cindex creating explicit links
+@cindex link creation
+@cindex mouse drag, explicit link creation
 @cindex mouse drag, link creation
 @cindex drag
-@cindex Action Key drag
-The most efficient way to create an explicit link button to something
-within an Emacs window is to use the Action Mouse Key to drag from an
-editable source window to another window with the desired link referent.
-The drag must start outside of a draggable item, @pxref{Displaying
-Items}.  Hyperbole will prompt for the button text label and then will
-either automatically select the button action type based on the referent
-context or will prompt you to select from one of a few possible link
-types.
+@cindex Assist Key drag
+Alternatively, to create an explicit link button to a referent
+displayed within an Emacs window, simply drag with the Assist (not the
+Action) Mouse Key depressed from an editable source window to another
+window with the desired link referent and then release.  The drag must
+start outside of a draggable item, @pxref{Displaying Items}.
+Hyperbole will either automatically select the button type based on
+the referent context or will prompt you to select from one of a few
+possible link types.
 
 In detail, you should split your current Emacs frame into two
 windows: one which contains the point at which you want a button to be
 inserted and another which shows the point to which you want to link.
-Depress the Action Mouse Key at the source point for the button (anywhere
+Depress the Assist Mouse Key at the source point for the button (anywhere
 but on a paired delimiter such as double quotes or parentheses).  Then
-drag to the other window and release the Action Mouse Key at the start
+drag to the other window and release the Assist Mouse Key at the start
 point of the link referent.  The process becomes quite simple with a
 little practice. (@xref{By Menu, Creation Via Menus}, for a more detailed
 explanation of the explicit button creation process).
 
 If a region was selected prior to the start of the drag, it is used as
-the button label, otherwise, you are prompted for the label.  Then
-Hyperbole uses the link referent context to determine the type of link to
-make.  If there are a few different types of links which are applicable
-from the context, you will be prompted with a list of the types.  Simply
-use the Action Key or the first capital letter of the link type to select
-one of the type names and to finish the link creation.  Hyperbole will
-then insert explicit button delimiters around the button label and will
-display a message in the minibuffer indicating the button label, its
-action/link type, and any arguments, notably the thing to which it links.
+the button label; otherwise, you are prompted for the label.
+Hyperbole uses the link referent context to determine the type of link
+to make.  If there are a few different types of links which are
+applicable from the context, you will be prompted with a list of the
+types.  Simply use the Action Key or the first capital letter of the
+link type to select one of the type names to finish the link
+creation.  Hyperbole will then insert explicit button delimiters
+around the button label and will display a message in the minibuffer
+indicating the button label, its action/link type, and any arguments,
+notably the thing to which it links.
 
 The following table shows the type of link that will be created based
 upon the referent context in which the Action Key is released.
@@ -7395,9 +7400,10 @@ if any emacs-related terms are unfamiliar to you.
 
 @item Ace Window
 Emacs extension package that labels windows with letters and allows
-quick selection or other operations on a specific window.  Hyperbole
-extends this with a number of additional commands like throw a buffer
-to a window or replace a windows's contents.  @xref{Keyboard Drags}.
+quick keyboard selection or other operations on a specific window.
+Hyperbole extends this with a number of additional commands like throw
+a buffer to a window or replace a windows's contents.  @xref{Keyboard
+Drags}.
 
 @item Action
 An executable behavior associated with a Hyperbole button.  @dfn{Links}
@@ -8706,11 +8712,11 @@ in @ref{HyControl}.
 Drag Operation: Keyboard emulation of the start and stop of mouse
 drags to invoke Smart Key actions.  This binding is made only if the
 key is not bound prior to initializing Hyperbole and if Emacs is run
-under a window system.  If the Ace Window package is loaded, then
-Ace Window commands are typically bound to @bkbd{M-o} instead.  Then
-@bkbd{M-o w} may be used to quickly create an explicit link button
-in the selected window that links to any other window chosen via the
-Ace Window prompt.
+under a window system.  If the Ace Window package is loaded, then Ace
+Window commands are typically bound to @bkbd{M-o} instead.  Then
+@bkbd{M-o w} may be used to quickly create an implicit link button in
+the selected window that links to a referent in any other window
+chosen via the Ace Window prompt.
 
 @cindex key binding, C-h h
 @kitem C-h h
@@ -9684,8 +9690,8 @@ Otherwise, if dragged from inside one window to another:
          See @code{hmouse-drag-item-mode-forms} for how to allow for draggable
          items in other modes.
      (2) Otherwise, creates a new link button at the drag start location,
-         linked to the drag end location.  Action Key creates an ixplicit button;
-         Assist Key creates an emplicit button.
+         linked to the drag end location.  Action Key creates an implicit button;
+         Assist Key creates an explicit button.
 
          In Hyperbole versions prior to 9, Assist Key drags between windows would
          swap buffers.  In version 9 and above, start or end the drag between

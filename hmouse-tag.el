@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:      1-Dec-23 at 23:32:23 by Mats Lidell
+;; Last-Mod:     28-Dec-23 at 11:16:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -821,23 +821,29 @@ Return nil when point is on the first line of a non-alias Lisp definition."
 		(looking-at "\"\\|\\$[{(]\\|[{]\\$]"))
 	(when (and (looking-at smart-lisp-identifier)
 		   ;; Ignore any punctuation matches.
-		   (save-match-data
-		     (not (string-match "\\`[-<>*]+\\'" (match-string 0)))))
+		   (not (string-match-p "\\`[-<>*]+\\'" (match-string 0))))
 	  ;; Ignore any leading '<' character from action buttons or
 	  ;; other links, i.e. only when followed by an alphabetic character.
-	  (when (and (eq (following-char) ?\<) (eq ?w (char-syntax (1+ (point)))))
-	    (goto-char (1+ (point))))
-	  (if no-flash
-	      (if (eq (char-after (1- (match-end 0))) ?:)
-		  (buffer-substring-no-properties (point) (1- (match-end 0)))
-		(buffer-substring-no-properties (point) (match-end 0)))
-	    (if (eq (char-after (1- (match-end 0))) ?:)
+	  (let* ((action-button-prefix-flag
+		  (and (eq (following-char) ?\<)
+		       (memq (char-syntax (1+ (point))) '(?_ ?w))))
+		 (suffix-flag
+		  (or (eq (char-after (1- (match-end 0))) ?:)
+		      (and action-button-prefix-flag
+			   (eq (char-after (1- (match-end 0))) ?\>)))))
+	    (when action-button-prefix-flag
+	      (goto-char (1+ (point))))
+	    (if no-flash
+		(if suffix-flag
+		    (buffer-substring-no-properties (point) (1- (match-end 0)))
+		  (buffer-substring-no-properties (point) (match-end 0)))
+	      (if suffix-flag
+		  (smart-flash-tag
+		   (buffer-substring-no-properties (point) (1- (match-end 0)))
+		   (point) (1- (match-end 0)))
 		(smart-flash-tag
-		 (buffer-substring-no-properties (point) (1- (match-end 0)))
-		 (point) (1- (match-end 0)))
-	      (smart-flash-tag
-	       (buffer-substring-no-properties (point) (match-end 0))
-	       (point) (match-end 0)))))))))
+		 (buffer-substring-no-properties (point) (match-end 0))
+		 (point) (match-end 0))))))))))
 
 ;;;###autoload
 (defun smart-lisp-mode-p ()

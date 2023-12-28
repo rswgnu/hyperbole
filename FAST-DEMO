@@ -330,6 +330,11 @@ pspell-config(1)         - prints information about a libpspell installation
        Display a Hyperbole Koutline starting from cell 3b10 with lines per
        cell clipped to 2.
 
+    <hbut-tests-ibut-insert-kbd-key>
+
+       Run one of the Hyperbole regression tests.  Thus, tests defined with
+       the Emacs Regression Test framework using `ert-deftest' work too.
+
 
 ** Many More Implicit Button Types to Learn Across Time
 
