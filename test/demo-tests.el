@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     28-Dec-23 at 18:58:46 by Mats Lidell
+;; Last-Mod:     29-Dec-23 at 00:19:28 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -240,13 +240,6 @@
     (action-key)
     (hy-test-helpers:should-last-message "Result = nil; Boolean value = False")))
 
-(ert-deftest demo-implicit-button-action-button-variable-display-test ()
-  (with-temp-buffer
-    (insert "<fill-column>")
-    (goto-char 2)
-    (action-key)
-    (hy-test-helpers:should-last-message (format "fill-column = %d" (current-fill-column)))))
-
 (ert-deftest demo-implicit-button-hash-link-test ()
   (unwind-protect
       (with-temp-buffer
@@ -427,7 +420,7 @@
 
 ;;; Fast demo
 ;; Implicit Buttons
-(ert-deftest fast-demo-outline-section-anchor-and-relative-line-number-test ()
+(ert-deftest fast-demo-outline-section-anchor-and-relative-line-number ()
   "Verify star outline section links with line and column works."
   (dolist (link '("\"HY-NEWS#ORG MODE:3:6\"" "\"HY-NEWS#ORG MODE:L3:C6\""))
     (unwind-protect
@@ -439,6 +432,50 @@
             (should (string= (buffer-name (current-buffer)) "HY-NEWS"))
             (should (looking-at-p "M-RET: Reworked"))))
       (hy-test-helpers:kill-buffer "HY-NEWS"))))
+
+(ert-deftest fast-demo-markdown-anchor-with-spaces ()
+  "Verify anchor with spaces works."
+  (unwind-protect
+      (let ((default-directory hyperb:dir))
+        (with-temp-buffer
+          (insert "\"README.md#Hyperbole Components\"")
+          (goto-char 3)
+          (action-key)
+          (should (string= (buffer-name (current-buffer)) "README.md"))
+          (should (looking-at-p "## Hyperbole Components"))))
+    (hy-test-helpers:kill-buffer "README.md")))
+
+(ert-deftest fast-demo-elisp-or-env-vars ()
+  "Verify Elisp or env variables work in paths."
+  (unwind-protect
+      (with-temp-buffer
+        (insert "\"${hyperb:dir}/HY-NEWS\"")
+        (goto-char 3)
+        (action-key)
+        (should (string= (buffer-name (current-buffer)) "HY-NEWS")))
+  (hy-test-helpers:kill-buffer "HY-NEWS")))
+
+(ert-deftest fast-demo-elisp-library-in-load-path ()
+  "Verify ibut to Elisp library works."
+  (let (bufname)
+    (unwind-protect
+        (with-temp-buffer
+          (insert "\"subr.el\"")
+          (goto-char 3)
+          (action-key)
+          (setq bufname (buffer-name (current-buffer)))
+          (should (string-prefix-p "subr.el" bufname))))
+    (hy-test-helpers:kill-buffer bufname)))
+
+(ert-deftest fast-demo-info-manual-references ()
+  "Verify info manual references works."
+  (unwind-protect
+      (with-temp-buffer
+        (insert "\"(hyperbole)action-key-modeline-function\"")
+        (goto-char 3)
+        (action-key)
+        (should (string= Info-current-node "Smart Mouse Key Modeline Clicks")))
+    (hy-test-helpers:kill-buffer "*info*")))
 
 ;; Fast demo key series
 (ert-deftest fast-demo-key-series-help-buffer ()
@@ -695,6 +732,102 @@ enough files with matching mode loaded."
 ;;  Local Variables:
 ;;  no-byte-compile: t
 ;;  End:
+
+
+;; Fast Demo Grep Messages, Stack Trace, Man Page Apropos
+(ert-deftest fast-demo-grep ()
+  "Verify ibuts from grep searches works."
+  (unwind-protect
+      (with-temp-buffer
+        (insert "hactypes.el:454:					      (mapcar #'list (gbut:label-list))\nhbut.el:605:				       (mapcar #'list (gbut:label-list))\n")
+        (goto-char 3)
+        (action-key)
+        (should (string= (buffer-name (current-buffer)) "hactypes.el"))
+        (should (= (line-number-at-pos) 454)))
+    (hy-test-helpers:kill-buffer "hactypes.el")))
+
+(ert-deftest fast-demo-python-trace-back ()
+  "Verify ibuts from python traceback works."
+  (unwind-protect
+      (let ((default-directory hyperb:dir))
+        (with-temp-buffer
+          (insert "Traceback (most recent call last):\n  File \"topwin.py\", line 18, in <module>\n    import Quartz\n")
+          (goto-char (point-min))
+          (forward-line 1)
+          (goto-char (+ (point) 3))
+          (action-key)
+          (should (string= (buffer-name (current-buffer)) "topwin.py"))
+          (should (= (line-number-at-pos) 18))))
+    (hy-test-helpers:kill-buffer "topwin.py")))
+
+(ert-deftest fast-demo-man-k ()
+  "Verify ibut in man -k output displays the associated man page."
+  (with-temp-buffer
+    (insert "aspell(1)                - interactive spell checker")
+    (goto-char 3)
+    (with-mock
+      (mock (man "aspell(1)") => t)
+      (action-key))))
+
+;; Fast Demo Action Buttons
+(ert-deftest fast-demo-action-button-shell ()
+  "Verify a shell is created when action button for shell is invoked."
+  (unwind-protect
+      (with-temp-buffer
+        (insert "<shell>")
+        (goto-char 3)
+        (action-key)
+        (should (string= (buffer-name (current-buffer)) "*shell*")))
+    (let (kill-buffer-hook kill-buffer-query-functions)
+      (hy-test-helpers:kill-buffer "*shell*"))))
+
+(ert-deftest fast-demo-action-button-fill-column ()
+  "Verify the value of `fill-column' is displayed in the minibuffer."
+  (with-temp-buffer
+    (insert "<fill-column>")
+    (goto-char 2)
+    (action-key)
+    (hy-test-helpers:should-last-message (format "fill-column = %d" (current-fill-column)))))
+
+(ert-deftest fast-demo-display-demo-using-action-buttons ()
+  "Verify the three ways show in the demo works."
+  (unwind-protect
+      (with-temp-buffer
+        (insert "<find-file-other-window (expand-file-name \"DEMO\" hyperb:dir)>")
+        (goto-char 5)
+	(let ((enable-local-variables nil))
+          (action-key))
+        (should (string= "DEMO" (buffer-name))))
+    (hy-test-helpers:kill-buffer "DEMO"))
+  (unwind-protect
+      (with-temp-buffer
+        (insert "<hpath:find \"${hyperb:dir}/DEMO\")>")
+        (goto-char 5)
+	(let ((enable-local-variables nil))
+          (action-key))
+        (should (string= "DEMO" (buffer-name))))
+    (hy-test-helpers:kill-buffer "DEMO"))
+  (unwind-protect
+      (with-temp-buffer
+        (insert "\"${hyperb:dir}/DEMO\"") ; Need double quotes - Error!?
+        (goto-char 5)
+	(let ((enable-local-variables nil))
+          (action-key))
+        (should (string= "DEMO" (buffer-name))))
+    (hy-test-helpers:kill-buffer "DEMO")))
+
+(ert-deftest fast-demo-display-kotl-starting-from-cell ()
+  "Verify a kotl file can be displayed from cell ref."
+  (unwind-protect
+      (let ((default-directory hyperb:dir))
+        (with-temp-buffer
+          (insert "<kotl/EXAMPLE.kotl#3b10|c2en>")
+          (goto-char 5)
+          (action-key)
+          (should (string= "EXAMPLE.kotl" (buffer-name)))
+          ;; FIXME: Add verification of lines per cell
+          (should (looking-at-p "Cell Transposition:"))))
+    (hy-test-helpers:kill-buffer "EXAMPLE.kotl")))
 
 (provide 'demo-tests)
 ;;; demo-tests.el ends here
