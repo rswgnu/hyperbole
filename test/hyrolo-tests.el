@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     28-Dec-23 at 12:01:34 by Mats Lidell
+;; Last-Mod:     28-Dec-23 at 12:48:26 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -372,7 +372,7 @@ and {b} the previous same level cell."
       (delete-directory temporary-file-directory))))
 
 (ert-deftest hyrolo-fgrep-and-goto-next-visible-md-heading ()
-  "verify move to next heading, then action-key to go to record for markdown mode."
+  "Verify move to next heading, then action-key to go to record for markdown mode."
   (let* ((temporary-file-directory (make-temp-file "hypb" t))
          (md-file (make-temp-file "hypb" nil ".md" "# heading\nstring\nmore\n"))
          (hyrolo-file-list (list temporary-file-directory)))
