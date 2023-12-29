@@ -19,6 +19,8 @@ otherwise, skip to the next section.
 
    - [Quick Introduction](https://youtu.be/K1MNUctggwI)
 
+   - [Top 10 ways Hyperbole amps up Emacs](https://emacsconf.org/2023/talks/hyperamp/)
+  
    - [Introduction to Buttons](https://youtu.be/zoEht66N2PI)
 
    - [Linking Personal Info with Implicit Buttons](https://emacsconf.org/2022/talks/buttons/)
@@ -27,10 +29,14 @@ otherwise, skip to the next section.
 
    - [HyRolo, fast contact/hierarchical record viewer](https://youtu.be/xdJGFdgKPFY)
 
+   - [Using Koutline for stream of thought journaling](https://emacsconf.org/2023/talks/koutline/)
+  
    - [Build a Zettelkasten with HyRolo](https://emacsconf.org/2022/talks/rolodex/)
 
    - [HyControl, fast Emacs frame and window manager](https://youtu.be/M3-aMh1ccJk)
 
+   - [Writing test cases for GNU Hyperbole](https://emacsconf.org/2023/talks/test/)
+  
    - [Find/Web Search](https://youtu.be/8lMlJed0-OM)
 
    - [Linking personal info with implicit buttons](https://youtu.be/TQ_fG7b1iHI)

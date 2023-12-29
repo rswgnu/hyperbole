@@ -1,5 +1,13 @@
 2023-12-29  Bob Weiner  <rsw@gnu.org>
 
+* hyrolo.el (hyrolo-to-entry-end): Fix bug where HyRolo fgrep would get stuck
+    in Org buffers without any outline delimiters due to this function moving
+    backwards.
+
+* HY-ANNOUNCE:
+  README.md:
+  FAST-DEMO (Introductory Videos): Add 3 EmacsConf 2023 videos on Hyperbole.
+
 * hui-mouse.el (hkey-alist): Add 'ert-results-mode' support using rsw's new
     "ert-results.el" library.  Add 'smart-ert-results' and
     'smart-ert-results-assist' support functions.  Fix many flycheck warnings.

@@ -4,9 +4,10 @@
 
   Send an email or a testimonial if you like Hyperbole to <rsw@gnu.org>.
 
-  This demo is the fast way to get started with Hyperbole after installation.
-  The prior, lengthier Hyperbole demo/tutorial can be found in this file: "DEMO".
-  For a non-interactive introduction to Hyperbole concepts, see "HY-CONCEPTS.kotl".
+  This interactive demo is the fast way to get started with Hyperbole after
+  installation.  The prior, lengthier Hyperbole demo/tutorial can be found
+  in this file: "DEMO".  For a non-interactive introduction to Hyperbole
+  concepts, see "HY-CONCEPTS.kotl".
 
 
 * Introductory Videos
@@ -53,9 +54,11 @@
   |-----------------------------------------------------+------------------------------|
   |-----------------------------------------------------+------------------------------|
   | <[Overview and Demo]>                               | https://youtu.be/WKwZHSbHmPg |
-  |     Sections broken out in the prior table          |                              |
+  | Sections broken out in the prior table              |                              |
   |-----------------------------------------------------+------------------------------|
   | <[Quick Introduction]>                              | https://youtu.be/K1MNUctggwI |
+  |-----------------------------------------------------+------------------------------|
+  | <[Top 10 ways Hyperbole amps up Emacs]>             | https://youtu.be/BysjfL25Nlc |
   |-----------------------------------------------------+------------------------------|
   | <[Introduction to Buttons]>                         | https://youtu.be/zoEht66N2PI |
   |-----------------------------------------------------+------------------------------|
@@ -65,9 +68,13 @@
   |-----------------------------------------------------+------------------------------|
   | <[HyRolo, fast contact/hierarchical record viewer]> | https://youtu.be/xdJGFdgKPFY |
   |-----------------------------------------------------+------------------------------|
+  | <[Using Koutline for stream of thought journaling]> | https://youtu.be/dO-gv898Vmg |
+  |-----------------------------------------------------+------------------------------|
   | <[Build a Zettelkasten with HyRolo]>                | https://youtu.be/HdlCK9w-LyQ |
   |-----------------------------------------------------+------------------------------|
   | <[HyControl, fast Emacs frame and window manager]>  | https://youtu.be/M3-aMh1ccJk |
+  |-----------------------------------------------------+------------------------------|
+  | <[Writing test cases for GNU Hyperbole]>            | https:/youtu.be/maNQSKxXIzI  |
   |-----------------------------------------------------+------------------------------|
   | <[Find/Web Search]>                                 | https://youtu.be/8lMlJed0-OM |
   |-----------------------------------------------------+------------------------------|
@@ -104,31 +111,35 @@
   These patterns are called `implicit buttons' and are activated by pressing
   {M-RET} (ESC RETURN, ALT-RETURN, or CMD-RETURN) or SHIFT-MIDDLE-MOUSE
   anywhere within them (this is known as the Action Key).  Hyperbole
-  recognizes these buttons using its predefined implicit button types that
-  specify how to recognize each type of button and what action it performs.
-  (For example, the web links in the table above are implicit buttons that
-  display web pages).  You can also add your own button and action types.
+  recognizes these buttons using its many predefined implicit button types
+  that specify how to recognize each type of button and what action it
+  performs.  (For example, the web links in the table above are implicit
+  buttons that display web pages.  So are the series of key presses
+  surrounded by braces throughout this document).  You can also add your own
+  button and action types.
 
   Try pressing {M-RET} or SHIFT-MIDDLE-MOUSE on some of the implicit buttons
   in double quotes below to activate them and see how they behave.  Press
-  {C-h A} (the A must be capitalized) on any Hyperbole button to see exactly
-  what it does prior to activating it.
+  {C-h A} (the A must be capitalized) on any Hyperbole button or highlighted
+  Emacs push-button to see exactly what it does prior to activating it.
+
+
+** Implicit Link Buttons
 
   You can simply type implicit buttons into a buffer or you can use {C-h h i
-  c} to create them and give them names.  To create an implicit link button
-  from a buffer in one window to another, simply depress the Action Mouse
-  Key where you want the new button (but not within a draggable item), drag
-  to a point in another Emacs window and release.  An implicit link button
-  of an appropriate type for the release context will be inserted at the
-  original depress point.
+  c} to create them and give them names.  When you have exactly two windows
+  in an Emacs frame, you can instantly create an unnamed implicit link
+  button from the selected window to point in the other window by using {C-h
+  h i l}.  {M-1 C-h h i l} creates or renames a named implicit button that
+  looks like <[name]>.
 
-  If you have exactly two Emacs windows in your current frame or exactly two
-  windows visible across two Emacs frames, there is an even simpler way to
-  create implicit links.  Use the Link menu item, {C-h h i l}, to create a
-  new unnamed implicit link button or to edit the one at point.  {M-1 C-h h
-  i l} will additionally prompt to add a name or rename the button at
-  point.  With more than two windows, Hyperbole will prompt you to choose
-  the referent window and its associated point to which to link.  If the Ace
+  You can create the same button by depressing the Action Mouse Key in the
+  text of one window and dragging to the text of the other and releasing it.
+  An implicit link button of an appropriate type for the release context
+  will be inserted at the original depress point.
+
+  With more than two windows, Hyperbole will prompt you to choose the
+  referent window and its associated point to which to link.  If the Ace
   Window package is installed and active, this will be used to choose the
   window; otherwise, you will be prompted to select it by mouse.
 
@@ -362,8 +373,10 @@ pspell-config(1)         - prints information about a libpspell installation
 |----------------------------------------------------------------------------|
 
 Implicit button types are stored in their own namespace, 'ibtypes::', so to
-see the doc on the 'pathname' ibtype, use {C-h f ibtypes::pathname RET}.  To
-learn how to create new kinds of implicit button and action types, see:
+see the doc on the 'pathname' ibtype, use {C-h f ibtypes::pathname RET}.
+
+See "DEMO#Implicit Buttons" or "(hyperbole)Implicit Buttons" for more detail.
+To learn how to create new kinds of implicit button and action types, see
 "(hyperbole)Creating Types".
 
 
@@ -372,31 +385,32 @@ learn how to create new kinds of implicit button and action types, see:
   You have learned the basics of Hyperbole implicit button types.  Hyperbole
   has two other categories of buttons:
 
-    `Explicit buttons' are manually created and embedded within buffers and
-    explicitly assigned any of many action types that Hyperbole and Emacs
-    include.  These contrast with implicit buttons which Hyperbole generates
-    automatically by recognizing text patterns in buffers.  Explicit buttons
-    look like this: <(fake button)>.  They are quickly recognizable, yet
-    relatively non-distracting as one scans the text in which they are
-    embedded.  Explicit buttons can link to local and remote files or to a
-    section within a document; they can calculate things or query databases
-    or show different views of bodies of information.  Unlike HTML
-    hyperbuttons, there is no markup language to learn nor specific document
-    format required.  You can create explicit buttons with simple keyboard
-    presses or mouse drags from one window to another (when not on a draggable
-    item).  See the {C-h h e} menu for explicit button commands.
-    {C-h h e c} creates an explicit button and {C-h h e l} creates an explicit
-    link button between two windows, just like their counterparts for implicit
-    butons.  See "DEMO#Explicit Buttons" or "(hyperbole)Explicit Buttons" for
-    more detail.
+  `Explicit buttons' are manually created and embedded within buffers and
+  explicitly assigned any of the many action types that Hyperbole includes.
+  These contrast with implicit buttons which Hyperbole generates
+  automatically by recognizing text patterns in buffers.  Explicit buttons
+  look like this: <(fake button)>.  They are quickly recognizable, yet
+  relatively non-distracting as one scans the text in which they are
+  embedded.  Explicit buttons can link to local and remote files or to a
+  section within a document; they can calculate things or query databases or
+  show different views of bodies of information.
 
-    `Global buttons' are labeled Hyperbole buttons in your personal button
-    file, {C-h h b p}.  All global buttons are activated by name with
-    completion provided, independent of which buffers are on-screen, {C-h h g
-    a}.  Global buttons may be <(explicit buttons)> or <[labeled/named]>
-    implicit buttons in the personal button file.  See the {C-h h g} menu for
-    global button commands.  See "DEMO#Global Buttons" or "(hyperbole)Global
-    Buttons" for more detail.
+  Unlike HTML hyperbuttons, there is no markup language to learn nor
+  specific document format required.  You can create explicit buttons with
+  simple keyboard presses or mouse drags from one window to another (when
+  not on a draggable item).  See the {C-h h e} menu for explicit button
+  commands.  {C-h h e c} creates an explicit button and {C-h h e l} creates
+  an explicit link button between two windows, just like their counterparts
+  for implicit butons.  See "DEMO#Explicit Buttons" or "(hyperbole)Explicit
+  Buttons" for more detail.
+
+  `Global buttons' are explicit or named implicit Hyperbole buttons that are
+  stored in your personal button file edited with {C-h h b p}.  Any such
+  button in there becomes global and is accessible by name without the need
+  to have the that file on screen.  Simply press {C-h h g a} to activate a
+  global button and you will be prompted with completion for the button
+  name.  See the {C-h h g} menu for the rest of the global button commands.
+  See "DEMO#Global Buttons" or "(hyperbole)Global Buttons" for more detail.
 
 
 * Hyperbole Subsystems
@@ -430,17 +444,17 @@ learn how to create new kinds of implicit button and action types, see:
   use within hyperlink references to the cell.
 
   A demonstration of the Koutliner is found on the Hyperbole Kotl/Example
-  menu entry.  {C-h h k e}, gives you an editable copy of Hyperbole's example
-  Koutliner file.  This explains the Koutliner commands and lets you try them
-  out as you learn.  Additional documentation can be found in
-  "(hyperbole)Koutliner".  "(hyperbole)Koutliner Keys" summarizes, in
+  menu entry, {C-h h k e}.  This gives you an editable copy of Hyperbole's
+  example Koutliner file.  This file explains the Koutliner commands and
+  lets you try them out as you learn.  Additional documentation can be found
+  in "(hyperbole)Koutliner".  "(hyperbole)Koutliner Keys" summarizes, in
   alphabetical order, the Koutliner commands which are bound to keys.
 
 
 * Reference Documentation
 
   As noted at the start, "DEMO" provides a more extensive, interactive look
-  into Hyperbole, {C-h h d d}.
+  into Hyperbole, {C-h h d d}, if you have more time.
 
   For a quick, non-interactive introduction to Hyperbole concepts, use
   "HY-CONCEPTS.kotl" available with {C-h h d c}.
@@ -451,9 +465,11 @@ learn how to create new kinds of implicit button and action types, see:
   and action types and much more.  See "(hyperbole)" or use {C-h h d i}.
 
   It is included in the "${hyperb:dir}/man/" subdirectory of Hyperbole in
-  four forms:
+  four forms, accessible as the links below:
 
     "man/hyperbole.info"   - online Info browser version
     "man/hyperbole.html"   - web HTML version
     "man/hyperbole.pdf"    - printable version
     "man/hyperbole.texi"   - source form
+
+-- The End --

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     26-Dec-23 at 22:03:08 by Bob Weiner
+;; Last-Mod:     29-Dec-23 at 21:55:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2262,11 +2262,18 @@ before the final newline of the entry.
 
 Return current point."
   (interactive "P")
-  (hyrolo-move-forward (lambda () (hyrolo-move-to-entry-end include-sub-entries)))
-  (when (and (called-interactively-p 'any)
-	     (not (eolp)))
-    (goto-char (1- (point))))
-  (point))
+  ;; In cases where a file lacks any entry delimiters and we consider
+  ;; each line a record, outline commands can falsely move point prior
+  ;; to its current location.  Prevent this by moving to the max of
+  ;; the (1+ start point) and the final point.
+  (let ((opoint (point)))
+    (hyrolo-move-forward (lambda () (hyrolo-move-to-entry-end include-sub-entries)))
+    (when (and (called-interactively-p 'any)
+	       (not (eolp)))
+      (goto-char (1- (point))))
+    (when (<= (point) opoint)
+      (goto-char (min (1+ opoint) (point-max))))
+  (point)))
 
 (defun hyrolo-move-to-entry-end (include-sub-entries)
   (if (not include-sub-entries)
