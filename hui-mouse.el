@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     26-Dec-23 at 12:06:25 by Bob Weiner
+;; Last-Mod:     29-Dec-23 at 16:24:31 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -40,6 +40,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
+(require 'ert-results nil t) ;; Action Key support in ERT result buffers
 (require 'hload-path)
 (require 'hsys-org)
 (require 'hbut)
@@ -71,6 +72,13 @@
 
 (defvar helm-selection-point)
 
+(declare-function ert-results-filter-status-p        "ext:ert-results")
+(declare-function ert-results-display                "ext:ert-results")
+(declare-function ert-results-hide                   "ext:ert-results")
+(declare-function ert-results-show                   "ext:ert-results")
+(declare-function ert-results-toggle                 "ext:ert-results")
+(declare-function ert-results-describe-test-at-point "ext:ert-results")
+
 (declare-function tar-flag-deleted "tar")
 (declare-function tar-unflag "tar")
 (declare-function tar-extract-other-window "tar")
@@ -88,7 +96,7 @@
   "*Command that sets point to the mouse cursor position.")
 
 (defun action-key-error ()
-  "If in Org mode and Hyperbole shares {M-RET}, run org-meta-return.
+  "If in Org mode and Hyperbole shares {M-RET}, run `org-meta-return'.
 In other context signal an error."
   (if (and (funcall hsys-org-mode-function)
 	   (hsys-org-meta-return-shared-p))
@@ -96,7 +104,7 @@ In other context signal an error."
     (hypb:error "(Hyperbole Action Key): No action defined for this context; try another location")))
 
 (defun assist-key-error ()
-  "If in Org mode and Hyperbole shares {M-RET}, run org-meta-return.
+  "If in Org mode and Hyperbole shares {M-RET}, run 'org-meta-return'.
 In other context, signal an error."
   (if (and (funcall hsys-org-mode-function)
 	   (hsys-org-meta-return-shared-p))
@@ -117,7 +125,7 @@ Smart Key behavior."
   :group 'hyperbole-keys)
 
 (defcustom action-key-modeline-buffer-id-function #'dired-jump
-  "*Function to call for Action Key clicks on the buffer id portion of a modeline.
+  "*Function to call for Action Key clicks on the buf id portion of a modeline.
 Its default value is `dired-jump'; set it to `smart-treemacs-modeline'
 to use the Treemacs file manager package instead."
   :type 'function
@@ -221,6 +229,12 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
     ;; dired-sidebar-mode
     ((eq major-mode 'dired-sidebar-mode)
      . ((smart-dired-sidebar) . (smart-dired-sidebar)))
+    ;;
+    ((and (eq major-mode 'ert-results-mode)
+	  (featurep 'ert-results)
+	  (setq hkey-value (ert-results-filter-status-p)))
+     . ((smart-ert-results hkey-value) . (smart-ert-results-assist hkey-value)))
+    ;;
     ;;
     ;; Handle Emacs push buttons in buffers
     ((and (fboundp 'button-at) (button-at (point)))
@@ -590,11 +604,11 @@ smart keyboard keys.")
 ;;; ************************************************************************
 
 (defun first-line-p ()
-  "Return true if point is on the first line of the buffer."
+  "Return t if point is on the first line of the buffer."
   (save-excursion (beginning-of-line) (bobp)))
 
 (defun last-line-p ()
-  "Return true if point is on the last line of the buffer."
+  "Return t if point is on the last line of the buffer."
   (save-excursion (end-of-line) (smart-eobp)))
 
 (defun smart-completion-help ()
@@ -649,7 +663,7 @@ If key is pressed:
 	(t (Buffer-menu-select))))
 
 (defun smart-buffer-menu-assist ()
-  "Use a single assist-key or mouse assist-key to manipulate `buffer-menu' entries.
+  "Use assist-key or mouse assist-key to manipulate `buffer-menu' entries.
 
 Invoked via an assist-key press when in `Buffer-menu-mode'.  It assumes that its
 caller has already checked that the assist-key was pressed in an appropriate
@@ -717,7 +731,7 @@ If key is pressed:
 	(t (ibuffer-do-view))))
 
 (defun smart-ibuffer-menu-assist ()
-  "Use a single assist-key or mouse assist-key to manipulate `buffer-menu' entries.
+  "Use assist-key or mouse assist-key to manipulate `buffer-menu' entries.
 
 Invoked via an assist-key press when in ibuffer-mode.  It assumes that
 its caller has already checked that the assist-key was pressed in an
@@ -846,7 +860,7 @@ If assist-key is pressed:
 ;; company-mode's minor mode map.
 
 (defun smart-company-to-definition (event)
-  "Action Key binding for company-mode completions popup to show item definition.
+  "Action Key binding for `company-mode' completions to show item definition.
 Use left mouse key, RET or TAB key to select a completion and exit."
   (interactive "e")
   (when (mouse-event-p last-command-event)
@@ -854,7 +868,7 @@ Use left mouse key, RET or TAB key to select a completion and exit."
   (company-show-location))
 
 (defun smart-company-help (event)
-  "Assist Key binding for company-mode completions popup to show item doc."
+  "Assist Key binding for `company-mode' completions popup to show item doc."
   (interactive "e")
   (when (mouse-event-p last-command-event)
     (company-select-mouse event))
@@ -867,7 +881,7 @@ Use left mouse key, RET or TAB key to select a completion and exit."
 ;;; ************************************************************************
 
 (defun smart-dired-pathname-up-to-point (&optional no-default)
-  "Return the part of the pathname up through point, else current directory path.
+  "Return the part of the pathname up through point, else current directory.
 Use for direct selection of an ancestor directory of the
 dired directory at point, if any.
 
@@ -965,6 +979,20 @@ If assist-key is pressed:
 	 (dired-flag-file-deletion 1))))
 
 ;;; ************************************************************************
+;;; smart-ert-results functions
+;;; ************************************************************************
+
+(defun smart-ert-results (status-symbol)
+  "Filter `ert-results-mode' entries to those matching STATUS-SYMBOL at point.
+Do nothing if STATUS-SYMBOL is nil."
+  (ert-results-filter status-symbol))
+
+(defun smart-ert-results-assist (_status-symbol)
+  "Display help documentation for the `ert-results-mode' test at point, if any.
+Trigger an error if there is no test result at or before point."
+  (ert-results-describe-test-at-point))
+
+;;; ************************************************************************
 ;;; smart-gnus functions
 ;;; ************************************************************************
 
@@ -991,7 +1019,7 @@ If key is pressed within:
 	(t (gnus-group-read-group nil))))
 
 (defun smart-gnus-group-assist ()
-  "Use an assist-key or assist-mouse key to move through Gnus Newsgroup listings.
+  "Use assist-key or assist-mouse key to move through Gnus Newsgroup listings.
 Invoked via an assist-key press when in gnus-group-mode.  It assumes that its
 caller has already checked that the key was pressed in an appropriate buffer
 and has moved the cursor to the selected buffer.
@@ -1153,6 +1181,7 @@ active."
 	    (smart-helm-get-current-action)))))))
 
 (defun smart-helm-alive-p ()
+  "Return t if `helm' completion is actively prompting."
   ;; Handles case where helm-action-buffer is visible but helm-buffer
   ;; is not; fixed in helm with commit gh#emacs-helm/helm/cc15f73.
   (and (featurep 'helm)
@@ -1324,9 +1353,9 @@ Locations are:
 (defun smart-hmail ()
   "Use a key or mouse key to move through e-mail messages and summaries.
 
-Invoked via a key press when in hmail:reader or hmail:lister mode.
-It assumes that its caller has already checked that the key was pressed in an
-appropriate buffer and has moved the cursor to the selected buffer.
+Invoked via a key press when in `hmail:reader' or `hmail:lister' mode.
+It assumes that its caller has already checked that the key was pressed
+in an appropriate buffer and has moved the cursor to the selected buffer.
 
 If key is pressed within:
  (1) a msg buffer, within the first line or at the end of a message,
@@ -1357,8 +1386,8 @@ If key is pressed within:
 (defun smart-hmail-assist ()
   "Use an assist key or mouse key to move through e-mail messages and summaries.
 
-Invoked via an assist key press when in hmail:reader or
-hmail:lister mode.  It assumes that its caller has already
+Invoked via an assist key press when in `hmail:reader' or
+`hmail:lister' mode.  It assumes that its caller has already
 checked that the assist-key was pressed in an appropriate buffer
 and has moved the cursor to the selected buffer.
 
@@ -1444,7 +1473,7 @@ sets `hkey-value' to (identifier . identifier-definition-buffer-position)."
 
 ;; Derived from `imenu' function in the imenu library.
 (defun smart-imenu-item-p (index-key &optional variable-flag no-recurse-flag)
-  "Return the definition marker position for INDEX-KEY in current buffer's imenu.
+  "Return the definition marker pos for INDEX-KEY in current buffer's imenu.
 Return nil if INDEX-KEY is not in the imenu.  If INDEX-KEY is
 both a function and a variable, the function definition is used
 by default; in such a case, when optional VARIABLE-FLAG is
@@ -1492,7 +1521,7 @@ NO-RECURSE-FLAG non-nil prevents infinite recursions."
 ;;; ************************************************************************
 
 (defun smart-magit-display-file (return-command)
-  "Execute Magit command bound to return, possibly using hpath:display-buffer."
+  "Execute `magit' cmd bound to return, possibly using `hpath:display-buffer'."
   (cond ((eq return-command #'magit-diff-visit-file)
 	 ;; Use Hyperbole display variable to determine where
 	 ;; to display the file of the diff.
@@ -1618,7 +1647,7 @@ If key is pressed:
       (unix-apropos-get-man))))
 
 (defun smart-apropos-assist ()
-  "Move through UNIX man apropos listings by using assist-key or mouse assist-key.
+  "Move through man apropos listings by using assist key or mouse assist key.
 
 Invoked via an assist-key press when in `unix-apropos-mode'.  It assumes that
 its caller has already checked that the assist-key was pressed in an appropriate
@@ -1684,7 +1713,7 @@ local variable containing its pathname."
 	  (t ref))))
 
 (defun smart-man-c-routine-ref ()
-  "Return form to jump to the definition of the C function whose name is at point.
+  "Return form to jump to the definition of the named C function at point.
 Valid sections within the man page are: ROUTINES, MACROS or FUNCTIONS.
 Uses (smart-tags-file-list) function to determine the tags file from which to
 locate the definition."
@@ -1729,7 +1758,7 @@ If not on a file name, returns nil."
 ;;; ************************************************************************
 
 (defun smart-org ()
-  "Follow Org mode references, cycles outline visibility and executes code blocks.
+  "Follow Org mode references, cycle outline visibility and execute code blocks.
 Active when `hsys-org-enable-smart-keys' is non-nil,
 
 When the Action Key is pressed:
@@ -1948,12 +1977,12 @@ If key is pressed:
 (defun smart-outline-assist ()
   "Collapse, expand, and move outline entries.
 Invoked via an assist-key press when in `outline-mode'.  It assumes that
-its caller has already checked that the assist-key was pressed in an appropriate
-buffer and has moved the cursor to the selected buffer.
+its caller has already checked that the assist-key was pressed in an
+appropriate buffer and has moved the cursor to the selected buffer.
 
 If assist-key is pressed:
- (1) after an outline heading has been cut via the action-key, allow multiple
-     pastes throughout the buffer (last paste should be done with
+ (1) after an outline heading has been cut via the action-key, allow
+     multiple pastes throughout the buffer (last paste should be done with
      the Action Key, not the Assist Key);
  (2) at the end of buffer, hide all bodies in buffer;
  (3) at the beginning of a heading line, cut the current heading (sans
@@ -1998,7 +2027,8 @@ entire subtree.  Return final point."
 	(point) (or (save-excursion (re-search-forward "[\n\r]" nil t)) (point)))))
 
 (defun smart-outline-char-invisible-p (&optional pos)
-  "Return t if the character after point is invisible/hidden, else nil."
+  "Return t if the character after point is invisible/hidden, else nil.
+With optional POS, use that instead of point."
   (or pos (setq pos (point)))
   (when (or
 	 ;; New-style Emacs outlines with invisible properties to hide lines
@@ -2059,10 +2089,10 @@ If key is pressed:
 
 ;; Emacs push button support
 (defun smart-push-button (&optional _pos _use-mouse-action)
-  "Activate an Emacs push-button, including text-property follow-link buttons.
+  "Activate an Emacs `push-button', including text-property follow-link buttons.
 Button is at optional POS or at point.  USE-MOUSE-ACTION prefers
 mouse-action to action property."
-  (or 
+  (or
    ;; Handle Emacs text-property buttons which don't work with 'button-activate'.
    ;; Use whatever command is bound to RET within the button's keymap.
    (call-interactively (or (lookup-key (get-text-property (point) 'keymap) (kbd "RET"))

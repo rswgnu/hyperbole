@@ -1,5 +1,9 @@
 2023-12-29  Bob Weiner  <rsw@gnu.org>
 
+* hui-mouse.el (hkey-alist): Add 'ert-results-mode' support using rsw's new
+    "ert-results.el" library.  Add 'smart-ert-results' and
+    'smart-ert-results-assist' support functions.  Fix many flycheck warnings.
+
 * hmouse-tag.el (smart-lisp-find-tag): Fix issue where 'hkey-value' was used
     as tag when it was not a string, causing failures on known function lookups.
 
