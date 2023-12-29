@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     28-Dec-23 at 21:47:55 by Bob Weiner
+@c Last-Mod:     29-Dec-23 at 23:27:32 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.0
-Printed December 28, 2023.
+Printed December 29, 2023.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.0
-December 28, 2023
+December 29, 2023
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -459,6 +459,7 @@ Smart Keyboard Keys
 * Smart Key - Ivy::
 * Smart Key - Treemacs::
 * Smart Key - Dired Sidebar Mode::
+* Smart Key - ERT Results Mode::
 * Smart Key - Emacs Pushbuttons::
 * Smart Key - Argument Completion::
 * Smart Key - ID Edit Mode::
@@ -9803,6 +9804,7 @@ If dragged from an Emacs window to outside of Emacs:
 * Smart Key - Ivy::
 * Smart Key - Treemacs::
 * Smart Key - Dired Sidebar Mode::
+* Smart Key - ERT Results Mode::
 * Smart Key - Emacs Pushbuttons::
 * Smart Key - Argument Completion::
 * Smart Key - ID Edit Mode::
@@ -9980,7 +9982,7 @@ When in a Treemacs file browser buffer:
 @end group
 @end format
 
-@node Smart Key - Dired Sidebar Mode, Smart Key - Emacs Pushbuttons, Smart Key - Treemacs, Smart Keyboard Keys
+@node Smart Key - Dired Sidebar Mode, Smart Key - ERT Results Mode, Smart Key - Treemacs, Smart Keyboard Keys
 @subsection Smart Key - Dired Sidebar Mode
 
 @cindex dired-sidebar-mode
@@ -10008,7 +10010,35 @@ When in a dired-sidebar buffer:
 @end group
 @end format
 
-@node Smart Key - Emacs Pushbuttons, Smart Key - Argument Completion, Smart Key - Dired Sidebar Mode, Smart Keyboard Keys
+@node Smart Key - ERT Results Mode, Smart Key - Emacs Pushbuttons, Smart Key - Dired Sidebar Mode, Smart Keyboard Keys
+@subsection Smart Key - ERT Results Mode
+
+@cindex ert-results-mode
+@cindex elisp testing
+@cindex ert
+@cindex regression testing
+@format
+@group
+When in an Emacs Regression Test (ERT) results buffer:
+  ACTION KEY
+     Filters @code{ert-results-mode} test results entries to those
+     matching the result status of the entry at point.  Does nothing
+     if there is no entry at point.
+
+     With point on any of the statistics lines in the top section of the
+     results buffer, does the following:
+       Selector: - toggles showing/hiding all test results
+       Passed:   - shows passed tests only
+       Failed:   - shows failed tests only
+       Skipped:  - shows skipped tests only
+       Total:    - shows all tests
+  ASSIST KEY
+     Displays help documentation for the @code{ert-results-mode} test at point,
+     if any.  Triggers an error if there is no test result at or before point."
+@end group
+@end format
+
+@node Smart Key - Emacs Pushbuttons, Smart Key - Argument Completion, Smart Key - ERT Results Mode, Smart Keyboard Keys
 @subsection Smart Key - Emacs Pushbuttons
 
 @format

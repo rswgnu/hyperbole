@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     29-Dec-23 at 16:24:31 by Bob Weiner
+;; Last-Mod:     29-Dec-23 at 23:43:11 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -72,6 +72,7 @@
 
 (defvar helm-selection-point)
 
+(declare-function ert-results-filter                 "ext:ert-results")
 (declare-function ert-results-filter-status-p        "ext:ert-results")
 (declare-function ert-results-display                "ext:ert-results")
 (declare-function ert-results-hide                   "ext:ert-results")
@@ -663,13 +664,13 @@ If key is pressed:
 	(t (Buffer-menu-select))))
 
 (defun smart-buffer-menu-assist ()
-  "Use assist-key or mouse assist-key to manipulate `buffer-menu' entries.
+  "Use assist key or mouse assist key to manipulate `buffer-menu' entries.
 
-Invoked via an assist-key press when in `Buffer-menu-mode'.  It assumes that its
-caller has already checked that the assist-key was pressed in an appropriate
+Invoked via an assist key press when in `Buffer-menu-mode'.  It assumes that its
+caller has already checked that the assist key was pressed in an appropriate
 buffer and has moved the cursor there.
 
-If assist-key is pressed:
+If assist key is pressed:
  (1) on the first or second column of an entry, the selected buffer is unmarked
      for display and for saving or deletion; 
  (2) anywhere else within an entry line, the selected buffer is marked for
@@ -731,13 +732,13 @@ If key is pressed:
 	(t (ibuffer-do-view))))
 
 (defun smart-ibuffer-menu-assist ()
-  "Use assist-key or mouse assist-key to manipulate `buffer-menu' entries.
+  "Use assist key or mouse assist key to manipulate `buffer-menu' entries.
 
-Invoked via an assist-key press when in ibuffer-mode.  It assumes that
-its caller has already checked that the assist-key was pressed in an
+Invoked via an assist key press when in ibuffer-mode.  It assumes that
+its caller has already checked that the assist key was pressed in an
 appropriate buffer and has moved the cursor there.
 
-If assist-key is pressed:
+If assist key is pressed:
  (1) on the first or second column of an entry, the selected buffer is unmarked
      for display or deletion; 
  (2) anywhere else within an entry line, the selected buffer is marked for
@@ -763,7 +764,7 @@ If assist-key is pressed:
 (defun smart-custom ()
   "Use a single key or mouse key to manipulate customizable settings.
 
-Invoked via a key press when in Custom-mode.  It assumes that
+Invoked via a key press when in `Custom-mode'.  It assumes that
 its caller has already checked that the key was pressed in an
 appropriate buffer and has moved the cursor there.
 
@@ -782,9 +783,9 @@ If key is pressed:
 	(t (Custom-newline (point)))))
 
 (defun smart-custom-assist ()
-  "Use an assist-key or mouse assist-kkey to manipulate customizable settings.
+  "Use an assist key or mouse assist key to manipulate customizable settings.
 
-Invoked via a key press when in Custom-mode.  It assumes that
+Invoked via a key press when in `Custom-mode'.  It assumes that
 its caller has already checked that the key was pressed in an
 appropriate buffer and has moved the cursor there.
 
@@ -812,7 +813,7 @@ If key is pressed:
 (defun smart-calendar ()
   "Use a single key or mouse key to manipulate the scrolling calendar.
 
-Invoked via a key press when in calendar-mode.  It assumes that its
+Invoked via a key press when in `calendar-mode'.  It assumes that its
 caller has already checked that the key was pressed in an appropriate buffer
 and has moved the cursor there.
 
@@ -831,13 +832,13 @@ If key is pressed:
 	   (diary-view-entries 1))))
 
 (defun smart-calendar-assist ()
-  "Use the assist-key or mouse assist-key to manipulate the scrolling calendar.
+  "Use the assist key or mouse assist key to manipulate the scrolling calendar.
 
-Invoked via an assist-key press when in calendar-mode.  It assumes that its
-caller has already checked that the assist-key was pressed in an appropriate
+Invoked via an assist key press when in `calendar-mode'.  It assumes that its
+caller has already checked that the assist key was pressed in an appropriate
 buffer and has moved the cursor there.
 
-If assist-key is pressed:
+If assist key is pressed:
  (1) at the end of the buffer, the calendar is scrolled backward 3 months;
  (2) to the left of any dates on a calendar line, the calendar is scrolled
      forward 3 months;
@@ -950,13 +951,13 @@ If key is pressed:
 	(t (hpath:find (or (dired-get-filename nil t) "")))))
 
 (defun smart-dired-assist ()
-  "Use a single assist-key or mouse assist-key to manipulate directory entries.
+  "Use a single assist key or mouse assist key to manipulate directory entries.
 
-Invoked via an assist-key press when in `dired-mode'.  It assumes that its
-caller has already checked that the assist-key was pressed in an appropriate
+Invoked via an assist key press when in `dired-mode'.  It assumes that its
+caller has already checked that the assist key was pressed in an appropriate
 buffer and has moved the cursor there.
 
-If assist-key is pressed:
+If assist key is pressed:
  (1) on a `~' character, all backup files in the directory are marked for
      deletion;
  (2) on a `#' character, all auto-save files in the directory are marked for
@@ -982,10 +983,7 @@ If assist-key is pressed:
 ;;; smart-ert-results functions
 ;;; ************************************************************************
 
-(defun smart-ert-results (status-symbol)
-  "Filter `ert-results-mode' entries to those matching STATUS-SYMBOL at point.
-Do nothing if STATUS-SYMBOL is nil."
-  (ert-results-filter status-symbol))
+(defalias 'smart-ert-results 'ert-results-filter)
 
 (defun smart-ert-results-assist (_status-symbol)
   "Display help documentation for the `ert-results-mode' test at point, if any.
@@ -998,7 +996,7 @@ Trigger an error if there is no test result at or before point."
 
 (defun smart-gnus-group ()
   "Use a key or mouse key to move through Gnus Newsgroup listings.
-Invoked via a key press when in gnus-group-mode.  It assumes that its caller
+Invoked via a key press when in `gnus-group-mode'.  It assumes that its caller
 has already checked that the key was pressed in an appropriate buffer and has
 moved the cursor to the selected buffer.
 
@@ -1019,8 +1017,8 @@ If key is pressed within:
 	(t (gnus-group-read-group nil))))
 
 (defun smart-gnus-group-assist ()
-  "Use assist-key or assist-mouse key to move through Gnus Newsgroup listings.
-Invoked via an assist-key press when in gnus-group-mode.  It assumes that its
+  "Use assist key or assist-mouse key to move through Gnus Newsgroup listings.
+Invoked via an assist key press when in `gnus-group-mode'.  It assumes that its
 caller has already checked that the key was pressed in an appropriate buffer
 and has moved the cursor to the selected buffer.
 
@@ -1042,7 +1040,7 @@ If key is pressed within:
 
 (defun smart-gnus-summary ()
   "Use a key or mouse key to move through Gnus News article listings.
-Invoked via a key press when in gnus-summary-mode.  It assumes that its caller
+Invoked via a key press when in `gnus-summary-mode'.  It assumes that its caller
 has already checked that the key was pressed in an appropriate buffer and has
 moved the cursor to the selected buffer.
 
@@ -1071,10 +1069,10 @@ If key is pressed within:
 	   (call-interactively 'gnus-summary-next-page))))
 
 (defun smart-gnus-summary-assist ()
-  "Use an assist-key or assist-mouse key to move through Gnus News articles.
-Invoked via an assist-key press when in gnus-summary-mode.  It assumes that its
-caller has already checked that the key was pressed in an appropriate buffer
-and has moved the cursor to the selected buffer.
+  "Use an assist key or assist-mouse key to move through Gnus News articles.
+Invoked via an assist key press when in `gnus-summary-mode'.  It assumes that
+its caller has already checked that the key was pressed in an appropriate
+buffer and has moved the cursor to the selected buffer.
 
 If key is pressed within:
  (1) to the left of an article number, that article is marked as unread;
@@ -1095,7 +1093,7 @@ If key is pressed within:
 (defun smart-gnus-article ()
   "Use a key or mouse key to move through Gnus netnews articles.
 
-Invoked via a key press when in gnus-article-mode.
+Invoked via a key press when in `gnus-article-mode'.
 It assumes that its caller has already checked that the key was pressed in an
 appropriate buffer and has moved the cursor to the selected buffer.
 
@@ -1116,14 +1114,14 @@ If key is pressed within:
 	(t (smart-scroll-up))))
 
 (defun smart-gnus-article-assist ()
-  "Use an assist-key or mouse assist-key to move through Gnus netnews articles.
+  "Use an assist key or mouse assist key to move through Gnus netnews articles.
 
-Invoked via an assist-key press when in gnus-article-mode.  It
-assumes that its caller has already checked that the assist-key
+Invoked via an assist key press when in `gnus-article-mode'.  It
+assumes that its caller has already checked that the assist key
 was pressed in an appropriate buffer and has moved the cursor to
 the selected buffer.
 
-If assist-key is pressed within:
+If assist key is pressed within:
  (1) the first line or end of an article, the previous message is displayed;
  (2) the first line of an Info cross reference, the reference is followed;
  (3) anywhere else, the window is scrolled down a windowful."
@@ -1388,10 +1386,10 @@ If key is pressed within:
 
 Invoked via an assist key press when in `hmail:reader' or
 `hmail:lister' mode.  It assumes that its caller has already
-checked that the assist-key was pressed in an appropriate buffer
+checked that the assist key was pressed in an appropriate buffer
 and has moved the cursor to the selected buffer.
 
-If assist-key is pressed within:
+If assist key is pressed within:
  (1) a msg buffer, within the first line or at the end of a message,
      the previous undeleted message is displayed;
  (2) a msg buffer within the first line of an Info cross reference, the
@@ -1559,10 +1557,10 @@ If key is pressed:
 
 Invoked via an assist key press when in a magit mode and not on a
 button.  It assumes that its caller has already checked that the
-assist-key was pressed in an appropriate buffer and has moved the
+assist key was pressed in an appropriate buffer and has moved the
 cursor to the selected buffer.
 
-If assist-key is pressed:
+If assist key is pressed:
  (1) on the last line, quit from the magit mode (\"q\" key binding);
  (2) at the end of a line, scroll down a windowful;
  (3) on an initial read-only header line, cycle visibility of all sections;
@@ -1649,11 +1647,11 @@ If key is pressed:
 (defun smart-apropos-assist ()
   "Move through man apropos listings by using assist key or mouse assist key.
 
-Invoked via an assist-key press when in `unix-apropos-mode'.  It assumes that
-its caller has already checked that the assist-key was pressed in an appropriate
+Invoked via an assist key press when in `unix-apropos-mode'.  It assumes that
+its caller has already checked that the assist key was pressed in an appropriate
 buffer and has moved the cursor to the selected buffer.
 
-If assist-key is pressed:
+If assist key is pressed:
  (1) on a UNIX man apropos entry, the man page for that entry is displayed in
      another window;
  (2) on or after the last line, the buffer in the other window is scrolled down
@@ -1976,12 +1974,12 @@ If key is pressed:
 
 (defun smart-outline-assist ()
   "Collapse, expand, and move outline entries.
-Invoked via an assist-key press when in `outline-mode'.  It assumes that
-its caller has already checked that the assist-key was pressed in an
+Invoked via an assist key press when in `outline-mode'.  It assumes that
+its caller has already checked that the assist key was pressed in an
 appropriate buffer and has moved the cursor to the selected buffer.
 
-If assist-key is pressed:
- (1) after an outline heading has been cut via the action-key, allow
+If assist key is pressed:
+ (1) after an outline heading has been cut via the action key, allow
      multiple pastes throughout the buffer (last paste should be done with
      the Action Key, not the Assist Key);
  (2) at the end of buffer, hide all bodies in buffer;
@@ -2054,7 +2052,7 @@ If key is pressed:
 	(t (todotxt-complete-toggle))))
 
 (defun smart-todotxt-assist ()
-  "Use a single assist-key or mouse assist-key to manipulate `todotxt' items.
+  "Use a single assist key or mouse assist key to manipulate `todotxt' items.
 
 If key is pressed:
  (1) at the end of buffer, archive completed items
@@ -2144,13 +2142,13 @@ If key is pressed:
 	(t (tar-extract-other-window))))
 
 (defun smart-tar-assist ()
-  "Use a single assist-key or mouse assist-key to manipulate tar file entries.
+  "Use a single assist key or mouse assist key to manipulate tar file entries.
 
-Invoked via an assist-key press when in `dired-mode'.  It assumes that its
-caller has already checked that the assist-key was pressed in an appropriate
+Invoked via an assist key press when in `dired-mode'.  It assumes that its
+caller has already checked that the assist key was pressed in an appropriate
 buffer and has moved the cursor there.
 
-If assist-key is pressed:
+If assist key is pressed:
  (1) on an entry line, the current entry is marked for deletion;
  (2) on or after the last line in the buffer, all delete marks on all entries
      are undone."
