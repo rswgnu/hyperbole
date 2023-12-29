@@ -1,4 +1,15 @@
+2023-12-29  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-tag.el (smart-lisp-find-tag): Fix issue where 'hkey-value' was used
+    as tag when it was not a string, causing failures on known function lookups.
+
 2023-12-28  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode:pre-self-insert-command): Add these kotl-mode
+    commands: kill-line, kill-region, kill-sentence, kill-or-copy-region, yank,
+    yank-from-kill-ring, yank-pop, and yank-rectangle.
+                   (kotl-mode:to-valid-position-commands): Make list of commands
+    modifiable.
 
 * hypb-ert.el (hypb-ert-def-at-p): Add support for `ert-deftest-async' from the
     "ert-async.el" package.
@@ -42,13 +53,13 @@
 
 2023-12-26  Bob Weiner  <rsw@gnu.org>
 
-* hpath.el (hpath:to-markup-anchor): If referent-regexp starts with '^', add
+* hpath.el (hpath:to-markup-anchor): If 'referent-regexp' starts with '^', add
     "[ \t]*" instead of "[ \t]+" to the expression in case it matches the whole line.
 
 * hui.el (hui:link-possible-types): Change outline heading line link to trigger only
     for outline, org and kotl modes when point is anywhere on the heading line.
     Include non-zero column in pathname so returns to the original point.  Produce a
-    link-to-string-match type.
+    'link-to-string-match' type.
   hbut.el (ibut:insert-text): Change 'actypes::link-to-string-match' to use a pathname
     format ibut rather than a <link-to-string-match> action button when the occurrence
     number is 1.

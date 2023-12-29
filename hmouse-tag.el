@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     28-Dec-23 at 11:16:10 by Bob Weiner
+;; Last-Mod:     29-Dec-23 at 00:52:05 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -699,7 +699,7 @@ Use `hpath:display-buffer' to show definition or documentation."
 				  "Show doc for" "Find")))
 	 current-prefix-arg))
   (unless (stringp tag)
-    (setq tag (or hkey-value (smart-lisp-at-tag-p t))))
+    (setq tag (if (stringp hkey-value) hkey-value (smart-lisp-at-tag-p t))))
   (let* ((elisp-flag (smart-emacs-lisp-mode-p))
 	 (tag-sym (intern-soft tag)))
     (cond ((and show-doc elisp-flag)

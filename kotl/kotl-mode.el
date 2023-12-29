@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     25-Dec-23 at 23:33:09 by Bob Weiner
+;; Last-Mod:     29-Dec-23 at 02:05:41 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -38,18 +38,11 @@
 ;;; Public variables
 ;;; ************************************************************************
 
-(defvar kotl-mode-map nil
-  "Keymap containing koutliner editing and viewing commands.")
-
-(defvar kotl-previous-mode nil
-  "Default mode of koutline buffers prior to invocation of kotl-mode.")
-
-(defcustom kotl-mode:shrink-region-flag nil
-  "*Non-nil means Koutliner commands automatically shrink the region.
-The region is shrinked within the visible bounds of a single cell
-before editing it.  The region then falls within the first
-visible cell that was part of the region or that followed it.
-Default value is nil."
+(defcustom kotl-mode:indent-tabs-mode t
+  "*Non-nil means {\\[kotl-mode:tab-command]} may insert literal tab characters.
+Tab characters are inserted rather than space characters when
+`kotl-mode:tab-flag' is non-nil.  Default value is t.  The value
+of this variable is local to each Koutline buffer."
   :type 'boolean
   :group 'hyperbole-koutliner)
 
@@ -61,6 +54,15 @@ during such operations, regardless of the value of this flag."
   :type 'boolean
   :group 'hyperbole-koutliner)
 
+(defcustom kotl-mode:shrink-region-flag nil
+  "*Non-nil means Koutliner commands automatically shrink the region.
+The region is shrinked within the visible bounds of a single cell
+before editing it.  The region then falls within the first
+visible cell that was part of the region or that followed it.
+Default value is nil."
+  :type 'boolean
+  :group 'hyperbole-koutliner)
+
 (defcustom kotl-mode:tab-flag nil
   "*Non-nil means {\\[kotl-mode:tab-command]} inserts a literal tab character and {\\[kotl-mode:untab-command]} deletes backward.
 Nil means {\\[kotl-mode:tab-command]} demotes the current tree and
@@ -68,13 +70,25 @@ Nil means {\\[kotl-mode:tab-command]} demotes the current tree and
   :type 'boolean
   :group 'hyperbole-koutliner)
 
-(defcustom kotl-mode:indent-tabs-mode t
-  "*Non-nil means {\\[kotl-mode:tab-command]} may insert literal tab characters.
-Tab characters are inserted rather than space characters when
-`kotl-mode:tab-flag' is non-nil.  Default value is t.  The value
-of this variable is local to each Koutline buffer."
-  :type 'boolean
-  :group 'hyperbole-koutliner)
+(defvar kotl-mode:to-valid-position-commands
+  '(kotl-mode:orgtbl-self-insert-command
+    kotl-mode:kill-or-copy-region
+    kotl-mode:kill-line
+    kotl-mode:kill-region
+    kotl-mode:kill-sentence
+    kotl-mode:yank
+    kotl-mode:yank-pop
+    orgtbl-self-insert-command
+    self-insert-command
+    yank-from-kill-ring
+    yank-rectangle)
+  "List of command symbols to move to a valid Koutline position before executing.")
+
+(defvar kotl-mode-map nil
+  "Keymap containing koutliner editing and viewing commands.")
+
+(defvar kotl-previous-mode nil
+  "Default mode of koutline buffers prior to invocation of kotl-mode.")
 
 ;; Define these newer Emacs variables if Emacs has not already done so.
 (defvar yank-window-start nil)
@@ -1364,8 +1378,8 @@ Leave point at original location but return the tree's new start point."
 More precisely, reinsert the most recent kill, which is the
 stretch of killed text most recently killed OR yanked.  Put point
 at the end, and set mark at the beginning without activating it.
-With just \\[universal-argument] as argument, put point at beginning, and mark at end.
-With argument N, reinsert the Nth most recent kill.
+With just \\[universal-argument] as argument, put point at beginning,
+and mark at end.  With argument N, reinsert the Nth most recent kill.
 
 When this command inserts text into the buffer, it honors the
 `yank-handled-properties' and `yank-excluded-properties'
@@ -3390,10 +3404,7 @@ newlines at end of tree."
 Mouse may have moved point outside of an editable area.
 `kotl-mode' adds this function to `pre-command-hook'."
   (when (and
-	 (memq this-command '(kotl-mode:orgtbl-self-insert-command
-			      ;; kotl-mode:self-insert-command
-			      orgtbl-self-insert-command
-			      self-insert-command))
+	 (memq this-command kotl-mode:to-valid-position-commands)
 	 (not (kview:valid-position-p))
 	 ;; Prevent repeatedly moving point to valid position when moving trees
 	 ;; (not (hyperb:stack-frame '(kcell-view:to-label-end)))
