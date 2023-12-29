@@ -3,6 +3,20 @@
 * hmouse-tag.el (smart-lisp-find-tag): Fix issue where 'hkey-value' was used
     as tag when it was not a string, causing failures on known function lookups.
 
+2023-12-29  Mats Lidell  <matsl@gnu.org>
+
+* test/demo-tests.el (fast-demo-markdown-anchor-with-spaces)
+    (fast-demo-elisp-or-env-vars, fast-demo-elisp-library-in-load-path)
+    (fast-demo-info-manual-references, fast-demo-grep)
+    (fast-demo-python-trace-back, fast-demo-man-k)
+    (fast-demo-action-button-shell, fast-demo-action-button-fill-column)
+    (fast-demo-display-demo-using-action-buttons)
+    (fast-demo-display-kotl-starting-from-cell)
+    (fast-demo-outline-section-anchor-and-relative-line-number)
+    (fast-demo-markdown-anchor-with-spaces)
+    (fast-demo-elisp-library-in-load-path)
+    (fast-demo-elisp-or-env-vars): Add remaining test cases for fast-demo.
+
 2023-12-28  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kotl-mode.el (kotl-mode:pre-self-insert-command): Add these kotl-mode
