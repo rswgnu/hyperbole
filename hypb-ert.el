@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org> and Bob Weiner <rsw@gnu.org>
 ;;
 ;; Orig-Date:    31-Mar-21 at 21:11:00
-;; Last-Mod:     28-Dec-23 at 15:33:38 by Bob Weiner
+;; Last-Mod:     30-Dec-23 at 00:38:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -41,7 +41,10 @@
       ;; Suppress ert messages so last test case message stays in the minibuffer;
       ;; 3rd arg message-fn available only in Emacs 27 and earlier
       (ert selector nil #'hypb-ert-message-function)
-    (ert selector)))
+    (ert selector))
+  ;; ERT can display a long internal data structure as a result, so
+  ;; replace it in the minibuffer with a blank message.
+  (message ""))
 
 (defun hypb-ert-run-test (test-name)
   "Run the specified TEST-NAME ert test."

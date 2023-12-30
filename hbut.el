@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     26-Dec-23 at 23:32:56 by Bob Weiner
+;; Last-Mod:     30-Dec-23 at 01:38:30 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -297,7 +297,15 @@ delimiters.  With TWO-LINES-FLAG non-nil, constrain label search
 to two lines."
   (let ((opoint (point))
 	(quoted "\\(^\\|[^\\{$]\\)")
-	(hbut:max-len hbut:max-len)
+	;; For <> delimited action buttons which can be long
+	;; sexpressions, don't enforce the normal, short button length
+	;; limit.  Setting this to 0 means unlimited length, assuming
+	;; the TWO-LINES-FLAG is nil.
+	(hbut:max-len
+	 (if (and (string-equal start-delim "<")
+		  (string-equal end-delim ">"))
+	     0
+	   hbut:max-len))
 	npoint start lbl-key end but-start but-end start-regexp end-regexp)
     (unless start-delim (setq start-delim ebut:label-start))
     (unless end-delim (setq end-delim ebut:label-end))
@@ -1773,7 +1781,10 @@ excluding delimiters, not just one."
 	  (setq lbl-start-end (if (and start-delim end-delim)
 				  (ibut:label-p nil start-delim end-delim t t)
 				(or (ibut:label-p nil "\"" "\"" t t)
-				    (ibut:label-p nil "<" ">" t t)
+				    ;; <action> buttons can be longer
+				    ;; than two lines, so don't limit
+				    ;; the length.
+				    (ibut:label-p nil "<" ">" t)
 				    (ibut:label-p nil "{" "}" t t)
 				    (ibut:label-p nil "[" "]" t t))))
 	  (when lbl-start-end

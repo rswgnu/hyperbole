@@ -1,4 +1,18 @@
+2023-12-30  Bob Weiner  <rsw@gnu.org>
+
+* FAST-DEMO (Action Buttons): Update to include ert test definition within
+    the file so do not have to load all of the test files to run the demo.
+
+* hbut.el (ebut:label-p): For <action> buttons, allow unlimited length
+    button labels since might be an entire long sexpression.
+
+* hib-debbugs.el (debbugs-gnu-query:list): Debbugs support libary has been renamed
+    from 'debbugs-gnu' to just 'debbugs'.
+
 2023-12-29  Bob Weiner  <rsw@gnu.org>
+
+* test/hui-tests.el (hui--link-possible-types): Make use .otl rather than .outl
+    file suffix which automatically invokes 'outline-mode'.
 
 * hyrolo.el (hyrolo-to-entry-end): Fix bug where HyRolo fgrep would get stuck
     in Org buffers without any outline delimiters due to this function moving

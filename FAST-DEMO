@@ -341,10 +341,20 @@ pspell-config(1)         - prints information about a libpspell installation
        Display a Hyperbole Koutline starting from cell 3b10 with lines per
        cell clipped to 2.
 
-    <hbut-tests-ibut-insert-kbd-key>
+    <ert-deftest hbut-tests-ibut-program-link-to-directory ()
+      "Programmatically create ibut link-to-directory."
+      (with-temp-buffer
+	(ibut:program nil 'link-to-directory "/tmp")
+	(should (string= "\"/tmp\"" (buffer-string))))>
 
-       Run one of the Hyperbole regression tests.  Thus, tests defined with
-       the Emacs Regression Test framework using `ert-deftest' work too.
+    <hbut-tests-ibut-program-link-to-directory>
+
+       Tests defined with the Emacs Regression Test framework using
+       `ert-deftest' can be run via action buttons as well.  Press {M-RET}
+       on the first line of each of the two above action buttons, within
+       the <> delimiters.  Start with the first one which defines an ERT
+       test case; the second one runs it, displaying the result which should
+       be successful.
 
 
 ** Many More Implicit Button Types to Learn Across Time

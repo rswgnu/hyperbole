@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     26-Dec-23 at 11:54:57 by Bob Weiner
+;; Last-Mod:     30-Dec-23 at 00:00:18 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1043,11 +1043,10 @@ With point on label suggest that ibut for rename."
       (hy-delete-file-and-buffer file)))
 
   ;; Outline Heading          link-to-string-match
-  (let ((file (make-temp-file "hypb" nil ".outl" "* heading\nbody\n")))
+  (let ((file (make-temp-file "hypb" nil ".otl" "* heading\nbody\n")))
     (unwind-protect
         (progn
           (find-file file)
-          (outline-mode)
           (goto-char 1)
           (hy-test-helpers:ensure-link-possible-type 'link-to-string-match))
       (hy-delete-file-and-buffer file)))

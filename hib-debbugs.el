@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Jun-16 at 14:24:53
-;; Last-Mod:      3-Oct-23 at 23:23:16 by Mats Lidell
+;; Last-Mod:     30-Dec-23 at 00:13:19 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -189,7 +189,7 @@ used as well in place of `bug'."
 Each element of the list should be of the form (attribute . attribute-value).
 Attribute may be a symbol or a string.  Common attributes
 include: status, severity, and package."
-  (require 'debbugs-gnu)
+  (require 'debbugs)
   (setq debbugs-gnu-current-query nil)
   (dolist (attr query-attribute-list)
     (add-to-list 'debbugs-gnu-current-query
