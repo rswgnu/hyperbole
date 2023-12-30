@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     28-Dec-23 at 22:16:53 by Bob Weiner
+;; Last-Mod:     30-Dec-23 at 23:22:54 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -314,7 +314,7 @@ and {b} the previous same level cell."
           (should (string= (buffer-name) hyrolo-display-buffer))
           (should (= (how-many "@loc>") 1))
           (should (looking-at-p "==="))
-          (hyrolo-next-visible-heading 1)
+          (hyrolo-outline-next-visible-heading 1)
           (should (looking-at-p "* heading"))
           (let ((revisit-normally (concat "y" (if noninteractive " RET"))))
             (with-simulated-input revisit-normally
@@ -342,7 +342,7 @@ and {b} the previous same level cell."
           (should (string= (buffer-name) hyrolo-display-buffer))
           (should (= (how-many "@loc>") 1))
           (should (looking-at-p "==="))
-          (hyrolo-next-visible-heading 1)
+          (hyrolo-outline-next-visible-heading 1)
           (should (looking-at-p ".*1\\. heading"))
           (action-key)
           (should (equal (current-buffer) (find-buffer-visiting kotl-file)))
@@ -362,7 +362,7 @@ and {b} the previous same level cell."
           (should (string= (buffer-name) hyrolo-display-buffer))
           (should (= (how-many "@loc>") 1))
           (should (looking-at-p "==="))
-          (hyrolo-next-visible-heading 1)
+          (hyrolo-outline-next-visible-heading 1)
           (should (looking-at-p "* heading"))
           (action-key)
           (should (equal (current-buffer) (find-buffer-visiting outl-file)))
@@ -382,7 +382,7 @@ and {b} the previous same level cell."
           (should (string= (buffer-name) hyrolo-display-buffer))
           (should (= (how-many "@loc>") 1))
           (should (looking-at-p "==="))
-          (hyrolo-next-visible-heading 1)
+          (hyrolo-outline-next-visible-heading 1)
           (should (looking-at-p "# heading"))
           (action-key)
           (should (equal (current-buffer) (find-buffer-visiting md-file)))
@@ -411,7 +411,7 @@ Match a string in a level 2 child cell."
           (should (string= (buffer-name) hyrolo-display-buffer))
           (should (= (how-many "@loc>") 1))
           (should (looking-at-p "==="))
-          (hyrolo-next-visible-heading 1)
+          (hyrolo-outline-next-visible-heading 1)
           (should (looking-at-p ".*1a\\. heading"))
           (action-key)
           (should (equal (current-buffer) (find-buffer-visiting kotl-file)))
@@ -440,7 +440,7 @@ Match a string in the second cell."
           (should (string= (buffer-name) hyrolo-display-buffer))
           (should (= (how-many "@loc>") 1))
           (should (looking-at-p "==="))
-          (hyrolo-next-visible-heading 1)
+          (hyrolo-outline-next-visible-heading 1)
           (should (looking-at-p ".*2\\. heading"))
           (action-key)
           (should (equal (current-buffer) (find-buffer-visiting kotl-file)))

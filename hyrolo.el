@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     29-Dec-23 at 21:55:32 by Bob Weiner
+;; Last-Mod:     30-Dec-23 at 23:23:18 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1921,15 +1921,6 @@ When found, return the match start position."
 			   t)
     (match-beginning 0)))
 
-(defun hyrolo-next-visible-heading (arg)
-  "Move to the next visible heading or match buffer header.
-With ARG, repeats or can move backward if negative.
-
-A heading is one that starts with an `outline-regexp' match.
-A match buffer header is one that starts with `hyrolo-hdr-regexp'."
-  (interactive "p")
-  (hyrolo-move-forward #'outline-next-visible-heading arg))
-
 ;;; In `hyrolo-mode' replace `outline-minor-mode' bindings with hyrolo-* overrides.
 ;;; Wrap outline movement commands with a `hyrolo-funcall-match' call
 ;;; Wrap outline whole buffer commands with a `hyrolo-map-matches' call.
@@ -2050,12 +2041,13 @@ This puts point at the start of the current subtree, and mark at the end."
   (hyrolo-funcall-match (lambda () (outline-move-subtree-up arg)) t))
 
 (defun hyrolo-outline-next-visible-heading (arg)
-  "Move to the next visible heading line.
+  "Move to the next visible heading or match buffer header.
 With ARG, repeats or can move backward if negative.
-A heading line is one that starts with a `*' (or that
-`outline-regexp' matches)."
+
+A heading is one that starts with an `outline-regexp' match.
+A match buffer header is one that starts with `hyrolo-hdr-regexp'."
   (interactive "p")
-  (hyrolo-funcall-match (lambda () (outline-next-visible-heading arg))))
+  (hyrolo-move-forward #'outline-next-visible-heading arg))
 
 (defun hyrolo-outline-previous-heading ()
   "Move to the previous (possibly invisible) heading line."
@@ -2249,7 +2241,7 @@ beginning of the highest ancestor level.  Return final point."
        (unless (<= (hyrolo-outline-level) 1)
 	 (outline-up-heading 80)))
      (when (hyrolo-hdr-move-after-p)
-       (hyrolo-next-visible-heading 1)))
+       (hyrolo-outline-next-visible-heading 1)))
    include-sub-entries))
 
 (defun hyrolo-to-entry-end (&optional include-sub-entries)
@@ -2633,23 +2625,24 @@ shown.
 
 Any call to this function should be wrapped in a call to
 `hyrolo-map-matches'."
-  (hyrolo-verify)
-  (outline-show-all)
-  (hyrolo-outline-hide-subtree) ;; Ensure reveal-mode does not expand current entry.
-  ;; Use {t} to display top-level cells only.
-  (hyrolo-map-matches
-   (lambda ()
-     (save-excursion
-       (save-restriction
-	 (goto-char (point-min))
-	 (hyrolo-hdr-move-after-p)
-	 ;; Prevent collapsing of initial file header
-	 (narrow-to-region (point) (point-max))
-	 (let ((max-level-to-show (+ (hyrolo-min-matched-level)
-				     (1- levels-to-show))))
-	   (outline-hide-sublevels max-level-to-show)
-	   (goto-char (point-min))))))
-   t))
+  (save-excursion
+    (hyrolo-verify)
+    (outline-show-all)
+    (hyrolo-outline-hide-subtree) ;; Ensure reveal-mode does not expand current entry.
+    ;; Use {t} to display top-level cells only.
+    (hyrolo-map-matches
+     (lambda ()
+       (save-excursion
+	 (save-restriction
+	   (goto-char (point-min))
+	   (hyrolo-hdr-move-after-p)
+	   ;; Prevent collapsing of initial file header
+	   (narrow-to-region (point) (point-max))
+	   (let ((max-level-to-show (+ (hyrolo-min-matched-level)
+				       (1- levels-to-show))))
+	     (outline-hide-sublevels max-level-to-show)
+	     (goto-char (point-min))))))
+     t)))
 
 (defun hyrolo-shrink-window ()
   (let* ((lines (count-lines (point-min) (point-max)))
@@ -2963,7 +2956,7 @@ Add `hyrolo-hdr-regexp' to `hyrolo-hdr-and-entry-regexp' and `outline-regexp'."
   (define-key hyrolo-mode-map "h"        'hyrolo-outline-hide-subtree)
   (define-key hyrolo-mode-map "l"        'hyrolo-locate)
   (define-key hyrolo-mode-map "m"        'hyrolo-mail-to)
-  (define-key hyrolo-mode-map "n"        'hyrolo-next-visible-heading)
+  (define-key hyrolo-mode-map "n"        'hyrolo-outline-next-visible-heading)
   (define-key hyrolo-mode-map "o"        'hyrolo-overview)
   (define-key hyrolo-mode-map "p"        'hyrolo-outline-previous-visible-heading)
   (define-key hyrolo-mode-map "q"        'hyrolo-quit)
@@ -2976,6 +2969,7 @@ Add `hyrolo-hdr-regexp' to `hyrolo-hdr-and-entry-regexp' and `outline-regexp'."
   (define-key hyrolo-mode-map [backtab]  'hyrolo-previous-match) ;; {Shift-TAB}
   (define-key hyrolo-mode-map "u"        'hyrolo-outline-up-heading)
 
+  ;; Rebind all `outline-mode-prefix-map' keys to hyrolo equivalents
   (let (otl-cmd-name
 	hyrolo-cmd-name
 	hyrolo-cmd)

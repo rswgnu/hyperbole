@@ -1,5 +1,10 @@
 2023-12-30  Bob Weiner  <rsw@gnu.org>
 
+* hyrolo.el (hyrolo-show-levels): Add top-level save-excursion so point does
+    not move.
+            (hyrolo-outline-next-visible-heading): Rename
+    'hyrolo-next-visible-heading' to this.
+
 * FAST-DEMO (Action Buttons): Update to include ert test definition within
     the file so do not have to load all of the test files to run the demo.
 
