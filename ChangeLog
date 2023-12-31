@@ -1,3 +1,9 @@
+2023-12-31  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-file-list): Add 'hyrolo-set-file-list' after loading the hyrolo
+    library (at the end of the file) if 'hyrolo-file-list' has been set by the
+    user or the customization system prior to loading HyRolo.
+
 2023-12-30  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-show-levels): Add top-level save-excursion so point does

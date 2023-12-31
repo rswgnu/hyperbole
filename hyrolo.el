@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     30-Dec-23 at 23:23:18 by Bob Weiner
+;; Last-Mod:     31-Dec-23 at 11:53:19 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -349,7 +349,7 @@ matches."
 
 (defvar hyrolo--expanded-file-list nil
   "List of hyrolo files after directory and file wildcard expansions.
-Hyrolo sets this internally; never set it yourself.")
+HyRolo sets this internally; never set it outside of this library.")
 
 (defconst hyrolo-match-regexp nil
   "Last regular expression used to search the hyrolo.
@@ -3025,6 +3025,13 @@ Add `hyrolo-hdr-regexp' to `hyrolo-hdr-and-entry-regexp' and `outline-regexp'."
            (when reveal-auto-hide
              (reveal-close-old-overlays old-ols)))
 	 t)))))
+
+;;; ************************************************************************
+;;; hyrolo-file-list - initialize cache if this is already set when loading
+;;; ************************************************************************
+
+(when (and hyrolo-file-list (null hyrolo--expanded-file-list))
+  (hyrolo-set-file-list 'hyrolo-file-list hyrolo-file-list))
 
 (provide 'hyrolo)
 
