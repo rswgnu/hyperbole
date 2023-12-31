@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     30-Dec-23 at 23:22:54 by Bob Weiner
+;; Last-Mod:     31-Dec-23 at 16:10:00 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -24,6 +24,7 @@
 (require 'hyrolo-demo)
 (require 'hy-test-helpers "test/hy-test-helpers")
 (require 'hib-kbd)
+(require 'kotl-mode)
 (require 'with-simulated-input)
 
 (declare-function hy-test-helpers:consume-input-events "hy-test-helpers")
@@ -448,6 +449,22 @@ Match a string in the second cell."
       (hy-delete-file-and-buffer kotl-file)
       (kill-buffer hyrolo-display-buffer)
       (delete-directory temporary-file-directory))))
+
+(ert-deftest hyrolo-tests--get-file-list-change ()
+  "Verify a change to hyrolo-file-list is noticed by hyrolo-get-file-list."
+  (let* ((tmp-file (make-temp-file "hypb" nil ".org"))
+         (hyrolo-file-list (list tmp-file)))
+    (unwind-protect
+        (let ((hl (hyrolo-get-file-list)))
+          (should (= 1 (length hl)))
+          (should (string= (car hl) tmp-file)))
+      (hy-delete-file-and-buffer tmp-file))))
+
+(ert-deftest hyrolo-tests--get-file-list-wrong-suffice ()
+  "Verify files need to have the proper suffix in hyrolo-file-list."
+  (should-error
+   (let ((hyrolo-file-list (list "file-no-proper-suffix")))
+     ())))
 
 (provide 'hyrolo-tests)
 ;;; hyrolo-tests.el ends here

@@ -1,3 +1,8 @@
+2023-01-02  Mats Lidell  <matsl@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-tests--get-file-list-change)
+    (hyrolo-tests--get-file-list-wrong-suffice): Add hyrolo tests.
+
 2024-01-02  Mats Lidell  <matsl@gnu.org>
 
 * test/hypb-ert-tests.el (hypb-ert-tests--def-at-p)
