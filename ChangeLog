@@ -1,3 +1,8 @@
+2023-01-01  Mats Lidell  <matsl@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-tests--get-file-list-change)
+    (hyrolo-tests--get-file-list-wrong-suffice): Add hyrolo tests.
+
 2024-01-01  Bob Weiner  <rsw@gnu.org>
 
 * hypb-ert.el (hypb-ert-def-at-p): Update doc.  Fix grouping ref that was
