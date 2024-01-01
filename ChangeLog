@@ -1,5 +1,15 @@
 2023-01-02  Mats Lidell  <matsl@gnu.org>
 
+* test/hyrolo-tests.el (hyrolo-tests--level-number)
+    (hyrolo-tests--generate-header-contents-for-tests)
+    (hyrolo-tests--gen-outline): Add helper for constructing org files for
+    tests.
+    (hyrolo-tests--outline-next-visible-header)
+    (hyrolo-tests--tab-through-matches): Add test for working with hyrolo
+    matches.
+
+2023-12-31  Mats Lidell  <matsl@gnu.org>
+
 * test/hyrolo-tests.el (hyrolo-tests--get-file-list-change)
     (hyrolo-tests--get-file-list-wrong-suffice): Add hyrolo tests.
 
