@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:      1-Jan-24 at 16:24:40 by Mats Lidell
+;; Last-Mod:      1-Jan-24 at 19:18:41 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -465,7 +465,8 @@ Match a string in the second cell."
   (let ((tmp-file (make-temp-file "hypb" nil)))
     (unwind-protect
         (should-error
-         (setq hyrolo-file-list (list tmp-file)))
+         (let ((hyrolo-file-list (list tmp-file)))
+           ()))
       (hy-delete-file-and-buffer tmp-file))))
 
 ;; Outline movement tests
@@ -565,9 +566,41 @@ Example:
       (kill-buffer "*HyRolo*")
       (hy-delete-file-and-buffer org-file))))
 
+(ert-deftest hyrolo-tests--outline-hide-show-heading ()
+  "Verify hiding and showing headers."
+  (let* ((org-file (make-temp-file "hypb" nil ".org"
+                                   (hyrolo-tests--gen-outline "header" 2 "body" 2)))
+         (hyrolo-file-list (list org-file)))
+    (unwind-protect
+        (progn
+          (hyrolo-grep "body")
+          (should (string= "*HyRolo*" (buffer-name)))
+
+          ;; Hide first line hides whole section
+          (should (looking-at-p "==="))
+          (should (hact 'kbd-key "h"))
+          (should (looking-at-p "^===+\.\.\.$"))
+          (save-excursion
+            (next-line)
+            (should (eobp)))
+          (should (hact 'kbd-key "a"))
+          (should (looking-at-p "^===+$"))
+
+          (should (hact 'kbd-key "n"))
+          (should (looking-at-p "^* header 1$"))
+          ;; BUG: This gives an unexpected error when trying to hide
+          ;; org-fold-region: Calling ‘org-fold-core-region’ with missing SPEC
+          (should-error (hact 'kbd-key "h"))
+          ;; Expected is not to fail on hiding the header.
+          ;; Seems to be version dependent for 29 and 30!?
+
+          ;; TBC - When bug above is resolved or understood better.
+          )
+      (kill-buffer "*HyRolo*")
+      (hy-delete-file-and-buffer org-file))))
 
 (ert-deftest hyrolo-tests--tab-through-matches ()
-  "Verify movement to next visible header."
+  "Verify tabbing through search matches."
   (let* ((org-file (make-temp-file "hypb" nil ".org"
                                    (hyrolo-tests--gen-outline "header" 2 "body" 2)))
          (hyrolo-file-list (list org-file)))
