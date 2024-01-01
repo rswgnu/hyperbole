@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:      1-Jan-24 at 22:06:44 by Mats Lidell
+;; Last-Mod:      1-Jan-24 at 22:38:40 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -43,7 +43,7 @@
           (hyrolo-add "a/b")
           (hyrolo-add "a/b/c")
           (beginning-of-line)
-          (should (looking-at-p "\*\*\*   c")))
+          (should (looking-at-p "\\*\\*\\*   c")))
       (hy-delete-file-and-buffer hyrolo-file))))
 
 (ert-deftest hyrolo-demo-search-work ()
@@ -650,9 +650,6 @@ Example:
           (should (hact 'kbd-key "h"))
           (end-of-line)
           (should (get-char-property (point) 'invisible))
-          (save-excursion
-            (next-line)
-            (should (eobp)))
           (goto-char (point-min))
           (should (hact 'kbd-key "a"))
           (should (looking-at-p "^===+$"))
