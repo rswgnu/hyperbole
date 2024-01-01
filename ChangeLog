@@ -5,7 +5,8 @@
     (hyrolo-tests--gen-outline): Add helper for constructing org files for
     tests.
     (hyrolo-tests--outline-next-visible-header)
-    (hyrolo-tests--tab-through-matches): Add test for working with hyrolo
+    (hyrolo-tests--tab-through-matches)
+    (hyrolo-tests--outline-hide-show-heading): Add test for working with hyrolo
     matches.
 
 2023-12-31  Mats Lidell  <matsl@gnu.org>
