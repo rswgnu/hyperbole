@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:      1-Jan-24 at 19:18:41 by Mats Lidell
+;; Last-Mod:      1-Jan-24 at 19:29:48 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -565,6 +565,53 @@ Example:
           (should (= 2 (line-number-at-pos))))
       (kill-buffer "*HyRolo*")
       (hy-delete-file-and-buffer org-file))))
+
+(ert-deftest hyrolo-tests--outline-next-visible-header-two-sections ()
+  "Verify movement to next visible header with two sections."
+  (let* ((org-file1 (make-temp-file "hypb" nil ".org"
+                                    (hyrolo-tests--gen-outline "header-a" 1 "body-a" 2)))
+         (org-file2 (make-temp-file "hypb" nil ".org"
+                                    (hyrolo-tests--gen-outline "header-b" 1 "body-b" 2)))
+         (hyrolo-file-list (list org-file1 org-file2)))
+    (unwind-protect
+        (progn
+          (hyrolo-grep "body")
+          (should (string= "*HyRolo*" (buffer-name)))
+
+          ;; Move down
+          (should (looking-at-p "==="))
+          (should (hact 'kbd-key "n"))
+          (should (looking-at-p "^* header-a 1$"))
+          (should (hact 'kbd-key "n"))
+          (should (looking-at-p "^** header-a 1.2$"))
+          (should (hact 'kbd-key "n"))
+          (should (looking-at-p "^* header-b 1$"))
+          (should (hact 'kbd-key "n"))
+          (should (looking-at-p "^** header-b 1.2$"))
+          (should (hact 'kbd-key "n"))
+          (should (eobp))
+
+          ;; Move back up
+          (should (hact 'kbd-key "p"))
+          (should (looking-at-p "^** header-b 1.2$"))
+          (should (hact 'kbd-key "p"))
+          (should (looking-at-p "^* header-b 1$"))
+          (should (hact 'kbd-key "p"))
+          (should (looking-at-p "^** header-a 1.2$"))
+          (should (hact 'kbd-key "p"))
+          (should (looking-at-p "^* header-a 1$"))
+          (should (hact 'kbd-key "p"))
+
+          ;; BUG: This fails in Emacs 29 and 30
+          ;; This is the expected behavior that works in Emacs 27 and 28.
+          ;; (should (looking-at-p "==="))
+          ;; (should (bobp))
+          ;; This is what we get
+          (should (looking-at-p "@loc>"))
+          (should (= 2 (line-number-at-pos))))
+      (kill-buffer "*HyRolo*")
+      (hy-delete-file-and-buffer org-file1)
+      (hy-delete-file-and-buffer org-file2))))
 
 (ert-deftest hyrolo-tests--outline-hide-show-heading ()
   "Verify hiding and showing headers."

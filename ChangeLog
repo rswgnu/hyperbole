@@ -6,8 +6,9 @@
     tests.
     (hyrolo-tests--outline-next-visible-header)
     (hyrolo-tests--tab-through-matches)
-    (hyrolo-tests--outline-hide-show-heading): Add test for working with hyrolo
-    matches.
+    (hyrolo-tests--outline-hide-show-heading)
+    (hyrolo-tests--outline-next-visible-header-two-sections): Add test for
+    working with hyrolo matches.
 
 2023-12-31  Mats Lidell  <matsl@gnu.org>
 
