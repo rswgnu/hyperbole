@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:      1-Jan-24 at 19:29:48 by Mats Lidell
+;; Last-Mod:      1-Jan-24 at 20:56:49 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -563,6 +563,28 @@ Example:
           ;; This is what we get
           (should (looking-at-p "@loc>"))
           (should (= 2 (line-number-at-pos))))
+      (kill-buffer "*HyRolo*")
+      (hy-delete-file-and-buffer org-file))))
+
+(ert-deftest hyrolo-tests--outline-up-header ()
+  "Verify movement from sub header to next header one level above."
+  (let* ((org-file (make-temp-file "hypb" nil ".org"
+                                   (hyrolo-tests--gen-outline "header" 2 "body" 3)))
+         (hyrolo-file-list (list org-file)))
+    (unwind-protect
+        (progn
+          (hyrolo-grep "body")
+          (should (string= "*HyRolo*" (buffer-name)))
+
+          ;; Move to last header
+          (goto-char (point-max))
+          (forward-line -2)
+          (should (looking-at-p "^*** header 2.2.3$"))
+          (should (hact 'kbd-key "u"))
+          (should (looking-at-p "^** header 2.2$"))
+          (should (hact 'kbd-key "u"))
+          (should (looking-at-p "^* header 2$"))
+          (should-error (hact 'kbd-key "u")))
       (kill-buffer "*HyRolo*")
       (hy-delete-file-and-buffer org-file))))
 
