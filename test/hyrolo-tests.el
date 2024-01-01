@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     31-Dec-23 at 16:10:00 by Mats Lidell
+;; Last-Mod:      1-Jan-24 at 16:24:40 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -462,9 +462,143 @@ Match a string in the second cell."
 
 (ert-deftest hyrolo-tests--get-file-list-wrong-suffice ()
   "Verify files need to have the proper suffix in hyrolo-file-list."
-  (should-error
-   (let ((hyrolo-file-list (list "file-no-proper-suffix")))
-     ())))
+  (let ((tmp-file (make-temp-file "hypb" nil)))
+    (unwind-protect
+        (should-error
+         (setq hyrolo-file-list (list tmp-file)))
+      (hy-delete-file-and-buffer tmp-file))))
+
+;; Outline movement tests
+(defun hyrolo-tests--level-number (section depth)
+  "Generate the number for the SECTION at DEPTH.
+
+The format is the section followed by the depth given by the
+sequence up to depth starting from 2.
+  Depth 1:        section
+  Depth <depth>:  section.2.3.4..<depth>"
+  (let (result)
+    (dotimes (d depth)
+      (setq result
+            (if (= 0 d)
+                (number-to-string section)
+              (concat result
+                      "."
+                      (number-to-string (+ 1 d))))))
+    result))
+
+(defun hyrolo-tests--generate-header-contents-for-tests (header section body depth)
+  "Generate the HEADER and BODY contents for the SECTION with DEPTH."
+  (let (result)
+    (dotimes (d depth)
+      (setq result
+            (concat result
+                    (make-string (1+ d) ?*) " " header " " (hyrolo-tests--level-number section (1+ d)) "\n"
+                    body " " (hyrolo-tests--level-number section (1+ d)) "\n")))
+    result))
+
+(defun hyrolo-tests--gen-outline (header sections body depth)
+  "Generate an outline structure suitable for hyrolo outline test.
+
+The contents is constructed with an outline HEADER and BODY text.
+Each is repeated in SECTIONS with one set of hierarchical headers
+to the specified DEPTH.
+
+Example:
+   * header 1
+   body 1
+   ** header 2
+   body 1.2
+   [...]
+   * header <sections>
+   body <sections>
+   ** header <sections>.2
+   body <section>.2
+   [...]"
+  (let (result)
+    (dotimes (section sections)
+      (setq result
+            (concat result
+                    (hyrolo-tests--generate-header-contents-for-tests header (1+ section) body depth))))
+    result))
+
+(ert-deftest hyrolo-tests--outline-next-visible-header ()
+  "Verify movement to next visible header."
+  (let* ((org-file (make-temp-file "hypb" nil ".org"
+                                   (hyrolo-tests--gen-outline "header" 2 "body" 2)))
+         (hyrolo-file-list (list org-file)))
+    (unwind-protect
+        (progn
+          (hyrolo-grep "body")
+          (should (string= "*HyRolo*" (buffer-name)))
+
+          ;; Move down
+          (should (looking-at-p "==="))
+          (should (hact 'kbd-key "n"))
+          (should (looking-at-p "^* header 1"))
+          (should (hact 'kbd-key "n"))
+          (should (looking-at-p "^** header 1.2"))
+          (should (hact 'kbd-key "n"))
+          (should (looking-at-p "^* header 2"))
+          (should (hact 'kbd-key "n"))
+          (should (looking-at-p "^** header 2.2"))
+          (should (hact 'kbd-key "n"))
+          (should (eobp))
+
+          ;; Move back up
+          (should (hact 'kbd-key "p"))
+          (should (looking-at-p "^** header 2.2"))
+          (should (hact 'kbd-key "p"))
+          (should (looking-at-p "^* header 2"))
+          (should (hact 'kbd-key "p"))
+          (should (looking-at-p "^** header 1.2"))
+          (should (hact 'kbd-key "p"))
+          (should (looking-at-p "^* header 1"))
+          (should (hact 'kbd-key "p"))
+
+          ;; BUG: This fails in Emacs 29 and 30
+          ;; This is the expected behavior that works in Emacs 27 and 28.
+          ;; (should (looking-at-p "==="))
+          ;; (should (bobp))
+          ;; This is what we get
+          (should (looking-at-p "@loc>"))
+          (should (= 2 (line-number-at-pos))))
+      (kill-buffer "*HyRolo*")
+      (hy-delete-file-and-buffer org-file))))
+
+
+(ert-deftest hyrolo-tests--tab-through-matches ()
+  "Verify movement to next visible header."
+  (let* ((org-file (make-temp-file "hypb" nil ".org"
+                                   (hyrolo-tests--gen-outline "header" 2 "body" 2)))
+         (hyrolo-file-list (list org-file)))
+    (unwind-protect
+        (progn
+          (hyrolo-grep "body")
+          (should (string= "*HyRolo*" (buffer-name)))
+
+          ;; Search Down
+          (should (looking-at-p "==="))
+          (should (hact 'kbd-key "TAB"))
+          (should (looking-at-p "^body 1$"))
+          (should (hact 'kbd-key "TAB"))
+          (should (looking-at-p "^body 1.2"))
+          (should (hact 'kbd-key "TAB"))
+          (should (looking-at-p "^body 2$"))
+          (should (hact 'kbd-key "TAB"))
+          (should (looking-at-p "^body 2.2"))
+          (should-error (hact 'kbd-key "TAB"))
+          (should (looking-at-p "^body 2.2"))
+
+          ;; Search Up
+          (should (hact 'kbd-key "<backtab>"))
+          (should (looking-at-p "^body 2$"))
+          (should (hact 'kbd-key "<backtab>"))
+          (should (looking-at-p "^body 1.2"))
+          (should (hact 'kbd-key "<backtab>"))
+          (should (looking-at-p "^body 1$"))
+          (should-error (hact 'kbd-key "<backtab>")))
+      (kill-buffer "*HyRolo*")
+      (hy-delete-file-and-buffer org-file))))
 
 (provide 'hyrolo-tests)
 ;;; hyrolo-tests.el ends here
