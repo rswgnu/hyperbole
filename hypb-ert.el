@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org> and Bob Weiner <rsw@gnu.org>
 ;;
 ;; Orig-Date:    31-Mar-21 at 21:11:00
-;; Last-Mod:     30-Dec-23 at 00:38:40 by Bob Weiner
+;; Last-Mod:      1-Jan-24 at 13:10:06 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -87,7 +87,8 @@ See documentation for `ert-select-tests' for TEST-SELECTOR types.")
 ;; (memq 'edebug-enter (flatten-tree (ert-test-body (ert-get-test test-sym))))
 
 (defun hypb-ert-def-at-p (&optional start-end-flag)
-  "Return test name if on the name in the first line of an ert test def."
+  "Return test name if on the name in the first line of an ert test def.
+With optional START-END-FLAG, return a list of (test-name start-pos end-pos)."
   (unless (or (eolp)
 	      (memq (char-after (point))
 		    '(?\( ?\) ?\[ ?\] ?{ ?} ?< ?>)))
@@ -98,7 +99,7 @@ See documentation for `ert-select-tests' for TEST-SELECTOR types.")
 				"\\s-*("))
 	(if start-end-flag
 	    (list (match-string-no-properties 2) (match-beginning 2) (match-end 2))
-	  (match-string-no-properties 1))))))
+	  (match-string-no-properties 2))))))
 
 (defun hypb-ert-run-test-at-definition (test-name &optional debug-it)
   "Assume on the name in the first line of an ert test def, eval and run the test.
