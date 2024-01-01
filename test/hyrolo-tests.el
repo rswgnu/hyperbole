@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:      1-Jan-24 at 20:56:49 by Mats Lidell
+;; Last-Mod:      1-Jan-24 at 22:06:44 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -535,25 +535,25 @@ Example:
           ;; Move down
           (should (looking-at-p "==="))
           (should (hact 'kbd-key "n"))
-          (should (looking-at-p "^* header 1"))
+          (should (looking-at-p "^\\* header 1"))
           (should (hact 'kbd-key "n"))
-          (should (looking-at-p "^** header 1.2"))
+          (should (looking-at-p "^\\*\\* header 1\\.2"))
           (should (hact 'kbd-key "n"))
-          (should (looking-at-p "^* header 2"))
+          (should (looking-at-p "^\\* header 2"))
           (should (hact 'kbd-key "n"))
-          (should (looking-at-p "^** header 2.2"))
+          (should (looking-at-p "^\\*\\* header 2\\.2"))
           (should (hact 'kbd-key "n"))
           (should (eobp))
 
           ;; Move back up
           (should (hact 'kbd-key "p"))
-          (should (looking-at-p "^** header 2.2"))
+          (should (looking-at-p "^\\*\\* header 2\\.2"))
           (should (hact 'kbd-key "p"))
-          (should (looking-at-p "^* header 2"))
+          (should (looking-at-p "^\\* header 2"))
           (should (hact 'kbd-key "p"))
-          (should (looking-at-p "^** header 1.2"))
+          (should (looking-at-p "^\\*\\* header 1\\.2"))
           (should (hact 'kbd-key "p"))
-          (should (looking-at-p "^* header 1"))
+          (should (looking-at-p "^\\* header 1"))
           (should (hact 'kbd-key "p"))
 
           ;; BUG: This fails in Emacs 29 and 30
@@ -579,11 +579,11 @@ Example:
           ;; Move to last header
           (goto-char (point-max))
           (forward-line -2)
-          (should (looking-at-p "^*** header 2.2.3$"))
+          (should (looking-at-p "^\\*\\*\\* header 2\\.2\\.3$"))
           (should (hact 'kbd-key "u"))
-          (should (looking-at-p "^** header 2.2$"))
+          (should (looking-at-p "^\\*\\* header 2\\.2$"))
           (should (hact 'kbd-key "u"))
-          (should (looking-at-p "^* header 2$"))
+          (should (looking-at-p "^\\* header 2$"))
           (should-error (hact 'kbd-key "u")))
       (kill-buffer "*HyRolo*")
       (hy-delete-file-and-buffer org-file))))
@@ -603,25 +603,25 @@ Example:
           ;; Move down
           (should (looking-at-p "==="))
           (should (hact 'kbd-key "n"))
-          (should (looking-at-p "^* header-a 1$"))
+          (should (looking-at-p "^\\* header-a 1$"))
           (should (hact 'kbd-key "n"))
-          (should (looking-at-p "^** header-a 1.2$"))
+          (should (looking-at-p "^\\*\\* header-a 1\\.2$"))
           (should (hact 'kbd-key "n"))
-          (should (looking-at-p "^* header-b 1$"))
+          (should (looking-at-p "^\\* header-b 1$"))
           (should (hact 'kbd-key "n"))
-          (should (looking-at-p "^** header-b 1.2$"))
+          (should (looking-at-p "^\\*\\* header-b 1\\.2$"))
           (should (hact 'kbd-key "n"))
           (should (eobp))
 
           ;; Move back up
           (should (hact 'kbd-key "p"))
-          (should (looking-at-p "^** header-b 1.2$"))
+          (should (looking-at-p "^\\*\\* header-b 1\\.2$"))
           (should (hact 'kbd-key "p"))
-          (should (looking-at-p "^* header-b 1$"))
+          (should (looking-at-p "^\\* header-b 1$"))
           (should (hact 'kbd-key "p"))
-          (should (looking-at-p "^** header-a 1.2$"))
+          (should (looking-at-p "^\\*\\* header-a 1\\.2$"))
           (should (hact 'kbd-key "p"))
-          (should (looking-at-p "^* header-a 1$"))
+          (should (looking-at-p "^\\* header-a 1$"))
           (should (hact 'kbd-key "p"))
 
           ;; BUG: This fails in Emacs 29 and 30
@@ -648,10 +648,12 @@ Example:
           ;; Hide first line hides whole section
           (should (looking-at-p "==="))
           (should (hact 'kbd-key "h"))
-          (should (looking-at-p "^===+\.\.\.$"))
+          (end-of-line)
+          (should (get-char-property (point) 'invisible))
           (save-excursion
             (next-line)
             (should (eobp)))
+          (goto-char (point-min))
           (should (hact 'kbd-key "a"))
           (should (looking-at-p "^===+$"))
 
@@ -683,22 +685,55 @@ Example:
           (should (hact 'kbd-key "TAB"))
           (should (looking-at-p "^body 1$"))
           (should (hact 'kbd-key "TAB"))
-          (should (looking-at-p "^body 1.2"))
+          (should (looking-at-p "^body 1\\.2"))
           (should (hact 'kbd-key "TAB"))
           (should (looking-at-p "^body 2$"))
           (should (hact 'kbd-key "TAB"))
-          (should (looking-at-p "^body 2.2"))
+          (should (looking-at-p "^body 2\\.2"))
           (should-error (hact 'kbd-key "TAB"))
-          (should (looking-at-p "^body 2.2"))
+          (should (looking-at-p "^body 2\\.2"))
 
           ;; Search Up
           (should (hact 'kbd-key "<backtab>"))
           (should (looking-at-p "^body 2$"))
           (should (hact 'kbd-key "<backtab>"))
-          (should (looking-at-p "^body 1.2"))
+          (should (looking-at-p "^body 1\\.2"))
           (should (hact 'kbd-key "<backtab>"))
           (should (looking-at-p "^body 1$"))
           (should-error (hact 'kbd-key "<backtab>")))
+      (kill-buffer "*HyRolo*")
+      (hy-delete-file-and-buffer org-file))))
+
+(ert-deftest hyrolo-tests--edit-entry ()
+  "Verify {e} brings up entry in new window."
+  (let* ((org-file (make-temp-file "hypb" nil ".org"
+                                   (hyrolo-tests--gen-outline "header" 1 "body" 2)))
+         (hyrolo-file-list (list org-file)))
+    (unwind-protect
+        (progn
+          (hyrolo-grep "body")
+          (should (string= "*HyRolo*" (buffer-name)))
+
+          ;; Search Down
+          (should (looking-at-p "==="))
+          (should (hact 'kbd-key "TAB"))
+          (should (looking-at-p "^body 1$"))
+
+          ;; Edit record
+          (let ((revisit-normally (concat "y" (if noninteractive " RET"))))
+            (with-simulated-input revisit-normally
+              (should (hact 'kbd-key "e"))))
+          (should (string= (buffer-name) (file-name-nondirectory org-file)))
+          (should (looking-at-p "^body 1$"))
+
+          ;; Edit next record
+          (switch-to-buffer "*HyRolo*")
+          (should (hact 'kbd-key "TAB"))
+          (should (looking-at-p "^body 1\\.2$"))
+          (should (hact 'kbd-key "e"))
+          (should (string= (buffer-name) (file-name-nondirectory org-file)))
+          (should (looking-at-p "^body 1\\.2$"))
+          )
       (kill-buffer "*HyRolo*")
       (hy-delete-file-and-buffer org-file))))
 

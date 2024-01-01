@@ -7,7 +7,7 @@
     (hyrolo-tests--outline-next-visible-header)
     (hyrolo-tests--tab-through-matches)
     (hyrolo-tests--outline-hide-show-heading)
-    (hyrolo-tests--outline-up-header)
+    (hyrolo-tests--outline-up-header, hyrolo-tests--edit-entry)
     (hyrolo-tests--outline-next-visible-header-two-sections): Add test for
     working with hyrolo matches.
 
