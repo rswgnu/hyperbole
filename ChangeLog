@@ -10,11 +10,9 @@
     (hyrolo-tests--outline-up-header, hyrolo-tests--edit-entry)
     (hyrolo-tests--outline-next-visible-header-two-sections): Add test for
     working with hyrolo matches.
-
-2023-12-31  Mats Lidell  <matsl@gnu.org>
-
-* test/hyrolo-tests.el (hyrolo-tests--get-file-list-change)
-    (hyrolo-tests--get-file-list-wrong-suffice): Add hyrolo tests.
+    (hyrolo-tests--get-file-list-change)
+    (hyrolo-tests--get-file-list-wrong-suffice): Add hyrolo tests for
+    get-file-list.
 
 2024-01-02  Mats Lidell  <matsl@gnu.org>
 
