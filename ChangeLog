@@ -23,6 +23,11 @@
     for the Assist Key when on a Hyperbole button.
   hmouse-drv.el (hkey-help): Update to display proper Assist Key help.
 
+2024-01-02  Mats Lidell  <matsl@gnu.org>
+
+* test/hypb-ert-tests.el (hypb-ert-tests--def-at-p)
+    (hypb-ert-tests--edebug-is-called): Add tests for hypb-ert.
+
 2024-01-01  Bob Weiner  <rsw@gnu.org>
 
 * hypb-ert.el (hypb-ert-def-at-p): Update doc.  Fix grouping ref that was
