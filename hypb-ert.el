@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org> and Bob Weiner <rsw@gnu.org>
 ;;
 ;; Orig-Date:    31-Mar-21 at 21:11:00
-;; Last-Mod:      1-Jan-24 at 13:10:06 by Bob Weiner
+;; Last-Mod:      3-Jan-24 at 03:37:28 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -105,14 +105,16 @@ With optional START-END-FLAG, return a list of (test-name start-pos end-pos)."
   "Assume on the name in the first line of an ert test def, eval and run the test.
 With optional DEBUG-IT non-nil (when the assist-key is pressed), edebug the
 test when it is run."
-  (let (test-sym)
-    (setq test-sym (intern-soft test-name))
+  (let ((test-sym (intern-soft test-name)))
     ;; Ensure run the latest version of the test, either with the
     ;; edebugger if already instrumented for it; otherwise, with the
     ;; normal evaluator.
     (if (and test-sym debug-it)
 	(edebug-defun)
-      (eval-defun nil))
+      (eval-defun nil)
+      (setq test-sym (intern-soft test-name))
+      (when (and test-sym debug-it)
+	(edebug-defun)))
     (setq test-sym (intern-soft test-name))
     (when (and test-sym (ert-test-boundp test-sym))
       (when (and buffer-file-name (string-prefix-p hyperb:dir buffer-file-name))

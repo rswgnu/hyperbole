@@ -1,5 +1,10 @@
 2024-01-03  Bob Weiner  <rsw@gnu.org>
 
+* hypb-ert.el (hypb-ert-run-test-at-definition): Fix to edebug function
+    when not previously defined.
+  test/hypb-ert-tests.el (hypb-ert-tests--edebug-is-called): Make edebug
+    test work.
+
 * hib-debbugs.el (declare-function): Revert declarations to use
     "ext:debbugs-gnu" from "ext:debbugs" since the newer package
     does not have many of the functions that Hyperbole presently uses.
