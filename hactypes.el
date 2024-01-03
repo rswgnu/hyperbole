@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     28-Dec-23 at 11:55:42 by Bob Weiner
+;; Last-Mod:      3-Jan-24 at 01:34:28 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -749,13 +749,18 @@ Optional SECTIONS-START limits toc entries to those after that point."
 SECTION is a string and can be just the leading part of a section heading."
   (interactive "sGo to section named: ")
   (when (stringp section)
-    (actypes::link-to-regexp-match
-     (concat "^[ \t]*" (regexp-quote section))
-     2 (current-buffer) t))
-  (while (and (= (forward-line -1) 0)
-	      (looking-at "[ \t]*[-=][-=]")))
-  (forward-line 1)
-  (recenter 0))
+    (setq section (string-trim section))
+    (if (string-match "\\`\\(\\*+\\)[ \t]*" section)
+	(actypes::link-to-regexp-match
+	 (concat "^[ \t]*" (regexp-quote (match-string 1 section))
+		 "[ \t]*" (regexp-quote (substring section (match-end 0))))
+	 2 (current-buffer) t)
+      (actypes::link-to-regexp-match (concat "^[ \t]*" (regexp-quote section))
+				     2 (current-buffer) t))
+    (while (and (= (forward-line -1) 0)
+		(looking-at "[ \t]*[-=][-=]")))
+    (forward-line 1)
+    (recenter 0)))
 
 (provide 'hactypes)
 

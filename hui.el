@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     28-Dec-23 at 21:34:45 by Bob Weiner
+;; Last-Mod:      2-Jan-24 at 23:02:06 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -876,7 +876,8 @@ BUT defaults to the button whose label point is within."
     (if (functionp type-help-func)
 	(funcall type-help-func but)
       (let ((total (hbut:report but)))
-	(when total (hui:help-ebut-highlight))))))
+	(when total (hui:help-ebut-highlight))))
+    (or type-help-func 'hbut:report)))
 
 (defun hui:hbut-label (default-label func-name &optional prompt)
   "Read button label from user using DEFAULT-LABEL and caller's FUNC-NAME.

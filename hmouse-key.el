@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    30-May-94 at 00:11:57
-;; Last-Mod:      3-Oct-23 at 17:10:05 by Mats Lidell
+;; Last-Mod:      3-Jan-24 at 02:29:03 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -37,7 +37,7 @@
 
 (defvar hyperbole-mode-map)             ; "hyperbole.el"
 
-(declare-function hkey-initialize "hbut")
+(declare-function hkey-initialize "hyperbole")
 (declare-function hmouse-get-bindings "hmouse-sh")
 (declare-function hmouse-unshifted-setup "hmouse-sh")
 (declare-function hmouse-shifted-setup "hmouse-sh")

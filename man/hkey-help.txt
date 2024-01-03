@@ -114,6 +114,7 @@ Hyperbole Key Press/Click in Special Modes
   Man Pages                     Follows cross refs, file refs and C code refs
   I/Buffer Menu                 Saves, deletes and displays buffers
   Todotxt Mode                  Toggles item completion    Edit and archive items
+  Flymake Mode                  Display issue at point     Insert issue on newline
 
 Emacs Info Reader
   Menu Entry or Cross Ref       Jumps to referent          <- same

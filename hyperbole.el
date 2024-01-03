@@ -8,7 +8,7 @@
 ;; Maintainer:   Mats Lidell <matsl@gnu.org>
 ;; Maintainers:  Robert Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:      06-Oct-92 at 11:52:51
-;; Last-Mod:     23-Dec-23 at 01:50:36 by Bob Weiner
+;; Last-Mod:      3-Jan-24 at 02:27:05 by Bob Weiner
 ;; Released:     03-Dec-23
 ;; Version:      9.0.0
 ;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -172,7 +172,7 @@ Info documentation at \"(hyperbole)Top\".
 (declare-function hmouse-install "hmouse-key")
 (declare-function hui-search-web "hui-mini")
 (declare-function hkey-operate "hmouse-drv")
-(declare-function facemenu-keymap nil)  ; Where is this defined?
+(declare-function facemenu-keymap "facemenu")
 (declare-function hkey-help "hmouse-drv")
 (declare-function hkey-either "hmouse-drv")
 

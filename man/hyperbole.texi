@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     29-Dec-23 at 23:27:32 by Bob Weiner
+@c Last-Mod:      3-Jan-24 at 03:13:18 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.0
-Printed December 29, 2023.
+Printed January 3, 2024.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.0
-December 29, 2023
+January 3, 2024
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -2906,6 +2906,11 @@ framework.  The @code{test-selector} argument is as described in
 Recognize Action Buttons of the form @code{<hyperbole-run-test
 test-name>} which when activated run individual Hyperbole tests, each
 given by the @code{<test-name>} argument, an unquoted name.
+
+@findex ibtypes hsys-flymake-issue-at-point
+@item hsys-flymake-issue-at-point
+Display the flymake linter diagnostic issue at source buffer point,
+if any.
 @end table
 
 

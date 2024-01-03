@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Jan-94
-;; Last-Mod:      3-Oct-23 at 23:27:17 by Mats Lidell
+;; Last-Mod:      3-Jan-24 at 02:28:36 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -20,7 +20,7 @@
 ;;; Public declarations
 ;;; ************************************************************************
 
-(declare-function kcell-view:indent "kcell")
+(declare-function kcell-view:indent "kview")
 
 ;;; ************************************************************************
 ;;; Public variables

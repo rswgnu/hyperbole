@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Jun-16 at 14:24:53
-;; Last-Mod:     30-Dec-23 at 00:13:19 by Bob Weiner
+;; Last-Mod:      3-Jan-24 at 03:06:43 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -11,7 +11,7 @@
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of Hyperbole.  It requires the Emacs package
-;; Debbugs 0.9.7 or higher; there were bugs in earlier versions
+;; debbugs-gnu 0.9.7 or higher; there were bugs in earlier versions
 ;; that made it incompatible with the queries Hyperbole issues.
 ;;
 ;;; Commentary:
@@ -77,11 +77,11 @@
 ;;; Public declarations
 ;;; ************************************************************************
 
-(declare-function debbugs-get-status "ext:debbugs")
-(declare-function debbugs-gnu-bugs "ext:debbugs")
-(declare-function debbugs-gnu-current-id "ext:debbugs")
-(declare-function debbugs-gnu-select-report "ext:debbugs")
-(declare-function debbugs-gnu-show-reports "ext:debbugs")
+(declare-function debbugs-get-status "ext:debbugs-gnu")
+(declare-function debbugs-gnu-bugs "ext:debbugs-gnu")
+(declare-function debbugs-gnu-current-id "ext:debbugs-gnu")
+(declare-function debbugs-gnu-select-report "ext:debbugs-gnu")
+(declare-function debbugs-gnu-show-reports "ext:debbugs-gnu")
 (defvar debbugs-gnu-current-query)
 (defvar debbugs-port)
 
@@ -263,7 +263,7 @@ Return t unless no attributes are printed."
   "Return t iff debbugs version is sufficient for use with Hyperbole.
 Must be greater than equal to 0.9.7."
   (save-excursion
-    (let* ((debbugs-src (locate-file "debbugs" load-path '(".el")))
+    (let* ((debbugs-src (locate-file "debbugs-gnu" load-path '(".el")))
 	   (visiting-debbugs-src (when debbugs-src (get-file-buffer debbugs-src)))
 	   debbugs-src-buffer
 	   version)

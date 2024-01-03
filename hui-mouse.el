@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     29-Dec-23 at 23:43:11 by Bob Weiner
+;; Last-Mod:      3-Jan-24 at 02:22:25 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -14,26 +14,25 @@
 
 ;;; Commentary:
 ;;
-;;  This code is machine independent.  It works best with a pointing device but
-;;  may also be used from a keyboard.  When used with a pointing device it
+;;  This code is machine independent.  It works best with a pointing device
+;;  but may also be used from a keyboard.  When used with a pointing device it
 ;;  requires an Emacs command that sets point to the location of the pointing
 ;;  device's cursor.
 ;;
 ;;  If you want to use your shift-middle mouse button to select Hyperbole menu
 ;;  items and Hyperbole buttons, follow these instructions.
 ;;
-;;  If you plan to use a mouse only with the X window system or macOS
-;;  and you want to use the shift-middle and shift-right buttons, you
-;;  need not do any mouse configuration.  Your Emacs executable must
-;;  have been built so as to include the mouse support files for your
-;;  window system, however.  These are in the Emacs "src" directory:
-;;  for X - "x*.c", for macOS - "ns*.c".
+;;  If you plan to use a mouse only with the X window system or macOS and you
+;;  want to use the shift-middle and shift-right buttons, you need not do any
+;;  mouse configuration.  Your Emacs executable must have been built so as to
+;;  include the mouse support files for your window system, however.  These
+;;  are in the Emacs "src" directory: for X - "x*.c", for macOS - "ns*.c".
 ;;
 ;;  To use a different mouse key or a different window system, modify the
 ;;  mouse key bindings in "hmouse-sh.el".
 ;;
-;; Using the Action Mouse Key to browse through and delete files from
-;; Dired listings is exceptionally nice, just as it is when reading mail.
+;;  Using the Action Mouse Key to browse through and delete files from Dired
+;;  listings is exceptionally nice, just as it is when reading mail.
 
 ;;; Code:
 ;;; ************************************************************************
@@ -50,7 +49,7 @@
   (require 'hmouse-tag))
 (require 'imenu)
 (eval-when-compile
-  (require 'eieio))
+  (require 'eieio)) ;; magit uses this and thus smart-magit does
 
 (eval-when-compile (require 'tar-mode))
 
@@ -58,20 +57,7 @@
 ;;; Public declarations
 ;;; ************************************************************************
 
-;; Functions from abstract mail and news interface. See "hmail.el"
-(declare-function lmail:delete nil)
-(declare-function lmail:undelete nil)
-(declare-function rmail:msg-prev nil)
-(declare-function lmail:goto nil)
-(declare-function lmail:expunge nil)
-(declare-function rmail:msg-next nil)
-(declare-function lmail:undelete-all nil)
-
-(declare-function helm-get-actions-from-current-source "ext:helm-core")
-(declare-function helm-get-default-action "ext:helm-core")
-
-(defvar helm-selection-point)
-
+;; Functions from optional, external ert-results package
 (declare-function ert-results-filter                 "ext:ert-results")
 (declare-function ert-results-filter-status-p        "ext:ert-results")
 (declare-function ert-results-display                "ext:ert-results")
@@ -80,6 +66,27 @@
 (declare-function ert-results-toggle                 "ext:ert-results")
 (declare-function ert-results-describe-test-at-point "ext:ert-results")
 
+;; Functions from Hyperbole's abstract mail and news interface.
+;; See "hmail.el"
+(declare-function lmail:delete "hmail")
+(declare-function lmail:undelete "hmail")
+(declare-function rmail:msg-prev "hmail")
+(declare-function lmail:goto "hmail")
+(declare-function lmail:expunge "hmail")
+(declare-function rmail:msg-next "hmail")
+(declare-function lmail:undelete-all "hmail")
+
+;; Functions and variables from the helm package
+(declare-function helm-get-actions-from-current-source "ext:helm-core")
+(declare-function helm-get-default-action "ext:helm-core")
+
+(defvar helm-selection-point)
+
+;; Functions from Hyperbole's Koutliner
+(declare-function kotl-mode:eobp "kotl-mode")
+(declare-function kotl-mode:eolp "kotl-mode")
+
+;; Emacs functions
 (declare-function tar-flag-deleted "tar")
 (declare-function tar-unflag "tar")
 (declare-function tar-extract-other-window "tar")
@@ -302,9 +309,7 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
      . ((xref-goto-xref) . (xref-show-location-at-point)))
     ;;
     ;; If at the end of a line (eol), invoke the associated Smart Key handler EOL handler.
-    ((if (eq major-mode 'kotl-mode)
-	 (and (not (kotl-mode:eobp)) (kotl-mode:eolp t))
-       (smart-eolp))
+    ((smart-eolp)
      . ((funcall action-key-eol-function) . (funcall assist-key-eol-function)))
     ;;
     ;; The Smart Menu system is an attractive in-buffer menu system
@@ -2076,10 +2081,19 @@ If key is pressed:
 (defun smart-eolp ()
   "Return t if point is at the end of a visible line but not the end of the buffer."
   ;; smart-helm handles eol for helm buffers
-  (unless (and (smart-helm-alive-p) (equal (helm-buffer-get) (buffer-name)))
-    (and (not (smart-eobp)) (eolp)
-	 (or (not (smart-outline-char-invisible-p))
-	     (not (smart-outline-char-invisible-p (1- (point))))))))
+  (unless (or (and (smart-helm-alive-p) (equal (helm-buffer-get) (buffer-name)))
+	      (and (featurep 'hsys-flymake)
+		   (boundp 'flymake-mode)
+		   flymake-mode
+		   (eolp)
+		   ;; If there is a flymake diagnostic issue at eol,
+		   ;; drop through this clause to handle it later.
+		   (hsys-flymake-get-issue-at-point)))
+    (if (eq major-mode 'kotl-mode)
+	(and (not (kotl-mode:eobp)) (kotl-mode:eolp t))
+      (and (not (smart-eobp)) (eolp)
+	   (or (not (smart-outline-char-invisible-p))
+	       (not (smart-outline-char-invisible-p (1- (point)))))))))
 
 ;;; ************************************************************************
 ;;; smart-push-button functions

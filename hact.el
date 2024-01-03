@@ -3,11 +3,11 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      7-Nov-23 at 21:38:28 by Bob Weiner
+;; Last-Mod:      3-Jan-24 at 02:32:30 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; Copyright (C) 1991-2022  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2024  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -25,10 +25,10 @@
 ;;; Public declarations
 ;;; ************************************************************************
 
-(declare-function hattr:get "hypb")
-(declare-function hattr:list "hypb")
-(declare-function hattr:set "hypb")
-(declare-function hbut:is-p "hypb")
+(declare-function hattr:get "hbut")
+(declare-function hattr:list "hbut")
+(declare-function hattr:set "hbut")
+(declare-function hbut:is-p "hbut")
 (declare-function hpath:absolute-arguments "hpath")
 (declare-function hypb:indirect-function "hypb")
 
@@ -126,7 +126,8 @@ with the `ibtypes::' prefix and one without.  The value for both
 keys is the Elisp symbol for the type, which includes the prefix.")
 
 (defsubst symtable:actype-p (symbol-or-name)
-  "Return SYMBOL-OR-NAME if a Hyperbole action type or Elisp function, else nil."
+  "Return Elisp symbol for SYMBOL-OR-NAME if a Hyperbole action type.
+May also be an Elisp function.  Otherwise, return nil."
   (when (or (symbolp symbol-or-name) (stringp symbol-or-name))
     (or (symtable:get symbol-or-name symtable:actypes)
 	(and (stringp symbol-or-name) (fboundp (intern-soft symbol-or-name))
@@ -134,14 +135,14 @@ keys is the Elisp symbol for the type, which includes the prefix.")
 	(and (functionp symbol-or-name) symbol-or-name))))
 
 (defsubst symtable:hyperbole-actype-p (symbol-or-name)
-  "Return SYMBOL-OR-NAME if a Hyperbole action type, else nil.
+  "Return Elisp symbol for SYMBOL-OR-NAME if a Hyperbole action type, else nil.
 This excludes Emacs Lisp functions which may be used as action types.
 Use `actype:elisp-symbol' to include these."
   (when (or (symbolp symbol-or-name) (stringp symbol-or-name))
     (or (symtable:get symbol-or-name symtable:actypes))))
 
 (defsubst symtable:ibtype-p (symbol-or-name)
-  "Return SYMBOL-OR-NAME if it is a Hyperbole implicit button type, else nil."
+  "Return Elisp symbol for SYMBOL-OR-NAME if it is a Hyperbole ibtype, else nil."
   (when (or (symbolp symbol-or-name) (stringp symbol-or-name))
     (symtable:get symbol-or-name symtable:ibtypes)))
 
@@ -154,8 +155,9 @@ Caller must ensure SYMBOL-OR-NAME is a symbol or string."
 (defalias 'symtable:delete #'symtable:remove)
 
 (defun    symtable:get (symbol-or-name symtable)
-  "Return Hyperbole SYMBOL-OR-NAME if it is in SYMTABLE, else nil.
-Caller must ensure SYMBOL-OR-NAME is a symbol or string."
+  "Return Elisp symbol for Hyperbole SYMBOL-OR-NAME if it is in SYMTABLE.
+Otherwise, return nil.  Caller must ensure SYMBOL-OR-NAME is a symbol
+or string."
   (symtable:operate #'gethash symbol-or-name symtable))
 
 (defun    symtable:remove (symbol-or-name symtable)
@@ -419,9 +421,6 @@ performing ACTION."
 		   t)
 	  (hhist:add hist-elt))))))
 
-;; Return the full Elisp symbol for ACTYPE, which may be a string or symbol.
-(defalias 'actype:elisp-symbol #'symtable:actype-p)
-
 (defun    actype:def-symbol (actype)
   "Return the abbreviated symbol for ACTYPE used in its `defact'.
 ACTYPE must be a symbol or string that begins with `actype::' or nil
@@ -431,6 +430,9 @@ is returned."
 		(symbol-name actype))))
     (when (string-match "\\`actypes::" name)
       (make-symbol (substring name (match-end 0))))))
+
+;; Return the full Elisp symbol for ACTYPE, which may be a string or symbol.
+(defalias 'actype:elisp-symbol #'symtable:actype-p)
 
 (defun    actype:eval (actype &rest args)
   "Perform action formed from ACTYPE and rest of ARGS and return value.

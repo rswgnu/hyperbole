@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     27-Dec-23 at 00:52:16 by Bob Weiner
+;; Last-Mod:      3-Jan-24 at 02:24:39 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -59,7 +59,7 @@
 (defvar action-key-default-function)    ; defcustom hui-mouse
 (defvar assist-key-default-function)    ; defcustom hui-mouse
 
-(declare-function mouse-drag-frame nil) ;; Obsolete from Emacs 28
+(declare-function mouse-drag-frame "mouse") ;; Obsolete from Emacs 28
 
 (declare-function hkey-quit-window "hmouse-drv") ; Alias defined in this file.
 
@@ -1146,7 +1146,8 @@ documentation is found."
 					(if (eq categ 'explicit) actype categ))
 				       (if (eq categ 'explicit) "EXPLICIT" "IMPLICIT")))
 			(hattr:report attributes)
-			(unless (or (eq categ 'explicit)
+			(unless (or assisting
+				    (eq categ 'explicit)
 				    (null categ)
 				    (not (fboundp categ))
 				    (null (documentation categ)))
@@ -1154,13 +1155,23 @@ documentation is found."
 			  (princ (format "\n%s\n"
 					 (replace-regexp-in-string "^" "  " (documentation categ)
 								   nil t))))
-			(when (and (symbolp actype)
-				   (fboundp actype)
-				   (documentation actype))
-			  (princ (format "\n%s ACTION SPECIFICS:\n%s\n"
-					 (or (actype:def-symbol actype) actype)
-					 (replace-regexp-in-string "^" "  " (documentation actype)
-								   nil t))))))
+			(if assisting
+			    (let ((type-help-func (or (intern-soft
+						       (concat (htype:names 'ibtypes categ)
+							       ":help"))
+						      'hbut:report)))
+			      (princ (format "\n%s ASSIST SPECIFICS:\n%s\n"
+					     type-help-func
+					     (replace-regexp-in-string
+					      "^" "  " (documentation type-help-func)
+					      nil t))))
+			  (when (and (symbolp actype)
+				     (fboundp actype)
+				     (documentation actype))
+			    (princ (format "\n%s ACTION SPECIFICS:\n%s\n"
+					   (or (actype:def-symbol actype) actype)
+					   (replace-regexp-in-string "^" "  " (documentation actype)
+								     nil t)))))))
 
 		    ;; Print Emacs push-button attributes
 		    (when (memq cmd-sym '(smart-push-button smart-push-button-help))

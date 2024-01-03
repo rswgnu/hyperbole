@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-Oct-91 at 18:38:05
-;; Last-Mod:      3-Oct-23 at 23:30:56 by Mats Lidell
+;; Last-Mod:      3-Jan-24 at 02:26:11 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -35,7 +35,7 @@
 ;;; Public declarations
 ;;; ************************************************************************
 
-(declare-function rmail:msg-widen nil)
+(declare-function rmail:msg-widen "hmail")
 (declare-function hypb:insert-region "hypb")
 
 ;;; ************************************************************************

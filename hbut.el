@@ -3,11 +3,11 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     30-Dec-23 at 01:38:30 by Bob Weiner
+;; Last-Mod:      3-Jan-24 at 02:31:24 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; Copyright (C) 1991-2023  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2024  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -15,6 +15,7 @@
 ;;; Commentary:
 
 ;;; Code:
+
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
@@ -1709,8 +1710,9 @@ Any named implicit button must contain at least two characters,
 excluding delimiters, not just one."
   ;; Since the Smart Keys handle end-of-line separately from whether
   ;; point is within an implicit button, always report not within one
-  ;; when point is at the end of a line.  -- RSW, 02-16-2020
-  (unless (eolp)
+  ;; when point is at the end of a line unless `flymake-mode' has added
+  ;; an issue annotation there. -- RSW 02-16-2020, 12-31-2023
+  (unless (smart-eolp)
     ;; Check for an implicit button at current point, record its
     ;; attributes in memory and return a button symbol for it.
     (when (ibut:create)
@@ -1875,9 +1877,10 @@ If a new button is created, store its attributes in the symbol,
 	      (setq name-and-lbl-key-flag nil))
 	    ;; Since the Smart Keys handle end-of-line and end-of-buffer
 	    ;; separately from whether point is within an implicit button,
-	    ;; always report not within one when point is at the end of a line.
-	    ;; -- RSW, 02-16-2020 and 07-17-2022
-	    (unless (or is-type (eolp) (eobp))
+	    ;; always report not within one when point is at the end of a line
+	    ;; except when there is a `flymake-mode' issue annotation there.
+	    ;; -- RSW  02-16-2020, 07-17-2022 and 12-31-2023
+	    (unless (or is-type (smart-eolp) (eobp))
 	      (unwind-protect
 		  (progn (when (or but-sym-flag name-and-lbl-key-flag)
 			   (setq text-start (or (hattr:get 'hbut:current 'lbl-start)
@@ -2889,6 +2892,12 @@ type for ibtype is presently undefined."
    [&optional ["&optional" arg &rest arg]]
    &optional ["&rest" arg])))
 
+(defun ibtype:act (ibtype)
+  "Execute IBTYPE's action in contexts where `ibtype:test-p' is true."
+  (let ((elisp-sym (ibtype:elisp-symbol ibtype)))
+    (when elisp-sym
+      (funcall elisp-sym))))
+
 (defalias 'ibtype:create #'defib)
 
 (defun    ibtype:activate-link (referent)
@@ -3075,6 +3084,13 @@ Return TYPE's symbol if it existed, else nil."
   (symtable:delete type symtable:ibtypes)
   (htype:delete type 'ibtypes))
 
-(provide 'hbut)
+;; Return the full Elisp symbol for IBTYPE, which may be a string or symbol.
+(defalias 'ibtype:elisp-symbol #'symtable:ibtype-p)
 
-;;; hbut.el ends here
+(defun ibtype:test-p (ibtype)
+  "Return t if IBTYPE would activate in the current buffer context, else nil."
+  (let ((elisp-sym (ibtype:elisp-symbol ibtype))
+	(hrule:action #'actype:identity))
+    (and elisp-sym (funcall elisp-sym) t)))
+
+(provide 'hbut)

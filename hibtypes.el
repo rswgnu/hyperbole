@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     28-Dec-23 at 18:27:19 by Bob Weiner
+;; Last-Mod:      3-Jan-24 at 01:38:08 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -86,6 +86,16 @@
 ;; Don't use require below here for any libraries with ibtypes in
 ;; them.  Use load instead to ensure are reloaded when resetting
 ;; ibtype priorities.
+
+;;; ========================================================================
+;;; Keymap with repeat and source buffer control for flymake code linter
+;;; ========================================================================
+
+(load "hsys-flymake")
+
+;;; ========================================================================
+;;; Jumps to source line from Python traceback lines
+;;; ========================================================================
 
 (defib python-tb-previous-line ()
   "Move to prior line with potential Python line ref.
@@ -623,11 +633,12 @@ anything."
   "Jump to the text file section referenced by a table of contents entry at point.
 Buffer must be in a text mode or must contain DEMO, README or
 TUTORIAL and there must be a `Table of Contents' or `Contents'
-label on a line by itself (it may begin with an asterisk),
-preceding the table of contents.  Each toc entry must begin with
-some whitespace followed by one or more asterisk characters.
-Each section header linked to by the toc must start with one or
-more asterisk characters at the very beginning of the line."
+label on a line by itself (it optionally may begin with an
+asterisk), preceding the table of contents.  Each toc entry must
+begin with optional whitespace followed by one or more asterisks.
+Each section header linked to by the toc must start with optional
+whitespace and then one or more asterisks at the beginning of the
+line."
   (let (section)
     (when (and (or (derived-mode-p 'text-mode)
 		   (string-match "DEMO\\|README\\|TUTORIAL" (buffer-name)))

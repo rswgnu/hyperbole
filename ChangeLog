@@ -1,3 +1,28 @@
+2024-01-03  Bob Weiner  <rsw@gnu.org>
+
+* hib-debbugs.el (declare-function): Revert declarations to use
+    "ext:debbugs-gnu" from "ext:debbugs" since the newer package
+    does not have many of the functions that Hyperbole presently uses.
+
+* MANIFEST:
+  man/hkey-help.txt:
+  man/hyperbole.texi (Implicit Button Types):
+  hibtypes.el (hsys-flymake):
+  Makefile (EL_COMPILE): Add "hsys-flymake.el" to Hyperbole.
+
+2024-01-02  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (text-toc): Fix doc on whitespace handling before and after
+    TOC header and TOC entry lines.
+  hactypes.el (text-toc): Fix not handling different whitespace in TOC
+    entry vs. section header.
+
+* hui.el (hui:hbut-help): Return custom button help function symbol if any;
+    otherwise, return the function used, 'hbut:report.  This is used in
+    Smart Key help which previously was not displaying the proper action
+    for the Assist Key when on a Hyperbole button.
+  hmouse-drv.el (hkey-help): Update to display proper Assist Key help.
+
 2024-01-01  Bob Weiner  <rsw@gnu.org>
 
 * hypb-ert.el (hypb-ert-def-at-p): Update doc.  Fix grouping ref that was
@@ -5,6 +30,20 @@
    regexp.
 
 2023-12-31  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:create, ibut:at-p): Change to call 'smart-eolp' instead of
+   'eolp' so can handle flymake issues where an overlay/char-property is
+   added at the end of a line only and we want an implicit button created
+   for this.
+
+* hui-mouse.el (hkey-alist): Add logic for new hsys-flymake library to handle
+    diag issues at the end of the line where we want an implicit button to
+    fire rather than typicaly eol handling.
+
+* hbut.el (ibtype:test-p, ibtype:act): Add these to mirror actype functions.
+          (ibtype:elisp-symbol): Add alias similar to existing actype one.  So
+    that (ibtype:act <ibtype-sym-or-name>) executes the ibtype action if the
+    current buffer context supports it.
 
 * hyrolo.el (hyrolo-file-list): Add 'hyrolo-set-file-list' after loading the hyrolo
     library (at the end of the file) if 'hyrolo-file-list' has been set by the
