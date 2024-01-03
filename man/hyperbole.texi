@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:      3-Jan-24 at 03:13:18 by Bob Weiner
+@c Last-Mod:      3-Jan-24 at 13:55:25 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -471,7 +471,9 @@ Smart Keyboard Keys
 * Smart Key - View Mode::
 * Smart Key - Helm Mode::
 * Smart Key - Delimited Things::
+* Smart Key - Occurrence Matches::
 * Smart Key - The Koutliner::
+* Smart Key - Flymake Mode::
 * Smart Key - RDB Mode::
 * Smart Key - Help Buffers::
 * Smart Key - Custom Mode::
@@ -487,7 +489,6 @@ Smart Keyboard Keys
 * Smart Key - Objective-C Source Code::
 * Smart Key - Fortran Source Code::
 * Smart Key - Identifier Menu Mode ::
-* Smart Key - Occurrence Matches::
 * Smart Key - Calendar Mode::
 * Smart Key - Man Page Apropos::
 * Smart Key - Emacs Outline Mode::
@@ -2906,11 +2907,6 @@ framework.  The @code{test-selector} argument is as described in
 Recognize Action Buttons of the form @code{<hyperbole-run-test
 test-name>} which when activated run individual Hyperbole tests, each
 given by the @code{<test-name>} argument, an unquoted name.
-
-@findex ibtypes hsys-flymake-issue-at-point
-@item hsys-flymake-issue-at-point
-Display the flymake linter diagnostic issue at source buffer point,
-if any.
 @end table
 
 
@@ -7602,6 +7598,18 @@ action type.  By default, explicit buttons are delimited like
 this @samp{<(fake button)>}.  Direct selection is used to operate upon
 an explicit button.
 
+@cindex flymake definition
+@findex flymake-minor-mode
+@findex flymake-diagnostics-buffer-mode
+@item Flymake
+Flymake is an Emacs library that lints your code in the background.
+It provides @code{flymake-minor-mode} for source buffers and
+@code{flymake-diagnostics-buffer-mode} for listing the linter issues
+for a given source buffer.  Hyperbole extends this library with Smart
+Key jump and display issue contexts as well as a key map of commands
+in source buffers to support removal of flymake issues without having
+to jump to the issue listing buffer.
+
 @item Frame
 An Emacs frame displays one or more Emacs windows and widgets
 (menubars, toolbars, scrollbars).  Under a graphical window system,
@@ -9821,7 +9829,9 @@ If dragged from an Emacs window to outside of Emacs:
 * Smart Key - View Mode::
 * Smart Key - Helm Mode::
 * Smart Key - Delimited Things::
+* Smart Key - Occurrence Matches::
 * Smart Key - The Koutliner::
+* Smart Key - Flymake Mode::
 * Smart Key - RDB Mode::
 * Smart Key - Help Buffers::
 * Smart Key - Custom Mode::
@@ -9837,7 +9847,6 @@ If dragged from an Emacs window to outside of Emacs:
 * Smart Key - Objective-C Source Code::
 * Smart Key - Fortran Source Code::
 * Smart Key - Identifier Menu Mode ::
-* Smart Key - Occurrence Matches::
 * Smart Key - Calendar Mode::
 * Smart Key - Man Page Apropos::
 * Smart Key - Emacs Outline Mode::
@@ -10293,7 +10302,7 @@ If pressed within a buffer in helm major mode:
 @end group
 @end format
 
-@node Smart Key - Delimited Things, Smart Key - The Koutliner, Smart Key - Helm Mode, Smart Keyboard Keys
+@node Smart Key - Delimited Things, Smart Key - Occurrence Matches, Smart Key - Helm Mode, Smart Keyboard Keys
 @subsection Smart Key - Delimited Things
 
 @cindex thing
@@ -10334,8 +10343,18 @@ original location and yanks it at the new location.
 @end group
 @end format
 
+@node Smart Key - Occurrence Matches, Smart Key - The Koutliner, Smart Key - Delimited Things, Smart Keyboard Keys
+@subsection Smart Key - Occurrence Matches
 
-@node Smart Key - The Koutliner, Smart Key - RDB Mode, Smart Key - Delimited Things, Smart Keyboard Keys
+@format
+@group
+When pressed within an occur-mode, moccur-mode or amoccur-mode buffer:
+  ACTION KEY or ASSIST KEY
+     Jumps to the source buffer and line of the current occurrence.
+@end group
+@end format
+
+@node Smart Key - The Koutliner, Smart Key - Flymake Mode, Smart Key - Occurrence Matches, Smart Keyboard Keys
 @subsection Smart Key - The Koutliner
 @format
 @group
@@ -10368,7 +10387,96 @@ When pressed within a Hyperbole Koutliner buffer (kotl-mode):
 @end group
 @end format
 
-@node Smart Key - RDB Mode, Smart Key - Help Buffers, Smart Key - The Koutliner, Smart Keyboard Keys
+@node Smart Key - Flymake Mode, Smart Key - RDB Mode, Smart Key - The Koutliner, Smart Keyboard Keys
+@subsection Smart Key - Flymake Mode
+
+@cindex linter
+@cindex flymake
+@format
+@group
+When pressed within a line of the flymake linter list of issues buffer:
+  ACTION KEY
+     jumps to the source buffer line and point where the issue occurred
+  ASSIST KEY
+     displays/pulses, but does not jump to, the source buffer line and point
+     where the issue occurred
+@end group
+@end format
+
+@cindex flymake keymap
+The flymake library comes with only a pulldown menu and no other
+source buffer key bindings, forcing you to first display the list of
+issues and then find the issue of interest and jump to it.  Hyperbole
+adds a source buffer keymap on the @bkbd{C-c C-l} prefix that lets you
+navigate and remediate flymake issues exclusively in the source
+buffer.  It also makes it more convenient to jump to the issue listing
+buffer, to toggle @code{flymake-mode} on and off and to toggle whether
+the movement between issue commands wrap around at the end of the
+buffer or not.
+
+
+@table @asis
+@findex flymake-show-buffer-diagnostics
+@kindex C-c C-l d
+@kitem C-c C-l d
+@code{flymake-show-buffer-diagnostics} - Display list of flymake
+issues for this buffer.
+
+@findex hsys-flymake-display-this-or-next-issue
+@kindex C-c C-l g
+@kitem C-c C-l g
+@code{hsys-flymake-display-this-or-next-issue} - Display issue at
+point or if no issue there, move to next issue location and display
+it.
+
+@findex hsys-flymake-insert-issue-at-point)
+@kindex C-c C-l i
+@kitem C-c C-l i
+@code{hsys-flymake-insert-issue-at-point} - Insert issue at point on a
+separate new line below the current line so that its text can be
+utilized.
+
+@findex flymake-switch-to-log-buffer
+@kindex C-c C-l l
+@kitem C-c C-l l
+@code{flymake-switch-to-log-buffer} - For developers of new language flymake backends:
+Jump to a log of internal flymake processing.
+
+@findex flymake-goto-next-error
+@kindex C-c C-l n
+@kitem C-c C-l n
+@code{flymake-goto-next-error} - In source buffer, move to next
+flymake issue.  Wrap around at the end of the buffer if
+@code{flymake-wrap-around} is non-nil.  Repeat with @bkbd{n}.
+
+@findex flymake-goto-prev-error
+@kindex C-c C-l p
+@kitem C-c C-l p
+@code{flymake-goto-prev-error} - In source buffer, move to previous
+flymake issue.  Wrap around at the beginning of the buffer if
+@code{flymake-wrap-around} is non-nil.  Repeat with @bkbd{p}.
+
+@findex flymake-start
+@kindex C-c C-l s
+@kitem C-c C-l s
+@code{flymake-start} - Force a run of flymake to update issues for the
+current buffer.
+
+@cindex key binding, C-c C-l t
+@findex hsys-flymake-toggle
+@kindex C-c C-l t
+@kitem C-c C-l t
+@code{hsys-flymake-toggle} - Toggle whether minor mode
+@code{flymake-mode} is enabled in the current buffer.
+
+@findex hsys-flymake-toggle-wraparound
+@kindex C-c C-l w
+@kitem C-c C-l w
+@code{hsys-flymake-toggle-wraparound} - Toggle whether next and previous issue commands
+wrap around at the end and beginning of the buffer.  Repeat with @bkbd{w}.
+@end table
+
+@node Smart Key - RDB Mode, Smart Key - Help Buffers, Smart Key - Flymake Mode, Smart Keyboard Keys
 @subsection Smart Key - RDB Mode
 @cindex rdb-mode
 @cindex database
@@ -10736,7 +10844,7 @@ When pressed within a Fortran source code file:
 @end group
 @end format
 
-@node Smart Key - Identifier Menu Mode , Smart Key - Occurrence Matches, Smart Key - Fortran Source Code, Smart Keyboard Keys
+@node Smart Key - Identifier Menu Mode , Smart Key - Calendar Mode, Smart Key - Fortran Source Code, Smart Keyboard Keys
 @subsection Smart Key - Identifier Menu Mode 
 
 @format
@@ -10757,18 +10865,7 @@ When pressed on an identifier name after an identifier index has been generated:
 @end group
 @end format
 
-@node Smart Key - Occurrence Matches, Smart Key - Calendar Mode, Smart Key - Identifier Menu Mode , Smart Keyboard Keys
-@subsection Smart Key - Occurrence Matches
-
-@format
-@group
-When pressed within an occur-mode, moccur-mode or amoccur-mode buffer:
-  ACTION KEY or ASSIST KEY
-     Jumps to the source buffer and line of the current occurrence.
-@end group
-@end format
-
-@node Smart Key - Calendar Mode, Smart Key - Man Page Apropos, Smart Key - Occurrence Matches, Smart Keyboard Keys
+@node Smart Key - Calendar Mode, Smart Key - Man Page Apropos, Smart Key - Identifier Menu Mode , Smart Keyboard Keys
 @subsection Smart Key - Calendar Mode
 
 @format

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:      3-Jan-24 at 02:22:25 by Bob Weiner
+;; Last-Mod:      3-Jan-24 at 13:54:31 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -65,6 +65,9 @@
 (declare-function ert-results-show                   "ext:ert-results")
 (declare-function ert-results-toggle                 "ext:ert-results")
 (declare-function ert-results-describe-test-at-point "ext:ert-results")
+
+;; Hyperbole functions and keymap for `flymake-mode'
+(declare-function hsys-flymake-get-issue-at-position "hsys-flymake")
 
 ;; Functions from Hyperbole's abstract mail and news interface.
 ;; See "hmail.el"
@@ -401,6 +404,10 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
     ;;
     ((eq major-mode 'kotl-mode)
      . ((kotl-mode:action-key) . (kotl-mode:assist-key)))
+    ;;
+    ;; If in the flymake linter list of issues buffer, jump to or show issue at point
+    ((eq major-mode 'flymake-diagnostics-buffer-mode)
+     . ((flymake-goto-diagnostic (point)) . (flymake-show-diagnostic (point) t)))
     ;;
     ;; Rdb-mode supports direct selection and viewing of in-memory relational
     ;; databases.  Rdb-mode is available as a part of InfoDock.
@@ -2088,7 +2095,7 @@ If key is pressed:
 		   (eolp)
 		   ;; If there is a flymake diagnostic issue at eol,
 		   ;; drop through this clause to handle it later.
-		   (hsys-flymake-get-issue-at-point)))
+		   (hsys-flymake-get-issue-at-position)))
     (if (eq major-mode 'kotl-mode)
 	(and (not (kotl-mode:eobp)) (kotl-mode:eolp t))
       (and (not (smart-eobp)) (eolp)

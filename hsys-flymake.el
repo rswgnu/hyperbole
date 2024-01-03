@@ -7,7 +7,7 @@
 ;; E-mail:       rsw@gnu.org
 ;;
 ;; Orig-Date:    31-Dec-23 at 13:54:08
-;; Last-Mod:      3-Jan-24 at 03:19:44 by Bob Weiner
+;; Last-Mod:      3-Jan-24 at 13:41:18 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -116,7 +116,7 @@ Issue is inserted into the buffer after the current visible line."
     (define-key map "d" 'flymake-show-buffer-diagnostics)
     (define-key map "g" 'hsys-flymake-display-this-or-next-issue)
     (define-key map "i" 'hsys-flymake-insert-issue-at-point)
-    (define-key map "l" 'flymake-switch-to-log-buffers)
+    (define-key map "l" 'flymake-switch-to-log-buffer)
     (define-key map "n" 'flymake-goto-next-error)
     (define-key map "p" 'flymake-goto-prev-error)
     (define-key map "s" 'flymake-start)

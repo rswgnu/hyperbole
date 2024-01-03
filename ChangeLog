@@ -1,5 +1,23 @@
 2024-01-03  Bob Weiner  <rsw@gnu.org>
 
+* hui-mouse.el (smart-eolp): Change 'hsys-flymake-get-issue-at-point' to
+    correct 'hsys-flymake-get-issue-at-position' call.
+               (hkey-alist): If in the flymake linter list of issues buffer,
+    jump to or show issue at point.
+  man/hkey-help.txt:
+  man/hyperbole.texi (Implicit Button Types): Remove
+    'hsys-flymake-issue-at-point' ibtype (use {C-c C-l g} command instead.
+    Document new 'hkey-alist' behavior from above.
+* man/hyperbole.texi (Smart Key - Occurrence Matches): Move to proper
+    priority order.
+                     (Smart Key - Flymake Mode): Add and add table of
+    Hyperbole key bindings in source buffer 'flymake-mode'.
+                     (Glossary - Flymake): Add.
+                     (Implicit Button Types): Remove hsys-flymake ibtype
+    since would only apply if no other type applies and this could be
+    confusing and inconsistent to users.  Leave it commented out in the
+    code so a user can enable it at a higher priority if desired.
+
 * hypb-ert.el (hypb-ert-run-test-at-definition): Fix to edebug function
     when not previously defined.
   test/hypb-ert-tests.el (hypb-ert-tests--edebug-is-called): Make edebug
