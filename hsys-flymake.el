@@ -7,7 +7,7 @@
 ;; E-mail:       rsw@gnu.org
 ;;
 ;; Orig-Date:    31-Dec-23 at 13:54:08
-;; Last-Mod:      3-Jan-24 at 13:41:18 by Bob Weiner
+;; Last-Mod:      3-Jan-24 at 15:45:33 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -23,12 +23,15 @@
 ;;
 ;;    We want to load this so the implicit button type defined herein
 ;;    takes effect, but we don't require `flymake-mode' or
-;;    `repeat-mode'. Instead we leave it to each function to check
+;;    `repeat-mode'.  Instead we leave it to each function to check
 ;;    whether it is enabled and active in the current buffer.  This way,
 ;;    if the user never uses `flymake-mode' that library is never loaded
 ;;    and the implicit button type never triggers.
 ;;
 ;;; Code:
+
+(require 'flymake)
+(require 'hbut)
 
 ;;; ************************************************************************
 ;;; Public functions
