@@ -7,7 +7,7 @@
 ;; E-mail:       rsw@gnu.org
 ;;
 ;; Orig-Date:    31-Dec-23 at 13:54:08
-;; Last-Mod:      3-Jan-24 at 15:45:33 by Mats Lidell
+;; Last-Mod:      4-Jan-24 at 10:18:18 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -30,8 +30,17 @@
 ;;
 ;;; Code:
 
-(require 'flymake)
 (require 'hbut)
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(defvar flymake-mode)
+(defvar flymake-wrap-around)
+(defvar flymake-mode-map)
+
+(declare-function flymake--diag-text "flymake")
 
 ;;; ************************************************************************
 ;;; Public functions
