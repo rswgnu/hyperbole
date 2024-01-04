@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     31-Dec-23 at 11:53:19 by Bob Weiner
+;; Last-Mod:      4-Jan-24 at 00:12:17 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -102,6 +102,7 @@
 (defvar org-outline-regexp-bol)         ; "org.el"
 (defvar markdown-regex-header)          ; "markdown-mode.el"
 (defvar google-contacts-buffer-name)    ; "ext:google-contacts.el"
+(defvar hbut:source-prefix)             ; "hbut.el"
 
 ;; Forward declarations
 (defvar hyrolo--wconfig)
@@ -185,7 +186,7 @@ See `hyrolo-hdr-and-entry-regexp'")
   (concat hyrolo-hdr-regexp
 	  "\\|^" (if (boundp 'hbut:source-prefix) hbut:source-prefix "@loc> ")
 	  "\\|")
-  "Regular expression to prefix to `hyrolo-hdr-and-entry-regexp' and `outline-regexp'.
+  "Regexp to prefix to `hyrolo-hdr-and-entry-regexp' and `outline-regexp'.
 It must not contain any parenthesized match groupings.")
 
 (defvar hyrolo-entry-regexp "^\\([*\^L]+\\)\\([ \t\n\r]+\\)"
@@ -248,7 +249,8 @@ It must contain a %s indicating where to put the entry name and a second
   :group 'hyperbole-hyrolo)
 
 (defvar hyrolo-entry-name-regexp "[-_a-zA-Z0-9@.]+\\( ?, ?[-_a-zA-Z0-9@.]+\\)?"
-  "*Regexp matching a hyrolo entry name after matching to `hyrolo-hdr-and-entry-regexp'.")
+  "*Regexp matching a hyrolo entry name.
+The match is after matching to `hyrolo-hdr-and-entry-regexp'.")
 
 (defconst hyrolo-markdown-suffix-regexp "md\\|markdown\\|mkd\\|mdown\\|mkdn\\|mdwn"
   "Regexp matching Markdown file suffixes.")
@@ -1064,7 +1066,8 @@ any rolo entry of the given level, not the beginning of a line (^); an
 example, might be (regexp-quote \"**\") to match level two.  Return number
 of groupings sorted.
 
-Current buffer should be an editable HyRolo source location, not the match buffer."
+Current buffer should be an editable HyRolo source location, not
+the match buffer."
   (interactive "sRegexp for level's entries: \nP")
   ;; Divide by 2 in next line because each asterisk character is preceded
   ;; by a regexp-quote backslash character.
@@ -1780,7 +1783,8 @@ Return number of matching entries found."
 
 (defun hyrolo-map-level (func level-regexp &optional max-groupings)
   "Perform FUNC in current buffer on groupings of entries at level LEVEL-REGEXP.
-Current buffer should be an editable HyRolo source location, not the match buffer.
+Current buffer should be an editable HyRolo source location, not
+the match buffer.
 
 Limit to a maximum of optional argument MAX-GROUPINGS.  Nil value
 of MAX-GROUPINGS means all groupings at the given level.  FUNC
@@ -1845,7 +1849,10 @@ Return number of groupings matched."
 This mode does not add any outline-related font-locking.
 
 See the command `outline-mode' for more information on this mode."
-  nil " Outl" nil
+  ;; nil " Outl" nil ;; FIXME: From when is this obsolete?
+  :init-value nil
+  :lighter " Outl"
+  :keymap nil
   (if hyrolo-outline-minor-mode
       ;; enable minor mode
       (progn
@@ -2860,7 +2867,8 @@ Both positions may be nil if there are no matches yet found."
       (list nil nil))))
 
 (defun hyrolo--cache-get-major-mode-from-index (major-mode-index)
-  "Return `major-mode' key from hash table entry with key MAJOR-MODE-INDEX, else nil."
+  "Return `major-mode' key from hash table entry with key MAJOR-MODE-INDEX.
+Return nil if not found."
   (gethash major-mode-index hyrolo--cache-index-to-major-mode-hasht))
 
 (defun hyrolo-cache-get-major-mode-from-pos (pos)
@@ -2894,9 +2902,10 @@ Call whenever `hyrolo-display-buffer' is changed."
   "Cache buffer `major-mode' for MATCHED-BUF with point in HyRolo display buffer.
 MATCHED-BUF must be a live buffer, not a buffer name.
 
-Push (point-max) of `hyrolo-display-buffer' onto `hyrolo--cache-loc-match-bounds'.
-Push hash table's index key to `hyrolo--cache-major-mode-indexes'.
-Ensure MATCHED-BUF's `major-mode' is stored in the hash table."
+Push (point-max) of `hyrolo-display-buffer' onto
+`hyrolo--cache-loc-match-bounds'.  Push hash table's index key to
+`hyrolo--cache-major-mode-indexes'.  Ensure MATCHED-BUF's
+`major-mode' is stored in the hash table."
   (with-current-buffer hyrolo-display-buffer
     (let* ((matched-buf-major-mode (buffer-local-value 'major-mode matched-buf))
 	   (matched-buf-major-mode-name (symbol-name matched-buf-major-mode))

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:      2-Jan-24 at 23:02:06 by Bob Weiner
+;; Last-Mod:      3-Jan-24 at 23:42:18 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1141,7 +1141,8 @@ link button and return t; otherwise, return nil.
 With optional DEPRESS-WINDOW and RELEASE-WINDOW, use the points
 from those instead.  See also documentation for `hui:link-possible-types'.
 
-An Assist Mouse Key drag between windows (when not on an item) runs this command."
+An Assist Mouse Key drag between windows (when not on an item)
+runs this command."
   (interactive (progn
 		 ;; Clear smart key variables so this does not
 		 ;; improperly reference values left over from a prior
@@ -1243,7 +1244,8 @@ With optional NAME-ARG-FLAG (interactively, the prefix argument set to
 anything other than a single C-u (list 4)), prompt for a name to precede
 the implicit button.
 
-An Action Mouse Key drag between windows (when not on an item) runs this command."
+An Action Mouse Key drag between windows (when not on an item)
+runs this command."
   (interactive (progn
 		 ;; Clear smart key variables so this does not
 		 ;; improperly reference values left over from a prior

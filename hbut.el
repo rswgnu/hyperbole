@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      3-Jan-24 at 02:31:24 by Bob Weiner
+;; Last-Mod:      3-Jan-24 at 23:32:27 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -66,6 +66,9 @@ Use the function, (hbut:max-len), to read the proper value.")
 (declare-function org-context "org")
 
 (declare-function hpath:file-position-to-line-and-column "hpath")
+
+(declare-function hyrolo-hdr-move-after-p "hyrolo")
+(declare-function smart-eolp "hui-mouse")
 
 ;;; ************************************************************************
 ;;; Private variables
