@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:      3-Jan-24 at 13:54:31 by Bob Weiner
+;; Last-Mod:      3-Jan-24 at 23:43:10 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -115,7 +115,7 @@ In other context signal an error."
     (hypb:error "(Hyperbole Action Key): No action defined for this context; try another location")))
 
 (defun assist-key-error ()
-  "If in Org mode and Hyperbole shares {M-RET}, run 'org-meta-return'.
+  "If in Org mode and Hyperbole shares {M-RET}, run `org-meta-return'.
 In other context, signal an error."
   (if (and (funcall hsys-org-mode-function)
 	   (hsys-org-meta-return-shared-p))

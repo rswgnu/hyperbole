@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    13-Jun-89 at 22:57:33
-;; Last-Mod:     26-Dec-23 at 20:46:10 by Bob Weiner
+;; Last-Mod:      4-Jan-24 at 14:00:13 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -89,7 +89,10 @@ flag is non-nil.  With optional KOUTLINE-FLAG, map entries with
 `hyrolo-map-kotl' rather than `hyrolo-map-entries'.
 
 A complex example of EXPR might be:
-  (and (or (not time card) (xor (and french \"red balloons\") spanish)) teacher pet)
+  (and
+   (or (not time card) (xor (and french \"red balloons\") spanish))
+   teacher
+   pet)
 which means:
   (Match neither `time' nor `card'
      or

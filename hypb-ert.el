@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org> and Bob Weiner <rsw@gnu.org>
 ;;
 ;; Orig-Date:    31-Mar-21 at 21:11:00
-;; Last-Mod:      3-Jan-24 at 03:37:28 by Bob Weiner
+;; Last-Mod:      4-Jan-24 at 14:10:39 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -40,7 +40,8 @@
   (if (memq 'message-fn (actype:params #'ert-run-tests-interactively))
       ;; Suppress ert messages so last test case message stays in the minibuffer;
       ;; 3rd arg message-fn available only in Emacs 27 and earlier
-      (ert selector nil #'hypb-ert-message-function)
+      (with-suppressed-warnings ((callargs ert))
+        (ert selector nil #'hypb-ert-message-function))
     (ert selector))
   ;; ERT can display a long internal data structure as a result, so
   ;; replace it in the minibuffer with a blank message.

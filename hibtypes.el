@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      3-Jan-24 at 01:38:08 by Bob Weiner
+;; Last-Mod:      3-Jan-24 at 23:34:58 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -76,6 +76,7 @@
 (declare-function symtable:add "hact")
 
 (declare-function hyrolo-get-file-list "hyrolo")
+(declare-function ert-test-boundp "ert")
 
 ;;; ************************************************************************
 ;;; Public implicit button types

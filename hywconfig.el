@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Mar-89
-;; Last-Mod:     23-Dec-23 at 01:21:23 by Bob Weiner
+;; Last-Mod:      4-Jan-24 at 14:15:30 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -204,7 +204,8 @@ oldest one comes the newest one."
 
 (defun hywconfig-named-get (name)
   "Return the selected frame's window configuration with NAME."
-  (lax-plist-get (hywconfig-named-get-entries) name))
+  (with-suppressed-warnings ((obsolete lax-plist-get)) ;; Obsolete since 29.1, use plist-get
+    (lax-plist-get (hywconfig-named-get-entries) name)))
 
 (defun hywconfig-named-get-names ()
   "Return the selected frame's list of window configuration names."
@@ -216,7 +217,9 @@ oldest one comes the newest one."
 
 (defun hywconfig-named-put (name wconfig)
   "Add NAMEd WCONFIG to selected frame's plist of named window configurations."
-  (hywconfig-named-set-entries (lax-plist-put (hywconfig-named-get-entries) name wconfig)))
+  (hywconfig-named-set-entries
+   (with-suppressed-warnings ((obsolete lax-plist-put)) ;; Obsolete since 29.1, use plist-get
+     (lax-plist-put (hywconfig-named-get-entries) name wconfig))))
 
 (defun hywconfig-named-remove (name)
   "Remove the selected frame's stored window configuration with NAME."

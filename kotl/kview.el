@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     20-Dec-23 at 17:27:44 by Bob Weiner
+;; Last-Mod:      4-Jan-24 at 13:59:44 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -26,6 +26,9 @@
 ;;; ************************************************************************
 
 (defvar kotl-mode:refill-flag)
+(defvar hyrolo-display-buffer)
+(defvar hyrolo-hdr-regexp)
+(defvar hbut:source-prefix)
 
 (declare-function klabel:format "klabel.el")
 (declare-function klabel:idstamp-p "klabel.el")
