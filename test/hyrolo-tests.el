@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:      1-Jan-24 at 22:38:40 by Mats Lidell
+;; Last-Mod:      4-Jan-24 at 13:19:35 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -487,73 +487,75 @@ sequence up to depth starting from 2.
                       (number-to-string (+ 1 d))))))
     result))
 
-(defun hyrolo-tests--generate-header-contents-for-tests (header section body depth)
-  "Generate the HEADER and BODY contents for the SECTION with DEPTH."
+(defun hyrolo-tests--generate-heading-contents-for-tests (heading-prefix-char heading section body depth)
+  "Generate the HEADING and BODY contents for the SECTION with DEPTH."
   (let (result)
     (dotimes (d depth)
       (setq result
             (concat result
-                    (make-string (1+ d) ?*) " " header " " (hyrolo-tests--level-number section (1+ d)) "\n"
+                    (make-string (1+ d) heading-prefix-char)
+		    " " heading " " (hyrolo-tests--level-number section (1+ d)) "\n"
                     body " " (hyrolo-tests--level-number section (1+ d)) "\n")))
     result))
 
-(defun hyrolo-tests--gen-outline (header sections body depth)
+(defun hyrolo-tests--gen-outline (heading-prefix-char heading sections body depth)
   "Generate an outline structure suitable for hyrolo outline test.
 
-The contents is constructed with an outline HEADER and BODY text.
-Each is repeated in SECTIONS with one set of hierarchical headers
-to the specified DEPTH.
+The contents is constructed with an outline HEADING-PREFIX-CHAR,
+HEADING and BODY text.  Each is repeated in SECTIONS with one set
+of hierarchical headings to the specified DEPTH.
 
 Example:
-   * header 1
+   * heading 1
    body 1
-   ** header 2
+   ** heading 2
    body 1.2
    [...]
-   * header <sections>
+   * heading <sections>
    body <sections>
-   ** header <sections>.2
+   ** heading <sections>.2
    body <section>.2
    [...]"
   (let (result)
     (dotimes (section sections)
       (setq result
             (concat result
-                    (hyrolo-tests--generate-header-contents-for-tests header (1+ section) body depth))))
+                    (hyrolo-tests--generate-heading-contents-for-tests
+		     heading-prefix-char heading (1+ section) body depth))))
     result))
 
-(ert-deftest hyrolo-tests--outline-next-visible-header ()
-  "Verify movement to next visible header."
+(ert-deftest hyrolo-tests--outline-next-visible-heading ()
+  "Verify movement to next visible heading."
   (let* ((org-file (make-temp-file "hypb" nil ".org"
-                                   (hyrolo-tests--gen-outline "header" 2 "body" 2)))
+                                   (hyrolo-tests--gen-outline ?* "heading" 2 "body" 2)))
          (hyrolo-file-list (list org-file)))
     (unwind-protect
         (progn
           (hyrolo-grep "body")
-          (should (string= "*HyRolo*" (buffer-name)))
+          (should (string= hyrolo-display-buffer (buffer-name)))
 
           ;; Move down
           (should (looking-at-p "==="))
           (should (hact 'kbd-key "n"))
-          (should (looking-at-p "^\\* header 1"))
+          (should (looking-at-p "^\\* heading 1"))
           (should (hact 'kbd-key "n"))
-          (should (looking-at-p "^\\*\\* header 1\\.2"))
+          (should (looking-at-p "^\\*\\* heading 1\\.2"))
           (should (hact 'kbd-key "n"))
-          (should (looking-at-p "^\\* header 2"))
+          (should (looking-at-p "^\\* heading 2"))
           (should (hact 'kbd-key "n"))
-          (should (looking-at-p "^\\*\\* header 2\\.2"))
+          (should (looking-at-p "^\\*\\* heading 2\\.2"))
           (should (hact 'kbd-key "n"))
           (should (eobp))
 
           ;; Move back up
           (should (hact 'kbd-key "p"))
-          (should (looking-at-p "^\\*\\* header 2\\.2"))
+          (should (looking-at-p "^\\*\\* heading 2\\.2"))
           (should (hact 'kbd-key "p"))
-          (should (looking-at-p "^\\* header 2"))
+          (should (looking-at-p "^\\* heading 2"))
           (should (hact 'kbd-key "p"))
-          (should (looking-at-p "^\\*\\* header 1\\.2"))
+          (should (looking-at-p "^\\*\\* heading 1\\.2"))
           (should (hact 'kbd-key "p"))
-          (should (looking-at-p "^\\* header 1"))
+          (should (looking-at-p "^\\* heading 1"))
           (should (hact 'kbd-key "p"))
 
           ;; BUG: This fails in Emacs 29 and 30
@@ -563,87 +565,81 @@ Example:
           ;; This is what we get
           (should (looking-at-p "@loc>"))
           (should (= 2 (line-number-at-pos))))
-      (kill-buffer "*HyRolo*")
+      (kill-buffer hyrolo-display-buffer)
       (hy-delete-file-and-buffer org-file))))
 
-(ert-deftest hyrolo-tests--outline-up-header ()
-  "Verify movement from sub header to next header one level above."
+(ert-deftest hyrolo-tests--outline-up-heading ()
+  "Verify movement from sub heading to next heading one level above."
   (let* ((org-file (make-temp-file "hypb" nil ".org"
-                                   (hyrolo-tests--gen-outline "header" 2 "body" 3)))
+                                   (hyrolo-tests--gen-outline ?* "heading" 2 "body" 3)))
          (hyrolo-file-list (list org-file)))
     (unwind-protect
         (progn
           (hyrolo-grep "body")
-          (should (string= "*HyRolo*" (buffer-name)))
+          (should (string= hyrolo-display-buffer (buffer-name)))
 
-          ;; Move to last header
+          ;; Move to last heading
           (goto-char (point-max))
           (forward-line -2)
-          (should (looking-at-p "^\\*\\*\\* header 2\\.2\\.3$"))
+          (should (looking-at-p "^\\*\\*\\* heading 2\\.2\\.3$"))
           (should (hact 'kbd-key "u"))
-          (should (looking-at-p "^\\*\\* header 2\\.2$"))
+          (should (looking-at-p "^\\*\\* heading 2\\.2$"))
           (should (hact 'kbd-key "u"))
-          (should (looking-at-p "^\\* header 2$"))
+          (should (looking-at-p "^\\* heading 2$"))
           (should-error (hact 'kbd-key "u")))
-      (kill-buffer "*HyRolo*")
+      (kill-buffer hyrolo-display-buffer)
       (hy-delete-file-and-buffer org-file))))
 
-(ert-deftest hyrolo-tests--outline-next-visible-header-two-sections ()
-  "Verify movement to next visible header with two sections."
+(ert-deftest hyrolo-tests--outline-next-visible-heading-two-sections ()
+  "Verify movement to next visible heading with two sections."
   (let* ((org-file1 (make-temp-file "hypb" nil ".org"
-                                    (hyrolo-tests--gen-outline "header-a" 1 "body-a" 2)))
-         (org-file2 (make-temp-file "hypb" nil ".org"
-                                    (hyrolo-tests--gen-outline "header-b" 1 "body-b" 2)))
-         (hyrolo-file-list (list org-file1 org-file2)))
+                                    (hyrolo-tests--gen-outline ?* "heading-a" 1 "body-a" 2)))
+         (md-file1 (make-temp-file "hypb" nil ".md"
+                                    (hyrolo-tests--gen-outline ?# "heading-b" 1 "body-b" 2)))
+         (hyrolo-file-list (list org-file1 md-file1)))
     (unwind-protect
         (progn
           (hyrolo-grep "body")
-          (should (string= "*HyRolo*" (buffer-name)))
+          (should (string= hyrolo-display-buffer (buffer-name)))
 
           ;; Move down
           (should (looking-at-p "==="))
           (should (hact 'kbd-key "n"))
-          (should (looking-at-p "^\\* header-a 1$"))
+          (should (looking-at-p "^\\* heading-a 1$"))
           (should (hact 'kbd-key "n"))
-          (should (looking-at-p "^\\*\\* header-a 1\\.2$"))
+          (should (looking-at-p "^\\*\\* heading-a 1\\.2$"))
+          (should (hact 'kbd-key "nn"))
+          (should (looking-at-p "^# heading-b 1$"))
           (should (hact 'kbd-key "n"))
-          (should (looking-at-p "^\\* header-b 1$"))
-          (should (hact 'kbd-key "n"))
-          (should (looking-at-p "^\\*\\* header-b 1\\.2$"))
+          (should (looking-at-p "^## heading-b 1\\.2$"))
           (should (hact 'kbd-key "n"))
           (should (eobp))
 
           ;; Move back up
           (should (hact 'kbd-key "p"))
-          (should (looking-at-p "^\\*\\* header-b 1\\.2$"))
+          (should (looking-at-p "^## heading-b 1\\.2$"))
           (should (hact 'kbd-key "p"))
-          (should (looking-at-p "^\\* header-b 1$"))
+          (should (looking-at-p "^# heading-b 1$"))
+          (should (hact 'kbd-key "pp"))
+          (should (looking-at-p "^\\*\\* heading-a 1\\.2$"))
           (should (hact 'kbd-key "p"))
-          (should (looking-at-p "^\\*\\* header-a 1\\.2$"))
+          (should (looking-at-p "^\\* heading-a 1$"))
           (should (hact 'kbd-key "p"))
-          (should (looking-at-p "^\\* header-a 1$"))
-          (should (hact 'kbd-key "p"))
-
-          ;; BUG: This fails in Emacs 29 and 30
-          ;; This is the expected behavior that works in Emacs 27 and 28.
-          ;; (should (looking-at-p "==="))
-          ;; (should (bobp))
-          ;; This is what we get
-          (should (looking-at-p "@loc>"))
-          (should (= 2 (line-number-at-pos))))
-      (kill-buffer "*HyRolo*")
+          (should (looking-at-p "==="))
+          (should (= 1 (line-number-at-pos))))
+      (kill-buffer hyrolo-display-buffer)
       (hy-delete-file-and-buffer org-file1)
-      (hy-delete-file-and-buffer org-file2))))
+      (hy-delete-file-and-buffer md-file1))))
 
 (ert-deftest hyrolo-tests--outline-hide-show-heading ()
-  "Verify hiding and showing headers."
+  "Verify hiding and showing headings."
   (let* ((org-file (make-temp-file "hypb" nil ".org"
-                                   (hyrolo-tests--gen-outline "header" 2 "body" 2)))
+                                   (hyrolo-tests--gen-outline ?* "heading" 2 "body" 2)))
          (hyrolo-file-list (list org-file)))
     (unwind-protect
         (progn
           (hyrolo-grep "body")
-          (should (string= "*HyRolo*" (buffer-name)))
+          (should (string= hyrolo-display-buffer (buffer-name)))
 
           ;; Hide first line hides whole section
           (should (looking-at-p "==="))
@@ -655,27 +651,27 @@ Example:
           (should (looking-at-p "^===+$"))
 
           (should (hact 'kbd-key "n"))
-          (should (looking-at-p "^* header 1$"))
+          (should (looking-at-p "^* heading 1$"))
           ;; BUG: This gives an unexpected error when trying to hide
           ;; org-fold-region: Calling ‘org-fold-core-region’ with missing SPEC
           (should-error (hact 'kbd-key "h"))
-          ;; Expected is not to fail on hiding the header.
+          ;; Expected is not to fail on hiding the heading.
           ;; Seems to be version dependent for 29 and 30!?
 
           ;; TBC - When bug above is resolved or understood better.
           )
-      (kill-buffer "*HyRolo*")
+      (kill-buffer hyrolo-display-buffer)
       (hy-delete-file-and-buffer org-file))))
 
 (ert-deftest hyrolo-tests--tab-through-matches ()
   "Verify tabbing through search matches."
   (let* ((org-file (make-temp-file "hypb" nil ".org"
-                                   (hyrolo-tests--gen-outline "header" 2 "body" 2)))
+                                   (hyrolo-tests--gen-outline ?* "heading" 2 "body" 2)))
          (hyrolo-file-list (list org-file)))
     (unwind-protect
         (progn
           (hyrolo-grep "body")
-          (should (string= "*HyRolo*" (buffer-name)))
+          (should (string= hyrolo-display-buffer (buffer-name)))
 
           ;; Search Down
           (should (looking-at-p "==="))
@@ -698,18 +694,18 @@ Example:
           (should (hact 'kbd-key "<backtab>"))
           (should (looking-at-p "^body 1$"))
           (should-error (hact 'kbd-key "<backtab>")))
-      (kill-buffer "*HyRolo*")
+      (kill-buffer hyrolo-display-buffer)
       (hy-delete-file-and-buffer org-file))))
 
 (ert-deftest hyrolo-tests--edit-entry ()
   "Verify {e} brings up entry in new window."
   (let* ((org-file (make-temp-file "hypb" nil ".org"
-                                   (hyrolo-tests--gen-outline "header" 1 "body" 2)))
+                                   (hyrolo-tests--gen-outline ?* "heading" 1 "body" 2)))
          (hyrolo-file-list (list org-file)))
     (unwind-protect
         (progn
           (hyrolo-grep "body")
-          (should (string= "*HyRolo*" (buffer-name)))
+          (should (string= hyrolo-display-buffer (buffer-name)))
 
           ;; Search Down
           (should (looking-at-p "==="))
@@ -724,14 +720,14 @@ Example:
           (should (looking-at-p "^body 1$"))
 
           ;; Edit next record
-          (switch-to-buffer "*HyRolo*")
+          (switch-to-buffer hyrolo-display-buffer)
           (should (hact 'kbd-key "TAB"))
           (should (looking-at-p "^body 1\\.2$"))
           (should (hact 'kbd-key "e"))
           (should (string= (buffer-name) (file-name-nondirectory org-file)))
           (should (looking-at-p "^body 1\\.2$"))
           )
-      (kill-buffer "*HyRolo*")
+      (kill-buffer hyrolo-display-buffer)
       (hy-delete-file-and-buffer org-file))))
 
 (provide 'hyrolo-tests)

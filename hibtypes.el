@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      3-Jan-24 at 23:34:58 by Mats Lidell
+;; Last-Mod:      4-Jan-24 at 22:48:49 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -87,12 +87,6 @@
 ;; Don't use require below here for any libraries with ibtypes in
 ;; them.  Use load instead to ensure are reloaded when resetting
 ;; ibtype priorities.
-
-;;; ========================================================================
-;;; Keymap with repeat and source buffer control for flymake code linter
-;;; ========================================================================
-
-(load "hsys-flymake")
 
 ;;; ========================================================================
 ;;; Jumps to source line from Python traceback lines

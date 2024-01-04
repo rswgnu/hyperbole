@@ -7,7 +7,7 @@
 ;; E-mail:       rsw@gnu.org
 ;;
 ;; Orig-Date:    31-Dec-23 at 13:54:08
-;; Last-Mod:      4-Jan-24 at 10:18:18 by Mats Lidell
+;; Last-Mod:      4-Jan-24 at 22:51:11 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -21,14 +21,50 @@
 ;;    These functions all work in the source code buffer, not the flymake
 ;;    diagnostics buffer.
 ;;
-;;    We want to load this so the implicit button type defined herein
-;;    takes effect, but we don't require `flymake-mode' or
-;;    `repeat-mode'.  Instead we leave it to each function to check
-;;    whether it is enabled and active in the current buffer.  This way,
-;;    if the user never uses `flymake-mode' that library is never loaded
-;;    and the implicit button type never triggers.
+;;    This library defines the following key bindings and associated functions.
+;;
+;;    {C-c C-l t} - `hsys-flymake-toggle' - Global binding to toggle whether
+;;    flymake minor mode is enabled in the current buffer.
+;;
+;;    The rest of these key bindings are local and enabled only when flymake
+;;    minor mode is enabled.
+;;
+;;    {C-c C-l d} - `flymake-show-buffer-diagnostics' - Display list of flymake
+;;    issues with this buffer.
+;;
+;;    {C-c C-l g} - `hsys-flymake-display-this-or-next-issue' - Display issue at
+;;    point or if no issue there, move to next issue location and display it.
+;;
+;;    {C-c C-l i} - `hsys-flymake-insert-issue-at-point' - Insert issue at point
+;;    on a separate new line below the current line so that its text can be
+;;    utilized.
+;;
+;;    {C-c C-l l} - `flymake-switch-to-log-buffer' - For developers of new
+;;    language flymake backends: Jump to a log of internal flymake processing.
+;;
+;;    {C-c C-l n} - `flymake-goto-next-error' - In source buffer, move to next
+;;    flymake issue.  Wrap around at the end of the buffer if
+;;    `flymake-wrap-around' is non-nil.  Repeat with {n}.
+;;
+;;    {C-c C-l p} - `flymake-goto-prev-error' - In source buffer, move to
+;;    previous flymake issue.  Wrap around at the beginning of the buffer
+;;    if `flymake-wrap-around' is non-nil.  Repeat with {p}.
+;;
+;;    {C-c C-l s} - `flymake-start' - Force a run of flymake to update issues
+;;    with the current buffer.
+;;
+;;    {C-c C-l w} - `hsys-flymake-toggle-wraparound' - Toggle whether next
+;;    and previous issue commands wrap around at the end and beginning of the
+;;    buffer.  Repeat with {w}.
 ;;
 ;;; Code:
+
+;;    Don't require `flymake-mode' or `repeat-mode' here.  Instead we
+;;    leave it to each function to check whether `flymake-mode' is
+;;    enabled and active in the current buffer.  This way, if the user
+;;    never uses `flymake-mode' that library is never loaded and the
+;;    Smart Key context from `hkey-alist' in "hui-mouse.el" that invokes
+;;    functions from herein, never triggers.
 
 (require 'hbut)
 
@@ -45,22 +81,6 @@
 ;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
-
-(defib hsys-flymake-issue-at-point ()
-  "Display the flymake diagnostic issue at source buffer point, if any."
-  (let ((issue (hsys-flymake-get-issue-at-position)))
-    (when issue
-      (ibut:label-set issue)
-      (hact 'message issue))))
-
-(defun hsys-flymake-issue-at-point:help (ibut)
-  "With flymake enabled and point on its highlighted text, insert the issue."
-  (interactive)
-  (let ((issue (car (hattr:get ibut 'args))))
-    (when issue
-      (save-excursion
-	(end-of-visible-line)
-	(insert "\n" issue "\n")))))
 
 (defun hsys-flymake-display-issue-at-point ()
   "Display the flymake diagnostic issue at source buffer point, if any."

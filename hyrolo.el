@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      4-Jan-24 at 00:12:17 by Mats Lidell
+;; Last-Mod:      4-Jan-24 at 22:51:55 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1606,7 +1606,7 @@ Stop at the first and last subheadings of a superior heading."
   (hyrolo-move-forward #'outline-forward-same-level arg))
 
 (defun hyrolo-hdr-to-first-line-p ()
-  "If point is on a file hdr single text/sep/loc line, go to its first line.
+  "If point is within a file header, go to its first line.
 Return t in such cases.  Otherwise, don't move and return nil.
 
 The header includes lines matching both `hyrolo-hdr-regexp' and
@@ -1616,7 +1616,7 @@ The header includes lines matching both `hyrolo-hdr-regexp' and
     t))
 
 (defun hyrolo-hdr-to-last-line-p ()
-  "If point is on a file hdr single text/sep/loc line, go to its last line.
+  "If point is within a file header, go to its last line.
 Return t in such cases.  Otherwise, don't move and return nil.
 
 The header includes lines matching both `hyrolo-hdr-regexp' and
@@ -1626,37 +1626,42 @@ The header includes lines matching both `hyrolo-hdr-regexp' and
     t))
 
 (defun hyrolo-hdr-in-p ()
-  "If point is on a file hdr single text/separator/loc line, return t, else nil."
+  "If point is within a file header, return t, else nil."
   (save-excursion (hyrolo-hdr-move-after-p)))
 
 (defun hyrolo-hdr-move-after-p ()
-  "If point is on a file hdr separator/loc line, move past the hdr and return t.
+  "If point is within a file header, move past the hdr and return non-nil.
 Otherwise, don't move and return nil."
-  (let ((opoint (point))
-	(hdr-delim-count 0)
-	(loc-count 0))
-    (while (save-excursion
-	     (beginning-of-line)
-	     (or (when (looking-at hyrolo-hdr-regexp)
-		   (cl-incf hdr-delim-count))
+  (let (result)
+    (if (save-excursion
+	  (beginning-of-line)
+	  (zerop (% (count-matches hyrolo-hdr-regexp (point-min) (point)) 2)))
+	(cond ((save-excursion
+		(beginning-of-line)
+		(looking-at hyrolo-hdr-regexp))
+	       (setq result t)
+	       ;; On the first line of a file header pair
+	       (beginning-of-line)
+	       (when (re-search-forward hyrolo-hdr-regexp nil t 2)
+		 (forward-line 1)
 		 (when (looking-at hbut:source-prefix)
-		   (cl-incf loc-count))
-		 ;; Handle textual single line between header delimiter lines
-		 (when (and (forward-line -1)
-			    (looking-at hyrolo-hdr-regexp)
-			    (forward-line 2)
-			    (looking-at hyrolo-hdr-regexp))
-		   (forward-line -1)
-		   (cl-incf loc-count))))
-      (forward-line 1))
-    (when (and (/= (point) opoint) (< hdr-delim-count 2) (zerop loc-count))
-      (if (looking-at hyrolo-hdr-regexp)
-	  (forward-line 1)
-	(when (re-search-forward hyrolo-hdr-regexp nil t)
-          (forward-line 1)
-	  (when (looking-at hbut:source-prefix)
-	    (forward-line 1)))))
-    (/= (point) opoint)))
+		   ;; @loc> line after header
+		   (forward-line 1))))
+	      ((save-excursion
+		(beginning-of-line)
+		(looking-at hbut:source-prefix))
+	       ;; @loc> line after header
+	       (setq result t)
+	       (forward-line 1)))
+      ;; Within a file header pair,
+      (beginning-of-line)
+      (when (re-search-forward hyrolo-hdr-regexp nil t)
+	(setq result t)
+	(forward-line 1)
+	(when (looking-at hbut:source-prefix)
+	  ;; @loc> line after header
+	  (forward-line 1))))
+    result))
 
 ;;;###autoload
 (defun hyrolo-grep-directories (file-regexp &rest dirs)
@@ -2054,7 +2059,43 @@ With ARG, repeats or can move backward if negative.
 A heading is one that starts with an `outline-regexp' match.
 A match buffer header is one that starts with `hyrolo-hdr-regexp'."
   (interactive "p")
-  (hyrolo-move-forward #'outline-next-visible-heading arg))
+  (condition-case nil
+      (progn
+	(if (< arg 0)
+	    (beginning-of-line)
+	  (end-of-line))
+	(let ((found-heading-p)
+	      (opoint (point)))
+	  (while (and (not (bobp)) (< arg 0))
+	    (while (and (not (bobp))
+			(progn (hyrolo-hdr-to-first-line-p)
+			       (hyrolo-funcall-match
+				(lambda ()
+				  (setq found-heading-p
+					(re-search-backward
+					 (concat "^\\(?:" outline-regexp "\\)")
+					 nil 'move)))))
+			(progn (hyrolo-hdr-to-first-line-p)
+			       (outline-invisible-p))))
+	    (setq arg (1+ arg)))
+	  (while (and (not (eobp)) (> arg 0))
+	    (while (and (not (eobp))
+			(progn (hyrolo-hdr-move-after-p)
+			       (hyrolo-funcall-match
+				(lambda ()
+				  (setq found-heading-p
+					(re-search-forward
+					 (concat "^\\(?:" outline-regexp "\\)")
+					 nil 'move)))))
+			(outline-invisible-p (match-beginning 0))))
+	    (setq arg (1- arg)))
+	  (if found-heading-p (beginning-of-line))))
+    ;; Prevent error and move to start or end of file header at point,
+    ;; if any
+    (error (if (>= arg 0)
+	       (hyrolo-hdr-move-after-p)
+	     (hyrolo-hdr-to-first-line-p))))
+  (point))
 
 (defun hyrolo-outline-previous-heading ()
   "Move to the previous (possibly invisible) heading line."
@@ -2068,7 +2109,7 @@ With ARG, repeats or can move forward if negative.
 A heading is one that starts with an `outline-regexp' match.
 A match buffer header is one that starts with `hyrolo-hdr-regexp'."
   (interactive "p")
-  (hyrolo-move-backward #'outline-previous-visible-heading arg))
+  (hyrolo-outline-next-visible-heading (- arg)))
 
 (defun hyrolo-outline-promote (&optional which)
   "Promote headings higher up the tree.
@@ -2554,6 +2595,7 @@ Any non-nil value returned is a cons of (<entry-name> . <entry-source>)."
 	      outline-regexp (concat hyrolo-hdr-prefix-regexp "^\\(\\*+\\)\\( \\)")
 	      outline-level #'hyrolo-org-outline-level)
   (use-local-map org-mode-map)
+  (font-lock-mode -1) ;; Never font-lock in this mode to keep it fast
   ;; Modify a few syntax entries
   (modify-syntax-entry ?\" "\"")
   (modify-syntax-entry ?\\ "_")
@@ -2806,8 +2848,8 @@ prior to applying FUNC."
 
 (defun hyrolo-funcall-match (func &optional narrow-flag)
   "Apply FUNC with no arguments to the entry at point.
-If on a display match entry, set the appropriate major mode based
-on its source location prior to applying FUNC.
+If on a display match entry or file header, set the appropriate
+major mode based on its source location prior to applying FUNC.
 
 With point in the HyRolo display matches buffer and optional
 NARROW-FLAG non-nil, narrow to the current file of matches

@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:      3-Jan-24 at 13:55:25 by Bob Weiner
+@c Last-Mod:      4-Jan-24 at 13:12:14 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -10420,7 +10420,7 @@ buffer or not.
 @kindex C-c C-l d
 @kitem C-c C-l d
 @code{flymake-show-buffer-diagnostics} - Display list of flymake
-issues for this buffer.
+issues with this buffer.
 
 @findex hsys-flymake-display-this-or-next-issue
 @kindex C-c C-l g
@@ -10459,7 +10459,7 @@ flymake issue.  Wrap around at the beginning of the buffer if
 @findex flymake-start
 @kindex C-c C-l s
 @kitem C-c C-l s
-@code{flymake-start} - Force a run of flymake to update issues for the
+@code{flymake-start} - Force a run of flymake to update issues with the
 current buffer.
 
 @cindex key binding, C-c C-l t

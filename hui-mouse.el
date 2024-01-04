@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:      3-Jan-24 at 23:43:10 by Mats Lidell
+;; Last-Mod:      4-Jan-24 at 22:51:41 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -40,6 +40,7 @@
 ;;; ************************************************************************
 
 (require 'ert-results nil t) ;; Action Key support in ERT result buffers
+(require 'hsys-flymake)
 (require 'hload-path)
 (require 'hsys-org)
 (require 'hbut)

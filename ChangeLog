@@ -1,3 +1,24 @@
+2024-01-04  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-org-mode): Force font-lock-mode off in this major mode for speed.
+
+* hui-mouse.el (hsys-flymake): Move loading of this library here from "hibtypes.el".
+  hsys-flymake.el (hsys-flymake-issue-at-point, hsys-flymake-issue-at-point:help):
+    Remove this ibtype and its :help function.  Hyperbole uses 'hkey-alist' Smart
+    Key invocations of functions from this file instead now.
+    Also, add documentation of all commands and key bindings.
+
+* test/hyrolo-tests.el: Changed all 'header' to 'heading'.
+    (hyrolo-tests--generate-heading-contents-for-tests): Generalized to take
+    a 'heading-prefix-char' argument, to allow for markdown outline generation
+    as well.
+
+* hyrolo.el (hyrolo-hdr-move-after-p): Fix and improve to handle point
+    anywhere within a file header, not just on delim or loc lines.
+            (hyrolo-outline-next-visible-heading,
+             hyrolo-outline-previous-visible-heading): Fix to handle file
+    headers properly when moving more than one entry at a time.
+
 2024-01-03  Bob Weiner  <rsw@gnu.org>
 
 * hui-mouse.el (smart-eolp): Change 'hsys-flymake-get-issue-at-point' to
