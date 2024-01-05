@@ -1,3 +1,17 @@
+2024-01-05  Bob Weiner  <rsw@gnu.org>
+
+* Makefile (test-all): Change 'ert-run-tests-interactively' to
+    'ert-run-tests-batch' because this shows tracebacks of any tests that
+    fail in the *Messages* buffer, speeding debugging.  Although it does
+    have the side-effect of not producing the interactive *ert* buffer that
+    lets you jump to test source.  However, you can paste the test results
+    into another Emacs and use Hyperbole to jump to test/symbol definitions.
+           (test-all-output): Save outputs including backtraces written
+    to *Messages* buffer in file "ERT-OUTPUT".
+
+* test/hib-kbd-tests.el (kbd-key-hy-demo-factorial-test): Remove use of *ert*
+    buffer which may not exist if run in batch mode.
+
 * hyrolo.el (hyrolo-any-file-type-problem-p): If problem occurs within a 'let',
     then show backtrace so know where the let-binding was set.
 
