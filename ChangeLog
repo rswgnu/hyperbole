@@ -1,6 +1,14 @@
+* hyrolo.el (hyrolo-any-file-type-problem-p): If problem occurs within a 'let',
+    then show backtrace so know where the let-binding was set.
+
 2024-01-04  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-org-mode): Force font-lock-mode off in this major mode for speed.
+            (hyrolo-funcall-match): Add optional arg 'backward-flag' to select
+    proper major mode for a *HyRolo* match file when moving backwards.
+  test/hyrolo-tests.el (hyrolo-tests--outline-next-visible-heading,
+                        hyrolo-tests--outline-next-visible-heading-two-sections):
+    Fix tests to work with fixed {n} and {p} commands.
 
 * hui-mouse.el (hsys-flymake): Move loading of this library here from "hibtypes.el".
   hsys-flymake.el (hsys-flymake-issue-at-point, hsys-flymake-issue-at-point:help):

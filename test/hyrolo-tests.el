@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:      4-Jan-24 at 13:19:35 by Bob Weiner
+;; Last-Mod:      5-Jan-24 at 01:51:50 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -460,7 +460,7 @@ Match a string in the second cell."
           (should (string= (car hl) tmp-file)))
       (hy-delete-file-and-buffer tmp-file))))
 
-(ert-deftest hyrolo-tests--get-file-list-wrong-suffice ()
+(ert-deftest hyrolo-tests--get-file-list-wrong-suffix ()
   "Verify files need to have the proper suffix in hyrolo-file-list."
   (let ((tmp-file (make-temp-file "hypb" nil)))
     (unwind-protect
@@ -557,14 +557,8 @@ Example:
           (should (hact 'kbd-key "p"))
           (should (looking-at-p "^\\* heading 1"))
           (should (hact 'kbd-key "p"))
-
-          ;; BUG: This fails in Emacs 29 and 30
-          ;; This is the expected behavior that works in Emacs 27 and 28.
-          ;; (should (looking-at-p "==="))
-          ;; (should (bobp))
-          ;; This is what we get
-          (should (looking-at-p "@loc>"))
-          (should (= 2 (line-number-at-pos))))
+          (should (looking-at-p "==="))
+          (should (bobp)))
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-file-and-buffer org-file))))
 
@@ -608,7 +602,8 @@ Example:
           (should (looking-at-p "^\\* heading-a 1$"))
           (should (hact 'kbd-key "n"))
           (should (looking-at-p "^\\*\\* heading-a 1\\.2$"))
-          (should (hact 'kbd-key "nn"))
+          (should (hact 'kbd-key "n"))
+          (should (hact 'kbd-key "n"))
           (should (looking-at-p "^# heading-b 1$"))
           (should (hact 'kbd-key "n"))
           (should (looking-at-p "^## heading-b 1\\.2$"))
@@ -620,7 +615,8 @@ Example:
           (should (looking-at-p "^## heading-b 1\\.2$"))
           (should (hact 'kbd-key "p"))
           (should (looking-at-p "^# heading-b 1$"))
-          (should (hact 'kbd-key "pp"))
+          (should (hact 'kbd-key "p"))
+          (should (hact 'kbd-key "p"))
           (should (looking-at-p "^\\*\\* heading-a 1\\.2$"))
           (should (hact 'kbd-key "p"))
           (should (looking-at-p "^\\* heading-a 1$"))
@@ -654,7 +650,7 @@ Example:
           (should (looking-at-p "^* heading 1$"))
           ;; BUG: This gives an unexpected error when trying to hide
           ;; org-fold-region: Calling ‘org-fold-core-region’ with missing SPEC
-          (should-error (hact 'kbd-key "h"))
+          (should (hact 'kbd-key "h"))
           ;; Expected is not to fail on hiding the heading.
           ;; Seems to be version dependent for 29 and 30!?
 

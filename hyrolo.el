@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      4-Jan-24 at 22:51:55 by Bob Weiner
+;; Last-Mod:      5-Jan-24 at 01:29:50 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2074,7 +2074,8 @@ A match buffer header is one that starts with `hyrolo-hdr-regexp'."
 				  (setq found-heading-p
 					(re-search-backward
 					 (concat "^\\(?:" outline-regexp "\\)")
-					 nil 'move)))))
+					 nil 'move)))
+				nil t))
 			(progn (hyrolo-hdr-to-first-line-p)
 			       (outline-invisible-p))))
 	    (setq arg (1+ arg)))
@@ -2427,7 +2428,15 @@ package is not installed."
 		files-no-mode-list)
 	  (terpri)
 	  (princ "Please add appropriate entries for the above files to `auto-mode-alist'.\n")
-	  (terpri)))
+	  (terpri))
+
+	(when (hyperb:stack-frame '(hyrolo-file-list-changed))
+	  ;; Errors occurred with a let of `hyrolo-file-list' so
+	  ;; include backtrace of where this occurred.
+	  (princ "Stack trace of where invalid files were referenced:\n")
+	  (terpri)
+          ;; (setq backtrace-view (plist-put backtrace-view :show-locals t))
+	  (backtrace)))
       t)))
 
 (defun hyrolo-buffer-exists-p (hyrolo-buf)
@@ -2846,14 +2855,18 @@ prior to applying FUNC."
       (save-excursion
 	(funcall func)))))
 
-(defun hyrolo-funcall-match (func &optional narrow-flag)
+(defun hyrolo-funcall-match (func &optional narrow-flag backward-flag)
   "Apply FUNC with no arguments to the entry at point.
 If on a display match entry or file header, set the appropriate
 major mode based on its source location prior to applying FUNC.
 
 With point in the HyRolo display matches buffer and optional
 NARROW-FLAG non-nil, narrow to the current file of matches
-prior to applying FUNC."
+prior to applying FUNC.
+
+With optional BACKWARD-FLAG, FUNC is moving point backwards; when
+on a file boundary, move point back a character to select the
+proper major mode."
   (let ((display-buf (get-buffer hyrolo-display-buffer)))
     (if (eq (current-buffer) display-buf)
 	(progn
@@ -2870,7 +2883,11 @@ prior to applying FUNC."
 		  (when narrow-flag
 		    (narrow-to-region start end))
 		  (let ((font-lock-mode))
-		    (hyrolo-cache-set-major-mode (1+ start))
+		    ;; (message "%s" (hyrolo-cache-get-major-mode-from-pos
+		    ;;		   (funcall (if backward-flag '1- '1+) start)))
+		    (if (and backward-flag (looking-at hyrolo-hdr-regexp))
+			(hyrolo-cache-set-major-mode (1- start))
+		      (hyrolo-cache-set-major-mode (1+ start)))
 		    ;; Prevent Org and Outline minor modes from font-locking
 		    (setq font-lock-mode nil)
 		    (funcall func)))
@@ -2887,7 +2904,7 @@ prior to applying FUNC."
 		  (orgtbl-mode 0))
 		;; This pause forces a window redisplay that maximizes the
 		;; entries displayed for any final location of point.
-		(sit-for 0.001)
+		(sit-for 0.0001)
 		;; Need to leave point on a visible character or since
 		;; hyrolo uses reveal-mode, redisplay will rexpand
 		;; hidden entries to make point visible.
@@ -3052,30 +3069,30 @@ Add `hyrolo-hdr-regexp' to `hyrolo-hdr-and-entry-regexp' and `outline-regexp'."
   ;; FIXME: do we actually know that (current-buffer) = (window-buffer) ?
   (with-local-quit
     (with-demoted-errors "Reveal: %s"
-      (let ((old-ols
-             (delq nil
-                   (mapcar
-                    (lambda (x)
-                      ;; We refresh any spot in the current window as well
-                      ;; as any spots associated with a dead window or
-                      ;; a window which does not show this buffer any more.
-                      (cond
-                       ((eq (car x) (selected-window)) (cdr x))
-                       ((not (and (window-live-p (car x))
-                                  (eq (window-buffer (car x))
-                                      (current-buffer))))
-                        ;; Adopt this since it's owned by a window that's
-                        ;; either not live or at least not showing this
-                        ;; buffer any more.
-                        (setcar x (selected-window))
-                        (cdr x))))
-                    reveal-open-spots))))
-	(hyrolo-funcall-match
-	 (lambda ()
-           (setq old-ols (reveal-open-new-overlays old-ols))
-           (when reveal-auto-hide
-             (reveal-close-old-overlays old-ols)))
-	 t)))))
+	 (let ((old-ols
+		(delq nil
+                      (mapcar
+                       (lambda (x)
+			 ;; We refresh any spot in the current window as well
+			 ;; as any spots associated with a dead window or
+			 ;; a window which does not show this buffer any more.
+			 (cond
+			  ((eq (car x) (selected-window)) (cdr x))
+			  ((not (and (window-live-p (car x))
+                                     (eq (window-buffer (car x))
+					 (current-buffer))))
+                           ;; Adopt this since it's owned by a window that's
+                           ;; either not live or at least not showing this
+                           ;; buffer any more.
+                           (setcar x (selected-window))
+                           (cdr x))))
+                       reveal-open-spots))))
+	   (hyrolo-funcall-match
+	    (lambda ()
+              (setq old-ols (reveal-open-new-overlays old-ols))
+              (when reveal-auto-hide
+		(reveal-close-old-overlays old-ols)))
+	    t)))))
 
 ;;; ************************************************************************
 ;;; hyrolo-file-list - initialize cache if this is already set when loading
