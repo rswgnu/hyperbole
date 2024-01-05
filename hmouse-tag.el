@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     29-Dec-23 at 00:52:05 by Bob Weiner
+;; Last-Mod:      5-Jan-24 at 14:02:46 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -36,12 +36,20 @@
      (max (point-min) (if (eolp) (1- (point)) (point)))
      'xref-item))
   (when (not (fboundp 'xref-definition))
-    (defun xref-definition (identifier)
-      "Return the first definition of string IDENTIFIER."
-      (car (xref-backend-definitions (xref-find-backend) identifier)))
     (defun xref-definitions (identifier)
       "Return a list of all definitions of string IDENTIFIER."
-      (xref-backend-definitions (xref-find-backend) identifier))
+      (let* ((elisp-flag (smart-emacs-lisp-mode-p))
+	     (xref-backend (or (and elisp-flag
+				    (fboundp 'ert-test-boundp)
+				    (ert-test-boundp identifier)
+				    (boundp 'xref-etags-mode)
+				    'etags)
+			       (xref-find-backend)))
+	     (xref-items (xref-backend-definitions xref-backend identifier)))
+	xref-items))
+    (defun xref-definition (identifier)
+      "Return the first definition of string IDENTIFIER."
+      (car (xref-definitions identifier)))
     (defun xref-item-buffer (item)
       "Return the buffer in which xref ITEM is defined."
       (marker-buffer (save-excursion (xref-location-marker (xref-item-location item)))))
@@ -422,7 +430,8 @@ If:
   ;; Beyond Lisp files, Emacs Lisp symbols appear frequently in Byte-Compiled
   ;; buffers, debugger buffers, program ChangeLog buffers, Help buffers,
   ;; *Warnings*, *Flymake log* and *Flymake diagnostics... buffers.
-  (or (memq major-mode #'(emacs-lisp-mode lisp-interaction-mode debugger-mode))
+  (or (memq major-mode #'(emacs-lisp-mode lisp-interaction-mode
+					  debugger-mode ert-results-mode))
       (string-match-p (concat "\\`\\*\\(Warnings\\|Flymake log\\|Compile-Log\\(-Show\\)?\\)\\*"
 			      "\\|\\`\\*Flymake diagnostics")
 		      (buffer-name))
@@ -698,6 +707,8 @@ Use `hpath:display-buffer' to show definition or documentation."
 			      (if current-prefix-arg
 				  "Show doc for" "Find")))
 	 current-prefix-arg))
+  (when (and tag (symbolp tag))
+    (setq tag (symbol-name tag)))
   (unless (stringp tag)
     (setq tag (if (stringp hkey-value) hkey-value (smart-lisp-at-tag-p t))))
   (let* ((elisp-flag (smart-emacs-lisp-mode-p))

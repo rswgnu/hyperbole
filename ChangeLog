@@ -1,5 +1,16 @@
 2024-01-05  Bob Weiner  <rsw@gnu.org>
 
+* hypb-ert.el (hypb-ert-run-test-at-definition): Accept a symbol as
+    a 'test-name' argument.
+
+* hmouse-tag.el (smart-emacs-lisp-mode-p): Include 'ert-results-mode'.
+                (smart-lisp-find-tag): Allow 'tag' arg to be a symbol,
+    not just a string.  This allows it to be used as a target function
+    in 'find-function-regexp-alist' which is used in the ert results buffer
+    with the {.} command to jump to the ert test definition at point.
+                (xref-definitions, xref-definition): Rewrite to handle
+    ert-deftests.
+
 * Makefile (test-all): Change 'ert-run-tests-interactively' to
     'ert-run-tests-batch' because this shows tracebacks of any tests that
     fail in the *Messages* buffer, speeding debugging.  Although it does

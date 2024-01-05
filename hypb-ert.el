@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org> and Bob Weiner <rsw@gnu.org>
 ;;
 ;; Orig-Date:    31-Mar-21 at 21:11:00
-;; Last-Mod:      4-Jan-24 at 14:10:39 by Mats Lidell
+;; Last-Mod:      5-Jan-24 at 15:11:42 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -32,17 +32,19 @@
 (eval-and-compile (mapc #'require '(lisp-mode hload-path ert hact hbut hargs)))
 
 (defun hypb-ert-message-function (_msg-pat &rest _args)
-  "Ignore messages ert outputs so can display messages from tests run."
+  "Ignore the messages ert outputs so can display its test messages."
   ;; (identity (apply #'format msg-pat args)))))))
   nil)
 
-(defun hypb-ert (selector)
+(defun hypb-ert (test-selector)
+  "Run all ert TEST-SELECTOR tests.
+See documentation for `ert-select-tests' for TEST-SELECTOR types."
   (if (memq 'message-fn (actype:params #'ert-run-tests-interactively))
       ;; Suppress ert messages so last test case message stays in the minibuffer;
       ;; 3rd arg message-fn available only in Emacs 27 and earlier
       (with-suppressed-warnings ((callargs ert))
-        (ert selector nil #'hypb-ert-message-function))
-    (ert selector))
+        (ert test-selector nil #'hypb-ert-message-function))
+    (ert test-selector))
   ;; ERT can display a long internal data structure as a result, so
   ;; replace it in the minibuffer with a blank message.
   (message ""))
@@ -68,6 +70,7 @@ See documentation for `ert-select-tests' for TEST-SELECTOR types."
 	  (directory-files (expand-file-name "test" hyperb:dir) nil "^[a-zA-Z].*\\.el$")))
 
 (defun hypb-ert-require-libraries ()
+  "Load all Hyperbole ert test symbols."
   (mapc #'require (hypb-ert-get-require-symbols)))
 
 (defal hyperbole-run-test  "hypb-ert-run-test"
@@ -78,7 +81,7 @@ See documentation for `ert-select-tests' for TEST-SELECTOR types."
 See documentation for `ert-select-tests' for TEST-SELECTOR types.")
 
 (defun hypb-ert-run-all-tests ()
-  "Run every ert test."
+  "Run every Hyperbole ert test."
   (interactive)
   (hypb-ert-require-libraries)
   (hypb-ert t))
@@ -102,19 +105,20 @@ With optional START-END-FLAG, return a list of (test-name start-pos end-pos)."
 	    (list (match-string-no-properties 2) (match-beginning 2) (match-end 2))
 	  (match-string-no-properties 2))))))
 
-(defun hypb-ert-run-test-at-definition (test-name &optional debug-it)
-  "Assume on the name in the first line of an ert test def, eval and run the test.
-With optional DEBUG-IT non-nil (when the assist-key is pressed), edebug the
-test when it is run."
-  (let ((test-sym (intern-soft test-name)))
+(defun hypb-ert-run-test-at-definition (test-name &optional edebug-it)
+  "Eval and run the ert TEST-NAME defined at point.
+Assume point is on the text of the first line of an ert test def,
+With optional EDEBUG-IT non-nil (when the assist-key is pressed),
+edebug the test when it is run."
+  (let ((test-sym (if (symbolp test-name) test-name (intern-soft test-name))))
     ;; Ensure run the latest version of the test, either with the
     ;; edebugger if already instrumented for it; otherwise, with the
     ;; normal evaluator.
-    (if (and test-sym debug-it)
+    (if (and test-sym edebug-it)
 	(edebug-defun)
       (eval-defun nil)
       (setq test-sym (intern-soft test-name))
-      (when (and test-sym debug-it)
+      (when (and test-sym edebug-it)
 	(edebug-defun)))
     (setq test-sym (intern-soft test-name))
     (when (and test-sym (ert-test-boundp test-sym))
