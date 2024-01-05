@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      5-Jan-24 at 01:29:50 by Bob Weiner
+;; Last-Mod:      5-Jan-24 at 20:29:50 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2064,8 +2064,7 @@ A match buffer header is one that starts with `hyrolo-hdr-regexp'."
 	(if (< arg 0)
 	    (beginning-of-line)
 	  (end-of-line))
-	(let ((found-heading-p)
-	      (opoint (point)))
+	(let ((found-heading-p))
 	  (while (and (not (bobp)) (< arg 0))
 	    (while (and (not (bobp))
 			(progn (hyrolo-hdr-to-first-line-p)
