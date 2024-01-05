@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:      5-Jan-24 at 14:02:46 by Bob Weiner
+;; Last-Mod:      5-Jan-24 at 23:01:12 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -27,35 +27,32 @@
     ;; command.
     (load "etags.elc" t nil t)))
 
-;; If etags utilizes the new xref.el library, define some helper
-;; functions to simplify programming and fix one existing function.
-(when (require 'xref nil t)
-  ;; Fix next xref function to handle when called at beginning of buffer
-  (defun xref--item-at-point ()
-    (get-text-property
-     (max (point-min) (if (eolp) (1- (point)) (point)))
-     'xref-item))
-  (when (not (fboundp 'xref-definition))
-    (defun xref-definitions (identifier)
-      "Return a list of all definitions of string IDENTIFIER."
-      (let* ((elisp-flag (smart-emacs-lisp-mode-p))
-	     (xref-backend (or (and elisp-flag
-				    (fboundp 'ert-test-boundp)
-				    (ert-test-boundp identifier)
-				    (boundp 'xref-etags-mode)
-				    'etags)
-			       (xref-find-backend)))
-	     (xref-items (xref-backend-definitions xref-backend identifier)))
-	xref-items))
-    (defun xref-definition (identifier)
-      "Return the first definition of string IDENTIFIER."
-      (car (xref-definitions identifier)))
-    (defun xref-item-buffer (item)
-      "Return the buffer in which xref ITEM is defined."
-      (marker-buffer (save-excursion (xref-location-marker (xref-item-location item)))))
-    (defun xref-item-position (item)
-      "Return the buffer position where xref ITEM is defined."
-      (marker-position (save-excursion (xref-location-marker (xref-item-location item)))))))
+(require 'xref)
+;; Fix next xref function to handle when called at beginning of buffer
+(defun xref--item-at-point ()
+  (get-text-property
+   (max (point-min) (if (eolp) (1- (point)) (point)))
+   'xref-item))
+(defun xref-definitions (identifier)
+  "Return a list of all definitions of string IDENTIFIER."
+  (let* ((elisp-flag (smart-emacs-lisp-mode-p))
+	 (xref-backend (or (and elisp-flag
+				(fboundp 'ert-test-boundp)
+				(ert-test-boundp identifier)
+				(boundp 'xref-etags-mode)
+				'etags)
+			   (xref-find-backend)))
+	 (xref-items (xref-backend-definitions xref-backend identifier)))
+    xref-items))
+(defun xref-definition (identifier)
+  "Return the first definition of string IDENTIFIER."
+  (car (xref-definitions identifier)))
+(defun xref-item-buffer (item)
+  "Return the buffer in which xref ITEM is defined."
+  (marker-buffer (save-excursion (xref-location-marker (xref-item-location item)))))
+(defun xref-item-position (item)
+  "Return the buffer position where xref ITEM is defined."
+  (marker-position (save-excursion (xref-location-marker (xref-item-location item)))))
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -89,12 +86,6 @@
 (declare-function hsys-org-get-value "hsys-org")
 (declare-function org-in-src-block-p "org")
 (declare-function ibtype:def-symbol "hbut")
-
-;; Forward declare needed? Because of optional defined above? Can we
-;; skip checking if xref is available since it has been at least since
-;; 26.1 or even earlier? Then we should not need these declares.
-(declare-function xref-item-position "hmouse-tag")
-(declare-function xref-item-buffer "hmouse-tag")
 
 ;;; ************************************************************************
 ;;; Public variables
