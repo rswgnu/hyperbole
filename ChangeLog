@@ -1,3 +1,15 @@
+2024-01-06  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (HYPB_ERT_BATCH, HYPB_ERT_BATCH_BT):  Add command line arg to
+    run test specified by selector. Example to run all hyrolo tests
+
+      make test SELECTOR=hyrolo
+
+    Bonus. Control size of backtraces so that we get more info on
+    errors. For full backtrace add command line argument FULL_BT=
+
+      make test SELECTOR=hyrolo FULL_BT=
+
 2024-01-06  Bob Weiner  <rsw@gnu.org>
 
 * Makefile (test-all): Revert to use 'ert-run-tests-interactively' again

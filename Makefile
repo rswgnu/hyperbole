@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:      6-Jan-24 at 01:47:15 by Bob Weiner
+# Last-Mod:      6-Jan-24 at 16:59:43 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -71,7 +71,7 @@
 #
 #               To run unit tests:
 #                   make test           - run not interactive tests in batch mode
-#                   make test-all       - run all tests startin an emacs in windowed mode
+#                   make test-all       - run all tests starting an Emacs in windowed mode
 #
 #               Verify hyperbole installation using different sources:
 #                   make install-<source>
@@ -469,9 +469,27 @@ test: test-ert
 LET_VARIABLES = (auto-save-default) (enable-local-variables :all)
 LOAD_TEST_ERT_FILES=$(patsubst %,(load-file \"%\"),${TEST_ERT_FILES})
 
+# Run make test SELECTOR=<ert-test-selector> to limit batch test to
+# tests specified by the selector. See "(ert)test selectors"
+ifeq ($(origin SELECTOR), command line)
+HYPB_ERT_BATCH = (ert-run-tests-batch-and-exit \"${SELECTOR}\")
+else
+HYPB_ERT_BATCH = (ert-run-tests-batch-and-exit)
+endif
+
+# For full backtrace run make test FULL_BT=<anything or even empty>
+ifeq ($(origin FULL_BT), command line)
+HYPB_ERT_BATCH_BT = (ert-batch-backtrace-line-length nil)
+else
+HYPB_ERT_BATCH_BT = (ert-batch-backtrace-line-length 256)
+endif
+
 test-ert:
 	@echo "# Tests: $(TEST_ERT_FILES)"
-	$(EMACS_BATCH) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ((auto-save-default)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-batch-and-exit))"
+	$(EMACS_BATCH) --eval "(load-file \"test/hy-test-dependencies.el\")" \
+	--eval "(let ((auto-save-default) (ert-batch-print-level 10) (ert-batch-print-length 20) \
+		$(HYPB_ERT_BATCH_BT) (ert-batch-backtrace-right-margin 2048)) \
+	$(LOAD_TEST_ERT_FILES) $(HYPB_ERT_BATCH))"
 
 all-tests: test-all
 test-all:
