@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:     1-Jan-24 at 23:11:54
-;; Last-Mod:      2-Jan-24 at 00:28:42 by Mats Lidell
+;; Last-Mod:      6-Jan-24 at 01:34:38 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -55,9 +55,8 @@
       (insert "(ert-deftest " test-name " ()\n\"Docstring.\"\nt\n)\n")
       (emacs-lisp-mode)
       (goto-char (1+ (point-min)))
-      (mocklet (((edebug-defun) => t)
-                ((hypb-ert *) => t))
-        (hypb-ert-run-test-at-definition test-name t)))))
+      (mocklet (((hypb-ert *) => t))
+        (hypb-ert-run-test-at-definition t)))))
 
 (provide 'hypb-ert-tests)
 ;;; hypb-ert-tests.el ends here

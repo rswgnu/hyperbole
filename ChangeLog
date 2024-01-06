@@ -1,7 +1,25 @@
+2024-01-06  Bob Weiner  <rsw@gnu.org>
+
+* Makefile (test-all): Revert to use 'ert-run-tests-interactively' again
+    instead of 'ert-run-tests-batch' so get interactive *ert* features
+    including {b} to show backtraces for failed tests.  With new updates,
+    now can run a previously run test from its definition with the Action
+    Key and it will simply update the result in the existing buffer rather
+    than overwriting the buffer with just that test.
+
+* test/hypb-ert-tests.el (hypb-ert-tests--edebug-is-called): Fix this
+    test by removing mock of `edebug-defun' which is necessary to set
+    the symbol property that registers the name as an ert test.  Without
+    this, `hypb-ert-run-test-at-definition' will not run the test.
+
 2024-01-05  Bob Weiner  <rsw@gnu.org>
 
-* hypb-ert.el (hypb-ert-run-test-at-definition): Accept a symbol as
-    a 'test-name' argument.
+* test/hypb-ert-tests.el (hypb-ert-tests--edebug-is-called):
+  hypb-ert.el (hypb-ert-run-test-at-definition,
+               hyperbole-run-test-definition,
+               hyperbole-run-test-definition:help): Remove 'test-name' arg
+    and find any name at point instead.  Return t if run a test, else nil.
+    Simplify logic.
 
 * hmouse-tag.el (smart-emacs-lisp-mode-p): Include 'ert-results-mode'.
                 (smart-lisp-find-tag): Allow 'tag' arg to be a symbol,

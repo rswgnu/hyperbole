@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      3-Jan-24 at 23:32:27 by Mats Lidell
+;; Last-Mod:      6-Jan-24 at 00:40:15 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2321,6 +2321,9 @@ move to the first occurrence of the button."
 
 (defun    ibut:operate (&optional new-name edit-flag)
   "Insert/modify an ibutton based on `hbut:current' in current buffer.
+
+This is for internal Hyperbole use only.  Use `ibut:program' and `ibut:create'
+(an alias of `defib'), if programming applications with Hyperbole.
 
 IMPORTANT:
 Caller must either call `hbut:at-p' or manually set the attributes of

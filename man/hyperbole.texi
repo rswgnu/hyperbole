@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:      4-Jan-24 at 13:12:14 by Bob Weiner
+@c Last-Mod:      6-Jan-24 at 01:18:32 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.0
-Printed January 3, 2024.
+Printed January 6, 2024.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.0
-January 3, 2024
+January 6, 2024
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -7198,17 +7198,21 @@ by the implicit button; that must be done separately.
 @vindex class, hbut
 @vindex file, hib-kbd.el
 By default, a request for help on an implicit button will display the
-button's attributes in the same manner as is done for explicit buttons.
-For some implicit button types, other forms of help will be more
-appropriate.  If an Emacs Lisp function is defined whose name is formed
-from the concatenation of the type name followed by @samp{:help}, e.g.@:
-@code{my-ibtype:help}, it is used as the assist-action whenever the
-Assist Key is pressed, to respond to requests for help on buttons of
-that type.  Any such function should take a single argument of an
-implicit button construct.  (This is what
+button's attributes in the same manner as is done for explicit
+buttons.  For some implicit button types, other forms of help will be
+more appropriate.  If an Emacs Lisp function is defined whose name is
+formed from the concatenation of the type name followed by
+@samp{:help}, e.g.@: @code{my-ibtype:help}, it is used as the
+assist-action whenever the Assist Key is pressed, to respond to
+requests for help on buttons of that type.  Any such function should
+take a single argument of an implicit button construct.  (This is what
 @code{(ibut:at-p)} returns when point is within an implicit button
-context).  The button may be queried for its attributes using
-functions from the @samp{hbut} and @samp{hattr} classes.  See
+context).  Remember that the standard help for buttons with custom
+help functions is still available with @bkbd{C-h A} for the Action Key
+and @bkbd{C-u C-h A} for the Assist Key.
+
+To programmatically query implicit buttons for their attributes, use
+the functions from the @samp{hbut} and @samp{hattr} classes.  See
 the @file{hib-kbd.el} file for an example of a custom help function.
 
 @node Explicit Button Technicalities, Encapsulating Systems, Creating Types, Developing with Hyperbole

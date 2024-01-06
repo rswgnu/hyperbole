@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:      5-Jan-24 at 02:24:26 by Bob Weiner
+# Last-Mod:      6-Jan-24 at 01:47:15 by Bob Weiner
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -479,14 +479,14 @@ test-all:
 ifeq ($(TERM), dumb)
 ifneq (,$(findstring .apple.,$(DISPLAY)))
         # Found, on MacOS
-	TERM=xterm-256color $(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ((auto-save-default)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-batch t) (switch-to-buffer \"*Messages*\"))"
+	TERM=xterm-256color $(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ((auto-save-default)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"
 else
         # Not found, set TERM so tests will at least run within parent Emacs session
-	TERM=vt100 $(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ($(LET_VARIABLES)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-batch t) (switch-to-buffer \"*Messages*\"))"
+	TERM=vt100 $(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ($(LET_VARIABLES)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"
 endif
 else
         # Typical case, run emacs normally
-	$(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ($(LET_VARIABLES)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-batch t) (switch-to-buffer \"*Messages*\"))"
+	$(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ($(LET_VARIABLES)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"
 endif
 
 batch-tests: test-all-output
