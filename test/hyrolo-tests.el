@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:      5-Jan-24 at 01:51:50 by Bob Weiner
+;; Last-Mod:      6-Jan-24 at 12:42:21 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -25,7 +25,7 @@
 (require 'hy-test-helpers "test/hy-test-helpers")
 (require 'hib-kbd)
 (require 'kotl-mode)
-(require 'with-simulated-input)
+(require 'el-mock)
 
 (declare-function hy-test-helpers:consume-input-events "hy-test-helpers")
 (declare-function hy-test-helpers:should-last-message "hy-test-helpers")
@@ -317,9 +317,8 @@ and {b} the previous same level cell."
           (should (looking-at-p "==="))
           (hyrolo-outline-next-visible-heading 1)
           (should (looking-at-p "* heading"))
-          (let ((revisit-normally (concat "y" (if noninteractive " RET"))))
-            (with-simulated-input revisit-normally
-              (action-key)))
+          (mocklet ((y-or-n-p => t))
+            (action-key))
           (should (equal (current-buffer) (find-buffer-visiting org-file)))
           (should (looking-at-p "* heading")))
       (hy-delete-file-and-buffer org-file)
@@ -629,6 +628,7 @@ Example:
 
 (ert-deftest hyrolo-tests--outline-hide-show-heading ()
   "Verify hiding and showing headings."
+  (skip-unless (version< org-version "9.6"))
   (let* ((org-file (make-temp-file "hypb" nil ".org"
                                    (hyrolo-tests--gen-outline ?* "heading" 2 "body" 2)))
          (hyrolo-file-list (list org-file)))
@@ -709,9 +709,8 @@ Example:
           (should (looking-at-p "^body 1$"))
 
           ;; Edit record
-          (let ((revisit-normally (concat "y" (if noninteractive " RET"))))
-            (with-simulated-input revisit-normally
-              (should (hact 'kbd-key "e"))))
+          (mocklet ((y-or-n-p => t))
+            (should (hact 'kbd-key "e")))
           (should (string= (buffer-name) (file-name-nondirectory org-file)))
           (should (looking-at-p "^body 1$"))
 
