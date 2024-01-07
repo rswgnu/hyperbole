@@ -1,3 +1,15 @@
+2024-01-09  Mats Lidell  <matsl@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-tests--outline-next-visible-heading-md)
+    (hyrolo-tests--outline-next-visible-heading-all)
+    (hyrolo-tests--outline-next-visible-heading-kotl)
+    (hyrolo-tests--outline-next-visible-heading-all-file-types)
+    (hyrolo-tests--outline-show-when-moving-out-of-hidden-line): Add more
+    test cases for hyrolo outline show, hide and movement.
+
+    (hyrolo-tests--gen-kotl-outline, hyrolo-tests--verify-hidden-line)
+    (hyrolo-tests--verify-not-hidden-line): Add helper functions and use.
+
 2024-01-09  Bob Weiner  <rsw@gnu.org>
 
 * hact.el (htype:def-symbol, htype:names, actype:def-symbol): Change call
@@ -20,6 +32,9 @@
   Makefile (EL_COMPILE):
   hsys-xref.el (hsys-xref-definitions): Move xref utility functions
     from "hmouse-tag.el" to here and add Hyperbole unique hsys- prefix.
+
+* test/hy-test-helpers.el (hy-delete-files-and-buffers): Add helper for
+    cleaning up multiple files and buffers.
 
 2024-01-06  Mats Lidell  <matsl@gnu.org>
 
