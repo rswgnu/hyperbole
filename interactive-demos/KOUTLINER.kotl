@@ -79,13 +79,89 @@
             use {C-c m} which will prompt us with which cell we want
             to move, and which cell we want afterwards. Go ahead and
             change the positions of these two cells.
+
+     3h. Now let's say we want to promote/demote our cells. We can do
+         that with {M-TAB} and {SHIFT-TAB}. This will also move the
+         children of the parent cell. To test this out, let's go ahead
+         and do {M-TAB} to the below cell!
+
+     3i. Movement within a Koutline file
+
+       3i1. Now that we have enough knowledge to get the basic
+            movement down, here is a list of commands for cursor
+            movement,
+            {C-c , } - Move to the beginning of the current cell.
+            {C-c .}       - Move to the end of the current cell.
+
+            {C-c C-n}     - Move to the next visible cell, regardless of level.
+            {C-c C-p}     - Move to the prev visible cell, regardless of level.
+
+            {C-c C-f}     - Move forward  to this cell's successor, if any.
+            {C-c C-b}     - Move backward to this cell's predecessor, if any.
+
+            {C-c C-d}     - Move to first child of current cell, if any.
+
+            {C-c C-u}     - Move to parent cell of current cell, if any.
+
+            {C-c <}       - Move to the first sibling at the current level.
+            {C-c >}       - Move to the last  sibling at the current level.
+
+            {C-c ^}       - Move to the level 1 root of the current tree.
+            {C-c $}       - Move to the last cell in the tree rooted at point.
+
+       3i2. And here is a list of tree movement commands.
+            {[M-down]}    - Move current tree past prefix arg same level trees.
+            {[M-up]}      - Move current tree back prefix arg same level trees.
+            
+            {C-c c}       - Copy <tree> to follow as sibling of <cell>.
+            {C-u C-c c}   - Copy <tree> to follow as first child of <cell>.
+            
+            {C-c C-c}     - Copy <tree> to precede <cell>.
+            {C-u C-c C-c} - Copy <tree> as first child of the parent of <cell>.
+            
+            {C-c m}       - Move <tree> to follow as sibling of <cell>.
+            {C-u C-c m}   - Move <tree> to follow as first child of <cell>.
+            
+            {C-c C-m}     - Move <tree> to precede <cell>.
+            {C-u C-c C-m} - Move <tree> as first child of the parent
+            of <cell>.
             
 
+   4. Finally, org table support
+
+     4a. You have to use the first line of your cell to label the
+         tables because the tables can only have blank spaces to their
+         left 
+
+     4b. Here are a couple of examples
          
+                    |--------------------------------+---------------------------|
+                    | Promotion Inside Org Table     | Demotion Inside Org Table |
+                    |--------------------------------+---------------------------|
+                    | {M-0 Shift-TAB} or {M-0 M-TAB} | {M-0 TAB}                 |
+                    | {C-c C-,}                      | {C-c C-.}                 |
+                    | {C-c C-<}                      | {C-c C->}                 |
+                    |--------------------------------+---------------------------|
+                               
+                    |-----------------------------+----------------------------|
+                    | Promotion Outside Org Table | Demotion Outside Org Table |
+                    |-----------------------------+----------------------------|
+                    | {Shift-TAB} or {M-TAB}      | {TAB}                      |
+                    | {M-left}                    | {M-right}                  |
+                    | {C-c C-,}                   | {C-c C-.}                  |
+                    | {C-c C-<}                   | {C-c C->}                  |
+                    |-----------------------------+----------------------------|
+
+         To toggle table editing on/off, press the Action Key on any
+         of the table | symbols and then edit the same way you would
+         any Org Table.
+
+   5. For more information please check out "EXAMPLE.kotl" or
+      {C-h h k i}
 
 
 "ben" ;; kvspec:current
-18 ;; id-counter
+38 ;; id-counter
 alpha ;; label-type
 4 ;; label-min-width
 ". " ;; label-separator
@@ -93,7 +169,7 @@ alpha ;; label-type
 
 ;; depth-first kcell attributes
 [[0
-  (creator "hankgreenburg@Hanks-MBP.lan" create-time "20231206:22:01:16" id-counter 18)]
+  (creator "hankgreenburg@Hanks-MBP.lan" create-time "20231206:22:01:16" id-counter 38)]
  [1
   (creator "hankgreenburg@Hanks-MBP.lan" create-time "20231206:22:01:16")]
  [2
@@ -122,4 +198,20 @@ alpha ;; label-type
   (creator "hankgreenburg@Hanks-MBP.lan" create-time "20231206:22:08:54")]
  [18
   (creator "hankgreenburg@Hanks-MBP.lan" create-time "20231206:22:09:04")]
- nil nil nil nil]
+ [26
+  (creator "hank@hank-archbtw" create-time "20240107:20:53:30")]
+ [22
+  (creator "hank@hank-archbtw" create-time "20240107:20:40:18")]
+ [24
+  (creator "hank@hank-archbtw" create-time "20240107:20:40:46")]
+ [29
+  (creator "hank@hank-archbtw" create-time "20240107:21:00:02")]
+ [33
+  (creator "hank@hank-archbtw" create-time "20240107:21:02:34")]
+ [36
+  (creator "hank@hank-archbtw" create-time "20240107:21:03:08")]
+ [37
+  (creator "hank@hank-archbtw" create-time "20240107:21:04:09")]
+ [38
+  (creator "hank@hank-archbtw" create-time "20240107:21:07:25")]
+ nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil]
