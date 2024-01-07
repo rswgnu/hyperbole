@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      5-Jan-24 at 20:29:50 by Mats Lidell
+;; Last-Mod:      6-Jan-24 at 10:02:10 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1871,7 +1871,7 @@ See the command `outline-mode' for more information on this mode."
 	;; Cause use of ellipses for invisible text.
 	(add-to-invisibility-spec '(outline . t)))
     ;; disable minor mode
-    (when outline-minor-mode-cycle
+    (when (and (boundp 'outline-minor-mode-cycle) outline-minor-mode-cycle)
       (remove-overlays nil nil 'outline-overlay t))
     (setq line-move-ignore-invisible nil)
     ;; Disable use of ellipses for invisible text.
@@ -1901,12 +1901,18 @@ Calls the functions given by `hyrolo-mode-hook'.
 		;; the end of the match.  Note this change adds one
 		;; level to the level count, so `hyrolo-outline-level'
 		;; decrements it by one.  -- rsw, 2023-11-17
-		outline-level #'hyrolo-outline-level
-		;; Can't cycle because {TAB} moves to next match
-		outline-minor-mode-cycle nil
-		;; For speed reasons, don't want to ever font-lock
-		;; in this mode
-		outline-minor-mode-highlight nil))
+		outline-level #'hyrolo-outline-level)
+
+    (when (boundp 'outline-minor-mode-cycle)
+      (setq-local
+       ;; Can't cycle because {TAB} moves to next match
+       outline-minor-mode-cycle nil))
+
+    (when (boundp 'outline-minor-mode-highlight)
+      (setq-local
+       ;; For speed reasons, don't want to ever font-lock
+       ;; in this mode
+       outline-minor-mode-highlight nil)))
 
   (use-local-map hyrolo-mode-map)
   (set-syntax-table hyrolo-mode-syntax-table)
