@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:      3-Jan-24 at 23:44:37 by Mats Lidell
+;; Last-Mod:      8-Jan-24 at 17:01:26 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1098,7 +1098,6 @@ If FILE is not an absolute path, expand it relative to `hyperb:dir'."
       (let ((buffer-read-only))
 	(hypb:insert-hyperbole-banner))
       (goto-char (point-min))
-      (skip-syntax-forward "-")
       (set-window-start (selected-window) 1)
       (set-buffer-modified-p nil)
       (view-mode)
