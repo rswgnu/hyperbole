@@ -1,3 +1,9 @@
+2024-01-15  Mats Lidell  <matsl@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-tests--forward-same-level-all-file-types-level1)
+    (hyrolo-tests--forward-same-level-org-level2): Add tests for hyrolo
+    forward and backward movement on same level.
+
 2024-01-14  Bob Weiner  <rsw@gnu.org>
 
 * hypb.el (require 'org): Add to define 'org-show-all'.  Fix typo
@@ -129,6 +135,8 @@
                   (flymake-mode-hook): Check whether `repeat-mode' is
     fboundp or not before trying to enable it (should be autoloaded when
     it exists, probably in Emacs 28 or greater).
+
+2024-01-09  Bob Weiner  <rsw@gnu.org>
 
 * hsys-xref.el: Add forgotten file.
 
