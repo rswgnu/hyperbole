@@ -1,3 +1,7 @@
+2024-01-09  Bob Weiner  <rsw@gnu.org>
+
+* hsys-xref.el: Add forgotten file.
+
 2024-01-09  Mats Lidell  <matsl@gnu.org>
 
 * test/hyrolo-tests.el (hyrolo-tests--outline-next-visible-heading-md)
