@@ -1,3 +1,8 @@
+2024-01-09  Bob Weiner  <rsw@gnu.org>
+
+* hact.el (htype:def-symbol, htype:names, actype:def-symbol): Change call
+    from 'make-symbol' to 'intern' for efficiency.
+
 2024-01-07  Bob Weiner  <rsw@gnu.org>
 
 * hbut.el (hbut:actype, ibut:type): Add for Hyperbole API use.

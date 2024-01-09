@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      3-Jan-24 at 02:32:30 by Bob Weiner
+;; Last-Mod:      9-Jan-24 at 03:31:53 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -255,7 +255,7 @@ given as a string or a symbol."
 		  type
 		(symbol-name type))))
     (when (string-match "\\`\\(ib\\|ac\\)types::" name)
-      (make-symbol (substring name (match-end 0))))))
+      (intern (substring name (match-end 0))))))
 
 (defun    htype:delete (type type-category)
   "Delete a Hyperbole TYPE derived from TYPE-CATEGORY (both symbols).
@@ -277,13 +277,13 @@ Return the Hyperbole symbol for the TYPE if it existed, else nil."
   "Return a list of current definition names for TYPE-CATEGORY in priority order.
 Definition names do not contain the category prefix.
 TYPE-CATEGORY should be `actypes', `ibtypes' or nil for all.
-When optional SYM is given, returns the name for that symbol only, if any."
+When optional SYM is given, return the name for that symbol only, if any."
   (let ((types (symset:get type-category 'symbols))
 	(sym-name (when sym (symbol-name sym))))
     (if sym-name
 	;; Strip category from sym-name before looking for a match.
 	(progn (when (string-match "::" sym-name)
-		 (setq sym (make-symbol (substring sym-name (match-end 0)))))
+		 (setq sym (intern (substring sym-name (match-end 0)))))
 	       (when (symtable:get sym (symtable:select type-category))
 		 (symbol-name sym)))
       (mapcar #'symbol-name types))))
@@ -429,7 +429,7 @@ is returned."
 		  actype
 		(symbol-name actype))))
     (when (string-match "\\`actypes::" name)
-      (make-symbol (substring name (match-end 0))))))
+      (intern (substring name (match-end 0))))))
 
 ;; Return the full Elisp symbol for ACTYPE, which may be a string or symbol.
 (defalias 'actype:elisp-symbol #'symtable:actype-p)
