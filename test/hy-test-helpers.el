@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     26-Dec-23 at 11:55:42 by Bob Weiner
+;; Last-Mod:      7-Jan-24 at 00:56:08 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -87,6 +87,11 @@ Checks ACTYPE, ARGS, LOC and LBL-KEY."
         (set-buffer-modified-p nil)
         (kill-buffer))))
   (delete-file file))
+
+(defun hy-delete-files-and-buffers (files)
+  "Delete all FILES and all buffers visiting those files."
+  (dolist (f files)
+    (hy-delete-file-and-buffer f)))
 
 (defun hy-delete-dir-and-buffer (dir)
   "Delete DIR and buffer visiting directory."
