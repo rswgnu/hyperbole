@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      6-Jan-24 at 00:40:15 by Bob Weiner
+;; Last-Mod:      7-Jan-24 at 20:13:36 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -976,7 +976,7 @@ Ignore nil valued attributes.  Return t unless no attributes are printed."
 						     val
 						   (prin1-to-string val)))
 				       (string-match "\\`actypes::" str))
-				  (make-symbol (substring str (match-end 0))))
+				  (intern (substring str (match-end 0))))
 				 (t val)))))))
       has-attr)))
 
@@ -1080,6 +1080,11 @@ Default is the symbol hbut:current."
 	     (= (length (symbol-name atype)) 2))
 	atype
       (or action (actype:action atype)))))
+
+(defun    hbut:actype (hbut)
+  "Return action type for Hyperbole button symbol HBUT."
+  (when (hbut:is-p hbut)
+    (hattr:get hbut 'actype)))
 
 (defun    hbut:at-p ()
   "Return symbol for explicit or implicit Hyperbole button at point or nil.
@@ -1725,17 +1730,21 @@ excluding delimiters, not just one."
 
 (defun    ibut:at-type-p (ibut-type-symbol)
   "Return non-nil if point is on a button of type IBUT-TYPE-SYMBOL.
-Point must be on the button itself and not its name, if any.
+Point may be on the button text or its preceding name.
 
 The return value is a list of the type's action type symbol and
 associated arguments from the button."
-  (when (and ibut-type-symbol (symbolp ibut-type-symbol))
-    (let ((type-name (symbol-name ibut-type-symbol)))
-      (unless (string-match "::" type-name)
-	(setq ibut-type-symbol (intern-soft (concat "ibtypes::" type-name))))
-      (when ibut-type-symbol
-	(let ((hrule:action #'actype:identity))
-	  (funcall ibut-type-symbol))))))
+  (and (setq ibut-type-symbol (ibtype:elisp-symbol ibut-type-symbol))
+       (let ((ibut (ibut:at-p)))
+	 (and ibut (eq (ibut:type ibut) ibut-type-symbol)))))
+
+(defun    ibut:is-type-p (ibut ibut-type-symbol)
+  "Return non-nil if IBUT is a button of type IBUT-TYPE-SYMBOL.
+Use `ibut:at-type-p' to test the type of the implicit button at point."
+  (when (setq ibut-type-symbol (ibtype:elisp-symbol ibut-type-symbol))
+    (unless (ibut:is-p ibut)
+      (setq ibut nil))
+    (and ibut (eq (ibut:type ibut) ibut-type-symbol))))
 
 (defun    ibut:set-name-and-label-key-p (&optional start-delim end-delim)
   "Set ibut name, lbl-key, lbl-start/end attributes in \\='hbut:current.
@@ -2843,6 +2852,11 @@ Return the symbol for the button if found, else nil."
      name-key
      (current-buffer))))
 
+(defun    ibut:type (ibut)
+  "Return full implicit type name for IBUT, else nil."
+  (when (ibut:is-p ibut)
+    (hattr:get ibut 'categ)))
+
 ;;; ------------------------------------------------------------------------
 (defconst ibut:label-start "<["
   "String matching the start of a Hyperbole implicit button label.")
@@ -3082,7 +3096,7 @@ is returned."
 		  ibtype
 		(symbol-name ibtype))))
     (when (string-match "\\`ibtypes::" name)
-      (make-symbol (substring name (match-end 0))))))
+      (intern (substring name (match-end 0))))))
 
 (defun    ibtype:delete (type)
   "Delete an implicit button TYPE (a symbol).

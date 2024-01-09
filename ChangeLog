@@ -1,3 +1,21 @@
+2024-01-07  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (hbut:actype, ibut:type): Add for Hyperbole API use.
+          (ibut:at-type-p): Rewrite using 'ibtype:elisp-symbol' and
+    'ibut:type'.
+          (ibut:is-type-p): Add to give both an ibut and a type for
+  comparison and API use.
+         (ibtype:def-symbol, hattr:report): Change call from 'make-symbol'
+  to 'intern' for efficiency.
+
+* hmouse-tag.el (smart-tags-noselect-function): Change function reference
+    to new name, 'hsys-xref-definition'.
+
+* MANIFEST:
+  Makefile (EL_COMPILE):
+  hsys-xref.el (hsys-xref-definitions): Move xref utility functions
+    from "hmouse-tag.el" to here and add Hyperbole unique hsys- prefix.
+
 2024-01-06  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (HYPB_ERT_BATCH, HYPB_ERT_BATCH_BT):  Add command line arg to
@@ -8704,11 +8722,13 @@ for expanded Org mode reference handling.
 
 * hbut.el (gbut:ibut-key-list): Added.
 
-* hui.el (hui:hbut-term-highlight, hui:hbut-term-unhighlight): Fixed so save-excursion is outermost.
+* hui.el (hui:hbut-term-highlight, hui:hbut-term-unhighlight): Fixed so
+    save-excursion is outermost.
 
 2019-06-29  Bob Weiner  <rsw@gnu.org>
 
-* hbut.el (ebut:get, ebut:at-p, ebut:label-to-key, ibut:at-type-p): Simplified conditionals using 'when'.
+* hbut.el (ebut:get, ebut:at-p, ebut:label-to-key, ibut:at-type-p): Simplified
+    conditionals using 'when'.
           (ibut:label-start, ibut:label-end, ibut:label-p, ibut:get,
            ibut:next-occurrence, ibut:label-regexp): Added.
 	   (hbut:label-regexp): Added to support labeled implicit buttons too.
@@ -8717,8 +8737,9 @@ for expanded Org mode reference handling.
 
 2019-06-23  Bob Weiner  <rsw@gnu.org>
 
-* hsys-org.el: Added many new predicates and code to handle navigation between Org
-    mode internal links and their targets, as well as radio target definitions and their links.
+* hsys-org.el: Added many new predicates and code to handle navigation between
+    Org mode internal links and their targets, as well as radio target
+    definitions and their links.
     (hsys-org-mode-function, hsys-org-mode-p): Added to determine when hsys-org actions
        are activated.
 

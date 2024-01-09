@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:      5-Jan-24 at 23:01:12 by Mats Lidell
+;; Last-Mod:      7-Jan-24 at 14:34:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -27,32 +27,7 @@
     ;; command.
     (load "etags.elc" t nil t)))
 
-(require 'xref)
-;; Fix next xref function to handle when called at beginning of buffer
-(defun xref--item-at-point ()
-  (get-text-property
-   (max (point-min) (if (eolp) (1- (point)) (point)))
-   'xref-item))
-(defun xref-definitions (identifier)
-  "Return a list of all definitions of string IDENTIFIER."
-  (let* ((elisp-flag (smart-emacs-lisp-mode-p))
-	 (xref-backend (or (and elisp-flag
-				(fboundp 'ert-test-boundp)
-				(ert-test-boundp identifier)
-				(boundp 'xref-etags-mode)
-				'etags)
-			   (xref-find-backend)))
-	 (xref-items (xref-backend-definitions xref-backend identifier)))
-    xref-items))
-(defun xref-definition (identifier)
-  "Return the first definition of string IDENTIFIER."
-  (car (xref-definitions identifier)))
-(defun xref-item-buffer (item)
-  "Return the buffer in which xref ITEM is defined."
-  (marker-buffer (save-excursion (xref-location-marker (xref-item-location item)))))
-(defun xref-item-position (item)
-  "Return the buffer position where xref ITEM is defined."
-  (marker-position (save-excursion (xref-location-marker (xref-item-location item)))))
+(require 'hsys-xref)
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -1554,7 +1529,7 @@ to look.  If no tags file is found, an error is signaled."
   "Return the best available function for finding a tag definition.
 The function does not select the tag definition."
   (car (delq nil (mapcar (lambda (func) (if (fboundp func) func))
-			 #'(xref-definition find-tag-noselect find-tag-internal)))))
+			 #'(hsys-xref-definition find-tag-noselect find-tag-internal)))))
 
 (provide 'hmouse-tag)
 
