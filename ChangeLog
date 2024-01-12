@@ -1,3 +1,14 @@
+2024-01-13  Mats Lidell  <matsl@gnu.org>
+
+* test/hbut-tests.el (ebut-program-link-to-directory): Remove test in
+    favor of almost identical copy but keep the simpler name.
+
+    (ebut-program-link-to-directory-in-non-file-buffer)
+    (ebut-program-link-to-directory-in-message-mode-buffer)
+    (ebut-delete-removes-ebut-in-non-file-buffer)
+    (ebut-delete-removes-ebut-in-message-mode-buffer): Add tests for
+    non-file buffer and non-file in message-mode buffer.
+
 2024-01-09  Bob Weiner  <rsw@gnu.org>
 
 * hsys-xref.el: Add forgotten file.
