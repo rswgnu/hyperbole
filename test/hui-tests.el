@@ -935,11 +935,32 @@ With point on label suggest that ibut for rename."
 (ert-deftest hui--link-possible-types ()
   "Verify right type is selected from referent buffer."
 
+  ;; Ensure using any local available packaged version of Org mode rather than built-in
+  ;; which may have been activated before load-path was set correctly.
+  ;; Avoids mixed version load of Org.
+  (mapc (lambda (lib-sym) (when (featurep lib-sym) (unload-feature lib-sym t)))
+	'(org org-version org-keys org-compat ol org-table org-macs org-id org-element org-list))
+  (package-initialize)
+  (let ((pkg-desc (car (cdr (assq 'org package-archive-contents)))))
+    (package-activate pkg-desc t))
+  ;; Not all versions of org include this variable, so set it
+  (setq org--inhibit-version-check nil
+	org-list-allow-alphabetical nil)
+  (load "org-keys") ;; Otherwise, {M-RET} may not be bound to a key
+  (load "org-compat") ;; Otherwise, `org-file-name-concat' may be undefined
+  (load "org-macs") ;; Otherwise, `org--inhibit-version-check' may be undefined
+  (load "org-list") ;; Otherwise, `org-list-allow-alphabetical' may be undefined
+  (load "ol")       ;; Otherwise, `org-link--description-folding-spec' may be undefined
+  (cl-flet ((require (lambda (lib-sym &optional _filename _noerror)
+		       (load (symbol-name lib-sym)))))
+    (require 'org))
+
   ;; Org Roam or Org Id       link-to-org-id
   (let ((file (make-temp-file "hypb" nil ".org")))
     (unwind-protect
         (progn
           (find-file file)
+	  (erase-buffer)
           (org-id-get-create nil)
           (re-search-forward ":ID:")
 	  (hy-test-helpers:ensure-link-possible-type 'link-to-org-id))

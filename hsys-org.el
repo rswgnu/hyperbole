@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     26-Dec-23 at 12:05:46 by Bob Weiner
+;; Last-Mod:     13-Jan-24 at 02:28:50 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -68,12 +68,12 @@
 ;;;###autoload
 (defcustom hsys-org-enable-smart-keys 'unset
   "This applies in Org major/minor modes only when `hyperbole-mode' is active.
-If set to \\='unset prior to loading Hyperbole, then Hyperbole
-initialization will set its value.
+If set to \\='unset prior to loading Hyperbole, then Hyperbole initialization
+will set its value.
 
-The following table shows what the Smart Keys do in various contexts
-with different settings of this option.  For example, a nil value makes
-{M-RET} operate as it normally does within Org mode contexts.
+The following table shows what the Smart Keys do in various contexts with
+different settings of this option.  For example, a nil value makes {M-RET}
+operate as it normally does within Org mode contexts.
 
 |---------+-------------------+------------------+----------+------------------|
 | Setting | Smart Key Context | Hyperbole Button | Org Link | Fallback Command |
@@ -99,6 +99,13 @@ with different settings of this option.  For example, a nil value makes
 ;;; ************************************************************************
 ;;; Public Action Types
 ;;; ************************************************************************
+
+(defcustom hsys-org-cycle-bob-file-list
+  '("${hyperb:dir}/DEMO" "${hyperb:dir}/FAST-DEMO" "${hyperb:dir}/MANIFEST"
+     "${hyperb:dir}/HY-ABOUT" "${hyperb:dir}/HY-NEWS")
+  "List of files to globally `org-cycle' when at the beginning of the buffer."
+  :type '(repeat file)
+  :group 'hyperbole)
 
 (defact org-link (&optional link)
   "Follow an optional Org mode LINK to its target.

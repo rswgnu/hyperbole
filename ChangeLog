@@ -1,4 +1,56 @@
-2024-01-09  Bob Weiner  <rsw@gnu.org>
+2024-01-13  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-org-mode): Add newer Org 9.7-pre hide/show support.
+  test/hyrolo-tests.el (hyrolo-tests--outline-hide-show-heading,
+  	                hyrolo-tests--outline-show-when-moving-out-of-hidden-line):
+    The above change fixes these tests, so they have been re-enabled.
+
+* hmouse-tag.el (smart-lisp-identifier-chars): Add @ char as advised functions
+    use the orig-function@advice-wrapper-name to refer to the advice.
+
+* hpath.el (hpath:variables): Move 'load-path' and 'exec-path' before
+    'Info-directory-list' as they should be higher priority matches.
+    Remove old 'Info-directory'.
+
+2024-01-12  Bob Weiner  <rsw@gnu.org>
+
+* hypb.el (hypb:display-file-with-logo): Expand any folded headings
+    in the file.
+
+    Improve use in tests by doing the following when in batch mode
+    (noninteractive): Kill off any non-modified buffer showing the file
+    to display before freshly reading it.
+
+2024-01-10  Bob Weiner  <rsw@gnu.org>
+
+* hui-mouse.el (hkey-alist): Move 'smart-eolp' to immediately before
+    'smart-org' clause.
+  hsys-org.el (hsys-org-cycle-bob-file-list): Add to list files auto
+    set to 'org-mode' with minor 'view-mode' that allow org global
+    cycling of headings with {TAB} when at the beginning of buffer and
+    not on a heading.
+  hyrolo.el (hyrolo-verify): Allow buffers associated with files from
+    'hsys-org-cycle-bob-file-list' as well.
+  hui-mouse.el (smart-org-bob-and-non-heading-p): Check whether {TAB} or
+    {M-RET} should org-global-cycle at point."
+               (smart-eolp): Allow for org global cycling at start of
+    buffer on a non-heading line in Hyperbole doc files when displayed from
+    Hyperbole menu items.
+  hypb.el (hypb:insert-hyperbole-banner): Update so Hyperbole logo link
+    does not include the first blank line, allowing for a different
+    action on {RET} there.
+
+* hyrolo.el (hyrolo-verify): Remove mentions of HyNote (not in this release).
+
+* hypb.el (hypb:display-file-with-logo): Remove call (skip-syntax-forward "-")
+    so point stays at the beginning of buffer for Org global display cycling.
+    Replace 'id-browse-file' and 'view-mode' with 'hyrolo-mode'.
+
+* hsys-flymake.el (repeat-mode): Add missing (require 'repeat) since
+    'repeat-mode' function used herein is not autoloaded.
+                  (flymake-mode-hook): Check whether `repeat-mode' is
+    fboundp or not before trying to enable it (should be autoloaded when
+    it exists, probably in Emacs 28 or greater).
 
 * hsys-xref.el: Add forgotten file.
 

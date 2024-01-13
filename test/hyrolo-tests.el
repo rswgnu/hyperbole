@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:      7-Jan-24 at 01:00:43 by Mats Lidell
+;; Last-Mod:     13-Jan-24 at 02:32:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -773,7 +773,6 @@ Make cell start with HEADING and follow by next line BODY."
 
 (ert-deftest hyrolo-tests--outline-hide-show-heading ()
   "Verify hiding and showing headings."
-  (skip-unless (version< org-version "9.6"))
   (let* ((org-file (make-temp-file "hypb" nil ".org"
                                    (hyrolo-tests--gen-outline ?* "heading" 1 "body" 2)))
          (hyrolo-file-list (list org-file)))
@@ -815,7 +814,6 @@ Make cell start with HEADING and follow by next line BODY."
 
 (ert-deftest hyrolo-tests--outline-show-when-moving-out-of-hidden-line ()
   "Verify region is shown after moving out of hidden area."
-  (skip-unless (version< org-version "9.6"))
   (let* ((org-file (make-temp-file "hypb" nil ".org"
                                    (hyrolo-tests--gen-outline ?* "heading" 1 "body" 2)))
          (hyrolo-file-list (list org-file)))

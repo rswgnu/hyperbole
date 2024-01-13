@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     26-Dec-23 at 22:42:39 by Bob Weiner
+;; Last-Mod:     13-Jan-24 at 00:57:41 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -546,7 +546,7 @@ Used only if the function `image-mode' is defined."
 ;; link is later resolved.
 ;;
 (defcustom hpath:variables
-  '(hyperb:dir Info-directory Info-directory-list sm-directory load-path exec-path)
+  '(hyperb:dir load-path exec-path Info-directory-list sm-directory)
   "*List of Emacs Lisp variable symbols to substitute within matching link paths.
 Each variable value, if bound, must be either a pathname or a list of pathnames.
 When embedded within a path, the format is ${variable}."
