@@ -62,9 +62,12 @@
 (defvar helm-org-rifle-show-level-stars)
 (defvar hproperty:but-emphasize-flag)
 (defvar markdown-regex-header)
+(defvar org-fold-core-style)
+(defvar org-link--link-folding-spec)
 (defvar org-roam-db-autosync-mode)
 (defvar org-roam-directory)
 (defvar plstore-cache-passphrase-for-symmetric-encryption)
+(defvar reveal-auto-hide)
 
 (declare-function consult-grep "ext:consult")
 (declare-function consult-ripgrep "ext:consult")
@@ -79,6 +82,8 @@
 (declare-function helm-org-rifle-org-directory "ext:helm-org-rifle")
 (declare-function helm-org-rifle-show-full-contents "ext:helm-org-rifle")
 (declare-function kotl-mode:to-valid-position "kotl/kotl-mode")
+(declare-function org-fold-initialize "org-fold")
+(declare-function org-fold-core-set-folding-spec-property "org-fold")
 (declare-function org-roam-db-autosync-mode "ext:org-roam")
 (declare-function xml-node-child-string "ext:google-contacts")
 (declare-function xml-node-get-attribute-type "ext:google-contacts")
@@ -2446,6 +2451,9 @@ package is not installed."
 	  (terpri)
           ;; (setq backtrace-view (plist-put backtrace-view :show-locals t))
 	  (backtrace)))
+      (when noninteractive
+	(princ (with-current-buffer (get-buffer "*HyRolo Errors*")
+		 (buffer-string))))
       t)))
 
 (defun hyrolo-buffer-exists-p (hyrolo-buf)
@@ -2605,16 +2613,17 @@ Any non-nil value returned is a cons of (<entry-name> . <entry-source>)."
   ;; checks will pass.
   (put 'hyrolo-org-mode 'derived-mode-parent 'org-mode)
 
-  (when (and org-link-descriptive
-             (eq org-fold-core-style 'overlays))
-    (add-to-invisibility-spec '(org-link)))
-  (org-fold-initialize (or (and (stringp org-ellipsis) (not (equal "" org-ellipsis)) org-ellipsis)
-                           "..."))
-  (make-local-variable 'org-link-descriptive)
-  (when (eq org-fold-core-style 'overlays) (add-to-invisibility-spec '(org-hide-block . t)))
-  (if org-link-descriptive
-      (org-fold-core-set-folding-spec-property (car org-link--link-folding-spec) :visible nil)
-    (org-fold-core-set-folding-spec-property (car org-link--link-folding-spec) :visible t))
+  (when (featurep 'org-fold) ;; newer Org versions
+    (when (and org-link-descriptive
+               (eq org-fold-core-style 'overlays))
+      (add-to-invisibility-spec '(org-link)))
+    (org-fold-initialize (or (and (stringp org-ellipsis) (not (equal "" org-ellipsis)) org-ellipsis)
+                             "..."))
+    (make-local-variable 'org-link-descriptive)
+    (when (eq org-fold-core-style 'overlays) (add-to-invisibility-spec '(org-hide-block . t)))
+    (if org-link-descriptive
+	(org-fold-core-set-folding-spec-property (car org-link--link-folding-spec) :visible nil)
+      (org-fold-core-set-folding-spec-property (car org-link--link-folding-spec) :visible t)))
 
   (setq-local hyrolo-entry-regexp "^\\(\\*+\\)\\([ 	]+\\)"
 	      hyrolo-hdr-and-entry-regexp (concat hyrolo-hdr-prefix-regexp hyrolo-entry-regexp)

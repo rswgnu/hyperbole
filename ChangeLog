@@ -1,12 +1,34 @@
 2024-01-13  Bob Weiner  <rsw@gnu.org>
 
+* hsys-org.el (hsys-org-fix-version): Add.  Add .org suffix to
+    'auto-mode-alist' as it may be removed in this function.
+  hyperbole.el (hyperb:init): Add call to 'hsys-org-fix-version' when
+    detect a mixed version installation of Org, typically part of
+    built-in Org loaded before loading a newer packaged version.
+
+* hargs.el (hargs:at-p): Fix 'no-default' arg handling to not select
+    non-existent dirs and files when no-default is true.
+
+* hsys-xref.el (hsys-xref-definitions): Fix to pass symbol, not string to
+    'ert-test-boundp'.
+
+* hmouse-drv.el (hkey-help-show): Rename local var from 'org-help' to
+    'hkey-org-help' to eliminate any confusion that this is an Org variable.
+
+* hyrolo.el (hyrolo-any-file-type-problem-p): Print error buffer to stdout
+    when run noninteractively (batch mode).
+
+* hyrolo.el (hyrolo-org-mode): Conditionalize org-fold usage as it is only
+    available in newer Org versions.  Add missing forward declarations.
+
 * hyrolo.el (hyrolo-org-mode): Add newer Org 9.7-pre hide/show support.
   test/hyrolo-tests.el (hyrolo-tests--outline-hide-show-heading,
   	                hyrolo-tests--outline-show-when-moving-out-of-hidden-line):
     The above change fixes these tests, so they have been re-enabled.
 
-* hmouse-tag.el (smart-lisp-identifier-chars): Add @ char as advised functions
-    use the orig-function@advice-wrapper-name to refer to the advice.
+* hmouse-tag.el (smart-lisp-identifier-chars): Add @ char as advised
+    functions use the orig-function@advice-wrapper-name to refer to the
+    advice.
 
 * hpath.el (hpath:variables): Move 'load-path' and 'exec-path' before
     'Info-directory-list' as they should be higher priority matches.

@@ -274,7 +274,6 @@
       (should (not (org-check-for-hidden 'headlines)))
       (save-excursion
 	(action-key))
-;;; (org-hide-entry)
       (should (org-check-for-hidden 'headlines)))))
 
 ;; Manifest

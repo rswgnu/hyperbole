@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:      7-Jan-24 at 00:56:08 by Mats Lidell
+;; Last-Mod:     13-Jan-24 at 16:21:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -19,7 +19,7 @@
 ;;; Code:
 
 (require 'ert)
-(require 'hmouse-drv)                   ;For `action-key'.
+(require 'hmouse-drv)                   ; For `action-key'
 (eval-when-compile (require 'cl-lib))
 
 (defun hy-test-helpers:consume-input-events ()

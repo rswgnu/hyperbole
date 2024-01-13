@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:      1-Dec-23 at 11:23:52 by Bob Weiner
+;; Last-Mod:     13-Jan-24 at 16:09:00 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -658,9 +658,9 @@ Handles all of the interactive argument types that `hargs:iform-read' does."
 	       ((hpath:at-p 'file))
 	       ;; Unquoted remote file name.
 	       ((hpath:is-p (hpath:remote-at-p) 'file))
-	       ;; Possibly non-existent file name
-	       ((when no-default (hpath:at-p 'file 'non-exist)))
 	       (no-default nil)
+	       ;; Possibly non-existent file name
+	       ((hpath:at-p 'file 'non-exist))
 	       ((buffer-file-name))))
 	((eq hargs:reading-type 'directory)
 	 (cond ((derived-mode-p 'dired-mode)
@@ -672,9 +672,9 @@ Handles all of the interactive argument types that `hargs:iform-read' does."
 	       ((hpath:at-p 'directory))
 	       ;; Unquoted remote directory name.
 	       ((hpath:is-p (hpath:remote-at-p) 'directory))
-	       ;; Possibly non-existent directory name
-	       ((when no-default (hpath:at-p 'directory 'non-exist)))
 	       (no-default nil)
+	       ;; Possibly non-existent directory name
+	       ((hpath:at-p 'directory 'non-exist))
 	       (default-directory)))
 	((eq hargs:reading-type 'string)
 	 (or (hargs:delimited "\"" "\"") (hargs:delimited "'" "'")
