@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     13-Jan-24 at 02:32:45 by Bob Weiner
+;; Last-Mod:     13-Jan-24 at 19:54:49 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -26,9 +26,11 @@
 (require 'hib-kbd)
 (require 'kotl-mode)
 (require 'el-mock)
+(require 'org)
 
 (declare-function hy-test-helpers:consume-input-events "hy-test-helpers")
 (declare-function hy-test-helpers:should-last-message "hy-test-helpers")
+
 
 (ert-deftest hyrolo-add-items-at-multiple-levels ()
   "`hyrolo-add` can add items at different levels."
@@ -291,6 +293,7 @@ and {b} the previous same level cell."
          (kotl-file (make-temp-file "hypb" nil ".kotl" "1.  string"))
          (md-file (make-temp-file "hypb" nil ".md" "# string\n"))
          (outl-file (make-temp-file "hypb" nil ".otl" "* string\n"))
+	 (auto-mode-alist (append (list (cons "\\.org" 'org-mode)) auto-mode-alist))
          (hyrolo-file-list (list temporary-file-directory)))
     (unwind-protect
         (progn
@@ -308,6 +311,7 @@ and {b} the previous same level cell."
   "Verify move to next heading, then action-key to go to record for org mode."
   (let* ((temporary-file-directory (make-temp-file "hypb" t))
          (org-file (make-temp-file "hypb" nil ".org" "* heading\nstring\nmore\n"))
+	 (auto-mode-alist (append (list (cons "\\.org" 'org-mode)) auto-mode-alist))
          (hyrolo-file-list (list temporary-file-directory)))
     (unwind-protect
         (progn
@@ -452,12 +456,28 @@ Match a string in the second cell."
 (ert-deftest hyrolo-tests--get-file-list-change ()
   "Verify a change to hyrolo-file-list is noticed by hyrolo-get-file-list."
   (let* ((tmp-file (make-temp-file "hypb" nil ".org"))
+	 (auto-mode-alist (append (list (cons "\\.org" 'org-mode)) auto-mode-alist))
          (hyrolo-file-list (list tmp-file)))
     (unwind-protect
         (let ((hl (hyrolo-get-file-list)))
           (should (= 1 (length hl)))
           (should (string= (car hl) tmp-file)))
       (hy-delete-file-and-buffer tmp-file))))
+
+(ert-deftest hyrolo-tests--get-file-list-change-multiple-files ()
+  "Verify a change to hyrolo-file-list is noticed by hyrolo-get-file-list."
+  (let* ((temporary-file-directory (make-temp-file "hypb" t))
+         (_org-file (make-temp-file "hypb" nil ".org" "* string\n"))
+         (_kotl-file (make-temp-file "hypb" nil ".kotl" "1.  string"))
+         (_md-file (make-temp-file "hypb" nil ".md" "# string\n"))
+         (_outl-file (make-temp-file "hypb" nil ".otl" "* string\n"))
+	 (auto-mode-alist (append (list (cons "\\.org" 'org-mode)) auto-mode-alist))
+         (hyrolo-file-list (list temporary-file-directory))
+         (hl (hyrolo-get-file-list)))
+    (unwind-protect
+        (should (= 4 (length hl)))
+      (hy-delete-files-and-buffers hl)
+      (delete-directory temporary-file-directory))))
 
 (ert-deftest hyrolo-tests--get-file-list-wrong-suffix ()
   "Verify files need to have the proper suffix in hyrolo-file-list."
@@ -527,6 +547,7 @@ Example:
   "Verify movement to next visible heading."
   (let* ((org-file (make-temp-file "hypb" nil ".org"
                                    (hyrolo-tests--gen-outline ?* "heading" 2 "body" 2)))
+	 (auto-mode-alist (append (list (cons "\\.org" 'org-mode)) auto-mode-alist))
          (hyrolo-file-list (list org-file)))
     (unwind-protect
         (progn
@@ -641,6 +662,7 @@ Example:
   "Verify movement from sub heading to next heading one level above."
   (let* ((org-file (make-temp-file "hypb" nil ".org"
                                    (hyrolo-tests--gen-outline ?* "heading" 2 "body" 3)))
+	 (auto-mode-alist (append (list (cons "\\.org" 'org-mode)) auto-mode-alist))
          (hyrolo-file-list (list org-file)))
     (unwind-protect
         (progn
@@ -664,7 +686,8 @@ Example:
   (let* ((org-file1 (make-temp-file "hypb" nil ".org"
                                     (hyrolo-tests--gen-outline ?* "heading-a" 1 "body-a" 2)))
          (md-file1 (make-temp-file "hypb" nil ".md"
-                                    (hyrolo-tests--gen-outline ?# "heading-b" 1 "body-b" 2)))
+                                   (hyrolo-tests--gen-outline ?# "heading-b" 1 "body-b" 2)))
+	 (auto-mode-alist (append (list (cons "\\.org" 'org-mode)) auto-mode-alist))
          (hyrolo-file-list (list org-file1 md-file1)))
     (unwind-protect
         (progn
@@ -739,6 +762,7 @@ Make cell start with HEADING and follow by next line BODY."
          (md-file1 (make-temp-file "hypb" nil ".md"
                                    (hyrolo-tests--gen-outline ?# "heading-md" 1 "body-md" 1)))
          (kotl-file1 (hyrolo-tests--gen-kotl-outline "heading-kotl" "body-kotl"))
+	 (auto-mode-alist (append (list (cons "\\.org" 'org-mode)) auto-mode-alist))
          (hyrolo-file-list (list org-file1 otl-file1 md-file1 kotl-file1)))
     (unwind-protect
         (progn
@@ -775,6 +799,7 @@ Make cell start with HEADING and follow by next line BODY."
   "Verify hiding and showing headings."
   (let* ((org-file (make-temp-file "hypb" nil ".org"
                                    (hyrolo-tests--gen-outline ?* "heading" 1 "body" 2)))
+	 (auto-mode-alist (append (list (cons "\\.org" 'org-mode)) auto-mode-alist))
          (hyrolo-file-list (list org-file)))
     (unwind-protect
         (progn
@@ -816,6 +841,7 @@ Make cell start with HEADING and follow by next line BODY."
   "Verify region is shown after moving out of hidden area."
   (let* ((org-file (make-temp-file "hypb" nil ".org"
                                    (hyrolo-tests--gen-outline ?* "heading" 1 "body" 2)))
+	 (auto-mode-alist (append (list (cons "\\.org" 'org-mode)) auto-mode-alist))
          (hyrolo-file-list (list org-file)))
     (unwind-protect
         (progn
@@ -840,6 +866,7 @@ Make cell start with HEADING and follow by next line BODY."
   "Verify tabbing through search matches."
   (let* ((org-file (make-temp-file "hypb" nil ".org"
                                    (hyrolo-tests--gen-outline ?* "heading" 2 "body" 2)))
+	 (auto-mode-alist (append (list (cons "\\.org" 'org-mode)) auto-mode-alist))
          (hyrolo-file-list (list org-file)))
     (unwind-protect
         (progn
@@ -874,6 +901,7 @@ Make cell start with HEADING and follow by next line BODY."
   "Verify {e} brings up entry in new window."
   (let* ((org-file (make-temp-file "hypb" nil ".org"
                                    (hyrolo-tests--gen-outline ?* "heading" 1 "body" 2)))
+	 (auto-mode-alist (append (list (cons "\\.org" 'org-mode)) auto-mode-alist))
          (hyrolo-file-list (list org-file)))
     (unwind-protect
         (progn
