@@ -9,7 +9,104 @@
     (ebut-delete-removes-ebut-in-message-mode-buffer): Add tests for
     non-file buffer and non-file in message-mode buffer.
 
-2024-01-09  Bob Weiner  <rsw@gnu.org>
+2024-01-13  Bob Weiner  <rsw@gnu.org>
+
+* test/hy-test-dependencies.el: Print status of resolving any
+    multi-version/mixed Org installations.
+
+* hyrolo.el (hyrolo-any-file-type-problem-p): Disable printing
+    output if 'hyrolo-boolean-only-flag' is non-nil, used in
+    testing.
+ test/hyrolo-tests.el (hyrolo-tests--get-file-list-wrong-suffix):
+    Use above flag.
+
+* Makefile (test-ert): Do not ellide any stack traces, i.e. set
+    'ert-batch-print-length' to nil.
+    Change test SELECTOR= to test= and document how to run.
+
+* hyrolo.el (hyrolo-any-file-type-problem-p): Disable printing of
+    any output when 'hyrolo-boolean-only-flag' is non-nil, typically
+    used for testing purposes.
+
+* hui.el (hui:ebut-unmark): Fix to handle a non-file-based buffer as
+    'key-src'.
+
+* hsys-org.el (hsys-org-fix-version): Add.  Add .org suffix to
+    'auto-mode-alist' as it may be removed in this function.  Return
+    t when Org is reloaded, nil if not.  Require Org libraries even
+    when no reload is done.  Handle when 'org-version' differs from
+    version number in 'org-dir'.
+  hyperbole.el (hyperb:init): Add call to 'hsys-org-fix-version' when
+    detect a mixed version installation of Org, typically part of
+    built-in Org loaded before loading a newer packaged version.
+
+* hargs.el (hargs:at-p): Fix 'no-default' arg handling to not select
+    non-existent dirs and files when no-default is true.
+
+* hsys-xref.el (hsys-xref-definitions): Fix to pass symbol, not string to
+    'ert-test-boundp'.
+
+* hmouse-drv.el (hkey-help-show): Rename local var from 'org-help' to
+    'hkey-org-help' to eliminate any confusion that this is an Org variable.
+
+* hyrolo.el (hyrolo-any-file-type-problem-p): Print error buffer to stdout
+    when run noninteractively (batch mode).
+
+* hyrolo.el (hyrolo-org-mode): Conditionalize org-fold usage as it is only
+    available in newer Org versions.  Add missing forward declarations.
+
+* hyrolo.el (hyrolo-org-mode): Add newer Org 9.7-pre hide/show support.
+  test/hyrolo-tests.el (hyrolo-tests--outline-hide-show-heading,
+  	                hyrolo-tests--outline-show-when-moving-out-of-hidden-line):
+    The above change fixes these tests, so they have been re-enabled.
+
+* hmouse-tag.el (smart-lisp-identifier-chars): Add @ char as advised
+    functions use the orig-function@advice-wrapper-name to refer to the
+    advice.
+
+* hpath.el (hpath:variables): Move 'load-path' and 'exec-path' before
+    'Info-directory-list' as they should be higher priority matches.
+    Remove old 'Info-directory'.
+
+2024-01-12  Bob Weiner  <rsw@gnu.org>
+
+* hypb.el (hypb:display-file-with-logo): Expand any folded headings
+    in the file.
+
+    Improve use in tests by doing the following when in batch mode
+    (noninteractive): Kill off any non-modified buffer showing the file
+    to display before freshly reading it.
+
+2024-01-10  Bob Weiner  <rsw@gnu.org>
+
+* hui-mouse.el (hkey-alist): Move 'smart-eolp' to immediately before
+    'smart-org' clause.
+  hsys-org.el (hsys-org-cycle-bob-file-list): Add to list files auto
+    set to 'org-mode' with minor 'view-mode' that allow org global
+    cycling of headings with {TAB} when at the beginning of buffer and
+    not on a heading.
+  hyrolo.el (hyrolo-verify): Allow buffers associated with files from
+    'hsys-org-cycle-bob-file-list' as well.
+  hui-mouse.el (smart-org-bob-and-non-heading-p): Check whether {TAB} or
+    {M-RET} should org-global-cycle at point."
+               (smart-eolp): Allow for org global cycling at start of
+    buffer on a non-heading line in Hyperbole doc files when displayed from
+    Hyperbole menu items.
+  hypb.el (hypb:insert-hyperbole-banner): Update so Hyperbole logo link
+    does not include the first blank line, allowing for a different
+    action on {RET} there.
+
+* hyrolo.el (hyrolo-verify): Remove mentions of HyNote (not in this release).
+
+* hypb.el (hypb:display-file-with-logo): Remove call (skip-syntax-forward "-")
+    so point stays at the beginning of buffer for Org global display cycling.
+    Replace 'id-browse-file' and 'view-mode' with 'hyrolo-mode'.
+
+* hsys-flymake.el (repeat-mode): Add missing (require 'repeat) since
+    'repeat-mode' function used herein is not autoloaded.
+                  (flymake-mode-hook): Check whether `repeat-mode' is
+    fboundp or not before trying to enable it (should be autoloaded when
+    it exists, probably in Emacs 28 or greater).
 
 * hsys-xref.el: Add forgotten file.
 

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:      7-Jan-24 at 14:34:32 by Bob Weiner
+;; Last-Mod:     13-Jan-24 at 01:29:42 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -598,7 +598,7 @@ in the current directory or any of its ancestor directories."
   "Regexp matching the first character of a Lisp identifier.")
 
 ;;;###autoload
-(defconst smart-lisp-identifier-chars "-_:/*+=%$&?!<>a-zA-Z0-9~^"
+(defconst smart-lisp-identifier-chars "-_:/*+=%$&?!<>a-zA-Z0-9~^@"
   "Regexp matching a valid char in a Lisp identifier except the first char.
 Excludes character matching square brackets, so may be used with
 skip-characters-forward/backward.")

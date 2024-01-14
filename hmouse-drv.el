@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:      3-Jan-24 at 02:24:39 by Bob Weiner
+;; Last-Mod:     13-Jan-24 at 15:32:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1240,7 +1240,7 @@ the current window.  By default, it is displayed according to the setting of
 `hpath:display-where'."
   (if (bufferp buffer) (setq buffer (buffer-name buffer)))
   (if (null buffer) (setq buffer (buffer-name (current-buffer))))
-  (let ((org-help (and (stringp buffer) (string-match "\\`\\*Org Help\\*" buffer)))
+  (let ((hkey-org-help (and (stringp buffer) (string-match "\\`\\*Org Help\\*" buffer)))
 	(owind (selected-window)))
     (and (stringp buffer)
 	 (string-match "^\\*Help\\|Help\\*$" buffer)
@@ -1262,7 +1262,7 @@ the current window.  By default, it is displayed according to the setting of
 			    (selected-window))
 			   (t (hpath:display-buffer buf)))))
 	  ;; Ignore org-mode's temp help buffers which it handles on its own.
-	  (when (and wind (not org-help))
+	  (when (and wind (not hkey-org-help))
 	    (setq minibuffer-scroll-window wind)
 	    ;; Don't use help-mode in buffers already set up with a
 	    ;; quit-key to bury the buffer, e.g. minibuffer completions,
@@ -1275,7 +1275,7 @@ the current window.  By default, it is displayed according to the setting of
 	      (when (derived-mode-p 'help-mode)
 		(local-set-key "q" #'hkey-help-hide)))))
       ;; If in an *Org Help* buffer, reselect the Org buffer.
-      (when org-help
+      (when hkey-org-help
 	(select-window owind))
       ;; If in a *Completions* buffer, re-select the window that
       ;; generated the completions.

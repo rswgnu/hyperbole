@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:      9-Jan-24 at 12:07:34 by Bob Weiner
+;; Last-Mod:     13-Jan-24 at 15:55:13 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -31,7 +31,7 @@
   (let* ((elisp-flag (smart-emacs-lisp-mode-p))
 	 (xref-backend (or (and elisp-flag
 				(fboundp 'ert-test-boundp)
-				(ert-test-boundp identifier)
+				(ert-test-boundp (intern-soft identifier))
 				(boundp 'xref-etags-mode)
 				'etags)
 			   (xref-find-backend)))

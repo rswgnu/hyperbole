@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:      4-Jan-24 at 22:51:41 by Bob Weiner
+;; Last-Mod:     10-Jan-24 at 21:26:33 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -40,7 +40,10 @@
 ;;; ************************************************************************
 
 (require 'ert-results nil t) ;; Action Key support in ERT result buffers
-(require 'hsys-flymake)
+;; Library in next line (for code optionally used in `smart-eol') uses
+;; `repeat-map' which was not added to the "repeat.el" library in Emacs 27.1,
+;; so don't use if it fails to load properly.
+(ignore-errors (require 'hsys-flymake))
 (require 'hload-path)
 (require 'hsys-org)
 (require 'hbut)
@@ -292,6 +295,10 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 	      (smart-helm-alive-p)))
      . ((funcall (key-binding (kbd "RET"))) . (funcall (key-binding (kbd "RET")))))
     ;;
+    ;; If at the end of a line (eol), invoke the associated Smart Key handler EOL handler.
+    ((smart-eolp)
+     . ((funcall action-key-eol-function) . (funcall assist-key-eol-function)))
+    ;;
     ;; Handle any Org mode-specific contexts but give priority to Hyperbole
     ;; buttons prior to cycling Org headlines
     ((and (not (hyperb:stack-frame '(smart-org)))
@@ -311,10 +318,6 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
     ;; the source line referenced by the current entry.
     ((and (fboundp 'xref--item-at-point) (xref--item-at-point))
      . ((xref-goto-xref) . (xref-show-location-at-point)))
-    ;;
-    ;; If at the end of a line (eol), invoke the associated Smart Key handler EOL handler.
-    ((smart-eolp)
-     . ((funcall action-key-eol-function) . (funcall assist-key-eol-function)))
     ;;
     ;; The Smart Menu system is an attractive in-buffer menu system
     ;; that works on any display system that supports Emacs.  It
@@ -1918,6 +1921,15 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
 	     ;; contexts
 	     nil)))))
 
+(defun smart-org-bob-and-non-heading-p ()
+  "Check whether {TAB} should globally `org-cycle' at point."
+  (and (bobp)
+       buffer-file-name
+       (derived-mode-p 'org-mode)
+       (not (org-at-heading-p))
+       (member buffer-file-name 
+	       (hpath:expand-list hsys-org-cycle-bob-file-list))))
+
 ;;; ************************************************************************
 ;;; smart-outline functions
 ;;; ************************************************************************
@@ -2090,12 +2102,16 @@ If key is pressed:
   "Return t if point is at the end of a visible line but not the end of the buffer."
   ;; smart-helm handles eol for helm buffers
   (unless (or (and (smart-helm-alive-p) (equal (helm-buffer-get) (buffer-name)))
+	      ;; Allow for org global cycling at start of buffer on a
+	      ;; non-heading line in Hyperbole doc files when
+	      ;; displayed from Hyperbole menu items.
+	      (smart-org-bob-and-non-heading-p)
+	      ;; If there is a flymake diagnostic issue at eol,
+	      ;; drop through this clause to handle it later.
 	      (and (featurep 'hsys-flymake)
 		   (boundp 'flymake-mode)
 		   flymake-mode
 		   (eolp)
-		   ;; If there is a flymake diagnostic issue at eol,
-		   ;; drop through this clause to handle it later.
 		   (hsys-flymake-get-issue-at-position)))
     (if (eq major-mode 'kotl-mode)
 	(and (not (kotl-mode:eobp)) (kotl-mode:eolp t))

@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:      7-Jan-24 at 14:27:34 by Bob Weiner
+# Last-Mod:     13-Jan-24 at 19:12:58 by Bob Weiner
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -70,8 +70,9 @@
 #               * Developer targets
 #
 #               To run unit tests:
-#                   make test           - run not interactive tests in batch mode
-#                   make test-all       - run all tests starting an Emacs in windowed mode
+#                   make test                  - run non-interactive tests in batch mode
+#                   make test-all              - run all tests starting an interactive Emacs
+#                   make test test=<test-name> - run a single test or tests matching the name
 #
 #               Verify hyperbole installation using different sources:
 #                   make install-<source>
@@ -459,7 +460,7 @@ packageclean:
 	  cd $(pkg_hyperbole)/man/im && $(RM) -r .DS_Store core .place* ._* .*~ *~ \
 	    *.ps *\# *- *.orig *.rej .nfs* CVS .cvsignore; fi
 
-# Ert test
+# ERT test
 .PHONY: tests test test-ert all-tests test-all
 tests: test
 test: test-ert
@@ -469,10 +470,10 @@ test: test-ert
 LET_VARIABLES = (auto-save-default) (enable-local-variables :all)
 LOAD_TEST_ERT_FILES=$(patsubst %,(load-file \"%\"),${TEST_ERT_FILES})
 
-# Run make test SELECTOR=<ert-test-selector> to limit batch test to
+# Run make test test=<ert-test-selector> to limit batch test to
 # tests specified by the selector. See "(ert)test selectors"
-ifeq ($(origin SELECTOR), command line)
-HYPB_ERT_BATCH = (ert-run-tests-batch-and-exit \"${SELECTOR}\")
+ifeq ($(origin test), command line)
+HYPB_ERT_BATCH = (ert-run-tests-batch-and-exit \"${test}\")
 else
 HYPB_ERT_BATCH = (ert-run-tests-batch-and-exit)
 endif
@@ -487,9 +488,10 @@ endif
 test-ert:
 	@echo "# Tests: $(TEST_ERT_FILES)"
 	$(EMACS_BATCH) --eval "(load-file \"test/hy-test-dependencies.el\")" \
-	--eval "(let ((auto-save-default) (ert-batch-print-level 10) (ert-batch-print-length 20) \
-		$(HYPB_ERT_BATCH_BT) (ert-batch-backtrace-right-margin 2048)) \
-	$(LOAD_TEST_ERT_FILES) $(HYPB_ERT_BATCH))"
+	--eval "(let ((auto-save-default) (ert-batch-print-level 10) \
+	              (ert-batch-print-length nil) (backtrace-line-length 5000) \
+	              $(HYPB_ERT_BATCH_BT) (ert-batch-backtrace-right-margin 2048)) \
+	           $(LOAD_TEST_ERT_FILES) $(HYPB_ERT_BATCH))"
 
 all-tests: test-all
 test-all:

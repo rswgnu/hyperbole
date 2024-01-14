@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:      3-Jan-24 at 23:44:37 by Mats Lidell
+;; Last-Mod:     12-Jan-24 at 08:20:56 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1091,17 +1091,43 @@ If FILE is not an absolute path, expand it relative to `hyperb:dir'."
     (error "(hypb:display-file-with-logo): 'file' must be a string, not '%s'" file))
   (unless (file-name-absolute-p file)
     (setq file (expand-file-name file hyperb:dir)))
-  (let ((existing-buf (when (stringp file) (get-file-buffer file))))
-    ;; A stub for this function is defined in hversion.el when not running in InfoDock.
-    (id-browse-file file)
+  (let ((existing-buf (when (stringp file) (get-file-buffer file)))
+	(hsys-org-enable-smart-keys hsys-org-enable-smart-keys))
+
+    ;; Ensure Smart Keys do not defer to Org mode when running tests noninteractively
+    (when noninteractive
+      (setq sys-org-enable-smart-keys t))
+
+    (when (and existing-buf noninteractive)
+      ;; Likely are running tests when running non-interactively, so
+      ;; kill existing buffer, so each test run starts from scratch
+      ;; and is consistent.  Trigger an error if buffer has been
+      ;; modified.
+      (when (buffer-modified-p existing-buf)
+	(error "(hypb:display-file-with-logo): Attempt to kill modified buffer: %s" existing-buf))
+      (when (kill-buffer existing-buf)
+	(setq existing-buf nil)))
+
+    ;; A stub for the `id-browse-file' function is defined in
+    ;; "hversion.el" when not running in InfoDock.
+    (if (eq (symbol-function #'id-browse-file) #'view-file)
+	(find-file file)
+      ;; Running under InfoDock
+      (id-browse-file file))
+
     (unless existing-buf
       (let ((buffer-read-only))
 	(hypb:insert-hyperbole-banner))
       (goto-char (point-min))
-      (skip-syntax-forward "-")
       (set-window-start (selected-window) 1)
       (set-buffer-modified-p nil)
+      (org-mode)
+      (setq-local org-cycle-global-at-bob t)
       (view-mode)
+      ;; Ensure no initial folding of the buffer, possibly from a hook
+      (if (fboundp 'org-fold-show-all)
+	  (org-fold-show-all)
+	(org-show-all))
       ;; On some versions of Emacs like Emacs28, need a slight delay
       ;; for file loading before searches will work properly.
       ;; Otherwise, "test/demo-tests.el" may fail.
@@ -1146,7 +1172,7 @@ Without file, the banner is prepended to the current buffer."
 	(insert "\n")
 	(insert-image hyperbole-banner)
 	(insert "\n")
-	(setq button (make-button (- (point) 3) (- (point) 2) :type 'hyperbole-banner))
+	(setq button (make-button (- (point) 2) (- (point) 1) :type 'hyperbole-banner))
 	(button-put button 'help-echo (concat "Click to visit " hypb:home-page))
 	(button-put button 'action #'hypb:browse-home-page)
 	(button-put button 'face 'default)

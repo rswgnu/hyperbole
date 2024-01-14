@@ -3,16 +3,14 @@
 ;; Keywords:     tools
 ;;
 ;; Author:       Bob Weiner
-;; Org:          RWorks
-;; E-mail:       rsw@gnu.org
 ;;
 ;; Orig-Date:    31-Dec-23 at 13:54:08
-;; Last-Mod:      4-Jan-24 at 22:51:11 by Bob Weiner
+;; Last-Mod:      9-Jan-24 at 21:29:43 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
 ;; Copyright (C) 2023-2024  Free Software Foundation, Inc.
-;; Licensed under the GNU General Public License, version 3.
+;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
 ;;
@@ -59,11 +57,11 @@
 ;;
 ;;; Code:
 
-;;    Don't require `flymake-mode' or `repeat-mode' here.  Instead we
-;;    leave it to each function to check whether `flymake-mode' is
-;;    enabled and active in the current buffer.  This way, if the user
-;;    never uses `flymake-mode' that library is never loaded and the
-;;    Smart Key context from `hkey-alist' in "hui-mouse.el" that invokes
+;;    Don't require `flymake-mode' or `repeat' here.  Instead we leave
+;;    it to each function to check whether `flymake-mode' is enabled
+;;    and active in the current buffer.  This way, if the user never
+;;    uses `flymake-mode' that library is never loaded and the Smart
+;;    Key context from `hkey-alist' in "hui-mouse.el" that invokes
 ;;    functions from herein, never triggers.
 
 (require 'hbut)
@@ -141,7 +139,7 @@ Issue is inserted into the buffer after the current visible line."
 
 ;; flymake-mode does not bind any keys; it has only menu bindings.
 ;; Add key bindings for use in the source buffer on the C-c C-l prefix.
-;; Each time these keys are changed, need to disable repeat-mode and
+;; Each time these keys are changed, need to disable `repeat-mode' and
 ;; then re-enable it to read the updated key bindings.
 (defvar hsys-flymake-mode-control-l-prefix-map
   (let ((map (make-sparse-keymap)))
@@ -155,9 +153,9 @@ Issue is inserted into the buffer after the current visible line."
     (define-key map "w" 'hsys-flymake-toggle-wraparound)
     map))
 
-;; Use repeat-mode for appropriate flymake commands so can repeat them
-;; with their last keystroke, e.g. repeat {C-c C-l n} by pressing {n}
-;; repeatedly.
+;; Use `repeat-map' property for appropriate flymake commands so can
+;; repeat them with their last keystroke, e.g. repeat {C-c C-l n} by
+;; pressing {n} repeatedly.
 (defvar hsys-flymake-repeat-map
   (let ((map (make-sparse-keymap)))
     (mapc (lambda (cmd)
@@ -181,7 +179,9 @@ Issue is inserted into the buffer after the current visible line."
 	  (lambda () (when flymake-mode
 		       (define-key flymake-mode-map "\C-c"
 			 hsys-flymake-mode-control-c-prefix-map)
-		       (repeat-mode 1))))
+		       ;; probably Emacs 28 or greater
+		       (when (fboundp 'repeat-mode)
+			 (repeat-mode 1)))))
 ;; If flymake-mode is already enabled, re-enable it to ensure
 ;; repeat-mode gets enabled.
 (when (and (featurep 'flymake) flymake-mode)

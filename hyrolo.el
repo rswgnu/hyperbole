@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      6-Jan-24 at 10:02:10 by Mats Lidell
+;; Last-Mod:     13-Jan-24 at 20:04:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -28,10 +28,11 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(require 'custom) ;; For 'defface'.
+(require 'custom)   ;; For `defface'
 (require 'hversion)
 (require 'hmail)
-(require 'hypb)  ;; For 'hypb:mail-address-regexp'.
+(require 'hsys-org) ;; For `hsys-org-cycle-bob-file-list'
+(require 'hypb)     ;; For `hypb:mail-address-regexp'
 (require 'outline)
 (require 'package)
 (require 'reveal)
@@ -61,9 +62,12 @@
 (defvar helm-org-rifle-show-level-stars)
 (defvar hproperty:but-emphasize-flag)
 (defvar markdown-regex-header)
+(defvar org-fold-core-style)
+(defvar org-link--link-folding-spec)
 (defvar org-roam-db-autosync-mode)
 (defvar org-roam-directory)
 (defvar plstore-cache-passphrase-for-symmetric-encryption)
+(defvar reveal-auto-hide)
 
 (declare-function consult-grep "ext:consult")
 (declare-function consult-ripgrep "ext:consult")
@@ -78,6 +82,8 @@
 (declare-function helm-org-rifle-org-directory "ext:helm-org-rifle")
 (declare-function helm-org-rifle-show-full-contents "ext:helm-org-rifle")
 (declare-function kotl-mode:to-valid-position "kotl/kotl-mode")
+(declare-function org-fold-initialize "org-fold")
+(declare-function org-fold-core-set-folding-spec-property "org-fold")
 (declare-function org-roam-db-autosync-mode "ext:org-roam")
 (declare-function xml-node-child-string "ext:google-contacts")
 (declare-function xml-node-get-attribute-type "ext:google-contacts")
@@ -1136,16 +1142,19 @@ matched entries."
   (hyrolo-show-levels 1))
 
 (defun hyrolo-verify ()
-  "Verify point is in a HyRolo or HyNote match buffer."
-  (when (not (member (buffer-name) (list hyrolo-display-buffer
-					 (and (car (hyrolo-get-file-list))
-					      (file-name-nondirectory (car (hyrolo-get-file-list))))
-					 (when (boundp 'hynote-display-buffer)
-					   hynote-display-buffer)
-					 (when (boundp 'hynote-file-list)
-					   (and (car hynote-file-list)
-						(file-name-nondirectory (car hynote-file-list)))))))
-    (error "(HyRolo): Use this command in HyRolo/HyNote match buffers or primary file buffers")))
+  "Verify point is in a HyRolo match buffer."
+  (when (not (member (buffer-name) (nconc (list hyrolo-display-buffer
+						(and (car (hyrolo-get-file-list))
+						     (file-name-nondirectory (car (hyrolo-get-file-list)))))
+					  (mapcar #'file-name-nondirectory
+						  (hpath:expand-list hsys-org-cycle-bob-file-list))
+					  ;; (when (boundp 'hynote-display-buffer)
+					  ;;   hynote-display-buffer)
+					  ;; (when (boundp 'hynote-file-list)
+					  ;;   (and (car hynote-file-list)
+					  ;; 	(file-name-nondirectory (car hynote-file-list))))
+					  )))
+    (error "(HyRolo): Use this command in HyRolo match buffers or primary file buffers")))
 
 (defun hyrolo-widen ()
   "Widen non-special HyRolo buffers mainly for adding entries or editing them."
@@ -2015,7 +2024,7 @@ of the current heading, or to 1 if the current line is not a heading."
   "Move back to the start of current subtree and hide everything after the heading.
 If within a file header, hide the whole file after the end of the current line.
 
-Necessary, since with reveal-mode active, outline-hide-subtree works
+Necessary, since with reveal-mode active, `outline-hide-subtree' works
 only if on the heading line of the subtree."
   (interactive)
   (if (and (hyrolo-hdr-in-p)
@@ -2411,37 +2420,41 @@ package is not installed."
 
     ;;  6. if not, display a buffer with the invalid file types and return t
     (when (or files-invalid-suffix-list files-no-mode-list)
-      (with-help-window "*HyRolo Errors*"
-	(princ "`hyrolo-file-list' gets its files from these patterns:\n")
-	(mapc (lambda (spec) (princ (format "\t%S\n" spec)))
-	      hyrolo-file-list)
-	(terpri)
-	(princ "When expanded, it includes the following files that HyRolo cannot process:\n\n")
-
-	(when files-invalid-suffix-list
-	  (princ (format "Files with invalid or no suffixes:\n  (valid suffixes: %S)\n"
-			 hyrolo-file-suffix-regexp))
-	  (mapc (lambda (file) (princ (format "\t%S\n" file)))
-		files-invalid-suffix-list)
+      (unless (and (boundp 'hyrolo-boolean-only-flag) hyrolo-boolean-only-flag)
+	(with-help-window "*HyRolo Errors*"
+	  (princ "`hyrolo-file-list' gets its files from these patterns:\n")
+	  (mapc (lambda (spec) (princ (format "\t%S\n" spec)))
+		hyrolo-file-list)
 	  (terpri)
-	  (princ "Please remove the above files from `hyrolo-file-list'.\n")
-	  (terpri))
+	  (princ "When expanded, it includes the following files that HyRolo cannot process:\n\n")
 
-	(when files-no-mode-list
-	  (princ "Files with invalid modes (file suffixes not in `auto-mode-alist'):\n")
-	  (mapc (lambda (file) (princ (format "\t%S\n" file)))
-		files-no-mode-list)
-	  (terpri)
-	  (princ "Please add appropriate entries for the above files to `auto-mode-alist'.\n")
-	  (terpri))
+	  (when files-invalid-suffix-list
+	    (princ (format "Files with invalid or no suffixes:\n  (valid suffixes: %S)\n"
+			   hyrolo-file-suffix-regexp))
+	    (mapc (lambda (file) (princ (format "\t%S\n" file)))
+		  files-invalid-suffix-list)
+	    (terpri)
+	    (princ "Please remove the above files from `hyrolo-file-list'.\n")
+	    (terpri))
 
-	(when (hyperb:stack-frame '(hyrolo-file-list-changed))
-	  ;; Errors occurred with a let of `hyrolo-file-list' so
-	  ;; include backtrace of where this occurred.
-	  (princ "Stack trace of where invalid files were referenced:\n")
-	  (terpri)
-          ;; (setq backtrace-view (plist-put backtrace-view :show-locals t))
-	  (backtrace)))
+	  (when files-no-mode-list
+	    (princ "Files with invalid modes (file suffixes not in `auto-mode-alist'):\n")
+	    (mapc (lambda (file) (princ (format "\t%S\n" file)))
+		  files-no-mode-list)
+	    (terpri)
+	    (princ "Please add appropriate entries for the above files to `auto-mode-alist'.\n")
+	    (terpri))
+
+	  (when (hyperb:stack-frame '(hyrolo-file-list-changed))
+	    ;; Errors occurred with a let of `hyrolo-file-list' so
+	    ;; include backtrace of where this occurred.
+	    (princ "Stack trace of where invalid files were referenced:\n")
+	    (terpri)
+            ;; (setq backtrace-view (plist-put backtrace-view :show-locals t))
+	    (backtrace))
+
+	  (when noninteractive
+	    (princ (buffer-string)))))
       t)))
 
 (defun hyrolo-buffer-exists-p (hyrolo-buf)
@@ -2600,6 +2613,19 @@ Any non-nil value returned is a cons of (<entry-name> . <entry-source>)."
   ;; set its parent mode property to org-mode so can `derived-mode-p'
   ;; checks will pass.
   (put 'hyrolo-org-mode 'derived-mode-parent 'org-mode)
+
+  (when (featurep 'org-fold) ;; newer Org versions
+    (when (and org-link-descriptive
+               (eq org-fold-core-style 'overlays))
+      (add-to-invisibility-spec '(org-link)))
+    (org-fold-initialize (or (and (stringp org-ellipsis) (not (equal "" org-ellipsis)) org-ellipsis)
+                             "..."))
+    (make-local-variable 'org-link-descriptive)
+    (when (eq org-fold-core-style 'overlays) (add-to-invisibility-spec '(org-hide-block . t)))
+    (if org-link-descriptive
+	(org-fold-core-set-folding-spec-property (car org-link--link-folding-spec) :visible nil)
+      (org-fold-core-set-folding-spec-property (car org-link--link-folding-spec) :visible t)))
+
   (setq-local hyrolo-entry-regexp "^\\(\\*+\\)\\([ 	]+\\)"
 	      hyrolo-hdr-and-entry-regexp (concat hyrolo-hdr-prefix-regexp hyrolo-entry-regexp)
 	      hyrolo-entry-group-number 1

@@ -3,11 +3,11 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:16:00
-;; Last-Mod:      2-Oct-23 at 04:48:58 by Bob Weiner
+;; Last-Mod:     13-Jan-24 at 20:08:39 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; Copyright (C) 2021  Free Software Foundation, Inc.
+;; Copyright (C) 2021-2024  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -18,11 +18,12 @@
 
 ;;; Code:
 
-(require 'hload-path)
-(add-to-list 'load-path (expand-file-name "test" hyperb:dir))
-
-(package-initialize)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(package-initialize)
+
+(require 'hload-path)
+(require 'hyperbole)
+(add-to-list 'load-path (expand-file-name "test" hyperb:dir))
 
 (defun hy-test-ensure-package-installed (pkg-symbol)
   (unless (package-installed-p pkg-symbol)
@@ -34,6 +35,18 @@
 
 ;; Needed when `hypb:display-file-with-logo' uses `org-mode'.
 (setq hsys-org-enable-smart-keys t)
+
+(require 'pp)
+(terpri)
+(print (format "org-directory = %S" (ignore-errors (org-find-library-dir "org"))))
+(print (format "ord-load-dir  = %S" (ignore-errors (org-find-library-dir "org-loaddefs"))))
+(print (format "version       = %S" (org-release)))
+(terpri)
+
+(let ((org-reloaded (hsys-org-fix-version)))
+  (if org-reloaded
+      (message "Mixed Org versions fixed and reloaded; version is now %s" org-version)
+    (message "Correct, single version of Org is active %s" org-version)))
 
 (provide 'hy-test-dependencies)
 ;;; hy-test-dependencies.el ends here

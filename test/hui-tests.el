@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     30-Dec-23 at 00:00:18 by Bob Weiner
+;; Last-Mod:     13-Jan-24 at 16:30:08 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -935,11 +935,14 @@ With point on label suggest that ibut for rename."
 (ert-deftest hui--link-possible-types ()
   "Verify right type is selected from referent buffer."
 
+  (hsys-org-fix-version)
+
   ;; Org Roam or Org Id       link-to-org-id
   (let ((file (make-temp-file "hypb" nil ".org")))
     (unwind-protect
         (progn
           (find-file file)
+	  (erase-buffer)
           (org-id-get-create nil)
           (re-search-forward ":ID:")
 	  (hy-test-helpers:ensure-link-possible-type 'link-to-org-id))

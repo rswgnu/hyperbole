@@ -8,7 +8,7 @@
 ;; Maintainer:   Mats Lidell <matsl@gnu.org>
 ;; Maintainers:  Robert Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:      06-Oct-92 at 11:52:51
-;; Last-Mod:      3-Jan-24 at 02:27:05 by Bob Weiner
+;; Last-Mod:     13-Jan-24 at 16:28:45 by Bob Weiner
 ;; Released:     03-Dec-23
 ;; Version:      9.0.0
 ;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -496,6 +496,13 @@ frame, those functions by default still return the prior frame."
 				'buttons
 			      t)))
   ;;
+  ;; This next function call must be run before any tests involving Org
+  ;; in case the user has installed a new version of Org but Emacs has
+  ;; loaded parts of Org before his load path is finalized.  It loads
+  ;; the newer version of Org, if any, assuming `load-path' is configured
+  ;; correctly.
+  (hsys-org-fix-version)
+  ;;
   ;; When vertico-mode is used, vertico-mouse-mode is needed for the
   ;; Action Key to properly select completions from the candidate
   ;; list, so force its usage when vertico-mode is invoked.
@@ -505,9 +512,10 @@ frame, those functions by default still return the prior frame."
   ;;
   ;; Hyperbole initialization is complete.
   (message "Initializing Hyperbole...done"))
+  
 
-;; This call loads the rest of the Hyperbole system.
-(require 'hinit)
+  ;; This call loads the rest of the Hyperbole system.
+  (require 'hinit)
 
 (defun hyperbole--enable-mode ()
   "Enable Hyperbole global minor mode."
