@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     13-Jan-24 at 02:25:54 by Bob Weiner
+;; Last-Mod:     13-Jan-24 at 20:04:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2420,40 +2420,41 @@ package is not installed."
 
     ;;  6. if not, display a buffer with the invalid file types and return t
     (when (or files-invalid-suffix-list files-no-mode-list)
-      (with-help-window "*HyRolo Errors*"
-	(princ "`hyrolo-file-list' gets its files from these patterns:\n")
-	(mapc (lambda (spec) (princ (format "\t%S\n" spec)))
-	      hyrolo-file-list)
-	(terpri)
-	(princ "When expanded, it includes the following files that HyRolo cannot process:\n\n")
-
-	(when files-invalid-suffix-list
-	  (princ (format "Files with invalid or no suffixes:\n  (valid suffixes: %S)\n"
-			 hyrolo-file-suffix-regexp))
-	  (mapc (lambda (file) (princ (format "\t%S\n" file)))
-		files-invalid-suffix-list)
+      (unless (and (boundp 'hyrolo-boolean-only-flag) hyrolo-boolean-only-flag)
+	(with-help-window "*HyRolo Errors*"
+	  (princ "`hyrolo-file-list' gets its files from these patterns:\n")
+	  (mapc (lambda (spec) (princ (format "\t%S\n" spec)))
+		hyrolo-file-list)
 	  (terpri)
-	  (princ "Please remove the above files from `hyrolo-file-list'.\n")
-	  (terpri))
+	  (princ "When expanded, it includes the following files that HyRolo cannot process:\n\n")
 
-	(when files-no-mode-list
-	  (princ "Files with invalid modes (file suffixes not in `auto-mode-alist'):\n")
-	  (mapc (lambda (file) (princ (format "\t%S\n" file)))
-		files-no-mode-list)
-	  (terpri)
-	  (princ "Please add appropriate entries for the above files to `auto-mode-alist'.\n")
-	  (terpri))
+	  (when files-invalid-suffix-list
+	    (princ (format "Files with invalid or no suffixes:\n  (valid suffixes: %S)\n"
+			   hyrolo-file-suffix-regexp))
+	    (mapc (lambda (file) (princ (format "\t%S\n" file)))
+		  files-invalid-suffix-list)
+	    (terpri)
+	    (princ "Please remove the above files from `hyrolo-file-list'.\n")
+	    (terpri))
 
-	(when (hyperb:stack-frame '(hyrolo-file-list-changed))
-	  ;; Errors occurred with a let of `hyrolo-file-list' so
-	  ;; include backtrace of where this occurred.
-	  (princ "Stack trace of where invalid files were referenced:\n")
-	  (terpri)
-          ;; (setq backtrace-view (plist-put backtrace-view :show-locals t))
-	  (backtrace)))
-      (when noninteractive
-	(princ (with-current-buffer (get-buffer "*HyRolo Errors*")
-		 (buffer-string))))
+	  (when files-no-mode-list
+	    (princ "Files with invalid modes (file suffixes not in `auto-mode-alist'):\n")
+	    (mapc (lambda (file) (princ (format "\t%S\n" file)))
+		  files-no-mode-list)
+	    (terpri)
+	    (princ "Please add appropriate entries for the above files to `auto-mode-alist'.\n")
+	    (terpri))
+
+	  (when (hyperb:stack-frame '(hyrolo-file-list-changed))
+	    ;; Errors occurred with a let of `hyrolo-file-list' so
+	    ;; include backtrace of where this occurred.
+	    (princ "Stack trace of where invalid files were referenced:\n")
+	    (terpri)
+            ;; (setq backtrace-view (plist-put backtrace-view :show-locals t))
+	    (backtrace))
+
+	  (when noninteractive
+	    (princ (buffer-string)))))
       t)))
 
 (defun hyrolo-buffer-exists-p (hyrolo-buf)

@@ -1,7 +1,30 @@
 2024-01-13  Bob Weiner  <rsw@gnu.org>
 
+* test/hy-test-dependencies.el: Print status of resolving any
+    multi-version/mixed Org installations.
+
+* hyrolo.el (hyrolo-any-file-type-problem-p): Disable printing
+    output if 'hyrolo-boolean-only-flag' is non-nil, used in
+    testing.
+ test/hyrolo-tests.el (hyrolo-tests--get-file-list-wrong-suffix):
+    Use above flag.
+
+* Makefile (test-ert): Do not ellide any stack traces, i.e. set
+    'ert-batch-print-length' to nil.
+    Change test SELECTOR= to test= and document how to run.
+
+* hyrolo.el (hyrolo-any-file-type-problem-p): Disable printing of
+    any output when 'hyrolo-boolean-only-flag' is non-nil, typically
+    used for testing purposes.
+
+* hui.el (hui:ebut-unmark): Fix to handle a non-file-based buffer as
+    'key-src'.
+
 * hsys-org.el (hsys-org-fix-version): Add.  Add .org suffix to
-    'auto-mode-alist' as it may be removed in this function.
+    'auto-mode-alist' as it may be removed in this function.  Return
+    t when Org is reloaded, nil if not.  Require Org libraries even
+    when no reload is done.  Handle when 'org-version' differs from
+    version number in 'org-dir'.
   hyperbole.el (hyperb:init): Add call to 'hsys-org-fix-version' when
     detect a mixed version installation of Org, typically part of
     built-in Org loaded before loading a newer packaged version.

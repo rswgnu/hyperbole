@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     13-Jan-24 at 16:28:29 by Bob Weiner
+;; Last-Mod:     13-Jan-24 at 19:50:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -154,45 +154,65 @@ an error."
 
 ;;;###autoload
 (defun hsys-org-fix-version ()
-  "If multiple Org versions are loaded, use the one first on `load-path'."
+  "If multiple Org versions are loaded, use the one first on `load-path'.
+Always ensure Org libraries have been required.
+Return t if Org is reloaded, else nil."
+  ;; Not all versions of org include this variable, so set it
+  (setq org--inhibit-version-check nil
+	org-list-allow-alphabetical nil)
   (let ((org-dir (ignore-errors (org-find-library-dir "org")))
 	(org-install-dir
-	 (ignore-errors (org-find-library-dir "org-loaddefs"))))
-    (unless (and org-dir org-install-dir (string-equal org-dir org-install-dir))
-      ;; Ensure using any local available packaged version of Org mode
-      ;; rather than built-in which may have been activated before
-      ;; load-path was set correctly.  Avoids mixed version load of Org.
-      (mapc (lambda (lib-sym) (when (featurep lib-sym) (unload-feature lib-sym t)))
-	    '(org org-version org-keys org-compat ol org-table org-macs org-id org-element org-list
-		  org-element org-src org-fold))
-      (package-initialize)
-      (let ((pkg-desc (car (cdr (assq 'org package-archive-contents)))))
-	(package-activate pkg-desc t))
-      ;; Not all versions of org include this variable, so set it
-      (setq org--inhibit-version-check nil
-	    org-list-allow-alphabetical nil)
-      ;; Otherwise, `font-lock-ensure' make invoke an undefined matcher
-      ;; function, `org-fontify-inline-src-blocks'.
-      (load "org-src")
-      ;; Otherwise, `org-id-get-create' may call undefined
-      ;; `org-element-cache-active-p'
-      (load "org-element")
-      ;; Otherwise, {M-RET} may not be bound to a key
-      (load "org-keys")
-      ;; Otherwise, `org-file-name-concat' may be undefined
-      (load "org-compat")
-      ;; Otherwise, `org--inhibit-version-check' may be undefined
-      (load "org-macs")
-      ;; Otherwise, `org-list-allow-alphabetical' may be undefined
-      (load "org-list")
-      ;; Otherwise, `org-fold--advice-edit-commands' may be undefined
-      (load "org-fold")
-      ;; Otherwise, `org-link--description-folding-spec' may be undefined
-      (load "ol")
-      (cl-flet ((require (lambda (lib-sym &optional _filename _noerror)
-			   (load (symbol-name lib-sym)))))
-	(require 'org))
-      (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode)))))
+	 (ignore-errors (org-find-library-dir "org-loaddefs")))
+	org-dir-version)
+    (cond ((and org-dir org-install-dir (string-equal org-dir org-install-dir)
+		;; Still may have a situation where the Org version matches the
+		;; builtin Org but the directories are for a newer Org
+		;; package version.
+		(if (string-match "[\\/]org-\\([0-9.]+-?[a-z]*\\)" org-dir)
+		    (string-equal (setq org-dir-version (match-string 1 org-dir))
+				  (remove ?- (org-release)))
+		  t))
+	   ;; Just require these libraries used for testing to ensure
+	   ;; they are loaded from the single Org version used.
+	   (mapc (lambda (lib-sym) (require lib-sym nil t))
+		 '(org-version org-keys org-compat ol org-table org-macs org-id
+			       org-element org-list org-element org-src org-fold org))
+	   nil)
+	  (t
+	   ;; Ensure using any local available packaged version of Org mode
+	   ;; rather than built-in which may have been activated before
+	   ;; load-path was set correctly.  Avoids mixed version load of Org.
+	   (mapc (lambda (lib-sym) (when (featurep lib-sym) (unload-feature lib-sym t)))
+		 '(org org-version org-keys org-compat ol org-table org-macs org-id
+		       org-element org-list org-element org-src org-fold))
+	   (package-initialize)
+	   (let ((pkg-desc (car (cdr (assq 'org package-archive-contents)))))
+	     (package-activate pkg-desc t))
+	   ;; Otherwise, `font-lock-ensure' make invoke an undefined matcher
+	   ;; function, `org-fontify-inline-src-blocks'.
+	   (load "org-src")
+	   ;; Otherwise, `org-id-get-create' may call undefined
+	   ;; `org-element-cache-active-p'
+	   (load "org-element")
+	   ;; Otherwise, {M-RET} may not be bound to a key
+	   (load "org-keys")
+	   ;; Otherwise, `org-file-name-concat' may be undefined
+	   (load "org-compat")
+	   ;; Otherwise, `org--inhibit-version-check' may be undefined
+	   (load "org-macs")
+	   ;; Otherwise, `org-list-allow-alphabetical' may be undefined
+	   (load "org-list")
+	   ;; Otherwise, `org-fold--advice-edit-commands' may be undefined
+	   (load "org-fold")
+	   ;; Otherwise, `org-link--description-folding-spec' may be undefined
+	   (load "ol")
+	   (cl-flet ((require (lambda (lib-sym &optional _filename _noerror)
+				(load (symbol-name lib-sym)))))
+	     (require 'org))
+	   ;; Next setting may have been deleted with the library
+	   ;; unloading, so restore it.
+	   (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
+	   t))))
 
 ;;;###autoload
 (defun hsys-org-meta-return-shared-p ()

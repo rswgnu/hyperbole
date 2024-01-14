@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     13-Jan-24 at 02:32:45 by Bob Weiner
+;; Last-Mod:     13-Jan-24 at 20:05:16 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -464,7 +464,8 @@ Match a string in the second cell."
   (let ((tmp-file (make-temp-file "hypb" nil)))
     (unwind-protect
         (should-error
-         (let ((hyrolo-file-list (list tmp-file)))
+         (let* ((hyrolo-boolean-only-flag t)
+		(hyrolo-file-list (list tmp-file)))
            ()))
       (hy-delete-file-and-buffer tmp-file))))
 

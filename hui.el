@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:      3-Jan-24 at 23:42:18 by Mats Lidell
+;; Last-Mod:     13-Jan-24 at 18:55:34 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1522,10 +1522,12 @@ With a prefix argument, also delete the button text between the delimiters."
 	  (when (search-forward ebut:label-end nil t) (funcall form)))
       ;; Non-interactive invocation.
       (let (cur-flag)
-	(if (and (or (null key-src) (eq key-src buffer-file-name))
-		 (or (null directory) (eq directory default-directory)))
-	    (setq cur-flag t)
-	  (set-buffer (find-file-noselect (expand-file-name key-src directory))))
+	(cond ((and (or (null key-src) (eq key-src buffer-file-name))
+		    (or (null directory) (eq directory default-directory)))
+	       (setq cur-flag t))
+	      ((bufferp key-src)
+	       (set-buffer key-src))
+	      (t (set-buffer (find-file-noselect (expand-file-name key-src directory)))))
 	(unless (stringp but-key)
 	  (setq but-key (hbut:label-p))
 	  (unless (stringp but-key)
