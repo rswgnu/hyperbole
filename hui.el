@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     13-Jan-24 at 18:55:34 by Bob Weiner
+;; Last-Mod:     14-Jan-24 at 12:07:46 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -296,7 +296,7 @@ Default is the current button."
 					  (ebut:label-p 'as-label) 'ebut))))
 	    (t
 	     (hypb:error "(ebut-act): No explicit buttons in buffer."))))))
-  (hui:hbut-operate #'ebut:act "Activate explicit button: " but))
+  (hui:hbut-operate #'hbut:act "Activate explicit button: " but))
 
 (defun hui:ebut-create (&optional start end)
   "Interactively create an explicit Hyperbole button.
@@ -942,7 +942,7 @@ Default is any implicit button at point."
 					  (ibut:label-p 'as-label) 'ibut))))
 	    (t
 	     (hypb:error "(ibut-act): No named implicit buttons in buffer."))))))
-  (hui:hbut-operate #'ibut:act "Activate named implicit button: " ibut))
+  (hui:hbut-operate #'hbut:act "Activate named implicit button: " ibut))
 
 (defun hui:ibut-create (&optional start end)
   "Interactively create an implicit Hyperbole button at point.

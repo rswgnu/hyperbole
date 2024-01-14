@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     13-Jan-24 at 15:55:13 by Bob Weiner
+;; Last-Mod:     14-Jan-24 at 12:05:01 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -21,6 +21,12 @@
 ;;; ************************************************************************
 
 (require 'xref)
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function smart-emacs-lisp-mode-p "hmouse-tag")
 
 ;;; ************************************************************************
 ;;; Public functions

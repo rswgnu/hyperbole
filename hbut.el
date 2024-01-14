@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      7-Jan-24 at 20:13:36 by Bob Weiner
+;; Last-Mod:     14-Jan-24 at 11:55:14 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2331,29 +2331,31 @@ move to the first occurrence of the button."
 (defun    ibut:operate (&optional new-name edit-flag)
   "Insert/modify an ibutton based on `hbut:current' in current buffer.
 
-This is for internal Hyperbole use only.  Use `ibut:program' and `ibut:create'
-(an alias of `defib'), if programming applications with Hyperbole.
+This is for internal Hyperbole use only.  Use `ibut:program' and
+`ibut:create' (an alias of `defib'), if programming applications
+with Hyperbole.
 
-IMPORTANT:
-Caller must either call `hbut:at-p' or manually set the attributes of
-`hbut:current' prior to invoking this function, i.e. there must be an
-ibutton stored in memory in `hbut:current prior to invocation.  If point
-is on an existing Hyperbole button, `edit-flag' must be set to t; otherwise,
-this may create a new ibutton inserted within the prior one, making the
-prior one unusable.
+IMPORTANT: Caller must either call `hbut:at-p' or manually set
+the attributes of `hbut:current' prior to invoking this function,
+i.e. there must be an ibutton stored in memory in `hbut:current
+prior to invocation.  If point is on an existing Hyperbole
+button, `edit-flag' must be set to t; otherwise, this may create
+a new ibutton inserted within the prior one, making the prior one
+unusable.
 
-Optional non-nil NEW-NAME is new name to give button.  With optional
-EDIT-FLAG non-nil, modify an existing in-buffer ibutton rather
-than creating a new one.
+Optional non-nil NEW-NAME is new name to give button.  With
+optional EDIT-FLAG non-nil, modify an existing in-buffer ibutton
+rather than creating a new one.
 
-If NEW-NAME is nil, use the active region text as the button name, if any;
-if no such region, then create/modify an unnamed implicit button.
+If NEW-NAME is nil, use the active region text as the button
+name, if any; if no such region, then create/modify an unnamed
+implicit button.
 
-Return instance string appended to name to form a per-buffer unique
-name; nil if name is already unique or no name.  Signal an error when no
-such button is found in the current buffer.
+Return instance string appended to name to form a per-buffer
+unique name; nil if name is already unique or no name.  Signal an
+error when no such button is found in the current buffer.
 
-Summary of operations based on inputs (name arg comes from \\='hbut:current attrs):
+Summary of operations based on inputs (name arg from \\='hbut:current attrs):
 |----+------+----------+--------+------+-----------------------------------------------|
 |  # | name | new-name | region | edit | operation                                     |
 |----+------+----------+--------+------+-----------------------------------------------|

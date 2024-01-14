@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     13-Jan-24 at 19:50:40 by Bob Weiner
+;; Last-Mod:     14-Jan-24 at 12:07:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -35,6 +35,7 @@
 (require 'org)
 (require 'org-element)
 (require 'org-fold nil t)
+(require 'package)
 ;; Avoid any potential library name conflict by giving the load directory.
 (require 'set (expand-file-name "set" hyperb:dir))
 
@@ -162,14 +163,13 @@ Return t if Org is reloaded, else nil."
 	org-list-allow-alphabetical nil)
   (let ((org-dir (ignore-errors (org-find-library-dir "org")))
 	(org-install-dir
-	 (ignore-errors (org-find-library-dir "org-loaddefs")))
-	org-dir-version)
+	 (ignore-errors (org-find-library-dir "org-loaddefs"))))
     (cond ((and org-dir org-install-dir (string-equal org-dir org-install-dir)
 		;; Still may have a situation where the Org version matches the
 		;; builtin Org but the directories are for a newer Org
 		;; package version.
 		(if (string-match "[\\/]org-\\([0-9.]+-?[a-z]*\\)" org-dir)
-		    (string-equal (setq org-dir-version (match-string 1 org-dir))
+		    (string-equal (match-string 1 org-dir) ;; org-dir version
 				  (remove ?- (org-release)))
 		  t))
 	   ;; Just require these libraries used for testing to ensure

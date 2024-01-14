@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     12-Jan-24 at 08:20:56 by Bob Weiner
+;; Last-Mod:     14-Jan-24 at 10:47:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -19,7 +19,8 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(compile hversion hact locate cl-lib)))
+;; Load Org here for `org-show-all'.
+(eval-and-compile (mapc #'require '(compile hversion hact locate cl-lib org)))
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -1096,7 +1097,7 @@ If FILE is not an absolute path, expand it relative to `hyperb:dir'."
 
     ;; Ensure Smart Keys do not defer to Org mode when running tests noninteractively
     (when noninteractive
-      (setq sys-org-enable-smart-keys t))
+      (setq hsys-org-enable-smart-keys t))
 
     (when (and existing-buf noninteractive)
       ;; Likely are running tests when running non-interactively, so

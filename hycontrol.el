@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:     25-Nov-23 at 16:47:02 by Mats Lidell
+;; Last-Mod:     14-Jan-24 at 14:53:56 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1603,15 +1603,12 @@ Enabled if `hycontrol-invert-mode-line-flag' is non-nil."
 (defun hycontrol-windows-grid-buffer-list ()
   "Return buffer list for grid.
 Buffers are either any marked items in Dired, Buffer Menu or
-IBuffer mode or the existing frame's buffer list.  If selecting
-buffers by major-mode, then ignore any marked items."
-  (if (and (boundp 'mode) (symbolp mode))
-      (buffer-list (selected-frame))
-    ;; Get the list of marked items if in an item list buffer and
-    ;; convert items to buffers.
-    ;; Return either non-nil items or frame's full buffer list.
-    (or (hycontrol-windows-grid-marked-items)
-	(buffer-list (selected-frame)))))
+IBuffer mode or the existing frame's buffer list."
+  ;; Get the list of marked items if in an item list buffer and
+  ;; convert items to buffers.
+  ;; Return either non-nil items or frame's full buffer list.
+  (or (hycontrol-windows-grid-marked-items)
+      (buffer-list (selected-frame))))
 
 ;;; Split selected frame into a grid of windows given by row and
 ;;; column count, displaying different buffers in each window.
@@ -1926,7 +1923,7 @@ See documentation of `hycontrol-windows-grid' for further details."
 	       (setq hycontrol-arg 1))
       (error (set-window-configuration wconfig)
 	     (and hycontrol-help-flag (or hycontrol-frames-mode hycontrol-windows-mode)
-		 (pop-to-buffer (messages-buffer)))
+		  (pop-to-buffer (messages-buffer)))
 	     (error "(HyDebug): Grid Size: %d; %s" arg err)))
     ;; No error, save prior frame configuration for easy return
     (hhist:add hist-elt)
@@ -1936,8 +1933,8 @@ See documentation of `hycontrol-windows-grid' for further details."
 (defun hycontrol-delete-other-windows ()
   "Confirm and then delete all other windows in the selected frame."
   (interactive)
-  (if (y-or-n-p "Delete all windows in this frame other than the selected one?")
-      (delete-other-windows)))
+  (when (y-or-n-p "Delete all windows in this frame other than the selected one?")
+    (delete-other-windows)))
 
 (defun hycontrol-window-maximize-lines ()
   "Grow window to its maximum possible number of lines without removing windows."

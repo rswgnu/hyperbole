@@ -1,3 +1,25 @@
+2024-01-14  Bob Weiner  <rsw@gnu.org>
+
+* hypb.el (require 'org): Add to define 'org-show-all'.  Fix typo
+    missing leading h in 'hsys-org-enable-smart-keys'.
+
+* hsys-org.el (hsys-org-fix-version): Remove unused 'org-dir-version'.
+
+* hsys-xref.el (smart-emacs-lisp-mode-p): Declare this function.
+
+* hycontrol.el (hycontrol-windows-grid-buffer-list): Remove use of
+    free variable, 'mode', since this is never called when a specific
+    'major-mode' is set.
+
+* hsys-org.el (package): Add (require 'package).
+
+* hmouse-tag.el (smart-tags-display): Fix missed rename of
+    'hsys-xref-item-buffer' and 'hsys-xref-item-position'.
+
+* hui.el (hui:ebut-act, hui:ebut-act): Fix 'hui:hbut-operate' call
+    to use 'hbut:act' which takes a button argument as opposed to
+    'ebut:act' and 'ibut:act' which each take a label argument.
+
 2024-01-13  Mats Lidell  <matsl@gnu.org>
 
 * test/hbut-tests.el (ebut-program-link-to-directory): Remove test in

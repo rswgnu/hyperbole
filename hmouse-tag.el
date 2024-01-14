@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     13-Jan-24 at 01:29:42 by Bob Weiner
+;; Last-Mod:     14-Jan-24 at 11:58:31 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1443,8 +1443,8 @@ See the \"${hyperb:dir}/smart-clib-sym\" script for more information."
 		(setq find-tag-result (funcall func tag)))
 	   (cond ((or (eq (type-of find-tag-result) 'xref-item)
 		      (vectorp find-tag-result))
-		  (hpath:display-buffer (xref-item-buffer find-tag-result))
-		  (goto-char (xref-item-position find-tag-result)))
+		  (hpath:display-buffer (hsys-xref-item-buffer find-tag-result))
+		  (goto-char (hsys-xref-item-position find-tag-result)))
 		 (t
 		  ;; Emacs with some unknown version of tags.
 		  ;; Signals an error if tag is not found which is caught by
