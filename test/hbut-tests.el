@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-may-21 at 09:33:00
-;; Last-Mod:     23-Nov-23 at 01:44:46 by Bob Weiner
+;; Last-Mod:     13-Jan-24 at 20:37:07 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -32,19 +32,6 @@ Needed since hyperbole expands all links to absolute paths and
   (should (and (stringp tmp) (string-match-p "\"?\\(/\\|./\\|/private/\\)tmp\"?\\'" tmp) t)))
 
 (ert-deftest ebut-program-link-to-directory ()
-  "Programatically create ebut with link-to-directory."
-  (let ((file (make-temp-file "hypb_" nil ".txt")))
-    (unwind-protect
-        (progn
-          (find-file file)
-          (ebut:program "label" 'link-to-directory "/tmp")
-          (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
-          (hbut-tests:should-match-tmp-folder (car (hattr:get (hbut:at-p) 'args)))
-          (should (equal (hattr:get (hbut:at-p) 'loc) file))
-          (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label")))
-      (hy-delete-file-and-buffer file))))
-
-(ert-deftest ebut-program-link-to-directory-2 ()
   "Programatically create ebut with link-to-directory using `temporary-file-directory`."
   (let ((file (make-temp-file "hypb_" nil ".txt")))
     (unwind-protect
@@ -53,6 +40,24 @@ Needed since hyperbole expands all links to absolute paths and
           (ebut:program "label" 'link-to-directory temporary-file-directory)
           (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-directory :args (list temporary-file-directory) :loc file :lbl-key "label"))
       (hy-delete-file-and-buffer file))))
+
+(ert-deftest ebut-program-link-to-directory-in-non-file-buffer ()
+  "Programatically create ebut in non file buffer.
+Create button with link-to-directory using `temporary-file-directory`."
+  (with-temp-buffer
+    (ebut:program "label" 'link-to-directory temporary-file-directory)
+    (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-directory :args (list temporary-file-directory) :loc (current-buffer) :lbl-key "label")))
+
+(ert-deftest ebut-program-link-to-directory-in-message-mode-buffer ()
+  "Programatically create ebut in message mode buffer.
+Create button with link-to-directory using `temporary-file-directory`."
+  (with-temp-buffer
+    (unwind-protect
+        (progn
+          (message-mode)
+          (ebut:program "label" 'link-to-directory temporary-file-directory)
+          (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-directory :args (list temporary-file-directory) :loc (current-buffer) :lbl-key "label"))
+      (set-buffer-modified-p nil))))
 
 (ert-deftest ebut-program-shell-cmd ()
   "Programatically create ebut running shell command."
@@ -64,7 +69,7 @@ Needed since hyperbole expands all links to absolute paths and
           (hy-test-helpers-verify-hattr-at-p :actype 'actypes::exec-shell-cmd :args '("ls /tmp") :loc file :lbl-key "label"))
       (hy-delete-file-and-buffer file))))
 
-(ert-deftest ebut-delete-removes-ebut-and-returns-button-data ()
+(ert-deftest ebut-delete-removes-ebut ()
   "Remove an ebut."
   (let ((file (make-temp-file "hypb_" nil ".txt")))
     (unwind-protect
@@ -72,10 +77,26 @@ Needed since hyperbole expands all links to absolute paths and
           (find-file file)
           (ebut:program "label" 'link-to-directory "/tmp")
           (should (hbut:at-p))
-          (let ((success-flag (hui:hbut-delete)))
-            (should-not (hbut:at-p))
-            (should (eq success-flag t))))
+          (should (hui:hbut-delete))
+          (should-not (hbut:at-p)))
       (hy-delete-file-and-buffer file))))
+
+(ert-deftest ebut-delete-removes-ebut-in-non-file-buffer ()
+  "Remove an ebut from non file buffer."
+  (with-temp-buffer
+    (ebut:program "label" 'link-to-directory "/tmp")
+    (should (hbut:at-p))
+    (should (hui:hbut-delete))
+    (should-not (hbut:at-p))))
+
+(ert-deftest ebut-delete-removes-ebut-in-message-mode-buffer ()
+  "Remove an ebut from `message-mode' buffer."
+  (with-temp-buffer
+    (message-mode)
+    (ebut:program "label" 'link-to-directory "/tmp")
+    (should (hbut:at-p))
+    (should (hui:hbut-delete))
+    (should-not (hbut:at-p))))
 
 (ert-deftest gbut-program-calls-ebut-program ()
   "Programatically create gbut calls ebut:program."
