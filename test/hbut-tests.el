@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-may-21 at 09:33:00
-;; Last-Mod:     13-Jan-24 at 00:26:25 by Mats Lidell
+;; Last-Mod:     13-Jan-24 at 20:37:07 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -83,7 +83,6 @@ Create button with link-to-directory using `temporary-file-directory`."
 
 (ert-deftest ebut-delete-removes-ebut-in-non-file-buffer ()
   "Remove an ebut from non file buffer."
-  :expected-result :failed ;; BUG: hui:ebut-unmark tries to find file of buffer.
   (with-temp-buffer
     (ebut:program "label" 'link-to-directory "/tmp")
     (should (hbut:at-p))
