@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     10-Jan-24 at 21:26:33 by Bob Weiner
+;; Last-Mod:     15-Jan-24 at 18:18:37 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -89,7 +89,10 @@
 
 (defvar helm-selection-point)
 
-;; Functions from Hyperbole's Koutliner
+;; Functions from Hyperbole's HyRolo and Koutliner
+(declare-function hyrolo-edit-entry "hyrolo")
+(declare-function hyrolo-hdr-in-p "hyrolo")
+(declare-function hyrolo-hdr-to-first-line-p "hyrolo")
 (declare-function kotl-mode:eobp "kotl-mode")
 (declare-function kotl-mode:eolp "kotl-mode")
 
@@ -99,7 +102,6 @@
 (declare-function tar-extract-other-window "tar")
 (declare-function tar-expunge "tar")
 (declare-function outline-invisible-in-p "hyperbole")
-(declare-function hyrolo-edit-entry "hyrolo")
 (declare-function Custom-newline "cus-edit")
 (declare-function Custom-buffer-done "cus-edit")
 
@@ -1437,13 +1439,18 @@ If assist key is pressed within:
 
 (defun smart-hyrolo ()
   "In hyrolo match buffer, edit current entry.
-Uses one key or mouse key.
+If on a file header, edit the file.  Uses one key or mouse key.
 
 Invoked via a key press when in the `hyrolo-display-buffer'.  Assume that
 its caller has already checked that the key was pressed in an appropriate
 buffer and has moved the cursor to the selected buffer."
   (interactive)
-  (hyrolo-edit-entry))
+  (if (hyrolo-hdr-in-p)
+      (hact 'hyp-source (save-excursion
+			  (hyrolo-hdr-to-first-line-p)
+			  (when (search-forward hbut:source-prefix nil t)
+			    (hbut:source t))))
+    (hyrolo-edit-entry)))
 
 (defalias 'smart-hyrolo-assist #'smart-hyrolo)
 

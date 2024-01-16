@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     15-Jan-24 at 00:38:13 by Mats Lidell
+;; Last-Mod:     15-Jan-24 at 21:40:51 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -906,7 +906,6 @@ Make cell start with HEADING and follow by next line BODY."
 (ert-deftest hyrolo-tests--forward-same-level-all-file-types-level1 ()
   "Verify forward and backward to first level headers and section lines.
 All files types are present."
-  :expected-result :failed
   (let* ((org-file1 (make-temp-file "hypb" nil ".org"
                                     (hyrolo-tests--gen-outline ?* "heading-org" 1 "body-org" 1)))
          (md-file1 (make-temp-file "hypb" nil ".md"
@@ -922,7 +921,7 @@ All files types are present."
 
           ;; Move forward
           (dolist (v '("===" "^\\* heading-org 1$" "===" "^# heading-md 1$"
-                       "===" "^\\* heading-otl 1$" "===" "^ +1\\. heading-kotl$"))
+                       "===" "^\\* heading-otl 1$" "==="))
             (should (and (looking-at-p v) (hact 'kbd-key "f"))))
           (should (looking-at-p "^ +1\\. heading-kotl$")) ; When on last match do not move further
 
@@ -968,8 +967,7 @@ body
           (should (and (hact 'kbd-key "f") (looking-at-p "^\\*\\* h-org 1\\.2")))
 
           ;; Multiple times does not move point when there are no more headers at the same level
-          (should (and (hact 'kbd-key "f") (looking-at-p "^\\*\\* h-org 1\\.2")))
-          (should (and (hact 'kbd-key "f") (looking-at-p "^\\*\\* h-org 1\\.2")))
+          (should-error (and (hact 'kbd-key "f") (looking-at-p "^\\*\\* h-org 1\\.2")))
 
           ;; Move back on same level
           (should (and (hact 'kbd-key "b") (looking-at-p "\\*\\* h-org 1\\.1")))

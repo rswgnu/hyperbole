@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     13-Jan-24 at 20:04:26 by Bob Weiner
+;; Last-Mod:     15-Jan-24 at 21:27:59 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -218,7 +218,7 @@ This pattern must match the beginning of a line.")
 			;; trailing-space grouping below
 			hyrolo-entry-trailing-space-group-number 2
 			outline-regexp (concat hyrolo-hdr-prefix-regexp markdown-regex-header)
-			outline-level #'hyrolo-markdown-outline-level)))
+			outline-level #'hyrolo-outline-level)))
 
 ;; Support hyrolo searches in Emacs outline files
 (add-hook 'outline-mode-hook
@@ -1547,12 +1547,6 @@ returned to the number given."
     ;; (goto-char (previous-single-char-property-change (point) 'invisible))))
     (goto-char (1- (point)))))
 
-(defun hyrolo-backward-same-level (arg)
-  "Move backward to the ARG'th subheading at same level as this one.
-Stop at the first and last subheadings of a superior heading."
-  (interactive "p")
-  (hyrolo-move-backward #'hyrolo-outline-backward-same-level arg))
-
 ;;;###autoload
 (defun hyrolo-consult-grep (&optional regexp max-matches)
   "Interactively search `hyrolo-file-list' with a consult package grep command.
@@ -1607,12 +1601,6 @@ only (first line of entries), rather than entire entries.
 
 Return number of matching entries found."
   (hyrolo-grep-file hyrolo-file-or-buf (regexp-quote string) max-matches count-only headline-only))
-
-(defun hyrolo-forward-same-level (arg)
-  "Move forward to the ARG'th subheading at same level as this one.
-Stop at the first and last subheadings of a superior heading."
-  (interactive "p")
-  (hyrolo-move-forward #'outline-forward-same-level arg))
 
 (defun hyrolo-hdr-to-first-line-p ()
   "If point is within a file header, go to its first line.
@@ -1937,6 +1925,8 @@ Calls the functions given by `hyrolo-mode-hook'.
   (setq major-mode 'hyrolo-mode
 	mode-name "HyRolo")
 
+  (setq buffer-read-only t)
+
   (run-mode-hooks 'hyrolo-mode-hook))
 
 (defun hyrolo-next-regexp-match (regexp headline-only)
@@ -1960,7 +1950,19 @@ Only visible heading lines are considered, unless INVISIBLE-OK is non-nil."
   "Move backward to the ARG'th subheading at same level as this one.
 Stop at the first and last subheadings of a superior heading."
   (interactive "p")
-  (hyrolo-funcall-match (lambda () (outline-backward-same-level arg))))
+  (hyrolo-funcall-match
+   (lambda ()
+     (outline-back-to-heading)
+     (while (> arg 0)
+       (let ((point-to-move-to (save-excursion
+				 (hyrolo-outline-get-last-sibling))))
+	 (if point-to-move-to
+	     (progn
+	       (goto-char point-to-move-to)
+	       (setq arg (1- arg)))
+	   (setq arg 0)
+	   (error "No previous same-level heading/header")))))
+   nil t))
 
 (defun hyrolo-outline-demote (&optional which)
   "Demote headings lower down the tree.
@@ -1971,16 +1973,68 @@ subtree (from a Lisp program, pass `subtree' for WHICH); with prefix
 argument, demote just the current heading (from a Lisp program, pass
 nil for WHICH, or do not pass any argument)."
   (interactive
-   (list (if (and transient-mark-mode mark-active) 'region
-	   (outline-back-to-heading)
-	   (if current-prefix-arg nil 'subtree))))
+   (progn
+     (barf-if-buffer-read-only)
+     (list (if (and transient-mark-mode mark-active) 'region
+	     (outline-back-to-heading)
+	     (if current-prefix-arg nil 'subtree)))))
   (hyrolo-funcall-match (lambda () (outline-demote which)) t))
 
 (defun hyrolo-outline-forward-same-level (arg)
   "Move forward to the ARG'th subheading at same level as this one.
 Stop at the first and last subheadings of a superior heading."
   (interactive "p")
-  (hyrolo-funcall-match (lambda () (outline-forward-same-level arg))))
+  (hyrolo-funcall-match
+   (lambda ()
+     (outline-back-to-heading)
+     (while (> arg 0)
+       (let ((point-to-move-to (save-excursion
+				 (hyrolo-outline-get-next-sibling))))
+	 (if point-to-move-to
+	     (progn
+	       (goto-char point-to-move-to)
+	       (setq arg (1- arg)))
+	   (setq arg 0)
+	   (error "No following same-level heading/header")))))))
+
+(defun hyrolo-outline-get-last-sibling ()
+  "Move to previous heading of the same level, and return point.
+If there is no such heading, return nil."
+  (let ((opoint (point))
+	(level (funcall outline-level)))
+    (hyrolo-outline-previous-visible-heading 1)
+    (when (and (/= (point) opoint) (outline-on-heading-p))
+      (while (and (> (funcall outline-level) level)
+		  (not (bobp)))
+	(hyrolo-outline-previous-visible-heading 1))
+      (if (< (funcall outline-level) level)
+	  nil
+        (point)))))
+
+(defun hyrolo-outline-get-level (backward-flag)
+  "Return the outline level at point.
+Return 0 if not on an `outline-regexp' line.
+BACKWARD-FLAG is non-nil if moving backward, else nil when moving
+forward through the buffer."
+  (save-excursion
+    (beginning-of-line)
+    (hyrolo-funcall-match
+     (lambda ()
+       (if (looking-at outline-regexp)
+	   (hyrolo-outline-level)
+	 0))
+     backward-flag)))
+
+(defun hyrolo-outline-get-next-sibling ()
+  "Move to next heading/header of the same level, and return point.
+If there is no such heading/header, return nil."
+  (let ((level (funcall outline-level)))
+    (hyrolo-outline-next-visible-heading 1)
+    (while (and (not (eobp)) (> (funcall outline-level) level))
+      (hyrolo-outline-next-visible-heading 1))
+    (if (or (eobp) (< (funcall outline-level) level))
+	nil
+      (point))))
 
 (defun hyrolo-outline-hide-body ()
   "Hide all body lines in buffer, leaving all headings visible.
@@ -2048,7 +2102,7 @@ only if on the heading line of the subtree."
 
 (defun hyrolo-outline-insert-heading ()
   "Insert a new heading at same depth at point."
-  (interactive)
+  (interactive "*")
   (hyrolo-funcall-match #'outline-insert-heading t))
 
 (defun hyrolo-outline-mark-subtree ()
@@ -2059,27 +2113,28 @@ This puts point at the start of the current subtree, and mark at the end."
 
 (defun hyrolo-outline-move-subtree-down (&optional arg)
   "Move the current subtree down past ARG headlines of the same level."
-  (interactive "p")
+  (interactive "*p")
   (hyrolo-funcall-match (lambda () (outline-move-subtree-down arg)) t))
 
 (defun hyrolo-outline-move-subtree-up (&optional arg)
   "Move the current subtree up past ARG headlines of the same level."
-  (interactive "p")
+  (interactive "*p")
   (hyrolo-funcall-match (lambda () (outline-move-subtree-up arg)) t))
 
 (defun hyrolo-outline-next-visible-heading (arg)
-  "Move to the next visible heading or match buffer header.
+  "Move to next visible heading or match buffer header.
 With ARG, repeats or can move backward if negative.
+Return t if find any matching next heading/header, nil otherwise.
 
 A heading is one that starts with an `outline-regexp' match.
 A match buffer header is one that starts with `hyrolo-hdr-regexp'."
   (interactive "p")
-  (condition-case nil
-      (progn
-	(if (< arg 0)
-	    (beginning-of-line)
-	  (end-of-line))
-	(let ((found-heading-p))
+  (let ((found-heading-p))
+    (condition-case nil
+	(progn
+	  (if (< arg 0)
+	      (beginning-of-line)
+	    (end-of-line))
 	  (while (and (not (bobp)) (< arg 0))
 	    (while (and (not (bobp))
 			(progn (hyrolo-hdr-to-first-line-p)
@@ -2104,13 +2159,13 @@ A match buffer header is one that starts with `hyrolo-hdr-regexp'."
 					 nil 'move)))))
 			(outline-invisible-p (match-beginning 0))))
 	    (setq arg (1- arg)))
-	  (if found-heading-p (beginning-of-line))))
-    ;; Prevent error and move to start or end of file header at point,
-    ;; if any
-    (error (if (>= arg 0)
-	       (hyrolo-hdr-move-after-p)
-	     (hyrolo-hdr-to-first-line-p))))
-  (point))
+	  (if found-heading-p (beginning-of-line)))
+      ;; Prevent error and move to start or end of file header at point,
+      ;; if any
+      (error (if (>= arg 0)
+		 (hyrolo-hdr-move-after-p)
+	       (hyrolo-hdr-to-first-line-p))))
+    (when found-heading-p t)))
 
 (defun hyrolo-outline-previous-heading ()
   "Move to the previous (possibly invisible) heading line."
@@ -2135,9 +2190,11 @@ subtree (from a Lisp program, pass `subtree' for WHICH); with prefix
 argument, promote just the current heading (from a Lisp program, pass
 nil for WHICH, or do not pass any argument)."
   (interactive
-   (list (if (and transient-mark-mode mark-active) 'region
-	   (outline-back-to-heading)
-	   (if current-prefix-arg nil 'subtree))))
+   (progn
+     (barf-if-buffer-read-only)
+     (list (if (and transient-mark-mode mark-active) 'region
+	     (outline-back-to-heading)
+	     (if current-prefix-arg nil 'subtree)))))
   (hyrolo-funcall-match (lambda () (outline-promote which)) t))
 
 ;;; Don't need to override but alias them for completeness
@@ -2531,10 +2588,6 @@ HYROLO-BUF is optional; the default is the current buffer."
   (and hyrolo-kill-buffers-after-use (not (buffer-modified-p hyrolo-buf))
        (kill-buffer hyrolo-buf)))
 
-(defun hyrolo-markdown-outline-level ()
-  "Fix markdown `outline-level' function to always return a non-nil level."
-  (or (markdown-outline-level) 1))
-
 (defun hyrolo-name-and-email ()
   "If point is in a mail message, return list of (name email-addr) of sender.
 Name is returned as `last, first-and-middle'."
@@ -2799,9 +2852,12 @@ trailing periods and whitespace.
 Point must be at the beginning of a heading line and a regexp match to
 `outline-regexp' must have been done prior to calling this."
   (or (cdr (assoc (match-string-no-properties 0) outline-heading-alist))
-      (when (looking-at-p hyrolo-hdr-regexp) 1)
-      (when (looking-at-p hbut:source-prefix) 1)
-      (1- (- (match-end 0) (match-beginning 0)))))
+      (when (hyrolo-hdr-in-p) 1)
+      (cond ((derived-mode-p 'kotl-mode)
+	     (kcell-view:level))
+	    ((looking-at hyrolo-hdr-and-entry-regexp)
+	     (1- (- (match-end 0) (match-beginning 0))))
+	    (t 0))))
 
 ;;; ************************************************************************
 ;;; Caching of buffer major-modes for use in HyRolo display match buffer
@@ -2847,7 +2903,8 @@ prior to applying FUNC."
     (error "(hryolo-map-matches): No HyRolo matches in current buffer"))
   (let ((display-buf (get-buffer hyrolo-display-buffer)))
     (if (eq (current-buffer) display-buf)
-	(let ((bounds hyrolo--cache-loc-match-bounds)
+	(let ((outline-regexp hyrolo-hdr-and-entry-regexp)
+	      (bounds hyrolo--cache-loc-match-bounds)
 	      (ofont-lock font-lock-mode)
 	      (omode major-mode)
 	      (ostart (point-min))
@@ -2873,7 +2930,7 @@ prior to applying FUNC."
 	    ;; Restore original mode and font-locking
 	    (funcall omode)
 	    (font-lock-mode (if ofont-lock 1 0))
-	    (when (fboundp 'orgtbl-mode)
+	    (when (and (fboundp 'orgtbl-mode) orgtbl-mode)
 	      ;; Disable as overrides single letter keys
 	      (orgtbl-mode 0))
 	    ;; This pause forces a window redisplay that maximizes the
@@ -2900,7 +2957,7 @@ on a file boundary, move point back a character to select the
 proper major mode."
   (let ((display-buf (get-buffer hyrolo-display-buffer)))
     (if (eq (current-buffer) display-buf)
-	(progn
+	(let ((outline-regexp hyrolo-hdr-and-entry-regexp))
 	  (when (< (length hyrolo--cache-loc-match-bounds) 1)
 	    (error "(hryolo-funcall-match): No HyRolo matches in display buffer"))
 	  (let ((ofont-lock font-lock-mode)
@@ -2930,7 +2987,7 @@ proper major mode."
 		;; Restore original mode and font-locking
 		(funcall omode)
 		(font-lock-mode (if ofont-lock 1 0))
-		(when (fboundp 'orgtbl-mode)
+		(when (and (fboundp 'orgtbl-mode) orgtbl-mode)
 		  ;; Disable as overrides single letter keys
 		  (orgtbl-mode 0))
 		;; This pause forces a window redisplay that maximizes the
@@ -3025,7 +3082,7 @@ Add `hyrolo-hdr-regexp' to `hyrolo-hdr-and-entry-regexp' and `outline-regexp'."
   (unless (string-prefix-p hyrolo-hdr-regexp outline-regexp)
     (setq-local outline-regexp (concat hyrolo-hdr-prefix-regexp outline-regexp)))
   (when (eq outline-level #'markdown-outline-level)
-    (setq-local outline-level #'hyrolo-markdown-outline-level)))
+    (setq-local outline-level #'hyrolo-outline-level)))
 
 ;;; ************************************************************************
 ;;; hyrolo-mode key bindings - set after all library functions have
@@ -3049,9 +3106,9 @@ Add `hyrolo-hdr-regexp' to `hyrolo-hdr-and-entry-regexp' and `outline-regexp'."
   (define-key hyrolo-mode-map "\177"     'scroll-down)
   (define-key hyrolo-mode-map " "        'scroll-up)
   (define-key hyrolo-mode-map "a"        'outline-show-all)
-  (define-key hyrolo-mode-map "b"        'hyrolo-backward-same-level)
+  (define-key hyrolo-mode-map "b"        'hyrolo-outline-backward-same-level)
   (define-key hyrolo-mode-map "e"        'hyrolo-edit-entry)
-  (define-key hyrolo-mode-map "f"        'hyrolo-forward-same-level)
+  (define-key hyrolo-mode-map "f"        'hyrolo-outline-forward-same-level)
   (define-key hyrolo-mode-map "h"        'hyrolo-outline-hide-subtree)
   (define-key hyrolo-mode-map "l"        'hyrolo-locate)
   (define-key hyrolo-mode-map "m"        'hyrolo-mail-to)

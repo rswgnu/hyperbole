@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     29-Dec-23 at 02:05:41 by Bob Weiner
+;; Last-Mod:     15-Jan-24 at 17:21:47 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -183,7 +183,7 @@ It provides the following keys:
 	  ;; Remove indication that buffer is narrowed.
 	  mode-line-format (copy-sequence mode-line-format)
 	  mode-line-format (set:remove "%n" mode-line-format)
-	  outline-level  #'kcell-view:level
+	  outline-level  #'hyrolo-outline-level
 	  outline-regexp hyrolo-hdr-and-entry-regexp))
   ;;
   (when (fboundp 'add-to-invisibility-spec)

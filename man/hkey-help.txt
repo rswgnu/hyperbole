@@ -105,7 +105,7 @@ Hyperbole Key Press/Click in Special Modes
     Menu Item or node hdr       Jumps to Texinfo referent  Button help
     Include file                Jumps to Texinfo referent  Button help
     code/var reference          Displays doc for referent  Button help
-  Org Mode                      Follows links and cycles outline views
+  Org Mode                      Follows links, cycles headings and Org Meta Return
   Org/Roam ID                   Jumps to ID referent       Button help
   Outline Major/Minor Modes     Collapses, expands, and moves outline entries
   Man Apropos                   Displays man page entry    <- same

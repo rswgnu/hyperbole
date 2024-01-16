@@ -1,3 +1,39 @@
+2024-01-15  Bob Weiner  <rsw@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-tests--forward-same-level-all-file-types-level1):
+    Fix test error by removing last forward list element so does not move past.
+
+* hyrolo.el (hyrolo-map-matches, hyrolo-funcall-match): Disable 'orgtbl-mode'
+    only if enabled.
+
+* man/hkey-help.txt: Add ref to Org Meta Return.
+
+* hui-mouse.el (smart-hyrolo): Extend to edit source location from any line
+    within the header, not just the @loc> line.
+  man/hyperbole.texi (Smart Key - HyRolo Match Buffers): Document above change.
+
+* kotl/kotl-mode.el (kotl-mode): Set 'outline-level' to 'hyrolo-outline-level'
+    which works for all HyRolo supported modes.
+
+* hyrolo.el (hyrolo-mode-map): Change {b} to 'hyrolo-outline-backward-same-level'.
+    Change {f} to 'hyrolo-outline-forward-same-level' and rewrite.
+            (hyrolo-outline-get-last-sibling, hyrolo-outline-get-next-sibling):
+    Add to support {f} and {b} commands.
+            (hyrolo-mode): Add set of buffer read-only to ensure no editing.  Any
+    commands that change text therein need to also update the buffer caches.
+            (hyrolo-forward-same-level, hyrolo-backward-same-level): Remove,
+    duplicates of above hyrolo-outline-* functions.
+            (hyrolo-outline-next-visible-heading): Change to return whether any
+    next heading/header is found.
+            (hyrolo-outline-forward-same-level, hyrolo-outline-backward-same-level):
+    Rewrite based on 'hyrolo-outline-next-visible-heading'.
+            (hyrolo-outline-get-level): Add and call from above 2 functions.
+	    (hyrolo-markdown-outline-level): Remove and use 'hyrolo-outline-level'.
+	    (hyrolo-outline-level): Fix to handle kotl-mode properly.
+	    (hyrolo-outline-move-subtree-up, hyrolo-outline-move-subtree-down,
+	     hyrolo-outline-insert-heading, hyrolo-outline-demote,
+	     hyrolo-outline-promote): Barf if buffer is read-only for these cmds.
+
 2024-01-15  Mats Lidell  <matsl@gnu.org>
 
 * test/hyrolo-tests.el (hyrolo-tests--forward-same-level-all-file-types-level1)

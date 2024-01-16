@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:      6-Jan-24 at 01:18:32 by Bob Weiner
+@c Last-Mod:     15-Jan-24 at 18:26:44 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -11229,9 +11229,10 @@ If pressed on a World-Wide Web universal resource locator (URL):
 @cindex hyrolo matches
 @format
 @group
-If pressed within an entry in the HyRolo search results buffer:
+If pressed within the HyRolo search results buffer:
   ACTION KEY or ASSIST KEY
-     The entry is edited in the other window.
+     On an entry, the entry is displayed for editing in its source buffer.
+     On a file header, the file location is displayed for editing.
 @end group
 @end format
 
