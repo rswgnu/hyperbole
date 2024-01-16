@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     15-Jan-24 at 00:38:13 by Mats Lidell
+;; Last-Mod:     16-Jan-24 at 00:05:00 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -702,15 +702,22 @@ Example:
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))
 
-(defun hyrolo-tests--gen-kotl-outline (heading body)
+(defun hyrolo-tests--gen-kotl-outline (heading body &optional depth)
   "Generate a temp file with kotl outline structure for hyrolo outline test.
-Make cell start with HEADING and follow by next line BODY."
+Make cell start with HEADING and follow by next line BODY.  With
+optional DEPTH the number of sub cells are created to that depth."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (find-file kotl-file)
     (insert heading)
     (kotl-mode:newline 1)
     (insert body)
     (kotl-mode:newline 1)
+    (when (and depth (< 0 depth))
+      (dotimes (d depth)
+        (kotl-mode:add-child)
+        (insert (format "%s %d" heading (1+ d)))
+        (kotl-mode:newline 1)
+        (insert (format "%s %d" body (1+ d)))))
     (save-buffer)
     kotl-file))
 
@@ -934,10 +941,40 @@ All files types are present."
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))
 
-(ert-deftest hyrolo-tests--forward-same-level-org-level2 ()
-  "Verify forward and backward to second level headers with org files."
-  (let* ((content
-          "\
+(ert-deftest hyrolo-tests--forward-same-level-all-file-types-level1-depth2 ()
+  "Verify forward and backward to first level headers and section lines.
+All files types are present with a max depth of 2 of the outline
+structure."
+  :expected-result :failed
+  (let* ((org-file1 (make-temp-file "hypb" nil ".org"
+                                    (hyrolo-tests--gen-outline ?* "heading-org" 1 "body-org" 2)))
+         (md-file1 (make-temp-file "hypb" nil ".md"
+                                   (hyrolo-tests--gen-outline ?# "heading-md" 1 "body-md" 2)))
+         (otl-file1 (make-temp-file "hypb" nil ".otl"
+                                    (hyrolo-tests--gen-outline ?* "heading-otl" 1 "body-otl" 2)))
+         (kotl-file1 (hyrolo-tests--gen-kotl-outline "heading-kotl" "body-kotl" 2))
+         (hyrolo-file-list (list org-file1 md-file1 otl-file1 kotl-file1)))
+    (unwind-protect
+        (progn
+          (hyrolo-grep "body")
+          (should (string= hyrolo-display-buffer (buffer-name)))
+
+          ;; Move forward
+          (dolist (v '("===" "^\\* heading-org 1$" "===" "^# heading-md 1$"
+                       "===" "^\\* heading-otl 1$" "===" "^ +1\\. heading-kotl$"))
+            (should (and (looking-at-p v) (hact 'kbd-key "f"))))
+          (should (looking-at-p "^ +1\\. heading-kotl$")) ; When on last match do not move further
+
+          ;; Move backward
+          (dolist (v '("===" "^\\* heading-otl 1$" "===" "^# heading-md 1$"
+                       "===" "^\\* heading-org 1$" "==="))
+            (should (and (hact 'kbd-key "b") (looking-at-p v))))
+          (should (= 1 (line-number-at-pos))))
+      (kill-buffer hyrolo-display-buffer)
+      (hy-delete-files-and-buffers hyrolo-file-list))))
+
+(defconst hyrolo-tests--outline-content-org
+  "\
 * h-org 1
 body
 ** h-org 1.1
@@ -950,10 +987,56 @@ body
 body
 ** h-org-2.1
 body
-")
-         (org-file1 (make-temp-file "hypb" nil ".org" content))
-         (org-file2 (make-temp-file "hypb" nil ".org" content))
+"
+  "Outline content for org files.")
+
+(defconst hyrolo-tests--outline-content-otl
+  (string-replace "org" "otl" hyrolo-tests--outline-content-org)
+  "Outline content for otl files.")
+
+(defconst hyrolo-tests--outline-content-md
+  (string-replace "*" "#"
+                  (string-replace "org" "md" hyrolo-tests--outline-content-org))
+  "Outline content for markdown files.")
+
+(ert-deftest hyrolo-tests--forward-same-level-org-level2 ()
+  "Verify forward and backward to second level headers with org files."
+  (let* ((org-file1 (make-temp-file "hypb" nil ".org" hyrolo-tests--outline-content-org))
+         (org-file2 (make-temp-file "hypb" nil ".org" hyrolo-tests--outline-content-org))
          (hyrolo-file-list (list org-file1 org-file2)))
+    (unwind-protect
+        (progn
+          (hyrolo-grep "body")
+          (should (string= hyrolo-display-buffer (buffer-name)))
+
+          ;; Move to first second level header
+          (search-forward "** h-org 1.1")
+          (beginning-of-line)
+          (should (looking-at-p "^\\*\\* h-org 1\\.1"))
+
+          ;; Move forward same level
+          (should (and (hact 'kbd-key "f") (looking-at-p "^\\*\\* h-org 1\\.2")))
+
+          ;; Multiple times does not move point when there are no more headers at the same level
+          (should (and (hact 'kbd-key "f") (looking-at-p "^\\*\\* h-org 1\\.2")))
+          (should (and (hact 'kbd-key "f") (looking-at-p "^\\*\\* h-org 1\\.2")))
+
+          ;; Move back on same level
+          (should (and (hact 'kbd-key "b") (looking-at-p "\\*\\* h-org 1\\.1")))
+
+          ;; Moving up from first header on a level errors, also when repeated.
+          (should-error (and (hact 'kbd-key "b") (looking-at-p "^\\*\\* h-org 1\\.1")))
+          (should-error (and (hact 'kbd-key "b") (looking-at-p "^\\*\\* h-org 1\\.1"))))
+      (kill-buffer hyrolo-display-buffer)
+      (hy-delete-files-and-buffers hyrolo-file-list))))
+
+(ert-deftest hyrolo-tests--forward-same-level-all-file-types-level2 ()
+  "Verify forward and backward to second level headers with org files."
+  (let* ((org-file1 (make-temp-file "hypb" nil ".org" hyrolo-tests--outline-content-org))
+         (otl-file1 (make-temp-file "hypb" nil ".otl" hyrolo-tests--outline-content-otl))
+         (md-file1 (make-temp-file "hypb" nil ".md" hyrolo-tests--outline-content-md))
+         (kotl-file1 (hyrolo-tests--gen-kotl-outline "heading-kotl" "body-kotl" 2))
+         (hyrolo-file-list (list org-file1 otl-file1 md-file1 kotl-file1)))
     (unwind-protect
         (progn
           (hyrolo-grep "body")
