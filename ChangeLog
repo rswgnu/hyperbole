@@ -1,3 +1,9 @@
+2024-01-16  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (eln): Use echo target for showing build info as part of the
+    eln build.
+    (echo): Show Emacs location and version in build environment info.
+
 2024-01-15  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-to-entry-beginning): Rewrite to move properly.

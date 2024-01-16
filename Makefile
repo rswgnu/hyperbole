@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     15-Jan-24 at 08:28:48 by Mats Lidell
+# Last-Mod:     16-Jan-24 at 11:26:22 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -260,7 +260,10 @@ help:
 all: help
 
 echo:
-	which emacs; echo $(TERM); echo "$(DISPLAY)"
+	@echo "Emacs: $(shell which emacs)"
+	@echo "Version: $(shell emacs --version)"
+	@echo "TERM: $(TERM)"
+	@echo "DISPLAY: $(DISPLAY)"
 
 install: elc install-info install-html $(data_dir)/hkey-help.txt
 
@@ -325,7 +328,7 @@ remove-elc:
 bin: src remove-elc new-bin
 
 # Native compilation (Requires Emacs built with native compilation support.)
-eln: src
+eln: echo src
 	HYPB_NATIVE_COMP=yes make new-bin
 
 tags: TAGS
