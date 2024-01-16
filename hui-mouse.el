@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     15-Jan-24 at 18:18:37 by Bob Weiner
+;; Last-Mod:     15-Jan-24 at 22:12:47 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1447,8 +1447,8 @@ buffer and has moved the cursor to the selected buffer."
   (interactive)
   (if (hyrolo-hdr-in-p)
       (hact 'hyp-source (save-excursion
-			  (hyrolo-hdr-to-first-line-p)
-			  (when (search-forward hbut:source-prefix nil t)
+			  (when (and (hyrolo-hdr-to-first-line-p)
+				     (search-forward hbut:source-prefix nil t))
 			    (hbut:source t))))
     (hyrolo-edit-entry)))
 
