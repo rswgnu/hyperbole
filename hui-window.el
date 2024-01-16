@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Sep-92
-;; Last-Mod:     27-Dec-23 at 23:59:25 by Bob Weiner
+;; Last-Mod:     15-Jan-24 at 23:52:17 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -30,6 +30,7 @@
 (require 'hycontrol)
 ;; If installed, use pulse library for momentary highlighting of buffer/file item lines.
 (require 'pulse nil t)
+(require 'seq)
 (require 'hui-select)
 
 ;;; ************************************************************************

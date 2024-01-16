@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     15-Jan-24 at 21:27:59 by Bob Weiner
+;; Last-Mod:     15-Jan-24 at 23:50:21 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -93,6 +93,7 @@
 (declare-function hui:hbut-act "hui")
 (declare-function ibut:at-p "hbut")
 (declare-function kcell-view:indent "kotl/kview")
+(declare-function kcell-view:level "kotl/kview")
 
 (declare-function hmouse-pulse-line "hui-window")
 (declare-function hpath:find "hpath")
@@ -2354,15 +2355,13 @@ begins or nil if not found."
 With optional prefix arg INCLUDE-SUB-ENTRIES non-nil, move to the
 beginning of the highest ancestor level.  Return final point."
   (interactive "P")
-  (hyrolo-move-backward
-   (lambda (include-sub-entries)
-     (outline-back-to-heading)
-     (when include-sub-entries
-       (unless (<= (hyrolo-outline-level) 1)
-	 (outline-up-heading 80)))
-     (when (hyrolo-hdr-move-after-p)
-       (hyrolo-outline-next-visible-heading 1)))
-   include-sub-entries))
+  (when (hyrolo-hdr-in-p)
+    (hyrolo-hdr-to-first-line-p))
+  (if include-sub-entries
+      (unless (<= (hyrolo-outline-level) 1)
+	(hyrolo-outline-up-heading 80))
+    (hyrolo-outline-back-to-heading))
+  (point))
 
 (defun hyrolo-to-entry-end (&optional include-sub-entries)
   "Move point past the end of the current entry.
@@ -2803,29 +2802,6 @@ Any call to this function should be wrapped in a call to
   "Pop to BUFFER."
   (pop-to-buffer buffer other-window-flag))
 
-(defun hyrolo-move-backward (func &rest args)
-  "Move back past any file header and apply FUNC to ARGS.
-Return final point."
-  (let ((opoint (point)))
-    ;; Prevent error when calling 'func' when within a file header.
-    (while (and (or (looking-at hyrolo-hdr-regexp)
-		    (looking-at hbut:source-prefix))
-		(hyrolo-outline-previous-heading)))
-    (when (/= (point) opoint)
-      (forward-line 1))
-    (hyrolo-funcall-match
-     (lambda ()
-       (apply func args)
-       (when (or (looking-at hyrolo-hdr-regexp)
-		 (looking-at hbut:source-prefix))
-	 (forward-line 1)
-	 (re-search-backward hyrolo-hdr-regexp nil t 2))
-       (when (> (point) opoint)
-	 (goto-char opoint)))
-     ;; Narrow to current match buffer when given a lambda func.
-     (not (symbolp func))))
-  (point))
-
 (defun hyrolo-move-forward (func &rest args)
   "Move forward past any file header and apply FUNC to ARGS.
 If FUNC is a lambda (not a function symbol), then temporarily
@@ -2903,8 +2879,7 @@ prior to applying FUNC."
     (error "(hryolo-map-matches): No HyRolo matches in current buffer"))
   (let ((display-buf (get-buffer hyrolo-display-buffer)))
     (if (eq (current-buffer) display-buf)
-	(let ((outline-regexp hyrolo-hdr-and-entry-regexp)
-	      (bounds hyrolo--cache-loc-match-bounds)
+	(let ((bounds hyrolo--cache-loc-match-bounds)
 	      (ofont-lock font-lock-mode)
 	      (omode major-mode)
 	      (ostart (point-min))
@@ -2923,7 +2898,8 @@ prior to applying FUNC."
 		  (let ((font-lock-mode))
 		    (hyrolo-cache-set-major-mode (1+ start))
 		    (setq font-lock-mode nil) ;; Prevent Org mode from font-locking
-		    (funcall func))))
+		    (let ((outline-regexp hyrolo-hdr-and-entry-regexp))
+		      (funcall func)))))
 	    (when narrow-flag
 	      ;; Restore original restriction
 	      (narrow-to-region ostart oend))
@@ -2940,8 +2916,9 @@ prior to applying FUNC."
 	    ;; hyrolo uses reveal-mode, redisplay will rexpand
 	    ;; hidden entries to make point visible.
 	    (hyrolo-back-to-visible-point)))
-      (save-excursion
-	(funcall func)))))
+      (let ((outline-regexp hyrolo-hdr-and-entry-regexp))
+	(save-excursion
+	  (funcall func))))))
 
 (defun hyrolo-funcall-match (func &optional narrow-flag backward-flag)
   "Apply FUNC with no arguments to the entry at point.
@@ -2957,7 +2934,7 @@ on a file boundary, move point back a character to select the
 proper major mode."
   (let ((display-buf (get-buffer hyrolo-display-buffer)))
     (if (eq (current-buffer) display-buf)
-	(let ((outline-regexp hyrolo-hdr-and-entry-regexp))
+	(progn
 	  (when (< (length hyrolo--cache-loc-match-bounds) 1)
 	    (error "(hryolo-funcall-match): No HyRolo matches in display buffer"))
 	  (let ((ofont-lock font-lock-mode)
@@ -2978,7 +2955,8 @@ proper major mode."
 		      (hyrolo-cache-set-major-mode (1+ start)))
 		    ;; Prevent Org and Outline minor modes from font-locking
 		    (setq font-lock-mode nil)
-		    (funcall func)))
+		    (let ((outline-regexp hyrolo-hdr-and-entry-regexp))
+		      (funcall func))))
 	      (with-current-buffer display-buf
 		;; func may have changed the current buffer
 		(when narrow-flag
@@ -2997,7 +2975,8 @@ proper major mode."
 		;; hyrolo uses reveal-mode, redisplay will rexpand
 		;; hidden entries to make point visible.
 		(hyrolo-back-to-visible-point)))))
-      (funcall func))))
+      (let ((outline-regexp hyrolo-hdr-and-entry-regexp))
+	(funcall func)))))
 
 (defun hyrolo-cache-location-start-and-end ()
   "Return a list of the (start end) of location matches that point is within.

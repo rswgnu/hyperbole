@@ -1,3 +1,8 @@
+2024-01-15  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-to-entry-beginning): Rewrite to move properly.
+            (hyrolo-move-backward): Remove, no longer used.
+
 2024-01-16  Mats Lidell  <matsl@gnu.org>
 
 * test/hyrolo-tests.el

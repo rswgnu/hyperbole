@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     14-Jan-24 at 12:07:26 by Bob Weiner
+;; Last-Mod:     16-Jan-24 at 00:16:13 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -35,6 +35,7 @@
 (require 'org)
 (require 'org-element)
 (require 'org-fold nil t)
+(require 'org-macs)
 (require 'package)
 ;; Avoid any potential library name conflict by giving the load directory.
 (require 'set (expand-file-name "set" hyperb:dir))
@@ -50,13 +51,13 @@
    :type 'function
    :group 'org)
 
-;; `org-show-context' is obsolete as of Org 9.6, use `org-fold-show-context'
-;; instead.
-(unless (fboundp #'org-fold-show-context)
-  (with-suppressed-warnings ((obsolete org-show-context))
-    (defalias 'org-fold-show-context #'org-show-context)))
-
 (defvar hyperbole-mode-map)             ; "hyperbole.el"
+(defvar org--inhibit-version-check)     ; "org-macs.el"
+
+(declare-function org-babel-get-src-block-info "org-babel")
+(declare-function org-fold-show-context "org-fold")
+(declare-function org-link-open-from-string "ol")
+(declare-function outline-on-heading-p "outline")
 
 (declare-function smart-eobp "hui-mouse")
 (declare-function smart-eolp "hui-mouse")

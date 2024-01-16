@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Apr-91 at 00:48:49
-;; Last-Mod:      3-Oct-23 at 17:22:51 by Mats Lidell
+;; Last-Mod:     15-Jan-24 at 23:57:25 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -26,6 +26,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
+(require 'cl-lib)
 (require 'hversion)
 (require 'hvar)
 (require 'browse-url)

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     14-Jan-24 at 10:47:40 by Bob Weiner
+;; Last-Mod:     15-Jan-24 at 23:51:41 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -19,8 +19,9 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-;; Load Org here for `org-show-all'.
-(eval-and-compile (mapc #'require '(compile hversion hact locate cl-lib org)))
+;; Load Org here for `org-fold-show-all'.
+(eval-and-compile (mapc #'require '(compile hversion hact locate
+				    cl-lib org package)))
 
 ;;; ************************************************************************
 ;;; Public declarations

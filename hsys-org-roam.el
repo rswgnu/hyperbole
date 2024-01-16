@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-23 at 11:20:15 by Bob Weiner
-;; Last-Mod:      6-Jan-24 at 00:54:15 by Mats Lidell
+;; Last-Mod:     15-Jan-24 at 23:54:00 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -22,6 +22,11 @@
 ;;   assign them UUIDs required for indexing by Org Roam.
 
 ;;; Code:
+;;; ************************************************************************
+;;; Other required Elisp libraries
+;;; ************************************************************************
+
+(require 'package)
 
 ;;; ************************************************************************
 ;;; Public declarations

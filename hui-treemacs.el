@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Nov-17
-;; Last-Mod:      3-Oct-23 at 23:01:16 by Mats Lidell
+;; Last-Mod:     16-Jan-24 at 00:21:50 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -21,12 +21,12 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(when (or (require 'treemacs nil t)
-	  (and (require 'package)
-	       (package-installed-p 'treemacs)
-	       (package-activate 'treemacs)))
+(require 'package)
+(require 'seq)
 
-(require 'treemacs)
+(or (require 'treemacs nil t)
+    (and (package-installed-p 'treemacs)
+	 (package-activate 'treemacs)))
 
 (defvar treemacs-version)
 
@@ -141,4 +141,4 @@ Suitable for use as a value of `action-key-modeline-buffer-id-function'."
 
 (provide 'hui-treemacs)
 ;;; hui-treemacs.el ends here
-)
+
