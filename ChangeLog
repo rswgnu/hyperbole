@@ -1,3 +1,8 @@
+2024-01-17  Mats Lidell  <matsl@gnu.org>
+
+* test/hui-select-tests.el (hui-select--thing): Remove not interactive
+    guard.
+
 2024-01-16  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (eln): Use echo target for showing build info as part of the
