@@ -8,7 +8,7 @@
 ;; Maintainer:   Mats Lidell <matsl@gnu.org>
 ;; Maintainers:  Robert Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:      06-Oct-92 at 11:52:51
-;; Last-Mod:     20-Jan-24 at 15:42:11 by Mats Lidell
+;; Last-Mod:     20-Jan-24 at 20:20:34 by Mats Lidell
 ;; Released:     03-Dec-23
 ;; Version:      9.0.0
 ;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -134,7 +134,7 @@ See `hkey-initialize'.")
 
 (defcustom hyperbole-mode-lighter " Hypb"
   "String to display in mode line when the Hyperbole global minor mode is enabled.
-  Use nil for no Hyperbole mode indicator."
+Use nil for no Hyperbole mode indicator."
   :type 'string
   :group 'hyperbole)
 
@@ -194,9 +194,9 @@ Info documentation at \"(hyperbole)Top\".
   "*A non-nil value (default) at system load time binds Hyperbole keys.
 Keys bound are the Action and Assist Keyboard Keys, as well as
 other keys.  {\\[hkey-either]} invokes the Action Key and
-{C-u \\[hkey-either]} invokes the Assist Key.  Additionally,
+{\\`C-u' \\[hkey-either]} invokes the Assist Key.  Additionally,
 {\\[hkey-help]} shows what the Action Key will do in the current
-context (wherever point is).  {C-u \\[hkey-help]} shows what the
+context (wherever point is).  {\\`C-u' \\[hkey-help]} shows what the
 Assist Key will do."
   :type 'boolean
   :group 'hyperbole-keys)
@@ -406,7 +406,7 @@ frame, those functions by default still return the prior frame."
     "Return t if there is an invisible character between BEG and END, else nil."
     (catch 'result
       (let ((p beg))
-	(while (< p end) 
+	(while (< p end)
 	  (when (eq (get-char-property p 'invisible) 'outline)
 	    (throw 'result t))
 	  (setq p (1+ p))))

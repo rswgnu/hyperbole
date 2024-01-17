@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     26-Dec-23 at 21:57:18 by Bob Weiner
+;; Last-Mod:     19-Jan-24 at 18:17:28 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -53,7 +53,7 @@
 ;;   for how this is done).
 ;;
 ;;   The command, `hui-select-thing', may be bound to a key to provide the same
-;;   syntax-driven region selection functionality. {C-c RETURN} is a
+;;   syntax-driven region selection functionality.  {C-c RETURN} is a
 ;;   reasonable site-wide choice since this key is seldom used and it
 ;;   mnemonically indicates marking something; Hyperbole typically
 ;;   binds this key for you.  {C-c s} may be preferred as a personal binding.
@@ -358,7 +358,7 @@ returned is the function to call to select that syntactic unit."
 If the key that invokes this command in `hyperbole-minor-mode' is
 also bound in the current major mode map, then interactively
 invoke that command instead.  Typically prevents clashes over
-{C-c .}."
+{\\`C-c' .}."
   (interactive)
   (if (memq major-mode hui-select-markup-modes)
       (hui-select-goto-matching-tag)
@@ -480,7 +480,7 @@ interactively, the type of selection is displayed in the minibuffer.
 If the key that invokes this command in `hyperbole-minor-mode' is
 also bound in the current major mode map, then interactively
 invoke that command instead.  Typically prevents clashes over
-{C-c RET}, {C-c C-m}."
+{\\`C-c' RET}, {\\`C-c´ \\`C-m'}."
   (interactive
    (cond ((and (fboundp 'use-region-p) (use-region-p))
 	  nil)
@@ -730,9 +730,10 @@ The character at POS is selected if no other thing is matched."
 ;;;###autoload
 (defun hui-select-double-click-hook (event click-count)
   "Select region based on the character syntax where the mouse is double-clicked.
-If the double-click occurs at the same point as the last double-click, select
-the next larger syntactic structure.  If `hui-select-display-type' is non-nil,
-the type of selection is displayed in the minibuffer."
+If the double-click EVENT occurs at the same point as the last
+double-click, select the next larger syntactic structure.  If
+`hui-select-display-type' is non-nil, the type of selection is
+displayed in the minibuffer."
   (cond ((/= click-count 2)
 	 ;; Return nil so any other hooks are performed.
 	 nil)
@@ -807,6 +808,7 @@ Return t if selected, else nil."
 	  (goto-char (match-end 0)))))))
 
 (defun hui-select-at-delimited-sexp-p ()
+  "Select a delimited sexp."
   (unless (eolp)
     (let ((syn-before (if (char-before) (char-syntax (char-before)) 0))
 	  (syn-after  (if (char-after)  (char-syntax (char-after)) 0)))
@@ -921,7 +923,7 @@ partially overlaps OLD-REGION, or if OLD-REGION is uninitialized."
 		      (max (cdr old-region) (car old-region))))))))
 
 (defun hui-select-reset ()
-  ;; Reset syntactic selection.
+  "Reset syntactic selection."
   (setq hui-select-prior-point (point)
 	hui-select-prior-buffer (current-buffer)
 	hui-select-previous 'char)
@@ -1359,7 +1361,7 @@ Delimiters may be single, double or open and close quotes."
 			     (progn (forward-sentence) (point))))))
 
 (defun hui-select-whitespace (pos)
-  "Return (start . end) of all whitespace at POS,
+  "Return (start . end) of all whitespace at POS.
 Return all whitespace, unless there is only one character of
 whitespace or this is leading whitespace on the line."
   (setq hui-select-previous 'whitespace)

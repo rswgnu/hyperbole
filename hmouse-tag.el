@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     20-Jan-24 at 15:39:18 by Mats Lidell
+;; Last-Mod:     20-Jan-24 at 20:17:05 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -207,7 +207,8 @@ If:
 
 ;;;###autoload
 (defun smart-asm-at-tag-p (&optional no-flash)
-  "Return assembly tag name that point is within, else nil."
+  "Return assembly tag name that point is within, else nil.
+When optional NO-FLASH, do not flash."
   (let* ((identifier-chars "_.$a-zA-Z0-9")
 	 (identifier (concat "[_.$a-zA-Z][" identifier-chars "]*")))
     (save-excursion
@@ -249,6 +250,8 @@ Otherwise:
 
 ;;;###autoload
 (defun smart-c++-tag (&optional identifier next)
+  "Jumps to the definition of optional C++ IDENTIFIER or the one at point.
+Optional second arg NEXT means jump to next matching C++ tag."
   (let ((tag (or identifier (smart-c++-at-tag-p))))
     (message "Looking for `%s'..." tag)
     (condition-case ()
@@ -372,7 +375,8 @@ If:
 
 ;;;###autoload
 (defun smart-c-at-tag-p (&optional no-flash)
-  "Return C tag name that point is within, else nil."
+  "Return C tag name that point is within, else nil.
+When optional NO-FLASH, do not flash."
   (let* ((identifier-chars "_a-zA-Z0-9")
 	 (identifier (concat "[_a-zA-Z][" identifier-chars "]*")))
     (save-excursion
@@ -392,7 +396,7 @@ If:
   nil)
 
 (defun smart-emacs-lisp-mode-p ()
-  "Return non-nil if in a mode which uses Emacs Lisp symbols."
+  "Return non-nil if in a mode which use Emacs Lisp symbols."
   ;; Beyond Lisp files, Emacs Lisp symbols appear frequently in Byte-Compiled
   ;; buffers, debugger buffers, program ChangeLog buffers, Help buffers,
   ;; *Warnings*, *Flymake log* and *Flymake diagnostics... buffers.
@@ -447,7 +451,8 @@ in the current directory or any of its ancestor directories."
 
 ;;;###autoload
 (defun smart-fortran-at-tag-p (&optional no-flash)
-  "Return Fortran tag name that point is within, else nil."
+  "Return Fortran tag name that point is within, else nil.
+When optional NO-FLASH, do not flash."
   (let* ((identifier-chars "_a-zA-Z0-9")
 	 (identifier (concat "[_a-zA-Z][" identifier-chars "]*")))
     (save-excursion
@@ -486,6 +491,8 @@ Otherwise:
 
 ;;;###autoload
 (defun smart-java-tag (&optional identifier next)
+  "Jumps to the definition of optional Java IDENTIFIER or the one at point.
+Optional second arg NEXT means jump to next matching Java tag."
   (let ((tag (or identifier (smart-java-at-tag-p t))))
     (message "Looking for `%s'..." tag)
     (condition-case ()
@@ -528,7 +535,8 @@ If key is pressed:
 
 ;;;###autoload
 (defun smart-java-at-tag-p (&optional no-flash)
-  "Return Java tag name that point is within, else nil."
+  "Return Java tag name that point is within, else nil.
+When optional NO-FLASH, do not flash."
   (let* ((identifier-chars "_$.a-zA-Z0-9")
 	 (identifier
 	  (concat "[_$a-zA-Z][" identifier-chars "]*")))
@@ -574,7 +582,8 @@ in the current directory or any of its ancestor directories."
 
 ;;;###autoload
 (defun smart-javascript-at-tag-p (&optional no-flash)
-  "Return JavaScript tag name that point is within, else nil."
+  "Return JavaScript tag name that point is within, else nil.
+When optional NO-FLASH, do not flash."
   (if (if (memq major-mode '(html-mode web-mode))
 	  ;; Must be within a <script> tag or this predicate function
 	  ;; fails (returns nil).
@@ -780,7 +789,8 @@ Return matching Elisp tag name that point is within, else nil."
 
 (defun smart-lisp-at-tag-p (&optional no-flash)
   "Return possibly non-existent Lisp tag name that point is within, else nil.
-Return nil when point is on the first line of a non-alias Lisp definition.
+When optional NO-FLASH, do not flash.  Return nil when point is
+on the first line of a non-alias Lisp definition.
 
 Resolve Hyperbole implicit button type and action type references."
   (smart-lisp-htype-tag
@@ -788,7 +798,8 @@ Resolve Hyperbole implicit button type and action type references."
 
 (defun smart-lisp-at-non-htype-tag-p (&optional no-flash)
   "Return possibly non-existent Lisp tag name that point is within, else nil.
-Return nil when point is on the first line of a non-alias Lisp definition."
+When optional NO-FLASH, do not flash.  Return nil when point is
+on the first line of a non-alias Lisp definition."
   (unless (smart-lisp-at-definition-p)
     (save-excursion
       (skip-chars-backward smart-lisp-identifier-chars)
@@ -898,7 +909,7 @@ If key is pressed:
  (4) on a global variable or function identifier, its definition is shown.
 
  (2) and (3) require that an OO-Browser Environment has been loaded with
-     the {M-x br-env-load RET} command."
+     the {\\`M-x' br-env-load RET} command."
 
   (interactive)
   (objc-to-definition t))
@@ -909,7 +920,8 @@ If key is pressed:
   "Sorted list of Objective-C keywords, all in lowercase.")
 
 (defun smart-objc-at-tag-p (&optional no-flash)
-  "Return Objective-C tag name that point is within, else nil."
+  "Return Objective-C tag name that point is within, else nil.
+When optional NO-FLASH, do not flash."
   (let* ((identifier-chars "_a-zA-Z0-9")
 	 (identifier
 	  (concat "\\([-+][ \t]*\\)?\\([_a-zA-Z][" identifier-chars "]*\\)")))
@@ -981,6 +993,8 @@ in the current directory or any of its ancestor directories."
 
 ;;;###autoload
 (defun smart-python-tag (&optional identifier next)
+  "Jumps to the definition of optional Python IDENTIFIER or the one at point.
+Optional second arg NEXT means jump to next matching Python tag."
   (let ((tag (or identifier (smart-python-at-tag-p t))))
     (message "Looking for `%s'..." tag)
     (condition-case ()
@@ -1016,7 +1030,8 @@ If key is pressed:
 
 ;;;###autoload
 (defun smart-python-at-tag-p (&optional no-flash)
-  "Return Python tag name that point is within, else nil."
+  "Return Python tag name that point is within, else nil.
+When optional NO-FLASH, do not flash."
   (let* ((identifier-chars "a-zA-Z0-9_")
 	 (identifier-fragment (concat "[a-zA-Z_][" identifier-chars "]*"))
 	 (identifier (concat identifier-fragment "\\(\\."

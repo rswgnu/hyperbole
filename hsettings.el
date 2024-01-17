@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Apr-91 at 00:48:49
-;; Last-Mod:     20-Jan-24 at 15:39:36 by Mats Lidell
+;; Last-Mod:     20-Jan-24 at 20:18:53 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -101,8 +101,7 @@ The Smart Menu system must have already been loaded.  If a Smart
 Menu is already displayed, perform another Action or Assist Key function.")
 
 (defcustom hmouse-middle-flag (and (boundp 'infodock-version) infodock-version t)
-  "*Under InfoDock or when t, additionally bind the middle mouse button as an
-Action Key."
+  "*Non-nil means additionally bind the middle mouse button as an Action Key."
   :type 'boolean
   :group 'hyperbole-keys)
 
@@ -146,9 +145,7 @@ ignores current line and always scrolls up or down a windowful."
   (hyperbole-minibuffer-menu))
 
 (defcustom hyperbole-default-web-search-term-max-lines 2
-  "Provide a default search term using the selected text if the
-active region contains less than or equal to this number of
-lines"
+  "Provide a default search term from max this number of lines from selected text."
   :type 'integer
   :group 'hyperbole-commands)
 
@@ -175,6 +172,7 @@ use those instead of reading from the keyboard."
 (defun hyperbole-web-search (&optional service-name search-term return-search-expr-flag)
   "Search web SERVICE-NAME for SEARCH-TERM.
 Both arguments are optional and are prompted for when not given or when null.
+With optional RETURN-SEARCH-EXPR-FLAG return the search expression.
 Uses `hyperbole-web-search-alist' to match each service to its search url.
 Uses `hyperbole-web-search-browser-function' and the `browse-url'
 package to display search results."
@@ -285,7 +283,8 @@ then runs the search."
 ;;; ************************************************************************
 
 ;; No-op unless set by one of the conditionals below.
-(defun hui:but-flash ())
+(defun hui:but-flash ()
+  "Button flash No-op.")
 
 (cond ((not noninteractive)
        (require 'hui-em-but)

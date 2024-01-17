@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Nov-17
-;; Last-Mod:     20-Jan-24 at 15:41:11 by Mats Lidell
+;; Last-Mod:     20-Jan-24 at 20:20:00 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -86,7 +86,7 @@ If key is pressed:
      `assist-key-eol-function', typically to scroll down proportionally,
      if an Asisst Key press;
  (4) on the first line of the buffer (other than the end of line),
-     dired is run on the current directory of this Treemacs;
+     Dired is run on the current directory of this Treemacs;
  (5) at the end of the first or last line of the buffer,
      this Treemacs invocation is quit."
 

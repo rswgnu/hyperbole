@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Apr-94 at 17:17:39 by Bob Weiner
-;; Last-Mod:      3-Oct-23 at 17:46:21 by Mats Lidell
+;; Last-Mod:     18-Jan-24 at 23:59:15 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -148,7 +148,10 @@ Return http urls unchanged.  Normalize remote paths."
 
 ;;;###autoload
 (defun www-url-find-file-noselect (path &rest args)
-  "Find PATH without selecting its buffer.  Handle http urls."
+  "Find PATH without selecting its buffer.
+Handle http urls.  ARGS is the optional arguments to
+`find-file-noselect'.  If PATH is a list ARGS is set to remainder
+after that the first element is extracted as the PATH."
   (if (listp path)
       (setq args (cdr path)
 	    path (car path)))

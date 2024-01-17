@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     20-Jan-24 at 15:41:03 by Mats Lidell
+;; Last-Mod:     20-Jan-24 at 20:19:54 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -902,7 +902,7 @@ Use left mouse key, RET or TAB key to select a completion and exit."
 (defun smart-dired-pathname-up-to-point (&optional no-default)
   "Return the part of the pathname up through point, else current directory.
 Use for direct selection of an ancestor directory of the
-dired directory at point, if any.
+Dired directory at point, if any.
 
 With optional NO-DEFAULT, do not default to current directory
 path; instead return nil."
@@ -936,15 +936,15 @@ If key is pressed:
      for display in another window, then this entry is displayed in the current
      window (DisplayHere minor mode is shown in the mode-line; use {g}
      to disable it)
- (2) on a dired header line (other than the end of line):
+ (2) on a Dired header line (other than the end of line):
      (a) within the leading whitespace, then if any deletes are to be
          performed, they are executed after user verification; otherwise,
          nothing is done;
-     (b) otherwise, dired is run in another window on the ancestor directory
+     (b) otherwise, Dired is run in another window on the ancestor directory
          of the current directory path up through the location of point;
          if point is on the first character, then the / root directory
          is used.
- (3) on or after the last line in the buffer, this dired invocation is quit."
+ (3) on or after the last line in the buffer, this Dired invocation is quit."
 
   (interactive)
   (cond ((save-excursion
@@ -1542,7 +1542,7 @@ NO-RECURSE-FLAG non-nil prevents infinite recursions."
 ;;; ************************************************************************
 
 (defun smart-magit-display-file (return-command)
-  "Execute `magit' cmd bound to return, possibly using `hpath:display-buffer'."
+  "Execute `magit' RETURN-COMMAND possibly using `hpath:display-buffer'."
   (cond ((eq return-command #'magit-diff-visit-file)
 	 ;; Use Hyperbole display variable to determine where
 	 ;; to display the file of the diff.
@@ -1803,7 +1803,7 @@ When the Action Key is pressed:
 
   8. With point on any #+BEGIN_SRC, #+END_SRC, #+RESULTS, #+begin_example
      or #+end_example header, execute the code block via the Org mode
-     standard binding of {C-c C-c}, (org-ctrl-c-ctrl-c).
+     standard binding of {\\`C-c' \\`C-c'}, (org-ctrl-c-ctrl-c).
   
   9. When point is on an Org mode heading, cycle the view of the subtree
      at point.
@@ -1934,7 +1934,7 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
        buffer-file-name
        (derived-mode-p 'org-mode)
        (not (org-at-heading-p))
-       (member buffer-file-name 
+       (member buffer-file-name
 	       (hpath:expand-list hsys-org-cycle-bob-file-list))))
 
 ;;; ************************************************************************

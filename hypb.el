@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     20-Jan-24 at 15:42:04 by Mats Lidell
+;; Last-Mod:     20-Jan-24 at 20:20:28 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -443,7 +443,8 @@ This will install the Emacs devdocs package if not yet installed."
       (concat "@" dname))))
 
 (defun hypb:error (&rest args)
-  "Signal an error typically to be caught by `hyperbole'."
+  "Signal an error typically to be caught by `hyperbole'.
+The error message is formatted passing ARGS to the function `format'."
   (let ((msg (if (< (length args) 2)
 		 (car args)
 	       (apply 'format (cons (car args)
@@ -544,7 +545,7 @@ Use the current syntax table or optional SYNTAX-TABLE."
   (aref (or syntax-table (syntax-table)) char))
 
 (defun hypb:glob-to-regexp (str)
-  "Convert any file glob syntax to Emacs regexp syntax."
+  "Convert any file glob syntax in STR to Emacs regexp syntax."
   (when (stringp str)
     (setq str (replace-regexp-in-string "\\`\\*" ".*" str nil t)
 	  str (replace-regexp-in-string "\\([^\\.]\\)\\*" "\\1.*" str))
@@ -894,7 +895,7 @@ Removes any trailing newline at the end of the output."
   "Recursively grep with symbol at point or PATTERN.
 Grep over all non-backup and non-autosave files in the current
 directory tree.  If in an Emacs Lisp mode buffer and no optional
-PREFIX-ARG is given, limit search to only .el and .el.gz files."
+PREFX-ARG is given, limit search to only .el and .el.gz files."
   (interactive (list (if (and (not current-prefix-arg) (equal (buffer-name) "*Locate*"))
 			 (read-string "Grep files listed here for: ")
 		       (let ((default (symbol-at-point)))
@@ -953,7 +954,7 @@ Set in the current syntax table or optional SYNTAX-TABLE.  Return
 the RAW-DESCRIPTOR.  Use the `syntax-after' function to retrieve
 the raw descriptor for a buffer position.
 
-Similar to modify-syntax-entry but uses a raw descriptor
+Similar to `modify-syntax-entry' but uses a raw descriptor
 previously extracted from a syntax table to set the value rather
 than a string.
 
@@ -1127,9 +1128,10 @@ If FILE is not an absolute path, expand it relative to `hyperb:dir'."
       (setq-local org-cycle-global-at-bob t)
       (view-mode)
       ;; Ensure no initial folding of the buffer, possibly from a hook
-      (if (fboundp 'org-fold-show-all)
-	  (org-fold-show-all)
-	(org-show-all))
+      (with-suppressed-warnings ((obsolete org-show-all))
+        (if (fboundp 'org-fold-show-all)
+	    (org-fold-show-all)
+	  (org-show-all)))
       ;; On some versions of Emacs like Emacs28, need a slight delay
       ;; for file loading before searches will work properly.
       ;; Otherwise, "test/demo-tests.el" may fail.

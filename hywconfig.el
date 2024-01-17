@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Mar-89
-;; Last-Mod:     20-Jan-24 at 15:42:45 by Mats Lidell
+;; Last-Mod:     20-Jan-24 at 20:20:58 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -216,7 +216,7 @@ oldest one comes the newest one."
   (frame-parameter (selected-frame) 'named-hywconfigs))
 
 (defun hywconfig-named-put (name wconfig)
-  "Add NAMEd WCONFIG to selected frame's plist of named window configurations."
+  "Add WCONFIG with NAME to selected frame's plist of named window configurations."
   (hywconfig-named-set-entries
    (with-suppressed-warnings ((obsolete lax-plist-put)) ;; Obsolete since 29.1, use plist-get
      (lax-plist-put (hywconfig-named-get-entries) name wconfig))))

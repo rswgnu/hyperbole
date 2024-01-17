@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    20-Jul-16 at 22:41:34
-;; Last-Mod:     28-Oct-23 at 12:27:26 by Bob Weiner
+;; Last-Mod:     17-Jan-24 at 23:48:46 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -645,6 +645,7 @@ Then an Action Key displays the associated changeset."
   "Filename of cache of local git repository directories found by `locate-command'.")
 
 (defun hibtypes-git-get-locate-command ()
+  "Get the locate command."
   (require 'locate)
   (let ((cmd (if (string-match "locate" locate-command) locate-command "locate")))
     (if (executable-find cmd)

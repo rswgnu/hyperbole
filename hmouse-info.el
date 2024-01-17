@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Apr-89
-;; Last-Mod:      3-Oct-23 at 17:48:46 by Mats Lidell
+;; Last-Mod:     18-Jan-24 at 19:08:48 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -163,9 +163,9 @@ or a Menu; otherwise returns nil."
 ;;; ************************************************************************
 
 (defun Info-handle-in-node-hdr ()
-  "If within an Info node header, move to <FILE>Top, <Up>, <Previous>, or
-<Next> node, depending on which label point is on, and return t.
-Otherwise, return nil."
+  "If within an Info node header on a label move to the corresponding node.
+Move to <FILE>Top, <Up>, <Previous>, or <Next> node, depending on
+which label point is on, and return t.  Otherwise, return nil."
   ;;
   ;; Test if on 1st line of node, i.e. node header
   ;;
@@ -193,10 +193,11 @@ Otherwise, return nil."
       t)))
 
 (defun Info-handle-in-node-hdr-assist ()
-  "If within an Info node header when the `smart-info-assist' command is
-executed, when within the <FILE> header go to the DIR `top-level node'.  When
-within any other header (<Up>, <Previous>, or <Next>) go to last node from
-history list.  Return t if in Info node header.  Otherwise return nil."
+  "When `smart-info-assist' command is executed on an Info node header, go to node.
+When within the <FILE> header go to the DIR `top-level node'.
+When within any other header (<Up>, <Previous>, or <Next>) go to
+last node from history list.  Return t if in Info node header.
+Otherwise return nil."
   ;;
   ;; Test if on 1st line of node, i.e. node header
   ;;

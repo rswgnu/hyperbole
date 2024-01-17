@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     3-Sep-91 at 21:40:58
-;; Last-Mod:      3-Oct-23 at 22:50:40 by Mats Lidell
+;; Last-Mod:     18-Jan-24 at 19:06:51 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -69,7 +69,7 @@
 
 (defun hmouse-bind-key-emacs (mouse-key-number depress-cmd release-cmd)
   "Ensure MOUSE-KEY-NUMBER (1-5) is bound to DEPRESS-CMD and RELEASE-CMD.
-This includes depresses and drags.  Mouse key 1 is [mouse-1], etc.
+This includes depresses and drags.  Mouse key 1 is [\\`mouse-1'], etc.
 Use nil as cmd value to unbind a key."
   (hmouse-set-key-list
    depress-cmd
@@ -434,7 +434,7 @@ This must be bound to a button-down mouse event.
 In Transient Mark mode, the highlighting remains as long as the mark
 remains active.  Otherwise, it remains until the next input event.
 
-When the region already exists and `mouse-drag-and-drop-region'
+When the region already exists and variable `mouse-drag-and-drop-region'
 is non-nil, this moves the entire region of text to where mouse
 is dragged over to."
   (interactive "e")
@@ -487,15 +487,15 @@ point determined by `mouse-select-region-move-to-beginning'."
 	    (error (when (window-valid-p end-w-or-f)
 		     (select-frame (window-frame end-w-or-f))))))))))
 
-(defun hmouse-move-point-eterm (arg-list)
-  (apply 'mouse-move-point arg-list))
-
 (defun hmouse-set-key-list (binding key-list)
+  "Define a Hyperbole global minor mode key from KEY-LIST bound to BINDING."
   (mapc (lambda (key) (hkey-set-key key binding)) key-list)
   nil)
 
 (defun hmouse-shifted-setup (middle-flag)
-  "Call `hmouse-install' instead of this and see its documentation."
+  "Call `hmouse-install' instead of this and see its documentation.
+When non-nil MIDDLE-FLAG bind the middle and right mouse keys as
+Action and Assist Keys, respectively."
   (interactive)
   ;; Do nothing when running in batch mode.
   (unless noninteractive

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Apr-91
-;; Last-Mod:      3-Jan-24 at 02:27:47 by Bob Weiner
+;; Last-Mod:     17-Jan-24 at 23:07:53 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -88,7 +88,7 @@
 ;;; Button data accessor functions
 ;;; ------------------------------------------------------------------------
 (defun hbdata:action (hbdata)
-  "[Hyp V2] Return action overriding button's action type or nil."
+  "[Hyp V2] Return action overriding button's action type or nil from HBDATA."
   (nth 1 hbdata))
 
 (defun hbdata:actype (hbdata)

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Sep-92
-;; Last-Mod:     20-Jan-24 at 15:41:21 by Mats Lidell
+;; Last-Mod:     20-Jan-24 at 20:20:09 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -275,7 +275,7 @@ and release to register a diagonal drag.")
 
 (defun hmouse-at-item-p (start-window)
   "Return t if point is on an item draggable by Hyperbole, otherwise nil.
-Draggable items include Hyperbole buttons, dired items, buffer/ibuffer
+Draggable items include Hyperbole buttons, Dired items, buffer/ibuffer
 menu items."
   (let* ((buf (when (window-live-p start-window)
 		(window-buffer start-window)))
@@ -340,22 +340,22 @@ part of InfoDock and not a part of Hyperbole)."
 	     t)))))
 
 (defun hmouse-dired-readin-hook ()
-  "Remove local `hpath:display-where' setting whenever re-read a dired directory.
+  "Remove local `hpath:display-where' setting whenever re-read a Dired directory.
 See `hmouse-dired-item-dragged' for use."
   (hmouse-dired-display-here-mode 0))
 
 (define-minor-mode hmouse-dired-display-here-mode
-  "Display item here on key press after dired item drag.
-Once a dired buffer item has been dragged, make next Action Key
-press on an item display it in the same dired window.
+  "Display item here on key press after Dired item drag.
+Once a Dired buffer item has been dragged, make next Action Key
+press on an item display it in the same Dired window.
 
-By default an Action Key press on a dired item displays it in another
+By default an Action Key press on a Dired item displays it in another
 window.   But once a Dired item is dragged to another window, the next
-Action Key press should display it in the dired window so that the
+Action Key press should display it in the Dired window so that the
 behavior matches that of Buffer Menu and allows for setting what is
-displayed in all windows on screen, including the dired window.
+displayed in all windows on screen, including the Dired window.
 
-If the directory is re-read into the dired buffer with {g}, then Action
+If the directory is re-read into the Dired buffer with {g}, then Action
 Key behavior reverts to as though no items have been dragged."
   :lighter " DisplayHere"
   (if hmouse-dired-display-here-mode
@@ -545,7 +545,7 @@ If free variable `assist-flag' is non-nil, uses Assist Key."
 
 (defun hmouse-drag-item-to-display (&optional new-window-flag)
   "Drag an item and release where it is to be displayed.
-Draggable items include Hyperbole buttons, dired items, buffer/ibuffer
+Draggable items include Hyperbole buttons, Dired items, buffer/ibuffer
 menu items.
 
 Depress on the item and release where the item is to be displayed.
@@ -688,7 +688,7 @@ If free variable `assist-flag' is non-nil, uses Assist Key."
 		    hmouse-side-sensitivity))))))
 
 (defun hmouse-read-only-toggle-key ()
-  "Return the first key binding that toggles read-only mode, or nil if none."
+  "Return the first key binding that toggle read-only mode, or nil if none."
   (key-description (where-is-internal #'read-only-mode nil t)))
 
 (defun hmouse-vertical-action-drag ()
@@ -808,6 +808,7 @@ buffer."
   (error "(hmouse-drag-region-active): Region is active; use a Smart Key press/click within a window, not a drag"))
 
 (defun hmouse-set-buffer-and-point (buffer point)
+  "Set BUFFER and POINT."
   (when buffer
     (set-buffer buffer)
     (when point (goto-char point))))
@@ -870,7 +871,7 @@ Return t if such a point is saved, else nil."
       (pulse-momentary-highlight-one-line (point) 'next-error))))
 
 (defun hmouse-pulse-region (start end)
-  "When `hmouse-pulse-flag' is non-nil, display can pulse, pulse the region."
+  "When `hmouse-pulse-flag' is non-nil pulse the region between START and END."
   (when (and hmouse-pulse-flag (featurep 'pulse) pulse-flag (pulse-available-p))
     (let ((pulse-iterations hmouse-pulse-iterations))
       (pulse-momentary-highlight-region start end 'next-error))))
@@ -955,7 +956,7 @@ If the Action Key is:
      the Info buffer is displayed, or if already displayed and the
      modeline clicked belongs to a window displaying Info, the Info
      buffer is hidden;
- (3) clicked on the buffer id of a window's modeline, dired is run
+ (3) clicked on the buffer id of a window's modeline, Dired is run
      on the current directory, replacing the window's buffer;
      successive clicks walk up the directory tree
  (4) clicked anywhere in the middle of a window's modeline,
@@ -1106,6 +1107,7 @@ of the Smart Key."
 	       (set-buffer obuf)))))))
 
 (defun hmouse-clone-window-to-frame (&optional _always-delete-flag)
+  "Clone window to frame."
   (let ((hycontrol-keep-window-flag t))
     (hmouse-move-window-to-frame)))
 

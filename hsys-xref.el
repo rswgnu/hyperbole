@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     20-Jan-24 at 15:40:22 by Mats Lidell
+;; Last-Mod:     20-Jan-24 at 20:19:45 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -60,8 +60,8 @@
 ;;; Private functions
 ;;; ************************************************************************
 
-;; Fix next xref function to handle when called at beginning of buffer
 (defun xref--item-at-point ()
+  "Fix next xref function to handle when called at beginning of buffer."
   (get-text-property
    (max (point-min) (if (eolp) (1- (point)) (point)))
    'xref-item))

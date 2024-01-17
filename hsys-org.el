@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     20-Jan-24 at 15:40:12 by Mats Lidell
+;; Last-Mod:     20-Jan-24 at 20:19:11 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -307,7 +307,7 @@ Return t if Org is reloaded, else nil."
 
 ;;;###autoload
 (defun hsys-org-consult-grep ()
-  "Prompt for search terms and run consult grep over `org-directory'
+  "Prompt for search terms and run consult grep over `org-directory'.
 Actual grep function used is given by the variable,
 `hsys-org-consult-grep-func'."
   (interactive)
