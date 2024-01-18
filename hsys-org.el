@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     16-Jan-24 at 00:16:13 by Bob Weiner
+;; Last-Mod:     17-Jan-24 at 22:49:28 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -156,6 +156,78 @@ an error."
 
 ;;;###autoload
 (defun hsys-org-fix-version ()
+  "If multiple Org versions are loaded, use the one first on `load-path'.
+Always ensure Org libraries have been required.
+Return t if Org is reloaded, else nil."
+  ;; Not all versions of org include these variables, so set them
+  (setq org--inhibit-version-check nil
+	org-list-allow-alphabetical nil)
+  (let ((org-dir (ignore-errors (org-find-library-dir "org")))
+	(org-install-dir
+	 (ignore-errors (org-find-library-dir "org-loaddefs"))))
+    (cond ((and org-dir org-install-dir (string-equal org-dir org-install-dir)
+		;; Still may have a situation where the Org version matches the
+		;; builtin Org but the directories are for a newer Org
+		;; package version.
+		(if (string-match "[\\/]org-\\([0-9.]+-?[a-z]*\\)" org-dir)
+		    (string-equal (match-string 1 org-dir) ;; org-dir version
+				  (remove ?- (org-release)))
+		  t))
+	   ;; Just require these libraries used for Hyperbole testing to ensure
+	   ;; they are loaded from the single Org version used.
+	   (mapc (lambda (lib-sym) (require lib-sym nil t))
+		 '(org-version org-keys org-compat ol org-table org-macs org-id
+			       org-element org-list org-element org-src org-fold org))
+	   nil)
+	  (t
+	   ;; Ensure using any local available packaged version of Org mode
+	   ;; rather than built-in which may have been activated before
+	   ;; load-path was set correctly.  Avoids mixed version load of Org.
+	   (let ((org-libraries-to-reload (hsys-org-get-libraries-to-reload))
+		 lib-sym)
+	     ;; Unload org libraries loaded with wrong path
+	     (mapc (lambda (lib)
+		     (setq lib-sym (intern-soft lib))
+		     (when (featurep lib-sym) (unload-feature lib-sym t)))
+		   org-libraries-to-reload)
+
+	     ;; Ensure user's external Org package version is configured for loading
+	     (package-initialize)
+	     (let ((pkg-desc (car (cdr (assq 'org package-archive-contents)))))
+	       (package-activate pkg-desc t))
+
+	     ;; Load org libraries with right path but save "org" for last
+	     (mapc #'load (remove "org" org-libraries-to-reload))
+	     (load "org")
+	     ;; Next setting may have been deleted with the library
+	     ;; unloading, so restore it.
+	     (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
+	     t)))))
+
+(defun hsys-org-get-libraries-to-reload ()
+  (interactive)
+  (let* ((builtin-org-dir (expand-file-name "../lisp/org/" data-directory))
+	 (default-directory builtin-org-dir)
+	 (builtin-org-files (nconc (file-expand-wildcards "*.el.gz")
+				   (file-expand-wildcards "*.el")))
+	 (feature-sym)
+	 (file-to-load)
+	 (builtin-org-libraries-loaded
+	  (delq nil (mapcar (lambda (f)
+			      (setq file-to-load
+				    ;; Get rid of both .el and .el.gz suffixes
+				    (file-name-sans-extension
+				     (file-name-sans-extension f))
+				    feature-sym (intern-soft file-to-load))
+			      (and (featurep feature-sym)
+				   (string-prefix-p builtin-org-dir
+						    (symbol-file feature-sym))
+				   file-to-load))
+			    builtin-org-files))))
+    builtin-org-libraries-loaded))
+
+;; !! Delete this after fully testing replacement version
+(defun hsys-org-OLD-fix-version ()
   "If multiple Org versions are loaded, use the one first on `load-path'.
 Always ensure Org libraries have been required.
 Return t if Org is reloaded, else nil."
