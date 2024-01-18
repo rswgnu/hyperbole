@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     16-Jan-24 at 11:26:22 by Mats Lidell
+# Last-Mod:     17-Jan-24 at 14:57:57 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -260,8 +260,8 @@ help:
 all: help
 
 echo:
-	@echo "Emacs: $(shell which emacs)"
-	@echo "Version: $(shell emacs --version)"
+	@echo "Emacs: $(shell which ${EMACS})"
+	@echo "Version: $(shell ${EMACS} --version)"
 	@echo "TERM: $(TERM)"
 	@echo "DISPLAY: $(DISPLAY)"
 
