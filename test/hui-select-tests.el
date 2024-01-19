@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    14-Apr-22 at 23:45:52
-;; Last-Mod:     16-Jan-24 at 17:57:01 by Mats Lidell
+;; Last-Mod:     23-Nov-23 at 02:12:38 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -82,6 +82,7 @@
 
 (ert-deftest hui-select--thing ()
   "`hui-select-thing' selects bigger sections of text when called repeatedly."
+  (skip-unless (not noninteractive))
   (hui-select-reset)
   (with-temp-buffer
     (insert "Buffer\n\nParagraph\nline.  One word.")
