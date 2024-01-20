@@ -3,11 +3,11 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Jun-16 at 14:24:53
-;; Last-Mod:      3-Jan-24 at 03:06:43 by Bob Weiner
+;; Last-Mod:     20-Jan-24 at 15:38:32 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; Copyright (C) 2016, 2021  Free Software Foundation, Inc.
+;; Copyright (C) 2016-2024  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of Hyperbole.  It requires the Emacs package
