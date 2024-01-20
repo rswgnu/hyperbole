@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    04-Feb-22 at 23:00:00
-;; Last-Mod:     20-Jan-24 at 12:04:32 by Mats Lidell
+;; Last-Mod:     20-Jan-24 at 19:38:11 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -53,7 +53,7 @@
     (insert " (setq var (+ 1 2))  ")
     ;; pos ->123456789012345678901
     (dolist (v '((1 nil nil)
-                 (2 nil nil)
+                 (2 "(setq var (+ 1 2))" "(setq var (+ 1 2))")
                  (3 "(setq var (+ 1 2))" nil)
                  (4 "(setq var (+ 1 2))" nil)
                  (11 "(setq var (+ 1 2))" nil)

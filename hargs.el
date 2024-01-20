@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:     20-Jan-24 at 15:37:06 by Mats Lidell
+;; Last-Mod:     20-Jan-24 at 19:43:53 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -508,23 +508,25 @@ If point follows an sexpression end character, the preceding sexpression
 is returned.  If point precedes an sexpression start character, the
 following sexpression is returned.  Otherwise, the innermost sexpression
 that point is within is returned or nil if none."
-  (save-excursion
-    (ignore-errors
-	(let ((not-quoted
-	       '(not (and (eq (char-syntax (char-after (- (point) 2))) ?\\)
-			  (not (eq (char-syntax (char-after (- (point) 3))) ?\\))))))
-	  (cond ((and (eq (char-syntax (preceding-char)) ?\))
-		      ;; Ignore quoted end chars.
-		      (eval not-quoted))
-		 (buffer-substring (point)
-				   (progn (forward-sexp -1) (point))))
-		((and (eq (char-syntax (following-char)) ?\()
-		      ;; Ignore quoted begin chars.
-		      (eval not-quoted))
-		 (buffer-substring (point)
-				   (progn (forward-sexp) (point))))
-		(no-recurse nil)
-		(t (save-excursion (up-list 1) (hargs:sexpression-p t))))))))
+  (let ((not-quoted
+	 '(condition-case ()
+	      (not (and (eq (char-syntax (char-after (- (point) 2))) ?\\)
+			(not (eq (char-syntax (char-after (- (point) 3))) ?\\))))
+	    (error t))))
+    (save-excursion
+      (ignore-errors
+	(cond ((and (eq (char-syntax (preceding-char)) ?\))
+		    ;; Ignore quoted end chars.
+		    (eval not-quoted))
+	       (buffer-substring (point)
+				 (progn (forward-sexp -1) (point))))
+	      ((and (eq (char-syntax (following-char)) ?\()
+		    ;; Ignore quoted begin chars.
+		    (eval not-quoted))
+	       (buffer-substring (point)
+				 (progn (forward-sexp) (point))))
+	      (no-recurse nil)
+	      (t (save-excursion (up-list 1) (hargs:sexpression-p t))))))))
 
 ;;; ************************************************************************
 ;;; Public functions
