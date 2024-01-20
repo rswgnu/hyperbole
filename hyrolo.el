@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     20-Jan-24 at 20:20:45 by Mats Lidell
+;; Last-Mod:     20-Jan-24 at 20:22:18 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1264,9 +1264,9 @@ Return number of matching entries found."
 	 (not (get-file-buffer (expand-file-name bbdb-file)))))
     (hyrolo-grep-file hyrolo-file-or-buf regexp max-matches count-only)))
 
-(defun hyrolo-bbdb-entry-format (entry)
-  "Format for a BBDB ENTRY."
-  (let ((v (read entry)))
+(defun hyrolo-bbdb-entry-format (bbdb-entry)
+  "Format for a BBDB-ENTRY."
+  (let ((v (read bbdb-entry)))
     (format "* %s: %s: <%s>\n" (elt v 1) (elt v 0) (car (elt v 7)))))
 
 ;;; ************************************************************************

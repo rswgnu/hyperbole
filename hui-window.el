@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Sep-92
-;; Last-Mod:     20-Jan-24 at 20:20:09 by Mats Lidell
+;; Last-Mod:     20-Jan-24 at 20:22:03 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -688,7 +688,7 @@ If free variable `assist-flag' is non-nil, uses Assist Key."
 		    hmouse-side-sensitivity))))))
 
 (defun hmouse-read-only-toggle-key ()
-  "Return the first key binding that toggle read-only mode, or nil if none."
+  "Return the first toggle read-only mode key binding, or nil if none."
   (key-description (where-is-internal #'read-only-mode nil t)))
 
 (defun hmouse-vertical-action-drag ()
@@ -871,7 +871,7 @@ Return t if such a point is saved, else nil."
       (pulse-momentary-highlight-one-line (point) 'next-error))))
 
 (defun hmouse-pulse-region (start end)
-  "When `hmouse-pulse-flag' is non-nil pulse the region between START and END."
+  "When `hmouse-pulse-flag' is non-nil, pulse the region between START and END."
   (when (and hmouse-pulse-flag (featurep 'pulse) pulse-flag (pulse-available-p))
     (let ((pulse-iterations hmouse-pulse-iterations))
       (pulse-momentary-highlight-region start end 'next-error))))

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     20-Jan-24 at 20:17:05 by Mats Lidell
+;; Last-Mod:     20-Jan-24 at 20:21:57 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -181,7 +181,7 @@ Keyword matched is grouping 1.  Referent is grouping 2.")
 ;;; ************************************************************************
 
 (defun smart-asm (&optional identifier next)
-  "Jumps to the definition of optional assembly IDENTIFIER or the one at point.
+  "Jump to the definition of optional assembly IDENTIFIER or the one at point.
 Optional second arg NEXT means jump to next matching assembly tag.
 
 It assumes that its caller has already checked that the key was pressed in an
@@ -222,7 +222,7 @@ When optional NO-FLASH, do not flash."
 
 ;;;###autoload
 (defun smart-c++ (&optional identifier next)
-  "Jumps to the definition of optional C++ IDENTIFIER or the one at point.
+  "Jump to the definition of optional C++ IDENTIFIER or the one at point.
 Optional second arg NEXT means jump to next matching C++ tag.
 
 It assumes that its caller has already checked that the key was pressed in an
@@ -250,7 +250,7 @@ Otherwise:
 
 ;;;###autoload
 (defun smart-c++-tag (&optional identifier next)
-  "Jumps to the definition of optional C++ IDENTIFIER or the one at point.
+  "Jump to the definition of optional C++ IDENTIFIER or the one at point.
 Optional second arg NEXT means jump to next matching C++ tag."
   (let ((tag (or identifier (smart-c++-at-tag-p))))
     (message "Looking for `%s'..." tag)
@@ -396,7 +396,7 @@ When optional NO-FLASH, do not flash."
   nil)
 
 (defun smart-emacs-lisp-mode-p ()
-  "Return non-nil if in a mode which use Emacs Lisp symbols."
+  "Return non-nil if in a mode using Emacs Lisp symbols."
   ;; Beyond Lisp files, Emacs Lisp symbols appear frequently in Byte-Compiled
   ;; buffers, debugger buffers, program ChangeLog buffers, Help buffers,
   ;; *Warnings*, *Flymake log* and *Flymake diagnostics... buffers.
@@ -410,7 +410,7 @@ When optional NO-FLASH, do not flash."
 	   (smart-lisp-at-known-identifier-p))))
 
 (defun smart-fortran (&optional identifier next)
-  "Jumps to the definition of optional Fortran IDENTIFIER or the one at point.
+  "Jump to the definition of optional Fortran IDENTIFIER or the one at point.
 Optional second arg NEXT means jump to next matching Fortran tag.
 
 It assumes that its caller has already checked that the key was pressed in an
@@ -466,7 +466,7 @@ When optional NO-FLASH, do not flash."
 
 ;;;###autoload
 (defun smart-java (&optional identifier next)
-  "Jumps to the definition of optional Java IDENTIFIER or the one at point.
+  "Jump to the definition of optional Java IDENTIFIER or the one at point.
 Optional second arg NEXT means jump to next matching Java tag.
 
 It assumes that its caller has already checked that the key was pressed in an
@@ -491,7 +491,7 @@ Otherwise:
 
 ;;;###autoload
 (defun smart-java-tag (&optional identifier next)
-  "Jumps to the definition of optional Java IDENTIFIER or the one at point.
+  "Jump to the definition of optional Java IDENTIFIER or the one at point.
 Optional second arg NEXT means jump to next matching Java tag."
   (let ((tag (or identifier (smart-java-at-tag-p t))))
     (message "Looking for `%s'..." tag)
@@ -504,7 +504,7 @@ Optional second arg NEXT means jump to next matching Java tag."
 
 ;;; The following should be called only if the OO-Browser is available.
 (defun smart-java-oo-browser (&optional _junk)
-  "Jumps to the definition of selected Java construct via OO-Browser support.
+  "Jump to the definition of selected Java construct via OO-Browser support.
 Optional JUNK is ignored.  Does nothing if the OO-Browser is not available.
 
 It assumes that its caller has already checked that the key was pressed in an
@@ -968,7 +968,7 @@ See https://tkf.github.io/emacs-jedi/latest/."
 
 ;;;###autoload
 (defun smart-python (&optional identifier next)
-  "Jumps to the definition of optional Python IDENTIFIER or the one at point.
+  "Jump to the definition of optional Python IDENTIFIER or the one at point.
 Optional second arg NEXT means jump to next matching Python tag.
 
 It assumes that its caller has already checked that the key was pressed in an
@@ -993,7 +993,7 @@ in the current directory or any of its ancestor directories."
 
 ;;;###autoload
 (defun smart-python-tag (&optional identifier next)
-  "Jumps to the definition of optional Python IDENTIFIER or the one at point.
+  "Jump to the definition of optional Python IDENTIFIER or the one at point.
 Optional second arg NEXT means jump to next matching Python tag."
   (let ((tag (or identifier (smart-python-at-tag-p t))))
     (message "Looking for `%s'..." tag)
@@ -1006,7 +1006,7 @@ Optional second arg NEXT means jump to next matching Python tag."
 
 ;;; The following should be called only if the OO-Browser is available.
 (defun smart-python-oo-browser (&optional _junk)
-  "Jumps to the definition of selected Python construct via OO-Browser support.
+  "Jump to the definition of selected Python construct via OO-Browser support.
 Optional JUNK is ignored.  Does nothing if the OO-Browser is not available.
 
 It assumes that its caller has already checked that the key was pressed in an

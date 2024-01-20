@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     3-Sep-91 at 21:40:58
-;; Last-Mod:     18-Jan-24 at 19:06:51 by Mats Lidell
+;; Last-Mod:     20-Jan-24 at 19:54:28 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -486,6 +486,9 @@ point determined by `mouse-select-region-move-to-beginning'."
 	      (hmouse-posn-set-point (event-end event))
 	    (error (when (window-valid-p end-w-or-f)
 		     (select-frame (window-frame end-w-or-f))))))))))
+
+(defun hmouse-move-point-eterm (arg-list)
+  (apply 'mouse-move-point arg-list))
 
 (defun hmouse-set-key-list (binding key-list)
   "Define a Hyperbole global minor mode key from KEY-LIST bound to BINDING."

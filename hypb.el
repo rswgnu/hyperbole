@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     20-Jan-24 at 20:20:28 by Mats Lidell
+;; Last-Mod:     20-Jan-24 at 20:22:08 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -444,7 +444,8 @@ This will install the Emacs devdocs package if not yet installed."
 
 (defun hypb:error (&rest args)
   "Signal an error typically to be caught by `hyperbole'.
-The error message is formatted passing ARGS to the function `format'."
+The error message is formatted passing the rest of the ARGS to
+the `format' function."
   (let ((msg (if (< (length args) 2)
 		 (car args)
 	       (apply 'format (cons (car args)

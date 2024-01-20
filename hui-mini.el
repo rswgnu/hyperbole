@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     19-Jan-24 at 17:48:25 by Mats Lidell
+;; Last-Mod:     20-Jan-24 at 20:01:18 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -111,7 +111,7 @@ documentation, not the full text."
 ;;;###autoload
 (defun hyperbole-demo (&optional arg)
   "Display the Hyperbole FAST-DEMO.
-With a prefix ARG, display the older, more extensive DEMO file."
+With a prefix ARG, display the older, more extensive \"DEMO\" file."
   (interactive "P")
   (hypb:display-file-with-logo (if arg "DEMO" "FAST-DEMO")))
 
