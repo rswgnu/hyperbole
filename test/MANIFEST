@@ -9,6 +9,7 @@ hibtypes-tests.el       - unit test for hib-kbd
 hmouse-drv-tests.el     - hmouse-drv unit tests
 hmouse-info-tests.el    - hmouse-info unit tests
 hpath-tests.el          - unit tests for hpath
+hsettings-test.el       - unit tests for hsettings
 hsys-org-tests.el       - hsys-org tests
 hui-register-tests.el   - test for hui-register
 hui-select-tests.el     - hui-select tests
