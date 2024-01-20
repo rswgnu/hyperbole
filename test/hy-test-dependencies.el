@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:16:00
-;; Last-Mod:     17-Jan-24 at 23:32:33 by Bob Weiner
+;; Last-Mod:     20-Jan-24 at 09:56:08 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -31,22 +31,10 @@
     (package-install pkg-symbol)))
 
 (mapc (lambda (sym) (hy-test-ensure-package-installed sym))
-      '(el-mock package-lint with-simulated-input))
+      '(el-mock with-simulated-input))
 
 ;; Needed when `hypb:display-file-with-logo' uses `org-mode'.
 (setq hsys-org-enable-smart-keys t)
-
-;; From compat.el package
-(unless (fboundp 'string-replace)
-(defun string-replace (fromstring tostring instring)
-  "Replace FROMSTRING with TOSTRING in INSTRING each time it occurs."
-  (when (equal fromstring "")
-    (signal 'wrong-length-argument '(0)))
-  (let ((case-fold-search nil))
-    (replace-regexp-in-string
-     (regexp-quote fromstring)
-     tostring instring
-     t t))))
 
 (require 'pp)
 (terpri)

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     15-Jan-24 at 22:15:11 by Bob Weiner
+;; Last-Mod:     20-Jan-24 at 10:03:01 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -989,12 +989,13 @@ body
   "Outline content for org files.")
 
 (defconst hyrolo-tests--outline-content-otl
-  (string-replace "org" "otl" hyrolo-tests--outline-content-org)
+  (replace-regexp-in-string "org" "otl" hyrolo-tests--outline-content-org)
   "Outline content for otl files.")
 
 (defconst hyrolo-tests--outline-content-md
-  (string-replace "*" "#"
-                  (string-replace "org" "md" hyrolo-tests--outline-content-org))
+  (replace-regexp-in-string
+   (regexp-quote "*") "#"
+   (replace-regexp-in-string "org" "md" hyrolo-tests--outline-content-org))
   "Outline content for markdown files.")
 
 (ert-deftest hyrolo-tests--forward-same-level-org-level2 ()
