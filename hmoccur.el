@@ -3,7 +3,7 @@
 ;; Author:       Markus Freericks <Mfx@cs.tu-berlin.de> / Bob Weiner
 ;;
 ;; Orig-Date:     1-Aug-91
-;; Last-Mod:     25-Dec-23 at 01:58:55 by Bob Weiner
+;; Last-Mod:     17-Jan-24 at 23:57:46 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -76,6 +76,7 @@ With optional FILE-REGEXP (a pattern which matches to files in a
 single directory), search matching files rather than current
 buffers.  The lines are shown in a buffer named *Moccur* which
 serves as a menu to find any of the occurrences in this buffer.
+With optional NO-FOLD-SEARCH non-nil do case sensitive search.
 
 \\{moccur-mode-map}"
   (interactive "sRegexp to find occurrences of: \nsFiles to search (default current file buffers): ")

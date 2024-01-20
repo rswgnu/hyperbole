@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Jun-16 at 14:24:53
-;; Last-Mod:     20-Jan-24 at 15:38:32 by Mats Lidell
+;; Last-Mod:     20-Jan-24 at 20:15:21 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -154,9 +154,9 @@ Ignore other types of GNU debbugs query strings."
 ;;; ************************************************************************
 
 (defun debbugs-gnu-show-discussion ()
+  "Display the 2nd message which is the initial bug report.
+This may be in Gnus or Rmail summary mode."
     (debbugs-gnu-select-report)
-    ;; Display the 2nd message which is the initial bug report.  This
-    ;; may be in Gnus or Rmail summary mode.
     (goto-char (point-min))
     (forward-line 1)
     (call-interactively (key-binding "\C-m")))
@@ -219,7 +219,7 @@ When the Action Key is pressed on a Gnu Debbugs listing entry."
   "Return t if point appears to be within a debbugs id.
 Id number is (match-string 2).  If this is a query with attributes,
 then (match-string 3) = \"?\" and (match-string 4) is the query
-attributes." 
+attributes."
   ;; Point must be before one of the bug#222 characters to match.
   (let ((case-fold-search t))
     (when (string-match "[bugise#0-9]" (char-to-string (following-char)))

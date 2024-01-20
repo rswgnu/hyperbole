@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     20-Jan-24 at 15:39:28 by Mats Lidell
+;; Last-Mod:     20-Jan-24 at 20:17:17 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -445,10 +445,10 @@ format documentation."
 		  (error "Invalid file"))))))
 
     '("\\.rdb\\'" . rdb:initialize)))
-  "*Alist of (FILENAME-REGEXP . EDIT-FUNCTION) elements for calling special
-functions to display particular file types within Emacs.  See
-also the function (hpath:get-external-display-alist) for external
-display program settings."
+  "*Alist for calling special functions to display file types in Emacs.
+The alist consists of (FILENAME-REGEXP . EDIT-FUNCTION) elements.
+See also the function (hpath:get-external-display-alist) for
+external display program settings."
   :type '(alist :key-type regexp :value-type sexp)
   :group 'hyperbole-commands)
 
@@ -707,8 +707,9 @@ Contains a %s for replacement of a specific section name.")
 ;;; ************************************************************************
 
 (defun hpath:abbreviate-file-name (path)
-  "Same as `abbreviate-file-name' but disables tramp-mode.
-This prevents improper processing of hargs with colons in them,
+  "Return a version of PATH shortened using `directory-abbrev-alist'.
+Same as `abbreviate-file-name' but disables `tramp-mode'.  This
+prevents improper processing of hargs with colons in them,
 e.g. `actypes::link-to-file'."
   (let (tramp-mode)
     (abbreviate-file-name path)))
@@ -792,7 +793,7 @@ match to empty string if present."
 
 (defun hpath:remote-at-p ()
   "Return a remote pathname that point is within or nil.
-See the `(emacs)Remote Files' info documentation for pathname format details.
+See the `(Emacs)Remote Files' info documentation for pathname format details.
 Always returns nil if (hpath:remote-available-p) returns nil."
   (let ((remote-package (hpath:remote-available-p))
 	(user (hpath:remote-default-user))
@@ -1641,7 +1642,7 @@ Move point to beginning of buffer if HASH is non-nil and ANCHOR is null."
 	(narrow-to-region omin omax)))))
 
 (defun hpath:find-executable (executable-list)
-  "Return first executable string from EXECUTABLE-LIST found in `exec-path'.
+  "Return first executable string from EXECUTABLE-LIST in variable `exec-path'.
 Return nil if none are found."
   (catch 'found
     (mapc
@@ -1713,7 +1714,7 @@ programs, such as a pdf reader.  The cdr of each element may be:
   a list of executable names \(the first valid one is used);
   or a function of one filename argument.
 See also `hpath:internal-display-alist' for internal,
-`window-system' independent display settings."
+window-system independent display settings."
   (cond ((memq window-system '(mac dps ns))
 	 hpath:external-display-alist-macos)
 	(hyperb:microsoft-os-p
@@ -1724,9 +1725,10 @@ See also `hpath:internal-display-alist' for internal,
 
 (defun hpath:is-p (path &optional type non-exist)
   "Return normalized PATH if PATH is a Posix or MSWindows path, else nil.
-If optional TYPE is the symbol \\='file or \\='directory, then only that path type
-is accepted as a match.  The existence of the path is checked only for
-locally reachable paths (Info paths are not checked).
+If optional TYPE is the symbol \\='file or \\='directory, then
+only that path type is accepted as a match.  The existence of the
+path is checked only for locally reachable paths (Info paths are
+not checked).
 
 Single spaces are permitted in the middle of existing pathnames, but not at
 the start or end.  With optional NON-EXIST equal to t, nonexistent local
@@ -2160,7 +2162,7 @@ Default-directory should be equal to the current Hyperbole button
 source directory when called, so that PATH is expanded relative
 to it."
   (unless (stringp path)
-    (error "(hpath:validate): \"%s\" is not a pathname." path))
+    (error "(hpath:validate): \"%s\" is not a pathname" path))
   (setq path (hpath:mswindows-to-posix path))
   (cond ((or (string-match "[()]" path) (hpath:remote-p path))
 	 ;; info or remote path, so don't validate
@@ -2460,9 +2462,12 @@ function (hpath:get-external-display-alist) and the variable
 
 (defun hpath:match (filename regexp-alist)
   "If FILENAME matches the car of any element in REGEXP-ALIST, return its cdr.
-REGEXP-ALIST elements must be of the form (<filename-regexp>
-. <command-to-display-file>).  <command-to-display-file> may be a string
-representing an external `window-system' command to run or it may be a Lisp
+REGEXP-ALIST elements must be of the form
+
+    (<filename-regexp> . <command-to-display-file>).
+
+<command-to-display-file> may be a string representing an
+external window-system command to run or it may be a Lisp
 function to call with FILENAME as its single argument."
   (let ((cmd)
 	elt)

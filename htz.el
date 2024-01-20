@@ -3,7 +3,7 @@
 ;; Author:       Masanobu Umeda             / Bob Weiner
 ;;
 ;; Orig-Date:    14-Oct-91 at 07:22:08
-;; Last-Mod:      2-Dec-23 at 23:27:40 by Bob Weiner
+;; Last-Mod:     19-Jan-24 at 12:13:19 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -363,7 +363,7 @@ Optional argument TIMEZONE specifies a time zone."
       (zerop (% year 400))))
 
 (defun htz:time-fix (year month day hour minute second)
-  "Fix date and time."
+  "Fix date and time given by YEAR, MONTH, DAY, HOUR, MINUTE and SECOND."
   (cond ((<= 24 hour)			; 24 -> 00
 	 (setq hour (- hour 24))
 	 (setq day  (1+ day))

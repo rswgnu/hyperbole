@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-May-91 at 04:22:02
-;; Last-Mod:      3-Oct-23 at 23:29:21 by Mats Lidell
+;; Last-Mod:     18-Jan-24 at 19:53:39 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -96,7 +96,9 @@ This includes Hyperbole button data."
 	(end (rmail-msgend rmail-current-message)))
     (narrow-to-region beg end)))
 
-(defun Rmail-msg-next ()        (rmail-next-undeleted-message 1))
+(defun Rmail-msg-next ()
+  "Go to next message."
+  (rmail-next-undeleted-message 1))
 
 (defun Rmail-msg-num ()
   "Return number of Rmail message that point is within."
@@ -111,7 +113,9 @@ This includes Hyperbole button data."
 	 (setq count (1+ count)))))
     count))
 
-(defun Rmail-msg-prev ()        (rmail-previous-undeleted-message 1))
+(defun Rmail-msg-prev ()
+  "Go to previous message."
+  (rmail-previous-undeleted-message 1))
 
 (defun Rmail-msg-to-p (mail-msg-id mail-file)
   "Set current buffer to start of msg with MAIL-MSG-ID in MAIL-FILE.
@@ -331,6 +335,7 @@ see the documentation of `rmail-resend'."
 ;;
 
 (defun hrmail--show-msg-and-buttons (&rest _)
+  "Show message and buttons."
   (if (fboundp 'hproperty:but-create)
       (progn (widen) (hproperty:but-create)
 	     (rmail-show-message))))
@@ -343,6 +348,7 @@ see the documentation of `rmail-resend'."
 ;; highlight Hyperbole buttons when possible.
 ;;
 (defun hrmail--highlight-buttons (&rest _)
+  "Highlight buttons."
   (if (fboundp 'hproperty:but-create) (hproperty:but-create)))
 (if (boundp 'rmail-summary-create-post-hook) ;FIXME: Doesn't exist.  XEmacs?
     (add-hook 'rmail-summary-create-post-hook 'hrmail--highlight-buttons)

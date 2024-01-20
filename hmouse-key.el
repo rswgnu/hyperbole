@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    30-May-94 at 00:11:57
-;; Last-Mod:     20-Jan-24 at 15:38:58 by Mats Lidell
+;; Last-Mod:     20-Jan-24 at 20:16:44 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -51,7 +51,7 @@
   "List of (key . binding) pairs for Hyperbole mouse keys.")
 
 (defvar hmouse-bindings-flag nil
-  "True if Hyperbole mouse bindings are in use, else nil.")
+  "Non-nil means Hyperbole mouse bindings are in use, else nil.")
 
 (defvar hmouse-previous-bindings nil
   "List of prior (key . binding) pairs for mouse keys rebound by Hyperbole.")
@@ -120,7 +120,7 @@ Assist Key = shift-right mouse key."
 		 "{Shift-Mouse-2} invokes"))))
 
 (defun hmouse-add-unshifted-smart-keys ()
-  "Bind mouse-2 to the Action Key and mouse-3 to the Assist Key."
+  "Bind \\`mouse-2' to the Action Key and \\`mouse-3' to the Assist Key."
   (interactive)
   (require 'hyperbole)
   (hmouse-unshifted-setup))
@@ -163,19 +163,6 @@ Use after any programmatic change is made."
 	  ftrs)
     (mapc #'require ftrs)
     (message "Hyperbole Smart Keys and menus have been updated")))
-
-;;; ************************************************************************
-;;; Private variables
-;;; ************************************************************************
-
-(defvar hmouse-bindings nil
-  "List of (key . binding) pairs for Hyperbole mouse keys.")
-
-(defvar hmouse-bindings-flag nil
-  "True if Hyperbole mouse bindings are in use, else nil.")
-
-(defvar hmouse-previous-bindings nil
-  "List of prior (key . binding) pairs for mouse keys rebound by Hyperbole.")
 
 (provide 'hmouse-key)
 

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    22-Nov-91 at 01:37:57
-;; Last-Mod:     23-Nov-23 at 01:51:41 by Bob Weiner
+;; Last-Mod:     17-Jan-24 at 23:47:04 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -77,10 +77,10 @@ the unmodified key.")
 
 (defconst kbd-key:extended-command-prefix "\\_<M-x\\_>"
   "Normalized prefix regular expression that invokes an extended command.
-Default is M-x.")
+Default is \\`M-x'.")
 
 (defconst kbd-key:extended-command-binding-list '(execute-extended-command helm-M-x counsel-M-x)
-  "List of commands that may be bound to M-x to invoke extended/named commands.")
+  "List of commands that may be bound to \\`M-x' to invoke extended/named commands.")
 
 (defvar kbd-key:mini-menu-key nil
   "The key sequence that invokes the Hyperbole minibuffer menu.")
@@ -189,7 +189,7 @@ Return t if KEY-SERIES is a valid key series that is executed, else nil."
     (hact #'kbd-key:act key-series)))
 
 (defun kbd-key:execute-special-series (key-series)
-  "Execute key series."
+  "Execute KEY-SERIES."
   (if (memq (key-binding [?\M-x]) '(execute-extended-command counsel-M-x))
       (kbd-key:key-series-to-events key-series)
     ;; Disable helm while processing M-x commands; helm
@@ -208,12 +208,12 @@ Return t if KEY-SERIES is a valid key series that is executed, else nil."
 
 (defun kbd-key:maybe-enable-helm (helm-flag orig-M-x-binding)
   "Enable helm-mode if HELM-FLAG is non-nil.
-Restore M-x binding to ORIG-M-X-BINDING."
+Restore \\`M-x' binding to ORIG-M-X-BINDING."
   (when helm-flag (helm-mode 1))
   (global-set-key [?\M-x] orig-M-x-binding))
 
 (defun kbd-key:key-series-to-events (key-series)
-  "Insert the key-series as a series of keyboard events.
+  "Insert the KEY-SERIES as a series of keyboard events.
 The events are inserted into Emacs unread input stream.  Emacs
 then executes them when its command-loop regains control."
   (setq unread-command-events (nconc unread-command-events
@@ -259,7 +259,7 @@ With optional prefix arg FULL, display full documentation for command."
   "Return the non-delimited, normalized form, of a delimited key series, STR.
 When STR is a curly-brace {} delimited key series, a
 non-delimited, normalized form is returned, else nil.  Key
-sequences should be in human readable form, e.g. {C-x C-b}, or
+sequences should be in human readable form, e.g. {\\`C-x' \\`C-b'}, or
 what `key-description' returns.  Forms such as {\C-b}, {\^b}, and
 {^M} will not be recognized.
 
@@ -380,6 +380,7 @@ For an approximate inverse of this, see `key-description'."
 ;; try to parse <event> strings nor does it have optional second
 ;; parameter, need-vector.
 (defun kbd-key:parse (string)
+  "Parse STRING for keys."
   (let ((case-fold-search nil)
 	(len (length string)) ; We won't alter string in the loop below.
 	(pos 0)
@@ -535,7 +536,7 @@ KEY-SERIES can have following interactive arguments."
   "Return non-nil if normalized KEY-SERIES string is one of the following:
 a Hyperbole minibuffer menu item key sequence,
 a HyControl key sequence,
-a M-x extended command,
+a \\`M-x' extended command,
   or a valid key sequence together with its interactive arguments."
   (or (kbd-key:hyperbole-mini-menu-key-p key-series)
       (kbd-key:hyperbole-hycontrol-key-p key-series)

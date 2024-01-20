@@ -1,5 +1,7 @@
 2024-01-20  Mats Lidell  <matsl@gnu.org>
 
+* Cleanup using flycheck resolving info and warning messages.
+
 * Update copyright date of latest updated version to be 2024 for all files
     with copyright string that so far have been updated in git under 2024.
 

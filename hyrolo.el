@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     20-Jan-24 at 15:42:34 by Mats Lidell
+;; Last-Mod:     20-Jan-24 at 20:22:18 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -147,7 +147,7 @@ executable must be found as well (for Oauth security)."
 The first file should be a user-specific hyrolo file, typically in the home
 directory and must have a suffix of either .org (Org mode) or .otl (Emacs
 Outline mode).  Other files in the list may use suffixes of .org, .otl, .md
-(Markdown mode) or .kotl (Koutline mode).
+\(Markdown mode) or .kotl (Koutline mode).
 
 A hyrolo-file consists of:
    (1) an optional header beginning with and ending with a line which matches
@@ -160,6 +160,8 @@ A hyrolo-file consists of:
   :group 'hyperbole-hyrolo)
 
 (defun hyrolo-file-list-changed (symbol set-to-value operation _where)
+  "Watch function for variable `hyrolo-file-list'.
+Function is called with 4 arguments: (SYMBOL SET-TO-VALUE OPERATION WHERE)."
   (if (memq operation '(let unlet)) ;; not setting global value
       (hyrolo-let-file-list symbol set-to-value)
     (hyrolo-set-file-list symbol set-to-value)))
@@ -174,8 +176,8 @@ A hyrolo-file consists of:
    "===============================================================================\n"
    "%s\n"
    "===============================================================================\n")
-  "Header to insert preceding a file's first HyRolo entry match when
-file has none of its own.  Used with one argument, the file name.")
+  "Header to insert before a file's first entry match when file has no header.
+Used with one argument, the file name.")
 
 (defconst hyrolo-hdr-regexp "^==="
   "Regular expression to match the first and last lines of hyrolo file headers.
@@ -379,7 +381,7 @@ String search expressions are converted to regular expressions.")
   "Keymap for the hyrolo display match buffer.")
 
 (defvar hyrolo-mode-prefix-map nil
-  "Keymap for hyrolo display match buffer bindings with a prefix, typically C-c.")
+  "Keymap for hyrolo display match buffer bindings with a prefix, typically \\`C-c'.")
 
 ;;; ************************************************************************
 ;;; Commands
@@ -995,6 +997,7 @@ Raise an error if a match is not found."
 		      new-file))))
 
 (defun hyrolo-set-display-buffer ()
+  "Set display buffer."
   (prog1 (set-buffer (get-buffer-create hyrolo-display-buffer))
     (unless (eq major-mode 'hyrolo-mode)
       (hyrolo-mode))
@@ -1261,8 +1264,9 @@ Return number of matching entries found."
 	 (not (get-file-buffer (expand-file-name bbdb-file)))))
     (hyrolo-grep-file hyrolo-file-or-buf regexp max-matches count-only)))
 
-(defun hyrolo-bbdb-entry-format (entry)
-  (let ((v (read entry)))
+(defun hyrolo-bbdb-entry-format (bbdb-entry)
+  "Format for a BBDB-ENTRY."
+  (let ((v (read bbdb-entry)))
     (format "* %s: %s: <%s>\n" (elt v 1) (elt v 0) (car (elt v 7)))))
 
 ;;; ************************************************************************
@@ -1316,6 +1320,7 @@ Return number of matching entries found."
 
 ;; Derived from google-contacts.el.
 (defun hyrolo-google-contacts-insert-data (contacts _token contact-prefix-string)
+  "Insert google CONTACTS data."
   (if (not contacts)
       ;; No contacts, insert a string and return nil
       (insert "No result.")
@@ -2079,7 +2084,7 @@ of the current heading, or to 1 if the current line is not a heading."
   "Move back to the start of current subtree and hide everything after the heading.
 If within a file header, hide the whole file after the end of the current line.
 
-Necessary, since with reveal-mode active, `outline-hide-subtree' works
+Necessary, since with `reveal-mode' active, `outline-hide-subtree' works
 only if on the heading line of the subtree."
   (interactive)
   (if (and (hyrolo-hdr-in-p)
@@ -2571,7 +2576,8 @@ a default of MM/DD/YYYY."
 
 (defun hyrolo-isearch-for-regexp (regexp fold-search-flag)
   "Interactively search forward for the next occurrence of REGEXP.
-Then add characters to further narrow the search."
+When FOLD-SEARCH-FLAG is non-nil search ignores case.  Then add
+characters to further narrow the search."
   (hyrolo-verify)
   (if (stringp regexp)
       (progn (setq unread-command-events
@@ -2751,7 +2757,7 @@ The date format is determined by the setting, `hyrolo-date-format'."
       min-level)))
 
 (defun hyrolo-search-directories (search-cmd file-regexp &rest dirs)
-  "Search HyRolo over files matching FILE-REGEXP in rest of DIRS."
+  "Search HyRolo over files using SEARCH-CMD matching FILE-REGEXP in rest of DIRS."
   (when (or (null file-regexp) (string-empty-p file-regexp))
     (setq file-regexp hyrolo-file-suffix-regexp))
   (let ((hyrolo-file-list (hypb:filter-directories file-regexp dirs)))
@@ -2799,7 +2805,9 @@ Any call to this function should be wrapped in a call to
 	    (min desired-shrinkage (- height window-min-height)))))))
 
 (defun hyrolo-to-buffer (buffer &optional other-window-flag _frame)
-  "Pop to BUFFER."
+  "Pop to BUFFER.
+With optional OTHER-WINDOW-FLAG non-nil, pop to a window other
+than the selected one."
   (pop-to-buffer buffer other-window-flag))
 
 (defun hyrolo-move-forward (func &rest args)
@@ -3046,7 +3054,7 @@ Push (point-max) of `hyrolo-display-buffer' onto
 	(setq-local hyrolo--cache-major-mode-index (1+ hyrolo--cache-major-mode-index))))))
 
 (defun hyrolo--cache-post-display-buffer ()
-  "Cache updates to make after display buffer modifications are finished."
+  "Cache update to make after display buffer modifications are finished."
   ;; Reverse both of the above lists to order them properly.
   (with-current-buffer hyrolo-display-buffer
     (setq-local hyrolo--cache-loc-match-bounds   (nreverse hyrolo--cache-loc-match-bounds)

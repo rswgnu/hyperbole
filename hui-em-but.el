@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Aug-92
-;; Last-Mod:     29-Oct-23 at 10:13:42 by Bob Weiner
+;; Last-Mod:     20-Jan-24 at 20:09:40 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -42,7 +42,7 @@
 ;;; ************************************************************************
 
 (defcustom hproperty:but-highlight-flag t
-  "*Non-nil applies `hproperty:but-face' highlight to labeled Hyperbole buttons."
+  "*Non-nil means highlight named Hyperbole buttons with `hproperty:but-face'."
   :type 'boolean
   :group 'hyperbole-buttons)
 
@@ -212,6 +212,7 @@ moves over it."
 	      regexp-match 'include-delims)))
 
 (defun hproperty:but-create-on-yank (_prop-value start end)
+  "Used in `yank-handled-properties' called with START and END pos of the text."
   (save-restriction
     (narrow-to-region start end)
     (hproperty:but-create-all)))
@@ -223,6 +224,7 @@ moves over it."
 ;;; ************************************************************************
 
 (defun hproperty:but-get (&optional pos)
+  "Get button property at optional POS or point."
   (car (delq nil
 	     (mapcar (lambda (props)
 		       (if (memq (overlay-get props 'face)
@@ -284,6 +286,7 @@ hproperty:color-ptr."
 		  (overlays-at (or pos (point))))))
 
 (defun hproperty:set-but-face (pos face)
+  "Set button face at POS to FACE."
   (let ((but (hproperty:but-get pos)))
     (when but (overlay-put but 'face face))))
 
@@ -295,7 +298,7 @@ hproperty:color-ptr."
 	 (end   (hattr:get 'hbut:current 'lbl-end))
 	 (ibut)
 	 (prev)
-	 (categ-face)) 
+	 (categ-face))
     (if (eq categ 'explicit)
 	(setq categ-face hproperty:but-face)
       (setq categ-face hproperty:ibut-face

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
-;; Last-Mod:      3-Oct-23 at 23:29:46 by Mats Lidell
+;; Last-Mod:     19-Jan-24 at 14:19:19 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -45,6 +45,8 @@ the current buffer.")
 ;;; ************************************************************************
 
 (defmacro hui-menu-browser (title browser-option)
+  "Browser menu with a TITLE.
+BROWSER-OPTION marks current active menu option as selected."
   `(list
     (list ,title
 	  ["Chrome (Google)"
@@ -88,6 +90,7 @@ the current buffer.")
 
 ;; List explicit buttons in the current buffer for menu activation.
 (defun hui-menu-explicit-buttons (rest-of-menu)
+  "Explicit button menu to go before REST-OF-MENU."
   (delq nil
 	(append
 	 '(["Manual"   (id-info "(hyperbole)Explicit Buttons") t]
@@ -125,6 +128,7 @@ Return t if cutoff, else nil."
 
 ;; List existing global buttons for menu activation.
 (defun hui-menu-global-buttons (rest-of-menu)
+  "Global button menu to go before REST-OF-MENU."
   (delq nil
 	(append
 	 '(["Manual" (id-info "(hyperbole)Global Buttons") t]
@@ -148,6 +152,7 @@ Return t if cutoff, else nil."
 		      (format "(%s)" (key-description (where-is-internal command nil t))))))
 
 (defun hui-menu-key-bindings (rest-of-menu)
+  "Key binding menu to go before REST-OF-MENU."
   (nconc
    (list
     (vector (hui-menu-key-binding-item "Action-Key          \t\t\t" 'hkey-either)                        '(hui:bind-key #'hkey-either) t)                    ;; {M-RET}
@@ -164,6 +169,7 @@ Return t if cutoff, else nil."
 
 ;; Dynamically compute submenus for Screen menu
 (defun hui-menu-screen (_ignored)
+  "Screen menu."
   (list
    ["Manual" (id-info "(hyperbole)HyControl") t]
    "----"
@@ -175,7 +181,7 @@ Return t if cutoff, else nil."
    (hui-menu-of-windows)))
 
 (defun hui-menu-web-search ()
-  ;; Pulldown menu
+  "Web search pulldown menu."
   (let* (service
 	 action)
     (mapcar (lambda (service-and-action)
@@ -322,7 +328,8 @@ Return t if cutoff, else nil."
   (force-mode-line-update))
 
 (defun hyperbole-popup-menu (&optional rebuild-flag)
-  "Popup the Hyperbole menubar menu."
+  "Popup the Hyperbole menubar menu.
+With optional REBUILD-FLAG rebuild the menu."
   (interactive "P")
   (popup-menu (infodock-hyperbole-menu rebuild-flag)))
 

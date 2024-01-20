@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    25-Jul-20
-;; Last-Mod:      3-Oct-23 at 17:42:21 by Mats Lidell
+;; Last-Mod:     19-Jan-24 at 12:13:30 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -60,7 +60,7 @@ If key is pressed:
      `assist-key-eol-function', typically to scroll down proportionally,
      if an Asisst Key press;
  (3) on the first line of the buffer (other than the end of line),
-     dired is run on the current directory of this dired-sidebar;
+     Dired is run on the current directory of this dired-sidebar;
  (4) at the end of the first or last line of the buffer,
      this dired-sidebar invocation is hidden."
 

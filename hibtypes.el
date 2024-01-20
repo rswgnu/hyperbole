@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     20-Jan-24 at 15:38:00 by Mats Lidell
+;; Last-Mod:     20-Jan-24 at 20:15:45 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -643,7 +643,7 @@ line."
                (save-excursion
                  (beginning-of-line)
                  ;; Entry line within a TOC
-                 (when (and (or 
+                 (when (and (or
 			     ;; Next line is typically in RFCs,
 			     ;; e.g. "1.1.  Scope ..... 1"
 			     (looking-at "^[ \t]*\\([0-9.]+\\([ \t]+[^ \t\n\r]+\\)+\\) \\.+")

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     8-Oct-92 at 19:08:31
-;; Last-Mod:     20-Jan-24 at 15:39:09 by Mats Lidell
+;; Last-Mod:     20-Jan-24 at 20:16:52 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -168,7 +168,9 @@ Second argument COUNT is used as a prefix argument to the command."
 	   (message "(HyDebug): hmouse-mod-execute-command - `%s' invalid key" key)))))
 
 (defun hmouse-mod-insert-command (count)
-  "Surrogate function for `self-insert-command'.  Accounts for modifier Smart Keys."
+  "Surrogate function for `self-insert-command'.
+Accounts for modifier Smart Keys.  COUNT is used as a prefix
+argument to the command."
   (interactive "p")
   (if (and (boundp 'action-key-depressed-flag)
 	   (boundp 'assist-key-depressed-flag))
@@ -204,7 +206,8 @@ Second argument COUNT is used as a prefix argument to the command."
   (keyboard-quit))
 
 (defun hmouse-mod-last-char ()
-  (when (characterp last-command-event)
+  "When last command was a character return the event."
+(when (characterp last-command-event)
     last-command-event))
 
 (provide 'hmouse-mod)

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     14-Jan-24 at 11:55:14 by Bob Weiner
+;; Last-Mod:     20-Jan-24 at 00:21:10 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -196,7 +196,9 @@ Do not save button data buffer."
 
 (defun    ebut:get (&optional lbl-key buffer key-src start-delim end-delim)
   "Return explicit Hyperbole button symbol given by LBL-KEY and BUFFER.
-KEY-SRC is given when retrieving global buttons and is the full source pathname.
+KEY-SRC is given when retrieving global buttons and is the full
+source pathname.  START-DELIM and END-DELIM are strings that
+override default button delimiters.
 
 Retrieve button data, convert into a button object and return a symbol
 which references the button.
@@ -2610,7 +2612,7 @@ Summary of operations based on inputs (name arg from \\='hbut:current attrs):
 	 (insert (format "<%s \"%s\" %d \"%s\">" (actype:def-symbol actype) arg1 arg2
 			 (hpath:shorten arg3)))))
       ('nil (error "(ibut:insert-text): actype must be a Hyperbole actype or Lisp function symbol, not '%s'" orig-actype))
-      ;; Generic action button type						      
+      ;; Generic action button type
       (_ (insert (format "<%s%s%s>" (actype:def-symbol actype) (if args " " "")
 			 (if args (hypb:format-args args) "")))))
     (unless (looking-at "\\s-\\|\\'")
@@ -2695,7 +2697,7 @@ the existing point."
 	   (save-excursion (insert new-lbl ibut:label-end))
 	   (hattr:clear 'hbut:current)
            t))
-	(t (error "(ibut:rename): Button '%s' not found in visible portion of buffer." old-lbl))))
+	(t (error "(ibut:rename): Button '%s' not found in visible portion of buffer" old-lbl))))
 
 (defalias 'ibut:summarize #'hbut:report)
 
@@ -3116,3 +3118,4 @@ Return TYPE's symbol if it existed, else nil."
     (and elisp-sym (funcall elisp-sym) t)))
 
 (provide 'hbut)
+;;; hbut.el ends here

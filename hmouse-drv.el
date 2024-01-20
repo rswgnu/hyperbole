@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     20-Jan-24 at 15:38:45 by Mats Lidell
+;; Last-Mod:     20-Jan-24 at 20:15:55 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -88,8 +88,8 @@ that the release point was in its frame.
 
 See function `hmouse-window-at-absolute-pixel-position' for more details.")
 
-(defvar action-key-depressed-flag nil "t while Action Key is depressed.")
-(defvar assist-key-depressed-flag nil "t while Assist Key is depressed.")
+(defvar action-key-depressed-flag nil "Non-nil means Action Key is depressed.")
+(defvar assist-key-depressed-flag nil "Non-nil means Assist Key is depressed.")
 (defvar action-key-depress-args nil
   "List of event args from most recent depress of the Action Mouse Key.")
 (defvar assist-key-depress-args nil
@@ -151,12 +151,12 @@ Note that this may be a buffer different than where the release occurs.")
   "When non-nil, cancels last Assist Key depress.")
 
 (defvar action-key-help-flag nil
-  "When non-nil, forces display of help for next Action Key release.")
+  "Non-nil means it forces display of help for next Action Key release.")
 (defvar assist-key-help-flag nil
-  "When non-nil, forces display of help for next Assist Key release.")
+  "Non-nil means it forces display of help for next Assist Key release.")
 
 (defvar assist-flag nil
-  "Non-nil when Hyperbole's Assist Key is in use rather than the Action Key.
+  "Non-nil means Hyperbole's Assist Key is in use rather than the Action Key.
 Never set directly.  Bound as a parameter when `hkey-execute' is called
 and then used as a free variable.")
 
@@ -246,12 +246,12 @@ This permits the Smart Keys to behave as paste keys.")
   (run-hooks 'assist-key-depress-hook))
 
 (defun action-key-depress-emacs (event)
-  "Handle depress event of the Hyperbole Action Mouse Key."
+  "Handle depress EVENT of the Hyperbole Action Mouse Key."
   (interactive "e")
   (action-key-depress event))
 
 (defun assist-key-depress-emacs (event)
-  "Handle depress event of the Hyperbole Assist Mouse Key."
+  "Handle depress EVENT of the Hyperbole Assist Mouse Key."
   (interactive "e")
   (assist-key-depress event))
 
@@ -359,6 +359,7 @@ a valid function."
     (setq action-key-depressed-flag nil)))
 
 (defun action-key-internal ()
+  "Action key internal."
   (setq action-key-depressed-flag t)
   (when action-key-cancelled
     (setq action-key-cancelled nil
@@ -382,6 +383,7 @@ bound to a valid function."
     (setq assist-key-depressed-flag nil)))
 
 (defun assist-key-internal ()
+  "Assist key internal."
   (setq assist-key-depressed-flag t)
   (when assist-key-cancelled
     (setq assist-key-cancelled nil
@@ -420,7 +422,7 @@ The ace-window package, (see \"https://elpa.gnu.org/packages/ace-window.html\"),
 assigns short ids to each Emacs window and lets you jump to or
 operate upon a specific window by giving its letter.  Hyperbole
 can insert an operation into ace-window that allows you to
-display items such as dired or buffer menu items in a specific
+display items such as Dired or buffer menu items in a specific
 window.
 
 To enable this feature, in your Emacs initialization file after
@@ -429,13 +431,13 @@ ace-window, then call:
 
  (hkey-ace-window-setup)
 
-otherwise, choose a binding like {M-o} and send it to the same
+otherwise, choose a binding like {\\`M-o'} and send it to the same
 function to bind it:
 
  (hkey-ace-window-setup \"\M-o\")
 
 Then whenever point is on an item you want displayed in another
-window, use {M-o i <id-of-window-to-display-item-in>} and watch the
+window, use {\\`M-o' i <id-of-window-to-display-item-in>} and watch the
 magic happen."
   (require 'ace-window)
   (when key (hkey-set-key key 'ace-window))
@@ -652,7 +654,7 @@ RELEASE-WINDOW is interactively selected via the `ace-window' command.
 The selected window does not change.
 
 With no prefix argument, create an unnamed implicit button.
-With a single C-u \\='(4) prefix argument, create an explicit button.
+With a single \\`C-u' \\='(4) prefix argument, create an explicit button.
 With any other prefix argument, like M-1, create an named implicit button."
   (interactive
    (list (let ((mode-line-text (concat " Ace - Hyperbole: " (nth 2 (assq ?w aw-dispatch-alist)))))
@@ -753,7 +755,7 @@ The selected window does not change."
 ;;;###autoload
 (defun hmouse-click-to-drag-item ()
   "Mouse click on start and end windows for use with `hkey-drag-item'.
-Emulate {M-o i} from start window to end window.
+Emulate {\\`M-o' i} from start window to end window.
 After the drag, the end window is the selected window."
   (interactive)
   (hmouse-choose-windows #'hkey-drag-item))
@@ -861,7 +863,7 @@ hkey-replace, hkey-swap and hkey-throw."
 (defun hmouse-keyboard-choose-windows (func)
   "Press Return in start and end windows which are then applied to FUNC.
 With the start window temporarily selected, run FUNC with the end
-window as an argument. 
+window as an argument.
 
 Appropriate FUNCs include: hkey-drag, hkey-drag-to, hkey-link,
 hkey-replace, hkey-swap and hkey-throw."
@@ -984,6 +986,7 @@ frame instead."
         (mouse-drag-frame start-event 'move))))))
 
 (defun hkey-debug (pred pred-value hkey-action)
+  "Display a message with the context and values from Smart Key activation."
   (message (concat "(HyDebug) %sContext: %s; %s: %s; Buf: %s; Mode: %s; MinibufDepth: %s\n"
 		   "  action-depress: %s; action-release: %s\n"
 		   "  assist-depress: %s; assist-release: %s")
@@ -1388,7 +1391,7 @@ the current window.  By default, it is displayed in another window."
 
 (defun hkey-toggle-debug (&optional arg)
   "Toggle whether Hyperbole logs Smart Key events.
-Key events can be used later for analysis/submission using {C-h h m c}.
+Key events can be used later for analysis/submission using {\\`C-h' h m c}.
 With optional ARG, enable iff ARG is positive."
   (interactive "P")
   (if (or (and arg (<= (prefix-numeric-value arg) 0))
@@ -1412,7 +1415,7 @@ and it was inactive, return its window, else nil."
 
 ;; Based on code from subr.el.
 (defun hmouse-vertical-line-spacing (frame)
-  "Return any extra vertical spacing in pixels between text lines or 0 if none."
+  "Return FRAME extra vertical spacing in pixels between text lines or 0 if none."
   (let ((spacing (when (display-graphic-p frame)
                    (or (with-current-buffer (window-buffer (frame-selected-window frame))
                          line-spacing)

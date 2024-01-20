@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-Mar-94 at 23:37:28
-;; Last-Mod:     24-Dec-23 at 00:06:07 by Bob Weiner
+;; Last-Mod:     19-Jan-24 at 14:09:51 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -60,6 +60,7 @@
 
 ;;;###autoload
 (defun hui-menu-of-buffers ()
+  "Buffer menu."
   (let* ((buf-name)
 	 (buffer-and-mode-name-list
 	  ;; Remove internal buffers whose names begin with a space
@@ -160,6 +161,7 @@ Jump to chosen buffer."
 ;;; ************************************************************************
 
 (defun hui-menu-buffer-mode-name (buffer)
+  "Return the mode name for BUFFER."
   (let ((mname (buffer-local-value 'mode-name buffer)))
     (if mname
 	;; Next line needed to ensure mode name is always formatted as
@@ -173,6 +175,7 @@ Jump to chosen buffer."
   (frame-parameter frame 'name))
 
 (defun hui-menu-modeline (_ignore)
+  "Return a modeline menu."
   (list
    ["Control-Frames"  hycontrol-enable-frames-mode t]
    ["Control-Windows" hycontrol-enable-windows-mode t]
@@ -204,10 +207,12 @@ Jump to chosen buffer."
    ;;  ["Raise-Frame"               raise-frame                    t])
 
 (defun hui-menu-to-frame (frame)
+  "Raise FRAME."
   (make-frame-visible frame)
   (raise-frame (select-frame frame)))
   
 (defun hui-menu-to-window (window)
+  "Go to WINDOW."
   (if (window-live-p window)
       (let ((frame (window-frame window)))
 	(make-frame-visible frame)
@@ -240,6 +245,7 @@ Reverse sort elements by `mode-name' and then by `buffer-name'."
     (read (current-buffer))))
 
 (defun hui-menu-of-frames ()
+  "Return a menu of frames."
   (let ((frames (copy-sequence (frame-list))))
     (hui-menu-cutoff-list frames)
     (cons "Frames"
@@ -253,6 +259,7 @@ Reverse sort elements by `mode-name' and then by `buffer-name'."
 					(hui-menu-frame-name fm2))))))))
 
 (defun hui-menu-of-windows ()
+  "Return a menu of windows."
   (let ((windows (hui-menu-window-list-all-frames 'nomini)))
     (hui-menu-cutoff-list windows)
     (cons "Windows"
@@ -268,7 +275,7 @@ Reverse sort elements by `mode-name' and then by `buffer-name'."
 
 (defun hui-menu-program-path (exe &optional insert-flag)
   "Return the full path name of the executable named by EXE.
-This command searches the directories in `exec-path'.
+This command searches the directories in variable `exec-path'.
 With optional prefix arg INSERT-FLAG, inserts the pathname at point."
   (interactive "sGet pathname of executable: \nP")
   (catch 'answer
@@ -334,6 +341,7 @@ frame.  The current buffer is buried in the old frame's buffer list."
        t))
 
 (defun hui-menu-edit-server-finish ()
+  "If current buffer is an edit server buffer, signal edit is done and delete it."
   (if (hui-menu-server-buffer-p)
       ;; If this buffer is the result of an edit request from an external
       ;; application, signal that edit is done and delete frame.

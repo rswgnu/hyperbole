@@ -4,7 +4,7 @@
 ;; Maintainer:   Bob Weiner, Mats Lidell
 ;;
 ;; Orig-Date:     1-Jan-94
-;; Last-Mod:      3-Dec-23 at 09:43:50 by Bob Weiner
+;; Last-Mod:     19-Jan-24 at 23:13:33 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -58,9 +58,10 @@ your specific mouse.")
 ;; Called in hyperbole.el.
 (defun hyperb:stack-frame (function-list &optional debug-flag)
   "Return the nearest Elisp stack frame that called a function from FUNCTION-LIST.
-Return nil if there is no match.  FUNCTION-LIST entries must be symbols.
-If FUNCTION-LIST contains \\='load, \\='autoload or \\='require, detect autoloads
-not visible within the Lisp level stack frames.
+Return nil if there is no match.  FUNCTION-LIST entries must be
+symbols.  If FUNCTION-LIST contains \\='load, \\='autoload or
+\\='require, detect autoloads not visible within the Lisp level
+stack frames.
 
 With optional DEBUG-FLAG non-nil, if no matching frame is found, return list
 of stack frames (from innermost to outermost)."

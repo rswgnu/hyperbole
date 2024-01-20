@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10-Jul-22 at 18:10:56
-;; Last-Mod:     14-May-23 at 11:27:53 by Bob Weiner
+;; Last-Mod:     19-Jan-24 at 12:11:07 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -67,7 +67,7 @@ The first %s is where the video id string is inserted; the second %s is
 where the start time string in seconds is inserted; the third %s is
 where the end time string in seconds is inserted.  The time strings
 must be in colon-separated hours:minutes:seconds format, e.g. 1:2:44
-(1 hour, two minutes, 45 seconds), where the hours and minutes are
+\(1 hour, two minutes, 45 seconds), where the hours and minutes are
 optional.")
 
 ;;; ************************************************************************
@@ -205,7 +205,7 @@ format is invalid, return it unchanged."
 	   (string-match-p ":" start-time-string))
       (let* ((time-parts (split-string start-time-string "[:hmsHMS]" t))
              (num-of-parts (length time-parts))
-	     (part1 (nth 0 time-parts)) 
+	     (part1 (nth 0 time-parts))
 	     (part2 (nth 1 time-parts))
 	     (part3 (nth 2 time-parts)))
         (cond ((zerop num-of-parts)
@@ -229,7 +229,7 @@ START-TIME-STRING format is invalid, return it unchanged."
 	   (string-match-p "[:hmsHMS]" start-time-string))
       (let* ((time-parts (split-string start-time-string "[:hmsHMS]" t))
              (num-of-parts (length time-parts))
-	     (part1 (nth 0 time-parts)) 
+	     (part1 (nth 0 time-parts))
 	     (part2 (nth 1 time-parts))
 	     (part3 (nth 2 time-parts)))
         (cond ((zerop num-of-parts)
@@ -246,3 +246,5 @@ START-TIME-STRING format is invalid, return it unchanged."
     start-time-string))
 
 (provide 'hsys-youtube)
+;;; hsys-youtube.el ends here
+
