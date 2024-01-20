@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     17-Jan-24 at 14:57:57 by Mats Lidell
+# Last-Mod:     20-Jan-24 at 10:07:54 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -535,5 +535,7 @@ package-lint:
 	$(EMACS_BATCH) \
 	--eval "(setq package-lint-main-file \"hyperbole.el\")" \
 	--eval "(load-file \"test/hy-test-dependencies.el\")" \
+	--eval "(add-to-list 'package-archives '(\"melpa\" . \"https://melpa.org/packages/\"))" \
+	--eval "(hy-test-ensure-package-installed 'package-lint)" \
 	-l package-lint.el -f package-lint-batch-and-exit \
 	$(EL_KOTL) $(EL_SRC)

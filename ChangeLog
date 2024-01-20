@@ -3,6 +3,19 @@
 * test/hsettings-test.el: New test file for hsettings.
     (hsettings-test--hyperbole-web-search): Test hyperbole-web-search.
 
+* Makefile (package-lint): Add explicit loading of package-lint from Melpa
+    for this target. Only needed there.
+
+* test/hy-test-dependencies.el: Do not load package-lint for running
+    tests.
+
+* test/hy-test-dependencies.el (string-replace): Remove not needed
+    compatibility code.
+
+* test/hyrolo-tests.el (hyrolo-tests--outline-content-otl)
+    (hyrolo-tests--outline-content-md): Use replace-regexp-in-string for
+    compatibility with old Emacs versions.
+
 2024-01-17  Bob Weiner  <rsw@gnu.org>
 
 * test/hy-test-dependencies.el (org-reloaded): Show Org src dir.
