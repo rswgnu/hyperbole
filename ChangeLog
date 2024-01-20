@@ -1,5 +1,8 @@
 2024-01-20  Mats Lidell  <matsl@gnu.org>
 
+* test/hsettings-test.el: New test file for hsettings.
+    (hsettings-test--hyperbole-web-search): Test hyperbole-web-search.
+
 * Makefile (package-lint): Add explicit loading of package-lint from Melpa
     for this target. Only needed there.
 
