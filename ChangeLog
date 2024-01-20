@@ -1,5 +1,8 @@
 2024-01-20  Mats Lidell  <matsl@gnu.org>
 
+* Update copyright date of latest updated version to be 2024 for all files
+    with copyright string that so far have been updated in git under 2024.
+
 * test/hsettings-test.el: New test file for hsettings.
     (hsettings-test--hyperbole-web-search): Test hyperbole-web-search.
 
@@ -8,9 +11,7 @@
 
 * test/hy-test-dependencies.el: Do not load package-lint for running
     tests.
-
-* test/hy-test-dependencies.el (string-replace): Remove not needed
-    compatibility code.
+    (string-replace): Remove not needed compatibility code.
 
 * test/hyrolo-tests.el (hyrolo-tests--outline-content-otl)
     (hyrolo-tests--outline-content-md): Use replace-regexp-in-string for
