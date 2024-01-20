@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Apr-91 at 00:48:49
-;; Last-Mod:     20-Jan-24 at 20:18:53 by Mats Lidell
+;; Last-Mod:     20-Jan-24 at 15:05:31 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -160,22 +160,31 @@ ignores current line and always scrolls up or down a windowful."
   "Read from the keyboard a list of (web-search-service-string search-term-string).
 With optional non-empty SERVICE-NAME and SEARCH-TERM arguments,
 use those instead of reading from the keyboard."
-  (let ((completion-ignore-case t))
+  (let ((completion-ignore-case t)
+	cmd-or-url)
     (while (or (not (stringp service-name)) (equal service-name ""))
       (setq service-name (completing-read "Search service: " hyperbole-web-search-alist
 					  nil t)))
-    (while (or (not (stringp search-term)) (equal search-term ""))
-      (setq search-term (read-string (format "Search %s for: " service-name)
-				     (hyperbole-default-web-search-term))))
+    (setq cmd-or-url (cdr (assoc service-name hyperbole-web-search-alist)))
+    (unless (functionp cmd-or-url)
+      (while (or (not (stringp search-term)) (equal search-term ""))
+	(setq search-term (read-string (format "Search %s for: " service-name)
+				       (hyperbole-default-web-search-term)))))
     (list service-name search-term)))
 
 (defun hyperbole-web-search (&optional service-name search-term return-search-expr-flag)
-  "Search web SERVICE-NAME for SEARCH-TERM.
-Both arguments are optional and are prompted for when not given or when null.
-With optional RETURN-SEARCH-EXPR-FLAG return the search expression.
-Uses `hyperbole-web-search-alist' to match each service to its search url.
-Uses `hyperbole-web-search-browser-function' and the `browse-url'
-package to display search results."
+  "Search web SERVICE-NAME for SEARCH-TERM (both arguments are optional).
+With optional RETURN-SEARCH-EXPR-FLAG, return the search expression.
+
+Use `hyperbole-web-search-alist' to match each service to its search
+url or function.
+Use `hyperbole-web-search-browser-function' and the `browse-url'
+package to display search results.
+
+If SERVICE-NAME is not given or is null and it is associated with
+a function rather than a search url in `hyperbole-web-search-alist',
+don't prompt for SEARCH-TERM; the function will prompt for that when
+run."
   (interactive)
   (cl-multiple-value-bind (service-name search-term)
       (hyperbole-read-web-search-arguments service-name search-term)
@@ -183,17 +192,18 @@ package to display search results."
 	  (search-pat (cdr (assoc service-name hyperbole-web-search-alist
 				  (lambda (service1 service2)
 				    (equal (downcase service1) (downcase service2)))))))
-      (setq search-term (browse-url-url-encode-chars search-term "[*\"()',=;?% ]"))
+      (unless (null search-term)
+	(setq search-term (browse-url-url-encode-chars search-term "[*\"()',=;?% ]")))
       (if return-search-expr-flag
 	  (cond ((stringp search-pat)
 		 (format search-pat search-term))
 		((functionp search-pat)
-		 (list search-pat search-term))
+		 (list search-pat))
 		(t (user-error "(Hyperbole): Invalid web search service `%s'" service-name)))
 	(cond ((stringp search-pat)
 	       (browse-url (format search-pat search-term)))
 	      ((functionp search-pat)
-	       (funcall search-pat search-term))
+	       (funcall search-pat))
 	      (t (user-error "(Hyperbole): Invalid web search service `%s'" service-name)))))))
 
 ;; This must be defined before the defcustom `inhbit-hyperbole-messaging'.

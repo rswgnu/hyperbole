@@ -1,3 +1,9 @@
+2024-01-20  Bob Weiner  <rsw@gnu.org>
+
+* hsettings.el (hyperbole-web-search, hyperbole-read-web-search-arguments): Update
+    to not prompt for search-term if the service is a function rather than a string.
+    In such cases, the function should prompt for the search term.
+
 2024-01-20  Mats Lidell  <matsl@gnu.org>
 
 * Cleanup using flycheck resolving info and warning messages.
