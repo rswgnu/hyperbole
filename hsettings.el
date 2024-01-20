@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Apr-91 at 00:48:49
-;; Last-Mod:     20-Jan-24 at 15:05:31 by Bob Weiner
+;; Last-Mod:     20-Jan-24 at 15:49:24 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -260,6 +260,7 @@ Hyperbole, and then restart Emacs."
     ("Bing" . "http://www.bing.com/search?q=%s")
     ;; Wikipedia Dictionary
     ("Dictionary" . "https://en.wiktionary.org/wiki/%s")
+    ("ducKduckgo" . "https://duckduckgo.com/?q=%s")
     ("Elisp" . "http://www.google.com/search?q=%s+filetype:el")
     ;; Facebook Hashtags
     ("Facebook" . "https://www.facebook.com/hashtag/%s")
