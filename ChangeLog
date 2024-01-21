@@ -35,6 +35,8 @@
 
 2024-01-20  Mats Lidell  <matsl@gnu.org>
 
+* hmouse-sh.el (hmouse-move-point-eterm): Remove unused function.
+
 * Cleanup using flycheck resolving info and warning messages.
 
 * Update copyright date of latest updated version to be 2024 for all files
