@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
-;; Last-Mod:     19-Jan-24 at 14:19:19 by Mats Lidell
+;; Last-Mod:     21-Jan-24 at 10:31:58 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -206,7 +206,7 @@ Return t if cutoff, else nil."
 		  (if (= (aref hyperb:version 0) ?0)
 		      (substring hyperb:version 1)
 		    hyperb:version))
-	  #'(hypb:display-file-with-logo "HY-ABOUT")
+	  '(hypb:display-file-with-logo "HY-ABOUT")
 	  t))
 
 (defconst hui-menu-options

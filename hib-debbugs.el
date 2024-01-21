@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Jun-16 at 14:24:53
-;; Last-Mod:     20-Jan-24 at 20:15:21 by Mats Lidell
+;; Last-Mod:     21-Jan-24 at 10:32:46 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -90,8 +90,8 @@
 ;;; ************************************************************************
 
 (eval-after-load "debbugs-gnu"
-  #'(progn (push "hyperbole"  debbugs-gnu-all-packages)
-	   (push "oo-browser" debbugs-gnu-all-packages)))
+  '(progn (push "hyperbole"  debbugs-gnu-all-packages)
+	  (push "oo-browser" debbugs-gnu-all-packages)))
 
 ;;; ************************************************************************
 ;;; Public implicit button types

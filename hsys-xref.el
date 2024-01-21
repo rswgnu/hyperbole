@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     20-Jan-24 at 20:19:45 by Mats Lidell
+;; Last-Mod:     21-Jan-24 at 12:42:59 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -34,7 +34,7 @@
 
 (defun hsys-xref-definitions (identifier)
   "Return a list of all definitions of string IDENTIFIER."
-  (let* ((elisp-flag (smart-emacs-lisp-mode-p))
+  (let* ((elisp-flag (smart-emacs-lisp-mode-p t))
 	 (xref-backend (or (and elisp-flag
 				(fboundp 'ert-test-boundp)
 				(ert-test-boundp (intern-soft identifier))

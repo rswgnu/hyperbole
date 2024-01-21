@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     20-Jan-24 at 20:21:57 by Mats Lidell
+;; Last-Mod:     21-Jan-24 at 12:43:04 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -395,19 +395,22 @@ When optional NO-FLASH, do not flash."
   (ignore-errors (require 'cc-mode) (c-initialize-cc-mode))
   nil)
 
-(defun smart-emacs-lisp-mode-p ()
+(defun smart-emacs-lisp-mode-p (&optional skip-identifier-flag)
   "Return non-nil if in a mode using Emacs Lisp symbols."
   ;; Beyond Lisp files, Emacs Lisp symbols appear frequently in Byte-Compiled
   ;; buffers, debugger buffers, program ChangeLog buffers, Help buffers,
-  ;; *Warnings*, *Flymake log* and *Flymake diagnostics... buffers.
-  (or (memq major-mode #'(emacs-lisp-mode lisp-interaction-mode
-					  debugger-mode ert-results-mode))
+  ;; *Warnings*, *Flymake log* and *Flymake diagnostics buffers.
+  (or (apply #'derived-mode-p '(emacs-lisp-mode lisp-interaction-mode
+				debugger-mode ert-results-mode))
       (string-match-p (concat "\\`\\*\\(Warnings\\|Flymake log\\|Compile-Log\\(-Show\\)?\\)\\*"
 			      "\\|\\`\\*Flymake diagnostics")
 		      (buffer-name))
-      (and (or (memq major-mode #'(help-mode change-log-mode))
+      ;; Consider the following buffer types only if on an Emacs Lisp
+      ;; symbol that can be looked up, e.g. in a TAGS file or via a
+      ;; previous symbol load.
+      (and (or (apply #'derived-mode-p '(help-mode change-log-mode))
 	       (string-match-p "\\`\\*Help\\|Help\\*\\'" (buffer-name)))
-	   (smart-lisp-at-known-identifier-p))))
+	   (or skip-identifier-flag (smart-lisp-at-known-identifier-p)))))
 
 (defun smart-fortran (&optional identifier next)
   "Jump to the definition of optional Fortran IDENTIFIER or the one at point.
@@ -761,7 +764,7 @@ Return matching Elisp tag name that point is within, else nil."
   (when (derived-mode-p 'change-log-mode)
     (let ((identifier (smart-lisp-at-tag-p)))
       (and identifier (intern-soft identifier)
-	   (string-match "[^-]-[^-]" identifier)
+	   (string-match-p "[^-]-[^-]" identifier)
 	   identifier))))
 
 (defun smart-lisp-htype-tag (tag)
@@ -837,7 +840,7 @@ on the first line of a non-alias Lisp definition."
 (defun smart-lisp-mode-p ()
   "Return t if in a mode which use Lisp symbols."
   (or (smart-emacs-lisp-mode-p)
-      (memq major-mode '(lisp-mode scheme-mode))))
+      (apply #'derived-mode-p '(lisp-mode scheme-mode))))
 
 ;;;###autoload
 (defun smart-objc (&optional identifier next)
@@ -1544,7 +1547,7 @@ to look.  If no tags file is found, an error is signaled."
   "Return the best available function for finding a tag definition.
 The function does not select the tag definition."
   (car (delq nil (mapcar (lambda (func) (if (fboundp func) func))
-			 #'(hsys-xref-definition find-tag-noselect find-tag-internal)))))
+			 '(hsys-xref-definition find-tag-noselect find-tag-internal)))))
 
 (provide 'hmouse-tag)
 

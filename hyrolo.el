@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     20-Jan-24 at 20:22:18 by Mats Lidell
+;; Last-Mod:     21-Jan-24 at 10:54:37 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1945,7 +1945,7 @@ When found, return the match start position."
     (match-beginning 0)))
 
 ;;; In `hyrolo-mode' replace `outline-minor-mode' bindings with hyrolo-* overrides.
-;;; Wrap outline movement commands with a `hyrolo-funcall-match' call
+;;; Wrap outline movement commands with a `hyrolo-funcall-match' call.
 ;;; Wrap outline whole buffer commands with a `hyrolo-map-matches' call.
 (defun hyrolo-outline-back-to-heading (&optional invisible-ok)
   "Move to previous heading line, or beg of this line if it's a heading.
@@ -2917,13 +2917,13 @@ prior to applying FUNC."
 	    (when (and (fboundp 'orgtbl-mode) orgtbl-mode)
 	      ;; Disable as overrides single letter keys
 	      (orgtbl-mode 0))
-	    ;; This pause forces a window redisplay that maximizes the
-	    ;; entries displayed for any final location of point.
-	    (sit-for 0.001)
 	    ;; Need to leave point on a visible character or since
 	    ;; hyrolo uses reveal-mode, redisplay will rexpand
 	    ;; hidden entries to make point visible.
-	    (hyrolo-back-to-visible-point)))
+	    (hyrolo-back-to-visible-point)
+	    ;; This pause forces a window redisplay that maximizes the
+	    ;; entries displayed for any final location of point.
+	    (sit-for 0.001)))
       (let ((outline-regexp hyrolo-hdr-and-entry-regexp))
 	(save-excursion
 	  (funcall func))))))
@@ -2976,13 +2976,13 @@ proper major mode."
 		(when (and (fboundp 'orgtbl-mode) orgtbl-mode)
 		  ;; Disable as overrides single letter keys
 		  (orgtbl-mode 0))
-		;; This pause forces a window redisplay that maximizes the
-		;; entries displayed for any final location of point.
-		(sit-for 0.0001)
 		;; Need to leave point on a visible character or since
 		;; hyrolo uses reveal-mode, redisplay will rexpand
 		;; hidden entries to make point visible.
-		(hyrolo-back-to-visible-point)))))
+		(hyrolo-back-to-visible-point)
+		;; This pause forces a window redisplay that maximizes the
+		;; entries displayed for any final location of point.
+		(sit-for 0.0001)))))
       (let ((outline-regexp hyrolo-hdr-and-entry-regexp))
 	(funcall func)))))
 

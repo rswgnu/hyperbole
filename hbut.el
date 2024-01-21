@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     20-Jan-24 at 00:21:10 by Mats Lidell
+;; Last-Mod:     21-Jan-24 at 10:31:14 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1686,7 +1686,7 @@ Keys in optional KEY-SRC or the current buffer."
     (when (hbut:key-src-set-buffer (or key-src (current-buffer)))
       (save-restriction
 	(widen)
-	(ibut:label-map #'(lambda (label _start _end) (ibut:label-to-key label)))))))
+	(ibut:label-map (lambda (label _start _end) (ibut:label-to-key label)))))))
 
 ;;; ========================================================================
 ;;; ibut class - Implicit Hyperbole Buttons

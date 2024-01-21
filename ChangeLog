@@ -1,3 +1,31 @@
+2024-01-21  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-tag.el (smart-emacs-lisp-mode-p ,smart-lisp-mode-p): Change to use
+   'derived-mode-p' rather than checking for 'major-mode' matches directly.
+                (smart-emacs-lisp-mode-p): Add optional 'skip-identifier-flag'.
+  hsys-xref.el (hsys-xref-definitions): Use above flag to fix improper cyclic
+    calling of 'smart-emacs-lisp-mode-p'; visible as very slow Elisp tag finding
+    in ChangeLog mode.
+
+* hsys-org.el (hsys-org-log-and-fix-version): Add to log state when fixing a mixed
+    Org mode installation.
+  test/hy-test-dependencies.el: Remove require of 'pp' library and move logging
+    into "hsys-org.el".
+
+* hyrolo.el (hyrolo-map-matches, hyrolo-funcall-match): Move 'sit-for' to the end
+    of the function to ensure happens last.
+
+* hui-window.el (hmouse-alist-add-window-handlers):
+  hui-mouse.el (outline-mode-hook):
+  hui-menu.el (hui-menu-about):
+  hmouse-tag.el (smart-emacs-lisp-mode-p, smart-tags-noselect-function):
+  hib-debbugs.el (debbugs-gnu):
+  hbut.el (hbut:ibut-key-list): Remove # quoting around function lists as edebug
+    cannot handle this.
+
+* test/hy-test-dependencies.el (hsys-org-fix-version): Improve log msgs for
+    this function.
+
 2024-01-20  Bob Weiner  <rsw@gnu.org>
 
 * hsettings.el (hyperbole-web-search, hyperbole-read-web-search-arguments): Update

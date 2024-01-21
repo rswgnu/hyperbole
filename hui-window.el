@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Sep-92
-;; Last-Mod:     20-Jan-24 at 20:22:03 by Mats Lidell
+;; Last-Mod:     21-Jan-24 at 10:32:38 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -183,7 +183,7 @@ and release to register a diagonal drag.")
 (defvar hmouse-alist)
 (defun hmouse-alist-add-window-handlers ()
   "Add Smart Mouse Key drag actions to `hmouse-alist'."
-  (unless (assoc #'(hmouse-inactive-minibuffer-p) hmouse-alist)
+  (unless (assoc '(hmouse-inactive-minibuffer-p) hmouse-alist)
     (setq hmouse-alist
 	  (append
 	   '(

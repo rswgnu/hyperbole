@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:16:00
-;; Last-Mod:     20-Jan-24 at 09:56:08 by Mats Lidell
+;; Last-Mod:     21-Jan-24 at 11:42:52 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -33,21 +33,11 @@
 (mapc (lambda (sym) (hy-test-ensure-package-installed sym))
       '(el-mock with-simulated-input))
 
-;; Needed when `hypb:display-file-with-logo' uses `org-mode'.
+;; Needed when `hypb:display-file-with-logo' uses `org-mode'
 (setq hsys-org-enable-smart-keys t)
 
-(require 'pp)
-(terpri)
-(print (format "Org source dir = %S" (ignore-errors (org-find-library-dir "org"))))
-(print (format "Org load dir   = %S" (ignore-errors (org-find-library-dir "org-loaddefs"))))
-(print (format "Org version    = %S" (org-release)))
-(terpri)
-
-(let ((org-reloaded (hsys-org-fix-version)))
-  (if org-reloaded
-      (message "Mixed Org versions fixed and reloaded\n  version is now %s\n  source dir is now %S"
-	       org-version (ignore-errors (org-find-library-dir "org")))
-    (message "Correct, single version of Org is active %s" org-version)))
+;; Log and fix any mixed version Org installation
+(hsys-org-log-and-fix-version)
 
 (provide 'hy-test-dependencies)
 ;;; hy-test-dependencies.el ends here
