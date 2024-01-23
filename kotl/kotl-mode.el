@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     20-Jan-24 at 15:43:01 by Mats Lidell
+;; Last-Mod:     21-Jan-24 at 23:26:00 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -186,8 +186,7 @@ It provides the following keys:
 	  outline-level  #'hyrolo-outline-level
 	  outline-regexp hyrolo-hdr-and-entry-regexp))
   ;;
-  (when (fboundp 'add-to-invisibility-spec)
-    (add-to-invisibility-spec '(outline . t)))
+  (hypb:add-to-invisibility-spec '(outline . t))
   (setq indent-line-function 'kotl-mode:indent-line
 	indent-region-function 'kotl-mode:indent-region
 	outline-isearch-open-invisible-function 'kotl-mode:isearch-open-invisible

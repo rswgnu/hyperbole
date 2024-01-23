@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    29-Jun-16 at 14:39:33
-;; Last-Mod:     24-Dec-23 at 00:41:54 by Bob Weiner
+;; Last-Mod:     21-Jan-24 at 23:38:30 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -69,7 +69,7 @@ directory separator character.")
 ;;; Emacs Outline settings for .otl files
 ;;; ************************************************************************
 
-(add-to-list 'auto-mode-alist '("\\.otl\\'" . outline-mode))
+(add-to-list 'auto-mode-alist '("\\.ou?tl\\'" . outline-mode))
 
 ;;; ************************************************************************
 ;;; Hyperbole test importation settings

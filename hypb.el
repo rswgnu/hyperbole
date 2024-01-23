@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     20-Jan-24 at 20:22:08 by Mats Lidell
+;; Last-Mod:     21-Jan-24 at 23:24:46 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -119,6 +119,23 @@ It must end with a space."
 ;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
+
+;; Adapted from "subr.el" but doesn't add if ELEMENT already exists
+(defun hypb:add-to-invisibility-spec (element)
+  "Add ELEMENT to `buffer-invisibility-spec'.
+See documentation for `buffer-invisibility-spec' for the kind of elements
+that can be added.
+
+If `buffer-invisibility-spec' isn't a list before calling this
+function, `buffer-invisibility-spec' will afterwards be a list
+with the value `(t ELEMENT)'.  This means that if text exists
+that invisibility values that aren't either `t' or ELEMENT, that
+text will become visible."
+  (if (eq buffer-invisibility-spec t)
+      (setq buffer-invisibility-spec (list t)))
+  (unless (member element buffer-invisibility-spec)
+    (setq buffer-invisibility-spec
+	  (cons element buffer-invisibility-spec))))
 
 ;;;###autoload
 (defun hypb:activate-interaction-log-mode ()

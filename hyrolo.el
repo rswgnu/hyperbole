@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     21-Jan-24 at 10:54:37 by Bob Weiner
+;; Last-Mod:     23-Jan-24 at 18:56:27 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -32,7 +32,7 @@
 (require 'hversion)
 (require 'hmail)
 (require 'hsys-org) ;; For `hsys-org-cycle-bob-file-list'
-(require 'hypb)     ;; For `hypb:mail-address-regexp'
+(require 'hypb)     ;; For `hypb:mail-address-regexp' and `hypb:add-to-invisibility-spec'
 (require 'outline)
 (require 'package)
 (require 'reveal)
@@ -264,7 +264,7 @@ The match is after matching to `hyrolo-hdr-and-entry-regexp'.")
 (defconst hyrolo-markdown-suffix-regexp "md\\|markdown\\|mkd\\|mdown\\|mkdn\\|mdwn"
   "Regexp matching Markdown file suffixes.")
 
-(defcustom hyrolo-file-suffix-regexp (concat "\\.\\(kotl?\\|org\\|otl\\|"
+(defcustom hyrolo-file-suffix-regexp (concat "\\.\\(kotl?\\|org\\|ou?tl\\|"
 					     hyrolo-markdown-suffix-regexp "\\)$")
   "File suffix regexp used to select files to search with HyRolo."
   :type 'string
@@ -942,6 +942,7 @@ of matches for the file of matches at point."
 		       (<= levels-to-show 0))
 	      (not (integerp levels-to-show))))
     (setq levels-to-show 100))
+  (setq hyrolo-this-command-ignore-reveal t)
   (hyrolo-show-levels levels-to-show))
 
 (defun hyrolo-previous-match ()
@@ -1143,6 +1144,7 @@ Useful when bound to a mouse key."
 Top-level matches are those with the lowest outline level among the
 matched entries."
   (interactive)
+  (setq-local hyrolo-reveal-ignore-this-command t)
   (hyrolo-show-levels 1))
 
 (defun hyrolo-verify ()
@@ -1458,7 +1460,7 @@ otherwise just use the cdr of the item."
 (defun hyrolo-helm-org-rifle (&optional context-only-flag)
   "Search with helm and interactively show all matches from `hyrolo-file-list'.
 Prompt for the search pattern.
-Search readable .org and .otl files only.  With optional prefix
+Search readable .org, .otl and .outl files only.  With optional prefix
 arg CONTEXT-ONLY-FLAG, show one extra line only of context around
 a matching line, rather than entire entries."
   (interactive "P")
@@ -1467,7 +1469,7 @@ a matching line, rather than entire entries."
   (require 'helm-org-rifle)
   (let ((files (seq-filter (lambda (f)
 			     (and (stringp f)
-				  (string-match "\\.\\(org\\|otl\\)$" f)
+				  (string-match "\\.\\(org\\|ou?tl\\)$" f)
 				  (file-readable-p f)))
 			   (hyrolo-get-file-list)))
 	;; Next 2 local settings used by helm-org-rifle-files call below
@@ -1502,11 +1504,11 @@ entries."
 ;;;###autoload
 (defun hyrolo-helm-org-rifle-directories (&optional context-only-flag &rest dirs)
   "Interactively search over Emacs outline format files in rest of DIRS.
-Search readable .org and .otl files only.  With optional prefix
+Search readable .org, .otl and .outl files only.  With optional prefix
 arg CONTEXT-ONLY-FLAG, show one extra line only of context around
 a matching line, rather than entire entries."
   (interactive "P")
-  (let ((hyrolo-file-list (hypb:filter-directories "\\.\\(org\\|otl\\)$" dirs)))
+  (let ((hyrolo-file-list (hypb:filter-directories "\\.\\(org\\|ou?tl\\)$" dirs)))
     (hyrolo-helm-org-rifle context-only-flag)))
 
 ;;;###autoload
@@ -1773,15 +1775,17 @@ Return number of matching entries found."
 			      (hyrolo-add-match pattern entry-start (point)))))))
 		  num-found))
 	  (when (and (> num-found 0) (not count-only))
-	    ;; Require a final blank line so that `outline-hide-sublevels' won't hide
-	    ;; it and combine with any next file header.
-	    (when (/= (char-after (1- (point-max))) ?\n)
-	      (save-excursion
-		(goto-char (point-max))
-		(insert "\n")))
-	    (hyrolo--cache-major-mode (current-buffer)))
+	    (with-current-buffer hyrolo-display-buffer
+	      ;; Require a final blank line in `hyrolo-display-buffer'
+	      ;; so that `outline-hide-sublevels' won't hide it and
+	      ;; combine with any next file header.
+	      (when (/= (char-after (1- (point-max))) ?\n)
+		(save-excursion
+		  (goto-char (point-max))
+		  (newline))))
+	    (hyrolo--cache-major-mode actual-buf))
 	  (when (< stuck-negative-point 0)
-	    (pop-to-buffer (current-buffer))
+	    (pop-to-buffer actual-buf)
 	    (goto-char (- stuck-negative-point))
 	    (error "(hyrolo-grep-file): Stuck looping in buffer \"%s\" at position %d"
 		   (buffer-name) (point)))
@@ -1872,7 +1876,7 @@ See the command `outline-mode' for more information on this mode."
 		  nil t)
         (setq-local line-move-ignore-invisible t)
 	;; Cause use of ellipses for invisible text.
-	(add-to-invisibility-spec '(outline . t)))
+	(hypb:add-to-invisibility-spec '(outline . t)))
     ;; disable minor mode
     (when (and (boundp 'outline-minor-mode-cycle) outline-minor-mode-cycle)
       (remove-overlays nil nil 'outline-overlay t))
@@ -1906,26 +1910,22 @@ Calls the functions given by `hyrolo-mode-hook'.
 		;; decrements it by one.  -- rsw, 2023-11-17
 		outline-level #'hyrolo-outline-level)
 
+    ;; Can't cycle because {TAB} moves to next match
     (when (boundp 'outline-minor-mode-cycle)
-      (setq-local
-       ;; Can't cycle because {TAB} moves to next match
-       outline-minor-mode-cycle nil))
+      (setq-local outline-minor-mode-cycle nil))
 
+    ;; For speed reasons, don't want to ever font-lock in this mode
     (when (boundp 'outline-minor-mode-highlight)
-      (setq-local
-       ;; For speed reasons, don't want to ever font-lock
-       ;; in this mode
-       outline-minor-mode-highlight nil)))
+      (setq-local outline-minor-mode-highlight nil)))
 
   (use-local-map hyrolo-mode-map)
   (set-syntax-table hyrolo-mode-syntax-table)
   (hyrolo-outline-minor-mode 1) ;; no keymap
 
-  ;; !! TODO: Disable this until can get it working right with the
-  ;; enabling of outline-minor-mode when switch major modes in *HyRolo*
-  ;; typically using hyrolo-funcall-match or hyrolo-map-matches.
-  ;; (unless (eq major-mode 'hyrolo-mode)
-  ;;  (reveal-mode 1)) ;; Expose hidden text as move into it.
+  (setq-local reveal-around-mark nil)
+  (unless (or (eq major-mode 'hyrolo-mode)
+	      hyrolo-reveal-ignore-this-command)
+    (reveal-mode 1)) ;; Expose hidden text as move into it.
 
   ;; Do this after reveal-mode is enabled.
   (setq major-mode 'hyrolo-mode
@@ -2203,8 +2203,13 @@ nil for WHICH, or do not pass any argument)."
 	     (if current-prefix-arg nil 'subtree)))))
   (hyrolo-funcall-match (lambda () (outline-promote which)) t))
 
-;;; Don't need to override but alias them for completeness
-(defalias 'hyrolo-outline-show-all 'outline-show-all)
+(defun hyrolo-outline-show-all ()
+  "Show all of the text in the HyRolo display buffer."
+  (interactive)
+  (setq-local hyrolo-reveal-ignore-this-command t)
+  (outline-show-all))
+
+;;; Don't need to override but alias this for completeness
 (defalias 'hyrolo-outline-show-branches 'outline-show-branches)
 
 (defun hyrolo-outline-show-children (&optional level)
@@ -2668,18 +2673,22 @@ Any non-nil value returned is a cons of (<entry-name> . <entry-source>)."
   "Basic Org mode for use in HyRolo display match searches."
   (require 'org)
   ;; Don't actually derive from org-mode to avoid its costly setup but
-  ;; set its parent mode property to org-mode so can `derived-mode-p'
+  ;; set its parent mode property to org-mode so `derived-mode-p'
   ;; checks will pass.
   (put 'hyrolo-org-mode 'derived-mode-parent 'org-mode)
 
+  (font-lock-mode -1) ;; Never font-lock in this mode to keep it fast
+
   (when (featurep 'org-fold) ;; newer Org versions
+    (setq org-fold-core-style 'overlays) ;; Make compatible with reveal minor mode
     (when (and org-link-descriptive
                (eq org-fold-core-style 'overlays))
-      (add-to-invisibility-spec '(org-link)))
+      (hypb:add-to-invisibility-spec '(org-link)))
     (org-fold-initialize (or (and (stringp org-ellipsis) (not (equal "" org-ellipsis)) org-ellipsis)
                              "..."))
     (make-local-variable 'org-link-descriptive)
-    (when (eq org-fold-core-style 'overlays) (add-to-invisibility-spec '(org-hide-block . t)))
+    (when (eq org-fold-core-style 'overlays)
+      (hypb:add-to-invisibility-spec '(org-hide-block . t)))
     (if org-link-descriptive
 	(org-fold-core-set-folding-spec-property (car org-link--link-folding-spec) :visible nil)
       (org-fold-core-set-folding-spec-property (car org-link--link-folding-spec) :visible t)))
@@ -2693,13 +2702,14 @@ Any non-nil value returned is a cons of (<entry-name> . <entry-source>)."
 	      outline-regexp (concat hyrolo-hdr-prefix-regexp "^\\(\\*+\\)\\( \\)")
 	      outline-level #'hyrolo-org-outline-level)
   (use-local-map org-mode-map)
-  (font-lock-mode -1) ;; Never font-lock in this mode to keep it fast
   ;; Modify a few syntax entries
   (modify-syntax-entry ?\" "\"")
   (modify-syntax-entry ?\\ "_")
   (modify-syntax-entry ?~ "_")
   (modify-syntax-entry ?< "(>")
-  (modify-syntax-entry ?> ")<"))
+  (modify-syntax-entry ?> ")<")
+
+  (reveal-mode 1))
 
 (defun hyrolo-org-outline-level ()
   "Compute the outline level of the heading at point.
@@ -2982,7 +2992,10 @@ proper major mode."
 		(hyrolo-back-to-visible-point)
 		;; This pause forces a window redisplay that maximizes the
 		;; entries displayed for any final location of point.
-		(sit-for 0.0001)))))
+		;; Comment it out for now and see how well movement
+		;; cmds work.
+		;; (sit-for 0.0001)
+		))))
       (let ((outline-regexp hyrolo-hdr-and-entry-regexp))
 	(funcall func)))))
 
@@ -3125,49 +3138,153 @@ Add `hyrolo-hdr-regexp' to `hyrolo-hdr-and-entry-regexp' and `outline-regexp'."
 	 (substitute-key-definition otl-cmd hyrolo-cmd hyrolo-mode-map)))
      outline-mode-prefix-map)))
 
-;;; Integrate reveal-mode with HyRolo.
-;;; NOTE: !! TODO: This does not yet work so is not enabled in `hyrolo-mode' yet,
-;;; thus the `reveal-post-command' below is not yet used.
+;;; ************************************************************************
+;;; hyrolo-reveal - Extend reveal-mode to support Org mode org-fold
+;;; ************************************************************************
+
+(defvar hyrolo-reveal-ignore-this-command nil
+  "Set this non-nil in any command that should ignore `hyrolo-reveal-mode'.")
+
+(defun hyrolo-reveal-open-new-overlays (old-ols)
+  (let ((repeat t))
+    (while repeat
+      (setq repeat nil)
+      (dolist (ol (nconc (when (and reveal-around-mark mark-active)
+                           (overlays-at (mark)))
+                         (overlays-at (point))))
+        (setq old-ols (delq ol old-ols))
+        (when (overlay-start ol)        ;Check it's still live.
+          ;; We either have an invisible overlay, or a display
+          ;; overlay.  Always reveal invisible text, but only reveal
+          ;; display properties if `reveal-toggle-invisible' is
+          ;; present.
+          (let ((inv (overlay-get ol (if (derived-mode-p 'org-mode) 'org-invisible 'invisible)))
+                (disp (and (overlay-get ol 'display)
+                           (overlay-get ol 'reveal-toggle-invisible)))
+                open)
+            (when (and (or (and inv
+                                ;; There's an `invisible' property.
+                                ;; Make sure it's actually invisible,
+                                ;; and ellipsized.
+                                (and (consp buffer-invisibility-spec)
+                                     (cdr (assq inv buffer-invisibility-spec))))
+                           disp)
+                       (or (setq open
+                                 (or (overlay-get ol 'reveal-toggle-invisible)
+                                     (and (symbolp inv)
+                                          (get inv 'reveal-toggle-invisible))
+                                     (overlay-get
+                                      ol 'isearch-open-invisible-temporary)))
+                           (overlay-get ol 'isearch-open-invisible)
+                           (and (consp buffer-invisibility-spec)
+                                (cdr (assq inv buffer-invisibility-spec)))))
+              (when inv
+                (overlay-put ol 'reveal-invisible inv))
+              (push (cons (selected-window) ol) reveal-open-spots)
+              (if (null open)
+		  (if (derived-mode-p 'org-mode)
+		      (org-fold-region (overlay-start ol) (overlay-end ol) nil 'headline)
+                    (overlay-put ol 'invisible nil))
+                ;; Use the provided opening function and repeat (since the
+                ;; opening function might have hidden a subpart around point
+                ;; or moved/killed some of the overlays).
+                (setq repeat t)
+                (condition-case err
+                    (funcall open ol nil)
+                  (error (message "!!Reveal-show (funcall %s %s nil): %s !!"
+                                  open ol err)
+                         ;; Let's default to a meaningful behavior to avoid
+                         ;; getting stuck in an infinite loop.
+                         (setq repeat nil)
+			 (if (derived-mode-p 'org-mode)
+			     (org-fold-region (overlay-start ol) (overlay-end ol) nil 'headline)
+			   (overlay-put ol 'invisible nil)))))))))))
+  old-ols)
+
+(defun hyrolo-reveal-close-old-overlays (old-ols)
+  (if (or track-mouse                   ;Don't close in the middle of a click.
+          (not (eq reveal-last-tick
+                   (setq reveal-last-tick (buffer-modified-tick)))))
+      ;; The buffer was modified since last command: let's refrain from
+      ;; closing any overlay because it tends to behave poorly when
+      ;; inserting text at the end of an overlay (basically the overlay
+      ;; should be rear-advance when it's open, but things like
+      ;; outline-minor-mode make it non-rear-advance because it's
+      ;; a better choice when it's closed).
+      nil
+    ;; The last command was only a point motion or some such
+    ;; non-buffer-modifying command.  Let's close whatever can be closed.
+    (dolist (ol old-ols)
+      (if (and (overlay-start ol)       ;Check it's still live.
+               (>= (point) (save-excursion
+                             (goto-char (overlay-start ol))
+                             (line-beginning-position 1)))
+               (<= (point) (save-excursion
+                             (goto-char (overlay-end ol))
+                             (line-beginning-position 2)))
+               ;; If the application has moved the overlay to some other
+               ;; buffer, we'd better reset the buffer to its
+               ;; original state.
+               (eq (current-buffer) (overlay-buffer ol)))
+          ;; Still near the overlay: keep it open.
+          nil
+        ;; Really close it.
+        (let* ((inv (overlay-get ol 'reveal-invisible))
+               (open (or (overlay-get ol 'reveal-toggle-invisible)
+                         (get inv 'reveal-toggle-invisible)
+                         (overlay-get ol 'isearch-open-invisible-temporary))))
+          (if (and (overlay-start ol)   ;Check it's still live.
+                   open)
+              (condition-case err
+                  (funcall open ol t)
+                (error (message "!!Reveal-hide (funcall %s %s t): %s !!"
+                                open ol err)))
+	    (if (derived-mode-p 'org-mode)
+		(org-fold-region (overlay-start ol) (overlay-end ol) nil 'headline)
+              (overlay-put ol 'invisible nil)))
+          ;; Remove the overlay from the list of open spots.
+          (overlay-put ol 'reveal-invisible nil)
+          (setq reveal-open-spots
+                (delq (rassoc ol reveal-open-spots)
+                      reveal-open-spots)))))))
 
 ;; Note that `outline-reveal-toggle-invisible' is the function
 ;; stored in the `outline' `reveal-toggle-invisible' property.  It
-;; is called from `reveal-open-new-overlays' and -
-;; `reveal-close-old-overlays' which are called from within
+;; is called from `hyrolo-reveal-open-new-overlays' and
+;; `hyrolo-reveal-close-old-overlays' which are called from within
 ;; `reveal-post-command' on `post-command-hook'.  Below we update
 ;; `reveal-post-command' to work with HyRolo.
 
 (defun reveal-post-command ()
-  ;; Refresh the spots that might have changed.
-  ;; `Refreshing' here means to try and re-hide the corresponding text.
-  ;; We don't refresh everything correctly:
-  ;; - we only refresh spots in the current window.
-  ;; FIXME: do we actually know that (current-buffer) = (window-buffer) ?
-  (with-local-quit
-    (with-demoted-errors "Reveal: %s"
-	 (let ((old-ols
-		(delq nil
-                      (mapcar
-                       (lambda (x)
-			 ;; We refresh any spot in the current window as well
-			 ;; as any spots associated with a dead window or
-			 ;; a window which does not show this buffer any more.
-			 (cond
-			  ((eq (car x) (selected-window)) (cdr x))
-			  ((not (and (window-live-p (car x))
-                                     (eq (window-buffer (car x))
-					 (current-buffer))))
-                           ;; Adopt this since it's owned by a window that's
-                           ;; either not live or at least not showing this
-                           ;; buffer any more.
-                           (setcar x (selected-window))
-                           (cdr x))))
-                       reveal-open-spots))))
-	   (hyrolo-funcall-match
-	    (lambda ()
-              (setq old-ols (reveal-open-new-overlays old-ols))
-              (when reveal-auto-hide
-		(reveal-close-old-overlays old-ols)))
-	    t)))))
+  (if hyrolo-reveal-ignore-this-command
+      (setq hyrolo-reveal-ignore-this-command nil)
+    ;; Refresh the spots that might have changed.
+    ;; `Refreshing' here means to try and re-hide the corresponding text.
+    ;; We don't refresh everything correctly:
+    ;; - we only refresh spots in the current window.
+    ;; FIXME: do we actually know that (current-buffer) = (window-buffer) ?
+    (with-local-quit
+      (with-demoted-errors "Reveal: %s"
+	(let ((old-ols
+               (delq nil
+                     (mapcar
+                      (lambda (x)
+			;; We refresh any spot in the current window as well
+			;; as any spots associated with a dead window or
+			;; a window which does not show this buffer any more.
+			(cond
+			 ((eq (car x) (selected-window)) (cdr x))
+			 ((not (and (window-live-p (car x))
+                                    (eq (window-buffer (car x))
+					(current-buffer))))
+                          ;; Adopt this since it's owned by a window that's
+                          ;; either not live or at least not showing this
+                          ;; buffer any more.
+                          (setcar x (selected-window))
+                          (cdr x))))
+                      reveal-open-spots))))
+          (setq old-ols (hyrolo-reveal-open-new-overlays old-ols))
+	  (hyrolo-reveal-close-old-overlays old-ols))))))
 
 ;;; ************************************************************************
 ;;; hyrolo-file-list - initialize cache if this is already set when loading

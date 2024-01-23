@@ -1,4 +1,17 @@
+2024-01-23  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-reveal-ignore-this-command, hyrolo-reveal-open-new-overlays,
+             hyrolo-reveal-close-old-overlays, reveal-post-command):
+    Enable Hyperbole extended version of 'reveal-mode' that supports 'org-fold'.
+
 2024-01-21  Bob Weiner  <rsw@gnu.org>
+
+* hypb.el (hypb:add-to-invisibility-spec): Add and use wherever
+    'add-to-invisbility-spec' was.
+
+* hload-path.el (auto-mode-alist):
+  hyrolo.el (hyrolo-file-suffix-regexp): Allow for suffix .outl to invoke outline
+    mode in addition to .otl.
 
 * hmouse-tag.el (smart-emacs-lisp-mode-p ,smart-lisp-mode-p): Change to use
    'derived-mode-p' rather than checking for 'major-mode' matches directly.
