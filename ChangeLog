@@ -1,8 +1,33 @@
 2024-01-28  Bob Weiner  <rsw@gnu.org>
 
+* hyrolo.el (hyrolo-org-outline-level): Fix to not move point; was causing errors
+    when moving forward to next sibling.
+            (hyrolo-org-outline-level): Remove and use 'hyrolo-outline-level' instead
+    to centralize any issues.
+
+* hmouse-tag.el (find-ert-test-regexp): Change ert test definition lookups to use
+    the path stored in each test symbol's 'ert--test' property by changing from
+    using the 'xref-find-definitions' in 'find-function-regexp-alist' to using
+    this newly defined regexp instead.  Add (require 'cl-lib) since this update
+    uses 'cl-delete-if'.
+
 * hyrolo.el (hyrolo-reveal-open-new-overlays, hyrolo-reveal-close-old-overlays):
     Wrap 'funcall' in 'hyrolo-funcall-match' so uses HyRolo outline settings.
             (hyrolo-markdown-mode): Add missing (require 'markdown-mode).
+	    (hyrolo-show-levels): Remove call to 'hyrolo-outline-hide-subtree'
+    to ensure reveal-mode does not expand current entry, since if point is within
+    file header this displays the first entry on the final visible line of the file
+    header rather than the next line.  Callers of this function should instead set
+    'hyrolo-reveal-ignore-this-command' to t (which was already being done).
+            (hyrolo-outline-hide-subtree, hyrolo-outline-hide-body)
+             hyrolo-outline-hide-entry, hyrolo-outline-hide-leaves,
+             hyrolo-outline-hide-other, hyrolo-outline-hide-sublevels,
+             hyrolo-outline-show-branches, hyrolo-outline-show-children,
+             hyrolo-outline-show-entry, hyrolo-outline-show-subtree): Add
+    '(setq hyrolo-reveal-ignore-this-command t)' to these hide/show commands.
+            (hyrolo-funcall-match): Fix edge-case of bob and eob off by one
+    error in 'hyrolo-cache-set-major-mode' argument.
+            (hyrolo-boolean-only-flag): Declare this so 'boundp' test passes.
 
 2024-01-27  Bob Weiner  <rsw@gnu.org>
 

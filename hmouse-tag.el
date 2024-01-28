@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     21-Jan-24 at 12:43:04 by Bob Weiner
+;; Last-Mod:     28-Jan-24 at 15:54:51 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -20,7 +20,7 @@
 ;;; ************************************************************************
 
 (eval-and-compile
-  (mapc #'require '(find-func hpath hui-select))
+  (mapc #'require '(cl-lib find-func hpath hui-select))
   (unless (or (featurep 'etags) (featurep 'tags))
     ;; Force use of .elc file here since otherwise the bin/etags
     ;; executable might be found in a user's load-path by the load
@@ -86,13 +86,28 @@ should insert the implicit button type definition name.")
 Note it must contain a ‘%s’ at the place where ‘format’
 should insert the implicit link type definition name.")
 
+;; Change ert-deftest lookups to use this regexp rather than the
+;; default, `xref-find-definitions', so is not dependent on TAGS
+;; tables or the `default-directory' in the ERT results buffer.  When
+;; a test is loaded, its symbol property, `ert--test', holds the
+;; absolute path to its file, and find-function uses that when its
+;; entry in `find-function-regexp-alist' is a regexp.
+(defconst find-ert-test-regexp "^\\s-*(ert-deftest\\s-+%s\\s-"
+  "The regexp used to search for an ert test definition.
+Note it must contain a ‘%s’ at the place where ‘format’
+should insert the implicit link type definition name.")
+
 ;; Add Hyperbole def types to `find-function-regexp-alist'.
 (mapc (lambda (item)
+	(setq find-function-regexp-alist
+	      (cl-delete-if (lambda (elt) (eq (car elt) (car item)))
+			    find-function-regexp-alist))
 	(add-to-list 'find-function-regexp-alist item))
       '((defact . find-defact-regexp)
 	(defal  . find-defal-regexp)
 	(defib  . find-defib-regexp)
-	(defil  . find-defil-regexp)))
+	(defil  . find-defil-regexp)
+	(ert--test . find-ert-test-regexp)))
 
 (define-obsolete-variable-alias 'smart-asm-include-dirs
   'smart-asm-include-path "06.00")

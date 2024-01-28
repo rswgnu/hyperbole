@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     20-Jan-24 at 19:26:38 by Mats Lidell
+;; Last-Mod:     28-Jan-24 at 15:51:04 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -835,9 +835,14 @@ optional DEPTH the number of sub cells are created to that depth."
           (should (hact 'kbd-key "h"))
 	  (hyrolo-tests--verify-hidden-line)
 
+	  ;; Now expose just top-level headings and move to buffer beginning
+          (should (hact 'kbd-key "t"))
+          (should (hact 'kbd-key "<"))
+
 	  ;; Move to first heading and back to top
           (should (hact 'kbd-key "n"))
           (should (looking-at-p "^\\* heading 1$"))
+	  (should-not (get-char-property (point) 'invisible))
           (should (hact 'kbd-key "p"))
 	  (should (and (looking-at-p "===") (= 1 (line-number-at-pos))))
 	  (hyrolo-tests--verify-not-hidden-line))

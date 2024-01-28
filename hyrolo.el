@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     28-Jan-24 at 02:33:39 by Bob Weiner
+;; Last-Mod:     28-Jan-24 at 15:34:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -103,6 +103,8 @@
 (declare-function hpath:find "hpath")
 (declare-function hpath:expand-list "hpath")
 (declare-function hbut:get-key-src "hbut")
+;; This next function is replaced by `hyrolo-outline-function'
+;; within `hyrolo-cache-set-major-mode'.
 (declare-function markdown-outline-level "ext:markdown-mode")
 (declare-function org-outline-level "org")
 
@@ -130,6 +132,11 @@
 ;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************
+
+(defvar hyrolo-boolean-only-flag nil
+  "Set to prevent HyRolo from displaying an error buffer when running tests.
+Return a boolean only, indicating whether the test passed or not.
+See usage in `hyrolo-any-file-type-problem-p'.")
 
 (defconst hyrolo-markdown-suffix-regexp "md\\|markdown\\|mkd\\|mdown\\|mkdn\\|mdwn"
   "Regexp matching Markdown file suffixes.")
@@ -1167,7 +1174,7 @@ of matches for the file of matches at point."
 		       (<= levels-to-show 0))
 	      (not (integerp levels-to-show))))
     (setq levels-to-show 100))
-  (setq hyrolo-this-command-ignore-reveal t)
+  (setq hyrolo-reveal-ignore-this-command t)
   (hyrolo-show-levels levels-to-show))
 
 (defun hyrolo-previous-match ()
@@ -2235,7 +2242,7 @@ Stop at the first and last subheadings of a superior heading."
 
 (defun hyrolo-outline-get-last-sibling ()
   "Move to previous heading of the same level, and return point.
-If there is no such heading, return nil."
+If there is no such heading, do not move and return nil."
   (let ((opoint (point))
 	(level (funcall outline-level)))
     (hyrolo-outline-previous-visible-heading 1)
@@ -2244,7 +2251,7 @@ If there is no such heading, return nil."
 		  (not (bobp)))
 	(hyrolo-outline-previous-visible-heading 1))
       (if (< (funcall outline-level) level)
-	  nil
+	  (progn (goto-char opoint) nil)
         (point)))))
 
 (defun hyrolo-outline-get-level (backward-flag)
@@ -2263,35 +2270,40 @@ forward through the buffer."
 
 (defun hyrolo-outline-get-next-sibling ()
   "Move to next heading/header of the same level, and return point.
-If there is no such heading/header, return nil."
-  (let ((level (funcall outline-level)))
+If there is no such heading/header, do not move and return nil."
+  (let ((opoint (point))
+	(level (funcall outline-level)))
     (hyrolo-outline-next-visible-heading 1)
     (while (and (not (eobp)) (> (funcall outline-level) level))
       (hyrolo-outline-next-visible-heading 1))
     (if (or (eobp) (< (funcall outline-level) level))
-	nil
+	(progn (goto-char opoint) nil)
       (point))))
 
 (defun hyrolo-outline-hide-body ()
   "Hide all body lines in buffer, leaving all headings visible.
 Note that this does not hide the lines preceding the first heading line."
   (interactive)
+  (setq hyrolo-reveal-ignore-this-command t)
   (hyrolo-map-matches #'outline-hide-body t))
 
 (defun hyrolo-outline-hide-entry ()
   "Hide the body directly following this heading."
   (interactive)
+  (setq hyrolo-reveal-ignore-this-command t)
   (hyrolo-funcall-match #'outline-hide-entry t))
 
 (defun hyrolo-outline-hide-leaves ()
   "Hide the body after this heading and at deeper levels."
   (interactive)
+  (setq hyrolo-reveal-ignore-this-command t)
   (hyrolo-funcall-match #'outline-hide-leaves t))
 
 (defun hyrolo-outline-hide-other ()
   "Hide everything except current body and parent and top-level headings.
 This also unhides the top heading-less body, if any."
   (interactive)
+  (setq hyrolo-reveal-ignore-this-command t)
   (hyrolo-funcall-match #'outline-hide-other))
 
 (defun hyrolo-outline-hide-sublevels (levels)
@@ -2308,15 +2320,14 @@ of the current heading, or to 1 if the current line is not a heading."
 				  (looking-at outline-regexp))
 		  (funcall outline-level))
 		 (t 1))))
+  (setq hyrolo-reveal-ignore-this-command t)
   (hyrolo-map-matches (lambda () (outline-hide-sublevels levels)) t))
 
 (defun hyrolo-outline-hide-subtree ()
   "Move back to the start of current subtree and hide everything after the heading.
-If within a file header, hide the whole file after the end of the current line.
-
-Necessary, since with `reveal-mode' active, `outline-hide-subtree' works
-only if on the heading line of the subtree."
+If within a file header, hide the whole file after the end of the current line."
   (interactive)
+  (setq hyrolo-reveal-ignore-this-command t)
   (if (and (hyrolo-hdr-in-p)
 	   (eq (current-buffer) (get-buffer hyrolo-display-buffer)))
       (cl-destructuring-bind (start end)
@@ -2365,7 +2376,9 @@ Return t if find any matching next heading/header, nil otherwise.
 A heading is one that starts with an `outline-regexp' match.
 A match buffer header is one that starts with `hyrolo-hdr-regexp'."
   (interactive "p")
-  (let ((found-heading-p)
+  (let ((orig-arg arg)
+	(found-heading-p)
+	(opoint (point))
 	(last-point (point)))
     (condition-case nil
 	(progn
@@ -2379,34 +2392,51 @@ A match buffer header is one that starts with `hyrolo-hdr-regexp'."
 			       (hyrolo-funcall-match
 				(lambda ()
 				  (re-search-backward
-				   (concat "^\\(?:" outline-regexp "\\)")
-				   nil 'move))
+				   (concat "^\\(" outline-regexp "\\)")
+				   nil t))
 				nil t))
-			(setq found-heading-p (< (point) last-point))
+			(when (< (point) last-point)
+			  (setq found-heading-p t))
 			(setq last-point (point))
 			(progn (hyrolo-hdr-to-first-line-p)
 			       (outline-invisible-p))))
 	    (setq arg (1+ arg)))
 	  (while (and (not (eobp)) (> arg 0))
 	    (while (and (not (eobp))
-			(progn (hyrolo-hdr-move-after-p)
-			       (setq last-point (point))
-			       (hyrolo-funcall-match
-				(lambda ()
-				  (re-search-forward
-				   (concat "^\\(?:" outline-regexp "\\)")
-				   nil 'move))))
-			(setq found-heading-p (< last-point (point)))
-			(setq last-point (point))
-			(outline-invisible-p (match-beginning 0))))
+			(or (and (hyrolo-hdr-move-after-p)
+				 (if (outline-invisible-p (point))
+				     ;; Skip any invisible heading at point
+				     (progn
+				       (goto-char (min (1+ (point)) (point-max)))
+				       nil)
+				   (setq found-heading-p t)))
+			    (progn (setq last-point (point))
+				   (hyrolo-funcall-match
+				    (lambda ()
+				      (re-search-forward
+				       (concat "^\\(" outline-regexp "\\)")
+				       nil t)))
+				   (and (< last-point (point))
+					(setq last-point (point))
+					(if (outline-invisible-p (match-beginning 0))
+					    ;; Skip any invisible heading at point
+					    (goto-char (min (1+ (point)) (point-max)))
+					  (setq found-heading-p t)))))
+			(not found-heading-p)))
 	    (setq arg (1- arg)))
-	  (if found-heading-p (beginning-of-line)))
+	  (cond (found-heading-p
+		 (beginning-of-line))
+		((> orig-arg 0)
+		 (goto-char (point-max)))
+		((< orig-arg 0)
+		 (goto-char (point-min)))
+		(t (goto-char opoint))))
       ;; Prevent error and move to start or end of file header at point,
       ;; if any
       (error (if (>= arg 0)
 		 (hyrolo-hdr-move-after-p)
 	       (hyrolo-hdr-to-first-line-p))))
-    (when found-heading-p t)))
+    (and found-heading-p (/= (point) opoint) t)))
 
 (defun hyrolo-outline-previous-heading ()
   "Move to the previous (possibly invisible) heading line."
@@ -2444,26 +2474,33 @@ nil for WHICH, or do not pass any argument)."
   (setq-local hyrolo-reveal-ignore-this-command t)
   (outline-show-all))
 
-;;; Don't need to override but alias this for completeness
-(defalias 'hyrolo-outline-show-branches 'outline-show-branches)
+;;; Override this function for completeness
+(defun hyrolo-outline-show-branches ()
+  "Show all subheadings of this heading, but not their bodies."
+  (interactive)
+  (setq hyrolo-reveal-ignore-this-command t)
+  (outline-show-children 1000))
 
 (defun hyrolo-outline-show-children (&optional level)
   "Show all direct subheadings of this heading.
 Prefix arg LEVEL is how many levels below the current level should be shown.
 Default is enough to cause the following heading to appear."
   (interactive "P")
+  (setq hyrolo-reveal-ignore-this-command t)
   (hyrolo-funcall-match (lambda () (outline-show-children level)) t))
 
 (defun hyrolo-outline-show-entry ()
   "Show the body directly following this heading.
 Show the heading too, if it is currently invisible."
   (interactive)
+  (setq hyrolo-reveal-ignore-this-command t)
   (hyrolo-funcall-match #'outline-show-entry t))
 
 (defun hyrolo-outline-show-subtree ()
   "Show everything after this heading at deeper levels.
 If within a file header, show the whole file starting with the header."
   (interactive)
+  (setq hyrolo-reveal-ignore-this-command t)
   (if (and (hyrolo-hdr-in-p)
 	   (eq (current-buffer) (get-buffer hyrolo-display-buffer)))
       (cl-destructuring-bind (start end)
@@ -2675,7 +2712,10 @@ Entry is inserted before point.  The region is between START to END."
 
 (defun hyrolo-any-file-type-problem-p ()
   "Return t if any file from `hyrolo-file-list' has an unusable format.
-The list of unusable files is displayed in a HyRolo error window.
+
+The list of unusable files is displayed in a HyRolo error window
+unless 'hyrolo-boolean-only-flag' is set to t (used for testing).
+
 This will install `markdown-mode' if any Markdown files are specified and the
 package is not installed."
   ;;  1. Ignore files without suffixes in step 2
@@ -2935,7 +2975,7 @@ Any non-nil value returned is a cons of (<entry-name> . <entry-source>)."
 	      ;; trailing-space grouping below
 	      hyrolo-entry-trailing-space-group-number 2
 	      outline-regexp (concat hyrolo-hdr-prefix-regexp "^\\(\\*+\\)\\( \\)")
-	      outline-level #'hyrolo-org-outline-level)
+	      outline-level #'hyrolo-outline-level)
   (use-local-map org-mode-map)
   ;; Modify a few syntax entries
   (modify-syntax-entry ?\" "\"")
@@ -2953,16 +2993,6 @@ Any non-nil value returned is a cons of (<entry-name> . <entry-source>)."
 
   ;; Expose hidden text as move into it
   (reveal-mode 1))
-
-(defun hyrolo-org-outline-level ()
-  "Compute the outline level of the heading at point.
-
-If this is called at a normal headline, the level is the number
-of stars."
-  (end-of-line)
-  (if (re-search-backward org-outline-regexp-bol nil t)
-      (1- (- (match-end 0) (match-beginning 0)))
-    1))
 
 (defun hyrolo-save-buffer (&optional hyrolo-buf)
   "Save optional HYROLO-BUF if changed and `hyrolo-save-buffers-after-use' is t.
@@ -3029,8 +3059,6 @@ Any call to this function should be wrapped in a call to
   (save-excursion
     (hyrolo-verify)
     (outline-show-all)
-    ;; Ensure reveal-mode does not expand current entry
-    (hyrolo-outline-hide-subtree)
     ;; Use {t} to display top-level cells only
     (hyrolo-map-matches
      (lambda ()
@@ -3083,13 +3111,15 @@ Return final point."
   (point))
 
 (defun hyrolo-outline-level ()
-  "Return the depth to which an entry is nested in the outline.
+  "Return the depth to which an entry is nested in the *HyRolo* buffer.
 This is actually either the level specified in `outline-heading-alist'
 or else the number of characters matched by `outline-regexp' minus
 trailing periods and whitespace.
 
 Point must be at the beginning of a heading line and a regexp match to
-`outline-regexp' must have been done prior to calling this."
+`outline-regexp' must have been done prior to calling this.
+
+This function is used for every file-type major-mode supported by HyRolo."
   (or (cdr (assoc (match-string-no-properties 0) outline-heading-alist))
       (when (hyrolo-hdr-in-p) 1)
       (cond ((derived-mode-p 'kotl-mode)
@@ -3193,8 +3223,8 @@ proper major mode."
 		    ;; (message "%s" (hyrolo-cache-get-major-mode-from-pos
 		    ;;		   (funcall (if backward-flag '1- '1+) start)))
 		    (if (and backward-flag (looking-at hyrolo-hdr-regexp))
-			(hyrolo-cache-set-major-mode (1- start))
-		      (hyrolo-cache-set-major-mode (1+ start)))
+			(hyrolo-cache-set-major-mode (max (1- start) 1))
+		      (hyrolo-cache-set-major-mode (min (1+ start) (point-max))))
 		    ;; Prevent Org and Outline minor modes from font-locking
 		    (setq font-lock-mode nil)
 		    (hyrolo--funcall-with-outline-regexp func)))
@@ -3212,7 +3242,7 @@ proper major mode."
 		;; Need to leave point on a visible character or since
 		;; hyrolo uses reveal-mode, redisplay will rexpand
 		;; hidden entries to make point visible.
-		(hyrolo-back-to-visible-point)
+		;; (hyrolo-back-to-visible-point)
 		;; This pause forces a window redisplay that maximizes the
 		;; entries displayed for any final location of point.
 		;; Comment it out for now and see how well movement
