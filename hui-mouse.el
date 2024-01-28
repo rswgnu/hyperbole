@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     21-Jan-24 at 10:31:44 by Bob Weiner
+;; Last-Mod:     27-Jan-24 at 11:29:19 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1948,12 +1948,12 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
   "Non-nil means outline region was cut and is ready to be pasted at point.")
 
 (eval-after-load "outline"
-  '(mapc (lambda (mode)
-	   (add-hook mode (lambda ()
-			    (make-local-variable 'smart-outline-cut)
-			    ;; Non-nil means outline region was cut
-			    ;; and is available to be pasted at point.
-			    (setq smart-outline-cut nil))))
+  '(mapc (lambda (hook-var)
+	   (add-hook hook-var (lambda ()
+				(make-local-variable 'smart-outline-cut)
+				;; Non-nil means outline region was cut
+				;; and is available to be pasted at point.
+				(setq smart-outline-cut nil))))
 	 '(outline-mode-hook outline-minor-mode-hook)))
 
 (defun smart-outline-level ()

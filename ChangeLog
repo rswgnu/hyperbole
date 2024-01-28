@@ -1,3 +1,31 @@
+2024-01-28  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-reveal-open-new-overlays, hyrolo-reveal-close-old-overlays):
+    Wrap 'funcall' in 'hyrolo-funcall-match' so uses HyRolo outline settings.
+
+2024-01-27  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-google-contacts-insert-data): Remove local let of (child nil).
+            (hyrolo-edit, hyrolo-add): Call '(set-auto-mode t)' to change from any
+    HyRolo-specific major-mode for quick reading to the file's normal mode for editing.
+            (hyrolo--funcall-with-outline-regexp): Add to avoid setting 'outline-regexp'
+    with a 'let' and call from 'hyrolo-map-matches' and 'hyrolo-funcall-match'.
+
+* hyrolo.el (hyrolo-auto-mode-alist): Add new variable to control major modes used
+    by files read in for HyRolo searches.
+            (hyrolo-find-file-noselect): Remove Org mode-specific logic and instead
+    utilize 'hyrolo-auto-mode-alist'.
+            (hyrolo-outline-mode): Add for use with .ou?tl files with HyRolo.
+            (hyrolo-min-matched-level): Ensure never returns less than 1.
+            (hyrolo--cache-major-mode): Use `hyrolo-auto-mode-alist' to override
+    the default `major-mode' used on file entry matches within the *HyRolo* buffer.
+  hypb.el (hypb:major-mode-from-file-name): Rename to 'hyrolo-major-mode-from-file-name'
+    and move to "hyrolo.el".  Prefix 'auto-mode-alist' values with those in
+    'hyrolo-auto-mode-alist'.
+  hyrolo.el (hyrolo-any-file-type-problem-p): Rename call here of above function.
+  hyrolo-logic.el (hyrolo-logic): Change call from 'hyrolo-find-file' to
+    'hyrolo-find-file-noselect' to enable use of 'hyrolo-auto-mode-alist'.
+
 2024-01-23  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-reveal-ignore-this-command, hyrolo-reveal-open-new-overlays,

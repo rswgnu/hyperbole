@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     20-Jan-24 at 15:43:08 by Mats Lidell
+;; Last-Mod:     27-Jan-24 at 23:43:15 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -429,8 +429,9 @@ If labels are off, return cell's idstamp as a string."
       (if (eq label-type 'no)
 	  (kcell-view:idstamp)
 	(kcell-view:to-label-end)
-	(buffer-substring-no-properties (point) (progn (skip-chars-backward "^ \t\n\r")
-						       (point)))))))
+	(buffer-substring-no-properties
+	 (point) (progn (skip-chars-backward "^ \t\n\r")
+			(point)))))))
 
 (defun kcell-view:level (&optional pos lbl-sep-len indent)
   "Return the outline level of the current cell or the one at optional POS.
