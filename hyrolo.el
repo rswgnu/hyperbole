@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     28-Jan-24 at 02:11:12 by Bob Weiner
+;; Last-Mod:     28-Jan-24 at 02:33:39 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -952,6 +952,7 @@ or NAME is invalid, return nil."
   "Major mode for editing Markdown files."
   (unless (fboundp 'markdown-mode)
     (package-install 'markdown-mode))
+  (require 'markdown-mode)
 
   ;; Don't actually derive from `markdown-mode' to avoid its costly setup
   ;; but set its parent mode property to org-mode so `derived-mode-p' checks

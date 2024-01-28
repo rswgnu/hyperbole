@@ -2,6 +2,7 @@
 
 * hyrolo.el (hyrolo-reveal-open-new-overlays, hyrolo-reveal-close-old-overlays):
     Wrap 'funcall' in 'hyrolo-funcall-match' so uses HyRolo outline settings.
+            (hyrolo-markdown-mode): Add missing (require 'markdown-mode).
 
 2024-01-27  Bob Weiner  <rsw@gnu.org>
 
