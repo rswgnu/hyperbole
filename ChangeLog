@@ -1,3 +1,12 @@
+2024-01-30  Mats Lidell  <matsl@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-tests--outline-as-string): Add helper that
+    returns how the buffer looks to the eye.
+    (hyrolo-tests--outline-hide-other)
+    (hyrolo-tests--outline-hide-sublevels)
+    (hyrolo-tests--hyrolo-outline-show-subtree): Add tests for hyrolo
+    outline show and hide commands.
+
 2024-01-28  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-org-outline-level): Fix to not move point; was causing errors

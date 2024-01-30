@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     28-Jan-24 at 15:51:04 by Bob Weiner
+;; Last-Mod:     30-Jan-24 at 14:24:16 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1064,6 +1064,194 @@ body
           ;; Moving up from first header on a level errors, also when repeated.
           (should-error (and (hact 'kbd-key "b") (looking-at-p "^\\*\\* h-org 1\\.1")))
           (should-error (and (hact 'kbd-key "b") (looking-at-p "^\\*\\* h-org 1\\.1"))))
+      (kill-buffer hyrolo-display-buffer)
+      (hy-delete-files-and-buffers hyrolo-file-list))))
+
+(defun hyrolo-tests--outline-as-string (&optional begin end)
+  "Return buffer content as a string with hidden text replaced by ellipses.
+The string contains what the outline actually looks like.  This
+enables `string-match' tests for verifying text is hidden.  With
+optional BEGIN and END only return that part of the buffer."
+  (if (not begin) (setq begin (point-min)))
+  (if (not end) (setq end (point-max)))
+  (save-excursion
+    (let ((result "")
+          in-invisible-section)
+      (goto-char begin)
+      (while (< (point) end)
+        (setq result
+              (concat result
+                      (if (get-char-property (point) 'invisible)
+                          (cond ((not in-invisible-section)
+                                 (setq in-invisible-section t)
+                                 "...")
+                                (t nil))
+                        (progn
+                          (if in-invisible-section
+                              (setq in-invisible-section nil))
+                          (char-to-string (char-after))))))
+        (goto-char (1+ (point))))
+      result)))
+
+(ert-deftest hyrolo-tests--outline-hide-other ()
+  "Verify `hyrolo-outline-hide-other' hides except current body, parent and top-level headings."
+  (let* ((org-file1 (make-temp-file "hypb" nil ".org" hyrolo-tests--outline-content-org))
+         (hyrolo-file-list (list org-file1)))
+    (unwind-protect
+        (progn
+          (hyrolo-grep "body")
+
+          ;; First line
+          (should (= (point) 1))
+          (hyrolo-outline-hide-other)
+          (should (string-match-p
+                   (concat "^===+" (regexp-quote "...\n* h-org 1...\n* h-org 2...\n") "$")
+                   (hyrolo-tests--outline-as-string)))
+
+          ;; On first header
+          (goto-char (point-min))
+          (hyrolo-outline-show-all)
+          (search-forward "* h-org 1")
+          (beginning-of-line)
+          (hyrolo-outline-hide-other)
+          (should (string= "...\n* h-org 1\nbody...\n* h-org 2...\n"
+                           (hyrolo-tests--outline-as-string)))
+          (should (string= "* h-org 1\nbody...\n* h-org 2...\n"
+                           (hyrolo-tests--outline-as-string (point))))
+
+          ;; On second header
+          (goto-char (point-min))
+          (hyrolo-outline-show-all)
+          (search-forward "** h-org 1.1")
+          (beginning-of-line)
+          (hyrolo-outline-hide-other)
+          (should (string= "...\n* h-org 1\n...\n** h-org 1.1\nbody...\n* h-org 2...\n"
+                           (hyrolo-tests--outline-as-string)))
+          (should (string= "** h-org 1.1\nbody...\n* h-org 2...\n"
+                           (hyrolo-tests--outline-as-string (point)))))
+      (kill-buffer hyrolo-display-buffer)
+      (hy-delete-files-and-buffers hyrolo-file-list))))
+
+
+(ert-deftest hyrolo-tests--outline-hide-sublevels ()
+  "Verify `hyrolo-outline-hide-sublevels' hides everything but the top levels."
+  (let* ((org-file1 (make-temp-file "hypb" nil ".org" hyrolo-tests--outline-content-org))
+         (hyrolo-file-list (list org-file1)))
+    (unwind-protect
+        (progn
+          (hyrolo-grep "body")
+
+          ;; First line
+          (should (= (point) 1))
+          (hyrolo-outline-hide-sublevels 1)
+          (should (= (point) 1))
+          (should (string= "...\n* h-org 1...\n* h-org 2...\n"
+                           (hyrolo-tests--outline-as-string)))
+
+          ;; On first header
+          (goto-char (point-min))
+          (hyrolo-outline-show-all)
+          (search-forward "* h-org 1")
+          (beginning-of-line)
+          (hyrolo-outline-hide-sublevels 1)
+          (should (string= "...\n* h-org 1...\n* h-org 2...\n"
+                           (hyrolo-tests--outline-as-string)))
+          (should (string= "* h-org 1...\n* h-org 2...\n"
+                           (hyrolo-tests--outline-as-string (point))))
+
+          ;; On second header
+          (goto-char (point-min))
+          (hyrolo-outline-show-all)
+          (search-forward "** h-org 1.1")
+          (beginning-of-line)
+          (hyrolo-outline-hide-sublevels 1)
+          (should (string= "...\n* h-org 1...\n* h-org 2...\n"
+                           (hyrolo-tests--outline-as-string)))
+          (should (string= "1...\n* h-org 2...\n"
+                           (hyrolo-tests--outline-as-string (point))))
+
+          ;; First line - 2 levels
+          (goto-char (point-min))
+          (should (= (point) 1))
+          (hyrolo-outline-hide-sublevels 2)
+          (should (= (point) 1))
+          (should (string= "...\n* h-org 1...\n** h-org 1.1...\n** h-org 1.2...\n* h-org 2...\n** h-org-2.1...\n"
+                           (hyrolo-tests--outline-as-string)))
+
+          ;; On first header - 2 levels
+          (goto-char (point-min))
+          (hyrolo-outline-show-all)
+          (search-forward "* h-org 1")
+          (beginning-of-line)
+          (hyrolo-outline-hide-sublevels 2)
+          (should (string= "...\n* h-org 1...\n** h-org 1.1...\n** h-org 1.2...\n* h-org 2...\n** h-org-2.1...\n"
+                           (hyrolo-tests--outline-as-string)))
+          (should (string= "* h-org 1...\n** h-org 1.1...\n** h-org 1.2...\n* h-org 2...\n** h-org-2.1...\n"
+                           (hyrolo-tests--outline-as-string (point))))
+
+          ;; On second header - 2 levels
+          (goto-char (point-min))
+          (hyrolo-outline-show-all)
+          (search-forward "** h-org 1.1")
+          (beginning-of-line)
+          (hyrolo-outline-hide-sublevels 2)
+          (should (string=
+                   "...\n* h-org 1...\n** h-org 1.1...\n** h-org 1.2...\n* h-org 2...\n** h-org-2.1...\n"
+                   (hyrolo-tests--outline-as-string)))
+          (should (string= "** h-org 1.1...\n** h-org 1.2...\n* h-org 2...\n** h-org-2.1...\n"
+                           (hyrolo-tests--outline-as-string (point)))))
+      (kill-buffer hyrolo-display-buffer)
+      (hy-delete-files-and-buffers hyrolo-file-list))))
+
+(ert-deftest hyrolo-tests--hyrolo-outline-show-subtree ()
+  "Verify `hyrolo-hyrolo-outline-show-subtree' shows everything after heading at deeper levels."
+  (let* ((org-file1 (make-temp-file "hypb" nil ".org" hyrolo-tests--outline-content-org))
+         (hyrolo-file-list (list org-file1)))
+    (unwind-protect
+        (progn
+          (hyrolo-grep "body")
+
+          ;; First line - show all
+          (should (= (point) 1))
+          (let ((original-look (hyrolo-tests--outline-as-string)))
+            (hyrolo-outline-hide-subtree)
+            (should (string-match-p
+                     (concat "^===+" (regexp-quote "...") "\n$")
+                     (hyrolo-tests--outline-as-string)))
+            (hyrolo-outline-show-subtree)
+            (should (string= original-look (hyrolo-tests--outline-as-string))))
+
+          ;; On first header
+          (goto-char (point-min))
+          (hyrolo-outline-show-all)
+          (hyrolo-outline-hide-sublevels 1)
+          (search-forward "* h-org 1")
+          (beginning-of-line)
+          (let ((original-look (hyrolo-tests--outline-as-string)))
+            (hyrolo-outline-show-subtree)
+            (should (string= "...\n* h-org 1\nbody\n** h-org 1.1\nbody\n** h-org 1.2\nbody\n*** h-org 1.2.1\nbody\n* h-org 2...\n"
+                             (hyrolo-tests--outline-as-string)))
+            (should (string= "* h-org 1\nbody\n** h-org 1.1\nbody\n** h-org 1.2\nbody\n*** h-org 1.2.1\nbody\n* h-org 2...\n"
+                             (hyrolo-tests--outline-as-string (point))))
+            ;; Hide it again
+            (hyrolo-outline-hide-subtree)
+            (should (string= original-look (hyrolo-tests--outline-as-string))))
+
+          ;; On second level header
+          (goto-char (point-min))
+          (hyrolo-outline-show-all)
+          (hyrolo-outline-hide-sublevels 2)
+          (search-forward "** h-org 1.2")
+          (beginning-of-line)
+          (let ((original-look (hyrolo-tests--outline-as-string)))
+            (hyrolo-outline-show-subtree)
+            (should (string= "...\n* h-org 1...\n** h-org 1.1...\n** h-org 1.2\nbody\n*** h-org 1.2.1\nbody\n* h-org 2...\n** h-org-2.1...\n"
+                             (hyrolo-tests--outline-as-string)))
+            (should (string= "** h-org 1.2\nbody\n*** h-org 1.2.1\nbody\n* h-org 2...\n** h-org-2.1...\n"
+                             (hyrolo-tests--outline-as-string (point))))
+            ;; Hide it again
+            (hyrolo-outline-hide-subtree)
+            (should (string= original-look (hyrolo-tests--outline-as-string)))))
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))
 
