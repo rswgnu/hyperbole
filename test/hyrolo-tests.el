@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     30-Jan-24 at 14:24:16 by Mats Lidell
+;; Last-Mod:      1-Feb-24 at 00:10:57 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1252,6 +1252,74 @@ optional BEGIN and END only return that part of the buffer."
             ;; Hide it again
             (hyrolo-outline-hide-subtree)
             (should (string= original-look (hyrolo-tests--outline-as-string)))))
+      (kill-buffer hyrolo-display-buffer)
+      (hy-delete-files-and-buffers hyrolo-file-list))))
+
+(defun hyrolo-tests--hyrolo-section-header (filename)
+  "Return a hyrolo section header for FILENAME."
+  (concat
+   "===============================================================================\n@loc> \""
+   filename
+   "\"\n"
+   "===============================================================================\n"))
+
+(ert-deftest hyrolo-tests--hyrolo-reveal-mode ()
+  "Verify hidden sections are shown when using {TAB} to move through matches."
+  (skip-unless (not noninteractive))
+  (let* ((org-file1 (make-temp-file "hypb" nil ".org" hyrolo-tests--outline-content-org))
+         (hyrolo-file-list (list org-file1)))
+    (unwind-protect
+        (progn
+          (hyrolo-grep "body")
+          (hyrolo-top-level)
+
+          (should (string=
+                   (concat (hyrolo-tests--hyrolo-section-header org-file1)
+                           "* h-org 1...\n* h-org 2...\n")
+                   (hyrolo-tests--outline-as-string)))
+
+          (should (hact 'kbd-key "TAB"))
+	  (hy-test-helpers:consume-input-events)
+	  (hy-test-helpers:consume-input-events)
+          (should (string=
+                   (concat (hyrolo-tests--hyrolo-section-header org-file1)
+                           "* h-org 1\nbody\n** h-org 1.1...\n** h-org 1.2...\n* h-org 2...\n")
+                   (hyrolo-tests--outline-as-string)))
+
+          (should (hact 'kbd-key "TAB"))
+          (hy-test-helpers:consume-input-events)
+          (should (string=
+                   (concat (hyrolo-tests--hyrolo-section-header org-file1)
+                           "* h-org 1\nbody\n** h-org 1.1\nbody\n** h-org 1.2...\n* h-org 2...\n")
+                   (hyrolo-tests--outline-as-string)))
+
+          (should (hact 'kbd-key "TAB"))
+          (hy-test-helpers:consume-input-events)
+          (should (string=
+                   (concat (hyrolo-tests--hyrolo-section-header org-file1)
+                           "* h-org 1\nbody\n** h-org 1.1\nbody\n** h-org 1.2\nbody\n*** h-org 1.2.1...\n* h-org 2...\n")
+                   (hyrolo-tests--outline-as-string)))
+
+          (should (hact 'kbd-key "TAB"))
+          (hy-test-helpers:consume-input-events)
+          (should (string=
+                   (concat (hyrolo-tests--hyrolo-section-header org-file1)
+                           "* h-org 1\nbody\n** h-org 1.1\nbody\n** h-org 1.2\nbody\n*** h-org 1.2.1\nbody\n* h-org 2...\n")
+                   (hyrolo-tests--outline-as-string)))
+
+          (should (hact 'kbd-key "TAB"))
+          (hy-test-helpers:consume-input-events)
+          (should (string=
+                   (concat (hyrolo-tests--hyrolo-section-header org-file1)
+                           "* h-org 1\nbody\n** h-org 1.1\nbody\n** h-org 1.2\nbody\n*** h-org 1.2.1\nbody\n* h-org 2\nbody\n** h-org-2.1...\n")
+                   (hyrolo-tests--outline-as-string)))
+
+          (should (hact 'kbd-key "TAB"))
+          (hy-test-helpers:consume-input-events)
+          (should (string=
+                   (concat (hyrolo-tests--hyrolo-section-header org-file1)
+                           "* h-org 1\nbody\n** h-org 1.1\nbody\n** h-org 1.2\nbody\n*** h-org 1.2.1\nbody\n* h-org 2\nbody\n** h-org-2.1\nbody\n")
+                   (hyrolo-tests--outline-as-string))))
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))
 

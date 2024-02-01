@@ -1,3 +1,9 @@
+2024-02-01  Mats Lidell  <matsl@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-tests--hyrolo-section-header): Helper that
+    returns a HyRolo section header.
+    (hyrolo-tests--hyrolo-reveal-mode): Add reveal mode test.
+
 2024-01-30  Mats Lidell  <matsl@gnu.org>
 
 * test/hyrolo-tests.el (hyrolo-tests--outline-as-string): Add helper that
