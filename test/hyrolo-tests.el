@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:      1-Feb-24 at 00:10:57 by Mats Lidell
+;; Last-Mod:      1-Feb-24 at 23:47:50 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1095,6 +1095,7 @@ optional BEGIN and END only return that part of the buffer."
 
 (ert-deftest hyrolo-tests--outline-hide-other ()
   "Verify `hyrolo-outline-hide-other' hides except current body, parent and top-level headings."
+  (skip-unless (< 28 emacs-major-version)) ;; Different behavior in older Emacs versions
   (let* ((org-file1 (make-temp-file "hypb" nil ".org" hyrolo-tests--outline-content-org))
          (hyrolo-file-list (list org-file1)))
     (unwind-protect
@@ -1135,6 +1136,7 @@ optional BEGIN and END only return that part of the buffer."
 
 (ert-deftest hyrolo-tests--outline-hide-sublevels ()
   "Verify `hyrolo-outline-hide-sublevels' hides everything but the top levels."
+    (skip-unless (< 28 emacs-major-version)) ;; Different behavior in older Emacs versions
   (let* ((org-file1 (make-temp-file "hypb" nil ".org" hyrolo-tests--outline-content-org))
          (hyrolo-file-list (list org-file1)))
     (unwind-protect
@@ -1205,6 +1207,7 @@ optional BEGIN and END only return that part of the buffer."
 
 (ert-deftest hyrolo-tests--hyrolo-outline-show-subtree ()
   "Verify `hyrolo-hyrolo-outline-show-subtree' shows everything after heading at deeper levels."
+  (skip-unless (< 28 emacs-major-version)) ;; Different behavior in older Emacs versions
   (let* ((org-file1 (make-temp-file "hypb" nil ".org" hyrolo-tests--outline-content-org))
          (hyrolo-file-list (list org-file1)))
     (unwind-protect
