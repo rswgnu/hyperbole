@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-may-21 at 09:33:00
-;; Last-Mod:     20-Jan-24 at 15:43:50 by Mats Lidell
+;; Last-Mod:      2-Feb-24 at 22:16:49 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -737,6 +737,16 @@ See #10 for the proper way to add an ibutton name.
       (message buf-str)
       (hbut-tests:should-match-tmp-folder buf-str)
       (should (null (hattr:get 'hbut:current 'name))))))
+
+(ert-deftest hbut-tests--ebut-act-calls-hbut-act ()
+  "Verify `ebut:act' calls `hbut:act'."
+  (mocklet (((hbut:act 'button) => t))
+    (should (ebut:act 'button))))
+
+(ert-deftest hbut-tests--ibut-act-calls-hbut-act ()
+  "Verify `ibut:act' calls `hbut:act'."
+  (mocklet (((hbut:act 'button) => t))
+    (should (ibut:act 'button))))
 
 ;; This file can't be byte-compiled without the `el-mock' package (because of
 ;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.

@@ -1,12 +1,13 @@
 2024-02-08  Mats Lidell  <matsl@gnu.org>
 
-* hbut.el (ibut:act-label): Rename ibut:act to ibut:act-label, it takes a
-    label as arg.
+* test/hbut-tests.el (hbut-tests--ebut-act-calls-hbut-act)
+    (hbut-tests--ibut-act-calls-hbut-act): Add test for new act functions.
 
 * hui-menu.el (hui-menu-explicit-buttons): Use ebut:act-label.
 
-* hbut.el (ebut:act-label): Rename ebut:act to ebut:act-label, it takes a
-    label as arg.
+* hbut.el (ibut:act-label, ebut:act-label): Rename ebut:act and ibut:act
+    since they take a label as arg.
+    (ebut:act, ibut:act): Add new act functions taking a hbut as arg.
 
 * test/hyrolo-tests.el: Make hide tests more forgiving about hiding
     section headers. Allows test cases to be used with different versions

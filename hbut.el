@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      2-Feb-24 at 21:47:24 by Mats Lidell
+;; Last-Mod:      2-Feb-24 at 22:11:13 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -121,6 +121,14 @@ indicating the source of any of its Hyperbole buttons.")
 (defvar   ebut:hattr-save t
   "*Non-nil value saves button data when button source is saved.
 Nil disables saving.")
+
+(defun    ebut:act (&optional hbut)
+  "Perform action for optional explicit Hyperbole button symbol HBUT.
+Default is the symbol hbut:current."
+  (interactive (list (hbut:get (hargs:read-match "Activate labeled Hyperbole button: "
+						 (ebut:alist)
+						 nil t nil 'hbut))))
+  (hbut:act hbut))
 
 (defun    ebut:act-label (label)
   "Activate Hyperbole explicit button with LABEL from the current buffer."
@@ -1692,6 +1700,13 @@ Keys in optional KEY-SRC or the current buffer."
 ;;; ibut class - Implicit Hyperbole Buttons
 ;;; ========================================================================
 
+(defun    ibut:act (&optional hbut)
+  "Perform action for optional implicit Hyperbole button symbol HBUT.
+Default is the symbol hbut:current."
+  (interactive (list (hbut:get (hargs:read-match "Activate labeled Hyperbole button: "
+						 (ibut:alist)
+						 nil t nil 'hbut))))
+  (hbut:act hbut))
 
 (defun    ibut:act-label (label)
   "Activate Hyperbole implicit button with <[LABEL]> from the current buffer."
