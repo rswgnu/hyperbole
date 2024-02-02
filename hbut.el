@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     21-Jan-24 at 10:31:14 by Bob Weiner
+;; Last-Mod:      2-Feb-24 at 21:41:12 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -122,7 +122,7 @@ indicating the source of any of its Hyperbole buttons.")
   "*Non-nil value saves button data when button source is saved.
 Nil disables saving.")
 
-(defun    ebut:act (label)
+(defun    ebut:act-label (label)
   "Activate Hyperbole explicit button with LABEL from the current buffer."
   (interactive (list (hargs:read-match "Activate explicit button labeled: "
 				       (ebut:alist)
@@ -131,7 +131,7 @@ Nil disables saving.")
 	 (but (ebut:get lbl-key)))
     (if but
 	(hbut:act but)
-      (error "(ebut:act): No explicit button labeled: %s" label))))
+      (error "(ebut:act-label): No explicit button labeled: %s" label))))
 
 (defun    ebut:alist (&optional file)
   "Return alist of ebuts in FILE or the current buffer.

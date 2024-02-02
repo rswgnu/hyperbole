@@ -1,5 +1,10 @@
 2024-02-08  Mats Lidell  <matsl@gnu.org>
 
+* hui-menu.el (hui-menu-explicit-buttons): Use ebut:act-label.
+
+* hbut.el (ebut:act-label): Rename ebut:act to ebut:act-label, it takes a
+    label as arg.
+
 * test/hyrolo-tests.el: Make hide tests more forgiving about hiding
     section headers. Allows test cases to be used with different versions
     of org.
