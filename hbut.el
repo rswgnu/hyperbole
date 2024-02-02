@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      2-Feb-24 at 21:41:12 by Mats Lidell
+;; Last-Mod:      2-Feb-24 at 21:47:24 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1693,7 +1693,7 @@ Keys in optional KEY-SRC or the current buffer."
 ;;; ========================================================================
 
 
-(defun    ibut:act (label)
+(defun    ibut:act-label (label)
   "Activate Hyperbole implicit button with <[LABEL]> from the current buffer."
   (interactive (list (hargs:read-match "Activate implicit button labeled: "
 				       (ibut:alist)
@@ -1702,7 +1702,7 @@ Keys in optional KEY-SRC or the current buffer."
 	 (but (ibut:get lbl-key)))
     (if but
 	(hbut:act but)
-      (error "(ibut:act): No implicit button labeled: %s" label))))
+      (error "(ibut:act-label): No implicit button labeled: %s" label))))
 
 (defun    ibut:alist (&optional file)
   "Return alist of labeled ibuts in FILE or the current buffer.

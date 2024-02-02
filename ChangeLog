@@ -1,5 +1,8 @@
 2024-02-08  Mats Lidell  <matsl@gnu.org>
 
+* hbut.el (ibut:act-label): Rename ibut:act to ibut:act-label, it takes a
+    label as arg.
+
 * hui-menu.el (hui-menu-explicit-buttons): Use ebut:act-label.
 
 * hbut.el (ebut:act-label): Rename ebut:act to ebut:act-label, it takes a
