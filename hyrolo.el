@@ -2730,7 +2730,7 @@ Entry is inserted before point.  The region is between START to END."
   "Return t if any file from `hyrolo-file-list' has an unusable format.
 
 The list of unusable files is displayed in a HyRolo error window
-unless 'hyrolo-boolean-only-flag' is set to t (used for testing).
+unless `hyrolo-boolean-only-flag' is set to t (used for testing).
 
 This will install `markdown-mode' if any Markdown files are specified and the
 package is not installed."
