@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      4-Feb-24 at 14:00:36 by Bob Weiner
+;; Last-Mod:      4-Feb-24 at 22:42:01 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -113,9 +113,32 @@
 (defvar org-mode-syntax-table)          ; "org.el"
 (defvar org-outline-regexp)             ; "org.el"
 (defvar org-outline-regexp-bol)         ; "org.el"
-(defvar markdown-regex-header)          ; "markdown-mode.el"
 (defvar google-contacts-buffer-name)    ; "ext:google-contacts.el"
 (defvar hbut:source-prefix)             ; "hbut.el"
+
+;; markdown-mode.el
+(defvar markdown-regex-header)
+(defvar markdown-hide-markup)
+(defvar markdown-nested-imenu-heading-index)
+(defvar markdown-indent-function)
+(defvar markdown-make-gfm-checkboxes-buttons)
+(declare-function markdown--edit-indirect-after-commit-function "ext:markdown-mode")
+(declare-function markdown--indent-region "ext:markdown-mode")
+(declare-function markdown--inhibit-electric-quote "ext:markdown-mode")
+(declare-function markdown-adaptive-fill-function "ext:markdown-mode")
+(declare-function markdown-beginning-of-defun "ext:markdown-mode")
+(declare-function markdown-end-of-defun "ext:markdown-mode")
+(declare-function markdown-fill-forward-paragraph "ext:markdown-mode")
+(declare-function markdown-fill-paragraph "ext:markdown-mode")
+(declare-function markdown-gfm-checkbox-after-change-function "ext:markdown-mode")
+(declare-function markdown-imenu-create-flat-index "ext:markdown-mode")
+(declare-function markdown-imenu-create-nested-index "ext:markdown-mode")
+(declare-function markdown-line-is-reference-definition-p "ext:markdown-mode")
+(declare-function markdown-live-preview-if-markdown "ext:markdown-mode")
+(declare-function markdown-live-preview-remove-on-kill "ext:markdown-mode")
+(declare-function markdown-make-gfm-checkboxes-buttons "ext:markdown-mode")
+(declare-function markdown-pipe-at-bol-p "ext:markdown-mode")
+(declare-function markdown-remove-gfm-checkbox-overlays "ext:markdown-mode")
 
 ;; Forward declarations
 (defvar hyrolo--wconfig)
@@ -128,6 +151,7 @@
 (defvar hyrolo-mode-map)
 (defvar hyrolo-mode-prefix-map)
 (defvar hyrolo-mode-syntax-table)
+(defvar hyrolo-reveal-ignore-this-command)
 
 ;;; ************************************************************************
 ;;; Public variables
