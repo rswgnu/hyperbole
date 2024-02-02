@@ -1560,7 +1560,7 @@ Return number of matching entries found."
       (insert "No result.")
     (print contacts (get-buffer-create "*contacts-data*"))
     (dolist (contact contacts)
-      (let* (
+      (let* ((child nil)
 	     (name-value (nth 0 (xml-get-children contact 'gd:name)))
              (fullname (xml-node-child-string (nth 0 (xml-get-children name-value 'gd:fullName))))
              (givenname (xml-node-child-string (nth 0 (xml-get-children name-value 'gd:givenName))))
