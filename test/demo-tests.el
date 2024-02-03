@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     20-Jan-24 at 15:43:39 by Mats Lidell
+;; Last-Mod:      3-Feb-24 at 23:32:21 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -657,7 +657,8 @@ enough files with matching mode loaded."
 
 (ert-deftest fast-demo-key-series-shell-apropos ()
   "Action key executes apropos shell command."
-  (skip-unless (not noninteractive))
+  (skip-unless (and (not noninteractive)
+                    (executable-find "apropos")))
   (let* ((shell-file-name (executable-find "sh"))
          (shell-buffer-name "*shell*")
 	 (existing-shell-flag (get-buffer-process shell-buffer-name)))
