@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     28-Jan-24 at 15:54:51 by Bob Weiner
+;; Last-Mod:     28-Jan-24 at 18:36:34 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -20,7 +20,7 @@
 ;;; ************************************************************************
 
 (eval-and-compile
-  (mapc #'require '(cl-lib find-func hpath hui-select))
+  (mapc #'require '(find-func hpath hui-select))
   (unless (or (featurep 'etags) (featurep 'tags))
     ;; Force use of .elc file here since otherwise the bin/etags
     ;; executable might be found in a user's load-path by the load
@@ -100,13 +100,12 @@ should insert the implicit link type definition name.")
 ;; Add Hyperbole def types to `find-function-regexp-alist'.
 (mapc (lambda (item)
 	(setq find-function-regexp-alist
-	      (cl-delete-if (lambda (elt) (eq (car elt) (car item)))
-			    find-function-regexp-alist))
-	(add-to-list 'find-function-regexp-alist item))
-      '((defact . find-defact-regexp)
-	(defal  . find-defal-regexp)
-	(defib  . find-defib-regexp)
-	(defil  . find-defil-regexp)
+	      (assq-delete-all (car item) find-function-regexp-alist))
+	(push item find-function-regexp-alist))
+      '((defact    . find-defact-regexp)
+	(defal     . find-defal-regexp)
+	(defib     . find-defib-regexp)
+	(defil     . find-defil-regexp)
 	(ert--test . find-ert-test-regexp)))
 
 (define-obsolete-variable-alias 'smart-asm-include-dirs

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     21-Jan-24 at 11:47:53 by Bob Weiner
+;; Last-Mod:      4-Feb-24 at 14:12:06 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -173,8 +173,11 @@ Return t if Org is reloaded, else nil."
 		    (string-equal (match-string 1 org-dir) ;; org-dir version
 				  (remove ?- (org-release)))
 		  t))
-	   ;; Just require these libraries used for Hyperbole testing to ensure
-	   ;; they are loaded from the single Org version used.
+	   ;; Ensure Org folding is configured for `reveal-mode' compatibility
+	   (hsys-org--set-fold-style)
+	   ;; Just require these libraries used for Hyperbole testing
+	   ;; (when they are available) to ensure they are loaded from
+	   ;; the single Org version used.
 	   (mapc (lambda (lib-sym) (require lib-sym nil t))
 		 '(org-version org-keys org-compat ol org-table org-macs org-id
 			       org-element org-list org-element org-src org-fold org))
@@ -192,7 +195,10 @@ Return t if Org is reloaded, else nil."
 		   org-libraries-to-reload)
 
 	     ;; Ensure user's external Org package version is configured for loading
-	     (package-initialize)
+	     (unless (and package--initialized (not after-init-time))
+	       (package-initialize))
+	     ;; Ensure Org folding is configured for `reveal-mode' compatibility
+	     (hsys-org--set-fold-style)
 	     (let ((pkg-desc (car (cdr (assq 'org package-archive-contents)))))
 	       (package-activate pkg-desc t))
 
@@ -548,6 +554,14 @@ TARGET must be a string."
 ;;; ************************************************************************
 ;;; Private functions
 ;;; ************************************************************************
+
+(defun hsys-org--set-fold-style ()
+  "Set `org-fold-core-style' to 'overlays for `reveal-mode' compatibility.
+This must be called before Org mode is loaded."
+  (when (and (ignore-errors (find-library-name "org-fold-core"))
+	     (not (boundp 'org-fold-core-style)))
+    (load "org-fold-core"))
+  (custom-set-variables '(org-fold-core-style 'overlays)))
 
 (provide 'hsys-org)
 

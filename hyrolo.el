@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     28-Jan-24 at 15:34:45 by Bob Weiner
+;; Last-Mod:      4-Feb-24 at 14:00:36 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -491,7 +491,7 @@ entry which begins with the parent string."
 							(re-search-forward hyrolo-entry-name-regexp nil t)
 							(point))))
 	  (when (and (derived-mode-p 'markdown-mode)
-		     (string-match "\\`.*#+" entry-spc))
+		     (string-match "\\`[^#]*#+" entry-spc))
 	    (setq entry-spc (substring entry-spc (length (match-string 0 entry-spc)))))
 	  (cond ((string-lessp entry name)
 		 (hyrolo-to-entry-end t))
@@ -1038,7 +1038,7 @@ or NAME is invalid, return nil."
 	      ;; `hyrolo-add' handles removing # prefix from
 	      ;; trailing-space grouping below
 	      hyrolo-entry-trailing-space-group-number 2
-	      outline-regexp (concat hyrolo-hdr-prefix-regexp markdown-regex-header)
+	      outline-regexp (concat hyrolo-hdr-prefix-regexp "^\\(#+\\)\\([ \t\n\r]\\)")
 	      outline-level #'hyrolo-outline-level)
   ;; Use ellipses for invisible text
   (add-to-invisibility-spec '(outline . t))
@@ -1146,7 +1146,7 @@ non-nil."
   (setq-local hyrolo-entry-regexp "^\\([*\^L]+\\)\\([ \t\n\r]+\\)"
 	      hyrolo-hdr-and-entry-regexp (concat hyrolo-hdr-prefix-regexp hyrolo-entry-regexp)
 	      hyrolo-entry-group-number 1
-	      ;; `hyrolo-add' handles removing # prefix from
+	      ;; `hyrolo-add' handles removing * prefix from
 	      ;; trailing-space grouping below
 	      hyrolo-entry-trailing-space-group-number 2
 	      outline-regexp (concat hyrolo-hdr-prefix-regexp "^\\([*\^L]+\\)\\([ \t\n\r]\\)")
@@ -1867,8 +1867,8 @@ The header includes lines matching both `hyrolo-hdr-regexp' and
   (save-excursion (hyrolo-hdr-move-after-p)))
 
 (defun hyrolo-hdr-move-after-p ()
-  "If point is within a file header, move past the hdr and return non-nil.
-Otherwise, don't move and return nil."
+  "If point is within a file header, move past the hdr and blank lines.
+Return non-nil if point moves, else return nil."
   (let ((opoint (point))
 	result)
     (if (save-excursion
@@ -1900,7 +1900,9 @@ Otherwise, don't move and return nil."
 	  ;; @loc> line after header
 	  (forward-line 1))))
     (if (> (point) opoint)
-	result
+	(progn (while (looking-at-p "^[ \t]*$")
+		 (forward-line 1))
+	       result)
       (goto-char opoint)
       nil)))
 
@@ -2134,9 +2136,7 @@ Calls the functions given by `hyrolo-mode-hook'.
 		  "@loc> ")
 		1)
 	  outline-heading-alist)
-    ;; This next local value is dynamically overridden in `hyrolo-grep'.
-    (setq-local outline-regexp "\\([*\^L]+\\)\\([ \t\n\r]\\)"
-		hyrolo-entry-regexp (concat "^" "\\([*\^L]+\\)\\([ \t\n\r]+\\)")
+    (setq-local hyrolo-entry-regexp (concat "^" "\\([*\^L]+\\)\\([ \t\n\r]+\\)")
 		hyrolo-hdr-and-entry-regexp (default-value 'hyrolo-hdr-and-entry-regexp)
 		;; In `outline-regexp', prevent matching to *word*
 		;; at the beginning of lines and hanging hyrolo
@@ -2144,6 +2144,8 @@ Calls the functions given by `hyrolo-mode-hook'.
 		;; the end of the match.  Note this change adds one
 		;; level to the level count, so `hyrolo-outline-level'
 		;; decrements it by one.  -- rsw, 2023-11-17
+		;; This next local value is dynamically overridden in `hyrolo-grep'.
+		outline-regexp "\\([*\^L]+\\)\\([ \t\n\r]\\)"
 		outline-level #'hyrolo-outline-level)
 
     ;; Can't cycle because {TAB} moves to next match
@@ -2669,10 +2671,24 @@ Return current point."
   (point)))
 
 (defun hyrolo-move-to-entry-end (include-sub-entries)
+  "Move point past the end of the current entry, if any.
+With optional INCLUDE-SUB-ENTRIES non-nil, move to the end of the
+entire subtree.  Return INCLUDE-SUB-ENTRIES flag value."
   (if (not include-sub-entries)
+      ;; Move to (point-max) if no next heading found and return nil
       (outline-next-heading)
-    (outline-end-of-subtree)
-    (goto-char (1+ (point))))
+    ;; When point is before the first entry in an Org file,
+    ;; `outline-end-of-subtree' can signal an
+    ;; `outline-before-first-heading' error within its subcall to
+    ;; `outline-back-to-heading' because of advice wrapped around that
+    ;; function from "org-compat.el".
+    (condition-case ()
+	(progn
+	  (outline-end-of-subtree)
+	  (goto-char (1+ (point))))
+      ;; Error means point is before the first buffer heading; move
+      ;; past file header to any next entry.
+      (error (hyrolo-hdr-move-after-p))))
   include-sub-entries)
 
 (defun hyrolo-to-next-loc ()
@@ -2968,13 +2984,13 @@ Any non-nil value returned is a cons of (<entry-name> . <entry-source>)."
 	(org-fold-core-set-folding-spec-property (car org-link--link-folding-spec) :visible nil)
       (org-fold-core-set-folding-spec-property (car org-link--link-folding-spec) :visible t)))
 
-  (setq-local hyrolo-entry-regexp "^\\(\\*+\\)\\([ 	]+\\)"
+  (setq-local hyrolo-entry-regexp "^\\(\\*+\\)\\([ \t\n\r]+\\)"
 	      hyrolo-hdr-and-entry-regexp (concat hyrolo-hdr-prefix-regexp hyrolo-entry-regexp)
 	      hyrolo-entry-group-number 1
-	      ;; `hyrolo-add' handles removing # prefix from
+	      ;; `hyrolo-add' handles removing * prefix from
 	      ;; trailing-space grouping below
 	      hyrolo-entry-trailing-space-group-number 2
-	      outline-regexp (concat hyrolo-hdr-prefix-regexp "^\\(\\*+\\)\\( \\)")
+	      outline-regexp (concat hyrolo-hdr-prefix-regexp "^\\(\\*+\\)\\([ \t\n\r]\\)")
 	      outline-level #'hyrolo-outline-level)
   (use-local-map org-mode-map)
   ;; Modify a few syntax entries
@@ -3106,7 +3122,8 @@ Return final point."
 	 (apply func args))
        ;; Narrow to current match buffer when given a lambda func.
        (not (symbolp func)))
-    ;; Prevent error and move past file header.
+    ;; Error means point is before the first buffer heading; move
+    ;; past file header to any next entry.
     (error (hyrolo-hdr-move-after-p)))
   (point))
 
@@ -3163,7 +3180,7 @@ HyRolo display matches buffer.")
   "Get the `major-mode' associated with POS in the current HyRolo display buffer."
   (hyrolo--cache-get-major-mode-from-index
    (nth (or (seq-position hyrolo--cache-loc-match-bounds pos (lambda (e pos) (< pos e)))
-	    (error "(hyrolo-cache-get-major-mode): pos=%d > max display buffer pos=%d"
+	    (error "(hyrolo-cache-get-major-mode): pos=%d >= max display buffer pos=%d"
 		   pos (car hyrolo--cache-loc-match-bounds)))
 	hyrolo--cache-major-mode-indexes)))
 

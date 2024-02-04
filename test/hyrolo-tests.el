@@ -176,7 +176,6 @@ and {b} the previous same level cell."
         (should (equal (point) (point-min)))
 
 	(hyrolo-hdr-move-after-p)
-        (should (hact 'kbd-key "n"))
         (should (looking-at "\\*\\*\\s-+Strong"))
 
         (should (hact 'kbd-key "f"))
@@ -200,7 +199,6 @@ and {b} the previous same level cell."
         (should (equal (point) (point-min)))
 
 	(hyrolo-hdr-move-after-p)
-        (should (hact 'kbd-key "n"))
         (should (looking-at "\\*\\*\\s-+Strong"))
 
         (should (hact 'kbd-key "n"))

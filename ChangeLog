@@ -1,14 +1,45 @@
+2024-02-04  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-add): Ensure when matching for initial # characters, do not match
+    to those later in the line.
+            (hyrolo-markdown-mode): Fix to match only to lines starting with # as an
+    entry prefix; don't use `markdown-regex-header' since that allows '- ' as an
+    entry prefix.
+
+* hsys-org.el (hsys-org--set-fold-style): Add and use in 'hsys-org-fix-version'.
+
 2024-02-03  Mats Lidell  <matsl@gnu.org>
 
 * test/demo-tests.el (fast-demo-key-series-shell-apropos): Skip test if
     apropos command is not available. Useful for running test-all using
     silex docker-emacs images.
 
+2024-02-03  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-move-to-entry-end): Add doc string; add 'condition-case' in
+    case of 'outline-before-first-heading' error (see advice from "org-compat.el").
+  hui-mouse.el (smart-outline-to-entry-end): Reverse parts of if clause; add
+    'condition-case' in case of 'outline-before-first-heading' error (see advice
+    from "org-compat.el").
+    (hyrolo-cache-get-major-mode-from-pos): Fix error msg to reflect >= not >.
+
 2024-02-01  Mats Lidell  <matsl@gnu.org>
 
 * test/hyrolo-tests.el (hyrolo-tests--hyrolo-section-header): Helper that
     returns a HyRolo section header.
     (hyrolo-tests--hyrolo-reveal-mode): Add reveal mode test.
+
+2024-02-01  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-hdr-move-after-p): Updated to skip over trailing empty lines.
+* test/hyrolo-tests.el (hyrolo-demo-no-following-same-level-heading,
+                        hyrolo-demo-move-between-entries-on-same-level): No longer
+    need to go to next record after moving past a header followed by a blank line.
+
+2024-01-31  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-move-to-entry-end): Handle potential error raised if called
+    with point before the first entry.
 
 2024-01-30  Mats Lidell  <matsl@gnu.org>
 
@@ -29,8 +60,7 @@
 * hmouse-tag.el (find-ert-test-regexp): Change ert test definition lookups to use
     the path stored in each test symbol's 'ert--test' property by changing from
     using the 'xref-find-definitions' in 'find-function-regexp-alist' to using
-    this newly defined regexp instead.  Add (require 'cl-lib) since this update
-    uses 'cl-delete-if'.
+    this newly defined regexp instead.
 
 * hyrolo.el (hyrolo-reveal-open-new-overlays, hyrolo-reveal-close-old-overlays):
     Wrap 'funcall' in 'hyrolo-funcall-match' so uses HyRolo outline settings.

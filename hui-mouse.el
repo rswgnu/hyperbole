@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     27-Jan-24 at 11:29:19 by Bob Weiner
+;; Last-Mod:      4-Feb-24 at 10:07:05 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2041,13 +2041,15 @@ If assist key is pressed:
 	(t (outline-hide-entry))))
 
 (defun smart-outline-to-entry-end (&optional include-sub-entries)
-  "Move point past the end of the current entry.
+  "Move point past the end of the current entry, if any.
 With optional INCLUDE-SUB-ENTRIES non-nil, move to the end of the
 entire subtree.  Return final point."
-  (if include-sub-entries
-      (progn (outline-end-of-subtree)
-	     (goto-char (1+ (point))))
-    (outline-next-heading))
+  (if (not include-sub-entries)
+      (outline-next-heading)
+    (condition-case ()
+	(progn (outline-end-of-subtree)
+	       (goto-char (1+ (point))))
+      (error "")))
   (point))
 
 (defun smart-outline-subtree-hidden-p ()
