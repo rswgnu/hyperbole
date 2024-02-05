@@ -12,9 +12,9 @@ HY-TALK.org          - Source slides and video link from the author's 2020 talk 
 HY-WHY.kotl          - Quick list of great reasons to use Hyperbole
 INSTALL              - GNU Hyperbole installation and invocation instructions
 Makefile             - Build GNU Hyperbole directories and distributions
-README               - Information GNU Hyperbole users and maintainers should read
 README.md            - Markdown formatted introduction combining README, INSTALL and HY-ABOUT
-README.md.html       - HTML formatted introduction combining README, INSTALL and HY-ABOUT
+README.toc.md        - Markdown README with table of contents included
+README.md.html       - HTML introduction with table of contents combining README, INSTALL and HY-ABOUT
 hversion.el          - GNU Hyperbole version and system information setup
 hyperbole.el         - Loads and initializes GNU Hyperbole
 ChangeLog            - Summary of changes in recent GNU Hyperbole releases

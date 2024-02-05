@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      4-Feb-24 at 14:00:36 by Bob Weiner
+;; Last-Mod:      4-Feb-24 at 15:50:54 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -22,6 +22,10 @@
 ;;
 ;;  See all the autoloaded functions herein for interactive commands.
 ;;  See the Info manual entry "(hyperbole)HyRolo" for usage information.
+;;
+;;  Note that for Markdown files, HyRolo supports only the modern standard
+;;  of headlines that start with '#' characters, not the older, setext
+;;  style of underlining headers with '=' or '-' characters.
 
 ;;; Code:
 ;;; ************************************************************************
@@ -55,22 +59,6 @@
 ;;; ************************************************************************
 ;;; Public declarations
 ;;; ************************************************************************
-
-(defvar consult-grep-args)
-(defvar consult-ripgrep-args)
-(defvar google-contacts-expire-time)
-(defvar google-contacts-history)
-(defvar google-contacts-query-string)
-(defvar helm-org-rifle-show-full-contents)
-(defvar helm-org-rifle-show-level-stars)
-(defvar hproperty:but-emphasize-flag)
-(defvar markdown-regex-header)
-(defvar org-fold-core-style)
-(defvar org-link--link-folding-spec)
-(defvar org-roam-db-autosync-mode)
-(defvar org-roam-directory)
-(defvar plstore-cache-passphrase-for-symmetric-encryption)
-(defvar reveal-auto-hide)
 
 (declare-function consult-grep "ext:consult")
 (declare-function consult-ripgrep "ext:consult")
@@ -113,11 +101,25 @@
 (defvar org-mode-syntax-table)          ; "org.el"
 (defvar org-outline-regexp)             ; "org.el"
 (defvar org-outline-regexp-bol)         ; "org.el"
-(defvar markdown-regex-header)          ; "markdown-mode.el"
 (defvar google-contacts-buffer-name)    ; "ext:google-contacts.el"
 (defvar hbut:source-prefix)             ; "hbut.el"
 
 ;; Forward declarations
+(defvar consult-grep-args)
+(defvar consult-ripgrep-args)
+(defvar google-contacts-expire-time)
+(defvar google-contacts-history)
+(defvar google-contacts-query-string)
+(defvar helm-org-rifle-show-full-contents)
+(defvar helm-org-rifle-show-level-stars)
+(defvar hproperty:but-emphasize-flag)
+(defvar org-fold-core-style)
+(defvar org-link--link-folding-spec)
+(defvar org-roam-db-autosync-mode)
+(defvar org-roam-directory)
+(defvar plstore-cache-passphrase-for-symmetric-encryption)
+(defvar reveal-auto-hide)
+
 (defvar hyrolo--wconfig)
 (defvar hyrolo-entry-group-number)
 (defvar hyrolo-entry-trailing-space-group-number)
@@ -308,6 +310,9 @@ Only unmodified buffers are killed."
   :type 'boolean
   :group 'hyperbole-hyrolo)
 
+(defvar hyrolo-reveal-ignore-this-command nil
+  "Set this non-nil in any command that should ignore `hyrolo-reveal-mode'.")
+
 (defcustom hyrolo-save-buffers-after-use t
   "Non-nil means save rolo file after an entry is killed."
   :type 'boolean
@@ -321,35 +326,6 @@ Only unmodified buffers are killed."
   "*A function of two arguments, START and END, invoked after a `hyrolo-yank'.
 It should reformat the region given by the arguments to some preferred style.
 Default value is to perform no reformatting.")
-
-(defun hyrolo-google-contacts-p ()
-  "Non-nil means google contacts package is available and feature is enabled.
-Requires `hyrolo-google-contacts-flag' set as non-nil and
-google-contacts package and gpg executables to be available for
-use."
-  (and hyrolo-google-contacts-flag
-       (featurep 'google-contacts)
-       (boundp 'google-contacts-buffer-name)
-       ;; If no gpg encryption executable, Oauth login to Google will fail.
-       (or (executable-find "gpg2") (executable-find "gpg"))))
-
-(defun hyrolo-expand-path-list (paths)
-  "Expand and return non-nil PATHS's dirs, file variables and file wildcards.
-If PATHS is nil, return a default set of hyrolo files to use.
-
-Single ${env-or-lisp-variable} references are resolved within
-each path using `hpath:expand'; this also expands paths to
-absolute paths.  Then directories are expanded into the files
-they contain that match `hyrolo-file-suffix-regexp'.  Then, if
-`find-file-wildcards' is non-nil (the default), any files
-containing [char-matches] or * wildcards are expanded to their
-matches."
-  (if paths
-      (hpath:expand-list paths hyrolo-file-suffix-regexp t)
-    (delq nil
-	  (list "~/.rolo.otl"
-		(if (and (boundp 'bbdb-file) (stringp bbdb-file)) bbdb-file)
-		(when (hyrolo-google-contacts-p) google-contacts-buffer-name)))))
 
 ;;; ************************************************************************
 ;;; Private variables
@@ -634,6 +610,24 @@ Return entry name, if any, otherwise, trigger an error."
 			 (error "(hyrolo-edit-entry): Move to an entry to edit it"))))
 	 (error "(hyrolo-edit-entry): Move to an entry to edit it"))))
    t))
+
+(defun hyrolo-expand-path-list (paths)
+  "Expand and return non-nil PATHS's dirs, file variables and file wildcards.
+If PATHS is nil, return a default set of hyrolo files to use.
+
+Single ${env-or-lisp-variable} references are resolved within
+each path using `hpath:expand'; this also expands paths to
+absolute paths.  Then directories are expanded into the files
+they contain that match `hyrolo-file-suffix-regexp'.  Then, if
+`find-file-wildcards' is non-nil (the default), any files
+containing [char-matches] or * wildcards are expanded to their
+matches."
+  (if paths
+      (hpath:expand-list paths hyrolo-file-suffix-regexp t)
+    (delq nil
+	  (list "~/.rolo.otl"
+		(if (and (boundp 'bbdb-file) (stringp bbdb-file)) bbdb-file)
+		(when (hyrolo-google-contacts-p) google-contacts-buffer-name)))))
 
 ;;;###autoload
 (defun hyrolo-fgrep (string &optional max-matches hyrolo-file count-only headline-only no-display)
@@ -1506,6 +1500,17 @@ Return number of matching entries found."
 ;;; ************************************************************************
 ;;; Google Contacts Integration
 ;;; ************************************************************************
+
+(defun hyrolo-google-contacts-p ()
+  "Non-nil means google contacts package is available and feature is enabled.
+Requires `hyrolo-google-contacts-flag' set as non-nil and
+google-contacts package and gpg executables to be available for
+use."
+  (and hyrolo-google-contacts-flag
+       (featurep 'google-contacts)
+       (boundp 'google-contacts-buffer-name)
+       ;; If no gpg encryption executable, Oauth login to Google will fail.
+       (or (executable-find "gpg2") (executable-find "gpg"))))
 
 ;;;###autoload
 (defun hyrolo-google-contacts-fgrep (&optional arg)
@@ -3439,9 +3444,6 @@ Push (point-max) of `hyrolo-display-buffer' onto
 ;;; ************************************************************************
 ;;; hyrolo-reveal - Extend reveal-mode to support Org mode org-fold
 ;;; ************************************************************************
-
-(defvar hyrolo-reveal-ignore-this-command nil
-  "Set this non-nil in any command that should ignore `hyrolo-reveal-mode'.")
 
 (defun hyrolo-reveal-open-new-overlays (old-ols)
   (let ((repeat t))

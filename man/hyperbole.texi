@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     15-Jan-24 at 18:26:44 by Bob Weiner
+@c Last-Mod:      4-Feb-24 at 16:01:50 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.0
-Printed January 6, 2024.
+Printed February 4, 2024.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.0
-January 6, 2024
+February 4, 2024
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -790,12 +790,13 @@ call these the Action Mouse and Action Assist keys or buttons.  @xref{Smart
 Keys}.
 
 @item HyRolo
-a powerful, hierarchical contact manager which anyone can
-use, is also included.  It is easy to learn since it introduces only a few
-new mechanisms and has a menu interface, which may be operated from the
-keyboard or the mouse.  It may also be used to look up any record-based
-information in any number of Org or Markdown files.  Hyperbole buttons may
-be embedded in any records.  @xref{HyRolo}. 
+a powerful, hierarchical contact manager which anyone can use, is also
+included.  It is easy to learn since it introduces only a few new
+mechanisms and has a menu interface, which may be operated from the
+keyboard or the mouse.  It may also be used for full-text searching
+over any record-based information in any number of Org, Markdown,
+Koutline or Emacs Outline files.  Hyperbole buttons may be embedded in
+any records.  @xref{HyRolo}.
 
 @item HyControl
 the fastest, easiest-to-use window and frame control available for GNU
@@ -5990,10 +5991,9 @@ typically in the home directory and must have a suffix of either .org
 use suffixes of .org, .otl, .md (Markdown mode) or .kotl (Koutline
 mode).
 
-Rolo @dfn{entries} begin with optional space, followed by a delimiter of
-one or more special characters followed by another space.  Delimiters
-vary based on the type of file, for example level 3 entry delimiters
-look like this:
+HyRolo @dfn{entries} begin with a delimiter of one or more special
+characters followed by another space.  Delimiters vary based on the
+type of file, for example level 3 entry delimiters look like this:
 
 @example
 @group
@@ -6011,15 +6011,17 @@ in the case of Koutlines.
 
 Beyond this initial delimiter, entries are completely free-form text.
 It is best to use a "lastname, firstname" format, however, when adding
-contact entries into a rolo.  Then HyRolo will automatically keep your
-entries alphabetized as you enter them.  Then you can sort the entries
-if you ever need.  This ordering is what the rolo will use if you
-accept the default entry with which it prompts you when adding a new
-entry.
+contact entries into the first HyRolo file in your list.  Then HyRolo
+will automatically keep your entries alphabetized as you add them;
+HyRolo can also sort the entries if you ever need.  HyRolo will use
+this ordering if you accept the default entry with which it prompts
+you when adding a new entry.
 
+@vindex hyrolo-date-format
 @noindent
-Here is an example of a simple rolo file.  The date at the end is
-automatically added by HyRolo whenever a new record is added.
+Here is an example of a simple HyRolo file.  The date at the end is
+automatically added by HyRolo whenever a new record is added, unless
+@code{hyrolo-date-format} is set to the empty string.
 
 @example
 @group

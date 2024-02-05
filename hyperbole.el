@@ -8,7 +8,7 @@
 ;; Maintainer:   Mats Lidell <matsl@gnu.org>
 ;; Maintainers:  Robert Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:      06-Oct-92 at 11:52:51
-;; Last-Mod:     20-Jan-24 at 20:20:34 by Mats Lidell
+;; Last-Mod:      5-Feb-24 at 00:31:58 by Bob Weiner
 ;; Released:     03-Dec-23
 ;; Version:      9.0.0
 ;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -64,7 +64,7 @@
 ;; 
 ;; ----
 ;;
-;; See the "INSTALL" file for installation instructions and the "README" file
+;; See the "INSTALL" file for installation instructions and the "README.md" file
 ;; for general information.
 ;;
 ;; There is no need to manually edit this file unless there are specific

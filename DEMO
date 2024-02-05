@@ -765,10 +765,10 @@ file and you see that it is displayed as expected.  (Remember to use the
 Hyperbole history command to return here.)  You can get help on these buttons
 just like any others.
 
-In README files, such as Hyperbole's "README", table of contents entries
-act similarly.  Press on "README" to view that file and then press on a
-table of contents entry to jump to the associated section in the "README"
-file.  Or "README#User Quotes" goes directly to that section.
+In README files, such as Hyperbole's "README.md", table of contents entries
+act similarly.  Press on "README.md" to view that file and then press on a
+table of contents entry to jump to the associated section in the "README.md"
+file.  Or "README.md#User Quotes" goes directly to that section.
 
 ** World Wide Web URL Buttons
 

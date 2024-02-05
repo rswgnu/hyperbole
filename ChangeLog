@@ -1,4 +1,16 @@
+2024-02-05  Bob Weiner  <rsw@gnu.org>
+
+* Makefile (README.md.html): Rewrote to use md_toc and pandoc programs for greater
+    reliability.
+           (README.toc.md, README.md.html): Add to git repo for package distribution.
+* MANIFEST, Makefile: Add README.toc.md and remove README.
+
 2024-02-04  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Hyperbole Overview): Update summary to include all newly
+    supported file formats.
+                     (HyRolo Concepts): Remove comment that HyRolo entries can begin
+    with optional whitespace; the code does not support this.
 
 * hyrolo.el (hyrolo-add): Ensure when matching for initial # characters, do not match
     to those later in the line.
@@ -3100,7 +3112,7 @@ name with 'name' and 'name-key'.
 * HY-NEWS (9.0.0): Add EmacsConf 2022 videos.
   INSTALL: (Invocation):
   README.md (Videos):
-  man/hyperbole.texi (Invocation): Add link to Hyperbole videos in README.
+  man/hyperbole.texi (Invocation): Add link to Hyperbole videos in README.md.
 
 2023-03-29  Bob Weiner  <rsw@gnu.org>
 

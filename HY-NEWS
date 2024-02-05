@@ -2212,7 +2212,7 @@
     - Added pointer to HyControl video and {C-c \} binding which invokes
       HyControl window control.
 
-    - README File: New Org-mode user testimonial.
+    - README.md File: New Org-mode user testimonial.
 
     - DEMO File: Added description and exercise using the new Find/Web menu.
 

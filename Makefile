@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     20-Jan-24 at 10:07:54 by Mats Lidell
+# Last-Mod:      5-Feb-24 at 00:21:22 by Bob Weiner
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -370,19 +370,15 @@ pdf: $(man_dir)/hyperbole.pdf
 $(man_dir)/hyperbole.pdf: $(TEXINFO_SRC)
 	cd $(man_dir) && $(TEXI2PDF) hyperbole.texi
 
-# md2html is a Python package that comes from the md2html-phuker repo on github.
-#   Documentation is here: https://github.com/Phuker/md2html
-#   Need the GNU sed call below because md2html generates ids with the wrong case and leaves URL encoded chars in ids.
-#   To test links in the generated html:
-#     Run a Python directory web browser in this directory: python -m http.server 8000
-#     Open the page in a web browser:                       http://localhost:8000/README.md.html
+# The `md_toc' table-of-contents generator program is available from:
+#   https://github.com/frnmst/md-toc
 #
-# Used to use github-markdown is an npm, installed with: npm install markdown-to-html -g
-#   But then it's links broke.  Documentation is here: https://www.npmjs.com/package/markdown-to-html
-#	github-markdown README.md > README.md.html
-README.md.html: README.md
-	md2html README.md -f -o - | sed - -e 's/\(id="[^%]*\)\(%[A-Z0-9][A-Z0-9]\)/\1/g' -e 's/\(id="[^"]*"\)/\L\1/g' > README.md.html
-	md2html README.md -f -o README.md.html
+# `pandoc' is available from:
+#    https://github.com/jgm/pandoc
+README.md.html: README.md README.toc.md
+	cp -p README.md README.toc.md && md_toc -p -m [TOC] github README.toc.md \
+	  && sed -i -e 's/^\[TOC\]//g' README.toc.md \
+	  && pandoc --from=gfm-tex_math_dollars --to=html+gfm_auto_identifiers -o README.md.html README.toc.md
 
 # website maintenance: "https://www.gnu.org/software/hyperbole/"
 # Locally update Hyperbole website
