@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      2-Feb-24 at 22:11:13 by Mats Lidell
+;; Last-Mod:      8-Feb-24 at 15:39:49 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -128,7 +128,11 @@ Default is the symbol hbut:current."
   (interactive (list (hbut:get (hargs:read-match "Activate labeled Hyperbole button: "
 						 (ebut:alist)
 						 nil t nil 'hbut))))
-  (hbut:act hbut))
+  (unless hbut
+    (setq hbut 'hbut:current))
+  (if (ebut:is-p hbut)
+      (hbut:act hbut)
+    (error "(ebut:act): Must be called with an ebut or hbut:current must be an ebut")))
 
 (defun    ebut:act-label (label)
   "Activate Hyperbole explicit button with LABEL from the current buffer."
@@ -1706,7 +1710,11 @@ Default is the symbol hbut:current."
   (interactive (list (hbut:get (hargs:read-match "Activate labeled Hyperbole button: "
 						 (ibut:alist)
 						 nil t nil 'hbut))))
-  (hbut:act hbut))
+  (unless hbut
+    (setq hbut 'hbut:current))
+  (if (ibut:is-p hbut)
+      (hbut:act hbut)
+    (error "(ibut:act): Must be called with an ibut or hbut:current must be an ibut")))
 
 (defun    ibut:act-label (label)
   "Activate Hyperbole implicit button with <[LABEL]> from the current buffer."

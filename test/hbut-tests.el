@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-may-21 at 09:33:00
-;; Last-Mod:      2-Feb-24 at 22:16:49 by Mats Lidell
+;; Last-Mod:      8-Feb-24 at 15:38:21 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -740,13 +740,27 @@ See #10 for the proper way to add an ibutton name.
 
 (ert-deftest hbut-tests--ebut-act-calls-hbut-act ()
   "Verify `ebut:act' calls `hbut:act'."
-  (mocklet (((hbut:act 'button) => t))
-    (should (ebut:act 'button))))
+  (mocklet (((hbut:act 'button) => t)
+            ((ebut:is-p 'button) => t))
+    (should (ebut:act 'button)))
+  (mocklet (((hbut:act 'hbut:current) => t)
+            ((ebut:is-p 'hbut:current) => t))
+    (should (ebut:act)))
+  (mocklet ((ebut:is-p => nil))
+    (should-error (ebut:act 'button))
+    (should-error (ebut:act))))
 
 (ert-deftest hbut-tests--ibut-act-calls-hbut-act ()
   "Verify `ibut:act' calls `hbut:act'."
-  (mocklet (((hbut:act 'button) => t))
-    (should (ibut:act 'button))))
+  (mocklet (((hbut:act 'button) => t)
+            ((ibut:is-p 'button) => t))
+    (should (ibut:act 'button)))
+  (mocklet (((hbut:act 'hbut:current) => t)
+            ((ibut:is-p 'hbut:current) => t))
+    (should (ibut:act)))
+  (mocklet ((ibut:is-p => nil))
+    (should-error (ibut:act 'button))
+    (should-error (ibut:act))))
 
 ;; This file can't be byte-compiled without the `el-mock' package (because of
 ;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.
