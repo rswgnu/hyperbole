@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:      5-Feb-24 at 00:04:01 by Mats Lidell
+;; Last-Mod:      8-Feb-24 at 13:57:13 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1104,7 +1104,11 @@ optional BEGIN and END only return that part of the buffer."
           (hyrolo-outline-hide-other)
           (should (string-match-p
                    (concat "^\\(===+.*[^*]\\|" (regexp-quote "...\n") "\\)"
-                           (regexp-quote "* h-org 1...\n* h-org 2...\n") "$")
+                           (regexp-quote "\
+* h-org 1...
+* h-org 2...
+"
+                                         ) "$")
                    (hyrolo-tests--outline-as-string)))
 
           ;; On first header
@@ -1113,7 +1117,11 @@ optional BEGIN and END only return that part of the buffer."
           (search-forward "* h-org 1")
           (beginning-of-line)
           (hyrolo-outline-hide-other)
-          (should (string= "* h-org 1\nbody...\n* h-org 2...\n"
+          (should (string= "\
+* h-org 1
+body...
+* h-org 2...
+"
                            (hyrolo-tests--outline-as-string (point))))
 
           ;; On second header
@@ -1122,7 +1130,11 @@ optional BEGIN and END only return that part of the buffer."
           (search-forward "** h-org 1.1")
           (beginning-of-line)
           (hyrolo-outline-hide-other)
-          (should (string= "** h-org 1.1\nbody...\n* h-org 2...\n"
+          (should (string= "\
+** h-org 1.1
+body...
+* h-org 2...
+"
                            (hyrolo-tests--outline-as-string (point)))))
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))
@@ -1142,7 +1154,11 @@ optional BEGIN and END only return that part of the buffer."
           (should (= (point) 1))
           (should (string-match-p
                    (concat "^\\(===+.*[^*]\\|" (regexp-quote "...\n") "\\)"
-                           (regexp-quote "* h-org 1...\n* h-org 2...\n") "$")
+                           (regexp-quote "\
+* h-org 1...
+* h-org 2...
+"
+                                         ) "$")
                    (hyrolo-tests--outline-as-string)))
 
           ;; On first header
@@ -1151,7 +1167,10 @@ optional BEGIN and END only return that part of the buffer."
           (search-forward "* h-org 1")
           (beginning-of-line)
           (hyrolo-outline-hide-sublevels 1)
-          (should (string= "* h-org 1...\n* h-org 2...\n"
+          (should (string= "\
+* h-org 1...
+* h-org 2...
+"
                            (hyrolo-tests--outline-as-string (point))))
 
           ;; On second header
@@ -1160,7 +1179,10 @@ optional BEGIN and END only return that part of the buffer."
           (search-forward "** h-org 1.1")
           (beginning-of-line)
           (hyrolo-outline-hide-sublevels 1)
-          (should (string= "1...\n* h-org 2...\n"
+          (should (string= "\
+1...
+* h-org 2...
+"
                            (hyrolo-tests--outline-as-string (point))))
 
           ;; First line - 2 levels
@@ -1170,7 +1192,14 @@ optional BEGIN and END only return that part of the buffer."
           (should (= (point) 1))
           (should (string-match-p
                    (concat "^\\(===+.*[^*]\\|" (regexp-quote "...\n") "\\)"
-                           (regexp-quote "* h-org 1...\n** h-org 1.1...\n** h-org 1.2...\n* h-org 2...\n** h-org-2.1...\n") "$")
+                           (regexp-quote "\
+* h-org 1...
+** h-org 1.1...
+** h-org 1.2...
+* h-org 2...
+** h-org-2.1...
+"
+                                         ) "$")
                    (hyrolo-tests--outline-as-string)))
 
           ;; On first header - 2 levels
@@ -1179,7 +1208,13 @@ optional BEGIN and END only return that part of the buffer."
           (search-forward "* h-org 1")
           (beginning-of-line)
           (hyrolo-outline-hide-sublevels 2)
-          (should (string= "* h-org 1...\n** h-org 1.1...\n** h-org 1.2...\n* h-org 2...\n** h-org-2.1...\n"
+          (should (string= "\
+* h-org 1...
+** h-org 1.1...
+** h-org 1.2...
+* h-org 2...
+** h-org-2.1...
+"
                            (hyrolo-tests--outline-as-string (point))))
 
           ;; On second header - 2 levels
@@ -1188,7 +1223,12 @@ optional BEGIN and END only return that part of the buffer."
           (search-forward "** h-org 1.1")
           (beginning-of-line)
           (hyrolo-outline-hide-sublevels 2)
-          (should (string= "** h-org 1.1...\n** h-org 1.2...\n* h-org 2...\n** h-org-2.1...\n"
+          (should (string= "\
+** h-org 1.1...
+** h-org 1.2...
+* h-org 2...
+** h-org-2.1...
+"
                            (hyrolo-tests--outline-as-string (point)))))
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))
@@ -1219,7 +1259,17 @@ optional BEGIN and END only return that part of the buffer."
           (beginning-of-line)
           (let ((original-look (hyrolo-tests--outline-as-string)))
             (hyrolo-outline-show-subtree)
-            (should (string= "* h-org 1\nbody\n** h-org 1.1\nbody\n** h-org 1.2\nbody\n*** h-org 1.2.1\nbody\n* h-org 2...\n"
+            (should (string= "\
+* h-org 1
+body
+** h-org 1.1
+body
+** h-org 1.2
+body
+*** h-org 1.2.1
+body
+* h-org 2...
+"
                              (hyrolo-tests--outline-as-string (point))))
             ;; Hide it again
             (hyrolo-outline-hide-subtree)
@@ -1233,7 +1283,14 @@ optional BEGIN and END only return that part of the buffer."
           (beginning-of-line)
           (let ((original-look (hyrolo-tests--outline-as-string)))
             (hyrolo-outline-show-subtree)
-            (should (string= "** h-org 1.2\nbody\n*** h-org 1.2.1\nbody\n* h-org 2...\n** h-org-2.1...\n"
+            (should (string= "\
+** h-org 1.2
+body
+*** h-org 1.2.1
+body
+* h-org 2...
+** h-org-2.1...
+"
                              (hyrolo-tests--outline-as-string (point))))
             ;; Hide it again
             (hyrolo-outline-hide-subtree)
