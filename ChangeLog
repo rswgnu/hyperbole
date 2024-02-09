@@ -1,3 +1,11 @@
+2024-02-08  Mats Lidell  <matsl@gnu.org>
+
+* test/hyrolo-tests.el: Make hide tests more forgiving about hiding
+    section headers. Allows test cases to be used with different versions
+    of org.
+    Expand test verification strings so it is easier to view the expected
+    outcome.
+
 2024-02-05  Bob Weiner  <rsw@gnu.org>
 
 * Makefile (README.md.html): Rewrote to use md_toc and pandoc programs for greater
