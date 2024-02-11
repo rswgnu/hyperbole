@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-may-21 at 09:33:00
-;; Last-Mod:      8-Feb-24 at 15:38:21 by Mats Lidell
+;; Last-Mod:     11-Feb-24 at 23:35:14 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -748,6 +748,9 @@ See #10 for the proper way to add an ibutton name.
     (should (ebut:act)))
   (mocklet ((ebut:is-p => nil))
     (should-error (ebut:act 'button))
+    (should-error (ebut:act)))
+  (progn
+    (hattr:clear 'hbut:current)
     (should-error (ebut:act))))
 
 (ert-deftest hbut-tests--ibut-act-calls-hbut-act ()
@@ -760,6 +763,9 @@ See #10 for the proper way to add an ibutton name.
     (should (ibut:act)))
   (mocklet ((ibut:is-p => nil))
     (should-error (ibut:act 'button))
+    (should-error (ibut:act)))
+  (progn
+    (hattr:clear 'hbut:current)
     (should-error (ibut:act))))
 
 ;; This file can't be byte-compiled without the `el-mock' package (because of

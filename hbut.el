@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      8-Feb-24 at 15:39:49 by Mats Lidell
+;; Last-Mod:     11-Feb-24 at 23:43:08 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -122,17 +122,17 @@ indicating the source of any of its Hyperbole buttons.")
   "*Non-nil value saves button data when button source is saved.
 Nil disables saving.")
 
-(defun    ebut:act (&optional hbut)
-  "Perform action for optional explicit Hyperbole button symbol HBUT.
+(defun    ebut:act (&optional ebut)
+  "Perform action for optional explicit Hyperbole button symbol EBUT.
 Default is the symbol hbut:current."
   (interactive (list (hbut:get (hargs:read-match "Activate labeled Hyperbole button: "
 						 (ebut:alist)
-						 nil t nil 'hbut))))
-  (unless hbut
-    (setq hbut 'hbut:current))
-  (if (ebut:is-p hbut)
-      (hbut:act hbut)
-    (error "(ebut:act): Must be called with an ebut or hbut:current must be an ebut")))
+						 nil t nil 'ebut))))
+  (unless ebut
+    (setq ebut 'hbut:current))
+  (if (ebut:is-p ebut)
+      (hbut:act ebut)
+    (error "(ebut:act): Expected an ebut but got a but of type %s" (hattr:get ebut 'categ))))
 
 (defun    ebut:act-label (label)
   "Activate Hyperbole explicit button with LABEL from the current buffer."
@@ -1704,17 +1704,17 @@ Keys in optional KEY-SRC or the current buffer."
 ;;; ibut class - Implicit Hyperbole Buttons
 ;;; ========================================================================
 
-(defun    ibut:act (&optional hbut)
-  "Perform action for optional implicit Hyperbole button symbol HBUT.
+(defun    ibut:act (&optional ibut)
+  "Perform action for optional implicit Hyperbole button symbol IBUT.
 Default is the symbol hbut:current."
   (interactive (list (hbut:get (hargs:read-match "Activate labeled Hyperbole button: "
 						 (ibut:alist)
-						 nil t nil 'hbut))))
-  (unless hbut
-    (setq hbut 'hbut:current))
-  (if (ibut:is-p hbut)
-      (hbut:act hbut)
-    (error "(ibut:act): Must be called with an ibut or hbut:current must be an ibut")))
+						 nil t nil 'ibut))))
+  (unless ibut
+    (setq ibut 'hbut:current))
+  (if (ibut:is-p ibut)
+      (hbut:act ibut)
+    (error "(ebut:act): Expected an ibut but got a but of type %s" (hattr:get ibut 'categ))))
 
 (defun    ibut:act-label (label)
   "Activate Hyperbole implicit button with <[LABEL]> from the current buffer."
