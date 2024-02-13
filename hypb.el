@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     27-Jan-24 at 12:39:34 by Bob Weiner
+;; Last-Mod:     11-Feb-24 at 16:14:58 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -121,6 +121,8 @@ It must end with a space."
 ;;; ************************************************************************
 
 ;; Adapted from "subr.el" but doesn't add if ELEMENT already exists
+;; Used in `kotl-mode', so autoload.
+;;;###autoload
 (defun hypb:add-to-invisibility-spec (element)
   "Add ELEMENT to `buffer-invisibility-spec'.
 See documentation for `buffer-invisibility-spec' for the kind of elements
