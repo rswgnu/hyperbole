@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:      8-Feb-24 at 13:57:13 by Mats Lidell
+;; Last-Mod:     12-Feb-24 at 23:01:15 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -986,19 +986,24 @@ body
 body
 * h-org 2
 body
-** h-org-2.1
+** h-org 2.1
 body
 "
   "Outline content for org files.")
 
+(defun hyrolo-tests--modify-test-data (star type str)
+  "Replace * with STAR and org with TYPE in STR.
+Useful for creating outline and markdown test data from org examples."
+  (replace-regexp-in-string
+   "org" type
+   (replace-regexp-in-string (regexp-quote "*") star str)))
+
 (defconst hyrolo-tests--outline-content-otl
-  (replace-regexp-in-string "org" "otl" hyrolo-tests--outline-content-org)
+  (hyrolo-tests--modify-test-data "*" "otl" hyrolo-tests--outline-content-org)
   "Outline content for otl files.")
 
 (defconst hyrolo-tests--outline-content-md
-  (replace-regexp-in-string
-   (regexp-quote "*") "#"
-   (replace-regexp-in-string "org" "md" hyrolo-tests--outline-content-org))
+  (hyrolo-tests--modify-test-data "#" "md" hyrolo-tests--outline-content-org)
   "Outline content for markdown files.")
 
 (ert-deftest hyrolo-tests--forward-same-level-org-level2 ()
@@ -1197,7 +1202,7 @@ body...
 ** h-org 1.1...
 ** h-org 1.2...
 * h-org 2...
-** h-org-2.1...
+** h-org 2.1...
 "
                                          ) "$")
                    (hyrolo-tests--outline-as-string)))
@@ -1213,7 +1218,7 @@ body...
 ** h-org 1.1...
 ** h-org 1.2...
 * h-org 2...
-** h-org-2.1...
+** h-org 2.1...
 "
                            (hyrolo-tests--outline-as-string (point))))
 
@@ -1227,7 +1232,7 @@ body...
 ** h-org 1.1...
 ** h-org 1.2...
 * h-org 2...
-** h-org-2.1...
+** h-org 2.1...
 "
                            (hyrolo-tests--outline-as-string (point)))))
       (kill-buffer hyrolo-display-buffer)
@@ -1289,7 +1294,7 @@ body
 *** h-org 1.2.1
 body
 * h-org 2...
-** h-org-2.1...
+** h-org 2.1...
 "
                              (hyrolo-tests--outline-as-string (point))))
             ;; Hide it again
@@ -1354,14 +1359,89 @@ body
           (hy-test-helpers:consume-input-events)
           (should (string=
                    (concat (hyrolo-tests--hyrolo-section-header org-file1)
-                           "* h-org 1\nbody\n** h-org 1.1\nbody\n** h-org 1.2\nbody\n*** h-org 1.2.1\nbody\n* h-org 2\nbody\n** h-org-2.1...\n")
+                           "* h-org 1\nbody\n** h-org 1.1\nbody\n** h-org 1.2\nbody\n*** h-org 1.2.1\nbody\n* h-org 2\nbody\n** h-org 2.1...\n")
                    (hyrolo-tests--outline-as-string)))
 
           (should (hact 'kbd-key "TAB"))
           (hy-test-helpers:consume-input-events)
           (should (string=
                    (concat (hyrolo-tests--hyrolo-section-header org-file1)
-                           "* h-org 1\nbody\n** h-org 1.1\nbody\n** h-org 1.2\nbody\n*** h-org 1.2.1\nbody\n* h-org 2\nbody\n** h-org-2.1\nbody\n")
+                           "* h-org 1\nbody\n** h-org 1.1\nbody\n** h-org 1.2\nbody\n*** h-org 1.2.1\nbody\n* h-org 2\nbody\n** h-org 2.1\nbody\n")
+                   (hyrolo-tests--outline-as-string))))
+      (kill-buffer hyrolo-display-buffer)
+      (hy-delete-files-and-buffers hyrolo-file-list))))
+
+(defconst hyrolo-tests---org-expected-outline-for-top-level
+  "\
+* h-org 1...
+* h-org 2...
+"
+  "Expected outline for org test data.")
+
+(ert-deftest hyrolo-tests--top-level-outline-for-all-file-types ()
+  "Verify `hyrolo-top-level' shows first level for all supported file types."
+  (let* ((org-file1 (make-temp-file "hypb" nil ".org" hyrolo-tests--outline-content-org))
+         (otl-file1 (make-temp-file "hypb" nil ".otl" hyrolo-tests--outline-content-otl))
+         (md-file1 (make-temp-file "hypb" nil ".md" hyrolo-tests--outline-content-md))
+         (kotl-file1 (hyrolo-tests--gen-kotl-outline "h-kotl" "body" 2))
+         (hyrolo-file-list (list org-file1 otl-file1 md-file1 kotl-file1)))
+    (unwind-protect
+        (progn
+          (hyrolo-grep "body")
+          (hyrolo-top-level)
+
+          (should (string=
+                   (concat (hyrolo-tests--hyrolo-section-header org-file1)
+                           hyrolo-tests---org-expected-outline-for-top-level
+                           (hyrolo-tests--hyrolo-section-header otl-file1)
+                           (hyrolo-tests--modify-test-data "*" "otl" hyrolo-tests---org-expected-outline-for-top-level)
+                           (hyrolo-tests--hyrolo-section-header md-file1)
+                           (hyrolo-tests--modify-test-data "#" "md" hyrolo-tests---org-expected-outline-for-top-level)
+                           (hyrolo-tests--hyrolo-section-header kotl-file1)
+                           "\
+   1. h-kotl...
+     1a. h-kotl 1...
+")
+                   (hyrolo-tests--outline-as-string))))
+      (kill-buffer hyrolo-display-buffer)
+      (hy-delete-files-and-buffers hyrolo-file-list))))
+
+(defconst hyrolo-tests---org-expected-outline-for-overview
+  "\
+* h-org 1...
+** h-org 1.1...
+** h-org 1.2...
+*** h-org 1.2.1...
+* h-org 2...
+** h-org 2.1...
+"
+  "Expected outline for org test data.")
+
+(ert-deftest hyrolo-tests--overview-outline-for-all-file-types ()
+  "Verify `hyrolo-overview' shows all level headings for all supported file types."
+  (let* ((org-file1 (make-temp-file "hypb" nil ".org" hyrolo-tests--outline-content-org))
+         (otl-file1 (make-temp-file "hypb" nil ".otl" hyrolo-tests--outline-content-otl))
+         (md-file1 (make-temp-file "hypb" nil ".md" hyrolo-tests--outline-content-md))
+         (kotl-file1 (hyrolo-tests--gen-kotl-outline "h-kotl" "body" 2))
+         (hyrolo-file-list (list org-file1 otl-file1 md-file1 kotl-file1)))
+    (unwind-protect
+        (progn
+          (hyrolo-grep "body")
+          (hyrolo-overview nil)
+
+          (should (string=
+                   (concat (hyrolo-tests--hyrolo-section-header org-file1)
+                           hyrolo-tests---org-expected-outline-for-overview
+                           (hyrolo-tests--hyrolo-section-header otl-file1)
+                           (hyrolo-tests--modify-test-data "*" "otl" hyrolo-tests---org-expected-outline-for-overview)
+                           (hyrolo-tests--hyrolo-section-header md-file1)
+                           (hyrolo-tests--modify-test-data "#" "md" hyrolo-tests---org-expected-outline-for-overview)
+                           (hyrolo-tests--hyrolo-section-header kotl-file1)
+                           "\
+   1. h-kotl...
+     1a. h-kotl 1...
+       1a1. h-kotl 2...
+")
                    (hyrolo-tests--outline-as-string))))
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))

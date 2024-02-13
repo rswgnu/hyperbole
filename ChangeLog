@@ -1,3 +1,15 @@
+2024-02-12  Mats Lidell  <matsl@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-tests--modify-test-data): Helper for
+    modifying org test data for outline and markdown files.
+    (hyrolo-tests--outline-content-otl)
+    (hyrolo-tests--outline-content-md): Use hyrolo-tests--modify-test-data.
+    (hyrolo-tests---org-expected-outline-for-top-level)
+    (hyrolo-tests---org-expected-outline-for-overview): Add expected
+    outline for org test data.
+    (hyrolo-tests--top-level-outline-for-all-file-types): Test top level outline.
+    (hyrolo-tests--overview-outline-for-all-file-types): Test overview outline.
+
 2024-02-11  Mats Lidell  <matsl@gnu.org>
 
 * test/hbut-tests.el (hbut-tests--ebut-act-calls-hbut-act)
