@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     21-Jan-24 at 10:31:14 by Bob Weiner
+;; Last-Mod:     11-Feb-24 at 23:43:08 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -122,7 +122,19 @@ indicating the source of any of its Hyperbole buttons.")
   "*Non-nil value saves button data when button source is saved.
 Nil disables saving.")
 
-(defun    ebut:act (label)
+(defun    ebut:act (&optional ebut)
+  "Perform action for optional explicit Hyperbole button symbol EBUT.
+Default is the symbol hbut:current."
+  (interactive (list (hbut:get (hargs:read-match "Activate labeled Hyperbole button: "
+						 (ebut:alist)
+						 nil t nil 'ebut))))
+  (unless ebut
+    (setq ebut 'hbut:current))
+  (if (ebut:is-p ebut)
+      (hbut:act ebut)
+    (error "(ebut:act): Expected an ebut but got a but of type %s" (hattr:get ebut 'categ))))
+
+(defun    ebut:act-label (label)
   "Activate Hyperbole explicit button with LABEL from the current buffer."
   (interactive (list (hargs:read-match "Activate explicit button labeled: "
 				       (ebut:alist)
@@ -131,7 +143,7 @@ Nil disables saving.")
 	 (but (ebut:get lbl-key)))
     (if but
 	(hbut:act but)
-      (error "(ebut:act): No explicit button labeled: %s" label))))
+      (error "(ebut:act-label): No explicit button labeled: %s" label))))
 
 (defun    ebut:alist (&optional file)
   "Return alist of ebuts in FILE or the current buffer.
@@ -1692,8 +1704,19 @@ Keys in optional KEY-SRC or the current buffer."
 ;;; ibut class - Implicit Hyperbole Buttons
 ;;; ========================================================================
 
+(defun    ibut:act (&optional ibut)
+  "Perform action for optional implicit Hyperbole button symbol IBUT.
+Default is the symbol hbut:current."
+  (interactive (list (hbut:get (hargs:read-match "Activate labeled Hyperbole button: "
+						 (ibut:alist)
+						 nil t nil 'ibut))))
+  (unless ibut
+    (setq ibut 'hbut:current))
+  (if (ibut:is-p ibut)
+      (hbut:act ibut)
+    (error "(ebut:act): Expected an ibut but got a but of type %s" (hattr:get ibut 'categ))))
 
-(defun    ibut:act (label)
+(defun    ibut:act-label (label)
   "Activate Hyperbole implicit button with <[LABEL]> from the current buffer."
   (interactive (list (hargs:read-match "Activate implicit button labeled: "
 				       (ibut:alist)
@@ -1702,7 +1725,7 @@ Keys in optional KEY-SRC or the current buffer."
 	 (but (ibut:get lbl-key)))
     (if but
 	(hbut:act but)
-      (error "(ibut:act): No implicit button labeled: %s" label))))
+      (error "(ibut:act-label): No implicit button labeled: %s" label))))
 
 (defun    ibut:alist (&optional file)
   "Return alist of labeled ibuts in FILE or the current buffer.
