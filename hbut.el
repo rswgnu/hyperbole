@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     11-Feb-24 at 23:43:08 by Mats Lidell
+;; Last-Mod:     12-Feb-24 at 22:12:59 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -132,7 +132,7 @@ Default is the symbol hbut:current."
     (setq ebut 'hbut:current))
   (if (ebut:is-p ebut)
       (hbut:act ebut)
-    (error "(ebut:act): Expected an ebut but got a but of type %s" (hattr:get ebut 'categ))))
+    (hypb:error "(ebut:act): Expected an ebut, instead given: `%s'" ebut)))
 
 (defun    ebut:act-label (label)
   "Activate Hyperbole explicit button with LABEL from the current buffer."
@@ -143,7 +143,7 @@ Default is the symbol hbut:current."
 	 (but (ebut:get lbl-key)))
     (if but
 	(hbut:act but)
-      (error "(ebut:act-label): No explicit button labeled: %s" label))))
+      (hypb:error "(ebut:act-label): No explicit button labeled: `%s'" label))))
 
 (defun    ebut:alist (&optional file)
   "Return alist of ebuts in FILE or the current buffer.
@@ -1082,7 +1082,18 @@ Default is the symbol hbut:current."
 	((and hbut (symbolp hbut))
 	 (hypb:error "(hbut:act): Symbol, %s, has invalid Hyperbole button attributes:\n  %S" hbut (hattr:list hbut)))
 	(t
-	 (hypb:error "(hbut:act): Invalid Hyperbole button: %s" hbut))))
+	 (hypb:error "(hbut:act): Expected an ibut, instead given: `%s'" hbut))))
+
+(defun    hbut:act-label (label)
+  "Activate Hyperbole implicit button with <[LABEL]> from the current buffer."
+  (interactive (list (hargs:read-match "Activate labeled Hyperbole button: "
+				       (nconc (ebut:alist) (ibut:alist))
+				       nil t nil 'hbut)))
+  (let* ((lbl-key (hbut:label-to-key label))
+	 (but (hbut:get lbl-key)))
+    (if but
+	(hbut:act but)
+      (hypb:error "(hbut:act-label): No implicit button labeled: `%s'" label))))
 
 (defun    hbut:action (hbut)
   "Return appropriate action name/function for Hyperbole button symbol HBUT."
@@ -1714,7 +1725,7 @@ Default is the symbol hbut:current."
     (setq ibut 'hbut:current))
   (if (ibut:is-p ibut)
       (hbut:act ibut)
-    (error "(ebut:act): Expected an ibut but got a but of type %s" (hattr:get ibut 'categ))))
+    (hypb:error "(ibut:act): Expected an ibut, instead given: `%s'" ibut)))
 
 (defun    ibut:act-label (label)
   "Activate Hyperbole implicit button with <[LABEL]> from the current buffer."
@@ -1725,7 +1736,7 @@ Default is the symbol hbut:current."
 	 (but (ibut:get lbl-key)))
     (if but
 	(hbut:act but)
-      (error "(ibut:act-label): No implicit button labeled: %s" label))))
+      (hypb:error "(ibut:act-label): No implicit button labeled: `%s'" label))))
 
 (defun    ibut:alist (&optional file)
   "Return alist of labeled ibuts in FILE or the current buffer.
