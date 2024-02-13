@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:      4-Feb-24 at 14:12:06 by Bob Weiner
+;; Last-Mod:     12-Feb-24 at 22:30:23 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -179,8 +179,8 @@ Return t if Org is reloaded, else nil."
 	   ;; (when they are available) to ensure they are loaded from
 	   ;; the single Org version used.
 	   (mapc (lambda (lib-sym) (require lib-sym nil t))
-		 '(org-version org-keys org-compat ol org-table org-macs org-id
-			       org-element org-list org-element org-src org-fold org))
+		 '(org-version org-macs org-keys org-compat ol org-table org-id
+		   org-element org-list org-element org-src org-fold org))
 	   nil)
 	  (t
 	   ;; Ensure using any local available packaged version of Org mode

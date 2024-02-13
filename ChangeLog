@@ -1,5 +1,7 @@
 2024-02-12  Bob Weiner  <rsw@gnu.org>
 
+* hsys-org.el (hsys-org-fix-version): Reorder to have `org-macs' near front.
+
 * hbut.el (hbut:act-label): Add to match same func for ebuts and ibuts.
 
 2024-02-12  Mats Lidell  <matsl@gnu.org>
