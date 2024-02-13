@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
-;; Last-Mod:     21-Jan-24 at 10:31:58 by Bob Weiner
+;; Last-Mod:      2-Feb-24 at 21:41:16 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -110,7 +110,7 @@ BROWSER-OPTION marks current active menu option as selected."
 				 (not hui-menu-order-explicit-buttons))
 			   :style toggle :selected hui-menu-order-explicit-buttons]
 			  "Activate:")
-			(mapcar (lambda (label) (vector label `(ebut:act ,label) t))
+			(mapcar (lambda (label) (vector label `(ebut:act-label ,label) t))
 				(if hui-menu-order-explicit-buttons
 				    (sort labels #'string-lessp)
 				  labels))

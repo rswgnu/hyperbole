@@ -10,6 +10,21 @@
     (hyrolo-tests--top-level-outline-for-all-file-types): Test top level outline.
     (hyrolo-tests--overview-outline-for-all-file-types): Test overview outline.
 
+2024-02-11  Mats Lidell  <matsl@gnu.org>
+
+* test/hbut-tests.el (hbut-tests--ebut-act-calls-hbut-act)
+    (hbut-tests--ibut-act-calls-hbut-act): Add test for new act functions
+    with error cases.
+
+* hui-menu.el (hui-menu-explicit-buttons): Use ebut:act-label.
+
+* hbut.el (ibut:act-label, ebut:act-label): Rename ebut:act and ibut:act
+    since they take a label as arg.
+    (ebut:act, ibut:act): Add new act functions taking a hbut as
+    arg. Allow only to be called with ebut or ibut respectively. If
+    falling back on hbut:current check that it is of the same type as the
+    call.
+
 2024-02-08  Mats Lidell  <matsl@gnu.org>
 
 * test/hyrolo-tests.el: Make hide tests more forgiving about hiding
