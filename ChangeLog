@@ -1,5 +1,8 @@
 2024-02-21  Mats Lidell  <matsl@gnu.org>
 
+* test/hyrolo-tests.el (hyrolo-tests--hyrolo-reveal-mode-kotl-file): Add
+    test for reveal mode with kotl file.
+
 * Makefile (HYPERBOLE_FILES): Do not require README. It has been removed.
     (website, release, git-tag-release, ftp): Add confirmation of
     successful operation.

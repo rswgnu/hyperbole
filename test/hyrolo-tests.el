@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     19-Feb-24 at 11:39:19 by Bob Weiner
+;; Last-Mod:     21-Feb-24 at 23:01:47 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -705,7 +705,6 @@ optional DEPTH the number of sub cells are created to that depth."
     (insert heading)
     (kotl-mode:newline 1)
     (insert body)
-    (kotl-mode:newline 1)
     (when (and depth (< 0 depth))
       (dotimes (d depth)
         (kotl-mode:add-child)
@@ -1365,6 +1364,42 @@ body
                            "* h-org 1\nbody\n** h-org 1.1\nbody\n** h-org 1.2\nbody\n*** h-org 1.2.1\nbody\n* h-org 2\nbody\n** h-org 2.1\nbody\n")
                    (hyrolo-tests--outline-as-string))))
       (kill-buffer hyrolo-display-buffer)
+      (hy-delete-files-and-buffers hyrolo-file-list))))
+
+(ert-deftest hyrolo-tests--hyrolo-reveal-mode-kotl-file ()
+  "Verify hidden sections are shown when using {TAB} to move through matches in kotl."
+  (skip-unless (not noninteractive))
+  (let* ((kotl-file1 (hyrolo-tests--gen-kotl-outline "h-kotl" "body" 2))
+         (hyrolo-file-list (list kotl-file1)))
+    (unwind-protect
+        (progn
+          (hyrolo-grep "body")
+          (hyrolo-top-level)
+
+          ;; Problems or observations noticed from this state. See
+          ;; <switch-to-buffer-other-window "*HyRolo*"> to view and
+          ;; experiment.
+
+          ;; 1. Both first cell heading and second cell heading lines
+          ;;    are shown. Expecting just the first line of the first
+          ;;    cell to be displayed. => "1. h-kotl..."  This can be
+          ;;    seen in other test but I only got to report it now.
+
+          ;; 2. Hitting TAB now displays all matches. i.e. cell 1, 2
+          ;;    and 3. I was expecting just body in the first cell to
+          ;;    be shown. Not sure if cell 2 should be shown or not.
+
+          ;; 3. Hitting TAB again and Emacs goes into an endless loop
+          ;;    eating 100 % CPU.
+
+          ;; 4. Quitting out of the loop with {C-g} makes all matches
+          ;;    show and moving up and down with {TAB} and {shift TAB}
+          ;;    now works.
+
+          ; (should (hact 'kbd-key "TAB"))
+          ; (hy-test-helpers:consume-input-events)
+          )
+      ;;(kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))
 
 (defconst hyrolo-tests---org-expected-outline-for-top-level
