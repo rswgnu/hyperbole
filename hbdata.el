@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Apr-91
-;; Last-Mod:     17-Jan-24 at 23:07:53 by Mats Lidell
+;; Last-Mod:     18-Feb-24 at 11:32:03 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -203,6 +203,7 @@ If the hbdata buffer is blank/empty, kill it and remove the associated file."
    lbl-key key-src directory))
 
 (defun hbdata:delete-entry-at-point ()
+  "Delete the hbdata entry at point."
   (delete-region (point) (progn (forward-line 1) (point))))
 
 (defun hbdata:ebut-build (&optional mod-lbl-key but-sym new-lbl-key)

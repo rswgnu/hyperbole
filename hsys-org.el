@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     12-Feb-24 at 22:30:23 by Bob Weiner
+;; Last-Mod:     18-Feb-24 at 11:25:39 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -66,6 +66,8 @@
 (declare-function symtable:add "hact")
 (declare-function action-key "hmouse-drv")
 (declare-function hkey-either "hmouse-drv")
+
+(declare-function find-library-name "find-func")
 
 ;;;###autoload
 (defcustom hsys-org-enable-smart-keys 'unset
@@ -211,6 +213,7 @@ Return t if Org is reloaded, else nil."
 	     t)))))
 
 (defun hsys-org-get-libraries-to-reload ()
+  "Return all org libraries that needs to be reloaded to avoid mixed versions."
   (interactive)
   (let* ((builtin-org-dir (expand-file-name "../lisp/org/" data-directory))
 	 (default-directory builtin-org-dir)
@@ -556,7 +559,7 @@ TARGET must be a string."
 ;;; ************************************************************************
 
 (defun hsys-org--set-fold-style ()
-  "Set `org-fold-core-style' to 'overlays for `reveal-mode' compatibility.
+  "Set `org-fold-core-style' to \\='overlays for `reveal-mode' compatibility.
 This must be called before Org mode is loaded."
   (when (and (ignore-errors (find-library-name "org-fold-core"))
 	     (not (boundp 'org-fold-core-style)))

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     18-Feb-24 at 18:01:59 by Bob Weiner
+;; Last-Mod:     18-Feb-24 at 23:46:53 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -131,7 +131,7 @@ that can be added.
 If `buffer-invisibility-spec' isn't a list before calling this
 function, `buffer-invisibility-spec' will afterwards be a list
 with the value `(t ELEMENT)'.  This means that if text exists
-that invisibility values that aren't either `t' or ELEMENT, that
+that invisibility values that aren't either t or ELEMENT, that
 text will become visible."
   (if (eq buffer-invisibility-spec t)
       (setq buffer-invisibility-spec (list t)))
@@ -379,9 +379,11 @@ Use optional OUT-BUF if present, else the current buffer."
       (load "hbut.el"))
   (setq debug-on-error t))
 
-;; Copied from eww.el so as to not require that package.
-(defun hypb:decode-url (string)
-  (let* ((binary (url-unhex-string string))
+;; Copied from eww.el, eww-decode-url-file-name, so as to not require
+;; that package.
+(defun hypb:decode-url (url-file-name)
+  "Decode an URL-FILE-NAME."
+  (let* ((binary (url-unhex-string url-file-name))
          (decoded
           (decode-coding-string
            binary
@@ -402,7 +404,7 @@ Use optional OUT-BUF if present, else the current buffer."
       ;; If we can't encode the decoded file name (due to language
       ;; environment settings), then we return the original, hexified
       ;; string.
-      string)))
+      url-file-name)))
 
 ;; Similar keyboard macro to next function, but less flexible: {C-x 1 M-o F M-o a C-x b *scratch* RET M-< M-o s C-@ C-M-h M-o t a C-u C-@ C-u C-@ M-o a C-M-p}
 
@@ -819,6 +821,7 @@ PACKAGE-NAME may be a symbol or a string."
 ;; Adapted from cl--do-remf in "cl-extra.el" but uses 'equal' for comparisons.
 ;;;###autoload
 (defun hypb:do-remove-from-plist (plist name)
+  "Remove from property list PLIST a NAME string."
   (let ((p (cdr plist)))
     ;; Can't use `plist-member' here because it goes to the cons-cell
     ;; of NAME and we need the one before.

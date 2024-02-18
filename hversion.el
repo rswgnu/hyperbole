@@ -4,7 +4,7 @@
 ;; Maintainer:   Bob Weiner, Mats Lidell
 ;;
 ;; Orig-Date:     1-Jan-94
-;; Last-Mod:     19-Jan-24 at 23:13:33 by Mats Lidell
+;; Last-Mod:     18-Feb-24 at 12:32:25 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -99,7 +99,8 @@ of stack frames (from innermost to outermost)."
 
 (defun hyperb:window-sys-term (&optional frame)
   "Return first part of the term-type if running under a window system, else nil.
-Where a part in the term-type is delimited by a `-' or  an `_'."
+Where a part in the term-type is delimited by a `-' or  an `_'.
+FRAME defaults to the selected frame."
   (unless frame (setq frame (selected-frame)))
   (let* ((display-type window-system)
 	 (term (cond ((or (memq display-type '(x gtk mswindows win32 w32 ns dps pm))

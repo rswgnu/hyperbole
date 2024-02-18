@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      9-Jan-24 at 03:31:53 by Bob Weiner
+;; Last-Mod:     18-Feb-24 at 11:27:01 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -521,7 +521,7 @@ Return symbol created when successful, else nil."
 
 (defun    actype:doc (but &optional full)
   "Return first line of action doc for BUT.
-BUT should be a Hyperbole button symbol or an Emacs push-button.
+BUT should be a Hyperbole button symbol or an Emacs push button.
 With optional FULL, returns full documentation string.
 Return nil when no documentation."
   (let* ((is-hbut (hbut:is-p but))
