@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     18-Feb-24 at 11:25:39 by Mats Lidell
+;; Last-Mod:     18-Feb-24 at 23:44:42 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -213,7 +213,7 @@ Return t if Org is reloaded, else nil."
 	     t)))))
 
 (defun hsys-org-get-libraries-to-reload ()
-  "Return all org libraries that needs to be reloaded to avoid mixed versions."
+  "Return all org libraries that need to be reloaded to avoid mixed versions."
   (interactive)
   (let* ((builtin-org-dir (expand-file-name "../lisp/org/" data-directory))
 	 (default-directory builtin-org-dir)

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     18-Feb-24 at 23:46:53 by Mats Lidell
+;; Last-Mod:     18-Feb-24 at 23:50:41 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -382,7 +382,7 @@ Use optional OUT-BUF if present, else the current buffer."
 ;; Copied from eww.el, eww-decode-url-file-name, so as to not require
 ;; that package.
 (defun hypb:decode-url (url-file-name)
-  "Decode an URL-FILE-NAME."
+  "Decode a URL-FILE-NAME."
   (let* ((binary (url-unhex-string url-file-name))
          (decoded
           (decode-coding-string
