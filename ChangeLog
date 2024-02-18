@@ -1,3 +1,16 @@
+2024-02-18  Bob Weiner  <rsw@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-demo-show-overview,
+                        hyrolo-tests--hyrolo-reveal-mode): ): Fix to handle
+    that {TAB} now auto-expands the whole subtree of the matching entry.
+
+* hyrolo.el (hyrolo-next-match, hyrolo-previous-match): Temporarily add
+    'hyrolo-outline-show-subtree' call.
+            (hyrolo-markdown-mode, hyrolo-outline-mode, hyrolo-org-mode):
+    Change all `reveal-mode' calls to new `hyrolo-reveal-mode', which is
+    temporarily a no-op until its functionality can be debugged in *HyRolo*
+    buffers.
+
 2024-02-12  Bob Weiner  <rsw@gnu.org>
 
 * hsys-org.el (hsys-org-fix-version): Reorder to have `org-macs' near front.

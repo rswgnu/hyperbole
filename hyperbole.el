@@ -8,7 +8,7 @@
 ;; Maintainer:   Mats Lidell <matsl@gnu.org>
 ;; Maintainers:  Robert Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:      06-Oct-92 at 11:52:51
-;; Last-Mod:      5-Feb-24 at 00:31:58 by Bob Weiner
+;; Last-Mod:     17-Feb-24 at 22:43:43 by Bob Weiner
 ;; Released:     03-Dec-23
 ;; Version:      9.0.0
 ;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -576,7 +576,8 @@ frame, those functions by default still return the prior frame."
 ;; it also sets up Kotl's autoloads.
 ;;;###autoload
 (let ((us (if (fboundp 'macroexp-file-name)
-              (macroexp-file-name) load-file-name)))
+              (macroexp-file-name)
+	    load-file-name)))
   (when us
     ;; Contrary to the usual ELPA autoloads files, `kotl-autoloads'
     ;; does not add its directory to `load-path', so let's do it here

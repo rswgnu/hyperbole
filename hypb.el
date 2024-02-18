@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     11-Feb-24 at 16:14:58 by Bob Weiner
+;; Last-Mod:     18-Feb-24 at 18:01:59 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -656,9 +656,9 @@ Resolves autoloadable function symbols properly."
 
 (defun hypb:insert-region (buffer start end invisible-flag)
   "Insert into BUFFER the contents of the region from START to END.
-Contents is fetch from within the current buffer.
-INVISIBLE-FLAG, if non-nil, means invisible text in an outline
-region is copied, otherwise, it is omitted."
+Contents come from the current buffer.  INVISIBLE-FLAG, if
+non-nil, means invisible text in an outline region is copied,
+otherwise, it is omitted."
   (if invisible-flag
       ;; Skip hidden blank lines between cells but include hidden outline text.
       (while (< start end)

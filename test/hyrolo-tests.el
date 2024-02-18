@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     12-Feb-24 at 23:01:15 by Mats Lidell
+;; Last-Mod:     18-Feb-24 at 18:14:07 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -118,11 +118,7 @@
         ;; Check next match is an outline
         (should (hact 'kbd-key "TAB"))
         (end-of-line)
-        (should (get-char-property (point) 'invisible))
-
-        ;; Check next line is end of buffer
-        (should (hact 'kbd-key "n"))
-        (should (equal (point) (point-max))))
+        (should-not (get-char-property (point) 'invisible)))
     (hyrolo-demo-quit)))
 
 (ert-deftest hyrolo-demo-move-to-beginning-and-end-of-file ()
@@ -1331,38 +1327,38 @@ body
 	  (hy-test-helpers:consume-input-events)
           (should (string=
                    (concat (hyrolo-tests--hyrolo-section-header org-file1)
-                           "* h-org 1\nbody\n** h-org 1.1...\n** h-org 1.2...\n* h-org 2...\n")
-                   (hyrolo-tests--outline-as-string)))
-
-          (should (hact 'kbd-key "TAB"))
-          (hy-test-helpers:consume-input-events)
-          (should (string=
-                   (concat (hyrolo-tests--hyrolo-section-header org-file1)
-                           "* h-org 1\nbody\n** h-org 1.1\nbody\n** h-org 1.2...\n* h-org 2...\n")
-                   (hyrolo-tests--outline-as-string)))
-
-          (should (hact 'kbd-key "TAB"))
-          (hy-test-helpers:consume-input-events)
-          (should (string=
-                   (concat (hyrolo-tests--hyrolo-section-header org-file1)
-                           "* h-org 1\nbody\n** h-org 1.1\nbody\n** h-org 1.2\nbody\n*** h-org 1.2.1...\n* h-org 2...\n")
-                   (hyrolo-tests--outline-as-string)))
-
-          (should (hact 'kbd-key "TAB"))
-          (hy-test-helpers:consume-input-events)
-          (should (string=
-                   (concat (hyrolo-tests--hyrolo-section-header org-file1)
                            "* h-org 1\nbody\n** h-org 1.1\nbody\n** h-org 1.2\nbody\n*** h-org 1.2.1\nbody\n* h-org 2...\n")
                    (hyrolo-tests--outline-as-string)))
 
-          (should (hact 'kbd-key "TAB"))
-          (hy-test-helpers:consume-input-events)
-          (should (string=
-                   (concat (hyrolo-tests--hyrolo-section-header org-file1)
-                           "* h-org 1\nbody\n** h-org 1.1\nbody\n** h-org 1.2\nbody\n*** h-org 1.2.1\nbody\n* h-org 2\nbody\n** h-org 2.1...\n")
-                   (hyrolo-tests--outline-as-string)))
+          ;; (should (hact 'kbd-key "TAB"))
+          ;; (hy-test-helpers:consume-input-events)
+          ;; (should (string=
+          ;;          (concat (hyrolo-tests--hyrolo-section-header org-file1)
+          ;;                  "* h-org 1\nbody\n** h-org 1.1\nbody\n** h-org 1.2...\n* h-org 2...\n")
+          ;;          (hyrolo-tests--outline-as-string)))
 
-          (should (hact 'kbd-key "TAB"))
+          ;; (should (hact 'kbd-key "TAB"))
+          ;; (hy-test-helpers:consume-input-events)
+          ;; (should (string=
+          ;;          (concat (hyrolo-tests--hyrolo-section-header org-file1)
+          ;;                  "* h-org 1\nbody\n** h-org 1.1\nbody\n** h-org 1.2\nbody\n*** h-org 1.2.1...\n* h-org 2...\n")
+          ;;          (hyrolo-tests--outline-as-string)))
+
+          ;; (should (hact 'kbd-key "TAB"))
+          ;; (hy-test-helpers:consume-input-events)
+          ;; (should (string=
+          ;;          (concat (hyrolo-tests--hyrolo-section-header org-file1)
+          ;;                  "* h-org 1\nbody\n** h-org 1.1\nbody\n** h-org 1.2\nbody\n*** h-org 1.2.1\nbody\n* h-org 2...\n")
+          ;;          (hyrolo-tests--outline-as-string)))
+
+          ;; (should (hact 'kbd-key "TAB"))
+          ;; (hy-test-helpers:consume-input-events)
+          ;; (should (string=
+          ;;          (concat (hyrolo-tests--hyrolo-section-header org-file1)
+          ;;                  "* h-org 1\nbody\n** h-org 1.1\nbody\n** h-org 1.2\nbody\n*** h-org 1.2.1\nbody\n* h-org 2\nbody\n** h-org 2.1...\n")
+          ;;          (hyrolo-tests--outline-as-string)))
+
+          (should (hact 'kbd-key "f TAB"))
           (hy-test-helpers:consume-input-events)
           (should (string=
                    (concat (hyrolo-tests--hyrolo-section-header org-file1)

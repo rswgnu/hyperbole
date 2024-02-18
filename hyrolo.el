@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      5-Feb-24 at 00:46:01 by Bob Weiner
+;; Last-Mod:     18-Feb-24 at 17:35:53 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -308,8 +308,8 @@ Use the `hyrolo-edit' function instead to edit a new or existing entry."
 (defvar hyrolo-next-match-function #'hyrolo-next-regexp-match
   "Value is the function to find next match within a HyRolo file.
 Must take two arguments, `match-pattern' and `headline-only-flag'.
-Must leave point at the end of the match, return the start position of
-the match and return nil when no match.")
+Must leave point at the end of the match and return the start position
+of the match or nil when no match.")
 
 (defvar hyrolo-add-hook nil
   "Hook run when a HyRolo item is added.")
@@ -1109,10 +1109,10 @@ or NAME is invalid, return nil."
     (push `(visual-line-mode . ,newmap) minor-mode-overriding-map-alist))
 
   ;; Expose hidden text as move into it
-  (reveal-mode 1))
+  (hyrolo-reveal-mode 1))
 
 (defun hyrolo-next-match ()
-  "Move point forward to the start of the next rolo search match.
+  "Move point forward to the start of the next HyRolo search match.
 Raise an error if a match is not found."
   (interactive)
   (hyrolo-verify)
@@ -1122,7 +1122,9 @@ Raise an error if a match is not found."
     (when (and prior-regexp-search (looking-at hyrolo-match-regexp))
       (goto-char (match-end 0)))
     (if (and prior-regexp-search (re-search-forward hyrolo-match-regexp nil t))
-	(goto-char (match-beginning 0))
+	(progn (goto-char (match-beginning 0))
+	       ;; !! TODO: Next line temporary until `reveal-mode' works properly
+	       (hyrolo-outline-show-subtree))
       (goto-char start)
       (if prior-regexp-search
 	  (error
@@ -1179,7 +1181,7 @@ non-nil."
   (remove-hook 'hack-local-variables-hook #'outline-apply-default-state t)
 
   ;; Expose hidden text as move into it
-  (reveal-mode 1))
+  (hyrolo-reveal-mode 1))
 
 (defun hyrolo-overview (levels-to-show)
   "Show the first line of all levels of HyRolo matches.
@@ -1197,16 +1199,18 @@ of matches for the file of matches at point."
   (hyrolo-show-levels levels-to-show))
 
 (defun hyrolo-previous-match ()
-  "Move point back to the start of the previous rolo search match.
+  "Move point back to the start of the previous HyRolo search match.
 This could be the current match if point is past its `hyrolo-match-regexp'.
 Raise an error if a match is not found."
   (interactive)
   (hyrolo-verify)
   (if hyrolo-match-regexp
       (let ((case-fold-search t))
-	(or (re-search-backward hyrolo-match-regexp nil t)
-	    (error
-	     "(hyrolo-previous-match): No prior matches for \"%s\"" hyrolo-match-regexp)))
+	(if (re-search-backward hyrolo-match-regexp nil t)
+	    ;; !! TODO: Next line temporary until `reveal-mode' works properly
+	    (hyrolo-outline-show-subtree)
+	  (error
+	   "(hyrolo-previous-match): No prior matches for \"%s\"" hyrolo-match-regexp)))
     (error (substitute-command-keys "(hyrolo-previous-match): Use {\\[hyrolo-grep-or-fgrep]} to do an initial search"))))
 
 (defun hyrolo-prompt (keyboard-function prompt)
@@ -2194,7 +2198,7 @@ Calls the functions given by `hyrolo-mode-hook'.
   (unless (or (eq major-mode 'hyrolo-mode)
 	      hyrolo-reveal-ignore-this-command)
     ;; Expose hidden text as move into it
-    (reveal-mode 1))
+    (hyrolo-reveal-mode 1))
 
   ;; Do this after reveal-mode is enabled.
   (setq major-mode 'hyrolo-mode
@@ -3038,7 +3042,7 @@ Any non-nil value returned is a cons of (<entry-name> . <entry-source>)."
   (remove-hook 'hack-local-variables-hook #'outline-apply-default-state t)
 
   ;; Expose hidden text as move into it
-  (reveal-mode 1))
+  (hyrolo-reveal-mode 1))
 
 (defun hyrolo-save-buffer (&optional hyrolo-buf)
   "Save optional HYROLO-BUF if changed and `hyrolo-save-buffers-after-use' is t.
@@ -3470,6 +3474,32 @@ Push (point-max) of `hyrolo-display-buffer' onto
 ;;; hyrolo-reveal - Extend reveal-mode to support Org mode org-fold
 ;;; ************************************************************************
 
+(define-minor-mode hyrolo-reveal-mode
+  "Toggle uncloaking of invisible text near point (Reveal mode).
+
+Reveal mode is a buffer-local minor mode.  When enabled, it
+reveals invisible text around point.
+
+Also see the `reveal-auto-hide' variable."
+  nil) ;; Make this a no-op until can debug `reveal-mode' in *HyRolo* buffer
+
+(unless (boundp 'reveal-auto-hide)
+(defcustom reveal-auto-hide t
+  "Automatically hide revealed text when leaving it.
+If nil, the `reveal-hide-revealed' command can be useful to hide
+revealed text manually."
+  :type 'boolean
+  :version "28.1"))
+
+(unless (fboundp 'reveal-hide-revealed)
+(defun reveal-hide-revealed ()
+  "Hide all revealed text.
+If there is revealed text under point, this command does not hide
+that text."
+  (interactive)
+  (let ((reveal-auto-hide t))
+    (reveal-post-command))))
+
 (defun hyrolo-reveal-open-new-overlays (old-ols)
   (let ((repeat t))
     (while repeat
@@ -3483,7 +3513,7 @@ Push (point-max) of `hyrolo-display-buffer' onto
           ;; overlay.  Always reveal invisible text, but only reveal
           ;; display properties if `reveal-toggle-invisible' is
           ;; present.
-          (let ((inv (overlay-get ol (if (derived-mode-p 'org-mode) 'org-invisible 'invisible)))
+          (let ((inv (overlay-get ol 'invisible))
                 (disp (and (overlay-get ol 'display)
                            (overlay-get ol 'reveal-toggle-invisible)))
                 open)
@@ -3507,23 +3537,19 @@ Push (point-max) of `hyrolo-display-buffer' onto
                 (overlay-put ol 'reveal-invisible inv))
               (push (cons (selected-window) ol) reveal-open-spots)
               (if (null open)
-		  (if (derived-mode-p 'org-mode)
-		      (org-fold-region (overlay-start ol) (overlay-end ol) nil 'headline)
-                    (overlay-put ol 'invisible nil))
+                  (overlay-put ol 'invisible nil)
                 ;; Use the provided opening function and repeat (since the
                 ;; opening function might have hidden a subpart around point
                 ;; or moved/killed some of the overlays).
                 (setq repeat t)
                 (condition-case err
-                    (hyrolo-funcall-match (lambda () (funcall open ol nil)))
+                    (funcall open ol nil)
                   (error (message "!!Reveal-show (funcall %s %s nil): %s !!"
                                   open ol err)
                          ;; Let's default to a meaningful behavior to avoid
                          ;; getting stuck in an infinite loop.
                          (setq repeat nil)
-			 (if (derived-mode-p 'org-mode)
-			     (org-fold-region (overlay-start ol) (overlay-end ol) nil 'headline)
-			   (overlay-put ol 'invisible nil)))))))))))
+			 (overlay-put ol 'invisible nil))))))))))
   old-ols)
 
 (defun hyrolo-reveal-close-old-overlays (old-ols)
@@ -3561,12 +3587,10 @@ Push (point-max) of `hyrolo-display-buffer' onto
           (if (and (overlay-start ol)   ;Check it's still live.
                    open)
               (condition-case err
-                  (hyrolo-funcall-match (lambda () (funcall open ol t)))
+                  (hyrolo-funcall-match (lambda () (funcall open ol t)) t)
 		(error (message "!!Reveal-hide (funcall %s %s t): %s !!"
                                 open ol err)))
-	    (if (derived-mode-p 'org-mode)
-		(org-fold-region (overlay-start ol) (overlay-end ol) nil 'headline)
-              (overlay-put ol 'invisible nil)))
+            (overlay-put ol 'invisible nil))
           ;; Remove the overlay from the list of open spots.
           (overlay-put ol 'reveal-invisible nil)
           (setq reveal-open-spots
@@ -3609,7 +3633,8 @@ Push (point-max) of `hyrolo-display-buffer' onto
                           (cdr x))))
                       reveal-open-spots))))
           (setq old-ols (hyrolo-reveal-open-new-overlays old-ols))
-	  (hyrolo-reveal-close-old-overlays old-ols))))))
+          (when reveal-auto-hide
+	    (hyrolo-reveal-close-old-overlays old-ols)))))))
 
 ;;; ************************************************************************
 ;;; hyrolo-file-list - initialize cache if this is already set when loading
