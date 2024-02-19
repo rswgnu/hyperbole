@@ -1,3 +1,8 @@
+2024-02-19  Mats Lidell  <matsl@gnu.org>
+
+* .mailmap: Add git .mailmap for mapping name and emails for commit
+    authors.
+
 2024-02-19  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-show-post-command): Add.
