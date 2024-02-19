@@ -1264,6 +1264,10 @@
     (hyrolo-fgrep-and-goto-next-visible-md-heading): Use level one heading
     so that heading hierarchy is respected.
 
+==============================================================================
+V8.0.2pre changes ^^^^:
+==============================================================================
+
 2023-12-01  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-add): Fix that narrow-to-region was narrowing to a
@@ -3181,7 +3185,7 @@ name with 'name' and 'name-key'.
 
 2023-04-02  Bob Weiner  <rsw@gnu.org>
 
-* HY-NEWS (9.0.0): Add EmacsConf 2022 videos.
+* HY-NEWS: Add EmacsConf 2022 videos.
   INSTALL: (Invocation):
   README.md (Videos):
   man/hyperbole.texi (Invocation): Add link to Hyperbole videos in README.md.
@@ -4772,6 +4776,9 @@ name with 'name' and 'name-key'.
 
 * Makefile (website-local): Add dependency on README.md.html.
 
+==============================================================================
+V8.0.1pre changes ^^^^:
+==============================================================================
 ==============================================================================
 V9.0.0 changes ^^^^:
 ==============================================================================

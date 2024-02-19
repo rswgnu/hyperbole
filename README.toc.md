@@ -1,4 +1,4 @@
-# GNU Hyperbole 9.0.0 - The Everyday Hypertextual Information Manager
+# GNU Hyperbole 8.0.2pre - The Everyday Hypertextual Information Manager
 
 [We work on Hyperbole as a gift to the Emacs community and request you
  send us a thank you or a testimonial describing your usage if you like
@@ -6,7 +6,7 @@
 
 
 
-- [GNU Hyperbole 9.0.0 - The Everyday Hypertextual Information Manager](#gnu-hyperbole-900---the-everyday-hypertextual-information-manager)
+- [GNU Hyperbole 8.0.2pre - The Everyday Hypertextual Information Manager](#gnu-hyperbole-802pre---the-everyday-hypertextual-information-manager)
   - [Videos](#videos)
   - [Summary](#summary)
   - [Mailing Lists](#mailing-lists)
@@ -203,7 +203,7 @@ to clone the Hyperbole project tree.
 Once you have Emacs set up at your site, GNU Hyperbole may be
 installed by using the Emacs Package Manager.  If you are not
 familiar with it, see the Packages section of the GNU Emacs Manual,
-[Emacs Packages](https://www.gnu.org/software/emacs/manual/html_node/emacs/Packages.html).
+[Emacs Packages](https://www.gnu.org/software/emacs/manual/html_node/emacs/Packages.html). 
 
 If you have Hyperbole 5.10 or higher already installed and simply want to
 upgrade it, invoke the Emacs Package Manager with {M-x list-packages RET},

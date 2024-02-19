@@ -1,4 +1,4 @@
-\input texinfo  @c -*- coding: utf-8 -*-
+ \input texinfo  @c -*- coding: utf-8 -*-
 
 @c $Id$
 @c hyperbole.texi --- The GNU Hyperbole Manual
@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:      4-Feb-24 at 16:01:50 by Bob Weiner
+@c Last-Mod:     19-Feb-24 at 12:40:29 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -155,8 +155,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 9.0.0
-Printed February 4, 2024.
+Edition 8.0.2pre
+Printed February 19, 2024.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -197,8 +197,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 @sp 2
 
 @example
-Edition 9.0.0
-February 4, 2024
+Edition 8.0.2pre
+February 19, 2024
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -514,7 +514,7 @@ Smart Keyboard Keys
 @chapter Introduction
 
 This edition of the GNU Hyperbole Manual is for use with any version
-9.0.0 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 27.1
+8.0.2pre or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 27.1
 or higher.  It will trigger an error if your Emacs is older.
 
 This chapter summarizes the structure of the rest of the manual,

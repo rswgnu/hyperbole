@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:      5-Feb-24 at 00:21:22 by Bob Weiner
+# Last-Mod:     19-Feb-24 at 12:30:10 by Bob Weiner
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -86,7 +86,7 @@
 
 # This ver setup won't work under any make except GNU make, so set it manually.
 #HYPB_VERSION = "`head -3 hversion.el | tail -1 | sed -e 's/.*|\(.*\)|.*/\1/'`"
-HYPB_VERSION = 9.0.0
+HYPB_VERSION = 8.0.2pre
 
 # Emacs executable used to byte-compile .el files into .elc's.
 # To override which executable is used from the commandline, do something like this:
