@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     19-Feb-24 at 10:47:52 by Bob Weiner
+;; Last-Mod:     19-Feb-24 at 11:33:53 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -3089,7 +3089,7 @@ This must be 1 or greater."
     (goto-char (point-min))
     (let ((min-level 1000))
       (when (looking-at outline-regexp)
-	(funcall outline-level))
+	(setq min-level (min min-level (funcall outline-level))))
       (while (outline-next-heading)
 	(setq min-level (min min-level (funcall outline-level))))
       (max min-level 1))))

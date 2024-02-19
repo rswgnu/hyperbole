@@ -1,7 +1,14 @@
 2024-02-19  Bob Weiner  <rsw@gnu.org>
 
+
 * hyrolo.el (hyrolo-mode): Set these two missing variables:
     'hyrolo-entry-group-number' and 'hyrolo-entry-trailing-space-group-number'.
+            (hyrolo-outline-level): Fix to use the length of match to
+    'hyrolo-entry-group-number'.
+            (hyrolo-min-matched-level): Fix 'hyrolo-top-level'.  First
+    'outline-regexp' match was ignored when computing min-level; fix to include.
+  test/hyrolo-tests.el (hyrolo-tests--top-level-outline-for-all-file-types):
+    Fix kotl-mode match string to include only the top-level entry line.
 
 2024-02-18  Mats Lidell  <matsl@gnu.org>
 

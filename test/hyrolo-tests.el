@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     18-Feb-24 at 18:14:07 by Bob Weiner
+;; Last-Mod:     19-Feb-24 at 11:39:19 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1396,7 +1396,6 @@ body
                            (hyrolo-tests--hyrolo-section-header kotl-file1)
                            "\
    1. h-kotl...
-     1a. h-kotl 1...
 ")
                    (hyrolo-tests--outline-as-string))))
       (kill-buffer hyrolo-display-buffer)
