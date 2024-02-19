@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10-Oct-91 at 01:51:12
-;; Last-Mod:     14-May-23 at 01:50:19 by Bob Weiner
+;; Last-Mod:     18-Feb-24 at 12:33:39 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -392,7 +392,7 @@ Has side-effect of widening buffer."
 	  (point-max))
 	 (vm-show-current-message)
 	 (setq vm-system-state 'reading))
-	(t (error "vm search code is missing, can't continue")))))
+	(t (error "Vm search code is missing, can't continue")))))
 
 ;; Hide any Hyperbole button data when reply to or forward a message.
 ;; See "vm-reply.el".

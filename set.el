@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Sep-91 at 19:24:19
-;; Last-Mod:      6-Feb-23 at 20:05:30 by Mats Lidell
+;; Last-Mod:     18-Feb-24 at 12:51:49 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -77,7 +77,7 @@ Use (setq set (set:remove elt set)) to assure set is always properly modified."
 (defun set:remove-key-value (key set)
   "Remove element whose car matches KEY in SET.
 Return the set.  Use (setq set (set:remove-key-value key set)) to assure set is
-always properly modified. 
+always properly modified.
 
 Use `set:equal-op' to match against KEY.  Assume each element in the set has a
 car and a cdr."
@@ -88,7 +88,7 @@ car and a cdr."
 This includes the empty set and the SET itself.  Assume SET is a
 valid set.  With optional ARITY, return only subsets with ARITY
 members."
-  (cond ((null arity) 
+  (cond ((null arity)
 	 (setq arity 0)
 	 (cons nil (apply #'nconc (mapcar (lambda (_elt) (setq arity (1+ arity)) (set:combinations set arity))
 					 set))))
@@ -183,7 +183,7 @@ Uses `set:equal-op' for comparison.  See also `set:create'."
 (defun set:replace (old-elt new-elt set)
   "Replace OLD-ELT with NEW-ELT in SET.  Add NEW-ELT if OLD-ELT is not in SET.
 Return the set.  Use (setq set (set:replace elt set)) to assure set is
-always properly modified. 
+always properly modified.
 
 Use `set:equal-op' for element comparisons."
   (set:add new-elt (set:remove old-elt set)))
@@ -191,7 +191,7 @@ Use `set:equal-op' for element comparisons."
 (defun set:replace-key-value (key value set)
   "Replace or add element whose car matches KEY with a cdr of VALUE in SET.
 Return the set.  Use (setq set (set:replace elt set)) to assure set is
-always properly modified. 
+always properly modified.
 
 Use `set:equal-op' to match against KEY.  Assume each element in the set has a
 car and a cdr."

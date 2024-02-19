@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     12-Feb-24 at 22:12:59 by Bob Weiner
+;; Last-Mod:     18-Feb-24 at 11:37:11 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2705,7 +2705,7 @@ For interactive creation, use `hui:ibut-create' instead."
 	(if (or (and actype-sym (fboundp actype-sym))
 		(functionp actype))
 	    (hattr:set 'hbut:current 'actype actype)
-	  (error "actype arg must be a bound symbol (not a string): %S" actype))
+	  (error "Actype arg must be a bound symbol (not a string): %S" actype))
 	(hattr:set 'hbut:current 'args args)
 	(condition-case err
 	    (ibut:operate)

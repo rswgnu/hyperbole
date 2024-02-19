@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     20-Jan-24 at 20:17:17 by Mats Lidell
+;; Last-Mod:     18-Feb-24 at 12:20:15 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2176,12 +2176,13 @@ to it."
 
 ;;; URL Handling
 (defun hpath:find-file-urls-p ()
+  "Return t when file finding commands can handle remote urls."
   (and (boundp 'file-name-handler-alist) (hpath:remote-available-p) t))
 
-;; Partial setup which makes file finding commands recognize full and
-;; abbreviated ftp and www URLs when a remote file access library is
-;; available.
 (defun hpath:handle-urls ()
+  "Partially configure file finding commands to recognize ftp and www URLs.
+Recognizes full and abbreviated ftp and www URLs when a remote file
+access library is available."
   (let ((remote-fs-package (hpath:remote-available-p)))
     ;; www-url functions are defined in "hsys-www.el".
     (put 'expand-file-name   remote-fs-package   'www-url-expand-file-name)

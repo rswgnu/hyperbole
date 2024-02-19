@@ -1,3 +1,7 @@
+2024-02-18  Mats Lidell  <matsl@gnu.org>
+
+* Fix flycheck/flymake warnings.
+
 2024-02-18  Bob Weiner  <rsw@gnu.org>
 
 * test/hyrolo-tests.el (hyrolo-demo-show-overview,

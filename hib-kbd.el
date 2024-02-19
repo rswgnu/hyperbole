@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    22-Nov-91 at 01:37:57
-;; Last-Mod:     17-Jan-24 at 23:47:04 by Mats Lidell
+;; Last-Mod:     18-Feb-24 at 11:39:41 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -260,13 +260,13 @@ With optional prefix arg FULL, display full documentation for command."
 When STR is a curly-brace {} delimited key series, a
 non-delimited, normalized form is returned, else nil.  Key
 sequences should be in human readable form, e.g. {\\`C-x' \\`C-b'}, or
-what `key-description' returns.  Forms such as {\C-b}, {\^b}, and
+what `key-description' returns.  Forms such as {\\`C-b'}, {\^b}, and
 {^M} will not be recognized.
 
 Any key sequence within the series must be a string of one of the following:
   a Hyperbole minibuffer menu item key sequence,
   a HyControl key sequence,
-  a M-x extended command,
+  a \\`M-x' extended command,
   or a valid key sequence together with its interactive arguments."
   ;; Handle long series, e.g. eval-elisp actions
   (let* ((hbut:max-len (max 3000 (hbut:max-len)))
