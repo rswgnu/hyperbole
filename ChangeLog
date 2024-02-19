@@ -1,3 +1,8 @@
+2024-02-19  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-mode): Set these two missing variables:
+    'hyrolo-entry-group-number' and 'hyrolo-entry-trailing-space-group-number'.
+
 2024-02-18  Mats Lidell  <matsl@gnu.org>
 
 * Fix flycheck/flymake warnings.

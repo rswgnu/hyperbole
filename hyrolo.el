@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     18-Feb-24 at 17:35:53 by Bob Weiner
+;; Last-Mod:     19-Feb-24 at 10:47:52 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2172,6 +2172,10 @@ Calls the functions given by `hyrolo-mode-hook'.
 	  outline-heading-alist)
     (setq-local hyrolo-entry-regexp (concat "^" "\\([*\^L]+\\)\\([ \t\n\r]+\\)")
 		hyrolo-hdr-and-entry-regexp (default-value 'hyrolo-hdr-and-entry-regexp)
+		hyrolo-entry-group-number 1
+		;; `hyrolo-add' handles removing * prefix from
+		;; trailing-space grouping below
+		hyrolo-entry-trailing-space-group-number 2
 		;; In `outline-regexp', prevent matching to *word*
 		;; at the beginning of lines and hanging hyrolo
 		;; search functions by adding a whitespace char at
@@ -3176,7 +3180,7 @@ This function is used for every file-type major-mode supported by HyRolo."
       (cond ((derived-mode-p 'kotl-mode)
 	     (kcell-view:level))
 	    ((looking-at hyrolo-hdr-and-entry-regexp)
-	     (1- (- (match-end 0) (match-beginning 0))))
+	     (length (match-string hyrolo-entry-group-number)))
 	    (t 0))))
 
 ;;; ************************************************************************
