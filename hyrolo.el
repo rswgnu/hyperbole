@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     19-Feb-24 at 11:33:53 by Bob Weiner
+;; Last-Mod:     19-Feb-24 at 12:09:48 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2146,12 +2146,14 @@ See the command `outline-mode' for more information on this mode."
 		    (unless (derived-mode-p 'hyrolo-mode 'kotl-mode 'markdown-mode 'org-mode 'outline-mode)
 		      (hyrolo-outline-minor-mode -1)))
 		  nil t)
+	(add-hook 'post-command-hook 'hyrolo-show-post-command nil t)
         (setq-local line-move-ignore-invisible t)
 	;; Use ellipses for invisible text
 	(hypb:add-to-invisibility-spec '(outline . t)))
     ;; disable minor mode
     (when (and (boundp 'outline-minor-mode-cycle) outline-minor-mode-cycle)
       (remove-overlays nil nil 'outline-overlay t))
+    (remove-hook 'post-command-hook 'hyrolo-show-post-command t)
     (setq line-move-ignore-invisible nil)
     ;; Disable use of ellipses for invisible text.
     (remove-from-invisibility-spec '(outline . t))
@@ -2547,7 +2549,7 @@ If within a file header, show the whole file starting with the header."
 	  (hyrolo-cache-location-start-and-end)
 	(setq start (or start (line-beginning-position))
 	      end (1- (or end (point-max))))
-	;; Hide region
+	;; Show region
 	(outline-flag-region start end nil))
     (hyrolo-funcall-match #'outline-show-subtree t)))
 
@@ -3639,6 +3641,12 @@ that text."
           (setq old-ols (hyrolo-reveal-open-new-overlays old-ols))
           (when reveal-auto-hide
 	    (hyrolo-reveal-close-old-overlays old-ols)))))))
+
+(defun hyrolo-show-post-command ()
+  "Post command hook function to expand subtree if point is in invisible text.
+Used in *HyRolo* match buffer."
+  (when (outline-invisible-p)
+    (hyrolo-outline-show-subtree)))
 
 ;;; ************************************************************************
 ;;; hyrolo-file-list - initialize cache if this is already set when loading

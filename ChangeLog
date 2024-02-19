@@ -1,5 +1,7 @@
 2024-02-19  Bob Weiner  <rsw@gnu.org>
 
+* hyrolo.el (hyrolo-show-post-command): Add.
+            (hyrolo-outline-minor-mode): Toggle use of 'hyrolo-show-post-command'.
 
 * hyrolo.el (hyrolo-mode): Set these two missing variables:
     'hyrolo-entry-group-number' and 'hyrolo-entry-trailing-space-group-number'.
