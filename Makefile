@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     19-Feb-24 at 12:30:10 by Bob Weiner
+# Last-Mod:     21-Feb-24 at 15:54:48 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -205,7 +205,7 @@ HY-TALK  = HY-TALK/.hypb HY-TALK/HYPB HY-TALK/HY-TALK.org HY-TALK/HYPERAMP.org H
 HYPERBOLE_FILES = dir info html $(EL_SRC) $(EL_KOTL) \
 	$(HY-TALK) ChangeLog COPYING Makefile HY-ABOUT HY-ANNOUNCE \
         HY-CONCEPTS.kotl HY-NEWS \
-	HY-WHY.kotl INSTALL DEMO DEMO-ROLO.otl FAST-DEMO MANIFEST README README.md TAGS _hypb \
+	HY-WHY.kotl INSTALL DEMO DEMO-ROLO.otl FAST-DEMO MANIFEST README.md TAGS _hypb \
         .hypb smart-clib-sym topwin.py hyperbole-banner.png $(man_dir)/hkey-help.txt \
 	$(man_dir)/hyperbole.texi $(man_dir)/hyperbole.css $(man_dir)/version.texi
 
@@ -388,6 +388,7 @@ website-local: README.md.html
 # Push to public Hyperbole website
 website: website-local
 	cd $(HYPB_WEB_REPO_LOCATION) && $(CVS) commit -m "Hyperbole release $(HYPB_VERSION)"
+	@ echo "Website for Hyperbole $(HYPB_VERSION) is updated."
 
 # Generate a Hyperbole package suitable for distribution via the Emacs package manager.
 pkg: package
@@ -396,26 +397,28 @@ package: tags doc $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.sig
 # Generate and distribute a Hyperbole release to ftp.gnu.org.
 # One step in this is to generate an autoloads file for the Koutliner, kotl/kotl-autoloads.el.
 release: git-pull git-verify-no-update package $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz ftp website git-tag-release
-	@ echo; echo "Hyperbole $(HYPB_VERSION) released to ftp.gnu.org successfully."
+	@ echo "Hyperbole $(HYPB_VERSION) is released."
 
 # Ensure local hyperbole directory is synchronized with master before building a release.
 git-pull:
-	echo "If this step fails check your work directory for not committed changes"
+	@ echo "If this step fails check your work directory for not committed changes"
 	git checkout master && git pull
 	git diff-index --quiet master
 
 git-verify-no-update:
-	echo "If this step fails check your work directory for updated docs and push these to savannah"
+	@ echo "If this step fails check your work directory for updated docs and push these to savannah"
 	git diff-index --quiet master
 
 git-tag-release:
 	git tag -a hyperbole-$(HYPB_VERSION) -m "Hyperbole release $(HYPB_VERSION)"
 	git push origin hyperbole-$(HYPB_VERSION)
+	@ echo "Hyperbole $(HYPB_VERSION) is tagged as hyperbole-$(HYPB_VERSION)."
 
 # Send compressed tarball for uploading to GNU ftp site; this must be done from the directory
 # containing the tarball to upload.
 ftp: package $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz
 	cd $(pkg_parent) && $(GNUFTP) hyperbole-$(HYPB_VERSION).tar.gz
+	@ echo "Hyperbole $(HYPB_VERSION) uploaded to ftp.gnu.org."
 
 # Autoloads
 autoloads: kotl/kotl-autoloads.el hyperbole-autoloads.el

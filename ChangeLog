@@ -1,3 +1,9 @@
+2024-02-21  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (HYPERBOLE_FILES): Do not require README. It has been removed.
+    (website, release, git-tag-release, ftp): Add confirmation of
+    successful operation.
+
 2024-02-19  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-show-post-command): Add.
