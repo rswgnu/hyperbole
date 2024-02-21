@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:45:00
-;; Last-Mod:     25-Dec-23 at 23:30:20 by Mats Lidell
+;; Last-Mod:     21-Feb-24 at 23:55:45 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -166,7 +166,7 @@
          (should (string-match "No action defined" (cadr err))))))))
 
 (ert-deftest ibtypes::pathname-dot-slash-in-same-folder-test ()
-  "Pathname that starts with ./ resolves properly when found in default-directory."
+  "Pathname that starts with ./ resolves properly when found in `default-directory'."
   (with-temp-buffer
     (insert "\"./hypb.el\"")
     (goto-char 2)

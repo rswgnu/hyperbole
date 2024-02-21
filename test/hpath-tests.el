@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 23:26:00
-;; Last-Mod:     28-Dec-23 at 22:41:51 by Bob Weiner
+;; Last-Mod:     21-Feb-24 at 23:57:35 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -83,7 +83,7 @@
 
 (defun hpath--should-not-exist-p (path)
   (let ((default-directory hyperb:dir)
-	(expanded (condition-case err
+	(expanded (condition-case _err
 		      (hpath:expand path)
 		    (error path))))
     (if (not (file-exists-p expanded))
@@ -107,7 +107,7 @@
 
 (ert-deftest hpath:find-report-lisp-variable-path-name-when-not-exists ()
   "Test that `hpath:find' errors when it is non-existent."
-  (condition-case err
+  (condition-case _err
       (hpath:find "${hyperb:dir}/UNKNOWNFILE")
     (error (should t))))
 

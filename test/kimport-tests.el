@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:     9-Apr-23 at 23:31:48
-;; Last-Mod:     13-May-23 at 10:08:37 by Bob Weiner
+;; Last-Mod:     22-Feb-24 at 00:02:33 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -19,6 +19,7 @@
 
 (require 'kimport)
 (require 'ert)
+(require 'hy-test-helpers "test/hy-test-helpers")
 
 (ert-deftest kimport--aug-post-outline ()
   "Import .otl star outline as one cell per entry beginning with one or more stars."
