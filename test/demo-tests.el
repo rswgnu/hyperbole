@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:      3-Feb-24 at 23:32:21 by Mats Lidell
+;; Last-Mod:     21-Feb-24 at 23:55:10 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -110,8 +110,8 @@
         (with-temp-buffer
           (insert "Text")
           (hkey-help)
-          (should (get-buffer help-buffer))
-      (hy-test-helpers:kill-buffer help-buffer)))))
+          (should (get-buffer help-buffer)))
+      (hy-test-helpers:kill-buffer help-buffer))))
 
 (ert-deftest demo-assist-key-help ()
   (let ((help-buffer "*Help: Hyperbole Assist Key*"))
@@ -120,8 +120,8 @@
         (with-temp-buffer
           (insert "Text")
           (hkey-help t)
-          (should (get-buffer help-buffer))
-      (hy-test-helpers:kill-buffer help-buffer)))))
+          (should (get-buffer help-buffer)))
+      (hy-test-helpers:kill-buffer help-buffer))))
 
 ;; HyControl
 (ert-deftest demo-window-grid-22-test ()
@@ -281,7 +281,7 @@
   (unwind-protect
       (progn
         (find-file (expand-file-name "MANIFEST" hyperb:dir))
-        (beginning-of-buffer)
+        (goto-char (point-min))
         (forward-line 1)
         (should (looking-at "COPYING"))
         (action-key)
@@ -463,8 +463,8 @@
           (goto-char 3)
           (action-key)
           (setq bufname (buffer-name (current-buffer)))
-          (should (string-prefix-p "subr.el" bufname))))
-    (hy-test-helpers:kill-buffer bufname)))
+          (should (string-prefix-p "subr.el" bufname)))
+      (hy-test-helpers:kill-buffer bufname))))
 
 (ert-deftest fast-demo-info-manual-references ()
   "Verify info manual references works."

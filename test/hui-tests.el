@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     20-Jan-24 at 15:44:10 by Mats Lidell
+;; Last-Mod:     21-Feb-24 at 23:53:09 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -789,7 +789,7 @@ With point on label suggest that ibut for rename."
       (hy-delete-file-and-buffer fileb))))
 
 (ert-deftest hui--ibut-link-directly-to-dired ()
-  "Create a direct link to a directory in dired."
+  "Create a direct link to a directory in Dired."
   (let* ((file (make-temp-file "hypb" nil ".txt"))
          (dir hyperb:dir)
          dir-buf)

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 22:52:00
-;; Last-Mod:     26-Dec-23 at 22:44:10 by Mats Lidell
+;; Last-Mod:     21-Feb-24 at 23:55:58 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -400,7 +400,7 @@
     (hy-test-helpers:should-last-message "hy-test-dependencies.el")))
 
 (ert-deftest hbut-pathname-directory-test ()
-  "Pathname with directory opens dired."
+  "Pathname with directory opens Dired."
   (unwind-protect
       (with-temp-buffer
         (insert "\"/tmp\"")

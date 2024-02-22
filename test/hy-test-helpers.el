@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     20-Jan-24 at 15:44:21 by Mats Lidell
+;; Last-Mod:     21-Feb-24 at 23:47:33 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -32,7 +32,7 @@
   (let* ((possible-types (hui:link-possible-types))
 	 (first-type (caar possible-types)))
     (should (= (length possible-types) 1))
-    (should (equal (caar (hui:link-possible-types)) type))))
+    (should (equal first-type type))))
 
 (defun hy-test-helpers:should-last-message (msg)
   "Verify last message is MSG."
@@ -71,7 +71,7 @@
 
 (cl-defun hy-test-helpers-verify-hattr-at-p (&key actype args loc lbl-key name)
   "Verify the attribute of hbut at point.
-Checks ACTYPE, ARGS, LOC and LBL-KEY."
+Checks ACTYPE, ARGS, LOC, LBL-KEY and NAME."
   (let ((hbut-at-p (hbut:at-p)))
     (should (eq (hattr:get hbut-at-p 'actype) actype))
     (should (equal (hattr:get hbut-at-p 'args) args))

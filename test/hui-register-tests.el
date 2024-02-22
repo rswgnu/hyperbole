@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    10-Sep-22 at 20:43:17
-;; Last-Mod:     28-Aug-23 at 00:59:44 by Bob Weiner
+;; Last-Mod:     22-Feb-24 at 00:00:12 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -20,6 +20,7 @@
 (require 'ert)
 (require 'hmouse-drv)
 (require 'hui-register)
+(require 'hy-test-helpers "test/hy-test-helpers")
 
 (ert-deftest hui-register-test--create-register-content ()
   "Verify the struct contains its parts."
