@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     19-Feb-24 at 11:39:19 by Bob Weiner
+;; Last-Mod:     21-Feb-24 at 23:06:04 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -705,7 +705,6 @@ optional DEPTH the number of sub cells are created to that depth."
     (insert heading)
     (kotl-mode:newline 1)
     (insert body)
-    (kotl-mode:newline 1)
     (when (and depth (< 0 depth))
       (dotimes (d depth)
         (kotl-mode:add-child)
@@ -1364,6 +1363,35 @@ body
                    (concat (hyrolo-tests--hyrolo-section-header org-file1)
                            "* h-org 1\nbody\n** h-org 1.1\nbody\n** h-org 1.2\nbody\n*** h-org 1.2.1\nbody\n* h-org 2\nbody\n** h-org 2.1\nbody\n")
                    (hyrolo-tests--outline-as-string))))
+      (kill-buffer hyrolo-display-buffer)
+      (hy-delete-files-and-buffers hyrolo-file-list))))
+
+(ert-deftest hyrolo-tests--hyrolo-reveal-mode-kotl-file ()
+  "Verify hidden sections are shown when using {TAB} to move through matches in kotl."
+  (let* ((kotl-file1 (hyrolo-tests--gen-kotl-outline "h-kotl" "body" 1))
+         (hyrolo-file-list (list kotl-file1)))
+    (unwind-protect
+        (progn
+          (hyrolo-grep "body")
+          (hyrolo-top-level)
+
+          (should (string= (concat
+                            (hyrolo-tests--hyrolo-section-header kotl-file1)
+                            "\
+   1. h-kotl...
+")
+                           (hyrolo-tests--outline-as-string)))
+          (hyrolo-next-match)
+          (should (string= (concat
+                            (hyrolo-tests--hyrolo-section-header kotl-file1)
+                            "\
+   1. h-kotl
+      body
+
+     1a. h-kotl 1
+         body 1
+")
+                           (hyrolo-tests--outline-as-string))))
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))
 
