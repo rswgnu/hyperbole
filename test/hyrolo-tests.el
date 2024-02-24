@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     21-Feb-24 at 23:06:04 by Mats Lidell
+;; Last-Mod:     25-Feb-24 at 00:13:19 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1466,6 +1466,43 @@ body
        1a1. h-kotl 2...
 ")
                    (hyrolo-tests--outline-as-string))))
+      (kill-buffer hyrolo-display-buffer)
+      (hy-delete-files-and-buffers hyrolo-file-list))))
+
+(ert-deftest hyrolo-tests--mail-to ()
+  "Verify composing mail works."
+  (let* ((org-file (make-temp-file "hypb" nil ".org" "\
+* h-org 1
+<first@receiver.org>
+* h-org 2
+<second@receiver.org>
+"))
+         (hyrolo-file-list (list org-file)))
+    (unwind-protect
+        (let ((hypb:mail-address-mode-list '(hyrolo-mode)))
+          (hyrolo-grep "receiver\\.org")
+          (mocklet (((mail-other-window nil "first@receiver.org") => t))
+            (hyrolo-mail-to))
+          (forward-line)
+          (mocklet (((mail-other-window nil "second@receiver.org") => t))
+            (hyrolo-mail-to)))
+      (kill-buffer hyrolo-display-buffer)
+      (hy-delete-files-and-buffers hyrolo-file-list))))
+
+(ert-deftest hyrolo-tests--location-movement ()
+  "Verify movement between location headers."
+  (let* ((org-file1 (make-temp-file "hypb" nil ".org" hyrolo-tests--outline-content-org))
+         (otl-file1 (make-temp-file "hypb" nil ".otl" hyrolo-tests--outline-content-otl))
+         (hyrolo-file-list (list org-file1 otl-file1)))
+    (unwind-protect
+        (progn
+          (hyrolo-grep "body")
+          (hyrolo-to-next-loc)
+          (should (looking-at-p (concat "@loc> \"" org-file1 "\"")))
+          (hyrolo-to-next-loc)
+          (should (looking-at-p (concat "@loc> \"" otl-file1 "\"")))
+          (hyrolo-to-previous-loc)
+          (should (looking-at-p (concat "@loc> \"" org-file1 "\""))))
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))
 

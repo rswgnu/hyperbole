@@ -1,3 +1,8 @@
+2024-02-25  Mats Lidell  <matsl@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-tests--mail-to)
+    (hyrolo-tests--location-movement): More hyrolo tests.
+
 2024-02-22  Mats Lidell  <matsl@gnu.org>
 
 * test/MANIFEST: Add hywconfig-test.el.
