@@ -1,3 +1,11 @@
+2024-02-24  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (HyRolo Searching): Update this section with doc
+    on auto-expansion and how to hide entries again.
+
+* MANIFEST (HYPERBOLE INTERNALS):
+  Makefile (HYPERBOLE_FILES): Add .mailmap.
+
 2024-02-22  Mats Lidell  <matsl@gnu.org>
 
 * test/MANIFEST: Add hywconfig-test.el.

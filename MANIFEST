@@ -81,6 +81,7 @@ kotl/EXAMPLE.kotl    - Sample Koutline document explaining Koutliner features
 hgnus.el             - GNU Hyperbole buttons in news reader/poster: GNUS
 
 * --- HYPERBOLE INTERNALS ---
+.mailmap             - Normalize author name and email addresses
 hactypes.el          - Default action types for GNU Hyperbole
 hbdata.el            - GNU Hyperbole button attribute accessor functions
 hibtypes.el          - GNU Hyperbole default implicit button types

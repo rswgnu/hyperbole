@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     21-Feb-24 at 15:54:48 by Mats Lidell
+# Last-Mod:     24-Feb-24 at 10:28:47 by Bob Weiner
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -203,7 +203,7 @@ ELC_KOTL = $(EL_KOTL:.el=.elc)
 HY-TALK  = HY-TALK/.hypb HY-TALK/HYPB HY-TALK/HY-TALK.org HY-TALK/HYPERAMP.org HY-TALK/HYPERORG.org
 
 HYPERBOLE_FILES = dir info html $(EL_SRC) $(EL_KOTL) \
-	$(HY-TALK) ChangeLog COPYING Makefile HY-ABOUT HY-ANNOUNCE \
+	$(HY-TALK) .mailmap ChangeLog COPYING Makefile HY-ABOUT HY-ANNOUNCE \
         HY-CONCEPTS.kotl HY-NEWS \
 	HY-WHY.kotl INSTALL DEMO DEMO-ROLO.otl FAST-DEMO MANIFEST README.md TAGS _hypb \
         .hypb smart-clib-sym topwin.py hyperbole-banner.png $(man_dir)/hkey-help.txt \
