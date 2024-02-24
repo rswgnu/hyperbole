@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:      9-Oct-23 at 00:51:28 by Mats Lidell
+;; Last-Mod:     22-Feb-24 at 00:03:07 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -546,8 +546,8 @@
           (kotl-mode:transpose-cells 1)
 
           (should (string= (kcell-view:idstamp) "01"))
-          (should (looking-at-p "first"))))
-      (hy-delete-file-and-buffer kotl-file)))
+          (should (looking-at-p "first")))
+      (hy-delete-file-and-buffer kotl-file))))
 
 (ert-deftest kotl-mode-transpose-cell-with-mark ()
   "Transpose cell with cell with mark and change point to mark."
