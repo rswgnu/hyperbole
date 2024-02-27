@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:     27-Feb-24 at 16:22:26 by Mats Lidell
+;; Last-Mod:     27-Feb-24 at 23:53:09 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -354,7 +354,10 @@
     (insert "first line")
     (kotl-mode:backward-word)
     (should (looking-at-p "line"))
-    (kotl-mode:kill-contents nil)
+    (let ((transient-mark-mode nil))
+      ;; kotl-mode:kill-contents uses kotl-mode:kill-region which
+      ;; depends on transient-mark-mode
+      (kotl-mode:kill-contents nil))
     (kotl-mode:beginning-of-cell)
     (should (looking-at-p "first $"))))
 
@@ -1018,9 +1021,9 @@ optional DEPTH the number of sub cells are created to that depth."
     (make-kotl-mode-tests--func :func #'kotl-mode:hide-sublevels :args '(0))
     (make-kotl-mode-tests--func :func #'kotl-mode:hide-subtree)
     (make-kotl-mode-tests--func :func #'kotl-mode:hide-tree)
-    (make-kotl-mode-tests--func :func #'kotl-mode:kill-contents :ignore t)
-    (make-kotl-mode-tests--func :func #'kotl-mode:kill-line :ignore t)
-    (make-kotl-mode-tests--func :func #'kotl-mode:kill-region :ignore t)
+    (make-kotl-mode-tests--func :func #'kotl-mode:kill-contents :args '(t))
+    (make-kotl-mode-tests--func :func #'kotl-mode:kill-line)
+    (make-kotl-mode-tests--func :func #'kotl-mode:kill-region :args '(130 131))
     (make-kotl-mode-tests--func :func #'kotl-mode:kill-ring-save :ignore t)
     (make-kotl-mode-tests--func :func #'kotl-mode:kill-sentence :ignore t)
     (make-kotl-mode-tests--func :func #'kotl-mode:kill-tree)
@@ -1084,7 +1087,8 @@ marked with :ignore t")
               ;; point for many commands to be able to succeed.
               (kotl-mode:beginning-of-line)
               (kotl-mode:forward-char 1)
-              (apply function args))
+              (let ((transient-mark-mode nil))
+                (apply function args)))
           (error
            (ert-fail (format "Function %s called with args %s fails due to %s" function args err))))
       (hy-delete-file-and-buffer kotl-file))))
