@@ -1,3 +1,11 @@
+2024-02-27  Mats Lidell  <matsl@gnu.org>
+
+* test/kotl-mode-tests.el (kotl-mode-tests--gen-kotl-outline)
+    (kotl-mode-tests--func, kotl-mode-tests--sanity-check-function-list)
+    (kotl-mode--sanity-check-function)
+    (kotl-mode--sanity-check-key-bound-commands): Sanity check kotl-mode
+    user level commands.
+
 2024-02-25  Mats Lidell  <matsl@gnu.org>
 
 * test/hyrolo-tests.el (hyrolo-tests--mail-to)
