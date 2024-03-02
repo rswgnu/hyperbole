@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     25-Feb-24 at 00:13:19 by Mats Lidell
+;; Last-Mod:      2-Mar-24 at 22:43:25 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -280,12 +280,13 @@ and {b} the previous same level cell."
 
 (ert-deftest hyrolo-fgrep-find-all-types-of-files ()
   "Verify that all types of files are found in an fgrep search."
-  (let* ((temporary-file-directory (make-temp-file "hypb" t))
-         (org-file (make-temp-file "hypb" nil ".org" "* string\n"))
-         (kotl-file (make-temp-file "hypb" nil ".kotl" "1.  string"))
-         (md-file (make-temp-file "hypb" nil ".md" "# string\n"))
-         (outl-file (make-temp-file "hypb" nil ".otl" "* string\n"))
-         (hyrolo-file-list (list temporary-file-directory)))
+  (let* ((folder (make-temp-file "hypb" t))
+         (prefix (expand-file-name "hypb" folder))
+         (org-file (make-temp-file prefix nil ".org" "* string\n"))
+         (kotl-file (make-temp-file prefix nil ".kotl" "1.  string"))
+         (md-file (make-temp-file prefix nil ".md" "# string\n"))
+         (outl-file (make-temp-file prefix nil ".otl" "* string\n"))
+         (hyrolo-file-list (list folder)))
     (unwind-protect
         (progn
           (hyrolo-fgrep "string")
@@ -296,13 +297,14 @@ and {b} the previous same level cell."
       (dolist (f (list org-file kotl-file md-file outl-file))
         (hy-delete-file-and-buffer f))
       (kill-buffer hyrolo-display-buffer)
-      (delete-directory temporary-file-directory))))
+      (delete-directory folder))))
 
 (ert-deftest hyrolo-fgrep-and-goto-next-visible-org-heading ()
   "Verify move to next heading, then action-key to go to record for org mode."
-  (let* ((temporary-file-directory (make-temp-file "hypb" t))
-         (org-file (make-temp-file "hypb" nil ".org" "* heading\nstring\nmore\n"))
-         (hyrolo-file-list (list temporary-file-directory)))
+  (let* ((folder (make-temp-file "hypb" t))
+         (prefix (expand-file-name "hypb" folder))
+         (org-file (make-temp-file prefix nil ".org" "* heading\nstring\nmore\n"))
+         (hyrolo-file-list (list folder)))
     (unwind-protect
         (progn
           (hyrolo-fgrep "string")
@@ -317,13 +319,14 @@ and {b} the previous same level cell."
           (should (looking-at-p "* heading")))
       (hy-delete-file-and-buffer org-file)
       (kill-buffer hyrolo-display-buffer)
-      (delete-directory temporary-file-directory))))
+      (delete-directory folder))))
 
 (ert-deftest hyrolo-fgrep-and-goto-next-visible-kotl-heading ()
   "Verify move to next heading, then action-key to go to record for kotl mode."
-  (let* ((temporary-file-directory (make-temp-file "hypb" t))
-         (kotl-file (make-temp-file "hypb" nil ".kotl"))
-         (hyrolo-file-list (list temporary-file-directory)))
+  (let* ((folder (make-temp-file "hypb" t))
+         (prefix (expand-file-name "hypb" folder))
+         (kotl-file (make-temp-file prefix nil ".kotl"))
+         (hyrolo-file-list (list folder)))
     (unwind-protect
         (progn
           (find-file kotl-file)
@@ -343,13 +346,14 @@ and {b} the previous same level cell."
           (should (looking-at-p "heading")))
       (hy-delete-file-and-buffer kotl-file)
       (kill-buffer hyrolo-display-buffer)
-      (delete-directory temporary-file-directory))))
+      (delete-directory folder))))
 
 (ert-deftest hyrolo-fgrep-and-goto-next-visible-outl-heading ()
   "Verify move to next heading, then action-key to go to record for outline mode."
-  (let* ((temporary-file-directory (make-temp-file "hypb" t))
-         (outl-file (make-temp-file "hypb" nil ".otl" "* heading\nstring\nmore\n"))
-         (hyrolo-file-list (list temporary-file-directory)))
+  (let* ((folder (make-temp-file "hypb" t))
+         (prefix (expand-file-name "hypb" folder))
+         (outl-file (make-temp-file prefix nil ".otl" "* heading\nstring\nmore\n"))
+         (hyrolo-file-list (list folder)))
     (unwind-protect
         (progn
           (hyrolo-fgrep "string")
@@ -363,13 +367,14 @@ and {b} the previous same level cell."
           (should (looking-at-p "* heading")))
       (hy-delete-file-and-buffer outl-file)
       (kill-buffer hyrolo-display-buffer)
-      (delete-directory temporary-file-directory))))
+      (delete-directory folder))))
 
 (ert-deftest hyrolo-fgrep-and-goto-next-visible-md-heading ()
   "Verify move to next heading, then action-key to go to record for markdown mode."
-  (let* ((temporary-file-directory (make-temp-file "hypb" t))
-         (md-file (make-temp-file "hypb" nil ".md" "# heading\nstring\nmore\n"))
-         (hyrolo-file-list (list temporary-file-directory)))
+  (let* ((folder (make-temp-file "hypb" t))
+         (prefix (expand-file-name "hypb" folder))
+         (md-file (make-temp-file prefix nil ".md" "# heading\nstring\nmore\n"))
+         (hyrolo-file-list (list folder)))
     (unwind-protect
         (progn
           (hyrolo-fgrep "string")
@@ -383,14 +388,15 @@ and {b} the previous same level cell."
           (should (looking-at-p "# heading")))
       (hy-delete-file-and-buffer md-file)
       (kill-buffer hyrolo-display-buffer)
-      (delete-directory temporary-file-directory))))
+      (delete-directory folder))))
 
 (ert-deftest hyrolo-fgrep-and-goto-next-visible-kotl-heading-level-2 ()
   "Verify move to next heading, then action-key to go to record for kotl mode.
 Match a string in a level 2 child cell."
-  (let* ((temporary-file-directory (make-temp-file "hypb" t))
-         (kotl-file (make-temp-file "hypb" nil ".kotl"))
-         (hyrolo-file-list (list temporary-file-directory)))
+  (let* ((folder (make-temp-file "hypb" t))
+         (prefix (expand-file-name "hypb" folder))
+         (kotl-file (make-temp-file prefix nil ".kotl"))
+         (hyrolo-file-list (list folder)))
     (unwind-protect
         (progn
           (find-file kotl-file)
@@ -412,14 +418,15 @@ Match a string in a level 2 child cell."
           (should (looking-at-p "heading")))
       (hy-delete-file-and-buffer kotl-file)
       (kill-buffer hyrolo-display-buffer)
-      (delete-directory temporary-file-directory))))
+      (delete-directory folder))))
 
 (ert-deftest hyrolo-fgrep-and-goto-next-visible-kotl-heading-cell-2 ()
   "Verify move to next heading, then action-key to go to record for kotl mode.
 Match a string in the second cell."
-  (let* ((temporary-file-directory (make-temp-file "hypb" t))
-         (kotl-file (make-temp-file "hypb" nil ".kotl"))
-         (hyrolo-file-list (list temporary-file-directory)))
+  (let* ((folder (make-temp-file "hypb" t))
+         (prefix (expand-file-name "hypb" folder))
+         (kotl-file (make-temp-file prefix nil ".kotl"))
+         (hyrolo-file-list (list folder)))
     (unwind-protect
         (progn
           (find-file kotl-file)
@@ -441,7 +448,7 @@ Match a string in the second cell."
           (should (looking-at-p "heading")))
       (hy-delete-file-and-buffer kotl-file)
       (kill-buffer hyrolo-display-buffer)
-      (delete-directory temporary-file-directory))))
+      (delete-directory folder))))
 
 (ert-deftest hyrolo-tests--get-file-list-change ()
   "Verify a change to hyrolo-file-list is noticed by hyrolo-get-file-list."

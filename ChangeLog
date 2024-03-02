@@ -1,3 +1,8 @@
+2024-03-02  Mats Lidell  <matsl@gnu.org>
+
+* test/hyrolo-tests.el: Create temp files in tests without setting
+    temporary-file-directory. It can interfere with native code compilation.
+
 2024-02-27  Mats Lidell  <matsl@gnu.org>
 
 * test/kotl-mode-tests.el (kotl-mode-tests--gen-kotl-outline)
