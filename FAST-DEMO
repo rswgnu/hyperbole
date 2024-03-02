@@ -410,7 +410,7 @@ To learn how to create new kinds of implicit button and action types, see
   not on a draggable item).  See the {C-h h e} menu for explicit button
   commands.  {C-h h e c} creates an explicit button and {C-h h e l} creates
   an explicit link button between two windows, just like their counterparts
-  for implicit butons.  See "DEMO#Explicit Buttons" or "(hyperbole)Explicit
+  for implicit buttons.  See "DEMO#Explicit Buttons" or "(hyperbole)Explicit
   Buttons" for more detail.
 
   `Global buttons' are explicit or named implicit Hyperbole buttons that are
