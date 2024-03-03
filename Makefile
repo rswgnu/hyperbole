@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:      3-Mar-24 at 23:42:00 by Mats Lidell
+# Last-Mod:      3-Mar-24 at 18:29:05 by Bob Weiner
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -39,7 +39,7 @@
 #		Note: Releasing to ELPA is automatic in that the
 #		master branch on savannah is automatically synced
 #		daily by ELPA. The pkg and release targets are for
-#		making and uploading tar ball to ftp.gnu.org.
+#		making and uploading a tar ball to ftp.gnu.org.
 #
 #               To assemble a Hyperbole Emacs package for testing:
 #		     make pkg
@@ -49,6 +49,9 @@
 #
 #		Generate the website sources and upload them:
 #		    make website - generate web site in folder $(HYPB_WEB_REPO_LOCATION)"
+#
+#               Lint all Hyperbole code files:
+#                   make lint
 #
 #               To setup Hyperbole to run directly from the latest test source
 #               code, use:
@@ -203,7 +206,7 @@ ELC_KOTL = $(EL_KOTL:.el=.elc)
 HY-TALK  = HY-TALK/.hypb HY-TALK/HYPB HY-TALK/HY-TALK.org HY-TALK/HYPERAMP.org HY-TALK/HYPERORG.org
 
 HYPERBOLE_FILES = dir info html $(EL_SRC) $(EL_KOTL) \
-	$(HY-TALK) ChangeLog COPYING Makefile HY-ABOUT HY-ANNOUNCE \
+	$(HY-TALK) .mailmap ChangeLog COPYING Makefile HY-ABOUT HY-ANNOUNCE \
         HY-CONCEPTS.kotl HY-NEWS \
 	HY-WHY.kotl INSTALL DEMO DEMO-ROLO.otl FAST-DEMO MANIFEST README.md TAGS _hypb \
         .hypb smart-clib-sym topwin.py hyperbole-banner.png $(man_dir)/hkey-help.txt \
@@ -532,7 +535,7 @@ install-local:
 	(cd ./install-test/ && \
 	./local-install-test.sh $(subst install-,,$@) $(shell pwd) $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null))
 
-package-lint:
+lint:
 	$(EMACS_BATCH) \
 	--eval "(setq package-lint-main-file \"hyperbole.el\")" \
 	--eval "(load-file \"test/hy-test-dependencies.el\")" \

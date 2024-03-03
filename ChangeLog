@@ -1,3 +1,14 @@
+2024-03-03  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-install-markdown-mode): Centralize install of this package.
+            (hyrolo-install-markdown-mode): Add 'package-refresh-contents'
+    call so CI/CD tests pass when installing this.
+
+* HY-NEWS: Updated with Hyperbole changes since 2024-01-07.
+
+* hyrolo.el (hyrolo-any-file-type-problem-p): Use 'nongnu' archive instead
+    of 'melpa' for 'markdown-mode' package.
+
 2024-03-02  Mats Lidell  <matsl@gnu.org>
 
 * test/hyrolo-tests.el: Create temp files in tests without setting
@@ -16,6 +27,30 @@
 * test/hyrolo-tests.el (hyrolo-tests--mail-to)
     (hyrolo-tests--location-movement): More hyrolo tests.
 
+2024-02-25  Bob Weiner  <rsw@gnu.org>
+
+* FAST-DEMO: Add <hyperbole-run-tests hyrolo> ERT multiple test run example.
+
+* hui.el (hui:ibut-link-directly): Fix doc to say 'Action Key' instead of 'Assist Key'
+            and on error to go to Action Key depress buffer, not Assist one.
+         (hui:ebut-link-directly): Fix doc to say 'Assist Key' instead of 'Action Key'.
+            and on error to go to Assist Key depress buffer, not Action one.
+
+2024-02-24  Bob Weiner  <rsw@gnu.org>
+
+* Makefile (lint): Rename 'package-lint' target to 'lint' and doc in comments.
+
+* hyrolo.el (hyrolo-isearch-for-regexp): Update to use minibuffer hook
+    instead of unread-command-events since that was not working.  Including
+    a newline in the regexp which 'hyrolo-hdr-and-entry-regexp' does, may
+    also cause the 'hyrolo-locate' command bound to {l} to fail.
+
+* man/hyperbole.texi (HyRolo Searching): Update this section with doc
+    on auto-expansion and how to hide entries again.
+
+* MANIFEST (HYPERBOLE INTERNALS):
+  Makefile (HYPERBOLE_FILES): Add .mailmap.
+
 2024-02-22  Mats Lidell  <matsl@gnu.org>
 
 * test/MANIFEST: Add hywconfig-test.el.
@@ -29,10 +64,13 @@
     (website, release, git-tag-release, ftp): Add confirmation of
     successful operation.
 
+==============================================================================
+V9.0.1 changes ^^^^:
+==============================================================================
+
 2024-02-19  Mats Lidell  <matsl@gnu.org>
 
-* .mailmap: Add git .mailmap for mapping name and emails for commit
-    authors.
+* .mailmap: Add git .mailmap for mapping name and emails for commit authors.
 
 2024-02-19  Bob Weiner  <rsw@gnu.org>
 
@@ -91,11 +129,11 @@
 
 * hui-menu.el (hui-menu-explicit-buttons): Use ebut:act-label.
 
-* hbut.el (ibut:act-label, ebut:act-label): Rename ebut:act and ibut:act
+* hbut.el (ibut:act-label, ebut:act-label): Rename 'ebut:act' and 'ibut:act'
     since they take a label as arg.
-    (ebut:act, ibut:act): Add new act functions taking a hbut as
-    arg. Allow only to be called with ebut or ibut respectively. If
-    falling back on hbut:current check that it is of the same type as the
+          (ebut:act, ibut:act): Add new act functions taking an hbut as
+    an arg.  Allow calling only with an ebut or ibut respectively.  If
+    falling back on 'hbut:current', check that it is of the same type as the
     call.
 
 2024-02-08  Mats Lidell  <matsl@gnu.org>
@@ -713,7 +751,7 @@
 
 * hui-mouse.el (hkey-alist): Add logic for new hsys-flymake library to handle
     diag issues at the end of the line where we want an implicit button to
-    fire rather than typicaly eol handling.
+    fire rather than typically eol handling.
 
 * hbut.el (ibtype:test-p, ibtype:act): Add these to mirror actype functions.
           (ibtype:elisp-symbol): Add alias similar to existing actype one.  So
@@ -937,7 +975,7 @@
        key bindings.
             (hyrolo-overview, hyrolo-top-level): Simplify for new version of
        'hyrolo-show-levels'.
-            (outline-mode-hook): Fix to apture only one whitespace char in
+            (outline-mode-hook): Fix to capture only one whitespace char in
        'outline-regexp' so 'hyrolo-outline-level' function works properly.
             (hyrolo-grep-file): Require a final blank line so that
        'outline-hide-sublevels' won't hide it and combine with any next file header.
@@ -1110,7 +1148,7 @@
     than hyrolo-mode from the display matches buffer.  Also, reused cached major-mode-index
     values when the major-mode is the same and increment index only when not reused.
             (hyrolo-map-matches, hyrolo-funcall-match): Eliminate save-restriction calls.
-	    (hyrolo-cache-get-major-mode-from-pos): Add and use in 'hyrolo-cace-set-major-mode'.
+	    (hyrolo-cache-get-major-mode-from-pos): Add and use in 'hyrolo-cache-set-major-mode'.
 	    (hyrolo-previous-visible-heading): Remove, use
     'hyrolo-outline-previous-visible-heading'.
 
@@ -1353,7 +1391,7 @@ V8.0.2pre changes ^^^^:
     (hyrolo-fgrep-and-goto-next-visible-kotl-heading-level-2)
     (hyrolo-fgrep-and-goto-next-visible-kotl-heading-cell-2): Add test for
     moving to next header and that action-key then brings you to the
-    matchi
+    matching header.
 
 2023-11-25  Mats Lidell  <matsl@gnu.org>
 

@@ -341,7 +341,7 @@ pspell-config(1)         - prints information about a libpspell installation
        cell clipped to 2.
 
     <ert-deftest hbut-tests-ibut-program-link-to-directory ()
-      "Programmatically create ibut link-to-directory."
+      "Test programmatically creating a link-to-directory implicit button."
       (with-temp-buffer
 	(ibut:program nil 'link-to-directory "/tmp")
 	(should (string= "\"/tmp\"" (buffer-string))))>
@@ -354,6 +354,11 @@ pspell-config(1)         - prints information about a libpspell installation
        the <> delimiters.  Start with the first one which defines an ERT
        test case; the second one runs it, displaying the result which should
        be successful.
+
+    <hyperbole-run-tests hyrolo>
+
+       The above will even run all Hyperbole regression tests for the HyRolo
+       hierarchical full-text record retriever part of Hyperbole.
 
 
 ** Many More Implicit Button Types to Learn Across Time

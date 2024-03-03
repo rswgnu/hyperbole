@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     20-Jan-24 at 20:20:21 by Mats Lidell
+;; Last-Mod:     25-Feb-24 at 11:56:14 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1134,7 +1134,7 @@ Signal an error when no such button is found in the current buffer."
 	(hui:ibut-message t)))))
 
 (defun hui:ebut-link-directly (&optional depress-window release-window)
-  "Create a link ebutton at Action Key depress point, linked to release point.
+  "Create a link ebutton at Assist Key depress point, linked to release point.
 If an explicit button already exists at point, replace it with the new
 link button and return t; otherwise, return nil.
 
@@ -1172,10 +1172,10 @@ runs this command."
       ;; It is rarely possible that a *Warnings* buffer popup might have
       ;; displaced the button src buffer in the depress window, so switch
       ;; to it to be safe.
-      (when (and action-key-depress-buffer
-		 (not (eq (current-buffer) action-key-depress-buffer))
-		 (buffer-live-p action-key-depress-buffer))
-	(switch-to-buffer action-key-depress-buffer))
+      (when (and assist-key-depress-buffer
+		 (not (eq (current-buffer) assist-key-depress-buffer))
+		 (buffer-live-p assist-key-depress-buffer))
+	(switch-to-buffer assist-key-depress-buffer))
       (hui:buf-writable-err (current-buffer) "ebut-link-directly")
       (if (ebut:at-p)
 	  (setq edit-flag t
@@ -1232,7 +1232,7 @@ runs this command."
       edit-flag)))
 
 (defun hui:ibut-link-directly (&optional depress-window release-window name-arg-flag)
-  "Create a link ibutton at Assist Key depress point, linked to release point.
+  "Create a link ibutton at Action Key depress point, linked to release point.
 If an ibutton already exists at point, replace it with the new
 link button and return t; otherwise, return nil.
 
@@ -1277,10 +1277,10 @@ runs this command."
       ;; It is rarely possible that a *Warnings* buffer popup might have
       ;; displaced the button src buffer in the depress window, so switch
       ;; to it to be safe.
-      (when (and assist-key-depress-buffer
-		 (not (eq (current-buffer) assist-key-depress-buffer))
-		 (buffer-live-p assist-key-depress-buffer))
-	(switch-to-buffer assist-key-depress-buffer))
+      (when (and action-key-depress-buffer
+		 (not (eq (current-buffer) action-key-depress-buffer))
+		 (buffer-live-p action-key-depress-buffer))
+	(switch-to-buffer action-key-depress-buffer))
       (hui:buf-writable-err (current-buffer) "ibut-link-directly")
       (if (ibut:at-p)
 	  (setq edit-flag t

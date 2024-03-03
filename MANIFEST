@@ -8,7 +8,6 @@ HY-ANNOUNCE          - GNU Hyperbole release announcement
 HY-CONCEPTS.kotl     - Techncial introduction to Hyperbole concept interrelations
 HY-COPY              - GNU Hyperbole Copyright
 HY-NEWS              - What's new in each release of GNU Hyperbole
-HY-TALK.org          - Source slides and video link from the author's 2020 talk on Hyperbole
 HY-WHY.kotl          - Quick list of great reasons to use Hyperbole
 INSTALL              - GNU Hyperbole installation and invocation instructions
 Makefile             - Build GNU Hyperbole directories and distributions
@@ -26,9 +25,9 @@ man/hyperbole.info   - The GNU Hyperbole Manual  (GNU Info version)
 man/hyperbole.pdf    - The GNU Hyperbole Manual  (printable version)
 man/hyperbole.texi   - The GNU Hyperbole Manual  (GNU Texinfo source form)
 man/hkey-help.txt    - Summarizes Smart Key behaviors in different contexts
-HY-TALK/HY-TALK.org  - EmacsNYC Talk: Make Your Text Come Alive
-HY-TALK/HYPERAMP.org - EmacsConf 2023 Talk: Top 10 Ways Hyperbole Amps Up Emacs
-HY-TALK/HYPERORG.org - EmacsConf 2022 Talk: Powerful Productivity with Hyperbole and Org Mode
+HY-TALK/HY-TALK.org  - EmacsNYC 2020 Talk: Make Your Text Come Alive slides
+HY-TALK/HYPERAMP.org - EmacsConf 2023 Talk: Top 10 Ways Hyperbole Amps Up Emacs slides
+HY-TALK/HYPERORG.org - EmacsConf 2022 Talk: Powerful Productivity with Hyperbole and Org Mode slides
 
 * --- USER INTERFACE ---
 hmouse-info.el       - Walks through Info networks using one key
@@ -81,6 +80,7 @@ kotl/EXAMPLE.kotl    - Sample Koutline document explaining Koutliner features
 hgnus.el             - GNU Hyperbole buttons in news reader/poster: GNUS
 
 * --- HYPERBOLE INTERNALS ---
+.mailmap             - Normalize author name and email addresses
 hactypes.el          - Default action types for GNU Hyperbole
 hbdata.el            - GNU Hyperbole button attribute accessor functions
 hibtypes.el          - GNU Hyperbole default implicit button types

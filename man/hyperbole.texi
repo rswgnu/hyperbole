@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     19-Feb-24 at 12:40:29 by Bob Weiner
+@c Last-Mod:     26-Feb-24 at 00:46:32 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.2pre
-Printed February 19, 2024.
+Printed February 26, 2024.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.2pre
-February 19, 2024
+February 26, 2024
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -2195,15 +2195,15 @@ type, not just links.
 
 @cindex mouse drag, implicit link creation
 @cindex drag
-@cindex Assist Key drag
+@cindex Action Key drag
 Alternatively, to create an implicit link button to something
 displayed within an Emacs window (the referent), simply drag with the
-Assist (not the Action) Mouse Key depressed from an editable source
-window to another window with the desired link referent and then
-release.  The drag must start outside of a draggable item,
-@pxref{Displaying Items}.  Hyperbole will either automatically select
-the button type based on the referent context or will prompt you to
-select from one of a few possible link types.
+Action Mouse Key depressed from an editable source window to another
+window with the desired link referent and then release.  The drag must
+start outside of a draggable item, @pxref{Displaying Items}.
+Hyperbole will either automatically select the button type based on
+the referent context or will prompt you to select from one of a few
+possible link types.
 
 @cindex implicit link creation
 @cindex menu item, Ibut/Link
@@ -3539,7 +3539,8 @@ what buttons do.
 If you want to create an explicit link button to somewhere within an
 Emacs window, then simply drag with the Assist Mouse Key from an
 editable buffer (outside of a draggable item) to the target buffer.
-Note, the same Action Mouse Key drag creates an implicit button.
+Note, the same Action Mouse Key drag creates an implicit button
+instead.
 
 Alternatively, the Hyperbole minibuffer menu item, Ebut/Create, will
 create any type of explicit button, but requires a few steps.
@@ -6279,12 +6280,14 @@ displayed.
 @cindex rolo, finding matches
 @cindex rolo, moving through matches
 If your emacs version supports textual highlighting, each search match
-is highlighted for quick, visual location.  @bkbd{@key{TAB}} moves point
-forward to successive spans of text which match the search expression.
-@bkbd{M-@key{TAB}} or @bkbd{@key{SHIFT}-@key{TAB}} move point backward
-to earlier matches.  These keys allow you to quickly find the matching
-entry of most interest to you if your search expression failed to
-narrow the matches sufficiently.
+is highlighted for quick, visual location.  @bkbd{@key{TAB}} moves
+point forward to successive spans of text which match the search
+expression.  If the matching text is hidden/invisible, it is shown;
+the body of the entry with the match, as well as all of its sub-entries
+are shown.  @bkbd{M-@key{TAB}} or @bkbd{@key{SHIFT}-@key{TAB}} move
+point backward to earlier matches.  These keys allow you to quickly
+find the matching entry of most interest to you if your search
+expression failed to narrow the matches sufficiently.
 
 @kindex rolo, M-s
 @kindex rolo, C-s
@@ -6293,20 +6296,19 @@ narrow the matches sufficiently.
 @cindex rolo, extending a match
 @cindex rolo, interactive searching
 @cindex rolo, locating a name
-If you want to extend the match expression with some more characters
-to find a particular entry, use @bkbd{M-s}.  This performs an
-interactive search forward for the match expression.  You may add to
-or delete characters from this expression to find different
-occurrences or move to the next match with @bkbd{C-s}.
-@bkbd{C-r} reverses the direction of the search.
+To extend the match expression with some more characters to find a
+particular entry, use @bkbd{M-s}.  This performs an interactive search
+forward for the match expression.  You may add to or delete characters
+from this expression to find different occurrences or move to the next
+match with @bkbd{C-s}.  @bkbd{C-r} reverses the direction of the
+search.
 
-If you would like to search for a specific entry name in the match
-buffer, use @bkbd{l} to interactively locate the text immediately
-following the entry start delimiter, typically one or more asterisks.
-This lets you find entries by last name quickly, eliminating other
-matches.  Standard string, @bkbd{C-s}, and regular expression,
-@bkbd{C-M-s}, interactive search commands are also available within
-the rolo match buffer.
+To search for a specific entry name in the match buffer, use @bkbd{l}
+to interactively locate the text immediately following the entry start
+delimiter, typically one or more asterisks.  This lets you find
+entries by last name quickly, eliminating other matches.  Standard
+string, @bkbd{C-s}, and regular expression, @bkbd{C-M-s}, interactive
+search commands are also available within the rolo match buffer.
 
 @kindex rolo, o
 @kindex rolo, t
@@ -6334,13 +6336,11 @@ file from the end of the current line forward, so you can leave parts of
 the header displayed, if desired.  Press @bkbd{a} to expand all entries
 in the buffer across all matched files.
 
-@c If an entry is collapsed/hidden, moving to any hidden part auto-expands
-@c it and then re-collapses it when point is moved to another entry (just
-@c like isearch).
-
-Please note that to facilitate further use of movement by entry commands,
-the @bkbd{h} hide entry subtree command leaves point at the beginning of
-the entry (does not apply in file headers).
+If an entry is collapsed/hidden, moving to any hidden part
+auto-expands it.  Use @bkbd{h}, the hide entry subtree to hide it
+again, if desired; this leaves point at the beginning of the entry
+(does not apply in file headers) to facilitate further use of movement
+by entry commands.
 
 @noindent
 Other keys are defined to help you work with matching entries.

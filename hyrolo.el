@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     19-Feb-24 at 12:09:48 by Bob Weiner
+;; Last-Mod:      3-Mar-24 at 18:25:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -38,8 +38,7 @@
 (require 'hsys-org) ;; For `hsys-org-cycle-bob-file-list'
 (require 'hypb)     ;; For `hypb:mail-address-regexp' and `hypb:add-to-invisibility-spec'
 (eval-when-compile
-  `(unless (fboundp 'markdown-mode)
-     (package-install 'markdown-mode)))
+  `(hyrolo-install-markdown-mode))
 (require 'outline)
 (require 'package)
 (require 'reveal)
@@ -91,9 +90,6 @@
 (declare-function hpath:find "hpath")
 (declare-function hpath:expand-list "hpath")
 (declare-function hbut:get-key-src "hbut")
-;; This next function is replaced by `hyrolo-outline-function'
-;; within `hyrolo-cache-set-major-mode'.
-(declare-function markdown-outline-level "ext:markdown-mode")
 (declare-function org-outline-level "org")
 
 (defvar org-directory)                  ; "org.el"
@@ -125,6 +121,9 @@
 (declare-function markdown-live-preview-if-markdown "ext:markdown-mode")
 (declare-function markdown-live-preview-remove-on-kill "ext:markdown-mode")
 (declare-function markdown-make-gfm-checkboxes-buttons "ext:markdown-mode")
+;; This next function is replaced by `hyrolo-outline-function'
+;; within `hyrolo-cache-set-major-mode'.
+(declare-function markdown-outline-level "ext:markdown-mode")
 (declare-function markdown-pipe-at-bol-p "ext:markdown-mode")
 (declare-function markdown-remove-gfm-checkbox-overlays "ext:markdown-mode")
 
@@ -608,8 +607,8 @@ a parent entry which begins with the parent string."
       (when (derived-mode-p 'kotl-mode)
 	(kotl-mode:to-valid-position))
       (unless (get-text-property 0 'hyrolo-line-entry name)
-	;; Run hooks like adding a date only when not handling a
-	;; non-delimited entry.
+	;; Run hooks like adding a date only when handling a
+	;; delimited (rather than single-line) entry.
 	(run-hooks 'hyrolo-edit-hook)))))
 
 (defun hyrolo-edit-entry ()
@@ -976,8 +975,7 @@ or NAME is invalid, return nil."
 ;;;###autoload
 (define-derived-mode hyrolo-markdown-mode text-mode "Markdown"
   "Major mode for editing Markdown files."
-  (unless (fboundp 'markdown-mode)
-    (package-install 'markdown-mode))
+  (hyrolo-install-markdown-mode)
   (require 'markdown-mode)
 
   ;; Don't actually derive from `markdown-mode' to avoid its costly setup
@@ -1408,13 +1406,7 @@ matched entries."
 						(and (car (hyrolo-get-file-list))
 						     (file-name-nondirectory (car (hyrolo-get-file-list)))))
 					  (mapcar #'file-name-nondirectory
-						  (hpath:expand-list hsys-org-cycle-bob-file-list))
-					  ;; (when (boundp 'hynote-display-buffer)
-					  ;;   hynote-display-buffer)
-					  ;; (when (boundp 'hynote-file-list)
-					  ;;   (and (car hynote-file-list)
-					  ;; 	(file-name-nondirectory (car hynote-file-list))))
-					  )))
+						  (hpath:expand-list hsys-org-cycle-bob-file-list)))))
     (error "(HyRolo): Use this command in HyRolo match buffers or primary file buffers")))
 
 (defun hyrolo-widen ()
@@ -2783,20 +2775,17 @@ package is not installed."
 	files-invalid-suffix-list
 	package-archives)
 
-    ;;  2. If any `hyrolo-file-list' file has a markdown file suffix,
-    (when (delq nil (mapcar (lambda (suffix)
-			      (string-match-p (concat "\\(?:" hyrolo-markdown-suffix-regexp "\\)$")
-					      suffix))
-			    file-suffixes))
+    ;;  2. Skip this if the markdown-mode package is installed
+    (unless (package-installed-p 'markdown-mode)
+    ;;  3. If any `hyrolo-file-list' file has a markdown file suffix,
+      (when (delq nil (mapcar (lambda (suffix)
+				(string-match-p (concat "\\(?:" hyrolo-markdown-suffix-regexp "\\)$")
+						suffix))
+			      file-suffixes))
 
-      ;;  3. ensure the markdown-mode package is installed from melpa.
-      (unless (package-installed-p 'markdown-mode)
-	;;  4. if not, ensure melpa is temporarily added to package
+	;;  4. if not, ensure nongnu is temporarily added to package
 	;;     source list and then install markdown-mode.
-	(unless (assoc "melpa" package-archives)
-	  (setq package-archives (cl-copy-list package-archives))
-	  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
-	(package-install 'markdown-mode)))
+	(hyrolo-install-markdown-mode)))
 
     ;;  5. Check that each file has an entry in `hyrolo-auto-mode-alist' or `auto-mode-alist',
     (setq file-and-major-mode-list
@@ -2910,16 +2899,28 @@ a default of MM/DD/YYYY."
 			     (or hyrolo-highlight-face
 				 hproperty:highlight-face)))))))
 
+(defun hyrolo-install-markdown-mode ()
+  "Install `markdown-mode' package unless already installed."
+  (unless (package-installed-p 'markdown-mode)
+    (unless (assoc "nongnu" package-archives)
+      (setq package-archives (cl-copy-list package-archives))
+      (add-to-list 'package-archives '("nongnu" . "https://elpa.nongnu.org/nongnu/")
+		   t))
+    (package-refresh-contents)
+    (package-install 'markdown-mode)))
+
 (defun hyrolo-isearch-for-regexp (regexp fold-search-flag)
   "Interactively search forward for the next occurrence of REGEXP.
 When FOLD-SEARCH-FLAG is non-nil search ignores case.  Then add
 characters to further narrow the search."
   (hyrolo-verify)
   (if (stringp regexp)
-      (progn (setq unread-command-events
-		   (append unread-command-events (string-to-list regexp)))
-	     (let ((case-fold-search fold-search-flag))
-	       (isearch-forward-regexp)))
+      (let ((case-fold-search fold-search-flag)
+	    (insert-func (lambda () (insert regexp))))
+	(unwind-protect
+	    (progn (add-hook 'minibuffer-setup-hook insert-func 100)
+		   (isearch-forward-regexp))
+	  (remove-hook 'minibuffer-setup-hook insert-func)))
     (error "(hyrolo-isearch-for-regexp): 'regexp' must be a string, not: %s" regexp)))
 
 (defun hyrolo-kill-buffer (&optional hyrolo-buf)
