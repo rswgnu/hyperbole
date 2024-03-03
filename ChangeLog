@@ -1,5 +1,7 @@
 2024-03-03  Bob Weiner  <rsw@gnu.org>
 
+* HY-NEWS: Updated with Hyperbole changes since 2024-01-07.
+
 * hyrolo.el (hyrolo-any-file-type-problem-p): Use 'nongnu' archive instead
     of 'melpa' for 'markdown-mode' package.
 

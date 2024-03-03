@@ -94,8 +94,17 @@
       want a quick read about how Hyperbole concepts all interrelate.
       View it with {C-h h d c}.
 
-  *** Action Types: Added newer types and updated existing doc summaries
+  *** Action Types: Add newer types and updated existing doc summaries
       in the Hyperbole manual.  See "(hyperbole)Action Types".
+
+  *** Doc Viewing: Updated to display many files from the Doc> menu in Org
+      mode, so can cycle through expanding and collapsing entries with TAB
+      when point is at the beginning of the buffer, allowing you to view
+      just the sections of interest.  View minor mode is also enabled so
+      you can scroll forward and backward with SPC and DEL.
+
+      This includes DEMO, FAST-DEMO, HY-ABOUT, HY-NEWS and the Hyperbole
+      Files MANIFEST.
 
   *** Emacs 2023 Talk Videos:
 
@@ -121,10 +130,8 @@
         - Build a Zettelkasten with HyRolo: The video is at
           "https://emacsconf.org/2022/talks/rolodex/".
 
-  *** Doc Viewing: Updated to display many files from the Doc> menu in view
-      minor mode, so can expand and collapse entries to view just the
-      sections of interest.  This includes DEMO, FAST-DEMO, HY-ABOUT,
-      HY-NEWS and the Hyperbole Files MANIFEST.
+  *** FAST-DEMO: Add <hyperbole-run-tests hyrolo> ERT multiple test run
+      example.
 
   *** New Menu Key Doc: Documented these Hyperbole minibuffer menu keys:
 
@@ -143,7 +150,10 @@
 
       Some of the updates include:
 
-  **** Ibut Menu: Documented in the manual, notably the new Ibut/Create menu
+  **** HyRolo Searching: Update this section with doc on auto-expansion and
+       how to hide entries again.
+
+  **** Ibut Menu: Document in the manual, notably the new Ibut/Create menu
        item.  See "(hyperbole)menu, Ibut/Create".  For the Ibut/Link menu
        item, see "(hyperbole)menu, Ibut/Link".
 
@@ -160,6 +170,8 @@
 
   **** Smart Key - Org Mode: Expanded with doc for more extensive behavior.
        See "(hyperbole)Smart Key - Org Mode".
+
+  *** README.md: Unify this as the only readme file and remove "README".
 
 
 ** EXPLICIT BUTTONS  (See "(hyperbole)Explicit Buttons").
@@ -191,9 +203,11 @@
       buttons now works on any display capable of displaying colors.  See
       "(hyperbole)Button Colors".
 
-  *** Create Buttons in Current Buffer: Stopped prompting for a source
-      buffer when creating a Hyperbole button.  Always use the current
-      buffer and point.  See "(hyperbole)Creation".
+  *** Create Buttons in Current Buffer: Stop prompting for a source buffer
+      when creating a Hyperbole button.  Always use the current buffer and
+      point.  See "(hyperbole)Creation".
+
+  *** DuckDuckGo Web Search: {C-h h f w k} runs a DuckDuckGo web search.
 
   *** Hyperbole Keys Defer to Current Modes: Hyperbole bindings of {C-c RET},
       {C-c .}, {C-c @}, and {C-c /} defer to any major mode, like org-mode,
@@ -213,11 +227,11 @@
       of warnings for the current buffer.  See "(hyperbole)Smart Key - Flymake
       Mode" for details.
 
-  *** Interactive Org-Roam DB Consult Grep: {M-x hsys-org-roam-consult-grep
-      RET} Interactively greps org-roam files with live in-buffer display as
-      you move through matching lines.  It uses the automatically installed
-      consult-org-roam package when invoked.  See
-      "(hyperbole)hsys-org-roam-consult-grep".
+  *** Makefile (eln): Use echo target for showing build info as part of the
+      eln build.
+               (echo): Show Emacs location and version in build environment
+      info.
+               (lint): Use "package-lint" to lint Hyperbole source code. 
 
   *** mhtml-mode Markup Selection: Hyperbole's matching markup pair selection,
       copying and movement now works with Emacs' builtin mhtml-mode.  See
@@ -318,7 +332,7 @@
       buffer, rather than jumping to the start of the entry.
 
   *** New HyRolo menu items ConsultFind and HelmFind: These appear when you
-      independently load the @file{consult} or @file{helm-org-rifle} package.
+      independently load the `consult' or `helm-org-rifle' package.
       These menu items then use the related interactive search functions to
       search over the HyRolo file list.
 
@@ -398,7 +412,12 @@
   *** Path Implicit Buttons: Much improved relative path handling, including
       expanding into executable paths when pathname is prefixed by ! or &,
       and handling info paths outside `Info-directory-list', like
-      "man/hyperbole.info".
+      "man/hyperbole.info".  Also, prioritize 'load-path' and 'exec-path' above
+      'Info-directory-list' within 'hpath:variables' when expanding pathnames.
+      Remove outdated 'Info-directory' from 'hpath:variables' as well.
+
+      Automatically invoke `outline-mode' on files with ".outl" suffix;
+      previously, only ".otl" suffixes did this.
 
   *** Read-only Context Errors: Trigger errors when trying to create an
       implicit button with point on read-only text, read-only Org contexts,
@@ -542,6 +561,16 @@
   *** (hyrolo-add-match): Remove first arg, `hyrolo-matches-buffer' and
       use global `hyrolo-display-buffer' instead.
 
+  *** (hyrolo-auto-mode-alist): Add new variable to control major modes used
+       by files read in for HyRolo searches.
+
+      (hypb:major-mode-from-file-name): Rename to
+      `hyrolo-major-mode-from-file-name' and move to "hyrolo.el".  Prefix
+      `auto-mode-alist' values with those in `hyrolo-auto-mode-alist'.
+
+      (hyrolo-logic): Change call from `hyrolo-find-file' to
+      `hyrolo-find-file-noselect' to enable use of `hyrolo-auto-mode-alist'.
+
   *** hsys-org-roam.el: This library supports interactively grepping over
       org-roam files with live in-buffer display.  It uses the automatically
       installed consult package when `hsys-org-roam-consult-grep' is invoked.
@@ -645,6 +674,10 @@
   *** (smart-push-button): Added and referenced in `hkey-help' to trigger
       push-button-specific help output.
 
+  *** (smart-emacs-lisp-mode-p ,smart-lisp-mode-p): Change to use `derived-mode-p'
+      rather than checking for 'major-mode' matches directly.
+      (smart-emacs-lisp-mode-p): Add optional `skip-identifier-flag'.
+
   *** (hpath:to-markup-anchor, hpath:to-line): Updated to find matches
       outside narrowed area.
 
@@ -741,11 +774,40 @@
 
   *** (hywconfig-named-get-entries, hywconfig-named-put, hywconfig-named-get): Add.
 
+  *** (hbut:actype, ibut:type): Add for Hyperbole API use.
+      (ibut:is-type-p): Add to give both an ibut and a type for comparison and API use.
+
+  *** Add "hsys-xref.el".  Rename all Hyperbole defined 'xref-' functions to 'hsys-xref-'
+      and move here.  The xref function, 'xref--item-at-point' is redefined to handle
+      the beginning of buffer.
+
+  *** (ibut:act-label, ebut:act-label): Rename `ebut:act' and `ibut:act' since they take
+      a label as arg.
+      (ebut:act, ibut:act): Add new act functions taking an hbut as an arg.
+      (hbut:act-label): Add to match same func for ebuts and ibuts.
+
 
 ** ORG MODE INTEGRATION (See "(hyperbole)Smart Key - Org Mode").
 
+  *** Automatic Fix of Mixed Org Versions: Loading Hyperbole (via its
+      `hyperb:init' function) automatically detects and resolves the
+      hard-to-fix problem when some older builtin Org libraries are loaded
+      before a newer version of the Org package is loaded.  The fix utilizes
+      libraries exclusively from the newer Org package.  See the doc for
+      `hsys-org-fix-version'.
+
   *** Org Links Outside Org Buffers: The `org-link' actype now opens links
       found inside and outside of Org buffers.
+
+  *** Interactive Org Directory Consult Grep: {M-x hsys-org-consult-grep
+      RET} interactively greps your `org-directory' files with live in-buffer
+      display as you move through matching lines.
+
+  *** Interactive Org-Roam DB Consult Grep: {M-x hsys-org-roam-consult-grep
+      RET} interactively greps org-roam files with live in-buffer display as
+      you move through matching lines.  It uses the automatically installed
+      consult-org-roam package when invoked.  See
+      "(hyperbole)hsys-org-roam-consult-grep".
 
   *** Org and Org Roam IDs: New `org-id' implicit button type and
       `link-to-org-id-marker' action type that jump to the referent of an Org
@@ -763,9 +825,16 @@
       lookup now works in Org code blocks.  Smart Keys on Org internal
       targets now work just as they do on radio button targets.
 
+  *** HyRolo Integration with Org 9.7 and Up: Support "org-fold.el" and other
+      newer features fo Org mode.
+
   *** Todo Cycling: An Action Key press on an Org mode todo state keyword,
       cycles to the next state.  An Assist Key press in the same place cycles
       to the next set of states, if any.
+
+  *** Bobp Hyperbole Doc File Cycling: Allow for org global cycling at the start
+      of a buffer on a non-heading line within Hyperbole Doc/ files when displayed
+      from Hyperbole menu items.
 
   *** {C-c /}: The Hyperbole {C-c /} web search binding defers to the org-mode
       binding, `org-show-todo-tree', when in Org mode, but uses the improved
@@ -793,16 +862,19 @@
       etags command-line option:
          etags --regex={lisp}'/(ert-deftest[ \t]+\([^ \t\n\r\f()]+\)/' <src-files>
 
+      For the Hyperbole source code itself, you can do this via 'make tags' from
+      within the Hyperbole source directory, `hyperb:dir'.
+
   *** Run Hyperbole Tests via Make: Use the 'test' target and provide a pattern
       of test names to match like so:
 
-        make test SELECTOR=hyrolo
+        make test test=hyrolo
 
       to run just the HyRolo associated tests.
 
       To enable, full backtraces and not truncated ones, add  'FULL_BT=' at the end:
 
-        make test SELECTOR=hyrolo FULL_BT=
+        make test test=hyrolo FULL_BT=
 
   *** QA: Many quality improvements across Hyperbole and integration with
       Emacs updates with backward compatibility from Emacs 27 through Emacs
