@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      3-Mar-24 at 13:17:49 by Bob Weiner
+;; Last-Mod:      3-Mar-24 at 18:25:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2906,6 +2906,7 @@ a default of MM/DD/YYYY."
       (setq package-archives (cl-copy-list package-archives))
       (add-to-list 'package-archives '("nongnu" . "https://elpa.nongnu.org/nongnu/")
 		   t))
+    (package-refresh-contents)
     (package-install 'markdown-mode)))
 
 (defun hyrolo-isearch-for-regexp (regexp fold-search-flag)

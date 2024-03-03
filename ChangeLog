@@ -1,6 +1,8 @@
 2024-03-03  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-install-markdown-mode): Centralize install of this package.
+            (hyrolo-install-markdown-mode): Add 'package-refresh-contents'
+    call so CI/CD tests pass when installing this.
 
 * HY-NEWS: Updated with Hyperbole changes since 2024-01-07.
 
