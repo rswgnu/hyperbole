@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:     22-Feb-24 at 00:03:07 by Mats Lidell
+;; Last-Mod:     27-Feb-24 at 23:53:09 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -354,7 +354,10 @@
     (insert "first line")
     (kotl-mode:backward-word)
     (should (looking-at-p "line"))
-    (kotl-mode:kill-contents nil)
+    (let ((transient-mark-mode nil))
+      ;; kotl-mode:kill-contents uses kotl-mode:kill-region which
+      ;; depends on transient-mark-mode
+      (kotl-mode:kill-contents nil))
     (kotl-mode:beginning-of-cell)
     (should (looking-at-p "first $"))))
 
@@ -943,6 +946,160 @@ actually depends on the point adjustment heuristics."
           (kotl-mode:backward-char)
           (should-not (kotl-mode:eocp)))
       (hy-delete-file-and-buffer kotl-file))))
+
+(defun kotl-mode-tests--gen-kotl-outline (heading body &optional depth)
+  "Generate a temp file with kotl outline structure for hyrolo outline test.
+Make cell start with HEADING and follow by next line BODY.  With
+optional DEPTH the number of sub cells are created to that depth."
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (find-file kotl-file)
+    (insert heading)
+    (kotl-mode:newline 1)
+    (insert body)
+    (when (and depth (< 0 depth))
+      (dotimes (d depth)
+        (kotl-mode:add-child)
+        (insert (format "%s %d" heading (1+ d)))
+        (kotl-mode:newline 1)
+        (insert (format "%s %d" body (1+ d)))))
+    (save-buffer)
+    kotl-file))
+
+(cl-defstruct kotl-mode-tests--func
+  "Test definition struct."
+  func args ignore)
+
+(defconst kotl-mode-tests--sanity-check-function-list
+  (list
+    (make-kotl-mode-tests--func :func #'kfile:write :ignore t)
+    (make-kotl-mode-tests--func :func #'kimport:insert-file :ignore t)
+    (make-kotl-mode-tests--func :func #'kimport:insert-register :args '(?a))
+    (make-kotl-mode-tests--func :func #'klink:create :args '("1a"))
+    (make-kotl-mode-tests--func :func #'kotl-mode:add-cell)
+    (make-kotl-mode-tests--func :func #'kotl-mode:add-child)
+    (make-kotl-mode-tests--func :func #'kotl-mode:add-parent)
+    (make-kotl-mode-tests--func :func #'kotl-mode:append-cell :args '("1a" "1a1"))
+    (make-kotl-mode-tests--func :func #'kotl-mode:back-to-indentation)
+    (make-kotl-mode-tests--func :func #'kotl-mode:backward-cell :args '(1))
+    (make-kotl-mode-tests--func :func #'kotl-mode:backward-char)
+    (make-kotl-mode-tests--func :func #'kotl-mode:backward-kill-word :args '(1))
+    (make-kotl-mode-tests--func :func #'kotl-mode:backward-paragraph)
+    (make-kotl-mode-tests--func :func #'kotl-mode:backward-sentence)
+    (make-kotl-mode-tests--func :func #'kotl-mode:backward-word)
+    (make-kotl-mode-tests--func :func #'kotl-mode:beginning-of-buffer)
+    (make-kotl-mode-tests--func :func #'kotl-mode:beginning-of-cell)
+    (make-kotl-mode-tests--func :func #'kotl-mode:beginning-of-tree)
+    (make-kotl-mode-tests--func :func #'kotl-mode:cell-help)
+    (make-kotl-mode-tests--func :func #'kotl-mode:center-line)
+    (make-kotl-mode-tests--func :func #'kotl-mode:center-paragraph)
+    (make-kotl-mode-tests--func :func #'kotl-mode:copy-after :args '("1a" "1a1" nil))
+    (make-kotl-mode-tests--func :func #'kotl-mode:copy-before :args '("1a" "1a1" nil))
+    (make-kotl-mode-tests--func :func #'kotl-mode:copy-to-register :args (list ?a 130 131))
+    (make-kotl-mode-tests--func :func #'kotl-mode:copy-tree-or-region-to-buffer :ignore t)
+    (make-kotl-mode-tests--func :func #'kotl-mode:delete-backward-char :args '(1))
+    (make-kotl-mode-tests--func :func #'kotl-mode:delete-blank-lines)
+    (make-kotl-mode-tests--func :func #'kotl-mode:delete-char :args '(-1))
+    (make-kotl-mode-tests--func :func #'kotl-mode:delete-forward-char :args '(-1))
+    (make-kotl-mode-tests--func :func #'kotl-mode:delete-horizontal-space)
+    (make-kotl-mode-tests--func :func #'kotl-mode:delete-indentation)
+    (make-kotl-mode-tests--func :func #'kotl-mode:demote-tree :ignore t)
+    (make-kotl-mode-tests--func :func #'kotl-mode:down-level :ignore t)
+    (make-kotl-mode-tests--func :func #'kotl-mode:end-of-buffer)
+    (make-kotl-mode-tests--func :func #'kotl-mode:end-of-cell)
+    (make-kotl-mode-tests--func :func #'kotl-mode:end-of-tree)
+    (make-kotl-mode-tests--func :func #'kotl-mode:exchange-cells :args '("1a" "1a1"))
+    (make-kotl-mode-tests--func :func #'kotl-mode:fill-cell)
+    (make-kotl-mode-tests--func :func #'kotl-mode:fill-paragraph)
+    (make-kotl-mode-tests--func :func #'kotl-mode:fill-tree)
+    (make-kotl-mode-tests--func :func #'kotl-mode:first-sibling)
+    (make-kotl-mode-tests--func :func #'kotl-mode:forward-cell :args '(1))
+    (make-kotl-mode-tests--func :func #'kotl-mode:forward-char :args '(-1))
+    (make-kotl-mode-tests--func :func #'kotl-mode:forward-paragraph)
+    (make-kotl-mode-tests--func :func #'kotl-mode:forward-sentence)
+    (make-kotl-mode-tests--func :func #'kotl-mode:forward-word)
+    (make-kotl-mode-tests--func :func #'kotl-mode:goto-cell :args '("1a"))
+    (make-kotl-mode-tests--func :func #'kotl-mode:hide-sublevels :args '(0))
+    (make-kotl-mode-tests--func :func #'kotl-mode:hide-subtree)
+    (make-kotl-mode-tests--func :func #'kotl-mode:hide-tree)
+    (make-kotl-mode-tests--func :func #'kotl-mode:kill-contents :args '(t))
+    (make-kotl-mode-tests--func :func #'kotl-mode:kill-line)
+    (make-kotl-mode-tests--func :func #'kotl-mode:kill-region :args '(130 131))
+    (make-kotl-mode-tests--func :func #'kotl-mode:kill-ring-save :ignore t)
+    (make-kotl-mode-tests--func :func #'kotl-mode:kill-sentence :ignore t)
+    (make-kotl-mode-tests--func :func #'kotl-mode:kill-tree)
+    (make-kotl-mode-tests--func :func #'kotl-mode:kill-whole-line)
+    (make-kotl-mode-tests--func :func #'kotl-mode:kill-word :args '(-1))
+    (make-kotl-mode-tests--func :func #'kotl-mode:last-sibling)
+    (make-kotl-mode-tests--func :func #'kotl-mode:left-char)
+    (make-kotl-mode-tests--func :func #'kotl-mode:mail-tree :ignore t)
+    (make-kotl-mode-tests--func :func #'kotl-mode:mark-paragraph)
+    (make-kotl-mode-tests--func :func #'kotl-mode:mark-whole-buffer)
+    (make-kotl-mode-tests--func :func #'kotl-mode:move-after :args '("1a1" "1a" nil))
+    (make-kotl-mode-tests--func :func #'kotl-mode:move-before :args '("1a1" "1a" nil))
+    (make-kotl-mode-tests--func :func #'kotl-mode:move-beginning-of-line)
+    (make-kotl-mode-tests--func :func #'kotl-mode:move-end-of-line)
+    (make-kotl-mode-tests--func :func #'kotl-mode:move-tree-backward :ignore t)
+    (make-kotl-mode-tests--func :func #'kotl-mode:move-tree-forward :ignore t)
+    (make-kotl-mode-tests--func :func #'kotl-mode:newline :args '(1))
+    (make-kotl-mode-tests--func :func #'kotl-mode:next-cell :args '(-1))
+    (make-kotl-mode-tests--func :func #'kotl-mode:next-line :args '(1))
+    (make-kotl-mode-tests--func :func #'kotl-mode:open-line :args '(1))
+    (make-kotl-mode-tests--func :func #'kotl-mode:overview)
+    (make-kotl-mode-tests--func :func #'kotl-mode:previous-cell :args '(1))
+    (make-kotl-mode-tests--func :func #'kotl-mode:previous-line :args '(1))
+    (make-kotl-mode-tests--func :func #'kotl-mode:promote-tree :args '(1))
+    (make-kotl-mode-tests--func :func #'kotl-mode:right-char :args '(-1))
+    (make-kotl-mode-tests--func :func #'kotl-mode:scroll-down-command :ignore t)
+    (make-kotl-mode-tests--func :func #'kotl-mode:scroll-up-command :ignore t)
+    (make-kotl-mode-tests--func :func #'kotl-mode:set-fill-prefix :args '(t))
+    (make-kotl-mode-tests--func :func #'kotl-mode:set-or-remove-cell-attribute :ignore t)
+    (make-kotl-mode-tests--func :func #'kotl-mode:show-all)
+    (make-kotl-mode-tests--func :func #'kotl-mode:show-tree)
+    (make-kotl-mode-tests--func :func #'kotl-mode:split-cell)
+    (make-kotl-mode-tests--func :func #'kotl-mode:tab-command :args '(1))
+    (make-kotl-mode-tests--func :func #'kotl-mode:top-cells)
+    (make-kotl-mode-tests--func :func #'kotl-mode:transpose-cells :args '(1))
+    (make-kotl-mode-tests--func :func #'kotl-mode:transpose-chars :args '(-1))
+    (make-kotl-mode-tests--func :func #'kotl-mode:transpose-lines :args '(1))
+    (make-kotl-mode-tests--func :func #'kotl-mode:transpose-words :args '(1))
+    (make-kotl-mode-tests--func :func #'kotl-mode:untab-command :args '(1))
+    (make-kotl-mode-tests--func :func #'kotl-mode:up-level :args '(1))
+    (make-kotl-mode-tests--func :func #'kotl-mode:yank)
+    (make-kotl-mode-tests--func :func #'kotl-mode:yank-pop :ignore t)
+    (make-kotl-mode-tests--func :func #'kotl-mode:zap-to-char :args '(1 ?y))
+    (make-kotl-mode-tests--func :func #'kotl-popup-menu :ignore t)
+    (make-kotl-mode-tests--func :func #'kview:set-label-separator :args '(" - "))
+    (make-kotl-mode-tests--func :func #'kview:set-label-type :ignore t)
+    (make-kotl-mode-tests--func :func #'kvspec:activate)
+    (make-kotl-mode-tests--func :func #'kvspec:toggle-blank-lines))
+  "List of functions to sanity check and their arguments if needed.
+Functions that does not allow themselves to be checked in this way are
+marked with :ignore t")
+
+(defun kotl-mode--sanity-check-function (function args)
+  "Check that FUNCTION called with ARGS does not throw an error."
+  (let ((kotl-file (kotl-mode-tests--gen-kotl-outline "h" "body" 2)))
+    (unwind-protect
+        (condition-case err
+            (progn
+              (find-file kotl-file)
+              ;; Move to middle of last line in cell to be a good
+              ;; point for many commands to be able to succeed.
+              (kotl-mode:beginning-of-line)
+              (kotl-mode:forward-char 1)
+              (let ((transient-mark-mode nil))
+                (apply function args)))
+          (error
+           (ert-fail (format "Function %s called with args %s fails due to %s" function args err))))
+      (hy-delete-file-and-buffer kotl-file))))
+
+(ert-deftest kotl-mode--sanity-check-key-bound-commands ()
+  "Verify that commands bound to keys in `kotl-mode' does not throw an error."
+  (set-register ?a "text")
+  (dolist (f kotl-mode-tests--sanity-check-function-list)
+    (unless (kotl-mode-tests--func-ignore f)
+      (kotl-mode--sanity-check-function (kotl-mode-tests--func-func f)
+                                        (kotl-mode-tests--func-args f)))))
 
 (provide 'kotl-mode-tests)
 ;;; kotl-mode-tests.el ends here

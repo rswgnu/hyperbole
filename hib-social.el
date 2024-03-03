@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    20-Jul-16 at 22:41:34
-;; Last-Mod:     17-Jan-24 at 23:48:46 by Mats Lidell
+;; Last-Mod:      3-Mar-24 at 10:50:02 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -686,10 +686,10 @@ Return the project directory found or nil if none."
       ;; ...and return it.
       project-dir)))
 
-(defun hibtypes-git-build-or-add-to-repos-cache (project &optional _prompt-flag)
-  "Store cache of local git repo directories in `hibtypes-git-repos-cache'.
-With optional PROMPT-FLAG non-nil, prompt user whether to build
-the cache before building.  Return t if built, nil otherwise."
+(defun hibtypes-git-build-or-add-to-repos-cache (project)
+  "Add PROJECT directory to local repo cache in `hibtypes-git-repos-cache'.
+If cache does not exist or is empty, prompt user whether to build the
+cache.  Return t if built, nil otherwise."
   (if (and (file-readable-p hibtypes-git-repos-cache)
 	   ;; Non-zero file size
 	   (not (zerop (nth 7 (file-attributes hibtypes-git-repos-cache)))))
@@ -815,7 +815,7 @@ no PROJECT value is provided, it defaults to the value of
 			    ;; out-of-date and needs to be rebuilt or added
 			    ;; to.  Prompt user and if rebuilt or added to,
 			    ;; continue.
-			    (hibtypes-git-build-or-add-to-repos-cache project t))
+			    (hibtypes-git-build-or-add-to-repos-cache project))
 		       (setq project-dir (and project (hibtypes-git-project-directory project)))
 		     (error "(git-reference): No git directory found for project `%s'" project)))
 		 (when (equal project-dir "") (setq project-dir nil))

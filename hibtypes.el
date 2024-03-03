@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     20-Jan-24 at 20:15:45 by Mats Lidell
+;; Last-Mod:      3-Mar-24 at 00:19:27 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1576,7 +1576,7 @@ If a boolean function or variable, display its value."
   (interactive
    (list
     (when (hbut:at-p)
-      (hbut:label 'hbut:current))))
+      'hbut:current)))
   (when (hbut:is-p hbut)
     (let* ((label (hbut:key-to-label (hattr:get hbut 'lbl-key)))
 	   (actype (hattr:get hbut 'actype))
