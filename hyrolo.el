@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      3-Mar-24 at 10:31:34 by Bob Weiner
+;; Last-Mod:      3-Mar-24 at 13:17:49 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -38,8 +38,7 @@
 (require 'hsys-org) ;; For `hsys-org-cycle-bob-file-list'
 (require 'hypb)     ;; For `hypb:mail-address-regexp' and `hypb:add-to-invisibility-spec'
 (eval-when-compile
-  `(unless (fboundp 'markdown-mode)
-     (package-install 'markdown-mode)))
+  `(hyrolo-install-markdown-mode))
 (require 'outline)
 (require 'package)
 (require 'reveal)
@@ -976,8 +975,7 @@ or NAME is invalid, return nil."
 ;;;###autoload
 (define-derived-mode hyrolo-markdown-mode text-mode "Markdown"
   "Major mode for editing Markdown files."
-  (unless (fboundp 'markdown-mode)
-    (package-install 'markdown-mode))
+  (hyrolo-install-markdown-mode)
   (require 'markdown-mode)
 
   ;; Don't actually derive from `markdown-mode' to avoid its costly setup
@@ -2787,11 +2785,7 @@ package is not installed."
 
 	;;  4. if not, ensure nongnu is temporarily added to package
 	;;     source list and then install markdown-mode.
-	(unless (assoc "nongnu" package-archives)
-	  (setq package-archives (cl-copy-list package-archives))
-	  (add-to-list 'package-archives '("nongnu" . "https://elpa.nongnu.org/nongnu/")
-		       t))
-	(package-install 'markdown-mode)))
+	(hyrolo-install-markdown-mode)))
 
     ;;  5. Check that each file has an entry in `hyrolo-auto-mode-alist' or `auto-mode-alist',
     (setq file-and-major-mode-list
@@ -2904,6 +2898,15 @@ a default of MM/DD/YYYY."
 	  (hproperty:but-add (match-beginning 0) (match-end 0)
 			     (or hyrolo-highlight-face
 				 hproperty:highlight-face)))))))
+
+(defun hyrolo-install-markdown-mode ()
+  "Install `markdown-mode' package unless already installed."
+  (unless (package-installed-p 'markdown-mode)
+    (unless (assoc "nongnu" package-archives)
+      (setq package-archives (cl-copy-list package-archives))
+      (add-to-list 'package-archives '("nongnu" . "https://elpa.nongnu.org/nongnu/")
+		   t))
+    (package-install 'markdown-mode)))
 
 (defun hyrolo-isearch-for-regexp (regexp fold-search-flag)
   "Interactively search forward for the next occurrence of REGEXP.

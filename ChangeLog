@@ -1,5 +1,7 @@
 2024-03-03  Bob Weiner  <rsw@gnu.org>
 
+* hyrolo.el (hyrolo-install-markdown-mode): Centralize install of this package.
+
 * HY-NEWS: Updated with Hyperbole changes since 2024-01-07.
 
 * hyrolo.el (hyrolo-any-file-type-problem-p): Use 'nongnu' archive instead
@@ -125,11 +127,11 @@ V9.0.1 changes ^^^^:
 
 * hui-menu.el (hui-menu-explicit-buttons): Use ebut:act-label.
 
-* hbut.el (ibut:act-label, ebut:act-label): Rename ebut:act and ibut:act
+* hbut.el (ibut:act-label, ebut:act-label): Rename 'ebut:act' and 'ibut:act'
     since they take a label as arg.
-    (ebut:act, ibut:act): Add new act functions taking a hbut as
-    arg. Allow only to be called with ebut or ibut respectively. If
-    falling back on hbut:current check that it is of the same type as the
+          (ebut:act, ibut:act): Add new act functions taking an hbut as
+    an arg.  Allow calling only with an ebut or ibut respectively.  If
+    falling back on 'hbut:current', check that it is of the same type as the
     call.
 
 2024-02-08  Mats Lidell  <matsl@gnu.org>
