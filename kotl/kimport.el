@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 11:57:05
-;; Last-Mod:      4-Oct-23 at 19:10:12 by Mats Lidell
+;; Last-Mod:     25-Feb-24 at 18:03:16 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -40,7 +40,7 @@ normally does an import of a koutline or text file.
 
 Each importation-function must take two arguments, a buffer/file to import
 and a buffer/file into which to insert the imported elements and a third
-optional argument, CHILDREN-P, which when non-nil means insert imported cells
+optional argument, CHILDREN-FLAG, which when non-nil means insert imported cells
 as the initial set of children of the current cell, if any.
 
    `outline-mode'  - imported as an Emacs outline whose entries begin with
@@ -59,7 +59,7 @@ as the initial set of children of the current cell, if any.
 This determines the type of importation done on a file when `kimport:file' is
 called.  Each importation-function must take two arguments, a buffer/file to
 import and a buffer/file into which to insert the imported elements.
-A third optional argument, CHILDREN-P, may be given; when non-nil, insert
+A third optional argument, CHILDREN-FLAG, may be given; when non-nil, insert
 imported cells as the initial set of children of the current cell, if any.
 
    .org  - import format is an Emacs outline whose entries begin with asterisks;
@@ -121,7 +121,7 @@ BUFFER may be a buffer or a buffer name."
 (defun kimport:insert-file (import-from children-flag)
   "Insert each element in IMPORT-FROM as a separate cell in the current view.
 Insert as sibling cells following the current cell unless prefix arg,
-CHILDREN-P is non-nil, then insert as the initial children of the current
+CHILDREN-FLAG is non-nil, then insert as the initial children of the current
 cell.
 
 IMPORT-FROM may be a buffer name or file name (file name completion is
