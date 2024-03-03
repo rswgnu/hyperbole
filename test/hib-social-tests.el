@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:24:00
-;; Last-Mod:      3-Mar-24 at 11:05:25 by Mats Lidell
+;; Last-Mod:      3-Mar-24 at 11:28:17 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -75,4 +75,13 @@
       (hy-delete-file-and-buffer hibtypes-git-repos-cache))))
 
 (provide 'hib-social-tests)
+
+;; This file can't be byte-compiled without the `el-mock' package
+;; which is not a dependency of Hyperbole.
+;;
+;; Local Variables:
+;; no-byte-compile: t
+;; End:
+
 ;;; hib-social-tests.el ends here
+
