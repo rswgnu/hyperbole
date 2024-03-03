@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     21-Feb-24 at 15:54:48 by Mats Lidell
+# Last-Mod:      3-Mar-24 at 23:42:00 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -487,6 +487,7 @@ else
 HYPB_ERT_BATCH_BT = (ert-batch-backtrace-line-length 256)
 endif
 
+# Run non-interactive tests in batch mode
 test-ert:
 	@echo "# Tests: $(TEST_ERT_FILES)"
 	$(EMACS_BATCH) --eval "(load-file \"test/hy-test-dependencies.el\")" \
@@ -495,6 +496,7 @@ test-ert:
 	              $(HYPB_ERT_BATCH_BT) (ert-batch-backtrace-right-margin 2048)) \
 	           $(LOAD_TEST_ERT_FILES) $(HYPB_ERT_BATCH))"
 
+# Run all tests by starting an Emacs that runs the tests interactively in windowed mode.
 all-tests: test-all
 test-all:
 	@echo "# Tests: $(TEST_ERT_FILES)"
