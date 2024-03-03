@@ -499,6 +499,13 @@ default context-sensitive Hyperbole key bindings (Smart Keys).
 ## User Quotes
 
 
+  Hyperbole is a wonderful package, I love the feeling of the deep,
+  well-thought out, poised engineering.  It may be from the 90s, but it
+  feels like a breath of fresh air to me.
+
+                        -- de_sonnaz on reddit  
+
+
   \*\*\* MAN I love Hyperbole!!!  Wow! \*\*\*
 
                         -- Ken Olstad  

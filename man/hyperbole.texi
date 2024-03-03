@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     24-Feb-24 at 11:31:23 by Bob Weiner
+@c Last-Mod:     26-Feb-24 at 00:46:32 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -156,7 +156,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 8.0.2pre
-Printed February 19, 2024.
+Printed February 26, 2024.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +198,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 8.0.2pre
-February 19, 2024
+February 26, 2024
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -2195,15 +2195,15 @@ type, not just links.
 
 @cindex mouse drag, implicit link creation
 @cindex drag
-@cindex Assist Key drag
+@cindex Action Key drag
 Alternatively, to create an implicit link button to something
 displayed within an Emacs window (the referent), simply drag with the
-Assist (not the Action) Mouse Key depressed from an editable source
-window to another window with the desired link referent and then
-release.  The drag must start outside of a draggable item,
-@pxref{Displaying Items}.  Hyperbole will either automatically select
-the button type based on the referent context or will prompt you to
-select from one of a few possible link types.
+Action Mouse Key depressed from an editable source window to another
+window with the desired link referent and then release.  The drag must
+start outside of a draggable item, @pxref{Displaying Items}.
+Hyperbole will either automatically select the button type based on
+the referent context or will prompt you to select from one of a few
+possible link types.
 
 @cindex implicit link creation
 @cindex menu item, Ibut/Link
@@ -3539,7 +3539,8 @@ what buttons do.
 If you want to create an explicit link button to somewhere within an
 Emacs window, then simply drag with the Assist Mouse Key from an
 editable buffer (outside of a draggable item) to the target buffer.
-Note, the same Action Mouse Key drag creates an implicit button.
+Note, the same Action Mouse Key drag creates an implicit button
+instead.
 
 Alternatively, the Hyperbole minibuffer menu item, Ebut/Create, will
 create any type of explicit button, but requires a few steps.
