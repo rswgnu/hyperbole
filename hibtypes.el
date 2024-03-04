@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      3-Mar-24 at 00:19:27 by Mats Lidell
+;; Last-Mod:      4-Mar-24 at 00:37:13 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -810,7 +810,7 @@ context of the current buffer.
 Recognizes the format '<elink:' button_label [':' button_file_path] '>',
 where : button_file_path is given only when the link is to another file,
 e.g. <elink: project-list: ~/projs>."
-  (hlink 'link-to-ebut "elink_" elink:start elink:end))
+  (hlink 'link-to-ebut "" elink:start elink:end))
 
 (defconst glink:start "<glink:"
   "String matching the start of a link to a Hyperbole global button.")
@@ -824,7 +824,7 @@ of the current buffer.
 
 Recognizes the format '<glink:' button_label '>',
 e.g. <glink: open todos>."
-  (hlink 'link-to-gbut "glink_" glink:start glink:end))
+  (hlink 'link-to-gbut "" glink:start glink:end))
 
 (defconst ilink:start "<ilink:"
   "String matching the start of a link to a Hyperbole implicit button.")
@@ -839,7 +839,7 @@ current buffer.
 Recognizes the format '<ilink:' button_label [':' button_file_path] '>',
 where button_file_path is given only when the link is to another file,
 e.g. <ilink: my series of keys: ${hyperb:dir}/HYPB>."
-  (hlink 'link-to-ibut "ilink_" ilink:start ilink:end))
+  (hlink 'link-to-ibut "" ilink:start ilink:end))
 
 ;;; ========================================================================
 ;;; Displays files at specific lines and optional column number
