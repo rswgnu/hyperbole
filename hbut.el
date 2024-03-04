@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     18-Feb-24 at 11:37:11 by Mats Lidell
+;; Last-Mod:      4-Mar-24 at 00:10:14 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1028,7 +1028,9 @@ Default is the symbol hbut:current."
   (interactive (list (hbut:get (hargs:read-match "Activate labeled Hyperbole button: "
 						 (nconc (ebut:alist) (ibut:alist))
 						 nil t nil 'hbut))))
-  (unless hbut
+  (if (and (symbolp hbut)
+	   (not (eq hbut 'hbut:current)))
+      (hattr:copy hbut 'hbut:current)
     (setq hbut 'hbut:current))
   (cond ((hbut:is-p hbut)
 	 (let ((orig-point (point-marker))
@@ -1747,8 +1749,8 @@ as a completion table."
 (defun    ibut:at-p (&optional name-key-only)
   "Return symbol for implicit button at point, else nil.
 Point may be on the implicit button text or its optional preceding
-name.  With optional NAME-KEY-ONLY, return only the label key of the
-button.
+name.  With optional NAME-KEY-ONLY, return only the key format of the
+<[name]> of the button, if any.
 
 Any named implicit button must contain at least two characters,
 excluding delimiters, not just one."
@@ -2104,7 +2106,7 @@ Default is the symbol \\='hbut:current.  Return symbol for button deleted or nil
 		     (ibut:delete-occurrence
 		      (hattr:get but-sym 'name-start)
 		      (hattr:get but-sym 'lbl-end))))
-		 (ibut:label-instances-regexp (ibut:label-to-key name))
+		 (ibut:name-instances-regexp (ibut:label-to-key name))
 		 t)
 	      (ibut:delete-occurrence lbl-start lbl-end)))
 	  ;; Also delete in-memory version of the ibut
@@ -2201,7 +2203,7 @@ first encountered."
     (apply #'set:create
 	   (ibut:map
 	    (lambda (lbl _start _end) (ibut:label-to-key lbl))
-	    (ibut:label-instances-regexp name-key)))))
+	    (ibut:name-instances-regexp name-key)))))
 
 (defun    ibut:label-p (&optional as-label start-delim end-delim pos-flag two-lines-flag)
   "Return key for the implicit button name that point is within, else nil.
@@ -2247,18 +2249,6 @@ lines."
 				    (regexp-quote end-delim))
 			    lbl)
 	result))))
-
-(defun    ibut:label-regexp (lbl-key &optional no-delim)
-  "Unnormalize ibutton LBL-KEY.
-Return regular expression matching delimited button label.
-Optional NO-DELIM leaves off delimiters, leading and trailing space."
-  (hbut:label-regexp lbl-key no-delim ibut:label-start ibut:label-end))
-
-(defun    ibut:label-instances-regexp (lbl-key &optional no-delim)
-  "Unnormalize ibutton LBL-KEY.
-Return regular expression matching all instances of delimited button label.
-Optional NO-DELIM leaves off delimiters, leading and trailing space."
-  (hbut:label-instances-regexp lbl-key no-delim ibut:label-start ibut:label-end))
 
 (defun    ibut:label-set (label &optional start end)
   "Set current implicit button attributes.
@@ -2349,8 +2339,20 @@ position (positions include delimiters when INCLUDE-DELIMS is
 non-nil)."
   (hbut:map but-func ibut:label-start ibut:label-end regexp-match include-delims))
 
-(defun    ibut:next-occurrence (lbl-key &optional buffer)
-  "Move point to next occurrence of an implicit button with LBL-KEY.
+(defun    ibut:name-regexp (name-key &optional no-delim)
+  "Unnormalize ibutton NAME-KEY.
+Return regular expression matching delimited button name.
+Optional NO-DELIM leaves off delimiters, leading and trailing space."
+  (hbut:label-regexp name-key no-delim ibut:label-start ibut:label-end))
+
+(defun    ibut:name-instances-regexp (name-key &optional no-delim)
+  "Unnormalize ibutton NAME-KEY.
+Return regular expression matching all instances of delimited button name.
+Optional NO-DELIM leaves off delimiters, leading and trailing space."
+  (hbut:label-instances-regexp name-key no-delim ibut:label-start ibut:label-end))
+
+(defun    ibut:next-occurrence (name-key &optional buffer)
+  "Move point to next occurrence of an implicit button with NAME-KEY.
 Optional BUFFER defaults to current buffer.  It may be a buffer name.
 Return non-nil iff occurrence is found.
 
@@ -2360,8 +2362,8 @@ move to the first occurrence of the button."
     (if (not (or (bufferp buffer) (and (stringp buffer) (get-buffer buffer))))
 	(error "(ibut:next-occurrence): Invalid buffer arg: %s" buffer)
       (switch-to-buffer buffer)))
-  (when (or (re-search-forward (ibut:label-regexp lbl-key) nil t)
-	    (re-search-forward (ibut:label-regexp lbl-key t) nil t))
+  (when (or (re-search-forward (ibut:name-regexp name-key) nil t)
+	    (re-search-forward (ibut:name-regexp name-key t) nil t))
     (goto-char (+ (match-beginning 0) (length ibut:label-start)))))
 
 (defun    ibut:operate (&optional new-name edit-flag)
@@ -2379,7 +2381,7 @@ button, `edit-flag' must be set to t; otherwise, this may create
 a new ibutton inserted within the prior one, making the prior one
 unusable.
 
-Optional non-nil NEW-NAME is new name to give button.  With
+Optional non-nil NEW-NAME is the new name to give the button.  With
 optional EDIT-FLAG non-nil, modify an existing in-buffer ibutton
 rather than creating a new one.
 
@@ -2415,7 +2417,7 @@ Summary of operations based on inputs (name arg from \\='hbut:current attrs):
 |----+------+----------+--------+------+-----------------------------------------------|"
   (barf-if-buffer-read-only)
   (let* ((name (hattr:get 'hbut:current 'name))
-	 (name-regexp (ibut:label-regexp (ibut:label-to-key name)))
+	 (name-regexp (ibut:name-regexp (ibut:label-to-key name)))
 	 (region-flag (hmouse-use-region-p))
 	 (instance-flag))
     (when (and new-name (or (not (stringp new-name)) (string-empty-p new-name)))
@@ -2566,7 +2568,7 @@ Summary of operations based on inputs (name arg from \\='hbut:current attrs):
 	     (when (search-backward ibut:label-start nil t)
 	       (goto-char (match-end 0))))
 	    (new-key
-	     (let ((regexp (ibut:label-regexp new-key)))
+	     (let ((regexp (ibut:name-regexp new-key)))
 	       (or (re-search-forward  regexp nil t)
 		   (re-search-backward regexp nil t)))
 	     (goto-char (+ (match-beginning 0) (length ibut:label-start))))))
@@ -2652,8 +2654,8 @@ Summary of operations based on inputs (name arg from \\='hbut:current attrs):
     (unless (looking-at "\\s-\\|\\'")
       (insert " "))))
 
-(defun    ibut:previous-occurrence (lbl-key &optional buffer)
-  "Move point to previous occurrence of an implicit button with LBL-KEY.
+(defun    ibut:previous-occurrence (name-key &optional buffer)
+  "Move point to previous occurrence of an implicit button with NAME-KEY.
 Optional BUFFER defaults to current buffer.  It may be a buffer name.
 Return non-nil iff occurrence is found.
 
@@ -2663,8 +2665,8 @@ the whole buffer."
     (if (not (or (bufferp buffer) (and (stringp buffer) (get-buffer buffer))))
 	(error "(ibut:previous-occurrence): Invalid buffer arg: %s" buffer)
       (switch-to-buffer buffer)))
-  (when (or (re-search-backward (ibut:label-regexp lbl-key) nil t)
-	    (re-search-backward (ibut:label-regexp lbl-key t) nil t))
+  (when (or (re-search-backward (ibut:name-regexp name-key) nil t)
+	    (re-search-backward (ibut:name-regexp name-key t) nil t))
     (goto-char (+ (match-beginning 0) (length ibut:label-start)))))
 
 (defun    ibut:program (name actype &rest args)
@@ -2749,7 +2751,7 @@ When NAME-KEY is nil, return the ibutton at point or nil if none."
 			;; Handle a name given rather than a name key
 			(when (string-match-p "\\s-" name-key)
 			  (setq name-key (ibut:label-to-key name-key)))
-			(let ((regexp (ibut:label-regexp name-key t))
+			(let ((regexp (ibut:name-regexp name-key t))
 			      (start (point))
 			      at-name-key
 			      pos
@@ -2767,14 +2769,14 @@ When NAME-KEY is nil, return the ibutton at point or nil if none."
 				    ;; character to prevent this.
 				    found (save-excursion
 					    (goto-char (1- (point)))
-					    (setq at-name-key (ibut:label-p nil nil nil nil t))
+					    (setq at-name-key (ibut:at-p t))
 					    (equal at-name-key name-key))))
 			    (unless found
 			      (goto-char start))
 			    ;; re-search backward
 			    (while (and (not found) (re-search-backward regexp nil t))
 			      (setq pos (match-beginning 0)
-				    at-name-key (ibut:label-p nil nil nil nil t)
+				    at-name-key (ibut:at-p t)
 				    found (equal at-name-key name-key))))
 			  (when found
 			    (goto-char pos)
@@ -2825,10 +2827,10 @@ Return the symbol for the button if found, else nil."
      (let* ((name-start-end (ibut:label-p nil nil nil t t))
 	    (name-start (nth 1 name-start-end))
 	    (at-name (car name-start-end))
-	    (at-lbl-key (ibut:label-p nil "\"" "\"" nil t))
+	    (at-text-key (ibut:label-p nil "\"" "\"" nil t))
 	    ibut)
        (cond ((or (and at-name (equal at-name lbl-key))
-		  (and lbl-key (equal at-lbl-key lbl-key)))
+		  (and lbl-key (equal at-text-key lbl-key)))
 	      (setq ibut 'hbut:current))
 	     ((and lbl-key (setq ibut (ibut:to lbl-key)))))
        ;; Skip past any optional name and separators
@@ -2840,55 +2842,55 @@ Return the symbol for the button if found, else nil."
    lbl-key
    (current-buffer)))
 
-(defun    ibut:to-text (name-key)
-  "Move to the text of the nearest implicit button matching NAME-KEY.
-Find the nearest implicit button with NAME-KEY (a name or name key)
+(defun    ibut:to-text (lbl-key)
+  "Move to the text of the nearest implicit button matching LBL-KEY.
+Find the nearest implicit button with LBL-KEY (a name or name key)
 within the visible portion of the current buffer and move to within
 its button text.  This will find an implicit button if point is
-within its name or text or if NAME-KEY is a name/name-key of an
+within its name or text or if LBL-KEY is a name/name-key of an
 existing implicit button.  It will not find other unnamed implicit
 buttons.
 
+The caller must have populated the attributes of 'hbut:current.
+
 Return the symbol for the button if found, else nil."
-  (unless name-key
-    (setq name-key (ibut:label-p nil nil nil nil t)))
-  (when name-key
-    (hbut:funcall
-     (lambda (name-key _buffer _key-src)
-       (let* ((name-start-end (ibut:label-p t nil nil t t))
-	      (name-end (nth 2 name-start-end))
-	      (at-name (car name-start-end))
-	      (at-name-key (ibut:label-p nil "\"" "\"" nil t))
-	      (opoint (point))
-	      move-flag
-	      start
-	      ibut)
-	 ;; Do not move point if it is already in the text of an
-	 ;; implicit button matching NAME-KEY.  If on the name of
-	 ;; the same button, move into the text of the button.
-	 (cond ((and name-key (equal at-name-key name-key))
-		(setq ibut 'hbut:current))
-	       ((and at-name (equal (ibut:label-to-key at-name) name-key))
-		(setq ibut 'hbut:current
-		      move-flag t))
-	       ((and name-key (setq ibut (ibut:to name-key)))
-		(setq move-flag t)))
-	 (when (and move-flag ibut)
-	   ;; Skip past any optional name and separators
-	   (if (setq start (hattr:get ibut 'lbl-start))
-	       (goto-char start)
-	     (when name-end
-	       (goto-char name-end)
-	       (if (looking-at ibut:label-separator-regexp)
-		   ;; Move past up to 2 possible characters of ibut
-		   ;; delimiters to ensure are inside the ibut name; this
-		   ;; prevents recognizing labeled, delimited ibuts of a
-		   ;; single character since no one should need that.
-		   (goto-char (min (+ 2 (match-end 0)) (point-max)))
-		 (goto-char opoint)))))
-	 ibut))
-     name-key
-     (current-buffer))))
+  (unless (stringp lbl-key)
+    (error "(ibut:to-text): 'lbl-key' arg must be a string, not: %S" lbl-key))
+  (hbut:funcall
+   (lambda (lbl-key _buffer _key-src)
+     (let* ((name-end (hattr:get 'hbut:current 'name-end))
+	    (at-name (hattr:get 'hbut:current 'name))
+	    (at-text-key (hattr:get 'hbut:current 'lbl-key))
+	    (opoint (point))
+	    move-flag
+	    start
+	    ibut)
+       ;; Do not move point if it is already in the text of an
+       ;; implicit button matching LBL-KEY.  If on the name of
+       ;; the same button, move into the text of the button.
+       (cond ((and lbl-key (equal at-text-key lbl-key))
+	      (setq ibut 'hbut:current))
+	     ((and at-name (equal (ibut:label-to-key at-name) lbl-key))
+	      (setq ibut 'hbut:current
+		    move-flag t))
+	     ((and lbl-key (setq ibut (ibut:to lbl-key)))
+	      (setq move-flag t)))
+       (when (and move-flag ibut)
+	 ;; Skip past any optional name and separators
+	 (if (setq start (hattr:get ibut 'lbl-start))
+	     (goto-char start)
+	   (when name-end
+	     (goto-char name-end)
+	     (if (looking-at ibut:label-separator-regexp)
+		 ;; Move past up to 2 possible characters of ibut
+		 ;; delimiters to ensure are inside the ibut name; this
+		 ;; prevents recognizing labeled, delimited ibuts of a
+		 ;; single character since no one should need that.
+		 (goto-char (min (+ 2 (match-end 0)) (point-max)))
+	       (goto-char opoint)))))
+       ibut))
+   lbl-key
+   (current-buffer)))
 
 (defun    ibut:type (ibut)
   "Return full implicit type name for IBUT, else nil."
@@ -2897,9 +2899,9 @@ Return the symbol for the button if found, else nil."
 
 ;;; ------------------------------------------------------------------------
 (defconst ibut:label-start "<["
-  "String matching the start of a Hyperbole implicit button label.")
+  "String matching the start of a Hyperbole implicit button optional name.")
 (defconst ibut:label-end   "]>"
-  "String matching the end of a Hyperbole implicit button label.")
+  "String matching the end of a Hyperbole implicit button optional name.")
 
 ;;; ========================================================================
 ;;; ibtype class - Implicit button types

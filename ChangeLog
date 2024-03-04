@@ -1,4 +1,30 @@
+2024-03-04  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (elink): Change "elink_" arg to "" so button lbl-key is
+    set properly.
+              (glink): Change "glink_" arg to "" so button lbl-key is
+    set properly.
+              (ilink): Change "ilink_" arg to "" so button lbl-key is
+    set properly.
+  hactypes.el (link-to-ibut): 'hbut:current may be the prior ilink that
+    invoked this action for the ibut at point; before activating the
+    button, call 'ibut:at-p' to ensure attributes are properly set.  Fixes
+    ilink bug.
+  hbut.el (ibut:to-text): Rewrite to assume 'hbut:current has been set
+    by the caller.
+
 2024-03-03  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (hbut:act): If arg 'hbut' is given as a symbol, ensure its properties
+    are copied to 'hbut:current so subcalls can reference them.
+
+* hactypes.el (link-to-ibut): Fix to use 'ibut:to-text' instead of 'ibut:to'.
+
+* hbut.el (ibut:label-start, ibut:label-end, ibut:label-regexp,
+           ibut:label-instances-regexp, ibut:next-occurrence,
+	   ibut:previous-occurrence): Fix doc strings to refer to ibut name.
+          (ibut:label-instances-regexp): Rename to 'ibut:name-instances-regexp'.
+	  (ibut:label-regexp): Rename to 'ibut:name-regexp'.
 
 * hyrolo.el (hyrolo-install-markdown-mode): Centralize install of this package.
             (hyrolo-install-markdown-mode): Add 'package-refresh-contents'
@@ -1970,7 +1996,7 @@ V8.0.2pre changes ^^^^:
 * test/hui-register-tests.el (hui-register-test--register-val-insert-ibut): Fix this test.
 
 * hbut.el (ebut:to): Simplify so if 'lbl-key' is nil, look only for ebutton at point.
-          (ibut:to): Simplify so if 'name-key' is nil, look only for ebutton at point.
+          (ibut:to): Simplify so if 'name-key' is nil, look only for ibutton at point.
     Fix so finds any matching name-key without using attributes of hbut:current.
 
 * hsys-www.el (eww-browse-url): Remove unused '(let ((url-allow-non-local-files t))'.

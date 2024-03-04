@@ -591,15 +591,18 @@
 
   *** (ibut:label-sort-instances): Sort label key instance numbers.
 
-  *** ebut:label-start, ebut:label-end: Renamed from `ebut:start' and
+  *** (ibut:label-instances-regexp): Rename to `ibut:name-instances-regexp'.
+      (ibut:label-regexp): Rename to `ibut:name-regexp'.
+
+  *** (ebut:label-start, ebut:label-end): Rename from `ebut:start' and
       `ebut:end'.
 
-  *** (hpath:delimited-possible-path): Added support for HTML &quot;
+  *** (hpath:delimited-possible-path): Add support for HTML &quot;
       quoting and embedded double quotes.
 
-  *** (hargs:read): Added support for 'i' interactive spec (ignored arg).
+  *** (hargs:read): Add support for 'i' interactive spec (ignored arg).
 
-  *** (set:replace-key-value): Renamed from `set:replace'.
+  *** (set:replace-key-value): Rename from `set:replace'.
 
       (set:replace): Now replaces a non-keyed old-value with a new value.
 
