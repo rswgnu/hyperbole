@@ -1,3 +1,8 @@
+2024-03-06  Mats Lidell  <matsl@gnu.org>
+
+* hmouse-drv.el (hmouse-choose-link-and-referent-windows): Only pick next
+    window from the selected frame.
+
 2024-03-04  Bob Weiner  <rsw@gnu.org>
 
 * hibtypes.el (elink): Change "elink_" arg to "" so button lbl-key is

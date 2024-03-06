@@ -806,7 +806,7 @@ buffer to the end window.  The selected window does not change."
       (cond ((or (= (count-windows) 2)
 		 (= (hypb:count-visible-windows) 2))
 	     (setq link-but-window (selected-window)
-		   referent-window (next-window nil nil 'visible)))
+		   referent-window (next-window nil nil (selected-frame))))
 	    ((= (hypb:count-visible-windows) 1)
 	     ;; Fall through to error below
 	     )
