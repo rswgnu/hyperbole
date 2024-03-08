@@ -1,3 +1,12 @@
+2024-03-08  Mats Lidell  <matsl@gnu.org>
+
+* test/hmouse-drv-tests.el (hmouse-drv--hmouse-choose-link-and-referent-windows--two-windows-same-frame)
+    (hmouse-drv--hmouse-choose-link-and-referent-windows--two-windows-different-frame):
+    Add tests for choosing the windows non interactively.
+
+* hmouse-drv.el (hmouse-choose-link-and-referent-windows): Only pick next
+    window from the selected frame when there are two windows in the frame.
+
 2024-03-04  Bob Weiner  <rsw@gnu.org>
 
 * hibtypes.el (elink): Change "elink_" arg to "" so button lbl-key is

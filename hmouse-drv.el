@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     20-Jan-24 at 20:15:55 by Mats Lidell
+;; Last-Mod:      8-Mar-24 at 11:06:21 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -803,8 +803,10 @@ buffer to the end window.  The selected window does not change."
 	(referent-window (and (window-live-p assist-key-release-window)
 			      assist-key-release-window)))
     (unless (and link-but-window referent-window)
-      (cond ((or (= (count-windows) 2)
-		 (= (hypb:count-visible-windows) 2))
+      (cond ((= (count-windows) 2)
+	     (setq link-but-window (selected-window)
+		   referent-window (next-window nil nil (selected-frame))))
+	    ((= (hypb:count-visible-windows) 2)
 	     (setq link-but-window (selected-window)
 		   referent-window (next-window nil nil 'visible)))
 	    ((= (hypb:count-visible-windows) 1)
