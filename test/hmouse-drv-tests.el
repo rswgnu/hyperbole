@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 22:52:00
-;; Last-Mod:      8-Mar-24 at 12:34:17 by Mats Lidell
+;; Last-Mod:      8-Mar-24 at 16:52:52 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -589,7 +589,7 @@ Regression: Looked up path name '-narrow'."
           (split-window)
           (find-file filea)
           (let ((result (hmouse-choose-link-and-referent-windows)))
-            (should (length= result 2))
+            (should (= (length result) 2))
             (should (equal (list (get-buffer-window (get-file-buffer filea))
                                  (get-buffer-window (get-file-buffer fileb)))
                            result))))
@@ -616,7 +616,7 @@ The frame setup is mocked."
                     ((next-window nil nil 'visible) => fileb-window)
                     (count-windows => 1))
             (let ((result (hmouse-choose-link-and-referent-windows)))
-              (should (length= result 2))
+              (should (= (length result) 2))
               (should (equal (list (get-buffer-window (get-file-buffer filea))
                                    (get-buffer-window (get-file-buffer fileb)))
                              result)))))
