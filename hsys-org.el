@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     18-Feb-24 at 23:44:42 by Mats Lidell
+;; Last-Mod:     10-Mar-24 at 11:31:56 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -501,7 +501,8 @@ White spaces are insignificant.  Return t if a link is found, else nil."
 	(backward-char)
 	(let ((object (org-element-context)))
 	  (when (eq (org-element-type object) 'link)
-            (org-fold-show-context 'link-search)
+	    (when (featurep 'org-fold) ;; newer Org versions
+              (org-fold-show-context 'link-search))
 	    (goto-char (or (previous-single-property-change (point) 'face) (point-min)))
 	    (throw :link-match t))))
       (goto-char origin)
@@ -522,7 +523,8 @@ White spaces are insignificant.  Return t if a target link is found, else nil."
 	(backward-char)
 	(let ((object (org-element-context)))
 	  (when (eq (org-element-type object) 'link)
-            (org-fold-show-context 'link-search)
+	    (when (featurep 'org-fold) ;; newer Org versions
+              (org-fold-show-context 'link-search))
 	    (throw :radio-match t))))
       (goto-char origin)
       nil)))

@@ -1,3 +1,16 @@
+2024-03-10  Bob Weiner  <rsw@gnu.org>
+
+* hload-path.el (make-directory-autoloads): Remove 'ext:' since this is an Emacs
+    built-in library available in version 28 and above.
+
+* hvm.el: Remove from Hyperbole as VM (the mail reader) is a very old package that is
+    not available in normal package distributions today.
+
+* hsys-org.el (hsys-org-search-internal-link-p,
+               hsys-org-search-radio-target-link-p):
+  hactypes.el (link-to-org-id-marker): Conditionalize call of 'org-fold-show-context'
+    on whether 'org-fold' feature exists.
+
 2024-03-08  Mats Lidell  <matsl@gnu.org>
 
 * test/hmouse-drv-tests.el (hmouse-drv--hmouse-choose-link-and-referent-windows--two-windows-same-frame)
