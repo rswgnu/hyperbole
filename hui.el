@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     25-Feb-24 at 11:56:14 by Bob Weiner
+;; Last-Mod:     10-Mar-24 at 10:07:01 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -732,9 +732,9 @@ Use `hui:gbut-create' to create a global explicit button."
   (interactive "sCreate global implicit button named: \nsButton text (with any delimiters): ")
   (let (but-buf
 	opoint
-        delimited-label)
+        delimited-name)
     (save-excursion
-      (setq delimited-label (concat ibut:label-start name ibut:label-end)
+      (setq delimited-name (concat ibut:label-start name ibut:label-end)
 	    but-buf (hpath:find-noselect (gbut:file)))
       (hui:buf-writable-err but-buf "gibut-create")
       ;; This prevents movement of point which might be useful to user.
@@ -744,7 +744,7 @@ Use `hui:gbut-create' to create a global explicit button."
         (unless (bolp)
 	  (insert "\n"))
 	(setq opoint (point))
-        (insert delimited-label ": " text "\n")
+        (insert delimited-name ": " text "\n")
 	(save-excursion
 	  (goto-char (+ opoint (length ibut:label-start)))
 	  ;; Create button object from ibut at point

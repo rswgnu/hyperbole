@@ -3,11 +3,11 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    29-Jun-16 at 14:39:33
-;; Last-Mod:     21-Jan-24 at 23:38:30 by Bob Weiner
+;; Last-Mod:     10-Mar-24 at 12:07:48 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; Copyright (C) 1992-2022  Free Software Foundation, Inc.
+;; Copyright (C) 1992-2024  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -21,7 +21,7 @@
 ;;; ************************************************************************
 (defvar generated-autoload-file)
 
-(declare-function make-directory-autoloads "ext:autoload")
+(declare-function make-directory-autoloads "autoload")
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -148,10 +148,6 @@ directory or directories specified."
 
 ;; Menu items could call this function before Info is loaded.
 (autoload 'Info-goto-node   "info" "Jump to specific Info node."  t)
-
-;; Auto-autoload doesn't work for next item because it is defined
-;; within a condition-case, so autoload it here.
-(autoload 'Vm-init          "hvm"  "Initializes Hyperbole Vm support." t)
 
 (defun hyperb:autoloads-exist-p ()
   "Return t if all Hyperbole autoload files exist or nil otherwise."

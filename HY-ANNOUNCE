@@ -1,22 +1,29 @@
 From: Bob Weiner <rsw@gnu.org>
 To: gnu-emacs-sources@gnu.org, emacs-tangents@gnu.org, hyperbole-users@gnu.org, hyperbole-announce@gnu.org
-Subject: GNU Hyperbole Major Release 9
+Subject: GNU Hyperbole Major Release 9 (V9.0.1)
 --text follows this line--
 ========================================================================
 * Overview
 ========================================================================
 
-GNU Hyperbole 9.0.0, the Rhapsody release, is now available on GNU ELPA.
+GNU Hyperbole 9.0.1, the Rhapsody release, is now available on GNU ELPA.
 And oh what a release it is: extensive new features, new video demos,
 org and org roam integration, Markdown and Org file support in HyRolo,
 recursive directory and wildcard file scanning in HyRolo and much more.
 
-Hyperbole is a unique hypertextual information management Emacs package
-that works across all Emacs modes, letting the computer do the hard work
-while you benefit from its sophisticated context-sensitive linking and
-navigation capabilities.  Hyperbole has always been one of the best
-documented Emacs packages.  With Version 9 comes excellent test coverage:
-over 340 automated tests to ensure quality.  We hope you'll give it a try.
+Hyperbole is a unique hypertextual information management Emacs
+package that works across all Emacs modes, letting the computer do the
+hard work while you benefit from its sophisticated context-sensitive
+linking and navigation capabilities.
+
+Hyperbole has always been one of the best documented Emacs packages.
+With Version 9 comes excellent test coverage: over 400 automated tests
+are run with every update against every major version of Emacs since
+version 27, to ensure quality.  We hope you'll give it a try.
+
+========================================================================
+* What's New
+========================================================================
 
 What's new in this release is described here:
 
@@ -25,8 +32,8 @@ What's new in this release is described here:
   Everything back until release 8.0.0 is new since the last major release
   announcement (almost a year and a half ago), so updates are extensive.
 
-If you prefer video introductions, visit the videos linked to below; otherwise,
-skip to the next section.
+If you prefer video introductions, visit the videos linked to below;
+otherwise, skip to the next section.
 
   |--------------------------------------------------+------------------------------|
   | GNU Hyperbole Videos                             | Web Link                     |
@@ -66,34 +73,32 @@ skip to the next section.
 
 Hyperbole is like Markdown for hypertext.  Hyperbole automatically
 recognizes dozens of common patterns in any buffer regardless of mode
-and can instantly activate them as hyperbuttons with a single key:
-email addresses, URLs, grep -n outputs, programming backtraces,
-sequences of Emacs keys, programming identifiers, Texinfo and Info
-cross-references, Org links, Markdown links and on and on.  All you do
-is load Hyperbole and then your text comes to life with no extra
-effort or complex formatting.
+and transparently turns them into hyperbuttons you can instantly
+activate with a single key.  Email addresses, URLs, grep -n outputs,
+programming backtraces, sequences of Emacs keys, programming
+identifiers, Texinfo and Info cross-references, Org links, Markdown
+links and on and on.  All you do is load Hyperbole and then your text
+comes to life with no extra effort or complex formatting.
 
-Hyperbole interlinks all your working information within Emacs for
-fast access and editing, not just within special modes.  Every button
-is automatically assigned a type and new types can be developed for
-your own buttons with simple function definitions.  You can create
-your own buttons by simply dragging between two buffers.
+Hyperbole interlinks your working information across all major modes
+within Emacs for fast access and editing.  Every button is
+automatically assigned a type and new types can be developed for your
+own buttons with simple function definitions.  You can create your own
+buttons by simply dragging between two buffers.
 
-But Hyperbole is also a hub controller for your information supplying
-built-in capabilities of contact management/hierarchical record
-lookup, legal-numbered outlines with hyperlinkable views and a unique
-window and frame manager.  It is even Org-compatible so you can use
-all of Org's capabilities together with Hyperbole.
+But Hyperbole is also a personal information manager with built-in
+capabilities of contact management/hierarchical record lookup,
+legal-numbered outlines with hyperlinkable views and a unique window
+and frame manager.  It is even Org-compatible so you can use all of
+Org's capabilities together with Hyperbole.
 
-Hyperbole is unique, powerful, extensively documented, and free.  Like
-Emacs, Org, Counsel and Helm, Hyperbole has many different uses all
-based around the theme of reducing cognitive load and improving your
-everyday information management.  It reduces cognitive load by using
-a single Action Key, {M-RET}, across many different contexts
-which automatically chooses the best action
-
-Then as you grow with it across time, it helps you build new capabilities
-that continue to speed your work.
+Hyperbole is unique, powerful, extensively documented, and free.  It
+stays out of your way but is always a key press away when you need it.
+Like Emacs, Org, Counsel and Helm, Hyperbole has many different uses
+all based around the theme of reducing cognitive load and improving
+your everyday information management.  It reduces cognitive load by
+using a single Action Key, {M-RET}, across many different contexts to
+perform the best default action in each.
 
 ========================================================================
 * Installing and Using Hyperbole
@@ -111,7 +116,7 @@ Then to invoke its minibuffer menu, use:
    {C-h h} or {M-x hyperbole RET}
 
 The best way to get a feel for many of its capabilities is to invoke the
-all new, interactive DEMO and explore sections of interest:
+all new, interactive FAST-DEMO and explore sections of interest:
 
    {C-h h d d}
 

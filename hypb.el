@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     18-Feb-24 at 23:50:41 by Mats Lidell
+;; Last-Mod:     10-Mar-24 at 11:51:55 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -29,7 +29,6 @@
 
 (defvar mh-e-RCS-id)
 (defvar pm-version)
-(defvar vm-version)
 
 (declare-function helm-info "ext:helm")
 (declare-function helm-apropos "ext:helm")
@@ -341,8 +340,6 @@ Use optional OUT-BUF if present, else the current buffer."
       (when (and (boundp 'hmail:reader) hmail:reader)
         (insert (format "\tMail Reader: %s\n"
                         (cond ((eq hmail:reader 'rmail-mode) "RMAIL")
-                              ((eq hmail:reader 'vm-mode)
-                               (concat "VM " vm-version))
                               ((and (eq hmail:reader 'mh-show-mode)
                                     (string-match "v ?\\([0-9]+.[0-9]+\\)"
                                                   mh-e-RCS-id))

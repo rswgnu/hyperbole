@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:      4-Mar-24 at 00:24:53 by Bob Weiner
+;; Last-Mod:     10-Mar-24 at 11:28:18 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -632,7 +632,8 @@ See doc of `ibtypes::org-id' for usage."
     (org-mark-ring-push)
     (hact 'link-to-buffer-tmp (marker-buffer marker) marker)
     (move-marker marker nil)
-    (org-fold-show-context))
+    (when (featurep 'org-fold) ;; newer Org versions
+      (org-fold-show-context)))
 
 (defact link-to-regexp-match (regexp n source &optional buffer-p)
   "Find REGEXP's Nth occurrence in SOURCE and display location at window top.

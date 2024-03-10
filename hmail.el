@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-Oct-91 at 18:38:05
-;; Last-Mod:     20-Jan-24 at 15:38:10 by Mats Lidell
+;; Last-Mod:     10-Mar-24 at 11:52:34 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -51,11 +51,10 @@
 
 (defcustom hmail:init-function nil
   "*Function (a symbol) to initialize Hyperbole support for a mail reader/composer.
-Valid values are: nil, Mh-init, Rmail-init or Vm-init."
+Valid values are: nil, Mh-init or Rmail-init."
   :type '(choice (const nil)
 		 (const Mh-init)
-		 (const Rmail-init)
-		 (const Vm-init))
+		 (const Rmail-init))
   :group 'hyperbole-commands)
 
 (defvar hmail:composer  'message-mode
@@ -176,7 +175,7 @@ Otherwise, return nil."
 	      func-suffix-list))))
 
 (defun hmail:invoke (&optional address cc subject)
-  "Invoke user preferred mail composer: vm-mail, mh-send or mail.
+  "Invoke user preferred mail composer: mh-send or mail.
 Optional arguments are ADDRESS, CC list and SUBJECT of mail."
   ;; Next 3 lines prevent blank lines between fields due to
   ;; fill-region-as-paragraph within mail-setup.
