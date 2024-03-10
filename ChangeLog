@@ -1,5 +1,10 @@
 2024-03-10  Bob Weiner  <rsw@gnu.org>
 
+* hversion.el:
+  hyperbole.el: Release version 9.0.1
+
+* Makefile (version): Add version check for file HY-ANNOUNCE.
+
 * hload-path.el (make-directory-autoloads): Remove 'ext:' since this is an Emacs
     built-in library available in version 28 and above.
 

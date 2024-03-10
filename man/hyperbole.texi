@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     26-Feb-24 at 00:46:32 by Bob Weiner
+@c Last-Mod:     10-Mar-24 at 12:41:20 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -155,8 +155,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 8.0.2pre
-Printed February 26, 2024.
+Edition 9.0.1
+Printed March 10, 2024.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -197,8 +197,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 @sp 2
 
 @example
-Edition 8.0.2pre
-February 26, 2024
+Edition 9.0.1
+March 10, 2024
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
