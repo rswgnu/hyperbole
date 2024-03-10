@@ -4,11 +4,11 @@
 ;; Maintainer:   Bob Weiner, Mats Lidell
 ;;
 ;; Orig-Date:     1-Jan-94
-;; Last-Mod:     19-Feb-24 at 12:31:39 by Bob Weiner
+;; Last-Mod:     10-Mar-24 at 12:49:39 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; Copyright (C) 1994-2022  Free Software Foundation, Inc.
+;; Copyright (C) 1994-2024  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -35,7 +35,7 @@
 ;;; Public variables
 ;;; ************************************************************************
 
-(defconst hyperb:version "8.0.2pre" "GNU Hyperbole revision number.")
+(defconst hyperb:version "9.0.1" "GNU Hyperbole revision number.")
 
 (defvar hyperb:mouse-buttons
   (if (or (and hyperb:microsoft-os-p (not (memq window-system '(w32 w64 x))))

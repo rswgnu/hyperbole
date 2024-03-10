@@ -6,15 +6,40 @@ Subject: GNU Hyperbole Major Release 9 (V9.0.1)
 * Overview
 ========================================================================
 
-GNU Hyperbole 9.0.1, the Rhapsody release, is now available on GNU ELPA.
-And oh what a release it is: extensive new features, new video demos,
-org and org roam integration, Markdown and Org file support in HyRolo,
-recursive directory and wildcard file scanning in HyRolo and much more.
+GNU Hyperbole 9.0.1, the Rhapsody release, is now available on GNU
+ELPA.  And oh what a release it is: extensive new features, new video
+demos, org and org roam integration, Markdown and Org file support in
+HyRolo, recursive directory and wildcard file scanning in HyRolo, and
+much more.
 
-Hyperbole is a unique hypertextual information management Emacs
-package that works across all Emacs modes, letting the computer do the
-hard work while you benefit from its sophisticated context-sensitive
-linking and navigation capabilities.
+What's new in this release is extensively described here:
+
+  www.gnu.org/s/hyperbole/HY-NEWS.html
+
+  Everything back until release 8.0.0 is new since the last major release
+  announcement (almost a year and a half ago), so updates are extensive.
+
+Hyperbole is like Markdown for hypertext.  Hyperbole automatically
+recognizes dozens of common patterns in any buffer regardless of mode
+and transparently turns them into hyperbuttons you can instantly
+activate with a single key.  Email addresses, URLs, grep -n outputs,
+programming backtraces, sequences of Emacs keys, programming
+identifiers, Texinfo and Info cross-references, Org links, Markdown
+links and on and on.  All you do is load Hyperbole and then your text
+comes to life with no extra effort or complex formatting.
+
+But Hyperbole is also a personal information manager with built-in
+capabilities of contact management/hierarchical record lookup,
+legal-numbered outlines with hyperlinkable views and a unique window
+and frame manager.  It is even Org-compatible so you can use all of
+Org's capabilities together with Hyperbole.
+
+Hyperbole stays out of your way but is always a key press away when
+you need it.  Like Emacs, Org, Counsel and Helm, Hyperbole has many
+different uses, all based around the theme of reducing cognitive load
+and improving your everyday information management.  It reduces
+cognitive load by using a single Action Key, {M-RET}, across many
+different contexts to perform the best default action in each.
 
 Hyperbole has always been one of the best documented Emacs packages.
 With Version 9 comes excellent test coverage: over 400 automated tests
@@ -22,15 +47,8 @@ are run with every update against every major version of Emacs since
 version 27, to ensure quality.  We hope you'll give it a try.
 
 ========================================================================
-* What's New
+* Videos
 ========================================================================
-
-What's new in this release is described here:
-
-  www.gnu.org/s/hyperbole/HY-NEWS.html
-
-  Everything back until release 8.0.0 is new since the last major release
-  announcement (almost a year and a half ago), so updates are extensive.
 
 If you prefer video introductions, visit the videos linked to below;
 otherwise, skip to the next section.
@@ -65,40 +83,6 @@ otherwise, skip to the next section.
   |--------------------------------------------------+------------------------------|
   | Find/Web Search                                  | https://youtu.be/8lMlJed0-OM |
   |--------------------------------------------------+------------------------------|
-
-
-========================================================================
-* Introduction
-========================================================================
-
-Hyperbole is like Markdown for hypertext.  Hyperbole automatically
-recognizes dozens of common patterns in any buffer regardless of mode
-and transparently turns them into hyperbuttons you can instantly
-activate with a single key.  Email addresses, URLs, grep -n outputs,
-programming backtraces, sequences of Emacs keys, programming
-identifiers, Texinfo and Info cross-references, Org links, Markdown
-links and on and on.  All you do is load Hyperbole and then your text
-comes to life with no extra effort or complex formatting.
-
-Hyperbole interlinks your working information across all major modes
-within Emacs for fast access and editing.  Every button is
-automatically assigned a type and new types can be developed for your
-own buttons with simple function definitions.  You can create your own
-buttons by simply dragging between two buffers.
-
-But Hyperbole is also a personal information manager with built-in
-capabilities of contact management/hierarchical record lookup,
-legal-numbered outlines with hyperlinkable views and a unique window
-and frame manager.  It is even Org-compatible so you can use all of
-Org's capabilities together with Hyperbole.
-
-Hyperbole is unique, powerful, extensively documented, and free.  It
-stays out of your way but is always a key press away when you need it.
-Like Emacs, Org, Counsel and Helm, Hyperbole has many different uses
-all based around the theme of reducing cognitive load and improving
-your everyday information management.  It reduces cognitive load by
-using a single Action Key, {M-RET}, across many different contexts to
-perform the best default action in each.
 
 ========================================================================
 * Installing and Using Hyperbole

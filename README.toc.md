@@ -1,4 +1,4 @@
-# GNU Hyperbole 8.0.2pre - The Everyday Hypertextual Information Manager
+# GNU Hyperbole 9.0.1 - The Everyday Hypertextual Information Manager
 
 [We work on Hyperbole as a gift to the Emacs community and request you
  send us a thank you or a testimonial describing your usage if you like
@@ -6,7 +6,7 @@
 
 
 
-- [GNU Hyperbole 8.0.2pre - The Everyday Hypertextual Information Manager](#gnu-hyperbole-802pre---the-everyday-hypertextual-information-manager)
+- [GNU Hyperbole 9.0.1 - The Everyday Hypertextual Information Manager](#gnu-hyperbole-901---the-everyday-hypertextual-information-manager)
   - [Videos](#videos)
   - [Summary](#summary)
   - [Mailing Lists](#mailing-lists)
@@ -153,7 +153,7 @@ keyboard and mouse-based control of information display within multiple
 windows.  It also provides point-and-click access to World-Wide Web URLs,
 Info manuals, ftp archives, etc.
 
-Hyperbole works well on GNU Emacs 24.4 or above.  It is designed and written
+Hyperbole works well on GNU Emacs 27.1 or above.  It is designed and written
 by Bob Weiner.  It is maintained by him and Mats Lidell.  Its main
 distribution site is: <https://www.gnu.org/software/hyperbole/>.  If any
 term in here is new or unfamiliar to you, you can look it up in the
@@ -515,6 +515,13 @@ appendix in the Hyperbole manual for information on how to alter the
 default context-sensitive Hyperbole key bindings (Smart Keys).
 
 ## User Quotes
+
+
+  Hyperbole is a wonderful package, I love the feeling of the deep,
+  well-thought out, poised engineering.  It may be from the 90s, but it
+  feels like a breath of fresh air to me.
+
+                        -- de_sonnaz on reddit  
 
 
   \*\*\* MAN I love Hyperbole!!!  Wow! \*\*\*
