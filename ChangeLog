@@ -1,5 +1,17 @@
 2024-03-10  Bob Weiner  <rsw@gnu.org>
 
+* hactypes.el (org-fold-show-context): Declare Org function available in some
+    versions of Emacs to suppress byte-compiler warning.
+
+* test/kotl-mode-tests.el (hy-test-dependencies):
+  test/hyrolo-tests.el (hy-test-dependencies):
+  test/hypb-ert-tests.el (hy-test-dependencies)
+  test/demo-tests.el (hy-test-dependencies): Add to ensure el-mock is installed.
+
+==============================================================================
+V9.0.2 changes ^^^^:
+==============================================================================
+
 * hversion.el:
   hyperbole.el: Release version 9.0.1
 
@@ -1390,10 +1402,6 @@ V9.0.1 changes ^^^^:
     format used is well defined.
     (hyrolo-fgrep-and-goto-next-visible-md-heading): Use level one heading
     so that heading hierarchy is respected.
-
-==============================================================================
-V8.0.2pre changes ^^^^:
-==============================================================================
 
 2023-12-01  Bob Weiner  <rsw@gnu.org>
 
@@ -4903,9 +4911,6 @@ name with 'name' and 'name-key'.
 
 * Makefile (website-local): Add dependency on README.md.html.
 
-==============================================================================
-V8.0.1pre changes ^^^^:
-==============================================================================
 ==============================================================================
 V9.0.0 changes ^^^^:
 ==============================================================================

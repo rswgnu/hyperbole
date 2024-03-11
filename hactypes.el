@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     10-Mar-24 at 11:28:18 by Bob Weiner
+;; Last-Mod:     10-Mar-24 at 18:35:02 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -29,8 +29,9 @@
 (declare-function kotl-mode:goto-cell-ref "kotl-mode")
 (declare-function kcell-view:indent "kcell-view")
 
-(declare-function rmail:msg-to-p "hrmail")
+(declare-function org-fold-show-context "org-fold")
 (declare-function org-roam-id-find "‎ext:org-roam-id")
+(declare-function rmail:msg-to-p "hrmail")
 
 ;;; ************************************************************************
 ;;; Standard Hyperbole action types

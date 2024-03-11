@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     10-Mar-24 at 12:41:20 by Bob Weiner
+@c Last-Mod:     10-Mar-24 at 14:21:23 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -514,7 +514,7 @@ Smart Keyboard Keys
 @chapter Introduction
 
 This edition of the GNU Hyperbole Manual is for use with any version
-8.0.2pre or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 27.1
+9.0.1 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 27.1
 or higher.  It will trigger an error if your Emacs is older.
 
 This chapter summarizes the structure of the rest of the manual,

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:     27-Feb-24 at 23:53:09 by Mats Lidell
+;; Last-Mod:     10-Mar-24 at 18:30:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -19,7 +19,7 @@
 ;;; Code:
 
 (require 'ert)
-(require 'el-mock)
+(require 'hy-test-dependencies) ;; can install el-mock
 (require 'kotl-mode "kotl/kotl-mode")
 (require 'hy-test-helpers "test/hy-test-helpers")
 
