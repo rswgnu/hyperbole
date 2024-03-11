@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     10-Mar-24 at 18:29:46 by Bob Weiner
+;; Last-Mod:     10-Mar-24 at 21:01:35 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -802,7 +802,7 @@ optional DEPTH the number of sub cells are created to that depth."
           (should (hact 'kbd-key "h"))
 	  (hyrolo-tests--verify-hidden-line)
 	  (save-excursion
-	    (next-line)
+	    (forward-line)
 	    (should (eobp)))
           (should (hact 'kbd-key "s"))
 	  (hyrolo-tests--verify-not-hidden-line)
@@ -813,7 +813,7 @@ optional DEPTH the number of sub cells are created to that depth."
           (should (hact 'kbd-key "h"))
 	  (hyrolo-tests--verify-hidden-line)
 	  (save-excursion
-	    (next-line)
+	    (forward-line)
 	    (should (eobp)))
           (should (hact 'kbd-key "s"))
 	  (hyrolo-tests--verify-not-hidden-line))

@@ -1,5 +1,11 @@
 2024-03-10  Bob Weiner  <rsw@gnu.org>
 
+* test/hyrolo-tests.el (hyrolo-tests--outline-hide-show-heading): Change two
+    calls of 'next-line' to 'forward-line'.
+
+* test/hy-test-dependencies.el (hy-test-ensure-package-installed): Fix to both
+    install and require the package.
+
 * hactypes.el (org-fold-show-context): Declare Org function available in some
     versions of Emacs to suppress byte-compiler warning.
 
