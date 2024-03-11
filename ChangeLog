@@ -1,7 +1,7 @@
 2024-03-10  Bob Weiner  <rsw@gnu.org>
 
 * test/hyrolo-tests.el (hyrolo-tests--outline-hide-show-heading): Change two
-    calls of 'next-line' to 'forward-line'.
+    calls of 'next-line' to 'forward-visible-line'.
 
 * test/hy-test-dependencies.el (hy-test-ensure-package-installed): Fix to both
     install and require the package.
