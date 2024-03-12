@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    20-Jan-24 at 12:28:01
-;; Last-Mod:     20-Jan-24 at 15:12:46 by Bob Weiner
+;; Last-Mod:     12-Mar-24 at 22:59:00 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -36,4 +36,12 @@
   (should (equal (hyperbole-web-search "Jump" "arg" t) '(webjump))))
 
 (provide 'hsettings-test)
+
+;; This file can't be byte-compiled without the `el-mock' package
+;; which is not a dependency of Hyperbole.
+;;
+;; Local Variables:
+;; no-byte-compile: t
+;; End:
+
 ;;; hsettings-test.el ends here

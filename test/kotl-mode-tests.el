@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:     27-Feb-24 at 23:53:09 by Mats Lidell
+;; Last-Mod:     12-Mar-24 at 22:59:42 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1102,4 +1102,12 @@ marked with :ignore t")
                                         (kotl-mode-tests--func-args f)))))
 
 (provide 'kotl-mode-tests)
+
+;; This file can't be byte-compiled without the `el-mock' package
+;; which is not a dependency of Hyperbole.
+;;
+;; Local Variables:
+;; no-byte-compile: t
+;; End:
+
 ;;; kotl-mode-tests.el ends here

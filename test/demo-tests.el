@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     21-Feb-24 at 23:55:10 by Mats Lidell
+;; Last-Mod:     12-Mar-24 at 22:58:39 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -727,13 +727,6 @@ enough files with matching mode loaded."
 	  (set-process-query-on-exit-flag (get-buffer-process shell-buffer-name) nil)
 	  (hy-test-helpers:kill-buffer shell-buffer-name))))))
 
-;; This file can't be byte-compiled without the `el-mock' package (because of
-;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.
-;;  Local Variables:
-;;  no-byte-compile: t
-;;  End:
-
-
 ;; Fast Demo Grep Messages, Stack Trace, Man Page Apropos
 (ert-deftest fast-demo-grep ()
   "Verify ibuts from grep searches works."
@@ -830,4 +823,12 @@ enough files with matching mode loaded."
     (hy-test-helpers:kill-buffer "EXAMPLE.kotl")))
 
 (provide 'demo-tests)
+
+;; This file can't be byte-compiled without the `el-mock' package
+;; which is not a dependency of Hyperbole.
+;;
+;; Local Variables:
+;; no-byte-compile: t
+;; End:
+
 ;;; demo-tests.el ends here
