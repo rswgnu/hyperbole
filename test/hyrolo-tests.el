@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     14-Mar-24 at 00:26:34 by Mats Lidell
+;; Last-Mod:     15-Mar-24 at 23:34:41 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1513,8 +1513,8 @@ body
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))
 
-(ert-deftest hyrolo-tests--goto-org-match ()
-  "Verify that moving to a match reaches the target buffer."
+(ert-deftest hyrolo-tests--goto-org-body-match ()
+  "Move from body match to target at org file."
   (let* ((org-file1 (make-temp-file "hypb" nil ".org" hyrolo-tests--outline-content-org))
          (hyrolo-file-list (list org-file1)))
     (unwind-protect
@@ -1522,12 +1522,27 @@ body
           (hyrolo-grep "body")
           (hyrolo-next-match)
           (action-key)
-          (should (string= (buffer-file-name) org-file1)))
+          (should (string= (buffer-file-name) org-file1))
+          (should (looking-at-p "body")))
+      (kill-buffer hyrolo-display-buffer)
+      (hy-delete-files-and-buffers hyrolo-file-list))))
+
+(ert-deftest hyrolo-tests--goto-org-header-match ()
+  "Move from heading match to target at org file."
+  (let* ((org-file1 (make-temp-file "hypb" nil ".org" hyrolo-tests--outline-content-org))
+         (hyrolo-file-list (list org-file1)))
+    (unwind-protect
+        (progn
+          (hyrolo-grep "h-org")
+          (hyrolo-next-match)
+          (action-key)
+          (should (string= (buffer-file-name) org-file1))
+          (should (looking-at-p "h-org 1$")))
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))
 
 (ert-deftest hyrolo-tests--goto-kotl-body-match ()
-  "Verify that moving to a match reaches the target buffer."
+  "Move from body match to target at kotl file."
   (let* ((kotl-file1 (hyrolo-tests--gen-kotl-outline "h-kotl" "body" 1))
          (hyrolo-file-list (list kotl-file1)))
     (unwind-protect
@@ -1536,6 +1551,7 @@ body
           (hyrolo-next-match)
           (action-key)
           (should (string= (buffer-file-name) kotl-file1))
+          (should (looking-at-p "body$"))
           (should (string= (buffer-substring-no-properties (point-min) (point-max))
                            "\
    1. h-kotl
@@ -1549,7 +1565,7 @@ body
       (hy-delete-files-and-buffers hyrolo-file-list))))
 
 (ert-deftest hyrolo-tests--goto-kotl-header-match ()
-  "Verify that moving to a match reaches the target buffer."
+  "Move from heading match to target at first line in kotl file."
   (let* ((kotl-file1 (hyrolo-tests--gen-kotl-outline "h-kotl" "body" 1))
          (hyrolo-file-list (list kotl-file1)))
     (unwind-protect
@@ -1558,6 +1574,7 @@ body
           (hyrolo-next-match)
           (action-key)
           (should (string= (buffer-file-name) kotl-file1))
+          (should (looking-at-p "h-kotl$"))
           (should (string= (buffer-substring-no-properties (point-min) (point-max))
                            "\
    1. h-kotl
@@ -1571,44 +1588,46 @@ body
       (hy-delete-files-and-buffers hyrolo-file-list))))
 
 (ert-deftest hyrolo-tests--goto-kotl-body-with-slash-match ()
-  "Verify that moving to a match reaches the target buffer."
-  (let* ((kotl-file1 (hyrolo-tests--gen-kotl-outline "h-kotl" "bo/dy" 1))
+  "Move from body match to target line with slash in kotl file."
+  (let* ((kotl-file1 (hyrolo-tests--gen-kotl-outline "h-kotl" "body1 / body2" 1))
          (hyrolo-file-list (list kotl-file1)))
     (unwind-protect
         (progn
-          (hyrolo-grep "bo/dy")
+          (hyrolo-grep "body2")
           (hyrolo-next-match)
           (action-key)
           (should (string= (buffer-file-name) kotl-file1))
+          (should (looking-at-p "body2$"))
           (should (string= (buffer-substring-no-properties (point-min) (point-max))
                            "\
    1. h-kotl
-      bo/dy
+      body1 / body2
 
      1a. h-kotl 1
-         bo/dy 1
+         body1 / body2 1
 
 "                           )))
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))
 
 (ert-deftest hyrolo-tests--goto-kotl-header-with-slash-match ()
-  "Verify that moving to a match reaches the target buffer."
+  "Move from heading match to target line with a slash in kotl file."
   :expected-result :failed
-  (let* ((kotl-file1 (hyrolo-tests--gen-kotl-outline "h/kotl" "body" 1))
+  (let* ((kotl-file1 (hyrolo-tests--gen-kotl-outline "h1 / h2" "body" 1))
          (hyrolo-file-list (list kotl-file1)))
     (unwind-protect
         (progn
-          (hyrolo-grep "h/kotl")
+          (hyrolo-grep "h2")
           (hyrolo-next-match)
           (action-key)
           (should (string= (buffer-file-name) kotl-file1))
+          (should (looking-at-p "h2$"))
           (should (string= (buffer-substring-no-properties (point-min) (point-max))
                            "\
-   1. h/kotl
+   1. h1 / h2
       body
 
-     1a. h/kotl 1
+     1a. h1 / h2 1
          body 1
 
 "                           )))
