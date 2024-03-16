@@ -1,3 +1,8 @@
+2024-03-16  Mats Lidell  <matsl@gnu.org>
+
+* test/hbut-tests.el (hbut-tests--ibut-at-p-identifies-a-remote-pathname):
+    Add test for ibut:at-p on remote path names.
+
 2024-03-15  Mats Lidell  <matsl@gnu.org>
 
 * hycontrol.el (hycontrol-blank-buffer-name): Make name of the blank
