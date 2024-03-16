@@ -1,3 +1,7 @@
+2024-03-17  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (dockerized): Add target to run make with a dockerized Emacs.
+
 2024-03-16  Mats Lidell  <matsl@gnu.org>
 
 * test/hbut-tests.el (hbut-tests--ibut-at-p-identifies-a-remote-pathname):
