@@ -1,3 +1,10 @@
+2024-03-23  Mats Lidell  <matsl@gnu.org>
+
+* test/hui-tests.el (hui--ibut-link-directly-to-org-header-first-column)
+    (hui--ibut-link-directly-to-org-header-second-column)
+    (hui--ibut-link-directly-to-org-body): Add tests for ibut links to org
+    mode files.
+
 2024-03-21  Mats Lidell  <matsl@gnu.org>
 
 * .github/workflows/main.yml (jobs): Ensure grep for warnings does not

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     21-Feb-24 at 23:53:09 by Mats Lidell
+;; Last-Mod:     19-Mar-24 at 22:41:23 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -828,6 +828,59 @@ With point on label suggest that ibut for rename."
           (with-simulated-input "label RET"
             (hui:ibut-link-directly (get-buffer-window) (get-buffer-window (get-file-buffer fileb)) 4))
           (should (string= (buffer-string) (concat "<[label]> - " "\"" fileb ":1:10\""))))
+      (hy-delete-file-and-buffer filea)
+      (hy-delete-file-and-buffer fileb))))
+
+(ert-deftest hui--ibut-link-directly-to-org-header-first-column ()
+  "Create a direct link to an org file header point in first column."
+  (let ((filea (make-temp-file "hypb" nil ".txt"))
+        (fileb (make-temp-file "hypb" nil ".org" "* header\nbody\n")))
+    (unwind-protect
+        (progn
+          (delete-other-windows)
+          (find-file fileb)
+          (goto-char 1)
+          (split-window)
+          (find-file filea)
+          (hui:ibut-link-directly (get-buffer-window)
+                                  (get-buffer-window (get-file-buffer fileb)))
+          (should (string= (buffer-string) (concat "\"" fileb "#header\""))))
+      (hy-delete-file-and-buffer filea)
+      (hy-delete-file-and-buffer fileb))))
+
+(ert-deftest hui--ibut-link-directly-to-org-header-second-column ()
+  "Create a direct link to an org file header point in second column."
+  (let ((filea (make-temp-file "hypb" nil ".txt"))
+        (fileb (make-temp-file "hypb" nil ".org" "* header\nbody\n")))
+    (unwind-protect
+        (progn
+          (delete-other-windows)
+          (find-file fileb)
+          (goto-char 2)
+          (split-window)
+          (find-file filea)
+          (hui:ibut-link-directly (get-buffer-window)
+                                  (get-buffer-window (get-file-buffer fileb)))
+          (should (string= (buffer-string) (concat "\"" fileb "#header:1:1\""))))
+      (hy-delete-file-and-buffer filea)
+      (hy-delete-file-and-buffer fileb))))
+
+(ert-deftest hui--ibut-link-directly-to-org-body ()
+  "Create a direct link to an org file body."
+  (let ((filea (make-temp-file "hypb" nil ".txt"))
+        (fileb (make-temp-file "hypb" nil ".org" "* header\nbody\n")))
+    (unwind-protect
+        (progn
+          (delete-other-windows)
+          (find-file fileb)
+          (goto-char (point-min))
+          (forward-line 1)
+          (should (looking-at-p "body"))
+          (split-window)
+          (find-file filea)
+          (hui:ibut-link-directly (get-buffer-window)
+                                  (get-buffer-window (get-file-buffer fileb)))
+          (should (string= (buffer-string) (concat "\"" fileb ":2\""))))
       (hy-delete-file-and-buffer filea)
       (hy-delete-file-and-buffer fileb))))
 
