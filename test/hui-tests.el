@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     19-Mar-24 at 22:41:23 by Mats Lidell
+;; Last-Mod:     20-Mar-24 at 21:53:36 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -844,7 +844,12 @@ With point on label suggest that ibut for rename."
           (find-file filea)
           (hui:ibut-link-directly (get-buffer-window)
                                   (get-buffer-window (get-file-buffer fileb)))
-          (should (string= (buffer-string) (concat "\"" fileb "#header\""))))
+          (should (string= (buffer-string) (concat "\"" fileb "#header\"")))
+          (goto-char (point-min))
+          (search-forward "#")
+          (action-key)
+          (should (string= (buffer-name) (file-name-nondirectory fileb)))
+          (should (= (point) 1)))
       (hy-delete-file-and-buffer filea)
       (hy-delete-file-and-buffer fileb))))
 
@@ -861,7 +866,12 @@ With point on label suggest that ibut for rename."
           (find-file filea)
           (hui:ibut-link-directly (get-buffer-window)
                                   (get-buffer-window (get-file-buffer fileb)))
-          (should (string= (buffer-string) (concat "\"" fileb "#header:1:1\""))))
+          (should (string= (buffer-string) (concat "\"" fileb "#header:1:1\"")))
+          (goto-char (point-min))
+          (search-forward "#")
+          (action-key)
+          (should (string= (buffer-name) (file-name-nondirectory fileb)))
+          (should (= (point) 2)))
       (hy-delete-file-and-buffer filea)
       (hy-delete-file-and-buffer fileb))))
 
@@ -880,7 +890,12 @@ With point on label suggest that ibut for rename."
           (find-file filea)
           (hui:ibut-link-directly (get-buffer-window)
                                   (get-buffer-window (get-file-buffer fileb)))
-          (should (string= (buffer-string) (concat "\"" fileb ":2\""))))
+          (should (string= (buffer-string) (concat "\"" fileb ":2\"")))
+          (goto-char (point-min))
+          (search-forward ":")
+          (action-key)
+          (should (string= (buffer-name) (file-name-nondirectory fileb)))
+          (should (= (line-number-at-pos) 2)))
       (hy-delete-file-and-buffer filea)
       (hy-delete-file-and-buffer fileb))))
 
