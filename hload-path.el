@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    29-Jun-16 at 14:39:33
-;; Last-Mod:     10-Mar-24 at 12:07:48 by Bob Weiner
+;; Last-Mod:     21-Mar-24 at 11:35:21 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -166,13 +166,17 @@ This is used only when running from git source and not a package release."
   (let* ((default-directory hyperb:dir)
 	 (backup-inhibited t)
 	 (find-file-hook) ;; Prevent header insertion
-	 (al-file (expand-file-name "hyperbole-autoloads.el")))
+	 (al-file (expand-file-name "hyperbole-autoloads.el"))
+	 (al-buf (find-file-noselect al-file)))
     ;; (make-local-variable 'generated-autoload-file)
-    (with-current-buffer (find-file-noselect al-file)
+    (with-current-buffer al-buf
       (hload-path--make-directory-autoloads "." al-file))
-    (setq al-file (expand-file-name "kotl/kotl-autoloads.el"))
-    (with-current-buffer (find-file-noselect al-file)
-      (hload-path--make-directory-autoloads "." al-file)))
+    (kill-buffer al-buf)
+    (setq al-file (expand-file-name "kotl/kotl-autoloads.el")
+	  al-buf (find-file-noselect al-file))
+    (with-current-buffer al-buf
+      (hload-path--make-directory-autoloads "." al-file))
+    (kill-buffer al-buf))
   (unless (hyperb:autoloads-exist-p)
     (error "Hyperbole failed to generate autoload files; try running 'make src' in a shell in %s" hyperb:dir)))
 

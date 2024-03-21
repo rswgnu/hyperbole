@@ -1,3 +1,9 @@
+2024-03-21  Bob Weiner  <rsw@gnu.org>
+
+* hload-path.el (hyperb:generate-autoloads): Kill autoload buffers after generating
+    them so does not interfere with package manager builds which may also generate
+    these autoload files.
+
 2024-03-12  Bob Weiner  <rsw@gnu.org>
 
 * hypb-maintenance.el (hypb:web-repo-update): Add "hib-doc-id.el".
