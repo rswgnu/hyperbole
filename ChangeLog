@@ -1,3 +1,7 @@
+2024-03-12  Bob Weiner  <rsw@gnu.org>
+
+* hypb-maintenance.el (hypb:web-repo-update): Add "hib-doc-id.el".
+
 2024-03-10  Bob Weiner  <rsw@gnu.org>
 
 * test/hyrolo-tests.el (hyrolo-tests--outline-hide-show-heading): Change two
