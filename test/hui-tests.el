@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     20-Mar-24 at 21:53:36 by Mats Lidell
+;; Last-Mod:     21-Mar-24 at 17:30:27 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -866,7 +866,7 @@ With point on label suggest that ibut for rename."
           (find-file filea)
           (hui:ibut-link-directly (get-buffer-window)
                                   (get-buffer-window (get-file-buffer fileb)))
-          (should (string= (buffer-string) (concat "\"" fileb "#header:1:1\"")))
+          (should (string= (buffer-string) (concat "\"" fileb "#header:L1:C1\"")))
           (goto-char (point-min))
           (search-forward "#")
           (action-key)
