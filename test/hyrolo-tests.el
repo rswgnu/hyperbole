@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     10-Mar-24 at 21:18:58 by Bob Weiner
+;; Last-Mod:     21-Mar-24 at 10:53:01 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1514,4 +1514,12 @@ body
       (hy-delete-files-and-buffers hyrolo-file-list))))
 
 (provide 'hyrolo-tests)
+
+;; This file can't be byte-compiled without the `el-mock' package
+;; which is not a dependency of Hyperbole.
+;;
+;; Local Variables:
+;; no-byte-compile: t
+;; End:
+
 ;;; hyrolo-tests.el ends here

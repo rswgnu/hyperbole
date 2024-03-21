@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      4-Mar-24 at 00:10:14 by Bob Weiner
+;; Last-Mod:     12-Mar-24 at 22:04:28 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2851,7 +2851,7 @@ within its name or text or if LBL-KEY is a name/name-key of an
 existing implicit button.  It will not find other unnamed implicit
 buttons.
 
-The caller must have populated the attributes of 'hbut:current.
+The caller must have populated the attributes of \='hbut:current.
 
 Return the symbol for the button if found, else nil."
   (unless (stringp lbl-key)

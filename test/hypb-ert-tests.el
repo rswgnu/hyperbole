@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:     1-Jan-24 at 23:11:54
-;; Last-Mod:     10-Mar-24 at 18:29:19 by Bob Weiner
+;; Last-Mod:     21-Mar-24 at 10:52:53 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -59,4 +59,12 @@
         (hypb-ert-run-test-at-definition t)))))
 
 (provide 'hypb-ert-tests)
+
+;; This file can't be byte-compiled without the `el-mock' package
+;; which is not a dependency of Hyperbole.
+;;
+;; Local Variables:
+;; no-byte-compile: t
+;; End:
+
 ;;; hypb-ert-tests.el ends here
