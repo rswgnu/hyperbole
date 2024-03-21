@@ -1,3 +1,8 @@
+2024-03-15  Mats Lidell  <matsl@gnu.org>
+
+* hycontrol.el (hycontrol-blank-buffer-name): Make name of the blank
+    buffer customizable.
+
 2024-03-14  Mats Lidell  <matsl@gnu.org>
 
 * test/hyrolo-tests.el (hyrolo-tests--goto-org-match)
