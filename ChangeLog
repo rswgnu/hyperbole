@@ -1,3 +1,12 @@
+2024-03-14  Mats Lidell  <matsl@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-tests--goto-org-match)
+    (hyrolo-tests--goto-kotl-body-match)
+    (hyrolo-tests--goto-kotl-header-match)
+    (hyrolo-tests--goto-kotl-body-with-slash-match)
+    (hyrolo-tests--goto-kotl-header-with-slash-match): Test action key on
+    a hyrolo match.
+
 2024-03-10  Bob Weiner  <rsw@gnu.org>
 
 * hversion.el:
