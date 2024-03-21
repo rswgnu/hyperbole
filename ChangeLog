@@ -1,3 +1,8 @@
+2024-03-21  Mats Lidell  <matsl@gnu.org>
+
+* .github/workflows/main.yml (jobs): Ensure grep for warnings does not
+    fail the build if there are none.
+
 2024-03-21  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:line-column-instance-regexp): Add and use in addition to
