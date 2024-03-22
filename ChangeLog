@@ -64,7 +64,7 @@
   test/demo-tests.el (hy-test-dependencies): Add to ensure el-mock is installed.
 
 ==============================================================================
-V9.0.2 changes ^^^^:
+V9.0.2pre changes ^^^^:
 ==============================================================================
 
 * hversion.el:
