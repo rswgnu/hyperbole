@@ -14,6 +14,7 @@ hsys-org-tests.el       - hsys-org tests
 hui-register-tests.el   - test for hui-register
 hui-select-tests.el     - hui-select tests
 hui-tests.el            - tests for hui.el Hyperbole UI
+hy-test-coverage.el     - provide test coverage information
 hy-test-dependencies.el - Hyperbole test dependencies
 hy-test-helpers.el      - unit test helpers
 hypb-tests.el           - tests for hypb.el utility functions
