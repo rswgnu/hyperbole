@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     18-Feb-24 at 12:20:15 by Mats Lidell
+;; Last-Mod:     21-Mar-24 at 16:06:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -67,15 +67,22 @@ Default is nil since this can slow down normal file finding."
 
 (defconst hpath:line-and-column-regexp
   ":L?\\([-+]?[0-9]+\\)\\(:C?\\([-+]?[0-9]+\\)\\)?\\s-*\\'"
-  "Regexp matching a trailing line number with an optional column number.
-Path, line number and column are colon separated.
-Group 1 is the line number.  Group 3 is the column number.")
+  "Regexp matching a trailing line number and optional column number.
+Path, line and column numbers are colon separated.  Group 1 is the
+1-based line number.  Group 3 is the 0-based column number.")
+
+(defconst hpath:instance-line-column-regexp
+  ":I\\([-+]?[0-9]+\\)\\(:L?\\([-+]?[0-9]+\\)\\)?\\(:C?\\([-+]?[0-9]+\\)\\)?\\s-*\\'"
+  "Regexp matching a trailing instance, optional line, and column number.
+Path, instance, line, and column numbers are colon separated.  Group 1
+is the instance/occurrence number when searching from the buffer start.
+Group 3 is the 1-based line number.  Group 5 is the 0-based column number.")
 
 (defconst hpath:markup-link-anchor-regexp
   "\\`\\(#?[^#+]*[^#+.]\\)?\\(#\\)\\([^\]\[#+^{}<>\"`'\\\n\t\f\r]*\\)"
   "Regexp matching a filename followed by a hash (#) and an optional anchor name.
-The anchor is an in-file reference.
-# is group 2.  Group 3 is the anchor name.")
+The anchor is an in-file reference.  # is group 2.  Group 3 is the anchor
+name.")
 
 (defvar hpath:path-variable-regexp "\\`\\$?[{(]?\\([-_A-Z]*path[-_A-Z]*\\)[)}]?\\'"
   "Regexp that matches exactly to a standalone path variable name reference.
@@ -1012,7 +1019,7 @@ Make any existing path within a file buffer absolute before returning."
 					  (prog1 (match-string 0 path)
 					    (setq path (substring path (match-end 0))))))))))
 	 (suffix (when (stringp path)
-		   (apply #'concat (nreverse (list (when (string-match hpath:line-and-column-regexp path)
+		   (apply #'concat (nreverse (list (when (string-match hpath:instance-line-column-regexp path)
 						     (prog1 (match-string 0 path)
 						       (setq path (substring path 0 (match-beginning 0)))))
 						   (if (string-match-p hpath:variable-regexp path)
@@ -1445,7 +1452,7 @@ but locational suffixes within the file are utilized."
   (let ((case-fold-search t)
 	(default-directory default-directory)
 	modifier loc anchor anchor-start-pos hash
-	kotl-flag path path-with-anchor line-num col-num)
+	kotl-flag path path-with-anchor line-num col-num instance-num)
     (setq loc (hattr:get 'hbut:current 'loc)
 	  default-directory (or (hattr:get 'hbut:current 'dir)
 				;; Loc may be a buffer without a file
@@ -1456,11 +1463,18 @@ but locational suffixes within the file are utilized."
       (setq modifier (aref pathname 0)
 	    pathname (substring pathname (match-end 0))))
     (setq path pathname) ;; default
-    (when (string-match hpath:line-and-column-regexp path)
-      (setq line-num (string-to-number (match-string 1 path))
-	    col-num (when (match-string 3 path)
-		      (string-to-number (match-string 3 path)))
-	    path (substring path 0 (match-beginning 0))))
+    (cond ((string-match hpath:instance-line-column-regexp path)
+	   (setq instance-num (string-to-number (match-string 1 path))
+		 line-num (when (match-string 3 path)
+			    (string-to-number (match-string 3 path)))
+		 col-num (when (match-string 5 path)
+			   (string-to-number (match-string 5 path)))
+		 path (substring path 0 (match-beginning 0))))
+	  ((string-match hpath:line-and-column-regexp path)
+	   (setq line-num (string-to-number (match-string 1 path))
+		 col-num (when (match-string 3 path)
+			   (string-to-number (match-string 3 path)))
+		 path (substring path 0 (match-beginning 0)))))
     (unless (file-exists-p path) ;; might be #autosave-file#
       (when (string-match hpath:markup-link-anchor-regexp path)
 	(setq hash t
@@ -1553,10 +1567,11 @@ but locational suffixes within the file are utilized."
 			      (cond ((and anchor kotl-flag)
 				     (klink:act path-with-anchor anchor-start-pos))
 				    ((or hash anchor)
-				     (hpath:to-markup-anchor hash anchor)))
+				     (hpath:to-markup-anchor hash anchor instance-num)))
 			      (when line-num
-				;; With an anchor, goto line relative to anchor
-				;; location, otherwise use absolute line number
+				;; With an anchor or instance number,
+				;; goto line relative to anchor location,
+				;; otherwise use absolute line number
 				;; within the visible buffer portion.
 				(if (or hash anchor)
 				    (forward-line (1- line-num))
@@ -1570,9 +1585,11 @@ but locational suffixes within the file are utilized."
 				(kotl-mode:to-valid-position))
 			      (current-buffer)))))))))))
 
-(defun hpath:to-markup-anchor (hash anchor)
+(defun hpath:to-markup-anchor (hash anchor &optional instance-num)
   "Ignore HASH when ANCHOR is non-null and move point to ANCHOR string if found.
-Move point to beginning of buffer if HASH is non-nil and ANCHOR is null."
+Move point to beginning of buffer if HASH is non-nil and ANCHOR is null.
+With optional INSTANCE-NUM, go to that instance of ANCHOR from the start
+of the buffer."
   (let ((omin (point-min))
 	(omax (point-max)))
     (unwind-protect
@@ -1583,8 +1600,8 @@ Move point to beginning of buffer if HASH is non-nil and ANCHOR is null."
 			     (let ((opoint (point))
 				   (case-fold-search))
 			       (goto-char (point-min))
-			       (if (re-search-forward (format hpath:html-anchor-id-pattern (regexp-quote anchor)) nil t)
-				   (progn (forward-line 0)
+			       (if (re-search-forward (format hpath:html-anchor-id-pattern (regexp-quote anchor)) nil t instance-num)
+				   (progn (goto-char (match-beginning 0))
 					  (when (eq (current-buffer) (window-buffer))
 					    (recenter 0)))
 				 (goto-char opoint)
@@ -1627,10 +1644,10 @@ Move point to beginning of buffer if HASH is non-nil and ANCHOR is null."
 						(= (aref referent-regexp 0) ?^))
 				       (concat "^[ \t]*" (substring referent-regexp 1)))))
 			       (goto-char (point-min))
-			       (if (or (re-search-forward referent-regexp nil t)
+			       (if (or (re-search-forward referent-regexp nil t instance-num)
 				       (and referent-leading-spaces-regexp
-					    (re-search-forward referent-leading-spaces-regexp nil t)))
-				   (progn (forward-line 0)
+					    (re-search-forward referent-leading-spaces-regexp nil t instance-num)))
+				   (progn (goto-char (match-beginning 0))
 					  (when (eq (current-buffer) (window-buffer))
 					    (recenter 0)))
 				 (goto-char opoint)
@@ -1741,7 +1758,13 @@ are temporarily stripped, \"file://\" prefixes are stripped, link anchors at
 the end following a # or , character are temporarily stripped, and path
 variables are expanded with `hpath:substitute-value'.  This normalized path
 form is what is returned for PATH."
-  (when (and (stringp path) (not (string-match-p hpath:path-variable-value-regexp path))
+  (when (and (stringp path)
+	     (or 
+	      ;; Due to the colons, "hui.el#save-excursion:I2:L2:C30",
+	      ;; will improperly match to a PATH variable. Ensure it doesn't.
+	      (string-match hpath:instance-line-column-regexp path)
+	      ;; not a PATH variable type value
+	      (not (string-match-p hpath:path-variable-value-regexp path)))
 	     ;; If a single character in length, must be a word or symbol character
 	     (or (/= (length path) 1) (and (string-match-p "\\sw\\|\\s_" path)
 					   (not (string-match-p "[@#&!*]" path)))))
