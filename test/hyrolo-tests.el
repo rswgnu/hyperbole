@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     15-Mar-24 at 23:34:41 by Mats Lidell
+;; Last-Mod:     22-Mar-24 at 08:37:53 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -22,10 +22,10 @@
 (require 'hact)
 (require 'hyrolo)
 (require 'hyrolo-demo)
+(require 'hy-test-dependencies) ;; can install el-mock
 (require 'hy-test-helpers "test/hy-test-helpers")
 (require 'hib-kbd)
 (require 'kotl-mode)
-(require 'el-mock)
 
 (declare-function hy-test-helpers:consume-input-events "hy-test-helpers")
 (declare-function hy-test-helpers:should-last-message "hy-test-helpers")
@@ -802,7 +802,7 @@ optional DEPTH the number of sub cells are created to that depth."
           (should (hact 'kbd-key "h"))
 	  (hyrolo-tests--verify-hidden-line)
 	  (save-excursion
-	    (next-line)
+	    (forward-visible-line 1)
 	    (should (eobp)))
           (should (hact 'kbd-key "s"))
 	  (hyrolo-tests--verify-not-hidden-line)
@@ -813,7 +813,7 @@ optional DEPTH the number of sub cells are created to that depth."
           (should (hact 'kbd-key "h"))
 	  (hyrolo-tests--verify-hidden-line)
 	  (save-excursion
-	    (next-line)
+	    (forward-visible-line 1)
 	    (should (eobp)))
           (should (hact 'kbd-key "s"))
 	  (hyrolo-tests--verify-not-hidden-line))

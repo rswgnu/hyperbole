@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      3-Mar-24 at 18:25:10 by Bob Weiner
+;; Last-Mod:     21-Mar-24 at 13:33:38 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2214,6 +2214,18 @@ When found, return the match start position."
 			     (save-excursion (end-of-visible-line) (point)))
 			   t)
     (match-beginning 0)))
+
+;; The *HyRolo* buffer uses hyrolo-org-mode and hyrolo-markdown-mode
+;; on Org and Markdown files that it reads to speed loading and
+;; searching.  This next function switches such buffers to their
+;; normal modes whenever they are displayed.
+(defun hyrolo-normalize-mode-function (frame)
+  (with-selected-frame frame
+    (when (apply #'derived-mode-p '(hyrolo-markdown-mode hyrolo-org-mode))
+      ;; Display buffer before `normal-mode' triggers possibly long-running font-locking
+      (sit-for 0.1)
+      (normal-mode))))
+(push 'hyrolo-normalize-mode-function window-buffer-change-functions)
 
 ;;; In `hyrolo-mode' replace `outline-minor-mode' bindings with hyrolo-* overrides.
 ;;; Wrap outline movement commands with a `hyrolo-funcall-match' call.

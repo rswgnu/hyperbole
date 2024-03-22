@@ -1,4 +1,4 @@
-# GNU Hyperbole 9.0.1 - The Everyday Hypertextual Information Manager
+# GNU Hyperbole 9.0.2pre - The Everyday Hypertextual Information Manager
 
 [We work on Hyperbole as a gift to the Emacs community and request you
  send us a thank you or a testimonial describing your usage if you like

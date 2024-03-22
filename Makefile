@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     17-Mar-24 at 00:49:27 by Mats Lidell
+# Last-Mod:     22-Mar-24 at 08:48:26 by Bob Weiner
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -89,7 +89,7 @@
 
 # This ver setup won't work under any make except GNU make, so set it manually.
 #HYPB_VERSION = "`head -3 hversion.el | tail -1 | sed -e 's/.*|\(.*\)|.*/\1/'`"
-HYPB_VERSION = 9.0.1
+HYPB_VERSION = 9.0.2pre
 
 # Emacs executable used to byte-compile .el files into .elc's.
 # To override which executable is used from the commandline, do something like this:
@@ -220,45 +220,45 @@ EL_TAGS = $(EL_SRC) $(EL_KOTL) $(TEST_ERT_FILES)
 .SUFFIXES: .el .elc   # Define the list of file suffixes to match to rules
 
 help: 
-	@ echo "Use the Emacs Package Manager to build and install the latest release of GNU Hyperbole."
-	@ echo "For help with Emacs packages, see the GNU Emacs Info Manual section, \"(emacs)Packages\"."
-	@ echo "See \"$(shell pwd)/INSTALL\" for detailed installation instructions,"
-	@ echo "including how to install Hyperbole pre-releases from the git repo tip."
-	@ echo ""
+	@echo "Use the Emacs Package Manager to build and install the latest release of GNU Hyperbole."
+	@echo "For help with Emacs packages, see the GNU Emacs Info Manual section, \"(emacs)Packages\"."
+	@echo "See \"$(shell pwd)/INSTALL\" for detailed installation instructions,"
+	@echo "including how to install Hyperbole pre-releases from the git repo tip."
+	@echo ""
 
-	@ echo "To setup Hyperbole to run directly from the latest test source code, use:"
-	@ echo "     git clone http://git.savannah.gnu.org/r/hyperbole.git"
-	@ echo "     cd hyperbole"
-	@ echo "  Then use either:"
-	@ echo "     make src     - setup to run directly from .el files"
-	@ echo "   or"
-	@ echo "     make bin     - setup to build and run from .elc files"
-	@ echo ""
+	@echo "To setup Hyperbole to run directly from the latest test source code, use:"
+	@echo "     git clone http://git.savannah.gnu.org/r/hyperbole.git"
+	@echo "     cd hyperbole"
+	@echo "  Then use either:"
+	@echo "     make src     - setup to run directly from .el files"
+	@echo "   or"
+	@echo "     make bin     - setup to build and run from .elc files"
+	@echo ""
 
-	@ echo "For Hyperbole maintainers only:"
-	@ echo "  To run unit tests:"
-	@ echo "     make test-all       - run all tests with Emacs under a window system"
-	@ echo "     make test           - run non-interactive tests with Emacs in batch mode"
-	@ echo "  To verify hyperbole installation using different sources:"
-	@ echo "     make install-<source>"
-	@ echo "   where <source> can be 'elpa', 'elpa-devel', 'tarball' (tarball from elpa-devel),"
-	@ echo "   'straight' (git master from savannah) or 'all'."
-	@ echo "  To build the Hyperbole distribution package:"
-	@ echo "     make pkg"
-	@ echo "  To build documentation formats only:"
-	@ echo "     make doc"
-	@ echo "  To generate and upload the public Hyperbole website:"
-	@ echo "     make website"
-	@ echo "  To release a Hyperbole Emacs package to ELPA and ftp.gnu.org:"
-	@ echo "     make release"
-	@ echo ""
+	@echo "For Hyperbole maintainers only:"
+	@echo "  To run unit tests:"
+	@echo "     make test-all       - run all tests with Emacs under a window system"
+	@echo "     make test           - run non-interactive tests with Emacs in batch mode"
+	@echo "  To verify hyperbole installation using different sources:"
+	@echo "     make install-<source>"
+	@echo "   where <source> can be 'elpa', 'elpa-devel', 'tarball' (tarball from elpa-devel),"
+	@echo "   'straight' (git master from savannah) or 'all'."
+	@echo "  To build the Hyperbole distribution package:"
+	@echo "     make pkg"
+	@echo "  To build documentation formats only:"
+	@echo "     make doc"
+	@echo "  To generate and upload the public Hyperbole website:"
+	@echo "     make website"
+	@echo "  To release a Hyperbole Emacs package to ELPA and ftp.gnu.org:"
+	@echo "     make release"
+	@echo ""
 
-	@ echo "The Hyperbole Manual is included in the package in four forms:"
-	@ echo "    man/hyperbole.info    - GNU browsable version"
-	@ echo "    man/hyperbole.html    - Web browsable version"
-	@ echo "    man/hyperbole.pdf     - Printable version"
-	@ echo "    man/hyperbole.texi    - source form"
-	@ echo ""
+	@echo "The Hyperbole Manual is included in the package in four forms:"
+	@echo "    man/hyperbole.info    - GNU browsable version"
+	@echo "    man/hyperbole.html    - Web browsable version"
+	@echo "    man/hyperbole.pdf     - Printable version"
+	@echo "    man/hyperbole.texi    - source form"
+	@echo ""
 
 all: help
 
@@ -342,16 +342,15 @@ clean:
 	$(RM) hyperbole-autoloads.el kotl/kotl-autoloads.el $(ELC_COMPILE) $(ELC_KOTL) TAGS
 
 version:
-	@ echo ""
-	@ rm -f WRONG-VERSIONS
-	@ fgrep -L $(HYPB_VERSION) Makefile HY-ABOUT HY-ANNOUNCE HY-NEWS README.md hversion.el hyperbole.el man/hyperbole.texi man/version.texi > WRONG-VERSIONS
-	@ # If any file(s) have wrong version number, print them and exit with code 1
-	@ if [ -s WRONG-VERSIONS ]; then \
+	@echo ""
+	@fgrep -L $(HYPB_VERSION) Makefile HY-ABOUT HY-ANNOUNCE HY-NEWS README.md hversion.el hyperbole.el man/hyperbole.texi man/version.texi > WRONG-VERSIONS
+	@# If any file(s) have wrong version number, print them and exit with code 1
+	@if [ -s WRONG-VERSIONS ]; then \
 	  echo "The following files do not have the proper Hyperbole version number, $(HYPB_VERSION):"; \
 	  cat WRONG-VERSIONS; rm -f WRONG-VERSIONS; exit 1; \
 	fi
-	@ rm -f WRONG-VERSIONS
-	@ echo ""
+	@rm -f WRONG-VERSIONS
+	@echo ""
 
 # Build the README.md.html and Info, HTML and Postscript versions of the user manual
 doc: version README.md.html manual
@@ -391,7 +390,7 @@ website-local: README.md.html
 # Push to public Hyperbole website
 website: website-local
 	cd $(HYPB_WEB_REPO_LOCATION) && $(CVS) commit -m "Hyperbole release $(HYPB_VERSION)"
-	@ echo "Website for Hyperbole $(HYPB_VERSION) is updated."
+	@echo "Website for Hyperbole $(HYPB_VERSION) is updated."
 
 # Generate a Hyperbole package suitable for distribution via the Emacs package manager.
 pkg: package
@@ -400,28 +399,28 @@ package: tags doc $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.sig
 # Generate and distribute a Hyperbole release to ftp.gnu.org.
 # One step in this is to generate an autoloads file for the Koutliner, kotl/kotl-autoloads.el.
 release: git-pull git-verify-no-update package $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz ftp website git-tag-release
-	@ echo "Hyperbole $(HYPB_VERSION) is released."
+	@echo "Hyperbole $(HYPB_VERSION) is released."
 
 # Ensure local hyperbole directory is synchronized with master before building a release.
 git-pull:
-	@ echo "If this step fails check your work directory for not committed changes"
+	@echo "If this step fails check your work directory for not committed changes"
 	git checkout master && git pull
 	git diff-index --quiet master
 
 git-verify-no-update:
-	@ echo "If this step fails check your work directory for updated docs and push these to savannah"
+	@echo "If this step fails check your work directory for updated docs and push these to savannah"
 	git diff-index --quiet master
 
 git-tag-release:
 	git tag -a hyperbole-$(HYPB_VERSION) -m "Hyperbole release $(HYPB_VERSION)"
 	git push origin hyperbole-$(HYPB_VERSION)
-	@ echo "Hyperbole $(HYPB_VERSION) is tagged as hyperbole-$(HYPB_VERSION)."
+	@echo "Hyperbole $(HYPB_VERSION) is tagged as hyperbole-$(HYPB_VERSION)."
 
 # Send compressed tarball for uploading to GNU ftp site; this must be done from the directory
 # containing the tarball to upload.
 ftp: package $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz
 	cd $(pkg_parent) && $(GNUFTP) hyperbole-$(HYPB_VERSION).tar.gz
-	@ echo "Hyperbole $(HYPB_VERSION) uploaded to ftp.gnu.org."
+	@echo "Hyperbole $(HYPB_VERSION) uploaded to ftp.gnu.org."
 
 # Autoloads
 autoloads: kotl/kotl-autoloads.el hyperbole-autoloads.el

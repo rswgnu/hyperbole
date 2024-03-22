@@ -8,9 +8,9 @@
 ;; Maintainer:   Mats Lidell <matsl@gnu.org>
 ;; Maintainers:  Robert Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:      06-Oct-92 at 11:52:51
-;; Last-Mod:     10-Mar-24 at 12:50:16 by Bob Weiner
+;; Last-Mod:     22-Mar-24 at 08:50:50 by Bob Weiner
 ;; Released:     10-Mar-24
-;; Version:      9.0.1
+;; Version:      9.0.2pre
 ;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
 ;; Package:      hyperbole
 ;; Package-Requires: ((emacs "27.1"))

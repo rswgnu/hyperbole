@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     12-Mar-24 at 22:58:39 by Mats Lidell
+;; Last-Mod:     21-Mar-24 at 10:52:07 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -28,7 +28,7 @@
 (require 'hyrolo)
 (require 'eww)
 (require 'compile)
-(require 'el-mock)
+(require 'hy-test-dependencies) ;; can install el-mock
 (require 'hy-test-helpers "test/hy-test-helpers")
 
 (declare-function hy-test-helpers:consume-input-events "hy-test-helpers")

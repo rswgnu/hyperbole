@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     10-Mar-24 at 10:07:01 by Bob Weiner
+;; Last-Mod:     21-Mar-24 at 15:30:24 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1831,6 +1831,7 @@ Mail Reader Message      link-to-mail
 Directory Name           link-to-directory
 File Name                link-to-file
 Koutline Cell            link-to-kcell
+Single-line Region       link-to-string-match
 Outline Heading          link-to-string-match
 Buffer attached to File  link-to-file
 EOL in Dired Buffer      link-to-directory (Dired dir)
@@ -1908,28 +1909,44 @@ Buffer without File      link-to-buffer-tmp"
 					  ((derived-mode-p #'kotl-mode)
 					   (list 'link-to-kcell buffer-file-name (kcell-view:idstamp)))
 					  ;;
-					  ;; If current line starts with an outline-regexp prefix, use
-					  ;; a link-to-string-match.
+					  ;; If region is active in the target buffer and it is one
+					  ;; line or less, then do a link-to-string-match to the region string.
+					  ((let ((region (and (use-region-p)
+							      (string-trim (buffer-substring-no-properties
+									    (region-beginning) (region-end)))))
+						 (instance-num 0))
+					     (when (and region
+							(not (string-empty-p region))
+							;; single line
+							(not (string-match "[\n\r\f]" region)))
+					       (save-excursion
+						 (end-of-line)
+						 (while (search-backward region nil t)
+						   (setq instance-num (1+ instance-num))))
+					       (list 'link-to-string-match region instance-num buffer-file-name))))
+					  ;;
+					  ;; If current line starts with an outline-regexp prefix and
+					  ;; has a non-empty heading, use a link-to-string-match.
 					  ((and (derived-mode-p 'outline-mode 'org-mode 'kotl-mode)
 						(stringp outline-regexp)
 						(save-excursion
 						  (beginning-of-line)
-						  (looking-at outline-regexp)))
-					   (let ((heading (string-trim
-							   (buffer-substring-no-properties
-							    (match-end 0)
-							    (line-end-position))))
-						 (occur 0))
-					     (save-excursion
-					       (end-of-line)
-					       (while (and (not (string-empty-p heading))
-							   (search-backward heading nil t))
-						 (setq occur (1+ occur))))
-					     (list 'link-to-string-match
-						   (if (zerop (current-column))
-						       heading
-						     (format "%s:L1:C%d" heading (current-column)))
-						   occur buffer-file-name)))
+						  (looking-at outline-regexp))
+						(let ((heading (string-trim
+								(buffer-substring-no-properties
+								 (match-end 0)
+								 (line-end-position))))
+						      (instance-num 0))
+						  (when (not (string-empty-p heading))
+						    (save-excursion
+						      (end-of-line)
+						      (while (search-backward heading nil t)
+							(setq instance-num (1+ instance-num))))
+						    (list 'link-to-string-match
+							  (if (zerop (current-column))
+							      heading
+							    (format "%s:L1:C%d" heading (current-column)))
+							  instance-num buffer-file-name)))))
 					  (buffer-file-name
 					   (list 'link-to-file buffer-file-name (point)))
 					  ((derived-mode-p 'dired-mode)

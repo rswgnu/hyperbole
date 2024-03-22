@@ -1,3 +1,25 @@
+2024-03-21  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:line-column-instance-regexp): Add and use in addition to
+    'hpath:line-and-column-regexp'.
+           (hpath:find): Add above variable and instance handling logic.
+	   (hpath:to-markup-anchor): Add optional arg 'instance-num'.
+           (hpath:is-p): Fix to handle paths with instance-num, line and col num.
+           (hpath:to-markup-anchor): Change to leave point at the start of the anchor.
+* hbut.el (ibut:insert-text): Use anchor format in link-to-string-match when
+    given an instance-num.
+
+* hyrolo.el (hyrolo-normalize-mode-function): Add and attach to
+    `window-buffer-change-functions' to ensure normal modes are used when editing
+    Org or Markdown files.
+
+* hui.el (hui:link-possible-types): When a single-line region is active in the
+    referent buffer, create a link-to-string-match link to the text in the region.
+
+* hload-path.el (hyperb:generate-autoloads): Kill autoload buffers after generating
+    them so does not interfere with package manager builds which may also generate
+    these autoload files.
+
 2024-03-17  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (dockerized): Add target to run make with a dockerized Emacs.
@@ -21,7 +43,29 @@
     (hyrolo-tests--goto-kotl-header-with-slash-match): Test action key on
     a hyrolo match.
 
+2024-03-12  Bob Weiner  <rsw@gnu.org>
+
+* hypb-maintenance.el (hypb:web-repo-update): Add "hib-doc-id.el".
+
 2024-03-10  Bob Weiner  <rsw@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-tests--outline-hide-show-heading): Change two
+    calls of 'next-line' to 'forward-visible-line'.
+
+* test/hy-test-dependencies.el (hy-test-ensure-package-installed): Fix to both
+    install and require the package.
+
+* hactypes.el (org-fold-show-context): Declare Org function available in some
+    versions of Emacs to suppress byte-compiler warning.
+
+* test/kotl-mode-tests.el (hy-test-dependencies):
+  test/hyrolo-tests.el (hy-test-dependencies):
+  test/hypb-ert-tests.el (hy-test-dependencies)
+  test/demo-tests.el (hy-test-dependencies): Add to ensure el-mock is installed.
+
+==============================================================================
+V9.0.2pre changes ^^^^:
+==============================================================================
 
 * hversion.el:
   hyperbole.el: Release version 9.0.1
@@ -1413,10 +1457,6 @@ V9.0.1 changes ^^^^:
     format used is well defined.
     (hyrolo-fgrep-and-goto-next-visible-md-heading): Use level one heading
     so that heading hierarchy is respected.
-
-==============================================================================
-V8.0.2pre changes ^^^^:
-==============================================================================
 
 2023-12-01  Bob Weiner  <rsw@gnu.org>
 
@@ -4926,9 +4966,6 @@ name with 'name' and 'name-key'.
 
 * Makefile (website-local): Add dependency on README.md.html.
 
-==============================================================================
-V8.0.1pre changes ^^^^:
-==============================================================================
 ==============================================================================
 V9.0.0 changes ^^^^:
 ==============================================================================

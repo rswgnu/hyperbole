@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:16:00
-;; Last-Mod:     21-Jan-24 at 11:42:52 by Bob Weiner
+;; Last-Mod:     10-Mar-24 at 20:56:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -28,7 +28,8 @@
 (defun hy-test-ensure-package-installed (pkg-symbol)
   (unless (package-installed-p pkg-symbol)
     (package-refresh-contents)
-    (package-install pkg-symbol)))
+    (package-install pkg-symbol))
+  (require pkg-symbol))
 
 (mapc (lambda (sym) (hy-test-ensure-package-installed sym))
       '(el-mock with-simulated-input))

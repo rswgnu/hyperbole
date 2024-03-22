@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:     1-Jan-24 at 23:11:54
-;; Last-Mod:     12-Mar-24 at 22:59:20 by Mats Lidell
+;; Last-Mod:     21-Mar-24 at 10:52:53 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -18,7 +18,7 @@
 ;;; Code:
 
 (require 'ert)
-(require 'el-mock)
+(require 'hy-test-dependencies) ;; can install el-mock
 (require 'hypb-ert)
 
 (ert-deftest hypb-ert-tests--def-at-p ()

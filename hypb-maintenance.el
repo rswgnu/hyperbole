@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    31-Mar-21 at 21:11:00
-;; Last-Mod:      1-May-22 at 19:06:09 by Bob Weiner
+;; Last-Mod:     12-Mar-24 at 22:36:34 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -68,7 +68,7 @@ Point `hypb:web-repo-location' to where the web repo is located."
   (mapc (lambda (file) (copy-file file hypb:web-repo-location t))
 	'("DEMO" "DEMO-ROLO.otl" "FAST-DEMO" "HY-ABOUT" "INSTALL"
 	  "HY-COPY" "COPYING" "MANIFEST"
-	  "hui.el" "hbut.el" "hbdata.el" "hmail.el"))
+	  "hui.el" "hbut.el" "hbdata.el" "hib-doc-id.el" "hmail.el"))
 
   ;; man recursive
   (copy-directory "man" hypb:web-repo-location nil t nil)
