@@ -1,3 +1,13 @@
+2024-03-23  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (coverage): Make target to use the coverage function from the
+    command line.
+
+* test/hy-test-coverage.el: New test file for producing test coverage
+    data. Uses the testcover package.
+    (hy-test--count-coverage): Count the test splotches.
+    (hy-test-coverage-file): Run tests and produce coverage date.
+
 2024-03-21  Mats Lidell  <matsl@gnu.org>
 
 * .github/workflows/main.yml (jobs): Ensure grep for warnings does not
