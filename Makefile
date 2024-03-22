@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     10-Mar-24 at 19:45:09 by Bob Weiner
+# Last-Mod:     22-Mar-24 at 08:38:08 by Bob Weiner
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -542,3 +542,23 @@ lint:
 	--eval "(hy-test-ensure-package-installed 'package-lint)" \
 	-l package-lint.el -f package-lint-batch-and-exit \
 	$(EL_KOTL) $(EL_SRC)
+
+# Run a build using a dockerized version of Emacs
+#
+# Usage:
+#   make dockerized version=28.1 targets='clean bin test'
+
+# Specify version and targets to run
+ifeq ($(origin targets), command line)
+DOCKER_TARGETS = ${targets}
+else
+DOCKER_TARGETS = clean bin test
+endif
+ifeq ($(origin version), command line)
+DOCKER_VERSION = ${version}-ci
+else
+DOCKER_VERSION = master-ci
+endif
+
+dockerized:
+	docker run -v $$(pwd):/hyperbole -it silex/emacs:${DOCKER_VERSION} bash -c cd hyperbole && make ${DOCKER_TARGETS}

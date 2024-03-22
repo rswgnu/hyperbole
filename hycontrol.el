@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:     18-Feb-24 at 12:42:03 by Mats Lidell
+;; Last-Mod:     16-Mar-24 at 00:04:31 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -239,6 +239,13 @@ The final predicate should always be t, for default values, typically of zero.")
   :type '(integer :match (lambda (_widget value)
 			   (and (integerp value) (>= value 0)
 				(< value (display-pixel-width)))))
+  :group 'hyperbole-screen)
+
+(defcustom hycontrol-blank-buffer-name " BLANK"
+  "Blank buffer name used for to display in extra window grid windows.
+Used after selected buffer list is exhausted.  Start name with a space
+for it to be omitted by `list-buffers'."
+  :type 'string
   :group 'hyperbole-screen)
 
 (defvar hycontrol-frame-widths
@@ -891,7 +898,7 @@ multiple of the default frame font width."
 	      hycontrol-display-buffer-predicate-list)
     (error "(HyDebug): Invalid expression in `hycontrol-display-buffer-predicate-list' - %s" err)))
 
-(defvar hycontrol--blank-buffer (get-buffer-create " BLANK")
+(defvar hycontrol--blank-buffer (get-buffer-create hycontrol-blank-buffer-name)
   "Blank buffer to display in extra window grid windows.
 Used after selected buffer list is exhausted.")
 

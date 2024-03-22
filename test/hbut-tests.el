@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-may-21 at 09:33:00
-;; Last-Mod:     11-Feb-24 at 23:35:14 by Mats Lidell
+;; Last-Mod:     16-Mar-24 at 23:44:27 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -767,6 +767,19 @@ See #10 for the proper way to add an ibutton name.
   (progn
     (hattr:clear 'hbut:current)
     (should-error (ibut:act))))
+
+(ert-deftest hbut-tests--ibut-at-p-identifies-a-remote-pathname ()
+  "Verify `ibut:at-p' identifies a remote pathname."
+  :expected-result :failed
+  (hattr:clear 'hbut:current)
+  (with-temp-buffer
+    (insert "/ssh:user@host.org:/home/user/file\n")
+    (goto-char 4)
+    (should (equal (hattr:get (ibut:at-p) 'categ) 'ibtypes::pathname))
+    (goto-char (- (point-max) 5))
+    (should (equal (hattr:get (ibut:at-p) 'categ) 'ibtypes::pathname))
+    (goto-char 8)  ;; ibtypes::mail-address !!
+    (should (equal (hattr:get (ibut:at-p) 'categ) 'ibtypes::pathname))))
 
 ;; This file can't be byte-compiled without the `el-mock' package (because of
 ;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.
