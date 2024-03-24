@@ -784,7 +784,7 @@ With point on label suggest that ibut for rename."
           (find-file filea)
           (hui:ibut-link-directly (get-buffer-window)
            (get-buffer-window (get-file-buffer fileb)))
-          (should (string= (buffer-string) (concat "\"" fileb ":1:10\""))))
+          (should (string= (buffer-string) (concat "\"" fileb ":L1:C10\""))))
       (hy-delete-file-and-buffer filea)
       (hy-delete-file-and-buffer fileb))))
 
@@ -827,7 +827,7 @@ With point on label suggest that ibut for rename."
           (find-file filea)
           (with-simulated-input "label RET"
             (hui:ibut-link-directly (get-buffer-window) (get-buffer-window (get-file-buffer fileb)) 4))
-          (should (string= (buffer-string) (concat "<[label]> - " "\"" fileb ":1:10\""))))
+          (should (string= (buffer-string) (concat "<[label]> - " "\"" fileb ":L1:C10\""))))
       (hy-delete-file-and-buffer filea)
       (hy-delete-file-and-buffer fileb))))
 
@@ -890,7 +890,7 @@ With point on label suggest that ibut for rename."
           (find-file filea)
           (hui:ibut-link-directly (get-buffer-window)
                                   (get-buffer-window (get-file-buffer fileb)))
-          (should (string= (buffer-string) (concat "\"" fileb ":2\"")))
+          (should (string= (buffer-string) (concat "\"" fileb ":L2\"")))
           (goto-char (point-min))
           (search-forward ":")
           (action-key)
@@ -976,7 +976,7 @@ With point on label suggest that ibut for rename."
             (hui:gbut-link-directly t)
             (with-current-buffer (find-buffer-visiting global-but-file)
               (should (string= (buffer-string)
-                               (concat "First\n<[button]> - \"" file ":1\""))))))
+                               (concat "First\n<[button]> - \"" file ":L1\""))))))
       (hy-delete-file-and-buffer global-but-file)
       (hy-delete-file-and-buffer file))))
 
