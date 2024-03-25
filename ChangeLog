@@ -1,7 +1,8 @@
 2024-03-25  Mats Lidell  <matsl@gnu.org>
 
 * .github/workflows/main.yml (jobs): Add Emacs 29.2 to versions used for
-    the CI builds.
+    the CI builds and remove older minor versions to reduce the number of
+    builds used for each major version.
 
 2024-03-24  Mats Lidell  <matsl@gnu.org>
 
