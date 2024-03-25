@@ -15,8 +15,8 @@ jobs:
       fail-fast: false
       matrix:
         version: [27.2, 28.1, 28.2, 29.2, master]
-      exclude:
-        - version: 28.1
+        exclude:
+          - version: 28.1
     container: silex/emacs:${{ matrix.version }}-ci
 
     steps:
