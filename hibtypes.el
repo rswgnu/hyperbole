@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      4-Mar-24 at 00:37:13 by Bob Weiner
+;; Last-Mod:     27-Mar-24 at 20:15:24 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -850,7 +850,7 @@ e.g. <ilink: my series of keys: ${hyperb:dir}/HYPB>."
   "Display path at position given by a pathname:line-num[:column-num] pattern.
 Also works for remote pathnames.
 May also contain hash-style link references with the following format:
-\"<path>[#<link-anchor>]:<line-num>[:<column-num>]}\".
+\"<path>[#<link-anchor>]:[L]<line-num>[:[C]<column-num>]}\".
 
 See `hpath:at-p' function documentation for possible delimiters.
 See `hpath:suffixes' variable documentation for suffixes that are added to or

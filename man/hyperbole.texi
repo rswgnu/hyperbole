@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     10-Mar-24 at 14:21:23 by Bob Weiner
+@c Last-Mod:     27-Mar-24 at 20:28:14 by Mats Lidell
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -2562,6 +2562,8 @@ Make a valid @file{pathname:line-num[:column-num]} pattern display the
 path at @emph{line-num} and optional @emph{column-num}.  Also works
 for remote pathnames.  May also contain hash-style link references
 with the following format: @file{<path>[#<link-anchor>]:<line-num>[:<column-num>]}.
+Line and column can also include a leading and optional character, L
+for line and C for column.
 
 @findex ibtypes ilink
 @cindex implicit button link
