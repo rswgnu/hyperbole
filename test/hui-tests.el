@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     21-Feb-24 at 23:53:09 by Mats Lidell
+;; Last-Mod:     21-Mar-24 at 17:30:27 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -784,7 +784,7 @@ With point on label suggest that ibut for rename."
           (find-file filea)
           (hui:ibut-link-directly (get-buffer-window)
            (get-buffer-window (get-file-buffer fileb)))
-          (should (string= (buffer-string) (concat "\"" fileb ":1:10\""))))
+          (should (string= (buffer-string) (concat "\"" fileb ":L1:C10\""))))
       (hy-delete-file-and-buffer filea)
       (hy-delete-file-and-buffer fileb))))
 
@@ -827,7 +827,75 @@ With point on label suggest that ibut for rename."
           (find-file filea)
           (with-simulated-input "label RET"
             (hui:ibut-link-directly (get-buffer-window) (get-buffer-window (get-file-buffer fileb)) 4))
-          (should (string= (buffer-string) (concat "<[label]> - " "\"" fileb ":1:10\""))))
+          (should (string= (buffer-string) (concat "<[label]> - " "\"" fileb ":L1:C10\""))))
+      (hy-delete-file-and-buffer filea)
+      (hy-delete-file-and-buffer fileb))))
+
+(ert-deftest hui--ibut-link-directly-to-org-header-first-column ()
+  "Create a direct link to an org file header point in first column."
+  (let ((filea (make-temp-file "hypb" nil ".txt"))
+        (fileb (make-temp-file "hypb" nil ".org" "* header\nbody\n")))
+    (unwind-protect
+        (progn
+          (delete-other-windows)
+          (find-file fileb)
+          (goto-char 1)
+          (split-window)
+          (find-file filea)
+          (hui:ibut-link-directly (get-buffer-window)
+                                  (get-buffer-window (get-file-buffer fileb)))
+          (should (string= (buffer-string) (concat "\"" fileb "#header\"")))
+          (goto-char (point-min))
+          (search-forward "#")
+          (action-key)
+          (should (string= (buffer-name) (file-name-nondirectory fileb)))
+          (should (= (point) 1)))
+      (hy-delete-file-and-buffer filea)
+      (hy-delete-file-and-buffer fileb))))
+
+(ert-deftest hui--ibut-link-directly-to-org-header-second-column ()
+  "Create a direct link to an org file header point in second column."
+  (let ((filea (make-temp-file "hypb" nil ".txt"))
+        (fileb (make-temp-file "hypb" nil ".org" "* header\nbody\n")))
+    (unwind-protect
+        (progn
+          (delete-other-windows)
+          (find-file fileb)
+          (goto-char 2)
+          (split-window)
+          (find-file filea)
+          (hui:ibut-link-directly (get-buffer-window)
+                                  (get-buffer-window (get-file-buffer fileb)))
+          (should (string= (buffer-string) (concat "\"" fileb "#header:L1:C1\"")))
+          (goto-char (point-min))
+          (search-forward "#")
+          (action-key)
+          (should (string= (buffer-name) (file-name-nondirectory fileb)))
+          (should (= (point) 2)))
+      (hy-delete-file-and-buffer filea)
+      (hy-delete-file-and-buffer fileb))))
+
+(ert-deftest hui--ibut-link-directly-to-org-body ()
+  "Create a direct link to an org file body."
+  (let ((filea (make-temp-file "hypb" nil ".txt"))
+        (fileb (make-temp-file "hypb" nil ".org" "* header\nbody\n")))
+    (unwind-protect
+        (progn
+          (delete-other-windows)
+          (find-file fileb)
+          (goto-char (point-min))
+          (forward-line 1)
+          (should (looking-at-p "body"))
+          (split-window)
+          (find-file filea)
+          (hui:ibut-link-directly (get-buffer-window)
+                                  (get-buffer-window (get-file-buffer fileb)))
+          (should (string= (buffer-string) (concat "\"" fileb ":L2\"")))
+          (goto-char (point-min))
+          (search-forward ":")
+          (action-key)
+          (should (string= (buffer-name) (file-name-nondirectory fileb)))
+          (should (= (line-number-at-pos) 2)))
       (hy-delete-file-and-buffer filea)
       (hy-delete-file-and-buffer fileb))))
 
@@ -908,7 +976,7 @@ With point on label suggest that ibut for rename."
             (hui:gbut-link-directly t)
             (with-current-buffer (find-buffer-visiting global-but-file)
               (should (string= (buffer-string)
-                               (concat "First\n<[button]> - \"" file ":1\""))))))
+                               (concat "First\n<[button]> - \"" file ":L1\""))))))
       (hy-delete-file-and-buffer global-but-file)
       (hy-delete-file-and-buffer file))))
 

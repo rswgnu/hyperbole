@@ -1,3 +1,23 @@
+2024-03-24  Mats Lidell  <matsl@gnu.org>
+
+* test/hui-tests.el (hui--ibut-link-directly-to-file)
+    (hui--ibut-link-directly-to-org-body, hui--gbut-link-directly-ibut):
+    Use L and C format for pathnames.
+
+* test/hpath-tests.el (hpath--hpath:line-and-column-regexp): Verify hpath:line-and-column-regexp.
+
+* hpath.el (hpath:section-line-and-column-regexp): Add optional line and
+    column chars, L and C, to regexp.
+    (hpath:file-position-to-line-and-column): Use L and C as standard
+    format for pathnames with line and column.
+
+2024-03-23  Mats Lidell  <matsl@gnu.org>
+
+* test/hui-tests.el (hui--ibut-link-directly-to-org-header-first-column)
+    (hui--ibut-link-directly-to-org-header-second-column)
+    (hui--ibut-link-directly-to-org-body): Add tests for ibut links to org
+    mode files.
+
 2024-03-21  Mats Lidell  <matsl@gnu.org>
 
 * .github/workflows/main.yml (jobs): Ensure grep for warnings does not

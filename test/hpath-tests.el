@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 23:26:00
-;; Last-Mod:     21-Feb-24 at 23:57:35 by Mats Lidell
+;; Last-Mod:     24-Mar-24 at 10:10:33 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -378,6 +378,18 @@
       (dolist (f (list org1-file org2-file kotl-file))
         (hy-delete-file-and-buffer f))
       (delete-directory temp-dir))))
+
+(ert-deftest hpath--hpath:line-and-column-regexp ()
+  "Verify that the regexp identifies paths with line and optional column.
+See `hpath:line-and-column-regexp'."
+  (should (string-match hpath:line-and-column-regexp "/foo/bar.org:1:2"))
+  (should (string-match hpath:line-and-column-regexp "/foo/bar.org:L1:2"))
+  (should (string-match hpath:line-and-column-regexp "/foo/bar.org:1:C2"))
+  (should (string-match hpath:line-and-column-regexp "/foo/bar.org:L1:C2"))
+  (should (string-match hpath:line-and-column-regexp "/foo/bar.org:1"))
+  (should (string-match hpath:line-and-column-regexp "/foo/bar.org:L1"))
+  (should-not (string-match hpath:line-and-column-regexp "/foo/bar.org:LL1"))
+  (should-not (string-match hpath:line-and-column-regexp "/foo/bar.org:C1")))
 
 (provide 'hpath-tests)
 ;;; hpath-tests.el ends here

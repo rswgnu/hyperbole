@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     21-Mar-24 at 16:06:32 by Bob Weiner
+;; Last-Mod:     24-Mar-24 at 01:15:19 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -108,7 +108,7 @@ Posix has colon-separated and Windows has semicolon-separated
 path variable values.")
 
 (defconst hpath:section-line-and-column-regexp
-  "\\([^ \t\n\r\f:][^\t\n\r\f:]+\\(:[^0-9\t\n\r\f]*\\)*\\):\\([0-9]+\\)\\(:\\([0-9]+\\)\\)?$"
+  "\\([^ \t\n\r\f:][^\t\n\r\f:]+\\(:[^0-9\t\n\r\f]*\\)*\\):L?\\([0-9]+\\)\\(:C?\\([0-9]+\\)\\)?$"
   "Regexp that matches to a path with optional #section and :line-num:col-num.
 Grouping 1 is path, grouping 3 is line number, grouping 4 is
 column number.  Allow for \\='c:' single letter drive prefixes on
@@ -1383,8 +1383,8 @@ The path in the result is abbreviated when possible."
     (save-excursion
       (goto-char position)
       (if (zerop (current-column))
-	  (format "%s:%d" (hpath:shorten path) (line-number-at-pos (point) t))
-	(format "%s:%d:%d"
+	  (format "%s:L%d" (hpath:shorten path) (line-number-at-pos (point) t))
+	(format "%s:L%d:C%d"
 		(hpath:shorten path)
 		(line-number-at-pos (point) t)
 		(current-column))))))
