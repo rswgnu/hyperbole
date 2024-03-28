@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     24-Mar-24 at 01:15:19 by Mats Lidell
+;; Last-Mod:     27-Mar-24 at 20:22:55 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -109,10 +109,11 @@ path variable values.")
 
 (defconst hpath:section-line-and-column-regexp
   "\\([^ \t\n\r\f:][^\t\n\r\f:]+\\(:[^0-9\t\n\r\f]*\\)*\\):L?\\([0-9]+\\)\\(:C?\\([0-9]+\\)\\)?$"
-  "Regexp that matches to a path with optional #section and :line-num:col-num.
-Grouping 1 is path, grouping 3 is line number, grouping 4 is
-column number.  Allow for \\='c:' single letter drive prefixes on
-MSWindows and Elisp vars with colons in them.")
+  "Regexp that matches to a path with optional #section and :line:col.
+Grouping 1 is path, grouping 3 is line number, grouping 4 is column
+number.  Allow for \\='c:' single letter drive prefixes on MSWindows and
+Elisp vars with colons in them.  Line and column can include a leading
+and optional character, L for line and C for column.")
 
 (defconst hpath:variable-regexp "\\$@?\{\\([^\}]+\\)@?\}"
   "Regexp matching variable names that Hyperbole resolves within pathnames.
@@ -1425,6 +1426,9 @@ If PATHNAME does not start with a prefix character:
   preceded by a hash-style link reference, it is relative to the location
   of the link anchor and in the case of Koutlines, relative to the indent
   of the cell;
+
+  Line and column can also include a leading and optional character, L
+  for line and C for column, e.g. \"~/.bashrc:L20:C5\".
 
   if it matches a regular expression in the alist returned by
   (hpath:get-external-display-alist), invoke the associated external
