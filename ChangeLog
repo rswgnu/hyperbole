@@ -1,3 +1,9 @@
+2024-03-29  Mats Lidell  <matsl@gnu.org>
+
+* Makefile: Add install-melpa target. Used to validate hyperbole can be
+    installed from melpa.
+* install-test/melpa/.emacs: .emacs used for the melpa install test.
+
 2024-03-24  Mats Lidell  <matsl@gnu.org>
 
 * test/hui-tests.el (hui--ibut-link-directly-to-file)
