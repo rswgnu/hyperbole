@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     30-Mar-24 at 12:47:21 by Bob Weiner
+;; Last-Mod:     30-Mar-24 at 13:40:27 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1969,6 +1969,7 @@ Return number of matching entries found."
 	(let ((num-found 0)
 	      (incl-hdr t)
 	      (stuck-negative-point 0)
+	      (search-pattern pattern)
 	      entry-start
 	      hdr-pos)
 	  (when max-matches
@@ -1982,12 +1983,11 @@ Return number of matching entries found."
 	    (setq buffer-read-only t))
 
 	  (when (and headline-only
-		     (not (or (string-match (regexp-quote "^") pattern)
-			      (string-match (regexp-quote "\\`") pattern))))
+		     (not (string-match (concat "\\`\\(" (regexp-quote "^") "\\|" (regexp-quote "\\`") "\\)") pattern)))
 	    ;; If matching only to headlines and pattern is not already
 	    ;; anchored to the beginning of lines, add a file-type-specific
 	    ;; headline prefix regexp to the pattern to match.
-	    (setq pattern (concat hyrolo-entry-regexp ".*" pattern)))
+	    (setq search-pattern (concat hyrolo-entry-regexp ".*" pattern)))
 
 	  (setq stuck-negative-point
 		(catch 'stuck
@@ -2003,7 +2003,7 @@ Return number of matching entries found."
 			     match-end)
 			(re-search-forward hyrolo-hdr-and-entry-regexp nil t)
 			(while (and (or (null max-matches) (< num-found max-matches))
-				    (funcall hyrolo-next-match-function pattern))
+				    (funcall hyrolo-next-match-function search-pattern))
 			  (setq match-end (point))
 			  ;; If no entry delimiters found, just return
 			  ;; the line of the match alone.
@@ -2045,7 +2045,9 @@ Return number of matching entries found."
 				  (set-buffer actual-buf))))
 			  (setq num-found (1+ num-found))
 			  (or count-only
-			      (hyrolo-add-match pattern entry-start (point)))))))
+			      ;; Highlight original pattern only here,
+			      ;; not the potentially bol-anchored 'search-pattern'.
+			      (hyrolo-add-match pattern entry-start (point) headline-only))))))
 		  num-found))
 	  (when (and (> num-found 0) (not count-only))
 	    (with-current-buffer hyrolo-display-buffer
@@ -2764,7 +2766,7 @@ entire subtree.  Return INCLUDE-SUB-ENTRIES flag value."
 ;;; Private functions
 ;;; ************************************************************************
 
-(defun hyrolo-add-match (regexp start end)
+(defun hyrolo-add-match (regexp start end headline-only)
   "Add in `hyrolo-display-buffer' an entry matching REGEXP from current region.
 Entry is inserted before point.  The region is between START to END."
   (let ((hyrolo-buf (current-buffer))
@@ -2773,7 +2775,10 @@ Entry is inserted before point.  The region is between START to END."
     (set-buffer (get-buffer-create hyrolo-display-buffer))
     (setq opoint (point))
     (insert (funcall hyrolo-display-format-function hyrolo-entry))
-    (hyrolo-highlight-matches regexp opoint (point))
+    (hyrolo-highlight-matches regexp opoint
+			      (if headline-only
+				  (save-excursion (goto-char opoint) (line-end-position))
+				(point)))
     (set-buffer hyrolo-buf)))
 
 (defun hyrolo-any-file-type-problem-p ()
@@ -2906,13 +2911,13 @@ a default of MM/DD/YYYY."
 	(unless buffer-modified
 	  (kill-buffer buf))))))
 
-(defun hyrolo-highlight-matches (regexp start _end)
+(defun hyrolo-highlight-matches (regexp start end)
   "Highlight matches for REGEXP in region from START to END."
   (when (fboundp 'hproperty:but-add)
     (let ((hproperty:but-emphasize-flag))
       (save-excursion
 	(goto-char start)
-	(while (re-search-forward regexp nil t)
+	(while (re-search-forward regexp end t)
 	  (hproperty:but-add (match-beginning 0) (match-end 0)
 			     (or hyrolo-highlight-face
 				 hproperty:highlight-face)))))))

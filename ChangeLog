@@ -1,5 +1,14 @@
 2024-03-30  Bob Weiner  <rsw@gnu.org>
 
+* hyrolo.el (hyrolo-highlight-matches): Limit search to within 'end' bound.
+            (hyrolo-add-match): Add 'headline-only' flag to limit match highlighting
+    to within the headline of an entry only (its first line).
+            (hyrolo-grep-file): Send 'hyrolo-add-match' the 'headline-only' flag; this
+    fixes match highlighting to just within headlines when the flag is given.
+
+* hyrolo (hyrolo-grep-file): Fix to highlight only the original pattern match, not
+    the bol-anchored search-pattern used when 'headline-only' non-nil is used.
+
 * hyrolo.el (hyrolo-next-match-function): Change doc so function takes only one arg now
     and not a second arg of 'headline-only'.  That arg is now only sent to the higher
     level 'hyrolo-grep-file' function for efficiency.
