@@ -1,3 +1,7 @@
+2024-03-31  Mats Lidell  <matsl@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-test--grep-count): Verify hyrolo match count.
+
 2024-03-31  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-grep-file): Remove this line that was skipping past the
