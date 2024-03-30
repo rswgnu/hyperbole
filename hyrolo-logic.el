@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    13-Jun-89 at 22:57:33
-;; Last-Mod:     27-Jan-24 at 13:01:44 by Bob Weiner
+;; Last-Mod:     30-Mar-24 at 12:36:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -374,7 +374,7 @@ string."
 		  (or (null (setq pat (car pat-list)))
 		      (and (stringp pat)
 			   (goto-char start)
-			   (not (funcall hyrolo-next-match-function (regexp-quote pat) nil)))))
+			   (not (funcall hyrolo-next-match-function (regexp-quote pat))))))
 	(setq pat-list (cdr pat-list)))
       (not pat-list))))
 
@@ -391,7 +391,7 @@ string."
 		    (or (null (setq pat (car pat-list)))
 			(and (stringp pat)
 			     (goto-char start)
-			     (not (funcall hyrolo-next-match-function (regexp-quote pat) nil)))))
+			     (not (funcall hyrolo-next-match-function (regexp-quote pat))))))
 	  (setq pat-list (cdr pat-list)))
 	(if pat-list t nil)))))
 
@@ -407,7 +407,7 @@ string."
 		  (or (not (setq pat (car pat-list)))
 		      (and (or (eq pat t)
 			       (not (goto-char start))
-			       (funcall hyrolo-next-match-function (regexp-quote pat) nil))
+			       (funcall hyrolo-next-match-function (regexp-quote pat)))
 			   (setq matches (1+ matches)))
 		      t)
 		  (< matches 2))
@@ -426,7 +426,7 @@ string."
 		    (setq pat (car pat-list))
 		    (or (eq pat t)
 			(not (goto-char start))
-			(funcall hyrolo-next-match-function (regexp-quote pat) nil)))
+			(funcall hyrolo-next-match-function (regexp-quote pat))))
 	  (setq pat-list (cdr pat-list)))
 	(not pat-list)))))
 
@@ -443,7 +443,7 @@ regular expression."
 		  (or (null (setq pat (car pat-list)))
 		      (and (stringp pat)
 			   (goto-char start)
-			   (not (funcall hyrolo-next-match-function pat nil)))))
+			   (not (funcall hyrolo-next-match-function pat)))))
 	(setq pat-list (cdr pat-list)))
       (not pat-list))))
 
@@ -460,7 +460,7 @@ regular expression."
 		    (or (null (setq pat (car pat-list)))
 			(and (stringp pat)
 			     (goto-char start)
-			     (not (funcall hyrolo-next-match-function pat nil)))))
+			     (not (funcall hyrolo-next-match-function pat)))))
 	  (setq pat-list (cdr pat-list)))
 	(if pat-list t nil)))))
 
@@ -476,7 +476,7 @@ regular expression."
 		  (or (not (setq pat (car pat-list)))
 		      (and (or (eq pat t)
 			       (not (goto-char start))
-			       (funcall hyrolo-next-match-function pat nil))
+			       (funcall hyrolo-next-match-function pat))
 			   (setq matches (1+ matches)))
 		      t)
 		  (< matches 2))
@@ -495,7 +495,7 @@ regular expression."
 		    (setq pat (car pat-list))
 		    (or (eq pat t)
 			(not (goto-char start))
-			(funcall hyrolo-next-match-function pat nil)))
+			(funcall hyrolo-next-match-function pat)))
 	  (setq pat-list (cdr pat-list)))
 	(not pat-list)))))
 
