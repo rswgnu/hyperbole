@@ -4,11 +4,12 @@
 ;;
 ;; Copyright (C) 1992-2024  Free Software Foundation, Inc.
 
-;; Authors:      Robert Weiner <rsw@gnu.org>
+;; Author:       Robert Weiner <rsw@gnu.org>
+;; Authors:      Robert Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Maintainer:   Mats Lidell <matsl@gnu.org>
 ;; Maintainers:  Robert Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:      06-Oct-92 at 11:52:51
-;; Last-Mod:     22-Mar-24 at 08:50:50 by Bob Weiner
+;; Last-Mod:     30-Mar-24 at 11:23:37 by Bob Weiner
 ;; Released:     10-Mar-24
 ;; Version:      9.0.2pre
 ;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp

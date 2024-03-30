@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     21-Mar-24 at 13:33:38 by Bob Weiner
+;; Last-Mod:     30-Mar-24 at 12:47:21 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -306,7 +306,7 @@ Use the `hyrolo-edit' function instead to edit a new or existing entry."
 
 (defvar hyrolo-next-match-function #'hyrolo-next-regexp-match
   "Value is the function to find next match within a HyRolo file.
-Must take two arguments, `match-pattern' and `headline-only-flag'.
+Must take one argument, `match-pattern', a regular expression.
 Must leave point at the end of the match and return the start position
 of the match or nil when no match.")
 
@@ -1980,6 +1980,15 @@ Return number of matching entries found."
 	  (set-buffer actual-buf)
 	  (when new-buf-flag
 	    (setq buffer-read-only t))
+
+	  (when (and headline-only
+		     (not (or (string-match (regexp-quote "^") pattern)
+			      (string-match (regexp-quote "\\`") pattern))))
+	    ;; If matching only to headlines and pattern is not already
+	    ;; anchored to the beginning of lines, add a file-type-specific
+	    ;; headline prefix regexp to the pattern to match.
+	    (setq pattern (concat hyrolo-entry-regexp ".*" pattern)))
+
 	  (setq stuck-negative-point
 		(catch 'stuck
 		  (save-excursion
@@ -1994,7 +2003,7 @@ Return number of matching entries found."
 			     match-end)
 			(re-search-forward hyrolo-hdr-and-entry-regexp nil t)
 			(while (and (or (null max-matches) (< num-found max-matches))
-				    (funcall hyrolo-next-match-function pattern headline-only))
+				    (funcall hyrolo-next-match-function pattern))
 			  (setq match-end (point))
 			  ;; If no entry delimiters found, just return
 			  ;; the line of the match alone.
@@ -2206,13 +2215,10 @@ Calls the functions given by `hyrolo-mode-hook'.
 
   (run-mode-hooks 'hyrolo-mode-hook))
 
-(defun hyrolo-next-regexp-match (regexp headline-only)
-  "In a HyRolo source buffer, move past next occurrence of REGEXP or return nil.
-When found, return the match start position."
-  (when (re-search-forward regexp
-			   (when headline-only
-			     (save-excursion (end-of-visible-line) (point)))
-			   t)
+(defun hyrolo-next-regexp-match (regexp)
+  "In a HyRolo source buffer, Move past next occurrence of REGEXP.
+When found, return the match start position; otherwise, return nil."
+  (when (re-search-forward regexp nil t)
     (match-beginning 0)))
 
 ;; The *HyRolo* buffer uses hyrolo-org-mode and hyrolo-markdown-mode

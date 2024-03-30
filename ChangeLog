@@ -1,3 +1,15 @@
+2024-03-30  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-next-match-function): Change doc so function takes only one arg now
+    and not a second arg of 'headline-only'.  That arg is now only sent to the higher
+    level 'hyrolo-grep-file' function for efficiency.
+            (hyrolo-next-regexp-match): Remove second 'headline-only' flag.
+            (hyrolo-grep-file): With 'headline-only' flag, anchor pattern to match
+     headline lines only and don't send 'headline-only' flag to 'hyrolo-next-match-function'
+     call.  This fixes headline-only searching which previously did not work properly.
+  hyrolo-logic.el (hyrolo-<logical-operator>): No longer send a nil second arg to the
+     'hyrolo-next-match-function' call; no longer needed.
+
 2024-03-21  Mats Lidell  <matsl@gnu.org>
 
 * .github/workflows/main.yml (jobs): Ensure grep for warnings does not
