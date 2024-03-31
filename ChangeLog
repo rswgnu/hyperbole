@@ -1,5 +1,10 @@
 2024-03-31  Bob Weiner  <rsw@gnu.org>
 
+* hyrolo.el (hyrolo-grep-file): Remove this line that was skipping past the
+    beginning of the first matching entry regexp and making matching entry
+    count too low by 1:
+      (re-search-forward hyrolo-hdr-and-entry-regexp nil t)
+
 * hpath.el (hpath:expand-list): Fix to properly expand a dir when 'exists-flag' is t.
 
 2024-03-30  Bob Weiner  <rsw@gnu.org>
