@@ -1275,7 +1275,7 @@ ${variable} per path."
 	    (when (setq path (or (when (and path find-file-wildcards)
 				   (file-expand-wildcards path))
 				 (if exists-flag
-				     (when (file-exists-p path)
+				     (when (and path (file-exists-p path))
 				       (list path))
 				   (list path))))
 	      (if (= (length path) 1)
