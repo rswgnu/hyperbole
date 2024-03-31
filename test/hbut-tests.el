@@ -770,7 +770,6 @@ See #10 for the proper way to add an ibutton name.
 
 (ert-deftest hbut-tests--ibut-at-p-identifies-a-remote-pathname ()
   "Verify `ibut:at-p' identifies a remote pathname."
-  :expected-result :failed
   (hattr:clear 'hbut:current)
   (with-temp-buffer
     (insert "/ssh:user@host.org:/home/user/file\n")

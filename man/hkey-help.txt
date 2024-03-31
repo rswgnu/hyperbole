@@ -10,7 +10,7 @@ Hyperbole
     2nd press at an arg value   Uses value as argument     <- same
     In minibuffer at eol        Accepts minibuffer arg     List completions
     In minibuffer before eol    Deletes rest of arg        Deletes rest of arg
-  On an implicit button/path    Activates button           Button help
+  On an implicit button/path    Activates button/path      Button help
   Within a koutline cell        Collapses and expands      Shows tree props
   Left of a koutline cell       Creates a klink            Moves a tree
   HyRolo Match Buffer           Edits entries and mails to e-mail addresses

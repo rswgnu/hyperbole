@@ -1,3 +1,8 @@
+2024-03-31  Bob Weiner  <rsw@gnu.org>
+
+* test/hbut-tests.el (hbut-tests--ibut-at-p-identifies-a-remote-pathname):
+    Code now fixed so this test passes; remove expected failure clause.
+
 2024-03-31  Mats Lidell  <matsl@gnu.org>
 
 * .github/workflows/main.yml (jobs): Add Emacs 29.3 to versions used for
@@ -6,6 +11,20 @@
 * test/hyrolo-tests.el (hyrolo-test--grep-count): Verify hyrolo match count.
 
 2024-03-31  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (defil): Fix bug gh#rswgnu/hyperbole/503 with change at
+    "hbut.el:L3058:C21" to add lbl-key when referent is extracted from
+    grouping 1 rather than the entire delimited string.
+
+* man/hyperbole.texi (Top):
+  man/version.texi: Update version to 9.0.2pre.
+
+* hibtypes.el (mail-address): Move so lower priority than 'pathname' ibtype
+    so that Tramp paths with embedded email addresses don't trigger as
+    'mail-address' but as 'pathname'.
+  man/hyperbole.texi (Implicit Button Types): Change priority here too.  Add
+    'org-id', 'org-link-outside-org-mode' and 'python-tb-previous-line' ibtypes
+     doc.
 
 * hyrolo.el (hyrolo-grep-file): Remove this line that was skipping past the
     beginning of the first matching entry regexp and making matching entry
