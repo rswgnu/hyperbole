@@ -3,11 +3,11 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    21-Mar-24 at 13:22:27
-;; Last-Mod:     23-Mar-24 at 00:46:17 by Mats Lidell
+;; Last-Mod:     31-Mar-24 at 23:00:30 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
+;; Copyright (C) 2024  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.

@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     31-Mar-24 at 23:04:48 by Mats Lidell
+# Last-Mod:     31-Mar-24 at 23:05:09 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -581,4 +581,3 @@ coverage:
 	--eval "(load-file \"test/hy-test-dependencies.el\")" \
 	--eval "(load-file \"test/hy-test-coverage.el\")" \
 	--eval "(hy-test-coverage-file \"${file}\" \"${COVERAGE_TESTSPEC}\")"
-
