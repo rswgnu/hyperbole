@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     30-Mar-24 at 23:51:18 by Bob Weiner
+;; Last-Mod:     31-Mar-24 at 11:51:46 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2002,7 +2002,6 @@ Return number of matching entries found."
 			(setq hdr-pos (cons (point-min) (point))))
 		      (let* ((case-fold-search t)
 			     match-end)
-			(re-search-forward hyrolo-hdr-and-entry-regexp nil t)
 			(while (and (or (null max-matches) (< num-found max-matches))
 				    (funcall hyrolo-next-match-function search-pattern))
 			  (setq match-end (point))
