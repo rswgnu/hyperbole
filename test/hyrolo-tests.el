@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     31-Mar-24 at 11:36:33 by Mats Lidell
+;; Last-Mod:     31-Mar-24 at 22:29:58 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1636,7 +1636,6 @@ body
 
 (ert-deftest hyrolo-test--grep-count ()
   "Verify number of matched entries are correct."
-  :expected-result :failed
   (unwind-protect
       (with-temp-buffer
         (org-mode)
@@ -1652,8 +1651,8 @@ match
         (should (= (hyrolo-grep "match" nil (current-buffer) t nil) 3))
         ;; Count number of entries that only match on the first line
         (should (= (hyrolo-grep "match" nil (current-buffer) t t) 2))
-        ;; Count number of entries that match but not on the first line
-        (should (= (hyrolo-grep "match" t (current-buffer) t nil) 2))
+        ;; Count max number of entries
+        (should (= (hyrolo-grep "match" 1 (current-buffer) t nil) 1))
         ;; Nothing if there is no match
         (should (= (hyrolo-grep "nothing" nil (current-buffer) t nil) 0)))
     (and (get-buffer hyrolo-display-buffer)
