@@ -1,3 +1,8 @@
+2024-03-31  Bob Weiner  <rsw@gnu.org>
+
+* test/hbut-tests.el (hbut-tests--ibut-at-p-identifies-a-remote-pathname):
+    Code now fixed so this test passes; remove expected failure clause.
+
 2024-03-31  Mats Lidell  <matsl@gnu.org>
 
 * .github/workflows/main.yml (jobs): Add Emacs 29.3 to versions used for
