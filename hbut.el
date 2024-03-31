@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     21-Mar-24 at 15:30:13 by Bob Weiner
+;; Last-Mod:     31-Mar-24 at 17:02:39 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -3055,7 +3055,11 @@ commit changes."
 						      ,link-expr))
 						  t nil button-text)))
 		     ;; link-expr is a string
-		     (ibtype:activate-link referent)))))))
+		     (when referent
+		       (if (string-match "\\(\\`\\|[^%]\\)\\(%s\\)" ,link-expr)
+			   (ibut:label-set referent (match-beginning 1) (match-end 1))
+			 (ibut:label-set referent lbl-start lbl-end))
+		       (ibtype:activate-link referent))))))))
        (put (intern (format "ibtypes::%s" ',type))
 	    'function-documentation
 	    (or ,doc

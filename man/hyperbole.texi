@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     27-Mar-24 at 20:28:14 by Mats Lidell
+@c Last-Mod:     31-Mar-24 at 16:08:15 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -155,8 +155,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 9.0.1
-Printed March 10, 2024.
+Edition 9.0.2pre
+Printed March 31, 2024.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -197,8 +197,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 @sp 2
 
 @example
-Edition 9.0.1
-March 10, 2024
+Edition 9.0.2pre
+March 31, 2024
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -2507,18 +2507,17 @@ activated anywhere within such a line.
 @cindex stack frame
 @cindex breakpoint
 @cindex source line
-@item debugger-source
-Jump to the source line associated with a debugger stack frame or
-breakpoint line.  This works with gdb, dbx, and xdb.  Such lines are
-recognized in any buffer.
-
-@findex ibtypes hib-python-traceback
+@findex hib-python-traceback
 @cindex pdb
 @cindex python traceback
 @cindex python error
 @cindex source line
-@item hib-python-traceback
-Test for and jump to line referenced in Python pdb, traceback, or pytype error.
+@item debugger-source
+Jump to the source line associated with a debugger stack frame or
+breakpoint line.  This works with gdb, dbx, and xdb.  Such lines are
+recognized in any buffer.  For example, in Python, this will test for
+and jump to a source line referenced in Python pdb, traceback, or
+pytype error.
 
 @findex ibtypes grep-msg
 @cindex grep
@@ -2528,7 +2527,7 @@ Test for and jump to line referenced in Python pdb, traceback, or pytype error.
 Jump to the line associated with a grep or compilation error message.
 Messages are recognized in any buffer.
 
-@findex hyrolo-stuck-msg
+@findex ibtypes hyrolo-stuck-msg
 @cindex hyrolo error
 @item hyrolo-stuck-msg
 Jump to the position where a HyRolo search has become stuck from the error.
@@ -2760,6 +2759,12 @@ Each line of the summary may be selected to jump to the associated section.
 Display any in-file Markdown link referent.  Pathnames and urls are
 handled elsewhere.
   
+@findex ibtypes org-link-outside-org-mode
+@cindex Org link, outside Org
+@item org-link-outside-org-mode
+@noindent
+Activate an Org link outside of an Org buffer.
+
 @findex ibtypes git-commit-reference
 @findex hypb:fgrep-git-log
 @findex hypb:grep-git-log
@@ -2774,31 +2779,6 @@ and @code{hypb:grep-git-log} to list git commit references whose changesets cont
 either the string (fgrep) or regular expression (grep) given.  Then an Action Key
 press displays the associated changeset.
 
-@findex ibtypes social-reference
-@cindex hashtag
-@cindex username
-@cindex social media
-@cindex social reference
-@vindex hibtypes-social-default-service
-@item social-reference
-Display the web page associated with a social media hashtag or
-username reference at point.
-
-Reference format is:
-@example
-[facebook|instagram|twitter]?[#@@]<hashtag-or-username> or
-[fb|in|tw]?[#@@]<hashtag-or-username>
-@end example
-
-@noindent
-For example, @samp{fb@@someuser} displays the home page for facebook user
-@samp{someuser} and @samp{in#hashtag} displays photos with the hashtag
-@samp{hashtag}.  The first part of the label for a button of this type
-is the social media service name.  The service name defaults to the
-value of @code{hibtypes-social-default-service} (default value of
-``twitter'') when not given, so #hashtag would be the same as
-twitter#hashtag.
-
 @findex ibtypes annot-bib
 @cindex bibliography
 @cindex reference
@@ -2807,19 +2787,6 @@ Display annotated bibliography entries defined within the same buffer
 as the reference.  References must be delimited by square brackets, must
 begin with a word constituent character, and must not be in buffers
 whose names begin with a ` ' or `*' character.
-
-@findex ibtypes mail-address
-@cindex e-mail address
-@cindex rolo address
-@cindex address
-@item mail-address
-If on an e-mail address in a specific buffer type, compose mail to that
-address in another window. Applies to any major mode descended from those
-in @code{hypb:mail-address-mode-list}, the HyRolo match buffer, any buffer
-attached to a file included in @code{hyrolo-file-list}, or any buffer with
-@file{mail} or @file{rolo} (case-insensitive) within its name.  If
-@code{hypb:mail-address-mode-list} is set to @samp{nil}, this button type is
-active in all buffers.
 
 @findex ibtypes www-url
 @cindex URL
@@ -2884,6 +2851,27 @@ PATH-style variable, the path at point is displayed; empty paths,
 e.g. @file{::} represent the current directory, @file{.}.  Must have at
 least four paths within the variable value for this to work.
 
+@findex ibtypes mail-address
+@cindex e-mail address
+@cindex rolo address
+@cindex address
+@item mail-address
+If on an e-mail address in a specific buffer type, compose mail to that
+address in another window. Applies to any major mode descended from those
+in @code{hypb:mail-address-mode-list}, the HyRolo match buffer, any buffer
+attached to a file included in @code{hyrolo-file-list}, or any buffer with
+@file{mail} or @file{rolo} (case-insensitive) within its name.  If
+@code{hypb:mail-address-mode-list} is set to @samp{nil}, this button type is
+active in all buffers.
+
+@findex ibtypes org-id
+@cindex Org IDs
+@cindex Org Roam IDs
+@item org-id
+With an Action Key press on an Org Roam or Org node ID at point,
+display the associated node.  If on the :ID: definition line, display
+a message about how to copy the id.
+
 @findex ibtypes hyperbole-run-test-definition
 @cindex edebugging tests
 @cindex debugging tests
@@ -2897,21 +2885,55 @@ With an Action Key press on the name in the first line of an ert test
 def, evaluate and run the ERT test.  With an Assist Key press instead,
 edebug the test and step through it.
 
+@findex ibtypes social-reference
+@cindex hashtag
+@cindex username
+@cindex social media
+@cindex social reference
+@vindex hibtypes-social-default-service
+@item social-reference
+Display the web page associated with a social media hashtag or
+username reference at point.
+
+Reference format is:
+@example
+[facebook|instagram|twitter]?[#@@]<hashtag-or-username> or
+[fb|in|tw]?[#@@]<hashtag-or-username>
+@end example
+
+@noindent
+For example, @samp{fb@@someuser} displays the home page for facebook user
+@samp{someuser} and @samp{in#hashtag} displays photos with the hashtag
+@samp{hashtag}.  The first part of the label for a button of this type
+is the social media service name.  The service name defaults to the
+value of @code{hibtypes-social-default-service} (default value of
+``twitter'') when not given, so #hashtag would be the same as
+twitter#hashtag.
+
 @findex ibtypes hyperbole-run-tests
+@cindex ert
+@cindex testing
 @item hyperbole-run-tests
 Recognize Action Buttons of the form @code{<hyperbole-run-tests
 test-selector>} which when activated run Hyperbole tests using the ERT
 framework.  The @code{test-selector} argument is as described in
 @code{ert-select-tests}.
 
-
 @findex ibtypes hyperbole-run-test
 @item hyperbole-run-test
 Recognize Action Buttons of the form @code{<hyperbole-run-test
 test-name>} which when activated run individual Hyperbole tests, each
 given by the @code{<test-name>} argument, an unquoted name.
-@end table
 
+@finex ibtypes python-tb-previous-line ()
+@cindex python traceback
+@cindex stack frame
+@item python-tb-previous-line
+Move to prior line with potential Python line ref.  In Python,
+tracebacks may be on a line just below the source reference line so
+since not on a Hyperbole button, move back a line and check for a
+source reference line again.
+@end table
 
 @node Action Buttons,  , Implicit Button Types, Implicit Buttons
 @subsection  Action Buttons
