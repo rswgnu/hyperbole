@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     30-Mar-24 at 13:40:27 by Bob Weiner
+;; Last-Mod:     30-Mar-24 at 23:51:18 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -665,13 +665,13 @@ non-nil skips retrieval of matching entries.  Optional HEADLINE-ONLY searches
 only the first line of entries, not the full text.  Optional NO-DISPLAY non-nil
 retrieves entries but does not display them.
 
-Nil value of MAX-MATCHES means find all matches, t value means find all
-matches but omit file headers, negative values mean find up to the inverse of
-that number of entries and omit file headers.
+Nil value of MAX-MATCHES means find all entries that match, t value means find
+all matching entries but omit file headers, negative values mean find up to the
+inverse of that number of matching entries and omit file headers.
 
 Return number of entries matched.  See also documentation for the variable
-`hyrolo-file-list' and the function `hyrolo-fgrep-logical' for documentation on
-the logical sexpression matching."
+`hyrolo-file-list' and the function `hyrolo-fgrep-logical' for documentation
+on the logical sexpression matching."
   (interactive "sFind rolo string (or logical sexpression): \nP")
   (setq string (string-trim string "\"" "\""))
   (let ((total-matches 0))
@@ -769,9 +769,9 @@ HEADLINE-ONLY searches only the first line of entries, not the
 full text.  Optional NO-DISPLAY non-nil retrieves entries but
 does not display.
 
-Nil value of MAX-MATCHES means find all matches, t value means find all matches
-but omit file headers, negative values mean find up to the inverse of that
-number of entries and omit file headers.
+Nil value of MAX-MATCHES means find all entries that match, t value means find
+all matching entries but omit file headers, negative values mean find up to the
+inverse of that number of matching entries and omit file headers.
 
 Return number of entries matched.  See also documentation for the variable
 \`hyrolo-file-list'."
@@ -1947,6 +1947,7 @@ Retrieve a maximum of optional MAX-MATCHES.  Nil value of
 MAX-MATCHES means find all matches, t value means find all
 matches but omit file headers, negative values mean find up to
 the inverse of that number of entries and omit file headers.
+
 Optional COUNT-ONLY non-nil skips display of matching entries.
 Optional HEADLINE-ONLY non-nil searches only the first line of
 entries, rather than the full text.

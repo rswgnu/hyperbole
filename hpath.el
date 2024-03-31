@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     27-Mar-24 at 20:22:55 by Mats Lidell
+;; Last-Mod:     31-Mar-24 at 00:23:02 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1274,12 +1274,15 @@ ${variable} per path."
 	    (setq path (hpath:expand path exists-flag))
 	    (when (setq path (or (when (and path find-file-wildcards)
 				   (file-expand-wildcards path))
-				 (unless exists-flag (list path))))
+				 (if exists-flag
+				     (when (and path (file-exists-p path))
+				       (list path))
+				   (list path))))
 	      (if (= (length path) 1)
 		  (setq path (car path))
 		(setq paths (nconc (cdr path) paths)
 		      path (car path)))
-	      (if (file-directory-p path)
+	      (if (and path (file-directory-p path))
 		  (directory-files-recursively path (or match-regexp ""))
 		(list path))))
 	  (seq-filter #'stringp paths)))
