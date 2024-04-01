@@ -25,6 +25,8 @@
 * test/hpath-tests.el (hpath:prepend-shell-directory-test):
 * test/demo-tests.el (demo-manifest-test): Replace COPYING with DEMO since
     it is not exported in all installations, i.e. MELPA.
+    (hpath:prepend-shell-directory-test): Use kotl-mode.el instead of
+    version.texi which is not exported.
 
 2024-04-01  Bob Weiner  <rsw@gnu.org>
 
