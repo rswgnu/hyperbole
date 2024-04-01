@@ -1,3 +1,9 @@
+2024-04-01  Mats Lidell  <matsl@gnu.org>
+
+* test/hpath-tests.el (hpath:prepend-shell-directory-test):
+* test/demo-tests.el (demo-manifest-test): Replace COPYING with DEMO since
+    it is not exported in all installations, i.e. MELPA.
+
 2024-03-31  Bob Weiner  <rsw@gnu.org>
 
 * test/hbut-tests.el (hbut-tests--ibut-at-p-identifies-a-remote-pathname):

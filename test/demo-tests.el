@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     21-Mar-24 at 10:52:07 by Bob Weiner
+;; Last-Mod:      1-Apr-24 at 17:35:46 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -282,14 +282,14 @@
       (progn
         (find-file (expand-file-name "MANIFEST" hyperb:dir))
         (goto-char (point-min))
-        (forward-line 1)
-        (should (looking-at "COPYING"))
+        (forward-line 2)
+        (should (looking-at "DEMO"))
         (action-key)
-        (should (string= "COPYING" (buffer-name)))
-        (should (looking-at ".*GNU GENERAL PUBLIC LICENSE")))
+        (should (string= "DEMO" (buffer-name)))
+        (should (looking-at "\* GNU Hyperbole Full Demo")))
     (progn
       (hy-test-helpers:kill-buffer "MANIFEST")
-      (hy-test-helpers:kill-buffer "COPYING"))))
+      (hy-test-helpers:kill-buffer "DEMO"))))
 
 ;; Email compose
 (ert-deftest demo-mail-compose-test ()
