@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     29-Mar-24 at 23:29:53 by Mats Lidell
+# Last-Mod:     31-Mar-24 at 23:05:09 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -562,3 +562,22 @@ endif
 
 dockerized:
 	docker run -v $$(pwd):/hyperbole -it silex/emacs:${DOCKER_VERSION} bash -c cd hyperbole && make ${DOCKER_TARGETS}
+
+# Run with coverage. Run tests given by testspec and monitor the
+# coverage for the specified file.
+#
+# Usage:
+#    make coverage file=<file> testspec=<testspec>
+
+# Specify file to inspect for coverage while running tests given by testspec
+COVERAGE_FILE = ${file}
+ifeq ($(origin testspec), command line)
+COVERAGE_TESTSPEC = ${testspec}
+else
+COVERAGE_TESTSPEC = t
+endif
+coverage:
+	$(EMACS) --quick $(PRELOADS) \
+	--eval "(load-file \"test/hy-test-dependencies.el\")" \
+	--eval "(load-file \"test/hy-test-coverage.el\")" \
+	--eval "(hy-test-coverage-file \"${file}\" \"${COVERAGE_TESTSPEC}\")"
