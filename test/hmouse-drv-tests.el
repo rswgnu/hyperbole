@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 22:52:00
-;; Last-Mod:      8-Mar-24 at 16:52:52 by Mats Lidell
+;; Last-Mod:      5-Apr-24 at 23:05:53 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -148,6 +148,18 @@
         (set-buffer "*Help*")
         (should (looking-at "emacs-version")))
     (ibtype:delete 'ibtypes::defil-key)))
+
+(ert-deftest hbut-defil-verbatim ()
+  "Verify defil to recognize filenames highlighted using org =verbatim= text."
+  ;; gh#rswgnu/hyperbole/503
+  (defil defil-verbatim "=" "=" ".*" "\\&")
+  (unwind-protect
+      (with-temp-buffer
+        (org-mode)
+        (insert "=~/test.txt=\n")
+        (goto-char 4)
+        (hy-test-helpers:action-key-should-call-hpath:find "~/test.txt"))
+    (ibtype:delete 'ibtypes::defil-verbatim)))
 
 ;; Labels
 (ert-deftest hbut-ib-link-to-file-with-label ()
