@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      5-Apr-24 at 23:23:04 by Mats Lidell
+;; Last-Mod:      6-Apr-24 at 00:06:20 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -219,8 +219,14 @@ in all buffers."
                             (mapcar #'get-file-buffer (hyrolo-get-file-list))))))
     (let ((address (mail-address-at-p)))
       (when address
+        ;; Initialize user-specified mail reader if need be.
+        (if (and (symbolp hmail:init-function)
+	         (fboundp hmail:init-function)
+	         (listp (symbol-function hmail:init-function))
+	         (eq 'autoload (car (symbol-function hmail:init-function))))
+	    (funcall hmail:init-function))
         (ibut:label-set address (match-beginning 1) (match-end 1))
-        (hact 'mail-other-window nil address)))))
+        (hact hmail:compose-mail-function nil address)))))
 
 ;;; ========================================================================
 ;;; Displays files and directories when a valid pathname is activated.
@@ -341,60 +347,6 @@ display options."
 ;;; ========================================================================
 
 (load "hsys-www")
-
-;;; ========================================================================
-;;; Composes mail, in another window, to the e-mail address at point.
-;;; ========================================================================
-
-(defun mail-address-at-p ()
-  "Return e-mail address, a string, that point is within or nil."
-  (let ((case-fold-search t))
-    (save-excursion
-      (skip-chars-backward "^ \t\n\r\f\"\'(){}[];:<>|")
-      (and (or (looking-at hypb:mail-address-regexp)
-               (looking-at (concat "mailto:" hypb:mail-address-regexp)))
-           (save-match-data
-             (string-match hypb:mail-address-tld-regexp (match-string-no-properties 1)))
-           (match-string-no-properties 1)))))
-
-(defib mail-address ()
-  "If on an e-mail address, compose mail to that address in another window.
-
-Applies to any major mode in `hypb:mail-address-mode-list', the HyRolo match
-buffer, any buffer attached to a file in `hyrolo-file-list', or any buffer with
-\"mail\" or \"rolo\" (case-insensitive) within its name.
-
-If `hypb:mail-address-mode-list' is set to nil, this button type is active
-in all buffers."
-  (when (let ((case-fold-search t))
-          (or
-           (and (or (null hypb:mail-address-mode-list)
-		    (apply #'derived-mode-p hypb:mail-address-mode-list))
-                (not (string-match "-Elements\\'" (buffer-name)))
-                ;; Don't want this to trigger within an OOBR-FTR buffer.
-                (not (string-match "\\`\\(OOBR.*-FTR\\|oobr.*-ftr\\)"
-                                   (buffer-name)))
-                (not (string-equal "*Implementors*" (buffer-name))))
-           (and
-            (string-match "mail\\|rolo" (buffer-name))
-            ;; Don't want this to trigger in a mail/news summary buffer.
-            (not (or (hmail:lister-p) (hnews:lister-p))))
-           (when (boundp 'hyrolo-display-buffer)
-             (equal (buffer-name) hyrolo-display-buffer))
-           (and buffer-file-name
-                (boundp 'hyrolo-file-list)
-                (set:member (current-buffer)
-                            (mapcar #'get-file-buffer (hyrolo-get-file-list))))))
-    (let ((address (mail-address-at-p)))
-      (when address
-        ;; Initialize user-specified mail reader if need be.
-        (if (and (symbolp hmail:init-function)
-	         (fboundp hmail:init-function)
-	         (listp (symbol-function hmail:init-function))
-	         (eq 'autoload (car (symbol-function hmail:init-function))))
-	    (funcall hmail:init-function))
-        (ibut:label-set address (match-beginning 1) (match-end 1))
-        (hact hmail:compose-mail-function nil address)))))
 
 ;;; ========================================================================
 ;;; Handles internal references within an annotated bibliography, delimiters=[]
