@@ -1,3 +1,8 @@
+2024-04-05  Mats Lidell  <matsl@gnu.org>
+
+* test/hmouse-drv-tests.el (hbut-defil-verbatim): Add test for reported
+    issue gh#rswgnu/hyperbole/503.
+
 2024-04-01  Mats Lidell  <matsl@gnu.org>
 
 * test/hpath-tests.el (hpath:prepend-shell-directory-test):
