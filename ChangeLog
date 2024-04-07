@@ -1,3 +1,10 @@
+2024-04-07  Bob Weiner  <rsw@gnu.org>
+
+* Makefile (version, HYPERBOLE_FILES, TEXINFO_SRC):
+  test/hpath-tests.el (hpath:prepend-shell-directory-test):
+  man/hyperbole.texi: Remove "version.texi" file and include here to simplify
+    doc build recipes.
+
 2024-03-31  Bob Weiner  <rsw@gnu.org>
 
 * test/hbut-tests.el (hbut-tests--ibut-at-p-identifies-a-remote-pathname):

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 23:26:00
-;; Last-Mod:     24-Mar-24 at 10:10:33 by Mats Lidell
+;; Last-Mod:      7-Apr-24 at 10:30:56 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -207,7 +207,7 @@
                (default-directory hyperb:dir))
 	  (should explicit-shell-file-name)
           (hypb-run-shell-test-command shell-cmd shell-buffer)
-          (dolist (file '("COPYING" "man/hkey-help.txt" "man/version.texi" "man/im/demo.png"))
+          (dolist (file '("COPYING" "man/hkey-help.txt" "man/im/demo.png"))
             (goto-char (point-min))
             (should (search-forward (car (last (split-string file "/"))) nil t))
             (backward-char 5)

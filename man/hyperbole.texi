@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     31-Mar-24 at 16:08:15 by Bob Weiner
+@c Last-Mod:      7-Apr-24 at 10:27:10 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -25,7 +25,10 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@include version.texi
+@set UPDATED April, 2024
+@set UPDATED-MONTH April 2024
+@set EDITION 9.0.2pre
+@set VERSION 9.0.2pre
 
 @ifnotinfo
 @macro bkbd {arg}
@@ -156,7 +159,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed March 31, 2024.
+Printed April 7, 2024.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -198,7 +201,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.2pre
-March 31, 2024
+April 7, 2024
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
