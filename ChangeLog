@@ -1,5 +1,10 @@
 2024-04-07  Bob Weiner  <rsw@gnu.org>
 
+* hibtypes.el (org-link-outside-org-mode): Fix by removing this test:
+    (eq hsys-org-enable-smart-keys t) since should follow Org links outside
+    Org modes independent of this setting, as long as the Hyperbole mode
+    is active.
+
 * Makefile (version, HYPERBOLE_FILES, TEXINFO_SRC):
   test/hpath-tests.el (hpath:prepend-shell-directory-test):
   man/hyperbole.texi: Remove "version.texi" file and include here to simplify
