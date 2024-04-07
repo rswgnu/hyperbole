@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     31-Mar-24 at 11:51:46 by Bob Weiner
+;; Last-Mod:      4-Apr-24 at 21:47:39 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -519,6 +519,82 @@ entry which begins with the parent string."
       (run-hooks 'hyrolo-add-hook)
       (when (called-interactively-p 'interactive)
 	(message "Edit entry at point.")))))
+
+;;;###autoload
+(defun hyrolo-consult-grep (&optional regexp max-matches)
+  "Interactively search `hyrolo-file-list' with a consult package grep command.
+Use ripgrep (rg) if found, otherwise, plain grep.  Interactively
+show all matches from `hyrolo-file-list'.  Initialize search with
+optional REGEXP and interactively prompt for changes.  Limit matches
+per file to the absolute value of MAX-MATCHES, if given and not 0.  If
+0, match to headlines only (lines that start with a '^[*#]+ ' regexp)."
+  (interactive "i\nP")
+  (unless (package-installed-p 'consult)
+    (package-install 'consult))
+  (require 'consult)
+  (let ((consult-version (hyrolo-get-consult-version)))
+    ;; Multi-file support added after consult version "0.32"
+    (when (not (and consult-version (string-greaterp consult-version "0.32")))
+      (error "(hyrolo-consult-grep): consult package version is %s; update required"
+	     consult-version)))
+  (let* ((grep-includes (concat "--include *.kot --include *.kotl"
+				" --include *.md --include *.markdown --include *.mkd --include *.mdown --include *.mkdn --include *.mdwn"
+				" --include *.org --include *.otl --include *.outl"))
+	 (ripgrep-globs "--glob *.{kot,kotl,md,markdown,mkd,mdown,mkdn,mdwn,org,otl,outl}")
+	 (consult-grep-args
+	  (if (listp consult-grep-args)
+	      (append consult-grep-args (list grep-includes))
+	    (concat consult-grep-args " " grep-includes)))
+	 (consult-ripgrep-args
+	  (if (listp consult-ripgrep-args)
+	      (append consult-ripgrep-args (list ripgrep-globs))
+            (concat consult-ripgrep-args " " ripgrep-globs)))
+	 (paths (if find-file-wildcards
+		    ;; Use only the directory of paths with wildcards
+		    ;; since the grep command filters to desired file
+		    ;; types much more efficiently.
+		    (mapcar (lambda (path)
+			      (if (string-match "[\\/]?\\([^*?\\/]*[*?][^\\/]+\\'\\)" path)
+				  (substring path 0 (match-beginning 1))
+				path))
+			    hyrolo-file-list)
+		  hyrolo-file-list)))
+    (hyrolo-consult-grep-paths paths regexp max-matches)))
+
+;;;###autoload
+(defun hyrolo-consult-org-roam-grep (&optional regexp max-matches)
+  "Interactively narrow and select Org Roam nodes by line.
+Use ripgrep (rg) if found, otherwise, plain grep to search Org
+files within `org-roam-directory'.  Initialize search with
+optional REGEXP and interactively prompt for changes.  Limit
+matches per file to the absolute value of MAX-MATCHES, if given
+and not 0.  If 0, match to headlines only (lines that start with
+a '^[*#]+ ' regexp)."
+  (interactive "i\nP")
+  (unless (package-installed-p 'org-roam)
+    (package-install 'org-roam))
+  (require 'org-roam)
+  (unless (file-readable-p org-roam-directory)
+    (make-directory org-roam-directory))
+  (unless org-roam-db-autosync-mode
+    (org-roam-db-autosync-mode))
+  (if (file-readable-p org-roam-directory)
+      (let ((consult-grep-args
+	     (if (listp consult-grep-args)
+		 (append consult-grep-args (list "--include *.org"))
+	       (concat consult-grep-args " --include *.org")))
+	    (consult-ripgrep-args
+	     (if (listp consult-ripgrep-args)
+		 (append consult-ripgrep-args (list "--glob *.org"))
+               (concat consult-ripgrep-args " --glob *.org"))))
+	(hyrolo-consult-grep-paths (list org-roam-directory) regexp max-matches))
+    (error "(hyrolo-consult-org-roam-grep): `org-roam-directory', \"%s\", does not exist" org-roam-directory)))
+
+;;;###autoload
+(defun hyrolo-consult-org-roam-title ()
+  "Interactively narrow and select Org Roam nodes by title."
+  (interactive)
+  (org-roam-node-find nil nil (lambda (node) (zerop (org-roam-node-level node)))))
 
 ;;;###autoload
 (defun hyrolo-display-matches (&optional display-buf return-to-buffer)
@@ -1814,42 +1890,6 @@ returned to the number given."
     (goto-char (1- (point)))))
 
 ;;;###autoload
-(defun hyrolo-consult-grep (&optional regexp max-matches)
-  "Interactively search `hyrolo-file-list' with a consult package grep command.
-Use ripgrep (rg) if found, otherwise, plain grep.  Interactively
-show all matches from `hyrolo-file-list'.  Initialize search with
-optional REGEXP and interactively prompt for changes.  Limit matches
-per file to the absolute value of MAX-MATCHES if given."
-  (interactive "i\nP")
-  (unless (package-installed-p 'consult)
-    (package-install 'consult))
-  (require 'consult)
-  (let ((consult-version (hyrolo-get-consult-version)))
-    ;; Multi-file support added after consult version "0.32"
-    (when (not (and consult-version (string-greaterp consult-version "0.32")))
-      (error "(hyrolo-consult-grep): consult package version is %s; update required"
-	     consult-version)))
-  (let ((files (seq-filter #'file-readable-p (hyrolo-get-file-list)))
-	(consult-grep-args (if (integerp max-matches)
-			       (if (listp consult-grep-args)
-				   (append consult-grep-args
-					   (list (format "-m %d" (abs max-matches))))
-				 (concat consult-grep-args
-					 (format " -m %d" (abs max-matches))))
-			     consult-grep-args))
-	(consult-ripgrep-args (if (integerp max-matches)
-				  (if (listp consult-ripgrep-args)
-				      (append consult-ripgrep-args
-					      (list (format "-m %d" (abs max-matches))))
-				    (concat consult-ripgrep-args
-					    (format " -m %d" (abs max-matches))))
-				consult-ripgrep-args))
-	(grep-func (cond ((executable-find "rg")
-			  #'consult-ripgrep)
-			 (t #'consult-grep))))
-    (funcall grep-func files regexp)))
-
-;;;###autoload
 (defun hyrolo-fgrep-directories (file-regexp &rest dirs)
   "String/logical HyRolo search over files matching FILE-REGEXP in rest of DIRS."
   (apply #'hyrolo-search-directories #'hyrolo-fgrep file-regexp dirs))
@@ -2006,7 +2046,7 @@ Return number of matching entries found."
 				    (funcall hyrolo-next-match-function search-pattern))
 			  (setq match-end (point))
 			  ;; If no entry delimiters found, just return
-			  ;; the line of the match alone.
+			  ;; the single line of the match alone.
 			  (unless (re-search-backward hyrolo-hdr-and-entry-regexp nil t)
 			    (goto-char (line-beginning-position)))
 			  (setq entry-start (point))
@@ -2873,6 +2913,52 @@ HYROLO-BUF may be a file-name, `buffer-name', or buffer."
 				  (get-buffer hyrolo-buf))
 			     hyrolo-buf))
 	     (buffer-list))))
+
+(defun hyrolo-consult-grep-paths (paths &optional regexp max-matches)
+  "Interactively search PATHS with a consult package grep command.
+Use ripgrep (rg) if found, otherwise, plain grep.  Interactively
+show all matches from PATHS; see the documentation for the `dir'
+argument in `consult-grep' for valid values of PATHS. 
+
+Initialize search with optional REGEXP and interactively prompt
+for changes.  Limit matches per file to the absolute value of
+MAX-MATCHES, if given and not 0.  If 0, match to headlines
+only (lines that start with a '^[*#]+ ' regexp)."
+  (unless (package-installed-p 'consult)
+    (package-install 'consult))
+  (require 'consult)
+  (let ((consult-version (hyrolo-get-consult-version)))
+    ;; Multi-file support added after consult version "0.32"
+    (when (not (and consult-version (string-greaterp consult-version "0.32")))
+      (error "(hyrolo-consult-grep): consult package version is %s; update required"
+	     consult-version)))
+  (when max-matches
+    (setq max-matches (prefix-numeric-value max-matches)))
+  (when (and (integerp max-matches) (zerop max-matches))
+    (setq regexp (concat "^[*#]+ " (or regexp ""))))
+  (let ((consult-grep-args (if (integerp max-matches)
+			       (if (listp consult-grep-args)
+				   (append consult-grep-args
+					   (list (format "-m %d" (abs max-matches))))
+				 (concat consult-grep-args
+					 (format " -m %d" (abs max-matches))))
+			     consult-grep-args))
+	(consult-ripgrep-args (if (integerp max-matches)
+				  (if (listp consult-ripgrep-args)
+				      (append consult-ripgrep-args
+					      (list (format "-m %d" (abs max-matches))))
+				    (concat consult-ripgrep-args
+					    (format " -m %d" (abs max-matches))))
+				consult-ripgrep-args))
+	(grep-func (cond ((executable-find "rg")
+			  #'consult-ripgrep)
+			 (t #'consult-grep))))
+    ;; Consult split style usually uses '#' as a separator char but
+    ;; that interferes with matching to Markdown # chars at the start
+    ;; of a line in the regexp, so disable the separator char as it is
+    ;; not needed for simple regexp searches.
+    (let ((consult-async-split-style nil))
+      (funcall grep-func paths regexp))))
 
 (defun hyrolo-current-date ()
   "Return the current date (a string) in a form used for rolo entry insertion."
