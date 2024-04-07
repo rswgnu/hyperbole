@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      4-Apr-24 at 21:47:39 by Bob Weiner
+;; Last-Mod:      7-Apr-24 at 18:40:47 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -527,7 +527,7 @@ Use ripgrep (rg) if found, otherwise, plain grep.  Interactively
 show all matches from `hyrolo-file-list'.  Initialize search with
 optional REGEXP and interactively prompt for changes.  Limit matches
 per file to the absolute value of MAX-MATCHES, if given and not 0.  If
-0, match to headlines only (lines that start with a '^[*#]+ ' regexp)."
+0, match to headlines only (lines that start with a '^[*#]+[ \t]+' regexp)."
   (interactive "i\nP")
   (unless (package-installed-p 'consult)
     (package-install 'consult))
@@ -569,7 +569,7 @@ files within `org-roam-directory'.  Initialize search with
 optional REGEXP and interactively prompt for changes.  Limit
 matches per file to the absolute value of MAX-MATCHES, if given
 and not 0.  If 0, match to headlines only (lines that start with
-a '^[*#]+ ' regexp)."
+a '^[*#]+[ \t]+' regexp)."
   (interactive "i\nP")
   (unless (package-installed-p 'org-roam)
     (package-install 'org-roam))
@@ -2778,9 +2778,10 @@ entire subtree.  Return INCLUDE-SUB-ENTRIES flag value."
 	(progn
 	  (outline-end-of-subtree)
 	  (goto-char (1+ (point))))
-      ;; Error means point is before the first buffer heading; move
-      ;; past file header to any next entry.
-      (error (hyrolo-hdr-move-after-p))))
+      ;; Error or any signal condition (all caught with the 't' symbol)
+      ;; means point is before the first buffer heading; move past
+      ;; file header to any next entry.
+      (t (hyrolo-hdr-move-after-p))))
   include-sub-entries)
 
 (defun hyrolo-to-next-loc ()
@@ -2923,7 +2924,7 @@ argument in `consult-grep' for valid values of PATHS.
 Initialize search with optional REGEXP and interactively prompt
 for changes.  Limit matches per file to the absolute value of
 MAX-MATCHES, if given and not 0.  If 0, match to headlines
-only (lines that start with a '^[*#]+ ' regexp)."
+only (lines that start with a '^[*#]+[ ]t]+' regexp)."
   (unless (package-installed-p 'consult)
     (package-install 'consult))
   (require 'consult)
@@ -2935,15 +2936,17 @@ only (lines that start with a '^[*#]+ ' regexp)."
   (when max-matches
     (setq max-matches (prefix-numeric-value max-matches)))
   (when (and (integerp max-matches) (zerop max-matches))
-    (setq regexp (concat "^[*#]+ " (or regexp ""))))
-  (let ((consult-grep-args (if (integerp max-matches)
+    ;; Final space in leading regexp in next line makes it work with
+    ;; the Orderless package.
+    (setq regexp (concat "^[*#]+[ \t]+ " (or regexp ""))))
+  (let ((consult-grep-args (if (and (integerp max-matches) (not (zerop max-matches)))
 			       (if (listp consult-grep-args)
 				   (append consult-grep-args
 					   (list (format "-m %d" (abs max-matches))))
 				 (concat consult-grep-args
 					 (format " -m %d" (abs max-matches))))
 			     consult-grep-args))
-	(consult-ripgrep-args (if (integerp max-matches)
+	(consult-ripgrep-args (if (and (integerp max-matches) (not (zerop max-matches)))
 				  (if (listp consult-ripgrep-args)
 				      (append consult-ripgrep-args
 					      (list (format "-m %d" (abs max-matches))))
