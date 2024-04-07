@@ -1,3 +1,10 @@
+2024-04-07  Bob Weiner  <rsw@gnu.org>
+
+* Makefile (version, HYPERBOLE_FILES, TEXINFO_SRC):
+  test/hpath-tests.el (hpath:prepend-shell-directory-test):
+  man/hyperbole.texi: Remove "version.texi" file and include here to simplify
+    doc build recipes.
+
 2024-04-05  Mats Lidell  <matsl@gnu.org>
 
 * test/hmouse-drv-tests.el (hbut-defil-verbatim): Add test for reported
@@ -9,7 +16,18 @@
 * test/demo-tests.el (demo-manifest-test): Replace COPYING with DEMO since
     it is not exported in all installations, i.e. MELPA.
 
+2024-04-01  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-consult-grep-paths): Add this support function for
+    hyrolo-consult commands.
+            (hyrolo-consult-grep): Rewrote to select files to search within
+    the grep command itself for greatly increased speed.
+            (hyrolo-consult-org-roam-grep, hyrolo-consult-org-roam-title): Add.
+
 2024-03-31  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-consult-grep): Convert any non-nil prefix arg
+    'max-matches' to a number so it is utilized.
 
 * test/hbut-tests.el (hbut-tests--ibut-at-p-identifies-a-remote-pathname):
     Code now fixed so this test passes; remove expected failure clause.

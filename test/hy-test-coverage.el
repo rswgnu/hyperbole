@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    21-Mar-24 at 13:22:27
-;; Last-Mod:     31-Mar-24 at 23:00:30 by Mats Lidell
+;; Last-Mod:      7-Apr-24 at 10:43:42 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -14,12 +14,12 @@
 
 ;;; Commentary:
 ;;
-;; Uses the testcover functionality and runs the a specified test
+;; Uses the testcover functionality and runs a specified test
 ;; suite for a file that is monitored for coverage.  See
 ;; "testcover.el" for how to interpret the "splotches", the color code
 ;; characters in the monitored filed.
 ;;
-;; See also "../Makefile#coverage", a make target for running from the
+;; See also "../Makefile#coverage:", a make target for running from the
 ;; command line.
 
 ;;; Code:
@@ -35,11 +35,11 @@
    (car (overlay-lists))))
 
 (defun hy-test-coverage-file (filename &optional testspec)
-  "Run TESTSPEC and produce coverage data for FILENAME.
-With no TESTSPEC all tests are used."
+  "In FILENAME, run TESTSPEC and produce coverage data.
+With no TESTSPEC all tests are run."
   (interactive "fFilename: \nsTestspec: ")
   (unless (file-exists-p filename)
-    (error "(hy-test-coverage-file) - File %s does not exist" filename))
+    (error "(hy-test-coverage-file): File %s does not exist" filename))
   (unless testspec
     (setq testspec t))
   (let ((buff (find-file filename)))
