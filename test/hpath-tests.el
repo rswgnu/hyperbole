@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 23:26:00
-;; Last-Mod:      7-Apr-24 at 10:30:56 by Bob Weiner
+;; Last-Mod:      7-Apr-24 at 10:40:03 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -210,7 +210,7 @@
           (dolist (file '("COPYING" "man/hkey-help.txt" "man/im/demo.png"))
             (goto-char (point-min))
             (should (search-forward (car (last (split-string file "/"))) nil t))
-            (backward-char 5)
+            (backward-char (/ (length file) 2))
             (hy-test-helpers:action-key-should-call-hpath:find (expand-file-name file hyperb:dir))))
       (kill-buffer shell-buffer))))
 

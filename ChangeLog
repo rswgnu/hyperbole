@@ -5,6 +5,17 @@
   man/hyperbole.texi: Remove "version.texi" file and include here to simplify
     doc build recipes.
 
+2024-04-05  Mats Lidell  <matsl@gnu.org>
+
+* test/hmouse-drv-tests.el (hbut-defil-verbatim): Add test for reported
+    issue gh#rswgnu/hyperbole/503.
+
+2024-04-01  Mats Lidell  <matsl@gnu.org>
+
+* test/hpath-tests.el (hpath:prepend-shell-directory-test):
+* test/demo-tests.el (demo-manifest-test): Replace COPYING with DEMO since
+    it is not exported in all installations, i.e. MELPA.
+
 2024-04-01  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-consult-grep-paths): Add this support function for
@@ -22,6 +33,14 @@
     Code now fixed so this test passes; remove expected failure clause.
 
 2024-03-31  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (coverage): Make target to use the coverage function from the
+    command line.
+
+* test/hy-test-coverage.el: New test file for producing test coverage
+    data. Uses the testcover package.
+    (hy-test--count-coverage): Count the test splotches.
+    (hy-test-coverage-file): Run tests and produce coverage date.
 
 * .github/workflows/main.yml (jobs): Add Emacs 29.3 to versions used for
     the CI builds.
