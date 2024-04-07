@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     31-Mar-24 at 15:17:46 by Bob Weiner
+;; Last-Mod:      7-Apr-24 at 15:12:46 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -380,8 +380,7 @@ attached file."
   "Follow an Org link in a non-Org mode buffer.
 This should be a very low priority so other Hyperbole types
 handle any links they recognize first."
-  (when (and (eq hsys-org-enable-smart-keys t)
-	     (not (funcall hsys-org-mode-function))
+  (when (and (not (funcall hsys-org-mode-function))
 	     ;; Prevent infinite recursion, e.g. if called via
 	     ;; `org-metareturn-hook' from `org-meta-return' invocation.
 	     (not (hyperb:stack-frame '(ibtypes::debugger-source org-meta-return))))
