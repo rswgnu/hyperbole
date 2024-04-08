@@ -1,3 +1,9 @@
+2024-04-08  Mats Lidell  <matsl@gnu.org>
+
+* test/hsys-org-tests.el (hsys-org--org-outside-org-mode-tmp-buffer)
+    (hsys-org--org-outside-org-mode-tmp-file): Tests for org-links outside
+    of org-mode.
+
 2024-04-07  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-consult-grep-paths): Fix handling of zero 'max-matches'

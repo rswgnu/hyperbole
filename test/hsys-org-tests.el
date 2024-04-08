@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    23-Apr-21 at 20:55:00
-;; Last-Mod:     12-Mar-24 at 23:04:29 by Mats Lidell
+;; Last-Mod:      8-Apr-24 at 16:41:14 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -127,6 +127,31 @@
     (goto-char 6)
     (font-lock-ensure)
     (should (hsys-org-face-at-p 'org-target))))
+
+(ert-deftest hsys-org--org-outside-org-mode-tmp-buffer ()
+  "Org links in a temp buffer should work.
+This is independent of the setting of `hsys-org-enable-smart-keys'."
+  (let ((hsys-org-enable-smart-keys nil)
+        (browse-url-browser-function nil)) ;; Don't open browser on failure
+    (with-temp-buffer
+      (insert "[[file:/tmp/abc][file]]\n")
+      (goto-char 6)
+      (mocklet (((org-open-at-point-global) => t))
+        (action-key)))))
+
+(ert-deftest hsys-org--org-outside-org-mode-tmp-file ()
+  "Org links in a non `org-mode' file should work.
+This is independent of the setting of `hsys-org-enable-smart-keys'."
+  (let ((file (make-temp-file "hypb" nil ".txt" "[[file:/tmp/abc][file]]\n"))
+        (hsys-org-enable-smart-keys nil)
+        (browse-url-browser-function nil)) ;; Don't open browser on failure
+    (unwind-protect
+        (progn
+          (find-file file)
+          (goto-char 6)
+          (mocklet (((org-open-at-point-global) => t))
+            (action-key)))
+      (hy-delete-file-and-buffer file))))
 
 (provide 'hsys-org-tests)
 
