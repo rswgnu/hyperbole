@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    23-Apr-21 at 20:55:00
-;; Last-Mod:      8-Apr-24 at 16:41:14 by Mats Lidell
+;; Last-Mod:      9-Apr-24 at 09:32:53 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -131,26 +131,30 @@
 (ert-deftest hsys-org--org-outside-org-mode-tmp-buffer ()
   "Org links in a temp buffer should work.
 This is independent of the setting of `hsys-org-enable-smart-keys'."
-  (let ((hsys-org-enable-smart-keys nil)
-        (browse-url-browser-function nil)) ;; Don't open browser on failure
-    (with-temp-buffer
-      (insert "[[file:/tmp/abc][file]]\n")
-      (goto-char 6)
-      (mocklet (((org-open-at-point-global) => t))
-        (action-key)))))
+  (let ((browse-url-browser-function nil)) ;; Don't open browser on failure
+      (dolist (v '('unset 'button t nil))
+        (let ((hsys-org-enable-smart-keys v))
+          (with-temp-buffer
+            (insert "[[file:/tmp/abc][file]]\n")
+            (goto-char 6)
+            (mocklet (((org-open-at-point-global) => t))
+              (should (equal hsys-org-enable-smart-keys v)) ; Traceability
+              (should (action-key))))))))
 
 (ert-deftest hsys-org--org-outside-org-mode-tmp-file ()
   "Org links in a non `org-mode' file should work.
 This is independent of the setting of `hsys-org-enable-smart-keys'."
   (let ((file (make-temp-file "hypb" nil ".txt" "[[file:/tmp/abc][file]]\n"))
-        (hsys-org-enable-smart-keys nil)
         (browse-url-browser-function nil)) ;; Don't open browser on failure
     (unwind-protect
         (progn
           (find-file file)
           (goto-char 6)
-          (mocklet (((org-open-at-point-global) => t))
-            (action-key)))
+          (dolist (v '('unset 'button t nil))
+            (let ((hsys-org-enable-smart-keys v))
+              (mocklet (((org-open-at-point-global) => t))
+                (should (equal hsys-org-enable-smart-keys v)) ; Traceability
+                (should (action-key))))))
       (hy-delete-file-and-buffer file))))
 
 (provide 'hsys-org-tests)
