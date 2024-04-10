@@ -1,3 +1,8 @@
+2024-04-14  Mats Lidell  <matsl@gnu.org>
+
+* test/hbut-tests.el (hypb--gbut-act-with-web-link): Test for gbut:act
+    on a web link.
+
 2024-04-14  Bob Weiner  <rsw@gnu.org>
 
 * hbut.el (ibut:create): Set 'name-start' and 'name-end' location attributes
