@@ -1,3 +1,17 @@
+2024-04-09  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-tag.el (smart-python-tag): Rewrite to just try to display a tag
+    and signal an error if fail.  Return non-nil if succeed.
+                (smart-python): Rewrite to call 'smart-python-tag' first
+    so uses xref backend which may be something like 'eglot' or a TAGS file
+    in preference to 'jedi' and other Python def lookup methods.
+                (smart-tags-display): Fix for newer versions of 'xref' which
+    return an 'xref-match-item' sometimes rather than an 'xref-item'.  Document
+    this function.
+                (smart-asm, smart-javascript, smart-python-tag, smart-java-tag)
+                 smart-c++-tag, smart-c, smart-fortran, smart-objc-tag):
+    Remove searching messages to match other languages.
+
 2024-04-08  Mats Lidell  <matsl@gnu.org>
 
 * test/hsys-org-tests.el (hsys-org--org-outside-org-mode-tmp-buffer)
