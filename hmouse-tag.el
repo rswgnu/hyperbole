@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     28-Jan-24 at 18:36:34 by Bob Weiner
+;; Last-Mod:      9-Apr-24 at 23:19:17 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -211,11 +211,12 @@ If:
   (interactive)
   (or (if identifier nil (smart-asm-include-file))
       (let ((tag (or identifier (smart-asm-at-tag-p t))))
-	(message "Looking for `%s'..." tag)
+	;; (message "Looking for `%s'..." tag)
 	(condition-case ()
 	    (progn
 	      (smart-tags-display tag next)
-	      (message "Found definition for `%s'" tag))
+	      ;; (message "Found definition for `%s'" tag)
+	      t)
 	  (error (message "`%s' definition not found in identifier lookup/tag tables" tag)
 		 (beep))))))
 
@@ -267,11 +268,11 @@ Otherwise:
   "Jump to the definition of optional C++ IDENTIFIER or the one at point.
 Optional second arg NEXT means jump to next matching C++ tag."
   (let ((tag (or identifier (smart-c++-at-tag-p))))
-    (message "Looking for `%s'..." tag)
+    ;; (message "Looking for `%s'..." tag)
     (condition-case ()
 	(progn
 	  (smart-tags-display tag next)
-	  (message "Found definition for `%s'" tag)
+	  ;; (message "Found definition for `%s'" tag)
 	  t)
       (error
        (if (or (not smart-c-use-lib-man)
@@ -348,11 +349,12 @@ If:
   (interactive)
   (or (if identifier nil (smart-c-include-file))
       (let ((tag (or identifier (smart-c-at-tag-p t))))
-	(message "Looking for `%s'..." tag)
+	;; (message "Looking for `%s'..." tag)
 	(condition-case ()
 	    (progn
 	      (smart-tags-display tag next list-of-tags-tables)
-	      (message "Found definition for `%s'" tag))
+	      ;; (message "Found definition for `%s'" tag)
+	      t)
 	  (error
 	   (if (or (not smart-c-use-lib-man)
 		   (not (file-readable-p "~/.CLIBS-LIST")))
@@ -438,11 +440,12 @@ assuming the identifier is found within an `etags' generated tag file
 in the current directory or any of its ancestor directories."
   (interactive)
   (let ((tag (or identifier (smart-fortran-at-tag-p t))))
-    (message "Looking for `%s'..." tag)
+    ;; (message "Looking for `%s'..." tag)
     (condition-case ()
 	(progn
 	  (smart-tags-display tag next)
-	  (message "Found definition for `%s'" tag))
+	  ;; (message "Found definition for `%s'" tag)
+	  t)
       (error
        (message "`%s' definition not found in identifier lookup/tag tables" tag)
        (beep)))))
@@ -511,11 +514,12 @@ Otherwise:
   "Jump to the definition of optional Java IDENTIFIER or the one at point.
 Optional second arg NEXT means jump to next matching Java tag."
   (let ((tag (or identifier (smart-java-at-tag-p t))))
-    (message "Looking for `%s'..." tag)
+    ;; (message "Looking for `%s'..." tag)
     (condition-case ()
 	(progn
 	  (smart-tags-display tag next)
-	  (message "Found definition for `%s'" tag))
+	  ;; (message "Found definition for `%s'" tag)
+	  t)
       (error (progn (message "`%s' definition not found in identifier lookup/tag tables" tag)
 		    (beep))))))
 
@@ -580,11 +584,12 @@ assuming the identifier is found within an `etags' generated tag file
 in the current directory or any of its ancestor directories."
   (interactive)
   (let ((tag (or identifier (smart-javascript-at-tag-p t))))
-    (message "Looking for `%s'..." tag)
+    ;; (message "Looking for `%s'..." tag)
     (condition-case ()
 	(progn
 	  (smart-tags-display tag next)
-	  (message "Found definition for `%s'" tag))
+	  ;; (message "Found definition for `%s'" tag)
+	  t)
       (error
        (message "`%s' definition not found in identifier lookup/tag tables" tag)
        (beep)))))
@@ -741,11 +746,13 @@ Use `hpath:display-buffer' to show definition or documentation."
 		     (condition-case ()
 			 ;; Tag of any language
 			 (when (featurep 'etags)
-			   (smart-tags-display tag show-doc))
+			   (smart-tags-display tag show-doc)
+			   t)
 		       (error (unless (and elisp-flag (stringp smart-emacs-tags-file)
 					   (condition-case ()
-					       (smart-tags-display
-						tag show-doc (list smart-emacs-tags-file))
+					       (progn (smart-tags-display
+						       tag show-doc (list smart-emacs-tags-file))
+						      t)
 					     (error nil)))
 				(error "(smart-lisp): No definition found for `%s'" tag)))))
 		 (and (not etags-mode) elisp-flag (fboundp 'xref-etags-mode)
@@ -888,11 +895,12 @@ Otherwise:
 ;;;###autoload
 (defun smart-objc-tag (&optional identifier next)
   (let ((tag (or identifier (smart-objc-at-tag-p t))))
-    (message "Looking for `%s'..." tag)
+    ;; (message "Looking for `%s'..." tag)
     (condition-case ()
 	(progn
 	  (smart-tags-display tag next)
-	  (message "Found definition for `%s'" tag))
+	  ;; (message "Found definition for `%s'" tag)
+	  t)
       (error
        (if (or (not smart-c-use-lib-man)
 	       (not (file-readable-p "~/.CLIBS-LIST")))
@@ -991,35 +999,42 @@ Optional second arg NEXT means jump to next matching Python tag.
 It assumes that its caller has already checked that the key was pressed in an
 appropriate buffer and has moved the cursor to the selected buffer.
 
-See the documentation for `smart-python-jedi-to-definition-p' for the
-behavior when the Jedi python identifier server is in use.
+First, it tries to display the IDENTIFIER definition with
+the current 'xref' backend, which may be `eglot' or `etags' in which case
+Hyperbole walks up the current directory tree to find the nearest TAGS
+file.
 
-See the documentation for `smart-python-oo-browser' for the behavior of this
-function when the OO-Browser has been loaded.
+If that fails, then see the documentation for
+`smart-python-jedi-to-definition-p' for the behavior when the Jedi python
+identifier server is in use.
 
-Otherwise, on a Python identifier, the identifier definition is displayed,
-assuming the identifier is found within an `etags' generated tag file
-in the current directory or any of its ancestor directories."
+If that fails and the OO-Browser extension is available and has been loaded,
+see the documentation for `smart-python-oo-browser' for the behavior."
   (interactive)
-  (cond ((smart-python-jedi-to-definition-p))
-	((fboundp 'python-to-definition)
-	 ;; Only fboundp if the OO-Browser has been loaded.
-	 (smart-python-oo-browser))
-	(t
-	 (smart-python-tag identifier next))))
+  (let (err-msg)
+    (cond ((condition-case err
+	       (progn (smart-python-tag identifier next)
+		      t)
+	     (t (setq err-msg (cdr err))
+		nil)))
+	  ((smart-python-jedi-to-definition-p))
+	  ((fboundp 'python-to-definition)
+	   ;; Only fboundp if the OO-Browser has been loaded.
+	   (smart-python-oo-browser))
+	  (t
+	   (error (progn (message (or err-msg
+				      (format "`%s' definition not found in identifier lookup/tag tables" identifier)))
+			 (beep)))))))
 
 ;;;###autoload
 (defun smart-python-tag (&optional identifier next)
   "Jump to the definition of optional Python IDENTIFIER or the one at point.
 Optional second arg NEXT means jump to next matching Python tag."
   (let ((tag (or identifier (smart-python-at-tag-p t))))
-    (message "Looking for `%s'..." tag)
-    (condition-case ()
-	(progn
-	  (smart-tags-display tag next)
-	  (message "Found definition for `%s'" tag))
-      (error (progn (message "`%s' definition not found in identifier lookup/tag tables" tag)
-		    (beep))))))
+    ;; (message "Looking for `%s'..." tag)
+    (smart-tags-display tag next)
+    ;; (message "Found definition for `%s'" tag)
+    t))
 
 ;;; The following should be called only if the OO-Browser is available.
 (defun smart-python-oo-browser (&optional _junk)
@@ -1461,6 +1476,11 @@ See the \"${hyperb:dir}/smart-clib-sym\" script for more information."
       (smart-tags-file-list)))
 
 (defun smart-tags-display (tag next &optional list-of-tags-tables)
+  "Jump to the single definition of TAG or list definition locations.
+If NEXT is non-nil, jump to the next definition.  Optional
+LIST-OF-TAGS-TABLES are the tags tables to use when
+`xref-find-definitions' is called in a context where the 'etags'
+backend is used."
   (when next (setq tag nil))
   (let* ((tags-table-list (or list-of-tags-tables
 			      (smart-entire-tags-table-list)))
@@ -1473,7 +1493,7 @@ See the \"${hyperb:dir}/smart-clib-sym\" script for more information."
 	 (tags-add-tables nil))
     (cond ((and func (or tags-table-list tags-file-name)
 		(setq find-tag-result (funcall func tag)))
-	   (cond ((or (eq (type-of find-tag-result) 'xref-item)
+	   (cond ((or (memq (type-of find-tag-result) '(xref-item xref-match-item))
 		      (vectorp find-tag-result))
 		  (hpath:display-buffer (hsys-xref-item-buffer find-tag-result))
 		  (goto-char (hsys-xref-item-position find-tag-result)))
