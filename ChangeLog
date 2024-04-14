@@ -1,3 +1,16 @@
+2024-04-13  Bob Weiner  <rsw@gnu.org>
+
+* hsettings.el (hyperbole-web-search-alist):
+  man/hyperbole.texi (Implicit Button Types, Menus):
+  hib-social.el (social-reference): Update to use 'x' anywhere 'twitter'
+    was previously allowed; either one is now usable for the same service
+    name.
+
+* man/hyperbole.texi (Action Types):
+  hib-social.el (github-reference): Github links have largely moved from
+    using 'tree' to 'blob', so fix this.  Also fix doc so that if not
+    given a ref-type keyword, assume ref-type is to a file.
+
 2024-04-10  Bob Weiner  <rsw@gnu.org>
 
 * hbut.el (ibut:insert-text): Fix when given a command-name to output proper

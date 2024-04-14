@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Apr-91 at 00:48:49
-;; Last-Mod:     20-Jan-24 at 15:49:24 by Bob Weiner
+;; Last-Mod:     13-Apr-24 at 11:22:31 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -272,8 +272,8 @@ Hyperbole, and then restart Emacs."
     ("Maps" . "http://maps.google.com/maps?q=%s")
     ("RFCs" . "https://tools.ietf.org/html/rfc%s")
     ("StackOverflow" . "https://stackoverflow.com/search?q=%s")
-    ("Twitter" . "https://twitter.com/search?q=%s")
     ("Wikipedia" . "https://en.wikipedia.org/wiki/%s")
+    ("X" . "https://x.com/search?q=%s")
     ("Youtube" . "https://www.youtube.com/results?search_query=%s"))
   "*Alist of (web-service-name . emacs-cmd-or-url-with-%s-parameter) elements.
 The first capitalized character of each web-service-name must be unique.
