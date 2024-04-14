@@ -1,3 +1,8 @@
+2024-04-10  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:insert-text): Fix when given a command-name to output proper
+    action button, not a nil with nil arguments.
+
 2024-04-09  Bob Weiner  <rsw@gnu.org>
 
 * hmouse-tag.el (smart-python-tag): Rewrite to just try to display a tag

@@ -2647,7 +2647,8 @@ Summary of operations based on inputs (name arg from \\='hbut:current attrs):
 		       (if (<= arg2 1) "" (concat ":I" (number-to-string arg2))))))
       ('nil (error "(ibut:insert-text): actype must be a Hyperbole actype or Lisp function symbol, not '%s'" orig-actype))
       ;; Generic action button type
-      (_ (insert (format "<%s%s%s>" (actype:def-symbol actype) (if args " " "")
+      (_ (insert (format "<%s%s%s>" (or (actype:def-symbol actype) actype)
+			 (if args " " "")
 			 (if args (hypb:format-args args) "")))))
     (unless (looking-at "\\s-\\|\\'")
       (insert " "))))
