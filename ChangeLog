@@ -1,3 +1,8 @@
+* hbut.el (ibtype:delete):
+  hact.el (actype:delete): Make interactive with completion.
+    Remove call to 'symtable:delete' since following call to
+    'htype:delete' does that.
+
 2024-04-13  Bob Weiner  <rsw@gnu.org>
 
 * hsettings.el (hyperbole-web-search-alist):

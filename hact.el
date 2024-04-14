@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     18-Feb-24 at 11:27:01 by Mats Lidell
+;; Last-Mod:     14-Apr-24 at 01:33:24 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -516,8 +516,8 @@ Return symbol created when successful, else nil."
 
 (defun    actype:delete (type)
   "Delete an action TYPE (a symbol).  Return TYPE's symbol if it existed."
-  (symtable:delete type symtable:actypes)
-  (htype:delete type 'actypes))
+  (interactive (list (hui:htype-delete 'actypes))
+  (htype:delete type 'actypes)))
 
 (defun    actype:doc (but &optional full)
   "Return first line of action doc for BUT.

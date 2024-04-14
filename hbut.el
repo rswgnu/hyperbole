@@ -3144,7 +3144,7 @@ is returned."
 (defun    ibtype:delete (type)
   "Delete an implicit button TYPE (a symbol).
 Return TYPE's symbol if it existed, else nil."
-  (symtable:delete type symtable:ibtypes)
+  (interactive (list (hui:htype-delete 'ibtypes)))
   (htype:delete type 'ibtypes))
 
 ;; Return the full Elisp symbol for IBTYPE, which may be a string or symbol.
