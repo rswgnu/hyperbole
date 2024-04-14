@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-may-21 at 09:33:00
-;; Last-Mod:     10-Apr-24 at 16:25:30 by Mats Lidell
+;; Last-Mod:     14-Apr-24 at 21:52:52 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -782,13 +782,12 @@ See #10 for the proper way to add an ibutton name.
 
 (ert-deftest hypb--gbut-act-with-web-link ()
   "Verify `gbut:act' with a web link calls browser."
-  :expected-result :failed
   (defvar global-but-file)
   (let ((global-but-file (make-temp-file "gbut" nil ".txt"
                                          "<[Link]> - \"https://savannah.gnu.org/projects/hyperbole/\"\n")))
     (unwind-protect
         (mocklet ((gbut:file => global-but-file)
-                  ((browse-url "https://savannah.gnu.org/projects/hyperbole/" nil) => t)
+                  ((browse-url "https://savannah.gnu.org/projects/hyperbole/") => t)
                   (hpath:find-noselect => (find-file-noselect global-but-file)))
           (gbut:act "Link"))
       (hy-delete-file-and-buffer global-but-file))))
