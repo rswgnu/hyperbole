@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     31-Mar-24 at 17:02:39 by Bob Weiner
+;; Last-Mod:     14-Apr-24 at 13:52:20 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1035,32 +1035,36 @@ Default is the symbol hbut:current."
   (cond ((hbut:is-p hbut)
 	 (let ((orig-point (point-marker))
 	       (action (hattr:get hbut 'action))
+	       (loc (hattr:get hbut 'loc))
 	       text-point)
+	   (when loc
+	     ;; Button's location may be different than the current
+	     ;; buffer, so move point there if so.
+	     (hbut:key-src-set-buffer loc))
 	   (when (ibut:is-p hbut)
 	     ;; Determine whether point is already within hbut; if
 	     ;; not, it is moved there.
 	     ;;
-	     ;; The next line returns the lbl-key of the current
-	     ;; button only if point is within the optional name,
-	     ;; otherwise, nil.
-	     (let* ((lbl-key-start-end (ibut:label-p nil nil nil t t))
-		    (lbl-key (nth 0 lbl-key-start-end))
-		    (delim-text-start (or (nth 1 lbl-key-start-end)
-					  (hattr:get hbut 'lbl-start)))
-		    (delim-text-end (or (nth 2 lbl-key-start-end)
-				       (hattr:get hbut 'lbl-end))))
-	       (if (and lbl-key
-			(or (equal (hattr:get hbut 'loc) (current-buffer))
-			    (equal (hattr:get hbut 'loc) buffer-file-name))
-			(equal lbl-key (hattr:get hbut 'lbl-key)))
+	     ;; The next line returns the key version of the optional
+	     ;; name of the current button if and only if point is
+	     ;; within the name; otherwise, including if point is on
+	     ;; the text of the button, this returns nil.
+	     (let* ((name-key-start-end (ibut:label-p nil nil nil t t))
+		    (name-key (nth 0 name-key-start-end))
+		    (delim-text-start (hattr:get hbut 'lbl-start))
+		    (delim-text-end (hattr:get hbut 'lbl-end)))
+	       (if (and name-key
+			(or (equal loc buffer-file-name)
+			    (equal loc (current-buffer)))
+			(equal name-key (ibut:label-to-key (hattr:get hbut 'name))))
 		   (unless (and delim-text-start delim-text-end
 				(< delim-text-start (point))
 				(>= delim-text-end (point)))
 		     (goto-char delim-text-start)
 		     (skip-chars-forward "^-_a-zA-Z0-9"))
 		 ;; Here handle when there is no name preceding the implicit button.
-		 (unless (and (or (equal (hattr:get hbut 'loc) (current-buffer))
-				  (equal (hattr:get hbut 'loc) buffer-file-name))
+		 (unless (and (or (equal loc buffer-file-name)
+				  (equal loc (current-buffer)))
 			      delim-text-start delim-text-end
 			      (< delim-text-start (point))
 			      (>= delim-text-end (point)))
@@ -1220,12 +1224,14 @@ button file) or within the current buffer if both are null.  Use
 of point when desired.
 
 Caller must have used (ibut:at-p) to create hbut:current prior to
-calling this function."
+calling this function.  When KEY-SRC is given, this set's
+hbut:current's 'loc attribute to KEY-SRC."
   (if buffer
       (if (bufferp buffer)
 	  (set-buffer buffer)
 	(error "(ibut:get): Invalid buffer argument: %s" buffer))
-    (when (null key-src)
+    (if key-src
+	(hattr:set 'hbut:current 'loc key-src)
       (let ((loc (hattr:get 'hbut:current 'loc)))
 	(when loc
 	  (set-buffer (or (get-buffer loc) (find-file-noselect loc)))))
@@ -1960,16 +1966,20 @@ If a new button is created, store its attributes in the symbol,
 	  (when (or is-type but-sym)
 	    (unless but-sym
 	      (setq but-sym 'hbut:current))
-	    (let ((current-categ     (hattr:get but-sym 'categ))
-		  (current-name      (hattr:get but-sym 'name))
-		  (current-lbl-key   (hattr:get but-sym 'lbl-key))
-		  (current-lbl-start (hattr:get but-sym 'lbl-start))
-		  (current-lbl-end   (hattr:get but-sym 'lbl-end))
-		  (current-loc       (hattr:get but-sym 'loc))
-		  (current-dir       (hattr:get but-sym 'dir))
-		  (current-action    (hattr:get but-sym 'action))
-		  (current-actype    (hattr:get but-sym 'actype))
-		  (current-args      (hattr:get but-sym 'args)))
+	    (let ((current-categ      (hattr:get but-sym 'categ))
+		  (current-name       (hattr:get but-sym 'name))
+		  (current-name-start (hattr:get but-sym 'name-start))
+		  (current-name-end   (hattr:get but-sym 'name-end))
+		  (current-lbl-key    (hattr:get but-sym 'lbl-key))
+		  (current-lbl-start  (hattr:get but-sym 'lbl-start))
+		  (current-lbl-end    (hattr:get but-sym 'lbl-end))
+		  (current-loc        (hattr:get but-sym 'loc))
+		  (current-dir        (hattr:get but-sym 'dir))
+		  (current-action     (hattr:get but-sym 'action))
+		  (current-actype     (hattr:get but-sym 'actype))
+		  (current-args       (hattr:get but-sym 'args))
+		  name-start
+		  name-end)
 
 	      (cond ((and but-sym-flag current-name)
 		     (setq name current-name))
@@ -1978,6 +1988,22 @@ If a new button is created, store its attributes in the symbol,
 		     (setq name current-name)))
 	      (when name
 		(hattr:set 'hbut:current 'name name))
+
+	      (cond ((and but-sym-flag current-name-start)
+		     (setq name-start current-name-start))
+		    ((or name-start name-and-lbl-key-flag))
+		    (current-name-start
+		     (setq name-start current-name-start)))
+	      (when name-start
+		(hattr:set 'hbut:current 'name-start name-start))
+
+	      (cond ((and but-sym-flag current-name-end)
+		     (setq name-end current-name-end))
+		    ((or name-end name-and-lbl-key-flag))
+		    (current-name-end
+		     (setq name-end current-name-end)))
+	      (when name-end
+		(hattr:set 'hbut:current 'name-end name-end))
 
 	      (cond ((and but-sym-flag current-lbl-key)
 		     (setq lbl-key current-lbl-key))
@@ -2647,7 +2673,8 @@ Summary of operations based on inputs (name arg from \\='hbut:current attrs):
 		       (if (<= arg2 1) "" (concat ":I" (number-to-string arg2))))))
       ('nil (error "(ibut:insert-text): actype must be a Hyperbole actype or Lisp function symbol, not '%s'" orig-actype))
       ;; Generic action button type
-      (_ (insert (format "<%s%s%s>" (actype:def-symbol actype) (if args " " "")
+      (_ (insert (format "<%s%s%s>" (or (actype:def-symbol actype) actype)
+			 (if args " " "")
 			 (if args (hypb:format-args args) "")))))
     (unless (looking-at "\\s-\\|\\'")
       (insert " "))))
@@ -3143,7 +3170,7 @@ is returned."
 (defun    ibtype:delete (type)
   "Delete an implicit button TYPE (a symbol).
 Return TYPE's symbol if it existed, else nil."
-  (symtable:delete type symtable:ibtypes)
+  (interactive (list (hui:htype-delete 'ibtypes)))
   (htype:delete type 'ibtypes))
 
 ;; Return the full Elisp symbol for IBTYPE, which may be a string or symbol.

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     10-Mar-24 at 11:31:56 by Bob Weiner
+;; Last-Mod:     14-Apr-24 at 11:37:50 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -396,12 +396,12 @@ Return the (start . end) buffer positions of the region."
       (looking-at org-babel-src-block-regexp))))
 
 (defun hsys-org-link-at-p ()
-  "Return non-nil iff point is on an Org mode link.
+  "Return non-nil iff point is on a square-bracketed Org mode link.
 Assume caller has already checked that the current buffer is in `org-mode'
 or are looking for an Org link in another buffer type."
   (unless (or (smart-eolp) (smart-eobp))
     (with-suppressed-warnings nil
-      (org-in-regexp org-link-any-re nil t))))
+      (org-in-regexp org-link-bracket-re nil t))))
 
 ;; Assume caller has already checked that the current buffer is in org-mode.
 (defun hsys-org-heading-at-p (&optional _)

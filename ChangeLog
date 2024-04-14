@@ -1,3 +1,43 @@
+2024-04-14  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:create): Set 'name-start' and 'name-end' location attributes
+    when previously set in call of 'ibut:set-name-and-label-key-p'.
+
+* hbut.el (hbut:act): Fix to set current buffer to button 'loc attribute and
+    to not set delim-text-start/end to use name start/end but only label.
+          (hbut:funcall): Fix to set button's 'loc attribute to 'key-src'
+    when given.  Otherwise, activation of a global button from another buffer
+    would not set the actual location of the button.
+
+* hsys-org.el (hsys-org-link-at-p): Org treats URLs with and without
+    angle brackets as Org links but Hyperbole handles such links separately.
+    Fix to match only to Org links within square brackets.  This also fixes
+    a problem where activating a URL global button fails because the Org
+    open link code could not handle having point originally in another buffer.
+
+* hbut.el (ibtype:delete):
+  hact.el (actype:delete): Make interactive with completion.
+    Remove call to 'symtable:delete' since following call to
+    'htype:delete' does that.
+
+2024-04-13  Bob Weiner  <rsw@gnu.org>
+
+* hsettings.el (hyperbole-web-search-alist):
+  man/hyperbole.texi (Implicit Button Types, Menus):
+  hib-social.el (social-reference): Update to use 'x' anywhere 'twitter'
+    was previously allowed; either one is now usable for the same service
+    name.
+
+* man/hyperbole.texi (Action Types):
+  hib-social.el (github-reference): Github links have largely moved from
+    using 'tree' to 'blob', so fix this.  Also fix doc so that if not
+    given a ref-type keyword, assume ref-type is to a file.
+
+2024-04-10  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:insert-text): Fix when given a command-name to output proper
+    action button, not a nil with nil arguments.
+
 2024-04-09  Bob Weiner  <rsw@gnu.org>
 
 * hmouse-tag.el (smart-python-tag): Rewrite to just try to display a tag

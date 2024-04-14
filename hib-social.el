@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    20-Jul-16 at 22:41:34
-;; Last-Mod:      3-Mar-24 at 10:50:02 by Mats Lidell
+;; Last-Mod:     13-Apr-24 at 11:17:42 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -19,14 +19,14 @@
 ;;   When the referent is a web page, this calls the function given by
 ;;   `hibtypes-social-display-function' to display it, initially set to `browse-url'.
 ;;
-;;   A hashtag reference is either: [facebook|github|gitlab|git|instagram|twitter]#<hashtag>
-;;   or using 2-letter service abbreviations: [fb|gh|gl|gt|in|tw]#<hashtag>.
+;;   A hashtag reference is either: [facebook|github|gitlab|git|instagram|twitter|x]#<hashtag>
+;;   or using 1 to 2-letter service abbreviations: [fb|gh|gl|gt|in|tw|x]#<hashtag>.
 ;;
-;;   A username reference is either: [facebook|github|gitlab|instagram|twitter]@<username>
-;;   or [fb|gh|gl|in|tw]@<username>.
+;;   A username reference is either: [facebook|github|gitlab|instagram|twitter|x]@<username>
+;;   or [fb|gh|gl|in|tw|x]@<username>.
 ;;
 ;;   If the social media service is not given, it defaults to the value of
-;;   `hibtypes-social-default-service', initially set to \"twitter\".
+;;   `hibtypes-social-default-service', initially set to \"x\".
 ;;
 ;;   Below are a list of examples; simply press the Action Key on each one
 ;;   to test it; use the Assist Key to see what it will do.  The git
@@ -37,11 +37,11 @@
 ;;     github@rswgnu
 ;;     gitlab@seriyalexandrov
 ;;     instagram@lostart
-;;     twitter@nytimestravel
+;;     x@nytimestravel
 
 ;;     fb#technology                             Display page of hashtag matches
 ;;     in#art
-;;     tw#travel
+;;     x#travel
 
 ;;   Git (local) reference links
 ;;
@@ -192,14 +192,15 @@
   "Hyperbole explicit, global and implicit button customizations."
   :group 'hyperbole)
 
-(defcustom hibtypes-social-default-service "twitter"
+(defcustom hibtypes-social-default-service "x"
   "Lowercase string matching the social media service to use as a default."
   :type '(radio (const "facebook")
 		(const "git")
 		(const "github")
 		(const "gitlab")
 		(const "instagram")
-		(const "twitter"))
+		(const "twitter")
+		(const "x"))
   :group 'hyperbole-buttons)
 
 (defcustom hibtypes-social-display-function #'browse-url
@@ -247,7 +248,8 @@
     ("\\`\\(gl\\|gitlab\\)\\'"    . "https://www.gitlab.com/%s/%s/%s%s")
     ("\\`\\(gt\\|git\\)\\'"       . "(cd %s && git %s %s)")
     ("\\`\\(in\\|instagram\\)\\'" . "https://www.instagram.com/explore/tags/%s/")
-    ("\\`\\(tw\\|twitter\\)\\'"   . "https://twitter.com/search?q=%%23%s&src=hashtag"))
+    ("\\`\\(tw\\|twitter\\)\\'"   . "https://twitter.com/search?q=%%23%s&src=hashtag")
+    ("\\`\\(x\\)\\'"              . "https://x.com/search?q=%%23%s&src=hashtag"))
   "Alist of (social-media-service-regexp . to-display-hashtag-reference) elements.")
 
 (defconst hibtypes-social-username-alist
@@ -255,7 +257,8 @@
     ("\\`\\(gh\\|github\\)\\'"    . "https://github.com/%s/")
     ("\\`\\(gl\\|gitlab\\)\\'"    . "https://www.gitlab.com/%s/")
     ("\\`\\(in\\|instagram\\)\\'" . "https://www.instagram.com/%s/")
-    ("\\`\\(tw\\|twitter\\)\\'"   . "https://twitter.com/search?q=@%s"))
+    ("\\`\\(tw\\|twitter\\)\\'"   . "https://twitter.com/search?q=@%s")
+    ("\\`\\(x\\)\\'"              . "https://x.com/search?q=@%s"))
   "Alist of (social-media-service-regexp . url-with-%s-for-username) elements.")
 
 ;; Assume at least a 2-character project name
@@ -278,13 +281,13 @@ See `ibtypes::social-reference' for format details.")
 (defib social-reference ()
   "Display web page associated with a social hashtag/username reference at point.
 Reference format is:
-  [facebook|git|github|gitlab|instagram|twitter]?[#@]<reference> or
-  [fb|gt|gh|gl|in|tw]?[#@]<reference>.
+  [facebook|git|github|gitlab|instagram|twitter|x]?[#@]<reference> or
+  [fb|gt|gh|gl|in|tw|x]?[#@]<reference>.
 
 The first part of the label for a button of this type is the social
 service name.  The service name defaults to the value of
-`hibtypes-social-default-service' (default value of \"twitter\")
-when not given, so #hashtag would be the same as twitter#hashtag.
+`hibtypes-social-default-service' (default value of \"x\")
+when not given, so #hashtag would be the same as x#hashtag.
 
 Local git references allow hashtags only, not username references.
 
@@ -372,8 +375,8 @@ or  /<project>.
   a commit reference given by a hex number, 55a1f0; the commit
   diff is displayed;
 
-  a branch or tag reference given by an alphanumeric name,
-  e.g. hyper20; the files in the branch are listed.
+  a filename reference given by an alphanumeric name; the file
+  is displayed.
 
 USER defaults to the value of `hibtypes-github-default-user'.
 If given, PROJECT overrides any project value in REFERENCE.  If no
@@ -431,16 +434,18 @@ PROJECT value is provided, it defaults to the value of
 			;; issue, or pull
 			(setq ref-type (substring reference 0 (match-end 1))
 			      reference (substring reference (match-end 0))
-			      ref-type (concat ref-type (if (string-equal ref-type "issue") "s/" "/"))))
-		       ((string-match "\\`[0-9a-f]+\\'" reference)
+			      ref-type (concat ref-type (if (string-equal ref-type "issue") "s/" "/"))))		       ((string-match "\\`[0-9a-f]+\\'" reference)
 			;; Commit reference
 			(setq ref-type "commit/"))
 		       (t
 			;; Specific branch or commit tag reference
-			(setq ref-type "tree/")
-			(when (string-match "\\`\\(branch\\|tag\\)/" reference)
-			  ;; If preceded by optional keyword, remove that from the reference.
-			  (setq reference (substring reference (match-end 0)))))))
+			(if (string-match "\\`\\(branch\\|tag\\)/" reference)
+			    ;; Reference is a specific branch or tag.
+			    ;; If preceded by optional keyword, remove that from the reference.
+			    (setq ref-type "blob/"
+				  reference (substring reference (match-end 0)))
+			  ;; Reference is a file within a branch.
+			  (setq ref-type "blob/master/")))))
 	       (if (and (stringp user) (stringp project))
 		   (funcall hibtypes-social-display-function
 			    (if reference
