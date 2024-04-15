@@ -61,8 +61,6 @@ hpath.el             - GNU Hyperbole support routines for handling UNIX paths
 htz.el               - Timezone-based time and date support for GNU Hyperbole
 hypb.el              - Miscellaneous GNU Hyperbole support features
 hypb-ert.el          - Hyperbole test runner action button types
-hyrolo.el            - Hierarchical, multi-file, easy-to-use record management system
-hyrolo-logic.el      - Logic functions for GNU Hyperbole Rolo files
 hywconfig.el         - Save ring of window configurations
 set.el               - General mathematical operators for unordered sets
 
@@ -74,6 +72,11 @@ hsmail.el            - GNU Hyperbole buttons in mail composer: mail
 * --- HYPERBOLE KOUTLINER ---
 kotl/MANIFEST        - Summary of Koutliner files
 kotl/EXAMPLE.kotl    - Sample Koutline document explaining Koutliner features
+
+* --- HYPERBOLE ROLO ---
+hyrolo.el            - Hierarchical, multi-file, easy-to-use record management system
+hyrolo.py            - Output file header and matching entries from HyRolo files via the command-line
+hyrolo-logic.el      - Logic functions for GNU Hyperbole Rolo files
 
 * --- USENET NEWS SUPPORT ---
 hgnus.el             - GNU Hyperbole buttons in news reader/poster: GNUS
