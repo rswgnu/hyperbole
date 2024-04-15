@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-may-21 at 09:33:00
-;; Last-Mod:     16-Mar-24 at 23:44:27 by Mats Lidell
+;; Last-Mod:     14-Apr-24 at 21:52:52 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -779,6 +779,18 @@ See #10 for the proper way to add an ibutton name.
     (should (equal (hattr:get (ibut:at-p) 'categ) 'ibtypes::pathname))
     (goto-char 8)  ;; ibtypes::mail-address !!
     (should (equal (hattr:get (ibut:at-p) 'categ) 'ibtypes::pathname))))
+
+(ert-deftest hypb--gbut-act-with-web-link ()
+  "Verify `gbut:act' with a web link calls browser."
+  (defvar global-but-file)
+  (let ((global-but-file (make-temp-file "gbut" nil ".txt"
+                                         "<[Link]> - \"https://savannah.gnu.org/projects/hyperbole/\"\n")))
+    (unwind-protect
+        (mocklet ((gbut:file => global-but-file)
+                  ((browse-url "https://savannah.gnu.org/projects/hyperbole/") => t)
+                  (hpath:find-noselect => (find-file-noselect global-but-file)))
+          (gbut:act "Link"))
+      (hy-delete-file-and-buffer global-but-file))))
 
 ;; This file can't be byte-compiled without the `el-mock' package (because of
 ;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.
