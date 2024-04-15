@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     21-Jan-24 at 12:42:59 by Bob Weiner
+;; Last-Mod:     14-Apr-24 at 19:03:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -48,6 +48,9 @@
   "Return the first definition of string IDENTIFIER."
   (car (hsys-xref-definitions identifier)))
 
+(defun hsys-xref-identifier-at-point ()
+  (xref-backend-identifier-at-point (xref-find-backend)))
+
 (defun hsys-xref-item-buffer (item)
   "Return the buffer in which xref ITEM is defined."
   (marker-buffer (save-excursion (xref-location-marker (xref-item-location item)))))
@@ -65,6 +68,8 @@
   (get-text-property
    (max (point-min) (if (eolp) (1- (point)) (point)))
    'xref-item))
+
+(defalias 'hsys-xref-item-at-point #'xref--item-at-point)
 
 (provide 'hsys-xref)
 

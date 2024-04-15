@@ -5,6 +5,20 @@
 
 2024-04-14  Bob Weiner  <rsw@gnu.org>
 
+* hyrolo.py: Add this file for command-line search for string matches in HyRolo
+    files.
+ Makefile (HYPERBOLE_FILES): Add hyrolo.py.
+
+* hui-mouse.el (hkey-alist):
+  hmouse-tag.el (smart-prog-at-tag-p, smart-prog-tag): Add default
+    handlers for programming languages that have xref support but no other
+    specific Hyperbole features.
+
+* hsys-xref.el (hsys-xref-identifier-at-point, hsys-xref-item-at-point): Add so
+     do not expose any internal xref call outside of this library.
+  hui-mouse.el (hsys-xref): Switch to using 'hsys-xref-item-at-point' and add
+    (require 'hsys-xref).
+
 * hbut.el (ibut:create): Set 'name-start' and 'name-end' location attributes
     when previously set in call of 'ibut:set-name-and-label-key-p'.
 

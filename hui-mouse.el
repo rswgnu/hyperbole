@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:      4-Feb-24 at 10:07:05 by Bob Weiner
+;; Last-Mod:     15-Apr-24 at 00:08:13 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -39,12 +39,13 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(require 'ert-results nil t) ;; Action Key support in ERT result buffers
+(require 'ert-results nil t) ;; Optional Action Key support in ERT result buffers
 ;; Library in next line (for code optionally used in `smart-eol') uses
 ;; `repeat-map' which was not added to the "repeat.el" library in Emacs 27.1,
 ;; so don't use if it fails to load properly.
 (ignore-errors (require 'hsys-flymake))
 (require 'hload-path)
+(require 'hsys-xref)
 (require 'hsys-org)
 (require 'hbut)
 (unless (fboundp 'smart-info)
@@ -318,7 +319,7 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
     ;;
     ;; If in an xref buffer on a listing of matching identifier lines, go to
     ;; the source line referenced by the current entry.
-    ((and (fboundp 'xref--item-at-point) (xref--item-at-point))
+    ((hsys-xref-item-at-point)
      . ((xref-goto-xref) . (xref-show-location-at-point)))
     ;;
     ;; The Smart Menu system is an attractive in-buffer menu system
@@ -574,7 +575,12 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
     ;;
     ;; Todotxt
     ((eq major-mode 'todotxt-mode)
-     . ((smart-todotxt) . (smart-todotxt-assist))))
+     . ((smart-todotxt) . (smart-todotxt-assist)))
+    ;;
+    ;; Any other programming modes not specially supported
+    ;; Use xref which supports various Language Servers
+    ((setq hkey-value (smart-prog-at-tag-p))
+     . ((smart-prog-tag hkey-value) . (smart-prog-tag hkey-value))))
   "Alist of predicates and form-conses for the Action and Assist Keyboard Keys.
 Each element is: (PREDICATE-FORM . (ACTION-KEY-FORM . ASSIST-KEY-FORM)).
 When the Action or Assist Key is pressed, the first or second form,
@@ -2072,63 +2078,6 @@ With optional POS, use that instead of point."
     t))
 
 ;;; ************************************************************************
-;;; smart-todotxt functions
-;;; ************************************************************************
-
-(defun smart-todotxt ()
-  "Use a single key or mouse key to manipulate `todotxt' items.
-
-If key is pressed:
- (1) at the end of buffer, bury buffer
- (2) on a todo item, toggle the completion"
-  (interactive)
-  (cond ((smart-eobp) (todotxt-bury))
-	(t (todotxt-complete-toggle))))
-
-(defun smart-todotxt-assist ()
-  "Use a single assist key or mouse assist key to manipulate `todotxt' items.
-
-If key is pressed:
- (1) at the end of buffer, archive completed items
- (2) on a todo item, edit it"
-
-  (interactive)
-  (cond ((smart-eobp) (todotxt-archive))
-	(t (todotxt-edit-item))))
-
-;;;###autoload
-(defun smart-eobp ()
-  "Return t if point is past the last visible buffer line with text."
-  (and (or (eobp)
-	   ;; On a blank line and nothing but whitespace until eob
-	   (save-excursion
-	     (beginning-of-line)
-	     (looking-at "[ \t\n\r\f]+\\'")))
-       (or (not (smart-outline-char-invisible-p))
-	   (not (smart-outline-char-invisible-p (1- (point)))))))
-
-(defun smart-eolp ()
-  "Return t if point is at the end of a visible line but not the end of the buffer."
-  ;; smart-helm handles eol for helm buffers
-  (unless (or (and (smart-helm-alive-p) (equal (helm-buffer-get) (buffer-name)))
-	      ;; Allow for org global cycling at start of buffer on a
-	      ;; non-heading line in Hyperbole doc files when
-	      ;; displayed from Hyperbole menu items.
-	      (smart-org-bob-and-non-heading-p)
-	      ;; If there is a flymake diagnostic issue at eol,
-	      ;; drop through this clause to handle it later.
-	      (and (featurep 'hsys-flymake)
-		   (boundp 'flymake-mode)
-		   flymake-mode
-		   (eolp)
-		   (hsys-flymake-get-issue-at-position)))
-    (if (eq major-mode 'kotl-mode)
-	(and (not (kotl-mode:eobp)) (kotl-mode:eolp t))
-      (and (not (smart-eobp)) (eolp)
-	   (or (not (smart-outline-char-invisible-p))
-	       (not (smart-outline-char-invisible-p (1- (point)))))))))
-
-;;; ************************************************************************
 ;;; smart-push-button functions
 ;;; ************************************************************************
 
@@ -2205,6 +2154,63 @@ If assist key is pressed:
 	 (tar-unflag (- (count-lines (point-min) (point-max))))
 	 (goto-char (point-max)))
 	(t (tar-flag-deleted 1))))
+
+;;; ************************************************************************
+;;; smart-todotxt functions
+;;; ************************************************************************
+
+(defun smart-todotxt ()
+  "Use a single key or mouse key to manipulate `todotxt' items.
+
+If key is pressed:
+ (1) at the end of buffer, bury buffer
+ (2) on a todo item, toggle the completion"
+  (interactive)
+  (cond ((smart-eobp) (todotxt-bury))
+	(t (todotxt-complete-toggle))))
+
+(defun smart-todotxt-assist ()
+  "Use a single assist key or mouse assist key to manipulate `todotxt' items.
+
+If key is pressed:
+ (1) at the end of buffer, archive completed items
+ (2) on a todo item, edit it"
+
+  (interactive)
+  (cond ((smart-eobp) (todotxt-archive))
+	(t (todotxt-edit-item))))
+
+;;;###autoload
+(defun smart-eobp ()
+  "Return t if point is past the last visible buffer line with text."
+  (and (or (eobp)
+	   ;; On a blank line and nothing but whitespace until eob
+	   (save-excursion
+	     (beginning-of-line)
+	     (looking-at "[ \t\n\r\f]+\\'")))
+       (or (not (smart-outline-char-invisible-p))
+	   (not (smart-outline-char-invisible-p (1- (point)))))))
+
+(defun smart-eolp ()
+  "Return t if point is at the end of a visible line but not the end of the buffer."
+  ;; smart-helm handles eol for helm buffers
+  (unless (or (and (smart-helm-alive-p) (equal (helm-buffer-get) (buffer-name)))
+	      ;; Allow for org global cycling at start of buffer on a
+	      ;; non-heading line in Hyperbole doc files when
+	      ;; displayed from Hyperbole menu items.
+	      (smart-org-bob-and-non-heading-p)
+	      ;; If there is a flymake diagnostic issue at eol,
+	      ;; drop through this clause to handle it later.
+	      (and (featurep 'hsys-flymake)
+		   (boundp 'flymake-mode)
+		   flymake-mode
+		   (eolp)
+		   (hsys-flymake-get-issue-at-position)))
+    (if (eq major-mode 'kotl-mode)
+	(and (not (kotl-mode:eobp)) (kotl-mode:eolp t))
+      (and (not (smart-eobp)) (eolp)
+	   (or (not (smart-outline-char-invisible-p))
+	       (not (smart-outline-char-invisible-p (1- (point)))))))))
 
 (provide 'hui-mouse)
 
