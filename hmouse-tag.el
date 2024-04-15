@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:      9-Apr-24 at 23:19:17 by Bob Weiner
+;; Last-Mod:     14-Apr-24 at 21:27:25 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -959,6 +959,28 @@ When optional NO-FLASH, do not flash."
 	    (smart-flash-tag
 	     (buffer-substring-no-properties (match-beginning 2) (match-end 2))
 	     (match-beginning 2) (match-end 2)))))))
+
+;; smart-prog language default support functions
+;;;###autoload
+(defun smart-prog-at-tag-p (&optional no-flash)
+  "Return programming language tag name that point is within, else nil.
+When optional NO-FLASH, do not flash.
+Uses `xref' for identifier recognition."
+  (when (derived-mode-p 'prog-mode)
+    (let ((identifier (hsys-xref-identifier-at-point)))
+      (when identifier
+	(setq identifier (substring-no-properties identifier))
+	(if no-flash
+	    identifier
+	  (smart-flash-tag identifier (point) (match-end 0)))
+	identifier))))
+
+;;;###autoload
+(defun smart-prog-tag (&optional identifier next)
+  "Jump to definition of optional programming IDENTIFIER or the one at point.
+Optional second arg NEXT means jump to next matching tag."
+  (smart-tags-display (or identifier (hsys-xref-identifier-at-point)) next)
+  t)
 
 (defun smart-jedi-find-file (file line column other-window)
   "Function that read a source FILE for jedi navigation.
