@@ -8,7 +8,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:     1-Apr-24 at 01:45:27
-# Last-Mod:     15-Apr-24 at 00:04:58 by Bob Weiner
+# Last-Mod:     16-Apr-24 at 23:12:28 by Bob Weiner
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
@@ -36,11 +36,11 @@ import re
 
 # String to match at bol for file header start and end
 file_header_delimiter = '==='
-# Header to insert before a file's first entry match when file has no header.
-# Used with one argument, the file name.
+# Header to insert before a file's first entry match when file has no header
+# Used with one argument, the file name
 file_header_format = \
     "===============================================================================\n" \
-    "@loc> \"%s\"\n" \
+    "%s" \
     "===============================================================================\n"
 
 # The ANSI escape sequence for the red color
@@ -55,6 +55,7 @@ def find_matching_entries(match_string, file_paths):
 
     # Remove any null items from file_paths and expand them
     file_paths = [os.path.abspath(os.path.expanduser(os.path.expandvars(p))) for p in file_paths if p]
+    org_buffer_property_regex ='#\\+[^: \t\n]+:'
 
     for file_path in file_paths:
         # Initialize variables
@@ -62,18 +63,27 @@ def find_matching_entries(match_string, file_paths):
         file_header_buffer = ''
         inside_entry = False
         inside_file_header = False
+        inside_org_file_header = False
         first_line = True
         first_entry = True
         headline_match = False
+        org_file = False
 
         # Open the file
         with open(file_path, 'r') as file:
+            org_file = file_path.endswith('.org')
             for line in file:
                 if first_line:
                     first_line = False
                     if line.startswith(file_header_delimiter):
                         inside_file_header = True
                         file_header_buffer += line
+                        org_file = False  # Prevent double file header wrapping
+                        continue
+                    elif org_file and line.startswith('#'):
+                        inside_org_file_header = True
+                        if re.match(org_buffer_property_regex, line):
+                            file_header_buffer += line
                         continue
 
                 if inside_file_header:
@@ -81,20 +91,31 @@ def find_matching_entries(match_string, file_paths):
                     if line.startswith(file_header_delimiter):
                         inside_file_header = False
                     continue
+                elif inside_org_file_header:
+                    if re.match(org_buffer_property_regex, line):
+                        file_header_buffer += line
+                    elif line.startswith('#'):
+                        pass
+                    else:
+                        inside_org_file_header = False
+                    continue
 
                 headline_match = re.match(r'[\*\#]+[ \t]', line, re.IGNORECASE)
-                # If inside a entry and the line starts with an asterisk, check
+                # If inside an entry and the line starts with an asterisk, check
                 # if the buffer contains the match string. 
                 if inside_entry and headline_match:
                     if re.search(quoted_match_string, buffer, re.IGNORECASE):
                         if first_entry:
                             first_entry = False
                             if file_header_buffer:
-                                print(file_header_buffer, end='')
+                                if org_file:
+                                    print(file_header_format % file_header_buffer, end='')
+                                else:
+                                    print(file_header_buffer, end='')
                                 file_header_buffer = ''
                                 print("@loc> \"%s\"\n" % file_path)
                             else:
-                                print(file_header_format % file_path)
+                                print(file_header_format % "@loc> \"" + file_path + "\"\n")
 
                         highlight_matches(match_string, buffer)
 

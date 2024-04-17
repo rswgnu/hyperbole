@@ -1,5 +1,8 @@
 2024-04-16  Bob Weiner  <rsw@gnu.org>
 
+* hyrolo.py: For Org files, create hyrolo match file header from all
+    initial buffer-level '#+PROPERTY:' lines.
+
 * hib-social.el (github-reference): Allow for a - character following
     commit, issue or pull keywords; already supported / and = characters.
                 (gitlab-reference): Allow for a - character following
