@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    20-Jul-16 at 22:41:34
-;; Last-Mod:     13-Apr-24 at 11:17:42 by Bob Weiner
+;; Last-Mod:     16-Apr-24 at 22:10:55 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -166,7 +166,7 @@
 ;;     gl#projects                               List all available projects
 ;;
 ;;     gl#milestone=38                           Show a specific project milestone
-;;     gl#snippet/1689487                        Show a specific project snippet
+;;     gl#snippet=1689487                        Show a specific project snippet
 
 ;;; Code:
 ;;; ************************************************************************
@@ -367,7 +367,7 @@ or  /<project>.
   are listed;
 
   one of the words: branch, commit, issue, pull or tag followed
-  by a '/' or '=' and an item-id; the item is shown;
+  by by '/', '-', or '=', and an item-id; the item is shown;
 
   an issue reference given by a positive integer, e.g. 92 or
   prefaced with GH-, e.g. GH-92; the issue is displayed;
@@ -390,7 +390,7 @@ PROJECT value is provided, it defaults to the value of
 		 (url-to-format (assoc-default "github" hibtypes-social-hashtag-alist #'string-match))
 		 (ref-type))
 	     (when url-to-format
-	       (cond ((string-match "\\`\\(branch\\|commit\\|issue\\|pull\\|tag\\)[/=]" reference)
+	       (cond ((string-match "\\`\\(branch\\|commit\\|issue\\|pull\\|tag\\)[-/=]" reference)
 		      ;; [branch | commit | issue | pull | tag]/ref-item
 		      nil)
 		     ((string-match "\\`/?\\(\\([^/#@]+\\)/\\)\\([^/#@]+\\)\\'" reference)
@@ -426,20 +426,21 @@ PROJECT value is provided, it defaults to the value of
 			(setq ref-type reference
 			      reference ""))
 		       ((and (< (length reference) 8) (string-match "\\`\\([gG][hH]-\\)?[0-9]+\\'" reference))
-			;; Issue ref-id reference
+			;; Issue 'number' or 'GH-number' ref-id reference
 			(setq ref-type "issues/"
 			      reference (substring reference (match-end 1) (match-end 0))))
-		       ((string-match "\\`\\(commit\\|issue\\|pull\\)[/=]" reference)
+		       ((string-match "\\`\\(commit\\|issue\\|pull\\)[-/=]" reference)
 			;; Specific reference preceded by keyword branch, commit,
-			;; issue, or pull
+			;; issue, or pull and followed by -, /, = or #.
 			(setq ref-type (substring reference 0 (match-end 1))
 			      reference (substring reference (match-end 0))
-			      ref-type (concat ref-type (if (string-equal ref-type "issue") "s/" "/"))))		       ((string-match "\\`[0-9a-f]+\\'" reference)
+			      ref-type (concat ref-type (if (string-equal ref-type "issue") "s/" "/"))))
+		       ((string-match "\\`[0-9a-f]+\\'" reference)
 			;; Commit reference
 			(setq ref-type "commit/"))
 		       (t
 			;; Specific branch or commit tag reference
-			(if (string-match "\\`\\(branch\\|tag\\)/" reference)
+			(if (string-match "\\`\\(branch\\|tag\\)[-/=]" reference)
 			    ;; Reference is a specific branch or tag.
 			    ;; If preceded by optional keyword, remove that from the reference.
 			    (setq ref-type "blob/"
@@ -482,8 +483,8 @@ or  /<project-or-group> (where a group is a collection of projects).
   listed;
 
   one of the words: branch, commit(s), issue(s), milestone(s),
-  pull(s), snippet(s) or tag(s) followed by a '/' or '=' and an
-  item-id; the item is shown;
+  pull(s), snippet(s) or tag(s) followed by a '/', '-' or '='
+  and an item-id; the item is shown;
 
   an issue reference given by a positive integer, e.g. 92 or
   prefaced with GL-, e.g. GL-92; the issue is displayed;
@@ -592,15 +593,15 @@ PROJECT value is provided, it defaults to the value of
 			;; Labeled category of issues
 			(setq ref-type "issues?label_name%5B%5D="
 			      reference (substring reference (match-end 0))))
-		       ((string-match "\\`\\(commit\\|issues\\|milestones\\|pull\\|snippets\\|tags\\)[/=]" reference)
+		       ((string-match "\\`\\(commit\\|issues\\|milestones\\|pull\\|snippets\\|tags\\)[-/=]" reference)
 			;; Ref-id preceded by a keyword
 			(setq ref-type (concat (substring reference 0 (match-end 1)) "/")
 			      reference (substring reference (match-end 0))))
-		       ((string-match "\\`\\(issue\\|milestone\\|snippet\\|tag\\)[/=]" reference)
+		       ((string-match "\\`\\(issue\\|milestone\\|snippet\\|tag\\)[-/=]" reference)
 			;; Ref-id preceded by a singular keyword that must be converted to plural
 			(setq ref-type (concat (substring reference 0 (match-end 1)) "s/")
 			      reference (substring reference (match-end 0))))
-		       ((string-match "\\`\\(commit\\|pull\\)s[/=]" reference)
+		       ((string-match "\\`\\(commit\\|pull\\)s[-/=]" reference)
 			;; Ref-id preceded by a plural keyword that must be converted to singular
 			(setq ref-type (concat (substring reference 0 (match-end 1)) "/")
 			      reference (substring reference (1+ (match-end 0)))))
@@ -610,7 +611,7 @@ PROJECT value is provided, it defaults to the value of
 		       (t
 			;; Specific branch or commit tag reference
 			(setq ref-type "tree/")
-			(when (string-match "\\`\\(branch\\|tag\\)[/=]" reference)
+			(when (string-match "\\`\\(branch\\|tag\\)[-/=]" reference)
 			  ;; If preceded by optional keyword, remove that from the reference.
 			  (setq reference (substring reference (match-end 0)))))))
 	       (if (and (stringp user) (stringp project))

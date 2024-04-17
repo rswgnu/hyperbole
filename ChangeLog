@@ -1,3 +1,10 @@
+2024-04-16  Bob Weiner  <rsw@gnu.org>
+
+* hib-social.el (github-reference): Allow for a - character following
+    commit, issue or pull keywords; already supported / and = characters.
+                (gitlab-reference): Allow for a - character following
+    any ref-type keyword.
+
 * hui-select.el (hui-select-initialize): Disable C++ defun selection regexp until
     regexp is rewritten to prevent Emacs hangs.  See Emacs bug#61436 from 2023
     and; gh#rswgnu/hyperbole/issue-518 from 2024.
