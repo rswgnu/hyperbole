@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     13-Apr-24 at 11:21:43 by Bob Weiner
+@c Last-Mod:     16-Apr-24 at 22:13:33 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -159,7 +159,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed April 7, 2024.
+Printed April 16, 2024.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -201,7 +201,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.2pre
-April 7, 2024
+April 16, 2024
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -3203,7 +3203,7 @@ REFERENCE is a string of one of the following forms:
 @table @asis
 @item @bullet{} one of the words: branches, commits, issues, pulls, or tags
 the associated items are listed
-@item @bullet{} one of the words: branch, commit, issue, pull or tag followed by a '/' and item id
+@item @bullet{} one of the words: branch, commit, issue, pull or tag followed by a '/', '-', or '=', and item id
 the item is shown
 @item @bullet{} an issue reference given by a positive integer, e.g. @emph{92} or prefaced with @emph{GH-}, like GH-92
 the issue is displayed
@@ -3242,7 +3242,7 @@ or
 @table @asis
 @item @bullet{} one of the words: activity, analytics, boards or kanban, branches, commits, contributors, groups, issues or list, jobs, labels, merge_requests, milestones, pages, pipelines, pipeline_charts, members or people or staff, projects, pulls, schedules, snippets, status or tags
 the associated items are listed
-@item @bullet{} one of the words: branch, commit(s), issue(s), milestone(s), pull(s), snippet(s) or tag(s) followed by a '/' or '=' and an item-id
+@item @bullet{} one of the words: branch, commit(s), issue(s), milestone(s), pull(s), snippet(s) or tag(s) followed by a '/', '-', or '=', and an item-id
 the item is shown
 @item @bullet{} an issue reference given by a positive integer, e.g. @emph{92} or prefaced with @emph{GL-}, like GL-92
 the issue is displayed

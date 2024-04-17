@@ -1,3 +1,17 @@
+2024-04-16  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.py: For Org files, create hyrolo match file header from all
+    initial buffer-level '#+PROPERTY:' lines.
+
+* hib-social.el (github-reference): Allow for a - character following
+    commit, issue or pull keywords; already supported / and = characters.
+                (gitlab-reference): Allow for a - character following
+    any ref-type keyword.
+
+* hui-select.el (hui-select-initialize): Disable C++ defun selection regexp until
+    regexp is rewritten to prevent Emacs hangs.  See Emacs bug#61436 from 2023
+    and; gh#rswgnu/hyperbole/issue-518 from 2024.
+
 2024-04-14  Mats Lidell  <matsl@gnu.org>
 
 * test/hbut-tests.el (hypb--gbut-act-with-web-link): Test for gbut:act
