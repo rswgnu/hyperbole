@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     16-Apr-24 at 22:21:45 by Bob Weiner
+;; Last-Mod:     20-Apr-24 at 12:02:16 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -203,6 +203,90 @@ Used to include a final line when marking indented code.")
   :type 'boolean
   :group 'hyperbole-commands)
 
+(defconst hui-c++-defun-prompt-regexp
+  (let* ((space* "[ \t\n\r\f]*")
+	 (space+ "[ \t\n\r\f]+")
+	 (ad-hoc-requires-clause
+	  (concat "\\(?:requires" space* "[][()<> \t\n\r\f_$a-zA-Z0-9&|\"'+=.,*:~-]+" space* "\\)?"))
+	 (id (concat "[_$~a-zA-Z][_$a-zA-Z0-9]*")
+	     ;; (concat "\\(\\(~" space* "\\)?" "\\([_$a-zA-Z][_$a-zA-Z0-9]*\\)\\)")
+	     )
+	 (template-brackets "\\(?:<[^;{}]*>\\)")
+	 (id-<> (concat id "\\(?:" space* template-brackets "\\)?"))
+	 (id-:: (concat id-<> "\\(?:" space* "::" space* id-<> "\\)*"))
+	 (paren-exp "([^{};]*)")
+	 (template-exp\? (concat "\\(?:template" space* template-brackets space* "\\)?"))
+	 (type-prefix-modifier* (concat "\\(?:\\(?:"
+					"\\(?:\\<extern" space+ "\"[^\"]+\"\\)"
+					"\\|"
+					(regexp-opt '("auto" "const" "explicit" "extern"
+						      "friend" "inline" "mutable"
+						      "noexcept" "overload"
+						      "register" "static" "typedef"
+						      "virtual" "volatile")
+						    'words)
+					"\\)"
+					space+
+					"\\)*"))
+	 (type-exp (concat
+		    "\\(?:\\(?:" template-brackets space* "\\)?"
+		    type-prefix-modifier*
+		    "\\(?:\\(?:decltype" space* paren-exp space* "\\)"
+		    "\\|"
+		    "\\(?:"
+		    "\\(?:class\\|enum\\|struct\\|typename\\|union\\)"
+		    "\\(?:" space* "\\.\\.\\.\\)?\\)"
+		    space+ id space*
+		    "\\(?::" id-:: space* "\\)?"
+		    "\\|"
+		    id-:: space*
+		    "\\)"
+		    "\\)\\{1,2\\}"))
+	 (type-mid-modifier* (concat "\\(?:"
+				     (regexp-opt
+				      '("auto" "consteval" "constexpr"
+					"constinit" "explicit"
+					"extern" "friend" "inline"
+					"mutable" "noexcept" "register"
+					"static" "template"
+					"thread_local" "throw"
+					"virtual" "volatile")
+				      'words)
+				     space+ "\\)*"))
+	 (operator-exp (concat "\\(?:operator\\>" space*
+			       "\\(?:[][a-z_+*/%^?&|!~<>,:=-]+"
+			       "\\|()\\|\"\""
+			       "\\)" space*
+			       "\\)"))
+
+	 (name-exp			; matches foo or (* foo), etc.
+	  (concat "\\(?:(" space* "[*&]+" space* id-:: space* "[][()]*" ")"
+		  "\\|\\(?:[*&]+" space* "\\)?" id-::
+		  "\\)" space*))
+	 (type-suffix-modifier* (concat "\\(?:"
+					(regexp-opt
+					 '("auto" "const" "noexcept"
+					   "requires" "throw" "volatile")
+					 'words)
+					space+ "\\)*"))
+	 (post-paren-modifier* (concat "\\(?:"
+				       (regexp-opt
+					'("const" "final" "override"
+					  "mutable")
+					'words)
+				       space* "\\)*")))
+
+    (concat template-exp\?
+	    "\\(?:" ad-hoc-requires-clause "\\)?"
+	    type-exp
+	    type-mid-modifier*
+	    "\\(?:" operator-exp "\\|" name-exp "\\)"
+	    type-suffix-modifier*
+	    paren-exp space*
+	    "\\(?:->" space* type-exp "\\)?"
+	    post-paren-modifier*
+	    "{")))
+
 (defconst hui-java-defun-prompt-regexp
   (let* ((space* "[ \t\n\r\f]*")
          (space+ "[ \t\n\r\f]+")
@@ -221,15 +305,15 @@ Used to include a final line when marking indented code.")
     (concat "^[ \t]*"
             modifier*
             "\\(?:" generic-exp space* "\\)?"
-            ids-with-dot-\[\] space+                ; first part of type
+            ids-with-dot-\[\] space+	; first part of type
             "\\(?:" ids-with-dot-\[\] space+ "\\)?" ; optional second part of type.
             "\\(?:[_a-zA-Z][^][ \t:;.,{}()=<>]*"    ; defun name
-                "\\|" ids-with-dots
+            "\\|" ids-with-dots
             "\\)" space*
             paren-exp
             "\\(?:" space* "]\\)*"      ; What's this for?
             "\\(?:" space* "\\<throws\\>" space* ids-with-dot-\[\]
-                  "\\(?:," space* ids-with-dot-\[\] "\\)*"
+            "\\(?:," space* ids-with-dot-\[\] "\\)*"
             "\\)?"
             space*)))
 
@@ -402,12 +486,8 @@ Also, add language-specific syntax setups to aid in thing selection."
   (var:add-and-run-hook 'java-mode-hook (lambda ()
 					  (setq defun-prompt-regexp hui-java-defun-prompt-regexp)))
 
-  ;; !! TODO: defun selection regexp is disabled in C++ until regexp is
-  ;; rewritten as it can hang Emacs; reported in Emacs bug#61436 in
-  ;; 2023 and gh#rswgnu/hyperbole/issue-518 in 2024.
-  ;; (var:add-and-run-hook 'c++-mode-hook (lambda ()
-  ;;					 (setq defun-prompt-regexp
-  ;;					       "^[ \t]*\\(template\\s-*<[^>;.{}]+>\\s-*\\)?\\(\\(\\(auto\\|const\\|explicit\\|extern\\s-+\"[^\"]+\"\\|extern\\|friend\\|inline\\|mutable\\|overload\\|register\\|static\\|typedef\\|virtual\\)\\s-+\\)*\\(\\([[<a-zA-Z][]_a-zA-Z0-9]*\\(::[]_a-zA-Z0-9]+\\)?\\s-*<[_<>a-zA-Z0-9 ,]+>\\s-*[*&]*\\|[[<a-zA-Z][]_<>a-zA-Z0-9]*\\(::[[<a-zA-Z][]_<>a-zA-Z0-9]+\\)?\\s-*[*&]*\\)[*& \t\n\r]+\\)\\)?\\(\\(::\\|[[<a-zA-Z][]_a-zA-Z0-9]*\\s-*<[^>;{}]+>\\s-*[*&]*::\\|[[<a-zA-Z][]_~<>a-zA-Z0-9]*\\s-*[*&]*::\\)\\s-*\\)?\\(operator\\s-*[^ \t\n\r:;.,?~{}]+\\(\\s-*\\[\\]\\)?\\|[_~<a-zA-Z][^][ \t:;.,~{}()]*\\|[*&]?\\([_~<a-zA-Z][_a-zA-Z0-9]*\\s-*<[^>;{}]+[ \t\n\r>]*>\\|[_~<a-zA-Z][_~<>a-zA-Z0-9]*\\)\\)\\s-*\\(([^{;]*)\\(\\(\\s-+const\\|\\s-+mutable\\)?\\(\\s-*[=:][^;{]+\\)?\\)?\\)\\s-*")))
+  (var:add-and-run-hook 'c++-mode-hook (lambda ()
+					  (setq defun-prompt-regexp hui-c++-defun-prompt-regexp)))
   ;;
   ;; Match to Lisp symbols with : in their names, often included in help buffers.
   (var:add-and-run-hook 'help-mode-hook (lambda () (modify-syntax-entry ?:  "_"  help-mode-syntax-table)))
