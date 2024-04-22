@@ -1,3 +1,24 @@
+2024-04-22  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el: Add new auto-wikiword note-taking system with `hywiki' ibtype.
+  hasht.el: Temporarily add this for hywiki hash table support.
+  hibtypes.el (load "hywiki"): Add at lowest ibtype priority.
+  hsys-org.el (hsys-org-link-at-p): Support HyWiki word handling.
+  Makefile (EL_COMPILE):
+  MANIFEST: Add hywiki.el and hasht.el.
+
+* hui-em-but.el (hproperty:but-start, hproperty:but-end, hproperty:but-delete):
+    Add these functions and use in hywiki.el.
+
+2024-04-21  Bob Weiner  <rsw@gnu.org>
+
+* hui-em-but.el (hproperty:but-clear): Add optional args 'property' and 'value'.
+    When 'property' is given, clear the button only when property's value
+    matches 'value'.
+                (hproperty:but-p, hproperty:but-get): Add optional args
+    'property' and 'value', matching only when 'property' equals 'value', if
+    given.
+
 2024-04-20  Bob Weiner  <rsw@gnu.org>
 
 * hui-select.el (hui-c++-defun-prompt-regexp): Add to eliminate an Emacs

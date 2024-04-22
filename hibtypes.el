@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      7-Apr-24 at 15:12:46 by Bob Weiner
+;; Last-Mod:     22-Apr-24 at 02:06:09 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -11,6 +11,7 @@
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
+
 ;;; Commentary:
 ;;
 ;;   Implicit button types (ibtypes) in this file are defined in increasing
@@ -87,6 +88,12 @@
 ;; Don't use require below here for any libraries with ibtypes in
 ;; them.  Use load instead to ensure are reloaded when resetting
 ;; ibtype priorities.
+
+;;; ========================================================================
+;;; Creates and display personal wiki pages with auto-wikiword links
+;;; ========================================================================
+
+(load "hywiki")
 
 ;;; ========================================================================
 ;;; Jumps to source line from Python traceback lines

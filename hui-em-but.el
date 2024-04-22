@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Aug-92
-;; Last-Mod:     20-Jan-24 at 20:09:40 by Mats Lidell
+;; Last-Mod:     22-Apr-24 at 02:06:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -159,10 +159,13 @@ moves over it."
     (when hproperty:but-emphasize-flag
       (overlay-put but 'mouse-face 'highlight))))
 
-(defun hproperty:but-clear (&optional pos)
-  "Remove highlighting from any named Hyperbole button at point or POS."
-  (let ((but (hproperty:but-get pos)))
-    (when but (delete-overlay but))))
+(defun hproperty:but-clear (&optional pos property value)
+  "Remove highlighting from any named Hyperbole button at point or POS.
+If optional PROPERTY and VALUE are given, remove highlighting only if
+the PROPERTY at the position matches VALUE."
+  (let ((but (hproperty:but-get pos property value)))
+    (when but
+      (delete-overlay but))))
 
 (defun hproperty:but-clear-all (&optional regexp-match)
   "Remove highlighting from all named Hyperbole buttons in buffer.
@@ -217,22 +220,40 @@ moves over it."
     (narrow-to-region start end)
     (hproperty:but-create-all)))
 
+(defun hproperty:but-delete (hproperty-but)
+  "Remove HPROPERTY-BUT.  See `hproperty:but-get'."
+  (delete-overlay hproperty-but))
+
+(defun hproperty:but-end (hproperty-but)
+  "Return the start position of an HPROPERTY-BUT.
+See `hproperty:but-get'."
+  (overlay-end hproperty-but))
+
+(defun hproperty:but-get (&optional pos property value)
+  "Get button at optional POS or point.
+If optional PROPERTY and VALUE are given, return only the first button
+with that PROPERTY and VALUE."
+  (car (delq nil
+	     (mapcar (lambda (overlay)
+		       (when (memq (overlay-get overlay (or property 'face))
+				   (if property
+				       (list value)
+				     (list hproperty:but-face
+					   hproperty:ibut-face
+					   hproperty:flash-face)))
+			 overlay))
+		     (overlays-at (or pos (point)))))))
+
+(defun hproperty:but-start (hproperty-but)
+  "Return the end position of an HPROPERTY-BUT.
+See `hproperty:but-get'."
+  (overlay-start hproperty-but))
+
 (add-to-list 'yank-handled-properties '(hproperty:but-face . hproperty:but-create-on-yank))
 
 ;;; ************************************************************************
 ;;; Private functions
 ;;; ************************************************************************
-
-(defun hproperty:but-get (&optional pos)
-  "Get button property at optional POS or point."
-  (car (delq nil
-	     (mapcar (lambda (props)
-		       (if (memq (overlay-get props 'face)
-				 (list hproperty:but-face
-				       hproperty:ibut-face
-				       hproperty:flash-face))
-			   props))
-		     (overlays-at (or pos (point)))))))
 
 (defsubst hproperty:list-cycle (list-ptr list)
   "Move LIST-PTR to next element in LIST or when at end to first element."
@@ -277,11 +298,13 @@ hproperty:color-ptr."
     (redisplay t)
     t))
 
-(defun hproperty:but-p (&optional pos)
+(defun hproperty:but-p (&optional pos property value)
   "Return non-nil at point or optional POS iff on a highlighted Hyperbole button."
-  (memq t (mapcar (lambda (props)
-		    (when (memq (overlay-get props 'face)
-				(list hproperty:but-face hproperty:ibut-face))
+  (memq t (mapcar (lambda (overlay)
+		    (when (memq (overlay-get overlay (or property 'face))
+				(if property
+				    (list value)
+				  (list hproperty:but-face hproperty:ibut-face)))
 		      t))
 		  (overlays-at (or pos (point))))))
 
