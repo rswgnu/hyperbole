@@ -1,3 +1,8 @@
+2024-04-23  Mats Lidell  <matsl@gnu.org>
+
+* test/hpath-tests.el (hpath--hpath:delimited-possible-path): Add test
+    case for delimited paths in "ls -R"-listings.
+
 2024-04-20  Bob Weiner  <rsw@gnu.org>
 
 * hui-select.el (hui-c++-defun-prompt-regexp): Add to eliminate an Emacs

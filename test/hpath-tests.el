@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 23:26:00
-;; Last-Mod:      8-Apr-24 at 16:45:22 by Mats Lidell
+;; Last-Mod:     23-Apr-24 at 22:15:36 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -390,6 +390,22 @@ See `hpath:line-and-column-regexp'."
   (should (string-match hpath:line-and-column-regexp "/foo/bar.org:L1"))
   (should-not (string-match hpath:line-and-column-regexp "/foo/bar.org:LL1"))
   (should-not (string-match hpath:line-and-column-regexp "/foo/bar.org:C1")))
+
+(ert-deftest hpath--hpath:delimited-possible-path ()
+  "Verify delimited path is found in an `ls -R' listings in `shell-mode'."
+  (with-temp-buffer
+    (insert "\
+$ ls -R dir
+dir/subdir:
+file1.ext file2.ext file3.ext
+")
+    (goto-char (point-min))
+    (shell-mode)
+    (dolist (v '(1 2 3))
+      (let ((filename (concat "file" (number-to-string v))))
+        (search-forward filename)
+        (should (looking-at-p "\\.ext"))
+        (should (string= (hpath:delimited-possible-path) (concat filename ".ext")))))))
 
 (provide 'hpath-tests)
 ;;; hpath-tests.el ends here
