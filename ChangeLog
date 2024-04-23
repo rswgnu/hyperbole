@@ -1,5 +1,8 @@
 2024-04-23  Mats Lidell  <matsl@gnu.org>
 
+* hpath.el (hpath:delimited-possible-path): Allow space between file names
+    in "ls -R"-listings.
+
 * test/hpath-tests.el (hpath--hpath:delimited-possible-path): Add test
     case for delimited paths in "ls -R"-listings.
 
