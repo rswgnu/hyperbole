@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 23:26:00
-;; Last-Mod:     23-Apr-24 at 22:15:36 by Mats Lidell
+;; Last-Mod:     23-Apr-24 at 23:52:50 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -405,7 +405,8 @@ file1.ext file2.ext file3.ext
       (let ((filename (concat "file" (number-to-string v))))
         (search-forward filename)
         (should (looking-at-p "\\.ext"))
-        (should (string= (hpath:delimited-possible-path) (concat filename ".ext")))))))
+        (mocklet (((file-exists-p "dir/subdir") => t))
+          (should (string= (hpath:delimited-possible-path) (expand-file-name (concat filename ".ext") "dir/subdir"))))))))
 
 (provide 'hpath-tests)
 ;;; hpath-tests.el ends here
