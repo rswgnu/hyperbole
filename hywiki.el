@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     21-Apr-24 at 22:41:13
-;; Last-Mod:     22-Apr-24 at 02:22:28 by Bob Weiner
+;; Last-Mod:     23-Apr-24 at 18:49:43 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -139,7 +139,6 @@ the HyWiki word and grouping 2 is the #section with the # included.")
 ;;; Public Implicit Button and Action Types
 ;;; ************************************************************************
 
-;;;###autoload
 (defib hywiki ()
   "When on a HyWiki word, display its page and optional section."
   (let* ((page-name (hywiki-at-wikiword)))
@@ -148,7 +147,6 @@ the HyWiki word and grouping 2 is the #section with the # included.")
       (hywiki-highlight-page-name t)
       (hact 'hywiki-open page-name))))
 
-;;;###autoload
 (defun hywiki-open (page-name)
   "Display HyWiki PAGE-NAME.  Prompt to create if non-existent."
   (interactive (list (completing-read "HyWiki page: " (hywiki-page-list))))

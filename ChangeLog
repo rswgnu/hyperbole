@@ -1,3 +1,7 @@
+2024-04-23  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el: Remove autoload from defib and 'hywiki-open', fixing autoload error.
+
 2024-04-22  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el: Add new auto-wikiword note-taking system with `hywiki' ibtype.
