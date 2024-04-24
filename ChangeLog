@@ -1,6 +1,27 @@
+2024-04-24  Bob Weiner  <rsw@gnu.org>
+
 2024-04-23  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el: Remove autoload from defib and 'hywiki-open', fixing autoload error.
+             (hywiki-company-hasht-backend): Complete words, not symbols
+    (no punctuation).
+             (hywiki-open): Rename to 'hywiki-find-page' and automatically create
+    any non-existent page unless optional 'prompt-flag' is t, then prompt
+    whether to create.  If 'prompt-flag' is 'exists, return an existing page only,
+    else nil.
+             (hywiki-complete): Rename to 'hywiki-org-link-complete'.  Insert
+    `hywiki-org-link-type' only when 'hywiki-org-link-type-required' is non-nil.
+             (hywiki-store-link): Rename to 'hywiki-org-link-store'.  Insert
+    `hywiki-org-link-type' only when 'hywiki-org-link-type-required' is non-nil.
+	     (hywiki-org-link-type): Change value from 'hy:' to 'hy'.
+	     (hywiki-page-list): Rename to 'hywiki-get-page-list'.
+	     (hywiki-get-pages): Rename to 'hywiki-get-page-hasht'.
+             (hywiki-word-section-regexp): Add.
+             (hywiki-get-page-files): Add missing '+' for multiple chars in file suffix.
+             (hywiki-at-wikiword, hywiki-highlight-page-names): Allow for numerics
+    in #section references.
+             (hywiki--word-face): Change foreground of HyWiki word to 'orange'
+    when on a dark background.
 
 2024-04-22  Bob Weiner  <rsw@gnu.org>
 
