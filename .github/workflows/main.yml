@@ -24,6 +24,7 @@ jobs:
         run: make clean
 
       - name: Compile
+        shell: bash
         run: |
           make binn 2>&1 | tee MAKE_BIN_OUTPUT
           test 0 -eq ${PIPESTATUS}
