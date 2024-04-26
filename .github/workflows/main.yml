@@ -26,7 +26,7 @@ jobs:
       - name: Compile
         shell: bash
         run: |
-          make binn 2>&1 | tee MAKE_BIN_OUTPUT
+          make bin 2>&1 | tee MAKE_BIN_OUTPUT
           test 0 -eq ${PIPESTATUS}
           echo "Number of warnings: $(grep "Warning:" MAKE_BIN_OUTPUT | wc -l)" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
