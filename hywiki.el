@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     21-Apr-24 at 22:41:13
-;; Last-Mod:     24-Apr-24 at 02:26:23 by Bob Weiner
+;; Last-Mod:      5-May-24 at 09:46:52 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -183,16 +183,16 @@ nil, else return the file name of the page."
 	 (page-buf  (when page-file (find-file-noselect page-file))))
     (when page-buf
       (save-excursion
-	(set-buffer page-buf)
-	(barf-if-buffer-read-only)
-	(save-restriction
-	  (widen)
-	  (goto-char (if start-flag (point-min) (point-max)))
-	  (unless (bolp) (insert (newline)))
-	  (insert text)
-	  (unless (bolp) (insert (newline)))
-	  (goto-char (if start-flag (point-min) (point-max)))
-	  page-file)))))
+	(with-current-buffer page-buf
+	  (barf-if-buffer-read-only)
+	  (save-restriction
+	    (widen)
+	    (goto-char (if start-flag (point-min) (point-max)))
+	    (unless (bolp) (insert (newline)))
+	    (insert text)
+	    (unless (bolp) (insert (newline)))
+	    (goto-char (if start-flag (point-min) (point-max)))
+	    page-file))))))
 
 (defun hywiki-at-wikiword (&optional org-link-flag)
   "Return HyWiki word and optional #section at point or nil if not on one.
@@ -413,11 +413,12 @@ Use `hywiki-get-page' to determine whether a HyWiki page exists."
 			    page-files)))
     (setq hywiki-pages-hasht (hash-make page-elts))))
 
+(when (featurep 'company)
 (defun hywiki-company-hasht-backend (command &optional _arg &rest ignored)
  "A `company-mode` backend that completes from the keys of a hash table."
  (interactive (list 'interactive))
  (when (hywiki-at-wikiword)
-   (case command
+   (pcase command
      ('interactive (company-begin-backend 'company-hash-table-backend))
      ('prefix (company-grab-word))
      ('candidates
@@ -426,7 +427,7 @@ Use `hywiki-get-page' to determine whether a HyWiki page exists."
           (cl-loop for key being the hash-keys in (hywiki-get-page-list)
                    when (string-prefix-p prefix key)
                    collect key))))
-     ('sorted t))))
+     ('sorted t)))))
 
 (defun hywiki-org-link-complete (&optional _arg)
   "Complete HyWiki page names for `org-insert-link'."
