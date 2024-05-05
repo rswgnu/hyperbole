@@ -1,4 +1,7 @@
-2024-04-24  Bob Weiner  <rsw@gnu.org>
+2024-05-05  Bob Weiner  <rsw@gnu.org>
+
+* hui-em-but.el: Comment out non-load when non-interactive so does not created
+    errors when used in "hywiki.el".
 
 2024-04-23  Bob Weiner  <rsw@gnu.org>
 

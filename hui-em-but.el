@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Aug-92
-;; Last-Mod:     22-Apr-24 at 02:06:26 by Bob Weiner
+;; Last-Mod:      5-May-24 at 09:44:17 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -19,10 +19,10 @@
 
 ;;; Code:
 
-(when noninteractive
-  ;; Don't load this library
-  (with-current-buffer " *load*"
-    (goto-char (point-max))))
+;; (when noninteractive
+;;   ;; Don't load this library
+;;   (with-current-buffer " *load*"
+;;     (goto-char (point-max))))
 
 ;;; ************************************************************************
 ;;; Other required Elisp libraries
