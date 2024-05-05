@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     21-Mar-24 at 17:30:27 by Mats Lidell
+;; Last-Mod:      5-May-24 at 19:13:00 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -57,7 +57,7 @@
 
 		   (set-buffer gbut-file-buffer)
 		   (with-simulated-input create-gbut
-		     (hact (lambda () (call-interactively 'hui:gbut-create))))
+		     (hact '(lambda () (call-interactively 'hui:gbut-create))))
 
 		   ;; Create using program
 		   ;; (gbut:ebut-program "abcd" 'link-to-file linked-file)
@@ -67,7 +67,7 @@
 
 		   (goto-char (point-max)) ;; Move past button so does not prompt with label
 		   (with-simulated-input edit-gbut
-		     (hact (lambda () (call-interactively 'hui:gbut-edit))))
+		     (hact '(lambda () (call-interactively 'hui:gbut-edit))))
 
 		   ;; (set-buffer gbut-file-buffer)
 		   (goto-char (+ (point-min) 2))
@@ -628,7 +628,7 @@ Ensure modifying the button but keeping the label does not create a double label
         (progn
           (find-file file)
 	  (with-simulated-input "ibut RET link-to-rfc RET 123 RET"
-	    (hact (lambda () (call-interactively 'hui:ibut-create))))
+	    (hact '(lambda () (call-interactively 'hui:ibut-create))))
           (should (string= "<[ibut]> - rfc123" (buffer-string))))
       (hy-delete-file-and-buffer file))))
 
@@ -642,7 +642,7 @@ Ensure modifying the button but keeping the label does not create a double label
           (set-mark (point-min))
           (goto-char (point-max))
 	  (with-simulated-input "RET link-to-rfc RET 123 RET"
-	    (hact (lambda () (call-interactively 'hui:ibut-create))))
+	    (hact '(lambda () (call-interactively 'hui:ibut-create))))
           (should (string= "<[ibut]> - rfc123" (buffer-string))))
       (hy-delete-file-and-buffer file))))
 
@@ -655,7 +655,7 @@ Ensure modifying the button but keeping the label does not create a double label
           (find-file file)
           (insert "(sexp)")
 	  (with-simulated-input "ibut RET link-to-rfc RET 123 RET"
-	    (hact (lambda () (call-interactively 'hui:ibut-create))))
+	    (hact '(lambda () (call-interactively 'hui:ibut-create))))
           (should (string= "(sexp); <[ibut]> - rfc123" (buffer-string))))
       (hy-delete-file-and-buffer file))))
 
@@ -668,7 +668,7 @@ Ensure modifying the button but keeping the label does not create a double label
           (insert "\"/tmp\"")
           (goto-char 3)
 	  (with-simulated-input "label RET"
-	    (hact (lambda () (call-interactively 'hui:ibut-label-create))))
+	    (hact '(lambda () (call-interactively 'hui:ibut-label-create))))
           (should (string= "<[label]> - \"/tmp\"" (buffer-string))))
       (hy-delete-file-and-buffer file))))
 
@@ -682,7 +682,7 @@ With point on label suggest that ibut for rename."
           (insert "<[label]> - rfc123")
           (goto-char 3)
 	  (with-simulated-input "M-DEL renamed RET"
-	    (hact (lambda () (call-interactively 'hui:ibut-rename))))
+	    (hact '(lambda () (call-interactively 'hui:ibut-rename))))
           (should (string= "<[renamed]> - rfc123" (buffer-string))))
       (hy-delete-file-and-buffer file))))
 
@@ -695,7 +695,7 @@ With point on label suggest that ibut for rename."
           (insert "<[label]> - rfc123")
           (goto-char (point-max))
 	  (with-simulated-input "label RET M-DEL renamed RET"
-	    (hact (lambda () (call-interactively 'hui:ibut-rename))))
+	    (hact '(lambda () (call-interactively 'hui:ibut-rename))))
           (should (string= "<[renamed]> - rfc123" (buffer-string))))
       (hy-delete-file-and-buffer file))))
 

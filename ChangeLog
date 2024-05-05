@@ -1,3 +1,7 @@
+2024-05-05  Mats Lidell  <matsl@gnu.org>
+
+* test/hui-tests.el: Quote lambdas used in hact calls.
+
 2024-04-20  Bob Weiner  <rsw@gnu.org>
 
 * hui-select.el (hui-c++-defun-prompt-regexp): Add to eliminate an Emacs
