@@ -1,5 +1,16 @@
 2024-05-05  Bob Weiner  <rsw@gnu.org>
 
+* hpath.el (hpath:delimited-possible-path): Rewrite to expand both delimited
+    and non-delimited shell pathnames.
+
+    For non-delimited strings, remove any leading or trailing spaces;
+    otherwise, may prepend a dir with an extra space in there when
+    extracting paths from an ls command that are indented to match the
+    column indent of filenames with quotes around them.  Also, remove
+    requirement that shell buffer filenames be tab delimited and require
+    that filenames with spaces in their names have quotes around them.
+           (hpath:at-p): If file is readable, ignore whether it has "::" in it.
+
 * hui-em-but.el: Comment out non-load when non-interactive so does not created
     errors when used in "hywiki.el".
 
