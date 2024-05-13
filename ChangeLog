@@ -1,3 +1,7 @@
+2024-05-12  Bob Weiner  <rsw@gnu.org>
+
+* hact.el (actype:act, action:params): Add Emacs 30 closure support.
+
 2024-05-06  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-name-at-p): Fix to test point is in 'hyrolo-display-buffer'.

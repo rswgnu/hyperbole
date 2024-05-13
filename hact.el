@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     14-Apr-24 at 01:33:24 by Bob Weiner
+;; Last-Mod:     12-May-24 at 22:02:42 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -366,7 +366,9 @@ Autoloads action function if need be to get the parameter list."
 	     (compiled-function-arglist action)
 	   (action:params-emacs action)))
 	((symbolp action)
-	 (car (cdr (and (fboundp action) (hypb:indirect-function action)))))))
+	 (car (cdr (and (fboundp action) (hypb:indirect-function action)))))
+	((and (fboundp #'closurep) (closurep action))
+	 (aref action 0))))
 
 (defun action:param-list (action)
   "Return list of actual ACTION parameters (remove `&' special forms)."
@@ -411,7 +413,9 @@ performing ACTION."
 	   (setq args (hpath:absolute-arguments actype args)))
       (let ((hist-elt (hhist:element)))
 	(run-hooks 'action-act-hook)
-	(prog1 (or (if (or (symbolp action) (listp action)
+	(prog1 (or (when (and (fboundp #'closurep) (closurep action))
+			 (funcall action args))
+		   (if (or (symbolp action) (listp action)
 			   (byte-code-function-p action)
 			   (subrp action)
 			   (and (stringp action) (not (integerp action))
