@@ -1,3 +1,7 @@
+2024-05-06  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-name-at-p): Fix to test point is in 'hyrolo-display-buffer'.
+
 2024-05-05  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:delimited-possible-path): Rewrite to expand both delimited
