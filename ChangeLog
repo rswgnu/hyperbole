@@ -1,3 +1,7 @@
+2024-05-17  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (dockerized): Add quotes so make is executed in the container.
+
 2024-05-16  Mats Lidell  <matsl@gnu.org>
 
 * test/hact-tests.el (hact-tests--action-params-with-lambdas)
