@@ -1,3 +1,10 @@
+2024-05-16  Mats Lidell  <matsl@gnu.org>
+
+* test/hact-tests.el (hact-tests--action-params-with-lambdas)
+   (hact-tests--actype-act-with-lambdas): Verify closures.
+
+* hact.el (actype:act): Add Emacs 30 closure support.
+
 2024-04-20  Bob Weiner  <rsw@gnu.org>
 
 * hui-select.el (hui-c++-defun-prompt-regexp): Add to eliminate an Emacs

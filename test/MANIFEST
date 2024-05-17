@@ -1,5 +1,6 @@
 --- HYPERBOLE TEST CASES ---
 demo-tests.el           - unit tests from examples in the DEMO
+hact-tests.el           - hact unit tests
 hactypes-tests.el       - Ert tests for hactypes
 hargs-tests.el          - hargs unit tests
 hbut-tests.el           - hbut unit tests
