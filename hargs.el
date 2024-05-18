@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:     20-Jan-24 at 19:43:53 by Mats Lidell
+;; Last-Mod:     18-May-24 at 16:07:11 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -100,7 +100,8 @@ Current button is being edited when EDITING-FLAG is t.
 Return nil if ACTION is not a list or `byte-code' object, has no
 interactive form or takes no arguments."
   (save-excursion
-    (and (or (subrp action) (byte-code-function-p action) (listp action))
+    (and (or (subrp action) (byte-code-function-p action) (listp action)
+             (and (fboundp #'closurep) (closurep action)))
 	 (let ((interactive-form (action:commandp action)))
 	   (when interactive-form
 	     (hpath:relative-arguments
