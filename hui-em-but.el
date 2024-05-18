@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Aug-92
-;; Last-Mod:      5-May-24 at 09:44:17 by Bob Weiner
+;; Last-Mod:     18-May-24 at 10:42:36 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -182,6 +182,10 @@ de-highlighted."
     (remove-overlays nil nil 'face hproperty:but-face)
     (remove-overlays nil nil 'face hproperty:ibut-face)))
 
+(defun hproperty:but-clear-all-in-list (hbut-list)
+  "Delete all HBUT-LIST hproperties."
+  (mapc #'delete-overlay hbut-list))
+
 (defun hproperty:but-create (&optional regexp-match)
   "Highlight all named Hyperbole buttons in buffer.
 De-highlight buttons unless `hproperty:but-highlight-flag' is set.
@@ -229,20 +233,26 @@ moves over it."
 See `hproperty:but-get'."
   (overlay-end hproperty-but))
 
-(defun hproperty:but-get (&optional pos property value)
-  "Get button at optional POS or point.
+(defun hproperty:but-get-all-in-region (start end &optional property value)
+  "Return all buttons in the current buffer between START and END.
 If optional PROPERTY and VALUE are given, return only the first button
 with that PROPERTY and VALUE."
-  (car (delq nil
-	     (mapcar (lambda (overlay)
-		       (when (memq (overlay-get overlay (or property 'face))
-				   (if property
-				       (list value)
-				     (list hproperty:but-face
-					   hproperty:ibut-face
-					   hproperty:flash-face)))
-			 overlay))
-		     (overlays-at (or pos (point)))))))
+  (delq nil
+	(mapcar (lambda (overlay)
+		  (when (memq (overlay-get overlay (or property 'face))
+			      (if property
+				  (list value)
+				(list hproperty:but-face
+				      hproperty:ibut-face
+				      hproperty:flash-face)))
+		    overlay))
+		(overlays-in start end))))
+
+(defun hproperty:but-get (&optional pos property value)
+  "Return button at optional POS or point.
+If optional PROPERTY and VALUE are given, return only the first button
+with that PROPERTY and VALUE."
+  (car (hproperty:but-get-all-in-region pos (1+ pos) property value)))
 
 (defun hproperty:but-start (hproperty-but)
   "Return the end position of an HPROPERTY-BUT.

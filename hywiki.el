@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     21-Apr-24 at 22:41:13
-;; Last-Mod:      5-May-24 at 09:46:52 by Bob Weiner
+;; Last-Mod:     18-May-24 at 11:22:07 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -40,7 +40,8 @@
 ;;  for any delimiters.  Simply type them out, e.g. Emacs and if a
 ;;  page exists for the word, it is automatically highlighted when:
 ;;    - a HyWiki page file is read in
-;;    - a whitespace character is inserted following a HyWiki word
+;;    - a whitespace character, ')', '}', or Org-mode punctuation
+;;      character is inserted following a HyWiki word
 ;;    - the Action Key is pressed to activate a HyWiki word button.
 ;;
 ;;  HyWiki links can also link to a section headline within a page by
@@ -85,10 +86,6 @@
 (defvar hywiki-file-suffix ".org"
   "File suffix (including period) to use when creating HyWiki pages.")
 
-(defvar hywiki-allowed-modes '(text-mode wiki-mode)
-  "Parent modes where HyWiki words are recognized without delimiters.
-Applies only when the file is below `hywiki-directory'.")
-
 (defconst hywiki-directory '"~/hywiki/"
   "Directory in which to find HyWiki page files.")
 
@@ -99,8 +96,6 @@ Applies only when the file is below `hywiki-directory'.")
   "When non-nil, HyWiki Org links must start with `hywiki-org-link-type'.
 Otherwise, this prefix is not needed and HyWiki word Org links
 override standard Org link lookups.  See \"(org)Internal Links\".")
-
-(defvar hywiki-pages-hasht nil)
 
 (defconst hywiki-word-regexp
   "\\<\\([[:upper:]][[:alpha:]]+\\)\\>"
@@ -172,6 +167,80 @@ PROMPT-FLAG is 'exists, return nil unless the page already exists."
       (hpath:find (concat page-file section)))))
 
 ;;; ************************************************************************
+;;; hywiki minor mode
+;;; ************************************************************************
+
+(defun hywiki-buttonize ()
+  "Turn expression one character before point into a highlighted Hyperbole button.
+Do this only if the expression is an implicit button of hywiki type."
+  (interactive "*")
+  (insert last-input-event)
+  (hywiki-highlight-page-name))
+
+;; (defun hywiki-setup-org-mode-punctuation-remaps ()
+;;   "Remap punctuation keys in `org-mode` to `hywiki-buttonize`."
+;;   (let ((punctuation-chars ",.;:'\"-/\\?!()[]{}"))
+;;     (dolist (char punctuation-chars)
+;;       (let ((key (concat "<" char ">")))
+;;         (when (bound-and-true-p org-mode-map))))))
+
+(defun hywiki-get-org-insertion-punctuation-keys ()
+  "Return a string of Org self-insert keys that have punctuation syntax."
+  (let (key
+	cmd
+	key-cmds
+	result)
+    ;; org-self-insert-command bindings are just remaps inherited from
+    ;; global-map.  Create key-cmds list of parsable (key . cmd)
+    ;; combinations where key may be a (start-key . end-key) range of keys.
+    (map-keymap (lambda (key cmd) (setq key-cmds (cons (cons key cmd) key-cmds))) (current-global-map))
+    (dolist (key-cmd key-cmds (concat (nreverse result)))
+      (setq key (car key-cmd)
+	    cmd (cdr key-cmd))
+      (when (eq cmd 'self-insert-command)
+	(cond ((and (characterp key)
+		    (= (char-syntax key) ?.))
+	       ;; char with punctuation syntax
+	       (setq result (cons key result)))
+	      ((and (consp key)
+		    (characterp (car key))
+		    (characterp (cdr key))
+		    (<= (cdr key) 256))
+	       ;; ASCII char range, some of which has punctuation syntax
+	       (with-syntax-table org-mode-syntax-table
+		 (dolist (k (number-sequence (car key) (cdr key)))
+		   (when (= (char-syntax k) ?.)
+		     (setq result (cons k result)))))))))))
+
+(defun hywiki-remap-org-insertion-punctuation-keys ()
+  "Remap Org self-insert punct. keys in `hywiki-mode` to `hywiki-buttonize`."
+  (mapc (lambda (c) (define-key hywiki-mode-map (char-to-string c) 'hywiki-buttonize))
+	(hywiki-get-org-insertion-punctuation-keys)))
+
+;; Define the keymap for hywiki-mode.
+(defvar hywiki-mode-map nil
+  "Keymap for `hywiki-mode'.")
+
+;; Initialize hywiki-mode-map when null.
+(defun hywiki-initialize-mode-map ()
+  (setq hywiki-mode-map (make-sparse-keymap))
+  (hywiki-remap-org-insertion-punctuation-keys)
+  (define-key hywiki-mode-map ")" 'hywiki-buttonize)
+  (define-key hywiki-mode-map "]" 'hywiki-buttonize)
+  (define-key hywiki-mode-map ">" 'hywiki-buttonize)
+  (define-key hywiki-mode-map "}" 'hywiki-buttonize)
+  (define-key hywiki-mode-map (kbd "SPC") 'hywiki-buttonize)
+  (define-key hywiki-mode-map (kbd "RET") 'hywiki-buttonize))
+
+(unless hywiki-mode-map
+  (hywiki-initialize-mode-map))
+
+(define-minor-mode hywiki-mode
+  "A minor mode for HyWiki."
+  :lighter " HyWiki"
+  :keymap hywiki-mode-map)
+
+;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
 
@@ -194,33 +263,42 @@ nil, else return the file name of the page."
 	    (goto-char (if start-flag (point-min) (point-max)))
 	    page-file))))))
 
+(defun hywiki-maybe-at-wikiword-beginning ()
+  "Return non-nil if previous character is one preceding a HyWiki word.
+Does not test whether or not a page exists for the HyWiki word.
+Use `hywiki-get-page' to determine whether a HyWiki page exists."
+  ;; Ignore wikiwords preceded by any non-whitespace character, except
+  ;; any of these: ({"'`'
+  (when (or (bolp)
+	    (memq (char-before) '(?\( ?\{ ?\" ?\' ?\` ?\  ?\t ?\n ?\r ?\f)))
+    t))
+
 (defun hywiki-at-wikiword (&optional org-link-flag)
   "Return HyWiki word and optional #section at point or nil if not on one.
 Does not test whether or not a page exists for the HyWiki word.
 Use `hywiki-get-page' to determine whether a HyWiki page exists."
-  (let (wikiword)
-    (if (or org-link-flag (hsys-org-link-at-p))
-	;; Handle an Org link [[HyWiki word]] [[hy:HyWiki word]] or [[HyWiki word#section]]
-	(progn
-	  (setq wikiword
-		(org-link-expand-abbrev
-		 (org-link-unescape
-		  (string-trim (match-string-no-properties 1)))))
-	  ;; Ignore hy:word hywiki:word since Org mode will display those
-	  (when (hywiki-is-wikiword wikiword)
-	    wikiword))
-      ;; Handle a HyWiki word with optional #section; if it is an Org
-      ;; link, it may or may not have a hy: link-type prefix.
-      (and (apply #'derived-mode-p hywiki-allowed-modes)
-	   (string-prefix-p (expand-file-name hywiki-directory)
-			    (or buffer-file-name ""))
-	   (save-excursion
-             (let ((case-fold-search nil))
-	       (skip-chars-backward "-*#[:alnum:]")
-	       ;; Ignore wikiwords preceded by any non-whitespace character
-	       (and (or (bolp) (memq (preceding-char) '(?\[ ?\  ?\t ?\n ?\r ?\f)))
-		    (looking-at hywiki-word-optional-section-regexp)
-		    (string-trim (match-string-no-properties 0)))))))))
+  (when hywiki-mode
+    (let (wikiword)
+      (if (or org-link-flag (hsys-org-link-at-p))
+	  ;; Handle an Org link [[HyWiki word]] [[hy:HyWiki word]] or [[HyWiki word#section]].
+	  (progn
+	    (setq wikiword
+		  (org-link-expand-abbrev
+		   (org-link-unescape
+		    (string-trim (match-string-no-properties 1)))))
+	    ;; Ignore hy:word hywiki:word since Org mode will display those.
+	    (when (hywiki-is-wikiword wikiword)
+	      wikiword))
+	;; Handle a HyWiki word with optional #section; if it is an Org
+	;; link, it may optionally have a hy: link-type prefix.
+	(save-excursion
+          (let ((case-fold-search nil))
+	    (skip-chars-backward "-*#[:alnum:]")
+	    ;; Ignore wikiwords preceded by any non-whitespace
+	    ;; character, except any of these: (["'`'
+	    (and (hywiki-maybe-at-wikiword-beginning)
+		 (looking-at hywiki-word-optional-section-regexp)
+		 (string-trim (match-string-no-properties 0)))))))))
 
 ;; Globally set these values to avoid using 'let' with stack allocations
 ;; within `hywiki-highlight-page-name' frequently.
@@ -236,18 +314,19 @@ Use `hywiki-get-page' to determine whether a HyWiki page exists."
       hywiki--start nil)
 
 (defun hywiki-highlight-page-names ()
-  "Highlight all non-Org link HyWiki page names in the buffer.
+  "Highlight all non-Org link HyWiki page names in a HyWiki buffer.
 Use `hywiki-word-face' to highlight.  Does not highlight references to
 the current page unless they have sections attached.
 
-Used as a `find-file-hook'."
+Automatically called as a `find-file-hook'."
   (interactive)
-  ;; Avoid doing any lets in this `post-self-insert-function' for efficiency
-
-  ;; Highlight HyWiki words only in files below `hywiki-directory'
+  ;; Avoid doing any lets for efficiency.
+  ;; Highlight HyWiki words in buffers where `hywiki-mode' is enabled
+  ;; or with attached files below `hywiki-directory'.
   (when (and hywiki-word-highlight-flag
-	     (string-prefix-p (expand-file-name hywiki-directory)
-			      (or buffer-file-name "")))
+	     (or hywiki-mode
+		 (string-prefix-p (expand-file-name hywiki-directory)
+				  (or buffer-file-name ""))))
     (save-excursion
       (save-restriction
 	(setq hywiki--any-page-regexp (regexp-opt (hywiki-get-page-list) 'words)
@@ -263,9 +342,8 @@ Used as a `find-file-hook'."
 		hywiki--end   (match-end 0))
 	  (save-excursion
 	    (goto-char hywiki--start)
-	    ;; Ignore wikiwords preceded by any non-whitespace character
-	    (when (or (bolp) (memq (preceding-char) '(?\  ?\t)))
-	      ;; Include any #section
+	    (when (hywiki-maybe-at-wikiword-beginning)
+	      ;; Include any #section.
 	      (skip-syntax-forward "^-\)$\>.\"\'")
 	      (skip-chars-forward "-#[:alnum:]")
 	      (setq hywiki--end (point))
@@ -283,9 +361,7 @@ With optional ON-PAGE-NAME non-nil, assume point is within the page or
 section name.
 
 Use `hywiki-word-face' to highlight.  Does not highlight references to
-the current page unless they have sections attached.
-
-Used as a `post-self-insert-hook'."
+the current page unless they have sections attached."
   (interactive)
   (when (and hywiki-word-highlight-flag
 	     (or on-page-name
@@ -293,30 +369,40 @@ Used as a `post-self-insert-hook'."
 		      (not (eq ?# last-command-event))
 		      (memq (char-syntax last-command-event) '(?\  ?\) ?\$ ?\> ?. ?\" ?\'))))
              (not executing-kbd-macro)
-             (not noninteractive)
-	     (string-prefix-p (expand-file-name hywiki-directory)
-			      (or buffer-file-name "")))
+             (not noninteractive))
     (save-excursion
+      (when (= (char-syntax (char-before)) ?\))
+	;; Clear any HyWikiWord highlighting that may just be a part
+	;; of a larger balanced delimiter text with multiple words.
+	;; If there is just a single HyWikiWord, it will be
+	;; re-highlighted later in this function.
+	(ignore-errors
+	  (let* ((sexp-end (point))
+		 (sexp-start (scan-sexps sexp-end -1)))
+	    (when sexp-start
+	      (hproperty:but-clear-all-in-list
+	       (hproperty:but-get-all-in-region sexp-start sexp-end 'face hywiki-word-face))))))
+
       (unless on-page-name
 	;; after page name
 	(goto-char (max (1- (point)) (point-min))))
-      (skip-syntax-backward "^-\)$\>.\"\'")
+      (skip-syntax-backward "^-$().\"\'")
       (skip-chars-backward "#[:alpha:]")
 
       (setq hywiki--save-case-fold-search case-fold-search
 	    case-fold-search nil
 	    hywiki--save-org-link-type-required hywiki-org-link-type-required
 	    hywiki-org-link-type-required t)
-      (if (and (looking-at hywiki-word-optional-section-regexp)
-	       ;; Ignore wikiwords preceded by any non-whitespace character
-	       (or (bolp) (memq (preceding-char) '(?\  ?\t ?\n ?\r ?\f)))
+      (if (and (hywiki-maybe-at-wikiword-beginning)
+	       (looking-at hywiki-word-optional-section-regexp)
 	       (progn
 		 (setq hywiki--page-name (match-string-no-properties 1)
 		       hywiki--start (match-beginning 0)
 		       hywiki--end   (match-end 0))
 		 (and (hywiki-get-page hywiki--page-name)
 		      ;; Ignore wikiwords preceded by any non-whitespace character
-		      (or (bolp) (memq (preceding-char) '(?\  ?\t))))))
+		      ;; (or (bolp) (memq (preceding-char) '(?\  ?\t)))
+		      )))
 	  (progn
 	    (setq hywiki--current-page (hywiki-get-buffer-page-name))
 	    ;; Don't highlight current-page matches unless
@@ -333,7 +419,7 @@ Used as a `post-self-insert-hook'."
 		(hproperty:but-add hywiki--start hywiki--end hywiki-word-face))))
 	;; Remove any potential earlier highlighting since the
 	;; previous word may have changed.
-	(skip-syntax-backward "^-\)$\>.\"\'")
+	(skip-syntax-backward "^-$().\"\'")
 	(hproperty:but-clear (point) 'face hywiki-word-face)))))
 
 (defun hywiki-is-wikiword (word)
@@ -378,7 +464,7 @@ These may have any alphanumeric file suffix, if files were added manually."
 
 (defun hywiki-get-page-hasht ()
   "Return hash table of existing HyWiki pages."
-  (or hywiki-pages-hasht (hywiki-make-pages-hasht)))
+  (or hywiki--pages-hasht (hywiki-make-pages-hasht)))
 
 (defun hywiki-get-page-list ()
   (hash-map #'cdr (hywiki-get-page-hasht)))
@@ -411,7 +497,7 @@ Use `hywiki-get-page' to determine whether a HyWiki page exists."
 	 (page-elts (mapcar (lambda (file)
 			      (cons file (file-name-sans-extension (file-name-nondirectory file))))
 			    page-files)))
-    (setq hywiki-pages-hasht (hash-make page-elts))))
+    (setq hywiki--pages-hasht (hash-make page-elts))))
 
 (when (featurep 'company)
 (defun hywiki-company-hasht-backend (command &optional _arg &rest ignored)
@@ -458,9 +544,12 @@ Use `hywiki-get-page' to determine whether a HyWiki page exists."
 
 (add-hook 'org-mode-hook
 	  (lambda ()
-	    (make-local-variable 'find-file-hook)
-	    (make-local-variable 'post-self-insert-hook)
-	    (add-hook 'find-file-hook #'hywiki-highlight-page-names t)
-	    (add-hook 'post-self-insert-hook #'hywiki-highlight-page-name t)))
+	    (add-hook 'find-file-hook #'hywiki-highlight-page-names t)))
+
+;;; ************************************************************************
+;;; Private variables
+;;; ************************************************************************
+
+(defvar hywiki--pages-hasht nil)
 
 (provide 'hywiki)

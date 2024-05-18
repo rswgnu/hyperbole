@@ -1,3 +1,27 @@
+2024-05-18  Bob Weiner  <rsw@gnu.org>
+
+* hui-em-but.el (hproperty:but-clear-all-in-list, hproperty:but-get-all-in-region):
+    Add.
+
+* hywiki.el (org-mode-hook): Don't make 'find-file-hook' buffer local, as this
+    is not recommended.
+            (hywiki-pages-hasht): Rename to 'hywiki--pages-hasht'.
+	    (hywiki-at-wikiword): Allow preceding char to be whitespace or
+    additionally any of these chars: (["'`'
+            ((hywiki-highlight-page-names, hywiki-at-wikiword,
+    hywiki-highlight-page-name): Don't limit to files within 'hywiki-directory';
+    use whenever 'hywiki-mode' is enabled.
+            (hywiki-at-wikiword): Remove 'hywiki-allowed-modes' since now test
+    that hywiki-mode is enabled.
+            (hywiki-initialize-mode-map): Add and make punct. and non-square-bracket
+    and non-angle-bracket balanced expressions highlight HyWiki page name references.
+
+2024-05-15  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (org-mode-hook): Remove 'post-self-insert-hook' and instead highlight
+    HyWikiWords via new 'hywiki-mode' minor-mode and its SPC and RET key bindings
+    bound to hywiki-buttonize.
+
 2024-05-12  Bob Weiner  <rsw@gnu.org>
 
 * hact.el (actype:act, action:params): Add Emacs 30 closure support.
