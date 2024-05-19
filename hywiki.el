@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     21-Apr-24 at 22:41:13
-;; Last-Mod:     19-May-24 at 02:05:01 by Bob Weiner
+;; Last-Mod:     19-May-24 at 04:10:28 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -138,6 +138,17 @@ the HyWiki word and grouping 2 is the #section with the # included.")
   :type 'face
   :initialize #'custom-initialize-default
   :group 'hyperbole-buttons)
+
+;;; ************************************************************************
+;;; Private variables
+;;; ************************************************************************
+
+(defvar hywiki--buttonize-characters
+  (concat " \r\n\)\]\>\}'" (hywiki-get-buttonize-characters))
+  "String of single character keys bound to `hywiki-buttonize'.
+Each such key self-inserts before highlighting any prior HyWiki word.")
+
+(defvar hywiki--pages-hasht nil)
 
 ;;; ************************************************************************
 ;;; Public Implicit Button and Action Types
@@ -556,16 +567,5 @@ Use `hywiki-get-page' to determine whether a HyWiki page exists."
 (add-hook 'org-mode-hook
 	  (lambda ()
 	    (add-hook 'find-file-hook #'hywiki-find-page t)))
-
-;;; ************************************************************************
-;;; Private variables
-;;; ************************************************************************
-
-(defvar hywiki--buttonize-characters
-  (concat " \r\n\)\]\>\}'" (hywiki-get-buttonize-characters))
-  "String of single character keys bound to `hywiki-buttonize'.
-Each such key self-inserts before highlighting any prior HyWiki word.")
-
-(defvar hywiki--pages-hasht nil)
 
 (provide 'hywiki)
