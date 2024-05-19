@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     10-Mar-24 at 11:51:55 by Bob Weiner
+;; Last-Mod:     18-May-24 at 18:00:28 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -328,8 +328,13 @@ Use optional OUT-BUF if present, else the current buffer."
       (goto-char (point-max)))
     (delete-blank-lines) (delete-blank-lines)
     (let ((start (point)))
-      (insert (format "I use:\tEditor:      GNU Emacs %s\n\tHyperbole:   %s\n"
-		      emacs-version hyperb:version))
+      (insert (format "I use:\tEditor:      GNU Emacs %s %s\n\tHyperbole:   %s\n"
+		      emacs-version
+                      (if (and (fboundp #'native-comp-available-p)
+                               (native-comp-available-p))
+                          "with native comp"
+                        "")
+                      hyperb:version))
       (when (and (boundp 'br-version) (stringp br-version))
 	(insert (format "\tOO-Browser:  %s\n" br-version)))
       (when (and (boundp 'system-configuration) (stringp system-configuration))
