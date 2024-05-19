@@ -1,5 +1,27 @@
 2024-05-18  Bob Weiner  <rsw@gnu.org>
 
+* test/hyrolo-tests.el (hyrolo-tests--goto-kotl-header-with-slash-match): Start
+    to try to fix this test.
+
+* hpath.el (hpath:find, hpath:to-markup-anchor): Fix for directory pathnames so
+    properly handles anchors, line numbers, column numbers and 'hpath-find' returns
+    the buffer found.  Also, make 'hpath:to-markup-anchor' handle any special buffer
+    types without attached buffers.
+
+* hywiki.el (hywiki-get-org-insertion-punctuation-keys): Allow for symbol syntax
+    chars and rename to 'hywiki-get-buttonize-characters'.
+            (hywiki-remap-org-insertion-punctuation-keys): Rename to
+    'hywiki-remap-buttonize-characters'.
+            (hywiki--buttonize-characters): Add as a computed string of single
+    characters that each trigger prior hywiki word highlighting when it is enabled.
+            (hywiki-highlight-page-name, hywiki-highlight-page-names): Don't skip
+     back over symbol chars.
+            (hywiki-find-page): Use this function as the 'find-file-hook' instead
+     of 'hywiki-highlight-page-names'; make 'page-name' optional for this use since
+     the current buffer will be the page, so the page name can be derived.  If calling
+     this function creates the page buffer, then enable hywiki-mode and call
+     'hywiki-highlight-page-names'.
+
 * hui-em-but.el (hproperty:but-clear-all-in-list, hproperty:but-get-all-in-region):
     Add.
 

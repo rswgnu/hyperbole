@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:      5-May-24 at 23:48:12 by Bob Weiner
+;; Last-Mod:     18-May-24 at 19:06:22 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1571,9 +1571,10 @@ but locational suffixes within the file are utilized."
 			    ;; matching of path is likely to be wrong in
 			    ;; certain cases, e.g. with mount point or os path
 			    ;; alterations.
-			    (when (and buffer-file-name
+			    (when (or (null buffer-file-name)
+				      (and buffer-file-name
 				       (equal (file-name-nondirectory path)
-					      (file-name-nondirectory buffer-file-name)))
+					      (file-name-nondirectory buffer-file-name))))
 			      (cond ((and anchor kotl-flag)
 				     (klink:act path-with-anchor anchor-start-pos))
 				    ((or hash anchor)
@@ -1637,7 +1638,7 @@ of the buffer."
 								 (and buffer-file-name
 								      (string-match-p "\\`[A-Z][A-Z0-9]+\\'" buffer-file-name)))
 							     hpath:outline-section-pattern)
-							    (prog-mode
+							    ((or prog-mode (null buffer-file-name))
 							     "%s")
 							    ((or (and buffer-file-name
 								      (string-match-p hpath:markdown-suffix-regexp buffer-file-name))
