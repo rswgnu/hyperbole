@@ -1,5 +1,9 @@
 2024-05-19  Bob Weiner  <rsw@gnu.org>
 
+* hywiki.el (hywiki-remap-buttonize-characters): Move initialization of
+    'hywiki--buttonize-characters' here instead of at variable definition
+    to eliminate circular load dependency.
+
 * hibtypes.el (grep-msg): Fix that when no source-loc, file path was not
     expanded.
               (find-func): Add require of this library for native compiler

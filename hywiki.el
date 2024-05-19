@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     21-Apr-24 at 22:41:13
-;; Last-Mod:     19-May-24 at 04:10:28 by Bob Weiner
+;; Last-Mod:     19-May-24 at 04:18:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -143,8 +143,7 @@ the HyWiki word and grouping 2 is the #section with the # included.")
 ;;; Private variables
 ;;; ************************************************************************
 
-(defvar hywiki--buttonize-characters
-  (concat " \r\n\)\]\>\}'" (hywiki-get-buttonize-characters))
+(defvar hywiki--buttonize-characters nil
   "String of single character keys bound to `hywiki-buttonize'.
 Each such key self-inserts before highlighting any prior HyWiki word.")
 
@@ -248,6 +247,9 @@ Do this only if the expression is an implicit button of hywiki type."
 
 (defun hywiki-remap-buttonize-characters ()
   "Remap Org self-insert punct/sym keys in `hywiki-mode` to `hywiki-buttonize`."
+  (unless hywiki--buttonize-characters
+    (setq hywiki--buttonize-characters
+	  (concat " \r\n\)\]\>\}'" (hywiki-get-buttonize-characters))))
   (mapc (lambda (c) (define-key hywiki-mode-map (char-to-string c) 'hywiki-buttonize))
 	hywiki--buttonize-characters))
 
