@@ -1,3 +1,14 @@
+2024-05-19  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (grep-msg): Fix that when no source-loc, file path was not
+    expanded.
+              (find-func): Add require of this library for native compiler
+    grep-msg library name expansion.
+
+* hywiki.el (hywiki-initialize-mode-map): Fix call of old function name.
+            (hywiki-remap-remap-buttonize-characters): Remove extra remap-.
+	    (hywiki-find-page): Remove unused let of 'page-buffer'.
+
 2024-05-18  Bob Weiner  <rsw@gnu.org>
 
 * test/hyrolo-tests.el (hyrolo-tests--goto-kotl-header-with-slash-match): Start

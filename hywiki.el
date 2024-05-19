@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     21-Apr-24 at 22:41:13
-;; Last-Mod:     18-May-24 at 20:00:23 by Bob Weiner
+;; Last-Mod:     19-May-24 at 02:05:01 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -182,8 +182,7 @@ PROMPT-FLAG is 'exists, return nil unless the page already exists."
 				(unless (eq prompt-flag 'exists)
 				  (when (y-or-n-p (concat "Create new `" page-name "' page? "))
 				    (hywiki-add-page page-name)))
-			      (hywiki-add-page page-name))))
-	     (page-buffer (and page-file (get-file-buffer page-file))))
+			      (hywiki-add-page page-name)))))
 	(when page-file
 	  (unless in-page-flag (hpath:find (concat page-file section)))
 	  (unless hywiki-mode (hywiki-mode 1))
@@ -236,7 +235,7 @@ Do this only if the expression is an implicit button of hywiki type."
 		   (when (memq (char-syntax k) '(?. ?_))
 		     (setq result (cons k result)))))))))))
 
-(defun hywiki-remap-remap-buttonize-characters ()
+(defun hywiki-remap-buttonize-characters ()
   "Remap Org self-insert punct/sym keys in `hywiki-mode` to `hywiki-buttonize`."
   (mapc (lambda (c) (define-key hywiki-mode-map (char-to-string c) 'hywiki-buttonize))
 	hywiki--buttonize-characters))
@@ -244,7 +243,7 @@ Do this only if the expression is an implicit button of hywiki type."
 ;; Initialize hywiki-mode-map when null.
 (defun hywiki-initialize-mode-map ()
   (setq hywiki-mode-map (make-sparse-keymap))
-  (hywiki-remap-org-insertion-non-word-keys))
+  (hywiki-remap-buttonize-characters))
 
 (unless hywiki-mode-map
   (hywiki-initialize-mode-map))
@@ -383,7 +382,7 @@ the current page unless they have sections attached."
              (not executing-kbd-macro)
              (not noninteractive))
     (save-excursion
-      (when (= (char-syntax (char-before)) ?\))
+      ;; (when (= (char-syntax (char-before)) ?\))
 	;; Clear any HyWikiWord highlighting that may just be a part
 	;; of a larger balanced delimiter text with multiple words.
 	;; If there is just a single HyWikiWord, it will be
@@ -393,8 +392,7 @@ the current page unless they have sections attached."
 	;; 	 (sexp-start (scan-sexps sexp-end -1)))
 	;;     (when sexp-start
 	;;       (hproperty:but-clear-all-in-list
-	;;        (hproperty:but-get-all-in-region sexp-start sexp-end 'face hywiki-word-face)))))
-	)
+	;;        (hproperty:but-get-all-in-region sexp-start sexp-end 'face hywiki-word-face))))))
 
       (unless on-page-name
 	;; after page name

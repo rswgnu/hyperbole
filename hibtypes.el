@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     22-Apr-24 at 02:06:09 by Bob Weiner
+;; Last-Mod:     19-May-24 at 03:52:05 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -38,6 +38,7 @@
 ;;; ************************************************************************
 
 (require 'cl-lib) ;; for cl-count
+(require 'find-func) ;; used by grep-msg ibtype
 (eval-when-compile (require 'hversion))
 (require 'hactypes)
 (require 'hypb)
@@ -1048,7 +1049,9 @@ in grep and shell buffers."
                              (hbut:to-key-src t))))
           (if (stringp source-loc)
               (setq file (expand-file-name file (file-name-directory source-loc)))
-	    (setq file (or (hpath:prepend-shell-directory file) file)))
+	    (setq file (or (hpath:prepend-shell-directory file)
+			   (ignore-errors (find-library-name file))
+			   (expand-file-name file))))
 	  (when (file-exists-p file)
             (setq line-num (string-to-number line-num))
             (ibut:label-set but-label)
