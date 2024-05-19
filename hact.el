@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     12-May-24 at 22:02:42 by Bob Weiner
+;; Last-Mod:     18-May-24 at 20:26:19 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -414,7 +414,7 @@ performing ACTION."
       (let ((hist-elt (hhist:element)))
 	(run-hooks 'action-act-hook)
 	(prog1 (or (when (and (fboundp #'closurep) (closurep action))
-			 (funcall action args))
+			 (apply action args))
 		   (if (or (symbolp action) (listp action)
 			   (byte-code-function-p action)
 			   (subrp action)

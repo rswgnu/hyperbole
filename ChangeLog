@@ -38,6 +38,21 @@
             (hywiki-initialize-mode-map): Add and make punct. and non-square-bracket
     and non-angle-bracket balanced expressions highlight HyWiki page name references.
 
+2024-05-18  Mats Lidell  <matsl@gnu.org>
+
+* hargs.el (hargs:action-get): Add Emacs 30 closure support.
+
+2024-05-17  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (dockerized): Add quotes so make is executed in the container.
+
+2024-05-16  Mats Lidell  <matsl@gnu.org>
+
+* test/hact-tests.el (hact-tests--action-params-with-lambdas)
+   (hact-tests--actype-act-with-lambdas): Verify closures.
+
+* hact.el (actype:act): Add Emacs 30 closure support.
+
 2024-05-15  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (org-mode-hook): Remove 'post-self-insert-hook' and instead highlight
