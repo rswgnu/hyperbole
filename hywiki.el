@@ -2,8 +2,8 @@
 ;;
 ;; Author:       Bob Weiner
 ;;
-;; Orig-Date:     21-Apr-24 at 22:41:13
-;; Last-Mod:     19-May-24 at 04:18:40 by Bob Weiner
+;; Orig-Date:    21-Apr-24 at 22:41:13
+;; Last-Mod:     25-May-24 at 16:54:09 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -65,13 +65,13 @@
 ;;; ************************************************************************
 
 (require 'hasht)
+(require 'hpath)
 (require 'hui-em-but)
 (require 'ol)
 
-(when (package-installed-p 'company)
-  (package-activate 'company)
-  (require 'company)
-  (add-to-list 'company-backends 'hywiki-company-hasht-backend))
+(eval-and-compile
+  '(when (require 'company nil t)
+     (add-to-list 'company-backends 'hywiki-company-hasht-backend)))
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -88,6 +88,23 @@
 
 (defvar hywiki-directory '"~/hywiki/"
   "Directory in which to find HyWiki page files.")
+
+(defvar hywiki-non-character-commands
+  '(;; Org mode
+    org-cycle                         ;; TAB
+    org-return                        ;; RET, \r
+    org-return-and-maybe-indent       ;; C-j, \n
+    ;; Markdown mode
+    markdown-cycle                    ;; TAB
+    markdown-enter-key                ;; RET, \r
+    electric-newline-and-maybe-indent ;; C-j, \n
+    ;; Global
+    newline                           ;; RET, \r
+    newline-and-indent                ;; RET, \r
+    quoted-insert                     ;; C-q
+    )
+  "Commands that insert characters but whose input events do not
+  arrive as characters or that quote another character for input.")
 
 ;; Define the keymap for hywiki-mode.
 (defvar hywiki-mode-map nil
@@ -144,10 +161,85 @@ the HyWiki word and grouping 2 is the #section with the # included.")
 ;;; ************************************************************************
 
 (defvar hywiki--buttonize-characters nil
-  "String of single character keys bound to `hywiki-buttonize'.
+  "String of single character keys bound to `hywiki-buttonize-character-commands'.
 Each such key self-inserts before highlighting any prior HyWiki word.")
 
 (defvar hywiki--pages-hasht nil)
+
+;;; ************************************************************************
+;;; hywiki minor mode
+;;; ************************************************************************
+
+(defun hywiki-buttonize-character-commands ()
+  "Turn any HyWikiWord before point into a highlighted Hyperbole button.
+Triggered by `post-self-insert-hook' for self-inserting characters."
+  (when (and (characterp last-command-event)
+	     (seq-find (lambda (c) (= c last-command-event)) hywiki--buttonize-characters))
+    (hywiki-highlight-page-name)))
+
+(defun hywiki-buttonize-non-character-commands ()
+  "Turn any HyWikiWord before point into a highlighted Hyperbole button.
+Triggered by `pre-command-hook' for non-character-commands, e.g. return."
+  (when (memq this-command hywiki-non-character-commands)
+    (hywiki-highlight-page-name)))
+
+(defun hywiki-get-buttonize-characters ()
+  "Return a string of Org self-insert keys that have punctuation/symbol syntax."
+  (let (key
+	cmd
+	key-cmds
+	result)
+    ;; Org and other text mode self-insert-command bindings are just
+    ;; remaps inherited from global-map.  Create key-cmds list of
+    ;; parsable (key . cmd) combinations where key may be a
+    ;; (start-key . end-key) range of keys.
+    (map-keymap (lambda (key cmd) (setq key-cmds (cons (cons key cmd) key-cmds))) (current-global-map))
+    (dolist (key-cmd key-cmds (concat (nreverse result)))
+      (setq key (car key-cmd)
+	    cmd (cdr key-cmd))
+      (when (eq cmd 'self-insert-command)
+	(cond ((and (characterp key)
+		    (= (char-syntax key) ?.))
+	       ;; char with punctuation/symbol syntax
+	       (setq result (cons key result)))
+	      ((and (consp key)
+		    (characterp (car key))
+		    (characterp (cdr key))
+		    (<= (cdr key) 256))
+	       ;; ASCII char range, some of which has punctuation/symbol syntax
+	       (with-syntax-table org-mode-syntax-table
+		 (dolist (k (number-sequence (car key) (cdr key)))
+		   (when (memq (char-syntax k) '(?. ?_))
+		     (setq result (cons k result)))))))))))
+
+(define-minor-mode hywiki-mode
+  "Toggle HyWiki minor mode with \\[hywiki-mode].
+
+The hywiki-mode minor mode auto-highlights and creates implicit
+buttons from wiki words.  Any such button jumps to the associated
+HyWiki page or associated section when HyWikiWord#section is used.
+
+When hywiki-mode is enabled, the `hywiki-mode' variable is
+non-nil.
+
+See the Info documentation at \"(hyperbole)HyWiki\".
+
+\\{hywiki-mode-map}"
+
+  :lighter " HyWiki"
+  :keymap hywiki-mode-map
+  (if hywiki-mode
+      (progn (unless hywiki-mode-map
+               (setq hywiki-mode-map (make-sparse-keymap)))
+	     ;; Self-insert punct/sym keys that trigger wiki-word
+	     ;; highlighting via `hywiki-buttonize-character-commands' in `hywiki-mode'.
+	     (unless hywiki--buttonize-characters
+	       (setq hywiki--buttonize-characters
+		     (concat " \t\r\n\)\]\>\}'" (hywiki-get-buttonize-characters))))
+	     (add-hook 'post-self-insert-hook 'hywiki-buttonize-character-commands)
+	     (add-hook 'pre-command-hook 'hywiki-buttonize-non-character-commands 95))
+    (remove-hook 'post-self-insert-hook 'hywiki-buttonize-character-commands)
+    (remove-hook 'pre-command-hook 'hywiki-buttonize-character-commands)))
 
 ;;; ************************************************************************
 ;;; Public Implicit Button and Action Types
@@ -196,75 +288,9 @@ PROMPT-FLAG is 'exists, return nil unless the page already exists."
 	(when page-file
 	  (unless in-page-flag (hpath:find (concat page-file section)))
 	  (unless hywiki-mode (hywiki-mode 1))
-	  (hywiki-highlight-page-names))))))
-
-;;; ************************************************************************
-;;; hywiki minor mode
-;;; ************************************************************************
-
-(defun hywiki-buttonize ()
-  "Turn expression one character before point into a highlighted Hyperbole button.
-Do this only if the expression is an implicit button of hywiki type."
-  (interactive "*")
-  (insert last-input-event)
-  (hywiki-highlight-page-name))
-
-;; (defun hywiki-setup-org-mode-punctuation-remaps ()
-;;   "Remap punctuation keys in `org-mode` to `hywiki-buttonize`."
-;;   (let ((punctuation-chars ",.;:'\"-/\\?!()[]{}"))
-;;     (dolist (char punctuation-chars)
-;;       (let ((key (concat "<" char ">")))
-;;         (when (bound-and-true-p org-mode-map))))))
-
-(defun hywiki-get-buttonize-characters ()
-  "Return a string of Org self-insert keys that have punctuation/symbol syntax."
-  (let (key
-	cmd
-	key-cmds
-	result)
-    ;; Org and other text mode self-insert-command bindings are just
-    ;; remaps inherited from global-map.  Create key-cmds list of
-    ;; parsable (key . cmd) combinations where key may be a
-    ;; (start-key . end-key) range of keys.
-    (map-keymap (lambda (key cmd) (setq key-cmds (cons (cons key cmd) key-cmds))) (current-global-map))
-    (dolist (key-cmd key-cmds (concat (nreverse result)))
-      (setq key (car key-cmd)
-	    cmd (cdr key-cmd))
-      (when (eq cmd 'self-insert-command)
-	(cond ((and (characterp key)
-		    (= (char-syntax key) ?.))
-	       ;; char with punctuation/symbol syntax
-	       (setq result (cons key result)))
-	      ((and (consp key)
-		    (characterp (car key))
-		    (characterp (cdr key))
-		    (<= (cdr key) 256))
-	       ;; ASCII char range, some of which has punctuation/symbol syntax
-	       (with-syntax-table org-mode-syntax-table
-		 (dolist (k (number-sequence (car key) (cdr key)))
-		   (when (memq (char-syntax k) '(?. ?_))
-		     (setq result (cons k result)))))))))))
-
-(defun hywiki-remap-buttonize-characters ()
-  "Remap Org self-insert punct/sym keys in `hywiki-mode` to `hywiki-buttonize`."
-  (unless hywiki--buttonize-characters
-    (setq hywiki--buttonize-characters
-	  (concat " \r\n\)\]\>\}'" (hywiki-get-buttonize-characters))))
-  (mapc (lambda (c) (define-key hywiki-mode-map (char-to-string c) 'hywiki-buttonize))
-	hywiki--buttonize-characters))
-
-;; Initialize hywiki-mode-map when null.
-(defun hywiki-initialize-mode-map ()
-  (setq hywiki-mode-map (make-sparse-keymap))
-  (hywiki-remap-buttonize-characters))
-
-(unless hywiki-mode-map
-  (hywiki-initialize-mode-map))
-
-(define-minor-mode hywiki-mode
-  "A minor mode for HyWiki."
-  :lighter " HyWiki"
-  :keymap hywiki-mode-map)
+	  (hywiki-highlight-page-names)
+	  (run-hooks 'hywiki-find-page-hook)
+	  page-file)))))
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -299,20 +325,18 @@ Use `hywiki-get-page' to determine whether a HyWiki page exists."
 	    (memq (char-before) '(?\( ?\{ ?\" ?\' ?\` ?\  ?\t ?\n ?\r ?\f)))
     t))
 
-(defun hywiki-at-wikiword (&optional org-link-flag)
+(defun hywiki-at-wikiword ()
   "Return HyWiki word and optional #section at point or nil if not on one.
 Does not test whether or not a page exists for the HyWiki word.
 Use `hywiki-get-page' to determine whether a HyWiki page exists."
   (when hywiki-mode
-    (let (wikiword)
-      (if (or org-link-flag (hsys-org-link-at-p))
-	  ;; Handle an Org link [[HyWiki word]] [[hy:HyWiki word]] or [[HyWiki word#section]].
+    (let ((wikiword (ibut:label-p t "[[" "]]")))
+      (if wikiword
+	  ;; Handle an Org link [[HyWikiWord]] [[hy:HyWikiWord]] or [[HyWikiWord#section]].
 	  (progn
 	    (setq wikiword
-		  (org-link-expand-abbrev
-		   (org-link-unescape
-		    (string-trim (match-string-no-properties 1)))))
-	    ;; Ignore hy:word hywiki:word since Org mode will display those.
+		  (org-link-expand-abbrev (org-link-unescape (string-trim wikiword))))
+	    ;; Ignore prefixed, typed hy:HyWikiWord since Org mode will display those.
 	    (when (hywiki-is-wikiword wikiword)
 	      wikiword))
 	;; Handle a HyWiki word with optional #section; if it is an Org
@@ -328,16 +352,16 @@ Use `hywiki-get-page' to determine whether a HyWiki page exists."
 
 ;; Globally set these values to avoid using 'let' with stack allocations
 ;; within `hywiki-highlight-page-name' frequently.
-(setq hywiki--any-page-regexp nil
-      hywiki--but nil
-      hywiki--but-end nil
-      hywiki--but-start nil
-      hywiki--current-page nil
-      hywiki--end nil
-      hywiki--page-name nil
-      hywiki--save-case-fold-search nil
-      hywiki--save-org-link-type-required nil
-      hywiki--start nil)
+(defvar hywiki--any-page-regexp nil)
+(defvar hywiki--but nil)
+(defvar hywiki--but-end nil)
+(defvar hywiki--but-start nil)
+(defvar hywiki--current-page nil)
+(defvar hywiki--end nil)
+(defvar hywiki--page-name nil)
+(defvar hywiki--save-case-fold-search nil)
+(defvar hywiki--save-org-link-type-required nil)
+(defvar hywiki--start nil)
 
 (defun hywiki-highlight-page-names ()
   "Highlight all non-Org link HyWiki page names in a HyWiki buffer.
@@ -409,7 +433,10 @@ the current page unless they have sections attached."
 
       (unless on-page-name
 	;; after page name
-	(goto-char (max (1- (point)) (point-min))))
+	(skip-syntax-backward "-"))
+      ;; May be a closing delimiter that we have to skip past
+      (skip-chars-backward (regexp-quote hywiki--buttonize-characters))
+      ;; Skip pass HyWikiWord or section
       (skip-syntax-backward "^-$()._\"\'")
       (skip-chars-backward "#[:alpha:]")
 
@@ -451,10 +478,11 @@ the current page unless they have sections attached."
 The page for the word may not yet exist.  Use `hywiki-get-page'
 to determine whether a HyWiki word page exists."
   (and (stringp word)
-       (or (eq (string-match (concat "\\`" hywiki-word-org-link-regexp "\\'") word)
-	       0)
-	   (eq (string-match (concat "\\`" hywiki-word-optional-section-regexp "\\'") word)
-	       0))))
+       (let (case-fold-search)
+	 (or (eq (string-match (concat "\\`" hywiki-word-org-link-regexp "\\'") word)
+		 0)
+	     (eq (string-match (concat "\\`" hywiki-word-optional-section-regexp "\\'") word)
+		 0)))))
 
 (defun hywiki-get-buffer-page-name ()
   "Extract the page name from the buffer file name or else buffer name."
@@ -484,7 +512,8 @@ No validation of PAGE-NAME is done."
 (defun hywiki-get-page-files ()
   "Return the list of existing HyWiki page file names.
 These may have any alphanumeric file suffix, if files were added manually."
-  (directory-files-recursively hywiki-directory (concat "^" hywiki-word-regexp "\\.[A-Za-z0-9]+$")))
+  (when (and (stringp hywiki-directory) (file-readable-p hywiki-directory))
+    (directory-files-recursively hywiki-directory (concat "^" hywiki-word-regexp "\\.[A-Za-z0-9]+$"))))
 
 (defun hywiki-get-page-hasht ()
   "Return hash table of existing HyWiki pages."
@@ -523,7 +552,8 @@ Use `hywiki-get-page' to determine whether a HyWiki page exists."
 			    page-files)))
     (setq hywiki--pages-hasht (hash-make page-elts))))
 
-(when (featurep 'company)
+(eval-and-compile
+'(when (featurep 'company)
 (defun hywiki-company-hasht-backend (command &optional _arg &rest ignored)
  "A `company-mode` backend that completes from the keys of a hash table."
  (interactive (list 'interactive))
@@ -537,7 +567,7 @@ Use `hywiki-get-page' to determine whether a HyWiki page exists."
           (cl-loop for key being the hash-keys in (hywiki-get-page-list)
                    when (string-prefix-p prefix key)
                    collect key))))
-     ('sorted t)))))
+     ('sorted t))))))
 
 (defun hywiki-org-link-complete (&optional _arg)
   "Complete HyWiki page names for `org-insert-link'."
@@ -566,8 +596,6 @@ Use `hywiki-get-page' to determine whether a HyWiki page exists."
 			 :follow #'hywiki-find-page
 			 :store #'hywiki-org-link-store)
 
-(add-hook 'org-mode-hook
-	  (lambda ()
-	    (add-hook 'find-file-hook #'hywiki-find-page t)))
+(add-hook 'find-file-hook #'hywiki-find-page t)
 
 (provide 'hywiki)

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     19-May-24 at 03:52:05 by Bob Weiner
+;; Last-Mod:     25-May-24 at 10:11:05 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -366,16 +366,17 @@ attached file."
        (let ((chr (aref (buffer-name) 0)))
          (not (or (eq chr ?\ ) (eq chr ?*))))
        (not (apply #'derived-mode-p '(prog-mode c-mode objc-mode c++-mode java-mode markdown-mode org-mode)))
-       (let ((ref (hattr:get 'hbut:current 'lbl-key))
-	     (lbl-start (hattr:get 'hbut:current 'lbl-start)))
-         (and ref
-	      lbl-start
-	      (eq ?w (char-syntax (aref ref 0)))
-              (not (string-match "[#@]" ref))
-	      (save-excursion
-		(goto-char lbl-start)
-		(ibut:label-p t "[" "]" t))
-              (hact 'annot-bib ref)))))
+       (unless (ibut:label-p t "[[" "]]" t) ;; Org link
+	 (let ((ref (hattr:get 'hbut:current 'lbl-key))
+	       (lbl-start (hattr:get 'hbut:current 'lbl-start)))
+           (and ref
+		lbl-start
+		(eq ?w (char-syntax (aref ref 0)))
+		(not (string-match "[#@]" ref))
+		(save-excursion
+		  (goto-char lbl-start)
+		  (ibut:label-p t "[" "]" t))
+		(hact 'annot-bib ref))))))
 
 ;;; ========================================================================
 ;;; Follows Org links that are in non-Org mode buffers

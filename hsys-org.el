@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     21-Apr-24 at 12:17:44 by Bob Weiner
+;; Last-Mod:     25-May-24 at 10:22:57 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -411,7 +411,7 @@ or is looking for an Org link in another buffer type."
 	    ;; return nil from this function and let ibtypes handle this
 	    ;; as a HyWiki word.
 	    (if (fboundp 'hywiki-at-wikiword)
-		(if (hywiki-at-wikiword t)
+		(if (hywiki-at-wikiword)
 		    (when (or hywiki-org-link-type-required
 			      (hyperb:stack-frame '(hywiki-at-wikiword)))
 		      in-org-link)

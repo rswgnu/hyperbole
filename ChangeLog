@@ -2,11 +2,29 @@
 
 * hbut.el (ibtype:delete): Fix interactive call.
 
+* hywiki.el (hywiki-remap-buttonize-characters): Add <tab>.
+            (hywiki-highlight-page-name): Fix to highlight page
+    name regardless of how much whitespace comes after the name.
+            (hywiki-mode): Expand doc and add/remove 'post-self-insert-hook'
+    call of 'hywiki-buttonize'.
+            (hywiki-remap-buttonize-characters, hywiki-initialize-mode-map):
+    Remove these and move keymap init into 'hywiki-mode' definition.
+            (hywiki-buttonize): Rewrite to highlight hywiki word to the left of
+    point iff last inserted char is in the set of 'hywiki--buttonize-characters'.
+    Rename to 'hywiki-buttonize-character-commands'.
+           (hywiki-buttonize-non-character-commands): Add.
+
 * hbut.el (gbut:act): Set 'loc to current-buffer, not the gbut's
     source buffer.
           (hbut:key-src-set-buffer): Clarify doc.
           (hbut:funcall): Change to use 'hbut:key-src-set-buffer' to
     temporarily set current-buffer to button's loc attribute.
+
+* hywiki.el (hywiki-get-page-files): Check that 'hywiki-directory'
+    exists and is readable.
+           (hywiki-is-wikiword): Make case-sensitive.
+	   (hywiki-at-wikiword): Remove optional 'org-link-flag' arg
+    use 'ibut:label-p' to get HyWikiWord.
 
 2024-05-23  Bob Weiner  <rsw@gnu.org>
 
@@ -20,6 +38,9 @@
 * hywiki.el (hywiki-remap-buttonize-characters): Move initialization of
     'hywiki--buttonize-characters' here instead of at variable definition
     to eliminate circular load dependency.
+           (find-file-hook): Remove add-hook on 'org-mode-hook'.
+	   (hywiki-find-page): Add post 'hywiki-find-page-hook' and return
+    absolute path to the found page.
 
 * hibtypes.el (grep-msg): Fix that when no source-loc, file path was not
     expanded.
