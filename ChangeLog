@@ -93,6 +93,8 @@
 
 2024-05-18  Mats Lidell  <matsl@gnu.org>
 
+* hypb.el (hypb:configuration): Add info about Emacs native comp.
+
 * hargs.el (hargs:action-get): Add Emacs 30 closure support.
 
 2024-05-17  Mats Lidell  <matsl@gnu.org>
