@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     18-May-24 at 20:24:41 by Bob Weiner
+# Last-Mod:     19-May-24 at 10:58:02 by Bob Weiner
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -547,7 +547,8 @@ lint:
 # Run a build using a dockerized version of Emacs
 #
 # Usage:
-#   make dockerized version=28.1 targets='clean bin test'
+#   make dockerized version=master targets='clean bin test'
+#   make dockerized version=28.2 targets='clean bin test'
 
 # Specify version and targets to run
 ifeq ($(origin targets), command line)

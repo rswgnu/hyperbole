@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     21-Mar-24 at 15:30:24 by Bob Weiner
+;; Last-Mod:     25-May-24 at 11:19:06 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1623,8 +1623,8 @@ completion of all labeled buttons within the current buffer."
       (hproperty:but-create))))
 
 (defun hui:htype-delete (htype-sym)
-  "Delete HTYPE-SYM from use in current Hyperbole session.
-HTYPE-SYM must be redefined for use again."
+  "Delete a prompted-for Hyperbole type from HTYPE-SYM (actypes or ibtypes).
+The type must be redefined for use again."
   (and htype-sym (symbolp htype-sym)
        (let ((type
 	      (intern (hargs:read-match

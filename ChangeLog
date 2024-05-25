@@ -1,3 +1,20 @@
+2024-05-25  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibtype:delete): Fix interactive call.
+
+* hbut.el (gbut:act): Set 'loc to current-buffer, not the gbut's
+    source buffer.
+          (hbut:key-src-set-buffer): Clarify doc.
+          (hbut:funcall): Change to use 'hbut:key-src-set-buffer' to
+    temporarily set current-buffer to button's loc attribute.
+
+2024-05-23  Bob Weiner  <rsw@gnu.org>
+
+* hact.el (actype:delete): Fix interactive spec, eliminating use of
+    'hui:htype-delete'.
+
+* hui.el (hui:htype-delete): Fix doc.
+
 2024-05-19  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-remap-buttonize-characters): Move initialization of

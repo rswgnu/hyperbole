@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     14-Apr-24 at 13:52:20 by Bob Weiner
+;; Last-Mod:     25-May-24 at 16:30:50 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -762,7 +762,11 @@ Insert INSTANCE-FLAG after END, before ending delimiter."
 	(t (let* ((lbl-key (hbut:label-to-key label))
 		  (but (gbut:get lbl-key)))
 	     (if but
-		 (hbut:act but)
+		 (progn
+		   ;; Ensure gbut is activated with current-buffer as
+		   ;; the context, not the gbut's source buffer.
+		   (hattr:set but 'loc (current-buffer))
+		   (hbut:act but))
 	       (error "(gbut:act): No global button found for label: %s" label))))))
 
 (defun    gbut:delete (&optional lbl-key)
@@ -1234,7 +1238,7 @@ hbut:current's 'loc attribute to KEY-SRC."
 	(hattr:set 'hbut:current 'loc key-src)
       (let ((loc (hattr:get 'hbut:current 'loc)))
 	(when loc
-	  (set-buffer (or (get-buffer loc) (find-file-noselect loc)))))
+	  (hbut:key-src-set-buffer loc)))
       (setq key-src (hbut:to-key-src 'full)
 	    ;; `hbut:to-key-src' sets current buffer to key-src buffer.
 	    buffer (or buffer (current-buffer))))
@@ -1352,9 +1356,9 @@ represent the output of particular document formatters."
 	    ((current-buffer))))))
 
 (defun    hbut:key-src-set-buffer (src)
-  "Set buffer to SRC, a buffer, buffer name, file, directory or symlink.
-If SRC is a directory, simply return it; otherwise, return SRC or
-nil if invalid."
+  "Temporarily set current buffer to SRC, a buffer, buffer name, or file.
+If SRC is a directory, simply return it; otherwise, return set current
+buffer to SRC and return it or return nil if SRC is invalid/unreadable."
   (cond ((null src) nil)
 	((or (bufferp src) (get-buffer src))
 	 (set-buffer src)
@@ -1368,7 +1372,8 @@ nil if invalid."
 	 (set-buffer (find-file-noselect src))
 	 src)
 	;; Buffer may be newly created with an attached file that has
-	;; not yet been saved, so it can't be read.
+	;; not yet been saved, so the file does not exist and cannot
+	;; be read.
 	((get-file-buffer src)
 	 (set-buffer (get-file-buffer src))
 	 src)))
@@ -3170,7 +3175,10 @@ is returned."
 (defun    ibtype:delete (type)
   "Delete an implicit button TYPE (a symbol).
 Return TYPE's symbol if it existed, else nil."
-  (interactive (list (hui:htype-delete 'ibtypes)))
+  (interactive (list (intern (hargs:read-match
+			      (concat "Delete from " (symbol-name 'ibtypes) ": ")
+			      (mapcar 'list (htype:names 'ibtypes))
+			      nil t nil 'ibtypes))))
   (htype:delete type 'ibtypes))
 
 ;; Return the full Elisp symbol for IBTYPE, which may be a string or symbol.

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     18-May-24 at 20:26:19 by Bob Weiner
+;; Last-Mod:     23-May-24 at 23:18:43 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -520,8 +520,12 @@ Return symbol created when successful, else nil."
 
 (defun    actype:delete (type)
   "Delete an action TYPE (a symbol).  Return TYPE's symbol if it existed."
-  (interactive (list (hui:htype-delete 'actypes))
-  (htype:delete type 'actypes)))
+  (interactive
+   (list (intern (hargs:read-match
+		  "Delete from actypes: "
+		  (mapcar 'list (htype:names 'actypes))
+		  nil t nil 'actypes))))
+  (htype:delete type 'actypes))
 
 (defun    actype:doc (but &optional full)
   "Return first line of action doc for BUT.
