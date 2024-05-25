@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     21-Mar-24 at 15:30:24 by Bob Weiner
+;; Last-Mod:     25-May-24 at 11:19:06 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1623,8 +1623,8 @@ completion of all labeled buttons within the current buffer."
       (hproperty:but-create))))
 
 (defun hui:htype-delete (htype-sym)
-  "Delete HTYPE-SYM from use in current Hyperbole session.
-HTYPE-SYM must be redefined for use again."
+  "Delete a prompted-for Hyperbole type from HTYPE-SYM (actypes or ibtypes).
+The type must be redefined for use again."
   (and htype-sym (symbolp htype-sym)
        (let ((type
 	      (intern (hargs:read-match
@@ -1753,7 +1753,7 @@ button's source file name when the button data is stored externally."
 If EDIT-FLAG is non-nil, edit button at point in BUT-WINDOW,
 otherwise, prompt for button label and create a button.
 LBL-KEY is internal form of button label.  BUT-LOC is the file or buffer
-in which to create button.  BUT-DIR is the directory of BUT-LOC.
+in which to create the button.  BUT-DIR is the directory of BUT-LOC.
 TYPE-AND-ARGS is the action type for the button followed by any
 arguments it requires.  Any text properties are removed from string
 arguments."

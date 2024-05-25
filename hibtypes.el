@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      7-Apr-24 at 15:12:46 by Bob Weiner
+;; Last-Mod:     25-May-24 at 10:11:05 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -11,6 +11,7 @@
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
+
 ;;; Commentary:
 ;;
 ;;   Implicit button types (ibtypes) in this file are defined in increasing
@@ -37,6 +38,7 @@
 ;;; ************************************************************************
 
 (require 'cl-lib) ;; for cl-count
+(require 'find-func) ;; used by grep-msg ibtype
 (eval-when-compile (require 'hversion))
 (require 'hactypes)
 (require 'hypb)
@@ -87,6 +89,12 @@
 ;; Don't use require below here for any libraries with ibtypes in
 ;; them.  Use load instead to ensure are reloaded when resetting
 ;; ibtype priorities.
+
+;;; ========================================================================
+;;; Creates and display personal wiki pages with auto-wikiword links
+;;; ========================================================================
+
+(load "hywiki")
 
 ;;; ========================================================================
 ;;; Jumps to source line from Python traceback lines
@@ -358,16 +366,17 @@ attached file."
        (let ((chr (aref (buffer-name) 0)))
          (not (or (eq chr ?\ ) (eq chr ?*))))
        (not (apply #'derived-mode-p '(prog-mode c-mode objc-mode c++-mode java-mode markdown-mode org-mode)))
-       (let ((ref (hattr:get 'hbut:current 'lbl-key))
-	     (lbl-start (hattr:get 'hbut:current 'lbl-start)))
-         (and ref
-	      lbl-start
-	      (eq ?w (char-syntax (aref ref 0)))
-              (not (string-match "[#@]" ref))
-	      (save-excursion
-		(goto-char lbl-start)
-		(ibut:label-p t "[" "]" t))
-              (hact 'annot-bib ref)))))
+       (unless (ibut:label-p t "[[" "]]" t) ;; Org link
+	 (let ((ref (hattr:get 'hbut:current 'lbl-key))
+	       (lbl-start (hattr:get 'hbut:current 'lbl-start)))
+           (and ref
+		lbl-start
+		(eq ?w (char-syntax (aref ref 0)))
+		(not (string-match "[#@]" ref))
+		(save-excursion
+		  (goto-char lbl-start)
+		  (ibut:label-p t "[" "]" t))
+		(hact 'annot-bib ref))))))
 
 ;;; ========================================================================
 ;;; Follows Org links that are in non-Org mode buffers
@@ -1041,7 +1050,9 @@ in grep and shell buffers."
                              (hbut:to-key-src t))))
           (if (stringp source-loc)
               (setq file (expand-file-name file (file-name-directory source-loc)))
-	    (setq file (or (hpath:prepend-shell-directory file) file)))
+	    (setq file (or (hpath:prepend-shell-directory file)
+			   (ignore-errors (find-library-name file))
+			   (expand-file-name file))))
 	  (when (file-exists-p file)
             (setq line-num (string-to-number line-num))
             (ibut:label-set but-label)

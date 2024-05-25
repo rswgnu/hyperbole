@@ -1,3 +1,96 @@
+2024-05-25  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibtype:delete): Fix interactive call.
+
+* hywiki.el (hywiki-remap-buttonize-characters): Add <tab>.
+            (hywiki-highlight-page-name): Fix to highlight page
+    name regardless of how much whitespace comes after the name.
+            (hywiki-mode): Expand doc and add/remove 'post-self-insert-hook'
+    call of 'hywiki-buttonize'.
+            (hywiki-remap-buttonize-characters, hywiki-initialize-mode-map):
+    Remove these and move keymap init into 'hywiki-mode' definition.
+            (hywiki-buttonize): Rewrite to highlight hywiki word to the left of
+    point iff last inserted char is in the set of 'hywiki--buttonize-characters'.
+    Rename to 'hywiki-buttonize-character-commands'.
+           (hywiki-buttonize-non-character-commands): Add.
+
+* hbut.el (gbut:act): Set 'loc to current-buffer, not the gbut's
+    source buffer.
+          (hbut:key-src-set-buffer): Clarify doc.
+          (hbut:funcall): Change to use 'hbut:key-src-set-buffer' to
+    temporarily set current-buffer to button's loc attribute.
+
+* hywiki.el (hywiki-get-page-files): Check that 'hywiki-directory'
+    exists and is readable.
+           (hywiki-is-wikiword): Make case-sensitive.
+	   (hywiki-at-wikiword): Remove optional 'org-link-flag' arg
+    use 'ibut:label-p' to get HyWikiWord.
+
+2024-05-23  Bob Weiner  <rsw@gnu.org>
+
+* hact.el (actype:delete): Fix interactive spec, eliminating use of
+    'hui:htype-delete'.
+
+* hui.el (hui:htype-delete): Fix doc.
+
+2024-05-19  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-remap-buttonize-characters): Move initialization of
+    'hywiki--buttonize-characters' here instead of at variable definition
+    to eliminate circular load dependency.
+           (find-file-hook): Remove add-hook on 'org-mode-hook'.
+	   (hywiki-find-page): Add post 'hywiki-find-page-hook' and return
+    absolute path to the found page.
+
+* hibtypes.el (grep-msg): Fix that when no source-loc, file path was not
+    expanded.
+              (find-func): Add require of this library for native compiler
+    grep-msg library name expansion.
+
+* hywiki.el (hywiki-initialize-mode-map): Fix call of old function name.
+            (hywiki-remap-remap-buttonize-characters): Remove extra remap-.
+	    (hywiki-find-page): Remove unused let of 'page-buffer'.
+
+2024-05-18  Bob Weiner  <rsw@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-tests--goto-kotl-header-with-slash-match): Start
+    to try to fix this test.
+
+* hpath.el (hpath:find, hpath:to-markup-anchor): Fix for directory pathnames so
+    properly handles anchors, line numbers, column numbers and 'hpath-find' returns
+    the buffer found.  Also, make 'hpath:to-markup-anchor' handle any special buffer
+    types without attached buffers.
+
+* hywiki.el (hywiki-get-org-insertion-punctuation-keys): Allow for symbol syntax
+    chars and rename to 'hywiki-get-buttonize-characters'.
+            (hywiki-remap-org-insertion-punctuation-keys): Rename to
+    'hywiki-remap-buttonize-characters'.
+            (hywiki--buttonize-characters): Add as a computed string of single
+    characters that each trigger prior hywiki word highlighting when it is enabled.
+            (hywiki-highlight-page-name, hywiki-highlight-page-names): Don't skip
+     back over symbol chars.
+            (hywiki-find-page): Use this function as the 'find-file-hook' instead
+     of 'hywiki-highlight-page-names'; make 'page-name' optional for this use since
+     the current buffer will be the page, so the page name can be derived.  If calling
+     this function creates the page buffer, then enable hywiki-mode and call
+     'hywiki-highlight-page-names'.
+
+* hui-em-but.el (hproperty:but-clear-all-in-list, hproperty:but-get-all-in-region):
+    Add.
+
+* hywiki.el (org-mode-hook): Don't make 'find-file-hook' buffer local, as this
+    is not recommended.
+            (hywiki-pages-hasht): Rename to 'hywiki--pages-hasht'.
+	    (hywiki-at-wikiword): Allow preceding char to be whitespace or
+    additionally any of these chars: (["'`'
+            ((hywiki-highlight-page-names, hywiki-at-wikiword,
+    hywiki-highlight-page-name): Don't limit to files within 'hywiki-directory';
+    use whenever 'hywiki-mode' is enabled.
+            (hywiki-at-wikiword): Remove 'hywiki-allowed-modes' since now test
+    that hywiki-mode is enabled.
+            (hywiki-initialize-mode-map): Add and make punct. and non-square-bracket
+    and non-angle-bracket balanced expressions highlight HyWiki page name references.
+
 2024-05-18  Mats Lidell  <matsl@gnu.org>
 
 * hypb.el (hypb:configuration): Add info about Emacs native comp.
@@ -14,6 +107,80 @@
    (hact-tests--actype-act-with-lambdas): Verify closures.
 
 * hact.el (actype:act): Add Emacs 30 closure support.
+
+2024-05-15  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (org-mode-hook): Remove 'post-self-insert-hook' and instead highlight
+    HyWikiWords via new 'hywiki-mode' minor-mode and its SPC and RET key bindings
+    bound to hywiki-buttonize.
+
+2024-05-12  Bob Weiner  <rsw@gnu.org>
+
+* hact.el (actype:act, action:params): Add Emacs 30 closure support.
+
+2024-05-06  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-name-at-p): Fix to test point is in 'hyrolo-display-buffer'.
+
+2024-05-05  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:delimited-possible-path): Rewrite to expand both delimited
+    and non-delimited shell pathnames.
+
+    For non-delimited strings, remove any leading or trailing spaces;
+    otherwise, may prepend a dir with an extra space in there when
+    extracting paths from an ls command that are indented to match the
+    column indent of filenames with quotes around them.  Also, remove
+    requirement that shell buffer filenames be tab delimited and require
+    that filenames with spaces in their names have quotes around them.
+           (hpath:at-p): If file is readable, ignore whether it has "::" in it.
+
+* hui-em-but.el: Comment out non-load when non-interactive so does not created
+    errors when used in "hywiki.el".
+
+2024-04-23  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el: Remove autoload from defib and 'hywiki-open', fixing autoload error.
+             (hywiki-company-hasht-backend): Complete words, not symbols
+    (no punctuation).
+             (hywiki-open): Rename to 'hywiki-find-page' and automatically create
+    any non-existent page unless optional 'prompt-flag' is t, then prompt
+    whether to create.  If 'prompt-flag' is 'exists, return an existing page only,
+    else nil.
+             (hywiki-complete): Rename to 'hywiki-org-link-complete'.  Insert
+    `hywiki-org-link-type' only when 'hywiki-org-link-type-required' is non-nil.
+             (hywiki-store-link): Rename to 'hywiki-org-link-store'.  Insert
+    `hywiki-org-link-type' only when 'hywiki-org-link-type-required' is non-nil.
+	     (hywiki-org-link-type): Change value from 'hy:' to 'hy'.
+	     (hywiki-page-list): Rename to 'hywiki-get-page-list'.
+	     (hywiki-get-pages): Rename to 'hywiki-get-page-hasht'.
+             (hywiki-word-section-regexp): Add.
+             (hywiki-get-page-files): Add missing '+' for multiple chars in file suffix.
+             (hywiki-at-wikiword, hywiki-highlight-page-names): Allow for numerics
+    in #section references.
+             (hywiki--word-face): Change foreground of HyWiki word to 'orange'
+    when on a dark background.
+
+2024-04-22  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el: Add new auto-wikiword note-taking system with `hywiki' ibtype.
+  hasht.el: Temporarily add this for hywiki hash table support.
+  hibtypes.el (load "hywiki"): Add at lowest ibtype priority.
+  hsys-org.el (hsys-org-link-at-p): Support HyWiki word handling.
+  Makefile (EL_COMPILE):
+  MANIFEST: Add hywiki.el and hasht.el.
+
+* hui-em-but.el (hproperty:but-start, hproperty:but-end, hproperty:but-delete):
+    Add these functions and use in hywiki.el.
+
+2024-04-21  Bob Weiner  <rsw@gnu.org>
+
+* hui-em-but.el (hproperty:but-clear): Add optional args 'property' and 'value'.
+    When 'property' is given, clear the button only when property's value
+    matches 'value'.
+                (hproperty:but-p, hproperty:but-get): Add optional args
+    'property' and 'value', matching only when 'property' equals 'value', if
+    given.
 
 2024-04-20  Bob Weiner  <rsw@gnu.org>
 

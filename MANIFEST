@@ -73,6 +73,10 @@ hsmail.el            - GNU Hyperbole buttons in mail composer: mail
 kotl/MANIFEST        - Summary of Koutliner files
 kotl/EXAMPLE.kotl    - Sample Koutline document explaining Koutliner features
 
+* --- HYPERBOLE NOTES ---
+hywiki.el            - Hyperbole's auto-wikiword note-taking system
+hasht.el             - Create hash tables from lists and operate on them.
+
 * --- HYPERBOLE ROLO ---
 hyrolo.el            - Hierarchical, multi-file, easy-to-use record management system
 hyrolo.py            - Output file header and matching entries from HyRolo files via the command-line

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      7-Apr-24 at 18:40:47 by Bob Weiner
+;; Last-Mod:      6-May-24 at 00:20:13 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -3080,38 +3080,39 @@ Name is returned as `last, first-and-middle'."
 (defun hyrolo-name-at-p ()
   "Iff point is at or within an entry in `hyrolo-display-buffer', return non-nil.
 Any non-nil value returned is a cons of (<entry-name> . <entry-source>)."
-  (let ((entry-source (hbut:get-key-src t))
-	(col-num (current-column))
-	(line-start (line-beginning-position))
-	(line-end (line-end-position)))
-    (when entry-source
-      (save-excursion
-	(forward-line 0)
-	(let (case-fold-search
-	      entry-line
-	      entry-name)
-	  (if (and (or (looking-at hyrolo-hdr-and-entry-regexp)
-		       (re-search-backward hyrolo-hdr-and-entry-regexp nil t))
-		   (save-match-data (not (looking-at hyrolo-hdr-regexp))))
-	      (progn (goto-char (match-end 0))
-		     (skip-chars-forward " \t")
-		     (when (or (looking-at "[^ \t\n\r]+ ?, ?[^ \t\n\r]+")
-			       (looking-at "\\( ?[^ \t\n\r]+\\)+"))
-		       (setq entry-name (match-string-no-properties 0)
-			     entry-line (buffer-substring-no-properties line-start line-end))
-		       ;; Add a text-property of 'hyrolo-name-entry with
-		       ;; value of (entry-line . current-column) to entry-name.
-		       (put-text-property 0 1 'hyrolo-name-entry
-					  (cons entry-line col-num)
-					  entry-name)
-		       (cons entry-name entry-source)))
-	    ;; If not blank, return the current line as the name with
-	    ;; a text-property of 'hyrolo-line-entry with value of (current-column).
-	    (goto-char line-start)
-	    (when (not (looking-at "[ \t\f]*$"))
-	      (setq entry-line (buffer-substring-no-properties line-start line-end))
-	      (put-text-property 0 1 'hyrolo-line-entry col-num entry-line)
-	      (cons entry-line entry-source))))))))
+  (when (eq (current-buffer) (get-buffer hyrolo-display-buffer))
+    (let ((entry-source (hbut:get-key-src t))
+	  (col-num (current-column))
+	  (line-start (line-beginning-position))
+	  (line-end (line-end-position)))
+      (when entry-source
+	(save-excursion
+	  (forward-line 0)
+	  (let (case-fold-search
+		entry-line
+		entry-name)
+	    (if (and (or (looking-at hyrolo-hdr-and-entry-regexp)
+			 (re-search-backward hyrolo-hdr-and-entry-regexp nil t))
+		     (save-match-data (not (looking-at hyrolo-hdr-regexp))))
+		(progn (goto-char (match-end 0))
+		       (skip-chars-forward " \t")
+		       (when (or (looking-at "[^ \t\n\r]+ ?, ?[^ \t\n\r]+")
+				 (looking-at "\\( ?[^ \t\n\r]+\\)+"))
+			 (setq entry-name (match-string-no-properties 0)
+			       entry-line (buffer-substring-no-properties line-start line-end))
+			 ;; Add a text-property of 'hyrolo-name-entry with
+			 ;; value of (entry-line . current-column) to entry-name.
+			 (put-text-property 0 1 'hyrolo-name-entry
+					    (cons entry-line col-num)
+					    entry-name)
+			 (cons entry-name entry-source)))
+	      ;; If not blank, return the current line as the name with
+	      ;; a text-property of 'hyrolo-line-entry with value of (current-column).
+	      (goto-char line-start)
+	      (when (not (looking-at "[ \t\f]*$"))
+		(setq entry-line (buffer-substring-no-properties line-start line-end))
+		(put-text-property 0 1 'hyrolo-line-entry col-num entry-line)
+		(cons entry-line entry-source)))))))))
 
 (define-derived-mode hyrolo-org-mode outline-mode "HyRoloOrg"
   "Basic Org mode for use in HyRolo display match searches."

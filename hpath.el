@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     31-Mar-24 at 00:23:02 by Bob Weiner
+;; Last-Mod:     18-May-24 at 19:06:22 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -955,43 +955,43 @@ Absolute pathnames must begin with a `/' or `~'."
     (when (and path (not non-exist) (string-match hpath:prefix-regexp path)
 	       (not (string-equal (match-string 0 path) path)))
       (setq non-exist t))
-    (unless (and path (or (string-empty-p path)
-			  (string-match "::" path)))
-      (cond ((and path (file-readable-p path))
-	     path)
-	    ((and path
-		  ;; Don't allow more than one set of grouping chars
-		  (not (string-match-p "\)\\s-*\(\\|\\]\\s-*\\[\\|\}\\s-*\{" path))
-		  ;; With point inside a path variable, return the path that point is on or to the right of.
-		  (setq subpath (or (and (setq subpath (hargs:delimited "[:\"\']\\|^\\s-*" "[:\"\']\\|\\s-*$" t t nil "[\t\n\r\f]\\|[;:] \\| [;:]"))
-					 (not (string-match-p "[:;\t\n\r\f]" subpath))
-					 subpath)
-				    (and (setq subpath (hargs:delimited "[;\"\']\\|^\\s-*" "[;\"\']\\|\\s-*$"  t t nil "[\t\n\r\f]\\|[;:] \\| [;:]"))
-					 (not (string-match-p "[;\t\n\r\f]\\|:[^:]*:" subpath))
-					 subpath)))
-		  ;; Handle anchored or action prefix char paths in the
-		  ;; following clause; otherwise, might just be looking
-		  ;; at part of the path
-		  (and subpath (not (or (string-match-p "#" subpath)
-					(string-match-p hpath:prefix-regexp subpath))))
-		  (setq subpath
-			(if subpath
-			    (cond ((and (string-match "\\`\\s-*\\([^; \t]+\\)" subpath)
-					(executable-find (match-string 1 subpath)))
-				   ;; Could be a shell command from a semicolon separated
-				   ;; list; ignore if so
-				   nil)
-				  (t (expand-file-name subpath)))
-			  ;; Only default to current path if know are within a PATH value
-			  (when (string-match-p hpath:path-variable-value-regexp path)
-			    ".")))
-		  (hpath:is-p subpath type non-exist))
-	     subpath)
-	    ((hpath:is-p path type non-exist))
-	    ;; Local file URLs
-	    ;; ((hpath:is-p (hargs:delimited "file://" "[ \t\n\r\"\'\}]" nil t)))
-	    ((hpath:remote-at-p))
-	    ((hpath:www-at-p) nil)))))
+    (if (and path (not (string-empty-p path)) (file-readable-p path))
+	path
+      (unless (and path (or (string-empty-p path)
+			    (string-match "::" path)))
+	(cond ((and path
+		    ;; Don't allow more than one set of grouping chars
+		    (not (string-match-p "\)\\s-*\(\\|\\]\\s-*\\[\\|\}\\s-*\{" path))
+		    ;; With point inside a path variable, return the path that point is on or to the right of.
+		    (setq subpath (or (and (setq subpath (hargs:delimited "[:\"\']\\|^\\s-*" "[:\"\']\\|\\s-*$" t t nil "[\t\n\r\f]\\|[;:] \\| [;:]"))
+					   (not (string-match-p "[:;\t\n\r\f]" subpath))
+					   subpath)
+				      (and (setq subpath (hargs:delimited "[;\"\']\\|^\\s-*" "[;\"\']\\|\\s-*$"  t t nil "[\t\n\r\f]\\|[;:] \\| [;:]"))
+					   (not (string-match-p "[;\t\n\r\f]\\|:[^:]*:" subpath))
+					   subpath)))
+		    ;; Handle anchored or action prefix char paths in the
+		    ;; following clause; otherwise, might just be looking
+		    ;; at part of the path
+		    (and subpath (not (or (string-match-p "#" subpath)
+					  (string-match-p hpath:prefix-regexp subpath))))
+		    (setq subpath
+			  (if subpath
+			      (cond ((and (string-match "\\`\\s-*\\([^; \t]+\\)" subpath)
+					  (executable-find (match-string 1 subpath)))
+				     ;; Could be a shell command from a semicolon separated
+				     ;; list; ignore if so
+				     nil)
+				    (t (expand-file-name subpath)))
+			    ;; Only default to current path if know are within a PATH value
+			    (when (string-match-p hpath:path-variable-value-regexp path)
+			      ".")))
+		    (hpath:is-p subpath type non-exist))
+	       subpath)
+	      ((hpath:is-p path type non-exist))
+	      ;; Local file URLs
+	      ;; ((hpath:is-p (hargs:delimited "file://" "[ \t\n\r\"\'\}]" nil t)))
+	      ((hpath:remote-at-p))
+	      ((hpath:www-at-p) nil))))))
 
 (defun hpath:call (func path &optional non-exist)
   "Call FUNC with a PATH and optional NON-EXIST flag.
@@ -1125,44 +1125,47 @@ With optional INCLUDE-POSITIONS, return a triplet list of (path start-pos
 end-pos) or nil."
   (unless (eolp)
     ;; Prevents MSWindows to Posix path substitution
-    (let ((hyperb:microsoft-os-p t))
-      (or (hargs:delimited "file://" "\\s-" nil t include-positions)
-	  ;; Filenames in HTML
-	  (hargs:delimited "&quot;" "&quot;" nil nil include-positions "[`'’]")
-	  ;; Embedded double quoted filenames
-	  (hargs:delimited "\\\"" "\\\"" nil nil include-positions "[`'’]")
-	  ;; Double quoted filenames
-	  (hargs:delimited "\"" "\"" nil nil include-positions "[`'’]")
-	  ;; Filenames in Info docs or Python files
-	  (hargs:delimited "[`'‘]" "[`'’]" t t include-positions "\"")
-	  ;; Filenames in TexInfo docs
-	  (hargs:delimited "@file{" "}" nil nil include-positions)
-	  ;; if `non-exist' is nil, look for any existing whitespace
-	  ;; delimited filename at point.  If match consists of punctuation
-	  ;; only, like . or .., don't treat it as a pathname.
-	  ;; In shell modes, it must be tab delimited.
-	  (unless non-exist
-	    (let* ((space-delimiter (if (derived-mode-p #'shell-mode)
-					"\t"
-				      "[ \t]"))
-		   (triplet (hargs:delimited (format "^\\|\\(%s\\|[\]\[()<>\;&,@]\\)+"
-						     space-delimiter)
-					     "\\([\]\[()<>\;&,@]\\|:*\\s-\\)+\\|$"
-					     t t t))
-		   (p (car triplet))
-		   (punc (char-syntax ?.)))
-	      ;; May have matched to a string with an embedded double
-	      ;; quote or surrounded by braces; if so, don't consider it a path.
-              ;; Also ignore whitespace delimited root dirs, e.g. " / ".
-	      (when (and (stringp p) (not (string-match-p "\\`{.*}\\'\\|\"\\|\\`[/\\]+\\'" p))
-			 (delq nil (mapcar (lambda (c) (/= punc (char-syntax c))) p)))
-		;; Prepend proper directory from cd, ls *, recursive ls or dir file
-		;; listings when needed.
-		(setq p (or (hpath:prepend-shell-directory p) p))
-		(setcar triplet p)
-		(if include-positions
-		    triplet
-		  p))))))))
+    (let* ((hyperb:microsoft-os-p t)
+	   (triplet (or (hargs:delimited "file://" "\\s-" nil t include-positions)
+			;; Filenames in HTML
+			(hargs:delimited "&quot;" "&quot;" nil nil include-positions "[`'’]")
+			;; Embedded double quoted filenames
+			(hargs:delimited "\\\"" "\\\"" nil nil include-positions "[`'’]")
+			;; Filenames in TexInfo docs
+			(hargs:delimited "@file{" "}" nil nil include-positions)
+			;; Double quoted filenames
+			(hargs:delimited "\"" "\"" nil nil include-positions "[`'’]")
+			;; Filenames in Info docs, Python files or 'ls' listing files in
+			;; single quotes
+			(hargs:delimited "[`'‘]" "[`'’]" t t include-positions "\"")))
+	   (p (if (listp triplet) (car triplet) triplet)))
+      (if non-exist
+	  ;; This may be a triplet of (path start-pos end-pos) or just path
+	  triplet
+	;; If `non-exist' and 'triplet' are nil, look for any
+	;; existing whitespace delimited filename at point.  If
+	;; match consists of punctuation only, like . or ..,
+	;; don't treat it as a pathname.
+	(when (null triplet)
+	  (let* ((space-delimiter "[ \t]"))
+	    (setq triplet (hargs:delimited (format "^\\|\\(%s\\|[\]\[()<>\;&,@]\\)+"
+						   space-delimiter)
+					   "\\([\]\[()<>\;&,@]\\|:*\\s-\\)+\\|$"
+					   t t t)
+		  p (car triplet))))
+	;; May have matched to a string with an embedded double
+	;; quote or surrounded by braces; if so, don't consider it a path.
+	;; Also ignore whitespace delimited root dirs, e.g. " / ".
+	(when (and (stringp p) (not (string-match-p "\\`{.*}\\'\\|\"\\|\\`[/\\]+\\'" p))
+		   (delq nil (mapcar (lambda (c) (/= (char-syntax ?.) (char-syntax c))) p)))
+	  ;; Prepend proper directory from cd, ls *, recursive ls or dir file
+	  ;; listings when needed.
+	  (setq p (string-trim p)
+		p (or (hpath:prepend-shell-directory p) p))
+	  (if include-positions
+	      (progn (setcar triplet p)
+		     triplet)
+	    p))))))
 
 ;;;###autoload
 (defun hpath:display-buffer (buffer &optional display-where)
@@ -1568,9 +1571,10 @@ but locational suffixes within the file are utilized."
 			    ;; matching of path is likely to be wrong in
 			    ;; certain cases, e.g. with mount point or os path
 			    ;; alterations.
-			    (when (and buffer-file-name
+			    (when (or (null buffer-file-name)
+				      (and buffer-file-name
 				       (equal (file-name-nondirectory path)
-					      (file-name-nondirectory buffer-file-name)))
+					      (file-name-nondirectory buffer-file-name))))
 			      (cond ((and anchor kotl-flag)
 				     (klink:act path-with-anchor anchor-start-pos))
 				    ((or hash anchor)
@@ -1634,7 +1638,7 @@ of the buffer."
 								 (and buffer-file-name
 								      (string-match-p "\\`[A-Z][A-Z0-9]+\\'" buffer-file-name)))
 							     hpath:outline-section-pattern)
-							    (prog-mode
+							    ((or prog-mode (null buffer-file-name))
 							     "%s")
 							    ((or (and buffer-file-name
 								      (string-match-p hpath:markdown-suffix-regexp buffer-file-name))

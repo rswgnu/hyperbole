@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     14-Apr-24 at 11:37:50 by Bob Weiner
+;; Last-Mod:     25-May-24 at 10:22:57 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -398,10 +398,25 @@ Return the (start . end) buffer positions of the region."
 (defun hsys-org-link-at-p ()
   "Return non-nil iff point is on a square-bracketed Org mode link.
 Assume caller has already checked that the current buffer is in `org-mode'
-or are looking for an Org link in another buffer type."
+or is looking for an Org link in another buffer type."
   (unless (or (smart-eolp) (smart-eobp))
     (with-suppressed-warnings nil
-      (org-in-regexp org-link-bracket-re nil t))))
+      (let ((in-org-link (org-in-regexp org-link-bracket-re nil t)))
+	(when in-org-link
+	  (save-match-data
+	    ;; If this Org link matches a HyWiki word, let Org handle
+	    ;; it with its normal internal link handling only if it
+	    ;; has a `hywiki-org-link-type' prefix or if
+	    ;; `hywiki-org-link-type-required' is non-nil.  Otherwise,
+	    ;; return nil from this function and let ibtypes handle this
+	    ;; as a HyWiki word.
+	    (if (fboundp 'hywiki-at-wikiword)
+		(if (hywiki-at-wikiword)
+		    (when (or hywiki-org-link-type-required
+			      (hyperb:stack-frame '(hywiki-at-wikiword)))
+		      in-org-link)
+		  in-org-link)
+	      in-org-link)))))))
 
 ;; Assume caller has already checked that the current buffer is in org-mode.
 (defun hsys-org-heading-at-p (&optional _)
