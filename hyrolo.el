@@ -2269,11 +2269,15 @@ When found, return the match start position; otherwise, return nil."
 ;; normal modes whenever they are displayed.
 (defun hyrolo-normalize-mode-function (frame)
   (with-selected-frame frame
-    (when (apply #'derived-mode-p '(hyrolo-markdown-mode hyrolo-org-mode))
-      ;; Display buffer before `normal-mode' triggers possibly long-running font-locking
-      (sit-for 0.1)
-      (normal-mode))))
-(push 'hyrolo-normalize-mode-function window-buffer-change-functions)
+    (walk-windows
+     (lambda (window)
+       (with-selected-window window
+	 (when (apply #'derived-mode-p '(hyrolo-markdown-mode hyrolo-org-mode))
+	   ;; Display buffer before `normal-mode' triggers possibly
+	   ;; long-running font-locking
+	   (sit-for 0.1)
+	   (normal-mode)))))))
+(add-to-list 'window-buffer-change-functions 'hyrolo-normalize-mode-function nil 'eq)
 
 ;;; In `hyrolo-mode' replace `outline-minor-mode' bindings with hyrolo-* overrides.
 ;;; Wrap outline movement commands with a `hyrolo-funcall-match' call.

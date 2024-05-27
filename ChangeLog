@@ -1,3 +1,8 @@
+* hyrolo.el (window-buffer-change-functions): Use 'add-to-list' instead of 'push'
+    to prevent duplicates.
+            (hyrolo-normalize-mode-function): Apply to all windows in the given
+    frame, not just the selected one.
+
 2024-05-25  Bob Weiner  <rsw@gnu.org>
 
 * hbut.el (ibtype:delete): Fix interactive call.
