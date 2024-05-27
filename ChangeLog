@@ -1,4 +1,35 @@
+2024-05-27  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-at-wikiword): Change 'hywiki-mode' test to
+    'hywiki-active-in-current-buffer-p'.
+            (hywiki): Move above test into 'hywiki-at-wikiword'.
+	    (hywiki-get-buttonize-characters): Filter out "-_*#" chars
+    allowed in #section references.
+            (hywiki-at-wikiword, hywiki-highlight-page-names): Allow _ chars
+    in #section patterns.
+            (hywiki-highlight-page-name): Fix to highlight page#section where
+    section contains any of "-_*" characters.
+            (hywiki-get-page-files, hywiki-get-page-file): Create 'hywiki-directory'
+    if it does not exist.
+            (hywiki-directory-get-mod-time, hywiki-directory-modified-p): Add.
+            (hywiki-highlight-page-names): Use above functions to cache expensive
+    to compute 'hywiki--any-page-regexp'.
+
 2024-05-26  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-highlight-page-names): Add skip over asterisk in section
+    to match expression in 'hywiki-at-wikiword'.
+            (hywiki-word-optional-section-regexp): Rename to
+    'hywiki-word-with-optional-section-regexp'.
+            (hywiki-word-org-link-regexp): Rename to
+    'hywiki-word-with-optional-section-exact-regexp'.
+            (hywiki-mode): Change all defcustom groups in this library to
+    'hyperbole-wiki.
+	    (hywiki-excluded-major-modes): Add to exclude major modes and their
+    descendents from highlighting and activation of HyWiki words.  Default is nil.
+            (hywiki-active-in-current-buffer-p): Add and use in 'hywiki' ibtype.
+	    (hywiki-in-page-p): Add and use where buffer's file is tested against
+    'hywiki-directory'.
 
 * hargs.el (hargs:delimited): Change returned value from 'string' to 'result'.
     If 'as-key' arg eq 'none, return t or nil as result rather than matching string.
