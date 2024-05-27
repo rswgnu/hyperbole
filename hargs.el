@@ -227,23 +227,35 @@ button key (no spaces)."
 	       t)
 	     (< start end)
 	     (>= end opoint)
-	     (let ((string (hargs:buffer-substring start end))
-		   (string-with-delims (when (stringp exclude-regexp)
-					 (hargs:buffer-substring start-with-delim
-								 end-with-delim))))
-	       (unless (and string-with-delims
-			    (string-match exclude-regexp string-with-delims))
-		 ;; Normalize the string
-		 (setq string
-		       (if as-key
-			   (hbut:label-to-key string)
-			 (replace-regexp-in-string "[\n\r\f]\\s-*"
-						   " " string nil t)))
-		 (unless hyperb:microsoft-os-p
-		   (setq string (hpath:mswindows-to-posix string)))
+	     (if (eq as-key 'none)
 		 (if list-positions-flag
-		     (list string start end)
-		   string))))))))
+		     (list t start end)
+		   t)
+	       (let ((result (hargs:buffer-substring start end))
+		     (string-with-delims (when (stringp exclude-regexp)
+					   (hargs:buffer-substring start-with-delim
+								   end-with-delim))))
+		 (unless (and string-with-delims
+			      (string-match exclude-regexp string-with-delims))
+		   ;; Normalize the result
+		   (setq result
+			 (if as-key
+			     (hbut:label-to-key result)
+			   (replace-regexp-in-string "[\n\r\f]\\s-*"
+						     " " result nil t)))
+		   (unless hyperb:microsoft-os-p
+		     (setq result (hpath:mswindows-to-posix result)))
+		   (if list-positions-flag
+		       (list result start end)
+		     result)))))))))
+
+(defun hargs:delimited-p (start-delim end-delim
+			  &optional start-regexp-flag end-regexp-flag
+			  list-positions-flag exclude-regexp)
+  "Call `hargs:delimited' with its `as-key' arg set to 'none.
+See `hargs:delimited' for full documentation."
+  (hargs:delimited start-delim end-delim start-regexp-flag
+		   end-regexp-flag list-positions-flag exclude-regexp 'none))
 
 (defmacro hargs:make-iform-vector (&rest iform-alist)
   "Return a vector of interactive command code characters.

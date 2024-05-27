@@ -1,3 +1,52 @@
+2024-05-26  Bob Weiner  <rsw@gnu.org>
+
+* hargs.el (hargs:delimited): Change returned value from 'string' to 'result'.
+    If 'as-key' arg eq 'none, return t or nil as result rather than matching string.
+           (hargs:delimited-p): Add to all 'hargs:delimited with 'as-key' arg set to
+    'none.
+
+* hywiki.el (hywiki-highlight-on-yank): Add and add to 'yank-handled-properties'.
+            (hywiki-find-page): Don't turn on `hywiki-mode', let the user do that.
+    Call `hywiki-highlight-page-names' when finding a regular file too.
+            (hywiki-highlight-page-names): Fix so in-comment test is within the
+    loop searching for each match.
+            (hywiki--but): Rename to 'hywiki--buts' since will store a potential
+    list of HyWiki highlight buttons here.
+            (hywiki-highlight-page-names-in-frame): Allow frame arg of 't to mean
+    highlight/dehighlight across all frames.
+            (hywiki-dehighlight-page-names): Do this in buffers other than HyWiki
+    pages when 'hywiki-mode' is turned off.  Do it to HyWiki page buffers when
+    `hywiki-word-highlight-flag' is set to nil.
+            (require 'hargs): Add.
+            (hywiki-highlight-page-name): Allow for <> syntax as delim syntax.
+            (hywiki-maybe-at-wikiword-beginning): Allow for '<' as preceding char.
+            (hywiki-buttonize-character-commands): Replace seq-find with cl-find.
+            (hywiki-mode): Add all open delimiter characters to
+    'hywiki--buttonize-characters'.
+ 	    (hywiki-highlight-all-in-prog-modes): Add and use to specify major modes
+    in which to highlight HyWikiWords outside of comments.
+            (hywiki-highlight-page-name, hywiki-highlight-page-names): Clear
+    highlighting within square or angle brackets since these might be Org links or
+    targets.
+            (hywiki-highlight-page-name): Trigger on symbol syntax chars except "#_-".
+            (hywiki-find-page): Mention 'hywiki-find-page-hook' in doc.
+            (hywiki-buttonize-character-commands,
+             hywiki-buttonize-non-character-commands): Ignore unless
+    'hywiki-word-highlight-flag' is non-nil (the default).
+            (hywiki--org-mode-syntax-table): Add to avoid loading Org mode for
+    HyWikiWord testing.
+            (hywiki-get-buttonize-characters): Use above new variable.
+            (hywiki-highlight-page-names): Highlight only in region if active
+    or given as arguments.
+            (require 'outline): And remove (require 'ol) which is now loaded
+    after org is loaded and then HyWiki's `org-link-set-parameters' is lazily run.
+            (hywiki-mode): Make global minor mode.
+            (hywiki-at-wikiword): Don't require Org mode to test if
+    at a HyWikiWord.
+            (hywiki-highlight-page-name, hywiki-highlight-page-names): Make
+    an autoload for use in hywiki defib.
+           (hywiki): Move defib to "hibtypes.el".
+
 * hyrolo.el (window-buffer-change-functions): Use 'add-to-list' instead of 'push'
     to prevent duplicates.
             (hyrolo-normalize-mode-function): Apply to all windows in the given

@@ -141,7 +141,7 @@ Use nil for no Hyperbole mode indicator."
 
 ;;;###autoload
 (define-minor-mode hyperbole-mode
-  "Toggle Hyperbole global minor mode.
+  "Toggle Hyperbole global minor mode with \\[hyperbole-mode].
 
 Hyperbole is the Everyday Hypertextual Information Manager.
 
