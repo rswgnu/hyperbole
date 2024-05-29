@@ -9,7 +9,7 @@
 ;; Maintainer:   Mats Lidell <matsl@gnu.org>
 ;; Maintainers:  Robert Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:      06-Oct-92 at 11:52:51
-;; Last-Mod:     30-Mar-24 at 11:23:37 by Bob Weiner
+;; Last-Mod:     28-May-24 at 23:04:52 by Bob Weiner
 ;; Released:     10-Mar-24
 ;; Version:      9.0.2pre
 ;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -471,7 +471,8 @@ frame, those functions by default still return the prior frame."
 		   user-mail-address)
 	      (concat (user-login-name) (hypb:domain-name)))))
   ;;
-  ;; Modify syntactic character pairs for use with implicit button activations.
+  ;; Modify syntactic character pairs for use with implicit button activations
+  ;; in text and help modes.
   (hbut:modify-syntax)
   ;;
   ;; Conditionally initialize Hyperbole key bindings (when hkey-init is t).
@@ -486,9 +487,11 @@ frame, those functions by default still return the prior frame."
   ;; initialized, if not yet set by the user.
   (when (eq hsys-org-enable-smart-keys 'unset)
     (customize-set-variable 'hsys-org-enable-smart-keys
-			    (if (hsys-org-meta-return-shared-p)
-				'buttons
-			      t)))
+			    (cond ((car-safe (get 'hsys-org-enable-smart-keys 'customized-value)))
+				  ((car-safe (get 'hsys-org-enable-smart-keys 'saved-value)))
+				  ((hsys-org-meta-return-shared-p)
+				   'buttons)
+				  (t))))
   ;;
   ;; This next function call must be run before any tests involving Org
   ;; in case the user has installed a new version of Org but Emacs has

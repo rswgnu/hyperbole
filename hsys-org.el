@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     25-May-24 at 10:22:57 by Bob Weiner
+;; Last-Mod:     29-May-24 at 00:55:19 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -16,11 +16,11 @@
 ;;
 ;;   Support functions for "hui-mouse.el#smart-org".
 ;;
-;;   smart-org is triggered when the major mode is org-mode or is derived
-;;   from org-mode.
+;;   smart-org is triggered with the press of a Smart Key within an org-mode
+;;   (or org-mode derived) buffer.
 ;;
-;;   See the doc for smart-org for details of what it does and
-;;   its compatibility with org-mode.
+;;   See the doc for smart-org for details of what it does and its
+;;   compatibility with org-mode.
 ;;
 ;;   For a good tutorial on basic use of Org-mode, see:
 ;;     https://orgmode.org/worg/org-tutorials/orgtutorial_dto.html
@@ -46,7 +46,10 @@
 
 (declare-function consult-grep "ext:consult")
 
-(defcustom hsys-org-consult-grep-func #'consult-grep
+(defcustom hsys-org-consult-grep-func
+  (cond ((executable-find "rg")
+	 #'consult-ripgrep)
+	(t #'consult-grep))
   "Function for consult grep searching over files."
    :type 'function
    :group 'org)
@@ -266,11 +269,13 @@ Return t if Org is reloaded, else nil."
 
 ;;;###autoload
 (defun hsys-org-meta-return ()
-  "Call `org-meta-return' with the numeric value of any prefix arg when given."
+  "Call `org-meta-return' with the numeric value of any prefix arg when given.
+Do nothing if called outside of `org-mode'."
   (interactive "P")
-  (if current-prefix-arg
-      (org-meta-return (prefix-numeric-value current-prefix-arg))
-    (org-meta-return)))
+  (when (apply #'derived-mode-p '(org-mode))
+    (if current-prefix-arg
+	(org-meta-return (prefix-numeric-value current-prefix-arg))
+      (org-meta-return))))
 
 ;;;###autoload
 (defun hsys-org-consult-grep ()
@@ -377,8 +382,9 @@ Return the (start . end) buffer positions of the region."
 
 (defun hsys-org-agenda-item-at-p ()
   "Return non-nil if point is on an Org Agenda view item line, else nil."
-  (and (derived-mode-p 'org-agenda-mode)
-       (org-get-at-bol 'org-marker)))
+  (and (apply #'derived-mode-p '(org-agenda-mode))
+       (org-get-at-bol 'org-marker)
+       t))
 
 (defun hsys-org-block-start-at-p ()
   "Return non-nil if point is on the first line of an Org block definition."
@@ -432,12 +438,12 @@ Assume caller has already checked that the current buffer is in
 `org-mode'."
   (hsys-org-face-at-p 'org-target))
 
-;; Assume caller has already checked that the current buffer is in org-mode.
 (defun hsys-org-todo-at-p ()
   "Return non-nil iff point is on an Org mode todo keyword.
 Assume caller has already checked that the current buffer is in `org-mode'."
-  (when (assq :todo-keyword (org-context))
-    t))
+  (and (apply #'derived-mode-p '(org-mode))
+       (assq :todo-keyword (org-context))
+       t))
 
 (defun hsys-org-radio-target-link-at-p ()
   "Return link text region iff point is on an Org mode radio target link.
@@ -549,7 +555,8 @@ White spaces are insignificant.  Return t if a target link is found, else nil."
   (when (consp start-end)
     (ibut:label-set (ibut:key-to-label
 		     (ibut:label-to-key
-		      (buffer-substring-no-properties (car start-end) (cdr start-end))))
+		      (buffer-substring-no-properties
+		       (car start-end) (cdr start-end))))
 		    (car start-end) (cdr start-end))))
 
 (defun hsys-org-to-next-radio-target-link (target)

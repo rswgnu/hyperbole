@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     27-May-24 at 00:02:45 by Bob Weiner
+;; Last-Mod:     29-May-24 at 00:53:33 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -325,10 +325,10 @@ successfully finding a page and reading it into a buffer, run
 	  (when in-page-flag
 	    ;; Current buffer must be the desired page (called from 'find-file-hook')
 	    (unless in-hywiki-directory-flag
-	      (error "(hywiki-find-page): No `page-name'; buffer file must be in `hywiki-directory', not %s"
+	      (error "(hywiki-find-page): No `page-name' given; buffer file must be in `hywiki-directory', not %s"
 		     default-directory))
 	    (when (null buffer-file-name)
-	      (error "(hywiki-find-page): No `page-name' given in a buffer without an attached file"))
+	      (error "(hywiki-find-page): No `page-name' given; buffer must have an attached file"))
 	    (setq page-name (file-name-sans-extension (file-name-nondirectory buffer-file-name))))
 
 	  (let* ((section (when (string-match "#" page-name)
@@ -377,6 +377,16 @@ nil, else return the file name of the page."
 	    (unless (bolp) (insert (newline)))
 	    (goto-char (if start-flag (point-min) (point-max)))
 	    page-file))))))
+
+;;;###autoload
+(defun hywiki-consult-grep ()
+  "Prompt for search terms and run consult grep over `hywiki-directory'.
+Actual grep function used is given by the variable,
+`hsys-org-consult-grep-func'."
+  (interactive)
+  (require 'hsys-org)
+  (let ((org-directory hywiki-directory))
+    (hsys-org-consult-grep)))
 
 (defun hywiki-maybe-at-wikiword-beginning ()
   "Return non-nil if previous character is one preceding a HyWiki word.
@@ -440,6 +450,20 @@ interactively), limit dehighlighting to the region."
 
   (or (zerop hywiki--directory-mod-time)
       (/= hywiki--directory-mod-time (hywiki-directory-get-mod-time))))
+
+;;;###autoload
+(defun hywiki-grep-tags (&optional todo-only)
+  "Prompt for colon-separated Org tags and display matching HyWiki page sections.
+With optional prefix arg TODO-ONLY, limit matches to HyWiki Org todo items only."
+  (interactive "P")
+  (require 'org-agenda)
+  (let* ((org-agenda-files (list hywiki-directory))
+	 (org-agenda-buffer-name "*HyWiki Tags*")
+	 ;; `org-tags-view' is mis-written to require setting this next
+	 ;; tmp-name or it will not properly name the displayed buffer
+	 (org-agenda-buffer-tmp-name org-agenda-buffer-name))
+    ;; This prompts for the tags to match
+    (org-tags-view todo-only)))
 
 (defun hywiki-highlight-on-yank (_prop-value start end)
   "Used in `yank-handled-properties' called with START and END pos of the text."

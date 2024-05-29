@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:     5-Feb-23 at 09:12:52
-;; Last-Mod:      6-Feb-23 at 21:33:27 by Mats Lidell
+;; Last-Mod:     29-May-24 at 00:56:52 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -16,7 +16,8 @@
 
 ;;; Code:
 
-(require 'set)
+;; Avoid any potential library name conflict by giving the load directory.
+(require 'set (expand-file-name "set" hyperb:dir))
 
 (ert-deftest set-tests--function-tests-equal ()
   "Test Hyperbole set library functions."

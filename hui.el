@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     25-May-24 at 11:19:06 by Bob Weiner
+;; Last-Mod:     29-May-24 at 00:57:49 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -20,7 +20,8 @@
 ;;; ************************************************************************
 
 (require 'hargs)
-(require 'set)
+;; Avoid any potential library name conflict by giving the load directory.
+(require 'set (expand-file-name "set" hyperb:dir))
 (require 'hmail)
 (require 'hbut)
 (eval-when-compile (require 'hactypes))

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:     18-May-24 at 16:07:11 by Mats Lidell
+;; Last-Mod:     29-May-24 at 00:57:17 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -31,7 +31,8 @@
 (require 'etags)                        ; For `find-tag--default'
 (require 'hpath)
 (require 'hypb)
-(require 'set)
+;; Avoid any potential library name conflict by giving the load directory.
+(require 'set (expand-file-name "set" hyperb:dir))
 (require 'info)
 (require 'hmouse-drv) ;; loads hui-mouse and hmouse-key
 
