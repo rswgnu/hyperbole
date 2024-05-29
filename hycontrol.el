@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:     16-Mar-24 at 00:04:31 by Mats Lidell
+;; Last-Mod:     29-May-24 at 00:57:08 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -127,7 +127,8 @@
 (require 'cl-lib)
 (require 'hhist)     ; To store frame-config when hycontrol-windows-grid is used
 (require 'hypb)
-(require 'set)
+;; Avoid any potential library name conflict by giving the load directory.
+(require 'set (expand-file-name "set" hyperb:dir))
 (eval-and-compile
   (require 'framemove nil t) ;; Elpa package
   (require 'windmove))

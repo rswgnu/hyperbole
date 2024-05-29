@@ -1,4 +1,37 @@
+2024-05-29  Bob Weiner  <rsw@gnu.org>
+
+* hsys-org.el (hsys-org-consult-grep-func): Prefer ripgrep over grep.
+
+* hywiki.el (hywiki-consult-grep): Add as an autoloaded function to grep HyWiki
+    pages interactively with live page previews.
+            (hywiki-grep-tags): Add as an autoloaded function to grep HyWiki
+    page sections with matching Org tags.
+
+2024-05-28  Bob Weiner  <rsw@gnu.org>
+
+* hui-mouse.el (smart-org): Also fix when in a read-only Org-related buffer but
+    not org-mode and not on a button, do what the <return> key does but respect
+    Hyperbole display settings.
+              (smart-org-agenda-item-action): Add so user can override this.
+
+* hyperbole.el (hyperb:init): Fix to use any customized or saved value of
+    'hsys-org-enable-smart-keys' when unset.
+
+* hui-mouse.el (smart-org): Fix when in an Org-related buffer, e.g. agenda,
+    but not org-mode, don't call (hsys-org-get-value :language) as this will
+    fail with a warning: ‘org-element-at-point’ cannot be used in non-Org
+    buffer #<buffer *Org Agenda*>.
+* hsys-org.el (hsys-org-todo-at-p): Similarly, check that are in 'org-mode' to
+    avoid triggering the same warning from a call to 'org-context'.
+              (hsys-org-meta-return): Do nothing if called outside of 'org-mode',
+    e.g. in an Org Agenda.
+
 2024-05-27  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-org-roam-call-function): Add to install Org Roam
+    and then call an Org Roam-related function.
+            (hyrolo-consult-grep): Add optional 3rd arg 'path-list' so can
+    be used with hywiki as well.
 
 * hywiki.el (hywiki-at-wikiword): Change 'hywiki-mode' test to
     'hywiki-active-in-current-buffer-p'.

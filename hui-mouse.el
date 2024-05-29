@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     15-Apr-24 at 00:08:13 by Bob Weiner
+;; Last-Mod:     29-May-24 at 00:15:48 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1784,6 +1784,19 @@ If not on a file name, returns nil."
 ;;; smart-org functions
 ;;; ************************************************************************
 
+(defun smart-org-agenda-item-action ()
+  "Action/Assist Key action when point is on an Org Agenda item.
+On Action Key press, invoke Agenda's <return> key binding, typically
+`org-agenda-switch-to'.  On Assist Key press, display `smart-org' help."
+  (hsys-org-set-ibut-label (cons (line-beginning-position)
+				 (line-end-position)))
+  (if assist-flag
+      (hact (lambda () (describe-function 'smart-org)))
+    ;; Execute Agenda's {RET} binding using Hyperbole display setting
+    (cl-letf (((symbol-function 'pop-to-buffer-same-window)
+	       #'hpath:display-buffer))
+      (hact (lambda () (call-interactively (key-binding (kbd "RET"))))))))
+
 (defun smart-org ()
   "Follow Org mode references, cycle outline visibility and execute code blocks.
 Active when `hsys-org-enable-smart-keys' is non-nil,
@@ -1858,10 +1871,7 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
 			(hact 'hsys-org-todo-cycle)
 		      (hact 'hsys-org-todo-set-cycle)))
 		   ((hsys-org-agenda-item-at-p)
-		    (if (not assist-flag)
-			(progn (hsys-org-set-ibut-label (cons (line-beginning-position) (line-end-position)))
-			       (hact 'org-agenda-show-and-scroll-up current-prefix-arg))
-		      (hact 'hkey-help))
+		    (smart-org-agenda-item-action)
 		    ;; Ignore any further Smart Key non-Org contexts
 		    t)
 		   ((hsys-org-radio-target-def-at-p)
@@ -1921,14 +1931,21 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
 		    ;; Fall through until Hyperbole button context and
 		    ;; activate normally.
 		    nil)
-		   ((equal (hsys-org-get-value :language) "python")
+		   ((and (apply #'derived-mode-p '(org-mode))
+			 (equal (hsys-org-get-value :language) "python"))
 		    (setq hkey-value (smart-python-at-tag-p))
 		    (hact 'smart-python hkey-value ''next-tag))
-		   (t
+		   ((apply #'derived-mode-p '(org-mode))
 		    (when (hsys-org-meta-return-shared-p)
 		      (hact 'hsys-org-meta-return))
 		    ;; Ignore any further Smart Key non-Org contexts
-		    t)))
+		    t)
+		   ((hsys-org-agenda-item-at-p)
+		    (smart-org-agenda-item-action)
+		    ;; Ignore any further Smart Key non-Org contexts
+		    t)
+		   ;; Ignore any further Smart Key non-Org contexts
+		   (t)))
 	    (t
 	     ;; hsys-org-enable-smart-keys is set to t, so try other Smart
 	     ;; contexts

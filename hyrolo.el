@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      6-May-24 at 00:20:13 by Bob Weiner
+;; Last-Mod:     29-May-24 at 00:57:28 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -42,7 +42,8 @@
 (require 'outline)
 (require 'package)
 (require 'reveal)
-(require 'set)
+;; Avoid any potential library name conflict by giving the load directory.
+(require 'set (expand-file-name "set" hyperb:dir))
 (require 'sort)
 (require 'xml)
 (declare-function kotl-mode:to-valid-position "kotl/kotl-mode")
@@ -74,7 +75,11 @@
 (declare-function kotl-mode:to-valid-position "kotl/kotl-mode")
 (declare-function org-fold-initialize "org-fold")
 (declare-function org-fold-core-set-folding-spec-property "org-fold")
+
 (declare-function org-roam-db-autosync-mode "ext:org-roam")
+(declare-function org-roam-node-find "ext:org-roam")
+(declare-function org-roam-node-level "ext:org-roam")
+
 (declare-function outline-apply-default-state "outline")
 (declare-function xml-node-child-string "ext:google-contacts")
 (declare-function xml-node-get-attribute-type "ext:google-contacts")
@@ -521,7 +526,7 @@ entry which begins with the parent string."
 	(message "Edit entry at point.")))))
 
 ;;;###autoload
-(defun hyrolo-consult-grep (&optional regexp max-matches)
+(defun hyrolo-consult-grep (&optional regexp max-matches path-list)
   "Interactively search `hyrolo-file-list' with a consult package grep command.
 Use ripgrep (rg) if found, otherwise, plain grep.  Interactively
 show all matches from `hyrolo-file-list'.  Initialize search with
@@ -557,8 +562,8 @@ per file to the absolute value of MAX-MATCHES, if given and not 0.  If
 			      (if (string-match "[\\/]?\\([^*?\\/]*[*?][^\\/]+\\'\\)" path)
 				  (substring path 0 (match-beginning 1))
 				path))
-			    hyrolo-file-list)
-		  hyrolo-file-list)))
+			    (or path-list hyrolo-file-list))
+		  (or path-list hyrolo-file-list))))
     (hyrolo-consult-grep-paths paths regexp max-matches)))
 
 ;;;###autoload
@@ -571,30 +576,25 @@ matches per file to the absolute value of MAX-MATCHES, if given
 and not 0.  If 0, match to headlines only (lines that start with
 a '^[*#]+[ \t]+' regexp)."
   (interactive "i\nP")
-  (unless (package-installed-p 'org-roam)
-    (package-install 'org-roam))
-  (require 'org-roam)
-  (unless (file-readable-p org-roam-directory)
-    (make-directory org-roam-directory))
-  (unless org-roam-db-autosync-mode
-    (org-roam-db-autosync-mode))
-  (if (file-readable-p org-roam-directory)
-      (let ((consult-grep-args
-	     (if (listp consult-grep-args)
-		 (append consult-grep-args (list "--include *.org"))
-	       (concat consult-grep-args " --include *.org")))
-	    (consult-ripgrep-args
-	     (if (listp consult-ripgrep-args)
-		 (append consult-ripgrep-args (list "--glob *.org"))
-               (concat consult-ripgrep-args " --glob *.org"))))
-	(hyrolo-consult-grep-paths (list org-roam-directory) regexp max-matches))
-    (error "(hyrolo-consult-org-roam-grep): `org-roam-directory', \"%s\", does not exist" org-roam-directory)))
+  (hyrolo-org-roam-call-function
+   (lambda ()
+     (let ((consult-grep-args
+	    (if (listp consult-grep-args)
+		(append consult-grep-args (list "--include *.org"))
+	      (concat consult-grep-args " --include *.org")))
+	   (consult-ripgrep-args
+	    (if (listp consult-ripgrep-args)
+		(append consult-ripgrep-args (list "--glob *.org"))
+              (concat consult-ripgrep-args " --glob *.org"))))
+       (hyrolo-consult-grep-paths (list org-roam-directory) regexp max-matches)))))
 
 ;;;###autoload
 (defun hyrolo-consult-org-roam-title ()
   "Interactively narrow and select Org Roam nodes by title."
   (interactive)
-  (org-roam-node-find nil nil (lambda (node) (zerop (org-roam-node-level node)))))
+  (hyrolo-org-roam-call-function
+   (lambda ()
+     (org-roam-node-find nil nil (lambda (node) (zerop (org-roam-node-level node)))))))
 
 ;;;###autoload
 (defun hyrolo-display-matches (&optional display-buf return-to-buffer)
@@ -1865,17 +1865,10 @@ returned to the number given."
 OPTIONAL prefix arg, MAX-MATCHES, limits the number of matches
 returned to the number given."
   (interactive "sFind Org Roam directory string (or logical sexpression): \nP")
-  (unless (package-installed-p 'org-roam)
-    (package-install 'org-roam))
-  (require 'org-roam)
-  (unless (file-readable-p org-roam-directory)
-    (make-directory org-roam-directory))
-  (unless org-roam-db-autosync-mode
-    (org-roam-db-autosync-mode))
-  (if (file-readable-p org-roam-directory)
-      (let ((hyrolo-file-list (directory-files org-roam-directory t "\\.org$")))
-	(hyrolo-fgrep string max-matches))
-    (error "(hyrolo-org-roam): `org-roam-directory', \"%s\", does not exist" org-roam-directory)))
+  (hyrolo-org-roam-call-function
+   (lambda ()
+     (let ((hyrolo-file-list (directory-files org-roam-directory t "\\.org$")))
+       (hyrolo-fgrep string max-matches)))))
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -2966,6 +2959,19 @@ only (lines that start with a '^[*#]+[ ]t]+' regexp)."
     ;; not needed for simple regexp searches.
     (let ((consult-async-split-style nil))
       (funcall grep-func paths regexp))))
+
+(defun hyrolo-org-roam-call-function (func)
+  "Install Org Roam and then call an Org Roam FUNC."
+  (unless (package-installed-p 'org-roam)
+    (package-install 'org-roam))
+  (require 'org-roam)
+  (unless (file-readable-p org-roam-directory)
+    (make-directory org-roam-directory))
+  (unless org-roam-db-autosync-mode
+    (org-roam-db-autosync-mode))
+  (if (file-readable-p org-roam-directory)
+      (funcall func)
+    (error "`org-roam-directory', \"%s\", does not exist" org-roam-directory)))
 
 (defun hyrolo-current-date ()
   "Return the current date (a string) in a form used for rolo entry insertion."
