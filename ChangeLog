@@ -1,3 +1,8 @@
+2024-05-31  Mats Lidell  <matsl@gnu.org>
+
+* test/hui-tests.el (hui--gbut-should-execute-in-current-folder): Add test
+    for verifying global button executes in current folder.
+
 2024-05-29  Bob Weiner  <rsw@gnu.org>
 
 * hsys-org.el (hsys-org-consult-grep-func): Prefer ripgrep over grep.

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     21-Mar-24 at 17:30:27 by Mats Lidell
+;; Last-Mod:     31-May-24 at 15:58:58 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1141,6 +1141,21 @@ With point on label suggest that ibut for rename."
   ;; Buffer without File      link-to-buffer-tmp"
   (with-temp-buffer
     (hy-test-helpers:ensure-link-possible-type 'link-to-buffer-tmp)))
+
+(ert-deftest hui--gbut-should-execute-in-current-folder ()
+  "Verify global button executes in scope of current buffer."
+  (defvar global-but-file)
+  (defvar global-but-buffer)
+  (defvar current-folder)
+  (let* ((global-but-file (make-temp-file "gbut" nil ".txt"))
+         (global-but-buffer (find-file-noselect global-but-file))
+         (current-folder default-directory))
+    (unwind-protect
+        (mocklet ((gbut:file => global-but-file)
+                  ((hpath:find-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => global-but-buffer))
+          (gbut:ebut-program "global" 'eval-elisp ''(should (string= current-folder default-directory)))
+          (gbut:act "global"))
+      (hy-delete-file-and-buffer global-but-file))))
 
 ;; This file can't be byte-compiled without `with-simulated-input' which
 ;; is not part of the actual dependencies, so:
