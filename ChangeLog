@@ -1,5 +1,13 @@
 2024-06-01  Mats Lidell  <matsl@gnu.org>
 
+* test/hywiki-tests.el (hywiki-tests--hywiki-add-page--adds-file-in-wiki-folder)
+    (hywiki-tests--hywiki-add-page--adds-no-wiki-word-fails)
+    (hywiki-tests--wikiword-with-prefix-creates-a-new-page)
+    (hywiki-tests--not-a-wikiword-unless-in-hywiki-mode)
+    (hywiki-tests--face-property-for-wikiword-with-wikipage)
+    (hywiki-tests--no-face-property-for-no-wikipage): Add test cases for
+    hywiki.
+
 * test/hpath-tests.el (hpath--hpath:delimited-possible-path): Add test for
     hpath:delimited-possible-path.
 
