@@ -1,3 +1,8 @@
+2024-06-01  Mats Lidell  <matsl@gnu.org>
+
+* test/hpath-tests.el (hpath--hpath:delimited-possible-path): Add test for
+    hpath:delimited-possible-path.
+
 2024-05-31  Mats Lidell  <matsl@gnu.org>
 
 * test/hui-tests.el (hui--gbut-should-execute-in-current-folder): Add test
