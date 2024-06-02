@@ -9,7 +9,7 @@
 ;; Maintainer:   Mats Lidell <matsl@gnu.org>
 ;; Maintainers:  Robert Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:      06-Oct-92 at 11:52:51
-;; Last-Mod:     28-May-24 at 23:04:52 by Bob Weiner
+;; Last-Mod:      2-Jun-24 at 13:22:35 by Bob Weiner
 ;; Released:     10-Mar-24
 ;; Version:      9.0.2pre
 ;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -511,8 +511,8 @@ frame, those functions by default still return the prior frame."
   (message "Initializing Hyperbole...done"))
   
 
-  ;; This call loads the rest of the Hyperbole system.
-  (require 'hinit)
+;; This call loads the rest of the Hyperbole system.
+(require 'hinit)
 
 (defun hyperbole--enable-mode ()
   "Enable Hyperbole global minor mode."
@@ -540,6 +540,8 @@ frame, those functions by default still return the prior frame."
 
 (defun hyperbole--disable-mode ()
   "Disable Hyperbole keys, menus and hooks."
+  ;; Deactivate hywiki-mode
+  (hywiki-mode 0)
   ;; Deactivate hyperbole-mode
   ;; Delete Hyperbole menu from all menubars.
   (hui-menu-remove Hyperbole)
