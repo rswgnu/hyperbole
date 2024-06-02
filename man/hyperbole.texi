@@ -25,8 +25,8 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED April, 2024
-@set UPDATED-MONTH April 2024
+@set UPDATED June, 2024
+@set UPDATED-MONTH June 2024
 @set EDITION 9.0.2pre
 @set VERSION 9.0.2pre
 
@@ -159,7 +159,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed April 16, 2024.
+Printed June 2, 2024.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -201,7 +201,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.2pre
-April 16, 2024
+June 2, 2024
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -2326,13 +2326,13 @@ Within a radio or internal target or a link to it, jump between
 the target and the first link to it, allowing two-way navigation.
 
 @item
-Follow other internal links and ID references in Org mode files.
+On another internal link in an Org mode file, jump to its referent.
 
 @item
-Follow Org mode external links.
+On an Org mode external link, jump to its referent.
 
 @item
-When on a Hyperbole button, activate the button.
+On a Hyperbole button, activate the button.
 
 @item
 With point on the :dir path of a code block definition, display the
@@ -2344,8 +2344,8 @@ or #+end_example header, execute the code block via the Org mode
 standard binding of @bkbd{C-c C-c}, @code{org-ctrl-c-ctrl-c}.
 
 @item
-When point is on an Org mode heading, cycle the view of the subtree
-at point.
+With point on an Org mode heading, cycle the view of the subtree at
+point.
 
 @item
 In any other context besides the end of a line, invoke the Org mode
@@ -2358,11 +2358,11 @@ except in these contexts:
 
 @enumerate
 @item
-If on an Org todo keyword, move to the first todo keyword in
-the next set, if any.
+On an Org todo keyword, move to the first todo keyword in the next
+set, if any.
 
 @item
-If on an Org mode link or agenda view item, display Hyperbole
+On an Org mode link or agenda view item, display Hyperbole
 context-sensitive help.
 
 @item

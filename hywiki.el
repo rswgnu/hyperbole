@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     29-May-24 at 00:53:33 by Bob Weiner
+;; Last-Mod:      2-Jun-24 at 11:52:44 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -15,49 +15,76 @@
 ;;; Commentary:
 ;;
 ;;  This is Hyperbole's markup-free personal Wiki system for
-;;  note-taking and automatic WikiWord hyperlinking.  A `HyWiki word'
-;;  starts with a capitalized letter and contains only upper and
-;;  lowercase letters.  `HyWiki pages' are Org or other text mode
-;;  files with HyWiki word names (the page name) plus a file-type
-;;  suffix which are stored within `hywiki-directory'.
-;;
-;;  To create a new HyWiki page or to jump to one, simply create an
-;;  Org link in any buffer with the prefix "hy:" followed by a
-;;  capitalized alpha characters-only WikiWord, e.g. [[hy:Emacs]], and
-;;  then press the Action Key on the link to jump to the associated
-;;  page; new pages are automatically created.
+;;  note-taking and automatic wiki word hyperlinking.
 
-;;  If you set `hywiki-org-link-type-required' to `nil', then
-;;  you don't need the prefix, e.g. [[Emacs]] and existing HyWiki page
-;;  names will override Org's standard handling of such links.  To
-;;  prevent Org mode's binding of {M-RET} from splitting lines and
-;;  creating new headlines when on a HyWiki word whose page has not
-;;  yet been created, set `hsys-org-enable-smart-keys' to 't' so that
+;;  A `HyWikiWord' is a low-priority Hyperbole implicit button type
+;;  (named hywiki-word) that starts with a capitalized letter and
+;;  contains only upper and lowercase letters.  Such words
+;;  automatically link to `HyWiki pages', which are Org mode files
+;;  with HyWikiWord names (the page name) plus a ".org" suffix, stored
+;;  within the directory given by `hywiki-directory'.  Such links are
+;;  activated with a press of the Action Key {M-RET} within the link.
+;;
+;;  Once Hyperbole has been loaded and activated, HyWikiWords (with or
+;;  without delimiters) are automatically highlighted and active in
+;;  the following contexts:
+;;    - HyWiki page buffers;
+;;    - non-special text buffers when `hywiki-mode' is enabled;
+;;    - comments of programming buffers when `hywiki-mode' is enabled.
+;;  
+;;  As HyWikiWords are typed, highlighting occurs after a trailing
+;;  whitespace or punctuation character is added, or when an opening
+;;  or closing parenthesis or curly brace is added to surround the
+;;  HyWikiWord.
+;;
+;;  To create a new HyWiki page or to jump to one, simply type a
+;;  HyWikiWord in a valid context and then press the Action Key on it.
+;;  If the associated page exists, jump to it.  If it doesn't, create
+;;  it and display its empty buffer for editing.  editing.  Highlight
+;;  all visible Instances of the associated HyWikiWord as well.
+;;
+;;  You can also create Org links to HyWikiWords in any non-special text
+;;  buffer by surrounding them with double square brackets and the
+;;  'hy:' prefix, as in: [[hy:MyWikiWord]].  If you set
+;;  `hywiki-org-link-type-required' to `nil', then you don't need the
+;;  prefix, e.g. [[MyWikiWord]]; existing HyWiki page names then will
+;;  override Org's standard handling of such links.  To prevent Org
+;;  mode's binding of {M-RET} from splitting lines and creating new
+;;  headlines when on a HyWiki word whose page has not yet been
+;;  created, set `hsys-org-enable-smart-keys' to `t' so that
 ;;  Hyperbole's Action Key does the right thing in this context.
 ;;
 ;;  HyWiki pages are created in `hywiki-directory'.  Within such
-;;  pages, WikiWords (the names of HyWiki pages) work without the need
+;;  pages, HyWikiWords (the names of HyWiki pages) work without the need
 ;;  for any delimiters.  Simply type them out, e.g. Emacs and if a
-;;  page exists for the word, it is automatically highlighted when:
+;;  page exists for the word, it is 
 ;;    - a HyWiki page file is read in
 ;;    - a whitespace character, ')', '}', or Org-mode punctuation/symbol
 ;;      character is inserted following a HyWiki word
 ;;    - the Action Key is pressed to activate a HyWiki word button.
 ;;
 ;;  HyWiki links can also link to a section headline within a page by
-;;  simply following the page name a '#' character and then the
+;;  simply following the page name with a '#' character and then the
 ;;  section headline name.  For example, if your Emacs page has a
-;;  'Major Modes section, then either [[hy:Emacs#Major Modes]] or
-;;  Emacs#Major-Modes will work as a link to that section.  Note that
-;;  without the square bracket delimiters, you must convert spaces in
-;;  section names to '-' characters.
+;;  "Major Modes" section, then either Emacs#Major-Modes or
+;;  [[hy:Emacs#Major Modes]] will work as a link to that section.
+;;  Note that without the square bracket delimiters, you must convert
+;;  spaces in section names to '-' characters.  As long as the page
+;;  exists, section links are highlighted regardless of whether
+;;  associated sections exist or not.
 ;;
-;;  Although HyWiki creates new pages in Org mode, you can manually
-;;  insert pages in Markdown or other text modes within
-;;  `hywiki-directory' and then link to them.  You can also change the
-;;  default `hywiki-file-suffix' to something else, like ".md" to have
-;;  HyWiki use Markdown mode for its pages.  This usage has not yet
-;;  been tested though, so use at your own risk.
+;;  The custom setting, `hywiki-word-highlight-flag' (default = 't),
+;;  means HyWikiWords will be auto-highlighted within HyWiki pages.
+;;  Outside of such pages, `hywiki-mode' must also be enabled for such
+;;  auto-highlighting.
+;;
+;;  The custom setting, `hywiki-exclude-major-modes' (default = nil), is
+;;  a list of major modes to exclude from HyWikiWord auto-highlighting
+;;  and recognition.
+;;
+;;  The custom setting, `hywiki-highlight-all-in-prog-modes' (default =
+;;  '(lisp-interaction-mode)), is a list of programming major modes to
+;;  highlight HyWikiWords outside of comments.
 
 ;;; Code:
 ;;; ************************************************************************
@@ -87,24 +114,34 @@
 ;;; ************************************************************************
 
 (defcustom hywiki-word-highlight-flag t
-  "Non-nil means automatically highlight non-Org link HyWiki word hyperbuttons."
+  "HyWiki highlights non-Org link HyWikiWords only when this is non-nil.
+Outside of HyWiki pages, `hywiki-mode' must also be enabled for
+auto-HyWikiWord highlighting."
   :type 'boolean
   :initialize #'custom-initialize-default
-  :group 'hyperbole-wiki)
+  :group 'hyperbole-hywiki)
 
-(defcustom hywiki-excluded-major-modes nil
+(defcustom hywiki-exclude-major-modes nil
   "List of major modes to exclude from HyWiki word highlighting and recognition."
   :type '(list symbol)
-  :group 'hyperbole-wiki)
+  :group 'hyperbole-hywiki)
+
+(defcustom hywiki-highlight-all-in-prog-modes '(lisp-interaction-mode)
+  "List of programming major modes to highlight HyWikiWords outside of comments."
+  :type '(list symbol)
+  :group 'hyperbole-hywiki)
+
+(defcustom hywiki-mode-lighter  " HyWiki"
+  "String to display in mode line when the HyWiki global minor mode is enabled.
+Use nil for no HyWiki mode indicator."
+  :type 'string
+  :group 'hyperbole-hywiki)
 
 (defvar hywiki-file-suffix ".org"
   "File suffix (including period) to use when creating HyWiki pages.")
 
 (defvar hywiki-directory '"~/hywiki/"
   "Directory in which to find HyWiki page files.")
-
-(defvar hywiki-highlight-all-in-prog-modes '(lisp-interaction-mode)
-  "List of programming major modes to highlight HyWikiWords outside of comments.")
 
 (defvar hywiki-non-character-commands
   '(;; Org mode
@@ -166,13 +203,13 @@ the HyWiki word and grouping 2 is the #section with the # included.")
     (((min-colors 88)) (:foreground "orange"))
     (t (:background "orange")))
   "Face for HyWiki word highlighting."
-  :group 'hyperbole-wiki)
+  :group 'hyperbole-hywiki)
 
 (defcustom hywiki-word-face 'hywiki--word-face
   "Hyperbole face for HyWiki word highlighting."
   :type 'face
   :initialize #'custom-initialize-default
-  :group 'hyperbole-wiki)
+  :group 'hyperbole-hywiki)
 
 ;;; ************************************************************************
 ;;; Private variables
@@ -275,20 +312,27 @@ See the Info documentation at \"(hyperbole)HyWiki\".
 
 \\{hywiki-mode-map}"
   :global t
-  :lighter " HyWiki"
+  :lighter hywiki-mode-lighter
   :keymap hywiki-mode-map
-  :group 'hyperbole-wiki
+  :group 'hyperbole-hywiki
   (if hywiki-mode
-      (progn (unless hywiki-mode-map
-               (setq hywiki-mode-map (make-sparse-keymap)))
+      ;; enable mode
+      (progn
+	;; Need hyperbole-mode
+	(if (boundp 'hyperbole-mode)
+	    (unless hyperbole-mode (hyperbole-mode 1))
+	  (error "(hywiki-mode): `hyperbole-mode' must be defined before invoking `hywiki-mode'"))
+	(unless hywiki-mode-map
+          (setq hywiki-mode-map (make-sparse-keymap)))
 	     ;; Self-insert punct/sym keys that trigger wiki-word
 	     ;; highlighting via `hywiki-buttonize-character-commands'
 	     ;; in `hywiki-mode'.
-	     (unless hywiki--buttonize-characters
-	       (setq hywiki--buttonize-characters
-		     (concat " \t\r\n()<>[]{}'" (hywiki-get-buttonize-characters))))
-	     (add-hook 'post-self-insert-hook 'hywiki-buttonize-character-commands)
-	     (add-hook 'pre-command-hook 'hywiki-buttonize-non-character-commands 95))
+	(unless hywiki--buttonize-characters
+	  (setq hywiki--buttonize-characters
+		(concat " \t\r\n()<>[]{}'" (hywiki-get-buttonize-characters))))
+	(add-hook 'post-self-insert-hook 'hywiki-buttonize-character-commands)
+	(add-hook 'pre-command-hook 'hywiki-buttonize-non-character-commands 95))
+    ;; disable mode
     (remove-hook 'post-self-insert-hook 'hywiki-buttonize-character-commands)
     (remove-hook 'pre-command-hook 'hywiki-buttonize-character-commands))
   (hywiki-highlight-page-names-in-frame (selected-frame)))
@@ -297,7 +341,7 @@ See the Info documentation at \"(hyperbole)HyWiki\".
 ;;; Public Implicit Button and Action Types
 ;;; ************************************************************************
 
-(defib hywiki ()
+(defib hywiki-word ()
   "When on a HyWiki word, display its page and optional section."
   (let ((page-name (hywiki-at-wikiword)))
     (when page-name
@@ -355,8 +399,9 @@ successfully finding a page and reading it into a buffer, run
 
 (defun hywiki-active-in-current-buffer-p ()
   "Return non-nil if HyWiki word links are active in the current buffer."
-  (and hywiki-word-highlight-flag
-       (not (apply #'derived-mode-p hywiki-excluded-major-modes))
+  (and (not (eq (get major-mode 'mode-class) 'special))
+       hywiki-word-highlight-flag
+       (not (apply #'derived-mode-p hywiki-exclude-major-modes))
        (or hywiki-mode (hywiki-in-page-p))))
 
 (defun hywiki-add-to-page (page-name text start-flag)
@@ -718,11 +763,13 @@ No validation of PAGE-NAME is done."
 
 (defun hywiki-get-page-files ()
   "Return the list of existing HyWiki page file names.
-These may have any alphanumeric file suffix, if files were added manually."
+These must end with `hywiki-file-suffix'."
   (when (stringp hywiki-directory)
     (make-directory hywiki-directory t)
     (when (file-readable-p hywiki-directory)
-      (directory-files-recursively hywiki-directory (concat "^" hywiki-word-regexp "\\.[A-Za-z0-9]+$")))))
+      (directory-files-recursively
+       hywiki-directory (concat "^" hywiki-word-regexp
+				(regexp-quote hywiki-file-suffix) "$")))))
 
 (defun hywiki-get-page-hasht ()
   "Return hash table of existing HyWiki pages."
@@ -738,7 +785,7 @@ return nil.
 
 Use `hywiki-get-page' to determine whether a HyWiki page exists."
   (if (and (stringp page-name) (not (string-empty-p page-name))
-	   (string-match hywiki-word-with-optional-section-exact-regexp page-name))
+	   (hywiki-is-wikiword page-name))
       (progn
 	(when (match-string-no-properties 2 page-name)
 	  ;; Remove any #section suffix in PAGE-NAME.

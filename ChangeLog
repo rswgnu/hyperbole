@@ -1,3 +1,22 @@
+2024-06-02  Bob Weiner  <rsw@gnu.org>
+
+* hyperbole.el (hyperbole--disable-mode): Add disabling of 'hywiki-mode'.
+
+* hywiki.el (hywiki-active-in-current-buffer-p): Exclude buffers whose
+    major-modes are 'special, e.g. Dired mode.
+            (hywiki-word-highlight-flag): Clarify behavior.
+	    (hywiki-highlight-all-in-prog-modes): Change to a `defcustom'.
+	    (hywiki-get-page-files): Change to find files that end with
+    'hywiki-file-suffix' only.
+            (defib hywiki): Rename to 'hywiki-word' since activates on a
+    HyWikiWord.
+            (defcustom :group): Change from hyperbole-wiki to hyperbole-hywiki.
+            (hywiki-mode): Enable 'hyperbole-mode' which it uses.
+            (hywiki-mode-lighter): Add so can customize mode-line indicator.
+            (hywiki-excluded-major-modes): Rename to 'hywiki-exclude-major-modes'.
+            (hywiki-add-page): Fix case-sensitive check of page-name validity
+    by calling 'hywiki-is-wikiword'.
+
 2024-06-01  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--hywiki-add-page--adds-file-in-wiki-folder)

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     29-May-24 at 00:15:48 by Bob Weiner
+;; Last-Mod:      2-Jun-24 at 11:40:22 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1803,19 +1803,19 @@ Active when `hsys-org-enable-smart-keys' is non-nil,
 
 When the Action Key is pressed:
 
-  1. If on an Org todo keyword, cycle through the keywords in
-     that set or if final done keyword, remove it.
+  1. On an Org todo keyword, cycle through the keywords in that
+     set or if final done keyword, remove it.
 
-  2. If on an Org agenda view item, jump to the item for editing.
+  2. On an Org agenda view item, jump to the item for editing.
 
   3. Within a radio or internal target or a link to it, jump between
      the target and the first link to it, allowing two-way navigation.
 
-  4. Follow other internal links in Org mode files.
+  4. On another internal link in an Org mode file, jump to its referent.
 
-  5. Follow Org mode external links.
+  5. On an Org mode external link, jump to its referent.
 
-  6. When on a Hyperbole button, activate the button.
+  6. On a Hyperbole button, activate the button.
 
   7. With point on the :dir path of a code block definition, display the
      directory given by the path.
@@ -1824,8 +1824,8 @@ When the Action Key is pressed:
      or #+end_example header, execute the code block via the Org mode
      standard binding of {\\`C-c' \\`C-c'}, (org-ctrl-c-ctrl-c).
   
-  9. When point is on an Org mode heading, cycle the view of the subtree
-     at point.
+  9. With point on an Org mode heading, cycle the view of the subtree at
+     point.
 
   10. In any other context besides the end of a line, invoke the Org mode
       standard binding of {M-RET}, (org-meta-return).
@@ -1833,10 +1833,10 @@ When the Action Key is pressed:
 When the Assist Key is pressed, it behaves just like the Action Key except
 in these contexts:
 
-  1. If on an Org todo keyword, move to the first todo keyword in
-     the next set, if any.
+  1. On an Org todo keyword, move to the first todo keyword in the next
+     set, if any.
 
-  2. If on an Org mode link or agenda view item, display Hyperbole
+  2. On an Org mode link or agenda view item, display Hyperbole
      context-sensitive help.
 
   3. On a Hyperbole button, perform the Assist Key function, generally

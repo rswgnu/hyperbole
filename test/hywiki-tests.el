@@ -7,7 +7,7 @@
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; Copyright (C) 2021-2022  Free Software Foundation, Inc.
+;; Copyright (C) 2024  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -41,7 +41,6 @@
 
 (ert-deftest hywiki-tests--hywiki-add-page--adds-no-wiki-word-fails ()
   "Verify add page requires a WikiWord."
-  :expected-result :failed
   ;; Should not leave erroneously created file after test but leaving
   ;; added error cleanup till later if it is even needed!? No file
   ;; should be created so only happens on error!? (If this is
