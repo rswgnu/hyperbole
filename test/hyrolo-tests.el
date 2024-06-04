@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     18-May-24 at 20:14:05 by Bob Weiner
+;; Last-Mod:      1-Jun-24 at 16:49:47 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1612,22 +1612,21 @@ body
 
 (ert-deftest hyrolo-tests--goto-kotl-header-with-slash-match ()
   "Move from heading match to target line with a slash in kotl file."
-  :expected-result :failed
-  (let* ((kotl-file1 (hyrolo-tests--gen-kotl-outline "h1" "body" 1))
+  (let* ((kotl-file1 (hyrolo-tests--gen-kotl-outline "h1 / h2" "body" 1))
          (hyrolo-file-list (list kotl-file1)))
     (unwind-protect
         (progn
 	  (kotl-mode:beginning-of-buffer)
-          (hyrolo-grep "h1/h1 1")
+          (hyrolo-grep "h2")
           (action-key)
           (should (string= (buffer-file-name) kotl-file1))
-          (should (looking-at-p "h1 1$"))
+          (should (looking-at-p "h1 / h2$"))
           (should (string= (buffer-substring-no-properties (point-min) (point-max))
                            "\
-   1. h1
+   1. h1 / h2
       body
 
-     1a. h2
+     1a. h1 / h2 1
          body 1
 
 "                           )))
