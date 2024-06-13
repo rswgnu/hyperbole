@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     20-Jun-24 at 09:28:30 by Mats Lidell
+;; Last-Mod:     20-Jun-24 at 09:30:31 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -116,7 +116,7 @@
     (should (hywiki-maybe-at-wikiword-beginning))
     (goto-char 2)
     (should-not (hywiki-maybe-at-wikiword-beginning)))
-  (dolist (acceptable-char (seq-split "\(\{\<\"'`\t\n\r\f " 1))
+  (dolist (acceptable-char '("(" "{" "<" "\"" "'" "`" "	" " " "" "" " "))
     (with-temp-buffer
       (insert (format "%sWikiWord" acceptable-char))
       (goto-char 2)
@@ -196,7 +196,7 @@
          (wiki-page-list nil))
     (unwind-protect
         (progn
-          (dolist (char (seq-split "ABCDEFGHIJ" 1))
+          (dolist (char '("A" "B" "C" "D" "E" "F" "G" "H" "I" "J"))
             (push (hywiki-add-page (format "%s%s" basename char)) wiki-page-list))
           (should (= 10 (length wiki-page-list)))
           (should (= 10 (length (hywiki-get-page-list))))
