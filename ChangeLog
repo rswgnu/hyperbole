@@ -1,3 +1,12 @@
+2024-06-20  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--at-wikiword-finds-word-and-section)
+    (hywiki-tests--maybe-at-wikiword-beginning, hywiki-tests--in-page-p)
+    (hywiki-tests--active-in-current-buffer-p)
+    (hywiki-tests--directory-get-mod-time)
+    (hywiki-tests--directory-modified-p, hywiki-tests--get-page-list)
+    (hywiki-tests--get-page-list-multiple-words): Add hywiki tests.
+
 2024-06-19  Bob Weiner  <rsw@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--face-property-for-wikiword-with-wikipage,
