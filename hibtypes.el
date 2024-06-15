@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     25-May-24 at 10:11:05 by Bob Weiner
+;; Last-Mod:     16-Jun-24 at 11:25:46 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -228,7 +228,7 @@ in all buffers."
     (let ((address (mail-address-at-p)))
       (when address
         (ibut:label-set address (match-beginning 1) (match-end 1))
-        (hact 'mail-other-window nil address)))))
+        (hact 'compose-mail-other-window address)))))
 
 ;;; ========================================================================
 ;;; Displays files and directories when a valid pathname is activated.
