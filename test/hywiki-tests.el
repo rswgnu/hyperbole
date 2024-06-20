@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     20-Jun-24 at 09:30:31 by Mats Lidell
+;; Last-Mod:     20-Jun-24 at 09:44:36 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -84,7 +84,7 @@
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--at-wikiword-finds-word-and-section ()
-  "Verify `hywiki-at-wikiword' finds WikiWord and section if available."
+  "Verify `hywiki-word-at' finds WikiWord and section if available."
   (let ((hywiki-directory (make-temp-file "hywiki" t))
         (hywiki--pages-hasht nil))
     (unwind-protect
@@ -92,19 +92,19 @@
           (hywiki-mode)
           (insert "WikiWord")
           (goto-char 4)
-          (should (string= "WikiWord" (hywiki-at-wikiword)))
+          (should (string= "WikiWord" (hywiki-word-at)))
 
           ;; Section
           (goto-char (point-max))
           (insert "#section")
           (goto-char 4)
-          (should (string= "WikiWord#section" (hywiki-at-wikiword)))
+          (should (string= "WikiWord#section" (hywiki-word-at)))
 
           ;; Section with dash
           (goto-char (point-max))
           (insert "-section")
           (goto-char 4)
-          (should (string= "WikiWord#section-section" (hywiki-at-wikiword))))
+          (should (string= "WikiWord#section-section" (hywiki-word-at))))
       (hywiki-mode -1)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
