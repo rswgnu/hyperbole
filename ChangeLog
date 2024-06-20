@@ -1,4 +1,84 @@
+2024-06-19  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--face-property-for-wikiword-with-wikipage,
+                        hywiki-tests--no-face-property-for-no-wikipage): Basic
+    improvements.
+
+* hywiki.el (hywiki-highlight-page-name): Ensure either 'hywiki-mode'
+    or (hywiki-in-page-p) is true and not in the minibuffer.
+            (hywiki-buttonize-character-commands,
+             hywiki-buttonize-non-character-commands): Move most checks to
+    'hywiki-highlight-page-name'.
+            (hywiki-page-flag): Add as internal buffer-local flag set when
+    current buffer is a HyWiki page.
+            (hywiki-highlight-page-name): Rename all such prefixed functions to
+    'hywiki-maybe-highlight-page-name'.
+            (hywiki-active-in-current-buffer-p): Exclude minibuffer.
+	    (hywiki-maybe-highlight-page-name): Test with
+    'hywiki-active-in-current-buffer-p'.
+            (hywiki-dehighlight-page-names): Rename to
+    'hywiki-maybe-dehighlight-page-names'.
+            (hywiki-mode): Remove auto-HyWikiWord highlighting/dehighlighting from
+    the minor mode and associate it with the setting of 'hywiki-word-highlight-flag'
+    so that the same hooks can be used for HyWikiWord page highlighting as are used
+    in all buffers when 'hywiki-mode' is enabled.
+            (defib hywiki-word):
+            (hywiki-find-page): Move call of (hywiki-maybe-highlight-page-name t)
+    here from the defib since may need to create the page before highlighting will
+    work properly.
+            (hywiki-maybe-highlight-page-name): Skip back over buttonize-chars only
+    when 'on-page-name' is nil.  Also, remove sanity check line which fails when
+    called from control-key cmds like C-o (open-line):
+      (eq (char-before) last-command-event) ;; Sanity check
+            (hywiki-word-at): Fix doc to explain when this returns non-nil.
+            (hywiki-maybe-highlight-page-names): Fix setting of hywiki--start/end
+    and prevent infinite looping due to wrong positions.
+            (hywiki-word-highlight-flag-changed): Fix remove-hook from
+    'post-command-hook' to remove the correct function.
+
+2024-06-17  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-mode): Require 'hyperbole.
+            (find-file-hook): Remove 'hywiki-find-page hook and just highlight when
+    any frame window changes what buffer it displays.
+            (hywiki-buttonize-character-commands,
+             hywiki-buttonize-non-character-commands): Do this only if not in an
+    active minibuffer window.
+
+2024-06-16  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki--buttonize-characters): Remove setting from `hywiki-mode' and
+    set when hywiki library is loaded.
+            (hywiki--word-and-buttonize-character-regexp): Add.
+	    (hywiki-highlight-page-name, hywiki-word-at,
+	     hywiki-highlight-page-names) Use above regexp.
+            (hywiki--buttonize-character-regexp): Add and use in
+    'hywiki--word-and-buttonize-character-regexp'.
+
+2024-06-09  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-word-highlight-flag-changed): Disable 'hywiki-mode'
+    when disabling this global flag.
+            (hywiki-at-wikiword): Rename to 'hywiki-word-at' for consistency.
+	    (hywiki-mode): When enabling, enable `hywiki-word-highlight-flag' too.
+	    (hywiki-word-with-optional-section-exact-regexp): Fix doc to reflect
+    that regexp allows spaces and tabs.
+            (hywiki-buffer-highlighted-state): Add to skip HyWikiWord highlighting/
+    dehighlighting per buffer if already done.  Set it in
+    'hywiki-maybe-highlight-page-names' and 'hywiki-maybe-dehighlight-page-names'.
+
+2024-06-08  Bob Weiner  <rsw@gnu.org>
+
+* hypb.el (hypb:split-seq-into-sublists): Add for use with hywiki.
+
+* hywiki.el (hywiki-grep-tags): Fix so `org-redo-cmd' works properly.
+
 2024-06-02  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki--pages-directory): Add to track changes in
+    'hywiki-directory'.
+    (hywiki-make-pages-hasht, hywiki-get-page-hasht): Use above new
+    variable to rebuild hash table whenever directory changes.
 
 * hyperbole.el (hyperbole--disable-mode): Add disabling of 'hywiki-mode'.
 

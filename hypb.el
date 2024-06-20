@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     18-May-24 at 18:00:28 by Mats Lidell
+;; Last-Mod:      8-Jun-24 at 19:54:44 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -21,7 +21,7 @@
 
 ;; Load Org here for `org-fold-show-all'.
 (eval-and-compile (mapc #'require '(compile hversion hact locate
-				    cl-lib org package)))
+				    cl-lib org package seq)))
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -941,6 +941,14 @@ than a string.
 Syntax tables are char-tables whose values are encoded as raw
 descriptors."
   (aset (or syntax-table (syntax-table)) char raw-descriptor))
+
+(defun hypb:split-seq-into-sublists (seq size)
+  "Split a sequence SEQ into sublists of length SIZE, preserving item order."
+  (let (result)
+    (while (> (length seq) 0)
+      (push (seq-into (seq-take seq size) 'list) result)
+      (setq seq (seq-drop seq size)))
+    (nreverse result)))
 
 (defun hypb:straight-package-plist (pkg-string)
   "Return package info for a straight.el built package with name PKG-STRING.

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:      1-Jun-24 at 16:16:00 by Mats Lidell
+;; Last-Mod:     20-Jun-24 at 01:56:01 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -24,18 +24,18 @@
 
 (ert-deftest hywiki-tests--hywiki-add-page--adds-file-in-wiki-folder ()
   "Verify add page creates file in wiki folder and sets hash table."
-  (let ((hsys-org-enable-smart-keys t)
-        (hywiki-directory (make-temp-file "hywiki" t))
-        (hywiki--pages-hasht nil))
+  (let* ((hsys-org-enable-smart-keys t)
+         (hywiki-directory (make-temp-file "hywiki" t))
+	 (hywiki-page-file (expand-file-name "WikiWord.org" hywiki-directory))
+         (hywiki--pages-hasht nil))
     (unwind-protect
-        (progn
-          (mocklet (((make-empty-file (expand-file-name "WikiWord.org" hywiki-directory) t) => t))
-            (should (string= (expand-file-name "WikiWord.org" hywiki-directory)
-                             (hywiki-add-page "WikiWord"))))
+        (mocklet (((make-empty-file (expand-file-name "WikiWord.org" hywiki-directory) t) => t))
+          (should (string= hywiki-page-file
+                           (hywiki-add-page "WikiWord")))
           ;; Verify hash table is updated
           (with-mock
             (not-called hywiki-add-page)
-            (should (string= (expand-file-name "WikiWord.org" hywiki-directory)
+            (should (string= hywiki-page-file
                              (hywiki-get-page "WikiWord")))))
       (hy-delete-dir-and-buffer hywiki-directory))))
 
@@ -74,20 +74,19 @@
         (hywiki--pages-hasht nil))
     (unwind-protect
         (with-temp-buffer
+          (hywiki-mode 0)
           (insert "WikiWord")
           (goto-char 4)
-          (hywiki-mode -1)
-          (should-not (hywiki-at-wikiword))
-          (hywiki-mode)
-          (should (string= "WikiWord" (hywiki-at-wikiword))))
-      (hywiki-mode -1)
+          (should-not (hywiki-word-at))
+          (hywiki-mode 1)
+          (should (string= "WikiWord" (hywiki-word-at))))
+      (hywiki-mode 0)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 ;; Following two test cases for verifying proper face is some what
 ;; experimental. They need to be run in interactive mode and with the
 ;; help of hy-test-helpers:consume-input-events it seems the property
-;; can be verified. In the middle of it the "*ert*" buffer gets
-;; swapped in and the temp buffer needs to be brought back!?
+;; can be verified.
 
 (ert-deftest hywiki-tests--face-property-for-wikiword-with-wikipage ()
   "Verify WikiWord for a wiki page gets face property hywiki-word-face."
@@ -99,16 +98,13 @@
     (unwind-protect
         (with-temp-buffer
           (let ((buffer (current-buffer)))
-            (hywiki-mode)
+            (hywiki-mode 1)
             (insert "WikiWord")
-            (should (hact 'kbd-key "RET"))
+	    (newline nil t)
             (hy-test-helpers:consume-input-events)
-            (should (string= "*ert*" (buffer-name)))
-            (set-buffer buffer)
             (goto-char 4)
-            (should (equal buffer (current-buffer)))
             (should (hproperty:but-get (point) 'face hywiki-word-face))))
-      (hywiki-mode -1)
+      (hywiki-mode 0)
       (hy-delete-file-and-buffer wikipage)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
@@ -121,16 +117,12 @@
     (unwind-protect
         (with-temp-buffer
           (let ((buffer (current-buffer)))
-            (hywiki-mode)
+            (hywiki-mode 0)
             (insert "WikiWord")
-            (should (hact 'kbd-key "RET"))
+	    (newline nil t)
             (hy-test-helpers:consume-input-events)
-            (should (string= "*ert*" (buffer-name)))
-            (set-buffer buffer)
             (goto-char 4)
-            (should (equal buffer (current-buffer)))
             (should-not (hproperty:but-get (point) 'face hywiki-word-face))))
-      (hywiki-mode -1)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 (provide 'hywiki-tests)
