@@ -1,3 +1,32 @@
+2024-06-22  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-active-in-current-buffer-p): Fix to highlight HyWikiWords
+    in 'kotl-mode' which is a special class buffer.
+            (Commentary): Update this documentation, focusing on use.
+
+2024-06-21  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-word-at): Fix to use 'hywiki-word-with-optional-section-regexp'
+    instead of 'hywiki-word-regexp' so handles sections properly.
+            (hywiki-word-highlight-flag): Improve documentation.
+            (hywiki-get-files, hywiki-get-file-stem-list, hywiki-find-file):
+    Add these functions to find non-HyWikiWord files in `hywiki-directory' when
+    referenced by stem name, e.g. Action key on Non-Wiki-Word displays
+    Non-Wiki-Word.org.
+            (hywiki-file): Add ibtype to display non-HyWikiWord files in
+    hywiki-directory'.
+	    (hywiki-get-page-file): Allow name to include 'hywiki-file-suffix'
+    for non-HyWikiWord files.  Also, rename to 'hywiki-get-file'.
+
+2024-06-20  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--at-wikiword-finds-word-and-section)
+    (hywiki-tests--maybe-at-wikiword-beginning, hywiki-tests--in-page-p)
+    (hywiki-tests--active-in-current-buffer-p)
+    (hywiki-tests--directory-get-mod-time)
+    (hywiki-tests--directory-modified-p, hywiki-tests--get-page-list)
+    (hywiki-tests--get-page-list-multiple-words): Add hywiki tests.
+
 2024-06-19  Bob Weiner  <rsw@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--face-property-for-wikiword-with-wikipage,

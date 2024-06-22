@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     20-Jun-24 at 01:56:01 by Bob Weiner
+;; Last-Mod:     22-Jun-24 at 00:47:02 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -81,6 +81,127 @@
           (hywiki-mode 1)
           (should (string= "WikiWord" (hywiki-word-at))))
       (hywiki-mode 0)
+      (hy-delete-dir-and-buffer hywiki-directory))))
+
+(ert-deftest hywiki-tests--at-wikiword-finds-word-and-section ()
+  "Verify `hywiki-word-at' finds WikiWord and section if available."
+  (let ((hywiki-directory (make-temp-file "hywiki" t))
+        (hywiki--pages-hasht nil))
+    (unwind-protect
+        (with-temp-buffer
+          (hywiki-mode)
+          (insert "WikiWord")
+          (goto-char 4)
+          (should (string= "WikiWord" (hywiki-word-at)))
+
+          ;; Section
+          (goto-char (point-max))
+          (insert "#section")
+          (goto-char 4)
+          (should (string= "WikiWord#section" (hywiki-word-at)))
+
+          ;; Section with dash
+          (goto-char (point-max))
+          (insert "-subsection")
+          (goto-char 4)
+          (should (string= "WikiWord#section-subsection" (hywiki-word-at))))
+      (hywiki-mode -1)
+      (hy-delete-dir-and-buffer hywiki-directory))))
+
+(ert-deftest hywiki-tests--maybe-at-wikiword-beginning ()
+  "Verify `hywiki-maybe-at-wikiword-beginning' identifies if maybe at beginning of WikiWord."
+  (with-temp-buffer
+    (insert "WikiWord")
+    (goto-char 1)
+    (should (hywiki-maybe-at-wikiword-beginning))
+    (goto-char 2)
+    (should-not (hywiki-maybe-at-wikiword-beginning)))
+  (dolist (acceptable-char '("(" "{" "<" "\"" "'" "`" "	" " " "" "" " "))
+    (with-temp-buffer
+      (insert (format "%sWikiWord" acceptable-char))
+      (goto-char 2)
+      (should (hywiki-maybe-at-wikiword-beginning)))))
+
+(ert-deftest hywiki-tests--in-page-p ()
+  "Verify `hywiki-in-page-p' identifies a page in and outside of the wiki directory."
+  (let* ((hywiki-directory (make-temp-file "hywiki" t))
+         (hywiki--pages-hasht nil)
+         (wiki-page (hywiki-add-page "WikiWord"))
+         (no-wiki-page (make-temp-file "hypb")))
+    (unwind-protect
+        (progn
+          (with-current-buffer (find-file-noselect no-wiki-page)
+            (should-not (hywiki-in-page-p)))
+          (with-current-buffer (find-file-noselect wiki-page)
+            (should (hywiki-in-page-p))))
+      (hy-delete-files-and-buffers (list no-wiki-page wiki-page))
+      (hy-delete-dir-and-buffer hywiki-directory))))
+
+(ert-deftest hywiki-tests--active-in-current-buffer-p ()
+  "Verify `hywiki-active-in-current-buffer-p'."
+  (let* ((hywiki-directory (make-temp-file "hywiki" t))
+         (hywiki--pages-hasht nil)
+         (wiki-page (hywiki-add-page "WikiWord"))
+         (hywiki-word-highlight-flag t))
+    (unwind-protect
+        (with-current-buffer (find-file-noselect wiki-page)
+          (should (hywiki-active-in-current-buffer-p))
+          (let ((hywiki-word-highlight-flag nil))
+            (should-not (hywiki-active-in-current-buffer-p)))
+          (let ((hywiki-exclude-major-modes (list 'org-mode)))
+            (should-not (hywiki-active-in-current-buffer-p)))
+          (mocklet ((hywiki-in-page-p => nil))
+            (should-not (hywiki-active-in-current-buffer-p)))
+          (dired-mode)
+          (should-not (hywiki-active-in-current-buffer-p)))
+      (hy-delete-file-and-buffer wiki-page)
+      (hy-delete-dir-and-buffer hywiki-directory))))
+
+(ert-deftest hywiki-tests--directory-get-mod-time ()
+  "Verify `hywiki-directory-get-mod-time'."
+  (mocklet ((file-readable-p => nil))
+    (should (= 0 (hywiki-directory-get-mod-time))))
+  (mocklet ((file-readable-p => t)
+            (file-attributes => '(t 0 0 0 nil (100 100 100 100) nil 0 "drwxr-xr-x" t 0 0)))
+    (should (= 6553700 (hywiki-directory-get-mod-time)))))
+
+(ert-deftest hywiki-tests--directory-modified-p ()
+  "Verify `hywiki-directory-modified-p'."
+  (let ((hywiki--directory-mod-time 0))
+    (should (hywiki-directory-modified-p)))
+  (let ((hywiki--directory-mod-time 2))
+    (mocklet ((hywiki-directory-get-mod-time => 2))
+      (should-not (hywiki-directory-modified-p)))
+    (mocklet ((hywiki-directory-get-mod-time => 1))
+      (should (hywiki-directory-modified-p)))))
+
+(ert-deftest hywiki-tests--get-page-list ()
+  "Verify `hywiki-get-page-list' returns one WikiWord."
+  (let* ((hywiki-directory (make-temp-file "hywiki" t))
+         (hywiki--pages-hasht nil)
+         (wiki-page (hywiki-add-page "WikiWord")))
+    (unwind-protect
+        (progn
+          (should (equal '("WikiWord") (hywiki-get-page-list)))
+          (should (equal wiki-page (hywiki-add-page "WikiWord")))
+          (should (equal '("WikiWord") (hywiki-get-page-list))))
+      (hy-delete-file-and-buffer wiki-page)
+      (hy-delete-dir-and-buffer hywiki-directory))))
+
+(ert-deftest hywiki-tests--get-page-list-multiple-words ()
+  "Verify `hywiki-get-page-list' returns multiple WikiWords."
+  (let* ((hywiki-directory (make-temp-file "hywiki" t))
+         (hywiki--pages-hasht nil)
+         (basename "WikiWord")
+         (wiki-page-list nil))
+    (unwind-protect
+        (progn
+          (dolist (char '("A" "B" "C" "D" "E" "F" "G" "H" "I" "J"))
+            (push (hywiki-add-page (format "%s%s" basename char)) wiki-page-list))
+          (should (= 10 (length wiki-page-list)))
+          (should (= 10 (length (hywiki-get-page-list))))
+          (should (= 10 (length (seq-uniq (hywiki-get-page-list))))))
+      (hy-delete-files-and-buffers wiki-page-list)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 ;; Following two test cases for verifying proper face is some what
