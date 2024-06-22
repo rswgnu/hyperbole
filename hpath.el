@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     18-May-24 at 19:06:22 by Bob Weiner
+;; Last-Mod:     23-Jun-24 at 00:09:03 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2168,7 +2168,7 @@ point ends within the narrowed region."
 	(narrow-to-region omin omax)))))
 
 (defun hpath:trim (path)
-  "Return PATH with any [\" \t\n\r] characters trimmed from its start and end."
+  "Return PATH with any [\" \\t\\n\\r] characters trimmed from its start and end."
   ;; Trim only matching starting and ending quoted double quotes (must
   ;; be a single line string).
   (setq path (string-trim path))
