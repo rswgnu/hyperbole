@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     29-May-24 at 00:57:28 by Bob Weiner
+;; Last-Mod:     22-Jun-24 at 23:44:04 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -135,6 +135,7 @@
 ;; Forward declarations
 (defvar consult-grep-args)
 (defvar consult-ripgrep-args)
+(defvar consult-async-split-style)
 (defvar google-contacts-expire-time)
 (defvar google-contacts-history)
 (defvar google-contacts-query-string)
