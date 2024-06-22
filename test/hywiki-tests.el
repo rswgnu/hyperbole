@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     20-Jun-24 at 09:44:36 by Mats Lidell
+;; Last-Mod:     22-Jun-24 at 00:47:02 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -102,9 +102,9 @@
 
           ;; Section with dash
           (goto-char (point-max))
-          (insert "-section")
+          (insert "-subsection")
           (goto-char 4)
-          (should (string= "WikiWord#section-section" (hywiki-word-at))))
+          (should (string= "WikiWord#section-subsection" (hywiki-word-at))))
       (hywiki-mode -1)
       (hy-delete-dir-and-buffer hywiki-directory))))
 

@@ -14,34 +14,35 @@
 
 ;;; Commentary:
 ;;
-;;  This is Hyperbole's markup-free personal Wiki system for
-;;  note-taking and automatic wiki word hyperlinking.
-
-;;  A `HyWikiWord' is a low-priority Hyperbole implicit button type
-;;  (named hywiki-word) that starts with a capitalized letter and
-;;  contains only upper and lowercase letters.  Such words
-;;  automatically link to `HyWiki pages', which are Org mode files
-;;  with HyWikiWord names (the page name) plus a ".org" suffix, stored
-;;  within the directory given by `hywiki-directory'.  Such links are
-;;  activated with a press of the Action Key {M-RET} within the link.
+;;  This is Hyperbole's markup-free personal Wiki system for note-taking
+;;  and automatic wiki word highlighting and hyperlinking.  It uses Org
+;;  mode for note taking and adds automatic hyperlinking of HyWikiWords
+;;  within Org files in `hywiki-directory' (default = "~/hywiki"), where
+;;  a HyWikiWord is a capitalized word that contains upper and lowercase
+;;  letters only and has a corresponding HyWikiWord.org wiki page file
+;;  below `hywiki-directory'.  HyWikiWords require no delimiters.
+;;
+;;  HyWikiWords are also recognized in text buffers after the global
+;;  minor mode, `hywiki-mode' is enabled via {M-x hywiki-mode RET}.  To
+;;  create or jump to a HyWiki page, simply type out a potential
+;;  HyWikiWord or move point onto one and press the Action Key {M-RET}.
+;;  This will create the associated page if it does not exist.  This
+;;  also highlights any other instances of HyWikiWords across all
+;;  visible Emacs windows.  HyWiki is built for scalability and has been
+;;  tested to be performant with 10,000 HyWikiWords.
 ;;
 ;;  Once Hyperbole has been loaded and activated, HyWikiWords (with or
 ;;  without delimiters) are automatically highlighted and active in
 ;;  the following contexts:
 ;;    - HyWiki page buffers;
-;;    - non-special text buffers when `hywiki-mode' is enabled;
-;;    - comments of programming buffers when `hywiki-mode' is enabled.
+;;    - non-special text buffers, when `hywiki-mode' is enabled;
+;;    - comments of programming buffers, when `hywiki-mode' is enabled.
 ;;  
 ;;  As HyWikiWords are typed, highlighting occurs after a trailing
 ;;  whitespace or punctuation character is added, or when an opening
 ;;  or closing parenthesis or curly brace is added to surround the
-;;  HyWikiWord.
-;;
-;;  To create a new HyWiki page or to jump to one, simply type a
-;;  HyWikiWord in a valid context and then press the Action Key on it.
-;;  If the associated page exists, jump to it.  If it doesn't, create
-;;  it and display its empty buffer for editing.  editing.  Highlight
-;;  all visible Instances of the associated HyWikiWord as well.
+;;  HyWikiWord.  Since Org links use square brackets and Org targets
+;;  use angle brackets, HyWikiWords within these delimiters are ignored.
 ;;
 ;;  You can also create Org links to HyWikiWords in any non-special text
 ;;  buffer by surrounding them with double square brackets and the
@@ -54,26 +55,18 @@
 ;;  created, set `hsys-org-enable-smart-keys' to `t' so that
 ;;  Hyperbole's Action Key does the right thing in this context.
 ;;
-;;  HyWiki pages are created in `hywiki-directory'.  Within such
-;;  pages, HyWikiWords (the names of HyWiki pages) work without the need
-;;  for any delimiters.  Simply type them out, e.g. Emacs and if a
-;;  page exists for the word, it is 
-;;    - a HyWiki page file is read in
-;;    - a whitespace character, ')', '}', or Org-mode punctuation/symbol
-;;      character is inserted following a HyWiki word
-;;    - the Action Key is pressed to activate a HyWiki word button.
+;;  HyWikiWord links can also link to a section headline within a page
+;;  by simply following the page name with a '#' character and then the
+;;  section headline name.  For example, if your Emacs page has a "Major
+;;  Modes" section, then either Emacs#Major-Modes or [[hy:Emacs#Major
+;;  Modes]] will work as a link to that section.  Note that without the
+;;  square bracket delimiters, you must convert spaces in section names
+;;  to '-' characters.  As long as the page exists, section links are
+;;  highlighted regardless of whether associated sections exist or not.
+;;  When activating a link with a section reference, you will get an
+;;  error if the section does not exist.
 ;;
-;;  HyWiki links can also link to a section headline within a page by
-;;  simply following the page name with a '#' character and then the
-;;  section headline name.  For example, if your Emacs page has a
-;;  "Major Modes" section, then either Emacs#Major-Modes or
-;;  [[hy:Emacs#Major Modes]] will work as a link to that section.
-;;  Note that without the square bracket delimiters, you must convert
-;;  spaces in section names to '-' characters.  As long as the page
-;;  exists, section links are highlighted regardless of whether
-;;  associated sections exist or not.
-;;
-;;  The custom setting, `hywiki-word-highlight-flag' (default = 't),
+;;  The custom setting, `hywiki-word-highlight-flag' (default = t),
 ;;  means HyWikiWords will be auto-highlighted within HyWiki pages.
 ;;  Outside of such pages, `hywiki-mode' must also be enabled for such
 ;;  auto-highlighting.
@@ -82,9 +75,24 @@
 ;;  a list of major modes to exclude from HyWikiWord auto-highlighting
 ;;  and recognition.
 ;;
-;;  The custom setting, `hywiki-highlight-all-in-prog-modes' (default =
-;;  '(lisp-interaction-mode)), is a list of programming major modes to
-;;  highlight HyWikiWords outside of comments.
+;;  Within programming modes, HyWikiWords are highlighted/hyperlinked
+;;  within comments only.  For programming modes in which you want
+;;  HyWikiWords recognized everywhere, add them to the custom setting,
+;;  `hywiki-highlight-all-in-prog-modes' (default =
+;;  '(lisp-interaction-mode)).
+;;
+;;  HyWiki adds two implicit button types to Hyperbole:
+;;    `hywiki-word' creates and displays HyWikiWord pages;
+;;    `hywiki-file' displays existing `hywiki-directory' non-HyWikiWord
+;;  Org files that have been added manually.  For example, if you
+;;  add the file, my-file.org, there, you would be able to jump to it
+;;  by adding 'my-file' anywhere that HyWikiWords are recognized.  It
+;;  won't be highlighted as it isn't a HyWikiWord but it behaves
+;;  similarly when activated.
+;;
+;;  These are the lowest priority implicit button types so they trigger
+;;  only when other types are not recognized first.  The hywiki-word
+;;  type is recognized ahead of the hywiki-file type.
 
 ;;; Code:
 ;;; ************************************************************************
@@ -193,7 +201,7 @@ Otherwise, this prefix is not needed and HyWiki word Org links
 override standard Org link lookups.  See \"(org)Internal Links\".")
 
 (defvar-local hywiki-page-flag nil
-  "Set to t when find file if the buffer file is a HyWiki page, else nil.
+  "Set to t after a `find-file' of a HyWiki page file, else nil.
 The file must be below `hywiki-directory'.
 
 For reference, this is set when `window-buffer-change-functions' calls
@@ -372,6 +380,21 @@ See the Info documentation at \"(hyperbole)HyWiki\".
 ;;; Public Implicit Button and Action Types
 ;;; ************************************************************************
 
+(defun hywiki-file-stem-start-end-at ()
+  "Return (file-stem start-pos end-pos) if on a `hywiki-directory' file stem.
+Otherwise, return (nil nil nil)."
+  (or (hpath:delimited-possible-path nil t)
+      (list nil nil nil)))
+
+(defib hywiki-file ()
+  "When on a HyWiki file name stem, display the file and its optional section."
+  (cl-destructuring-bind (file-stem-name start end)
+      (hywiki-file-stem-start-end-at)
+    (when (and file-stem-name
+	       (file-readable-p (hywiki-get-file file-stem-name)))
+      (ibut:label-set file-stem-name start end)
+      (hact 'hywiki-find-file file-stem-name))))
+
 (defib hywiki-word ()
   "When on a HyWiki word, display its page and optional section."
   (let ((page-name (hywiki-word-at)))
@@ -379,10 +402,31 @@ See the Info documentation at \"(hyperbole)HyWiki\".
       (ibut:label-set page-name (match-beginning 0) (match-end 0))
       (hact 'hywiki-find-page page-name))))
 
+(defun hywiki-find-file (file-stem-name)
+  "Display an existing non-HyWikiWord FILE-STEM-NAME from `hywiki-directory'.
+Return the absolute path to any file successfully found, else nil.
+
+After successfully finding a file and reading it into a buffer, run
+`hywiki-find-file-hook'."
+  (interactive (list (completing-read "Find HyWiki file: "
+				      (hywiki-get-file-stem-list))))
+  (when (stringp file-stem-name)
+    (let ((file (hywiki-get-file file-stem-name))
+	  section)
+      (when (file-readable-p file)
+	(setq section (when (string-match "#" file-stem-name)
+			(substring file-stem-name (match-beginning 0))))
+	(when file
+	  (hpath:find (concat file section))
+	  (hywiki-maybe-highlight-page-names)
+	  (run-hooks 'hywiki-find-file-hook)
+	  file)))))
+
 (defun hywiki-find-page (&optional page-name prompt-flag)
   "Display HyWiki PAGE-NAME or a regular file with PAGE-NAME nil.
-Return the absolute path to any page successfully found; nil if failed
-or if displaying a regular file.
+Return the absolute path to any page successfully found; nil if
+failed or if displaying a regular file (read in via a `find-file'
+call)
 
 By default, create any non-existent page.  With optional
 PROMPT-FLAG t, prompt to create if non-existent.  If PROMPT-FLAG
@@ -392,8 +436,6 @@ successfully finding a page and reading it into a buffer, run
   (interactive (list (completing-read "Find HyWiki page: " (hywiki-get-page-list))))
   (let ((in-page-flag (null page-name))
 	(in-hywiki-directory-flag (hywiki-in-page-p)))
-    ;; If called from `find-file-hook' without a page-name and outside
-    ;; hywiki-directory, just find as a regular file.
     (if (or (stringp page-name) in-hywiki-directory-flag)
 	(progn
 	  (when in-page-flag
@@ -424,7 +466,10 @@ successfully finding a page and reading it into a buffer, run
 	      (hywiki-maybe-highlight-page-names)
 	      (run-hooks 'hywiki-find-page-hook)
 	      page-file)))
-      ;; Next line highlights only if buffer was not previously highlighted
+      ;; When called from `find-file-hook' without a page-name and outside
+      ;; hywiki-directory, just find as a regular file and use next line
+      ;; to highlight HyWikiWords only if buffer was not previously
+      ;; highlighted.
       (hywiki-maybe-highlight-page-names))))
 
 ;;; ************************************************************************
@@ -435,7 +480,8 @@ successfully finding a page and reading it into a buffer, run
   "Return non-nil if HyWiki word links are active in the current buffer."
   (and hywiki-word-highlight-flag
        (not (minibuffer-window-active-p (selected-window)))
-       (not (eq (get major-mode 'mode-class) 'special))
+       (or (derived-mode-p 'kotl-mode)
+	   (not (eq (get major-mode 'mode-class) 'special)))
        (not (apply #'derived-mode-p hywiki-exclude-major-modes))
        (or hywiki-mode (hywiki-in-page-p))))
 
@@ -479,11 +525,11 @@ Use `hywiki-get-page' to determine whether a HyWiki page exists."
 
 (defun hywiki-word-at ()
   "Return HyWiki word and optional #section at point or nil if not on one.
-A call to `hywiki-active-in-current-buffer-p' must return non-nil or
-this will return nil.
+Does not test whether or not a page exists for the HyWiki word; use
+`hywiki-get-page' for that.
 
-Does not test whether or not a page exists for the HyWiki word.
-Use `hywiki-get-page' to determine whether a HyWiki page exists."
+A call to `hywiki-active-in-current-buffer-p' must return non-nil or
+this will return nil."
   (when (hywiki-active-in-current-buffer-p)
     (let ((wikiword (ibut:label-p t "[[" "]]")))
       (if wikiword
@@ -499,24 +545,23 @@ Use `hywiki-get-page' to determine whether a HyWiki page exists."
 	      wikiword))
 	;; Handle a HyWiki word with optional #section; if it is an Org
 	;; link, it may optionally have a hy: link-type prefix.
+	;; Ignore wikiwords preceded by any non-whitespace
+	;; character, except any of these: "([\"'`'"
 	(save-excursion
           (let ((case-fold-search nil))
 	    (skip-chars-backward "-_*#[:alnum:]")
-	    ;; Ignore wikiwords preceded by any non-whitespace
-	    ;; character, except any of these: (["'`'
 	    (when (hywiki-maybe-at-wikiword-beginning)
 	      (cond ((looking-at hywiki--word-and-buttonize-character-regexp)
 		     (string-trim
 		      (buffer-substring-no-properties (match-beginning 0)
 						      (1- (match-end 0)))))
-		    ((looking-at (concat hywiki-word-regexp "\\'"))
+		    ((looking-at (concat hywiki-word-with-optional-section-regexp "\\'"))
 		     ;; No following char
 		     (string-trim
 		      (buffer-substring-no-properties (match-beginning 0)
 						      (match-end 0))))))))))))
 
 ;;;###autoload
-
 (defun hywiki-maybe-dehighlight-page-names (&optional region-start region-end)
   "Deighlight any highlighted HyWiki page names in a HyWiki buffer/region.
 With optional REGION-START and REGION-END positions (active region
@@ -817,7 +862,7 @@ the current page unless they have sections attached."
 (defun hywiki-in-page-p ()
   "Return non-nil if the current buffer is a HyWiki page.
 If this is a HyWiki page and `hywiki-word-highlight-flag' is non-nil
-(the default), also enable auto-highlighting of HyWiki words as they
+\(the default), also enable auto-highlighting of HyWiki words as they
 are typed in the buffer."
   (or hywiki-page-flag
       (when (string-prefix-p (expand-file-name hywiki-directory)
@@ -839,6 +884,23 @@ to determine whether a HyWiki word page exists."
   (file-name-sans-extension (file-name-nondirectory
 			     (or buffer-file-name (buffer-name)))))
 
+(defun hywiki-get-files ()
+  "Return the list of existing HyWiki files ending with `hywiki-file-suffix'.
+This includes both HyWiki page files and others.  File names returned are
+relative to `hywiki-directory'."
+  (when (stringp hywiki-directory)
+    (make-directory hywiki-directory t)
+    (when (file-readable-p hywiki-directory)
+      (directory-files
+       hywiki-directory nil
+       (concat "^[^#]+" (regexp-quote hywiki-file-suffix) "$")))))
+
+(defun hywiki-get-file-stem-list ()
+  "Return the list of existing HyWiki files sans their `hywiki-file-suffix'.
+This includes both HyWiki page files and others.  Stems returned are
+relative to `hywiki-directory'."
+  (mapcar #'file-name-sans-extension (hywiki-get-files)))
+
 (defun hywiki-get-page (page-name)
   "Return the absolute path of HyWiki PAGE-NAME or nil if it does not exist."
   (if (and (stringp page-name) (not (string-empty-p page-name))
@@ -850,15 +912,21 @@ to determine whether a HyWiki word page exists."
 
 	(or (hash-get page-name (hywiki-get-page-hasht))
 	    ;; If page exists but not yet in lookup hash table, add it.
-	    (when (file-readable-p (hywiki-get-page-file page-name))
+	    (when (file-readable-p (hywiki-get-file page-name))
 	      (hywiki-add-page page-name))))
     (user-error "(hywiki-get-page): Invalid page name: '%s'; must be capitalized, all alpha" page-name)))
 
-(defun hywiki-get-page-file (page-name)
-  "Return possibly non-existent file name for PAGE NAME.
-No validation of PAGE-NAME is done."
+(defun hywiki-get-file (file-stem-name)
+  "Return possibly non-existent path in `hywiki-directory' from FILE-STEM-NAME.
+No validation of FILE-STEM-NAME is done."
   (make-directory hywiki-directory t)
-  (concat (expand-file-name page-name hywiki-directory) hywiki-file-suffix))
+  ;; Remove any #section from `file-stem-name'
+  (setq file-stem-name (if (string-match "#" file-stem-name)
+			   (substring file-stem-name 0 (match-beginning 0))
+			 file-stem-name))
+  (if (string-suffix-p hywiki-file-suffix file-stem-name)
+      (expand-file-name file-stem-name hywiki-directory)
+    (concat (expand-file-name file-stem-name hywiki-directory) hywiki-file-suffix)))
 
 (defun hywiki-get-page-files ()
   "Return the list of existing HyWiki page file names.
@@ -892,7 +960,7 @@ Use `hywiki-get-page' to determine whether a HyWiki page exists."
 	  ;; Remove any #section suffix in PAGE-NAME.
 	  (setq page-name (match-string-no-properties 1 page-name)))
 
-	(let ((page-file (hywiki-get-page-file page-name))
+	(let ((page-file (hywiki-get-file page-name))
 	      (pages-hasht (hywiki-get-page-hasht)))
 	  (unless (file-readable-p page-file)
 	    ;; Create any parent dirs necessary to create empty file
