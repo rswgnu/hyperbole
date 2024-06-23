@@ -11,6 +11,11 @@
 
 2024-06-22  Bob Weiner  <rsw@gnu.org>
 
+* hyrolo.el (hyrolo-org-mode): Fix Org mode breakage with Emacs 30 and Org 9.7
+    and up by removing internal variable ref in
+    'org-fold-core-set-folding-spec-property' call and using 'org-link symbol
+    instead.
+
 * hywiki.el (hywiki-active-in-current-buffer-p): Fix to highlight HyWikiWords
     in 'kotl-mode' which is a special class buffer.
             (Commentary): Update this documentation, focusing on use.
