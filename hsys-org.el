@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:      9-Jun-24 at 12:46:05 by Bob Weiner
+;; Last-Mod:     22-Jun-24 at 23:43:08 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -45,6 +45,7 @@
 ;;; ************************************************************************
 
 (declare-function consult-grep "ext:consult")
+(declare-function consult-ripgrep "ext:consult")
 
 (defcustom hsys-org-consult-grep-func
   (cond ((executable-find "rg")
@@ -56,6 +57,7 @@
 
 (defvar hyperbole-mode-map)             ; "hyperbole.el"
 (defvar org--inhibit-version-check)     ; "org-macs.el"
+(defvar hywiki-org-link-type-required)  ; "hywiki.el"
 
 (declare-function org-babel-get-src-block-info "org-babel")
 (declare-function org-fold-show-context "org-fold")
@@ -71,6 +73,7 @@
 (declare-function hkey-either "hmouse-drv")
 
 (declare-function find-library-name "find-func")
+(declare-function hyperb:stack-frame "hversion.el")
 
 ;;;###autoload
 (defcustom hsys-org-enable-smart-keys 'unset

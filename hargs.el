@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:     29-May-24 at 00:57:17 by Bob Weiner
+;; Last-Mod:     22-Jun-24 at 22:53:41 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -253,7 +253,7 @@ button key (no spaces)."
 (defun hargs:delimited-p (start-delim end-delim
 			  &optional start-regexp-flag end-regexp-flag
 			  list-positions-flag exclude-regexp)
-  "Call `hargs:delimited' with its `as-key' arg set to 'none.
+  "Call `hargs:delimited' with its `as-key' arg set to `none'.
 See `hargs:delimited' for full documentation."
   (hargs:delimited start-delim end-delim start-regexp-flag
 		   end-regexp-flag list-positions-flag exclude-regexp 'none))

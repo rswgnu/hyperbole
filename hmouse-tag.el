@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     14-Apr-24 at 21:27:25 by Bob Weiner
+;; Last-Mod:     22-Jun-24 at 22:58:03 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1022,7 +1022,7 @@ It assumes that its caller has already checked that the key was pressed in an
 appropriate buffer and has moved the cursor to the selected buffer.
 
 First, it tries to display the IDENTIFIER definition with
-the current 'xref' backend, which may be `eglot' or `etags' in which case
+the current `xref' backend, which may be `eglot' or `etags' in which case
 Hyperbole walks up the current directory tree to find the nearest TAGS
 file.
 
@@ -1501,7 +1501,7 @@ See the \"${hyperb:dir}/smart-clib-sym\" script for more information."
   "Jump to the single definition of TAG or list definition locations.
 If NEXT is non-nil, jump to the next definition.  Optional
 LIST-OF-TAGS-TABLES are the tags tables to use when
-`xref-find-definitions' is called in a context where the 'etags'
+`xref-find-definitions' is called in a context where the `etags'
 backend is used."
   (when next (setq tag nil))
   (let* ((tags-table-list (or list-of-tags-tables
