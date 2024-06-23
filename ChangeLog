@@ -1,3 +1,9 @@
+2024-06-23  Bob Weiner  <rsw@gnu.org>
+
+* Makefile: (dockerized-run): Add to intweractively run dockerized versions
+    of Emacs with Hyperbole.  Update Commentary to summarize dockerized
+    targets that build, byte-compile and run Hyperbole.
+
 2024-06-22  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el
