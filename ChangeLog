@@ -1,3 +1,10 @@
+2024-06-23  Mats Lidell  <matsl@gnu.org>
+
+* hsys-org.el (hsys-org-first-face-type-pos)
+    (hsys-org-last-face-type-pos, hsys-org-region-with-face-type)
+    (hsys-org-is-face-type): Add support for working with org face types
+    to be compatible with org mode 9.7 and older versions.
+
 2024-06-23  Bob Weiner  <rsw@gnu.org>
 
 * Makefile: (dockerized-run): Add to intweractively run dockerized versions

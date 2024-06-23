@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    23-Apr-21 at 20:55:00
-;; Last-Mod:      9-Apr-24 at 09:32:53 by Mats Lidell
+;; Last-Mod:     23-Jun-24 at 23:08:22 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -41,7 +41,7 @@
     (insert "* 1\n** 2\n*** 3\n")
     (goto-char 1)
     (font-lock-ensure)
-    (should (equal (hsys-org-region-with-text-property-value 1 'face) '(1 . 4)))))
+    (should (equal (hsys-org-region-with-face-type 1 'org-level-1) '(1 . 4)))))
 
 ;; TODO: org-agenda-item-at-p
 
