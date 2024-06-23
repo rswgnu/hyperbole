@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     22-Jun-24 at 00:47:02 by Bob Weiner
+;; Last-Mod:     22-Jun-24 at 18:56:31 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -26,8 +26,7 @@
   "Verify add page creates file in wiki folder and sets hash table."
   (let* ((hsys-org-enable-smart-keys t)
          (hywiki-directory (make-temp-file "hywiki" t))
-	 (hywiki-page-file (expand-file-name "WikiWord.org" hywiki-directory))
-         (hywiki--pages-hasht nil))
+	 (hywiki-page-file (expand-file-name "WikiWord.org" hywiki-directory)))
     (unwind-protect
         (mocklet (((make-empty-file (expand-file-name "WikiWord.org" hywiki-directory) t) => t))
           (should (string= hywiki-page-file
@@ -45,8 +44,7 @@
   ;; added error cleanup till later if it is even needed!? No file
   ;; should be created so only happens on error!? (If this is
   ;; considered an error case that is.)
-  (let ((hywiki-directory (make-temp-file "hywiki" t))
-        (hywiki--pages-hasht nil))
+  (let ((hywiki-directory (make-temp-file "hywiki" t)))
     (unwind-protect
         (should-error (hywiki-add-page "notawikiword"))
       (hy-delete-dir-and-buffer hywiki-directory))))
@@ -56,7 +54,6 @@
   (defvar wikifile)
   (let ((hsys-org-enable-smart-keys t)
         (hywiki-directory (make-temp-file "hywiki" t))
-        (hywiki--pages-hasht nil)
         (wikifile (make-temp-file "wikifile")))
     (hywiki-mode -1)
     (unwind-protect
@@ -70,8 +67,7 @@
 (ert-deftest hywiki-tests--not-a-wikiword-unless-in-hywiki-mode ()
   "Verify WikiWord is not a WikiWord unless in `hywiki-mode'."
   (let ((hsys-org-enable-smart-keys t)
-        (hywiki-directory (make-temp-file "hywiki" t))
-        (hywiki--pages-hasht nil))
+        (hywiki-directory (make-temp-file "hywiki" t)))
     (unwind-protect
         (with-temp-buffer
           (hywiki-mode 0)
@@ -85,8 +81,7 @@
 
 (ert-deftest hywiki-tests--at-wikiword-finds-word-and-section ()
   "Verify `hywiki-word-at' finds WikiWord and section if available."
-  (let ((hywiki-directory (make-temp-file "hywiki" t))
-        (hywiki--pages-hasht nil))
+  (let ((hywiki-directory (make-temp-file "hywiki" t)))
     (unwind-protect
         (with-temp-buffer
           (hywiki-mode)
@@ -125,7 +120,6 @@
 (ert-deftest hywiki-tests--in-page-p ()
   "Verify `hywiki-in-page-p' identifies a page in and outside of the wiki directory."
   (let* ((hywiki-directory (make-temp-file "hywiki" t))
-         (hywiki--pages-hasht nil)
          (wiki-page (hywiki-add-page "WikiWord"))
          (no-wiki-page (make-temp-file "hypb")))
     (unwind-protect
@@ -140,7 +134,6 @@
 (ert-deftest hywiki-tests--active-in-current-buffer-p ()
   "Verify `hywiki-active-in-current-buffer-p'."
   (let* ((hywiki-directory (make-temp-file "hywiki" t))
-         (hywiki--pages-hasht nil)
          (wiki-page (hywiki-add-page "WikiWord"))
          (hywiki-word-highlight-flag t))
     (unwind-protect
@@ -178,7 +171,6 @@
 (ert-deftest hywiki-tests--get-page-list ()
   "Verify `hywiki-get-page-list' returns one WikiWord."
   (let* ((hywiki-directory (make-temp-file "hywiki" t))
-         (hywiki--pages-hasht nil)
          (wiki-page (hywiki-add-page "WikiWord")))
     (unwind-protect
         (progn
@@ -191,7 +183,6 @@
 (ert-deftest hywiki-tests--get-page-list-multiple-words ()
   "Verify `hywiki-get-page-list' returns multiple WikiWords."
   (let* ((hywiki-directory (make-temp-file "hywiki" t))
-         (hywiki--pages-hasht nil)
          (basename "WikiWord")
          (wiki-page-list nil))
     (unwind-protect
@@ -204,6 +195,22 @@
       (hy-delete-files-and-buffers wiki-page-list)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
+(ert-deftest hywiki-tests--get-page-list-when-new-wiki-directory ()
+  "Verify `hywiki-get-page-list' is empty for new `hywiki-directory'."
+  (let* ((hywiki-directory (make-temp-file "hywiki" t))
+         (wiki-page (hywiki-add-page "WikiWord")))
+    (unwind-protect
+        (progn
+          (should (= 1 (length (hywiki-get-page-list))))
+          (let ((hywiki-directory (make-temp-file "hywiki" t)))
+            (unwind-protect
+                (progn
+                  (should (hash-empty-p (hywiki-get-page-hasht)))
+                    (should (= 0 (length (hywiki-get-page-list)))))
+              (hy-delete-dir-and-buffer hywiki-directory))))
+      (hy-delete-file-and-buffer wiki-page)
+      (hy-delete-dir-and-buffer hywiki-directory))))
+
 ;; Following two test cases for verifying proper face is some what
 ;; experimental. They need to be run in interactive mode and with the
 ;; help of hy-test-helpers:consume-input-events it seems the property
@@ -214,7 +221,6 @@
   (skip-unless (not noninteractive))
   (let* ((hsys-org-enable-smart-keys t)
          (hywiki-directory (make-temp-file "hywiki" t))
-         (hywiki--pages-hasht nil)
          (wikipage (hywiki-add-page "WikiWord")))
     (unwind-protect
         (with-temp-buffer
@@ -233,8 +239,7 @@
   "Verify WikiWord for no wiki page does not get face property hywiki-word-face."
   (skip-unless (not noninteractive))
   (let* ((hsys-org-enable-smart-keys t)
-         (hywiki-directory (make-temp-file "hywiki" t))
-         (hywiki--pages-hasht nil))
+         (hywiki-directory (make-temp-file "hywiki" t)))
     (unwind-protect
         (with-temp-buffer
           (let ((buffer (current-buffer)))
