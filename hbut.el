@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     25-May-24 at 16:30:50 by Bob Weiner
+;; Last-Mod:     23-Jun-24 at 00:11:37 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1229,7 +1229,7 @@ of point when desired.
 
 Caller must have used (ibut:at-p) to create hbut:current prior to
 calling this function.  When KEY-SRC is given, this set's
-hbut:current's 'loc attribute to KEY-SRC."
+hbut:current's \\='loc attribute to KEY-SRC."
   (if buffer
       (if (bufferp buffer)
 	  (set-buffer buffer)

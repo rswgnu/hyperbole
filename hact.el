@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     23-May-24 at 23:18:43 by Bob Weiner
+;; Last-Mod:     22-Jun-24 at 22:50:10 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -31,6 +31,7 @@
 (declare-function hbut:is-p "hbut")
 (declare-function hpath:absolute-arguments "hpath")
 (declare-function hypb:indirect-function "hypb")
+(declare-function hargs:read-match "hargs")
 
 ;;; ************************************************************************
 ;;; Public variables

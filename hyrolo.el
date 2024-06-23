@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     29-May-24 at 00:57:28 by Bob Weiner
+;; Last-Mod:     22-Jun-24 at 22:19:36 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -135,6 +135,7 @@
 ;; Forward declarations
 (defvar consult-grep-args)
 (defvar consult-ripgrep-args)
+(defvar consult-async-split-style)
 (defvar google-contacts-expire-time)
 (defvar google-contacts-history)
 (defvar google-contacts-query-string)
@@ -3136,17 +3137,19 @@ Any non-nil value returned is a cons of (<entry-name> . <entry-source>)."
 
   (when (featurep 'org-fold) ;; newer Org versions
     (setq org-fold-core-style 'overlays) ;; Make compatible with reveal minor mode
-    (when (and org-link-descriptive
-               (eq org-fold-core-style 'overlays))
-      (hypb:add-to-invisibility-spec '(org-link)))
+    (hypb:add-to-invisibility-spec '(org-link))
     (org-fold-initialize (or (and (stringp org-ellipsis) (not (equal "" org-ellipsis)) org-ellipsis)
                              "..."))
     (make-local-variable 'org-link-descriptive)
     (when (eq org-fold-core-style 'overlays)
       (hypb:add-to-invisibility-spec '(org-hide-block . t)))
-    (if org-link-descriptive
-	(org-fold-core-set-folding-spec-property (car org-link--link-folding-spec) :visible nil)
-      (org-fold-core-set-folding-spec-property (car org-link--link-folding-spec) :visible t)))
+    (org-fold-core-set-folding-spec-property
+     (if (boundp 'org-link--link-folding-spec)
+	 ;; Org pre-9.7
+	 (car org-link--link-folding-spec)
+       ;; Org 9.7 and up
+       (caar org-fold-core--specs))
+     :visible (not org-link-descriptive)))
 
   (setq-local hyrolo-entry-regexp "^\\(\\*+\\)\\([ \t\n\r]+\\)"
 	      hyrolo-hdr-and-entry-regexp (concat hyrolo-hdr-prefix-regexp hyrolo-entry-regexp)
