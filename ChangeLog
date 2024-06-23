@@ -1,3 +1,14 @@
+2024-06-22  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el
+    (hywiki-tests--get-page-list-when-new-wiki-directory): Verify cache is
+    empty for a new hywiki-directory.
+
+* Makefile (dockerized-update): Target to update (pull) the Emacs docker
+    image.
+    (dockerized): Copy source to docker so not local workspace is affected
+    when running targets in the docker environment.
+
 2024-06-22  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-active-in-current-buffer-p): Fix to highlight HyWikiWords
