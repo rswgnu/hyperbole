@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     19-May-24 at 10:58:02 by Bob Weiner
+# Last-Mod:     22-Jun-24 at 11:35:21 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -563,7 +563,11 @@ DOCKER_VERSION = master-ci
 endif
 
 dockerized:
-	docker run -v $$(pwd):/hyperbole -it silex/emacs:${DOCKER_VERSION} bash -c "make -C hyperbole ${DOCKER_TARGETS}"
+	docker run -v $$(pwd):/hypb -it silex/emacs:${DOCKER_VERSION} bash -c "cp -a /hypb /hyperbole && make -C hyperbole ${DOCKER_TARGETS}"
+
+# Update the docker image for the specified version of Emacs
+dockerized-update:
+	docker pull silex/emacs:${DOCKER_VERSION}
 
 # Run with coverage. Run tests given by testspec and monitor the
 # coverage for the specified file.
