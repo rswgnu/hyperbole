@@ -135,6 +135,7 @@
 ;; Forward declarations
 (defvar consult-grep-args)
 (defvar consult-ripgrep-args)
+(defvar consult-async-split-style)
 (defvar google-contacts-expire-time)
 (defvar google-contacts-history)
 (defvar google-contacts-query-string)

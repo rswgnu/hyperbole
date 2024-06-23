@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    22-Nov-91 at 01:37:57
-;; Last-Mod:     18-Feb-24 at 11:39:41 by Mats Lidell
+;; Last-Mod:     23-Jun-24 at 00:04:17 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -105,7 +105,7 @@ Return t if the sequence appears to be valid, else nil."
   "Execute a key series (series of key sequences) around point.
 The key series is delimited by curly braces, {}.  Key sequences
 should be in human readable form, e.g. {C-x C-b}, or what
-`key-description' returns.  Forms such as {\C-b}, {\^b}, and {^M}
+`key-description' returns.  Forms such as {\\`C-b'}, {\\`^b'}, and {\\`^M'}
 will not be recognized.
 
 Any key sequence within the series must be a string of one of the following:
@@ -260,8 +260,8 @@ With optional prefix arg FULL, display full documentation for command."
 When STR is a curly-brace {} delimited key series, a
 non-delimited, normalized form is returned, else nil.  Key
 sequences should be in human readable form, e.g. {\\`C-x' \\`C-b'}, or
-what `key-description' returns.  Forms such as {\\`C-b'}, {\^b}, and
-{^M} will not be recognized.
+what `key-description' returns.  Forms such as {\\`C-b'}, {\\`^b'}, and
+{\\`^M'} will not be recognized.
 
 Any key sequence within the series must be a string of one of the following:
   a Hyperbole minibuffer menu item key sequence,

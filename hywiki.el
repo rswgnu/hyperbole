@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     19-Jun-24 at 15:08:31 by Bob Weiner
+;; Last-Mod:     23-Jun-24 at 00:12:37 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -116,6 +116,7 @@
 ;;; Public declarations
 ;;; ************************************************************************
 
+(defvar org-agenda-buffer-tmp-name)  ;; "org-agenda.el"
 (declare-function org-link-store-props "ol" (&rest plist))
 
 ;;; ************************************************************************
@@ -164,8 +165,8 @@ Use nil for no HyWiki mode indicator."
 
 (defvar-local hywiki-buffer-highlighted-state nil
   "State of HyWikiWords highlighting in the associated buffer.
-'h means the buffer was already highlighted;
-'d means the buffer was dehighlighted;
+\\='h means the buffer was already highlighted;
+\\='d means the buffer was dehighlighted;
 nil means no full buffer highlighting has occurred.")
 
 (defvar hywiki-non-character-commands
@@ -430,7 +431,7 @@ call)
 
 By default, create any non-existent page.  With optional
 PROMPT-FLAG t, prompt to create if non-existent.  If PROMPT-FLAG
-is 'exists, return nil unless the page already exists.  After
+is \\='exists, return nil unless the page already exists.  After
 successfully finding a page and reading it into a buffer, run
 `hywiki-find-page-hook'."
   (interactive (list (completing-read "Find HyWiki page: " (hywiki-get-page-list))))
