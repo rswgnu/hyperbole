@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     23-Jun-24 at 00:16:22 by Bob Weiner
+# Last-Mod:     24-Jun-24 at 23:49:29 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -77,14 +77,14 @@
 #                   make test-all              - run all tests starting an interactive Emacs
 #                   make test test=<test-name> - run a single test or tests matching the name
 #
-#               To interactively run a dockerized version of Emacs with Hyperbole:
-#                   make dockerized-run                - default to running master
-#                   make dockerized-run version=27.1   - run Emacs V27.1
+#               To interactively run a docker version of Emacs with Hyperbole:
+#                   make docker-run              - default to running master
+#                   make docker-run version=27.1 - run Emacs V27.1
 #
 #               To build and test a dockerized version of Emacs with Hyperbole:
-#                   make dockerized                    - defaults: version=master targets='clean bin test'
+#                   make docker                  - defaults: version=master targets='clean bin test'
 #
-#                   make dockerized version=28.2 targets='clean bin' - Emacs 28.2 with Hyperbole byte-compiled (possibly natively compiled)
+#                   make docker version=28.2 targets='clean bin' - byte-compile Hyperbole with Emacs 28.2
 #
 #               Verify hyperbole installation using different sources:
 #                   make install-<source>
@@ -553,7 +553,7 @@ lint:
 	-l package-lint.el -f package-lint-batch-and-exit \
 	$(EL_KOTL) $(EL_SRC)
 
-# Dockerized versions of Emacs for interactive running and test execution
+# Docker versions of Emacs for interactive running and test execution
 
 # Specify version and targets to run
 ifeq ($(origin targets), command line)
@@ -567,14 +567,14 @@ else
 DOCKER_VERSION = master-ci
 endif
 
-dockerized:
+docker: docker-update
 	docker run -v $$(pwd):/hypb -it silex/emacs:${DOCKER_VERSION} bash -c "cp -a /hypb /hyperbole && make -C hyperbole ${DOCKER_TARGETS}"
 
-dockerized-run:
+docker-run: docker-update
 	docker run -v $$(pwd):/hypb -it silex/emacs:${DOCKER_VERSION}
 
 # Update the docker image for the specified version of Emacs
-dockerized-update:
+docker-update:
 	docker pull silex/emacs:${DOCKER_VERSION}
 
 # Run with coverage. Run tests given by testspec and monitor the

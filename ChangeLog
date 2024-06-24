@@ -1,3 +1,9 @@
+2024-06-24  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (docker, docker-run, docker-update): Use simpler "docker" for
+    the docker targets. Make docker and docker-run depend on docker-update
+    to ensure we always use the latest version of the docker image.
+
 2024-06-23  Bob Weiner  <rsw@gnu.org>
 
 * Makefile: (dockerized-run): Add to intweractively run dockerized versions
