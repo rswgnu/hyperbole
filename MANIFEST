@@ -78,9 +78,10 @@ hyrolo.el            - Hierarchical, multi-file, easy-to-use record management s
 hyrolo.py            - Output file header and matching entries from HyRolo files via the command-line
 hyrolo-logic.el      - Logic functions for GNU Hyperbole Rolo files
 
-* --- HYPERBOLE WIKI ---
-hywiki.el            - Hyperbole's auto-wikiword note-taking system
+* --- HYPERBOLE NOTES AND WIKI ---
 hasht.el             - Create hash tables from lists and operate on them.
+hynote.el            - Link to Org and Org Roam notes by name
+hywiki.el            - Hyperbole's auto-wikiword note-taking system
 
 * --- USENET NEWS SUPPORT ---
 hgnus.el             - GNU Hyperbole buttons in news reader/poster: GNUS

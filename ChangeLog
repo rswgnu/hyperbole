@@ -1,7 +1,29 @@
+2024-06-25  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (hynote): Add for Org and Org Roam links by name.
+  MANIFEST (hynote.el): Add.
+  Makefile (EL_COMPILE): Add hynote.el.
+
+* hynote.el (hynote-directory-list, hynote-find-file-stem): Add.
+
+* hbut.el (ibut:create): Add debugging to show the type name if an ibtype
+    evaluation fails.
+  hmouse-drv.el (hkey-execute, hkey-help): Change 'eval' to 'hypb:eval-debug'
+    to show a backtrace whenever an error occurs.
+
 2024-06-23  Bob Weiner  <rsw@gnu.org>
 
-* Makefile: (dockerized-run): Add to intweractively run dockerized versions
-    of Emacs with Hyperbole.  Update Commentary to summarize dockerized
+* hynote.el (hynote-get-files, hynote-get-file-stem-list, hynote-find-file,
+             hynote-file-stem-start-end-at):
+    Add these functions to find non-HyWikiWord files in `hywiki-directory' when
+    referenced by stem name, e.g. Action key on Non-Wiki-Word displays
+    Non-Wiki-Word.org.
+            (hynote-file): Add ibtype to display non-HyWikiWord files in
+    hywiki-directory'.
+
+
+* Makefile: (docker-run): Add to intweractively run docker versions
+    of Emacs with Hyperbole.  Update Commentary to summarize docker
     targets that build, byte-compile and run Hyperbole.
 
 2024-06-22  Mats Lidell  <matsl@gnu.org>
@@ -12,7 +34,7 @@
 
 * Makefile (dockerized-update): Target to update (pull) the Emacs docker
     image.
-    (dockerized): Copy source to docker so not local workspace is affected
+    (dockererized): Copy source to docker so not local workspace is affected
     when running targets in the docker environment.
 
 2024-06-22  Bob Weiner  <rsw@gnu.org>
@@ -31,12 +53,6 @@
 * hywiki.el (hywiki-word-at): Fix to use 'hywiki-word-with-optional-section-regexp'
     instead of 'hywiki-word-regexp' so handles sections properly.
             (hywiki-word-highlight-flag): Improve documentation.
-            (hywiki-get-files, hywiki-get-file-stem-list, hywiki-find-file):
-    Add these functions to find non-HyWikiWord files in `hywiki-directory' when
-    referenced by stem name, e.g. Action key on Non-Wiki-Word displays
-    Non-Wiki-Word.org.
-            (hywiki-file): Add ibtype to display non-HyWikiWord files in
-    hywiki-directory'.
 	    (hywiki-get-page-file): Allow name to include 'hywiki-file-suffix'
     for non-HyWikiWord files.  Also, rename to 'hywiki-get-file'.
 

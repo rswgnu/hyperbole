@@ -476,6 +476,12 @@ the `format' function."
     (put 'error 'error-message msg)
     (error msg)))
 
+(defun hypb:eval-debug (sexp)
+  "Eval SEXP and on error show a debug backtrace of the problem."
+  (let ((debug-on-error t)
+	(debug-on-quit t))
+    (eval sexp)))
+
 (defun hypb:fgrep-git-log (string)
   "List git log entries whose changesets include STRING for selection and display.
 Listing is asynchronous.  A press of RET, the Action Key or the
