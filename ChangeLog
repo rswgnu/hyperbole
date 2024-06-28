@@ -1,3 +1,12 @@
+2024-06-30  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (docker-test-all-ert): Target for running all tests using ert
+    from within docker.
+    (VERSIONS): List of Emacs versions to run batch tests for to allow
+    checking same versions as the CI/CD run locally.
+    (docker-batch-test-all, docker-batch-test): Run batch tests for all
+    VERSIONS.
+
 2024-06-30  Bob Weiner  <rsw@gnu.org>
 
 * hbut.el (defib): Remove requirement for call to 'hact' since sometimes

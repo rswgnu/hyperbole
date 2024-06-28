@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     24-Jun-24 at 23:49:29 by Mats Lidell
+# Last-Mod:     28-Jun-24 at 22:13:29 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -527,8 +527,33 @@ endif
 
 batch-tests: test-all-output
 test-all-output:
-	$(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ($(LET_VARIABLES) (ert-quiet t)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-batch t) (with-current-buffer \"*Messages*\" (append-to-file (point-min) (point-max) \"ERT-OUTPUT\")) (kill-emacs))"
-	@echo "# Results written to file: ERT-OUTPUT"
+	@output=$(shell mktemp); \
+	$(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ($(LET_VARIABLES) (ert-quiet t)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-batch t) (with-current-buffer \"*Messages*\" (append-to-file (point-min) (point-max) \"$$output\")) (kill-emacs))"; \
+	sed -n -E '/^Ran [0123456789]+ tests/,/^make:/p' $$output; \
+	rm $$output
+
+# Target to be used in docker
+docker-test-all-ert:
+	@$(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ($(LET_VARIABLES) (ert-quiet t)) $(LOAD_TEST_ERT_FILES) (ert t) (with-current-buffer \"*ert*\" (write-region (point-min) (point-max) \"/hypb-tmp/ERT-OUTPUT-ERT\")) (kill-emacs))"
+
+VERSIONS=27.2 28.2 29.3 master
+docker-batch-test-all:
+	@total_summary=$(shell mktemp); \
+	for i in $(VERSIONS); do printf "=== Emacs $$i ===\n" | tee -a $$total_summary; \
+		make docker version=$$i targets='clean bin docker-test-all-ert'; \
+		cat /tmp/ERT-OUTPUT-ERT | tee -a $$total_summary; \
+	done; \
+	printf "\n\n=== Summary ===\n"; cat $$total_summary; \
+	rm $$total_summary
+
+docker-batch-test:
+	@total_summary=$(shell mktemp); build_summary=$(shell mktemp); \
+	for i in $(VERSIONS); do printf "=== Emacs $$i ===\n" | tee -a $$total_summary; \
+		make docker version=$$i targets='clean bin test' | tee $$build_summary; \
+		sed -n -E '/^Ran [0123456789]+ tests/,/^make:/p' $$build_summary | head -n-1 | tee -a $$total_summary; \
+	done; \
+	printf "\n\n=== Summary ===\n"; cat $$total_summary; \
+	rm $$total_summary $$build_summary
 
 # Hyperbole install tests - Verify that hyperbole can be installed
 # using different sources. See folder "install-test"
@@ -568,10 +593,10 @@ DOCKER_VERSION = master-ci
 endif
 
 docker: docker-update
-	docker run -v $$(pwd):/hypb -it silex/emacs:${DOCKER_VERSION} bash -c "cp -a /hypb /hyperbole && make -C hyperbole ${DOCKER_TARGETS}"
+	docker run -v $$(pwd):/hypb -v /tmp:/hypb-tmp -it silex/emacs:${DOCKER_VERSION} bash -c "cp -a /hypb /hyperbole && make -C hyperbole ${DOCKER_TARGETS}"
 
 docker-run: docker-update
-	docker run -v $$(pwd):/hypb -it silex/emacs:${DOCKER_VERSION}
+	docker run -v $$(pwd):/hypb -v /tmp:/hypb-tmp -it silex/emacs:${DOCKER_VERSION}
 
 # Update the docker image for the specified version of Emacs
 docker-update:
