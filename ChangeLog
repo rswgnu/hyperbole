@@ -24,6 +24,12 @@
   hmouse-drv.el (hkey-execute, hkey-help): Change 'eval' to 'hypb:eval-debug'
     to show a backtrace whenever an error occurs.
 
+2024-06-24  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (docker, docker-run, docker-update): Use simpler "docker" for
+    the docker targets. Make docker and docker-run depend on docker-update
+    to ensure we always use the latest version of the docker image.
+
 2024-06-23  Bob Weiner  <rsw@gnu.org>
 
 * hynote.el (hynote-get-files, hynote-get-file-stem-list, hynote-find-file,
@@ -33,7 +39,6 @@
     Non-Wiki-Word.org.
             (hynote-file): Add ibtype to display non-HyWikiWord files in
     hywiki-directory'.
-
 
 * Makefile: (docker-run): Add to intweractively run docker versions
     of Emacs with Hyperbole.  Update Commentary to summarize docker
