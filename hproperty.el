@@ -1,9 +1,9 @@
-;;; hui-em-but.el --- GNU Emacs button highlighting and flashing support -*- lexical-binding: t; -*-
+;;; hproperty.el --- GNU Emacs button highlighting and flashing support -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Aug-92
-;; Last-Mod:     26-May-24 at 17:24:25 by Bob Weiner
+;; Last-Mod:     29-Jun-24 at 18:57:42 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -261,6 +261,78 @@ See `hproperty:but-get'."
 
 (add-to-list 'yank-handled-properties '(hproperty:but-face . hproperty:but-create-on-yank))
 
+;;; char-property and overlay utility functions
+
+(defun hproperty:char-property-contains-p (pos property value)
+  "At POS if PROPERTY contains VALUE (a symbol), return VALUE, else nil."
+  (let ((val (get-char-property pos property)))
+    (when (or (eq val value)
+	      ;; `val' may be a list of property values
+	      (and (listp val) (memq value val)))
+      value)))
+
+(defun hproperty:char-property-start (pos property value)
+  "From POS, return the start of text PROPERTY with VALUE overlapping POS.
+Otherwise, return nil.  Value must be a symbol."
+  (when-let ((val (hproperty:char-property-contains-p pos property value))
+	     (prev pos))
+    ;; Can't use `previous-single-char-property-change' below
+    ;; because it checks for any change in the property value, not
+    ;; just if the property contains the value desired.
+    (while (and (setq prev (1- prev))
+		(>= prev (point-min))
+		(hproperty:char-property-contains-p prev property value)))
+    (max (1+ prev) (point-min))))
+
+(defun hproperty:char-property-end (pos property value)
+  "From POS, return the end of text PROPERTY with VALUE overlapping POS.
+Otherwise, return nil.  Value must be a symbol."
+  (when-let ((val (hproperty:char-property-contains-p pos property value))
+	     (next pos))
+    ;; Can't use `next-single-char-property-change' below
+    ;; because it checks for any change in the property value, not
+    ;; just if the property contains the value desired.
+    (while (and (setq next (1+ next))
+		(<= next (point-max))
+		(hproperty:char-property-contains-p next property value)))
+    (min next (point-max))))
+
+(defun hproperty:char-property-range (pos property &optional value)
+  "Return a char-property range (start . end) at POS where PROPERTY = VALUE.
+Return nil if no such range.  If POS is nil, use point.
+VALUE is optional; if omitted, use the first char-property at POS with PROPERTY."
+  (unless pos (setq pos (point)))
+  (let ((start pos)
+        (end pos)
+	val)
+    (when (or (null value)
+	      (eq value (setq val (hproperty:char-property-contains-p pos property value))))
+      (setq start (hproperty:char-property-start pos property val)
+	    end   (hproperty:char-property-end   pos property val)))
+    (unless (or (null start) (null end) (= start end))
+      (cons start end))))
+
+(defun hproperty:overlay-range (pos property &optional value)
+  "Return the first overlay range (start . end) at POS where PROPERTY = VALUE.
+Return nil if no such overlay range.  If POS is nil, use point.
+VALUE is optional; if omitted, use the first overlay at POS with PROPERTY.
+
+Use `hproperty:char-property-range' for the same capability but for
+both text-properties and overlays."
+  (unless pos (setq pos (point)))
+  (let ((start pos)
+        (end pos)
+	val)
+    (catch 'end
+      (dolist (overlay (overlays-at pos t))
+	(when (and (setq val (overlay-get overlay property))
+		   (or (null value) (eq val value)))
+          (setq start (overlay-start overlay)
+		end   (overlay-end overlay))
+	  (throw 'end nil))))
+    (unless (= start end)
+      (cons start end))))
+
 ;;; ************************************************************************
 ;;; Private functions
 ;;; ************************************************************************
@@ -375,6 +447,6 @@ hproperty:color-ptr."
   "Button used to highlight an item in a listing buffer.")
 (make-variable-buffer-local 'hproperty:item-button)
 
-(provide 'hui-em-but)
+(provide 'hproperty)
 
-;;; hui-em-but.el ends here
+;;; hproperty.el ends here

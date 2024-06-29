@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     22-Jun-24 at 11:35:21 by Mats Lidell
+# Last-Mod:     24-Jun-24 at 23:49:29 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -76,6 +76,15 @@
 #                   make test                  - run non-interactive tests in batch mode
 #                   make test-all              - run all tests starting an interactive Emacs
 #                   make test test=<test-name> - run a single test or tests matching the name
+#
+#               To interactively run a docker version of Emacs with Hyperbole:
+#                   make docker-run              - default to running master
+#                   make docker-run version=27.1 - run Emacs V27.1
+#
+#               To build and test a dockerized version of Emacs with Hyperbole:
+#                   make docker                  - defaults: version=master targets='clean bin test'
+#
+#                   make docker version=28.2 targets='clean bin' - byte-compile Hyperbole with Emacs 28.2
 #
 #               Verify hyperbole installation using different sources:
 #                   make install-<source>
@@ -186,12 +195,12 @@ EL_COMPILE = hact.el hactypes.el hargs.el hbdata.el hbmap.el hbut.el \
 	     hib-social.el hibtypes.el \
 	     hinit.el hload-path.el hmail.el hmh.el hmoccur.el hmouse-info.el \
 	     hmouse-drv.el hmouse-key.el hmouse-mod.el hmouse-sh.el hmouse-tag.el \
-	     hpath.el hrmail.el hsettings.el hsmail.el hsys-flymake.el hsys-org.el \
-             hsys-org-roam.el hsys-www.el hsys-xref.el hsys-youtube.el htz.el \
+	     hpath.el hproperty.el hrmail.el hsettings.el hsmail.el hsys-flymake.el \
+             hsys-org.el hsys-org-roam.el hsys-www.el hsys-xref.el hsys-youtube.el htz.el \
 	     hycontrol.el hui-jmenu.el hui-menu.el hui-mini.el hui-mouse.el hui-select.el \
-	     hui-treemacs.el hui-window.el hui.el hvar.el hversion.el hypb.el hyperbole.el \
+	     hui-treemacs.el hui-window.el hui.el hvar.el hversion.el hynote.el hypb.el hyperbole.el \
 	     hyrolo-demo.el hyrolo-logic.el hyrolo-menu.el hyrolo.el hywconfig.el hywiki.el \
-             hasht.el set.el hypb-ert.el hui-dired-sidebar.el hypb-maintenance.el hui-em-but.el \
+             hasht.el set.el hypb-ert.el hui-dired-sidebar.el hypb-maintenance.el \
              hui-register.el
 
 EL_SRC = $(EL_COMPILE)
@@ -544,11 +553,7 @@ lint:
 	-l package-lint.el -f package-lint-batch-and-exit \
 	$(EL_KOTL) $(EL_SRC)
 
-# Run a build using a dockerized version of Emacs
-#
-# Usage:
-#   make dockerized version=master targets='clean bin test'
-#   make dockerized version=28.2 targets='clean bin test'
+# Docker versions of Emacs for interactive running and test execution
 
 # Specify version and targets to run
 ifeq ($(origin targets), command line)
@@ -562,11 +567,14 @@ else
 DOCKER_VERSION = master-ci
 endif
 
-dockerized:
+docker: docker-update
 	docker run -v $$(pwd):/hypb -it silex/emacs:${DOCKER_VERSION} bash -c "cp -a /hypb /hyperbole && make -C hyperbole ${DOCKER_TARGETS}"
 
+docker-run: docker-update
+	docker run -v $$(pwd):/hypb -it silex/emacs:${DOCKER_VERSION}
+
 # Update the docker image for the specified version of Emacs
-dockerized-update:
+docker-update:
 	docker pull silex/emacs:${DOCKER_VERSION}
 
 # Run with coverage. Run tests given by testspec and monitor the

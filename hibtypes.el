@@ -91,7 +91,13 @@
 ;; ibtype priorities.
 
 ;;; ========================================================================
-;;; Creates and display personal wiki pages with auto-wikiword links
+;;; Displays Org and Org Roam files and sections by name link
+;;; ========================================================================
+
+(load "hynote")
+
+;;; ========================================================================
+;;; Creates and displays personal wiki pages and sections with auto-wikiword links
 ;;; ========================================================================
 
 (load "hywiki")
