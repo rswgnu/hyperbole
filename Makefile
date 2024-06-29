@@ -195,12 +195,12 @@ EL_COMPILE = hact.el hactypes.el hargs.el hbdata.el hbmap.el hbut.el \
 	     hib-social.el hibtypes.el \
 	     hinit.el hload-path.el hmail.el hmh.el hmoccur.el hmouse-info.el \
 	     hmouse-drv.el hmouse-key.el hmouse-mod.el hmouse-sh.el hmouse-tag.el \
-	     hpath.el hrmail.el hsettings.el hsmail.el hsys-flymake.el hsys-org.el \
-             hsys-org-roam.el hsys-www.el hsys-xref.el hsys-youtube.el htz.el \
+	     hpath.el hproperty.el hrmail.el hsettings.el hsmail.el hsys-flymake.el \
+             hsys-org.el hsys-org-roam.el hsys-www.el hsys-xref.el hsys-youtube.el htz.el \
 	     hycontrol.el hui-jmenu.el hui-menu.el hui-mini.el hui-mouse.el hui-select.el \
-	     hui-treemacs.el hui-window.el hui.el hvar.el hversion.el hypb.el hyperbole.el \
+	     hui-treemacs.el hui-window.el hui.el hvar.el hversion.el hynote.el hypb.el hyperbole.el \
 	     hyrolo-demo.el hyrolo-logic.el hyrolo-menu.el hyrolo.el hywconfig.el hywiki.el \
-             hasht.el set.el hypb-ert.el hui-dired-sidebar.el hypb-maintenance.el hui-em-but.el \
+             hasht.el set.el hypb-ert.el hui-dired-sidebar.el hypb-maintenance.el \
              hui-register.el
 
 EL_SRC = $(EL_COMPILE)

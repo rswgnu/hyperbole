@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     23-Jun-24 at 00:12:37 by Mats Lidell
+;; Last-Mod:     29-Jun-24 at 18:56:47 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -105,7 +105,7 @@
 (require 'hasht)
 (require 'hpath)
 (require 'hypb)
-(require 'hui-em-but)
+(require 'hproperty)
 (require 'outline)    ;; For `outline-mode-syntax-table'
 
 (eval-and-compile
@@ -381,47 +381,12 @@ See the Info documentation at \"(hyperbole)HyWiki\".
 ;;; Public Implicit Button and Action Types
 ;;; ************************************************************************
 
-(defun hywiki-file-stem-start-end-at ()
-  "Return (file-stem start-pos end-pos) if on a `hywiki-directory' file stem.
-Otherwise, return (nil nil nil)."
-  (or (hpath:delimited-possible-path nil t)
-      (list nil nil nil)))
-
-(defib hywiki-file ()
-  "When on a HyWiki file name stem, display the file and its optional section."
-  (cl-destructuring-bind (file-stem-name start end)
-      (hywiki-file-stem-start-end-at)
-    (when (and file-stem-name
-	       (file-readable-p (hywiki-get-file file-stem-name)))
-      (ibut:label-set file-stem-name start end)
-      (hact 'hywiki-find-file file-stem-name))))
-
 (defib hywiki-word ()
   "When on a HyWiki word, display its page and optional section."
   (let ((page-name (hywiki-word-at)))
     (when page-name
       (ibut:label-set page-name (match-beginning 0) (match-end 0))
       (hact 'hywiki-find-page page-name))))
-
-(defun hywiki-find-file (file-stem-name)
-  "Display an existing non-HyWikiWord FILE-STEM-NAME from `hywiki-directory'.
-Return the absolute path to any file successfully found, else nil.
-
-After successfully finding a file and reading it into a buffer, run
-`hywiki-find-file-hook'."
-  (interactive (list (completing-read "Find HyWiki file: "
-				      (hywiki-get-file-stem-list))))
-  (when (stringp file-stem-name)
-    (let ((file (hywiki-get-file file-stem-name))
-	  section)
-      (when (file-readable-p file)
-	(setq section (when (string-match "#" file-stem-name)
-			(substring file-stem-name (match-beginning 0))))
-	(when file
-	  (hpath:find (concat file section))
-	  (hywiki-maybe-highlight-page-names)
-	  (run-hooks 'hywiki-find-file-hook)
-	  file)))))
 
 (defun hywiki-find-page (&optional page-name prompt-flag)
   "Display HyWiki PAGE-NAME or a regular file with PAGE-NAME nil.
@@ -440,7 +405,7 @@ successfully finding a page and reading it into a buffer, run
     (if (or (stringp page-name) in-hywiki-directory-flag)
 	(progn
 	  (when in-page-flag
-	    ;; Current buffer must be the desired page (called from 'find-file-hook')
+	    ;; Current buffer must be the desired page
 	    (unless in-hywiki-directory-flag
 	      (error "(hywiki-find-page): No `page-name' given; buffer file must be in `hywiki-directory', not %s"
 		     default-directory))
@@ -467,10 +432,10 @@ successfully finding a page and reading it into a buffer, run
 	      (hywiki-maybe-highlight-page-names)
 	      (run-hooks 'hywiki-find-page-hook)
 	      page-file)))
-      ;; When called from `find-file-hook' without a page-name and outside
-      ;; hywiki-directory, just find as a regular file and use next line
-      ;; to highlight HyWikiWords only if buffer was not previously
-      ;; highlighted.
+      ;; When called from without a page-name and outside
+      ;; hywiki-directory, just find as a regular file and use next
+      ;; line to highlight HyWikiWords only if buffer was not
+      ;; previously highlighted.
       (hywiki-maybe-highlight-page-names))))
 
 ;;; ************************************************************************
@@ -895,12 +860,6 @@ relative to `hywiki-directory'."
       (directory-files
        hywiki-directory nil
        (concat "^[^#]+" (regexp-quote hywiki-file-suffix) "$")))))
-
-(defun hywiki-get-file-stem-list ()
-  "Return the list of existing HyWiki files sans their `hywiki-file-suffix'.
-This includes both HyWiki page files and others.  Stems returned are
-relative to `hywiki-directory'."
-  (mapcar #'file-name-sans-extension (hywiki-get-files)))
 
 (defun hywiki-get-page (page-name)
   "Return the absolute path of HyWiki PAGE-NAME or nil if it does not exist."

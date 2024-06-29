@@ -36,10 +36,8 @@ hmouse-key.el        - Setup Smart Key mouse bindings
 hmouse-mod.el        - Action Key acts as CONTROL modifier and Assist Key as META modifier (Unused)
 hmouse-sh.el         - System-dependent Smart Mouse Key bindings
 hmouse-tag.el        - Smart Key support of programming language tags location
-hycontrol.el         - Interactive sizing, moving, replicating and deleting of windows and frames
-hyrolo-menu.el       - Pulldown and popup menus of HyRolo commands
+hproperty.el         - GNU Emacs button highlighting and flashing support
 hui-dired-sidebar.el - Smart Key support for dired sidebar
-hui-em-but.el        - GNU Emacs button highlighting and flashing support
 hui-jmenu.el         - Popup menus for jumping to and managing buffers, frames, and windows
 hui-menu.el          - Menubar menu of GNU Hyperbole commands
 hui-mini.el          - Single line command menus for GNU Hyperbole
@@ -48,6 +46,8 @@ hui-select.el        - Select delimited or larger and larger syntax-driven regio
 hui-treemacs.el      - GNU Hyperbole Smart Key support for the Treemacs file manager package
 hui-window.el        - Smart Mouse Key window and modeline depress/release actions
 hui.el               - GNU Hyperbole button and hyperlink user interface
+hycontrol.el         - Interactive sizing, moving, replicating and deleting of windows and frames
+hyrolo-menu.el       - Pulldown and popup menus of HyRolo commands
 
 * --- APPLICATION PROGRAMMING INTERFACE ---
 hact.el              - GNU Hyperbole button action handling
@@ -78,9 +78,10 @@ hyrolo.el            - Hierarchical, multi-file, easy-to-use record management s
 hyrolo.py            - Output file header and matching entries from HyRolo files via the command-line
 hyrolo-logic.el      - Logic functions for GNU Hyperbole Rolo files
 
-* --- HYPERBOLE WIKI ---
-hywiki.el            - Hyperbole's auto-wikiword note-taking system
+* --- HYPERBOLE NOTES AND WIKI ---
 hasht.el             - Create hash tables from lists and operate on them.
+hynote.el            - Link to Org and Org Roam notes by name
+hywiki.el            - Hyperbole's auto-wikiword note-taking system
 
 * --- USENET NEWS SUPPORT ---
 hgnus.el             - GNU Hyperbole buttons in news reader/poster: GNUS
