@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:      8-Mar-24 at 11:06:21 by Mats Lidell
+;; Last-Mod:     25-Jun-24 at 02:13:58 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1029,7 +1029,7 @@ predicate is found."
     (while (and (null pred-value) (setq hkey-form (car hkey-forms)))
       (if (setq hkey-action (if assisting (cddr hkey-form) (cadr hkey-form))
 		pred (car hkey-form)
-		pred-value (eval pred))
+		pred-value (hypb:eval-debug pred))
 	  (progn
 	    ;; Any Smart Key predicate should leave point unchanged.
 	    ;; Trigger an error if not.
@@ -1041,9 +1041,7 @@ predicate is found."
 	    (when hkey-debug
 	      (hkey-debug pred pred-value hkey-action))
 	    (if hkey-debug
-		(let ((debug-on-error t)
-		      (debug-on-quit t))
-		  (eval hkey-action))
+		(hypb:eval-debug hkey-action)
 	      (eval hkey-action)))
 	(setq hkey-forms (cdr hkey-forms))))
     pred-value))
@@ -1062,7 +1060,7 @@ documentation is found."
 	 (assist-flag assisting)
 	 hkey-form pred-value call calls cmd-sym doc)
     (while (and (null pred-value) (setq hkey-form (car hkey-forms)))
-      (or (setq pred-value (eval (car hkey-form)))
+      (or (setq pred-value (hypb:eval-debug (car hkey-form)))
 	  (setq hkey-forms (cdr hkey-forms))))
     (if pred-value
 	(setq call (if assisting (cdr (cdr hkey-form))
