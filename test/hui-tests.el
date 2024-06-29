@@ -253,9 +253,9 @@ Ensure modifying the button but keeping the label does not create a double label
           (hy-test-helpers:consume-input-events)
           (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-Info-index-item
 					     :args '("(emacs)Package") :loc file :lbl-key "emacs-package-button"))
-      (progn
-        (kill-buffer "*info*")
-        (hy-delete-file-and-buffer file)))))
+      ;; There may be multiple *info* buffers, e.g. *info*<2>
+      (kill-matching-buffers "^\\*info\\*" nil t)
+      (hy-delete-file-and-buffer file))))
 
 (ert-deftest hui-gibut-create-link-to-file ()
   "Programatically create implicit button link to file."

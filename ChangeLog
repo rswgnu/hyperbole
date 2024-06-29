@@ -1,5 +1,8 @@
 2024-06-29  Bob Weiner  <rsw@gnu.org>
 
+* test/hui-tests.el (hui-ebut-create-link-to-info-index-using-completion):
+    When finished, kill all *info*<#> buffers.
+
 * hui-em-but.el: Rename to "hproperty.el".
 
 * hui-em-but.el (hproperty:char-property-start, hproperty:char-property-end,
