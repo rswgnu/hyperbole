@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:45:00
-;; Last-Mod:     21-Feb-24 at 23:55:45 by Mats Lidell
+;; Last-Mod:     16-Jun-24 at 18:45:13 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -47,7 +47,8 @@
       (with-temp-buffer
         (insert "receiver@mail.org")
         (goto-char 2)
-        (ibtypes::mail-address)
+        (let ((mail-user-agent 'sendmail-user-agent))
+          (ibtypes::mail-address))
         (should (string= "*mail*" (buffer-name))))
     (kill-buffer "*mail*")))
 

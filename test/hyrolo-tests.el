@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:      1-Jun-24 at 16:49:47 by Mats Lidell
+;; Last-Mod:     16-Jun-24 at 15:46:18 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1488,10 +1488,10 @@ body
     (unwind-protect
         (let ((hypb:mail-address-mode-list '(hyrolo-mode)))
           (hyrolo-grep "receiver\\.org")
-          (mocklet (((mail-other-window nil "first@receiver.org") => t))
+          (mocklet (((compose-mail-other-window "first@receiver.org") => t))
             (hyrolo-mail-to))
           (forward-line)
-          (mocklet (((mail-other-window nil "second@receiver.org") => t))
+          (mocklet (((compose-mail-other-window "second@receiver.org") => t))
             (hyrolo-mail-to)))
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 22:52:00
-;; Last-Mod:      5-Apr-24 at 23:05:53 by Mats Lidell
+;; Last-Mod:     16-Jun-24 at 18:46:42 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -242,7 +242,8 @@
       (with-temp-buffer
         (insert "receiver@mail.org")
         (goto-char 2)
-        (action-key)
+        (let ((mail-user-agent 'sendmail-user-agent))
+          (action-key))
         (should (string= "*mail*" (buffer-name))))
     (hy-test-helpers:kill-buffer "*mail*")))
 
