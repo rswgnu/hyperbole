@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     23-Jun-24 at 23:39:40 by Mats Lidell
+;; Last-Mod:     29-Jun-24 at 18:35:13 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -31,7 +31,7 @@
 ;;; ************************************************************************
 
 (eval-when-compile (require 'hmouse-drv))
-(require 'hbut)
+(require 'hui-em-but) ;; requires 'hbut
 (require 'org)
 (require 'org-element)
 (require 'org-fold nil t)
@@ -368,33 +368,6 @@ Match to all todos if `keyword' is nil or the empty string."
 	   (org-occur (concat "^" org-outline-regexp " *" (regexp-quote keyword)))
 	   keyword))
 
-(defun hsys-org-first-face-type-pos (start org-face-type)
-  "Return the first position for property ORG-FACE-TYPE when viewed from START."
-  (let (next)
-    (while (and (setq next (previous-single-property-change start 'face))
-                (hsys-org-is-face-type org-face-type (get-text-property (1- next) 'face)))
-      (setq start next))
-    next))
-
-(defun hsys-org-last-face-type-pos (start org-face-type)
-  "Return the last position for property ORG-FACE-TYPE when viewed from START."
-  (let ((pos (next-single-property-change start 'face)))
-    (while (memq org-face-type (get-text-property pos 'face))
-      (setq pos (next-single-property-change pos 'face)))
-    pos))
-
-(defun hsys-org-region-with-face-type (pos org-face-type)
-  "Return region around POS that shares its ORG-FACE-TYPE value, else nil.
-Return the (start . end) buffer positions of the region."
-  (when (null pos) (setq pos (point)))
-  (let ((start-point pos))
-    (when (hsys-org-is-face-type org-face-type (get-text-property pos 'face))
-      (if (bobp)
-	  (setq start-point (point-min))
-	(while (hsys-org-is-face-type org-face-type (get-text-property (1- start-point) 'face))
-	  (setq start-point (1- start-point))))
-      (cons start-point (hsys-org-last-face-type-pos start-point org-face-type)))))
-
 (defun hsys-org-agenda-item-at-p ()
   "Return non-nil if point is on an Org Agenda view item line, else nil."
   (and (apply #'derived-mode-p '(org-agenda-mode))
@@ -465,7 +438,7 @@ Assume caller has already checked that the current buffer is in `org-mode'."
 Link region is (start . end) and includes delimiters, else nil."
   (and (hsys-org-face-at-p 'org-link)
        (equal (get-text-property (point) 'help-echo) "Radio target link")
-       (hsys-org-region-with-face-type (point) 'org-link)))
+       (hproperty:char-property-range (point) 'face 'org-link)))
 
 (defun hsys-org-radio-target-def-at-p ()
   "Return target region iff point is on a <<<radio target>>> definition.
@@ -473,19 +446,19 @@ Target region is (start . end) and includes any delimiters, else nil."
   (when (hsys-org-target-at-p)
     (save-excursion
       (unless (looking-at org-radio-target-regexp)
-	(goto-char (or (hsys-org-first-face-type-pos (point) 'org-target)
+	(goto-char (or (hproperty:char-property-start (point) 'face 'org-target)
                        (point-min))))
       (when (looking-at "<<<")
 	(goto-char (match-end 0)))
       (and (hsys-org-face-at-p 'org-target)
-	   (hsys-org-region-with-face-type (point) 'org-target)))))
+	   (hproperty:char-property-range (point) 'face 'org-target)))))
 
 (defun hsys-org-radio-target-at-p ()
   "Return region iff point is on a <<<radio target>>> or a link to one.
 The region is (start . end) and includes any delimiters, else nil."
   (and (or (hsys-org-radio-target-def-at-p)
 	   (hsys-org-radio-target-link-at-p))
-       (hsys-org-region-with-face-type (point) 'org-target)))
+       (hproperty:char-property-range (point) 'face 'org-target)))
 
 (defun hsys-org-internal-target-link-at-p ()
   "Return link text region iff point is on an Org mode internal target link.
@@ -493,7 +466,7 @@ Link region is (start . end) and includes delimiters, else nil."
   (and (hsys-org-face-at-p 'org-link)
        (not (equal (get-text-property (point) 'help-echo) "Radio target link"))
        (hsys-org-link-at-p)
-       (hsys-org-region-with-face-type (point) 'org-link)))
+       (hproperty:char-property-range (point) 'face 'org-link)))
 
 (defun hsys-org-internal-target-def-at-p ()
   "Return target region iff point is on <<internal target>> definition.
@@ -501,29 +474,24 @@ Target region is (start . end) and includes any delimiters, else nil."
   (when (hsys-org-target-at-p)
     (save-excursion
       (unless (looking-at org-target-regexp)
-	(goto-char (or (hsys-org-first-face-type-pos (point) 'org-target) (point-min))))
+	(goto-char (or (hproperty:char-property-start (point) 'face 'org-target)
+		       (point-min))))
       (when (looking-at "<<")
 	(goto-char (match-end 0)))
       (and (hsys-org-face-at-p 'org-target)
-	   (hsys-org-region-with-face-type (point) 'org-target)))))
+	   (hproperty:char-property-range (point) 'face 'org-target)))))
 
 (defun hsys-org-internal-target-at-p ()
-  "Return region iff point is on an <<internal target>> or a link to one.
+  "Return target region iff point is on an <<internal target>> or a link to one.
 The region is (start . end) and includes any delimiters, else nil."
   (and (or (hsys-org-internal-target-def-at-p)
 	   (hsys-org-internal-target-link-at-p))
-       (hsys-org-region-with-face-type (point) 'org-target)))
-
-(defun hsys-org-is-face-type (org-face-type face-prop)
-  "Non-nil if FACE-PROP is a or contain ORG-FACE-TYPE."
-  (when (or (eq face-prop org-face-type)
-	    (and (listp face-prop) (memq org-face-type face-prop)))
-    org-face-type))
+       (hproperty:char-property-range (point) 'face 'org-target)))
 
 (defun hsys-org-face-at-p (org-face-type)
   "Return ORG-FACE-TYPE iff point is on a character with that face, else nil.
 ORG-FACE-TYPE must be a symbol, not a symbol name."
-  (hsys-org-is-face-type org-face-type (get-text-property (point) 'face)))
+  (hproperty:char-property-contains-p (point) 'face org-face-type))
 
 ;; Adapted from Org code
 (defun hsys-org-search-internal-link-p (target)

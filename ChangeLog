@@ -1,9 +1,10 @@
-2024-06-23  Mats Lidell  <matsl@gnu.org>
+2024-06-29  Bob Weiner  <rsw@gnu.org>
 
-* hsys-org.el (hsys-org-first-face-type-pos)
-    (hsys-org-last-face-type-pos, hsys-org-region-with-face-type)
-    (hsys-org-is-face-type): Add support for working with org face types
-    to be compatible with org mode 9.7 and older versions.
+* hui-em-but.el (hproperty:char-property-start, hproperty:char-property-end,
+                 hproperty:char-property-range, hproperty:overlay-range)
+                 hproperty:char-property-contains-p):
+    Add char-property and overlay utility functions and use in "hsys-org.el"
+    and "hsys-org-tests.el"; adds compatibility with Org mode 9.7 and earlier.
 
 2024-06-23  Bob Weiner  <rsw@gnu.org>
 
