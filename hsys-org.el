@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     29-Jun-24 at 18:35:13 by Bob Weiner
+;; Last-Mod:     29-Jun-24 at 18:55:30 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -31,7 +31,7 @@
 ;;; ************************************************************************
 
 (eval-when-compile (require 'hmouse-drv))
-(require 'hui-em-but) ;; requires 'hbut
+(require 'hproperty) ;; requires 'hbut
 (require 'org)
 (require 'org-element)
 (require 'org-fold nil t)

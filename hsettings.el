@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Apr-91 at 00:48:49
-;; Last-Mod:     13-Apr-24 at 11:22:31 by Bob Weiner
+;; Last-Mod:     29-Jun-24 at 18:57:18 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -38,8 +38,8 @@
 (defvar helm-allow-mouse)
 (defvar htz:local)                      ; "htz.el"
 
-(declare-function hproperty:but-create "hui-em-but")
-(declare-function hproperty:but-flash "hui-em-but")
+(declare-function hproperty:but-create "hproperty")
+(declare-function hproperty:but-flash "hproperty")
 (declare-function hyperbole-minibuffer-menu "hui-mini")
 (declare-function hyperbole-menubar-menu "hui-menu")
 
@@ -298,7 +298,7 @@ then runs the search."
   "Button flash No-op.")
 
 (cond ((not noninteractive)
-       (require 'hui-em-but)
+       (require 'hproperty)
        ;; Highlight explicit buttons whenever a file is read in.
        (add-hook 'find-file-hook #'hproperty:but-create t)
        (defalias 'hui:but-flash #'hproperty:but-flash)))

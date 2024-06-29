@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     24-Jun-24 at 23:33:45 by Bob Weiner
+;; Last-Mod:     29-Jun-24 at 18:56:47 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -105,7 +105,7 @@
 (require 'hasht)
 (require 'hpath)
 (require 'hypb)
-(require 'hui-em-but)
+(require 'hproperty)
 (require 'outline)    ;; For `outline-mode-syntax-table'
 
 (eval-and-compile

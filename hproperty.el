@@ -1,9 +1,9 @@
-;;; hui-em-but.el --- GNU Emacs button highlighting and flashing support -*- lexical-binding: t; -*-
+;;; hproperty.el --- GNU Emacs button highlighting and flashing support -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Aug-92
-;; Last-Mod:     26-May-24 at 17:24:25 by Bob Weiner
+;; Last-Mod:     29-Jun-24 at 18:57:42 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -447,6 +447,6 @@ hproperty:color-ptr."
   "Button used to highlight an item in a listing buffer.")
 (make-variable-buffer-local 'hproperty:item-button)
 
-(provide 'hui-em-but)
+(provide 'hproperty)
 
-;;; hui-em-but.el ends here
+;;; hproperty.el ends here

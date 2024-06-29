@@ -1,4 +1,13 @@
-<<<<<<< HEAD
+2024-06-29  Bob Weiner  <rsw@gnu.org>
+
+* hui-em-but.el: Rename to "hproperty.el".
+
+* hui-em-but.el (hproperty:char-property-start, hproperty:char-property-end,
+                 hproperty:char-property-range, hproperty:overlay-range)
+                 hproperty:char-property-contains-p):
+    Add char-property and overlay utility functions and use in "hsys-org.el"
+    and "hsys-org-tests.el"; adds compatibility with Org mode 9.7 and earlier.
+
 2024-06-25  Bob Weiner  <rsw@gnu.org>
 
 * hibtypes.el (hynote): Add for Org and Org Roam links by name.
@@ -11,15 +20,6 @@
     evaluation fails.
   hmouse-drv.el (hkey-execute, hkey-help): Change 'eval' to 'hypb:eval-debug'
     to show a backtrace whenever an error occurs.
-=======
-2024-06-29  Bob Weiner  <rsw@gnu.org>
-
-* hui-em-but.el (hproperty:char-property-start, hproperty:char-property-end,
-                 hproperty:char-property-range, hproperty:overlay-range)
-                 hproperty:char-property-contains-p):
-    Add char-property and overlay utility functions and use in "hsys-org.el"
-    and "hsys-org-tests.el"; adds compatibility with Org mode 9.7 and earlier.
->>>>>>> rsw-prop-updates
 
 2024-06-23  Bob Weiner  <rsw@gnu.org>
 
