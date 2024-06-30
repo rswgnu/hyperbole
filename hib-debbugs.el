@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Jun-16 at 14:24:53
-;; Last-Mod:      2-Feb-24 at 22:44:22 by Mats Lidell
+;; Last-Mod:     29-Jun-24 at 22:30:57 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -114,6 +114,10 @@ attribute):
 Note that `issue' or `debbugs' may be used as well in place of `bug'."
   (when (debbugs-version-sufficient-p)
     (when (debbugs-query:at-p)
+      (ibut:label-set (buffer-substring-no-properties
+		       (match-beginning 1) (match-end 2))
+		      (match-beginning 1)
+		      (match-end 2))
       (if (and (match-beginning 3) (string-equal "?" (match-string 3)))
 	  (hact 'debbugs-gnu-query:string (buffer-substring-no-properties
 					   (or (match-beginning 1) (match-beginning 2))
@@ -265,18 +269,21 @@ Return t unless no attributes are printed."
   "Return t iff debbugs version is sufficient for use with Hyperbole.
 Must be greater than equal to 0.9.7."
   (save-excursion
-    (let* ((debbugs-src (locate-file "debbugs-gnu" load-path '(".el")))
+    (let* ((debbugs-src (or (locate-file "debbugs" load-path '(".el"))
+			    (locate-file "debbugs-gnu" load-path '(".el"))))
 	   (visiting-debbugs-src (when debbugs-src (get-file-buffer debbugs-src)))
 	   debbugs-src-buffer
 	   version)
       (when debbugs-src
 	(unwind-protect
-	    (progn (set-buffer (setq debbugs-src-buffer (find-file-noselect debbugs-src)))
-		   (widen)
-		   (goto-char (point-min))
-		   (when (re-search-forward "^;; Version: \\([.0-9]+\\)" nil t)
-		     (setq version (match-string 1))))
-	  (unless visiting-debbugs-src
+	    (if (string-match "debbugs-\\([0-9]+.[0-9]+\\(.[0-9]+\\)?\\)" debbugs-src)
+		(setq version (match-string 1 debbugs-src))
+	      (set-buffer (setq debbugs-src-buffer (find-file-noselect debbugs-src)))
+	      (widen)
+	      (goto-char (point-min))
+	      (when (re-search-forward "^;; Version: \\([.0-9]+\\)" nil t)
+		(setq version (match-string 1))))
+	  (unless (or visiting-debbugs-src (null debbugs-src-buffer))
 	    (kill-buffer debbugs-src-buffer)))
 	(when (and version (not (equal version "")))
 	  (version-list-<= (version-to-list "0.9.7") (version-to-list version)))))))

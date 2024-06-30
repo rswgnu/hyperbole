@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    22-Nov-91 at 01:37:57
-;; Last-Mod:     23-Jun-24 at 00:04:17 by Mats Lidell
+;; Last-Mod:     30-Jun-24 at 02:19:16 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -140,9 +140,12 @@ Any key sequence within the series must be a string of one of the following:
 	;; Match only when start delimiter is preceded by whitespace,
 	;; double quotes or is the 1st buffer character, so do not
 	;; match to things like ${variable}.
-	(when (memq (char-before start) '(nil ?\ ?\t ?\n ?\r ?\f ?\"))
-	  (when (and (stringp key-series)
-		     (not (string-equal key-series "")))
+	(when (or (memq (char-before start) '(nil ?\ ?\t ?\n ?\r ?\f ?\"))
+		  ;; In Texinfo, allow for @bkbd{} or @kbd{}, so an
+		  ;; alpha char preceding
+		  (and (derived-mode-p 'texinfo-mode)
+		       (= (char-syntax (char-before start)) ?w)))
+	  (when (and (stringp key-series) (not (string-empty-p key-series)))
 	    ;; Replace any ${} internal or env vars; leave
 	    ;; $VAR untouched for the shell to evaluate.
 	    (let ((hpath:variable-regexp "\\${\\([^}]+\\)}"))

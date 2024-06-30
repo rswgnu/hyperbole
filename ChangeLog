@@ -1,4 +1,19 @@
+2024-06-30  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Programmatic Implicit Button Types): Expand doc on
+    'at-p' argument and explain its 'ibut:label-set' and 'hact' calls.
+
+* hib-kbd.el (kbd-key): Add support for key sequences in Texinfo mode.
+
 2024-06-29  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:to-text): Add current ibtype to the error when lbl-key attr is nil.
+  hib-debbugs.el (debbugs-version-sufficient-p): Update to get version number
+    from either the package pathname or from "debbugs.el" or "debbugs-gnu.el".
+    Fixes bug where debbugs is installed bug not used so bug ibuts are not
+    active.
+          (defib debbugs-gnu-query): Add `ibut:label-set' call.
+          (defib): Improve doc to mention requirement for call to 'ibut:label-set'.
 
 * test/hui-tests.el (hui-ebut-create-link-to-info-index-using-completion):
     When finished, kill all *info*<#> buffers.
