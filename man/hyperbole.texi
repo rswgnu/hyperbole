@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     30-Jun-24 at 11:07:23 by Bob Weiner
+@c Last-Mod:     30-Jun-24 at 12:04:15 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -2928,7 +2928,7 @@ Recognize Action Buttons of the form @code{<hyperbole-run-test
 test-name>} which when activated run individual Hyperbole tests, each
 given by the @code{<test-name>} argument, an unquoted name.
 
-@finex ibtypes python-tb-previous-line ()
+@findex ibtypes python-tb-previous-line ()
 @cindex python traceback
 @cindex stack frame
 @item python-tb-previous-line
@@ -3518,7 +3518,7 @@ implicit button, only the explicit button will be selected.  Explicit
 button labels are not allowed to overlap; Hyperbole's behavior in such
 cases is undefined.
 
-@cindex ibtype, evaluation order
+@cindex ibtype priority
 If there is no explicit button at point during a selection request,
 then each implicit button type predicate is tested in turn until one
 returns non-nil or all are exhausted.  Since two implicit button types
@@ -7186,11 +7186,11 @@ as @code{(defun)} is, but with a number of constraints.  The parameter
 list should always be empty since no parameters will be used.  A
 documentation string is required.  The last required form is the
 @code{at-p} predicate which when non-@samp{nil}, must do three things:
-@itemize @enumerate
+@enumerate
 @item determine if there is a button at point that matches the type being defined;
-@item if so, call @code{ibut:set-label) to identify the label text of the button;
+@item if so, call @code{ibut:set-label} to identify the label text of the button;
 @item if so, call @code{hact} to invoke the button's action, typically using the label.
-@end itemize
+@end enumerate
 
 @findex ibut:label-set
 @cindex ibtype ibut:label-set
