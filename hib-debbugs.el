@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Jun-16 at 14:24:53
-;; Last-Mod:     29-Jun-24 at 22:30:57 by Bob Weiner
+;; Last-Mod:     30-Jun-24 at 03:16:07 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -144,7 +144,10 @@ Ignore other types of GNU debbugs query strings."
 
 (defib debbugs-gnu-mode ()
   "Make a Gnu Debbugs listing entry at point display the discussion on the issue."
-  (if (eq major-mode 'debbugs-gnu-mode)
+  (when (eq major-mode 'debbugs-gnu-mode)
+      (ibut:label-set (buffer-substring-no-properties
+		       (line-beginning-position) (line-end-position))
+		      (line-beginning-position) (line-end-position))
       (hact 'smart-debbugs-gnu)))
 
 (defun debbugs-gnu-mode:help (&optional _but)

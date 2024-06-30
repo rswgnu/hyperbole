@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     29-Jun-24 at 22:03:56 by Bob Weiner
+;; Last-Mod:     30-Jun-24 at 10:01:50 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2953,8 +2953,9 @@ TYPE is an unquoted symbol.  PARAMS are presently ignored.
 AT-P is a boolean form of no arguments which determines whether or not point
 is within a button of this type.  When non-nil, it must contain a call
 to `ibut:label-set' with the text and optional buffer region of the
-button's label.  This must be followed by a call to `hact' with an
-action to be performed whenever a button of this type is activated.
+button's label.  This almost always should be followed by a call to
+`hact' with an action to be performed whenever a button of this type
+is activated.
 
 The action may be a regular Emacs Lisp function or a Hyperbole action
 type created with `defact' but may not return nil since any nil value
@@ -2979,10 +2980,11 @@ type for ibtype is presently undefined."
     (let* ((to-func (when to-p (action:create nil (list to-p))))
 	   (at-func (list at-p))
 	   (at-func-symbols (flatten-tree at-func)))
-      (progn (unless (member 'ibut:label-set at-func-symbols)
+      (progn (unless (or (member 'ibut:label-set at-func-symbols)
+			 (member 'hsys-org-set-ibut-label at-func-symbols))
 	       (error "(defib): %s `at-p' argument must include a call to `ibut:label-set'" type))
-	     (unless (member 'hact at-func-symbols)
-	       (error "(defib): %s `at-p' argument must include a call to `hact'" type))
+	     ;; (unless (member 'hact at-func-symbols)
+	     ;;   (error "(defib): %s `at-p' argument must include a call to `hact'" type))
 	     `(progn (symtable:add ',type symtable:ibtypes)
 		     (htype:create ,type ibtypes ,doc nil ,at-func
 				   '(to-p ,to-func style ,style)))))))
