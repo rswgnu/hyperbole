@@ -10,6 +10,12 @@
 
 2024-06-30  Bob Weiner  <rsw@gnu.org>
 
+* hibtypes.el (grep-msg): Fix bug where 'find-library-name' was called
+    on a non-Elisp library file and stripped its suffix and replaced it with
+    a different one; now uses only if file lacks a suffix or the suffix
+    matches one from 'get-load-suffixes'.  So "hyperbole.texi" will not lead
+    to a path ending in "hyperbole.el".
+
 * hbut.el (defib): Remove requirement for call to 'hact' since sometimes
     the action includes this instead.
 

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     30-Jun-24 at 10:34:39 by Bob Weiner
+;; Last-Mod:     30-Jun-24 at 16:00:23 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1060,11 +1060,18 @@ in grep and shell buffers."
 	       ;; RSW 12-05-2021 - Added hpath:expand in next line to
 	       ;; resolve any variables in the path before checking if absolute.
                (source-loc (unless (file-name-absolute-p (hpath:expand file))
-                             (hbut:to-key-src t))))
+                             (hbut:to-key-src t)))
+	       ext)
           (if (stringp source-loc)
               (setq file (expand-file-name file (file-name-directory source-loc)))
 	    (setq file (or (hpath:prepend-shell-directory file)
-			   (ignore-errors (find-library-name file))
+			   ;; find-library-name will strip file
+			   ;; suffixes, so use it only when the file
+			   ;; either doesn't have a suffix or has a
+			   ;; library suffix.
+			   (and (or (null (setq ext (file-name-extension file)))
+				    (member (concat "." ext) (get-load-suffixes)))
+				(ignore-errors (find-library-name file)))
 			   (expand-file-name file))))
 	  (when (file-exists-p file)
             (setq line-num (string-to-number line-num))
