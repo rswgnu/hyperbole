@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     30-Jun-24 at 16:00:23 by Bob Weiner
+;; Last-Mod:     30-Jun-24 at 17:22:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -899,6 +899,29 @@ See `hpath:find' function documentation for special file display options."
 ;;; compilation errors or HyRolo stuck position error messages.
 ;;; ========================================================================
 
+(defun hib-link-to-file-line (file line-num)
+  "Expand FILE and jump to its LINE-NUM in Hyperbole specified window.
+The variable `hpath:display-where' determines where to display the file.
+LINE-NUM may be an integer or string."
+  ;; RSW 12-05-2021 - Added hpath:expand in next line to
+  ;; resolve any variables in the path before checking if absolute.
+  (let ((source-loc (unless (file-name-absolute-p (hpath:expand file))
+                      (hbut:to-key-src t)))
+	ext)
+    (if (stringp source-loc)
+        (setq file (expand-file-name file (file-name-directory source-loc)))
+      (setq file (or (hpath:prepend-shell-directory file)
+		     ;; find-library-name will strip file
+		     ;; suffixes, so use it only when the file
+		     ;; either doesn't have a suffix or has a
+		     ;; library suffix.
+		     (and (or (null (setq ext (file-name-extension file)))
+			      (member (concat "." ext) (get-load-suffixes)))
+			  (ignore-errors (find-library-name file)))
+		     (expand-file-name file))))
+    (when (file-exists-p file)
+      (actypes::link-to-file-line file line-num))))
+
 (defib ipython-stack-frame ()
   "Jump to the line associated with an ipython stack frame line numbered msg.
 ipython outputs each pathname once followed by all matching lines
@@ -931,15 +954,8 @@ than a helm completion buffer)."
                       (not (re-search-forward " in " nil (line-end-position)))
                       (and (setq file (buffer-substring-no-properties (line-beginning-position) (match-beginning 0)))
                            (string-empty-p (string-trim file))))
-            (let* ((but-label (concat file ":" line-num))
-                   (source-loc (unless (file-name-absolute-p file)
-                                 (hbut:to-key-src t))))
-              (when (stringp source-loc)
-                (setq file (expand-file-name file (file-name-directory source-loc))))
-              (when (file-readable-p file)
-                (setq line-num (string-to-number line-num))
-                (ibut:label-set but-label)
-                (hact 'link-to-file-line file line-num)))))))))
+	    (ibut:label-set (concat file ":" line-num))
+	    (hact 'hib-link-to-file-line file line-num)))))))
 
 (defib ripgrep-msg ()
   "Jump to the line associated with a ripgrep (rg) line numbered msg.
@@ -974,18 +990,8 @@ than a helm completion buffer)."
           (unless (or (looking-at "[1-9][0-9]*[-:]\\|--$")
                       (and (setq file (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
                            (string-empty-p (string-trim file))))
-            (let* ((but-label (concat file ":" line-num))
-		   ;; RSW 12-05-2021 - Added hpath:expand in next line to
-		   ;; resolve any variables in the path before checking if absolute.
-		   (source-loc (unless (file-name-absolute-p (hpath:expand file))
-                                 (hbut:to-key-src t))))
-              (if (stringp source-loc)
-                  (setq file (expand-file-name file (file-name-directory source-loc)))
-		(setq file (or (hpath:prepend-shell-directory file) file)))
-              (when (file-readable-p file)
-                (setq line-num (string-to-number line-num))
-                (ibut:label-set but-label)
-                (hact 'link-to-file-line file line-num)))))))))
+	    (ibut:label-set (concat file ":" line-num))
+	    (hact 'hib-link-to-file-line file line-num)))))))
 
 (defib hyrolo-stuck-msg ()
   "Jump to the position where a HyRolo search has become stuck from the error.
@@ -1055,28 +1061,9 @@ in grep and shell buffers."
              (and (string-match "grep\\|shell" (buffer-name))
                   (looking-at "\\([^ \t\n\r:\"'`]+\\)-\\([1-9][0-9]*\\)-")))
         (let* ((file (match-string-no-properties 1))
-               (line-num  (or (match-string-no-properties 2) "1"))
-               (but-label (concat file ":" line-num))
-	       ;; RSW 12-05-2021 - Added hpath:expand in next line to
-	       ;; resolve any variables in the path before checking if absolute.
-               (source-loc (unless (file-name-absolute-p (hpath:expand file))
-                             (hbut:to-key-src t)))
-	       ext)
-          (if (stringp source-loc)
-              (setq file (expand-file-name file (file-name-directory source-loc)))
-	    (setq file (or (hpath:prepend-shell-directory file)
-			   ;; find-library-name will strip file
-			   ;; suffixes, so use it only when the file
-			   ;; either doesn't have a suffix or has a
-			   ;; library suffix.
-			   (and (or (null (setq ext (file-name-extension file)))
-				    (member (concat "." ext) (get-load-suffixes)))
-				(ignore-errors (find-library-name file)))
-			   (expand-file-name file))))
-	  (when (file-exists-p file)
-            (setq line-num (string-to-number line-num))
-            (ibut:label-set but-label)
-            (hact 'link-to-file-line file line-num)))))))
+               (line-num  (or (match-string-no-properties 2) "1")))
+	  (ibut:label-set (concat file ":" line-num))
+	  (hact 'hib-link-to-file-line file line-num))))))
 
 ;;; ========================================================================
 ;;; Jumps to source line associated with debugger stack frame or breakpoint
