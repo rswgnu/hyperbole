@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Jun-24 at 12:50:37
-;; Last-Mod:     25-Jun-24 at 02:39:05 by Bob Weiner
+;; Last-Mod:     30-Jun-24 at 11:27:57 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -25,6 +25,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
+(require 'hbut)
 (require 'hyrolo)
 (require 'hywiki)
 

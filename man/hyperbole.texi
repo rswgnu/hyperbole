@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     30-Jun-24 at 01:27:39 by Bob Weiner
+@c Last-Mod:     30-Jun-24 at 11:07:23 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -7200,16 +7200,17 @@ if you wnat the button to flash when pressed.
 
 @cindex ibtype hact
 The @code{hact} call, run whenever a button of the type is activated,
-must be the last expression within the @code{at-p} form; it will
-always return @samp{t} when the @code{at-p} form is tested for a
-boolean value since the implicit button type's check has already
-evaluated true before this is called.  The arguments to the call to
-@code{hact} are an action function and whatever arguments it takes.
-The action may be a Hyperbole action type created with @code{defact}
-or a regular Emacs Lisp function.  However, the action should not
-return @samp{nil} since any @samp{nil} value returned is converted to
-@samp{t} to ensure the implicit button checker recognizes that the
-action has been executed.
+must be the last expression within the @code{at-p} form unless the
+action itself ends with a call to @code{hact}.  This call will always
+return @samp{t} when the @code{at-p} form is tested for a boolean
+value since the implicit button type's check has already evaluated
+true before this is called.  The arguments to the call to @code{hact}
+are an action function and whatever arguments it takes.  The action
+may be a Hyperbole action type created with @code{defact} or a regular
+Emacs Lisp function.  However, the action should not return @samp{nil}
+since any @samp{nil} value returned is converted to @samp{t} to ensure
+the implicit button checker recognizes that the action has been
+executed.
 
 @cindex action
 @cindex ibtype action
