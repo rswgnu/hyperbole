@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     24-Jun-24 at 23:49:29 by Mats Lidell
+# Last-Mod:     30-Jun-24 at 19:08:27 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -73,9 +73,9 @@
 #               * Developer targets
 #
 #               To run unit tests:
-#                   make test                  - run non-interactive tests in batch mode
-#                   make test-all              - run all tests starting an interactive Emacs
-#                   make test test=<test-name> - run a single test or tests matching the name
+#                   make batch-tests             - run non-interactive tests in batch mode
+#                   make all-tests               - run all tests starting an interactive Emacs
+#                   make test test=<test-name>   - run a single test or tests matching the name
 #
 #               To interactively run a docker version of Emacs with Hyperbole:
 #                   make docker-run              - default to running master
@@ -85,6 +85,11 @@
 #                   make docker                  - defaults: version=master targets='clean bin test'
 #
 #                   make docker version=28.2 targets='clean bin' - byte-compile Hyperbole with Emacs 28.2
+#
+#                   For CI/CD Emacs versions see macro DOCKER_VERSIONS below.
+#
+#		    make docker-batch-tests      - run all non-interactive tests in docker for all CI/CD Emacs versions
+#		    make docker-all-tests        - run all tests in docker for all CI/CD Emacs versions
 #
 #               Verify hyperbole installation using different sources:
 #                   make install-<source>
@@ -170,6 +175,9 @@ ELISP_TO_COMPILE = $(pkg_parent)/elc-${USER}
 # Path to dir where the web repository is located i.e. hypb:web-repo-location
 HYPB_WEB_REPO_LOCATION = "../hyweb/hyperbole/"
 
+# CI/CD Emacs versions for local docker based tests
+DOCKER_VERSIONS=27.2 28.2 29.3 master
+
 ##########################################################################
 #                     NO CHANGES REQUIRED BELOW HERE.                    #
 ##########################################################################
@@ -247,8 +255,13 @@ help:
 
 	@echo "For Hyperbole maintainers only:"
 	@echo "  To run unit tests:"
-	@echo "     make test-all       - run all tests with Emacs under a window system"
-	@echo "     make test           - run non-interactive tests with Emacs in batch mode"
+	@echo "     make all-tests          - run all tests with Emacs under a window system"
+	@echo "     make batch-tests        - run non-interactive tests with Emacs in batch mode"
+	@echo "  Using docker and the macro DOCKER_VERSIONS for selected Emacs versions to test against"
+	@echo "     make docker-all-tests   - run all tests"
+	@echo "     make docker-batch-tests - run non-interactive tests"
+	@echo "  To selectively run make targets in docker:"
+	@echo "     make docker version=<emacs-version> targets=<make targets>"
 	@echo "  To verify hyperbole installation using different sources:"
 	@echo "     make install-<source>"
 	@echo "   where <source> can be 'elpa', 'elpa-devel', 'tarball' (tarball from elpa-devel),"
@@ -475,7 +488,9 @@ packageclean:
 	    *.ps *\# *- *.orig *.rej .nfs* CVS .cvsignore; fi
 
 # ERT test
-.PHONY: tests test test-ert all-tests test-all
+.PHONY: tests test test-ert all-tests test-all batch-tests
+,PHONY: docker-all-tests docker-batch-tests
+batch-tests: test
 tests: test
 test: test-ert
 
@@ -525,10 +540,33 @@ else
 	$(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ($(LET_VARIABLES)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"
 endif
 
-batch-tests: test-all-output
 test-all-output:
-	$(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ($(LET_VARIABLES) (ert-quiet t)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-batch t) (with-current-buffer \"*Messages*\" (append-to-file (point-min) (point-max) \"ERT-OUTPUT\")) (kill-emacs))"
-	@echo "# Results written to file: ERT-OUTPUT"
+	@output=$(shell mktemp); \
+	$(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ($(LET_VARIABLES) (ert-quiet t)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-batch t) (with-current-buffer \"*Messages*\" (append-to-file (point-min) (point-max) \"$$output\")) (kill-emacs))"; \
+	sed -n -E '/^Ran [0123456789]+ tests/,/^make:/p' $$output; \
+	rm $$output
+
+# Target to be used in docker
+internal-docker-all-tests-ert-output:
+	@$(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ($(LET_VARIABLES) (ert-quiet t)) $(LOAD_TEST_ERT_FILES) (ert t) (with-current-buffer \"*ert*\" (write-region (point-min) (point-max) \"/hypb-tmp/ERT-OUTPUT-ERT\")) (kill-emacs))"
+
+docker-all-tests:
+	@total_summary=$(shell mktemp); \
+	for i in $(DOCKER_VERSIONS); do printf "=== Emacs $$i ===\n" | tee -a $$total_summary; \
+		make docker version=$$i targets='clean bin internal-docker-all-tests-ert-output'; \
+		cat /tmp/ERT-OUTPUT-ERT | tee -a $$total_summary; \
+	done; \
+	printf "\n\n=== Summary ===\n"; cat $$total_summary; \
+	rm $$total_summary
+
+docker-batch-tests:
+	@total_summary=$(shell mktemp); build_summary=$(shell mktemp); \
+	for i in $(DOCKER_VERSIONS); do printf "=== Emacs $$i ===\n" | tee -a $$total_summary; \
+		make docker version=$$i targets='clean bin test' | tee $$build_summary; \
+		sed -n -E '/^Ran [0123456789]+ tests/,/^make:/p' $$build_summary | head -n-1 | tee -a $$total_summary; \
+	done; \
+	printf "\n\n=== Summary ===\n"; cat $$total_summary; \
+	rm $$total_summary $$build_summary
 
 # Hyperbole install tests - Verify that hyperbole can be installed
 # using different sources. See folder "install-test"
@@ -568,10 +606,10 @@ DOCKER_VERSION = master-ci
 endif
 
 docker: docker-update
-	docker run -v $$(pwd):/hypb -it silex/emacs:${DOCKER_VERSION} bash -c "cp -a /hypb /hyperbole && make -C hyperbole ${DOCKER_TARGETS}"
+	docker run -v $$(pwd):/hypb -v /tmp:/hypb-tmp -it silex/emacs:${DOCKER_VERSION} bash -c "cp -a /hypb /hyperbole && make -C hyperbole ${DOCKER_TARGETS}"
 
 docker-run: docker-update
-	docker run -v $$(pwd):/hypb -it silex/emacs:${DOCKER_VERSION}
+	docker run -v $$(pwd):/hypb -v /tmp:/hypb-tmp -it silex/emacs:${DOCKER_VERSION}
 
 # Update the docker image for the specified version of Emacs
 docker-update:
