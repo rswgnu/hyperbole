@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     23-Jun-24 at 00:09:03 by Mats Lidell
+;; Last-Mod:     30-Jun-24 at 17:09:25 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1686,6 +1686,7 @@ Return nil if none are found."
 
 (defun hpath:find-line (filename line-num &optional col-num display-where)
   "Edit file FILENAME with point placed at LINE-NUM and optional COL-NUM.
+When given, LINE-NUM and COL-NUM may be strings or integers.
 
 `hpath:display-where-alist' is consulted using the optional
 argument, DISPLAY-WHERE (a symbol) or if that is nil, the value
@@ -1700,10 +1701,14 @@ frame.  Always return t."
   (hpath:find
    (concat
     filename
-    (when (integerp line-num)
-      (concat ":" (int-to-string line-num)))
-    (when (integerp col-num)
-      (concat ":" (int-to-string col-num))))
+    (cond ((integerp line-num)
+	   (concat ":" (int-to-string line-num)))
+	  ((stringp line-num)
+	   (concat ":" line-num)))
+    (cond ((integerp col-num)
+	   (concat ":" (int-to-string col-num)))
+	  ((stringp col-num)
+	   (concat ":" col-num))))
    display-where)
   t)
 

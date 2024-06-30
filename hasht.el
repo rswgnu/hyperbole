@@ -8,7 +8,7 @@
 ;; AUTHOR:       Bob Weiner
 ;;
 ;; ORIG-DATE:    16-Mar-90 at 03:38:48
-;; LAST-MOD:     30-Jul-16 at 08:50:38 by Bob Weiner
+;; LAST-MOD:     30-Jun-24 at 17:39:31 by Bob Weiner
 ;;
 ;; Copyright (C) 1990-1995, 1997, 2016  Free Software Foundation, Inc.
 ;; See the file BR-COPY for license information.
@@ -50,7 +50,7 @@
 ;;; ************************************************************************
 
 (defvar hash-merge-values-function 'hash-merge-values
-  "*Function to call in hash-merge to merge the values from 2 hash tables that contain the same key.
+  "*Hash-merge function to merge values from 2 hash tables with the same key.
 It is sent the two values as arguments.")
 
 ;;; ************************************************************************
@@ -194,7 +194,7 @@ in reverse order of occurrence (they are prepended to the list)."
     (cons 'hasht obarray)))
 
 (defun hash-map (func hash-table)
-  "Return a list of the results of applying FUNC to each (<value> . <key>) element of HASH-TABLE."
+  "Return result of applying FUNC over each (<value> . <key>) in HASH-TABLE."
   (if (not (hashp hash-table))
       (error "(hash-map): Invalid hash-table: `%s'" hash-table))
   (let ((result))

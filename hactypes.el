@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     10-Mar-24 at 18:35:02 by Bob Weiner
+;; Last-Mod:     30-Jun-24 at 17:12:44 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -429,7 +429,8 @@ the window or as close as possible."
     (hypb:error "(link-to-file): Invalid file name: \"%s\"" path)))
 
 (defact link-to-file-line (path line-num)
-  "Display a file given by PATH scrolled to LINE-NUM."
+  "Display a file given by PATH scrolled to LINE-NUM.
+LINE-NUM may be an integer or string."
   (interactive "fPath to link to: \nnDisplay at line number: ")
   ;; Remove any double quotes and whitespace at the start and end of
   ;; the path that interactive use may have introduced.
