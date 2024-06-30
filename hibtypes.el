@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     16-Jun-24 at 11:25:46 by Mats Lidell
+;; Last-Mod:     30-Jun-24 at 10:34:39 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -113,8 +113,7 @@ reference line so since not on a Hyperbole button, move back a
 line and check for a source reference line again."
   (save-excursion
     (unless (/= (forward-line -1) 0)
-      ;; Don't wrap this next line in (hact) since has hact call
-      ;; in the function itself.
+      (ibut:label-set "temp") ;; Real value set in action call below
       (hib-python-traceback))))
 
 ;;; ========================================================================
@@ -374,14 +373,16 @@ attached file."
        (not (apply #'derived-mode-p '(prog-mode c-mode objc-mode c++-mode java-mode markdown-mode org-mode)))
        (unless (ibut:label-p t "[[" "]]" t) ;; Org link
 	 (let ((ref (hattr:get 'hbut:current 'lbl-key))
-	       (lbl-start (hattr:get 'hbut:current 'lbl-start)))
+	       (lbl-start (hattr:get 'hbut:current 'lbl-start))
+	       lbl-start-end)
            (and ref
 		lbl-start
 		(eq ?w (char-syntax (aref ref 0)))
 		(not (string-match "[#@]" ref))
 		(save-excursion
 		  (goto-char lbl-start)
-		  (ibut:label-p t "[" "]" t))
+		  (setq lbl-start-end (ibut:label-p t "[" "]" t)))
+		(apply #'ibut:label-set lbl-start-end)
 		(hact 'annot-bib ref))))))
 
 ;;; ========================================================================
@@ -824,7 +825,9 @@ context of the current buffer.
 Recognizes the format '<elink:' button_label [':' button_file_path] '>',
 where : button_file_path is given only when the link is to another file,
 e.g. <elink: project-list: ~/projs>."
-  (hlink 'link-to-ebut "" elink:start elink:end))
+  (progn
+    (ibut:label-set "temp") ;; Real value set in action call below
+    (hlink 'link-to-ebut "" elink:start elink:end)))
 
 (defconst glink:start "<glink:"
   "String matching the start of a link to a Hyperbole global button.")
@@ -838,7 +841,9 @@ of the current buffer.
 
 Recognizes the format '<glink:' button_label '>',
 e.g. <glink: open todos>."
-  (hlink 'link-to-gbut "" glink:start glink:end))
+  (progn
+    (ibut:label-set "temp") ;; Real value set in action call below
+    (hlink 'link-to-gbut "" glink:start glink:end)))
 
 (defconst ilink:start "<ilink:"
   "String matching the start of a link to a Hyperbole implicit button.")
@@ -853,7 +858,9 @@ current buffer.
 Recognizes the format '<ilink:' button_label [':' button_file_path] '>',
 where button_file_path is given only when the link is to another file,
 e.g. <ilink: my series of keys: ${hyperb:dir}/HYPB>."
-  (hlink 'link-to-ibut "" ilink:start ilink:end))
+  (progn
+    (ibut:label-set "temp") ;; Real value set in action call below
+    (hlink 'link-to-ibut "" ilink:start ilink:end)))
 
 ;;; ========================================================================
 ;;; Displays files at specific lines and optional column number
@@ -1088,9 +1095,8 @@ xdb.  Such lines are recognized in any buffer."
     (beginning-of-line)
     (cond
      ;; Python pdb or traceback, pytype error
-     ;; Don't wrap this next line in (hact) since has hact call
-     ;; in the function itself.
-     ((hib-python-traceback))
+     ((progn (ibut:label-set "temp") ;; Real value set in action call below
+	     (hib-python-traceback)))
 
      ;; JavaScript traceback
      ((or (looking-at "[a-zA-Z0-9-:.()? ]+? +at \\([^() \t]+\\) (\\([^:, \t()]+\\):\\([0-9]+\\):\\([0-9]+\\))$")
@@ -1384,9 +1390,15 @@ documentation string is displayed."
   "Activate GNUS-specific article push-buttons, e.g. for hiding signatures.
 GNUS is a news and mail reader."
   (and (fboundp 'get-text-property)
-       (get-text-property (point) 'gnus-callback)
        (fboundp 'gnus-article-press-button)
-       (hact 'gnus-article-press-button)))
+       (get-text-property (point) 'gnus-callback)
+       (let* ((but (button-at (point)))
+	      (but-start (when but (button-start but)))
+	      (but-end (when but (button-end but))))
+	 (when but
+	   (ibut:label-set (buffer-substring-no-properties but-start but-end)
+			   but-start but-end)
+	   (hact 'gnus-article-press-button)))))
 
 ;;; ========================================================================
 ;;; Displays Info nodes when double quoted "(file)node" button is activated.
@@ -1434,11 +1446,13 @@ also the documentation for `actypes::hyp-config'.
 For example, an Action Mouse Key click on <hyperbole-users@gnu.org> in
 a mail composer window would activate this implicit button type."
   (when (memq major-mode (list 'mail-mode hmail:composer hnews:composer))
-    (let ((addr (thing-at-point 'email)))
+    (let ((addr (thing-at-point 'email t)))
       (cond ((null addr) nil)
             ((member addr '("hyperbole" "hyperbole-users@gnu.org" "bug-hyperbole@gnu.org"))
+	     (ibut:label-set addr)
              (hact 'hyp-config))
             ((string-match "\\(hyperbole\\|hyperbole-users@gnu\\.org\\|bug-hyperbole@gnu\\.org\\)\\(-\\(join\\|leave\\|owner\\)\\)" addr)
+	     (ibut:label-set addr)
              (hact 'hyp-request))))))
 
 ;;; ========================================================================
@@ -1574,6 +1588,7 @@ action type, function symbol to call or test to execute, i.e.
 		       args `(',action)))))
 
 	;; Create implicit button object and store in symbol hbut:current.
+	(ibut:label-set lbl)
 	(ibut:create :lbl-key lbl-key :lbl-start start-pos :lbl-end end-pos
 		     :categ 'ibtypes::action :actype actype :args args)
 

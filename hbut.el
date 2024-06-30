@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     25-Jun-24 at 01:03:43 by Bob Weiner
+;; Last-Mod:     30-Jun-24 at 10:01:50 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2289,8 +2289,8 @@ lines."
 	result))))
 
 (defun    ibut:label-set (label &optional start end)
-  "Set current implicit button attributes.
-Get attributes from LABEL and optional START, END positions.
+  "Set current implicit button label attributes.
+Provide arguments LABEL and optional START, END positions.
 Return label.  When START and END are given, they specify the
 region in the buffer to flash when this implicit button is
 activated or queried for its attributes; this typically should
@@ -2892,7 +2892,9 @@ The caller must have populated the attributes of \='hbut:current.
 
 Return the symbol for the button if found, else nil."
   (unless (stringp lbl-key)
-    (error "(ibut:to-text): 'lbl-key' arg must be a string, not: %S" lbl-key))
+    (error "(ibut:to-text): %s 'lbl-key' arg must be a string, not: %S"
+	   (hattr:get 'hbut:current 'categ)
+	   lbl-key))
   (hbut:funcall
    (lambda (lbl-key _buffer _key-src)
      (let* ((name-end (hattr:get 'hbut:current 'name-end))
@@ -2949,8 +2951,11 @@ Return the symbol for the button if found, else nil."
 TYPE is an unquoted symbol.  PARAMS are presently ignored.
 
 AT-P is a boolean form of no arguments which determines whether or not point
-is within a button of this type and if it is, calls `hact' with an
-action to be performed whenever a button of this type is activated.
+is within a button of this type.  When non-nil, it must contain a call
+to `ibut:label-set' with the text and optional buffer region of the
+button's label.  This almost always should be followed by a call to
+`hact' with an action to be performed whenever a button of this type
+is activated.
 
 The action may be a regular Emacs Lisp function or a Hyperbole action
 type created with `defact' but may not return nil since any nil value
@@ -2972,11 +2977,17 @@ type for ibtype is presently undefined."
                            [&optional stringp] ; Doc string, if present.
                            def-body)))
   (when type
-    (let ((to-func (when to-p (action:create nil (list to-p))))
-	  (at-func (list at-p)))
-      `(progn (symtable:add ',type symtable:ibtypes)
-	      (htype:create ,type ibtypes ,doc nil ,at-func
-			    '(to-p ,to-func style ,style))))))
+    (let* ((to-func (when to-p (action:create nil (list to-p))))
+	   (at-func (list at-p))
+	   (at-func-symbols (flatten-tree at-func)))
+      (progn (unless (or (member 'ibut:label-set at-func-symbols)
+			 (member 'hsys-org-set-ibut-label at-func-symbols))
+	       (error "(defib): %s `at-p' argument must include a call to `ibut:label-set'" type))
+	     ;; (unless (member 'hact at-func-symbols)
+	     ;;   (error "(defib): %s `at-p' argument must include a call to `hact'" type))
+	     `(progn (symtable:add ',type symtable:ibtypes)
+		     (htype:create ,type ibtypes ,doc nil ,at-func
+				   '(to-p ,to-func style ,style)))))))
 
 ;; Support edebug-defun for interactive debugging of ibtypes
 (def-edebug-spec defib

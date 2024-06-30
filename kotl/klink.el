@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 12:15:16
-;; Last-Mod:     30-Oct-23 at 01:00:01 by Bob Weiner
+;; Last-Mod:     30-Jun-24 at 11:36:47 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -65,7 +65,7 @@
 
 (require 'subr-x) ;; For string-trim
 (require 'hmouse-tag) ;; For smart-c-include-regexp
-(eval-when-compile (require 'hbut)) ;; For defib.
+(require 'hbut) ;; For defib.
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -252,9 +252,11 @@ same directory."
 See documentation for the `link-to-kotl' function for valid klink formats."
   (let* ((link-and-pos (klink:at-p))
 	 (link (car link-and-pos))
-	 (start-pos (nth 1 link-and-pos)))
+	 (start (nth 1 link-and-pos))
+	 (end   (nth 2 link-and-pos)))
     (when link
-      (hact 'klink:act link start-pos))))
+      (ibut:label-set link start end)
+      (hact 'klink:act link start))))
 
 (defact link-to-kotl (link)
   "Display at the top of another window the referent pointed to by LINK.

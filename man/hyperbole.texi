@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     16-Apr-24 at 22:13:33 by Bob Weiner
+@c Last-Mod:     30-Jun-24 at 11:07:23 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -159,7 +159,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed June 2, 2024.
+Printed June 30, 2024.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -201,7 +201,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.2pre
-June 2, 2024
+June 30, 2024
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -7175,23 +7175,46 @@ same thing without any special definitions.
 @cindex ibtype
 @findex defib
 @findex ibtype:create
-An implicit button type is created or loaded via the @code{(defib)}
-function (which is an alias for @code{(ibtype:create)}).  The calling
-signature for this function is given in its documentation; it is the
-same as that of @code{(defun)}, but with a number of constraints.  The
-parameter list should always be empty since no parameters will be used.
-A documentation string is required; it is followed by the body of the
-type.
+@cindex ibtype predicate
+@cindex ibtype argument
+@cindex ibtype return val
+@cindex ibtype actype
+@cindex ibtype at-p
+An implicit button type is defined or updated via the @code{(defib)}
+macro (@code{ibtype:create} is alias for this).  It may be called just
+as @code{(defun)} is, but with a number of constraints.  The parameter
+list should always be empty since no parameters will be used.  A
+documentation string is required.  The last required form is the
+@code{at-p} predicate which when non-@samp{nil}, must do three things:
+@itemize @enumerate
+@item determine if there is a button at point that matches the type being defined;
+@item if so, call @code{ibut:set-label) to identify the label text of the button;
+@item if so, call @code{hact} to invoke the button's action, typically using the label.
+@end itemize
 
-@cindex ibtype, predicate
-@cindex ibtype, argument
-@cindex ibtype, return val
-@cindex ibtype, actype
-The body of an implicit button type is a predicate which determines
-whether or not point is within an implicit button of the type.  If
-not, the predicate returns @samp{nil}.  If the type is delimited,
-Hyperbole automatically sets up to flash the button when activated.
-Action invocations have the form: @code{(hact 'actype &rest
+@findex ibut:label-set
+@cindex ibtype ibut:label-set
+The call to @code{ibut:label-set} may contain just the button's label
+argument or the label plus its start and end positions in the buffer,
+if you wnat the button to flash when pressed.
+
+@cindex ibtype hact
+The @code{hact} call, run whenever a button of the type is activated,
+must be the last expression within the @code{at-p} form unless the
+action itself ends with a call to @code{hact}.  This call will always
+return @samp{t} when the @code{at-p} form is tested for a boolean
+value since the implicit button type's check has already evaluated
+true before this is called.  The arguments to the call to @code{hact}
+are an action function and whatever arguments it takes.  The action
+may be a Hyperbole action type created with @code{defact} or a regular
+Emacs Lisp function.  However, the action should not return @samp{nil}
+since any @samp{nil} value returned is converted to @samp{t} to ensure
+the implicit button checker recognizes that the action has been
+executed.
+
+@cindex action
+@cindex ibtype action
+Action invocations have the form: @code{(hact actype &rest
 actype-arguments)} where @code{actype} is a Hyperbole action type
 symbol or an Emacs Lisp function name or lambda;
 @code{actype-arguments} are the arguments fed to the action invocation
@@ -7201,11 +7224,11 @@ It is imperative that all actions (non-predicate code) be invoked
 through the @code{(hact)} function or your ibtypes will not work
 properly.  (Hyperbole first tests to see if any ibtype matches the
 current context before activating any type, so it ensures that
-@code{(hact)} calls are disabled during this testing.)  Any action
+@code{(hact)} calls are disabled during this testing).  Any action
 types used in the definition of an implicit button type may be created
 before or after the definition, but obviously, must be defined before
-any implicit buttons of the given type are activated; an error will
-result, otherwise.
+any implicit buttons of the given type are activated or an error will
+result.
 
 If an implicit button type create is successful, the symbol that
 Hyperbole uses internally to reference the type is returned.  On
@@ -7214,6 +7237,21 @@ operation succeeds.  Implicit button type names and action type names
 may be the same without any conflict.  In fact, such naming is
 encouraged when an implicit button type is the exclusive user of an
 action type.
+
+@cindex ibtype priorities
+@cindex priority of ibtypes
+@cindex types, implicit button
+@findex hui:htype-help 'ibtypes
+@kindex C-h h i t
+When the Action Key is pressed, each implicit button type predicate is
+checked in priority order and the first one whose @code{at-p} form
+evaluates non-@samp{nil} is activated (its action is run using the
+button label at point).  The first time an implicit button type is
+defined, it becomes the highest priority type; repeated definitions of
+the same type update the type but do not change its priority order.
+@bkbd{C-h h i t @key{RET}} @code{(hui:htype-help 'ibtypes 'no-sort)}
+displays the doc strings for all current implicit button types in
+descending priority order.
 
 @findex ibtype:delete
 Call @code{(ibtype:delete)} to remove an implicit button type from a
@@ -7224,9 +7262,6 @@ by the implicit button; that must be done separately.
 
 @cindex ibtype, help
 @findex ibut:at-p
-@vindex class, hattr
-@vindex class, hbut
-@vindex file, hib-kbd.el
 By default, a request for help on an implicit button will display the
 button's attributes in the same manner as is done for explicit
 buttons.  For some implicit button types, other forms of help will be
@@ -7241,6 +7276,11 @@ context).  Remember that the standard help for buttons with custom
 help functions is still available with @bkbd{C-h A} for the Action Key
 and @bkbd{C-u C-h A} for the Assist Key.
 
+@vindex class, hattr
+@vindex class, hbut
+@cindex hbut class
+@cindex hattr class
+@vindex file, hib-kbd.el
 To programmatically query implicit buttons for their attributes, use
 the functions from the @samp{hbut} and @samp{hattr} classes.  See
 the @file{hib-kbd.el} file for an example of a custom help function.
