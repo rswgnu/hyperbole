@@ -1,11 +1,12 @@
 2024-06-30  Mats Lidell  <matsl@gnu.org>
 
-* Makefile (docker-test-all-ert): Target for running all tests using ert
-    from within docker.
-    (VERSIONS): List of Emacs versions to run batch tests for to allow
-    checking same versions as the CI/CD run locally.
-    (docker-batch-test-all, docker-batch-test): Run batch tests for all
-    VERSIONS.
+* Makefile (internal-docker-all-tests-ert-output): Target for running all
+    tests using ert from within docker used by docker-all-tests.
+    (VERSIONS): List of Emacs versions to run batch-tests and all-tests to
+    check same versions as the CI/CD run locally.
+    (docker-all-tests, docker-batch-tests): Targets for running
+    batch-tests and all-tests for all VERSIONS.
+    Update developer target documentation.
 
 2024-06-30  Bob Weiner  <rsw@gnu.org>
 
