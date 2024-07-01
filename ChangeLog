@@ -1,3 +1,8 @@
+2024-07-12  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--maybe-at-wikiword-beginning): Fix
+    set of acceptable chars and use escaped notation.
+
 2024-07-07  Bob Weiner  <rsw@gnu.org>
 
 * hibtypes.el (elisp-compiler-msg): Fix to handle both of these cases:
