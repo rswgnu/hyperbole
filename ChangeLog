@@ -196,7 +196,7 @@
             (hynote-file): Add ibtype to display non-HyWikiWord files in
     hywiki-directory'.
 
-* Makefile: (docker-run): Add to intweractively run docker versions
+* Makefile: (docker-run): Add to interactively run docker versions
     of Emacs with Hyperbole.  Update Commentary to summarize docker
     targets that build, byte-compile and run Hyperbole.
 
