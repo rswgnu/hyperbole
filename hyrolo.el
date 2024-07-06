@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     22-Jun-24 at 22:19:36 by Bob Weiner
+;; Last-Mod:      4-Jul-24 at 13:40:35 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -35,6 +35,7 @@
 (require 'custom)   ;; For `defface'
 (require 'hversion)
 (require 'hmail)
+(require 'hsys-consult)
 (require 'hsys-org) ;; For `hsys-org-cycle-bob-file-list'
 (require 'hypb)     ;; For `hypb:mail-address-regexp' and `hypb:add-to-invisibility-spec'
 (eval-when-compile
@@ -60,8 +61,6 @@
 ;;; Public declarations
 ;;; ************************************************************************
 
-(declare-function consult-grep "ext:consult")
-(declare-function consult-ripgrep "ext:consult")
 (declare-function google-contacts  "ext:google-contacts")
 (declare-function google-contacts-add-margin-to-text "ext:google-contacts")
 (declare-function google-contacts-build-node-list "ext:google-contacts")
@@ -75,10 +74,6 @@
 (declare-function kotl-mode:to-valid-position "kotl/kotl-mode")
 (declare-function org-fold-initialize "org-fold")
 (declare-function org-fold-core-set-folding-spec-property "org-fold")
-
-(declare-function org-roam-db-autosync-mode "ext:org-roam")
-(declare-function org-roam-node-find "ext:org-roam")
-(declare-function org-roam-node-level "ext:org-roam")
 
 (declare-function outline-apply-default-state "outline")
 (declare-function xml-node-child-string "ext:google-contacts")
@@ -132,10 +127,6 @@
 (declare-function markdown-pipe-at-bol-p "ext:markdown-mode")
 (declare-function markdown-remove-gfm-checkbox-overlays "ext:markdown-mode")
 
-;; Forward declarations
-(defvar consult-grep-args)
-(defvar consult-ripgrep-args)
-(defvar consult-async-split-style)
 (defvar google-contacts-expire-time)
 (defvar google-contacts-history)
 (defvar google-contacts-query-string)
@@ -144,7 +135,6 @@
 (defvar hproperty:but-emphasize-flag)
 (defvar org-fold-core-style)
 (defvar org-link--link-folding-spec)
-(defvar org-roam-db-autosync-mode)
 (defvar org-roam-directory)
 (defvar plstore-cache-passphrase-for-symmetric-encryption)
 (defvar reveal-auto-hide)
@@ -528,74 +518,20 @@ entry which begins with the parent string."
 
 ;;;###autoload
 (defun hyrolo-consult-grep (&optional regexp max-matches path-list)
-  "Interactively search `hyrolo-file-list' with a consult package grep command.
-Use ripgrep (rg) if found, otherwise, plain grep.  Interactively
-show all matches from `hyrolo-file-list'.  Initialize search with
+  "Interactively search paths with a consult package grep command.
+Search for optional REGEXP up to MAX-MATCHES in PATH-LIST or `hyrolo-file-list'.
+
+Use ripgrep (rg) if found, otherwise, plain grep.  Initialize search with
 optional REGEXP and interactively prompt for changes.  Limit matches
 per file to the absolute value of MAX-MATCHES, if given and not 0.  If
 0, match to headlines only (lines that start with a '^[*#]+[ \t]+' regexp)."
   (interactive "i\nP")
-  (unless (package-installed-p 'consult)
-    (package-install 'consult))
-  (require 'consult)
-  (let ((consult-version (hyrolo-get-consult-version)))
-    ;; Multi-file support added after consult version "0.32"
-    (when (not (and consult-version (string-greaterp consult-version "0.32")))
-      (error "(hyrolo-consult-grep): consult package version is %s; update required"
-	     consult-version)))
   (let* ((grep-includes (concat "--include *.kot --include *.kotl"
 				" --include *.md --include *.markdown --include *.mkd --include *.mdown --include *.mkdn --include *.mdwn"
 				" --include *.org --include *.otl --include *.outl"))
-	 (ripgrep-globs "--glob *.{kot,kotl,md,markdown,mkd,mdown,mkdn,mdwn,org,otl,outl}")
-	 (consult-grep-args
-	  (if (listp consult-grep-args)
-	      (append consult-grep-args (list grep-includes))
-	    (concat consult-grep-args " " grep-includes)))
-	 (consult-ripgrep-args
-	  (if (listp consult-ripgrep-args)
-	      (append consult-ripgrep-args (list ripgrep-globs))
-            (concat consult-ripgrep-args " " ripgrep-globs)))
-	 (paths (if find-file-wildcards
-		    ;; Use only the directory of paths with wildcards
-		    ;; since the grep command filters to desired file
-		    ;; types much more efficiently.
-		    (mapcar (lambda (path)
-			      (if (string-match "[\\/]?\\([^*?\\/]*[*?][^\\/]+\\'\\)" path)
-				  (substring path 0 (match-beginning 1))
-				path))
-			    (or path-list hyrolo-file-list))
-		  (or path-list hyrolo-file-list))))
-    (hyrolo-consult-grep-paths paths regexp max-matches)))
-
-;;;###autoload
-(defun hyrolo-consult-org-roam-grep (&optional regexp max-matches)
-  "Interactively narrow and select Org Roam nodes by line.
-Use ripgrep (rg) if found, otherwise, plain grep to search Org
-files within `org-roam-directory'.  Initialize search with
-optional REGEXP and interactively prompt for changes.  Limit
-matches per file to the absolute value of MAX-MATCHES, if given
-and not 0.  If 0, match to headlines only (lines that start with
-a '^[*#]+[ \t]+' regexp)."
-  (interactive "i\nP")
-  (hyrolo-org-roam-call-function
-   (lambda ()
-     (let ((consult-grep-args
-	    (if (listp consult-grep-args)
-		(append consult-grep-args (list "--include *.org"))
-	      (concat consult-grep-args " --include *.org")))
-	   (consult-ripgrep-args
-	    (if (listp consult-ripgrep-args)
-		(append consult-ripgrep-args (list "--glob *.org"))
-              (concat consult-ripgrep-args " --glob *.org"))))
-       (hyrolo-consult-grep-paths (list org-roam-directory) regexp max-matches)))))
-
-;;;###autoload
-(defun hyrolo-consult-org-roam-title ()
-  "Interactively narrow and select Org Roam nodes by title."
-  (interactive)
-  (hyrolo-org-roam-call-function
-   (lambda ()
-     (org-roam-node-find nil nil (lambda (node) (zerop (org-roam-node-level node)))))))
+	 (ripgrep-globs "--glob *.{kot,kotl,md,markdown,mkd,mdown,mkdn,mdwn,org,otl,outl}"))
+    (hsys-consult-grep grep-includes ripgrep-globs
+		       regexp max-matches (or path-list hyrolo-file-list))))
 
 ;;;###autoload
 (defun hyrolo-display-matches (&optional display-buf return-to-buffer)
@@ -1866,7 +1802,7 @@ returned to the number given."
 OPTIONAL prefix arg, MAX-MATCHES, limits the number of matches
 returned to the number given."
   (interactive "sFind Org Roam directory string (or logical sexpression): \nP")
-  (hyrolo-org-roam-call-function
+  (hsys-consult--org-roam-call-function
    (lambda ()
      (let ((hyrolo-file-list (directory-files org-roam-directory t "\\.org$")))
        (hyrolo-fgrep string max-matches)))))
@@ -2913,67 +2849,6 @@ HYROLO-BUF may be a file-name, `buffer-name', or buffer."
 			     hyrolo-buf))
 	     (buffer-list))))
 
-(defun hyrolo-consult-grep-paths (paths &optional regexp max-matches)
-  "Interactively search PATHS with a consult package grep command.
-Use ripgrep (rg) if found, otherwise, plain grep.  Interactively
-show all matches from PATHS; see the documentation for the `dir'
-argument in `consult-grep' for valid values of PATHS. 
-
-Initialize search with optional REGEXP and interactively prompt
-for changes.  Limit matches per file to the absolute value of
-MAX-MATCHES, if given and not 0.  If 0, match to headlines
-only (lines that start with a '^[*#]+[ ]t]+' regexp)."
-  (unless (package-installed-p 'consult)
-    (package-install 'consult))
-  (require 'consult)
-  (let ((consult-version (hyrolo-get-consult-version)))
-    ;; Multi-file support added after consult version "0.32"
-    (when (not (and consult-version (string-greaterp consult-version "0.32")))
-      (error "(hyrolo-consult-grep): consult package version is %s; update required"
-	     consult-version)))
-  (when max-matches
-    (setq max-matches (prefix-numeric-value max-matches)))
-  (when (and (integerp max-matches) (zerop max-matches))
-    ;; Final space in leading regexp in next line makes it work with
-    ;; the Orderless package.
-    (setq regexp (concat "^[*#]+[ \t]+ " (or regexp ""))))
-  (let ((consult-grep-args (if (and (integerp max-matches) (not (zerop max-matches)))
-			       (if (listp consult-grep-args)
-				   (append consult-grep-args
-					   (list (format "-m %d" (abs max-matches))))
-				 (concat consult-grep-args
-					 (format " -m %d" (abs max-matches))))
-			     consult-grep-args))
-	(consult-ripgrep-args (if (and (integerp max-matches) (not (zerop max-matches)))
-				  (if (listp consult-ripgrep-args)
-				      (append consult-ripgrep-args
-					      (list (format "-m %d" (abs max-matches))))
-				    (concat consult-ripgrep-args
-					    (format " -m %d" (abs max-matches))))
-				consult-ripgrep-args))
-	(grep-func (cond ((executable-find "rg")
-			  #'consult-ripgrep)
-			 (t #'consult-grep))))
-    ;; Consult split style usually uses '#' as a separator char but
-    ;; that interferes with matching to Markdown # chars at the start
-    ;; of a line in the regexp, so disable the separator char as it is
-    ;; not needed for simple regexp searches.
-    (let ((consult-async-split-style nil))
-      (funcall grep-func paths regexp))))
-
-(defun hyrolo-org-roam-call-function (func)
-  "Install Org Roam and then call an Org Roam FUNC."
-  (unless (package-installed-p 'org-roam)
-    (package-install 'org-roam))
-  (require 'org-roam)
-  (unless (file-readable-p org-roam-directory)
-    (make-directory org-roam-directory))
-  (unless org-roam-db-autosync-mode
-    (org-roam-db-autosync-mode))
-  (if (file-readable-p org-roam-directory)
-      (funcall func)
-    (error "`org-roam-directory', \"%s\", does not exist" org-roam-directory)))
-
 (defun hyrolo-current-date ()
   "Return the current date (a string) in a form used for rolo entry insertion."
   (format-time-string hyrolo-date-format))
@@ -2999,17 +2874,6 @@ a default of MM/DD/YYYY."
     (concat (substring name-str (match-beginning last) (match-end last))
 	    ", "
 	    (substring name-str (match-beginning first) (match-end first)))))
-
-(defun hyrolo-get-consult-version ()
-  "Return the string version of the installed consult package or nil."
-  (let* ((consult-file (find-library-name "consult"))
-	 (buffer-existed (get-file-buffer consult-file))
-	 (buffer-modified (when buffer-existed (buffer-modified-p buffer-existed)))
-	 (buf (or buffer-existed (find-file-noselect consult-file))))
-    (with-current-buffer buf
-      (prog1 (package-get-version)
-	(unless buffer-modified
-	  (kill-buffer buf))))))
 
 (defun hyrolo-highlight-matches (regexp start end)
   "Highlight matches for REGEXP in region from START to END."

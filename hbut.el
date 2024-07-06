@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     30-Jun-24 at 10:01:50 by Bob Weiner
+;; Last-Mod:      6-Jul-24 at 01:31:19 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1957,14 +1957,15 @@ If a new button is created, store its attributes in the symbol,
 			 (setq ibtype-point (point))
 			 (while (and (not is-type) types)
 			   (setq itype (car types))
-			   (when (condition-case ()
+			   (when (condition-case err
 				     (and itype (setq args (funcall itype)))
 				   ;; Purposely trigger another error
 				   ;; here by sending a symbol
 				   ;; argument to the message call
 				   ;; below so can see the value of
 				   ;; itype whose funcall failed above.
-				   (error (message itype)))
+				   (error (progn (message "%S" err)
+						 (message itype))))
 			     (setq is-type itype)
 			     ;; Any implicit button type check should leave point
 			     ;; unchanged.  Trigger an error if not.

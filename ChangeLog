@@ -1,3 +1,73 @@
+2024-07-06  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (org-id): Fix bug in older versions of Org where where
+    'org-uuid-regexp' was not bound.
+
+* hbut.el (ibut:create): Improved when err occurs in type to print the err before
+    triggering a backtrace when in batch mode.
+
+* man/hyperbole.texi (Implicit Button Types): smart-org add new Org tags view
+    handling and improve index entries.
+
+2024-07-05  Bob Weiner  <rsw@gnu.org>
+
+* hui-mouse.el   (smart-org): Update to handle when point is on Org tags and
+    then search for matching Org tags with 'hsys-org-agenda-tags-p'.
+    With Assist Key, instead prompt and search with consult grep functions
+    for appropriate tag matches via 'hsys-org-consult-grep-tags-p'.
+  hsys-org-roam.el (hsys-org-roam-tags-view): Add.
+  hsys-org.el (hsys-org--agenda-tags-string, hsys-org-agenda-tags-p,
+               hsys-org-get-agenda-tags, hsys-org-hywiki-agenda-tags,
+               hsys-org-agenda-tags, hsys-org-roam-agenda-tags,
+               hsys-org-tags-view):
+    Add to match to display matching Org tags, including inheritance, using Org
+    agendas.
+
+* hsys-org.el    (hsys-org-directory-at-tags-p,
+                  hsys-org-at-tags-p): Add.
+  hsys-org-roam.el (hsys-org-roam-directory-at-tags-p): Add.
+  hywiki.el      (hywiki-at-tags-p): Add.
+  hsys-consult.el (hsys-consult--grep-paths): Change to use "[ \t]*" instead of
+    "[ \t]+" so handles space afterwards included to support Orderless.
+                  (hsys-consult--org-match-tags-string,
+                   hsys-consult-org-grep-tags-p, hsys-consult-grep-tags,
+                   hsys-consult-hywiki-grep-tags, hsys-consult-org-grep-tags,
+                   hsys-consult-org-roam-grep-tags): Add to consult-grep based
+    on dir and buffer name.  Use in 'smart-org'.
+  hui-mouse.el    (smart-org): Update doc for above change.
+
+2024-07-04  Bob Weiner  <rsw@gnu.org>
+
+* hsys-consult.el: Add and move/rename hyrolo consult support functions to
+     hsys-consult functions in here so they can be used in other parts
+     of Hyperbole.
+  hyrolo.el (hyrolo-org-roam-call-function): Rename to
+    'hsys-consult-org-roam-call-function'.
+            (hyrolo-consult-org-roam-title): Rename to 'hsys-consult-org-roam-title'.
+            (hyrolo-consult-org-roam-grep): Rename to 'hsys-consult-org-roam-grep'.
+    And move all to "hsys-consult.el".
+  hywiki.el (hywiki-consult-grep): Rewrite to use 'hsys-consult-grep'.
+    and add optional arguments to allow more flexibility in usage.
+  hsys-org.el (hsys-org-consult-grep): Rewrite to use 'hsys-consult-grep'.
+    and add optional arguments to allow more flexibility in usage.
+              (hsys-org-consult-grep-func): Remove this customization;
+    'hsys-consult-grep' automatically selects the grep function to use.
+
+2024-07-03  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-grep-tags): Rename to 'hywiki-tags-view' to align with
+    Org command with similar name.
+
+2024-07-02  Bob Weiner  <rsw@gnu.org>
+
+* hsys-org.el (hsys-org-meta-return): Trigger an error if called in an Org
+    read-only buffer.
+
+* hibtypes.el (org-id): Tighten match to uuids only to prevent false matches, e.g.
+    if matching to any custom id, my-list-function-name would match as an id.
+
+* hywiki.el (require 'thingatpt): Add.
+
 2024-06-30  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:find-line): Allow line-num and col-num to be strings.

@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     30-Jun-24 at 19:08:27 by Mats Lidell
+# Last-Mod:      4-Jul-24 at 11:26:09 by Bob Weiner
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -203,7 +203,8 @@ EL_COMPILE = hact.el hactypes.el hargs.el hbdata.el hbmap.el hbut.el \
 	     hib-social.el hibtypes.el \
 	     hinit.el hload-path.el hmail.el hmh.el hmoccur.el hmouse-info.el \
 	     hmouse-drv.el hmouse-key.el hmouse-mod.el hmouse-sh.el hmouse-tag.el \
-	     hpath.el hproperty.el hrmail.el hsettings.el hsmail.el hsys-flymake.el \
+	     hpath.el hproperty.el hrmail.el hsettings.el hsmail.el hsys-consult.el \
+             hsys-flymake.el \
              hsys-org.el hsys-org-roam.el hsys-www.el hsys-xref.el hsys-youtube.el htz.el \
 	     hycontrol.el hui-jmenu.el hui-menu.el hui-mini.el hui-mouse.el hui-select.el \
 	     hui-treemacs.el hui-window.el hui.el hvar.el hversion.el hynote.el hypb.el hyperbole.el \

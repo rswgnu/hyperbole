@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <!-- This manual is for GNU Hyperbole
-(Edition 9.0.2pre, Published June, 2024).
+(Edition 9.0.2pre, Published July, 2024).
 
 Copyright (C) 1989-2023  Free Software Foundation, Inc.
 
@@ -108,7 +108,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed June 30, 2024.
+Printed July 6, 2024.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -2191,6 +2191,7 @@ Next: <a href="#Action-Buttons" accesskey="n" rel="next">Action Buttons</a>, Pre
 
 <span id="index-ibtypes_002c-list-of"></span>
 <span id="index-implicit-button-types"></span>
+<span id="index-file_002c-hibtypes_002eel-1"></span>
 <p>Below is a list of standard implicit button types in the order in
 which Hyperbole tries to match to the types when looking for an
 implicit button (decreasing priority order).  <kbd>{C-h h i t
@@ -2211,6 +2212,9 @@ priority).
 <span id="index-org_002dmeta_002dreturn"></span>
 <span id="index-hsys_002dorg_002dmode_002dp"></span>
 <span id="index-file_002c-hsys_002dorg_002eel"></span>
+<span id="index-smart-org"></span>
+<span id="index-Action-Key_002c-Org-Mode"></span>
+<span id="index-Assist-Key_002c-Org-Mode"></span>
 </dd>
 <dt><span><code>smart-org</code></span></dt>
 <dd><p><code>smart-org</code> is not an actual implicit button type, just an Elisp function,
@@ -2220,15 +2224,27 @@ but it behaves similarly, so it is documented here.
 <code>org-mode</code>, <code>org-agenda-mode</code>, <code>outshine-mode</code>
 or <code>poporg-mode</code>.  (See the function <code>hsys-org-mode-p</code>).
 </p>
+<span id="index-hsys_002dorg_002denable_002dsmart_002dkeys"></span>
 <p>Hyperbole does quite a few things for Org mode users.  When the Action
-Key is pressed:
+Key is pressed and <code>hsys-org-enable-smart-keys</code> is &lsquo;<samp>t</samp>&rsquo;:
 </p>
 <ol>
-<li> If on an Org todo keyword, cycle through the keywords in
+<li> <span id="index-org-view-tags"></span>
+<span id="index-org-tags"></span>
+<span id="index-hsys_002dorg_002dagenda_002dtags_002dp"></span>
+On an Org tag, call <code>hsys-org-agenda-tags-p</code> and an
+appropriate view tags function based on current directory or buffer
+name, matching to the tag.  If on a colon between tags, match to all
+tags on the line.
+
+</li><li> On an Org todo keyword, cycle through the keywords in
 that set or if final done keyword, remove it.
 
-</li><li> If on an Org agenda view item, jump to the item for editing.
+</li><li> On an Org agenda view item, jump to the item for editing.
 
+<p>When the Action Key is pressed and <code>hsys-org-enable-smart-keys</code>
+is either &lsquo;<samp>t</samp>&rsquo; or &lsquo;<samp>'buttons</samp>&rsquo;:
+</p>
 </li><li> Within a radio or internal target or a link to it, jump between
 the target and the first link to it, allowing two-way navigation.
 
@@ -2256,7 +2272,15 @@ standard binding of <kbd>{M-<span class="key">RET</span>}</kbd>, <code>org-meta-
 except in these contexts:
 </p>
 <ol>
-<li> On an Org todo keyword, move to the first todo keyword in the next
+<li> <span id="index-org-tags_002c-consult-grep"></span>
+<span id="index-consult-grep-org-tags"></span>
+<span id="index-hsys_002dconsult_002dorg_002dgrep_002dtags_002dp"></span>
+On an Org tag, call <code>hsys-consult-org-grep-tags-p</code> and an
+appropriate consult grep function based on current directory or buffer
+name, prompting with and matching to the tag.  If on a colon between
+tags, prompt and match to all tags on the line.
+
+</li><li> On an Org todo keyword, move to the first todo keyword in the next
 set, if any.
 
 </li><li> On an Org mode link or agenda view item, display Hyperbole
@@ -2275,7 +2299,7 @@ or #+end_example header, remove any associated results.
 through views of the whole buffer outline.
 </li></ol>
 
-<span id="index-hsys_002dorg_002denable_002dsmart_002dkeys"></span>
+<span id="index-hsys_002dorg_002denable_002dsmart_002dkeys-1"></span>
 <span id="index-enable-org_002dmode-support"></span>
 <span id="index-disable-org_002dmode-support"></span>
 <span id="index-inhibit-org_002dmode-support"></span>
@@ -3541,7 +3565,7 @@ implicit button, only the explicit button will be selected.  Explicit
 button labels are not allowed to overlap; Hyperbole&rsquo;s behavior in such
 cases is undefined.
 </p>
-<span id="index-ibtype_002c-evaluation-order"></span>
+<span id="index-ibtype-priority"></span>
 <p>If there is no explicit button at point during a selection request,
 then each implicit button type predicate is tested in turn until one
 returns non-nil or all are exhausted.  Since two implicit button types
@@ -7328,7 +7352,7 @@ use <kbd>{C-x C-e}</kbd> <code>(eval-last-sexp)</code> (works in most modes).
 Hyperbole types, if needed.
 </p>
 <span id="index-file_002c-hactypes_002eel"></span>
-<span id="index-file_002c-hibtypes_002eel-1"></span>
+<span id="index-file_002c-hibtypes_002eel-2"></span>
 <p>The following subsections explain the specifics of Hyperbole type
 definitions which are beyond standard practice for Emacs Lisp programming.
 See the definitions of the standard types in <samp>hactypes.el</samp>
@@ -8174,14 +8198,15 @@ abstraction.
 wrappers around common search commands like grep, ripgrep, find and
 locate.
 </p>
-<p>Hyperbole uses this package to provide convenience commands for line-oriented searches.
+<p>Hyperbole uses this package to provide convenience commands for interactive,
+line-oriented searches.
 </p><dl compact="compact">
 <dt><span><kbd>{M-x hsys-org-roam-consult-grep <span class="key">RET</span>}</kbd></span></dt>
-<dd><p>Searches Org Roam notes in <code>org-roam-directory</code> with consult.
+<dd><p>Interactively searches Org Roam notes in <code>org-roam-directory</code> with consult.
 </p>
 </dd>
 <dt><span><kbd>{M-x hsys-org-consult-grep <span class="key">RET</span>}</kbd></span></dt>
-<dd><p>Searches Org notes in <code>org-directory</code> with consult.
+<dd><p>Interactively searches Org notes in <code>org-directory</code> with consult.
 </p></dd>
 </dl>
 
@@ -10831,7 +10856,7 @@ Next: <a href="#Smart-Key-_002d-Ivy" accesskey="n" rel="next">Smart Key - Ivy</a
 </div>
 <span id="Smart-Key-_002d-Org-Mode-1"></span><h4 class="subsection">E.2.2 Smart Key - Org Mode</h4>
 
-<span id="index-hsys_002dorg_002denable_002dsmart_002dkeys-1"></span>
+<span id="index-hsys_002dorg_002denable_002dsmart_002dkeys-2"></span>
 <span id="index-Org-mode-1"></span>
 <div class="format">
 <pre class="format">When in an Org mode context and <code>hsys-org-enable-smart-keys</code> is non-nil:
@@ -12620,7 +12645,7 @@ Hyperbole does.  For a list of some differences, see:
 agenda and diary management, so it is very complementary to Hyperbole.
 It did not exist when Hyperbole was first developed.
 </p>
-<span id="index-hsys_002dorg_002denable_002dsmart_002dkeys-2"></span>
+<span id="index-hsys_002dorg_002denable_002dsmart_002dkeys-3"></span>
 <p>Smart Key support for Org-mode is already in Hyperbole.  Use the
 <code>hsys-org-enable-smart-keys</code> customization variable to control
 the Smart Keys and <kbd>{M-<span class="key">RET</span>}</kbd> when in Org-mode with
@@ -13753,7 +13778,8 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-file_002c-hib_002ddebbugs_002eel">file, hib-debbugs.el</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-hib_002dkbd_002eel">file, hib-kbd.el</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Programmatic-Implicit-Button-Types">Programmatic Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-hibtypes_002eel">file, hibtypes.el</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-file_002c-hibtypes_002eel-1">file, hibtypes.el</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-Types">Creating Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-file_002c-hibtypes_002eel-1">file, hibtypes.el</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-file_002c-hibtypes_002eel-2">file, hibtypes.el</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-Types">Creating Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-hmail_002eel">file, hmail.el</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-hmouse_002dkey_002eel">file, hmouse-key.el</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Questions-and-Answers">Questions and Answers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-file_002c-hmouse_002dsh_002eel">file, hmouse-sh.el</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Questions-and-Answers">Questions and Answers</a></td></tr>
@@ -13857,14 +13883,17 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-hproperty_003abut_002dflash_002dtime_002dseconds">hproperty:but-flash-time-seconds</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Colors">Button Colors</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hproperty_003abut_002dhighlight_002dflag">hproperty:but-highlight-flag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Colors">Button Colors</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hproperty_003acycle_002dbut_002dcolor"><code>hproperty:cycle-but-color</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Colors">Button Colors</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hsys_002dconsult_002dorg_002dgrep_002dtags_002dp"><code>hsys-consult-org-grep-tags-p</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hsys_002dflymake_002ddisplay_002dthis_002dor_002dnext_002dissue"><code>hsys-flymake-display-this-or-next-issue</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Flymake-Mode">Smart Key - Flymake Mode</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hsys_002dflymake_002dinsert_002dissue_002dat_002dpoint_0029"><code>hsys-flymake-insert-issue-at-point)</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Flymake-Mode">Smart Key - Flymake Mode</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hsys_002dflymake_002dtoggle"><code>hsys-flymake-toggle</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Flymake-Mode">Smart Key - Flymake Mode</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hsys_002dflymake_002dtoggle_002dwraparound"><code>hsys-flymake-toggle-wraparound</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Flymake-Mode">Smart Key - Flymake Mode</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hsys_002dorg_002dagenda_002dtags_002dp"><code>hsys-org-agenda-tags-p</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hsys_002dorg_002dconsult_002dgrep"><code>hsys-org-consult-grep</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hsys_002dorg_002denable_002dsmart_002dkeys">hsys-org-enable-smart-keys</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-hsys_002dorg_002denable_002dsmart_002dkeys-1">hsys-org-enable-smart-keys</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Org-Mode">Smart Key - Org Mode</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-hsys_002dorg_002denable_002dsmart_002dkeys-2">hsys-org-enable-smart-keys</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Questions-and-Answers">Questions and Answers</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hsys_002dorg_002denable_002dsmart_002dkeys-1">hsys-org-enable-smart-keys</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hsys_002dorg_002denable_002dsmart_002dkeys-2">hsys-org-enable-smart-keys</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Org-Mode">Smart Key - Org Mode</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hsys_002dorg_002denable_002dsmart_002dkeys-3">hsys-org-enable-smart-keys</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Questions-and-Answers">Questions and Answers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hsys_002dorg_002dmode_002dp"><code>hsys-org-mode-p</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hsys_002dorg_002droam_002dconsult_002dgrep"><code>hsys-org-roam-consult-grep</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-htype_002dcreate_002dhook">htype-create-hook</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hook-Variables">Hook Variables</a></td></tr>
@@ -14327,6 +14356,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td valign="top"><a href="#index-Action-Key_002c-cell-argument">Action Key, cell argument</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Action-Key_002c-hide-or-show-cell">Action Key, hide or show cell</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Action-Key_002c-klink">Action Key, klink</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Klinks">Klinks</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Action-Key_002c-Org-Mode">Action Key, Org Mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Action-Key_002c-web-browsing">Action Key, web browsing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Action-Mouse-Key">Action Mouse Key</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Thing-Selection">Thing Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Action-Mouse-Key-1">Action Mouse Key</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Delimited-Things">Smart Key - Delimited Things</a></td></tr>
@@ -14360,6 +14390,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td valign="top"><a href="#index-Assist-Key-drag">Assist Key drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#By-Dragging">By Dragging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Assist-Key-in-minibuffer">Assist Key in minibuffer</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Argument-Selection">Smart Key Argument Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Assist-Key_002c-listing-attributes">Assist Key, listing attributes</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Assist-Key_002c-Org-Mode">Assist Key, Org Mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Assist-Mouse-Key">Assist Mouse Key</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Thing-Selection">Thing Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Assist-Mouse-Key-1">Assist Mouse Key</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Delimited-Things">Smart Key - Delimited Things</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Assist-Mouse-Key-drag">Assist Mouse Key drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Key-Drags">Smart Mouse Key Drags</a></td></tr>
@@ -14527,6 +14558,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td valign="top"><a href="#index-completion_002c-Ivy">completion, Ivy</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Ivy">Smart Key - Ivy</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-concepts">concepts</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-configuration">configuration</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Customization">Customization</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-consult-grep-org-tags">consult grep org tags</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-consult-package">consult package</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-consult_002dorg_002droam-package">consult-org-roam package</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ConsultFind">ConsultFind</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
@@ -14858,8 +14890,8 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td valign="top"><a href="#index-ibtype-ibut_003alabel_002dset">ibtype ibut:label-set</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Programmatic-Implicit-Button-Types">Programmatic Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtype-predicate">ibtype predicate</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Programmatic-Implicit-Button-Types">Programmatic Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtype-priorities">ibtype priorities</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Programmatic-Implicit-Button-Types">Programmatic Implicit Button Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtype-priority">ibtype priority</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Type-Precedence">Button Type Precedence</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtype-return-val">ibtype return val</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Programmatic-Implicit-Button-Types">Programmatic Implicit Button Types</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtype_002c-evaluation-order">ibtype, evaluation order</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Type-Precedence">Button Type Precedence</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtype_002c-help">ibtype, help</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Programmatic-Implicit-Button-Types">Programmatic Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes_002c-list-of">ibtypes, list of</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibuffer-menu">ibuffer menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Key-Modeline-Clicks">Smart Mouse Key Modeline Clicks</a></td></tr>
@@ -15234,6 +15266,9 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td valign="top"><a href="#index-Org-mode-1">Org mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Org-Mode">Smart Key - Org Mode</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Org-Roam-IDs">Org Roam IDs</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Org-tables">Org tables</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-org-tags">org tags</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-org-tags_002c-consult-grep">org tags, consult grep</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-org-view-tags">org view tags</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-org_002dmode">org-mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Org_002dmode">Org-mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Questions-and-Answers">Questions and Answers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-org_002drifle-package">org-rifle package</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Glossary">Glossary</a></td></tr>
@@ -15434,6 +15469,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td valign="top"><a href="#index-Smart-Mouse-Key-drag">Smart Mouse Key drag</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Editing">Editing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Smart-Mouse-Key-toggle">Smart Mouse Key toggle</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Smart-Mouse-Keys">Smart Mouse Keys</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Mouse-Keys">Smart Mouse Keys</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-smart-org">smart org</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-smart-selection">smart selection</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-social-media">social media</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-social-reference">social reference</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>

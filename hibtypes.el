@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     30-Jun-24 at 17:22:40 by Bob Weiner
+;; Last-Mod:      6-Jul-24 at 01:43:04 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -42,7 +42,8 @@
 (eval-when-compile (require 'hversion))
 (require 'hactypes)
 (require 'hypb)
-(require 'subr-x) ;; For string-trim
+(require 'org-macs) ;; for org-uuid-regexp
+(require 'subr-x) ;; for string-trim
 (require 'thingatpt)
 
 ;;; ************************************************************************
@@ -134,9 +135,10 @@ line and check for a source reference line again."
 ;;; ========================================================================
 
 (defib org-id ()
-  "Display Org roam or Org node referenced by id at point, if any.
-If on the :ID: definition line, display a message about how to copy the id.
-If the referenced location is found, return non-nil."
+  "Display Org roam or Org node referenced by uuid at point, if any.
+If on the :ID: definition line, display a message about how to copy the uuid.
+If the referenced location is found, return non-nil.  Match to uuids
+only to prevent false matches."
   (when (featurep 'org-id)
     (let* ((id (thing-at-point 'symbol t)) ;; Could be a uuid or some other form of id
            (bounds (when id (bounds-of-thing-at-point 'symbol)))
@@ -144,7 +146,9 @@ If the referenced location is found, return non-nil."
 	   (end   (when bounds (cdr bounds)))
 	   m)
       ;; Ignore ID definitions or when not on a possible ID
-      (when (and id (string-match "\\`[:alnum:][-[:alnum:]:.@]+\\'" id))
+      (when (and id (if (fboundp 'org-uuidgen-p)
+			(org-uuidgen-p id)
+		      (string-match org-uuid-regexp (downcase id))))
 	(when (and start end)
 	  (ibut:label-set id start end))
 	(if (and (not assist-flag)

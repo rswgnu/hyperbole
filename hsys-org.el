@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     29-Jun-24 at 18:55:30 by Bob Weiner
+;; Last-Mod:      6-Jul-24 at 00:25:11 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -32,6 +32,7 @@
 
 (eval-when-compile (require 'hmouse-drv))
 (require 'hproperty) ;; requires 'hbut
+(require 'hsys-consult)
 (require 'org)
 (require 'org-element)
 (require 'org-fold nil t)
@@ -43,17 +44,6 @@
 ;;; ************************************************************************
 ;;; Public declarations
 ;;; ************************************************************************
-
-(declare-function consult-grep "ext:consult")
-(declare-function consult-ripgrep "ext:consult")
-
-(defcustom hsys-org-consult-grep-func
-  (cond ((executable-find "rg")
-	 #'consult-ripgrep)
-	(t #'consult-grep))
-  "Function for consult grep searching over files."
-   :type 'function
-   :group 'org)
 
 (defvar hyperbole-mode-map)             ; "hyperbole.el"
 (defvar org--inhibit-version-check)     ; "org-macs.el"
@@ -161,6 +151,77 @@ an error."
 ;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
+
+;;;###autoload
+(defun hsys-org-agenda-tags-p ()
+  "When on an Org tag, return appropriate `org-tags-view' function.
+Use `default-directory' and buffer name to determine which function to
+call."
+  (when (hsys-org-at-tags-p)
+    (cond ((hsys-org-directory-at-tags-p t)
+	   #'hsys-org-agenda-tags)
+	  ((hsys-org-roam-directory-at-tags-p t)
+	   #'hsys-org-roam-agenda-tags)
+	  ((hywiki-at-tags-p t)
+	   #'hsys-org-hywiki-agenda-tags))))
+
+(defun hsys-org-get-agenda-tags (org-consult-agenda-function)
+  "When on an Org tag, call ORG-CONSULT-AGENDA-FUNCTION to find matches.
+If on a colon, match to sections with all tags around point;
+otherwise, just match to the single tag around point.
+
+The function determines the org files searched for matches and is
+given two arguments when called: a regexp of tags to match and a 0
+max-count which finds all matches within headlines only."
+  (interactive)
+  (when (hsys-org-at-tags-p)
+    (funcall org-consult-agenda-function nil (hsys-org--agenda-tags-string))))
+
+(defun hsys-org-hywiki-agenda-tags ()
+  "When on a HyWiki tag, use `hywiki-tags-view' to list all HyWiki tag matches.
+If on a colon, match to sections with all tags around point;
+otherwise, just match to the single tag around point."
+  (interactive)
+  (hsys-org-get-agenda-tags #'hywiki-tags-view))
+
+(defun hsys-org-agenda-tags ()
+  "When on an `org-directory' tag, use `hsys-org-tags-view' to list dir tag matches.
+If on a colon, match to sections with all tags around point;
+otherwise, just match to the single tag around point."
+  (interactive)
+  (hsys-org-get-agenda-tags #'hsys-org-tags-view))
+
+(defun hsys-org-roam-agenda-tags ()
+  "When on an `org-roam-directory' tag, use `hsys-org-roam-tags-view' to list tag matches.
+If on a colon, match to sections with all tags around point;
+otherwise, just match to the single tag around point."
+  (interactive)
+  (hsys-org-get-agenda-tags #'hsys-org-roam-tags-view))
+
+;;;###autoload
+(defun hsys-org-tags-view (&optional todo-only match view-buffer-name)
+  "Prompt for colon-separated Org tags and display matching Org headlines.
+With optional prefix arg TODO-ONLY, limit matches to Org todo
+items only.  With optional VIEW-BUFFER-NAME, use that rather than
+the default, \"*Org Tags*\"."
+  (interactive "P")
+  (require 'org-agenda)
+  (let* ((org-agenda-files (list org-directory))
+	 (org-agenda-buffer-name (or view-buffer-name "*Org Tags*"))
+	 ;; `org-tags-view' is mis-written to require setting this next
+	 ;; tmp-name or it will not properly name the displayed buffer.
+	 (org-agenda-buffer-tmp-name org-agenda-buffer-name))
+    ;; This prompts for the tags to match and uses `org-agenda-files'.
+    (org-tags-view todo-only match)
+    (when (equal (buffer-name) org-agenda-buffer-name)
+      ;; Set up {C-u r} redo cmd
+      (let (buffer-read-only)
+	(put-text-property (point-min) (point-max) 'org-redo-cmd
+			   `(hsys-org-tags-view
+			       ,todo-only
+			       nil
+			       ,org-agenda-buffer-name)))
+      (forward-line 2))))
 
 ;;;###autoload
 (defun hsys-org-fix-version ()
@@ -276,24 +337,28 @@ Return t if Org is reloaded, else nil."
 Do nothing if called outside of `org-mode'."
   (interactive "P")
   (when (apply #'derived-mode-p '(org-mode))
-    (if current-prefix-arg
+    (when buffer-read-only
+      (error "(hsys-org-meta-return): \"%s\" must not be read-only; toggle with {%s}"
+	     (buffer-name)
+	     (key-description (car (where-is-internal #'read-only-mode)))))
+   (if current-prefix-arg
 	(org-meta-return (prefix-numeric-value current-prefix-arg))
       (org-meta-return))))
 
 ;;;###autoload
-(defun hsys-org-consult-grep ()
-  "Prompt for search terms and run consult grep over `org-directory'.
-Actual grep function used is given by the variable,
-`hsys-org-consult-grep-func'."
-  (interactive)
-  (require 'org)
-  (let ((grep-func (when (and (boundp 'hsys-org-consult-grep-func)
-			      (fboundp hsys-org-consult-grep-func))
-		     hsys-org-consult-grep-func)))
-    (if grep-func
-	(funcall grep-func org-directory)
-      (error "(hsys-org-consult-grep): `%s' is an invalid function"
-	     hsys-org-consult-grep-func))))
+(defun hsys-org-consult-grep (&optional regexp max-matches path-list)
+  "Interactively search `org-directory' with a consult package grep command.
+Search for optional REGEXP up to MAX-MATCHES in PATH-LIST or `org-directory'.
+
+Use ripgrep (rg) if found, otherwise, plain grep.  Initialize search with
+optional REGEXP and interactively prompt for changes.  Limit matches
+per file to the absolute value of MAX-MATCHES, if given and not 0.  If
+0, match to headlines only (lines that start with a '^[*#]+[ \t]+' regexp)."
+  (interactive "i\nP")
+  (let* ((grep-includes "--include *.org")
+	 (ripgrep-globs "--glob *.org"))
+    (hsys-consult-grep grep-includes ripgrep-globs
+		       regexp max-matches (or path-list (list org-directory)))))
 
 ;;;###autoload
 (defun hsys-org-mode-p ()
@@ -323,12 +388,25 @@ Actual grep function used is given by the variable,
 				      :tags
 				      :todo-keyword))))))))
 
+(defun hsys-org-at-tags-p ()
+  "Return non-nil if point is within a fontified set of Org tags."
+  (hproperty:char-property-contains-p (point) 'face 'org-tag))
+
 (defun hsys-org-cycle ()
   "Call `org-cycle' and set as `this-command' to cycle through all states."
   (setq this-command 'org-cycle)
   (save-excursion
     (org-back-to-heading)
     (org-cycle)))
+
+(defun hsys-org-directory-at-tags-p (&optional at-tag-flag)
+  "Return non-nil if point is in an `org-directory' buffer and at Org tags."
+  (and (featurep 'org)
+       (or at-tag-flag (hsys-org-at-tags-p))
+       (or (and buffer-file-name
+		(string-prefix-p (expand-file-name org-directory)
+				 buffer-file-name))
+	   (string-prefix-p "*Org Agenda*" (buffer-name)))))
 
 (defun hsys-org-get-value (attribute)
   "Within the current Org context, return the ATTRIBUTE value."
@@ -568,6 +646,27 @@ TARGET must be a string."
 ;;; ************************************************************************
 ;;; Private functions
 ;;; ************************************************************************
+
+(defun hsys-org--agenda-tags-string ()
+  "When on or between Org tags, return an agenda match string for them.
+If on a colon, match to headlines with all tags around point, in any order.
+e.g. \":tag1: :tag2: :tag3: \".  Otherwise, just match to the single
+tag around point."
+  (let (range
+	tags)
+    (if (equal (char-after) ?:)
+	;;  On colon, search for HyWiki headings with all tags on line
+	(setq range (hproperty:char-property-range nil 'face 'org-tag)
+	      tags (when range (buffer-substring-no-properties (car range) (cdr range))))
+      ;;   Else on a specific tag, search for HyWiki headings with that tag only
+      (setq range (hargs:delimited ":" ":" nil nil t)
+	    tags (nth 0 range)
+	    range (cons (nth 1 range) (nth 2 range))))
+    (when (and tags range)
+      (ibut:label-set tags (car range) (cdr range))
+      (concat ":" (string-join (mapcar (lambda (tag) (regexp-quote tag))
+				       (split-string tags ":" t))
+			       ":")))))
 
 (defun hsys-org--set-fold-style ()
   "Set `org-fold-core-style' to \\='overlays for `reveal-mode' compatibility.

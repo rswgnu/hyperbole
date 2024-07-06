@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     30-Jun-24 at 12:04:15 by Bob Weiner
+@c Last-Mod:      6-Jul-24 at 00:42:11 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -25,8 +25,8 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED June, 2024
-@set UPDATED-MONTH June 2024
+@set UPDATED July, 2024
+@set UPDATED-MONTH July 2024
 @set EDITION 9.0.2pre
 @set VERSION 9.0.2pre
 
@@ -159,7 +159,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed June 30, 2024.
+Printed July 6, 2024.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -201,7 +201,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.2pre
-June 30, 2024
+July 6, 2024
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -2281,6 +2281,7 @@ by any number of :, - or = separator characters, including none.
 
 @cindex ibtypes, list of
 @cindex implicit button types
+@vindex file, hibtypes.el
 Below is a list of standard implicit button types in the order in
 which Hyperbole tries to match to the types when looking for an
 implicit button (decreasing priority order).  @bkbd{C-h h i t
@@ -2301,6 +2302,9 @@ priority).
 @findex org-meta-return
 @findex hsys-org-mode-p
 @vindex file, hsys-org.el
+@cindex smart org
+@cindex Action Key, Org Mode
+@cindex Assist Key, Org Mode
 @item smart-org
 @code{smart-org} is not an actual implicit button type, just an Elisp function,
 but it behaves similarly, so it is documented here.
@@ -2309,17 +2313,31 @@ Hyperbole recognizes Org mode constructs in any of these modes:
 @code{org-mode}, @code{org-agenda-mode}, @code{outshine-mode}
 or @code{poporg-mode}.  (See the function @code{hsys-org-mode-p}).
 
+@vindex hsys-org-enable-smart-keys
 @noindent
 Hyperbole does quite a few things for Org mode users.  When the Action
-Key is pressed:
+Key is pressed and @code{hsys-org-enable-smart-keys} is @samp{t}:
 
 @enumerate
+@cindex org view tags
+@cindex org tags
+@findex hsys-org-agenda-tags-p
 @item
-If on an Org todo keyword, cycle through the keywords in
+On an Org tag, call @code{hsys-org-agenda-tags-p} and an
+appropriate view tags function based on current directory or buffer
+name, matching to the tag.  If on a colon between tags, match to all
+tags on the line.
+
+@item
+On an Org todo keyword, cycle through the keywords in
 that set or if final done keyword, remove it.
 
 @item
-If on an Org agenda view item, jump to the item for editing.
+On an Org agenda view item, jump to the item for editing.
+
+@noindent
+When the Action Key is pressed and @code{hsys-org-enable-smart-keys}
+is either @samp{t} or @samp{'buttons}:
 
 @item
 Within a radio or internal target or a link to it, jump between
@@ -2357,6 +2375,15 @@ When the Assist Key is pressed, it behaves just like the Action Key
 except in these contexts:
 
 @enumerate
+@cindex org tags, consult grep
+@cindex consult grep org tags
+@findex hsys-consult-org-grep-tags-p
+@item
+On an Org tag, call @code{hsys-consult-org-grep-tags-p} and an
+appropriate consult grep function based on current directory or buffer
+name, prompting with and matching to the tag.  If on a colon between
+tags, prompt and match to all tags on the line.
+
 @item
 On an Org todo keyword, move to the first todo keyword in the next
 set, if any.
@@ -7631,13 +7658,14 @@ An Emacs extension package that provides asynchronous search and narrow
 wrappers around common search commands like grep, ripgrep, find and
 locate.
 
-Hyperbole uses this package to provide convenience commands for line-oriented searches.
+Hyperbole uses this package to provide convenience commands for interactive,
+line-oriented searches.
 @table @kbd
 @item @{M-x hsys-org-roam-consult-grep @key{RET}@}
-Searches Org Roam notes in @code{org-roam-directory} with consult.
+Interactively searches Org Roam notes in @code{org-roam-directory} with consult.
 
 @item @{M-x hsys-org-consult-grep @key{RET}@}
-Searches Org notes in @code{org-directory} with consult.
+Interactively searches Org notes in @code{org-directory} with consult.
 @end table
 
 @item Context
