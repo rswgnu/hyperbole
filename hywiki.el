@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     29-Jun-24 at 18:56:47 by Bob Weiner
+;; Last-Mod:      6-Jul-24 at 00:05:17 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -106,7 +106,9 @@
 (require 'hpath)
 (require 'hypb)
 (require 'hproperty)
+(require 'hsys-consult)
 (require 'outline)    ;; For `outline-mode-syntax-table'
+(require 'thingatpt)
 
 (eval-and-compile
   '(when (require 'company nil t)
@@ -470,15 +472,25 @@ nil, else return the file name of the page."
 	    (goto-char (if start-flag (point-min) (point-max)))
 	    page-file))))))
 
+(defun hywiki-at-tags-p (&optional at-tag-flag)
+  "Return non-nil if point is in a HyWiki buffer and at Org tags."
+  (and (or at-tag-flag (hsys-org-at-tags-p))
+       (or (hywiki-in-page-p) (string-prefix-p "*HyWiki Tags*" (buffer-name)))))
+
 ;;;###autoload
-(defun hywiki-consult-grep ()
-  "Prompt for search terms and run consult grep over `hywiki-directory'.
-Actual grep function used is given by the variable,
-`hsys-org-consult-grep-func'."
-  (interactive)
-  (require 'hsys-org)
-  (let ((org-directory hywiki-directory))
-    (hsys-org-consult-grep)))
+(defun hywiki-consult-grep (&optional regexp max-matches path-list)
+  "Interactively search `hywiki-directory' with a consult package grep command.
+Search for optional REGEXP up to MAX-MATCHES in PATH-LIST or `hywiki-directory'.
+
+Use ripgrep (rg) if found, otherwise, plain grep.  Initialize search with
+optional REGEXP and interactively prompt for changes.  Limit matches
+per file to the absolute value of MAX-MATCHES, if given and not 0.  If
+0, match to headlines only (lines that start with a '^[*#]+[ \t]+' regexp)."
+  (interactive "i\nP")
+  (let* ((grep-includes "--include *.org")
+	 (ripgrep-globs "--glob *.org"))
+    (hsys-consult-grep grep-includes ripgrep-globs
+		       regexp max-matches (or path-list (list hywiki-directory)))))
 
 (defun hywiki-maybe-at-wikiword-beginning ()
   "Return non-nil if previous character is one preceding a HyWiki word.
@@ -557,26 +569,27 @@ interactively), limit dehighlighting to the region."
       (/= hywiki--directory-mod-time (hywiki-directory-get-mod-time))))
 
 ;;;###autoload
-(defun hywiki-grep-tags (&optional todo-only grep-buffer-name)
+(defun hywiki-tags-view (&optional todo-only match view-buffer-name)
   "Prompt for colon-separated Org tags and display matching HyWiki page sections.
 With optional prefix arg TODO-ONLY, limit matches to HyWiki Org
-todo items only.  With optional GREP-BUFFER-NAME, use that rather
+todo items only.  With optional VIEW-BUFFER-NAME, use that rather
 than the default, \"*HyWiki Tags*\"."
   (interactive "P")
   (require 'org-agenda)
   (let* ((org-agenda-files (list hywiki-directory))
-	 (org-agenda-buffer-name (or grep-buffer-name "*HyWiki Tags*"))
+	 (org-agenda-buffer-name (or view-buffer-name "*HyWiki Tags*"))
 	 ;; `org-tags-view' is mis-written to require setting this next
 	 ;; tmp-name or it will not properly name the displayed buffer.
 	 (org-agenda-buffer-tmp-name org-agenda-buffer-name))
     ;; This prompts for the tags to match and uses `org-agenda-files'.
-    (org-tags-view todo-only)
+    (org-tags-view todo-only match)
     (when (equal (buffer-name) org-agenda-buffer-name)
       ;; Set up {C-u r} redo cmd
       (let (buffer-read-only)
 	(put-text-property (point-min) (point-max) 'org-redo-cmd
-			   `(hywiki-grep-tags
+			   `(hywiki-tags-view
 			       ,todo-only
+			       nil
 			       ,org-agenda-buffer-name)))
       (forward-line 2))))
 
@@ -1035,3 +1048,5 @@ Highlight/dehighlight HyWiki page names across all frames on change."
 	     #'hywiki-maybe-highlight-page-names-in-frame nil 'eq)
 
 (provide 'hywiki)
+
+;;; hywiki.el ends here

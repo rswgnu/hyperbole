@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:      2-Jun-24 at 11:40:22 by Bob Weiner
+;; Last-Mod:      6-Jul-24 at 00:38:17 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1801,54 +1801,67 @@ On Action Key press, invoke Agenda's <return> key binding, typically
   "Follow Org mode references, cycle outline visibility and execute code blocks.
 Active when `hsys-org-enable-smart-keys' is non-nil,
 
-When the Action Key is pressed:
+When the Action Key is pressed and `hsys-org-enable-smart-keys' is t:
 
-  1. On an Org todo keyword, cycle through the keywords in that
+  1. On an Org tag, call `hsys-org-agenda-tags-p' and an
+     appropriate view tags function based on current directory or
+     buffer name, matching to the tag.  If on a colon between
+     tags, match to all tags on the line.
+
+  2. On an Org todo keyword, cycle through the keywords in that
      set or if final done keyword, remove it.
 
-  2. On an Org agenda view item, jump to the item for editing.
+  3. On an Org agenda view item, jump to the item for editing.
 
-  3. Within a radio or internal target or a link to it, jump between
+When the Action Key is pressed and `hsys-org-enable-smart-keys' is
+either t or 'buttons:
+
+  4. Within a radio or internal target or a link to it, jump between
      the target and the first link to it, allowing two-way navigation.
 
-  4. On another internal link in an Org mode file, jump to its referent.
+  5. On another internal link in an Org mode file, jump to its referent.
 
-  5. On an Org mode external link, jump to its referent.
+  6. On an Org mode external link, jump to its referent.
 
-  6. On a Hyperbole button, activate the button.
+  7. On a Hyperbole button, activate the button.
 
-  7. With point on the :dir path of a code block definition, display the
+  8. With point on the :dir path of a code block definition, display the
      directory given by the path.
 
-  8. With point on any #+BEGIN_SRC, #+END_SRC, #+RESULTS, #+begin_example
+  9. With point on any #+BEGIN_SRC, #+END_SRC, #+RESULTS, #+begin_example
      or #+end_example header, execute the code block via the Org mode
      standard binding of {\\`C-c' \\`C-c'}, (org-ctrl-c-ctrl-c).
   
-  9. With point on an Org mode heading, cycle the view of the subtree at
+ 10. With point on an Org mode heading, cycle the view of the subtree at
      point.
 
-  10. In any other context besides the end of a line, invoke the Org mode
-      standard binding of {M-RET}, (org-meta-return).
+ 11. In any other context besides the end of a line, invoke the Org mode
+     standard binding of {M-RET}, (org-meta-return).
 
 When the Assist Key is pressed, it behaves just like the Action Key except
 in these contexts:
 
-  1. On an Org todo keyword, move to the first todo keyword in the next
+  1. On an Org tag, call `hsys-consult-org-grep-tags-p' and an
+     appropriate consult grep function based on current directory
+     or buffer name, prompting with and matching to the tag.  If on a
+     colon between tags, prompt and match to all tags on the line.
+
+  2. On an Org todo keyword, move to the first todo keyword in the next
      set, if any.
 
-  2. On an Org mode link or agenda view item, display Hyperbole
+  3. On an Org mode link or agenda view item, display Hyperbole
      context-sensitive help.
 
-  3. On a Hyperbole button, perform the Assist Key function, generally
+  4. On a Hyperbole button, perform the Assist Key function, generally
      showing help for the button.
 
-  4. With point on the :dir value of a code block definition, display
+  5. With point on the :dir value of a code block definition, display
      a help summary of this implicit directory button.
 
-  5. With point on any #+BEGIN_SRC, #+END_SRC, #+RESULTS, #+begin_example
+  6. With point on any #+BEGIN_SRC, #+END_SRC, #+RESULTS, #+begin_example
      or #+end_example header, remove source block results.
 
-  6. Not on a Hyperbole button but on an Org mode heading, cycle
+  7. Not on a Hyperbole button but on an Org mode heading, cycle
      through views of the whole buffer outline.
 
 To disable ALL Hyperbole support within Org major and minor modes, set the
@@ -1865,7 +1878,12 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
 	     ;; Ignore any further Smart Key non-Org contexts
 	     t)
 	    ((eq hsys-org-enable-smart-keys t)
-	     (cond ((or (hsys-org-todo-at-p)
+	     (cond ((setq hkey-value
+			  (if (not assist-flag)
+			      (hsys-org-agenda-tags-p)
+			    (hsys-consult-org-grep-tags-p)))
+		    (hact hkey-value))
+		   ((or (hsys-org-todo-at-p)
 			(eq last-command #'org-todo))
 		    (if (not assist-flag)
 			(hact 'hsys-org-todo-cycle)
