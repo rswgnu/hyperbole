@@ -1,3 +1,8 @@
+2024-07-07  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (HYPB_ERT_INTERACTIVE): New macro for supplying the test
+    specifier as given by the command line test to the all-tests target.
+
 2024-07-06  Bob Weiner  <rsw@gnu.org>
 
 * hibtypes.el (org-id): Fix bug in older versions of Org where where
