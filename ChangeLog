@@ -1,5 +1,10 @@
 2024-07-07  Bob Weiner  <rsw@gnu.org>
 
+* hywiki.el (hywiki-word-highlight-flag-changed): Ensure highlighting via
+    'window-buffer-change-functions' is properly reset when toggling this flag.
+    Also ensure highlighting/dehighlighting of HyWikiWords.  Remove separate
+    setting of this functions variable since this function is called on load.
+
 * hpath.el  (hpath:expand-list): Change 3rd arg from 'exists-flag' to 'filter',
     a predicate function that allows filtering the list of returned paths,
     e.g. 'file-readable-p'.  It t is sent, then file 'file-exists-p' is used.

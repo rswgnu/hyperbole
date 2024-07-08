@@ -1005,6 +1005,8 @@ Highlight/dehighlight HyWiki page names across all frames on change."
 	;; enabled
 	(progn (add-hook 'post-self-insert-hook 'hywiki-buttonize-character-commands)
 	       (add-hook 'post-command-hook     'hywiki-buttonize-non-character-commands 95)
+	       (add-hook 'window-buffer-change-functions
+			 'hywiki-maybe-highlight-page-names-in-frame)
 	       (add-to-list 'yank-handled-properties
 			    '(hywiki-word-face . hywiki-highlight-on-yank))
 	       (hywiki-maybe-highlight-page-names-in-frame t))
@@ -1012,6 +1014,9 @@ Highlight/dehighlight HyWiki page names across all frames on change."
       (remove-hook 'post-self-insert-hook 'hywiki-buttonize-character-commands)
       (remove-hook 'post-command-hook     'hywiki-buttonize-non-character-commands)
       (hywiki-mode 0) ;; also dehighlights HyWiki words outside of HyWiki pages
+      (remove-hook 'window-buffer-change-functions
+		   'hywiki-maybe-highlight-page-names-in-frame)
+      (hywiki-maybe-highlight-page-names-in-frame t)
       (setq yank-handled-properties
 	    (delete '(hywiki-word-face . hywiki-highlight-on-yank)
 		    yank-handled-properties)))))
@@ -1042,9 +1047,6 @@ Highlight/dehighlight HyWiki page names across all frames on change."
 ;; Sets HyWiki page auto-HyWikiWord highlighting and `yank-handled-properties'
 (hywiki-word-highlight-flag-changed 'hywiki-word-highlight-flag
 				    hywiki-word-highlight-flag 'set nil)
-
-(add-to-list 'window-buffer-change-functions
-	     #'hywiki-maybe-highlight-page-names-in-frame nil 'eq)
 
 (provide 'hywiki)
 
