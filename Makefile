@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:      4-Jul-24 at 11:26:09 by Bob Weiner
+# Last-Mod:      7-Jul-24 at 22:21:42 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -504,8 +504,10 @@ LOAD_TEST_ERT_FILES=$(patsubst %,(load-file \"%\"),${TEST_ERT_FILES})
 # tests specified by the selector. See "(ert)test selectors"
 ifeq ($(origin test), command line)
 HYPB_ERT_BATCH = (ert-run-tests-batch-and-exit \"${test}\")
+HYPB_ERT_INTERACTIVE = (ert-run-tests-interactively \"${test}\")
 else
 HYPB_ERT_BATCH = (ert-run-tests-batch-and-exit)
+HYPB_ERT_INTERACTIVE = (ert-run-tests-interactively t)
 endif
 
 # For full backtrace run make test FULL_BT=<anything or even empty>
@@ -531,14 +533,14 @@ test-all:
 ifeq ($(TERM), dumb)
 ifneq (,$(findstring .apple.,$(DISPLAY)))
         # Found, on MacOS
-	TERM=xterm-256color $(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ((auto-save-default)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"
+	TERM=xterm-256color $(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ((auto-save-default)) $(LOAD_TEST_ERT_FILES) $(HYPB_ERT_INTERACTIVE))"
 else
         # Not found, set TERM so tests will at least run within parent Emacs session
-	TERM=vt100 $(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ($(LET_VARIABLES)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"
+	TERM=vt100 $(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ($(LET_VARIABLES)) $(LOAD_TEST_ERT_FILES) $(HYPB_ERT_INTERACTIVE))"
 endif
 else
         # Typical case, run emacs normally
-	$(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ($(LET_VARIABLES)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-interactively t))"
+	$(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ($(LET_VARIABLES)) $(LOAD_TEST_ERT_FILES) $(HYPB_ERT_INTERACTIVE))"
 endif
 
 test-all-output:
