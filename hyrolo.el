@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      4-Jul-24 at 13:40:35 by Bob Weiner
+;; Last-Mod:      7-Jul-24 at 21:47:43 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -516,6 +516,21 @@ entry which begins with the parent string."
       (when (called-interactively-p 'interactive)
 	(message "Edit entry at point.")))))
 
+(defun hyrolo-at-tags-p (&optional at-tag-flag)
+  "Return non-nil if point is in a HyRolo buffer and at Org tags."
+  (and (or at-tag-flag (hsys-org-at-tags-p)
+	   ;; Non-highlighted Org tags in `hyrolo-display-buffer'
+	   (and (save-excursion
+		  (beginning-of-line)
+		  (looking-at org-tag-line-re))
+		(>= (point) (match-beginning 1))
+		(< (point) (match-end 1))))
+       (or (string-prefix-p "*HyRolo" (buffer-name))
+	   (and buffer-file-name
+		(apply #'derived-mode-p '(org-mode org-agenda-mode))
+		(member buffer-file-name (hyrolo-get-file-list))
+		t))))
+
 ;;;###autoload
 (defun hyrolo-consult-grep (&optional regexp max-matches path-list)
   "Interactively search paths with a consult package grep command.
@@ -650,7 +665,8 @@ Return entry name, if any, otherwise, trigger an error."
 
 (defun hyrolo-expand-path-list (paths)
   "Expand and return non-nil PATHS's dirs, file variables and file wildcards.
-If PATHS is nil, return a default set of hyrolo files to use.
+Return only existing, readable files.  If PATHS is nil, return a
+default set of hyrolo files to use.
 
 Single ${env-or-lisp-variable} references are resolved within
 each path using `hpath:expand'; this also expands paths to
@@ -660,7 +676,7 @@ they contain that match `hyrolo-file-suffix-regexp'.  Then, if
 containing [char-matches] or * wildcards are expanded to their
 matches."
   (if paths
-      (hpath:expand-list paths hyrolo-file-suffix-regexp t)
+      (hpath:expand-list paths hyrolo-file-suffix-regexp #'file-readable-p)
     (delq nil
 	  (list "~/.rolo.otl"
 		(if (and (boundp 'bbdb-file) (stringp bbdb-file)) bbdb-file)
@@ -1376,6 +1392,31 @@ the sort order."
 	(sort-subr reverse #'hyrolo-forward-visible-line #'end-of-visible-line)))))
 
 ;;;###autoload
+(defun hyrolo-tags-view (&optional todo-only match view-buffer-name)
+  "Prompt for colon-separated Org tags and display matching HyRolo sections.
+With optional prefix arg TODO-ONLY, limit matches to HyRolo Org
+todo items only.  With optional VIEW-BUFFER-NAME, use that rather
+than the default, \"*HyRolo Tags*\"."
+  (interactive "P")
+  (require 'org-agenda)
+  (let* ((org-agenda-files (hyrolo-get-file-list))
+	 (org-agenda-buffer-name (or view-buffer-name "*HyRolo Tags*"))
+	 ;; `org-tags-view' is mis-written to require setting this next
+	 ;; tmp-name or it will not properly name the displayed buffer.
+	 (org-agenda-buffer-tmp-name org-agenda-buffer-name))
+    ;; This prompts for the tags to match and uses `org-agenda-files'.
+    (org-tags-view todo-only match)
+    (when (equal (buffer-name) org-agenda-buffer-name)
+      ;; Set up {C-u r} redo cmd
+      (let (buffer-read-only)
+	(put-text-property (point-min) (point-max) 'org-redo-cmd
+			   `(hyrolo-tags-view
+			       ,todo-only
+			       nil
+			       ,org-agenda-buffer-name)))
+      (forward-line 2))))
+
+;;;###autoload
 (defun hyrolo-toggle-datestamps (&optional arg)
   "Toggle whether datestamps are updated when rolo entries are modified.
 With optional ARG, turn them on iff ARG is positive."
@@ -1386,7 +1427,7 @@ With optional ARG, turn them on iff ARG is positive."
 	       (memq 'hyrolo-set-date hyrolo-add-hook)))
       (progn (remove-hook 'hyrolo-add-hook #'hyrolo-set-date)
 	     (remove-hook 'hyrolo-edit-hook #'hyrolo-edit-date)
-	     (message "Rolo date stamps are now off."))
+	     (message "HyRolo date stamps are now off."))
     (add-hook 'hyrolo-add-hook  #'hyrolo-set-date)
     (add-hook 'hyrolo-edit-hook #'hyrolo-edit-date)
     (message "HyRolo date stamps are now on.")))
@@ -1415,11 +1456,12 @@ matched entries."
 
 (defun hyrolo-verify ()
   "Verify point is in a HyRolo match buffer."
-  (when (not (member (buffer-name) (nconc (list hyrolo-display-buffer
-						(and (car (hyrolo-get-file-list))
-						     (file-name-nondirectory (car (hyrolo-get-file-list)))))
-					  (mapcar #'file-name-nondirectory
-						  (hpath:expand-list hsys-org-cycle-bob-file-list)))))
+  (when (not (member (buffer-name)
+		     (nconc (list hyrolo-display-buffer
+				  (and (car (hyrolo-get-file-list))
+				       (file-name-nondirectory (car (hyrolo-get-file-list)))))
+			    (mapcar #'file-name-nondirectory
+				    (hpath:expand-list hsys-org-cycle-bob-file-list)))))
     (error "(HyRolo): Use this command in HyRolo match buffers or primary file buffers")))
 
 (defun hyrolo-widen ()

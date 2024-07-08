@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-23 at 11:20:15 by Bob Weiner
-;; Last-Mod:      6-Jul-24 at 00:11:29 by Bob Weiner
+;; Last-Mod:      7-Jul-24 at 17:04:57 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -46,9 +46,7 @@
 Actual grep function used is given by the variable,
 `consult-org-roam-grep-func'."
   (interactive)
-  (unless (package-installed-p 'consult-org-roam)
-    (package-install 'consult-org-roam))
-  (require 'consult-org-roam)
+  (hypb:require-package 'consult-org-roam)
   (let ((grep-func (when (and (boundp 'consult-org-roam-grep-func)
 			      (fboundp consult-org-roam-grep-func))
 		     consult-org-roam-grep-func)))
@@ -73,9 +71,7 @@ todo items only.  With optional VIEW-BUFFER-NAME, use that rather
 than the default, \"*Org Roam Tags*\"."
   (interactive "P")
   (require 'org-agenda)
-  (unless (package-installed-p 'org-roam)
-    (package-install 'org-roam))
-  (require 'org-roam)
+  (hypb:require-package 'org-roam)
   (let* ((org-agenda-files (list org-roam-directory))
 	 (org-agenda-buffer-name (or view-buffer-name "*Org Roam Tags*"))
 	 ;; `org-tags-view' is mis-written to require setting this next

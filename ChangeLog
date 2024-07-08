@@ -1,3 +1,30 @@
+2024-07-07  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (elisp-compiler-msg): Fix to handle both of these cases:
+  skipped  13/15  hywiki-tests--no-face-property-for-no-wikipage (0.000121 sec)
+  SKIPPED  hywiki-tests--face-property-for-wikiword-with-wikipage
+
+* hywiki.el (hywiki-word-highlight-flag-changed): Ensure highlighting via
+    'window-buffer-change-functions' is properly reset when toggling this flag.
+    Also ensure highlighting/dehighlighting of HyWikiWords.  Remove separate
+    setting of this functions variable since this function is called on load.
+
+* hpath.el  (hpath:expand-list): Change 3rd arg from 'exists-flag' to 'filter',
+    a predicate function that allows filtering the list of returned paths,
+    e.g. 'file-readable-p'.  It t is sent, then file 'file-exists-p' is used.
+  hyrolo.el (hyrolo-expand-path-list): Update to return only readable files.
+            (hyrolo-at-tags-p): Add to test if point is within HyRolo Org tags.
+	    (hyrolo-tags-view): Add to display HyRolo Org tags using Agenda search.
+  hsys-org.el (hsys-org-hyrolo-agenda-tags): Add.
+              (hsys-org-agenda-tags-p): Add calls to above new functions.
+  hsys-consult.el (hsys-consult-hyrolo-grep-tags): Add.
+                  (hsys-consult-org-grep-tags-p): Add calls to above new functions.
+
+* hsys-org-roam.el (hsys-org-roam-tags-view, hsys-org-roam-consult-grep): Prompt
+    whether to install needed package when not yet installed.
+
+* hbut.el (ibut:create): Improve messages and traceback generation on ibtype error.
+
 2024-07-07  Mats Lidell  <matsl@gnu.org>
 
 * .github/workflows/main.yml (jobs): Use update 29 to 29.4 in CI workflow.

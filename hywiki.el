@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:      6-Jul-24 at 00:05:17 by Bob Weiner
+;; Last-Mod:      7-Jul-24 at 23:15:29 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -564,7 +564,6 @@ interactively), limit dehighlighting to the region."
 
 (defun hywiki-directory-modified-p ()
   "Return non-nil if `hywiki-directory' has been modified since last read."
-
   (or (zerop hywiki--directory-mod-time)
       (/= hywiki--directory-mod-time (hywiki-directory-get-mod-time))))
 
@@ -1006,6 +1005,8 @@ Highlight/dehighlight HyWiki page names across all frames on change."
 	;; enabled
 	(progn (add-hook 'post-self-insert-hook 'hywiki-buttonize-character-commands)
 	       (add-hook 'post-command-hook     'hywiki-buttonize-non-character-commands 95)
+	       (add-hook 'window-buffer-change-functions
+			 'hywiki-maybe-highlight-page-names-in-frame)
 	       (add-to-list 'yank-handled-properties
 			    '(hywiki-word-face . hywiki-highlight-on-yank))
 	       (hywiki-maybe-highlight-page-names-in-frame t))
@@ -1013,6 +1014,9 @@ Highlight/dehighlight HyWiki page names across all frames on change."
       (remove-hook 'post-self-insert-hook 'hywiki-buttonize-character-commands)
       (remove-hook 'post-command-hook     'hywiki-buttonize-non-character-commands)
       (hywiki-mode 0) ;; also dehighlights HyWiki words outside of HyWiki pages
+      (remove-hook 'window-buffer-change-functions
+		   'hywiki-maybe-highlight-page-names-in-frame)
+      (hywiki-maybe-highlight-page-names-in-frame t)
       (setq yank-handled-properties
 	    (delete '(hywiki-word-face . hywiki-highlight-on-yank)
 		    yank-handled-properties)))))
@@ -1043,9 +1047,6 @@ Highlight/dehighlight HyWiki page names across all frames on change."
 ;; Sets HyWiki page auto-HyWikiWord highlighting and `yank-handled-properties'
 (hywiki-word-highlight-flag-changed 'hywiki-word-highlight-flag
 				    hywiki-word-highlight-flag 'set nil)
-
-(add-to-list 'window-buffer-change-functions
-	     #'hywiki-maybe-highlight-page-names-in-frame nil 'eq)
 
 (provide 'hywiki)
 

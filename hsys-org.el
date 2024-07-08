@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:      6-Jul-24 at 00:25:11 by Bob Weiner
+;; Last-Mod:      7-Jul-24 at 21:52:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -163,7 +163,9 @@ call."
 	  ((hsys-org-roam-directory-at-tags-p t)
 	   #'hsys-org-roam-agenda-tags)
 	  ((hywiki-at-tags-p t)
-	   #'hsys-org-hywiki-agenda-tags))))
+	   #'hsys-org-hywiki-agenda-tags)
+	  ((hyrolo-at-tags-p t)
+	   #'hsys-org-hyrolo-agenda-tags))))
 
 (defun hsys-org-get-agenda-tags (org-consult-agenda-function)
   "When on an Org tag, call ORG-CONSULT-AGENDA-FUNCTION to find matches.
@@ -176,6 +178,13 @@ max-count which finds all matches within headlines only."
   (interactive)
   (when (hsys-org-at-tags-p)
     (funcall org-consult-agenda-function nil (hsys-org--agenda-tags-string))))
+
+(defun hsys-org-hyrolo-agenda-tags ()
+  "When on a HyRolo tag, use `hyrolo-tags-view' to list all HyRolo tag matches.
+If on a colon, match to sections with all tags around point;
+otherwise, just match to the single tag around point."
+  (interactive)
+  (hsys-org-get-agenda-tags #'hyrolo-tags-view))
 
 (defun hsys-org-hywiki-agenda-tags ()
   "When on a HyWiki tag, use `hywiki-tags-view' to list all HyWiki tag matches.
