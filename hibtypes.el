@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      6-Jul-24 at 01:43:04 by Bob Weiner
+;; Last-Mod:      7-Jul-24 at 23:38:46 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1180,13 +1180,13 @@ This works when activated anywhere within file line references."
             (save-excursion
               (and (re-search-backward "^[^ \t\n\r]" nil t)
                    (looking-at "While compiling\\|In \\([^ \n]+\\):$"))))
-    (let (src buffer-p label start-end
-	  lbl-start-end)
+    (let ((case-fold-search t)
+	  src buffer-p label start-end lbl-start-end)
       (or
        ;; Emacs Regression Test (ERT) output lines
        (when (or (save-excursion
 		   (forward-line 0)
-		   (or (looking-at "\\s-+\\(passed\\|failed\\|skipped\\)\\s-+[0-9]+/[0-9]+\\s-+\\(\\S-+\\)\\s-+(")
+		   (or (looking-at "\\s-+\\(passed\\|failed\\|skipped\\)\\s-+\\(?:[0-9]+/[0-9]+\\s-+\\)\\(\\S-+\\)")
 		       (looking-at "\\(Test\\)\\s-+\\(\\S-+\\)\\s-+\\(backtrace\\|condition\\):")))
 		 ;; Handle symbols and pathnames in a backtrace from an ERT test exception
 		 (save-match-data
