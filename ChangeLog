@@ -14,6 +14,8 @@
 * hsys-org-roam.el (hsys-org-roam-tags-view, hsys-org-roam-consult-grep): Prompt
     whether to install needed package when not yet installed.
 
+* hbut.el (ibut:create): Improve messages and traceback generation on ibtype error.
+
 2024-07-06  Bob Weiner  <rsw@gnu.org>
 
 * hibtypes.el (org-id): Fix bug in older versions of Org where where
