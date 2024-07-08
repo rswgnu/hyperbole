@@ -1,5 +1,7 @@
 2024-07-07  Mats Lidell  <matsl@gnu.org>
 
+* .github/workflows/main.yml (jobs): Use update 29 to 29.4 in CI workflow.
+
 * Makefile (HYPB_ERT_INTERACTIVE): New macro for supplying the test
     specifier as given by the command line test to the all-tests target.
 
