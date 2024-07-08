@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:      6-Jul-24 at 00:05:17 by Bob Weiner
+;; Last-Mod:      7-Jul-24 at 23:15:29 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -564,7 +564,6 @@ interactively), limit dehighlighting to the region."
 
 (defun hywiki-directory-modified-p ()
   "Return non-nil if `hywiki-directory' has been modified since last read."
-
   (or (zerop hywiki--directory-mod-time)
       (/= hywiki--directory-mod-time (hywiki-directory-get-mod-time))))
 

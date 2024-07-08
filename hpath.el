@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     30-Jun-24 at 17:09:25 by Bob Weiner
+;; Last-Mod:      7-Jul-24 at 18:08:36 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1264,31 +1264,39 @@ only if it exists, otherwise, return nil."
 	(unless exists-flag
 	  path)))))
 
-(defun hpath:expand-list (paths &optional match-regexp exists-flag)
+(defun hpath:expand-list (paths &optional match-regexp filter)
   "Return expansions of PATHS, a list of dirs or wildcarded file patterns.
 PATHS expansion recursively walks directory trees to include
 files with names matching optional MATCH-REGEXP (otherwise, all
-files), filters out non-strings and non-existent filenames when
-optional EXISTS-FLAG is non-nil, expands file wildcards when
+files), filters out non-strings and any filenames not matching the
+optional predicate FILTER, expands file wildcards when
 `find-file-wildcards' is non-nil (the default), substitutes for
 multiple $var environment variables, and substitutes up to one
 ${variable} per path."
-  (mapcan (lambda (path)
-	    (setq path (hpath:expand path exists-flag))
-	    (when (setq path (or (when (and path find-file-wildcards)
-				   (file-expand-wildcards path))
-				 (if exists-flag
-				     (when (and path (file-exists-p path))
-				       (list path))
-				   (list path))))
-	      (if (= (length path) 1)
-		  (setq path (car path))
-		(setq paths (nconc (cdr path) paths)
-		      path (car path)))
-	      (if (and path (file-directory-p path))
-		  (directory-files-recursively path (or match-regexp ""))
-		(list path))))
-	  (seq-filter #'stringp paths)))
+  ;; Previously `filter' was a flag which when t, invoked
+  ;; `file-exists-p'; maintain this backward compatibility.
+  (when (eq filter t) (setq filter #'file-exists-p))
+
+  (setq paths (mapcan (lambda (path-pat-or-list)
+			(setq path-pat-or-list (hpath:expand path-pat-or-list filter))
+			(when (setq path-pat-or-list
+				    (or (when (and path-pat-or-list find-file-wildcards)
+					  (file-expand-wildcards path-pat-or-list))
+					(if filter
+					    (when (and path-pat-or-list (funcall filter path-pat-or-list))
+					      (list path-pat-or-list))
+					  (list path-pat-or-list))))
+			  (if (= (length path-pat-or-list) 1)
+			      (setq path-pat-or-list (car path-pat-or-list))
+			    (setq paths (nconc (cdr path-pat-or-list) paths)
+				  path-pat-or-list (car path-pat-or-list)))
+			  (if (and path-pat-or-list (file-directory-p path-pat-or-list))
+			      (directory-files-recursively path-pat-or-list (or match-regexp ""))
+			    (list path-pat-or-list))))
+		      (seq-filter #'stringp paths)))
+  (if filter
+      (seq-filter filter paths)
+    paths))
 
 (defun hpath:prepend-shell-directory (&optional filename)
   "Prepend subdir to a filename in an \\='ls'-file listing.

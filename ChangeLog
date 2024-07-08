@@ -1,3 +1,19 @@
+2024-07-07  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el  (hpath:expand-list): Change 3rd arg from 'exists-flag' to 'filter',
+    a predicate function that allows filtering the list of returned paths,
+    e.g. 'file-readable-p'.  It t is sent, then file 'file-exists-p' is used.
+  hyrolo.el (hyrolo-expand-path-list): Update to return only readable files.
+            (hyrolo-at-tags-p): Add to test if point is within HyRolo Org tags.
+	    (hyrolo-tags-view): Add to display HyRolo Org tags using Agenda search.
+  hsys-org.el (hsys-org-hyrolo-agenda-tags): Add.
+              (hsys-org-agenda-tags-p): Add calls to above new functions.
+  hsys-consult.el (hsys-consult-hyrolo-grep-tags): Add.
+                  (hsys-consult-org-grep-tags-p): Add calls to above new functions.
+
+* hsys-org-roam.el (hsys-org-roam-tags-view, hsys-org-roam-consult-grep): Prompt
+    whether to install needed package when not yet installed.
+
 2024-07-06  Bob Weiner  <rsw@gnu.org>
 
 * hibtypes.el (org-id): Fix bug in older versions of Org where where

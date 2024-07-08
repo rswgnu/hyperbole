@@ -2,7 +2,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     4-Jul-24 at 09:57:18
-;; Last-Mod:      6-Jul-24 at 00:24:36 by Bob Weiner
+;; Last-Mod:      7-Jul-24 at 21:58:54 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -117,7 +117,9 @@ call."
 	  ((hsys-org-roam-directory-at-tags-p t)
 	   #'hsys-consult-org-roam-grep-tags)
 	  ((hywiki-at-tags-p t)
-	   #'hsys-consult-hywiki-grep-tags))))
+	   #'hsys-consult-hywiki-grep-tags)
+	  ((hyrolo-at-tags-p t)
+	   #'hsys-consult-hyrolo-grep-tags))))
 
 (defun hsys-consult-grep-tags (org-consult-grep-function)
   "When on an Org tag, call ORG-CONSULT-GREP-FUNCTION to find matches.
@@ -130,6 +132,13 @@ max-count which finds all matches within headlines only."
   (interactive)
   (when (hsys-org-at-tags-p)
     (funcall org-consult-grep-function (hsys-consult--org-grep-tags-string) 0)))
+
+(defun hsys-consult-hyrolo-grep-tags ()
+  "When on a HyRolo tag, use `consult-grep' to list all HyRolo tag matches.
+If on a colon, match to sections with all tags around point;
+otherwise, just match to the single tag around point."
+  (interactive)
+  (hsys-consult-grep-tags #'hyrolo-consult-grep))
 
 (defun hsys-consult-hywiki-grep-tags ()
   "When on a HyWiki tag, use `consult-grep' to list all HyWiki tag matches.
