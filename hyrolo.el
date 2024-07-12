@@ -136,6 +136,7 @@
 (defvar org-fold-core-style)
 (defvar org-link--link-folding-spec)
 (defvar org-roam-directory)
+(defvar org-agenda-buffer-tmp-name)
 (defvar plstore-cache-passphrase-for-symmetric-encryption)
 (defvar reveal-auto-hide)
 

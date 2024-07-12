@@ -48,6 +48,7 @@
 (defvar hyperbole-mode-map)             ; "hyperbole.el"
 (defvar org--inhibit-version-check)     ; "org-macs.el"
 (defvar hywiki-org-link-type-required)  ; "hywiki.el"
+(defvar org-agenda-buffer-tmp-name)     ; "org-agenda"
 
 (declare-function org-babel-get-src-block-info "org-babel")
 (declare-function org-fold-show-context "org-fold")
@@ -63,7 +64,12 @@
 (declare-function hkey-either "hmouse-drv")
 
 (declare-function find-library-name "find-func")
+(declare-function hsys-org-roam-tags-view "hsys-org")
 (declare-function hyperb:stack-frame "hversion.el")
+(declare-function hyrolo-at-tags-p "hyrolo")
+(declare-function hyrolo-tags-view "hyrolo")
+(declare-function hywiki-at-tags-p "hywiki")
+(declare-function hywiki-tags-view "hywiki")
 
 ;;;###autoload
 (defcustom hsys-org-enable-smart-keys 'unset

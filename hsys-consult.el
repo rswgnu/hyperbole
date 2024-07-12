@@ -2,7 +2,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     4-Jul-24 at 09:57:18
-;; Last-Mod:      7-Jul-24 at 21:58:54 by Bob Weiner
+;; Last-Mod:     12-Jul-24 at 22:05:30 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -27,9 +27,20 @@
 ;; Don't (require 'consult) here since want to create that dependency only
 ;; when a function within this library is called.
 
+(require 'hbut)
+(require 'hargs)
+(require 'hproperty)
+(require 'hsys-org-roam)
+(require 'find-func)
+
 ;;; ************************************************************************
 ;;; Public declarations
 ;;; ************************************************************************
+
+(declare-function hyrolo-at-tags-p "hyrolo")
+(declare-function hywiki-at-tags-p "hywiki")
+(declare-function hsys-org-directory-at-tags-p "hsys-org")
+(declare-function hsys-org-at-tags-p "hsys-org")
 
 (declare-function consult-grep "ext:consult")
 (declare-function consult-ripgrep "ext:consult")
@@ -199,7 +210,7 @@ that start with the '^[*#]+[ \t]*' regexp)."
   "Interactively search PATHS with a consult package grep command.
 Use ripgrep (rg) if found, otherwise, plain grep.  Interactively
 show all matches from PATHS; see the documentation for the `dir'
-argument in `consult-grep' for valid values of PATHS. 
+argument in `consult-grep' for valid values of PATHS.
 
 Initialize search with optional REGEXP and interactively prompt
 for changes.  Limit matches per file to the absolute value of
