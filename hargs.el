@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:     22-Jun-24 at 22:53:41 by Mats Lidell
+;; Last-Mod:     12-Jul-24 at 23:33:16 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -102,7 +102,7 @@ Return nil if ACTION is not a list or `byte-code' object, has no
 interactive form or takes no arguments."
   (save-excursion
     (and (or (subrp action) (byte-code-function-p action) (listp action)
-             (and (fboundp #'closurep) (closurep action)))
+             (and (fboundp 'closurep) (closurep action)))
 	 (let ((interactive-form (action:commandp action)))
 	   (when interactive-form
 	     (hpath:relative-arguments
