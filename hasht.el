@@ -8,7 +8,7 @@
 ;; AUTHOR:       Bob Weiner
 ;;
 ;; ORIG-DATE:    16-Mar-90 at 03:38:48
-;; LAST-MOD:     30-Jun-24 at 17:39:31 by Bob Weiner
+;; LAST-MOD:     12-Jul-24 at 23:22:26 by Mats Lidell
 ;;
 ;; Copyright (C) 1990-1995, 1997, 2016  Free Software Foundation, Inc.
 ;; See the file BR-COPY for license information.
@@ -54,6 +54,12 @@
 It is sent the two values as arguments.")
 
 ;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(defvar hash-empty-htable)
+
+;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
 
@@ -66,7 +72,8 @@ Replaces any VALUE previously referenced by KEY."
 	(if sym (set sym value)))))
 
 (defun hash-copy (hash-table)
-  "Return a copy of HASH-TABLE, list and vector elements are shared across both tables."
+  "Return a copy of HASH-TABLE.
+List and vector elements are shared across both tables."
   (if (not (hashp hash-table))
       (error "(hash-copy): Invalid hash-table: `%s'" hash-table))
   (let ((htable-copy (hash-make (length (hash-obarray hash-table)))))
