@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:      6-Jul-24 at 00:38:17 by Bob Weiner
+;; Last-Mod:     12-Jul-24 at 20:48:37 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1814,7 +1814,7 @@ When the Action Key is pressed and `hsys-org-enable-smart-keys' is t:
   3. On an Org agenda view item, jump to the item for editing.
 
 When the Action Key is pressed and `hsys-org-enable-smart-keys' is
-either t or 'buttons:
+either t or \\='buttons:
 
   4. Within a radio or internal target or a link to it, jump between
      the target and the first link to it, allowing two-way navigation.
@@ -1830,13 +1830,13 @@ either t or 'buttons:
 
   9. With point on any #+BEGIN_SRC, #+END_SRC, #+RESULTS, #+begin_example
      or #+end_example header, execute the code block via the Org mode
-     standard binding of {\\`C-c' \\`C-c'}, (org-ctrl-c-ctrl-c).
+     standard binding of {\\`C-c' \\`C-c'}, (`org-ctrl-c-ctrl-c').
   
  10. With point on an Org mode heading, cycle the view of the subtree at
      point.
 
  11. In any other context besides the end of a line, invoke the Org mode
-     standard binding of {M-RET}, (org-meta-return).
+     standard binding of {M-RET}, (`org-meta-return').
 
 When the Assist Key is pressed, it behaves just like the Action Key except
 in these contexts:
