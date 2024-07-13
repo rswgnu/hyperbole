@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      7-Jul-24 at 21:47:43 by Bob Weiner
+;; Last-Mod:     12-Jul-24 at 23:13:27 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -136,6 +136,7 @@
 (defvar org-fold-core-style)
 (defvar org-link--link-folding-spec)
 (defvar org-roam-directory)
+(defvar org-agenda-buffer-tmp-name)
 (defvar plstore-cache-passphrase-for-symmetric-encryption)
 (defvar reveal-auto-hide)
 
@@ -3520,6 +3521,8 @@ Reveal mode is a buffer-local minor mode.  When enabled, it
 reveals invisible text around point.
 
 Also see the `reveal-auto-hide' variable."
+  :init-value nil
+  :keymap nil
   nil) ;; Make this a no-op until can debug `reveal-mode' in *HyRolo* buffer
 
 (unless (boundp 'reveal-auto-hide)
