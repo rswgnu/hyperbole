@@ -1,4 +1,9 @@
-2024-07-09  Mats Lidell  <matsl@gnu.org>
+2024-07-15  Mats Lidell  <matsl@gnu.org>
+
+* test/hui-tests.el (hui--link-possible-types): Add test for single-line
+    region.
+
+2024-07-14  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (DOCKER_VERSIONS): Use 29.4 for local docker builds.
 
