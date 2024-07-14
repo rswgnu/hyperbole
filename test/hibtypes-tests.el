@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:45:00
-;; Last-Mod:     16-Jun-24 at 18:45:13 by Mats Lidell
+;; Last-Mod:     14-Jul-24 at 12:13:26 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -26,8 +26,6 @@
 
 (declare-function hy-test-helpers:consume-input-events "hy-test-helpers")
 (declare-function hy-test-helpers:should-last-message "hy-test-helpers")
-
-;; (ert-deftest org-link-outside-org-mode-test ()
 
 ;; Mail address
 (ert-deftest mail-address-at-p-test ()

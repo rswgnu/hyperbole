@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    23-Apr-21 at 20:55:00
-;; Last-Mod:     29-Jun-24 at 15:13:29 by Bob Weiner
+;; Last-Mod:     14-Jul-24 at 23:09:13 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -157,6 +157,16 @@ This is independent of the setting of `hsys-org-enable-smart-keys'."
                 (should (equal hsys-org-enable-smart-keys v)) ; Traceability
                 (should (action-key))))))
       (hy-delete-file-and-buffer file))))
+
+(ert-deftest hsys-org--at-tags-p ()
+  "Verify `hsys-org-at-tags-p'."
+  (with-temp-buffer
+    (org-mode)
+    (save-excursion (insert "* header :tag:"))
+    (font-lock-ensure (point-min) (point-max))
+    (should-not (hsys-org-at-tags-p))
+    (should (search-forward ":"))
+    (should (hsys-org-at-tags-p))))
 
 (provide 'hsys-org-tests)
 
