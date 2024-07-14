@@ -1,3 +1,7 @@
+2024-07-09  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (DOCKER_VERSIONS): Use 29.4 for local docker builds.
+
 2024-07-12  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--maybe-at-wikiword-beginning): Fix
