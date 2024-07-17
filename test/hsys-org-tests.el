@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    23-Apr-21 at 20:55:00
-;; Last-Mod:     14-Jul-24 at 23:09:13 by Mats Lidell
+;; Last-Mod:     17-Jul-24 at 23:10:22 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -163,7 +163,7 @@ This is independent of the setting of `hsys-org-enable-smart-keys'."
   (with-temp-buffer
     (org-mode)
     (save-excursion (insert "* header :tag:"))
-    (font-lock-ensure (point-min) (point-max))
+    (font-lock-ensure)
     (should-not (hsys-org-at-tags-p))
     (should (search-forward ":"))
     (should (hsys-org-at-tags-p))))
