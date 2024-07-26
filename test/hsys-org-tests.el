@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    23-Apr-21 at 20:55:00
-;; Last-Mod:     17-Jul-24 at 23:10:22 by Mats Lidell
+;; Last-Mod:     26-Jul-24 at 19:24:24 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -167,6 +167,26 @@ This is independent of the setting of `hsys-org-enable-smart-keys'."
     (should-not (hsys-org-at-tags-p))
     (should (search-forward ":"))
     (should (hsys-org-at-tags-p))))
+
+(ert-deftest hsys-org--directory-at-tags-p ()
+  "Verify `hsys-org-directory-at-tags-p'."
+  (mocklet ((hsys-org-at-tags-p => nil)
+            (string-prefix-p not-called))
+    (should-not (hsys-org-directory-at-tags-p)))
+  (let ((buffer-file-name (expand-file-name "buff" org-directory)))
+    (mocklet ((hsys-org-at-tags-p not-called))
+      (should (hsys-org-directory-at-tags-p t))))
+  (mocklet ((hsys-org-at-tags-p => t))
+    (let ((buffer-file-name (expand-file-name "buff" org-directory)))
+      (should (hsys-org-directory-at-tags-p))))
+  (mocklet ((hsys-org-at-tags-p => t)
+            (buffer-name => "*Org Agenda*"))
+    (let ((buffer-file-name nil))
+      (should (hsys-org-directory-at-tags-p))))
+  (mocklet ((hsys-org-at-tags-p => t)
+            (buffer-name => "*Another Agenda*"))
+    (let ((buffer-file-name nil))
+      (should-not (hsys-org-directory-at-tags-p)))))
 
 (provide 'hsys-org-tests)
 
