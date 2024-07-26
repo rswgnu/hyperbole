@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    23-Apr-21 at 20:55:00
-;; Last-Mod:     26-Jul-24 at 19:24:24 by Mats Lidell
+;; Last-Mod:     26-Jul-24 at 20:44:38 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -187,6 +187,14 @@ This is independent of the setting of `hsys-org-enable-smart-keys'."
             (buffer-name => "*Another Agenda*"))
     (let ((buffer-file-name nil))
       (should-not (hsys-org-directory-at-tags-p)))))
+
+(ert-deftest hsys-org--mode-p ()
+  "Verify `hsys-org-mode-p' identifies an org major or minor-mode."
+  (with-temp-buffer
+    (org-mode)
+    (should (hsys-org-mode-p))
+    (org-agenda-mode)
+    (should (hsys-org-mode-p))))
 
 (provide 'hsys-org-tests)
 

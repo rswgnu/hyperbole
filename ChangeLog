@@ -1,5 +1,9 @@
 2024-07-26  Mats Lidell  <matsl@gnu.org>
 
+* test/hsys-org-tests.el (hsys-org--mode-p): Test hsys-org-mode-p.
+
+* test/hywiki-tests.el (hywiki-tests--at-tags-p): Test hywiki-at-tags-p.
+
 * test/hsys-org-tests.el (hsys-org--directory-at-tags-p): Test
     hsys-org-directory-at-tags-p.
 
