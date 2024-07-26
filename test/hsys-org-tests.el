@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    23-Apr-21 at 20:55:00
-;; Last-Mod:     26-Jul-24 at 20:44:38 by Mats Lidell
+;; Last-Mod:     26-Jul-24 at 23:50:53 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -195,6 +195,27 @@ This is independent of the setting of `hsys-org-enable-smart-keys'."
     (should (hsys-org-mode-p))
     (org-agenda-mode)
     (should (hsys-org-mode-p))))
+
+(ert-deftest hsys-org---agenda-tags-string ()
+  "Verify `hsys-org--agenda-tags-string'."
+  (with-temp-buffer
+    (org-mode)
+    (save-excursion (insert "* header :tag1:tag2:tag3:"))
+    (font-lock-ensure)
+
+    (should (and (search-forward "header ") (looking-at-p ":tag1:")))
+    (should (string= ":tag1:tag2:tag3" (hsys-org--agenda-tags-string)))
+
+    (forward-char)
+    (should (looking-at-p "tag1:"))
+    (should (string= ":tag1" (hsys-org--agenda-tags-string)))
+
+    (should (and (search-forward "tag1") (looking-at-p ":tag2:")))
+    (should (string= ":tag1:tag2:tag3" (hsys-org--agenda-tags-string)))
+
+    (forward-char)
+    (should (looking-at-p "tag2:"))
+    (should (string= ":tag2" (hsys-org--agenda-tags-string)))))
 
 (provide 'hsys-org-tests)
 

@@ -1,6 +1,9 @@
 2024-07-26  Mats Lidell  <matsl@gnu.org>
 
+* hsys-org.el (hsys-org--agenda-tags-string): Update docstring.
+
 * test/hsys-org-tests.el (hsys-org--mode-p): Test hsys-org-mode-p.
+    (hsys-org---agenda-tags-string): Test hsys-org--agenda-tags-string.
 
 * test/hywiki-tests.el (hywiki-tests--at-tags-p): Test hywiki-at-tags-p.
 
