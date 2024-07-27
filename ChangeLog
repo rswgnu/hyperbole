@@ -1,3 +1,8 @@
+2024-07-27  Mats Lidell  <matsl@gnu.org>
+
+* test/hsys-org-tests.el (hsys-org--get-agenda-tags): Test
+    hsys-org-get-agenda-tags.
+
 2024-07-26  Mats Lidell  <matsl@gnu.org>
 
 * hsys-org.el (hsys-org--agenda-tags-string): Update docstring.

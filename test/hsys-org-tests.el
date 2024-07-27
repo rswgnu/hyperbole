@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    23-Apr-21 at 20:55:00
-;; Last-Mod:     26-Jul-24 at 23:50:53 by Mats Lidell
+;; Last-Mod:     27-Jul-24 at 22:07:13 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -216,6 +216,13 @@ This is independent of the setting of `hsys-org-enable-smart-keys'."
     (forward-char)
     (should (looking-at-p "tag2:"))
     (should (string= ":tag2" (hsys-org--agenda-tags-string)))))
+
+(ert-deftest hsys-org--get-agenda-tags ()
+  "Verify `hsys-org-get-agenda-tags' calls org-consult-agenda-function."
+  (mocklet ((agenda-func => "agenda-func")
+            (hsys-org-at-tags-p => t)
+            (hsys-org--agenda-tags-string => ":tag"))
+    (should (string= "agenda-func" (hsys-org-get-agenda-tags #'agenda-func)))))
 
 (provide 'hsys-org-tests)
 
