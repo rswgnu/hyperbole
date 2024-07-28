@@ -21,9 +21,6 @@
 
 2024-07-15  Mats Lidell  <matsl@gnu.org>
 
-* test/hsys-consult-tests.el (hsys-consult--grep-version-dependencies):
-    New file for testing hsys-consult.
-
 * test/hsys-org-tests.el (hsys-org--at-tags-p): Test hsys-org-at-tags-p.
 
 * test/hpath-tests.el (hpath--to-markup-anchor): Test hpath:to-markup-anchor.
