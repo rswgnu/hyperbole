@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:45:00
-;; Last-Mod:     16-Jun-24 at 18:45:13 by Mats Lidell
+;; Last-Mod:     28-Jul-24 at 00:33:04 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -19,15 +19,13 @@
 ;;; Code:
 
 (require 'ert)
-(require 'hib-kbd)
+(require 'hibtypes)
 (require 'info)
 (require 'el-mock)
 (require 'hy-test-helpers "test/hy-test-helpers")
 
 (declare-function hy-test-helpers:consume-input-events "hy-test-helpers")
 (declare-function hy-test-helpers:should-last-message "hy-test-helpers")
-
-;; (ert-deftest org-link-outside-org-mode-test ()
 
 ;; Mail address
 (ert-deftest mail-address-at-p-test ()
@@ -330,6 +328,34 @@
 ;; action
 
 ;; completion
+
+(ert-deftest ibtypes:org-id-test ()
+  "Verify `org-id' ibut."
+  (with-temp-buffer
+    (org-mode)
+    (insert (format ":ID: %s" (hypb:uuid)))
+    (goto-char 10)
+    (should (string=
+             "On ID definition; use {C-u M-RET} to copy a link to an ID."
+             (ibtypes::org-id))))
+
+  (let ((file (make-temp-file "hypb" nil ".org")))
+    (unwind-protect
+        (let ((id (hypb:uuid)))
+          (find-file file)
+          (org-mode)
+          (insert (format "* header
+:PROPERTIES:
+:ID: %s
+:END:
+
+<ID:%s>
+" id id))
+          (goto-char (point-min))
+          (should (and (search-forward "<ID:") (looking-at-p id)))
+          (mocklet (((actypes::link-to-org-id-marker *) => t))
+            (should (ibtypes::org-id))))
+      (hy-delete-file-and-buffer file))))
 
 ;; This file can't be byte-compiled without the `el-mock' package (because of
 ;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.

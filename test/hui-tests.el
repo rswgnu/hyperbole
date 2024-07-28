@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     31-May-24 at 15:58:58 by Mats Lidell
+;; Last-Mod:     13-Jul-24 at 23:42:26 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1112,6 +1112,13 @@ With point on label suggest that ibut for rename."
           (insert "first")
           (hy-test-helpers:ensure-link-possible-type 'link-to-kcell))
       (hy-delete-file-and-buffer file)))
+
+  ;; Single-line Region       link-to-string-match
+  (with-temp-buffer
+    (insert "a word")
+    (goto-char 4)
+    (mark-word)
+    (hy-test-helpers:ensure-link-possible-type 'link-to-string-match))
 
   ;; Outline Heading          link-to-string-match
   (let ((file (make-temp-file "hypb" nil ".otl" "* heading\nbody\n")))

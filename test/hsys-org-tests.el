@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    23-Apr-21 at 20:55:00
-;; Last-Mod:     29-Jun-24 at 15:13:29 by Bob Weiner
+;; Last-Mod:     28-Jul-24 at 11:44:20 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -20,6 +20,7 @@
 
 (require 'ert)
 (require 'hsys-org)
+(require 'org-agenda)
 (if t (require 'el-mock))
 
 (ert-deftest hsys-org:cycle-on-header-cycles-visibility ()
@@ -157,6 +158,72 @@ This is independent of the setting of `hsys-org-enable-smart-keys'."
                 (should (equal hsys-org-enable-smart-keys v)) ; Traceability
                 (should (action-key))))))
       (hy-delete-file-and-buffer file))))
+
+(ert-deftest hsys-org--at-tags-p ()
+  "Verify `hsys-org-at-tags-p'."
+  (with-temp-buffer
+    (org-mode)
+    (save-excursion (insert "* header :tag:"))
+    (font-lock-ensure)
+    (should-not (hsys-org-at-tags-p))
+    (should (search-forward ":"))
+    (should (hsys-org-at-tags-p))))
+
+(ert-deftest hsys-org--directory-at-tags-p ()
+  "Verify `hsys-org-directory-at-tags-p'."
+  (mocklet ((hsys-org-at-tags-p => nil)
+            (string-prefix-p not-called))
+    (should-not (hsys-org-directory-at-tags-p)))
+  (let ((buffer-file-name (expand-file-name "buff" org-directory)))
+    (mocklet ((hsys-org-at-tags-p not-called))
+      (should (hsys-org-directory-at-tags-p t))))
+  (mocklet ((hsys-org-at-tags-p => t))
+    (let ((buffer-file-name (expand-file-name "buff" org-directory)))
+      (should (hsys-org-directory-at-tags-p))))
+  (mocklet ((hsys-org-at-tags-p => t)
+            (buffer-name => "*Org Agenda*"))
+    (let ((buffer-file-name nil))
+      (should (hsys-org-directory-at-tags-p))))
+  (mocklet ((hsys-org-at-tags-p => t)
+            (buffer-name => "*Another Agenda*"))
+    (let ((buffer-file-name nil))
+      (should-not (hsys-org-directory-at-tags-p)))))
+
+(ert-deftest hsys-org--mode-p ()
+  "Verify `hsys-org-mode-p' identifies an org major or minor-mode."
+  (with-temp-buffer
+    (org-mode)
+    (should (hsys-org-mode-p))
+    (org-agenda-mode)
+    (should (hsys-org-mode-p))))
+
+(ert-deftest hsys-org---agenda-tags-string ()
+  "Verify `hsys-org--agenda-tags-string'."
+  (with-temp-buffer
+    (org-mode)
+    (save-excursion (insert "* header :tag1:tag2:tag3:"))
+    (font-lock-ensure)
+
+    (should (and (search-forward "header ") (looking-at-p ":tag1:")))
+    (should (string= ":tag1:tag2:tag3" (hsys-org--agenda-tags-string)))
+
+    (forward-char)
+    (should (looking-at-p "tag1:"))
+    (should (string= ":tag1" (hsys-org--agenda-tags-string)))
+
+    (should (and (search-forward "tag1") (looking-at-p ":tag2:")))
+    (should (string= ":tag1:tag2:tag3" (hsys-org--agenda-tags-string)))
+
+    (forward-char)
+    (should (looking-at-p "tag2:"))
+    (should (string= ":tag2" (hsys-org--agenda-tags-string)))))
+
+(ert-deftest hsys-org--get-agenda-tags ()
+  "Verify `hsys-org-get-agenda-tags' calls org-consult-agenda-function."
+  (mocklet ((agenda-func => "agenda-func")
+            (hsys-org-at-tags-p => t)
+            (hsys-org--agenda-tags-string => ":tag"))
+    (should (string= "agenda-func" (hsys-org-get-agenda-tags #'agenda-func)))))
 
 (provide 'hsys-org-tests)
 

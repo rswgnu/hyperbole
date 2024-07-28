@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     12-Jul-24 at 23:11:41 by Mats Lidell
+;; Last-Mod:     26-Jul-24 at 23:52:18 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -664,8 +664,8 @@ TARGET must be a string."
 
 (defun hsys-org--agenda-tags-string ()
   "When on or between Org tags, return an agenda match string for them.
-If on a colon, match to headlines with all tags around point, in any order.
-e.g. \":tag1: :tag2: :tag3: \".  Otherwise, just match to the single
+If on a colon, match to headlines with all tags around point, in any
+order.  e.g. \":tag1:tag2:tag3:\".  Otherwise, just match to the single
 tag around point."
   (let (range
 	tags)

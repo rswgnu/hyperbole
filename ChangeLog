@@ -1,4 +1,34 @@
-2024-07-09  Mats Lidell  <matsl@gnu.org>
+2024-07-28  Mats Lidell  <matsl@gnu.org>
+
+* test/hibtypes-tests.el (ibtypes:org-id-test): Test org-id ibut.
+
+2024-07-27  Mats Lidell  <matsl@gnu.org>
+
+* test/hsys-org-tests.el (hsys-org--get-agenda-tags): Test
+    hsys-org-get-agenda-tags.
+
+2024-07-26  Mats Lidell  <matsl@gnu.org>
+
+* hsys-org.el (hsys-org--agenda-tags-string): Update docstring.
+
+* test/hsys-org-tests.el (hsys-org--mode-p): Test hsys-org-mode-p.
+    (hsys-org---agenda-tags-string): Test hsys-org--agenda-tags-string.
+
+* test/hywiki-tests.el (hywiki-tests--at-tags-p): Test hywiki-at-tags-p.
+
+* test/hsys-org-tests.el (hsys-org--directory-at-tags-p): Test
+    hsys-org-directory-at-tags-p.
+
+2024-07-15  Mats Lidell  <matsl@gnu.org>
+
+* test/hsys-org-tests.el (hsys-org--at-tags-p): Test hsys-org-at-tags-p.
+
+* test/hpath-tests.el (hpath--to-markup-anchor): Test hpath:to-markup-anchor.
+
+* test/hui-tests.el (hui--link-possible-types): Add test for single-line
+    region.
+
+2024-07-14  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (DOCKER_VERSIONS): Use 29.4 for local docker builds.
 
