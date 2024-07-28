@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    23-Apr-21 at 20:55:00
-;; Last-Mod:     27-Jul-24 at 22:07:13 by Mats Lidell
+;; Last-Mod:     28-Jul-24 at 11:44:20 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -20,6 +20,7 @@
 
 (require 'ert)
 (require 'hsys-org)
+(require 'org-agenda)
 (if t (require 'el-mock))
 
 (ert-deftest hsys-org:cycle-on-header-cycles-visibility ()
