@@ -832,9 +832,6 @@ the current page unless they have sections attached."
   (walk-windows
    (lambda (window)
      (with-selected-window window
-       ;; Display buffer before `normal-mode' triggers possibly
-       ;; long-running font-locking
-       (sit-for 0.1)
        (hywiki-maybe-highlight-page-names)))
    nil frame))
 
