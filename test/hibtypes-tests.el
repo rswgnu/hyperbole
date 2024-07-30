@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:45:00
-;; Last-Mod:      5-Aug-24 at 17:37:57 by Mats Lidell
+;; Last-Mod:     10-Aug-24 at 23:27:05 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -297,7 +297,33 @@
 ;; ipython-stack-frame
 
 ;; ripgrep-msg
+(ert-deftest ibtypes::ripgrep-msg-test ()
+  "Verify `ripgrep-msg'."
+  ;; Date is picked up as a line number but file existence test before
+  ;; concluding it is a button save it from being identified as
+  ;; a ripgrep-msg.
+  (with-temp-buffer
+    (insert "one two three\n2024-07-30 line\n")
+    (goto-line 2)
+    (should-not (eq (hattr:get (hbut:at-p) 'actype) 'hib-link-to-file-line))
+    (should-not (ibtypes::ripgrep-msg)))
 
+  ;; Regular ripgrep-msg case.
+  (with-temp-buffer
+    (insert "hibtypes.el\n20: line\n")
+    (goto-line 2)
+    (mocklet (((hib-link-to-file-line "hibtypes.el" "20") => t)
+              ((file-exists-p "hibtypes.el") => t))
+      (should (eq (hattr:get (hbut:at-p) 'actype) 'hib-link-to-file-line))
+      (should (ibtypes::ripgrep-msg))))
+
+  ;; Regular match but file does not exist case.
+  (with-temp-buffer
+    (insert "unknown-file\n20: line\n")
+    (goto-line 2)
+    (should-not (eq (hattr:get (hbut:at-p) 'actype) 'hib-link-to-file-line))
+    (should-not (ibtypes::ripgrep-msg))))
+  
 ;; grep-msg
 
 ;; debugger-source
