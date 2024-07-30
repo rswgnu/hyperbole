@@ -1,3 +1,9 @@
+2024-07-31  Mats Lidell  <matsl@gnu.org>
+
+* hibtypes.el (ripgrep-msg): Add check of file exist.
+
+* test/hibtypes-tests.el (ibtypes::ripgrep-msg-test): Test ripgrep-msg.
+
 2024-07-31  Bob Weiner  <rsw@gnu.org>
 
 * hibtypes.el (org-uuid-regexp): Add variable def for when missing in certain earlier Org
