@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     22-Jun-24 at 18:56:31 by Mats Lidell
+;; Last-Mod:     26-Jul-24 at 20:01:49 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -111,7 +111,7 @@
     (should (hywiki-maybe-at-wikiword-beginning))
     (goto-char 2)
     (should-not (hywiki-maybe-at-wikiword-beginning)))
-  (dolist (acceptable-char '("(" "{" "<" "\"" "'" "`" "	" " " "" "" " "))
+  (dolist (acceptable-char '("(" "{" "<" "\"" "'" "`" "\t" "\n" "\r" "\f" " "))
     (with-temp-buffer
       (insert (format "%sWikiWord" acceptable-char))
       (goto-char 2)
@@ -250,6 +250,23 @@
             (goto-char 4)
             (should-not (hproperty:but-get (point) 'face hywiki-word-face))))
       (hy-delete-dir-and-buffer hywiki-directory))))
+
+(ert-deftest hywiki-tests--at-tags-p ()
+  "Verify `hywiki-at-tags-p'."
+  (mocklet ((hsys-org-at-tags-p => nil))
+    (should-not (hywiki-at-tags-p)))
+  (mocklet ((hsys-org-at-tags-p not-called)
+            (hywiki-in-page-p => nil))
+    (should-not (hywiki-at-tags-p t)))
+  (mocklet ((hsys-org-at-tags-p => t)
+            (hywiki-in-page-p => t))
+    (should (hywiki-at-tags-p)))
+  (mocklet ((hsys-org-at-tags-p => t)
+            (hywiki-in-page-p => nil))
+    (mocklet ((buffer-name => "*HyWiki Tags*"))
+      (should (hywiki-at-tags-p)))
+    (mocklet ((buffer-name => "*Other Tags*"))
+      (should-not (hywiki-at-tags-p)))))
 
 (provide 'hywiki-tests)
 ;;; hywiki-tests.el ends here

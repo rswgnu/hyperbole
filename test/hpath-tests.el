@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 23:26:00
-;; Last-Mod:      1-Jun-24 at 20:45:10 by Mats Lidell
+;; Last-Mod:     15-Jul-24 at 00:07:11 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -441,6 +441,27 @@ dir/subdir:
             (mocklet (((file-exists-p "dir/subdir") => t))
               (should (string= (expand-file-name (concat filename ".ext") "dir/subdir")
                                (hpath:delimited-possible-path))))))))))
+
+(ert-deftest hpath--to-markup-anchor ()
+  "Verify `hpath:to-markup-anchor'."
+  (dolist (v '((text-mode 2) (outline-mode 0)))
+    (with-temp-buffer
+      (funcall (car v)) ;; Mode
+      (insert "Line 1\n* anchor\n* anchor")
+      (goto-char 4)
+      (hpath:to-markup-anchor nil "anchor")
+      (should (= (line-number-at-pos) 2))
+      (should (= (current-column) (cadr v)))
+
+      (goto-char 4)
+      (hpath:to-markup-anchor nil "anchor" 2)
+      (should (= (line-number-at-pos) 3))
+      (should (= (current-column) (cadr v)))
+
+      (goto-char 4)
+      (hpath:to-markup-anchor t nil)
+      (should (= (line-number-at-pos) 1))
+      (should (= (current-column) 0)))))
 
 (provide 'hpath-tests)
 

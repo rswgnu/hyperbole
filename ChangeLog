@@ -24,11 +24,45 @@
               (hsys-org--agenda-tags-string): Improve doc string and fix to return
     non-nil only when point is within a tag string.  Simplify return value creation.
 
+2024-07-28  Mats Lidell  <matsl@gnu.org>
+
+* test/hibtypes-tests.el (ibtypes:org-id-test): Test org-id ibut.
+
+2024-07-27  Mats Lidell  <matsl@gnu.org>
+
+* test/hsys-org-tests.el (hsys-org--get-agenda-tags): Test
+    hsys-org-get-agenda-tags.
+
+2024-07-26  Mats Lidell  <matsl@gnu.org>
+
+* hsys-org.el (hsys-org--agenda-tags-string): Update docstring.
+
+* test/hsys-org-tests.el (hsys-org--mode-p): Test hsys-org-mode-p.
+    (hsys-org---agenda-tags-string): Test hsys-org--agenda-tags-string.
+
+* test/hywiki-tests.el (hywiki-tests--at-tags-p): Test hywiki-at-tags-p.
+
+* test/hsys-org-tests.el (hsys-org--directory-at-tags-p): Test
+    hsys-org-directory-at-tags-p.
+
 2024-07-15  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-in-page-p): Change to use 'default-directory' instead
     of 'buffer-file-name' so works with temp buffers created during Org
     export to other formats, e.g. html.
+
+2024-07-15  Mats Lidell  <matsl@gnu.org>
+
+* test/hsys-org-tests.el (hsys-org--at-tags-p): Test hsys-org-at-tags-p.
+
+* test/hpath-tests.el (hpath--to-markup-anchor): Test hpath:to-markup-anchor.
+
+* test/hui-tests.el (hui--link-possible-types): Add test for single-line
+    region.
+
+2024-07-14  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (DOCKER_VERSIONS): Use 29.4 for local docker builds.
 
 2024-07-14  Bob Weiner  <rsw@gnu.org>
 
@@ -47,6 +81,11 @@
     'hywiki-word-face', use that as a shortcut to get the word.
             (hywiki-buttonize-word): Add.
 	    (hywiki-maybe-highlight-page-name): Rewrite to use above function.
+
+2024-07-12  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--maybe-at-wikiword-beginning): Fix
+    set of acceptable chars and use escaped notation.
 
 2024-07-10  Bob Weiner  <rsw@gnu.org>
 
@@ -248,7 +287,7 @@
             (hynote-file): Add ibtype to display non-HyWikiWord files in
     hywiki-directory'.
 
-* Makefile: (docker-run): Add to intweractively run docker versions
+* Makefile: (docker-run): Add to interactively run docker versions
     of Emacs with Hyperbole.  Update Commentary to summarize docker
     targets that build, byte-compile and run Hyperbole.
 
