@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      7-Jul-24 at 23:38:46 by Bob Weiner
+;; Last-Mod:     31-Jul-24 at 01:31:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -66,6 +66,8 @@
 (defvar id-cflow-repeated-indicator)
 
 (defvar cscope-output-line-regexp)
+
+(defvar org-uuid-regexp)
 
 (declare-function actype:eval "hact")
 (declare-function actype:identity "hact")
@@ -1427,6 +1429,14 @@ Activates only if point is within the first line of the Info-node name."
          (node-ref (and (stringp ref)
                         (or (string-match-p "\\`([^\): \t\n\r\f]+)\\'" ref)
                             (string-match-p "\\`([^\): \t\n\r\f]+)[^ :;\"'`]" ref))
+			;; Below handle decoding of Info node names in
+			;; Hyperbole Help buffer lbl-key: lines,
+			;; eliminating excess underscores.
+			(save-excursion
+			  (beginning-of-line)
+			  (when (looking-at "\\s-+lbl-key:\\s-+\"")
+			    (setq ref (ibut:key-to-label ref)))
+			  t)
                         (hpath:is-p ref nil t))))
     (and node-ref
          (ibut:label-set node-ref-and-pos)

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-23 at 11:20:15 by Bob Weiner
-;; Last-Mod:     12-Jul-24 at 23:17:53 by Mats Lidell
+;; Last-Mod:     28-Jul-24 at 12:33:29 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -34,12 +34,7 @@
 
 (defvar consult-org-roam-grep-func)
 (defvar org-roam-directory)
-(defvar org-agenda-files)
-(defvar org-agenda-buffer-tmp-name)
-
 (declare-function org-roam-db-autosync-mode "ext:org-roam")
-(declare-function hsys-org-at-tags-p "hsys-org")
-(declare-function hypb:require-package "hypb")
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -72,8 +67,11 @@ Actual grep function used is given by the variable,
 (defun hsys-org-roam-tags-view (&optional todo-only match view-buffer-name)
   "Prompt for colon-separated Org Roam tags and display matching headlines.
 With optional prefix arg TODO-ONLY, limit matches to Org Roam
-todo items only.  With optional VIEW-BUFFER-NAME, use that rather
-than the default, \"*Org Roam Tags*\"."
+todo items only.  With optional MATCH, an Org tags match selector
+string, e.g. \":tag1:tag2:tag3:\", match to sections that contain
+or inherit all of these tags, regardless of tag order.  With
+optional VIEW-BUFFER-NAME, use that rather than the default,
+\"*Org Roam Tags*\"."
   (interactive "P")
   (require 'org-agenda)
   (hypb:require-package 'org-roam)

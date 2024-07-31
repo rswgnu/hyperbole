@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10/18/2020
-;; Last-Mod:      3-Oct-23 at 22:24:23 by Mats Lidell
+;; Last-Mod:     14-Jul-24 at 23:32:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -76,7 +76,7 @@
 (defun orgtbl-tab (arg)
   "Justification and field motion for `orgtbl-mode' with Koutline support."
   (interactive "P")
-  (cond ((and (derived-mode-p #'kotl-mode) arg)
+  (cond ((and (derived-mode-p 'kotl-mode) arg)
 	 (kotl-mode:tab-command (if (= (prefix-numeric-value arg) 1) nil arg)))
 	(arg
 	 (org-table-edit-field t))

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     12-Jul-24 at 23:13:27 by Mats Lidell
+;; Last-Mod:     28-Jul-24 at 12:31:58 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -136,7 +136,6 @@
 (defvar org-fold-core-style)
 (defvar org-link--link-folding-spec)
 (defvar org-roam-directory)
-(defvar org-agenda-buffer-tmp-name)
 (defvar plstore-cache-passphrase-for-symmetric-encryption)
 (defvar reveal-auto-hide)
 
@@ -1396,8 +1395,11 @@ the sort order."
 (defun hyrolo-tags-view (&optional todo-only match view-buffer-name)
   "Prompt for colon-separated Org tags and display matching HyRolo sections.
 With optional prefix arg TODO-ONLY, limit matches to HyRolo Org
-todo items only.  With optional VIEW-BUFFER-NAME, use that rather
-than the default, \"*HyRolo Tags*\"."
+todo items only.  With optional MATCH, an Org tags match selector
+string, e.g. \":tag1:tag2:tag3:\", match to sections that contain
+or inherit all of these tags, regardless of tag order.  With
+optional VIEW-BUFFER-NAME, use that rather than the default,
+\"*HyRolo Tags*\"."
   (interactive "P")
   (require 'org-agenda)
   (let* ((org-agenda-files (hyrolo-get-file-list))
@@ -3521,8 +3523,6 @@ Reveal mode is a buffer-local minor mode.  When enabled, it
 reveals invisible text around point.
 
 Also see the `reveal-auto-hide' variable."
-  :init-value nil
-  :keymap nil
   nil) ;; Make this a no-op until can debug `reveal-mode' in *HyRolo* buffer
 
 (unless (boundp 'reveal-auto-hide)

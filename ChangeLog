@@ -1,3 +1,36 @@
+2024-07-31  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (org-uuid-regexp): Add variable def for when missing in certain earlier Org
+    versions.
+
+* test/hsys-org-tests.el (hsys-org---agenda-tags-string): Fix to current tag handling code.
+
+2024-07-28  Bob Weiner  <rsw@gnu.org>
+
+* hproperty.el (hproperty:but-add): Add a button only when a button with the same property
+    value, start, and end does not already exist, to prevent duplicates.
+
+* hywiki.el (hywiki-maybe-highlight-page-name): Fix to dehighlight wiki words only if within
+    double square or angle brackets (leaving these to Org to handle).
+    (hywiki-buttonize-non-character-commands): Add 'delete-' commands.
+    (hywiki--highlighting-done-flag): Add and use in 'hywiki-maybe-highlight-page-name'.
+    (hywiki-maybe-highlight-org-element-backward,
+     hywiki-maybe-highlight-org-element-forward): Add these two functions.
+    (hywiki-maybe-highlight-page-names): Fix to not use whole buffer highlight flag when
+       given a region.
+
+* hsys-org-roam.el (hsys-org-roam-tags-view):
+  hsys-org.el (hsys-org-tags-view):
+  hywiki.el (hywiki-tags-view):
+  hyrolo.el (hyrolo-tags-view): Add doc for 'match' arg.
+
+* hsys-org.el (hsys-org-get-agenda-tags): Rename arg from
+    'org-consult-agenda-function' to 'agenda-tags-view-function' since does
+    not require the consult package and don't want to override any org
+    package name.  Improve doc string.
+              (hsys-org--agenda-tags-string): Improve doc string and fix to return
+    non-nil only when point is within a tag string.  Simplify return value creation.
+
 2024-07-28  Mats Lidell  <matsl@gnu.org>
 
 * test/hibtypes-tests.el (ibtypes:org-id-test): Test org-id ibut.
@@ -19,6 +52,12 @@
 * test/hsys-org-tests.el (hsys-org--directory-at-tags-p): Test
     hsys-org-directory-at-tags-p.
 
+2024-07-15  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-in-page-p): Change to use 'default-directory' instead
+    of 'buffer-file-name' so works with temp buffers created during Org
+    export to other formats, e.g. html.
+
 2024-07-15  Mats Lidell  <matsl@gnu.org>
 
 * test/hsys-org-tests.el (hsys-org--at-tags-p): Test hsys-org-at-tags-p.
@@ -32,10 +71,35 @@
 
 * Makefile (DOCKER_VERSIONS): Use 29.4 for local docker builds.
 
+2024-07-14  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-convert-words-to-org-links, hywiki-map-words): Add.
+
+* hibtypes.el (Info-node): Handle decoding of Info node names in
+    Hyperbole Help buffer lbl-key: lines, eliminating excess underscores.
+
+* hmouse-tag.el (smart-lisp-mode-p): Add 'help-mode', e.g. for output of {C-h A}
+    to make Hyperbole cross-references work.
+
+2024-07-13  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki--range): Add to hold (start . end) range values.
+            (hywiki-word-at): If word is already highlighted with
+    'hywiki-word-face', use that as a shortcut to get the word.
+            (hywiki-buttonize-word): Add.
+	    (hywiki-maybe-highlight-page-name): Rewrite to use above function.
+
 2024-07-12  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--maybe-at-wikiword-beginning): Fix
     set of acceptable chars and use escaped notation.
+
+2024-07-10  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-org-link-export): Add as [[hy:WikiWord]] link-export property.
+            (hywiki-org-link-resolve): Add to resolve HyWikiWord link to its page.
+            (hywiki-org-link-store): Change :description property to be just
+    the 'page-name' itself.
 
 2024-07-07  Bob Weiner  <rsw@gnu.org>
 
@@ -73,8 +137,8 @@
 
 2024-07-06  Bob Weiner  <rsw@gnu.org>
 
-* hibtypes.el (org-id): Fix bug in older versions of Org where where
-    'org-uuid-regexp' was not bound.
+* hibtypes.el (org-id): Fix bug in older versions of Org where 'org-uuid-regexp'
+    was not bound.
 
 * hbut.el (ibut:create): Improved when err occurs in type to print the err before
     triggering a backtrace when in batch mode.

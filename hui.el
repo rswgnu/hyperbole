@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     29-May-24 at 00:57:49 by Bob Weiner
+;; Last-Mod:     14-Jul-24 at 23:32:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1889,7 +1889,7 @@ Buffer without File      link-to-buffer-tmp"
 						      (list 'link-to-Info-index-item (hargs:at-p)))
 						  (let ((hargs:reading-type 'Info-node))
 						    (list 'link-to-Info-node (hargs:at-p)))))
-					       ((and (derived-mode-p #'texinfo-mode)
+					       ((and (derived-mode-p 'texinfo-mode)
 						     (save-excursion
 						       (beginning-of-line)
 						       (or (looking-at "@node ")

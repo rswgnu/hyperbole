@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      7-Jul-24 at 14:57:30 by Bob Weiner
+;; Last-Mod:     15-Jul-24 at 01:42:17 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2246,11 +2246,12 @@ first encountered."
 Without the start and end delimiter arguments, this is the normalized
 key form of the optional name that may precede an implicit button.
 If the delimiter arguments are given, return the key form of the
-implicit button text at point between those delimiters.  Assume point is
-within the first line of any button.
+implicit button text at point between those delimiters.  Point must be
+within the first line and after the opening delimiter of any button to
+get the key.
 
-Use `ibut:at-p' instead to test if point is on either the implicit
-button text itself or the name.
+Alternatively, use `ibut:at-p' to test if point is on either the
+implicit button text itself or the name.
 
 All following arguments are optional.  If AS-LABEL is non-nil, label is
 returned rather than the key derived from the label.  START-DELIM and

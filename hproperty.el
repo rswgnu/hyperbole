@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Aug-92
-;; Last-Mod:     29-Jun-24 at 18:57:42 by Bob Weiner
+;; Last-Mod:     28-Jul-24 at 23:58:16 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -150,14 +150,18 @@ This is shown when hovering over the button with the mouse."
 
 (defun hproperty:but-add (start end face)
   "Add between START and END a button using FACE in current buffer.
+Button is added only if it does not already exist.
 
 If `hproperty:but-emphasize-flag' is non-nil when this is called,
 emphasize that button is selectable whenever the mouse cursor
 moves over it."
-  (let ((but (make-overlay start end nil t)))
-    (overlay-put but 'face face)
-    (when hproperty:but-emphasize-flag
-      (overlay-put but 'mouse-face 'highlight))))
+  (let ((but (hproperty:but-get start 'face face)))
+    (unless (and but (eq start (hproperty:but-start but))
+		 (eq end (hproperty:but-end but)))
+      (setq but (make-overlay start end nil t))
+      (overlay-put but 'face face)
+      (when hproperty:but-emphasize-flag
+	(overlay-put but 'mouse-face 'highlight)))))
 
 (defun hproperty:but-clear (&optional pos property value)
   "Remove highlighting from any named Hyperbole button at point or POS.
