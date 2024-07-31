@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     22-Jun-24 at 22:58:03 by Mats Lidell
+;; Last-Mod:     14-Jul-24 at 11:55:33 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -859,9 +859,9 @@ on the first line of a non-alias Lisp definition."
 
 ;;;###autoload
 (defun smart-lisp-mode-p ()
-  "Return t if in a mode which use Lisp symbols."
+  "Return t if in a mode which uses Lisp symbols."
   (or (smart-emacs-lisp-mode-p)
-      (apply #'derived-mode-p '(lisp-mode scheme-mode))))
+      (apply #'derived-mode-p '(lisp-mode scheme-mode help-mode))))
 
 ;;;###autoload
 (defun smart-objc (&optional identifier next)

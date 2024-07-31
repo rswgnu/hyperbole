@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 12:15:16
-;; Last-Mod:     30-Jun-24 at 11:36:47 by Bob Weiner
+;; Last-Mod:     14-Jul-24 at 23:32:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -181,7 +181,7 @@ link-end-position, (including delimiters)."
 	       (not (br-browser-buffer-p))
 	     t)
 	   ;; If in a programming mode, Klinks can occur only within comments.
-	   (if (and (derived-mode-p #'prog-mode)
+	   (if (and (derived-mode-p 'prog-mode)
 		    (not (derived-mode-p 'lisp-interaction-mode))
 		    (not (memq major-mode hui-select-markup-modes)))
 	       ;; Next line means point is within a comment
@@ -306,7 +306,7 @@ See `actypes::link-to-kotl' for valid KLINK formats."
   (let ((obuf (current-buffer)))
     ;; Perform klink's action which is to jump to klink referent.
     (prog1 (hact 'link-to-kotl klink)
-      (when (derived-mode-p #'kotl-mode)
+      (when (derived-mode-p 'kotl-mode)
 	(save-excursion
 	  ;; Update klink label if need be, which might be in a different buffer
 	  ;; than the current one.
