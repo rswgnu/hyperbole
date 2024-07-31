@@ -1,3 +1,9 @@
+* hibtypes.el (Info-node): Handle decoding of Info node names in
+    Hyperbole Help buffer lbl-key: lines, eliminating excess underscores.
+
+* hmouse-tag.el (smart-lisp-mode-p): Add 'help-mode', e.g. for output of {C-h A}
+    to make Hyperbole cross-references work.
+
 2024-07-07  Bob Weiner  <rsw@gnu.org>
 
 * hibtypes.el (elisp-compiler-msg): Fix to handle both of these cases:
