@@ -1,3 +1,6 @@
+* hproperty.el (hproperty:but-add): Add a button only when a button with the same property
+    value, start, and end does not already exist, to prevent duplicates.
+
 * hibtypes.el (Info-node): Handle decoding of Info node names in
     Hyperbole Help buffer lbl-key: lines, eliminating excess underscores.
 
