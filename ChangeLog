@@ -1,3 +1,10 @@
+2024-07-31  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (org-uuid-regexp): Add variable def for when missing in certain earlier Org
+    versions.
+
+* test/hsys-org-tests.el (hsys-org---agenda-tags-string): Fix to current tag handling code.
+
 2024-07-28  Bob Weiner  <rsw@gnu.org>
 
 * hproperty.el (hproperty:but-add): Add a button only when a button with the same property
@@ -130,8 +137,8 @@
 
 2024-07-06  Bob Weiner  <rsw@gnu.org>
 
-* hibtypes.el (org-id): Fix bug in older versions of Org where where
-    'org-uuid-regexp' was not bound.
+* hibtypes.el (org-id): Fix bug in older versions of Org where 'org-uuid-regexp'
+    was not bound.
 
 * hbut.el (ibut:create): Improved when err occurs in type to print the err before
     triggering a backtrace when in batch mode.

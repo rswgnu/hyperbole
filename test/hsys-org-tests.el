@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    23-Apr-21 at 20:55:00
-;; Last-Mod:     28-Jul-24 at 11:44:20 by Mats Lidell
+;; Last-Mod:     31-Jul-24 at 01:46:48 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -205,18 +205,18 @@ This is independent of the setting of `hsys-org-enable-smart-keys'."
     (font-lock-ensure)
 
     (should (and (search-forward "header ") (looking-at-p ":tag1:")))
-    (should (string= ":tag1:tag2:tag3" (hsys-org--agenda-tags-string)))
+    (should (string= ":tag1:tag2:tag3:" (hsys-org--agenda-tags-string)))
 
     (forward-char)
     (should (looking-at-p "tag1:"))
-    (should (string= ":tag1" (hsys-org--agenda-tags-string)))
+    (should (string= "tag1" (hsys-org--agenda-tags-string)))
 
     (should (and (search-forward "tag1") (looking-at-p ":tag2:")))
-    (should (string= ":tag1:tag2:tag3" (hsys-org--agenda-tags-string)))
+    (should (string= ":tag1:tag2:tag3:" (hsys-org--agenda-tags-string)))
 
     (forward-char)
     (should (looking-at-p "tag2:"))
-    (should (string= ":tag2" (hsys-org--agenda-tags-string)))))
+    (should (string= "tag2" (hsys-org--agenda-tags-string)))))
 
 (ert-deftest hsys-org--get-agenda-tags ()
   "Verify `hsys-org-get-agenda-tags' calls org-consult-agenda-function."

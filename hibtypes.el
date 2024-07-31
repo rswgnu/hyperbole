@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     14-Jul-24 at 12:11:19 by Bob Weiner
+;; Last-Mod:     31-Jul-24 at 01:31:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -66,6 +66,8 @@
 (defvar id-cflow-repeated-indicator)
 
 (defvar cscope-output-line-regexp)
+
+(defvar org-uuid-regexp)
 
 (declare-function actype:eval "hact")
 (declare-function actype:identity "hact")
