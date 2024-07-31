@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:      7-Jul-24 at 21:52:26 by Bob Weiner
+;; Last-Mod:     28-Jul-24 at 12:33:05 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -154,7 +154,7 @@ an error."
 
 ;;;###autoload
 (defun hsys-org-agenda-tags-p ()
-  "When on an Org tag, return appropriate `org-tags-view' function.
+  "When on an Org tag, return appropriate `org-tags-view'-like function.
 Use `default-directory' and buffer name to determine which function to
 call."
   (when (hsys-org-at-tags-p)
@@ -167,17 +167,19 @@ call."
 	  ((hyrolo-at-tags-p t)
 	   #'hsys-org-hyrolo-agenda-tags))))
 
-(defun hsys-org-get-agenda-tags (org-consult-agenda-function)
-  "When on an Org tag, call ORG-CONSULT-AGENDA-FUNCTION to find matches.
+(defun hsys-org-get-agenda-tags (agenda-tags-view-function)
+  "When on an Org tag, call AGENDA-TAGS-VIEW-FUNCTION to find matches.
 If on a colon, match to sections with all tags around point;
 otherwise, just match to the single tag around point.
 
 The function determines the org files searched for matches and is
-given two arguments when called: a regexp of tags to match and a 0
-max-count which finds all matches within headlines only."
+given two arguments when called: a null value to tell it to match to
+all headlines, not just todos and an Org tags match selector string,
+e.g. \":tag1:tag2:tag3:\".  Headlines that contain or inherit all of
+these tags will be displayed, regardless of tag order."
   (interactive)
   (when (hsys-org-at-tags-p)
-    (funcall org-consult-agenda-function nil (hsys-org--agenda-tags-string))))
+    (funcall agenda-tags-view-function nil (hsys-org--agenda-tags-string))))
 
 (defun hsys-org-hyrolo-agenda-tags ()
   "When on a HyRolo tag, use `hyrolo-tags-view' to list all HyRolo tag matches.
@@ -211,8 +213,11 @@ otherwise, just match to the single tag around point."
 (defun hsys-org-tags-view (&optional todo-only match view-buffer-name)
   "Prompt for colon-separated Org tags and display matching Org headlines.
 With optional prefix arg TODO-ONLY, limit matches to Org todo
-items only.  With optional VIEW-BUFFER-NAME, use that rather than
-the default, \"*Org Tags*\"."
+items only.  With optional MATCH, an Org tags match selector
+string, e.g. \":tag1:tag2:tag3:\", match to sections that contain
+or inherit all of these tags, regardless of tag order.  With
+optional VIEW-BUFFER-NAME, use that rather than the default,
+\"*Org Tags*\"."
   (interactive "P")
   (require 'org-agenda)
   (let* ((org-agenda-files (list org-directory))
@@ -658,24 +663,22 @@ TARGET must be a string."
 
 (defun hsys-org--agenda-tags-string ()
   "When on or between Org tags, return an agenda match string for them.
-If on a colon, match to headlines with all tags around point, in any order.
-e.g. \":tag1: :tag2: :tag3: \".  Otherwise, just match to the single
-tag around point."
-  (let (range
+If on a colon, return a match string for all tags around point,
+e.g. \":tag1:tag2:tag3:\", that will match to these tags in any order.
+Otherwise, just match to the single tag around point, e.g. tag2."
+  (let ((range (hproperty:char-property-range nil 'face 'org-tag))
 	tags)
-    (if (equal (char-after) ?:)
-	;;  On colon, search for HyWiki headings with all tags on line
-	(setq range (hproperty:char-property-range nil 'face 'org-tag)
-	      tags (when range (buffer-substring-no-properties (car range) (cdr range))))
-      ;;   Else on a specific tag, search for HyWiki headings with that tag only
-      (setq range (hargs:delimited ":" ":" nil nil t)
-	    tags (nth 0 range)
-	    range (cons (nth 1 range) (nth 2 range))))
-    (when (and tags range)
-      (ibut:label-set tags (car range) (cdr range))
-      (concat ":" (string-join (mapcar (lambda (tag) (regexp-quote tag))
-				       (split-string tags ":" t))
-			       ":")))))
+    (when range
+      (if (equal (char-after) ?:)
+	  ;;  On colon, search for HyWiki headings with all tags on line
+	  (setq tags (when range (buffer-substring-no-properties (car range) (cdr range))))
+	;;   Else on a specific tag, search for HyWiki headings with that tag only
+	(setq range (hargs:delimited ":" ":" nil nil t)
+	      tags (nth 0 range)
+	      range (cons (nth 1 range) (nth 2 range))))
+      (when (and tags range)
+	(ibut:label-set tags (car range) (cdr range))
+	tags))))
 
 (defun hsys-org--set-fold-style ()
   "Set `org-fold-core-style' to \\='overlays for `reveal-mode' compatibility.

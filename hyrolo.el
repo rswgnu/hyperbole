@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      7-Jul-24 at 21:47:43 by Bob Weiner
+;; Last-Mod:     28-Jul-24 at 12:31:58 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1395,8 +1395,11 @@ the sort order."
 (defun hyrolo-tags-view (&optional todo-only match view-buffer-name)
   "Prompt for colon-separated Org tags and display matching HyRolo sections.
 With optional prefix arg TODO-ONLY, limit matches to HyRolo Org
-todo items only.  With optional VIEW-BUFFER-NAME, use that rather
-than the default, \"*HyRolo Tags*\"."
+todo items only.  With optional MATCH, an Org tags match selector
+string, e.g. \":tag1:tag2:tag3:\", match to sections that contain
+or inherit all of these tags, regardless of tag order.  With
+optional VIEW-BUFFER-NAME, use that rather than the default,
+\"*HyRolo Tags*\"."
   (interactive "P")
   (require 'org-agenda)
   (let* ((org-agenda-files (hyrolo-get-file-list))
