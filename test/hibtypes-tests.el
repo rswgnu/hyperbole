@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:45:00
-;; Last-Mod:     28-Jul-24 at 00:33:04 by Mats Lidell
+;; Last-Mod:      4-Aug-24 at 23:34:43 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -305,6 +305,33 @@
 ;; pathname-line-and-column
 
 ;; elisp-compiler-msg
+(ert-deftest elisp-compiler-msg-test ()
+  "Verify elisp-compiler-msg."
+  (with-temp-buffer
+    (insert "    passed  1/1  test (0.000100 sec)\n")
+    (goto-line 1)
+    (mocklet (((buffer-name) => "*Compile-Log*")
+              ((smart-tags-display "test" nil) => t))
+      (should (ibtypes::elisp-compiler-msg))))
+
+  (with-temp-buffer
+    (insert "Test test-test backtrace:\n")
+    (goto-line 1)
+    (mocklet (((buffer-name) => "*Compile-Log*")
+              ((smart-tags-display "test-test" nil) => t))
+      (should (ibtypes::elisp-compiler-msg))))
+
+  (with-temp-buffer
+    (insert "Compiling /home/user/file.el...
+
+In hyperbole-test:
+file.el:10:20: Warning: Message
+")
+    (goto-line 3)
+    (mocklet (((buffer-name) => "*Compile-Log*")
+              ((actypes::link-to-regexp-match "^(def[a-z \11]+hyperbole-test[ \11\n\15(]" 1 "/home/user/file.el" nil) => t))
+      (should (ibtypes::elisp-compiler-msg))))
+  )
 
 ;; patch-msg
 
