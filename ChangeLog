@@ -1,3 +1,8 @@
+2024-08-05  Mats Lidell  <matsl@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-test--expand-path-list)
+    (hyrolo-test--at-tags-p): Add tests.
+
 2024-07-31  Bob Weiner  <rsw@gnu.org>
 
 * hibtypes.el (org-uuid-regexp): Add variable def for when missing in certain earlier Org
