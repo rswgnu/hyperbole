@@ -1,5 +1,8 @@
 2024-08-06  Mats Lidell  <matsl@gnu.org>
 
+* test/hproperty-tests.el: Test file for hproperty.
+    (hproperty-tests--but-add): Add test.
+
 * test/hywiki-tests.el (hywiki-tests--convert-words-to-org-link): Add test.
 
 2024-08-05  Mats Lidell  <matsl@gnu.org>
