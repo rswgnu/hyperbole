@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:      6-Aug-24 at 00:17:21 by Mats Lidell
+;; Last-Mod:      6-Aug-24 at 22:36:47 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -270,6 +270,7 @@
 
 (ert-deftest hywiki-tests--convert-words-to-org-link ()
   "Verify `hywiki-convert-words-to-org-links' converts WikiWords to org links."
+  (skip-unless (not noninteractive))
   (unwind-protect
       (with-temp-buffer
         (font-lock-mode 1)
