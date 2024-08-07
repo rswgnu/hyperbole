@@ -1,3 +1,15 @@
+2024-08-06  Mats Lidell  <matsl@gnu.org>
+
+* test/hproperty-tests.el: Test file for hproperty.
+    (hproperty-tests--but-add): Add test.
+
+* test/hywiki-tests.el (hywiki-tests--convert-words-to-org-link): Add test.
+
+2024-08-05  Mats Lidell  <matsl@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-test--expand-path-list)
+    (hyrolo-test--at-tags-p): Add tests.
+
 2024-07-31  Bob Weiner  <rsw@gnu.org>
 
 * hibtypes.el (org-uuid-regexp): Add variable def for when missing in certain earlier Org
