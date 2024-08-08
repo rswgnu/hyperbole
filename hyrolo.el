@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     28-Jul-24 at 12:31:58 by Bob Weiner
+;; Last-Mod:      8-Aug-24 at 23:53:10 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -97,6 +97,7 @@
 (defvar org-mode-syntax-table)          ; "org.el"
 (defvar org-outline-regexp)             ; "org.el"
 (defvar org-outline-regexp-bol)         ; "org.el"
+(defvar org-agenda-buffer-tmp-name)     ; "org-agenda.el"
 (defvar google-contacts-buffer-name)    ; "ext:google-contacts.el"
 (defvar hbut:source-prefix)             ; "hbut.el"
 

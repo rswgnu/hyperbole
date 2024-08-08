@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-23 at 11:20:15 by Bob Weiner
-;; Last-Mod:     28-Jul-24 at 12:33:29 by Bob Weiner
+;; Last-Mod:      8-Aug-24 at 23:49:13 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -34,7 +34,12 @@
 
 (defvar consult-org-roam-grep-func)
 (defvar org-roam-directory)
+(defvar hsys-org-at-tags-p)
+(defvar org-agenda-files)
+(defvar org-agenda-buffer-tmp-name)
 (declare-function org-roam-db-autosync-mode "ext:org-roam")
+(declare-function hypb:require-package "hypb")
+(declare-function hsys-org-at-tags-p "hsys-org")
 
 ;;; ************************************************************************
 ;;; Public functions
