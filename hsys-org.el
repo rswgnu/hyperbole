@@ -203,14 +203,14 @@ otherwise, just match to the single tag around point."
   (hsys-org-get-agenda-tags #'hywiki-tags-view))
 
 (defun hsys-org-agenda-tags ()
-  "When on an `org-directory' tag, use `hsys-org-tags-view' to list dir tag matches.
+  "On an `org-directory' tag, use `hsys-org-tags-view' to list dir tag matches.
 If on a colon, match to sections with all tags around point;
 otherwise, just match to the single tag around point."
   (interactive)
   (hsys-org-get-agenda-tags #'hsys-org-tags-view))
 
 (defun hsys-org-roam-agenda-tags ()
-  "When on an `org-roam-directory' tag, use `hsys-org-roam-tags-view' to list tag matches.
+  "On an `org-roam-directory' tag, use `hsys-org-roam-tags-view' to list matches.
 If on a colon, match to sections with all tags around point;
 otherwise, just match to the single tag around point."
   (interactive)
