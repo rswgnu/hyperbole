@@ -3524,6 +3524,8 @@ Reveal mode is a buffer-local minor mode.  When enabled, it
 reveals invisible text around point.
 
 Also see the `reveal-auto-hide' variable."
+  :init-value nil
+  :keymap nil
   nil) ;; Make this a no-op until can debug `reveal-mode' in *HyRolo* buffer
 
 (unless (boundp 'reveal-auto-hide)
