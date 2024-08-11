@@ -1,3 +1,36 @@
+2024-08-11  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-maybe-highlight-page-names-in-frame): Reduce sit-for
+    to 0 since just want to trigger redisplay.
+            (hywiki-publish-to-html): Retrieve HyWiki project by name.
+	    (hywiki-directory): Change to a defcustom so can set this before
+    loading Hyperoble.
+
+2024-08-10  Bob Weiner  <rsw@gnu.org>
+
+* hynote.el: Update commentary to current functionality.
+             (hynote-get-file): Add ".otl" and ".outl" suffixes for Emacs
+    outline and HyRolo files.
+
+* hywiki.el (hywiki-org-export-function): Add and use as advice on
+    'org-element--generate-copy-script'.
+            (hywiki-get-page): Fix so just returns nil if page name is invalid
+     or not found.
+            (hywiki-org-link-resolve ,hywiki-org-link-export): Handle nil as a
+     'link' arg value.  In resolve function, remove any hy: prefix and return
+     nil if wiki page is not found.  In export function, return 'link' arg
+     with no markup if wiki page is not found.
+            (hywiki-org-publishing-directory): Add as location to exported HyWiki
+     pages to.
+            (hywiki-org-publishing-function): Add as Org function used to export
+     each HyWiki page.
+            (hywiki-org-publish-project-alist): Add with properties for
+     exporting a HyWiki.
+            (hywiki-org-get-publish-project, hywiki-org-get-publish-property):
+     Add to simplify HyWiki Org publish property handling.
+            (hywiki-publish-to-html): Add to export HyWiki pages to html.  With
+     a prefix argument, regenerate all html pages.
+
 2024-08-08  Mats Lidell  <matsl@gnu.org>
 
 * test/hibtypes-tests.el (elisp-compiler-msg-test): Add test.
@@ -16,24 +49,28 @@
 
 2024-07-31  Bob Weiner  <rsw@gnu.org>
 
-* hibtypes.el (org-uuid-regexp): Add variable def for when missing in certain earlier Org
-    versions.
+* hibtypes.el (org-uuid-regexp): Add variable def for when missing in certain
+    earlier Org versions.
 
-* test/hsys-org-tests.el (hsys-org---agenda-tags-string): Fix to current tag handling code.
+* test/hsys-org-tests.el (hsys-org---agenda-tags-string): Fix to current tag
+    handling code.
 
 2024-07-28  Bob Weiner  <rsw@gnu.org>
 
-* hproperty.el (hproperty:but-add): Add a button only when a button with the same property
-    value, start, and end does not already exist, to prevent duplicates.
+* hproperty.el (hproperty:but-add): Add a button only when a button with the
+    same property value, start, and end does not already exist, to prevent
+    duplicates.
 
-* hywiki.el (hywiki-maybe-highlight-page-name): Fix to dehighlight wiki words only if within
-    double square or angle brackets (leaving these to Org to handle).
-    (hywiki-buttonize-non-character-commands): Add 'delete-' commands.
-    (hywiki--highlighting-done-flag): Add and use in 'hywiki-maybe-highlight-page-name'.
-    (hywiki-maybe-highlight-org-element-backward,
-     hywiki-maybe-highlight-org-element-forward): Add these two functions.
-    (hywiki-maybe-highlight-page-names): Fix to not use whole buffer highlight flag when
-       given a region.
+* hywiki.el (hywiki-maybe-highlight-page-name): Fix to dehighlight wiki words
+    only if within double square or angle brackets (leaving these to Org to
+    handle).
+            (hywiki-buttonize-non-character-commands): Add 'delete-' commands.
+            (hywiki--highlighting-done-flag): Add and use in
+    'hywiki-maybe-highlight-page-name'.
+            (hywiki-maybe-highlight-org-element-backward,
+            (hywiki-maybe-highlight-org-element-forward): Add these two functions.
+            (hywiki-maybe-highlight-page-names): Fix to not use whole buffer
+    highlight flag when given a region.
 
 * hsys-org-roam.el (hsys-org-roam-tags-view):
   hsys-org.el (hsys-org-tags-view):
@@ -44,8 +81,9 @@
     'org-consult-agenda-function' to 'agenda-tags-view-function' since does
     not require the consult package and don't want to override any org
     package name.  Improve doc string.
-              (hsys-org--agenda-tags-string): Improve doc string and fix to return
-    non-nil only when point is within a tag string.  Simplify return value creation.
+              (hsys-org--agenda-tags-string): Improve doc string and fix to
+    return non-nil only when point is within a tag string.  Simplify return
+    value creation.
 
 2024-07-28  Mats Lidell  <matsl@gnu.org>
 
