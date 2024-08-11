@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     10-Aug-24 at 21:05:30 by Bob Weiner
+;; Last-Mod:     11-Aug-24 at 01:09:50 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -181,9 +181,11 @@ Use nil for no HyWiki mode indicator."
 (defvar hywiki-file-suffix ".org"
   "File suffix (including period) to use when creating HyWiki pages.")
 
-(defvar hywiki-directory '"~/hywiki/"
+(defcustom hywiki-directory '"~/hywiki/"
   "Directory that holds all HyWiki pages in Org format.
-See `hywiki-org-publishing-directory' for exported pages in html format.")
+See `hywiki-org-publishing-directory' for exported pages in html format."
+  :type 'string
+  :group 'hyperbole-hywiki)
 
 (defvar-local hywiki-buffer-highlighted-state nil
   "State of HyWikiWords highlighting in the associated buffer.
@@ -1201,7 +1203,7 @@ Files are saved in:
 Customize this directory with:
     {M-x customize-variable RET hywiki-org-publishing-directory RET}."
   (interactive "P")
-  (org-publish-project (hywiki-org-get-publish-properties) all-pages-flag))
+  (org-publish-project "hywiki" all-pages-flag))
 
 ;;;###autoload
 (defun hywiki-tags-view (&optional todo-only match view-buffer-name)

@@ -2,6 +2,9 @@
 
 * hywiki.el (hywiki-maybe-highlight-page-names-in-frame): Reduce sit-for
     to 0 since just want to trigger redisplay.
+            (hywiki-publish-to-html): Retrieve HyWiki project by name.
+	    (hywiki-directory): Change to a defcustom so can set this before
+    loading Hyperoble.
 
 2024-08-10  Bob Weiner  <rsw@gnu.org>
 
