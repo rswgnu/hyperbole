@@ -14,11 +14,29 @@
 
 ;;; Commentary:
 ;;
-;;  This is Hyperbole's note taking system, HyNote.  It utilizes the
-;;  Org mode or the Koutliner file format plus UUIds and HyRolo for note lookups.
+;;  This is a start on Hyperbole's note taking system, HyNote, which
+;;  presently simply provides an experience similar to HyWikiWords
+;;  for Org and Org Roam file and headline links.  In the future, it
+;;  will also provide a universal way to easily link to information
+;;  across many file formats.
+;;
+;;  HyNote supports Org, Markdown, Koutline and Emacs Outline file
+;;  formats.  It uses UUIDs and HyRolo for quick note lookups across
+;;  matching files in `hynote-directory-list'.
 ;;
 ;;  See all the autoloaded functions herein for interactive commands.
-;;  See the Info manual entry "(hyperbole)HyNote" for usage information.
+;;
+;;  HyNote adds an implicit button type to Hyperbole:
+;;    `hynote-file' displays Org and Org Roam links without the need
+;;    for any delimiters or file suffixes, e.g. my-org-file-stem#headline
+;;    would jump to the headline in the my-org-file.  There is no
+;;    highlighting on such links but they flash when activated and {C-h A}
+;;    will show what they do.
+;;
+;;  This is one of the lowest priority implicit button types, so such link
+;;  buttons trigger only when other types are not recognized first.  Note
+;;  that the `hywiki-word' type is recognized ahead of the `hynote-file'
+;;  type.
 
 ;;; Code:
 ;;; ************************************************************************
@@ -106,14 +124,14 @@ After successfully finding a file and reading it into a buffer, run
 
 (defun hynote-get-file (file-stem-name)
   "Return existing file path in `hynote-directory-list' from FILE-STEM-NAME.
-File name must end with `hyrolo-file-suffix-regexp'.  No
-validation of FILE-STEM-NAME is done."
+File name must end with standard suffixes from `hyrolo-file-suffix-regexp'.
+No validation of FILE-STEM-NAME is done."
   ;; Remove any #section from `file-stem-name'
   (setq file-stem-name (if (string-match "#" file-stem-name)
 			   (substring file-stem-name 0 (match-beginning 0))
 			 file-stem-name))
-  (locate-file file-stem-name hynote-directory-list 
-	       '(".org" ".md" ".kotl" ".kot")))
+  (locate-file file-stem-name hynote-directory-list
+	       '(".kotl" ".kot" ".md" ".org" ".otl" ".outl")))
 
 (defun hynote-get-files ()
   "Return `hynote-directory-list' files ending with `hyrolo-file-suffix-regexp'.
@@ -126,7 +144,7 @@ File names returned are relative to `hynote-directory-list'."
    hynote-directory-list))
 
 (defun hynote-get-file-stems ()
-  "Return the list of existing HyWiki files sans their `hynote-file-suffixes'.
+  "Return the list of existing HyNote files sans their `hynote-file-suffixes'.
 This includes both Hynote page files and others.  Stems returned are
 relative to `hynote-directory-list'."
   (mapcar #'file-name-sans-extension (hynote-get-files)))
