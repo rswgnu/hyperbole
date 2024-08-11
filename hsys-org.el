@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     28-Jul-24 at 12:33:05 by Bob Weiner
+;; Last-Mod:      8-Aug-24 at 23:51:10 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -48,6 +48,13 @@
 (defvar hyperbole-mode-map)             ; "hyperbole.el"
 (defvar org--inhibit-version-check)     ; "org-macs.el"
 (defvar hywiki-org-link-type-required)  ; "hywiki.el"
+(defvar org-agenda-buffer-tmp-name)     ; "org-agenda.el"
+
+(declare-function hywiki-at-tags-p "hywiki")
+(declare-function hywiki-tags-view "hywiki")
+(declare-function hyrolo-tags-view "hyrolo")
+(declare-function hyrolo-at-tags-p "hyrolo")
+(declare-function hsys-org-roam-tags-view "hsys-org")
 
 (declare-function org-babel-get-src-block-info "org-babel")
 (declare-function org-fold-show-context "org-fold")
@@ -196,14 +203,14 @@ otherwise, just match to the single tag around point."
   (hsys-org-get-agenda-tags #'hywiki-tags-view))
 
 (defun hsys-org-agenda-tags ()
-  "When on an `org-directory' tag, use `hsys-org-tags-view' to list dir tag matches.
+  "On an `org-directory' tag, use `hsys-org-tags-view' to list dir tag matches.
 If on a colon, match to sections with all tags around point;
 otherwise, just match to the single tag around point."
   (interactive)
   (hsys-org-get-agenda-tags #'hsys-org-tags-view))
 
 (defun hsys-org-roam-agenda-tags ()
-  "When on an `org-roam-directory' tag, use `hsys-org-roam-tags-view' to list tag matches.
+  "On an `org-roam-directory' tag, use `hsys-org-roam-tags-view' to list matches.
 If on a colon, match to sections with all tags around point;
 otherwise, just match to the single tag around point."
   (interactive)

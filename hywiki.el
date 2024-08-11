@@ -138,6 +138,7 @@
 
 (defvar org-agenda-buffer-tmp-name)  ;; "org-agenda.el"
 (declare-function org-link-store-props "ol" (&rest plist))
+(declare-function hsys-org-at-tags-p "hsys-org")
 
 ;;; ************************************************************************
 ;;; Public variables

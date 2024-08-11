@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     21-Feb-24 at 23:47:33 by Mats Lidell
+;; Last-Mod:      6-Aug-24 at 00:09:45 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -23,7 +23,7 @@
 (eval-when-compile (require 'cl-lib))
 
 (defun hy-test-helpers:consume-input-events ()
-  "Use recusive-edit to consume the events kbd-key generates."
+  "Use `recursive-edit' to consume the events kbd-key generates."
   (run-with-timer 0.1 nil (lambda () (exit-recursive-edit)))
   (recursive-edit))
 
