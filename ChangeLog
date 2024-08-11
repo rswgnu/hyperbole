@@ -1,3 +1,8 @@
+2024-08-11  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-maybe-highlight-page-names-in-frame): Reduce sit-for
+    to 0 since just want to trigger redisplay.
+
 2024-08-10  Bob Weiner  <rsw@gnu.org>
 
 * hynote.el: Update commentary to current functionality.
