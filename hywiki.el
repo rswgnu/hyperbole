@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     30-Jul-24 at 23:49:43 by Bob Weiner
+;; Last-Mod:      8-Aug-24 at 23:22:05 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -121,6 +121,7 @@
 
 (defvar org-agenda-buffer-tmp-name)  ;; "org-agenda.el"
 (declare-function org-link-store-props "ol" (&rest plist))
+(declare-function hsys-org-at-tags-p "hsys-org")
 
 ;;; ************************************************************************
 ;;; Public variables
