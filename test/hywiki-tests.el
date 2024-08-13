@@ -46,7 +46,7 @@
   ;; considered an error case that is.)
   (let ((hywiki-directory (make-temp-file "hywiki" t)))
     (unwind-protect
-        (should-error (hywiki-add-page "notawikiword"))
+        (should-not (hywiki-add-page "notawikiword"))
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--wikiword-with-prefix-creates-a-new-page ()
@@ -271,17 +271,20 @@
 (ert-deftest hywiki-tests--convert-words-to-org-link ()
   "Verify `hywiki-convert-words-to-org-links' converts WikiWords to org links."
   (skip-unless (not noninteractive))
-  (unwind-protect
-      (with-temp-buffer
-        (font-lock-mode 1)
-        (hywiki-mode 1)
-        (insert "WikiWord")
-	(newline nil t)
-        (goto-char 4)
-        (hywiki-convert-words-to-org-links)
-        (should (string= "[[hy:WikiWord]]\n"
-                         (buffer-substring-no-properties (point-min) (point-max)))))
-    (hywiki-mode -1)))
+  (let* ((hsys-org-enable-smart-keys t)
+         (hywiki-directory (make-temp-file "hywiki" t)))
+    (unwind-protect
+	(with-temp-buffer
+          (font-lock-mode 1)
+          (hywiki-mode 1)
+	  (hywiki-add-page "WikiWord")
+          (insert "WikiWord")
+	  (newline nil t)
+          (goto-char 4)
+          (hywiki-convert-words-to-org-links)
+          (should (string= "[[hy:WikiWord]]\n"
+                           (buffer-substring-no-properties (point-min) (point-max)))))
+      (hywiki-mode -1))))
 
 (provide 'hywiki-tests)
 ;;; hywiki-tests.el ends here

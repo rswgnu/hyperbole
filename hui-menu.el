@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
-;; Last-Mod:      2-Feb-24 at 21:41:16 by Mats Lidell
+;; Last-Mod:     14-Aug-24 at 01:35:19 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -443,6 +443,17 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		   ["Help"   gbut:help t]
 		   ["Link"   hui:gbut-link-directly t]
                    ["Rename" hui:gbut-rename t])
+		 '("HyWiki"
+		   ["Manual"   (id-info "(hyperbole)HyWiki") t]
+		   "----"
+		   ["Activate" hui:ibut-act t]
+		   ["Create"   hywiki-add-page-and-display t]
+		   ["Edit"     hywiki-find-page t]
+		   ["Grep"     hywiki-consult-grep t]
+		   ["Help"     hui:hbut-help t]
+		   ["Link"     hywiki-add-link t]
+		   ["Publish"  hywiki-publish-to-html t]
+		   ["Search"   hywiki-word-search t])
 		 '("Implicit-Button"
 		   ["Manual"   (id-info "(hyperbole)Implicit Buttons") t]
 		   "----"

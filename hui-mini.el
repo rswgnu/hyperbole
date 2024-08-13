@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     20-Jan-24 at 20:01:18 by Mats Lidell
+;; Last-Mod:     14-Aug-24 at 00:41:19 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -687,8 +687,7 @@ command instead.  Typically prevents clashes over {\\`C-c' /}."
 	   ("Ebut/"       (menu . ebut)     "Explicit button commands.")
 	   ("Find/"       (menu . find)     "Find matching line commands.")
 	   ("Gbut/"       (menu . gbut)     "Global button commands.")
-	   ("Hist"        hhist:pop
-	    "Jumps back to location prior to last Hyperbole button follow.")
+	   ("HyWiki/"     (menu . hywiki)   "HyWiki commands.")
 	   ("Ibut/"       (menu . ibut)     "Implicit button and button type commands.")
 	   ("Kotl/"       (menu . kotl)     "Autonumbered outlining and hyperlink capabilities.")
 	   ("Msg/"        (menu . msg)      "Mail and News messaging capabilities.")
@@ -696,6 +695,8 @@ command instead.  Typically prevents clashes over {\\`C-c' /}."
 	   ("Screen/"     (menu . screen)   "Screen display management commands.")
 	   ;; ("To/"         (menu . to)       "A-Z menu to search and add Emacs artifacts")
 	   ("Win/"        (menu . win)      "Window configuration management commands.")
+	   ("historY"     hhist:pop
+	    "Jump back to location prior to last Hyperbole button follow.")
 	   )))
        '(butfile .
 	 (("Butfile>")
@@ -838,6 +839,25 @@ command instead.  Typically prevents clashes over {\\`C-c' /}."
 	   "Display manual section on global buttons.")
 	  ("Link"   hui:gbut-link-directly "Add a named global button link to point in other/another window.")
 	  ("Rename" hui:gbut-rename "Rename a global button.")))
+       '(hywiki .
+	 (("HyWiki>")
+	  ("Act"            hui:ibut-act      "Activate HyWikiWord link at point.")
+	  ("Create"         hywiki-add-page-and-display
+	    "Create and display a new HyWiki page.  Shows existing page names to aid in new naming.")
+	  ("Edit"           hywiki-find-page
+	   "Prompt with completion for and display a HyWiki page ready for editing.")
+	  ("Grep"           hywiki-consult-grep
+	   "Grep over HyWiki pages with interactive consult-grep.")
+	  ("Help"           hui:hbut-help
+	   "Report on a HyWikiWord's attributes.")
+	  ("Info"           (id-info "(hyperbole)HyWiki")
+	   "Display Hyperbole manual section on HyWiki.")
+	  ("Link"           hywiki-add-link
+	   "Prompt for and add a link at point to a HyWiki page.")
+          ("Publish"        hywiki-publish-to-html
+	   "Publish modified pages in the HyWiki to HTML; prefix arg to publish all pages.")
+	  ("Search"         hywiki-word-search
+	   "Use `hywiki-consult-grep' to show occurrences of a prompted for HyWikiWord.")))
        '(ibut .
 	 (("IButton>")
 	  ("Act"            hui:ibut-act
@@ -846,8 +866,8 @@ command instead.  Typically prevents clashes over {\\`C-c' /}."
 	    "Label and create an implicit button of any type.")
 	  ("DeleteType"     (hui:htype-delete 'ibtypes)
 	   "Delete specified implicit button type.")
-	  ("Edit"           hui:ibut-edit "Edits/modifies named implicit button attributes.")
-	  ("Help"           hui:hbut-help "Reports on button's attributes.")
+	  ("Edit"           hui:ibut-edit "Edit/modify named implicit button attributes.")
+	  ("Help"           hui:hbut-help "Report on button's attributes.")
 	  ("Info"           (id-info "(hyperbole)Implicit Buttons")
 	   "Display manual section on implicit buttons.")
 	  ("Link"           hui:ibut-link-directly "Insert an ibut link at point to other/another window.")

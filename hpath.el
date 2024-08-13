@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:      7-Jul-24 at 18:08:36 by Bob Weiner
+;; Last-Mod:     13-Aug-24 at 22:29:46 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1428,10 +1428,9 @@ PATHNAME may start with a special prefix character that is handled as follows:
 
 If PATHNAME does not start with a prefix character:
 
-  it may be followed by a hash-style link reference to HTML, XML,
-  SGML, shell script comment, Markdown or Emacs outline headings
-  of the form, <file>#<anchor-name>, e.g. \"~/.bashrc#Alias
-  Section\";
+  it may be followed by a hash-style link reference to Org, HTML, XML,
+  SGML, shell script comment, Markdown or Emacs outline headings of the
+  form, <file>#<anchor-name>, e.g. \"~/.bashrc#Alias Section\";
 
   it may end with a line number (starts from 1) and optional column number
   (starts from 0) to which to go, of the form,
