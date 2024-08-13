@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:      6-Aug-24 at 22:36:47 by Mats Lidell
+;; Last-Mod:     12-Aug-24 at 00:14:36 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -211,10 +211,8 @@
       (hy-delete-file-and-buffer wiki-page)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
-;; Following two test cases for verifying proper face is some what
-;; experimental. They need to be run in interactive mode and with the
-;; help of hy-test-helpers:consume-input-events it seems the property
-;; can be verified.
+;; Following three test cases for verifying proper face is some what
+;; experimental. They need to be run in interactive mode.
 
 (ert-deftest hywiki-tests--face-property-for-wikiword-with-wikipage ()
   "Verify WikiWord for a wiki page gets face property hywiki-word-face."
@@ -224,13 +222,11 @@
          (wikipage (hywiki-add-page "WikiWord")))
     (unwind-protect
         (with-temp-buffer
-          (let ((buffer (current-buffer)))
-            (hywiki-mode 1)
-            (insert "WikiWord")
-	    (newline nil t)
-            (hy-test-helpers:consume-input-events)
-            (goto-char 4)
-            (should (hproperty:but-get (point) 'face hywiki-word-face))))
+          (hywiki-mode 1)
+          (insert "WikiWord")
+	  (newline nil t)
+          (goto-char 4)
+          (should (hproperty:but-get (point) 'face hywiki-word-face)))
       (hywiki-mode 0)
       (hy-delete-file-and-buffer wikipage)
       (hy-delete-dir-and-buffer hywiki-directory))))
@@ -242,13 +238,29 @@
          (hywiki-directory (make-temp-file "hywiki" t)))
     (unwind-protect
         (with-temp-buffer
-          (let ((buffer (current-buffer)))
-            (hywiki-mode 0)
-            (insert "WikiWord")
-	    (newline nil t)
-            (hy-test-helpers:consume-input-events)
-            (goto-char 4)
-            (should-not (hproperty:but-get (point) 'face hywiki-word-face))))
+          (hywiki-mode 0)
+          (insert "WikiWord")
+	  (newline nil t)
+          (goto-char 4)
+          (should-not (hproperty:but-get (point) 'face hywiki-word-face)))
+      (hy-delete-dir-and-buffer hywiki-directory))))
+
+(ert-deftest hywiki-tests--convert-words-to-org-link ()
+  "Verify `hywiki-convert-words-to-org-links' converts WikiWords to org links."
+  (skip-unless (not noninteractive))
+  (let* ((hywiki-directory (make-temp-file "hywiki" t))
+         (wikipage (hywiki-add-page "WikiWord")))
+    (unwind-protect
+        (with-temp-buffer
+          (hywiki-mode 1)
+          (insert "WikiWord")
+	  (newline nil t)
+          (goto-char 4)
+          (hywiki-convert-words-to-org-links)
+          (should (string= "[[hy:WikiWord]]\n"
+                           (buffer-substring-no-properties (point-min) (point-max)))))
+      (hywiki-mode 0)
+      (hy-delete-file-and-buffer wikipage)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--at-tags-p ()
@@ -267,21 +279,6 @@
       (should (hywiki-at-tags-p)))
     (mocklet ((buffer-name => "*Other Tags*"))
       (should-not (hywiki-at-tags-p)))))
-
-(ert-deftest hywiki-tests--convert-words-to-org-link ()
-  "Verify `hywiki-convert-words-to-org-links' converts WikiWords to org links."
-  (skip-unless (not noninteractive))
-  (unwind-protect
-      (with-temp-buffer
-        (font-lock-mode 1)
-        (hywiki-mode 1)
-        (insert "WikiWord")
-	(newline nil t)
-        (goto-char 4)
-        (hywiki-convert-words-to-org-links)
-        (should (string= "[[hy:WikiWord]]\n"
-                         (buffer-substring-no-properties (point-min) (point-max)))))
-    (hywiki-mode -1)))
 
 (provide 'hywiki-tests)
 ;;; hywiki-tests.el ends here
