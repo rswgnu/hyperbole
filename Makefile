@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:      9-Jul-24 at 09:06:21 by Mats Lidell
+# Last-Mod:     12-Aug-24 at 00:26:29 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -363,7 +363,7 @@ TAGS: $(EL_TAGS)
 	$(ETAGS) --regex='{lisp}/(ert-deftest[ \t]+\([^ \t\n\r\f()]+\)/' $(EL_TAGS)
 
 clean:
-	$(RM) hyperbole-autoloads.el kotl/kotl-autoloads.el $(ELC_COMPILE) $(ELC_KOTL) TAGS
+	$(RM) hyperbole-autoloads.el kotl/kotl-autoloads.el $(ELC_COMPILE) $(ELC_KOTL) TAGS test/*.elc
 
 version:
 	@echo ""
