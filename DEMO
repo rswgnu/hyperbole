@@ -427,9 +427,9 @@ to remove the HyRolo demo code and restore any prior key binding:
 Hyperbole provides a history command that returns you to previous button
 locations in the reverse order of the way you traverse them.  It actually
 restores your complete frame and window configuration at the time of the
-button press.  You access it by selecting the Hist command from the top-level
-Hyperbole menu, {C-h h h}.  Remember this because you will want to use that
-command to return to this DEMO later.
+button press.  You access it by selecting the HistorY command from the
+top-level Hyperbole menu, {C-h h y}.  Remember this because you will want
+to use that command to return to this DEMO later.
 
 
 * Implicit Buttons
@@ -761,7 +761,7 @@ button (of type `dir-summary') to take us to the file.
 
 Let's look at "MANIFEST".  Now press anywhere within a line in the MANIFEST
 file and you see that it is displayed as expected.  (Remember to use the
-Hyperbole history command to return here.)  You can get help on these buttons
+Hyperbole history command to return here).  You can get help on these buttons
 just like any others.
 
 In README files, such as Hyperbole's "README.md", table of contents entries

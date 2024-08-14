@@ -1,3 +1,25 @@
+2024-08-13  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Menus): Add description of Doc/ and HyWiki/ menus.
+                     (Glossary): Add History and HyWiki entries.
+		     (HyWiki): Add a chapter documenting HyWiki.
+
+* hui-mini.el (hui:menus): Add HyWiki menu to 'h' and move Hist to historY,
+    selectable with 'y' instead of 'h'.
+  man/hyperbole.texi (Default Hyperbole Bindings): Update hist to 'y' binding.
+  DEMO (History): Update binding to {C-h h y}.
+
+* hywiki.el (hywiki-word-search): Add to search for HyWikiWord occurrences.
+            (hywiki-read-new-page-name): Add and use in 'hywiki-add-page'.
+            (hywiki-add-page): Update so returns nil if page-name is invalid,
+    unless called interactively, then trigger an error.
+
+2024-08-12  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-read-page-name): Add mainly for use in interactive calls
+    that require an existing HyWikiWord (same as its page name).
+            (hywiki-add-link): Add to prompt and link to HyWiki pages.
+
 2024-08-11  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-maybe-highlight-page-names-in-frame): Reduce sit-for
@@ -5,6 +27,23 @@
             (hywiki-publish-to-html): Retrieve HyWiki project by name.
 	    (hywiki-directory): Change to a defcustom so can set this before
     loading Hyperoble.
+            (hywiki-org-get-publish-property): (require 'ox-publish).
+	    (hywiki-org-maybe-add-title): Add title to HyWiki pages without one
+    using the file or buffer name.
+            (hywiki-org-export-function): Fix to trigger only in the copy of
+    the HyWiki Org buffer that we want to modify with a Title and [[hy:link]]
+    markup.
+            (hywiki-org-get-publish-project): Initialize alists if not set.
+	    (hywiki-org-set-publish-project): Add and use in above function.
+	    (hywiki-directory, hywiki-org-publishing-directory,
+	     hywiki-org-publishing-function): Add :initialize and :set
+    properties so that changes trigger updates in 'org-publish-project-alist'.
+            (hywiki-org-maybe-add-title): Add to add the HyWikiWord as the
+    title for each HyWiki page.
+            (hywiki-org-make-publish-project-alist): Add :sitemap-title property..
+	    (hywiki-org-publishing-sitemap-title): Add to set above property.
+	    (hywiki-is-wikiword): Add not 'string-empty-p' test.
+	    (hywiki-add-page): Add interactive spec.
 
 2024-08-10  Bob Weiner  <rsw@gnu.org>
 
@@ -16,7 +55,7 @@
     'org-element--generate-copy-script'.
             (hywiki-get-page): Fix so just returns nil if page name is invalid
      or not found.
-            (hywiki-org-link-resolve ,hywiki-org-link-export): Handle nil as a
+            (hywiki-org-link-resolve , hywiki-org-link-export): Handle nil as a
      'link' arg value.  In resolve function, remove any hy: prefix and return
      nil if wiki page is not found.  In export function, return 'link' arg
      with no markup if wiki page is not found.

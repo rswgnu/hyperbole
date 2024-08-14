@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     12-Aug-24 at 00:14:36 by Mats Lidell
+;; Last-Mod:     14-Aug-24 at 01:53:15 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -46,7 +46,7 @@
   ;; considered an error case that is.)
   (let ((hywiki-directory (make-temp-file "hywiki" t)))
     (unwind-protect
-        (should-error (hywiki-add-page "notawikiword"))
+        (should-not (hywiki-add-page "notawikiword"))
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--wikiword-with-prefix-creates-a-new-page ()

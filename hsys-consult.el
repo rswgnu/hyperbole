@@ -16,7 +16,8 @@
 ;;  This library automatically installs the `consult' package for its
 ;;  `consult-grep' command only when one of the functions in here is
 ;;  called.  At that time, if `consult' has not been installed, it will
-;;  be automatically downloaded and installed via the Emacs package system.
+;;  be automatically downloaded and installed via the Emacs package
+;;  system, so don't `require' it herein.
 
 ;;; Code:
 

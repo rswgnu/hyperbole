@@ -25,8 +25,8 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED July, 2024
-@set UPDATED-MONTH July 2024
+@set UPDATED August, 2024
+@set UPDATED-MONTH August 2024
 @set EDITION 9.0.2pre
 @set VERSION 9.0.2pre
 
@@ -159,7 +159,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed July 6, 2024.
+Printed August 14, 2024.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -201,7 +201,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.2pre
-July 6, 2024
+August 14, 2024
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -258,6 +258,7 @@ dedicated to my lovely wife, Kathy.
 * Smart Keys::
 * Buttons::
 * Menus::
+* HyWiki::
 * HyControl::
 * Koutliner::
 * HyRolo::
@@ -348,6 +349,12 @@ Creation
 * By Menu::
 * By Link::                     Creation Via Buffer Link
 * By Dragging::                 Creation Via Assist Key Drags
+
+HyWiki
+
+* HyWikiWords::
+* Publish HyWiki::
+* HyWiki Menu::
 
 Koutliner
 
@@ -2955,7 +2962,7 @@ Recognize Action Buttons of the form @code{<hyperbole-run-test
 test-name>} which when activated run individual Hyperbole tests, each
 given by the @code{<test-name>} argument, an unquoted name.
 
-@findex ibtypes python-tb-previous-line ()
+@findex ibtypes python-tb-previous-line
 @cindex python traceback
 @cindex stack frame
 @item python-tb-previous-line
@@ -3977,7 +3984,7 @@ explanation of how to turn this feature on.
 
 
 
-@node Menus, HyControl, Buttons, Top
+@node Menus, HyWiki, Buttons, Top
 @chapter Menus
 
 @cindex Emacs
@@ -4043,7 +4050,7 @@ look like this:
 
 @smallexample
 @noindent
-Hy>  Act Butfile/ Cust/ Doc/ Ebut/ Find/ Gbut/ Hist Ibut/ Kotl/ Msg/ Rolo/ Screen/ Win/
+Hy>  Act Butfile/ Cust/ Doc/ Ebut/ Find/ Gbut/ HyWiki/ Ibut/ Kotl/ Msg/ Rolo/ Screen/ Win/ historY
 @end smallexample
 
 @cindex submenus
@@ -4107,7 +4114,7 @@ mode.
 @noindent
 The top-level Hyperbole minibuffer menu items serve the following purposes:
 
-@table @strong
+@table @asis
 @cindex menu item, Act
 @cindex menu item, Activate-Button-in-Buffer
 @item Act
@@ -4147,13 +4154,6 @@ Key.  @xref{Smart Key Bindings}, for more information.
 @xref{Hyperbole Key Bindings}, for complete descriptions of Hyperbole's
 key bindings and how to manage them.
 
-@cindex menu, Explicit-Button
-@cindex menu, EBut
-@item Ebut/
-All explicit button commands.  The window-system-based Hyperbole
-menu includes an activation menu item for each explicit button found
-in the current buffer.
-
 @cindex menu, Documentation
 @cindex menu, Doc
 @cindex menu, Types
@@ -4167,6 +4167,13 @@ number of interactive Hyperbole features; a New item that details new
 Hyperbole features, as well as a WhyUse item with use cases.  It also
 contains the Types/ submenu for documentation on Hyperbole implicit
 button and action types.
+
+@cindex menu, Explicit-Button
+@cindex menu, EBut
+@item Ebut/
+All explicit button commands.  The window-system-based Hyperbole
+menu includes an activation menu item for each explicit button found
+in the current buffer.
 
 @cindex Find
 @cindex Grep
@@ -4261,22 +4268,21 @@ Web>  Amazon Bing Dictionary ducKduckgo Elisp Facebook
 All global button commands.  Global buttons are accessed by name
 rather than by direct selection.  The Hyperbole menubar menu also
 includes an activation menu item for each global button.
-@cindex menu item, Back-to-Prior-Location
-@cindex menu item, Hist
-@cindex history
-@item Hist
-Return to previous positions in the button traversal history.
+
+@cindex menu, HyWiki
+@cindex menu, HyWiki
+@cindex wiki menu
+@item HyWiki/
+A HyWiki is a personal wiki of interlinked Org files (pages) in a
+single directory, where each page name automatically becomes a live
+HyWikiWord link back to the associated page whenever added in any file
+in the HyWiki directory.  This menu includes commands to create, edit,
+grep, search for HyWikiWords and publish a HyWiki to the web.
 
 @cindex menu, Implicit-Button
 @cindex menu, Ibut
 @item Ibut/
 All implicit button commands.
-
-@cindex menu, Mail-Lists
-@cindex menu, Msg
-@item Msg/
-Hyperbole-specific email messaging commands.  Use this to send mail to
-a Hyperbole discussion mailing list.
 
 @cindex menu, Outliner
 @cindex menu, Koutline
@@ -4284,6 +4290,12 @@ a Hyperbole discussion mailing list.
 @item Kotl/
 Autonumbered, structured outliner commands with per-node hyperlink anchors.
 @xref{Koutliner}.
+
+@cindex menu, Mail-Lists
+@cindex menu, Msg
+@item Msg/
+Hyperbole-specific email messaging commands.  Use this to send mail to
+a Hyperbole discussion mailing list.
 
 @cindex menu, Rolo
 @item Rolo/
@@ -4300,11 +4312,224 @@ Window, frame and buffer display control commands.  @xref{HyControl}.
 Window configuration management commands, such as adding and restoring
 window configurations by name.  @xref{Window Configurations}.
 
+@cindex menu item, Back-to-Prior-Location
+@cindex menu item, Hist
+@cindex history
+@item historY
+Return to previous positions in the button traversal history.
+
 @end table
 
-@node HyControl, Koutliner, Menus, Top
-@chapter HyControl
+@node HyWiki, HyControl, Menus, Top
+@chapter HyWiki
 
+@cindex HyWiki
+@cindex wiki
+@cindex note-taking
+@kindex C-h h h p
+@vindex hywiki-directory
+HyWiki is Hyperbole's markup-free, personal Wiki system for
+note-taking and automatic HyWikiWord highlighting and hyperlinking.
+It uses Org mode for note taking and adds automatic hyperlinking and
+highlighting of HyWikiWords within Org files in @code{hywiki-directory}
+(default = @file{~/hywiki}).  With @bkbd{C-h h h p} you can publish
+your entire HyWiki to an HTML directory for export to the web.
+
+@menu
+* HyWikiWords::
+* Publish HyWiki::
+* HyWiki Menu::
+@end menu
+
+@node HyWikiWords, Publish HyWiki, HyWiki, HyWiki
+@section HyWikiWords
+
+@cindex hywiki-mode
+@findex hywiki-mode
+HyWikiWords can also be highlighted and treated as hyperlinks in
+buffers outside of the @code{hywiki-directory} when the global
+minor mode, @code{hywiki-mode} is enabled via @bkbd{M-x hywiki-mode
+@key{RET}}.
+
+@cindex HyWikiWord
+@cindex WikiWord
+@cindex HyWiki Org link format
+@cindex Org link, HyWiki
+@cindex hy: prefix
+A @dfn{HyWikiWord} is a capitalized word that contains upper and
+lowercase letters only and has a corresponding @file{HyWikiWord.org}
+wiki page file below @code{hywiki-directory}.  HyWikiWords require no
+delimiters but if you prefer them as Org links, simply delimit them
+with the `hy:' prefix like so: [[hy:HyWikiWord]].
+
+@vindex hywiki-org-link-type-required
+@vindex hsys-org-enable-smart-keys
+@cindex override Org M-RET
+@cindex HyWiki Action Key
+@cindex Action Key, HyWiki
+If you set @code{hywiki-org-link-type-required} to @samp{nil}, then
+you don't need the prefix, e.g. [[MyWikiWord]]; existing HyWiki page
+names then will override Org's standard handling of such links.  To
+prevent Org mode's binding of @bkbd{M-@key{RET}} from splitting lines
+and creating new headlines when on a HyWikiWord whose page has not
+yet been created, set @code{hsys-org-enable-smart-keys} to @samp{t} so
+that Hyperbole's Action Key does the right thing in this context.
+
+@cindex activate HyWiki link
+@cindex link, HyWikiWord
+To create or jump to a HyWiki page, simply type out a potential
+HyWikiWord or move point onto one and press the Action Key
+@bkbd{M-@key{RET}}.  This will create the associated page if it does
+not exist.  This also highlights any other instances of HyWikiWords
+across all visible Emacs windows.  HyWiki is built for scalability and
+has been tested to be performant with 10,000 HyWikiWords.
+
+@cindex HyWiki section link
+@cindex link, HyWiki section
+HyWikiWord links can also jump to a section headline within a page by
+following the page name with a '#' character and then the full section
+headline name (sans any leading asterisks).  For example, if your
+Emacs page has a "Major Modes" section, then either Emacs#Major-Modes
+or [[hy:Emacs#Major Modes]] will work as a link to that section.  Note
+that without the square bracket delimiters, you must convert spaces in
+section names to '-' characters.  As long as the page exists, section
+links are highlighted regardless of whether associated sections exist
+or not.  When activating a link with a section reference, you will get
+an error if the section does not exist.
+
+@cindex HyWikiWord contexts
+Once Hyperbole has been loaded and activated, HyWikiWords (with or
+without delimiters) are automatically highlighted and active in
+the following contexts:
+
+@itemize @bullet
+@item HyWiki page buffers;
+@item non-special text buffers, after `hywiki-mode' is enabled;
+@item comments of programming buffers, after `hywiki-mode' is enabled.
+@end itemize
+
+@cindex HyWikiWord highlighting
+As HyWikiWords are typed, highlighting occurs after a trailing
+whitespace or punctuation character is added, or when an opening
+or closing parenthesis or curly brace is added to surround the
+HyWikiWord.  Since Org links use double square brackets and Org
+targets use double or triple angle brackets, HyWikiWords within
+these delimiters are ignored once the brackets are in place.
+
+@vindex hywiki-word-highlight-flag
+The custom setting, @code{hywiki-word-highlight-flag} (default =
+@samp{t}), means HyWikiWords will be auto-highlighted within HyWiki
+pages.  Outside of such pages, @code{hywiki-mode} must also be enabled
+for such auto-highlighting.
+
+@vindex hywiki-exclude-major-modes
+@cindex HyWiki exclude modes
+The custom setting, @code{hywiki-exclude-major-modes} (default =
+@samp{nil}), is a list of major modes to exclude from HyWikiWord
+auto-highlighting and recognition.
+
+@cindex HyWiki programming modes
+@vindex hywiki-highlight-all-in-prog-modes
+Within programming modes, HyWikiWords are highlighted and hyperlinked
+within comments only.  For programming modes in which you want
+HyWikiWords recognized everywhere, add them to the custom setting,
+@code{hywiki-highlight-all-in-prog-modes} (default =
+@code{'(lisp-interaction-mode)}).
+
+@findex ibtypes hywiki-word
+@cindex ibtype hywiki-word
+HyWiki adds one implicit button type to Hyperbole: @code{hywiki-word},
+which creates and displays HyWikiWord pages.  This is one of the lowest
+priority implicit button types so that it triggers only when other
+types are not recognized first.
+
+@node Publish HyWiki, HyWiki Menu, HyWikiWords, HyWiki
+@section Publish HyWiki
+
+@cindex publish HyWiki
+@cindex HyWiki publish
+@cindex HyWiki export to HTML
+@kindex C-h h h p
+@findex hywiki-publish-to-html
+A HyWiki can be exported to HTML for publishing to the web via Org
+mode's publish a project feature.  @bkbd{C-h h h p} or @bkbd{M-x
+hywiki-publish-to-html @key{RET}} publishes any changed files in the
+HyWiki.  Give that command a prefix argument to force republishing of
+all HyWiki pages.
+
+@kindex C-c C-e P p
+@vindex hywiki-org-publish-project-alist
+@cindex Org publish
+@cindex HyWiki Org publish
+The full set of HyWiki-specific Org publish properties are set in
+the variable @code{hywiki-org-publish-project-alist}.  When the HyWiki
+code is loaded into Emacs, it automatically integrates these
+properties with Org's publishing framework, so when in a HyWiki
+page, you can use Org's standard @bkbd{C-c C-e P p} current project publish
+command if you prefer.
+
+There are a few publishing settings you can customize prior to
+loading Hyperbole's HyWiki code.
+
+@findex hywiki-org-get-publish-property
+@vindex hywiki-org-publishing-directory
+@cindex HyWiki publishing directory
+HyWiki html files are saved in:
+@indent
+@code{(hywiki-org-get-publish-property :publishing-directory)}
+Customize this directory with:
+@indent
+@bkbd{M-x customize-variable @key{RET} hywiki-org-publishing-directory @key{RET}}
+
+@vindex hywiki-org-publishing-function
+@cindex HyWiki publishing function
+HyWiki html files are generated by the function given by:
+@indent
+@code{(hywiki-org-get-publish-property :publishing-function)}
+Customize the value of this function if necessary with:
+@indent
+@bkbd{M-x customize-variable @key{RET} hywiki-org-publishing-function @key{RET}}
+
+@node HyWiki Menu,  , Publish HyWiki, HyWiki
+@section HyWiki Menu
+
+The HyWiki minibuffer menu offers quick access to important HyWiki features.
+It looks like this:
+
+@example
+@noindent
+HyWiki>  Act  Create  Edit  Grep  Help  Info  Link  Publish  Search
+@end example
+
+@noindent
+Below are descriptions of each menu item.
+
+@findex hywiki-consult-grep
+@cindex HyWiki menu
+@cindex menu, HyWiki
+@table @asis
+@item Act
+Activate HyWikiWord link at point.
+@item Create
+Create and display a new HyWiki page.  Shows existing page names to aid in new naming.
+@item Edit
+Prompt with completion for and display a HyWiki page ready for editing.
+@item Grep
+Grep over HyWiki pages with interactive @code{hywiki-consult-grep}.
+@item Help
+Report on a HyWikiWord's attributes.
+@item Info
+Display Hyperbole manual section on HyWiki.
+@item Link
+Prompt for and add a link at point to a HyWiki page.
+@item Publish
+Publish modified pages in the HyWiki to HTML; prefix arg to publish all pages.
+@item Search
+Use @code{hywiki-consult-grep} to show occurrences of a prompted for HyWikiWord.
+@end table
+
+@node HyControl, Koutliner, HyWiki, Top
+@chapter HyControl
 @cindex windows control
 @cindex frames control
 @cindex HyControl
@@ -7760,6 +7985,10 @@ together with the @file{org-rifle} package to interactively search the
 HyRolo.  Use @code{M-x hyrolo-helm-org-rifle} to search your HyRolo file
 list with these packages.
 
+@item History
+A Hyperbole menu command that moves back one step in Hyperbole
+hyperlink traversal and restores the prior frame and window configuration.
+
 @findex run-hooks
 @item Hook Variable
 A variable that permits customization of an existing function's
@@ -7794,6 +8023,15 @@ HyRolo, the Hyperbole record/contact manager, provides rapid lookup of
 multi-line, hierarchically ordered free form text records.  It can
 also lookup records from Google/GMail Contacts and the Big Brother
 DataBase (BBDB) package.
+
+@item HyWiki
+HyWiki, the Hyperbole personal wiki tool, lets you create a personal
+wiki of interlinked Org files in a single directory, where each page
+name automatically becomes a live HyWikiWord link back to the
+associated page whenever added in any file in the HyWiki directory.
+HyWikiWords also work outside this directory if you turn on the minor
+@code{hywiki-mode} in other buffers.  A single command exports an
+entire HyWiki to the web.
 
 @item Ilink
 @itemx link-to-ibut
@@ -8797,7 +9035,7 @@ h f w}, will do the same thing.
 @cindex key binding, C-c @@
 @cindex windows grid
 @cindex grid of windows
-@kindex C-h h h
+@kindex C-h h y
 @cindex restore frame configuration
 @cindex frame configuration, restore
 @cindex restore window configuration
@@ -8806,7 +9044,7 @@ h f w}, will do the same thing.
 Display a grid of windows in the selected frame, sized according to
 the prefix argument.  The left digit of the argument is the number
 of grid rows and the right digit is the number of grid columns.  Use
-@bkbd{C-h h h} to restore the prior frame configuration.
+@bkbd{C-h h y} to restore the prior frame configuration.
 
 If the argument is 0, prompt for a major mode whose buffers should
 be displayed first in the grid windows, then prompt for the grid

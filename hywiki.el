@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     11-Aug-24 at 01:09:50 by Bob Weiner
+;; Last-Mod:     13-Aug-24 at 01:44:00 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -83,7 +83,7 @@
 ;;  '(lisp-interaction-mode)).
 ;;
 ;;  HyWiki adds one implicit button type to Hyperbole:
-;;    `hywiki-word' creates and displays HyWikiWord pages;
+;;    `hywiki-word' - creates and displays HyWikiWord pages;
 ;;  This is one of the lowest priority implicit button types so that
 ;;  it triggers only when other types are not recognized first.
 ;;
@@ -137,8 +137,10 @@
 ;;; ************************************************************************
 
 (defvar org-agenda-buffer-tmp-name)  ;; "org-agenda.el"
-(declare-function org-link-store-props "ol" (&rest plist))
+(defvar org-publish-project-alist)   ;; "ox-publish.el"
 (declare-function hsys-org-at-tags-p "hsys-org")
+(declare-function org-link-store-props "ol" (&rest plist))
+(declare-function org-publish-property "ox-publish" (property project &optional default))
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -184,6 +186,10 @@ Use nil for no HyWiki mode indicator."
 (defcustom hywiki-directory '"~/hywiki/"
   "Directory that holds all HyWiki pages in Org format.
 See `hywiki-org-publishing-directory' for exported pages in html format."
+  :initialize #'custom-initialize-default
+  :set (lambda (option value)
+	 (set option value)
+	 (hywiki-org-set-publish-project))
   :type 'string
   :group 'hyperbole-hywiki)
 
@@ -227,32 +233,59 @@ override standard Org link lookups.  See \"(org)Internal Links\".")
 
 (defcustom hywiki-org-publishing-directory "~/public_hywiki"
   "Directory where HyWiki pages are converted into html and published."
+  :initialize #'custom-initialize-default
+  :set (lambda (option value)
+	 (set option value)
+	 (hywiki-org-set-publish-project))
   :type 'string
   :group 'hyperbole-hywiki)
 
 (defcustom hywiki-org-publishing-function 'org-html-publish-to-html
   "HyWiki Org publish function used to export a HyWiki page to html."
+  :initialize #'custom-initialize-default
+  :set (lambda (option value)
+	 (set option value)
+	 (hywiki-org-set-publish-project))
   :type 'symbol
   :group 'hyperbole-hywiki)
 
-(defvar hywiki-org-publish-project-alist
-  (list
-   "hywiki"
-   :auto-sitemap t
-   :base-directory (expand-file-name hywiki-directory)
-   :html-head (format
-	       "<link rel=\"stylesheet\" type=\"text/css\" href=\"%sman/hyperbole.css\"/>"
-	       hyperb:dir)
-   ;; !! TODO: The :makeindex property is disabled for now, until a process is
-   ;; developed to force the Org publish process to regenerate the
-   ;; index after index entries are inserted into the temporary Org
-   ;; buffer prior to export to HTML.
-   :makeindex nil
-   :publishing-function hywiki-org-publishing-function
-   :publishing-directory hywiki-org-publishing-directory
-   :section-numbers t
-   :with-toc nil)
+(defcustom hywiki-org-publishing-sitemap-title
+  (let ((dir-name (file-name-base
+		   (directory-file-name
+		    (file-name-as-directory hywiki-directory)))))
+    (if (equal dir-name "hywiki")
+	"HyWiki"
+      dir-name))
+  "HyWiki Org publish sitemap title."
+  :initialize #'custom-initialize-default
+  :set (lambda (option value)
+	 (set option value)
+	 (hywiki-org-set-publish-project))
+  :type 'string
+  :group 'hyperbole-hywiki)
+
+(defvar hywiki-org-publish-project-alist nil
   "HyWiki-specific export properties added to `org-publish-project-alist'.")
+
+(defun hywiki-org-make-publish-project-alist ()
+  (setq hywiki-org-publish-project-alist
+	(list
+	 "hywiki"
+	 :auto-sitemap t
+	 :base-directory (expand-file-name hywiki-directory)
+	 :html-head (format
+		     "<link rel=\"stylesheet\" type=\"text/css\" href=\"%sman/hyperbole.css\"/>"
+		     hyperb:dir)
+	 ;; !! TODO: The :makeindex property is disabled for now, until a process is
+	 ;; developed to force the Org publish process to regenerate the
+	 ;; index after index entries are inserted into the temporary Org
+	 ;; buffer prior to export to HTML.
+	 :makeindex nil
+	 :publishing-function hywiki-org-publishing-function
+	 :publishing-directory hywiki-org-publishing-directory
+	 :section-numbers t
+	 :sitemap-title hywiki-org-publishing-sitemap-title
+	 :with-toc nil)))
 
 (defvar-local hywiki-page-flag nil
   "Set to t after a `find-file' of a HyWiki page file, else nil.
@@ -457,14 +490,14 @@ See the Info documentation at \"(hyperbole)HyWiki\".
   "Display HyWiki PAGE-NAME or a regular file with PAGE-NAME nil.
 Return the absolute path to any page successfully found; nil if
 failed or if displaying a regular file (read in via a `find-file'
-call)
+call).
 
 By default, create any non-existent page.  With optional
 PROMPT-FLAG t, prompt to create if non-existent.  If PROMPT-FLAG
 is \\='exists, return nil unless the page already exists.  After
 successfully finding a page and reading it into a buffer, run
 `hywiki-find-page-hook'."
-  (interactive (list (completing-read "Find HyWiki page: " (hywiki-get-page-list))))
+  (interactive (list (hywiki-read-page-name "Find HyWiki page: ")))
   (let ((in-page-flag (null page-name))
 	(in-hywiki-directory-flag (hywiki-in-page-p)))
     (if (or (stringp page-name) in-hywiki-directory-flag)
@@ -515,6 +548,49 @@ successfully finding a page and reading it into a buffer, run
 	   (not (eq (get major-mode 'mode-class) 'special)))
        (not (apply #'derived-mode-p hywiki-exclude-major-modes))
        (or hywiki-mode (hywiki-in-page-p))))
+
+(defun hywiki-add-link ()
+  "Insert at point a link to a HyWiki page."
+  (interactive "*")
+  (insert (hywiki-read-page-name "Link to HyWiki page: "))
+  (hywiki-maybe-highlight-page-name))
+
+(defun hywiki-add-page (page-name)
+  "Add the HyWiki page for PAGE-NAME and return its file.
+If file exists already, just return it.  If PAGE-NAME is invalid,
+trigger a `user-error' if called interactively or return nil if
+not.
+
+Use `hywiki-get-page' to determine whether a HyWiki page exists."
+  (interactive (list (hywiki-read-new-page-name "Add HyWiki page: ")))
+  (if (hywiki-is-wikiword page-name)
+      (progn
+	(when (match-string-no-properties 2 page-name)
+	  ;; Remove any #section suffix in PAGE-NAME.
+	  (setq page-name (match-string-no-properties 1 page-name)))
+
+	(let ((page-file (hywiki-get-file page-name))
+	      (pages-hasht (hywiki-get-page-hasht)))
+	  (unless (file-readable-p page-file)
+	    ;; Create any parent dirs necessary to create empty file
+	    (make-empty-file page-file t))
+	  (unless (hash-get page-name pages-hasht)
+	    (hash-add page-file page-name pages-hasht))
+	  page-file))
+    (when (called-interactively-p 'interactive)
+      (user-error "(hywiki-add-page): Invalid page name: '%s'; must be capitalized, all alpha" page-name))))
+
+(defun hywiki-add-page-and-display (page-name)
+  "Add and display the HyWiki page for PAGE-NAME and return its file.
+If file exists already, just return it.  If PAGE-NAME is invalid,
+trigger a `user-error'.
+
+Use `hywiki-get-page' to determine whether a HyWiki page exists."
+  (interactive (list (hywiki-read-new-page-name "Add HyWiki page: ")))
+  (let ((page-file (hywiki-add-page page-name)))
+    (if page-file
+	(hywiki-find-page (file-name-base page-file))
+      (user-error "(hywiki-add-page-and-display): Invalid page name: '%s'; must be capitalized, all alpha" page-name))))
 
 (defun hywiki-add-to-page (page-name text start-flag)
   "Add to PAGE-NAME TEXT at page start with START-FLAG non-nil, else end.
@@ -631,9 +707,17 @@ this will return nil."
 			(buffer-substring-no-properties (match-beginning 0)
 							(match-end 0)))))))))))))
 
+(defun hywiki-word-search (word)
+  "Use `hywiki-consult-grep' to show occurrences of a prompted for HyWikiWord.
+Default to any HyWikiWord at point."
+  (interactive (list (hywiki-read-page-name)))
+  (if (and (stringp word) (not (string-empty-p word)))
+      (hywiki-consult-grep (concat "\\b" (regexp-quote word) "\\b"))
+    (user-error "(hywiki-word-search): Invalid HyWikiWord: '%s'; must be capitalized, all alpha" word)))
+
 ;;;###autoload
 (defun hywiki-maybe-dehighlight-page-names (&optional region-start region-end)
-  "Deighlight any highlighted HyWiki page names in a HyWiki buffer/region.
+  "Dehighlight any highlighted HyWiki page names in a HyWiki buffer/region.
 With optional REGION-START and REGION-END positions (active region
 interactively), limit dehighlighting to the region."
   (interactive (when (use-region-p) (list (region-beginning) (region-end))))
@@ -979,7 +1063,7 @@ are typed in the buffer."
   "Return non-nil if WORD is a HyWiki word and optional #section.
 The page for the word may not yet exist.  Use `hywiki-get-page'
 to determine whether a HyWiki word page exists."
-  (and (stringp word)
+  (and (stringp word) (not (string-empty-p word))
        (let (case-fold-search)
 	 (or (string-match hywiki-word-with-optional-section-exact-regexp word)
 	     (eq (string-match (concat "\\`" hywiki-word-with-optional-section-regexp "\\'") word)
@@ -1045,29 +1129,6 @@ These must end with `hywiki-file-suffix'."
 (defun hywiki-get-page-list ()
   (hash-map #'cdr (hywiki-get-page-hasht)))
 
-(defun hywiki-add-page (page-name)
-  "Add the HyWiki page for PAGE-NAME and return its file.
-If file exists already, just return it.  If PAGE-NAME is invalid,
-return nil.
-
-Use `hywiki-get-page' to determine whether a HyWiki page exists."
-  (if (and (stringp page-name) (not (string-empty-p page-name))
-	   (hywiki-is-wikiword page-name))
-      (progn
-	(when (match-string-no-properties 2 page-name)
-	  ;; Remove any #section suffix in PAGE-NAME.
-	  (setq page-name (match-string-no-properties 1 page-name)))
-
-	(let ((page-file (hywiki-get-file page-name))
-	      (pages-hasht (hywiki-get-page-hasht)))
-	  (unless (file-readable-p page-file)
-	    ;; Create any parent dirs necessary to create empty file
-	    (make-empty-file page-file t))
-	  (unless (hash-get page-name pages-hasht)
-	    (hash-add page-file page-name pages-hasht))
-	  page-file))
-    (user-error "(hywiki-add-page): Invalid page name: '%s'; must be capitalized, all alpha" page-name)))
-
 (defun hywiki-make-pages-hasht ()
   (let* ((page-files (hywiki-get-page-files))
 	 (page-elts (mapcar (lambda (file)
@@ -1098,16 +1159,22 @@ Use `hywiki-get-page' to determine whether a HyWiki page exists."
 This is done automatically by loading HyWiki."
   (require 'org-element)
   (when (and (derived-mode-p 'org-mode)
-	     (hyperb:stack-frame '(org-export-as)))
-    (hywiki-convert-words-to-org-links)))
+	     (hyperb:stack-frame '(org-export-copy-buffer)))
+    (hywiki-convert-words-to-org-links)
+    (hywiki-org-maybe-add-title)))
 
 (defun hywiki-org-get-publish-project ()
-  "Return the HyWiki Org publish project, a named set of properties."
+  "Return the HyWiki Org publish project, a named set of properties.
+If not found, set it up and return the new project properties."
   (require 'ox-publish)
-  (cons "hywiki" (alist-get "hywiki" org-publish-project-alist nil nil #'equal)))
+  (let ((project (assoc "hywiki" org-publish-project-alist)))
+    (if (and project hywiki-org-publish-project-alist)
+	project
+      (hywiki-org-set-publish-project))))
 
 (defun hywiki-org-get-publish-property (property)
   "Return the value of HyWiki Org publish PROPERTY symbol."
+  (require 'ox-publish)
   (org-publish-property property (hywiki-org-get-publish-project)))
 
 (defun hywiki-org-link-complete (&optional _arg)
@@ -1115,21 +1182,7 @@ This is done automatically by loading HyWiki."
   (concat
    (when hywiki-org-link-type-required
      (concat hywiki-org-link-type ":"))
-   (let ((completion-ignore-case t))
-     (completing-read "HyWiki page: " (hywiki-get-page-list) nil t))))
-
-(defun hywiki-org-link-store ()
-  "Store a link to a HyWiki word at point, if any."
-  (when (hywiki-word-at)
-    (let* ((page-name (hywiki-word-at))
-	   (link (concat
-		  (when hywiki-org-link-type-required
-		    (concat hywiki-org-link-type ":"))
-		  page-name)))
-      (org-link-store-props
-       :type hywiki-org-link-type
-       :link link
-       :description page-name))))
+   (hywiki-read-page-name)))
 
 ;;; Next two functions derived from the denote package.
 ;;;###autoload
@@ -1185,6 +1238,41 @@ word section).  If page is not found, return nil."
 	  (concat path "::" section))
 	 (t path))))))
 
+(defun hywiki-org-link-store ()
+  "Store a link to a HyWiki word at point, if any."
+  (when (hywiki-word-at)
+    (let* ((page-name (hywiki-word-at))
+	   (link (concat
+		  (when hywiki-org-link-type-required
+		    (concat hywiki-org-link-type ":"))
+		  page-name)))
+      (org-link-store-props
+       :type hywiki-org-link-type
+       :link link
+       :description page-name))))
+
+(defun hywiki-org-maybe-add-title ()
+  "Add a title to an Org buffer if it doesn't have one."
+  (save-excursion
+    (unless (and (re-search-forward "^#\\+TITLE:[ \t]\\|^$" nil t)
+		 (not (looking-at "^$")))
+      (goto-char (point-min))
+      (insert "#+TITLE: "
+	      (if buffer-file-name
+		  (file-name-base buffer-file-name)
+		(buffer-name))
+	      "\n"))))
+
+(defun hywiki-org-set-publish-project ()
+  "Setup and return the HyWiki Org publish project, a named set of properties.
+Sets the `org-publish-project-alist' and `hywiki-org-publish-project-alist'
+variables."
+  (require 'ox-publish)
+  (prog1 (hywiki-org-make-publish-project-alist)
+    ;; Remove "hywiki" entry from `org-publish-project-alist', then update it.
+    (setf (alist-get "hywiki" org-publish-project-alist nil 'remove #'equal) nil)
+    (add-to-list 'org-publish-project-alist hywiki-org-publish-project-alist t)))
+
 (eval-after-load "org"
   '(org-link-set-parameters hywiki-org-link-type
                             :complete #'hywiki-org-link-complete
@@ -1204,6 +1292,19 @@ Customize this directory with:
     {M-x customize-variable RET hywiki-org-publishing-directory RET}."
   (interactive "P")
   (org-publish-project "hywiki" all-pages-flag))
+
+(defun hywiki-read-new-page-name (&optional prompt)
+  "Prompt with completion for and return a new HyWiki page name."
+  (let ((completion-ignore-case t))
+    (completing-read (if (stringp prompt) prompt "HyWiki Page Name: ")
+		     (hywiki-get-page-list))))
+
+(defun hywiki-read-page-name (&optional prompt)
+  "Prompt with completion for and return an existing HyWiki page name.
+If on a page name, immediately pressing RET will use that name as the default."
+  (let ((completion-ignore-case t))
+    (completing-read (if (stringp prompt) prompt "HyWiki Page Name: ")
+		     (hywiki-get-page-list) nil t nil nil (hywiki-word-at))))
 
 ;;;###autoload
 (defun hywiki-tags-view (&optional todo-only match view-buffer-name)
@@ -1282,8 +1383,8 @@ Highlight/dehighlight HyWiki page names across all frames on change."
 (eval-after-load "org-element"
   '(advice-add 'org-element--generate-copy-script :before #'hywiki-org-export-function))
 
-(eval-after-load "ox-publish"
-  '(add-to-list 'org-publish-project-alist hywiki-org-publish-project-alist t))
+;; Use for its side effects, setting variables
+(eval-after-load "ox-publish" '(hywiki-org-get-publish-project))
 
 (add-variable-watcher 'hywiki-word-highlight-flag
 		      'hywiki-word-highlight-flag-changed)
