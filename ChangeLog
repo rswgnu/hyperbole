@@ -1,7 +1,3 @@
-2024-08-14  Bob Weiner  <rsw@gnu.org>
-
-* test/hywiki-tests.el (hywiki-tests--convert-words-to-org-link): Fix.
-
 2024-08-13  Bob Weiner  <rsw@gnu.org>
 
 * man/hyperbole.texi (Menus): Add description of Doc/ and HyWiki/ menus.
