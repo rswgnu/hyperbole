@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     15-Aug-24 at 09:02:21 by Mats Lidell
+;; Last-Mod:     15-Aug-24 at 09:17:01 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -325,7 +325,8 @@
                    (format "\\[hy\\] <doc:.*%s>" wikipage)
                    (hywiki-org-link-export "WikiWord" "doc" 'ascii)))
           (should (string-match-p
-                   (format "<a href=\".*%s\">doc</a>" (string-replace ".org" ".html" wikipage))
+                   (format "<a href=\".*%s\">doc</a>"
+                           (replace-regexp-in-string "\\.org" ".html" wikipage))
                    (hywiki-org-link-export "WikiWord" "doc" 'html)))
           (should (string-match-p
                    (format "\\[doc\\](.*%s)" wikipage)
