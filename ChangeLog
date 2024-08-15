@@ -1,3 +1,10 @@
+2024-08-15  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--org-set-publish-project)
+    (hywiki-tests--org-get-publish-project)
+    (hywiki-tests--org-link-resolve)
+    (hywiki-tests--org-link-export): Add publish and export tests.
+
 2024-08-15  Bob Weiner  <rsw@gnu.org>
 
 * Makefile (HYPERBOLE_FILES): Add all Org files under the hywiki dir.

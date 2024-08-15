@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     14-Aug-24 at 01:53:15 by Bob Weiner
+;; Last-Mod:     15-Aug-24 at 09:17:01 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -21,6 +21,7 @@
 (require 'el-mock)
 (require 'hy-test-helpers)
 (require 'hywiki)
+(require 'ox-publish)
 
 (ert-deftest hywiki-tests--hywiki-add-page--adds-file-in-wiki-folder ()
   "Verify add page creates file in wiki folder and sets hash table."
@@ -279,6 +280,69 @@
       (should (hywiki-at-tags-p)))
     (mocklet ((buffer-name => "*Other Tags*"))
       (should-not (hywiki-at-tags-p)))))
+
+(ert-deftest hywiki-tests--org-set-publish-project ()
+  "Verify `hywiki-org-set-publish-project' sets publish vars with hywiki."
+  (let (hywiki-org-publish-project-alist
+        org-publish-project-alist)
+    (should (hywiki-org-set-publish-project))
+    (should (assoc "hywiki" org-publish-project-alist))
+    (should (string= "hywiki" (car hywiki-org-publish-project-alist)))))
+
+(ert-deftest hywiki-tests--org-get-publish-project ()
+  "Verify `hywiki-org-get-publish-project' gets project or creates one if not found."
+  ;; Gets project that exists
+  (let ((org-publish-project-alist '(("hywiki"))) ; hywiki exists
+        (hywiki-org-publish-project-alist 'var-has-a-value))
+    (should (equal '("hywiki") (hywiki-org-get-publish-project))))
+  ;; Created project if not exists
+  (let (org-publish-project-alist)      ; hywiki does not exist
+    (mocklet (((hywiki-org-set-publish-project) => '("project")))
+      (should (equal '("project") (hywiki-org-get-publish-project))))))
+
+(ert-deftest hywiki-tests--org-link-resolve ()
+  "Verify `hywiki-org-link-resolve' resolves a link to page."
+  (should-not (hywiki-org-link-resolve 88)) ; Number
+  (should-not (hywiki-org-link-resolve '("string"))) ; List
+  (let* ((hywiki-directory (make-temp-file "hywiki" t))
+         (wikipage (hywiki-add-page "WikiWord")))
+    (unwind-protect
+        (progn
+          (should-not (hywiki-org-link-resolve "NoWikiWord"))
+          (should (string= wikipage (hywiki-org-link-resolve "WikiWord")))
+          (should (string= wikipage (hywiki-org-link-resolve "hy:WikiWord")))
+          (should (string= (concat wikipage "::section") (hywiki-org-link-resolve "WikiWord#section"))))
+      (hy-delete-file-and-buffer wikipage)
+      (hy-delete-dir-and-buffer hywiki-directory))))
+
+(ert-deftest hywiki-tests--org-link-export ()
+  "Verify `hywiki-org-link-export' output for different formats."
+  (let* ((hywiki-directory (make-temp-file "hywiki" t))
+         (wikipage (hywiki-add-page "WikiWord")))
+    (unwind-protect
+        (progn
+          (should (string-match-p
+                   (format "\\[hy\\] <doc:.*%s>" wikipage)
+                   (hywiki-org-link-export "WikiWord" "doc" 'ascii)))
+          (should (string-match-p
+                   (format "<a href=\".*%s\">doc</a>"
+                           (replace-regexp-in-string "\\.org" ".html" wikipage))
+                   (hywiki-org-link-export "WikiWord" "doc" 'html)))
+          (should (string-match-p
+                   (format "\\[doc\\](.*%s)" wikipage)
+                   (hywiki-org-link-export "WikiWord" "doc" 'md)))
+          (should (string-match-p
+                   (format "\\href{.*%s}{doc}" wikipage)
+                   (hywiki-org-link-export "WikiWord" "doc" 'latex)))
+          (should (string-match-p
+                   (format "@uref{.*%s,doc}" wikipage)
+                   (hywiki-org-link-export "WikiWord" "doc" 'texinfo)))
+          (should (string-match-p
+                   (format ".*%s" wikipage)
+                   (hywiki-org-link-export "WikiWord" "doc" 'unknown)))
+          (should (string= "NotAWikiPage" (hywiki-org-link-export "NotAWikiPage" "doc" 'ascii))))
+      (hy-delete-file-and-buffer wikipage)
+      (hy-delete-dir-and-buffer hywiki-directory))))
 
 (provide 'hywiki-tests)
 ;;; hywiki-tests.el ends here
