@@ -434,6 +434,42 @@ To learn how to create new kinds of implicit button and action types, see
   mode or Outline mode), managing the precise location of windows and frames,
   and one of the most advanced legal outliners available anywhere.
 
+** HyWiki
+
+  HyWiki is Hyperbole's markup-free personal wiki system for note-taking
+  and automatic wiki-word highlighting and hyperlinking.  It uses Org
+  mode for note taking and adds automatic hyperlinking of HyWikiWords
+  within Org files in `hywiki-directory' (default = "~/hywiki"), where
+  a HyWikiWord is a capitalized word that contains upper and lowercase
+  letters only and has a corresponding HyWikiWord.org wiki page file
+  below `hywiki-directory'.  HyWikiWords require no delimiters.
+  
+  Use {M-RET} on the first line of the expression below to set a demo
+  HyWiki directory and turn on hywiki-mode so HyWikiWords are
+  highlighted outside of the HyWiki directory.
+  
+    <progn (setq hywiki-directory (hpath:expand "${hyperb:dir}/hywiki/"))
+           (hywiki-mode 1)>
+  
+  Now all these wiki-words should be highlighted and can appear in any
+  text buffer and will be treated as hyperlinks.  Simply press {M-RET}
+  on each to display the associated wiki page:
+  
+    HyWiki
+    HyWikiMenus
+    Publishing
+  
+  Let's create a new page.  Press {M-RET} on the HyWikiWord below:
+
+  TestWord
+
+  Finally, let's restore the standard HyWiki directory so you can add
+  your own HyWiki pages.  Press {M-RET} on the following expression.
+
+    <setq hywiki-directory "~/hywiki/">
+
+  See "(hyperbole)HyWiki" for full details on HyWiki.
+
 ** HyRolo
 
   HyRolo is an advanced hierarchical, record-oriented retrieval system that

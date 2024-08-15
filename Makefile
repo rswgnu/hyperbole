@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     12-Aug-24 at 00:26:29 by Mats Lidell
+# Last-Mod:     15-Aug-24 at 00:32:27 by Bob Weiner
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -226,10 +226,10 @@ HY-TALK  = HY-TALK/.hypb HY-TALK/HYPB HY-TALK/HY-TALK.org HY-TALK/HYPERAMP.org H
 
 HYPERBOLE_FILES = dir info html $(EL_SRC) $(EL_KOTL) \
 	$(HY-TALK) .mailmap ChangeLog COPYING Makefile HY-ABOUT HY-ANNOUNCE \
-        HY-CONCEPTS.kotl HY-NEWS \
-	HY-WHY.kotl INSTALL DEMO DEMO-ROLO.otl FAST-DEMO MANIFEST README.md TAGS _hypb \
-        .hypb hyrolo.py smart-clib-sym topwin.py hyperbole-banner.png $(man_dir)/hkey-help.txt \
-	$(man_dir)/hyperbole.texi $(man_dir)/hyperbole.css
+        HY-CONCEPTS.kotl HY-NEWS HY-WHY.kotl $(wildcard hywiki/*.org) \
+        INSTALL DEMO DEMO-ROLO.otl FAST-DEMO MANIFEST README.md TAGS _hypb \
+        .hypb hyrolo.py smart-clib-sym topwin.py hyperbole-banner.png \
+	$(man_dir)/hkey-help.txt $(man_dir)/hyperbole.texi $(man_dir)/hyperbole.css
 
 TEST_ERT_FILES = $(wildcard test/*tests.el) $(wildcard test/hy-test-*.el)
 
@@ -238,7 +238,7 @@ EL_TAGS = $(EL_SRC) $(EL_KOTL) $(TEST_ERT_FILES)
 .SUFFIXES:            # Delete the default suffixes
 .SUFFIXES: .el .elc   # Define the list of file suffixes to match to rules
 
-help: 
+help:
 	@echo "Use the Emacs Package Manager to build and install the latest release of GNU Hyperbole."
 	@echo "For help with Emacs packages, see the GNU Emacs Info Manual section, \"(emacs)Packages\"."
 	@echo "See \"$(shell pwd)/INSTALL\" for detailed installation instructions,"

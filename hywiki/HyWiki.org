@@ -1,0 +1,73 @@
+;;; -*- org-link-descriptive: nil -*-
+
+* HyWiki
+
+This is Hyperbole's markup-free personal wiki system for note-taking
+and automatic wiki word highlighting and hyperlinking.  It uses Org
+mode for note taking and adds automatic hyperlinking of HyWikiWords
+within Org files in `hywiki-directory' (default = "~/hywiki"), where
+a HyWikiWord is a capitalized word that contains upper and lowercase
+letters only and has a corresponding HyWikiWord.org wiki page file
+below `hywiki-directory'.  HyWikiWords require no delimiters.
+
+* HyWikiWords
+
+HyWikiWords are also recognized in text buffers after the global
+minor mode, `hywiki-mode' is enabled via {M-x hywiki-mode RET}.  To
+create or jump to a HyWiki page, simply type out a potential
+HyWikiWord or move point onto one and press the Action Key {M-RET}.
+This will create the associated page if it does not exist.  This
+also highlights any other instances of HyWikiWords across all
+visible Emacs windows.  HyWiki is built for scalability and has been
+tested to be performant with 10,000 HyWikiWords.
+
+Once Hyperbole has been loaded and activated, HyWikiWords (with or
+without delimiters) are automatically highlighted and active in
+the following contexts:
+  - HyWiki page buffers;
+  - non-special text buffers, when `hywiki-mode' is enabled;
+  - comments of programming buffers, when `hywiki-mode' is enabled.
+
+As HyWikiWords are typed, highlighting occurs after a trailing
+whitespace or punctuation character is added, or when an opening
+or closing parenthesis or curly brace is added to surround the
+HyWikiWord.  Since Org links use double square brackets and Org
+targets use double or triple angle brackets, HyWikiWords within
+these delimiters are ignored.
+
+* Org-style HyWiki Links
+
+You can also create Org links to HyWikiWords in any non-special text
+buffer by surrounding them with double square brackets and the
+'hy:' prefix, as in: [[hy:MyWikiWord]].  If you set
+`hywiki-org-link-type-required' to `nil', then you don't need the
+prefix, e.g. [[MyWikiWord]]; existing HyWiki page names then will
+override Org's standard handling of such links.  To prevent Org
+mode's binding of {M-RET} from splitting lines and creating new
+headlines when on a HyWiki word whose page has not yet been
+created, set `hsys-org-enable-smart-keys' to `t' so that
+Hyperbole's Action Key does the right thing in this context.
+
+* HyWiki Settings
+
+The custom setting, 'hywiki-word-highlight-flag' (default = 't'),
+means HyWikiWords will be auto-highlighted within HyWiki pages.
+Outside of such pages, 'hywiki-mode' must also be enabled for such
+auto-highlighting.
+
+The custom setting, 'hywiki-exclude-major-modes' (default = 'nil'), is
+a list of major modes to exclude from HyWikiWord auto-highlighting and
+recognition.
+
+Within programming modes, HyWikiWords are highlighted and hyperlinked
+within comments only.  For programming modes in which you want
+HyWikiWords recognized everywhere, add them to the custom setting,
+'hywiki-highlight-all-in-prog-modes' (default =
+''(lisp-interaction-mode)').
+
+* hywiki-word Implicit Button Type
+
+HyWiki adds one implicit button type to Hyperbole: 'hywiki-word',
+which creates and displays HyWikiWord pages.  This is one of the lowest
+priority implicit button types so that it triggers only when other types
+are not recognized first.
