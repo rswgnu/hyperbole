@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     15-Aug-24 at 08:04:14 by Mats Lidell
+;; Last-Mod:     15-Aug-24 at 09:02:21 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -21,6 +21,7 @@
 (require 'el-mock)
 (require 'hy-test-helpers)
 (require 'hywiki)
+(require 'ox-publish)
 
 (ert-deftest hywiki-tests--hywiki-add-page--adds-file-in-wiki-folder ()
   "Verify add page creates file in wiki folder and sets hash table."
