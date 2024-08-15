@@ -159,7 +159,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed August 14, 2024.
+Printed August 15, 2024.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -201,7 +201,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.2pre
-August 14, 2024
+August 15, 2024
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -4344,13 +4344,6 @@ your entire HyWiki to an HTML directory for export to the web.
 @node HyWikiWords, Publish HyWiki, HyWiki, HyWiki
 @section HyWikiWords
 
-@cindex hywiki-mode
-@findex hywiki-mode
-HyWikiWords can also be highlighted and treated as hyperlinks in
-buffers outside of the @code{hywiki-directory} when the global
-minor mode, @code{hywiki-mode} is enabled via @bkbd{M-x hywiki-mode
-@key{RET}}.
-
 @cindex HyWikiWord
 @cindex WikiWord
 @cindex HyWiki Org link format
@@ -4358,9 +4351,19 @@ minor mode, @code{hywiki-mode} is enabled via @bkbd{M-x hywiki-mode
 @cindex hy: prefix
 A @dfn{HyWikiWord} is a capitalized word that contains upper and
 lowercase letters only and has a corresponding @file{HyWikiWord.org}
-wiki page file below @code{hywiki-directory}.  HyWikiWords require no
-delimiters but if you prefer them as Org links, simply delimit them
-with the `hy:' prefix like so: [[hy:HyWikiWord]].
+wiki page file below @code{hywiki-directory}.  HyWikiWords in HyWiki
+pages are automatically highlighted and turned into hyperlinks as soon
+as you type them, without the need for any delimiters.  However, if
+you prefer to use Org-style links, imply delimit them with double
+square brackets and the `hy:' prefix like so: [[hy:HyWikiWord]].
+
+@cindex HyWikiWord, outside the wiki
+@cindex hywiki-mode
+@findex hywiki-mode
+HyWikiWords can also be highlighted and treated as hyperlinks in
+buffers outside of the @code{hywiki-directory} when the global
+minor mode, @code{hywiki-mode} is enabled via @bkbd{M-x hywiki-mode
+@key{RET}}.
 
 @vindex hywiki-org-link-type-required
 @vindex hsys-org-enable-smart-keys

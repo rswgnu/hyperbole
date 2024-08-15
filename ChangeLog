@@ -1,3 +1,11 @@
+2024-08-15  Bob Weiner  <rsw@gnu.org>
+
+* Makefile (HYPERBOLE_FILES): Add all Org files under the hywiki dir.
+
+2024-08-14  Bob Weiner  <rsw@gnu.org>
+
+* FAST-DEMO: Add HyWiki section and associated hywiki pages sub-directory.
+
 2024-08-13  Bob Weiner  <rsw@gnu.org>
 
 * man/hyperbole.texi (Menus): Add description of Doc/ and HyWiki/ menus.

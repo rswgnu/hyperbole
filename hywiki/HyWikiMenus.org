@@ -1,0 +1,32 @@
+* HyWiki Menu
+
+The HyWiki minibuffer menu offers quick access to important HyWiki
+features.  It looks like this:
+
+     HyWiki>  Act  Create  Edit  Grep  Help  Info  Link  Publish  Search
+
+Below are descriptions of each menu item.
+
+** Act
+     Activate HyWikiWord link at point.
+** Create
+     Create and display a new HyWiki page.  Shows existing page names to
+     aid in new naming.
+** Edit
+     Prompt with completion for and display a HyWiki page ready for
+     editing.
+** Grep
+     Grep over HyWiki pages with interactive 'hywiki-consult-grep'.
+** Help
+     Report on a HyWikiWord's attributes.
+** Info
+     Display Hyperbole manual section on HyWiki.
+** Link
+     Prompt for and add a link at point to a HyWiki page.
+** Publish
+     Publish modified pages in the HyWiki to HTML; prefix arg to publish
+     all pages.
+** Search
+     Use 'hywiki-consult-grep' to show occurrences of a prompted for
+     HyWikiWord.
+

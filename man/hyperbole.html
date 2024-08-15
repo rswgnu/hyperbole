@@ -108,7 +108,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed August 14, 2024.
+Printed August 15, 2024.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -4439,13 +4439,6 @@ Next: <a href="#Publish-HyWiki" accesskey="n" rel="next">Publish HyWiki</a>, Pre
 </div>
 <span id="HyWikiWords-1"></span><h3 class="section">6.1 HyWikiWords</h3>
 
-<span id="index-hywiki_002dmode"></span>
-<span id="index-hywiki_002dmode-1"></span>
-<p>HyWikiWords can also be highlighted and treated as hyperlinks in
-buffers outside of the <code>hywiki-directory</code> when the global
-minor mode, <code>hywiki-mode</code> is enabled via <kbd>{M-x hywiki-mode
-<span class="key">RET</span>}</kbd>.
-</p>
 <span id="index-HyWikiWord"></span>
 <span id="index-WikiWord"></span>
 <span id="index-HyWiki-Org-link-format"></span>
@@ -4453,9 +4446,19 @@ minor mode, <code>hywiki-mode</code> is enabled via <kbd>{M-x hywiki-mode
 <span id="index-hy_003a-prefix"></span>
 <p>A <em>HyWikiWord</em> is a capitalized word that contains upper and
 lowercase letters only and has a corresponding <samp>HyWikiWord.org</samp>
-wiki page file below <code>hywiki-directory</code>.  HyWikiWords require no
-delimiters but if you prefer them as Org links, simply delimit them
-with the &lsquo;hy:&rsquo; prefix like so: [[hy:HyWikiWord]].
+wiki page file below <code>hywiki-directory</code>.  HyWikiWords in HyWiki
+pages are automatically highlighted and turned into hyperlinks as soon
+as you type them, without the need for any delimiters.  However, if
+you prefer to use Org-style links, imply delimit them with double
+square brackets and the &lsquo;hy:&rsquo; prefix like so: [[hy:HyWikiWord]].
+</p>
+<span id="index-HyWikiWord_002c-outside-the-wiki"></span>
+<span id="index-hywiki_002dmode"></span>
+<span id="index-hywiki_002dmode-1"></span>
+<p>HyWikiWords can also be highlighted and treated as hyperlinks in
+buffers outside of the <code>hywiki-directory</code> when the global
+minor mode, <code>hywiki-mode</code> is enabled via <kbd>{M-x hywiki-mode
+<span class="key">RET</span>}</kbd>.
 </p>
 <span id="index-hywiki_002dorg_002dlink_002dtype_002drequired"></span>
 <span id="index-hsys_002dorg_002denable_002dsmart_002dkeys-2"></span>
@@ -15176,6 +15179,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td valign="top"><a href="#index-HyWikiWord">HyWikiWord</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-HyWikiWord-contexts">HyWikiWord contexts</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-HyWikiWord-highlighting">HyWikiWord highlighting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-HyWikiWord_002c-outside-the-wiki">HyWikiWord, outside the wiki</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Concept-Index_cp_letter-I">I</th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtype">ibtype</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Programmatic-Implicit-Button-Types">Programmatic Implicit Button Types</a></td></tr>
