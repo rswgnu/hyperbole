@@ -1,3 +1,23 @@
+2024-08-17  Bob Weiner  <rsw@gnu.org>
+
+* hui-mini.el (hui:menus): Org-M-RET/ Customization menu, add doc to items
+    and add this menu to the HyWiki menu.  Also add Toggle 'hywiki-mode' item.
+    (hui:menus): Change Org-M-RET/All-Programmed-Contexts to
+    All-Smart-Org-Contexts.  Add HyWiki Toggle-HyWiki-Mode.
+  man/hyperbole.texi (HyWiki Menu): Doc above changes in the manual.
+                     (HyWikiWords): Explain new HyWikiWord page creation.
+
+* hact.el (hact): Document that this returns t instead of nil when action type
+    return value is nil; this ensures that implicit button types register
+    the performance of the action.
+
+* man/hyperbole.texi (HyWiki Menu):
+  hui-menu.el (infodock-hyperbole-menu):
+  hui-mini.el (hui:menus): Change 'Grep' to 'GrepConsult' and 'Search' to
+   'WikiWordConsult' so know they use the Consult package.
+
+* hsys-consult.el (hsys-consult-grep): Add missing autoload for this function.
+
 2024-08-16  Bob Weiner  <rsw@gnu.org>
 
 * hbut.el (hbut:map): Remove args 'start-delim' and 'end-delim' and fix to

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     14-Aug-24 at 00:41:19 by Bob Weiner
+;; Last-Mod:     17-Aug-24 at 17:45:49 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -722,8 +722,7 @@ command instead.  Typically prevents clashes over {\\`C-c' /}."
 	  ("Msg-Toggle-Ebuts"  hyperbole-toggle-messaging
 	   "Toggle Hyperbole support for explicit buttons in mail and news buffers.")
 	  ("Org-M-RET/"        (menu . cust-org)
-	   "Ses how much of Hyperbole Smart Key behavior is enabled in Org mode.")
-
+	   "Set how much of Hyperbole Smart Key behavior is enabled in Org mode.")
 	  ("Referents/"        (menu . cust-referents)
 	   "Set where Hyperbole button referents are displayed.")
 	  ("Smart-Key-at-Eol/" (menu . cust-eol)
@@ -751,9 +750,12 @@ command instead.  Typically prevents clashes over {\\`C-c' /}."
 	  ))
        '(cust-org .
          (("Org M-RETURN>")
-	  ("All-Programmed-Contexts" (customize-save-variable 'hsys-org-enable-smart-keys t))
-	  ("Hypb-Buttons-Only"       (customize-save-variable 'hsys-org-enable-smart-keys 'buttons))
-	  ("Ignore"                  (customize-save-variable 'hsys-org-enable-smart-keys nil))))
+	  ("All-Smart-Org-Contexts"       (customize-save-variable 'hsys-org-enable-smart-keys t)
+	   "Smart Keys override Org M-RET in all Org mode Smart Key contexts (see `smart-org').")
+	  ("Hyperbole-Buttons-Only"       (customize-save-variable 'hsys-org-enable-smart-keys 'buttons)
+	   "Smart Keys override Org M-RET only when on a Hyperbole recognized button.")
+	  ("Ignored-by-Hyperbole"         (customize-save-variable 'hsys-org-enable-smart-keys nil)
+	   "Org M-RET always overrides the Smart Keys within Org mode.")))
        '(cust-referents .
          (("Ref Display>")
 	  ("Any-Frame"   (setq hpath:display-where 'other-frame))
@@ -846,7 +848,7 @@ command instead.  Typically prevents clashes over {\\`C-c' /}."
 	    "Create and display a new HyWiki page.  Shows existing page names to aid in new naming.")
 	  ("Edit"           hywiki-find-page
 	   "Prompt with completion for and display a HyWiki page ready for editing.")
-	  ("Grep"           hywiki-consult-grep
+	  ("GrepConsult"    hywiki-consult-grep
 	   "Grep over HyWiki pages with interactive consult-grep.")
 	  ("Help"           hui:hbut-help
 	   "Report on a HyWikiWord's attributes.")
@@ -854,9 +856,13 @@ command instead.  Typically prevents clashes over {\\`C-c' /}."
 	   "Display Hyperbole manual section on HyWiki.")
 	  ("Link"           hywiki-add-link
 	   "Prompt for and add a link at point to a HyWiki page.")
+	  ("Org-M-RET/"     (menu . cust-org)
+	   "Set how much of Hyperbole Smart Key behavior is enabled in Org mode.")
           ("Publish"        hywiki-publish-to-html
 	   "Publish modified pages in the HyWiki to HTML; prefix arg to publish all pages.")
-	  ("Search"         hywiki-word-search
+          ("Toggle"         hywiki-mode
+	   "Toggle whether HyWikiWords are highlighted and active in buffers outside of the HyWiki page directory.")
+	  ("WikiWordConsult"         hywiki-word-search
 	   "Use `hywiki-consult-grep' to show occurrences of a prompted for HyWikiWord.")))
        '(ibut .
 	 (("IButton>")

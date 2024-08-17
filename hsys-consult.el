@@ -80,6 +80,7 @@
 	(unless buffer-modified
 	  (kill-buffer buf))))))
 
+;;;###autoload
 (defun hsys-consult-grep (grep-includes ripgrep-globs &optional regexp max-matches path-list)
   "Interactively search PATH-LIST with a consult package grep command.
 
