@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     14-Jul-24 at 23:32:10 by Bob Weiner
+;; Last-Mod:     15-Aug-24 at 22:44:16 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -843,9 +843,9 @@ Signal an error if point is not within a button."
 BUT defaults to the button whose label point is within."
   (interactive)
   (setq but (or but (hbut:at-p)
-		(ebut:get (ebut:label-to-key
+		(hbut:get (hbut:label-to-key
 			   (hargs:read-match "Help for button: "
-					     (ebut:alist) nil t nil 'ebut)))))
+					     (hbut:alist) nil t nil 'hbut)))))
   (unless but
     (hypb:error "(hbut-help):  Move point to a valid Hyperbole button"))
   (unless (hbut:is-p but)

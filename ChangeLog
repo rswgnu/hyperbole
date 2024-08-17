@@ -1,3 +1,30 @@
+2024-08-17  Bob Weiner  <rsw@gnu.org>
+
+* hui-mini.el (hui:menus): Org-M-RET/ Customization menu, add doc to items
+    and add this menu to the HyWiki menu.  Also add Toggle 'hywiki-mode' item.
+    (hui:menus): Change Org-M-RET/All-Programmed-Contexts to
+    All-Smart-Org-Contexts.  Add HyWiki Toggle-HyWiki-Mode.
+  man/hyperbole.texi (HyWiki Menu): Doc above changes in the manual.
+                     (HyWikiWords): Explain new HyWikiWord page creation.
+
+* hact.el (hact): Document that this returns t instead of nil when action type
+    return value is nil; this ensures that implicit button types register
+    the performance of the action.
+
+* man/hyperbole.texi (HyWiki Menu):
+  hui-menu.el (infodock-hyperbole-menu):
+  hui-mini.el (hui:menus): Change 'Grep' to 'GrepConsult' and 'Search' to
+   'WikiWordConsult' so know they use the Consult package.
+
+* hsys-consult.el (hsys-consult-grep): Add missing autoload for this function.
+
+2024-08-16  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (hbut:map): Remove args 'start-delim' and 'end-delim' and fix to
+    work for both ebuts and named ibuts.
+          (hbut:map-type): Create and use old logic from 'hbut:map' and
+    use in 'ebut:map', 'ibut:map' and 'ibut:label-map'.
+
 2024-08-15  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--org-set-publish-project)
@@ -6,6 +33,10 @@
     (hywiki-tests--org-link-export): Add publish and export tests.
 
 2024-08-15  Bob Weiner  <rsw@gnu.org>
+
+* hui.el (hbut:alist, hbut:list): Add to match but type-specific functions.
+         (hui:hbut-help): Change 'hargs:read-match' completion table to use
+    'hbut:alist' instead of 'ebut:alist'.
 
 * Makefile (HYPERBOLE_FILES): Add all Org files under the hywiki dir.
 

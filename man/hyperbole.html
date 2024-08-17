@@ -108,7 +108,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed August 15, 2024.
+Printed August 17, 2024.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -2300,9 +2300,13 @@ through views of the whole buffer outline.
 </li></ol>
 
 <span id="index-hsys_002dorg_002denable_002dsmart_002dkeys-1"></span>
+<span id="index-org_002dmeta_002dreturn-1"></span>
 <span id="index-enable-org_002dmode-support"></span>
 <span id="index-disable-org_002dmode-support"></span>
 <span id="index-inhibit-org_002dmode-support"></span>
+<span id="index-menu-item_002c-Cust_002fOrg_002dM_002dRET"></span>
+<span id="index-Org-M_002dRET-override"></span>
+<span id="index-override-Org-M_002dRET"></span>
 <span id="index-C_002dh-h-c-o"></span>
 <p>To disable Hyperbole support within Org major and minor modes, set
 the custom option <code>hsys-org-enable-smart-keys</code> to <code>nil</code>.  Then in
@@ -2310,8 +2314,7 @@ Org modes, the Action Key will simply invoke <code>org-meta-return</code>.
 <kbd>{C-h h c o}</kbd> (minibuffer menu Cust/Org-M-RET) will interactively customize
 this setting.
 </p>
-<p>The
-following table summarizes the effect of this option setting.
+<p>The following table summarizes the effect of this option setting.
 </p></dd>
 </dl>
 
@@ -4449,38 +4452,40 @@ lowercase letters only and has a corresponding <samp>HyWikiWord.org</samp>
 wiki page file below <code>hywiki-directory</code>.  HyWikiWords in HyWiki
 pages are automatically highlighted and turned into hyperlinks as soon
 as you type them, without the need for any delimiters.  However, if
-you prefer to use Org-style links, imply delimit them with double
-square brackets and the &lsquo;hy:&rsquo; prefix like so: [[hy:HyWikiWord]].
+you prefer to use Org-style links, simply delimit them with double
+square brackets and the &lsquo;hy:&rsquo; prefix like so: [[hy:MyWikiWord]].
 </p>
-<span id="index-HyWikiWord_002c-outside-the-wiki"></span>
-<span id="index-hywiki_002dmode"></span>
-<span id="index-hywiki_002dmode-1"></span>
-<p>HyWikiWords can also be highlighted and treated as hyperlinks in
-buffers outside of the <code>hywiki-directory</code> when the global
-minor mode, <code>hywiki-mode</code> is enabled via <kbd>{M-x hywiki-mode
-<span class="key">RET</span>}</kbd>.
+<span id="index-create-a-HyWikiWord"></span>
+<span id="index-HyWikiWord-create"></span>
+<p>To create a new HyWikiWord, insert it into a text buffer, move point
+onto the word and press <kbd>{C-h h h c}</kbd> to create a new blank HyWiki
+page that you can immediately start editing.  HyWiki is built for
+scalability and has been tested to be performant with 10,000
+HyWikiWords.
 </p>
-<span id="index-hywiki_002dorg_002dlink_002dtype_002drequired"></span>
-<span id="index-hsys_002dorg_002denable_002dsmart_002dkeys-2"></span>
-<span id="index-override-Org-M_002dRET"></span>
-<span id="index-HyWiki-Action-Key"></span>
-<span id="index-Action-Key_002c-HyWiki"></span>
-<p>If you set <code>hywiki-org-link-type-required</code> to &lsquo;<samp>nil</samp>&rsquo;, then
-you don&rsquo;t need the prefix, e.g. [[MyWikiWord]]; existing HyWiki page
-names then will override Org&rsquo;s standard handling of such links.  To
-prevent Org mode&rsquo;s binding of <kbd>{M-<span class="key">RET</span>}</kbd> from splitting lines
-and creating new headlines when on a HyWikiWord whose page has not
-yet been created, set <code>hsys-org-enable-smart-keys</code> to &lsquo;<samp>t</samp>&rsquo; so
-that Hyperbole&rsquo;s Action Key does the right thing in this context.
+<span id="index-Org-M_002dRET-override-1"></span>
+<span id="index-override-Org-M_002dRET-1"></span>
+<span id="index-C_002dh-h-h-o-a"></span>
+<span id="index-C_002dh-h-h-c"></span>
+<span id="index-menu-item_002c-HyWiki_002fOrg_002dM_002dRET_002fAll_002dSmart_002dOrg_002dContexts"></span>
+<p>The Action Key can create new HyWiki pages when on an undefined
+HyWikiWord if you change the setting that controls the Org mode
+<kbd>{M-<span class="key">RET</span>}</kbd> binding.  Have Hyperbole override Org&rsquo;s control of
+that key in all Action and Assist Key contexts with the
+&lsquo;<samp>All-Smart-Org-Contexts</samp>&rsquo; setting bound to <kbd>{C-h h h o a}</kbd>.
 </p>
 <span id="index-activate-HyWiki-link"></span>
 <span id="index-link_002c-HyWikiWord"></span>
-<p>To create or jump to a HyWiki page, simply type out a potential
-HyWikiWord or move point onto one and press the Action Key
-<kbd>{M-<span class="key">RET</span>}</kbd>.  This will create the associated page if it does
-not exist.  This also highlights any other instances of HyWikiWords
-across all visible Emacs windows.  HyWiki is built for scalability and
-has been tested to be performant with 10,000 HyWikiWords.
+<span id="index-C_002dh-h-h-a"></span>
+<span id="index-C_002dh-h-h-o-i"></span>
+<span id="index-menu-item_002c-HyWiki_002fOrg_002dM_002dRET_002fIgnored_002dby_002dHyperbole"></span>
+<p>To jump to a HyWiki page, simply move point onto any highlighted
+HyWikiWord and press the Action Key <kbd>{M-<span class="key">RET</span>}</kbd>.  This also
+highlights any other instances of HyWikiWords across all visible Emacs
+windows.  If you have set the Org <kbd>{M-<span class="key">RET</span>}</kbd> option to
+&lsquo;<samp>Ignored-by-Hyperbole</samp>&rsquo; with <kbd>{C-h h h o i}</kbd>, then you will have to
+use the HyWiki Act menu command <kbd>{C-h h h a}</kbd> instead to jump to HyWiki
+pages.
 </p>
 <span id="index-HyWiki-section-link"></span>
 <span id="index-link_002c-HyWiki-section"></span>
@@ -4495,6 +4500,33 @@ links are highlighted regardless of whether associated sections exist
 or not.  When activating a link with a section reference, you will get
 an error if the section does not exist.
 </p>
+<span id="index-HyWikiWord_002c-outside-the-wiki"></span>
+<span id="index-hywiki_002dmode"></span>
+<span id="index-toggle-hywiki_002dmode"></span>
+<span id="index-hywiki_002dmode-1"></span>
+<span id="index-C_002dh-h-h-t"></span>
+<p>HyWikiWords can also be highlighted and treated as hyperlinks in
+non-special text and programming buffers outside of the
+<code>hywiki-directory</code> when the global minor mode, <code>hywiki-mode</code>
+is enabled.  Toggle it via <kbd>{C-h h h t}</kbd> or <kbd>{M-x hywiki-mode
+<span class="key">RET</span>}</kbd>.
+</p>
+<span id="index-hywiki_002dorg_002dlink_002dtype_002drequired"></span>
+<span id="index-hsys_002dorg_002denable_002dsmart_002dkeys-2"></span>
+<span id="index-override-Org-M_002dRET-2"></span>
+<span id="index-HyWiki-Action-Key"></span>
+<span id="index-Action-Key_002c-HyWiki"></span>
+<p>If you prefer Org-style links in buffers outside of
+<code>hywiki-directory</code>, use the &rsquo;hy:&rsquo; prefix, as in:
+[[hy:MyWikiWord]].  If you set <code>hywiki-org-link-type-required</code> to
+&lsquo;<samp>nil</samp>&rsquo;, then you don&rsquo;t need the prefix, e.g. [[MyWikiWord]];
+existing HyWiki page names then will override Org&rsquo;s standard handling
+of such links.  To prevent Org mode&rsquo;s binding of <kbd>{M-<span class="key">RET</span>}</kbd>
+from splitting lines and creating new headlines when on a HyWikiWord
+whose page has not yet been created, set
+<code>hsys-org-enable-smart-keys</code> to &lsquo;<samp>t</samp>&rsquo; so that Hyperbole&rsquo;s
+Action Key does the right thing in this context.
+</p>
 <span id="index-HyWikiWord-contexts"></span>
 <p>Once Hyperbole has been loaded and activated, HyWikiWords (with or
 without delimiters) are automatically highlighted and active in
@@ -4508,11 +4540,11 @@ the following contexts:
 
 <span id="index-HyWikiWord-highlighting"></span>
 <p>As HyWikiWords are typed, highlighting occurs after a trailing
-whitespace or punctuation character is added, or when an opening
-or closing parenthesis or curly brace is added to surround the
-HyWikiWord.  Since Org links use double square brackets and Org
-targets use double or triple angle brackets, HyWikiWords within
-these delimiters are ignored once the brackets are in place.
+whitespace or punctuation character is added, or when the HyWikiWord
+is surrounded by a matching pair of characters such as curly braces.
+Since Org links use double square brackets and Org targets use double
+or triple angle brackets, HyWikiWords within these delimiters are
+ignored once the brackets are in place.
 </p>
 <span id="index-hywiki_002dword_002dhighlight_002dflag"></span>
 <p>The custom setting, <code>hywiki-word-highlight-flag</code> (default =
@@ -4603,7 +4635,7 @@ Previous: <a href="#Publish-HyWiki" accesskey="p" rel="prev">Publish HyWiki</a>,
 It looks like this:
 </p>
 <div class="example">
-<pre class="example">HyWiki&gt;  Act  Create  Edit  Grep  Help  Info  Link  Publish  Search
+<pre class="example">HyWiki&gt;  Act Create Edit GrepConsult Help Info Link Org-M-RET/ Publish Toggle WikiWordConsult
 </pre></div>
 
 <p>Below are descriptions of each menu item.
@@ -4621,7 +4653,7 @@ It looks like this:
 <dt><span>Edit</span></dt>
 <dd><p>Prompt with completion for and display a HyWiki page ready for editing.
 </p></dd>
-<dt><span>Grep</span></dt>
+<dt><span>GrepConsult</span></dt>
 <dd><p>Grep over HyWiki pages with interactive <code>hywiki-consult-grep</code>.
 </p></dd>
 <dt><span>Help</span></dt>
@@ -4632,11 +4664,28 @@ It looks like this:
 </p></dd>
 <dt><span>Link</span></dt>
 <dd><p>Prompt for and add a link at point to a HyWiki page.
+<span id="index-C_002dh-h-h-o"></span>
+<span id="index-HyWiki_002c-C_002dh-h-h-o"></span>
+<span id="index-C_002dh-h-h-c-1"></span>
+<span id="index-HyWiki_002c-C_002dh-h-h-c"></span>
+<span id="index-menu-item_002c-HyWiki_002fOrg_002dM_002dRET"></span>
+<span id="index-menu-item_002c-HyWiki_002fOrg_002dM_002dRET_002fHyperbole_002dButtons_002dOnly"></span>
+<span id="index-customize-Org-M_002dRET"></span>
+<span id="index-Org-M_002dRET-customize"></span>
+</p></dd>
+<dt><span>Org-M-RET/</span></dt>
+<dd><p>Menu to customize contexts in which Hyperbole Action and Assist Keys
+override Org&rsquo;s <kbd>{M-<span class="key">RET</span>}</kbd> command.  The default is
+when on &lsquo;<samp>Hyperbole-Buttons-Only</samp>&rsquo;.  Use &lsquo;<samp>All-Smart-Org-Contexts</samp>&rsquo; to
+make the Action Key create new HyWiki pages when pressed on as-yet
+undefined HyWikiWords; otherwise, you must use <kbd>{C-h h h c}</kbd> to create a
+new HyWiki page instead.  Use &lsquo;<samp>Ignored-by-Hyperbole</samp>&rsquo; if you want to
+use Org&rsquo;s <kbd>{M-<span class="key">RET</span>}</kbd> command in every context within Org mode.
 </p></dd>
 <dt><span>Publish</span></dt>
 <dd><p>Publish modified pages in the HyWiki to HTML; prefix arg to publish all pages.
 </p></dd>
-<dt><span>Search</span></dt>
+<dt><span>WikiWordConsult</span></dt>
 <dd><p>Use <code>hywiki-consult-grep</code> to show occurrences of a prompted for HyWikiWord.
 </p></dd>
 </dl>
@@ -13492,8 +13541,15 @@ Next: <a href="#Function" accesskey="n" rel="next">Function, Variable and File I
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-f-w-1"><code>C-h h f w</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-g"><code>C-h h g</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Buttons">Global Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-g-l"><code>C-h h g l</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Buttons">Global Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dh-h-h-a"><code>C-h h h a</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dh-h-h-c"><code>C-h h h c</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dh-h-h-c-1"><code>C-h h h c</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dh-h-h-o"><code>C-h h h o</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dh-h-h-o-a"><code>C-h h h o a</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dh-h-h-o-i"><code>C-h h h o i</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-h-p"><code>C-h h h p</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWiki">HyWiki</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-h-p-1"><code>C-h h h p</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Publish-HyWiki">Publish HyWiki</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-C_002dh-h-h-t"><code>C-h h h t</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-i"><code>C-h h i</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-i-a"><code>C-h h i a</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-C_002dh-h-i-c"><code>C-h h i c</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
@@ -13561,6 +13617,8 @@ Next: <a href="#Function" accesskey="n" rel="next">Function, Variable and File I
 <tr><td></td><td valign="top"><a href="#index-HyControl_002c-see-screen"><code>HyControl, see screen</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-HyControl_002c-see-screen-1"><code>HyControl, see screen</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-HyRolo_002c-see-rolo"><code>HyRolo, see rolo</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Keys">HyRolo Keys</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-HyWiki_002c-C_002dh-h-h-c"><code>HyWiki, C-h h h c</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-HyWiki_002c-C_002dh-h-h-o"><code>HyWiki, C-h h h o</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Key-Index_ky_letter-I">I</th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-I"><code>I</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
@@ -14483,6 +14541,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-org_002dctrl_002dc_002dctrl_002dc"><code>org-ctrl-c-ctrl-c</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-org_002ddirectory">org-directory</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-org_002dmeta_002dreturn"><code>org-meta-return</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-org_002dmeta_002dreturn-1"><code>org-meta-return</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-org_002droam_002ddirectory">org-roam-directory</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-outline_002dminor_002dmode-1"><code>outline-minor-mode</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Emacs-Outline-Mode">Smart Key - Emacs Outline Mode</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-outline_002dmode-1"><code>outline-mode</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Emacs-Outline-Mode">Smart Key - Emacs Outline Mode</a></td></tr>
@@ -14856,6 +14915,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td valign="top"><a href="#index-copying">copying</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-copying-things-to-kill-ring">copying things to kill ring</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-copying-things-to-registers">copying things to registers</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-create-a-HyWikiWord">create a HyWikiWord</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-create-link-button">create link button</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-create_002dtime-attribute">create-time attribute</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-creating-explicit-links">creating explicit links</a>:</td><td>&nbsp;</td><td valign="top"><a href="#By-Link">By Link</a></td></tr>
@@ -14872,6 +14932,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td valign="top"><a href="#index-customization">customization</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Customization">Customization</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-customization-1">customization</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Customization">Customization</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-customize">customize</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-customize-Org-M_002dRET">customize Org M-RET</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-customize_002c-rolo-additions">customize, rolo additions</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Keys">HyRolo Keys</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-customize_002c-rolo-datestamps">customize, rolo datestamps</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Keys">HyRolo Keys</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-customize_002c-rolo-edits">customize, rolo edits</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Keys">HyRolo Keys</a></td></tr>
@@ -15178,6 +15239,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td valign="top"><a href="#index-hywiki_002dmode">hywiki-mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-HyWikiWord">HyWikiWord</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-HyWikiWord-contexts">HyWikiWord contexts</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-HyWikiWord-create">HyWikiWord create</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-HyWikiWord-highlighting">HyWikiWord highlighting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-HyWikiWord_002c-outside-the-wiki">HyWikiWord, outside the wiki</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
@@ -15408,6 +15470,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td valign="top"><a href="#index-menu-item_002c-Cust_002fDebug_002dToggle">menu item, Cust/Debug-Toggle</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Debugging">Smart Key Debugging</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu-item_002c-Cust_002fMsg_002dToggle_002dEbuts">menu item, Cust/Msg-Toggle-Ebuts</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu-item_002c-Cust_002fMsg_002dToggle_002dEbuts-1">menu item, Cust/Msg-Toggle-Ebuts</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-News">Buttons in News</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-menu-item_002c-Cust_002fOrg_002dM_002dRET">menu item, Cust/Org-M-RET</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu-item_002c-Doc_002fSmartKeys">menu item, Doc/SmartKeys</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Operations">Smart Key Operations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu-item_002c-Ebut_002fCreate">menu item, Ebut/Create</a>:</td><td>&nbsp;</td><td valign="top"><a href="#By-Menu">By Menu</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu-item_002c-Ebut_002fEdit">menu item, Ebut/Edit</a>:</td><td>&nbsp;</td><td valign="top"><a href="#By-Menu">By Menu</a></td></tr>
@@ -15420,6 +15483,10 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td valign="top"><a href="#index-menu-item_002c-Gbut_002fLink">menu item, Gbut/Link</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Buttons">Global Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu-item_002c-GrepFile">menu item, GrepFile</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu-item_002c-Hist">menu item, Hist</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-menu-item_002c-HyWiki_002fOrg_002dM_002dRET">menu item, HyWiki/Org-M-RET</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-menu-item_002c-HyWiki_002fOrg_002dM_002dRET_002fAll_002dSmart_002dOrg_002dContexts">menu item, HyWiki/Org-M-RET/All-Smart-Org-Contexts</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-menu-item_002c-HyWiki_002fOrg_002dM_002dRET_002fHyperbole_002dButtons_002dOnly">menu item, HyWiki/Org-M-RET/Hyperbole-Buttons-Only</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-menu-item_002c-HyWiki_002fOrg_002dM_002dRET_002fIgnored_002dby_002dHyperbole">menu item, HyWiki/Org-M-RET/Ignored-by-Hyperbole</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu-item_002c-Ibut_002fAct">menu item, Ibut/Act</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu-item_002c-Ibut_002fActivate">menu item, Ibut/Activate</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu-item_002c-Ibut_002fCreate">menu item, Ibut/Create</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
@@ -15571,6 +15638,9 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td valign="top"><a href="#index-Org-link_002c-HyWiki">Org link, HyWiki</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Org-link_002c-outside-Org">Org link, outside Org</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Org-link_002c-outside-Org-1">Org link, outside Org</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Org-Mode">Smart Key - Org Mode</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Org-M_002dRET-customize">Org M-RET customize</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Org-M_002dRET-override">Org M-RET override</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-Org-M_002dRET-override-1">Org M-RET override</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Org-mode">Org mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Concepts">HyRolo Concepts</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Org-mode-1">Org mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Org-Mode">Smart Key - Org Mode</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Org-publish">Org publish</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Publish-HyWiki">Publish HyWiki</a></td></tr>
@@ -15618,7 +15688,9 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td valign="top"><a href="#index-outliner">outliner</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner">Koutliner</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-outliner-commands">outliner commands</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menu-Commands">Menu Commands</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-outliner-keys">outliner keys</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-override-Org-M_002dRET">override Org M-RET</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-override-Org-M_002dRET">override Org M-RET</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-override-Org-M_002dRET-1">override Org M-RET</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-override-Org-M_002dRET-2">override Org M-RET</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-overview">overview</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Concept-Index_cp_letter-P">P</th><td></td><td></td></tr>
@@ -15834,6 +15906,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td valign="top"><a href="#index-toc-implicit-button-type">toc implicit button type</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-todotxt_002dmode">todotxt-mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-_002d-Todotxt-Mode">Smart Key - Todotxt Mode</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-toggle-HyControl-mode">toggle HyControl mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-toggle-hywiki_002dmode">toggle hywiki-mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-toggle-key-bindings">toggle key bindings</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Invocation">Invocation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-toggling-blank-lines">toggling blank lines</a>:</td><td>&nbsp;</td><td valign="top"><a href="#View-Specs">View Specs</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-top_002dlevel-cell">top-level cell</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Creating-Outlines">Creating Outlines</a></td></tr>

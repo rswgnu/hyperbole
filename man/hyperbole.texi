@@ -159,7 +159,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed August 15, 2024.
+Printed August 17, 2024.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -201,7 +201,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.2pre
-August 15, 2024
+August 17, 2024
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -2417,9 +2417,13 @@ through views of the whole buffer outline.
 @end enumerate
 
 @vindex hsys-org-enable-smart-keys
+@findex org-meta-return
 @cindex enable org-mode support
 @cindex disable org-mode support
 @cindex inhibit org-mode support
+@cindex menu item, Cust/Org-M-RET
+@cindex Org M-RET override
+@cindex override Org M-RET
 @kindex C-h h c o
 To disable Hyperbole support within Org major and minor modes, set
 the custom option @code{hsys-org-enable-smart-keys} to @code{nil}.  Then in
@@ -2427,8 +2431,7 @@ Org modes, the Action Key will simply invoke @code{org-meta-return}.
 @bkbd{C-h h c o} (minibuffer menu Cust/Org-M-RET) will interactively customize
 this setting.
 
-The
-following table summarizes the effect of this option setting.
+The following table summarizes the effect of this option setting.
 @end table
 
 @smallexample
@@ -4354,38 +4357,40 @@ lowercase letters only and has a corresponding @file{HyWikiWord.org}
 wiki page file below @code{hywiki-directory}.  HyWikiWords in HyWiki
 pages are automatically highlighted and turned into hyperlinks as soon
 as you type them, without the need for any delimiters.  However, if
-you prefer to use Org-style links, imply delimit them with double
-square brackets and the `hy:' prefix like so: [[hy:HyWikiWord]].
+you prefer to use Org-style links, simply delimit them with double
+square brackets and the `hy:' prefix like so: [[hy:MyWikiWord]].
 
-@cindex HyWikiWord, outside the wiki
-@cindex hywiki-mode
-@findex hywiki-mode
-HyWikiWords can also be highlighted and treated as hyperlinks in
-buffers outside of the @code{hywiki-directory} when the global
-minor mode, @code{hywiki-mode} is enabled via @bkbd{M-x hywiki-mode
-@key{RET}}.
+@cindex create a HyWikiWord
+@cindex HyWikiWord create
+To create a new HyWikiWord, insert it into a text buffer, move point
+onto the word and press @bkbd{C-h h h c} to create a new blank HyWiki
+page that you can immediately start editing.  HyWiki is built for
+scalability and has been tested to be performant with 10,000
+HyWikiWords.
 
-@vindex hywiki-org-link-type-required
-@vindex hsys-org-enable-smart-keys
+@cindex Org M-RET override
 @cindex override Org M-RET
-@cindex HyWiki Action Key
-@cindex Action Key, HyWiki
-If you set @code{hywiki-org-link-type-required} to @samp{nil}, then
-you don't need the prefix, e.g. [[MyWikiWord]]; existing HyWiki page
-names then will override Org's standard handling of such links.  To
-prevent Org mode's binding of @bkbd{M-@key{RET}} from splitting lines
-and creating new headlines when on a HyWikiWord whose page has not
-yet been created, set @code{hsys-org-enable-smart-keys} to @samp{t} so
-that Hyperbole's Action Key does the right thing in this context.
+@kindex C-h h h o a
+@kindex C-h h h c
+@cindex menu item, HyWiki/Org-M-RET/All-Smart-Org-Contexts
+The Action Key can create new HyWiki pages when on an undefined
+HyWikiWord if you change the setting that controls the Org mode
+@bkbd{M-@key{RET}} binding.  Have Hyperbole override Org's control of
+that key in all Action and Assist Key contexts with the
+@samp{All-Smart-Org-Contexts} setting bound to @bkbd{C-h h h o a}.
 
 @cindex activate HyWiki link
 @cindex link, HyWikiWord
-To create or jump to a HyWiki page, simply type out a potential
-HyWikiWord or move point onto one and press the Action Key
-@bkbd{M-@key{RET}}.  This will create the associated page if it does
-not exist.  This also highlights any other instances of HyWikiWords
-across all visible Emacs windows.  HyWiki is built for scalability and
-has been tested to be performant with 10,000 HyWikiWords.
+@kindex C-h h h a
+@kindex C-h h h o i
+@cindex menu item, HyWiki/Org-M-RET/Ignored-by-Hyperbole
+To jump to a HyWiki page, simply move point onto any highlighted
+HyWikiWord and press the Action Key @bkbd{M-@key{RET}}.  This also
+highlights any other instances of HyWikiWords across all visible Emacs
+windows.  If you have set the Org @bkbd{M-@key{RET}} option to
+@samp{Ignored-by-Hyperbole} with @bkbd{C-h h h o i}, then you will have to
+use the HyWiki Act menu command @bkbd{C-h h h a} instead to jump to HyWiki
+pages.
 
 @cindex HyWiki section link
 @cindex link, HyWiki section
@@ -4400,6 +4405,33 @@ links are highlighted regardless of whether associated sections exist
 or not.  When activating a link with a section reference, you will get
 an error if the section does not exist.
 
+@cindex HyWikiWord, outside the wiki
+@cindex hywiki-mode
+@cindex toggle hywiki-mode
+@findex hywiki-mode
+@kindex C-h h h t
+HyWikiWords can also be highlighted and treated as hyperlinks in
+non-special text and programming buffers outside of the
+@code{hywiki-directory} when the global minor mode, @code{hywiki-mode}
+is enabled.  Toggle it via @bkbd{C-h h h t} or @bkbd{M-x hywiki-mode
+@key{RET}}.
+
+@vindex hywiki-org-link-type-required
+@vindex hsys-org-enable-smart-keys
+@cindex override Org M-RET
+@cindex HyWiki Action Key
+@cindex Action Key, HyWiki
+If you prefer Org-style links in buffers outside of
+@code{hywiki-directory}, use the 'hy:' prefix, as in:
+[[hy:MyWikiWord]].  If you set @code{hywiki-org-link-type-required} to
+@samp{nil}, then you don't need the prefix, e.g. [[MyWikiWord]];
+existing HyWiki page names then will override Org's standard handling
+of such links.  To prevent Org mode's binding of @bkbd{M-@key{RET}}
+from splitting lines and creating new headlines when on a HyWikiWord
+whose page has not yet been created, set
+@code{hsys-org-enable-smart-keys} to @samp{t} so that Hyperbole's
+Action Key does the right thing in this context.
+
 @cindex HyWikiWord contexts
 Once Hyperbole has been loaded and activated, HyWikiWords (with or
 without delimiters) are automatically highlighted and active in
@@ -4413,11 +4445,11 @@ the following contexts:
 
 @cindex HyWikiWord highlighting
 As HyWikiWords are typed, highlighting occurs after a trailing
-whitespace or punctuation character is added, or when an opening
-or closing parenthesis or curly brace is added to surround the
-HyWikiWord.  Since Org links use double square brackets and Org
-targets use double or triple angle brackets, HyWikiWords within
-these delimiters are ignored once the brackets are in place.
+whitespace or punctuation character is added, or when the HyWikiWord
+is surrounded by a matching pair of characters such as curly braces.
+Since Org links use double square brackets and Org targets use double
+or triple angle brackets, HyWikiWords within these delimiters are
+ignored once the brackets are in place.
 
 @vindex hywiki-word-highlight-flag
 The custom setting, @code{hywiki-word-highlight-flag} (default =
@@ -4499,10 +4531,10 @@ Customize the value of this function if necessary with:
 The HyWiki minibuffer menu offers quick access to important HyWiki features.
 It looks like this:
 
-@example
+@smallexample
 @noindent
-HyWiki>  Act  Create  Edit  Grep  Help  Info  Link  Publish  Search
-@end example
+HyWiki>  Act Create Edit GrepConsult Help Info Link Org-M-RET/ Publish Toggle WikiWordConsult
+@end smallexample
 
 @noindent
 Below are descriptions of each menu item.
@@ -4517,7 +4549,7 @@ Activate HyWikiWord link at point.
 Create and display a new HyWiki page.  Shows existing page names to aid in new naming.
 @item Edit
 Prompt with completion for and display a HyWiki page ready for editing.
-@item Grep
+@item GrepConsult
 Grep over HyWiki pages with interactive @code{hywiki-consult-grep}.
 @item Help
 Report on a HyWikiWord's attributes.
@@ -4525,9 +4557,25 @@ Report on a HyWikiWord's attributes.
 Display Hyperbole manual section on HyWiki.
 @item Link
 Prompt for and add a link at point to a HyWiki page.
+@kindex C-h h h o
+@kindex HyWiki, C-h h h o
+@kindex C-h h h c
+@kindex HyWiki, C-h h h c
+@cindex menu item, HyWiki/Org-M-RET
+@cindex menu item, HyWiki/Org-M-RET/Hyperbole-Buttons-Only
+@cindex customize Org M-RET
+@cindex Org M-RET customize
+@item Org-M-RET/
+Menu to customize contexts in which Hyperbole Action and Assist Keys
+override Org's @bkbd{M-@key{RET}} command.  The default is
+when on @samp{Hyperbole-Buttons-Only}.  Use @samp{All-Smart-Org-Contexts} to
+make the Action Key create new HyWiki pages when pressed on as-yet
+undefined HyWikiWords; otherwise, you must use @bkbd{C-h h h c} to create a
+new HyWiki page instead.  Use @samp{Ignored-by-Hyperbole} if you want to
+use Org's @bkbd{M-@key{RET}} command in every context within Org mode.
 @item Publish
 Publish modified pages in the HyWiki to HTML; prefix arg to publish all pages.
-@item Search
+@item WikiWordConsult
 Use @code{hywiki-consult-grep} to show occurrences of a prompted for HyWikiWord.
 @end table
 
