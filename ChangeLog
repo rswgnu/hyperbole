@@ -1,5 +1,9 @@
 2024-08-15  Bob Weiner  <rsw@gnu.org>
 
+* hui.el (hbut:alist, hbut:list): Add to match but type-specific functions.
+         (hui:hbut-help): Change 'hargs:read-match' completion table to use
+    'hbut:alist' instead of 'ebut:alist'.
+
 * Makefile (HYPERBOLE_FILES): Add all Org files under the hywiki dir.
 
 2024-08-14  Bob Weiner  <rsw@gnu.org>
