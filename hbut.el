@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     15-Jul-24 at 01:42:17 by Bob Weiner
+;; Last-Mod:     16-Aug-24 at 00:56:16 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -378,7 +378,7 @@ to two lines."
 (defalias 'ebut:label-to-key #'hbut:label-to-key)
 
 (defun    ebut:list (&optional file loc-p)
-  "Return list of button labels from in FILE or the current buffer.
+  "Return list of explicit button labels from in FILE or the current buffer.
 Remove duplicate labels if optional LOC-P is omitted.  With LOC-P, return
 list of elements (label start end) where start and end are the buffer
 positions at which the button delimiter begins and ends."
@@ -409,7 +409,7 @@ considered.
 BUT-FUNC must take precisely three arguments: the button label, the
 start position of the delimited button label and its end position (positions
 include delimiters when INCLUDE-DELIMS is non-nil)."
-  (hbut:map but-func nil nil regexp-match include-delims))
+  (hbut:map-type but-func ebut:label-start ebut:label-end regexp-match include-delims))
 
 (defun    ebut:next-occurrence (lbl-key &optional buffer)
   "Move point to next occurrence of button with LBL-KEY in optional BUFFER.
@@ -1121,6 +1121,11 @@ Default is the symbol hbut:current."
   (when (hbut:is-p hbut)
     (hattr:get hbut 'actype)))
 
+(defun    hbut:alist (&optional file)
+  "Return alist of hbuts (ebuts and named ibuts) in FILE or the current buffer.
+Each element is a list of just a button label.  For use as a completion table."
+  (mapcar #'list (hbut:list file)))
+
 (defun    hbut:at-p ()
   "Return symbol for explicit or implicit Hyperbole button at point or nil.
 Then use (hbut:act) to activate the button.
@@ -1501,29 +1506,67 @@ whitespace sequences with `_'."
 	  label (replace-regexp-in-string "_" "__" label nil t))
     (replace-regexp-in-string "[ \t\n\r]+" "_" label nil t)))
 
-(defun    hbut:map (but-func &optional start-delim end-delim
-			     regexp-match include-delims)
-  "Apply BUT-FUNC to a set of hbuttons in the visible part of the current buffer.
-The set of buttons are those whose labels are delimited by
-optional START-DELIM and END-DELIM and that match any optional
-REGEXP-MATCH (may be a partial match but must include delimiters).
+(defun    hbut:list (&optional file loc-p)
+  "Return list of button labels from in FILE or the current buffer.
+Remove duplicate labels if optional LOC-P is omitted.  With LOC-P, return
+list of elements (label start end) where start and end are the buffer
+positions at which the button delimiter begins and ends."
+  (interactive)
+  (setq file (if file
+		 (when (file-exists-p file)
+		   (find-file-noselect file))
+	       (current-buffer)))
+  (when file
+    (set-buffer file)
+    (let ((buts (hbut:map (if loc-p
+			      (lambda (lbl start end)
+				;; Normalize label spacing
+				(list (hbut:key-to-label (hbut:label-to-key lbl))
+				      start end))
+			    (lambda (lbl _start _end)
+			      ;; Normalize label spacing
+			      (hbut:key-to-label (hbut:label-to-key lbl)))))))
+      (if loc-p buts (when buts (apply #'set:create buts))))))
 
-START-DELIM defaults to ebut:label-start; END-DELIM defaults to
-ebut:label-end.  If END-DELIM is a symbol, e.g. t, then treat
-START-DELIM as a regular expression which matches an entire
-button string including instance numbers and
-delimiters (REGEXP-MATCH is ignored in such cases).
+(defun    hbut:map (but-func &optional regexp-match include-delims)
+  "Apply BUT-FUNC to a set of hbuttons in the visible part of the current buffer.
+Finds both ebuts and named ibuts that match any optional REGEXP-MATCH
+(may be a partial match but must include delimiters).
 
 Any regexp given must have grouping 1 match the label.
 
-BUT-FUNC must take precisely three arguments: the button label,
-the start position of the delimited button label and its end
-position (positions include delimiters when INCLUDE-DELIMS is
-non-nil)."
-  (unless start-delim
-    (setq start-delim ebut:label-start))
+BUT-FUNC must take precisely three arguments: the button label, the start
+position of the delimited button label and its end position (positions
+include delimiters when INCLUDE-DELIMS is non-nil)."
+(sort
+ (nconc
+  (ebut:map but-func regexp-match include-delims)
+  (ibut:map but-func regexp-match include-delims))
+ #'string<))
+
+(defun    hbut:map-type (but-func start-delim end-delim
+			 &optional regexp-match include-delims)
+  "Apply BUT-FUNC to a set of hbuttons in the visible part of the current buffer.
+The set of buttons are those whose labels are delimited by START-DELIM
+and END-DELIM and that match any optional REGEXP-MATCH (may be a partial
+match but must include delimiters).
+
+START-DELIM defaults to ebut:label-start; END-DELIM defaults to
+ebut:label-end.  If END-DELIM is a symbol, e.g. t, then treat START-DELIM
+as a regular expression which matches an entire button string including
+instance numbers and delimiters (REGEXP-MATCH is ignored in such cases).
+
+Any regexp given must have grouping 1 match the label.
+
+BUT-FUNC must take precisely three arguments: the button label, the start
+position of the delimited button label and its end position (positions
+include delimiters when INCLUDE-DELIMS is non-nil)."
+  (unless (stringp start-delim)
+    (error "(hbut:map-type): `start-delim' must be a string, not '%s'"
+	   start-delim))
   (unless end-delim
-    (setq end-delim ebut:label-end))
+    (error "(hbut:map-type): `end-delim' must be non-nil" end-delim))
+
   (let* ((match-to-start-delim (when end-delim (symbolp end-delim)))
 	 (end-char (unless match-to-start-delim
 		     (substring end-delim -1)))
@@ -2227,7 +2270,7 @@ BUT-FUNC must take precisely three arguments: the button label,
 the start position of the delimited button label and its end
 position (positions include delimiters when INCLUDE-DELIMS is
 non-nil)."
-  (hbut:map but-func ibut:label-start ibut:label-end regexp-match include-delims))
+  (hbut:map-type but-func ibut:label-start ibut:label-end regexp-match include-delims))
 
 (defun    ibut:label-key-match (name-key)
   "Return a list of implicit button label keys fully matching NAME-KEY.
@@ -2373,7 +2416,7 @@ BUT-FUNC must take precisely three arguments: the button name,
 the start position of the delimited button name and its end
 position (positions include delimiters when INCLUDE-DELIMS is
 non-nil)."
-  (hbut:map but-func ibut:label-start ibut:label-end regexp-match include-delims))
+  (hbut:map-type but-func ibut:label-start ibut:label-end regexp-match include-delims))
 
 (defun    ibut:name-regexp (name-key &optional no-delim)
   "Unnormalize ibutton NAME-KEY.
