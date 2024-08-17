@@ -25,6 +25,13 @@
           (hbut:map-type): Create and use old logic from 'hbut:map' and
     use in 'ebut:map', 'ibut:map' and 'ibut:label-map'.
 
+2024-08-15  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--org-set-publish-project)
+    (hywiki-tests--org-get-publish-project)
+    (hywiki-tests--org-link-resolve)
+    (hywiki-tests--org-link-export): Add publish and export tests.
+
 2024-08-15  Bob Weiner  <rsw@gnu.org>
 
 * hui.el (hbut:alist, hbut:list): Add to match but type-specific functions.
