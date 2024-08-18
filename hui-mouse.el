@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     12-Jul-24 at 20:48:37 by Mats Lidell
+;; Last-Mod:     18-Aug-24 at 09:35:51 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -444,7 +444,7 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
     ;;
     ;; Python files - ensure this comes before Imenu for more advanced
     ;; definition lookups
-    ((and (or (and (derived-mode-p 'python-mode) buffer-file-name)
+    ((and (or (and (derived-mode-p '(python-mode python-ts-mode)) buffer-file-name)
 	      (and (featurep 'hsys-org) (hsys-org-mode-p)
 		   (equal (hsys-org-get-value :language) "python"))
 	      (let ((case-fold-search))
@@ -452,11 +452,11 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 	  (setq hkey-value (smart-python-at-tag-p)))
      . ((smart-python hkey-value) . (smart-python hkey-value 'next-tag)))
     ;;
-    ((and (eq major-mode 'c-mode)
+    ((and (memq major-mode '(c-mode c-ts-mode))
 	  buffer-file-name (smart-c-at-tag-p))
      . ((smart-c) . (smart-c nil 'next-tag)))
     ;;
-    ((and (eq major-mode 'c++-mode) buffer-file-name
+    ((and (memq major-mode '(c++-mode c++-ts-mode)) buffer-file-name
 	  ;; Don't use smart-c++-at-tag-p here since it will prevent #include
 	  ;; lines from matching.
 	  (smart-c-at-tag-p))
@@ -479,7 +479,7 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
      . ((smart-lisp) . (smart-lisp 'show-doc)))
     ;;
     ;;
-    ((and (eq major-mode 'java-mode) buffer-file-name
+    ((and (memq major-mode '(java-mode java-ts-mode)) buffer-file-name
 	  (or (smart-java-at-tag-p)
 	      ;; Also handle Java @see cross-references.
 	      (looking-at "@see[ \t]+")
@@ -488,7 +488,7 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 		     (looking-at "@see[ \t]+")))))
      . ((smart-java) . (smart-java nil 'next-tag)))
     ;;
-    ((and (memq major-mode '(js2-mode js-mode js3-mode javascript-mode html-mode web-mode))
+    ((and (memq major-mode '(html-mode javascript-mode js-mode js-ts-mode js2-mode js3-mode web-mode))
 	  buffer-file-name
 	  (smart-javascript-at-tag-p))
      . ((smart-javascript) . (smart-javascript nil 'next-tag)))

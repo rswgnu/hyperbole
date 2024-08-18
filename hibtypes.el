@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     31-Jul-24 at 01:31:32 by Bob Weiner
+;; Last-Mod:     18-Aug-24 at 09:14:53 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -376,7 +376,9 @@ attached file."
        buffer-file-name
        (let ((chr (aref (buffer-name) 0)))
          (not (or (eq chr ?\ ) (eq chr ?*))))
-       (not (apply #'derived-mode-p '(prog-mode c-mode objc-mode c++-mode java-mode markdown-mode org-mode)))
+       (not (apply #'derived-mode-p
+                   '(c++-mode c++-ts-mode c-mode c-ts-mode java-mode java-ts-mode
+                              markdown-mode objc-mode org-mode prog-mode)))
        (unless (ibut:label-p t "[[" "]]" t) ;; Org link
 	 (let ((ref (hattr:get 'hbut:current 'lbl-key))
 	       (lbl-start (hattr:get 'hbut:current 'lbl-start))

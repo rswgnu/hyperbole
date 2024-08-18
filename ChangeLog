@@ -1,3 +1,13 @@
+2024-08-18  Mats Lidell  <matsl@gnu.org>
+
+* kotl/klink.el (klink:ignore-modes, klink:c-style-modes):
+* hui-select.el (hui-select-brace-modes)
+    (hui-select-brace-def-or-declaration):
+* hui-mouse.el (hkey-alist):
+* hmouse-tag.el (smart-java-cross-reference):
+* hibtypes.el (annot-bib): Add corresponding tree-sitter modes for the
+    modes supported by Hyperbole.
+
 2024-08-17  Bob Weiner  <rsw@gnu.org>
 
 * hui-mini.el (hui:menus): Org-M-RET/ Customization menu, add doc to items
