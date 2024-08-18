@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     16-Aug-24 at 22:28:45 by Mats Lidell
+;; Last-Mod:     18-Aug-24 at 09:44:46 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -119,8 +119,8 @@
 ;;; ************************************************************************
 
 (defcustom hui-select-brace-modes
-  '(c++-mode c-mode java-mode objc-mode perl-mode tcl-mode
-             c++-ts-mode c-ts-mode java-ts-mode)
+  '(c++-mode c++-ts-mode c-mode c-ts-mode java-mode java-ts-mode objc-mode
+             perl-mode tcl-mode)
   "*List of language major modes which define things with brace delimiters."
   :type '(repeat (function :tag "Mode"))
   :group 'hyperbole-commands)
@@ -138,9 +138,8 @@
   :group 'hyperbole-commands)
 
 (defcustom hui-select-indent-modes
-  (append '(altmath-mode asm-mode csh-mode eiffel-mode ksh-mode
-                         math-mode miranda-mode python-mode pascal-mode sather-mode
-                         python-ts-mode)
+  (append '(altmath-mode asm-mode csh-mode eiffel-mode ksh-mode math-mode miranda-mode
+                         pascal-mode python-mode python-ts-mode sather-mode)
 	  hui-select-text-modes)
   "*List of modes that use indentation mostly to define syntactic structure.
 Use for language major modes."

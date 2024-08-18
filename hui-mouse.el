@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     16-Aug-24 at 20:59:19 by Mats Lidell
+;; Last-Mod:     18-Aug-24 at 09:35:51 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -488,7 +488,7 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 		     (looking-at "@see[ \t]+")))))
      . ((smart-java) . (smart-java nil 'next-tag)))
     ;;
-    ((and (memq major-mode '(js2-mode js-mode js3-mode javascript-mode html-mode web-mode js-ts-mode))
+    ((and (memq major-mode '(html-mode javascript-mode js-mode js-ts-mode js2-mode js3-mode web-mode))
 	  buffer-file-name
 	  (smart-javascript-at-tag-p))
      . ((smart-javascript) . (smart-javascript nil 'next-tag)))
