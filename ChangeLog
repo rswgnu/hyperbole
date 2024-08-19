@@ -1,3 +1,7 @@
+* hywiki.el (hywiki-is-wikiword): Rename to 'hywiki-word-is-p'.
+            (hywiki-word-activate , hywiki-page-strip-section,
+             hywiki-page-exists-p): Add.
+            (hywiki-word-consult-grep): Rename from `hywiki-word-search'.
   hui-mini.el (hui:menus): Change "Act" item from 'hui:ibut-act' to
     new 'hywiki-word-activate'.
 
