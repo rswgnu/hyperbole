@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 12:15:16
-;; Last-Mod:     14-Jul-24 at 23:32:32 by Bob Weiner
+;; Last-Mod:     18-Aug-24 at 09:42:48 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -72,13 +72,14 @@
 ;;; ************************************************************************
 
 (defcustom klink:ignore-modes
-  '(occur-mode moccur-mode amoccur-mode shell-mode telnet-mode ssh-mode term-mode)
+  '(amoccur-mode bash-ts-mode moccur-mode occur-mode shell-mode ssh-mode
+                 telnet-mode term-mode)
   "Major modes in which to ignore potential klinks to avoid false positives."
   :type '(list function)
   :group 'hyperbole-koutliner)
 
 (defcustom klink:c-style-modes
-  '(c-mode c++-mode objc-mode java-mode)
+  '(c++-mode c++-ts-mode c-mode c-ts-mode java-mode java-ts-mode objc-mode)
   "C-related major modes with where klinks appear only within comments."
   :type '(list function)
   :group 'hyperbole-koutliner)

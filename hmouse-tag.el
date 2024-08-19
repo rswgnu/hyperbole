@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     14-Jul-24 at 11:55:33 by Bob Weiner
+;; Last-Mod:     16-Aug-24 at 22:30:09 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1319,7 +1319,7 @@ package for class and feature lookups."
   ;; fairly bad form anyway.
   ;;
   (let ((opoint (point)))
-    (if (and (eq major-mode 'java-mode) buffer-file-name
+    (if (and (memq major-mode '(java-mode java-ts-mode)) buffer-file-name
 	     (fboundp 'br-env-load)
 	     (or (looking-at "@see[ \t]+")
 		 (and (re-search-backward "[@\n\r\f]" nil t)
