@@ -1635,6 +1635,21 @@ If a boolean function or variable, display its value."
 	(error "(action:help): No action button labeled: %s" label)))))
 
 ;;; ========================================================================
+;;; Activates HyWikiWords with existing HyWiki pages.
+;;; Non-existing HyWikiWords are handled by the (load "hywiki") at a low
+;;; priority earlier in this file which defines the `hywiki-word' ibtype.
+;;; ========================================================================
+
+(defib hywiki-existing-word ()
+  "When on a HyWiki word with an existing page, display its page and optional section."
+  (cl-destructuring-bind (page-name start end)
+      (hywiki-page-exists-p 'range)
+    (when page-name
+      (when (and start end)
+	(ibut:label-set page-name (match-beginning 0) (match-end 0)))
+      (hact 'hywiki-find-page page-name))))
+
+;;; ========================================================================
 ;;; Inserts completion into minibuffer or other window.
 ;;; ========================================================================
 

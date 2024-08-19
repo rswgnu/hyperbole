@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     13-Aug-24 at 01:44:00 by Bob Weiner
+;; Last-Mod:     18-Aug-24 at 18:02:28 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -480,7 +480,8 @@ See the Info documentation at \"(hyperbole)HyWiki\".
 ;;; ************************************************************************
 
 (defib hywiki-word ()
-  "When on a HyWiki word, display its page and optional section."
+  "When on a HyWiki word, display its page and optional section.
+If the associated HyWiki page does not exist, create it automatically."
   (let ((page-name (hywiki-word-at)))
     (when page-name
       (ibut:label-set page-name (match-beginning 0) (match-end 0))
@@ -530,10 +531,9 @@ successfully finding a page and reading it into a buffer, run
 	      (hywiki-maybe-highlight-page-names)
 	      (run-hooks 'hywiki-find-page-hook)
 	      page-file)))
-      ;; When called from without a page-name and outside
-      ;; hywiki-directory, just find as a regular file and use next
-      ;; line to highlight HyWikiWords only if buffer was not
-      ;; previously highlighted.
+      ;; When called without a page-name and outside hywiki-directory,
+      ;; just find as a regular file and use next line to highlight
+      ;; HyWikiWords only if buffer was not previously highlighted.
       (hywiki-maybe-highlight-page-names))))
 
 ;;; ************************************************************************
@@ -563,7 +563,7 @@ not.
 
 Use `hywiki-get-page' to determine whether a HyWiki page exists."
   (interactive (list (hywiki-read-new-page-name "Add HyWiki page: ")))
-  (if (hywiki-is-wikiword page-name)
+  (if (hywiki-word-is-p page-name)
       (progn
 	(when (match-string-no-properties 2 page-name)
 	  ;; Remove any #section suffix in PAGE-NAME.
@@ -658,17 +658,29 @@ per file to the absolute value of MAX-MATCHES, if given and not 0.  If
 Does not test whether or not a page exists for the HyWiki word.
 Use `hywiki-get-page' to determine whether a HyWiki page exists."
   ;; Ignore wikiwords preceded by any non-whitespace character, except
-  ;; any of these: ({<"'`'
-  (when (or (bolp) (cl-find (char-before) "\(\{\<\"'`\t\n\r\f "))
+  ;; any of these: [({<"'`'
+  (when (or (bolp) (cl-find (char-before) "\[\(\{\<\"'`\t\n\r\f "))
     t))
 
-(defun hywiki-word-at ()
-  "Return HyWiki word and optional #section at point or nil if not on one.
-Does not test whether or not a page exists for the HyWiki word; use
-`hywiki-get-page' for that.
+(defun hywiki-word-activate (&optional arg)
+  "Display HyWiki page for wiki word at point, creating the page if needed.
+If found, return the full path of the page.
 
-A call to `hywiki-active-in-current-buffer-p' must return non-nil or
-this will return nil."
+If not on a wiki word and optional prefix ARG is null, emulate an
+Action Key press; with a prefix ARG, emulate an Assist Key press."
+  (interactive "P")
+  (let ((word hywiki-word-at))
+    (if word
+	(hywiki-find-page word)
+      (hkey-either arg))))
+
+(defun hywiki-word-at (&optional)
+  "Return HyWiki word and optional #section at point or nil if not on one.
+Does not test whether or not a page exists for the HyWiki word; call
+`hywiki-page-exists-p' without an argument for that.
+
+A call to `hywiki-active-in-current-buffer-p' at point must return non-nil
+or this will return nil."
   (when (hywiki-active-in-current-buffer-p)
     (if (setq hywiki--range
 	      (hproperty:char-property-range (point) 'face hywiki-word-face))
@@ -688,7 +700,7 @@ this will return nil."
 					    (format "[ \t\n\r]*\\(%s:\\)?"
 						    hywiki-org-link-type)))
 		;; Ignore prefixed, typed hy:HyWikiWord since Org mode will display those.
-		(when (hywiki-is-wikiword wikiword)
+		(when (hywiki-word-is-p wikiword)
 		  wikiword))
 	    ;; Handle a HyWiki word with optional #section; if it is an Org
 	    ;; link, it may optionally have a hy: link-type prefix.
@@ -707,13 +719,23 @@ this will return nil."
 			(buffer-substring-no-properties (match-beginning 0)
 							(match-end 0)))))))))))))
 
-(defun hywiki-word-search (word)
+(defun hywiki-word-consult-grep (word)
   "Use `hywiki-consult-grep' to show occurrences of a prompted for HyWikiWord.
 Default to any HyWikiWord at point."
   (interactive (list (hywiki-read-page-name)))
   (if (and (stringp word) (not (string-empty-p word)))
       (hywiki-consult-grep (concat "\\b" (regexp-quote word) "\\b"))
-    (user-error "(hywiki-word-search): Invalid HyWikiWord: '%s'; must be capitalized, all alpha" word)))
+    (user-error "(hywiki-word-consult-grep): Invalid HyWikiWord: '%s'; must be capitalized, all alpha" word)))
+
+(defun hywiki-word-is-p (word)
+  "Return non-nil if WORD is a HyWiki word and optional #section.
+The page for the word may not yet exist.  Use `hywiki-get-page'
+to determine whether a HyWiki word page exists."
+  (and (stringp word) (not (string-empty-p word))
+       (let (case-fold-search)
+	 (or (string-match hywiki-word-with-optional-section-exact-regexp word)
+	     (eq (string-match (concat "\\`" hywiki-word-with-optional-section-regexp "\\'") word)
+		 0)))))
 
 ;;;###autoload
 (defun hywiki-maybe-dehighlight-page-names (&optional region-start region-end)
@@ -1059,16 +1081,6 @@ are typed in the buffer."
 			     (or default-directory ""))
 	(setq hywiki-page-flag t))))
 
-(defun hywiki-is-wikiword (word)
-  "Return non-nil if WORD is a HyWiki word and optional #section.
-The page for the word may not yet exist.  Use `hywiki-get-page'
-to determine whether a HyWiki word page exists."
-  (and (stringp word) (not (string-empty-p word))
-       (let (case-fold-search)
-	 (or (string-match hywiki-word-with-optional-section-exact-regexp word)
-	     (eq (string-match (concat "\\`" hywiki-word-with-optional-section-regexp "\\'") word)
-		 0)))))
-
 (defun hywiki-get-buffer-page-name ()
   "Extract the page name from the buffer file name or else buffer name."
   (file-name-sans-extension (file-name-nondirectory
@@ -1279,6 +1291,42 @@ variables."
 			    :export #'hywiki-org-link-export
 			    :follow #'hywiki-find-page
 			    :store #'hywiki-org-link-store))
+
+(defun hywiki-page-exists-p (&optional word)
+  "Return an existing HyWiki page name from optional WORD or word at point.
+Word may be of form: HyWikiWord#section with an optional #section.
+If no such page exists, return nil.
+
+If WORD is the symbol, 'range, rather than a string, and there is a
+HyWikiWord at point with an existing page, then return the tuple of
+values: (word word-start word-end).
+
+When using the word at point, a call to
+`hywiki-active-in-current-buffer-p' at point must return non-nil or
+this will return nil." 
+  (setq hywiki--page-name word)
+  (if (or (stringp word)
+	  (setq word (hywiki-word-at)))
+      (progn (setq word (hywiki-page-strip-section word))
+	     (unless (hywiki-get-page word)
+	       (setq word nil)))
+    (setq word nil))
+  (if (eq hywiki--page-name 'range)
+      (if (setq hywiki--range
+		(hproperty:char-property-range (point) 'face hywiki-word-face))
+	  (list word (car hywiki--range) (cdr hywiki--range))
+	(list word nil nil))
+    word))
+
+(defun hywiki-page-strip-section (page-name)
+  "Return PAGE-NAME with any optional #section stripped off.
+If an empty string or not a string, return nil."
+  (when (and (stringp page-name) (not (string-empty-p page-name)))
+    (if (and (string-match hywiki-word-with-optional-section-exact-regexp page-name)
+	     (match-string-no-properties 2 page-name))
+	;; Remove any #section suffix in PAGE-NAME.
+	(match-string-no-properties 1 page-name)
+      page-name)))
 
 (defun hywiki-publish-to-html (&optional all-pages-flag)
   "Publish/export updated HyWiki pages to html.

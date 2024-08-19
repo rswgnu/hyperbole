@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     18-Aug-24 at 09:35:51 by Mats Lidell
+;; Last-Mod:     18-Aug-24 at 22:03:38 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -252,7 +252,6 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 	  (featurep 'ert-results)
 	  (setq hkey-value (ert-results-filter-status-p)))
      . ((smart-ert-results hkey-value) . (smart-ert-results-assist hkey-value)))
-    ;;
     ;;
     ;; Handle Emacs push buttons in buffers
     ((and (fboundp 'button-at) (button-at (point)))

@@ -1,3 +1,26 @@
+2024-08-18  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-maybe-at-wikiword-beginning): Fix to handle word
+    preceded by a single square bracket.
+
+* hibtypes.el (hywiki-existing-word): Add this new ibtype to match to
+    HyWikiWords with an existing page at a higher priority than those
+    without an existing page, so can be handled separately.  Must be
+    defined in this file to set its priority at a high level.
+
+* hywiki.el (hywiki-is-wikiword): Rename to 'hywiki-word-is-p'.
+            (hywiki-word-activate , hywiki-page-strip-section,
+             hywiki-page-exists-p): Add.
+            (hywiki-word-consult-grep): Rename from `hywiki-word-search'.
+  hui-mini.el (hui:menus): Change "Act" item from 'hui:ibut-act' to
+    new 'hywiki-word-activate'.
+
+* hui-menu.el (infodock-hyperbole-menu):
+  hui-mini.el (HyWiki, IButton): Change help function from 'hui:hbut-help'
+    to 'hkey-help' so handles more contexts without erroring.
+
+* hui-menu.el (hui-menu-org-meta-return-options): Remove wrong extra parens.
+
 2024-08-18  Mats Lidell  <matsl@gnu.org>
 
 * kotl/klink.el (klink:ignore-modes, klink:c-style-modes):

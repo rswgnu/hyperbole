@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     17-Aug-24 at 17:45:49 by Bob Weiner
+;; Last-Mod:     18-Aug-24 at 15:33:00 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -843,14 +843,15 @@ command instead.  Typically prevents clashes over {\\`C-c' /}."
 	  ("Rename" hui:gbut-rename "Rename a global button.")))
        '(hywiki .
 	 (("HyWiki>")
-	  ("Act"            hui:ibut-act      "Activate HyWikiWord link at point.")
+	  ("Act"            hywiki-word-activate
+	   "Activate HyWikiWord link at point or emulate a press of a Smart Key.")
 	  ("Create"         hywiki-add-page-and-display
 	    "Create and display a new HyWiki page.  Shows existing page names to aid in new naming.")
 	  ("Edit"           hywiki-find-page
 	   "Prompt with completion for and display a HyWiki page ready for editing.")
 	  ("GrepConsult"    hywiki-consult-grep
 	   "Grep over HyWiki pages with interactive consult-grep.")
-	  ("Help"           hui:hbut-help
+	  ("Help"           hkey-help
 	   "Report on a HyWikiWord's attributes.")
 	  ("Info"           (id-info "(hyperbole)HyWiki")
 	   "Display Hyperbole manual section on HyWiki.")
@@ -862,7 +863,7 @@ command instead.  Typically prevents clashes over {\\`C-c' /}."
 	   "Publish modified pages in the HyWiki to HTML; prefix arg to publish all pages.")
           ("Toggle"         hywiki-mode
 	   "Toggle whether HyWikiWords are highlighted and active in buffers outside of the HyWiki page directory.")
-	  ("WikiWordConsult"         hywiki-word-search
+	  ("WikiWordConsult"         hywiki-word-consult-grep
 	   "Use `hywiki-consult-grep' to show occurrences of a prompted for HyWikiWord.")))
        '(ibut .
 	 (("IButton>")
@@ -873,7 +874,7 @@ command instead.  Typically prevents clashes over {\\`C-c' /}."
 	  ("DeleteType"     (hui:htype-delete 'ibtypes)
 	   "Delete specified implicit button type.")
 	  ("Edit"           hui:ibut-edit "Edit/modify named implicit button attributes.")
-	  ("Help"           hui:hbut-help "Report on button's attributes.")
+	  ("Help"           hkey-help "Report on button's attributes.")
 	  ("Info"           (id-info "(hyperbole)Implicit Buttons")
 	   "Display manual section on implicit buttons.")
 	  ("Link"           hui:ibut-link-directly "Insert an ibut link at point to other/another window.")

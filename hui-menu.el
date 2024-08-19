@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
-;; Last-Mod:     17-Aug-24 at 17:44:53 by Bob Weiner
+;; Last-Mod:     18-Aug-24 at 15:33:29 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -210,7 +210,7 @@ Return t if cutoff, else nil."
 	  t))
 
 (defconst hui-menu-org-meta-return-options
-  '(("Org-M-RETURN"
+  '("Org-M-RETURN"
      "----"
      "----"
      ["All-Programmed-Contexts"
@@ -224,7 +224,7 @@ Return t if cutoff, else nil."
      ["Ignored-by-Hyperbole"
       (customize-save-variable 'hsys-org-enable-smart-keys nil)
       :style radio :selected (when (boundp 'hsys-org-enable-smart-keys)
-			       (eq hsys-org-enable-smart-keys nil))]))
+			       (eq hsys-org-enable-smart-keys nil))])
   "Settings for Hyperbole Smart Key overrides to {M-RET} within Org mode.")
 
 (defconst hui-menu-options
@@ -450,16 +450,16 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		 (list "HyWiki"
 		       ["Manual"   (id-info "(hyperbole)HyWiki") t]
 		       "----"
-		       ["Activate"           hui:ibut-act t]
+		       ["Activate"           hywiki-word-activate t]
 		       ["Create"             hywiki-add-page-and-display t]
 		       ["Edit"               hywiki-find-page t]
 		       ["Grep-Consult"       hywiki-consult-grep t]
-		       ["Help"               hui:hbut-help t]
+		       ["Help"               hkey-help t]
 		       ["Link"               hywiki-add-link t]
 		       hui-menu-org-meta-return-options
 		       ["Publish"            hywiki-publish-to-html t]
 		       ["Toggle-HyWiki-Mode" hywiki-mode t]
-		       ["WikiWord-Consult"   hywiki-word-search t])
+		       ["WikiWord-Consult"   hywiki-word-consult-grep t])
 		 '("Implicit-Button"
 		   ["Manual"   (id-info "(hyperbole)Implicit Buttons") t]
 		   "----"
@@ -467,7 +467,7 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		   ["Create"   hui:ibut-create t]
 		   ["Delete-Type" (hui:htype-delete 'ibtypes) t]
 		   ["Edit"   hui:ibut-edit t]
-		   ["Help"   hui:hbut-help t]
+		   ["Help"   hkey-help t]
 		   ["Link"   hui:ibut-link-directly t]
 		   ["Name"   hui:ibut-label-create t]
 		   ["Rename" hui:ibut-rename t]
