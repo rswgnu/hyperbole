@@ -1,3 +1,10 @@
+2024-08-18  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (hywiki-existing-word): Add this new ibtype to match to
+    HyWikiWords with an existing page at a higher priority than those
+    without an existing page, so can be handled separately.  Must be
+    defined in this file to set its priority at a high level.
+
 * hywiki.el (hywiki-is-wikiword): Rename to 'hywiki-word-is-p'.
             (hywiki-word-activate , hywiki-page-strip-section,
              hywiki-page-exists-p): Add.
