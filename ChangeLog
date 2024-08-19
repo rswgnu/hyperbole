@@ -1,5 +1,8 @@
 2024-08-18  Bob Weiner  <rsw@gnu.org>
 
+* hywiki.el (hywiki-maybe-at-wikiword-beginning): Fix to handle word
+    preceded by a single square bracket.
+
 * hibtypes.el (hywiki-existing-word): Add this new ibtype to match to
     HyWikiWords with an existing page at a higher priority than those
     without an existing page, so can be handled separately.  Must be

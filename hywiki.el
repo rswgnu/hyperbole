@@ -658,8 +658,8 @@ per file to the absolute value of MAX-MATCHES, if given and not 0.  If
 Does not test whether or not a page exists for the HyWiki word.
 Use `hywiki-get-page' to determine whether a HyWiki page exists."
   ;; Ignore wikiwords preceded by any non-whitespace character, except
-  ;; any of these: ({<"'`'
-  (when (or (bolp) (cl-find (char-before) "\(\{\<\"'`\t\n\r\f "))
+  ;; any of these: [({<"'`'
+  (when (or (bolp) (cl-find (char-before) "\[\(\{\<\"'`\t\n\r\f "))
     t))
 
 (defun hywiki-word-activate (&optional arg)
