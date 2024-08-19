@@ -662,7 +662,19 @@ Use `hywiki-get-page' to determine whether a HyWiki page exists."
   (when (or (bolp) (cl-find (char-before) "\(\{\<\"'`\t\n\r\f "))
     t))
 
-(defun hywiki-word-at ()
+(defun hywiki-word-activate (&optional arg)
+  "Display HyWiki page for wiki word at point, creating the page if needed.
+If found, return the full path of the page.
+
+If not on a wiki word and optional prefix ARG is null, emulate an
+Action Key press; with a prefix ARG, emulate an Assist Key press."
+  (interactive "P")
+  (let ((word hywiki-word-at))
+    (if word
+	(hywiki-find-page word)
+      (hkey-either arg))))
+
+(defun hywiki-word-at (&optional)
   "Return HyWiki word and optional #section at point or nil if not on one.
 Does not test whether or not a page exists for the HyWiki word; use
 `hywiki-get-page' for that.

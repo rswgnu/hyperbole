@@ -1,3 +1,12 @@
+  hui-mini.el (hui:menus): Change "Act" item from 'hui:ibut-act' to
+    new 'hywiki-word-activate'.
+
+* hui-menu.el (infodock-hyperbole-menu):
+  hui-mini.el (HyWiki, IButton): Change help function from 'hui:hbut-help'
+    to 'hkey-help' so handles more contexts without erroring.
+
+* hui-menu.el (hui-menu-org-meta-return-options): Remove wrong extra parens.
+
 2024-08-17  Bob Weiner  <rsw@gnu.org>
 
 * hui-mini.el (hui:menus): Org-M-RET/ Customization menu, add doc to items
