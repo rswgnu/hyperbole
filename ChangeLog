@@ -1,3 +1,9 @@
+2024-08-23  Mats Lidell  <matsl@gnu.org>
+
+* hibtypes.el (ripgrep-msg): Add check of file exist.
+
+* test/hibtypes-tests.el (ibtypes::ripgrep-msg-test): Test ripgrep-msg.
+
 2024-08-18  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-maybe-at-wikiword-beginning): Fix to handle word
