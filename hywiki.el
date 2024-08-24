@@ -669,7 +669,7 @@ If found, return the full path of the page.
 If not on a wiki word and optional prefix ARG is null, emulate an
 Action Key press; with a prefix ARG, emulate an Assist Key press."
   (interactive "P")
-  (let ((word hywiki-word-at))
+  (let ((word (hywiki-word-at)))
     (if word
 	(hywiki-find-page word)
       (hkey-either arg))))
