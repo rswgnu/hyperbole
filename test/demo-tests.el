@@ -250,7 +250,7 @@
         (should (looking-at "## Why was Hyperbole developed\\?")))
     (hy-test-helpers:kill-buffer "README.md")))
 
-(ert-deftest demo-implicit-button-line-and-column-test ()
+(ert-deftest demo-implicit-button-line-and-column-rtest ()
   (unwind-protect
       (with-temp-buffer
         (insert (format "\"%s%s\"" (expand-file-name "HY-ABOUT" hyperb:dir) ":5:46"))

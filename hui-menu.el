@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
-;; Last-Mod:     18-Aug-24 at 15:33:29 by Bob Weiner
+;; Last-Mod:     19-Aug-24 at 23:28:31 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -210,18 +210,18 @@ Return t if cutoff, else nil."
 	  t))
 
 (defconst hui-menu-org-meta-return-options
-  '("Org-M-RETURN"
+  '("Org M-RET Overrides"
      "----"
      "----"
-     ["All-Programmed-Contexts"
+     ["All-Hyperbole-Contexts"
       (customize-save-variable 'hsys-org-enable-smart-keys t)
       :style radio :selected (when (boundp 'hsys-org-enable-smart-keys)
 			       (eq hsys-org-enable-smart-keys t))]
      ["Hyperbole-Buttons-Only"
-      (customize-save-variable 'hsys-org-enable-smart-keys 'buttons)
+      (customize-save-variable 'hsys-org-enable-smart-keys :buttons)
       :style radio :selected (when (boundp 'hsys-org-enable-smart-keys)
-			       (eq hsys-org-enable-smart-keys 'buttons))]
-     ["Ignored-by-Hyperbole"
+			       (memq hsys-org-enable-smart-keys '(:buttons buttons)))]
+     ["None"
       (customize-save-variable 'hsys-org-enable-smart-keys nil)
       :style radio :selected (when (boundp 'hsys-org-enable-smart-keys)
 			       (eq hsys-org-enable-smart-keys nil))])
@@ -448,18 +448,19 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		   ["Link"   hui:gbut-link-directly t]
                    ["Rename" hui:gbut-rename t])
 		 (list "HyWiki"
-		       ["Manual"   (id-info "(hyperbole)HyWiki") t]
+		       ["Manual"              (id-info "(hyperbole)HyWiki") t]
 		       "----"
-		       ["Activate"           hywiki-word-activate t]
-		       ["Create"             hywiki-add-page-and-display t]
-		       ["Edit"               hywiki-find-page t]
-		       ["Grep-Consult"       hywiki-consult-grep t]
-		       ["Help"               hkey-help t]
-		       ["Link"               hywiki-add-link t]
+		       ["Activate"            hywiki-word-activate t]
+		       ["Create"              hywiki-add-page-and-display t]
+		       ["Edit"                hywiki-find-page t]
+		       ["Grep-Consult"        hywiki-consult-grep t]
+		       ["Help"                hkey-help t]
+		       ["Link"                hywiki-add-link t]
 		       hui-menu-org-meta-return-options
-		       ["Publish"            hywiki-publish-to-html t]
-		       ["Toggle-HyWiki-Mode" hywiki-mode t]
-		       ["WikiWord-Consult"   hywiki-word-consult-grep t])
+		       ["HyWiki-Mode-Toggle" hywiki-mode t]
+		       ["Publish"             hywiki-publish-to-html t]
+		       ["Tag-Find"            hywiki-tags-view t]
+		       ["WikiWord-Consult"    hywiki-word-consult-grep t])
 		 '("Implicit-Button"
 		   ["Manual"   (id-info "(hyperbole)Implicit Buttons") t]
 		   "----"

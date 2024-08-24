@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     18-Aug-24 at 15:33:00 by Bob Weiner
+;; Last-Mod:     19-Aug-24 at 23:29:29 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -389,11 +389,30 @@ or if there are none, then its first character."
       (aref item 0)))
 
 (defun hui:menu-item-keys (menu-alist)
-  "Return ordered list of keys that activate Hypb minibuffer MENU-ALIST items.
+  "Return ordered list of keys that activate Hypb minibuffer MENU-A[LIST items.
 For each item, the key is either the first capital letter in item
 or if there are none, then its first character."
   (mapcar (lambda (item) (hui:menu-item-key item))
 	  (mapcar 'car (cdr menu-alist))))
+
+(defun hui:menu-read-from-minibuffer (prompt &optional initial-contents keymap read
+				      hist default-value inherit-input-method)
+  "Hyperbole minibuffer menu replacement for `read-from-minibuffer'.
+Allows custom handling of menu lines before selecting an item."
+  (when (and (stringp initial-contents)
+	     (string-prefix-p "Org M-RET" initial-contents))
+    (let* ((org-m-ret-options (cddr (assq 'cust-org hui:menus)))
+	   (option-lookups (mapcar (lambda (option)
+				     (cons (car (last (nth 1 option)))
+					   (car option)))
+				   org-m-ret-options))
+	   (current-name (cdr (assq hsys-org-enable-smart-keys option-lookups))))
+      (when (and (stringp current-name) (stringp initial-contents))
+	(setq initial-contents (string-replace current-name
+					       (concat "==" current-name "==")
+					       initial-contents)))))
+  (read-from-minibuffer prompt initial-contents keymap read
+			hist default-value inherit-input-method))
 
 (defun hui:menu-choose (menu-alist &optional doc-flag help-string-flag)
   "Prompt user to choose the first capitalized char of any item from MENU-ALIST.
@@ -424,7 +443,7 @@ documentation, not the full text."
 	 (hargs:reading-type 'hmenu))
     (while (not (memq (setq key (upcase
 				 (string-to-char
-				  (read-from-minibuffer
+				  (hui:menu-read-from-minibuffer
 				   "" menu-line hui:menu-mode-map nil t))))
 		      keys))
       (beep)
@@ -749,13 +768,13 @@ command instead.  Typically prevents clashes over {\\`C-c' /}."
 	  ("WinControl"    (hui:bind-key #'hycontrol-enable-windows-mode))      ;; {C-c \}
 	  ))
        '(cust-org .
-         (("Org M-RETURN>")
-	  ("All-Smart-Org-Contexts"       (customize-save-variable 'hsys-org-enable-smart-keys t)
+         (("Org M-RET Overrides>")
+	  ("All-Hyperbole-Contexts" (customize-save-variable 'hsys-org-enable-smart-keys t)
 	   "Smart Keys override Org M-RET in all Org mode Smart Key contexts (see `smart-org').")
-	  ("Hyperbole-Buttons-Only"       (customize-save-variable 'hsys-org-enable-smart-keys 'buttons)
+	  ("Hyperbole-Buttons-Only" (customize-save-variable 'hsys-org-enable-smart-keys :buttons)
 	   "Smart Keys override Org M-RET only when on a Hyperbole recognized button.")
-	  ("Ignored-by-Hyperbole"         (customize-save-variable 'hsys-org-enable-smart-keys nil)
-	   "Org M-RET always overrides the Smart Keys within Org mode.")))
+	  ("None"                   (customize-save-variable 'hsys-org-enable-smart-keys nil)
+	   "Smart Keys never override Org M-RET operation.")))
        '(cust-referents .
          (("Ref Display>")
 	  ("Any-Frame"   (setq hpath:display-where 'other-frame))
@@ -857,13 +876,15 @@ command instead.  Typically prevents clashes over {\\`C-c' /}."
 	   "Display Hyperbole manual section on HyWiki.")
 	  ("Link"           hywiki-add-link
 	   "Prompt for and add a link at point to a HyWiki page.")
+          ("ModeToggle"     hywiki-mode
+	   "Toggle whether HyWikiWords are highlighted and active in buffers outside of the HyWiki page directory.")
 	  ("Org-M-RET/"     (menu . cust-org)
 	   "Set how much of Hyperbole Smart Key behavior is enabled in Org mode.")
           ("Publish"        hywiki-publish-to-html
 	   "Publish modified pages in the HyWiki to HTML; prefix arg to publish all pages.")
-          ("Toggle"         hywiki-mode
-	   "Toggle whether HyWikiWords are highlighted and active in buffers outside of the HyWiki page directory.")
-	  ("WikiWordConsult"         hywiki-word-consult-grep
+	  ("TagFind"        hywiki-tags-view
+	   "Find HyWiki Org tags.")
+	  ("WikiWordConsult" hywiki-word-consult-grep
 	   "Use `hywiki-consult-grep' to show occurrences of a prompted for HyWikiWord.")))
        '(ibut .
 	 (("IButton>")
@@ -990,6 +1011,7 @@ command instead.  Typically prevents clashes over {\\`C-c' /}."
 	 '("Order"            hyrolo-sort                   "Order rolo entries in a file.")
 	 '("RegexFind"        hyrolo-grep                   "Find entries containing a regexp.")
 	 '("StringFind"       hyrolo-fgrep                  "Find entries containing a string.")
+	 '("TagFind"          hyrolo-tags-view              "Find HyRolo Org tags.")
 	 '("WordFind"         hyrolo-word                   "Find entries containing words.")
 	 '("Yank"             hyrolo-yank                   "Find an entry containing a string and insert it at point.")))
   "*Hyperbole minibuffer Rolo menu items of the form:

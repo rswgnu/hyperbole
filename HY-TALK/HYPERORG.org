@@ -283,11 +283,11 @@ Variable name values can also be displayed.
 This <<variable>> sets the Org mode contexts where Hyperbole's
 Action/Assist keys are active.  By default, these 'Smart Keys'
 work only on hyperbuttons (Hyperbole's and Org's) when the variable
-is set to 'buttons.
+is set to :buttons.
 
    <hsys-org-enable-smart-keys>
 
-   <setq hsys-org-enable-smart-keys 'buttons>
+   <setq hsys-org-enable-smart-keys :buttons>
 
 Set this to 't to enable the Smart Keys in all Org contexts
 (nil to disable):

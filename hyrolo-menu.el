@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
-;; Last-Mod:     10-Dec-23 at 19:07:10 by Bob Weiner
+;; Last-Mod:     19-Aug-24 at 23:29:52 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -55,7 +55,8 @@
 	 ["Search-for-Regexp"       (id-tool-invoke 'hyrolo-grep)            t]
 	 ["Search-for-String"       (id-tool-invoke 'hyrolo-fgrep)           t]
 	 ["Search-for-Word"         (id-tool-invoke 'hyrolo-word)            t]
-	 ["Sort-Entries"            (id-tool-invoke 'hyrolo-sort)            t])))
+	 ["Sort-Entries"            (id-tool-invoke 'hyrolo-sort)            t]
+	 ["Tag-Find"                (id-tool-invoke 'hyrolo-tags-view)       t])))
 
 (defconst hyrolo-menu-common-body
   '(

@@ -79,7 +79,7 @@
 #
 #               To interactively run a docker version of Emacs with Hyperbole:
 #                   make docker-run              - default to running master
-#                   make docker-run version=27.1 - run Emacs V27.1
+#                   make docker-run version=27.2 - run Emacs V27.2
 #
 #               To build and test a dockerized version of Emacs with Hyperbole:
 #                   make docker                  - defaults: version=master targets='clean bin test'

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     16-Aug-24 at 00:56:16 by Bob Weiner
+;; Last-Mod:     23-Aug-24 at 21:38:08 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2324,10 +2324,11 @@ lines."
       (setq lbl (if (listp result) (car result) result))
       ;; Ensure match does not contain delimiters, as it may have run
       ;; past the beginning of another button.
-      (unless (string-match (concat (regexp-quote start-delim) "\\|"
-				    (regexp-quote end-delim))
-			    lbl)
-	result))))
+      (when lbl
+	(unless (string-match (concat (regexp-quote start-delim) "\\|"
+				      (regexp-quote end-delim))
+			      lbl)
+	  result)))))
 
 (defun    ibut:label-set (label &optional start end)
   "Set current implicit button label attributes.
