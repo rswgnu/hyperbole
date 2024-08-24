@@ -499,15 +499,17 @@ suffix."
 (defact link-to-Info-node (string)
   "Display an Info node given by STRING.
 If not found, try to display it as an Info index item.
-STRING must be a string of the form \"(filename)name\".  During
-button creation, completion for both filename and node names is
-available.  Filename may be given without the .info suffix."
+STRING must be a string of the form \"(filename)name\" or
+\"filename.info#name\".  During button creation, completion for both
+filename and node names is available.  Filename may be given without
+the .info suffix in the format with parentheses."
   (interactive "+IInfo (file)nodename to link to: ")
   (require 'info)
-  (when (stringp string)
-    ;; Remove any tabs or newlines that might be in string.
-    (setq string (replace-regexp-in-string "[ \t\n\r\f]+" " " string t t)))
-  (if (and (stringp string) (string-match "^(\\([^\)]+\\))\\(.*\\)" string))
+  (if (and (stringp string)
+	   ;; Remove any tabs or newlines that might be in string.
+	   (setq string (replace-regexp-in-string "[ \t\n\r\f]+" " " string t t)
+		 string (hpath:to-Info-ref string))
+	   (string-match "\\`(\\([^\)]+\\))\\(.*\\)" string))
       (id-info string)
     (hypb:error "(link-to-Info-node): Invalid Info node: `%s'" string)))
 

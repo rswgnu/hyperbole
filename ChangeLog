@@ -1,8 +1,46 @@
+2024-08-24  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:to-Info-ref): Add.
+           (hpath:is-p, hpath:at-p):
+  hactypes.el (link-to-Info-node):
+  hibtypes.el (Info-node): Add support for Info refs in a regular
+    pathname format, e.g. "hyperbole.info#Smart Keys".
+  hibtypes.el (pathname): Exclude Info paths without parens handled
+    by Info-node, e.g. "emacs.info#Windows".
+
+2024-08-23  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (hyp-html-manual): Add new ibtype to display Hyperbole HTML
+    manual sections using syntax: "hyperbole.html#section".
+
+* hbut.el (ibut:label-p): Handle when lbl is nil.
+
+* hyperbole.el: Require Emacs 27.2 minimum.
+
 2024-08-23  Mats Lidell  <matsl@gnu.org>
 
 * hibtypes.el (ripgrep-msg): Add check of file exist.
 
 * test/hibtypes-tests.el (ibtypes::ripgrep-msg-test): Test ripgrep-msg.
+
+2024-08-19  Bob Weiner  <rsw@gnu.org>
+
+* README.md: Add HyWiki description.
+
+* man/hyperbole.texi (HyRolo Searching, HyRolo Menu): Add TagFind menu item.
+
+* hyrolo-menu.el: Add "Tag-Find".
+  hui-menu.el (infodock-hyperbole-menu):
+  hui-mini.el (hui:menus): In HyWiki> menu, change Toggle to ModeToggle so
+    can add TagFind item.
+              (hui:menu-read-from-minibuffer): Add to allow customization
+    of minibuffer read arguments such as 'initial-content' that minibuffer
+    menus generate.
+              (hui:menu-rolo): Add TagFind.
+  man/hyperbole.texi (HyWiki Menu): Add TagFind menu item doc.
+
+* hsys-org.el (hsys-org-enable-smart-keys): Change 'buttons option to :buttons
+    so don't have to quote and works in assq/rassq lookups.
 
 2024-08-18  Bob Weiner  <rsw@gnu.org>
 

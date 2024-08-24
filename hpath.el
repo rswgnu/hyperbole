@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     13-Aug-24 at 22:29:46 by Bob Weiner
+;; Last-Mod:     24-Aug-24 at 01:31:41 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1085,7 +1085,8 @@ Make any existing path within a file buffer absolute before returning."
 			   (file-name-absolute-p expanded-path) ;; absolute path
 			   (string-match-p hpath:variable-regexp expanded-path) ;; path with var
 			   (string-match-p "\\`([^\):]+)" expanded-path)))) ;; Info node
-	  (when (or non-exist (file-exists-p expanded-path))
+	  (when (or non-exist (file-exists-p expanded-path)
+		    (string-match-p ".+\\.info\\([.#]\\|\\'\\)" expanded-path))
 	    (concat prefix mode-prefix expanded-path suffix)))))))
 
 (defun hpath:is-path-variable-p (path-var)
@@ -1827,6 +1828,7 @@ form is what is returned for PATH."
 							  (or
 							   ;; Info or remote path, so don't check for.
 							   (string-match-p "[()]" path)
+							   (string-match-p ".+\\.info\\([.#]\\|\\'\\)" path)
 							   (hpath:remote-p path)
 							   (setq suffix (hpath:exists-p path t))
 							   ;; Don't allow spaces in non-existent pathnames
@@ -2161,6 +2163,15 @@ Return LINKNAME unchanged if it is not a symbolic link but is a pathname."
 	 (not (eq (aref referent 0) ?/))
 	 (setq referent (expand-file-name referent dirname))))
   referent)
+
+(defun hpath:to-Info-ref (path)
+  "Reformat Info PATH \"file.info#ref\" into \"(file)ref\" format.
+Leave any other format unchanged and return the resulting path."
+  (if (string-match "\\(.+\\)\\.info\\(-[0-9]+\\)?\\(\\.gz\\|\\.Z\\|-z\\)?\\(#\\(.+\\)\\)?\\'" path)
+      (format "(%s)%s"
+	      (match-string 1 path)
+	      (or (match-string 5 path) ""))
+    path))
 
 (defun hpath:to-line (line-num)
   "Move point to the start of an absolute LINE-NUM or the last line.

@@ -4,25 +4,7 @@
  send us a thank you or a testimonial describing your usage if you like
  Hyperbole (mailto:rsw@gnu.org)].
 
-
-
-- [GNU Hyperbole 9.0.2pre - The Everyday Hypertextual Information Manager](#gnu-hyperbole-902pre---the-everyday-hypertextual-information-manager)
-  - [Videos](#videos)
-  - [Summary](#summary)
-  - [Mailing Lists](#mailing-lists)
-  - [Ftp and Git Repository Downloads](#ftp-and-git-repository-downloads)
-  - [Installation](#installation)
-  - [Invocation](#invocation)
-  - [Hyperbole Components](#hyperbole-components)
-  - [Hyperbole Buttons](#hyperbole-buttons)
-  - [Important Features](#important-features)
-  - [Hyperbole Uses](#hyperbole-uses)
-  - [Files](#files)
-  - [Programmer Quick Reference](#programmer-quick-reference)
-  - [User Quotes](#user-quotes)
-  - [Why was Hyperbole developed?](#why-was-hyperbole-developed)
-
-
+[TOC]
 
 ![Hyperbole screenshot of the Koutliner, DEMO file and HyRolo](man/im/hyperbole-cv.png)
 
@@ -153,7 +135,7 @@ keyboard and mouse-based control of information display within multiple
 windows.  It also provides point-and-click access to World-Wide Web URLs,
 Info manuals, ftp archives, etc.
 
-Hyperbole works well on GNU Emacs 27.1 or above.  It is designed and written
+Hyperbole works well on GNU Emacs 27.2 or above.  It is designed and written
 by Bob Weiner.  It is maintained by him and Mats Lidell.  Its main
 distribution site is: <https://www.gnu.org/software/hyperbole/>.  If any
 term in here is new or unfamiliar to you, you can look it up in the
@@ -165,38 +147,6 @@ through the GNU Emacs package manager.
 Unlock the power of GNU Hyperbole to make your information work for you.
 One system.  One language.  One manual.  One solution.  Learn Hyperbole and
 start moving further, faster.
-
-## Mailing Lists
-
-   - **hyperbole-users@gnu.org** - User list for GNU Hyperbole
-
-       [info and subscription](http://lists.gnu.org/mailman/listinfo/hyperbole-users)
-       [web archive](http://lists.gnu.org/pipermail/hyperbole-users/)
-
-   - **bug-hyperbole@gnu.org** - List for bug reporting
-
-       [info and subscription](http://lists.gnu.org/mailman/listinfo/bug-hyperbole)
-       [web archive](http://lists.gnu.org/archive/html/bug-hyperbole/)
-
-## Ftp and Git Repository Downloads
-
-To inspect the Hyperbole source code online rather than installing it for
-use (which will also give you the source code), open a web page to:
-
-   - https://git.savannah.gnu.org/cgit/hyperbole.git/tree/
-
-Alternatively, you may download a tar.gz source archive from either:
-
-   - ftp://ftp.gnu.org/gnu/hyperbole/
-
-   - http://ftpmirror.gnu.org/hyperbole/
-
-which will find the closest mirror of the GNU ftp site and show it to you.
-
-If you want to follow along with Hyperbole development and maintain a
-copy/clone of the current version-controlled git tree, use a
-[command listed here](https://savannah.gnu.org/git/?group=hyperbole)
-to clone the Hyperbole project tree.
 
 ## Installation
 
@@ -290,9 +240,41 @@ wherever the Hyperbole package directory is on your system; often this is:
 "~/.emacs.d/elpa/hyperbole-${hyperb:version}/".
 
 
+## Mailing Lists
+
+   - **hyperbole-users@gnu.org** - User list for GNU Hyperbole
+
+       [info and subscription](http://lists.gnu.org/mailman/listinfo/hyperbole-users)
+       [web archive](http://lists.gnu.org/pipermail/hyperbole-users/)
+
+   - **bug-hyperbole@gnu.org** - List for bug reporting
+
+       [info and subscription](http://lists.gnu.org/mailman/listinfo/bug-hyperbole)
+       [web archive](http://lists.gnu.org/archive/html/bug-hyperbole/)
+
+## Ftp and Git Repository Downloads
+
+To inspect the Hyperbole source code online rather than installing it for
+use (which will also give you the source code), open a web page to:
+
+   - https://git.savannah.gnu.org/cgit/hyperbole.git/tree/
+
+Alternatively, you may download a tar.gz source archive from either:
+
+   - ftp://ftp.gnu.org/gnu/hyperbole/
+
+   - http://ftpmirror.gnu.org/hyperbole/
+
+which will find the closest mirror of the GNU ftp site and show it to you.
+
+If you want to follow along with Hyperbole development and maintain a
+copy/clone of the current version-controlled git tree, use a
+[command listed here](https://savannah.gnu.org/git/?group=hyperbole)
+to clone the Hyperbole project tree.
+
 ## Hyperbole Components
 
-Hyperbole consists of five parts:
+Hyperbole consists of six parts:
 
    1.  **Buttons and Smart Keys**: A set of hyperbutton types which supply
        core hypertext and other behaviors.  Buttons may be added to
@@ -324,23 +306,33 @@ Hyperbole consists of five parts:
        complex operations without having to use a different key for each
        operation.  Just press a Smart Key and the right thing happens;
 
-   2.  **Contact and Text Finder**: an interactive textual information
-       management interface, including fast, flexible file and text
-       finding commands.  A powerful, hierarchical contact manager,
-       HyRolo, which anyone can use is also included.  It is easy to
-       learn to use since it introduces only a few new mechanisms and
-       has a menu interface, which may be operated from the keyboard or
-       the mouse.
+   2.  **Auto-Wiki Note Taker**: HyWiki is a simple note taking system
+       that uses Org mode and automatically highlights and turns each
+       WikiWord into a hyperlink to its Wiki page or section without any
+       markup.
+
+   3.  **Autonumbered Legal Outliner**: The Koutliner is an advanced
+       outliner with multi-level autonumbering and permanent ids
+       attached to each outline node for use as hypertext link
+       anchors, per node properties and flexible view specifications
+       that can be embedded within links or used interactively;
+
+   4.  **Contact and Text Finder**: HyRolo is a powerful, hierarchical
+       contact manager and fast text record search interface with
+       expand/collapse capabilities over search results for quick
+       views.  HyRolo is easy to learn to use since it introduces only
+       a few new mechanisms and has a menu interface, which may be
+       operated from the keyboard or the mouse.
 
 	   ![HyRolo Menubar Menu](man/im/menu-rolo.png)
 
-   3.  **Screen Control**: Hyperbole includes HyControl, the fastest,
-       easiest-to-use window and frame control available for GNU
-       Emacs.  With just a few keystrokes, you can shift from
-       increasing a window's height by 5 lines to moving a frame by
-       220 pixels or immediately moving it to a screen corner.  Text
-       in each window or frame may be enlarged or shrunk (zoomed) for
-       easy viewing, plus many other features;
+   5.  **Screen Control**: HyControl is the fastest, easiest-to-use
+       window and frame control available for GNU Emacs.  With just a
+       few keystrokes, you can shift from increasing a window's height
+       by 5 lines to moving a frame by 220 pixels or immediately
+       moving it to a screen corner.  Text in each window or frame may
+       be enlarged or shrunk (zoomed) for easy viewing, plus many
+       other features;
 
 	   The broader vision for HyControl is to support persistent
    	   window and frame configurations as link targets.  Then a user
@@ -349,13 +341,7 @@ Hyperbole consists of five parts:
    	   implement this feature but it helps explain the connection of
    	   HyControl to the rest of Hyperbole;
 
-   4.  **The Koutliner**: an advanced outliner with multi-level
-       autonumbering and permanent ids attached to each outline node for
-       use as hypertext link anchors, per node properties and flexible
-       view specifications that can be embedded within links or used
-       interactively;
-
-   5.  **Programming Library**: a set of programming library classes for
+   6.  **Programming Library**: a set of programming library classes for
        system developers who want to integrate Hyperbole with another
        user interface or as a back-end to a distinct system.  (All of
        Hyperbole is written in Emacs Lisp for ease of modification.

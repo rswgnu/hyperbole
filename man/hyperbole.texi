@@ -159,7 +159,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed August 17, 2024.
+Printed August 19, 2024.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -201,7 +201,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.2pre
-August 17, 2024
+August 19, 2024
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -524,7 +524,7 @@ Smart Keyboard Keys
 @chapter Introduction
 
 This edition of the GNU Hyperbole Manual is for use with any version
-9.0.1 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 27.1
+9.0.2pre or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 27.2
 or higher.  It will trigger an error if your Emacs is older.
 
 This chapter summarizes the structure of the rest of the manual,
@@ -2344,7 +2344,7 @@ On an Org agenda view item, jump to the item for editing.
 
 @noindent
 When the Action Key is pressed and @code{hsys-org-enable-smart-keys}
-is either @samp{t} or @samp{'buttons}:
+is either @samp{t} or @samp{:buttons}:
 
 @item
 Within a radio or internal target or a link to it, jump between
@@ -2422,6 +2422,8 @@ through views of the whole buffer outline.
 @cindex disable org-mode support
 @cindex inhibit org-mode support
 @cindex menu item, Cust/Org-M-RET
+@cindex customize Org M-RET
+@cindex Org M-RET customize
 @cindex Org M-RET override
 @cindex override Org M-RET
 @kindex C-h h c o
@@ -2438,7 +2440,7 @@ The following table summarizes the effect of this option setting.
 |--------------+-------------------+------------------+----------+------------------|
 | This Setting | Smart Key Context | Hyperbole Button | Org Link | Fallback Command |
 |--------------+-------------------+------------------+----------+------------------|
-| buttons      | Ignore            | Activate         | Activate | org-meta-return  |
+| :buttons     | Ignore            | Activate         | Activate | org-meta-return  |
 | nil          | Ignore            | Ignore           | Ignore   | org-meta-return  |
 | t            | Activate          | Activate         | Activate | None             |
 |--------------+-------------------+------------------+----------+------------------|
@@ -4372,23 +4374,23 @@ HyWikiWords.
 @cindex override Org M-RET
 @kindex C-h h h o a
 @kindex C-h h h c
-@cindex menu item, HyWiki/Org-M-RET/All-Smart-Org-Contexts
+@cindex menu item, HyWiki/Org-M-RET/All-Hyperbole-Contexts
 The Action Key can create new HyWiki pages when on an undefined
 HyWikiWord if you change the setting that controls the Org mode
 @bkbd{M-@key{RET}} binding.  Have Hyperbole override Org's control of
 that key in all Action and Assist Key contexts with the
-@samp{All-Smart-Org-Contexts} setting bound to @bkbd{C-h h h o a}.
+@samp{All-Hyperbole-Contexts} setting bound to @bkbd{C-h h h o a}.
 
 @cindex activate HyWiki link
 @cindex link, HyWikiWord
 @kindex C-h h h a
 @kindex C-h h h o i
-@cindex menu item, HyWiki/Org-M-RET/Ignored-by-Hyperbole
+@cindex menu item, HyWiki/Org-M-RET/None
 To jump to a HyWiki page, simply move point onto any highlighted
 HyWikiWord and press the Action Key @bkbd{M-@key{RET}}.  This also
 highlights any other instances of HyWikiWords across all visible Emacs
 windows.  If you have set the Org @bkbd{M-@key{RET}} option to
-@samp{Ignored-by-Hyperbole} with @bkbd{C-h h h o i}, then you will have to
+@samp{None} with @bkbd{C-h h h o i}, then you will have to
 use the HyWiki Act menu command @bkbd{C-h h h a} instead to jump to HyWiki
 pages.
 
@@ -4533,7 +4535,7 @@ It looks like this:
 
 @smallexample
 @noindent
-HyWiki>  Act Create Edit GrepConsult Help Info Link Org-M-RET/ Publish Toggle WikiWordConsult
+HyWiki>  Act Create Edit GrepConsult Help Info Link ModeToggle Org-M-RET/ Publish TagFind WikiWordConsult
 @end smallexample
 
 @noindent
@@ -4557,6 +4559,12 @@ Report on a HyWikiWord's attributes.
 Display Hyperbole manual section on HyWiki.
 @item Link
 Prompt for and add a link at point to a HyWiki page.
+@findex hywiki-mode
+@cindex HyWiki mode
+@cindex HyWikiWords outside hywiki-directory
+@item ModeToggle
+Toggle global minor mode @code{hywiki-mode} that enables HyWikiWord hyperlinks
+in buffers outside of @code{hywiki-directory}.
 @kindex C-h h h o
 @kindex HyWiki, C-h h h o
 @kindex C-h h h c
@@ -4565,16 +4573,22 @@ Prompt for and add a link at point to a HyWiki page.
 @cindex menu item, HyWiki/Org-M-RET/Hyperbole-Buttons-Only
 @cindex customize Org M-RET
 @cindex Org M-RET customize
+@cindex override Org M-RET
+@cindex Org M-RET override
 @item Org-M-RET/
 Menu to customize contexts in which Hyperbole Action and Assist Keys
 override Org's @bkbd{M-@key{RET}} command.  The default is
-when on @samp{Hyperbole-Buttons-Only}.  Use @samp{All-Smart-Org-Contexts} to
+when on @samp{Hyperbole-Buttons-Only}.  Use @samp{All-Hyperbole-Contexts} to
 make the Action Key create new HyWiki pages when pressed on as-yet
 undefined HyWikiWords; otherwise, you must use @bkbd{C-h h h c} to create a
-new HyWiki page instead.  Use @samp{Ignored-by-Hyperbole} if you want to
+new HyWiki page instead.  Use @samp{None} if you want to
 use Org's @bkbd{M-@key{RET}} command in every context within Org mode.
 @item Publish
 Publish modified pages in the HyWiki to HTML; prefix arg to publish all pages.
+@cindex HyWiki tag search
+@cindex search, HyWiki tag
+@item TagFind
+Find a matching Org tag across all HyWiki pages.
 @item WikiWordConsult
 Use @code{hywiki-consult-grep} to show occurrences of a prompted for HyWikiWord.
 @end table
@@ -6435,6 +6449,7 @@ set of commands as the menubar Rolo menu but with more concise labels.
 @findex hyrolo-sort
 @findex hyrolo-grep
 @findex hyrolo-fgrep
+@findex hyrolo-tags-view
 @findex hyrolo-word
 @findex hyrolo-yank
 The minibuffer Rolo/ menu offers the following commands (ConsultFind
@@ -6461,6 +6476,7 @@ RegexFind       hyrolo-grep             Finds all entries containing
 StringFind      hyrolo-fgrep            Finds all entries containing
                                           a string (or logical
                                           expression)
+TagFind         hyrolo-tags-view        Finds HyWiki Org tags
 WordFind        hyrolo-word             Finds all entries containing
                                           a string of whole words
 Yank            hyrolo-yank             Inserts the first matching
@@ -6510,6 +6526,7 @@ containing "Staffer" at any level in a hierarchy, like so:
 @cindex menu item, RegexFind
 @cindex menu item, WordFind
 @cindex menu item, StringFind
+@cindex menu item, TagFind
 @xref{HyRolo Menu}, for the list of HyRolo search commands.  In this
 section, the menu item names from the minibuffer menu are used to
 refer to each command.
@@ -6520,6 +6537,10 @@ expression syntax used is the same as the one used within Emacs
 and across the GNU set of tools.  @xref{Regexps,,Syntax of Regular
 Expressions, emacs, the GNU Emacs Manual}, for full documentation on this
 format.
+
+The @code{TagFind} menu item searches through HyRolo Org files and
+finds headlines with any matching tags.  An Action Key press on any
+matching line displays the line in its source buffer.
 
 The @code{WordFind} menu item locates full-word matches so that if you
 search for @samp{product}, it won't match to occurrences of
@@ -11923,7 +11944,7 @@ Smart Key support for Org-mode is already in Hyperbole.  Use the
 @code{hsys-org-enable-smart-keys} customization variable to control
 the Smart Keys and @bkbd{M-@key{RET}} when in Org-mode with
 @code{hyperbole-mode} active.  @code{t} enables Smart Key support
-everywhere.  The symbol, @code{buttons}, is the default; it means the
+everywhere.  The symbol, @code{:buttons}, is the default; it means the
 Smart Keys are active only when point is within a Hyperbole button.  A
 @code{nil} value means no Smart Key support; Hyperbole gives Org
 complete control over @bkbd{M-@key{RET}} so that it behaves just as it

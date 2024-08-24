@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     18-Aug-24 at 22:03:38 by Bob Weiner
+;; Last-Mod:     19-Aug-24 at 22:17:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1813,7 +1813,7 @@ When the Action Key is pressed and `hsys-org-enable-smart-keys' is t:
   3. On an Org agenda view item, jump to the item for editing.
 
 When the Action Key is pressed and `hsys-org-enable-smart-keys' is
-either t or \\='buttons:
+either `t' or `:buttons':
 
   4. Within a radio or internal target or a link to it, jump between
      the target and the first link to it, allowing two-way navigation.
@@ -1934,7 +1934,7 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
 		   (t
 		    ;; Continue with any further Smart Key non-Org contexts
 		    nil)))
-	    ((eq hsys-org-enable-smart-keys 'buttons)
+	    ((memq hsys-org-enable-smart-keys '(:buttons buttons))
 	     (cond ((hsys-org-radio-target-def-at-p)
 		    (hact 'org-radio-target-link)
 		    t)

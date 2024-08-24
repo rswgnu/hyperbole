@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    23-Apr-21 at 22:21:00
-;; Last-Mod:     22-May-22 at 15:04:44 by Bob Weiner
+;; Last-Mod:     19-Aug-24 at 22:00:29 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -70,7 +70,7 @@
 (ert-deftest smart-org-mode-with-smart-keys-buttons-on-hypb-button-activates ()
   "With smart keys as buttons on hypb button activates the button."
   (with-temp-buffer
-    (let ((hsys-org-enable-smart-keys 'buttons))
+    (let ((hsys-org-enable-smart-keys :buttons))
       (org-mode)
       (insert "/tmp")
       (goto-char 2)
@@ -93,7 +93,7 @@
 (ert-deftest smart-org-mode-with-smart-keys-buttons-on-delimited-thing-calls-org-meta-return ()
   "With smart keys as buttons on delimited falls back to `org-meta-return'."
   (with-temp-buffer
-    (let ((hsys-org-enable-smart-keys 'buttons))
+    (let ((hsys-org-enable-smart-keys :buttons))
       (org-mode)
       (insert "(hy per bo le)\n")
       (goto-char 14)
@@ -105,7 +105,7 @@
 (ert-deftest smart-org-mode-with-smart-keys-buttons-on-org-link-activates ()
   "With smart keys as buttons on `org-mode' link activates link."
   (with-temp-buffer
-    (let ((hsys-org-enable-smart-keys 'buttons))
+    (let ((hsys-org-enable-smart-keys :buttons))
       (org-mode)
       (insert "[[/tmp][desc]]")
       (goto-char 9)
