@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     23-Aug-24 at 21:32:09 by Mats Lidell
+;; Last-Mod:     24-Aug-24 at 11:32:31 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1669,7 +1669,7 @@ If a boolean function or variable, display its value."
 ;;; ========================================================================
 
 (defib hywiki-existing-word ()
-  "When on a HyWiki word with an existing page, display its page and optional section."
+  "On a HyWiki word with an existing page, display its page and optional section."
   (cl-destructuring-bind (page-name start end)
       (hywiki-page-exists-p 'range)
     (when page-name
