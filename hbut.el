@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     23-Aug-24 at 21:38:08 by Bob Weiner
+;; Last-Mod:     24-Aug-24 at 11:40:56 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1565,7 +1565,7 @@ include delimiters when INCLUDE-DELIMS is non-nil)."
     (error "(hbut:map-type): `start-delim' must be a string, not '%s'"
 	   start-delim))
   (unless end-delim
-    (error "(hbut:map-type): `end-delim' must be non-nil" end-delim))
+    (error "(hbut:map-type): `end-delim' must be non-nil"))
 
   (let* ((match-to-start-delim (when end-delim (symbolp end-delim)))
 	 (end-char (unless match-to-start-delim

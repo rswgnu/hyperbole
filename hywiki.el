@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     18-Aug-24 at 18:02:28 by Bob Weiner
+;; Last-Mod:     24-Aug-24 at 11:36:20 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -669,7 +669,7 @@ If found, return the full path of the page.
 If not on a wiki word and optional prefix ARG is null, emulate an
 Action Key press; with a prefix ARG, emulate an Assist Key press."
   (interactive "P")
-  (let ((word hywiki-word-at))
+  (let ((word (hywiki-word-at)))
     (if word
 	(hywiki-find-page word)
       (hkey-either arg))))
@@ -1297,7 +1297,7 @@ variables."
 Word may be of form: HyWikiWord#section with an optional #section.
 If no such page exists, return nil.
 
-If WORD is the symbol, 'range, rather than a string, and there is a
+If WORD is the symbol, \\='range, rather than a string, and there is a
 HyWikiWord at point with an existing page, then return the tuple of
 values: (word word-start word-end).
 
