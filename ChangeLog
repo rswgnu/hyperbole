@@ -1,5 +1,7 @@
 2024-08-24  Mats Lidell  <matsl@gnu.org>
 
+* man/hyperbole.texi: Remove not useful @indent.
+
 * Makefile (HYPB_ERT_BATCH_BT): Control abbreviation of backtrace.
 
 2024-08-24  Bob Weiner  <rsw@gnu.org>
