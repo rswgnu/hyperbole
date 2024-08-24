@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     18-Aug-24 at 09:14:53 by Mats Lidell
+;; Last-Mod:     23-Aug-24 at 21:32:09 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1021,8 +1021,9 @@ than a helm completion buffer)."
           (while (and (= (forward-line -1) 0)
                       (looking-at "[1-9][0-9]*[-:]\\|--$")))
           (unless (or (looking-at "[1-9][0-9]*[-:]\\|--$")
-                      (and (setq file (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
-                           (string-empty-p (string-trim file))))
+                      (and (setq file (string-trim (buffer-substring-no-properties (line-beginning-position) (match-beginning 0))))
+                           (or (string-empty-p file)
+		               (not (file-exists-p file)))))
 	    (ibut:label-set (concat file ":" line-num))
 	    (hact 'hib-link-to-file-line file line-num)))))))
 
