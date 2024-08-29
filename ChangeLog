@@ -1,3 +1,8 @@
+2024-08-25  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Implicit Button Types): Add doc for 'hywiki-existing-word',
+   'hywiki-word' and 'hynote-file'.
+
 2024-08-24  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:to-Info-ref): Add.

@@ -159,7 +159,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed August 19, 2024.
+Printed August 25, 2024.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -201,7 +201,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.2pre
-August 19, 2024
+August 25, 2024
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -2458,6 +2458,12 @@ not installed by default.  You must manually configure it and load it from
 the file, @file{@code{$@{hyperb:dir@}}/hib-doc-id.el}).  See the commentary
 at the top of that file for more information.
 
+@findex ibtypes hywiki-existing-word
+@cindex hywiki existing word
+@item hywiki-existing-word
+When on a HyWiki word with an existing page, display its page and
+optional section.
+
 @findex ibtypes completion
 @cindex completion
 @item completion
@@ -2975,6 +2981,23 @@ Move to prior line with potential Python line ref.  In Python,
 tracebacks may be on a line just below the source reference line so
 since not on a Hyperbole button, move back a line and check for a
 source reference line again.
+
+@findex ibtypes hywiki-word
+@cindex hywiki word
+@item hywiki-word
+When on a HyWiki word, display its page and optional section.  If the
+associated HyWiki page does not exist, create it automatically.
+
+@findex ibtypes hynote-file
+@findex hywiki-active-in-current-buffer-p
+@findex hywiki-mode
+@cindex hynote file
+@cindex hywiki-mode
+@item hynote-file
+When on a HyNote file name stem, display the file and its optional
+section.  This type is active only in buffers where
+@code{hywiki-active-in-current-buffer-p} is true.  This may require
+that the global minor mode @code(hywiki-mode) has been enabled.
 @end table
 
 @node Action Buttons,  , Implicit Button Types, Implicit Buttons

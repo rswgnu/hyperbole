@@ -284,7 +284,8 @@ display options."
 	   (path (hpath:at-p))
 	   elisp-suffix
            full-path)
-      ;; If an Info path without parens, don't handle it here, use the `Info-node' ibtype
+      ;; If an Info path without parens, don't handle it here, use the
+      ;; `Info-node' ibtype
       (unless (and path (string-match-p ".+\\.info\\([.#]\\|\\'\\)" path))
 	(if path
 	    (cond ((and (not (string-empty-p path))
