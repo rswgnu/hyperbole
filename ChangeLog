@@ -1,5 +1,7 @@
 2024-08-30  Bob Weiner  <rsw@gnu.org>
 
+* hibtypes.el (hyp-manual): Fix to strip spaces around section for both .html
+    and .texi files.
 * hywiki.el (hywiki-word-at): Add optional arg 'range-flag' and when non-nil
     return (wikiword word-start word-end).
             (hywiki-word-activate): Fix call to 'hywiki-word-at'.

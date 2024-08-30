@@ -389,17 +389,26 @@ Info browser."
 	 node)
     (when (stringp path)
       (setq path (string-trim path))
-      (cond ((string-match "\\`hyperbole.html\\(#.*\\)?\\'" path)
-	     (ibut:label-set path start end)
-	     ;; Any spaces in #section must be replaced with dashes to match html ids
-	     (setq path (replace-regexp-in-string "\\s-+" "-" path))
-	     (hact 'www-url (concat "file://" (expand-file-name path (hpath:expand "${hyperb:dir}/man/")))))
-	    ((string-match "\\`hyperbole.texi\\(#.*\\)?\\'" path)
-	     (setq node (match-string 1 path))
-	     (when node
-	       (setq node (substring node 1)))
-	     (ibut:label-set path start end)
-	     (hact 'link-to-texinfo-node "hyperbole.texi" node))))))
+      (when (string-match "\\`hyperbole.\\(html\\|texi\\)\\(#.*\\)?\\'" path)
+	(save-match-data
+	  (setq node (match-string 2 path))
+	  (when node
+	    (setq node (string-trim (substring node 1))))
+	  (ibut:label-set path start end))
+	(if (equal "html" (match-string 1 path))
+	    (progn
+	      ;; Any spaces in #section must be replaced with dashes to match html ids
+	      (when node
+		(setq node (replace-regexp-in-string "\\s-+" "-" node)))
+	      (hact 'www-url (concat "file://"
+				     (expand-file-name "hyperbole.html" (hpath:expand "${hyperb:dir}/man/"))
+				     (when node "#") node)))
+	  ;; texi file
+	  (hact 'link-to-file (concat
+			       (expand-file-name
+				"hyperbole.texi"
+				(hpath:expand "${hyperb:dir}/man/"))
+			       (when node "#") node)))))))
 
 ;;; ========================================================================
 ;;; Handles internal references within an annotated bibliography, delimiters=[]
