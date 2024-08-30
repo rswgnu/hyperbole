@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     15-Aug-24 at 22:44:16 by Bob Weiner
+;; Last-Mod:     29-Aug-24 at 17:08:21 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1892,10 +1892,10 @@ Buffer without File      link-to-buffer-tmp"
 					       ((and (derived-mode-p 'texinfo-mode)
 						     (save-excursion
 						       (beginning-of-line)
-						       (or (looking-at "@node ")
-							   (re-search-backward "^@node " nil t))))
-						(require 'texnfo-upd)
-						(setq node (texinfo-copy-node-name))
+						       (when (or (looking-at "@node ")
+								 (re-search-backward "^@node " nil t))
+							 (require 'texnfo-upd)
+							 (setq node (texinfo-copy-node-name)))))
 						(list 'link-to-texinfo-node buffer-file-name node))
 					       ((hmail:reader-p)
 						(list 'link-to-mail

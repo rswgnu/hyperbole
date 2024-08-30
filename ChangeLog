@@ -1,3 +1,40 @@
+2024-08-30  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (hyp-manual): Fix to strip spaces around section for both .html
+    and .texi files.
+* hywiki.el (hywiki-word-at): Add optional arg 'range-flag' and when non-nil
+    return (wikiword word-start word-end).
+            (hywiki-word-activate): Fix call to 'hywiki-word-at'.
+
+2024-08-29  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-page-exists-p): Use 'range only if 'word' is non-nil.
+    Add 'start' and 'end' optional args to record 'word' position range.
+
+* hibtypes.el (hywiki-existing-word): Fix to set label when a word is given
+    but no position is known for the word.
+
+* hactypes.el (link-to-texinfo-node): If 'node' is not a string, set it to
+    "Top", the first node.  If 'file' equals "hyperbole.texi", make the file
+    name absolute.
+  hibtypes.el (hyp-manual): Add new ibtype to display Hyperbole HTML and .texi
+    manual sections using syntax: "hyperbole.suffix#section".  The same syntax
+    for "hyperbole.info" is handled elsewhere.
+  man/hyperbole.texi (Implicit Button Types): Add 'hyp-manual' doc.
+
+2024-08-28  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (hywiki-existing-word): Fix label set to use start and end
+    rather than (match-beginning 0) (match-end 0) which yielded wrong positions.
+* hui.el (hui:link-possible-types): Fix bug in link-to-texinfo-node where
+    node name was grabbed outside of save-excursion when not at a node
+    name, so wrong value was used.
+
+2024-08-25  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Implicit Button Types): Add doc for 'hywiki-existing-word',
+   'hywiki-word' and 'hynote-file'.
+
 2024-08-24  Mats Lidell  <matsl@gnu.org>
 
 * man/hyperbole.texi: Remove not useful @indent.
@@ -15,9 +52,6 @@
     by Info-node, e.g. "emacs.info#Windows".
 
 2024-08-23  Bob Weiner  <rsw@gnu.org>
-
-* hibtypes.el (hyp-html-manual): Add new ibtype to display Hyperbole HTML
-    manual sections using syntax: "hyperbole.html#section".
 
 * hbut.el (ibut:label-p): Handle when lbl is nil.
 

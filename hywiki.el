@@ -674,8 +674,11 @@ Action Key press; with a prefix ARG, emulate an Assist Key press."
 	(hywiki-find-page word)
       (hkey-either arg))))
 
-(defun hywiki-word-at (&optional)
+(defun hywiki-word-at (&optional range-flag)
   "Return HyWiki word and optional #section at point or nil if not on one.
+With optional RANGE-FLAG non-nil and there is a HyWikiWord at point,
+return the tuple of values: (word word-start word-end) instead of a string,
+
 Does not test whether or not a page exists for the HyWiki word; call
 `hywiki-page-exists-p' without an argument for that.
 
@@ -686,9 +689,12 @@ or this will return nil."
 	      (hproperty:char-property-range (point) 'face hywiki-word-face))
 	(buffer-substring-no-properties (car hywiki--range) (cdr hywiki--range))
       (save-excursion
-	(let ((wikiword (progn (when (looking-at "\\[\\[")
-				 (goto-char (+ (point) 2)))
-			       (ibut:label-p t "[[" "]]"))))
+	(let* ((word-start-end (progn (when (looking-at "\\[\\[")
+					(goto-char (+ (point) 2)))
+				      (ibut:label-p t "[[" "]]" range-flag)))
+	       (wikiword (if range-flag (car word-start-end) word-start-end))
+	       start
+	       end)
 	  (if wikiword
 	      ;; Handle an Org link [[HyWikiWord]] [[hy:HyWikiWord]] or [[HyWikiWord#section]].
 	      (progn
@@ -701,7 +707,7 @@ or this will return nil."
 						    hywiki-org-link-type)))
 		;; Ignore prefixed, typed hy:HyWikiWord since Org mode will display those.
 		(when (hywiki-word-is-p wikiword)
-		  wikiword))
+		  (if range-flag word-start-end wikiword)))
 	    ;; Handle a HyWiki word with optional #section; if it is an Org
 	    ;; link, it may optionally have a hy: link-type prefix.
 	    ;; Ignore wikiwords preceded by any non-whitespace
@@ -710,14 +716,17 @@ or this will return nil."
 	      (skip-chars-backward "-_*#[:alnum:]")
 	      (when (hywiki-maybe-at-wikiword-beginning)
 		(cond ((looking-at hywiki--word-and-buttonize-character-regexp)
-		       (string-trim
-			(buffer-substring-no-properties (match-beginning 0)
-							(1- (match-end 0)))))
+		       (setq start (match-beginning 0)
+			     end (1- (match-end 0))
+			     wikiword (string-trim
+				       (buffer-substring-no-properties start end))))
 		      ((looking-at (concat hywiki-word-with-optional-section-regexp "\\'"))
-		       ;; No following char
-		       (string-trim
-			(buffer-substring-no-properties (match-beginning 0)
-							(match-end 0)))))))))))))
+		       (setq start (match-beginning 0)
+			     end   (match-end 0)
+			     ;; No following char
+			     wikiword (string-trim
+				       (buffer-substring-no-properties start end)))))
+		(if range-flag (list wikiword start end) wikiword)))))))))
 
 (defun hywiki-word-consult-grep (word)
   "Use `hywiki-consult-grep' to show occurrences of a prompted for HyWikiWord.
@@ -1292,30 +1301,34 @@ variables."
 			    :follow #'hywiki-find-page
 			    :store #'hywiki-org-link-store))
 
-(defun hywiki-page-exists-p (&optional word)
+(defun hywiki-page-exists-p (&optional word start end)
   "Return an existing HyWiki page name from optional WORD or word at point.
 Word may be of form: HyWikiWord#section with an optional #section.
 If no such page exists, return nil.
 
-If WORD is the symbol, \\='range, rather than a string, and there is a
-HyWikiWord at point with an existing page, then return the tuple of
-values: (word word-start word-end).
+If WORD is the symbol, :range, and there is a HyWikiWord at point
+with an existing page, then return the tuple of values: (word
+word-start word-end) instead of a string,
 
 When using the word at point, a call to
-`hywiki-active-in-current-buffer-p' at point must return non-nil or
-this will return nil." 
+`hywiki-active-in-current-buffer-p' at point must return non-nil
+or this will return nil." 
   (setq hywiki--page-name word)
   (if (or (stringp word)
 	  (setq word (hywiki-word-at)))
-      (progn (setq word (hywiki-page-strip-section word))
-	     (unless (hywiki-get-page word)
-	       (setq word nil)))
+      (unless (hywiki-get-page (hywiki-page-strip-section word))
+	(setq word nil))
     (setq word nil))
-  (if (eq hywiki--page-name 'range)
-      (if (setq hywiki--range
-		(hproperty:char-property-range (point) 'face hywiki-word-face))
-	  (list word (car hywiki--range) (cdr hywiki--range))
-	(list word nil nil))
+  (when (and (listp word) (= (length word) 3))
+    (setq start (nth 1 word)
+	  end   (nth 2 word)
+	  word  (nth 0 word)))
+  (if (eq hywiki--page-name :range)
+      (if (and word (setq hywiki--range
+			  (hproperty:char-property-range
+			   (point) 'face hywiki-word-face)))
+	  (list word (or start (car hywiki--range)) (or end (cdr hywiki--range)))
+	(list word start end))
     word))
 
 (defun hywiki-page-strip-section (page-name)

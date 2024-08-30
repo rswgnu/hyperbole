@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     24-Aug-24 at 11:56:43 by Mats Lidell
+@c Last-Mod:     30-Aug-24 at 01:45:39 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -146,7 +146,7 @@ Texinfo markup language.
 <CENTER><H3><A HREF="mailto:rsw@@gnu.org">Say thanks or send a testimonial if you like Hyperbole.</A></H3></CENTER>
 
 
-<P>Copyright &copy; 1989-2023  Free Software Foundation, Inc.</P>
+<P>Copyright &copy; 1989-2024  Free Software Foundation, Inc.</P>
 
 <P>GNU Hyperbole is available for use, modification, and distribution under
 the terms of the GNU General Public License (GPL) Version 3 or later,
@@ -159,7 +159,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed August 19, 2024.
+Printed August 29, 2024.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -187,7 +187,7 @@ Printed August 19, 2024.
 
 @sp 2
 @noindent
-Copyright @copyright{} 1989-2023  Free Software Foundation, Inc.
+Copyright @copyright{} 1989-2024  Free Software Foundation, Inc.
 
 GNU Hyperbole is available for use, modification, and distribution
 under the terms of the GNU General Public License (GPL) Version 3 or
@@ -201,7 +201,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.2pre
-August 19, 2024
+August 29, 2024
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -2458,6 +2458,12 @@ not installed by default.  You must manually configure it and load it from
 the file, @file{@code{$@{hyperb:dir@}}/hib-doc-id.el}).  See the commentary
 at the top of that file for more information.
 
+@findex ibtypes hywiki-existing-word
+@cindex hywiki existing word
+@item hywiki-existing-word
+When on a HyWiki word with an existing page, display its page and
+optional section.
+
 @findex ibtypes completion
 @cindex completion
 @item completion
@@ -2830,6 +2836,20 @@ as the reference.  References must be delimited by square brackets, must
 begin with a word constituent character, and must not be in buffers
 whose names begin with a ` ' or `*' character.
 
+@findex ibtypes hyp-html-manual
+@cindex hyperbole manual ibtype
+@item hyp-manual
+When on a Hyperbole manual file path, display it.  For example,
+display @file{hyperbole.html#Smart Keys} in a web browser using the
+local html version of the Hyperbole manual.  When on
+@file{hyperbole.texi#Smart Keys}, jump to the @emph{Smart Keys} node
+in the local Texinfo manual.  Without a node name, go to the initial,
+top node.
+
+Info file links like @file{hyperbole.info#Smart Keys} are handled by
+the @code{Info-node} implicit button type and displayed in the Emacs
+Info browser.
+
 @findex ibtypes www-url
 @cindex URL
 @cindex World-wide Web
@@ -2975,6 +2995,23 @@ Move to prior line with potential Python line ref.  In Python,
 tracebacks may be on a line just below the source reference line so
 since not on a Hyperbole button, move back a line and check for a
 source reference line again.
+
+@findex ibtypes hywiki-word
+@cindex hywiki word
+@item hywiki-word
+When on a HyWiki word, display its page and optional section.  If the
+associated HyWiki page does not exist, create it automatically.
+
+@findex ibtypes hynote-file
+@findex hywiki-active-in-current-buffer-p
+@findex hywiki-mode
+@cindex hynote file
+@cindex hywiki-mode
+@item hynote-file
+When on a HyNote file name stem, display the file and its optional
+section.  This type is active only in buffers where
+@code{hywiki-active-in-current-buffer-p} is true.  This may require
+that the global minor mode @code(hywiki-mode) has been enabled.
 @end table
 
 @node Action Buttons,  , Implicit Button Types, Implicit Buttons
