@@ -159,7 +159,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed August 25, 2024.
+Printed August 29, 2024.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -201,7 +201,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.2pre
-August 25, 2024
+August 29, 2024
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -2835,6 +2835,20 @@ Display annotated bibliography entries defined within the same buffer
 as the reference.  References must be delimited by square brackets, must
 begin with a word constituent character, and must not be in buffers
 whose names begin with a ` ' or `*' character.
+
+@findex ibtypes hyp-html-manual
+@cindex hyperbole manual ibtype
+@item hyp-manual
+When on a Hyperbole manual file path, display it.  For example,
+display @file{hyperbole.html#Smart Keys} in a web browser using the
+local html version of the Hyperbole manual.  When on
+@file{hyperbole.texi#Smart Keys}, jump to the @emph{Smart Keys} node
+in the local Texinfo manual.  Without a node name, go to the initial,
+top node.
+
+Info file links like @file{hyperbole.info#Smart Keys} are handled by
+the @code{Info-node} implicit button type and displayed in the Emacs
+Info browser.
 
 @findex ibtypes www-url
 @cindex URL

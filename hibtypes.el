@@ -367,25 +367,39 @@ display options."
 (load "hsys-www")
 
 ;;; ========================================================================
-;;; Uses web browser to display links to Hyperbole HTML manual sections
+;;; Uses web browser to display links to Hyperbole HTML manual sections;
 ;;; Links are of the form "hyperbole.html#Smart Keys"
 ;;; ========================================================================
 
-(defib hyp-html-manual ()
-  "When on a \"hyperbole.html\" manual path, display it in a web browser.
-For example, display \"hyperbole.html#Smart Keys\" using the local
-html version of the Hyperbole manual."
+(defib hyp-manual ()
+  "When on a Hyperbole manual file path, display it.
+For example, display \"hyperbole.html#Smart Keys\" in a web
+browser using the local html version of the Hyperbole manual.
+When on \"hyperbole.texi#Smart Keys\", jump to the \"Smart Keys\"
+node in the local Texinfo manual.  Without a node name, go to the
+top node.
+
+Info file links like \"hyperbole.info#Smart Keys\" are handled by
+the `Info-node' implicit button type and displayed in the Emacs
+Info browser."
   (let* ((path-start-end (hargs:delimited "\"" "\"" nil nil t))
 	 (path (nth 0 path-start-end))
 	 (start (nth 1 path-start-end))
-	 (end (nth 2 path-start-end)))
+	 (end (nth 2 path-start-end))
+	 node)
     (when (stringp path)
       (setq path (string-trim path))
-      (when (string-match "\\`hyperbole.html\\(#.*\\)?\\'" path)
-	(ibut:label-set path start end)
-	;; Any spaces in #section must be replaced with dashes to match html ids
-	(setq path (replace-regexp-in-string "\\s-+" "-" path))
-	(hact 'www-url (concat "file://" (expand-file-name path (hpath:expand "${hyperb:dir}/man/"))))))))
+      (cond ((string-match "\\`hyperbole.html\\(#.*\\)?\\'" path)
+	     (ibut:label-set path start end)
+	     ;; Any spaces in #section must be replaced with dashes to match html ids
+	     (setq path (replace-regexp-in-string "\\s-+" "-" path))
+	     (hact 'www-url (concat "file://" (expand-file-name path (hpath:expand "${hyperb:dir}/man/")))))
+	    ((string-match "\\`hyperbole.texi\\(#.*\\)?\\'" path)
+	     (setq node (match-string 1 path))
+	     (when node
+	       (setq node (substring node 1)))
+	     (ibut:label-set path start end)
+	     (hact 'link-to-texinfo-node "hyperbole.texi" node))))))
 
 ;;; ========================================================================
 ;;; Handles internal references within an annotated bibliography, delimiters=[]
@@ -1675,7 +1689,7 @@ If a boolean function or variable, display its value."
       (hywiki-page-exists-p 'range)
     (when page-name
       (when (and start end)
-	(ibut:label-set page-name (match-beginning 0) (match-end 0)))
+	(ibut:label-set page-name start end))
       (hact 'hywiki-find-page page-name))))
 
 ;;; ========================================================================

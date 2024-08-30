@@ -1,3 +1,21 @@
+2024-08-29  Bob Weiner  <rsw@gnu.org>
+
+* hactypes.el (link-to-texinfo-node): If 'node' is not a string, set it to
+    "Top", the first node.  If 'file' equals "hyperbole.texi", make the file
+    name absolute.
+  hibtypes.el (hyp-manual): Add new ibtype to display Hyperbole HTML and .texi
+    manual sections using syntax: "hyperbole.suffix#section".  The same syntax
+    for "hyperbole.info" is handled elsewhere.
+  man/hyperbole.texi (Implicit Button Types): Add 'hyp-manual' doc.
+
+2024-08-28  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (hywiki-existing-word): Fix label set to use start and end
+    rather than (match-beginning 0) (match-end 0) which yielded wrong positions.
+* hui.el (hui:link-possible-types): Fix bug in link-to-texinfo-node where
+    node name was grabbed outside of save-excursion when not at a node
+    name, so wrong value was used.
+
 2024-08-25  Bob Weiner  <rsw@gnu.org>
 
 * man/hyperbole.texi (Implicit Button Types): Add doc for 'hywiki-existing-word',
@@ -14,9 +32,6 @@
     by Info-node, e.g. "emacs.info#Windows".
 
 2024-08-23  Bob Weiner  <rsw@gnu.org>
-
-* hibtypes.el (hyp-html-manual): Add new ibtype to display Hyperbole HTML
-    manual sections using syntax: "hyperbole.html#section".
 
 * hbut.el (ibut:label-p): Handle when lbl is nil.
 

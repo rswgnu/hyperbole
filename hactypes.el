@@ -686,10 +686,13 @@ Return t if found, nil if not."
   "Display the Texinfo FILE and NODE (a string).
 FILE may be a string or nil, in which case the current buffer is used."
   (interactive "fTexinfo file to link to: \nsNode within file to link to: ")
-  (when (stringp node)
-    ;; Remove any tabs or newlines that might be in node name.
-    (setq node (replace-regexp-in-string "[ \t\n\r\f]+" " " node t t)))
+  (if (stringp node)
+      ;; Remove any tabs or newlines that might be in node name.
+      (setq node (replace-regexp-in-string "[ \t\n\r\f]+" " " (string-trim node) t t))
+    (setq node "Top"))
   (let (node-point)
+    (when (equal file "hyperbole.texi")
+      (setq file (expand-file-name file (hpath:expand "${hyperb:dir}/man/"))))
     (if file
         (set-buffer (find-file-noselect (hpath:substitute-value file)))
       (setq file buffer-file-name))
