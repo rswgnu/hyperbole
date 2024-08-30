@@ -1,4 +1,16 @@
+2024-08-30  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-word-at): Add optional arg 'range-flag' and when non-nil
+    return (wikiword word-start word-end).
+            (hywiki-word-activate): Fix call to 'hywiki-word-at'.
+
 2024-08-29  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-page-exists-p): Use 'range only if 'word' is non-nil.
+    Add 'start' and 'end' optional args to record 'word' position range.
+
+* hibtypes.el (hywiki-existing-word): Fix to set label when a word is given
+    but no position is known for the word.
 
 * hactypes.el (link-to-texinfo-node): If 'node' is not a string, set it to
     "Top", the first node.  If 'file' equals "hyperbole.texi", make the file

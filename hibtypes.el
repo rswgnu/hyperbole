@@ -1686,10 +1686,11 @@ If a boolean function or variable, display its value."
 (defib hywiki-existing-word ()
   "When on a HyWiki word with an existing page, display its page and optional section."
   (cl-destructuring-bind (page-name start end)
-      (hywiki-page-exists-p 'range)
+      (hywiki-page-exists-p :range)
     (when page-name
-      (when (and start end)
-	(ibut:label-set page-name start end))
+      (if (and start end)
+	  (ibut:label-set page-name start end)
+	(ibut:label-set page-name))
       (hact 'hywiki-find-page page-name))))
 
 ;;; ========================================================================
