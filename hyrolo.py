@@ -8,7 +8,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:     1-Apr-24 at 01:45:27
-# Last-Mod:     16-Apr-24 at 23:12:28 by Bob Weiner
+# Last-Mod:      1-Sep-24 at 12:25:38 by Bob Weiner
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
@@ -168,6 +168,7 @@ def main():
     else:
         args.files = ["~/.rolo.otl"]
     find_matching_entries(args.match_string, args.files)
+
 
 if __name__ == '__main__':
     main()

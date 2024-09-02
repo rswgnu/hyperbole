@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     30-Aug-24 at 01:45:39 by Bob Weiner
+@c Last-Mod:      1-Sep-24 at 20:28:29 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -25,8 +25,8 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED August, 2024
-@set UPDATED-MONTH August 2024
+@set UPDATED September, 2024
+@set UPDATED-MONTH September 2024
 @set EDITION 9.0.2pre
 @set VERSION 9.0.2pre
 
@@ -85,7 +85,7 @@ See the GNU General Public License for more details in the file,
      right thing, a powerful contact manager, an advanced, auto-
      numbered outliner with hyperlink anchors for each outline
      cell, and easily editable and extensible hyperlink buttons,
-     even embeddable within mail and news messages.@
+     even embeddable within mail and news messages.
 @end direntry
 
 @c
@@ -159,7 +159,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed August 29, 2024.
+Printed September 1, 2024.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -201,7 +201,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.2pre
-August 29, 2024
+September 1, 2024
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -259,6 +259,7 @@ dedicated to my lovely wife, Kathy.
 * Buttons::
 * Menus::
 * HyWiki::
+* HyNote::
 * HyControl::
 * Koutliner::
 * HyRolo::
@@ -3011,7 +3012,7 @@ associated HyWiki page does not exist, create it automatically.
 When on a HyNote file name stem, display the file and its optional
 section.  This type is active only in buffers where
 @code{hywiki-active-in-current-buffer-p} is true.  This may require
-that the global minor mode @code(hywiki-mode) has been enabled.
+that the global minor mode @code{hywiki-mode} has been enabled.
 @end table
 
 @node Action Buttons,  , Implicit Button Types, Implicit Buttons
@@ -4362,7 +4363,7 @@ Return to previous positions in the button traversal history.
 
 @end table
 
-@node HyWiki, HyControl, Menus, Top
+@node HyWiki, HyNote, Menus, Top
 @chapter HyWiki
 
 @cindex HyWiki
@@ -4373,9 +4374,10 @@ Return to previous positions in the button traversal history.
 HyWiki is Hyperbole's markup-free, personal Wiki system for
 note-taking and automatic HyWikiWord highlighting and hyperlinking.
 It uses Org mode for note taking and adds automatic hyperlinking and
-highlighting of HyWikiWords within Org files in @code{hywiki-directory}
-(default = @file{~/hywiki}).  With @bkbd{C-h h h p} you can publish
-your entire HyWiki to an HTML directory for export to the web.
+highlighting of HyWikiWords in Org files within
+@code{hywiki-directory} (default = @file{~/hywiki}).  With @bkbd{C-h h
+h p} you can publish any updated part of your HyWiki to an HTML
+directory for export to the web.
 
 @menu
 * HyWikiWords::
@@ -4572,6 +4574,12 @@ HyWiki>  Act Create Edit GrepConsult Help Info Link ModeToggle Org-M-RET/ Publis
 @end smallexample
 
 @noindent
+The GrepConsult and WikiWordConsult items appear only when the Consult
+package is installed prior to loading Hyperbole.  These commands are
+especially useful as they allow for fast line-level searching across
+many files with interactive search pattern narrowing.
+
+@noindent
 Below are descriptions of each menu item.
 
 @findex hywiki-consult-grep
@@ -4580,24 +4588,32 @@ Below are descriptions of each menu item.
 @table @asis
 @item Act
 Activate HyWikiWord link at point.
+
 @item Create
 Create and display a new HyWiki page.  Shows existing page names to aid in new naming.
+
 @item Edit
 Prompt with completion for and display a HyWiki page ready for editing.
+
 @item GrepConsult
 Grep over HyWiki pages with interactive @code{hywiki-consult-grep}.
+
 @item Help
 Report on a HyWikiWord's attributes.
+
 @item Info
 Display Hyperbole manual section on HyWiki.
+
 @item Link
 Prompt for and add a link at point to a HyWiki page.
+
 @findex hywiki-mode
 @cindex HyWiki mode
 @cindex HyWikiWords outside hywiki-directory
 @item ModeToggle
 Toggle global minor mode @code{hywiki-mode} that enables HyWikiWord hyperlinks
 in buffers outside of @code{hywiki-directory}.
+
 @kindex C-h h h o
 @kindex HyWiki, C-h h h o
 @kindex C-h h h c
@@ -4616,17 +4632,46 @@ make the Action Key create new HyWiki pages when pressed on as-yet
 undefined HyWikiWords; otherwise, you must use @bkbd{C-h h h c} to create a
 new HyWiki page instead.  Use @samp{None} if you want to
 use Org's @bkbd{M-@key{RET}} command in every context within Org mode.
+
 @item Publish
 Publish modified pages in the HyWiki to HTML; prefix arg to publish all pages.
+
 @cindex HyWiki tag search
 @cindex search, HyWiki tag
 @item TagFind
 Find a matching Org tag across all HyWiki pages.
+
 @item WikiWordConsult
 Use @code{hywiki-consult-grep} to show occurrences of a prompted for HyWikiWord.
 @end table
 
-@node HyControl, Koutliner, HyWiki, Top
+
+@node HyNote, HyControl, HyWiki, Top
+@chapter HyNote
+@cindex HyNote
+@cindex notes
+HyNote is a start on Hyperbole's note taking system.  HyNote supports
+Org, Markdown, Koutline and Emacs Outline file formats.
+
+@vindex hynote-directory-list
+@findex ibtypes hynote-file
+@cindex ibtype hynote-file
+Presently HyNote simply provides an experience similar to the HyWiki
+for Org and Org Roam file name stems and headline links for files
+found in the directories of @code{hynote-directory-list}, which
+defaults to the default Org and Org Roam directories.  For example, if
+the file @file{~/Org/hyperbole-cmds.org} has a headline,
+@samp{hyrolo-fgrep Command}, then "hyperbole-cmds#hyrolo-fgrep Command"
+in any file will link to that headline.  See the documentation for the
+implicit button type that HyNote defines, @code{hynote-file}.
+
+In the future, HyNote will also provide a universal way to easily link to
+information across many file formats.
+
+See also @ref{HyWiki}.
+
+
+@node HyControl, Koutliner, HyNote, Top
 @chapter HyControl
 @cindex windows control
 @cindex frames control
@@ -6325,12 +6370,13 @@ these capabilities back into the mainstream of modern computing culture.
 @node HyRolo, Window Configurations, Koutliner, Top
 @chapter HyRolo
 
-@cindex Rolo
+@cindex rolo
 @cindex HyRolo
-Hyperbole includes a complete, advanced rolo system, HyRolo, for
-convenient management of hierarchical, record-oriented information.
-Most often this is used for contact management but it can quickly be
-adapted to most any record-oriented lookup task requiring fast retrieval.
+Hyperbole includes HyRolo, a complete, advanced system for convenient
+management of hierarchical, record-oriented information.  Most often
+this is used for contact management but it can quickly be adapted to
+most any record-oriented lookup task requiring fast retrieval.  There
+is also a Python-based command-line version, @file{hyrolo.py}, included.
 
 @cindex rolo, buttons in
 Hyperbole buttons may be included within rolo records and then
@@ -6486,8 +6532,9 @@ set of commands as the menubar Rolo menu but with more concise labels.
 @findex hyrolo-word
 @findex hyrolo-yank
 The minibuffer Rolo/ menu offers the following commands (ConsultFind
-and HelmFind appear only when associated packages are loaded but are
-especially noteworthy as they allow for line-level searching with
+and HelmFind appear only when the Consult and Helm packages are
+installed prior to loading Hyperbole.  They are especially noteworthy
+as they allow for fast line-level searching across many files with
 interactive search pattern narrowing):
 
 @example
@@ -8105,6 +8152,21 @@ HyControl, the Hyperbole window and frame control manager, offers
 fast, single key manipulation of window and frame creation, deletion,
 sizing, position and face zooming (enlarging/shrinking).
 
+@item HyNote
+HyNote is a start on Hyperbole's note taking system.  It presently
+simply provides an experience similar to HyWiki, but for Org directory
+and Org Roam file and headline links.  See the documentation for the
+implicit button type it defines, @code{hynote-file}.
+
+HyNote supports Org, Markdown, Koutline and Emacs Outline file
+formats.  It uses UUIDs and HyRolo for quick note lookups across
+matching files in @code{hynote-directory-list}.
+
+In the future, it will also provide a universal way to easily link to
+information across many file formats.
+
+See also @b{HyWiki}.
+
 @item Hyperbole
 The flexible, programmable information management and viewing system
 documented by this manual.  It utilizes a button-action model and supports
@@ -8133,10 +8195,14 @@ DataBase (BBDB) package.
 HyWiki, the Hyperbole personal wiki tool, lets you create a personal
 wiki of interlinked Org files in a single directory, where each page
 name automatically becomes a live HyWikiWord link back to the
-associated page whenever added in any file in the HyWiki directory.
-HyWikiWords also work outside this directory if you turn on the minor
-@code{hywiki-mode} in other buffers.  A single command exports an
-entire HyWiki to the web.
+associated page whenever added in any file within the HyWiki
+directory.  HyWikiWords also work outside this directory if you turn
+on the minor @code{hywiki-mode} in other buffers.  A single command,
+@bkbd{C-u C-h h h p}, publishes/exports an entire HyWiki to HTML for
+display on the web.
+
+See the documentation for its implicit button types, @code{hywiki-word}
+and @code{hywiki-existing-word}.
 
 @item Ilink
 @itemx link-to-ibut

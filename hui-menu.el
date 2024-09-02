@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
-;; Last-Mod:     19-Aug-24 at 23:28:31 by Bob Weiner
+;; Last-Mod:      1-Sep-24 at 14:12:37 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -301,6 +301,26 @@ Return t if cutoff, else nil."
 	     :style toggle :selected hkey-debug]))
   "Untitled menu of Hyperbole options.")
 
+(defconst hui-menu-hywiki
+  (delq nil
+	(list
+	 ["Manual"              (id-info "(hyperbole)HyWiki") t]
+	 "----"
+	 ["Activate"            hywiki-word-activate t]
+	 ["Create"              hywiki-add-page-and-display t]
+	 ["Edit"                hywiki-find-page t]
+	 (when (fboundp 'consult-grep) ;; allow for autoloading
+	   ["Grep-Consult"        hywiki-consult-grep t])
+	 ["Help"                hkey-help t]
+	 ["Link"                hywiki-add-link t]
+	 hui-menu-org-meta-return-options
+	 ["HyWiki-Mode-Toggle" hywiki-mode t]
+	 ["Publish"             hywiki-publish-to-html t]
+	 ["Tag-Find"            hywiki-tags-view t]
+	 (when (fboundp 'consult-grep) ;; allow for autoloading
+	   ["WikiWord-Consult"    hywiki-word-consult-grep t])))
+  "Menu items for HyWiki editing and publishing.")
+
 (defvar infodock-hyperbole-menu nil)
 
 ;;; ************************************************************************
@@ -447,20 +467,7 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		   ["Help"   gbut:help t]
 		   ["Link"   hui:gbut-link-directly t]
                    ["Rename" hui:gbut-rename t])
-		 (list "HyWiki"
-		       ["Manual"              (id-info "(hyperbole)HyWiki") t]
-		       "----"
-		       ["Activate"            hywiki-word-activate t]
-		       ["Create"              hywiki-add-page-and-display t]
-		       ["Edit"                hywiki-find-page t]
-		       ["Grep-Consult"        hywiki-consult-grep t]
-		       ["Help"                hkey-help t]
-		       ["Link"                hywiki-add-link t]
-		       hui-menu-org-meta-return-options
-		       ["HyWiki-Mode-Toggle" hywiki-mode t]
-		       ["Publish"             hywiki-publish-to-html t]
-		       ["Tag-Find"            hywiki-tags-view t]
-		       ["WikiWord-Consult"    hywiki-word-consult-grep t])
+		 (cons "HyWiki" hui-menu-hywiki)
 		 '("Implicit-Button"
 		   ["Manual"   (id-info "(hyperbole)Implicit Buttons") t]
 		   "----"

@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <!-- This manual is for GNU Hyperbole
-(Edition 9.0.2pre, Published August, 2024).
+(Edition 9.0.2pre, Published September, 2024).
 
 Copyright (C) 1989-2023  Free Software Foundation, Inc.
 
@@ -95,7 +95,7 @@ Next: <a href="#Introduction" accesskey="n" rel="next">Introduction</a>, Previou
 <CENTER><H3><A HREF="mailto:rsw@gnu.org">Say thanks or send a testimonial if you like Hyperbole.</A></H3></CENTER>
 
 
-<P>Copyright &copy; 1989-2023  Free Software Foundation, Inc.</P>
+<P>Copyright &copy; 1989-2024  Free Software Foundation, Inc.</P>
 
 <P>GNU Hyperbole is available for use, modification, and distribution under
 the terms of the GNU General Public License (GPL) Version 3 or later,
@@ -108,7 +108,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed August 19, 2024.
+Printed September 1, 2024.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -170,7 +170,7 @@ Next: <a href="#Usage" accesskey="n" rel="next">Usage</a>, Previous: <a href="#T
 <span id="Introduction-1"></span><h2 class="chapter">1 Introduction</h2>
 
 <p>This edition of the GNU Hyperbole Manual is for use with any version
-9.0.1 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 27.1
+9.0.2pre or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 27.2
 or higher.  It will trigger an error if your Emacs is older.
 </p>
 <p>This chapter summarizes the structure of the rest of the manual,
@@ -2343,6 +2343,13 @@ not installed by default.  You must manually configure it and load it from
 the file, <samp><code>${hyperb:dir}</code>/hib-doc-id.el</samp>).  See the commentary
 at the top of that file for more information.
 </p>
+<span id="index-ibtypes-hywiki_002dexisting_002dword"></span>
+<span id="index-hywiki-existing-word"></span>
+</dd>
+<dt><span><code>hywiki-existing-word</code></span></dt>
+<dd><p>When on a HyWiki word with an existing page, display its page and
+optional section.
+</p>
 <span id="index-ibtypes-completion"></span>
 <span id="index-completion-1"></span>
 </dd>
@@ -2748,6 +2755,21 @@ as the reference.  References must be delimited by square brackets, must
 begin with a word constituent character, and must not be in buffers
 whose names begin with a &lsquo; &rsquo; or &lsquo;*&rsquo; character.
 </p>
+<span id="index-ibtypes-hyp_002dhtml_002dmanual"></span>
+<span id="index-hyperbole-manual-ibtype"></span>
+</dd>
+<dt><span><code>hyp-manual</code></span></dt>
+<dd><p>When on a Hyperbole manual file path, display it.  For example,
+display <samp>hyperbole.html#Smart Keys</samp> in a web browser using the
+local html version of the Hyperbole manual.  When on
+<samp>hyperbole.texi#Smart Keys</samp>, jump to the <em>Smart Keys</em> node
+in the local Texinfo manual.  Without a node name, go to the initial,
+top node.
+</p>
+<p>Info file links like <samp>hyperbole.info#Smart Keys</samp> are handled by
+the <code>Info-node</code> implicit button type and displayed in the Emacs
+Info browser.
+</p>
 <span id="index-ibtypes-www_002durl"></span>
 <span id="index-URL"></span>
 <span id="index-World_002dwide-Web"></span>
@@ -2898,6 +2920,25 @@ given by the <code>&lt;test-name&gt;</code> argument, an unquoted name.
 tracebacks may be on a line just below the source reference line so
 since not on a Hyperbole button, move back a line and check for a
 source reference line again.
+</p>
+<span id="index-ibtypes-hywiki_002dword"></span>
+<span id="index-hywiki-word"></span>
+</dd>
+<dt><span><code>hywiki-word</code></span></dt>
+<dd><p>When on a HyWiki word, display its page and optional section.  If the
+associated HyWiki page does not exist, create it automatically.
+</p>
+<span id="index-ibtypes-hynote_002dfile"></span>
+<span id="index-hywiki_002dactive_002din_002dcurrent_002dbuffer_002dp"></span>
+<span id="index-hywiki_002dmode-2"></span>
+<span id="index-hynote-file"></span>
+<span id="index-hywiki_002dmode"></span>
+</dd>
+<dt><span><code>hynote-file</code></span></dt>
+<dd><p>When on a HyNote file name stem, display the file and its optional
+section.  This type is active only in buffers where
+<code>hywiki-active-in-current-buffer-p</code> is true.  This may require
+that the global minor mode <code>hywiki-mode</code> has been enabled.
 </p></dd>
 </dl>
 
@@ -4414,7 +4455,7 @@ window configurations by name.  See <a href="#Window-Configurations">Window Conf
 <div class="chapter" id="HyWiki">
 <div class="header">
 <p>
-Next: <a href="#HyControl" accesskey="n" rel="next">HyControl</a>, Previous: <a href="#Menus" accesskey="p" rel="prev">Menus</a>, Up: <a href="#Top" accesskey="u" rel="up">GNU Hyperbole</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#HyNote" accesskey="n" rel="next">HyNote</a>, Previous: <a href="#Menus" accesskey="p" rel="prev">Menus</a>, Up: <a href="#Top" accesskey="u" rel="up">GNU Hyperbole</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <span id="HyWiki-1"></span><h2 class="chapter">6 HyWiki</h2>
 
@@ -4426,9 +4467,10 @@ Next: <a href="#HyControl" accesskey="n" rel="next">HyControl</a>, Previous: <a 
 <p>HyWiki is Hyperbole&rsquo;s markup-free, personal Wiki system for
 note-taking and automatic HyWikiWord highlighting and hyperlinking.
 It uses Org mode for note taking and adds automatic hyperlinking and
-highlighting of HyWikiWords within Org files in <code>hywiki-directory</code>
-(default = <samp>~/hywiki</samp>).  With <kbd>{C-h h h p}</kbd> you can publish
-your entire HyWiki to an HTML directory for export to the web.
+highlighting of HyWikiWords in Org files within
+<code>hywiki-directory</code> (default = <samp>~/hywiki</samp>).  With <kbd>{C-h h
+h p}</kbd> you can publish any updated part of your HyWiki to an HTML
+directory for export to the web.
 </p>
 
 <ul class="section-toc">
@@ -4503,9 +4545,9 @@ or not.  When activating a link with a section reference, you will get
 an error if the section does not exist.
 </p>
 <span id="index-HyWikiWord_002c-outside-the-wiki"></span>
-<span id="index-hywiki_002dmode"></span>
-<span id="index-toggle-hywiki_002dmode"></span>
 <span id="index-hywiki_002dmode-1"></span>
+<span id="index-toggle-hywiki_002dmode"></span>
+<span id="index-hywiki_002dmode-3"></span>
 <span id="index-C_002dh-h-h-t"></span>
 <p>HyWikiWords can also be highlighted and treated as hyperlinks in
 non-special text and programming buffers outside of the
@@ -4568,7 +4610,7 @@ HyWikiWords recognized everywhere, add them to the custom setting,
 <code>hywiki-highlight-all-in-prog-modes</code> (default =
 <code>'(lisp-interaction-mode)</code>).
 </p>
-<span id="index-ibtypes-hywiki_002dword"></span>
+<span id="index-ibtypes-hywiki_002dword-1"></span>
 <span id="index-ibtype-hywiki_002dword"></span>
 <p>HyWiki adds one implicit button type to Hyperbole: <code>hywiki-word</code>,
 which creates and displays HyWikiWord pages.  This is one of the lowest
@@ -4640,6 +4682,11 @@ It looks like this:
 <pre class="example">HyWiki&gt;  Act Create Edit GrepConsult Help Info Link ModeToggle Org-M-RET/ Publish TagFind WikiWordConsult
 </pre></div>
 
+<p>The GrepConsult and WikiWordConsult items appear only when the Consult
+package is installed prior to loading Hyperbole.  These commands are
+especially useful as they allow for fast line-level searching across
+many files with interactive search pattern narrowing.
+</p>
 <p>Below are descriptions of each menu item.
 </p>
 <span id="index-hywiki_002dconsult_002dgrep"></span>
@@ -4648,31 +4695,39 @@ It looks like this:
 <dl compact="compact">
 <dt><span>Act</span></dt>
 <dd><p>Activate HyWikiWord link at point.
-</p></dd>
+</p>
+</dd>
 <dt><span>Create</span></dt>
 <dd><p>Create and display a new HyWiki page.  Shows existing page names to aid in new naming.
-</p></dd>
+</p>
+</dd>
 <dt><span>Edit</span></dt>
 <dd><p>Prompt with completion for and display a HyWiki page ready for editing.
-</p></dd>
+</p>
+</dd>
 <dt><span>GrepConsult</span></dt>
 <dd><p>Grep over HyWiki pages with interactive <code>hywiki-consult-grep</code>.
-</p></dd>
+</p>
+</dd>
 <dt><span>Help</span></dt>
 <dd><p>Report on a HyWikiWord&rsquo;s attributes.
-</p></dd>
+</p>
+</dd>
 <dt><span>Info</span></dt>
 <dd><p>Display Hyperbole manual section on HyWiki.
-</p></dd>
+</p>
+</dd>
 <dt><span>Link</span></dt>
 <dd><p>Prompt for and add a link at point to a HyWiki page.
-<span id="index-hywiki_002dmode-2"></span>
+</p>
+<span id="index-hywiki_002dmode-4"></span>
 <span id="index-HyWiki-mode"></span>
 <span id="index-HyWikiWords-outside-hywiki_002ddirectory"></span>
-</p></dd>
+</dd>
 <dt><span>ModeToggle</span></dt>
 <dd><p>Toggle global minor mode <code>hywiki-mode</code> that enables HyWikiWord hyperlinks
 in buffers outside of <code>hywiki-directory</code>.
+</p>
 <span id="index-C_002dh-h-h-o"></span>
 <span id="index-HyWiki_002c-C_002dh-h-h-o"></span>
 <span id="index-C_002dh-h-h-c-1"></span>
@@ -4683,7 +4738,7 @@ in buffers outside of <code>hywiki-directory</code>.
 <span id="index-Org-M_002dRET-customize-1"></span>
 <span id="index-override-Org-M_002dRET-3"></span>
 <span id="index-Org-M_002dRET-override-2"></span>
-</p></dd>
+</dd>
 <dt><span>Org-M-RET/</span></dt>
 <dd><p>Menu to customize contexts in which Hyperbole Action and Assist Keys
 override Org&rsquo;s <kbd>{M-<span class="key">RET</span>}</kbd> command.  The default is
@@ -4692,29 +4747,64 @@ make the Action Key create new HyWiki pages when pressed on as-yet
 undefined HyWikiWords; otherwise, you must use <kbd>{C-h h h c}</kbd> to create a
 new HyWiki page instead.  Use &lsquo;<samp>None</samp>&rsquo; if you want to
 use Org&rsquo;s <kbd>{M-<span class="key">RET</span>}</kbd> command in every context within Org mode.
-</p></dd>
+</p>
+</dd>
 <dt><span>Publish</span></dt>
 <dd><p>Publish modified pages in the HyWiki to HTML; prefix arg to publish all pages.
+</p>
 <span id="index-HyWiki-tag-search"></span>
 <span id="index-search_002c-HyWiki-tag"></span>
-</p></dd>
+</dd>
 <dt><span>TagFind</span></dt>
 <dd><p>Find a matching Org tag across all HyWiki pages.
-</p></dd>
+</p>
+</dd>
 <dt><span>WikiWordConsult</span></dt>
 <dd><p>Use <code>hywiki-consult-grep</code> to show occurrences of a prompted for HyWikiWord.
 </p></dd>
 </dl>
 
+
 <hr>
 </div>
+</div>
+<div class="chapter" id="HyNote">
+<div class="header">
+<p>
+Next: <a href="#HyControl" accesskey="n" rel="next">HyControl</a>, Previous: <a href="#HyWiki" accesskey="p" rel="prev">HyWiki</a>, Up: <a href="#Top" accesskey="u" rel="up">GNU Hyperbole</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<span id="HyNote-1"></span><h2 class="chapter">7 HyNote</h2>
+<span id="index-HyNote"></span>
+<span id="index-notes"></span>
+<p>HyNote is a start on Hyperbole&rsquo;s note taking system.  HyNote supports
+Org, Markdown, Koutline and Emacs Outline file formats.
+</p>
+<span id="index-hynote_002ddirectory_002dlist"></span>
+<span id="index-ibtypes-hynote_002dfile-1"></span>
+<span id="index-ibtype-hynote_002dfile"></span>
+<p>Presently HyNote simply provides an experience similar to the HyWiki
+for Org and Org Roam file name stems and headline links for files
+found in the directories of <code>hynote-directory-list</code>, which
+defaults to the default Org and Org Roam directories.  For example, if
+the file <samp>~/Org/hyperbole-cmds.org</samp> has a headline,
+&lsquo;<samp>hyrolo-fgrep Command</samp>&rsquo;, then &quot;hyperbole-cmds#hyrolo-fgrep Command&quot;
+in any file will link to that headline.  See the documentation for the
+implicit button type that HyNote defines, <code>hynote-file</code>.
+</p>
+<p>In the future, HyNote will also provide a universal way to easily link to
+information across many file formats.
+</p>
+<p>See also <a href="#HyWiki">HyWiki</a>.
+</p>
+
+<hr>
 </div>
 <div class="chapter" id="HyControl">
 <div class="header">
 <p>
-Next: <a href="#Koutliner" accesskey="n" rel="next">Koutliner</a>, Previous: <a href="#HyWiki" accesskey="p" rel="prev">HyWiki</a>, Up: <a href="#Top" accesskey="u" rel="up">GNU Hyperbole</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Koutliner" accesskey="n" rel="next">Koutliner</a>, Previous: <a href="#HyNote" accesskey="p" rel="prev">HyNote</a>, Up: <a href="#Top" accesskey="u" rel="up">GNU Hyperbole</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="HyControl-1"></span><h2 class="chapter">7 HyControl</h2>
+<span id="HyControl-1"></span><h2 class="chapter">8 HyControl</h2>
 <span id="index-windows-control"></span>
 <span id="index-frames-control"></span>
 <span id="index-HyControl"></span>
@@ -4834,7 +4924,7 @@ buffers with attached files and displays those.
 <div class="float"><span id="image_003a2x3_002dWindows_002dGrid"></span>
 
 <img src="im/wgrid-2x3.png" alt="2x3 Windows Grid">
-<div class="float-caption"><p><strong>Image 7.1: </strong>2x3 Windows Grid</p></div></div><br>
+<div class="float-caption"><p><strong>Image 8.1: </strong>2x3 Windows Grid</p></div></div><br>
 
 <p>With a prefix argument of 0, the user is prompted for a major mode name and
 the windows grid size.  Only those buffers with the named major mode are
@@ -5307,7 +5397,7 @@ press that key, the other command can be reached by pressing <kbd>{t}</kbd>.
 <p>
 Next: <a href="#HyRolo" accesskey="n" rel="next">HyRolo</a>, Previous: <a href="#HyControl" accesskey="p" rel="prev">HyControl</a>, Up: <a href="#Top" accesskey="u" rel="up">GNU Hyperbole</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Koutliner-1"></span><h2 class="chapter">8 Koutliner</h2>
+<span id="Koutliner-1"></span><h2 class="chapter">9 Koutliner</h2>
 
 <span id="index-outliner"></span>
 <span id="index-autonumber"></span>
@@ -5345,7 +5435,7 @@ commands available in the Koutliner.
 <div class="float"><span id="image_003aKoutliner"></span>
 
 <img src="im/koutliner.png" alt="Koutliner Screenshot">
-<div class="float-caption"><p><strong>Image 8.1: </strong>Koutliner Screenshot</p></div></div><br>
+<div class="float-caption"><p><strong>Image 9.1: </strong>Koutliner Screenshot</p></div></div><br>
 
 
 
@@ -5366,7 +5456,7 @@ commands available in the Koutliner.
 <p>
 Next: <a href="#Creating-Outlines" accesskey="n" rel="next">Creating Outlines</a>, Previous: <a href="#Koutliner" accesskey="p" rel="prev">Koutliner</a>, Up: <a href="#Koutliner" accesskey="u" rel="up">Koutliner</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Menu-Commands-1"></span><h3 class="section">8.1 Menu Commands</h3>
+<span id="Menu-Commands-1"></span><h3 class="section">9.1 Menu Commands</h3>
 
 <p>The Kotl/ menu entry on the Hyperbole minibuffer menu provides access to
 a number of major Koutliner commands:
@@ -5420,7 +5510,7 @@ read the following sections explaining commands.
 <div class="float"><span id="image_003aKoutline-Menu"></span>
 
 <img src="im/menu-koutline.png" alt="Koutline Menu">
-<div class="float-caption"><p><strong>Image 8.2: </strong>Koutline Menu</p></div></div><br>
+<div class="float-caption"><p><strong>Image 9.2: </strong>Koutline Menu</p></div></div><br>
 
 <hr>
 </div>
@@ -5429,7 +5519,7 @@ read the following sections explaining commands.
 <p>
 Next: <a href="#Autonumbering" accesskey="n" rel="next">Autonumbering</a>, Previous: <a href="#Menu-Commands" accesskey="p" rel="prev">Menu Commands</a>, Up: <a href="#Koutliner" accesskey="u" rel="up">Koutliner</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Creating-Outlines-1"></span><h3 class="section">8.2 Creating Outlines</h3>
+<span id="Creating-Outlines-1"></span><h3 class="section">9.2 Creating Outlines</h3>
 
 <span id="index-outline-file-suffix"></span>
 <span id="index-outline_002c-creating"></span>
@@ -5466,7 +5556,7 @@ structure of the outline changes.
 <p>
 Next: <a href="#Idstamps" accesskey="n" rel="next">Idstamps</a>, Previous: <a href="#Creating-Outlines" accesskey="p" rel="prev">Creating Outlines</a>, Up: <a href="#Koutliner" accesskey="u" rel="up">Koutliner</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Autonumbering-1"></span><h3 class="section">8.3 Autonumbering</h3>
+<span id="Autonumbering-1"></span><h3 class="section">9.3 Autonumbering</h3>
 
 <span id="index-autonumber-1"></span>
 <span id="index-relative-identifier"></span>
@@ -5545,7 +5635,7 @@ initialization file, <samp>~/.emacs</samp>, substituting for &lsquo;your-separat
 <p>
 Next: <a href="#Editing-Outlines" accesskey="n" rel="next">Editing Outlines</a>, Previous: <a href="#Autonumbering" accesskey="p" rel="prev">Autonumbering</a>, Up: <a href="#Koutliner" accesskey="u" rel="up">Koutliner</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Idstamps-1"></span><h3 class="section">8.4 Idstamps</h3>
+<span id="Idstamps-1"></span><h3 class="section">9.4 Idstamps</h3>
 
 <span id="index-permanent-identifier-1"></span>
 <span id="index-idstamp-1"></span>
@@ -5578,7 +5668,7 @@ begin with a 0, as in 012, to distinguish them from relative ids.
 <p>
 Next: <a href="#Viewing-Outlines" accesskey="n" rel="next">Viewing Outlines</a>, Previous: <a href="#Idstamps" accesskey="p" rel="prev">Idstamps</a>, Up: <a href="#Koutliner" accesskey="u" rel="up">Koutliner</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Editing-Outlines-1"></span><h3 class="section">8.5 Editing Outlines</h3>
+<span id="Editing-Outlines-1"></span><h3 class="section">9.5 Editing Outlines</h3>
 
 <p>Text editing within the Koutliner works just as it does for other
 buffers, except when you need to deal with the structural components of
@@ -5616,7 +5706,7 @@ selected region, since that will destroy the outline structure.
 <p>
 Next: <a href="#Promoting-and-Demoting" accesskey="n" rel="next">Promoting and Demoting</a>, Previous: <a href="#Editing-Outlines" accesskey="p" rel="prev">Editing Outlines</a>, Up: <a href="#Editing-Outlines" accesskey="u" rel="up">Editing Outlines</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Adding-and-Killing-1"></span><h4 class="subsection">8.5.1 Adding and Killing</h4>
+<span id="Adding-and-Killing-1"></span><h4 class="subsection">9.5.1 Adding and Killing</h4>
 
 <span id="index-koutliner_002c-C_002dj"></span>
 <span id="index-koutliner_002c-C_002du-c_002dj"></span>
@@ -5653,7 +5743,7 @@ buffer with <kbd>{C-y}</kbd>.
 <p>
 Next: <a href="#Relocating-and-Copying" accesskey="n" rel="next">Relocating and Copying</a>, Previous: <a href="#Adding-and-Killing" accesskey="p" rel="prev">Adding and Killing</a>, Up: <a href="#Editing-Outlines" accesskey="u" rel="up">Editing Outlines</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Promoting-and-Demoting-1"></span><h4 class="subsection">8.5.2 Promoting and Demoting</h4>
+<span id="Promoting-and-Demoting-1"></span><h4 class="subsection">9.5.2 Promoting and Demoting</h4>
 
 <span id="index-promotion"></span>
 <span id="index-demotion"></span>
@@ -5750,7 +5840,7 @@ to demote/promote Koutline trees when in a table since <tt class="key">TAB</tt> 
 <p>
 Next: <a href="#Moving-Around" accesskey="n" rel="next">Moving Around</a>, Previous: <a href="#Promoting-and-Demoting" accesskey="p" rel="prev">Promoting and Demoting</a>, Up: <a href="#Editing-Outlines" accesskey="u" rel="up">Editing Outlines</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Relocating-and-Copying-1"></span><h4 class="subsection">8.5.3 Relocating and Copying</h4>
+<span id="Relocating-and-Copying-1"></span><h4 class="subsection">9.5.3 Relocating and Copying</h4>
 
 <span id="index-tree_002c-copying"></span>
 <span id="index-tree_002c-moving"></span>
@@ -5868,7 +5958,7 @@ See <a href="#Inserting-and-Importing">Inserting and Importing</a>.
 <p>
 Next: <a href="#Filling" accesskey="n" rel="next">Filling</a>, Previous: <a href="#Relocating-and-Copying" accesskey="p" rel="prev">Relocating and Copying</a>, Up: <a href="#Editing-Outlines" accesskey="u" rel="up">Editing Outlines</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Moving-Around-1"></span><h4 class="subsection">8.5.4 Moving Around</h4>
+<span id="Moving-Around-1"></span><h4 class="subsection">9.5.4 Moving Around</h4>
 
 <span id="index-outline_002c-motion"></span>
 <p>In addition to normal emacs movement commands, you can move within a
@@ -5939,7 +6029,7 @@ cell or from one cell or tree to another.
 <p>
 Next: <a href="#Transposing" accesskey="n" rel="next">Transposing</a>, Previous: <a href="#Moving-Around" accesskey="p" rel="prev">Moving Around</a>, Up: <a href="#Editing-Outlines" accesskey="u" rel="up">Editing Outlines</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Filling-1"></span><h4 class="subsection">8.5.5 Filling</h4>
+<span id="Filling-1"></span><h4 class="subsection">9.5.5 Filling</h4>
 
 <span id="index-outline_002c-filling"></span>
 <span id="index-filling"></span>
@@ -5986,7 +6076,7 @@ a &lsquo;no-fill&rsquo; property, then your formatting will be lost.
 <p>
 Next: <a href="#Splitting-and-Appending" accesskey="n" rel="next">Splitting and Appending</a>, Previous: <a href="#Filling" accesskey="p" rel="prev">Filling</a>, Up: <a href="#Editing-Outlines" accesskey="u" rel="up">Editing Outlines</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Transposing-1"></span><h4 class="subsection">8.5.6 Transposing</h4>
+<span id="Transposing-1"></span><h4 class="subsection">9.5.6 Transposing</h4>
 
 <p>The Koutliner move and copy commands rearrange entire trees.  The
 following two commands, in contrast, exchange the locations of two
@@ -6020,7 +6110,7 @@ fewer visible, it makes the current cell the last cell in the outline.
 <p>
 Next: <a href="#Inserting-and-Importing" accesskey="n" rel="next">Inserting and Importing</a>, Previous: <a href="#Transposing" accesskey="p" rel="prev">Transposing</a>, Up: <a href="#Editing-Outlines" accesskey="u" rel="up">Editing Outlines</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Splitting-and-Appending-1"></span><h4 class="subsection">8.5.7 Splitting and Appending</h4>
+<span id="Splitting-and-Appending-1"></span><h4 class="subsection">9.5.7 Splitting and Appending</h4>
 
 <span id="index-splitting-a-cell"></span>
 <span id="index-cell_002c-splitting"></span>
@@ -6054,7 +6144,7 @@ This helps maintain any special formatting the appended text may have.
 <p>
 Next: <a href="#Exporting" accesskey="n" rel="next">Exporting</a>, Previous: <a href="#Splitting-and-Appending" accesskey="p" rel="prev">Splitting and Appending</a>, Up: <a href="#Editing-Outlines" accesskey="u" rel="up">Editing Outlines</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Inserting-and-Importing-1"></span><h4 class="subsection">8.5.8 Inserting and Importing</h4>
+<span id="Inserting-and-Importing-1"></span><h4 class="subsection">9.5.8 Inserting and Importing</h4>
 
 <span id="index-outline_002c-inserting-into"></span>
 <span id="index-outline_002c-importing-into"></span>
@@ -6148,7 +6238,7 @@ information.
 <p>
 Previous: <a href="#Inserting-and-Importing" accesskey="p" rel="prev">Inserting and Importing</a>, Up: <a href="#Editing-Outlines" accesskey="u" rel="up">Editing Outlines</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Exporting-1"></span><h4 class="subsection">8.5.9 Exporting</h4>
+<span id="Exporting-1"></span><h4 class="subsection">9.5.9 Exporting</h4>
 
 <span id="index-outline_002c-exporting-1"></span>
 <span id="index-outline_002c-HTML-conversion"></span>
@@ -6191,7 +6281,7 @@ not be displayed; you must display it manually, if desired.
 <p>
 Next: <a href="#Klinks" accesskey="n" rel="next">Klinks</a>, Previous: <a href="#Editing-Outlines" accesskey="p" rel="prev">Editing Outlines</a>, Up: <a href="#Koutliner" accesskey="u" rel="up">Koutliner</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Viewing-Outlines-1"></span><h3 class="section">8.6 Viewing Outlines</h3>
+<span id="Viewing-Outlines-1"></span><h3 class="section">9.6 Viewing Outlines</h3>
 
 <span id="index-outline_002c-viewing"></span>
 <span id="index-view"></span>
@@ -6209,7 +6299,7 @@ effectively browse and study large amounts of material.
 <p>
 Next: <a href="#View-Specs" accesskey="n" rel="next">View Specs</a>, Previous: <a href="#Viewing-Outlines" accesskey="p" rel="prev">Viewing Outlines</a>, Up: <a href="#Viewing-Outlines" accesskey="u" rel="up">Viewing Outlines</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Hiding-and-Showing-1"></span><h4 class="subsection">8.6.1 Hiding and Showing</h4>
+<span id="Hiding-and-Showing-1"></span><h4 class="subsection">9.6.1 Hiding and Showing</h4>
 
 <span id="index-outline_002c-hiding"></span>
 <span id="index-outline_002c-showing"></span>
@@ -6313,7 +6403,7 @@ point.  Try it with either your mouse or with <kbd>{M-<span class="key">RET</spa
 <p>
 Previous: <a href="#Hiding-and-Showing" accesskey="p" rel="prev">Hiding and Showing</a>, Up: <a href="#Viewing-Outlines" accesskey="u" rel="up">Viewing Outlines</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="View-Specs-1"></span><h4 class="subsection">8.6.2 View Specs</h4>
+<span id="View-Specs-1"></span><h4 class="subsection">9.6.2 View Specs</h4>
 
 <span id="index-view-spec"></span>
 <span id="index-modeline_002c-view-spec"></span>
@@ -6430,7 +6520,7 @@ cells below level one.
 <p>
 Next: <a href="#Cell-Attributes" accesskey="n" rel="next">Cell Attributes</a>, Previous: <a href="#Viewing-Outlines" accesskey="p" rel="prev">Viewing Outlines</a>, Up: <a href="#Koutliner" accesskey="u" rel="up">Koutliner</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Klinks-1"></span><h3 class="section">8.7 Klinks</h3>
+<span id="Klinks-1"></span><h3 class="section">9.7 Klinks</h3>
 
 <span id="index-link"></span>
 <span id="index-hyperlink"></span>
@@ -6576,7 +6666,7 @@ mistakenly recognizes a pattern within a comment as a klink when it isn&rsquo;t.
 <p>
 Next: <a href="#Koutliner-History" accesskey="n" rel="next">Koutliner History</a>, Previous: <a href="#Klinks" accesskey="p" rel="prev">Klinks</a>, Up: <a href="#Koutliner" accesskey="u" rel="up">Koutliner</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Cell-Attributes-1"></span><h3 class="section">8.8 Cell Attributes</h3>
+<span id="Cell-Attributes-1"></span><h3 class="section">9.8 Cell Attributes</h3>
 
 <span id="index-cell-attribute"></span>
 <span id="index-attribute"></span>
@@ -6665,7 +6755,7 @@ attributes for all visible cells in the outline.
 <p>
 Previous: <a href="#Cell-Attributes" accesskey="p" rel="prev">Cell Attributes</a>, Up: <a href="#Koutliner" accesskey="u" rel="up">Koutliner</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Koutliner-History-1"></span><h3 class="section">8.9 Koutliner History</h3>
+<span id="Koutliner-History-1"></span><h3 class="section">9.9 Koutliner History</h3>
 
 <span id="index-NLS"></span>
 <span id="index-Augment"></span>
@@ -6698,14 +6788,15 @@ these capabilities back into the mainstream of modern computing culture.
 <p>
 Next: <a href="#Window-Configurations" accesskey="n" rel="next">Window Configurations</a>, Previous: <a href="#Koutliner" accesskey="p" rel="prev">Koutliner</a>, Up: <a href="#Top" accesskey="u" rel="up">GNU Hyperbole</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="HyRolo-1"></span><h2 class="chapter">9 HyRolo</h2>
+<span id="HyRolo-1"></span><h2 class="chapter">10 HyRolo</h2>
 
-<span id="index-Rolo"></span>
+<span id="index-rolo"></span>
 <span id="index-HyRolo"></span>
-<p>Hyperbole includes a complete, advanced rolo system, HyRolo, for
-convenient management of hierarchical, record-oriented information.
-Most often this is used for contact management but it can quickly be
-adapted to most any record-oriented lookup task requiring fast retrieval.
+<p>Hyperbole includes HyRolo, a complete, advanced system for convenient
+management of hierarchical, record-oriented information.  Most often
+this is used for contact management but it can quickly be adapted to
+most any record-oriented lookup task requiring fast retrieval.  There
+is also a Python-based command-line version, <samp>hyrolo.py</samp>, included.
 </p>
 <span id="index-rolo_002c-buttons-in"></span>
 <p>Hyperbole buttons may be included within rolo records and then
@@ -6728,7 +6819,7 @@ tool.
 <p>
 Next: <a href="#HyRolo-Menu" accesskey="n" rel="next">Rolo Menu</a>, Previous: <a href="#HyRolo" accesskey="p" rel="prev">HyRolo</a>, Up: <a href="#HyRolo" accesskey="u" rel="up">HyRolo</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="HyRolo-Concepts-1"></span><h3 class="section">9.1 HyRolo Concepts</h3>
+<span id="HyRolo-Concepts-1"></span><h3 class="section">10.1 HyRolo Concepts</h3>
 
 <span id="index-rolo-file"></span>
 <span id="index-rolo-entry"></span>
@@ -6818,7 +6909,7 @@ Searching for Manager turns up all Staffer entries.
 <p>
 Next: <a href="#HyRolo-Searching" accesskey="n" rel="next">HyRolo Searching</a>, Previous: <a href="#HyRolo-Concepts" accesskey="p" rel="prev">HyRolo Concepts</a>, Up: <a href="#HyRolo" accesskey="u" rel="up">HyRolo</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Rolo-Menu"></span><h3 class="section">9.2 Rolo Menu</h3>
+<span id="Rolo-Menu"></span><h3 class="section">10.2 Rolo Menu</h3>
 
 <p>The Rolo submenu of the Hyperbole menu offers a full set of commands
 for searching and maintaining a personal address book.  It looks like
@@ -6827,7 +6918,7 @@ so.
 <div class="float"><span id="image_003aRolo-Menu"></span>
 
 <img src="im/menu-rolo.png" alt="HyRolo Menu">
-<div class="float-caption"><p><strong>Image 9.1: </strong>HyRolo Menu</p></div></div>
+<div class="float-caption"><p><strong>Image 10.1: </strong>HyRolo Menu</p></div></div>
 <span id="index-Rolo-menu"></span>
 <span id="index-HyRolo-menu"></span>
 <span id="index-menu_002c-HyRolo"></span>
@@ -6859,8 +6950,9 @@ set of commands as the menubar Rolo menu but with more concise labels.
 <span id="index-hyrolo_002dword"></span>
 <span id="index-hyrolo_002dyank"></span>
 <p>The minibuffer Rolo/ menu offers the following commands (ConsultFind
-and HelmFind appear only when associated packages are loaded but are
-especially noteworthy as they allow for line-level searching with
+and HelmFind appear only when the Consult and Helm packages are
+installed prior to loading Hyperbole.  They are especially noteworthy
+as they allow for fast line-level searching across many files with
 interactive search pattern narrowing):
 </p>
 <div class="example">
@@ -6926,7 +7018,7 @@ containing &quot;Staffer&quot; at any level in a hierarchy, like so:
 <p>
 Next: <a href="#HyRolo-Keys" accesskey="n" rel="next">HyRolo Keys</a>, Previous: <a href="#HyRolo-Menu" accesskey="p" rel="prev">Rolo Menu</a>, Up: <a href="#HyRolo" accesskey="u" rel="up">HyRolo</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="HyRolo-Searching-1"></span><h3 class="section">9.3 HyRolo Searching</h3>
+<span id="HyRolo-Searching-1"></span><h3 class="section">10.3 HyRolo Searching</h3>
 
 <span id="index-rolo-searching"></span>
 <span id="index-searching_002c-rolo"></span>
@@ -7015,7 +7107,7 @@ to match.  For example:
 <p>
 Next: <a href="#HyRolo-Settings" accesskey="n" rel="next">HyRolo Settings</a>, Previous: <a href="#HyRolo-Searching" accesskey="p" rel="prev">HyRolo Searching</a>, Up: <a href="#HyRolo" accesskey="u" rel="up">HyRolo</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="HyRolo-Keys-1"></span><h3 class="section">9.4 HyRolo Keys</h3>
+<span id="HyRolo-Keys-1"></span><h3 class="section">10.4 HyRolo Keys</h3>
 
 <span id="index-hyrolo-menu"></span>
 <span id="index-rolo-keys"></span>
@@ -7210,7 +7302,7 @@ current frame to its state prior to the rolo search.
 <p>
 Previous: <a href="#HyRolo-Keys" accesskey="p" rel="prev">HyRolo Keys</a>, Up: <a href="#HyRolo" accesskey="u" rel="up">HyRolo</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="HyRolo-Settings-1"></span><h3 class="section">9.5 HyRolo Settings</h3>
+<span id="HyRolo-Settings-1"></span><h3 class="section">10.5 HyRolo Settings</h3>
 
 <span id="index-hyrolo_002dfile_002dlist-1"></span>
 <span id="index-rolo_002c-personal"></span>
@@ -7380,7 +7472,7 @@ There is never a need to learn a complicated query language.
 <p>
 Next: <a href="#Developing-with-Hyperbole" accesskey="n" rel="next">Developing with Hyperbole</a>, Previous: <a href="#HyRolo" accesskey="p" rel="prev">HyRolo</a>, Up: <a href="#Top" accesskey="u" rel="up">GNU Hyperbole</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Window-Configurations-1"></span><h2 class="chapter">10 Window Configurations</h2>
+<span id="Window-Configurations-1"></span><h2 class="chapter">11 Window Configurations</h2>
 
 <span id="index-window-configurations"></span>
 <span id="index-restoring-windows"></span>
@@ -7484,7 +7576,7 @@ is added.
 <p>
 Next: <a href="#Glossary" accesskey="n" rel="next">Glossary</a>, Previous: <a href="#Window-Configurations" accesskey="p" rel="prev">Window Configurations</a>, Up: <a href="#Top" accesskey="u" rel="up">GNU Hyperbole</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Developing-with-Hyperbole-1"></span><h2 class="chapter">11 Developing with Hyperbole</h2>
+<span id="Developing-with-Hyperbole-1"></span><h2 class="chapter">12 Developing with Hyperbole</h2>
 
 <p>This chapter is for people who wish to customize Hyperbole, to extend
 it, or to develop other systems using Hyperbole as a base.  Most of it
@@ -7507,7 +7599,7 @@ regular expressions.
 <p>
 Next: <a href="#Creating-Types" accesskey="n" rel="next">Creating Types</a>, Previous: <a href="#Developing-with-Hyperbole" accesskey="p" rel="prev">Developing with Hyperbole</a>, Up: <a href="#Developing-with-Hyperbole" accesskey="u" rel="up">Developing with Hyperbole</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Hook-Variables-1"></span><h3 class="section">11.1 Hook Variables</h3>
+<span id="Hook-Variables-1"></span><h3 class="section">12.1 Hook Variables</h3>
 
 <span id="index-variables"></span>
 <span id="index-hook-variables"></span>
@@ -7649,7 +7741,7 @@ specific usage of such hooks.
 <p>
 Next: <a href="#Explicit-Button-Technicalities" accesskey="n" rel="next">Explicit Button Technicalities</a>, Previous: <a href="#Hook-Variables" accesskey="p" rel="prev">Hook Variables</a>, Up: <a href="#Developing-with-Hyperbole" accesskey="u" rel="up">Developing with Hyperbole</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Creating-Types-1"></span><h3 class="section">11.2 Creating Types</h3>
+<span id="Creating-Types-1"></span><h3 class="section">12.2 Creating Types</h3>
 
 <span id="index-type-definition"></span>
 <span id="index-type-redefinition-1"></span>
@@ -7690,7 +7782,7 @@ and <samp>hibtypes.el</samp> for examples.
 <p>
 Next: <a href="#Creating-Implicit-Button-Types" accesskey="n" rel="next">Creating Implicit Button Types</a>, Previous: <a href="#Creating-Types" accesskey="p" rel="prev">Creating Types</a>, Up: <a href="#Creating-Types" accesskey="u" rel="up">Creating Types</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Creating-Action-Types-1"></span><h4 class="subsection">11.2.1 Creating Action Types</h4>
+<span id="Creating-Action-Types-1"></span><h4 class="subsection">12.2.1 Creating Action Types</h4>
 
 <span id="index-actype_003acreate"></span>
 <span id="index-file_002c-hactypes_002eel-1"></span>
@@ -7813,7 +7905,7 @@ returned by the call).
 <p>
 Previous: <a href="#Creating-Action-Types" accesskey="p" rel="prev">Creating Action Types</a>, Up: <a href="#Creating-Types" accesskey="u" rel="up">Creating Types</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Creating-Implicit-Button-Types-1"></span><h4 class="subsection">11.2.2 Creating Implicit Button Types</h4>
+<span id="Creating-Implicit-Button-Types-1"></span><h4 class="subsection">12.2.2 Creating Implicit Button Types</h4>
 
 <p>Implicit buttons leverage the same action types used by explicit and
 global buttons but each carries an additional implicit button type
@@ -7862,7 +7954,7 @@ techniques.
 <p>
 Next: <a href="#Implicit-Button-Link-Types" accesskey="n" rel="next">Implicit Button Link Types</a>, Previous: <a href="#Creating-Implicit-Button-Types" accesskey="p" rel="prev">Creating Implicit Button Types</a>, Up: <a href="#Creating-Implicit-Button-Types" accesskey="u" rel="up">Creating Implicit Button Types</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Action-Button-Link-Types-1"></span><h4 class="subsubsection">11.2.2.1 Action Button Link Types</h4>
+<span id="Action-Button-Link-Types-1"></span><h4 class="subsubsection">12.2.2.1 Action Button Link Types</h4>
 
 <p>The simplest way to create a new implicit link type (from which any
 number of buttons can be recognized within text) is to create an
@@ -7923,7 +8015,7 @@ expression-based link type creation.  See <a href="#Programmatic-Implicit-Button
 <p>
 Next: <a href="#Programmatic-Implicit-Button-Types" accesskey="n" rel="next">Programmatic Implicit Button Types</a>, Previous: <a href="#Action-Button-Link-Types" accesskey="p" rel="prev">Action Button Link Types</a>, Up: <a href="#Creating-Implicit-Button-Types" accesskey="u" rel="up">Creating Implicit Button Types</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Implicit-Button-Link-Types-1"></span><h4 class="subsubsection">11.2.2.2 Implicit Button Link Types</h4>
+<span id="Implicit-Button-Link-Types-1"></span><h4 class="subsubsection">12.2.2.2 Implicit Button Link Types</h4>
 
 <p>If you understand Emacs regular expressions (see <a data-manual="emacs" href="https://www.gnu.org/software/emacs/manual/html_mono/emacs.html#Regexps">Syntax of
 Regular Expressions</a> in <cite>the GNU Emacs Manual</cite>), you can create new
@@ -7998,7 +8090,7 @@ same thing without any special definitions.
 <p>
 Previous: <a href="#Implicit-Button-Link-Types" accesskey="p" rel="prev">Implicit Button Link Types</a>, Up: <a href="#Creating-Implicit-Button-Types" accesskey="u" rel="up">Creating Implicit Button Types</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Programmatic-Implicit-Button-Types-1"></span><h4 class="subsubsection">11.2.2.3 Programmatic Implicit Button Types</h4>
+<span id="Programmatic-Implicit-Button-Types-1"></span><h4 class="subsubsection">12.2.2.3 Programmatic Implicit Button Types</h4>
 
 <span id="index-implicit-button-type-1"></span>
 <span id="index-ibtype"></span>
@@ -8123,7 +8215,7 @@ the <samp>hib-kbd.el</samp> file for an example of a custom help function.
 <p>
 Next: <a href="#Encapsulating-Systems" accesskey="n" rel="next">Encapsulating Systems</a>, Previous: <a href="#Creating-Types" accesskey="p" rel="prev">Creating Types</a>, Up: <a href="#Developing-with-Hyperbole" accesskey="u" rel="up">Developing with Hyperbole</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Explicit-Button-Technicalities-1"></span><h3 class="section">11.3 Explicit Button Technicalities</h3>
+<span id="Explicit-Button-Technicalities-1"></span><h3 class="section">12.3 Explicit Button Technicalities</h3>
 
 <ul class="section-toc">
 <li><a href="#Button-Label-Normalization" accesskey="1">Button Label Normalization</a></li>
@@ -8136,7 +8228,7 @@ Next: <a href="#Encapsulating-Systems" accesskey="n" rel="next">Encapsulating Sy
 <p>
 Next: <a href="#Operational-and-Storage-Formats" accesskey="n" rel="next">Operational and Storage Formats</a>, Previous: <a href="#Explicit-Button-Technicalities" accesskey="p" rel="prev">Explicit Button Technicalities</a>, Up: <a href="#Explicit-Button-Technicalities" accesskey="u" rel="up">Explicit Button Technicalities</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Button-Label-Normalization-1"></span><h4 class="subsection">11.3.1 Button Label Normalization</h4>
+<span id="Button-Label-Normalization-1"></span><h4 class="subsection">12.3.1 Button Label Normalization</h4>
 <span id="index-normalized-label"></span>
 <span id="index-button-label-2"></span>
 <span id="index-button-key"></span>
@@ -8184,7 +8276,7 @@ intervention is required.
 <p>
 Next: <a href="#Programmatic-Button-Creation" accesskey="n" rel="next">Programmatic Button Creation</a>, Previous: <a href="#Button-Label-Normalization" accesskey="p" rel="prev">Button Label Normalization</a>, Up: <a href="#Explicit-Button-Technicalities" accesskey="u" rel="up">Explicit Button Technicalities</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Operational-and-Storage-Formats-1"></span><h4 class="subsection">11.3.2 Operational and Storage Formats</h4>
+<span id="Operational-and-Storage-Formats-1"></span><h4 class="subsection">12.3.2 Operational and Storage Formats</h4>
 
 <span id="index-explicit-button-formats"></span>
 <span id="index-explicit-button-storage"></span>
@@ -8218,7 +8310,7 @@ any Hyperbole client programming.
 <p>
 Previous: <a href="#Operational-and-Storage-Formats" accesskey="p" rel="prev">Operational and Storage Formats</a>, Up: <a href="#Explicit-Button-Technicalities" accesskey="u" rel="up">Explicit Button Technicalities</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Programmatic-Button-Creation-1"></span><h4 class="subsection">11.3.3 Programmatic Button Creation</h4>
+<span id="Programmatic-Button-Creation-1"></span><h4 class="subsection">12.3.3 Programmatic Button Creation</h4>
 
 <span id="index-explicit-button_002c-programmatic-creation"></span>
 <p>A common need when developing with Hyperbole is to create or to modify
@@ -8265,7 +8357,7 @@ buttons at the end of the personal button file.
 <p>
 Next: <a href="#Embedding-Hyperbole" accesskey="n" rel="next">Embedding Hyperbole</a>, Previous: <a href="#Explicit-Button-Technicalities" accesskey="p" rel="prev">Explicit Button Technicalities</a>, Up: <a href="#Developing-with-Hyperbole" accesskey="u" rel="up">Developing with Hyperbole</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Encapsulating-Systems-1"></span><h3 class="section">11.4 Encapsulating Systems</h3>
+<span id="Encapsulating-Systems-1"></span><h3 class="section">12.4 Encapsulating Systems</h3>
 
 <span id="index-file_002c-hsys_002d_002a"></span>
 <span id="index-Hyperbole_002c-system-encapsulation"></span>
@@ -8294,7 +8386,7 @@ that a press of the Action Key follows a URL.
 <p>
 Previous: <a href="#Encapsulating-Systems" accesskey="p" rel="prev">Encapsulating Systems</a>, Up: <a href="#Developing-with-Hyperbole" accesskey="u" rel="up">Developing with Hyperbole</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Embedding-Hyperbole-1"></span><h3 class="section">11.5 Embedding Hyperbole</h3>
+<span id="Embedding-Hyperbole-1"></span><h3 class="section">12.5 Embedding Hyperbole</h3>
 
 <span id="index-Hyperbole-API"></span>
 <span id="index-API"></span>
@@ -8656,6 +8748,22 @@ fast, single key manipulation of window and frame creation, deletion,
 sizing, position and face zooming (enlarging/shrinking).
 </p>
 </dd>
+<dt><span><b>HyNote</b></span></dt>
+<dd><p>HyNote is a start on Hyperbole&rsquo;s note taking system.  It presently
+simply provides an experience similar to HyWiki, but for Org directory
+and Org Roam file and headline links.  See the documentation for the
+implicit button type it defines, <code>hynote-file</code>.
+</p>
+<p>HyNote supports Org, Markdown, Koutline and Emacs Outline file
+formats.  It uses UUIDs and HyRolo for quick note lookups across
+matching files in <code>hynote-directory-list</code>.
+</p>
+<p>In the future, it will also provide a universal way to easily link to
+information across many file formats.
+</p>
+<p>See also <b>HyWiki</b>.
+</p>
+</dd>
 <dt><span><b>Hyperbole</b></span></dt>
 <dd><p>The flexible, programmable information management and viewing system
 documented by this manual.  It utilizes a button-action model and supports
@@ -8688,10 +8796,14 @@ DataBase (BBDB) package.
 <dd><p>HyWiki, the Hyperbole personal wiki tool, lets you create a personal
 wiki of interlinked Org files in a single directory, where each page
 name automatically becomes a live HyWikiWord link back to the
-associated page whenever added in any file in the HyWiki directory.
-HyWikiWords also work outside this directory if you turn on the minor
-<code>hywiki-mode</code> in other buffers.  A single command exports an
-entire HyWiki to the web.
+associated page whenever added in any file within the HyWiki
+directory.  HyWikiWords also work outside this directory if you turn
+on the minor <code>hywiki-mode</code> in other buffers.  A single command,
+<kbd>{C-u C-h h h p}</kbd>, publishes/exports an entire HyWiki to HTML for
+display on the web.
+</p>
+<p>See the documentation for its implicit button types, <code>hywiki-word</code>
+and <code>hywiki-existing-word</code>.
 </p>
 </dd>
 <dt><span><b>Ilink</b></span></dt>
@@ -14274,6 +14386,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-hycontrol_002dwindows_002dgrid_002dby_002dbuffer_002dlist"><code>hycontrol-windows-grid-by-buffer-list</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hycontrol_002dwindows_002dgrid_002dby_002dfile_002dlist"><code>hycontrol-windows-grid-by-file-list</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hycontrol_002dwindows_002dgrid_002dby_002dfile_002dpattern"><code>hycontrol-windows-grid-by-file-pattern</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hynote_002ddirectory_002dlist">hynote-directory-list</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyNote">HyNote</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hypb_003afgrep_002dgit_002dlog"><code>hypb:fgrep-git-log</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hypb_003agrep_002dgit_002dlog"><code>hypb:grep-git-log</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hypb_003argrep_002dcommand">hypb:rgrep-command</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
@@ -14338,12 +14451,14 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-hywconfig_002dring_002dsave-1"><code>hywconfig-ring-save</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Window-Configurations">Window Configurations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hywconfig_002dyank_002dpop"><code>hywconfig-yank-pop</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Window-Configurations">Window Configurations</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hywconfig_002dyank_002dpop-1"><code>hywconfig-yank-pop</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Window-Configurations">Window Configurations</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hywiki_002dactive_002din_002dcurrent_002dbuffer_002dp"><code>hywiki-active-in-current-buffer-p</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hywiki_002dconsult_002dgrep"><code>hywiki-consult-grep</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hywiki_002ddirectory">hywiki-directory</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWiki">HyWiki</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hywiki_002dexclude_002dmajor_002dmodes">hywiki-exclude-major-modes</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hywiki_002dhighlight_002dall_002din_002dprog_002dmodes">hywiki-highlight-all-in-prog-modes</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-hywiki_002dmode-1"><code>hywiki-mode</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-hywiki_002dmode-2"><code>hywiki-mode</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hywiki_002dmode-2"><code>hywiki-mode</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hywiki_002dmode-3"><code>hywiki-mode</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hywiki_002dmode-4"><code>hywiki-mode</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hywiki_002dorg_002dget_002dpublish_002dproperty"><code>hywiki-org-get-publish-property</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Publish-HyWiki">Publish HyWiki</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hywiki_002dorg_002dlink_002dtype_002drequired">hywiki-org-link-type-required</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hywiki_002dorg_002dpublish_002dproject_002dalist">hywiki-org-publish-project-alist</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Publish-HyWiki">Publish HyWiki</a></td></tr>
@@ -14372,13 +14487,18 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td valign="top"><a href="#index-ibtypes-glink"><code>ibtypes glink</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-gnus_002dpush_002dbutton"><code>ibtypes gnus-push-button</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-grep_002dmsg"><code>ibtypes grep-msg</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-hynote_002dfile"><code>ibtypes hynote-file</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-hynote_002dfile-1"><code>ibtypes hynote-file</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyNote">HyNote</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-hyp_002daddress"><code>ibtypes hyp-address</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-hyp_002dhtml_002dmanual"><code>ibtypes hyp-html-manual</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-hyp_002dsource"><code>ibtypes hyp-source</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-hyperbole_002drun_002dtest"><code>ibtypes hyperbole-run-test</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-hyperbole_002drun_002dtest_002ddefinition"><code>ibtypes hyperbole-run-test-definition</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-hyperbole_002drun_002dtests"><code>ibtypes hyperbole-run-tests</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-hyrolo_002dstuck_002dmsg"><code>ibtypes hyrolo-stuck-msg</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-ibtypes-hywiki_002dword"><code>ibtypes hywiki-word</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-hywiki_002dexisting_002dword"><code>ibtypes hywiki-existing-word</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-hywiki_002dword"><code>ibtypes hywiki-word</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtypes-hywiki_002dword-1"><code>ibtypes hywiki-word</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-id_002dcflow"><code>ibtypes id-cflow</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-ilink"><code>ibtypes ilink</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtypes-Info_002dnode"><code>ibtypes Info-node</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
@@ -15212,6 +15332,8 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td valign="top"><a href="#index-HyControl-switch-modes">HyControl switch modes</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-HyControl-toggle-modes">HyControl toggle modes</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-HyControl-windows-grid">HyControl windows grid</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-HyNote">HyNote</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyNote">HyNote</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hynote-file">hynote file</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Hyperbole">Hyperbole</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hyperbole-Overview">Hyperbole Overview</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Hyperbole-API">Hyperbole API</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Embedding-Hyperbole">Embedding Hyperbole</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Hyperbole-applications">Hyperbole applications</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hyperbole-Overview">Hyperbole Overview</a></td></tr>
@@ -15224,6 +15346,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td valign="top"><a href="#index-Hyperbole-mail-list">Hyperbole mail list</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Hyperbole-main-menu">Hyperbole main menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Hyperbole-manual">Hyperbole manual</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Documentation">Documentation</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hyperbole-manual-ibtype">hyperbole manual ibtype</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Hyperbole-menubar-menu">Hyperbole menubar menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Hyperbole-minibuffer-menu">Hyperbole minibuffer menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Invocation">Invocation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Hyperbole-minibuffer-menu-1">Hyperbole minibuffer menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
@@ -15253,6 +15376,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td valign="top"><a href="#index-HyWiki">HyWiki</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWiki">HyWiki</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-HyWiki-Action-Key">HyWiki Action Key</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-HyWiki-exclude-modes">HyWiki exclude modes</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hywiki-existing-word">hywiki existing word</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-HyWiki-export-to-HTML">HyWiki export to HTML</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Publish-HyWiki">Publish HyWiki</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-HyWiki-menu">HyWiki menu</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-HyWiki-mode">HyWiki mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
@@ -15264,7 +15388,9 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td valign="top"><a href="#index-HyWiki-publishing-function">HyWiki publishing function</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Publish-HyWiki">Publish HyWiki</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-HyWiki-section-link">HyWiki section link</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-HyWiki-tag-search">HyWiki tag search</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-hywiki_002dmode">hywiki-mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hywiki-word">hywiki word</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hywiki_002dmode">hywiki-mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-hywiki_002dmode-1">hywiki-mode</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-HyWikiWord">HyWikiWord</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-HyWikiWord-contexts">HyWikiWord contexts</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-HyWikiWord-create">HyWikiWord create</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
@@ -15279,6 +15405,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td valign="top"><a href="#index-ibtype-argument">ibtype argument</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Programmatic-Implicit-Button-Types">Programmatic Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtype-at_002dp">ibtype at-p</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Programmatic-Implicit-Button-Types">Programmatic Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtype-hact">ibtype hact</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Programmatic-Implicit-Button-Types">Programmatic Implicit Button Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-ibtype-hynote_002dfile">ibtype hynote-file</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyNote">HyNote</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtype-hywiki_002dword">ibtype hywiki-word</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtype-ibut_003alabel_002dset">ibtype ibut:label-set</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Programmatic-Implicit-Button-Types">Programmatic Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ibtype-predicate">ibtype predicate</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Programmatic-Implicit-Button-Types">Programmatic Implicit Button Types</a></td></tr>
@@ -15653,6 +15780,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td valign="top"><a href="#index-no_002dfill-attribute">no-fill attribute</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-normalized-label">normalized label</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Label-Normalization">Button Label Normalization</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-note_002dtaking">note-taking</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyWiki">HyWiki</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-notes">notes</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyNote">HyNote</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-numeric-argument">numeric argument</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-numeric-keypad">numeric keypad</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
@@ -15802,7 +15930,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td valign="top"><a href="#index-RFC-1">RFC</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-ripgrep">ripgrep</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Rmail">Rmail</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-Rolo">Rolo</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo">HyRolo</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-rolo">rolo</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo">HyRolo</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-rolo-address">rolo address</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Rolo-commands">Rolo commands</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-rolo-entry">rolo entry</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Concepts">HyRolo Concepts</a></td></tr>
