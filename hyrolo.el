@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      8-Aug-24 at 23:53:10 by Mats Lidell
+;; Last-Mod:      1-Sep-24 at 19:04:11 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -3054,11 +3054,12 @@ Any non-nil value returned is a cons of (<entry-name> . <entry-source>)."
     (when (eq org-fold-core-style 'overlays)
       (hypb:add-to-invisibility-spec '(org-hide-block . t)))
     (org-fold-core-set-folding-spec-property
-     (if (boundp 'org-link--link-folding-spec)
-	 ;; Org pre-9.7
-	 (car org-link--link-folding-spec)
-       ;; Org 9.7 and up
-       (caar org-fold-core--specs))
+     (cond ((boundp 'org-fold-core--specs)
+	    ;; Org 9.7 and up
+	    (caar org-fold-core--specs))
+	   ((boundp 'org-link--link-folding-spec)
+	    ;; Org pre-9.7
+	    (car org-link--link-folding-spec)))
      :visible (not org-link-descriptive)))
 
   (setq-local hyrolo-entry-regexp "^\\(\\*+\\)\\([ \t\n\r]+\\)"

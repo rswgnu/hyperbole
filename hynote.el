@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Jun-24 at 12:50:37
-;; Last-Mod:     30-Jun-24 at 11:27:57 by Bob Weiner
+;; Last-Mod:      1-Sep-24 at 14:26:02 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -14,9 +14,9 @@
 
 ;;; Commentary:
 ;;
-;;  This is a start on Hyperbole's note taking system, HyNote, which
-;;  presently simply provides an experience similar to HyWikiWords
-;;  for Org and Org Roam file and headline links.  In the future, it
+;;  HyNote is a start on Hyperbole's note taking system.  It presently
+;;  simply provides an experience similar to HyWikiWords for Org
+;;  directory and Org Roam file and headline links.  In the future, it
 ;;  will also provide a universal way to easily link to information
 ;;  across many file formats.
 ;;
@@ -44,8 +44,25 @@
 ;;; ************************************************************************
 
 (require 'hbut)
-(require 'hyrolo)
 (require 'hywiki)
+
+;;; ************************************************************************
+;;; Public variables
+;;; ************************************************************************
+
+(defvar hynote-directory-list '("~/org/" "~/org-roam/")
+  "Directories in which to find HyNote Org files.")
+
+(defvar hynote-file-suffix-list
+  '(".kotl" ".kot" ".md" ".markdown" ".mkd" ".mdown" ".mkdn" ".mdwn"
+    ".org" ".otl" ".outl")
+  "List of valid filename suffixes to search for HyNotes.
+If you change this value, you must regenerate `hynote-file-suffix-regexp'.")
+
+(defvar hynote-file-suffix-regexp
+  (concat "\\(" (string-join (mapcar #'regexp-quote hynote-file-suffix-list) "\\|")
+	  "\\)$")
+  "Regular expression matching valid filename suffixes to search for HyNotes.")
 
 ;;; ************************************************************************
 ;;; Public Implicit Button and Action Types
@@ -73,10 +90,11 @@ is true.  This may require that (hywiki-mode) has been enabled."
 	    (ibut:label-set file-stem-name start end)
 	    (hact 'hynote-find-file file section)))))))
 
+;;;###autoload
 (defun hynote-find-file (file &optional section)
-  "Display an existing FILE starting at SECTION.
+  "Display an existing HyNote FILE starting at SECTION.
 SECTION must be the name of a heading from the FILE and should begin
-with \"#\", though this function will add \"#\" if missing.
+with \"#\", though this function will add \"#\" if it is missing.
 
 Return the absolute path to any file successfully found, else nil.
 After successfully finding a file and reading it into a buffer, run
@@ -91,8 +109,9 @@ After successfully finding a file and reading it into a buffer, run
     (run-hooks 'hynote-find-file-hook)
     file))
 
+;;;###autoload
 (defun hynote-find-file-stem (file-stem-name)
-  "Display an existing FILE-STEM-NAME from `hynote-directory-list'.
+  "Display an existing HyNote FILE-STEM-NAME from `hynote-directory-list'.
 Return the absolute path to any file successfully found, else nil.
 
 After successfully finding a file and reading it into a buffer, run
@@ -112,35 +131,27 @@ After successfully finding a file and reading it into a buffer, run
 	  file)))))
 
 ;;; ************************************************************************
-;;; Public variables
-;;; ************************************************************************
-
-(defvar hynote-directory-list '("~/org/" "~/org-roam/")
-  "Directories in which to find HyNote Org files.")
-
-;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
 
 (defun hynote-get-file (file-stem-name)
   "Return existing file path in `hynote-directory-list' from FILE-STEM-NAME.
-File name must end with standard suffixes from `hyrolo-file-suffix-regexp'.
+File name must end with default suffixes from `hynote-file-suffix-list'.
 No validation of FILE-STEM-NAME is done."
   ;; Remove any #section from `file-stem-name'
   (setq file-stem-name (if (string-match "#" file-stem-name)
 			   (substring file-stem-name 0 (match-beginning 0))
 			 file-stem-name))
-  (locate-file file-stem-name hynote-directory-list
-	       '(".kotl" ".kot" ".md" ".org" ".otl" ".outl")))
+  (locate-file file-stem-name hynote-directory-list hynote-file-suffix-list))
 
 (defun hynote-get-files ()
-  "Return `hynote-directory-list' files ending with `hyrolo-file-suffix-regexp'.
+  "Return `hynote-directory-list' files ending with `hynote-file-suffix-regexp'.
 File names returned are relative to `hynote-directory-list'."
   (mapcan
    (lambda (dir)
     (make-directory dir t)
     (when (file-readable-p dir)
-      (directory-files dir nil (concat "^[^#]+" hyrolo-file-suffix-regexp))))
+      (directory-files dir nil (concat "^[^#]+" hynote-file-suffix-regexp))))
    hynote-directory-list))
 
 (defun hynote-get-file-stems ()

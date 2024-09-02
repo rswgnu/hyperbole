@@ -1,3 +1,25 @@
+2024-09-01  Bob Weiner  <rsw@gnu.org>
+
+* man/dir (File): Narrow width to better fit with out Info entries.
+
+* hyrolo.el (hyrolo-org-mode): Prioritize Org 9.7 folding-spec config
+    over earlier versions to fix a bug that used the wrong version.
+
+* hui-menu.el (infodock-hyperbole-menu):
+  hui-mini.el (hui:menu-hywiki): Allow customizing the HyWiki menus and
+    define its Consult items only when consult-grep is fboundp.
+
+* hynote.el (hynote-get-file): Add secondary markdown file suffixes.
+            (hynote-file-suffix-list): Add this variable and use in above
+    function.
+            (hynote-file-suffix-regexp): Add this variable and use in
+    `hynote-get-files'.
+            (require 'hyrolo): Remove.
+
+* man/hyperbole.texi (Glossary): Add HyNote entry and HyWiki entry reference
+    to its two ibtypes.
+                     (HyNote): Add a short chapter on this.
+
 2024-08-30  Bob Weiner  <rsw@gnu.org>
 
 * hibtypes.el (hyp-manual): Fix to strip spaces around section for both .html

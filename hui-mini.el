@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     19-Aug-24 at 23:29:29 by Bob Weiner
+;; Last-Mod:      1-Sep-24 at 19:46:18 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -28,10 +28,11 @@
 ;;; ************************************************************************
 
 (defvar hargs:reading-type)             ; "hargs.el"
-(defvar hui:menu-mode-map)              ; "hui.el"
 (defvar hbmap:dir-user)                 ; "hbmap.el"
 (defvar hbmap:filename)                 ; "hbmap.el"
-(defvar hui:menu-rolo)                  ; "hui.el"
+(defvar hui:menu-hywiki nil)            ; "hui-mini.el"
+(defvar hui:menu-mode-map)              ; "hui-mini.el"
+(defvar hui:menu-rolo nil)              ; "hui-mini.el"
 (defvar hyperbole-mode-map)             ; "hyperbole.el"
 (defvar hyrolo-add-hook)                ; "hyrolo.el"
 (defvar hyrolo-edit-hook)               ; "hyrolo.el"
@@ -860,32 +861,7 @@ command instead.  Typically prevents clashes over {\\`C-c' /}."
 	   "Display manual section on global buttons.")
 	  ("Link"   hui:gbut-link-directly "Add a named global button link to point in other/another window.")
 	  ("Rename" hui:gbut-rename "Rename a global button.")))
-       '(hywiki .
-	 (("HyWiki>")
-	  ("Act"            hywiki-word-activate
-	   "Activate HyWikiWord link at point or emulate a press of a Smart Key.")
-	  ("Create"         hywiki-add-page-and-display
-	    "Create and display a new HyWiki page.  Shows existing page names to aid in new naming.")
-	  ("Edit"           hywiki-find-page
-	   "Prompt with completion for and display a HyWiki page ready for editing.")
-	  ("GrepConsult"    hywiki-consult-grep
-	   "Grep over HyWiki pages with interactive consult-grep.")
-	  ("Help"           hkey-help
-	   "Report on a HyWikiWord's attributes.")
-	  ("Info"           (id-info "(hyperbole)HyWiki")
-	   "Display Hyperbole manual section on HyWiki.")
-	  ("Link"           hywiki-add-link
-	   "Prompt for and add a link at point to a HyWiki page.")
-          ("ModeToggle"     hywiki-mode
-	   "Toggle whether HyWikiWords are highlighted and active in buffers outside of the HyWiki page directory.")
-	  ("Org-M-RET/"     (menu . cust-org)
-	   "Set how much of Hyperbole Smart Key behavior is enabled in Org mode.")
-          ("Publish"        hywiki-publish-to-html
-	   "Publish modified pages in the HyWiki to HTML; prefix arg to publish all pages.")
-	  ("TagFind"        hywiki-tags-view
-	   "Find HyWiki Org tags.")
-	  ("WikiWordConsult" hywiki-word-consult-grep
-	   "Use `hywiki-consult-grep' to show occurrences of a prompted for HyWikiWord.")))
+       (cons 'hywiki hui:menu-hywiki)
        '(ibut .
 	 (("IButton>")
 	  ("Act"            hui:ibut-act
@@ -993,6 +969,50 @@ command instead.  Typically prevents clashes over {\\`C-c' /}."
 ;;; Public Customizations - must come after menus are defined
 ;;; ************************************************************************
 
+(unless hui:menu-hywiki
+  (makunbound 'hui:menu-hywiki))
+(defcustom hui:menu-hywiki
+  (delq nil
+	(list
+	 '("HyWiki>")
+	 '("Act"            hywiki-word-activate
+	   "Activate HyWikiWord link at point or emulate a press of a Smart Key.")
+	 '("Create"         hywiki-add-page-and-display
+	    "Create and display a new HyWiki page.  Shows existing page names to aid in new naming.")
+	 '("Edit"           hywiki-find-page
+	   "Prompt with completion for and display a HyWiki page ready for editing.")
+	 (when (fboundp 'consult-grep) ;; allow for autoloading
+	   '("GrepConsult"    hywiki-consult-grep
+	     "Grep over HyWiki pages with interactive consult-grep."))
+	 '("Help"           hkey-help
+	   "Report on a HyWikiWord's attributes.")
+	 '("Info"           (id-info "(hyperbole)HyWiki")
+	   "Display Hyperbole manual section on HyWiki.")
+	 '("Link"           hywiki-add-link
+	   "Prompt for and add a link at point to a HyWiki page.")
+         '("ModeToggle"     hywiki-mode
+	   "Toggle whether HyWikiWords are highlighted and active in buffers outside of the HyWiki page directory.")
+	 '("Org-M-RET/"     (menu . cust-org)
+	   "Set how much of Hyperbole Smart Key behavior is enabled in Org mode.")
+         '("Publish"        hywiki-publish-to-html
+	   "Publish modified pages in the HyWiki to HTML; prefix arg to publish all pages.")
+	 '("TagFind"        hywiki-tags-view
+	   "Find HyWiki Org tags.")
+	 (when (fboundp 'consult-grep) ;; allow for autoloading
+	   '("WikiWordConsult" hywiki-word-consult-grep
+	     "Use `hywiki-consult-grep' to show occurrences of a prompted for HyWikiWord."))))
+  "*Hyperbole minibuffer HyWiki menu items of the form:
+\(LABEL-STRING ACTION-SEXP DOC-STR)."
+  :set  (lambda (var value)
+	  (if (fboundp #'hyperbole-minibuffer-menu)
+	      (progn (set-default var value)
+		     (hyperbole-minibuffer-menu))
+	    (set-default var value)))
+  :type '(cons (list string) (repeat (list string sexp string)))
+  :group 'hyperbole-buttons)
+
+(unless hui:menu-rolo
+  (makunbound 'hui:menu-rolo))
 (defcustom hui:menu-rolo
   (delq nil
 	(list
