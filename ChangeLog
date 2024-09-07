@@ -1,3 +1,7 @@
+2024-09-08  Mats Lidell  <matsl@gnu.org>
+
+* test/hibtypes-tests.el (ibtypes::hyp-manual-test): Add test.
+
 2024-09-07  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (docker, docker-run): Use "--rm" option so the short lived
