@@ -1,3 +1,13 @@
+2024-09-02  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Action Button Link Types): Change PYTHONLIBPATH to
+    PYTHONPATH to match the example definition of 'pylib' in the 'defal'
+    macro documentation.
+
+* hui-select.el (hui-select-delimited-thing-call): FIX: Add setting of
+    missing 'hui-select-syntax-table' that was preventing the Action
+    Key from selecting markup pairs in HTML/Web modes.
+
 2024-09-01  Bob Weiner  <rsw@gnu.org>
 
 * man/dir (File): Narrow width to better fit with out Info entries.
