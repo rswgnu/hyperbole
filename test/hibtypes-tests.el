@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:45:00
-;; Last-Mod:     10-Aug-24 at 23:27:05 by Mats Lidell
+;; Last-Mod:      8-Sep-24 at 00:48:52 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -189,6 +189,20 @@
       (when (and visited-buf
 		 (buffer-live-p visited-buf))
  	(kill-buffer visited-buf)))))
+
+;; hyp-manual
+(ert-deftest ibtypes::hyp-manual-test ()
+  "Verify ibut for Hyperbole manual file path."
+  (with-temp-buffer
+    (insert "\"hyperbole.html#Smart Keys\"")
+    (goto-char 2)
+    (mocklet (((actypes::www-url (concat "file://" (expand-file-name "hyperbole.html" (hpath:expand "${hyperb:dir}/man/")) "#Smart-Keys")) => t))
+      (ibtypes::hyp-manual)))
+  (with-temp-buffer
+    (insert "\"hyperbole.texi#Smart Keys\"")
+    (goto-char 2)
+    (mocklet (((actypes::link-to-file (concat (expand-file-name "hyperbole.texi" (hpath:expand "${hyperb:dir}/man/")) "#Smart Keys")) => t))
+      (ibtypes::hyp-manual))))
 
 ;; markdown
 ; Can't find out how to use the markdown-internal-link ibtypes!?

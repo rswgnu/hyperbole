@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     24-Aug-24 at 10:41:04 by Mats Lidell
+# Last-Mod:      7-Sep-24 at 16:29:00 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -609,10 +609,10 @@ DOCKER_VERSION = master-ci
 endif
 
 docker: docker-update
-	docker run -v $$(pwd):/hypb -v /tmp:/hypb-tmp -it silex/emacs:${DOCKER_VERSION} bash -c "cp -a /hypb /hyperbole && make -C hyperbole ${DOCKER_TARGETS}"
+	docker run -v $$(pwd):/hypb -v /tmp:/hypb-tmp -it --rm silex/emacs:${DOCKER_VERSION} bash -c "cp -a /hypb /hyperbole && make -C hyperbole ${DOCKER_TARGETS}"
 
 docker-run: docker-update
-	docker run -v $$(pwd):/hypb -v /tmp:/hypb-tmp -it silex/emacs:${DOCKER_VERSION}
+	docker run -v $$(pwd):/hypb -v /tmp:/hypb-tmp -it --rm silex/emacs:${DOCKER_VERSION}
 
 # Update the docker image for the specified version of Emacs
 docker-update:
