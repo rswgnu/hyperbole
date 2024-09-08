@@ -1,3 +1,8 @@
+2024-09-07  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (docker, docker-run): Use "--rm" option so the short lived
+    container and its volumes are removed on exit.
+
 2024-09-01  Bob Weiner  <rsw@gnu.org>
 
 * man/dir (File): Narrow width to better fit with out Info entries.
