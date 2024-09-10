@@ -33,6 +33,7 @@
 (defvar hui:menu-hywiki nil)            ; "hui-mini.el"
 (defvar hui:menu-mode-map)              ; "hui-mini.el"
 (defvar hui:menu-rolo nil)              ; "hui-mini.el"
+(defvar hui:menu-highlight-flag)        ; "hui-mini.el"
 (defvar hyperbole-mode-map)             ; "hyperbole.el"
 (defvar hyrolo-add-hook)                ; "hyrolo.el"
 (defvar hyrolo-edit-hook)               ; "hyrolo.el"

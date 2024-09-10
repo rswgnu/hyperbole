@@ -138,6 +138,7 @@
 
 (defvar org-agenda-buffer-tmp-name)  ;; "org-agenda.el"
 (defvar org-publish-project-alist)   ;; "ox-publish.el"
+(defvar org-export-with-broken-links);; "ox.el"
 (declare-function hsys-org-at-tags-p "hsys-org")
 (declare-function org-link-store-props "ol" (&rest plist))
 (declare-function org-publish-property "ox-publish" (property project &optional default))
