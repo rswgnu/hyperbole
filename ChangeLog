@@ -1,3 +1,8 @@
+2024-09-09  Bob Weiner  <rsw@gnu.org>
+
+* hui-select.el (hui-select-syntax-table): Fix that # was registering as
+    an opening quote to an sexp rather than punctuation.
+
 2024-09-08  Bob Weiner  <rsw@gnu.org>
 
 * hui-mini.el (hui:menu-highlight-flag): Add this new customization.

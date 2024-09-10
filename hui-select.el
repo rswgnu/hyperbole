@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:      2-Sep-24 at 19:32:34 by Bob Weiner
+;; Last-Mod:      9-Sep-24 at 22:25:55 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -347,6 +347,9 @@ Used to include a final line when marking indented code.")
     (modify-syntax-entry ?\} "){" st)
     (modify-syntax-entry ?< "(>" st)
     (modify-syntax-entry ?> ")<" st)
+    ;; Next entry, e.g. for markdown mode, so does not register as a
+    ;; quote starting an sexp, as it does in emacs-lisp-mode
+    (modify-syntax-entry ?# "." st)
     st)
   "Syntax table to use when selecting delimited things.")
 
@@ -408,7 +411,6 @@ Each <function> takes a single position argument and returns a
 region (start . end) defining the boundaries of the thing at that position."
   :type '(repeat (cons (character :tag "Syntax-Char") function))
   :group 'hyperbole-commands)
-
 
 ;;; ************************************************************************
 ;;; Public functions
