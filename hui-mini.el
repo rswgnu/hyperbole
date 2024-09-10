@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:      1-Sep-24 at 19:46:18 by Bob Weiner
+;; Last-Mod:      9-Sep-24 at 01:27:12 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -396,6 +396,18 @@ or if there are none, then its first character."
   (mapcar (lambda (item) (hui:menu-item-key item))
 	  (mapcar 'car (cdr menu-alist))))
 
+(defun hui:menu-item-toggle-highlight (&optional arg)
+  "Toggle highlighting Hyperbole minibuffer menu item keys.
+With optional ARG, enable iff ARG is positive."
+  (interactive "P")
+  (if (or (and arg (<= (prefix-numeric-value arg) 0))
+	  (and (not (and arg (> (prefix-numeric-value arg) 0)))
+	       hui:menu-highlight-flag))
+      (progn (customize-set-variable 'hui:menu-highlight-flag nil)
+	     (message "Menu key highlighting is off."))
+    (customize-set-variable 'hui:menu-highlight-flag t)
+    (message "Menu key highlighting is on")))
+
 (defun hui:menu-read-from-minibuffer (prompt &optional initial-contents keymap read
 				      hist default-value inherit-input-method)
   "Hyperbole minibuffer menu replacement for `read-from-minibuffer'.
@@ -412,6 +424,7 @@ Allows custom handling of menu lines before selecting an item."
 	(setq initial-contents (string-replace current-name
 					       (concat "==" current-name "==")
 					       initial-contents)))))
+  (setq initial-contents (hui:menu-maybe-highlight-item-keys initial-contents))
   (read-from-minibuffer prompt initial-contents keymap read
 			hist default-value inherit-input-method))
 
@@ -562,6 +575,34 @@ constructs.  If not given, the top level Hyperbole menu is used."
 	  (if (eq act-form #'hui:menu-to-personal-section)
 	      (list #'hui:menu-to-personal-section label)
 	    act-form))))))
+
+(defun hui:menu-maybe-highlight-item-keys (menu-str)
+  "Maybe highlight the first capital letter of each MENU-STR item.
+Highlight if customization variable `hui:menu-highlight-flag' is
+non-nil and the display supports underlined faces.  Return the
+potentially modified MENU-STR."
+  (if (and hui:menu-highlight-flag
+           (display-supports-face-attributes-p
+            '(:underline t) (window-frame)))
+      (let ((after-menu-name-flag)
+	    (after-word-capital-letter-flag)
+	    (pos 0))
+	(mapc (lambda (c)
+		(cond ((= c ?>)
+		       (setq after-menu-name-flag t))
+		      ((= c ?\ )
+		       (setq after-word-capital-letter-flag nil))
+		      ((and after-menu-name-flag
+			    (not after-word-capital-letter-flag)
+			    (<= ?A c) (>= ?Z c))
+		       (put-text-property pos (1+ pos)
+					  'face 'read-multiple-choice-face
+					  menu-str)
+		       (setq after-word-capital-letter-flag t)))
+		(setq pos (1+ pos)))
+	      menu-str)
+	menu-str)
+    menu-str))
 
 (defun hui:menu-line (menu-alist)
   "Return a menu line string built from MENU-ALIST."
@@ -736,6 +777,8 @@ command instead.  Typically prevents clashes over {\\`C-c' /}."
 	   "Toggle display of Smart Key context after each press, for debugging.")
 	  ("Find-File-URLs"    hpath:find-file-urls-mode
 	   "Toggle find-file support for ftp and www URLs.")
+	  ("Highlight-Menu-Keys-Toggle" hui:menu-item-toggle-highlight
+	   "Toggle highlighting of minibuffer menu keys.")
 	  ("Isearch-Invisible" hypb:toggle-isearch-invisible
 	   "Toggle whether isearch searches invisible text or not.")
 	  ("KeyBindings/"      (menu . cust-keys) "Rebinds global Hyperbole keys.")
@@ -968,6 +1011,13 @@ command instead.  Typically prevents clashes over {\\`C-c' /}."
 ;;; ************************************************************************
 ;;; Public Customizations - must come after menus are defined
 ;;; ************************************************************************
+
+(defcustom hui:menu-highlight-flag t
+  "*If non-nil, highlight the first capitalized character of each menu item.
+Highlight with `read-multiple-choice-face'.  The display must
+support underlined faces as well."
+  :type 'boolean
+  :group 'hyperbole-buttons)
 
 (unless hui:menu-hywiki
   (makunbound 'hui:menu-hywiki))

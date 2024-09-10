@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:      1-Sep-24 at 20:28:29 by Bob Weiner
+@c Last-Mod:      2-Sep-24 at 19:50:16 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -7468,11 +7468,11 @@ button is activated and does one of four things with LINK-EXPR:
 @item invokes a function or action type of one argument, the button text sans the function name, to display it.
 @end enumerate
 
-For example, if you use Python and have a @samp{PYTHONLIBPATH} environment
+For example, if you use Python and have a @samp{PYTHONPATH} environment
 variable, then pressing @bkbd{C-x C-e} @code{eval-last-sexp} after
 this expression:
 
-@code{(defal pylib "$@{PYTHONLIBPATH@}/%s")}
+@code{(defal pylib "$@{PYTHONPATH@}/%s")}
 
 @noindent
 defines a new action button link type called ’pylib’ whose buttons

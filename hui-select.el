@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     18-Aug-24 at 09:44:46 by Mats Lidell
+;; Last-Mod:      9-Sep-24 at 22:25:55 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -347,6 +347,9 @@ Used to include a final line when marking indented code.")
     (modify-syntax-entry ?\} "){" st)
     (modify-syntax-entry ?< "(>" st)
     (modify-syntax-entry ?> ")<" st)
+    ;; Next entry, e.g. for markdown mode, so does not register as a
+    ;; quote starting an sexp, as it does in emacs-lisp-mode
+    (modify-syntax-entry ?# "." st)
     st)
   "Syntax table to use when selecting delimited things.")
 
@@ -408,7 +411,6 @@ Each <function> takes a single position argument and returns a
 region (start . end) defining the boundaries of the thing at that position."
   :type '(repeat (cons (character :tag "Syntax-Char") function))
   :group 'hyperbole-commands)
-
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -789,14 +791,13 @@ The character at POS is selected if no other thing is matched."
 			      (- (cdr region) (car region)))
 			(< region-size min-region))
 	       (setq min-region region-size
-		     result
-		     (list
-		      ;; The actual selection type is
-		      ;; sometimes different than the one we
-		      ;; originally tried, so recompute it here.
-		      (car (assq hui-select-previous
-				 hui-select-bigger-alist))
-		      (car region) (cdr region)))))
+		     result (list
+			     ;; The actual selection type is
+			     ;; sometimes different than the one we
+			     ;; originally tried, so recompute it here.
+			     (car (assq hui-select-previous
+					hui-select-bigger-alist))
+			     (car region) (cdr region)))))
 	   hui-select-bigger-alist)
 	  (if result
 	      ;; Returns hui-select-region
@@ -841,7 +842,7 @@ Typically:
  If `hui-select-char-p' is set non-nil, then as a fallback, the
  character at POS will be selected.
 
-If an error occurs during syntax scanning, it returns nil."
+If an error occurs during syntax scanning, return nil."
   (interactive "d")
   (setq hui-select-previous 'char)
   (if (save-excursion (goto-char pos) (eolp))
@@ -858,11 +859,11 @@ If an error occurs during syntax scanning, it returns nil."
 
 (defun hui-select-at-delimited-thing-p ()
   "Return non-nil if point is at a delimited thing, else nil.
-A delimited tings is a markup pair, list, array/vector, set,
+A delimited thing is a markup pair, list, array/vector, set,
 comment or string.  The non-nil value returned is the function to
 call to select that syntactic unit.
 
-Ignores any match if on an Emacs button and instead returns nil."
+Ignore any match if on an Emacs button and instead return nil."
   (unless (button-at (point))
     (setq hkey-value (hui-select-delimited-thing-call #'hui-select-at-p))
     (cond ((eq hkey-value 'hui-select-punctuation)
@@ -975,19 +976,23 @@ call to select that syntactic unit."
   (unless (and (memq major-mode hui-select-ignore-quoted-sexp-modes)
 	       ;; Ignore quoted identifier sexpressions, like #'function
 	       (char-after) (memq (char-after) '(?# ?\')))
-    (let ((hui-select-char-p)
-	  (hui-select-whitespace)
-	  (hui-select-syntax-alist '((?\" . hui-select-string)
-				     (?\( . hui-select-sexp-start)
-				     (?\$ . hui-select-sexp-start)
-				     (?\' . hui-select-sexp-start)
-				     (?\) . hui-select-sexp-end)
-				     (?\< . hui-select-comment)
-				     ;; Punctuation needed to match
-				     ;; multi-char comment delimiters
-				     (?\. . hui-select-punctuation))))
-      (hui-select-reset)
-      (funcall func))))
+    (with-syntax-table
+	(if (memq major-mode hui-select-ignore-quoted-sexp-modes)
+	    (syntax-table)
+	  hui-select-syntax-table)
+      (let ((hui-select-char-p)
+	    (hui-select-whitespace)
+	    (hui-select-syntax-alist '((?\" . hui-select-string)
+				       (?\( . hui-select-sexp-start)
+				       (?\$ . hui-select-sexp-start)
+				       (?\' . hui-select-sexp-start)
+				       (?\) . hui-select-sexp-end)
+				       (?\< . hui-select-comment)
+				       ;; Punctuation needed to match
+				       ;; multi-char comment delimiters
+				       (?\. . hui-select-punctuation))))
+	(hui-select-reset)
+	(funcall func)))))
 
 (defun hui-select-region-bigger-p (old-region new-region)
   "Non-nil means the new region is bigger than the old region.

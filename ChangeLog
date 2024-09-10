@@ -1,3 +1,18 @@
+2024-09-09  Bob Weiner  <rsw@gnu.org>
+
+* hui-select.el (hui-select-syntax-table): Fix that # was registering as
+    an opening quote to an sexp rather than punctuation.
+
+2024-09-08  Bob Weiner  <rsw@gnu.org>
+
+* hui-mini.el (hui:menu-highlight-flag): Add this new customization.
+              (hui:menu-item-highlight-key): Add to highlight with
+    'read-multiple-choice-face' the key to press for each menu item
+    if `hui:menu-highlight-flag' is non-nil.
+              (hui:menu-read-from-minibuffer): Call above function.
+              (hui:menu-item-toggle-highlight): Add and use in Cust/
+    menu.
+
 2024-09-08  Mats Lidell  <matsl@gnu.org>
 
 * test/hibtypes-tests.el (ibtypes::hyp-manual-test): Add test.
@@ -6,6 +21,16 @@
 
 * Makefile (docker, docker-run): Use "--rm" option so the short lived
     container and its volumes are removed on exit.
+
+2024-09-02  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Action Button Link Types): Change PYTHONLIBPATH to
+    PYTHONPATH to match the example definition of 'pylib' in the 'defal'
+    macro documentation.
+
+* hui-select.el (hui-select-delimited-thing-call): FIX: Add setting of
+    missing 'hui-select-syntax-table' that was preventing the Action
+    Key from selecting markup pairs in HTML/Web modes.
 
 2024-09-01  Bob Weiner  <rsw@gnu.org>
 
