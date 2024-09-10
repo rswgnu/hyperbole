@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:      1-Sep-24 at 12:20:24 by Bob Weiner
+;; Last-Mod:     10-Sep-24 at 01:28:06 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -231,6 +231,24 @@ Presently, there are no key bindings; this is for future use.")
 Otherwise, this prefix is not needed and HyWiki word Org links
 override standard Org link lookups.  See \"(org)Internal Links\".")
 
+(defcustom hywiki-org-publishing-broken-links 'mark
+  "HyWiki Org publish option that determines how invalid links are handled.
+The default is 'mark.
+
+When this option is non-nil, broken HyWiki links are ignored,
+without stopping the export process.  If it is set to 'mark,
+broken links are marked with a string like:
+
+  [BROKEN LINK: path]
+
+where PATH is the un-resolvable reference."
+  :initialize #'custom-initialize-default
+  :set (lambda (option value)
+	 (set option value)
+	 (hywiki-org-set-publish-project))
+  :type 'symbol
+  :group 'hyperbole-hywiki)
+
 (defcustom hywiki-org-publishing-directory "~/public_hywiki"
   "Directory where HyWiki pages are converted into html and published."
   :initialize #'custom-initialize-default
@@ -268,7 +286,8 @@ override standard Org link lookups.  See \"(org)Internal Links\".")
   "HyWiki-specific export properties added to `org-publish-project-alist'.")
 
 (defun hywiki-org-make-publish-project-alist ()
-  (setq hywiki-org-publish-project-alist
+  (setq org-export-with-broken-links hywiki-org-publishing-broken-links
+	hywiki-org-publish-project-alist
 	(list
 	 "hywiki"
 	 :auto-sitemap t
@@ -276,6 +295,8 @@ override standard Org link lookups.  See \"(org)Internal Links\".")
 	 :html-head (format
 		     "<link rel=\"stylesheet\" type=\"text/css\" href=\"%sman/hyperbole.css\"/>"
 		     hyperb:dir)
+	 ;; :html-link-home "theindex.html"
+	 ;; :html-link-up "theindex.html"
 	 ;; !! TODO: The :makeindex property is disabled for now, until a process is
 	 ;; developed to force the Org publish process to regenerate the
 	 ;; index after index entries are inserted into the temporary Org
@@ -284,6 +305,7 @@ override standard Org link lookups.  See \"(org)Internal Links\".")
 	 :publishing-function hywiki-org-publishing-function
 	 :publishing-directory hywiki-org-publishing-directory
 	 :section-numbers t
+	 ;; sitemap (TOC) is stored in "sitemap.html"
 	 :sitemap-title hywiki-org-publishing-sitemap-title
 	 :with-toc nil)))
 
@@ -440,6 +462,7 @@ the button."
 		   (when (memq (char-syntax k) '(?. ?_))
 		     (setq result (cons k result)))))))))))
 
+;;;###autoload
 (define-minor-mode hywiki-mode
   "Toggle HyWiki global minor mode with \\[hywiki-mode].
 
@@ -487,6 +510,7 @@ If the associated HyWiki page does not exist, create it automatically."
       (ibut:label-set page-name (match-beginning 0) (match-end 0))
       (hact 'hywiki-find-page page-name))))
 
+;;;###autoload
 (defun hywiki-find-page (&optional page-name prompt-flag)
   "Display HyWiki PAGE-NAME or a regular file with PAGE-NAME nil.
 Return the absolute path to any page successfully found; nil if
@@ -495,10 +519,13 @@ call).
 
 By default, create any non-existent page.  With optional
 PROMPT-FLAG t, prompt to create if non-existent.  If PROMPT-FLAG
-is \\='exists, return nil unless the page already exists.  After
-successfully finding a page and reading it into a buffer, run
+is :existing or with a prefix argument when called interactively,
+return nil unless the page already exists.  After successfully
+finding a page and reading it into a buffer, run
 `hywiki-find-page-hook'."
-  (interactive (list (hywiki-read-page-name "Find HyWiki page: ")))
+  (interactive (list (if current-prefix-arg
+			 (hywiki-read-page-name "Find existing HyWiki page: ")
+		       (hywiki-read-new-page-name "Find HyWiki page: "))))
   (let ((in-page-flag (null page-name))
 	(in-hywiki-directory-flag (hywiki-in-page-p)))
     (if (or (stringp page-name) in-hywiki-directory-flag)
@@ -519,7 +546,7 @@ successfully finding a page and reading it into a buffer, run
 			      page-name))
 		 (page-file (or (hywiki-get-page page-name)
 				(if prompt-flag
-				    (unless (eq prompt-flag 'exists)
+				    (unless (eq prompt-flag :existing)
 				      (when (y-or-n-p (concat "Create new `" page-name "' page? "))
 					(hywiki-add-page page-name)))
 				  (hywiki-add-page page-name)))))
@@ -541,7 +568,8 @@ successfully finding a page and reading it into a buffer, run
 ;;; ************************************************************************
 
 (defun hywiki-active-in-current-buffer-p ()
-  "Return non-nil if HyWiki word links are active in the current buffer."
+  "Return non-nil if HyWiki word links are active in the current buffer.
+Exclude the minibuffer if selected and return nil."
   (and hywiki-word-highlight-flag
        (not (minibuffer-window-active-p (selected-window)))
        (or (derived-mode-p 'kotl-mode)
@@ -549,6 +577,7 @@ successfully finding a page and reading it into a buffer, run
        (not (apply #'derived-mode-p hywiki-exclude-major-modes))
        (or hywiki-mode (hywiki-in-page-p))))
 
+;;;###autoload
 (defun hywiki-add-link ()
   "Insert at point a link to a HyWiki page."
   (interactive "*")
@@ -556,13 +585,13 @@ successfully finding a page and reading it into a buffer, run
   (hywiki-maybe-highlight-page-name))
 
 (defun hywiki-add-page (page-name)
-  "Add the HyWiki page for PAGE-NAME and return its file.
+  "Add or edit the HyWiki page for PAGE-NAME and return its file.
 If file exists already, just return it.  If PAGE-NAME is invalid,
 trigger a `user-error' if called interactively or return nil if
 not.
 
 Use `hywiki-get-page' to determine whether a HyWiki page exists."
-  (interactive (list (hywiki-read-new-page-name "Add HyWiki page: ")))
+  (interactive (list (hywiki-read-new-page-name "Add/Edit HyWiki page: ")))
   (if (hywiki-word-is-p page-name)
       (progn
 	(when (match-string-no-properties 2 page-name)
@@ -586,7 +615,7 @@ If file exists already, just return it.  If PAGE-NAME is invalid,
 trigger a `user-error'.
 
 Use `hywiki-get-page' to determine whether a HyWiki page exists."
-  (interactive (list (hywiki-read-new-page-name "Add HyWiki page: ")))
+  (interactive (list (hywiki-read-new-page-name "Add and display HyWiki page: ")))
   (let ((page-file (hywiki-add-page page-name)))
     (if page-file
 	(hywiki-find-page (file-name-base page-file))
@@ -728,6 +757,7 @@ or this will return nil."
 				       (buffer-substring-no-properties start end)))))
 		(if range-flag (list wikiword start end) wikiword)))))))))
 
+;;;###autoload
 (defun hywiki-word-consult-grep (word)
   "Use `hywiki-consult-grep' to show occurrences of a prompted for HyWikiWord.
 Default to any HyWikiWord at point."
