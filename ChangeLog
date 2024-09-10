@@ -1,4 +1,22 @@
+2024-09-10  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-org-make-publish-project-alist): Add
+    new option 'hywiki-org-publishing-broken-links' with a default value
+    of 'mark.  This is used to set 'org-export-with-broken-links' so
+    HyWiki will simply mark and include broken links when exporting rather
+    than failing.  Otherwise, exporting will often fail due to a few
+    invalid links.  With this setup, just search for 'BROKEN LINK' in the
+    output to repair each issue.
+
 2024-09-09  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el: Add additional autoloads.
+             (hywiki-add-page): Update doc and interactive prompt to
+    indicate this adds or edits an existing page.
+            (hywiki-find-page): Fix interactive expression without a
+    prefix arg to accept a non-existing page name to be created.  With a
+    prefix arg or programmatically with PROMPT-FLAG equal to :existing,
+    find existing pages only.
 
 * hui-select.el (hui-select-syntax-table): Fix that # was registering as
     an opening quote to an sexp rather than punctuation.
