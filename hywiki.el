@@ -234,10 +234,10 @@ override standard Org link lookups.  See \"(org)Internal Links\".")
 
 (defcustom hywiki-org-publishing-broken-links 'mark
   "HyWiki Org publish option that determines how invalid links are handled.
-The default is 'mark.
+The default is \\='mark.
 
 When this option is non-nil, broken HyWiki links are ignored,
-without stopping the export process.  If it is set to 'mark,
+without stopping the export process.  If it is set to \\='mark,
 broken links are marked with a string like:
 
   [BROKEN LINK: path]
