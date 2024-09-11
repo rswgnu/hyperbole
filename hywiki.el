@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     10-Sep-24 at 23:21:09 by Mats Lidell
+;; Last-Mod:     11-Sep-24 at 08:52:36 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -137,8 +137,8 @@
 ;;; ************************************************************************
 
 (defvar org-agenda-buffer-tmp-name)  ;; "org-agenda.el"
-(defvar org-publish-project-alist)   ;; "ox-publish.el"
 (defvar org-export-with-broken-links);; "ox.el"
+(defvar org-publish-project-alist)   ;; "ox-publish.el"
 (declare-function hsys-org-at-tags-p "hsys-org")
 (declare-function org-link-store-props "ol" (&rest plist))
 (declare-function org-publish-property "ox-publish" (property project &optional default))
