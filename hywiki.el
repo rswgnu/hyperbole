@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     10-Sep-24 at 01:28:06 by Bob Weiner
+;; Last-Mod:     11-Sep-24 at 08:52:36 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -137,6 +137,7 @@
 ;;; ************************************************************************
 
 (defvar org-agenda-buffer-tmp-name)  ;; "org-agenda.el"
+(defvar org-export-with-broken-links);; "ox.el"
 (defvar org-publish-project-alist)   ;; "ox-publish.el"
 (declare-function hsys-org-at-tags-p "hsys-org")
 (declare-function org-link-store-props "ol" (&rest plist))
@@ -233,10 +234,10 @@ override standard Org link lookups.  See \"(org)Internal Links\".")
 
 (defcustom hywiki-org-publishing-broken-links 'mark
   "HyWiki Org publish option that determines how invalid links are handled.
-The default is 'mark.
+The default is \\='mark.
 
 When this option is non-nil, broken HyWiki links are ignored,
-without stopping the export process.  If it is set to 'mark,
+without stopping the export process.  If it is set to \\='mark,
 broken links are marked with a string like:
 
   [BROKEN LINK: path]
