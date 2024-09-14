@@ -1,3 +1,8 @@
+2024-09-11  Mats Lidell  <matsl@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-tests--get-file-list): Verify
+    `hyrolo--expanded-file-list' is updated when a file is added.
+
 2024-09-10  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-org-make-publish-project-alist): Add
