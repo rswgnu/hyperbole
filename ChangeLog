@@ -1,3 +1,10 @@
+2024-09-16  Bob Weiner  <rsw@gnu.org>
+
+* hsys-org.el {C-c C-@} Bind this key in Org mode to
+   'hycontrol-windows-grid' unless already bound.
+  hycontrol.el (hycontrol-windows-grid): Fix infinite recursive call
+    when 'mode-binding' is the same as the current command, e.g. org-mode.
+
 2024-09-10  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-org-make-publish-project-alist): Add

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:     29-May-24 at 00:57:08 by Bob Weiner
+;; Last-Mod:     16-Sep-24 at 22:40:19 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1666,6 +1666,7 @@ command instead.  Typically prevents clashes over {\\`C-c' @}."
 	     (this-key-flag (and (called-interactively-p 'interactive)
 				 (equal (this-single-command-keys) key))))
 	(cond ((and mode-binding (not (integerp mode-binding))
+		    (not (eq this-command mode-binding))
 		    this-key-flag (if (eq major-mode #'outline-mode) (not arg) t))
 	       ;; If the key that invokes this command in `hyperbole-minor-mode'
 	       ;; is also bound in the current major mode map, then
