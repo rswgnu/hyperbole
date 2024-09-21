@@ -1,3 +1,22 @@
+2024-09-21  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-maybe-highlight-balanced-pairs): Separate balanced
+    pair delimited expression highlighting into this function to allow
+    for more general handling.  Expand range from one line to two.
+            (hywiki-maybe-highlight-page-name): Call above function.
+	    (hywiki-get-page): Auto-link standard pluralizations of HyWikiWords
+    that end 's' when not preceded by an 's' or in 'es'.
+            (hywiki-directory-set-mod-time): Add.
+	    (hywiki--directory-checksum): Add for checking if any HyWiki page file
+    names have changed.
+	    (hywiki-directory-get-checksum, hywiki-directory-set-checksum): Add.
+	    (hywiki-directory-modified-p): Additionally test if dir checksum changed.
+            (hywiki-get-page-hasht): Fix to update pages hash table and page name
+    and page name regexp lookups if any page file name changes.
+            (hywiki-maybe-highlight-page-names): Force rebuild of pages hash table
+    if any page file names have changed in 'hywiki-directory' and move mod-time
+    update to 'hywiki-get-page-hasht'.
+
 2024-09-16  Bob Weiner  <rsw@gnu.org>
 
 * hsys-org.el {C-c C-@} Bind this key in Org mode to
