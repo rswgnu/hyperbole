@@ -1,5 +1,10 @@
 2024-09-21  Bob Weiner  <rsw@gnu.org>
 
+* hywiki.el (hywiki-find-page): Prompt when creating the first HyWiki page
+    so user is not surprised by this Action Key behavior.
+
+* man/hyperbole.texi (Manual Overview): Add links for HyWiki and HyNote.
+
 * hywiki.el (hywiki-maybe-highlight-balanced-pairs): Separate balanced
     pair delimited expression highlighting into this function to allow
     for more general handling.  Expand range from one line to two.

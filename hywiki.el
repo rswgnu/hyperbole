@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     21-Sep-24 at 16:39:32 by Bob Weiner
+;; Last-Mod:     21-Sep-24 at 18:36:13 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -521,10 +521,11 @@ failed or if displaying a regular file (read in via a `find-file'
 call).
 
 By default, create any non-existent page.  With optional
-PROMPT-FLAG t, prompt to create if non-existent.  If PROMPT-FLAG
-is :existing or with a prefix argument when called interactively,
-return nil unless the page already exists.  After successfully
-finding a page and reading it into a buffer, run
+PROMPT-FLAG t or if this is the first HyWiki page in
+`hywiki-directory', prompt to create if non-existent.  If
+PROMPT-FLAG is :existing or with a prefix argument when called
+interactively, return nil unless the page already exists.  After
+successfully finding a page and reading it into a buffer, run
 `hywiki-find-page-hook'."
   (interactive (list (if current-prefix-arg
 			 (hywiki-read-page-name "Find existing HyWiki page: ")
@@ -548,9 +549,9 @@ finding a page and reading it into a buffer, run
 				(substring page-name 0 (match-beginning 0))
 			      page-name))
 		 (page-file (or (hywiki-get-page page-name)
-				(if prompt-flag
+				(if (or prompt-flag (null (hywiki-get-page-list)))
 				    (unless (eq prompt-flag :existing)
-				      (when (y-or-n-p (concat "Create new `" page-name "' page? "))
+				      (when (y-or-n-p (concat "Create new HyWiki page `" page-name "'? "))
 					(hywiki-add-page page-name)))
 				  (hywiki-add-page page-name)))))
 	    (when page-file
