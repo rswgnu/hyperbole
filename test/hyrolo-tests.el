@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:      5-Aug-24 at 22:16:27 by Mats Lidell
+;; Last-Mod:     11-Sep-24 at 23:56:02 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -469,6 +469,24 @@ Match a string in the second cell."
 		(hyrolo-file-list (list tmp-file)))
            ()))
       (hy-delete-file-and-buffer tmp-file))))
+
+(ert-deftest hyrolo-tests--get-file-list ()
+  "Verify `hyrolo-get-file-list` includes added files."
+  :expected-result :failed
+  (let* ((folder (make-temp-file "hypb" t))
+         (prefix (expand-file-name "hypb" folder))
+         (org-file (make-temp-file prefix nil ".org"))
+         (hyrolo-file-list (list folder)))
+    (unwind-protect
+        (progn
+          (should (= 1 (length (hyrolo-get-file-list))))
+          (let ((org2-file (make-temp-file prefix nil ".org")))
+            (unwind-protect
+                (should (= 2 (length (hyrolo-get-file-list))))
+              (hy-delete-file-and-buffer org2-file))))
+      (dolist (f (list org-file))
+        (hy-delete-file-and-buffer f))
+      (delete-directory folder))))
 
 ;; Outline movement tests
 (defun hyrolo-tests--level-number (section depth)

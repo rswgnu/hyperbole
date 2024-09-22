@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:      9-Sep-24 at 01:27:12 by Bob Weiner
+;; Last-Mod:     11-Sep-24 at 08:51:59 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -30,6 +30,7 @@
 (defvar hargs:reading-type)             ; "hargs.el"
 (defvar hbmap:dir-user)                 ; "hbmap.el"
 (defvar hbmap:filename)                 ; "hbmap.el"
+(defvar hui:menu-highlight-flag)        ; "hui-mini.el"
 (defvar hui:menu-hywiki nil)            ; "hui-mini.el"
 (defvar hui:menu-mode-map)              ; "hui-mini.el"
 (defvar hui:menu-rolo nil)              ; "hui-mini.el"
