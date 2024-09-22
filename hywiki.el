@@ -1217,6 +1217,17 @@ regexps of page names."
 (defun hywiki-get-page-list ()
   (hash-map #'cdr (hywiki-get-page-hasht)))
 
+(defun hywiki-kill-buffer-hook ()
+  "Delete file attached to HyWiki buffer if the file is zero-sized.
+If deleted, update HyWikiWord highlighting across all frames."
+  (when (hywiki-in-page-p)
+    (when (hypb:empty-file-p)
+      (delete-file buffer-file-name))
+    (when (hywiki-directory-modified-p)
+      ;; Rebuild lookup tables if any HyWiki page name has changed
+      (hywiki-get-page-hasht))
+    nil))
+
 (defun hywiki-make-pages-hasht ()
   (let* ((page-files (hywiki-get-page-files))
 	 (page-elts (mapcar (lambda (file)
@@ -1507,6 +1518,8 @@ Highlight/dehighlight HyWiki page names across all frames on change."
 ;;; ************************************************************************
 ;;; Public initializations
 ;;; ************************************************************************
+
+(add-hook 'kill-buffer-hook 'hywiki-kill-buffer-hook)
 
 (eval-after-load "org-element"
   '(advice-add 'org-element--generate-copy-script :before #'hywiki-org-export-function))
