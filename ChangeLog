@@ -1,11 +1,43 @@
+2024-09-22  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-find-page): Move prompt tests to 'hywiki-add-page'.
+            (hywiki-add-page): Add and run 'hywiki-add-page-hook'.  Add
+    optional second arg 'prompt-flag' that 'hywiki-find-page' passes.
+
+* test/hywiki-tests.el (hywiki-tests--directory-modified-p):
+    Update to set checksum which is needed now and expand
+    test scenarios.
+                       (hywiki-tests--wikiword-with-prefix-creates-a-new-page):
+    Update to add optional 2nd arg of nil to 'hywiki-add-page' call.
+                       (hywiki-tests--hywiki-add-page--adds-file-in-wiki-folder):
+   Actually create empty file and then delete it, fixing
+   hywiki-add-page call failure.
+  hywiki.el (hywiki-add-page): Fix issue where hash table
+    value was set before empty page file is created so
+    did not have correct value.
+
+* hywiki.el (hywiki-maybe-highlight-page-names-in-frame,
+             hywiki-maybe-highlight-page-names): Move set of
+    mod-time and checksum here from 'hywiki-get-page-hasht' to
+    make work with 'hywiki-kill-buffer-hook'.
+
 2024-09-21  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-kill-buffer-hook): Add for use as a global
     'kill-buffer-hook'.
   hypb.el (hypb:empty-file-p): Add and use in 'hywiki-kill-buffer-hook'.
 
+* hywiki.el (hywiki-maybe-highlight-page-names): Dehighlight HyWikiWords
+    before re-highlighting new set.
+
 * hywiki.el (hywiki-find-page): Prompt when creating the first HyWiki page
     so user is not surprised by this Action Key behavior.
+            (hywiki-maybe-highlight-page-names): Add 3rd optional arg,
+    'skip-lookups-update-flag'.
+            (hywiki-maybe-highlight-page-names-in-frame): Add optional 2nd arg,
+    'skip-lookups-update-flag'
+            (hywiki-get-page-hasht): Call above function when update
+    lookup tables so use new data to highlight HyWikiWords.
 
 * man/hyperbole.texi (Manual Overview): Add links for HyWiki and HyNote.
 
