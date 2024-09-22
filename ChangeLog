@@ -1,3 +1,76 @@
+2024-09-22  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--get-page-list-when-new-wiki-directory):
+    Remove 'hash-empty-p' test that fails exclusively on Emacs master.
+
+* hywiki.el (hywiki-find-page): Move prompt tests to 'hywiki-add-page'.
+            (hywiki-add-page): Add and run 'hywiki-add-page-hook'.  Add
+    optional second arg 'prompt-flag' that 'hywiki-find-page' passes.
+            (hywiki-directory-get-checksum): Update to use 'hywiki-get-page-files'.
+	    (hywiki-get-files): Remove, essentially duplicate of
+    'hywiki-get-page-files'.
+
+* test/hywiki-tests.el (hywiki-tests--directory-modified-p):
+    Update to set checksum which is needed now and expand
+    test scenarios.
+                       (hywiki-tests--wikiword-with-prefix-creates-a-new-page):
+    Update to add optional 2nd arg of nil to 'hywiki-add-page' call.
+                       (hywiki-tests--hywiki-add-page--adds-file-in-wiki-folder):
+   Actually create empty file and then delete it, fixing
+   hywiki-add-page call failure.
+  hywiki.el (hywiki-add-page): Fix issue where hash table
+    value was set before empty page file is created so
+    did not have correct value.
+
+* hywiki.el (hywiki-maybe-highlight-page-names-in-frame,
+             hywiki-maybe-highlight-page-names): Move set of
+    mod-time and checksum here from 'hywiki-get-page-hasht' to
+    make work with 'hywiki-kill-buffer-hook'.
+
+2024-09-21  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-kill-buffer-hook): Add for use as a global
+    'kill-buffer-hook'.
+  hypb.el (hypb:empty-file-p): Add and use in 'hywiki-kill-buffer-hook'.
+
+* hywiki.el (hywiki-maybe-highlight-page-names): Dehighlight HyWikiWords
+    before re-highlighting new set.
+
+* hywiki.el (hywiki-find-page): Prompt when creating the first HyWiki page
+    so user is not surprised by this Action Key behavior.
+            (hywiki-maybe-highlight-page-names): Add 3rd optional arg,
+    'skip-lookups-update-flag'.
+            (hywiki-maybe-highlight-page-names-in-frame): Add optional 2nd arg,
+    'skip-lookups-update-flag'
+            (hywiki-get-page-hasht): Call above function when update
+    lookup tables so use new data to highlight HyWikiWords.
+
+* man/hyperbole.texi (Manual Overview): Add links for HyWiki and HyNote.
+
+* hywiki.el (hywiki-maybe-highlight-balanced-pairs): Separate balanced
+    pair delimited expression highlighting into this function to allow
+    for more general handling.  Expand range from one line to two.
+            (hywiki-maybe-highlight-page-name): Call above function.
+	    (hywiki-get-page): Auto-link standard pluralizations of HyWikiWords
+    that end 's' when not preceded by an 's' or in 'es'.
+            (hywiki-directory-set-mod-time): Add.
+	    (hywiki--directory-checksum): Add for checking if any HyWiki page file
+    names have changed.
+	    (hywiki-directory-get-checksum, hywiki-directory-set-checksum): Add.
+	    (hywiki-directory-modified-p): Additionally test if dir checksum changed.
+            (hywiki-get-page-hasht): Fix to update pages hash table and page name
+    and page name regexp lookups if any page file name changes.
+            (hywiki-maybe-highlight-page-names): Force rebuild of pages hash table
+    if any page file names have changed in 'hywiki-directory' and move mod-time
+    update to 'hywiki-get-page-hasht'.
+
+2024-09-16  Bob Weiner  <rsw@gnu.org>
+
+* hsys-org.el {C-c C-@} Bind this key in Org mode to
+   'hycontrol-windows-grid' unless already bound.
+  hycontrol.el (hycontrol-windows-grid): Fix infinite recursive call
+    when 'mode-binding' is the same as the current command, e.g. org-mode.
+
 2024-09-11  Mats Lidell  <matsl@gnu.org>
 
 * test/hyrolo-tests.el (hyrolo-tests--get-file-list): Verify

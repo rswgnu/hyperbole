@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     15-Aug-24 at 09:17:01 by Mats Lidell
+;; Last-Mod:     22-Sep-24 at 03:00:21 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -29,7 +29,7 @@
          (hywiki-directory (make-temp-file "hywiki" t))
 	 (hywiki-page-file (expand-file-name "WikiWord.org" hywiki-directory)))
     (unwind-protect
-        (mocklet (((make-empty-file (expand-file-name "WikiWord.org" hywiki-directory) t) => t))
+	(progn
           (should (string= hywiki-page-file
                            (hywiki-add-page "WikiWord")))
           ;; Verify hash table is updated
@@ -37,6 +37,7 @@
             (not-called hywiki-add-page)
             (should (string= hywiki-page-file
                              (hywiki-get-page "WikiWord")))))
+      (hy-delete-file-and-buffer hywiki-page-file)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--hywiki-add-page--adds-no-wiki-word-fails ()
@@ -61,7 +62,7 @@
         (with-temp-buffer
           (insert "[[hy:WikiWord]]")
           (goto-char 4)
-          (mocklet (((hywiki-add-page "WikiWord") => wikifile))
+          (mocklet (((hywiki-add-page "WikiWord" nil) => wikifile))
             (action-key)))
       (hy-delete-file-and-buffer wikifile))))
 
@@ -163,10 +164,19 @@
   "Verify `hywiki-directory-modified-p'."
   (let ((hywiki--directory-mod-time 0))
     (should (hywiki-directory-modified-p)))
-  (let ((hywiki--directory-mod-time 2))
-    (mocklet ((hywiki-directory-get-mod-time => 2))
+  (let ((hywiki--directory-mod-time 2)
+	(hywiki--directory-checksum "3"))
+    (mocklet ((hywiki-directory-get-mod-time => 2)
+	      (hywiki-directory-get-checksum => "3"))
       (should-not (hywiki-directory-modified-p)))
-    (mocklet ((hywiki-directory-get-mod-time => 1))
+    (mocklet ((hywiki-directory-get-mod-time => 2)
+	      (hywiki-directory-get-checksum => "4"))
+      (should-not (hywiki-directory-modified-p)))
+    (mocklet ((hywiki-directory-get-mod-time => 1)
+	      (hywiki-directory-get-checksum => "3"))
+      (should-not (hywiki-directory-modified-p)))
+    (mocklet ((hywiki-directory-get-mod-time => 1)
+	      (hywiki-directory-get-checksum => "4"))
       (should (hywiki-directory-modified-p)))))
 
 (ert-deftest hywiki-tests--get-page-list ()
@@ -206,8 +216,7 @@
           (let ((hywiki-directory (make-temp-file "hywiki" t)))
             (unwind-protect
                 (progn
-                  (should (hash-empty-p (hywiki-get-page-hasht)))
-                    (should (= 0 (length (hywiki-get-page-list)))))
+                  (should (= 0 (length (hywiki-get-page-list)))))
               (hy-delete-dir-and-buffer hywiki-directory))))
       (hy-delete-file-and-buffer wiki-page)
       (hy-delete-dir-and-buffer hywiki-directory))))

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     11-Sep-24 at 08:52:36 by Mats Lidell
+;; Last-Mod:     22-Sep-24 at 02:44:39 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -39,11 +39,11 @@
 ;;    - comments of programming buffers, when `hywiki-mode' is enabled.
 ;;  
 ;;  As HyWikiWords are typed, highlighting occurs after a trailing
-;;  whitespace or punctuation character is added, or when an opening
-;;  or closing parenthesis or curly brace is added to surround the
-;;  HyWikiWord.  Since Org links use double square brackets and Org
-;;  targets use double or triple angle brackets, HyWikiWords within
-;;  these delimiters are ignored.
+;;  whitespace or punctuation character is added, or when it is
+;;  surrounded by a matching pair of characters such as curly braces
+;;  or single square brackets.  Since Org links use double square
+;;  brackets and Org targets use double or triple angle brackets,
+;;  HyWikiWords within these delimiters are ignored.
 ;;
 ;;  You can also create Org links to HyWikiWords in any non-special text
 ;;  buffer by surrounding them with double square brackets and the
@@ -372,6 +372,9 @@ in `hywiki-mode'.")
 (defconst hywiki--word-and-buttonize-character-regexp nil
   "Regexp matching HyWikiWord#section plus a valid word separating character.")
 
+(defvar hywiki--directory-checksum ""
+  "String checksum for `hywiki-directory' page names.")
+
 (defvar hywiki--directory-mod-time 0
   "Last mod time for `hywiki-directory' or 0 if the value has not been read.")
 
@@ -518,11 +521,12 @@ Return the absolute path to any page successfully found; nil if
 failed or if displaying a regular file (read in via a `find-file'
 call).
 
-By default, create any non-existent page.  With optional
-PROMPT-FLAG t, prompt to create if non-existent.  If PROMPT-FLAG
-is :existing or with a prefix argument when called interactively,
-return nil unless the page already exists.  After successfully
-finding a page and reading it into a buffer, run
+By default, create any non-existent page.  When not in batch mode,
+with optional PROMPT-FLAG t or if this is the first HyWiki page in
+`hywiki-directory', prompt to create if non-existent.  If
+PROMPT-FLAG is :existing or with a prefix argument when called
+interactively, return nil unless the page already exists.  After
+successfully finding a page and reading it into a buffer, run
 `hywiki-find-page-hook'."
   (interactive (list (if current-prefix-arg
 			 (hywiki-read-page-name "Find existing HyWiki page: ")
@@ -546,11 +550,7 @@ finding a page and reading it into a buffer, run
 				(substring page-name 0 (match-beginning 0))
 			      page-name))
 		 (page-file (or (hywiki-get-page page-name)
-				(if prompt-flag
-				    (unless (eq prompt-flag :existing)
-				      (when (y-or-n-p (concat "Create new `" page-name "' page? "))
-					(hywiki-add-page page-name)))
-				  (hywiki-add-page page-name)))))
+				(hywiki-add-page page-name prompt-flag))))
 	    (when page-file
 	      ;; Ensure highlight any page name at point in case called as a
 	      ;; Hyperbole action type
@@ -585,27 +585,39 @@ Exclude the minibuffer if selected and return nil."
   (insert (hywiki-read-page-name "Link to HyWiki page: "))
   (hywiki-maybe-highlight-page-name))
 
-(defun hywiki-add-page (page-name)
+(defun hywiki-add-page (page-name &optional prompt-flag)
   "Add or edit the HyWiki page for PAGE-NAME and return its file.
 If file exists already, just return it.  If PAGE-NAME is invalid,
 trigger a `user-error' if called interactively or return nil if
 not.
 
+By default, create any non-existent page.  When not in batch mode,
+with optional PROMPT-FLAG t or if this is the first HyWiki page in
+`hywiki-directory', prompt to create if non-existent.  If
+PROMPT-FLAG is :existing or with a prefix argument when called
+interactively, return nil unless the page already exists.  After
+successfully adding a page, run `hywiki-add-page-hook'.
+
 Use `hywiki-get-page' to determine whether a HyWiki page exists."
-  (interactive (list (hywiki-read-new-page-name "Add/Edit HyWiki page: ")))
+  (interactive (list (hywiki-read-new-page-name "Add/Edit HyWiki page: ")
+		     current-prefix-arg))
   (if (hywiki-word-is-p page-name)
-      (progn
+      (unless (or (eq prompt-flag :existing)
+		  (and prompt-flag (null noninteractive)
+		       (not (y-or-n-p (concat "Create new HyWiki page `" page-name "'? ")))))
 	(when (match-string-no-properties 2 page-name)
 	  ;; Remove any #section suffix in PAGE-NAME.
 	  (setq page-name (match-string-no-properties 1 page-name)))
 
 	(let ((page-file (hywiki-get-file page-name))
-	      (pages-hasht (hywiki-get-page-hasht)))
+	      pages-hasht)
 	  (unless (file-readable-p page-file)
 	    ;; Create any parent dirs necessary to create empty file
 	    (make-empty-file page-file t))
+	  (setq pages-hasht (hywiki-get-page-hasht))
 	  (unless (hash-get page-name pages-hasht)
 	    (hash-add page-file page-name pages-hasht))
+	  (run-hooks 'hywiki-add-page-hook)
 	  page-file))
     (when (called-interactively-p 'interactive)
       (user-error "(hywiki-add-page): Invalid page name: '%s'; must be capitalized, all alpha" page-name))))
@@ -792,6 +804,12 @@ interactively), limit dehighlighting to the region."
     (unless (or region-start region-end)
       (setq hywiki-buffer-highlighted-state 'd))))
 
+(defun hywiki-directory-get-checksum ()
+  "Compute and return the checksum for the current set of HyWiki pages."
+  (let ((hywiki-page-files (hywiki-get-page-files)))
+    (when hywiki-page-files
+      (md5 (apply #'concat hywiki-page-files) nil nil nil t))))
+
 (defun hywiki-directory-get-mod-time ()
   "Return the last mod time for `hywiki-directory' or 0."
   (if (file-readable-p hywiki-directory)
@@ -801,9 +819,18 @@ interactively), limit dehighlighting to the region."
     0))
 
 (defun hywiki-directory-modified-p ()
-  "Return non-nil if `hywiki-directory' has been modified since last read."
+  "Return non-nil if any HyWiki page name change since last read."
   (or (zerop hywiki--directory-mod-time)
-      (/= hywiki--directory-mod-time (hywiki-directory-get-mod-time))))
+      (and (/= hywiki--directory-mod-time (hywiki-directory-get-mod-time))
+	   (not (string-equal hywiki--directory-checksum (hywiki-directory-get-checksum))))))
+
+(defun hywiki-directory-set-checksum ()
+  "Store the last page name checksum for `hywiki-directory' as a string."
+  (setq hywiki--directory-checksum (hywiki-directory-get-checksum)))
+
+(defun hywiki-directory-set-mod-time ()
+  "Store the last page mod time for `hywiki-directory' as an integer."
+  (setq hywiki--directory-mod-time (hywiki-directory-get-mod-time)))
 
 (defun hywiki-highlight-on-yank (_prop-value start end)
   "Used in `yank-handled-properties' called with START and END pos of the text."
@@ -819,6 +846,42 @@ and its option #section."
 	      (funcall func overlay)))
 	  (overlays-in (point-min) (point-max)))
     nil))
+
+
+(defun hywiki-maybe-highlight-balanced-pairs ()
+  "Before or after a balanced delimiter, highlight HyWikiWords within.
+Includes: (), {}, <> and [].  Excludes Org links and radio targets."
+  (save-excursion
+    (save-restriction
+      ;; Limit balanced pair checks to the next two lines for speed
+      (narrow-to-region (line-beginning-position) (line-end-position 2))
+      (cond ((memq (char-before) '(?\[ ?\<))
+	     (goto-char (1- (point)))
+	     ;; Clear any HyWikiWord highlighting within double opening
+	     ;; square or angle brackets, when this is a link or target
+	     (hywiki-maybe-highlight-org-element-forward))
+	    ((memq (char-after) '(?\[ ?\<))
+	     ;; Clear any HyWikiWord highlighting within double opening
+	     ;; square or angle brackets, when this is a link or target
+	     (hywiki-maybe-highlight-org-element-forward))
+	    ((memq (char-before) '(?\( ?\{))
+	     ;; Highlight any HyWikiWords within opening parens or braces
+	     (ignore-errors
+	       (goto-char (1- (point)))
+	       (hywiki-maybe-highlight-sexp 1)))
+	    ((memq (char-before) '(?\] ?\>))
+	     ;; Clear any HyWikiWord highlighting within double closing
+	     ;; square or angle brackets, as this may be a link or target
+	     (hywiki-maybe-highlight-org-element-backward))
+	    ((memq (char-after) '(?\] ?\>))
+	     (goto-char (1+ (point)))
+	     ;; Clear any HyWikiWord highlighting within double closing
+	     ;; square or angle brackets, as this may be a link or target
+	     (hywiki-maybe-highlight-org-element-backward))
+	    ((memq (char-before) '(?\) ?\}))
+	     ;; Highlight any HyWikiWords within closing parens or braces
+	     (ignore-errors
+	       (hywiki-maybe-highlight-sexp -1)))))))
 
 ;;;###autoload
 (defun hywiki-maybe-highlight-page-name (&optional on-page-name)
@@ -848,38 +911,7 @@ the current page unless they have sections attached."
 	    ;; after page name
 	    (skip-syntax-backward "-"))
 
-	  (save-excursion
-	    (save-restriction
-	      ;; Limit sexp checks to a single line for speed since links and
-	      ;; targets should be on a single line.
-	      (narrow-to-region (line-beginning-position) (line-end-position))
-	      (cond ((memq (char-before) '(?\[ ?\<))
-		     (goto-char (1- (point)))
-		     ;; Clear any HyWikiWord highlighting within double opening
-		     ;; square or angle brackets, when this is a link or target
-		     (hywiki-maybe-highlight-org-element-forward))
-		    ((memq (char-after) '(?\[ ?\<))
-		     ;; Clear any HyWikiWord highlighting within double opening
-		     ;; square or angle brackets, when this is a link or target
-		     (hywiki-maybe-highlight-org-element-forward))
-		    ((memq (char-before) '(?\( ?\{))
-		     ;; Highlight any HyWikiWords within opening parens or braces
-		     (ignore-errors
-		       (goto-char (1- (point)))
-		       (hywiki-maybe-highlight-sexp 1)))
-		    ((memq (char-before) '(?\] ?\>))
-		     ;; Clear any HyWikiWord highlighting within double closing
-		     ;; square or angle brackets, as this may be a link or target
-		     (hywiki-maybe-highlight-org-element-backward))
-		    ((memq (char-after) '(?\] ?\>))
-		     (goto-char (1+ (point)))
-		     ;; Clear any HyWikiWord highlighting within double closing
-		     ;; square or angle brackets, as this may be a link or target
-		     (hywiki-maybe-highlight-org-element-backward))
-		    ((memq (char-before) '(?\) ?\}))
-		     ;; Highlight any HyWikiWords within closing parens or braces
-		     (ignore-errors
-		       (hywiki-maybe-highlight-sexp -1))))))
+	  (hywiki-maybe-highlight-balanced-pairs)
 
 	  (unless hywiki--highlighting-done-flag
 	    (unless on-page-name
@@ -984,10 +1016,12 @@ DIRECTION-NUMBER is 1 for forward scanning and -1 for backward scanning."
       (hywiki-maybe-highlight-sexp 1))))
 
 ;;;###autoload
-(defun hywiki-maybe-highlight-page-names (&optional region-start region-end)
+(defun hywiki-maybe-highlight-page-names (&optional region-start region-end skip-lookups-update-flag)
   "Highlight each non-Org link HyWiki page#section in a buffer/region.
-With optional REGION-START and REGION-END positions (active region
-interactively), limit highlighting to the region.
+With optional REGION-START and REGION-END positions (active
+region interactively), limit highlighting to the region.  With
+optional SKIP-LOOKUPS-UPDATE-FLAG non-nil, HyWiki lookup tables
+should have already been updated and this is skipped.
 
 Use `hywiki-word-face' to highlight.  Do not highlight references to
 the current page unless they have sections attached.
@@ -996,29 +1030,19 @@ Dehighlight buffers other than HyWiki pages when `hywiki-mode' is
 disabled.  Highlight/dehighlight HyWiki page buffers when
 `hywiki-word-highlight-flag' is changed."
   (interactive (when (use-region-p) (list (region-beginning) (region-end))))
-  ;; Avoid doing any lets for efficiency.
+  ;; Avoid doing many lets for efficiency.
   ;; Highlight HyWiki words in buffers where `hywiki-mode' is enabled
-  ;; or with attached files below `hywiki-directory'.
+  ;; or HyWiki pages below `hywiki-directory'.
   (if (hywiki-active-in-current-buffer-p)
       (unless (and (null region-start) (null region-end)
-		   (eq hywiki-buffer-highlighted-state 'h))
+		   (eq hywiki-buffer-highlighted-state 'h)
+		   (not (hywiki-directory-modified-p)))
+	(unless skip-lookups-update-flag
+	  ;; Rebuild lookup tables if any HyWiki page name has changed
+	  (hywiki-get-page-hasht))
 	(unwind-protect
 	    (save-excursion
 	      (save-restriction
-		(when (or (null hywiki--any-page-regexp-list)
-			  (hywiki-directory-modified-p))
-		  ;; Compute these expensive regexps (matching 50
-		  ;; hywiki words at a time) only if `hywiki-directory'
-		  ;; mod time has changed.
-		  (setq hywiki--any-page-regexp-list
-			(mapcar (lambda (page-sublist)
-				  (concat (regexp-opt page-sublist 'words)
-					  "\\("
-					  hywiki-word-section-regexp "?\\)"
-					  hywiki--buttonize-character-regexp))
-				(hypb:split-seq-into-sublists
-				 (hywiki-get-page-list) 50))
-			hywiki--directory-mod-time (hywiki-directory-get-mod-time)))
 		(setq hywiki--save-case-fold-search case-fold-search
 		      case-fold-search nil
 		      hywiki--save-org-link-type-required hywiki-org-link-type-required
@@ -1027,6 +1051,8 @@ disabled.  Highlight/dehighlight HyWiki page buffers when
 		(if (and region-start region-end)
 		    (narrow-to-region region-start region-end)
 		  (widen))
+		(let ((hywiki-word-highlight-flag))
+		  (hywiki-maybe-dehighlight-page-names))
 		(dolist (hywiki-words-regexp hywiki--any-page-regexp-list)
 		  (goto-char (point-min))
 		  (let ((highlight-in-comments-only
@@ -1086,19 +1112,22 @@ disabled.  Highlight/dehighlight HyWiki page buffers when
 				 (/= region-end   (point-max))))
 		  (setq hywiki-buffer-highlighted-state 'h))))
 	  (setq case-fold-search hywiki--save-case-fold-search
-		hywiki-org-link-type-required hywiki--save-org-link-type-required))
-	)
+		hywiki-org-link-type-required hywiki--save-org-link-type-required)))
 
     ;; Otherwise, dehighlight HyWikiWords in this buffer when
     ;; 'hywiki-mode' is disabled and this is not a HyWiki page
     ;; buffer. If this is a HyWiki page buffer, then dehighlight
     ;; when `hywiki-word-highlight-flag' is nil.
-    (hywiki-maybe-dehighlight-page-names region-start region-end)))
+    (hywiki-maybe-dehighlight-page-names region-start region-end))
+  (unless (hyperb:stack-frame '(hywiki-maybe-highlight-page-names-in-frame))
+    (hywiki-directory-set-mod-time)
+    (hywiki-directory-set-checksum)))
 
-(defun hywiki-maybe-highlight-page-names-in-frame (frame)
+(defun hywiki-maybe-highlight-page-names-in-frame (frame &optional skip-lookups-update-flag)
   "Highlight all non-Org link HyWiki page names displayed in FRAME.
 If FRAME is t, then highlight in all windows across all frames, even
-invisible ones.
+invisible ones.  With optional SKIP-LOOKUPS-UPDATE-FLAG non-nil, HyWiki
+lookup tables should have already been updated and this is skipped.
 
 Use `hywiki-word-face' to highlight.  Does not highlight references to
 the current page unless they have sections attached."
@@ -1108,8 +1137,10 @@ the current page unless they have sections attached."
        ;; Display buffer before `normal-mode' triggers possibly
        ;; long-running font-locking
        (sit-for 0)
-       (hywiki-maybe-highlight-page-names)))
-   nil frame))
+       (hywiki-maybe-highlight-page-names nil nil skip-lookups-update-flag)))
+   nil frame)
+  (hywiki-directory-set-mod-time)
+  (hywiki-directory-set-checksum))
 
 (defun hywiki-in-page-p ()
   "Return non-nil if the current buffer is a HyWiki page.
@@ -1126,21 +1157,10 @@ are typed in the buffer."
   (file-name-sans-extension (file-name-nondirectory
 			     (or buffer-file-name (buffer-name)))))
 
-(defun hywiki-get-files ()
-  "Return the list of existing HyWiki files ending with `hywiki-file-suffix'.
-This includes both HyWiki page files and others.  File names returned are
-relative to `hywiki-directory'."
-  (when (stringp hywiki-directory)
-    (make-directory hywiki-directory t)
-    (when (file-readable-p hywiki-directory)
-      (directory-files
-       hywiki-directory nil
-       (concat "^[^#]+" (regexp-quote hywiki-file-suffix) "$")))))
-
 (defun hywiki-get-page (page-name)
   "Return the absolute path of HyWiki PAGE-NAME or nil if it does not exist."
   (when (and (stringp page-name) (not (string-empty-p page-name))
-	   (string-match hywiki-word-with-optional-section-exact-regexp page-name))
+	     (string-match hywiki-word-with-optional-section-exact-regexp page-name))
     (when (match-string-no-properties 2 page-name)
       ;; Remove any #section suffix in PAGE-NAME.
       (setq page-name (match-string-no-properties 1 page-name)))
@@ -1148,7 +1168,13 @@ relative to `hywiki-directory'."
     (or (hash-get page-name (hywiki-get-page-hasht))
 	;; If page exists but not yet in lookup hash table, add it.
 	(when (file-readable-p (hywiki-get-file page-name))
-	  (hywiki-add-page page-name)))))
+	  (hywiki-add-page page-name))
+	;; Handle typical pluralized words ending in 's' (not preceded
+	;; by an 's') or 'es'
+	(when (string-match "es$" page-name)
+	  (hash-get (substring page-name 0 -2) (hywiki-get-page-hasht)))
+	(when (string-match ".[^eEsS]s$" page-name)
+	  (hash-get (substring page-name 0 -1) (hywiki-get-page-hasht))))))
 
 (defun hywiki-get-file (file-stem-name)
   "Return possibly non-existent path in `hywiki-directory' from FILE-STEM-NAME.
@@ -1173,13 +1199,43 @@ These must end with `hywiki-file-suffix'."
 				(regexp-quote hywiki-file-suffix) "$")))))
 
 (defun hywiki-get-page-hasht ()
-  "Return hash table of existing HyWiki pages."
-  (if (equal hywiki--pages-directory hywiki-directory)
+  "Return hash table of existing HyWiki pages.
+May update the page hash table if out-of-date as well as the list of
+regexps of page names."
+  (if (and hywiki--any-page-regexp-list
+	   (equal hywiki--pages-directory hywiki-directory)
+	   ;; If page files changed, have to rebuild page hash table
+	   (not (hywiki-directory-modified-p)))
       (or hywiki--pages-hasht (hywiki-make-pages-hasht))
-    (hywiki-make-pages-hasht)))
+    ;; Rebuild page hash table
+    (hywiki-make-pages-hasht)
+    ;; Compute these expensive regexps (matching 50
+    ;; hywiki words at a time) only if the set of HyWiki
+    ;; page names has changed in `hywiki-directory'.
+    (setq hywiki--any-page-regexp-list
+	  (mapcar (lambda (page-sublist)
+		    (concat (regexp-opt page-sublist 'words)
+			    "\\("
+			    hywiki-word-section-regexp "?\\)"
+			    hywiki--buttonize-character-regexp))
+		  (hypb:split-seq-into-sublists
+		   (hash-map #'cdr hywiki--pages-hasht) 50)))
+    (hywiki-maybe-highlight-page-names-in-frame t t)
+    hywiki--pages-hasht))
 
 (defun hywiki-get-page-list ()
   (hash-map #'cdr (hywiki-get-page-hasht)))
+
+(defun hywiki-kill-buffer-hook ()
+  "Delete file attached to HyWiki buffer if the file is zero-sized.
+If deleted, update HyWikiWord highlighting across all frames."
+  (when (hywiki-in-page-p)
+    (when (hypb:empty-file-p)
+      (delete-file buffer-file-name))
+    (when (hywiki-directory-modified-p)
+      ;; Rebuild lookup tables if any HyWiki page name has changed
+      (hywiki-get-page-hasht))
+    nil))
 
 (defun hywiki-make-pages-hasht ()
   (let* ((page-files (hywiki-get-page-files))
@@ -1430,7 +1486,7 @@ optional VIEW-BUFFER-NAME, use that rather than the default,
   "Watch function for variable ``hywiki-word-highlight-flag'.
 Function is called with 4 arguments: (SYMBOL SET-TO-VALUE OPERATION WHERE).
 Highlight/dehighlight HyWiki page names across all frames on change."
-  (unless (memq operation '(let unlet)) ;; not setting global valNue
+  (unless (memq operation '(let unlet)) ;; not setting global value
     (set symbol set-to-value)
     (if set-to-value
 	;; enabled
@@ -1471,6 +1527,8 @@ Highlight/dehighlight HyWiki page names across all frames on change."
 ;;; ************************************************************************
 ;;; Public initializations
 ;;; ************************************************************************
+
+(add-hook 'kill-buffer-hook 'hywiki-kill-buffer-hook)
 
 (eval-after-load "org-element"
   '(advice-add 'org-element--generate-copy-script :before #'hywiki-org-export-function))

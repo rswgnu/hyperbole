@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:      8-Aug-24 at 23:51:10 by Mats Lidell
+;; Last-Mod:     16-Sep-24 at 22:19:53 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -44,6 +44,12 @@
 ;;; ************************************************************************
 ;;; Public declarations
 ;;; ************************************************************************
+
+;; Bind {C-c C-@} to create a user-specified sized grid of windows
+;; displaying different buffers.
+;; Don't override prior bindings of this key.
+(unless (lookup-key org-mode-map "\C-c\C-@")
+  (define-key org-mode-map "\C-c\C-@" #'hycontrol-windows-grid))
 
 (defvar hyperbole-mode-map)             ; "hyperbole.el"
 (defvar org--inhibit-version-check)     ; "org-macs.el"

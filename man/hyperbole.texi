@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:      2-Sep-24 at 19:50:16 by Bob Weiner
+@c Last-Mod:     21-Sep-24 at 18:10:46 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -159,7 +159,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed September 1, 2024.
+Printed September 21, 2024.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -201,7 +201,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.2pre
-September 1, 2024
+September 21, 2024
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -589,7 +589,7 @@ Hyperbole allows hypertext buttons to be embedded within unstructured and
 structured files, mail messages and news articles.  It offers intuitive
 keyboard and mouse-based control of information display within multiple
 windows.  It also provides point-and-click access to Info manuals, ftp
-archives, and the World-Wide Web.
+archives, the World-Wide Web and much more.
 
 @cindex file, FAST-DEMO
 @cindex Hyperbole demo
@@ -632,17 +632,33 @@ provides a number of overlapping interaction methods that support differing
 work styles.  In such instances, you need learn only one technique that suits
 you.
 
-@xref{Buttons}, for an overview of Hyperbole buttons and how to use them.
+@xref{Buttons}, for an overview of Hyperbole buttons and how to use
+them.  Hyperbole's action-oriented button support is enabled via the
+global minor mode, @code{hyperbole-mode).
+
 
 @xref{Menus}, for summaries of Hyperbole menu commands and how to use
 the minibuffer-based menus that work on any display that Emacs supports.
+
+@xref{HyWiki}, for Hyperbole's markup-free, personal Wiki system for
+note-taking and automatic WikiWord highlighting and hyperlinking.  It
+extends Org mode.  HyWikiWord hyperlink buttons are automatically
+enabled for wiki pages below @code{hywiki-directory}.  To enable them
+in text buffers outside of this directory, enable the global minor
+mode, @code{hywiki-mode}.
+
+@xref{HyNote}, for a start on the very early stages of Hyperbole's
+multi-format note taking system.  HyNote supports Org, Markdown,
+Koutline and Emacs Outline file formats.  HyNote works in any buffer
+where HyWiki support is active.
 
 @xref{HyControl}, for how to quickly and interactively control what your
 Emacs windows and frames display and where they appear.
 
 @xref{Koutliner}, for concept and usage information on the
-autonumbered, hypertextual outliner.  @xref{Koutliner Keys}, for a full
-summary of the outliner commands that are bound to keys.
+autonumbered, hypertextual outliner.  It uses its own major mode.
+@xref{Koutliner Keys}, for a full summary of the outliner commands
+that are bound to keys.
 
 @xref{HyRolo}, for concept and usage information on the rapid lookup,
 hierarchical, full-text record management system included with Hyperbole.
@@ -4487,10 +4503,10 @@ the following contexts:
 @cindex HyWikiWord highlighting
 As HyWikiWords are typed, highlighting occurs after a trailing
 whitespace or punctuation character is added, or when the HyWikiWord
-is surrounded by a matching pair of characters such as curly braces.
-Since Org links use double square brackets and Org targets use double
-or triple angle brackets, HyWikiWords within these delimiters are
-ignored once the brackets are in place.
+is surrounded by a matching pair of characters such as curly braces or
+single square brackets.  Since Org links use double square brackets
+and Org targets use double or triple angle brackets, HyWikiWords
+within these delimiters are ignored once the brackets are in place.
 
 @vindex hywiki-word-highlight-flag
 The custom setting, @code{hywiki-word-highlight-flag} (default =
@@ -4668,7 +4684,7 @@ implicit button type that HyNote defines, @code{hynote-file}.
 In the future, HyNote will also provide a universal way to easily link to
 information across many file formats.
 
-See also @ref{HyWiki}.
+For more, @ref{HyWiki}.
 
 
 @node HyControl, Koutliner, HyNote, Top
