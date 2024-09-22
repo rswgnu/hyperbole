@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:      8-Jun-24 at 19:54:44 by Bob Weiner
+;; Last-Mod:     21-Sep-24 at 23:20:56 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -464,6 +464,11 @@ This will install the Emacs devdocs package if not yet installed."
 		       (or src-buf-exists-p (kill-buffer nil))
 		       dname))))
       (concat "@" dname))))
+
+(defun hypb:empty-file-p ()
+  "Return non-nil if the current buffer has an attached file of zero size."
+  (when (and buffer-file-name (file-readable-p buffer-file-name))
+    (= (file-attribute-size (file-attributes buffer-file-name)) 0)))
 
 (defun hypb:error (&rest args)
   "Signal an error typically to be caught by `hyperbole'.

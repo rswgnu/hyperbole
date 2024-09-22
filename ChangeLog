@@ -1,5 +1,7 @@
 2024-09-21  Bob Weiner  <rsw@gnu.org>
 
+* hypb.el (hypb:empty-file-p): Add and use in 'hywiki-kill-buffer-hook'.
+
 * hywiki.el (hywiki-find-page): Prompt when creating the first HyWiki page
     so user is not surprised by this Action Key behavior.
 
