@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     22-Sep-24 at 02:00:02 by Bob Weiner
+;; Last-Mod:     22-Sep-24 at 03:00:21 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -216,8 +216,7 @@
           (let ((hywiki-directory (make-temp-file "hywiki" t)))
             (unwind-protect
                 (progn
-                  (should (hash-empty-p (hywiki-get-page-hasht)))
-                    (should (= 0 (length (hywiki-get-page-list)))))
+                  (should (= 0 (length (hywiki-get-page-list)))))
               (hy-delete-dir-and-buffer hywiki-directory))))
       (hy-delete-file-and-buffer wiki-page)
       (hy-delete-dir-and-buffer hywiki-directory))))

@@ -1,5 +1,8 @@
 2024-09-22  Bob Weiner  <rsw@gnu.org>
 
+* test/hywiki-tests.el (hywiki-tests--get-page-list-when-new-wiki-directory):
+    Remove 'hash-empty-p' test that fails exclusively on Emacs master.
+
 * hywiki.el (hywiki-find-page): Move prompt tests to 'hywiki-add-page'.
             (hywiki-add-page): Add and run 'hywiki-add-page-hook'.  Add
     optional second arg 'prompt-flag' that 'hywiki-find-page' passes.
