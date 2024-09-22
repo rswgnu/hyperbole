@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     22-Sep-24 at 02:31:37 by Bob Weiner
+;; Last-Mod:     22-Sep-24 at 02:44:39 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -806,9 +806,9 @@ interactively), limit dehighlighting to the region."
 
 (defun hywiki-directory-get-checksum ()
   "Compute and return the checksum for the current set of HyWiki pages."
-  (let ((hywiki-file-regexp (concat hywiki-word-regexp (regexp-quote hywiki-file-suffix) "$")))
-    (md5 (apply #'concat (directory-files hywiki-directory nil hywiki-file-regexp))
-	 nil nil nil t)))
+  (let ((hywiki-page-files (hywiki-get-page-files)))
+    (when hywiki-page-files
+      (md5 (apply #'concat hywiki-page-files) nil nil nil t))))
 
 (defun hywiki-directory-get-mod-time ()
   "Return the last mod time for `hywiki-directory' or 0."
@@ -1156,17 +1156,6 @@ are typed in the buffer."
   "Extract the page name from the buffer file name or else buffer name."
   (file-name-sans-extension (file-name-nondirectory
 			     (or buffer-file-name (buffer-name)))))
-
-(defun hywiki-get-files ()
-  "Return the list of existing HyWiki files ending with `hywiki-file-suffix'.
-This includes both HyWiki page files and others.  File names returned are
-relative to `hywiki-directory'."
-  (when (stringp hywiki-directory)
-    (make-directory hywiki-directory t)
-    (when (file-readable-p hywiki-directory)
-      (directory-files
-       hywiki-directory nil
-       (concat "^[^#]+" (regexp-quote hywiki-file-suffix) "$")))))
 
 (defun hywiki-get-page (page-name)
   "Return the absolute path of HyWiki PAGE-NAME or nil if it does not exist."

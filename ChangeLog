@@ -3,6 +3,9 @@
 * hywiki.el (hywiki-find-page): Move prompt tests to 'hywiki-add-page'.
             (hywiki-add-page): Add and run 'hywiki-add-page-hook'.  Add
     optional second arg 'prompt-flag' that 'hywiki-find-page' passes.
+            (hywiki-directory-get-checksum): Update to use 'hywiki-get-page-files'.
+	    (hywiki-get-files): Remove, essentially duplicate of
+    'hywiki-get-page-files'.
 
 * test/hywiki-tests.el (hywiki-tests--directory-modified-p):
     Update to set checksum which is needed now and expand
