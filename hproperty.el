@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Aug-92
-;; Last-Mod:     28-Jul-24 at 23:58:16 by Bob Weiner
+;; Last-Mod:     29-Sep-24 at 20:39:58 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -239,18 +239,21 @@ See `hproperty:but-get'."
 
 (defun hproperty:but-get-all-in-region (start end &optional property value)
   "Return all buttons in the current buffer between START and END.
-If optional PROPERTY and VALUE are given, return only the first button
-with that PROPERTY and VALUE."
-  (delq nil
-	(mapcar (lambda (overlay)
-		  (when (memq (overlay-get overlay (or property 'face))
-			      (if property
-				  (list value)
-				(list hproperty:but-face
-				      hproperty:ibut-face
-				      hproperty:flash-face)))
-		    overlay))
-		(overlays-in start end))))
+If optional PROPERTY and non-nil VALUE are given, return a list of the
+first button with that PROPERTY and VALUE only."
+  (catch 'first
+    (delq nil
+	  (mapcar (lambda (overlay)
+		    (when (memq (overlay-get overlay (or property 'face))
+				(if property
+				    (list value)
+				  (list hproperty:but-face
+					hproperty:ibut-face
+					hproperty:flash-face)))
+		      (if property
+			  (throw 'first (list overlay))
+			overlay)))
+		  (overlays-in start end)))))
 
 (defun hproperty:but-get (&optional pos property value)
   "Return button at optional POS or point.

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     21-Sep-24 at 23:20:56 by Bob Weiner
+;; Last-Mod:     30-Sep-24 at 01:00:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -654,6 +654,11 @@ This will this install the Emacs helm package when needed."
 		 help-file
 	       (error "(hypb:hkey-help-file): Non-existent file: \"%s\""
 		      help-file))))))
+
+(defun hypb:in-string-p ()
+  "Return non-nil iff point is in a double quoted string."
+  (syntax-ppss-flush-cache (line-beginning-position))
+  (nth 3 (syntax-ppss)))
 
 (defun hypb:indirect-function (obj)
   "Return the function at the end of OBJ's function chain.

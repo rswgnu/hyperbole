@@ -1,3 +1,44 @@
+2024-09-30  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-maybe-highlight-page-names): Don't widen the buffer by
+    default as modes like the Koutliner and mail readers narrow to keep
+    certain data hidden from display or editing.
+
+2024-09-29  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-maybe-dehighlight-page-names): Add support for passing
+    markers as 'region-start' and 'region-end' args.
+
+* hproperty.el (hproperty:but-get-all-in-region): Fix to exit with first match
+    if 'property' arg is given.
+
+* hypb.el (hypb:in-string-p): Add.
+
+* hywiki.el (hywiki-word-activate): If on a HyWikiWord without a wiki page,
+    then prompt before creating the page.
+            (hywiki-maybe-highlight-balanced-pairs): Fix to handle HyWikiWords
+    within double quotes and re-highlight balanced expressions before and after
+    point since don't know if command is moving point forward or backward.  Also
+    limit buffer region to 'hywiki--buttonize-start' and 'hywiki--buttonize-end'
+    markers when set by 'pre-command-hook'.
+            (hywiki-maybe-highlight-page-names): Allow for whitespace in section
+    names when 'region-start' and 'region-end' are given.  And allow these two args
+    to be markers.
+            (hywiki-word-highlight-flag-changed): Add dehighlighting of HyWikiWords
+    after special commands like deletion to 'pre-command-hook'.  Leave
+    highlighting to 'post-command-hook'.  This allows dehighlighting of an an
+    entire balanced delimited HyWikiWord with a section that contains whitespace
+    before the delimiter is removed.
+           (hywiki-debuttonize-non-character-commands): Add to dehighlight
+    HyWikiWords for 'pre-command-hook'.
+           (hywiki--get-delimited-range-backward, hywiki--get-delimited-range-forward,
+            hywiki-get-delimited-range): Add to compute delimited range before
+    or after point that surrounds a HyWikiWord#section button, if any.
+           (hywiki-get-delimited-range, hywiki-maybe-highlight-balanced-pairs):
+
+    Fix to handle all cases of point being before or after delimiters since
+    for example can delete a delimiter forward or backward.
+
 2024-09-22  Bob Weiner  <rsw@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--get-page-list-when-new-wiki-directory):
