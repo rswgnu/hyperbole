@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     22-Sep-24 at 03:00:21 by Bob Weiner
+;; Last-Mod:      4-Oct-24 at 00:03:00 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -188,6 +188,28 @@
           (should (equal '("WikiWord") (hywiki-get-page-list)))
           (should (equal wiki-page (hywiki-add-page "WikiWord")))
           (should (equal '("WikiWord") (hywiki-get-page-list))))
+      (hy-delete-file-and-buffer wiki-page)
+      (hy-delete-dir-and-buffer hywiki-directory))))
+
+(ert-deftest hywiki-tests--get-page-list-after-add-and-delete ()
+  "Verify `hywiki-get-page-list' is updated when a page is added and removed."
+  (let* ((hywiki-directory (make-temp-file "hywiki" t))
+         (wiki-page (hywiki-add-page "WordOne")))
+    (unwind-protect
+        (progn
+          (should (equal '("WordOne") (hywiki-get-page-list)))
+          (let ((wiki-page2 (hywiki-add-page "WordTwo")))
+            (unwind-protect
+                (progn
+                  (should-not
+                   (cl-set-exclusive-or '("WordOne" "WordTwo") (hywiki-get-page-list) :test 'equal)))
+              ;; (sit-for 1) ; Wait before remove file or mock modified-p, see below.
+              (hy-delete-file-and-buffer wiki-page2)))
+          ;; Add and remove is within the same time stamp of the
+          ;; folder so removal is not noticed. We need to mock the
+          ;; modified check to get the desired behavior.
+          (mocklet ((hywiki-directory-modified-p => t))
+            (should (equal '("WordOne") (hywiki-get-page-list)))))
       (hy-delete-file-and-buffer wiki-page)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
