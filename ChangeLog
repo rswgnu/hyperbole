@@ -1,5 +1,7 @@
 2024-10-04  Mats Lidell  <matsl@gnu.org>
 
+* hywiki.el (hywiki-add-page): Set mod time and checksum on file creation.
+
 * test/hywiki-tests.el (hywiki-tests--get-page-list-after-add-and-delete):
     Add test.
 

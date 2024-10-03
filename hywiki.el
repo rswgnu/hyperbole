@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     22-Sep-24 at 02:44:39 by Bob Weiner
+;; Last-Mod:      3-Oct-24 at 23:57:21 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -613,7 +613,9 @@ Use `hywiki-get-page' to determine whether a HyWiki page exists."
 	      pages-hasht)
 	  (unless (file-readable-p page-file)
 	    ;; Create any parent dirs necessary to create empty file
-	    (make-empty-file page-file t))
+	    (make-empty-file page-file t)
+            (hywiki-directory-set-mod-time)
+            (hywiki-directory-set-checksum))
 	  (setq pages-hasht (hywiki-get-page-hasht))
 	  (unless (hash-get page-name pages-hasht)
 	    (hash-add page-file page-name pages-hasht))
