@@ -1,3 +1,39 @@
+2024-10-07  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--get-page-list-after-add-and-delete): Add
+    and update this test from Mats.
+
+* hywiki.el (hywiki-strip-org-link): Remove any Org link around HyWikiWord#section.
+	    (hywiki-page-exists-p): Call above function.
+	    (hywiki-word-is-p): Clarify in doc that hy:WikiWord returns nil since
+    Org mode handles such links.
+            (hywiki-word-at): Remove optional arg 'range-flag' since never used
+    and too complicated to always return a list with the range when given.
+
+2024-10-06  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-word-at): Update to handle HyWiki Org-type links with
+    descriptions, e.g. [[WikiWord][Description Text]].
+
+* hargs.el (hargs:delimited): Update doc of 'as-key' argument on use of 'none.
+
+* hasht.el (hash-map): Speed up by not consing key and value when don't need to.
+
+* hywiki.el (hywiki-add-page): Replace 'make-empty-file' with lower-level
+    'write-region' for efficiency.
+    (hywiki--directory-mod-time): Use nil as default value instead of 0.
+    (hywiki-directory-get-mod-time): Return nil if no mod-time or a list
+    that includes microseconds (previously integer return was only precision
+    of seconds).
+  test/hywiki-tests.el (hywiki-tests--directory-get-mod-time,
+                        hywiki-tests--directory-modified-p): Update to handle
+    new list format for mod-time.
+
+2024-10-05  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-kill-buffer-hook): Change to return t iff 'hywiki-directory'
+    change
+
 2024-09-30  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-maybe-highlight-page-names): Don't widen the buffer by

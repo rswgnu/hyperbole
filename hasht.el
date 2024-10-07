@@ -8,7 +8,7 @@
 ;; AUTHOR:       Bob Weiner
 ;;
 ;; ORIG-DATE:    16-Mar-90 at 03:38:48
-;; LAST-MOD:     12-Jul-24 at 23:22:26 by Mats Lidell
+;; LAST-MOD:      6-Oct-24 at 13:26:58 by Bob Weiner
 ;;
 ;; Copyright (C) 1990-1995, 1997, 2016  Free Software Foundation, Inc.
 ;; See the file BR-COPY for license information.
@@ -201,18 +201,25 @@ in reverse order of occurrence (they are prepended to the list)."
     (cons 'hasht obarray)))
 
 (defun hash-map (func hash-table)
-  "Return result of applying FUNC over each (<value> . <key>) in HASH-TABLE."
+  "Return result of applying FUNC over each (<value> . <key>) in HASH-TABLE.
+<key> is a symbol.
+
+If FUNC is in '(cdr key second symbol-name), then return all <key>s as strings.
+If FUNC is in '(car value first symbol-value), then return all <value>s."
   (if (not (hashp hash-table))
       (error "(hash-map): Invalid hash-table: `%s'" hash-table))
+  (setq func (cond ((memq func '(cdr key second symbol-name))
+		    #'symbol-name)
+		   ((memq func '(car value first symbol-value))
+		    #'symbol-value)
+		   (t `(lambda (sym) (funcall ,func
+					      (cons (symbol-value sym)
+						    (symbol-name sym)))))))
   (let ((result))
     (mapatoms (lambda (sym)
 		(and (boundp sym)
 		     sym
-		     (setq result (cons (funcall
-					 func
-					 (cons (symbol-value sym)
-					       (symbol-name sym)))
-					result))))
+		     (push (funcall func sym) result)))
 	      (hash-obarray hash-table))
     result))
 

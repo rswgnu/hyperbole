@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     22-Sep-24 at 03:00:21 by Bob Weiner
+;; Last-Mod:      6-Oct-24 at 12:38:13 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -155,20 +155,24 @@
 (ert-deftest hywiki-tests--directory-get-mod-time ()
   "Verify `hywiki-directory-get-mod-time'."
   (mocklet ((file-readable-p => nil))
-    (should (= 0 (hywiki-directory-get-mod-time))))
+    (should (null (hywiki-directory-get-mod-time))))
   (mocklet ((file-readable-p => t)
             (file-attributes => '(t 0 0 0 nil (100 100 100 100) nil 0 "drwxr-xr-x" t 0 0)))
-    (should (= 6553700 (hywiki-directory-get-mod-time)))))
+    (should (equal '(100 100 100 100) (hywiki-directory-get-mod-time)))))
 
 (ert-deftest hywiki-tests--directory-modified-p ()
-  "Verify `hywiki-directory-modified-p'."
-  (let ((hywiki--directory-mod-time 0))
+  "Verify `hywiki-directory-modified-p'.
+Both mod-time and checksum must be changed for a test to return true."
+  (let ((hywiki--directory-mod-time nil))
     (should (hywiki-directory-modified-p)))
   (let ((hywiki--directory-mod-time 2)
 	(hywiki--directory-checksum "3"))
     (mocklet ((hywiki-directory-get-mod-time => 2)
 	      (hywiki-directory-get-checksum => "3"))
       (should-not (hywiki-directory-modified-p)))
+    ;; Next test case should never be able to occur since a change in
+    ;; the filenames in the checksum necessitates a change in the
+    ;; mod-time variable.  So the modified test should return nil.
     (mocklet ((hywiki-directory-get-mod-time => 2)
 	      (hywiki-directory-get-checksum => "4"))
       (should-not (hywiki-directory-modified-p)))
@@ -188,6 +192,22 @@
           (should (equal '("WikiWord") (hywiki-get-page-list)))
           (should (equal wiki-page (hywiki-add-page "WikiWord")))
           (should (equal '("WikiWord") (hywiki-get-page-list))))
+      (hy-delete-file-and-buffer wiki-page)
+      (hy-delete-dir-and-buffer hywiki-directory))))
+
+(ert-deftest hywiki-tests--get-page-list-after-add-and-delete ()
+  "Verify `hywiki-get-page-list' is updated when a page is added and removed."
+  (let* ((hywiki-directory (make-temp-file "hywiki" t))
+         (wiki-page (hywiki-add-page "WordOne")))
+    (unwind-protect
+        (let ((wiki-page2 (hywiki-add-page "WordTwo")))
+	  (unwind-protect
+              (should (set:equal '("WordOne" "WordTwo")
+				 (hywiki-get-page-list)))
+	    ;; This delay is necessary or the test can fail sporadically
+	    (sit-for 0.01)
+            (hy-delete-file-and-buffer wiki-page2))
+	  (should (set:equal '("WordOne") (hywiki-get-page-list))))
       (hy-delete-file-and-buffer wiki-page)
       (hy-delete-dir-and-buffer hywiki-directory))))
 

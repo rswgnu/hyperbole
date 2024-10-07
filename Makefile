@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:      7-Sep-24 at 16:29:00 by Mats Lidell
+# Last-Mod:      6-Oct-24 at 11:52:28 by Bob Weiner
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -73,9 +73,11 @@
 #               * Developer targets
 #
 #               To run unit tests:
-#                   make batch-tests             - run non-interactive tests in batch mode
-#                   make all-tests               - run all tests starting an interactive Emacs
-#                   make test test=<test-name>   - run a single test or tests matching the name
+#                   make all-tests                    - run all tests in a new interactive Emacs
+#                   make all-tests test=<test-name>   - run all tests that match <test-name> in a new interactive emacs
+#
+#                   make batch-tests                  - run non-interactive tests in batch mode
+#                   make batch-tests test=<test-name> - run a single test or tests matching the name in batch mode
 #
 #               To interactively run a docker version of Emacs with Hyperbole:
 #                   make docker-run              - default to running master

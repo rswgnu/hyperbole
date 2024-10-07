@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     30-Sep-24 at 01:14:08 by Bob Weiner
+;; Last-Mod:      7-Oct-24 at 01:45:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -184,7 +184,7 @@ Use nil for no HyWiki mode indicator."
 (defvar hywiki-file-suffix ".org"
   "File suffix (including period) to use when creating HyWiki pages.")
 
-(defcustom hywiki-directory '"~/hywiki/"
+(defcustom hywiki-directory "~/hywiki/"
   "Directory that holds all HyWiki pages in Org format.
 See `hywiki-org-publishing-directory' for exported pages in html format."
   :initialize #'custom-initialize-default
@@ -375,8 +375,9 @@ in `hywiki-mode'.")
 (defvar hywiki--directory-checksum ""
   "String checksum for `hywiki-directory' page names.")
 
-(defvar hywiki--directory-mod-time 0
-  "Last mod time for `hywiki-directory' or 0 if the value has not been read.")
+(defvar hywiki--directory-mod-time nil
+  "Last mod time for `hywiki-directory' or nil if the value has not been read.
+See `current-time' function for the mod time format.")
 
 ;; Redefine the `org-mode-syntax-table' for use in `hywiki-get-buttonize-characters'
 ;; so do not have to load all of Org mode there.
@@ -633,14 +634,18 @@ Use `hywiki-get-page' to determine whether a HyWiki page exists."
 	  ;; Remove any #section suffix in PAGE-NAME.
 	  (setq page-name (match-string-no-properties 1 page-name)))
 
-	(let ((page-file (hywiki-get-file page-name))
-	      pages-hasht)
-	  (unless (file-readable-p page-file)
-	    ;; Create any parent dirs necessary to create empty file
-	    (make-empty-file page-file t))
-	  (setq pages-hasht (hywiki-get-page-hasht))
-	  (unless (hash-get page-name pages-hasht)
+	(let* ((page-file (hywiki-get-file page-name))
+	       (page-file-readable (file-readable-p page-file))
+	       (pages-hasht (hywiki-get-page-hasht))
+	       (page-in-hasht (hash-get page-name pages-hasht)))
+	  (unless page-file-readable
+	    (write-region "" nil page-file nil 0))
+	  (unless page-in-hasht
 	    (hash-add page-file page-name pages-hasht))
+	  (unless (or (hyperb:stack-frame '(hywiki-maybe-highlight-page-names-in-frame))
+		      (and page-file-readable page-in-hasht))
+	    (hywiki-directory-set-mod-time)
+	    (hywiki-directory-set-checksum))
 	  (run-hooks 'hywiki-add-page-hook)
 	  page-file))
     (when (called-interactively-p 'interactive)
@@ -743,12 +748,12 @@ Action Key press; with a prefix ARG, emulate an Assist Key press."
 	(hywiki-find-page word t)
       (hkey-either arg))))
 
-(defun hywiki-word-at (&optional range-flag)
-  "Return HyWiki word and optional #section at point or nil if not on one.
+(defun hywiki-word-at ()
+  "Return HyWikiWord and optional #section at point or nil if not on one.
 Point must be prior to any whitespace character within #section.
 
-With optional RANGE-FLAG non-nil and there is a HyWikiWord at point,
-return the tuple of values: (word word-start word-end) instead of a string,
+Return nil if the HyWikiWord is a prefixed, typed hy:HyWikiWord, since
+these are handled by the Org mode link handler.
 
 Do not test whether or not a page exists for the HyWiki word; call
 `hywiki-page-exists-p' without an argument for that.
@@ -760,30 +765,33 @@ or this will return nil."
 	      (hproperty:char-property-range (point) 'face hywiki-word-face))
 	(buffer-substring-no-properties (car hywiki--range) (cdr hywiki--range))
       (save-excursion
-	(let* ((word-start-end (progn (when (looking-at "\\[\\[")
-					(goto-char (+ (point) 2)))
-				      (ibut:label-p t "[[" "]]" range-flag)))
-	       (wikiword (if range-flag (car word-start-end) word-start-end))
-	       start
-	       end)
+	(let ((wikiword (progn (when (looking-at "\\[\\[")
+				 (goto-char (+ (point) 2)))
+			       (hargs:delimited "[[" "]]"))))
 	  (if wikiword
-	      ;; Handle an Org link [[HyWikiWord]] [[hy:HyWikiWord]] or [[HyWikiWord#section]].
+	      ;; Handle an Org link [[HyWikiWord]] [[hy:HyWikiWord]]
+	      ;; or [[HyWikiWord#section][Description Text]].
 	      (progn
-		;; Don't use next line so don't have to load all of Org
-		;; mode just to check for HyWikiWords; however, disables
-		;; support for Org mode aliases.
-		;; (setq wikiword (org-link-expand-abbrev (org-link-unescape (string-trim wikiword))))
-		(setq wikiword (string-trim wikiword
-					    (format "[ \t\n\r]*\\(%s:\\)?"
-						    hywiki-org-link-type)))
-		;; Ignore prefixed, typed hy:HyWikiWord since Org mode will display those.
-		(when (hywiki-word-is-p wikiword)
-		  (if range-flag word-start-end wikiword)))
+		;; Get the HyWikiWord link reference, ignoring any
+		;; description given in the link
+		(setq wikiword (hywiki-strip-org-link wikiword))
+		(if (string-match (concat "\\`" hywiki-org-link-type ":") wikiword)
+		    ;; Ignore prefixed, typed hy:HyWikiWord since Org mode will
+		    ;; display those.
+		    nil
+		  ;; Don't use next line so don't have to load all of Org
+		  ;; mode just to check for HyWikiWords; however, disables
+		  ;; support for Org mode aliases.
+		  ;; (setq wikiword (org-link-expand-abbrev (org-link-unescape (string-trim wikiword))))
+		  (when (hywiki-word-is-p wikiword)
+		    wikiword)))
 	    ;; Handle a HyWiki word with optional #section; if it is an Org
 	    ;; link, it may optionally have a hy: link-type prefix.
 	    ;; Ignore wikiwords preceded by any non-whitespace
 	    ;; character, except any of these: "([\"'`'"
-            (let ((case-fold-search nil))
+            (let ((case-fold-search nil)
+		  start
+		  end)
 	      (skip-chars-backward "-_*#[:alnum:]")
 	      (when (hywiki-maybe-at-wikiword-beginning)
 		(cond ((looking-at hywiki--word-and-buttonize-character-regexp)
@@ -797,7 +805,7 @@ or this will return nil."
 			     ;; No following char
 			     wikiword (string-trim
 				       (buffer-substring-no-properties start end)))))
-		(if range-flag (list wikiword start end) wikiword)))))))))
+		wikiword))))))))
 
 ;;;###autoload
 (defun hywiki-word-consult-grep (word)
@@ -811,7 +819,10 @@ Default to any HyWikiWord at point."
 (defun hywiki-word-is-p (word)
   "Return non-nil if WORD is a HyWiki word and optional #section.
 The page for the word may not yet exist.  Use `hywiki-get-page'
-to determine whether a HyWiki word page exists."
+to determine whether a HyWiki word page exists.
+
+Return nil if WORD is a prefixed, typed hy:HyWikiWord, since
+these are handled by the Org mode link handler."
   (and (stringp word) (not (string-empty-p word))
        (let (case-fold-search)
 	 (or (string-match hywiki-word-with-optional-section-exact-regexp word)
@@ -849,18 +860,21 @@ interactively), limit dehighlighting to the region."
       (md5 (apply #'concat hywiki-page-files) nil nil nil t))))
 
 (defun hywiki-directory-get-mod-time ()
-  "Return the last mod time for `hywiki-directory' or 0."
-  (if (file-readable-p hywiki-directory)
-      (time-convert (file-attribute-modification-time
-		     (file-attributes hywiki-directory))
-		  'integer)
-    0))
+  "Return the last mod time for `hywiki-directory' or nil."
+  (when (file-readable-p hywiki-directory)
+    (time-convert (file-attribute-modification-time
+		   (file-attributes hywiki-directory))
+		  'list)))
 
 (defun hywiki-directory-modified-p ()
   "Return non-nil if any HyWiki page name change since last read."
-  (or (zerop hywiki--directory-mod-time)
-      (and (/= hywiki--directory-mod-time (hywiki-directory-get-mod-time))
-	   (not (string-equal hywiki--directory-checksum (hywiki-directory-get-checksum))))))
+  (or (null hywiki--directory-mod-time)
+      ;; Both dir mod-time and filename checksum over HyWiki page
+      ;; files must have changed for this to be an update to report.
+      ;; Don't change this logic as many other dir changes can occur
+      ;; that should not be reported here.
+      (not (or (equal hywiki--directory-mod-time (hywiki-directory-get-mod-time))
+	       (string-equal hywiki--directory-checksum (hywiki-directory-get-checksum))))))
 
 (defun hywiki-directory-set-checksum ()
   "Store the last page name checksum for `hywiki-directory' as a string."
@@ -1369,7 +1383,8 @@ If deleted, update HyWikiWord highlighting across all frames."
       (delete-file buffer-file-name))
     (when (hywiki-directory-modified-p)
       ;; Rebuild lookup tables if any HyWiki page name has changed
-      (hywiki-get-page-hasht))
+      (hywiki-get-page-hasht)
+      t)
     nil))
 
 (defun hywiki-make-pages-hasht ()
@@ -1535,7 +1550,8 @@ word-start word-end) instead of a string,
 When using the word at point, a call to
 `hywiki-active-in-current-buffer-p' at point must return non-nil
 or this will return nil." 
-  (setq hywiki--page-name word)
+  (setq hywiki--page-name word
+	word (hywiki-strip-org-link word))
   (if (or (stringp word)
 	  (setq word (hywiki-word-at)))
       (unless (hywiki-get-page (hywiki-page-strip-section word))
@@ -1552,6 +1568,13 @@ or this will return nil."
 	  (list word (or start (car hywiki--range)) (or end (cdr hywiki--range)))
 	(list word start end))
     word))
+
+(defun hywiki-strip-org-link (link-str)
+  "Return the hy:HyWikiWord#section part of an Org link string.
+Strip any square bracket delimiters, any description and leading or
+trailing whitespace."
+  (when (and (stringp link-str) (not (string-empty-p link-str)))
+    (string-trim (car (delete "" (split-string link-str "\\[\\[\\|\\]\\[\\|\\]\\]"))))))
 
 (defun hywiki-page-strip-section (page-name)
   "Return PAGE-NAME with any optional #section stripped off.
