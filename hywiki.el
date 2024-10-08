@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     22-Sep-24 at 02:44:39 by Bob Weiner
+;; Last-Mod:      7-Oct-24 at 01:45:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -184,7 +184,7 @@ Use nil for no HyWiki mode indicator."
 (defvar hywiki-file-suffix ".org"
   "File suffix (including period) to use when creating HyWiki pages.")
 
-(defcustom hywiki-directory '"~/hywiki/"
+(defcustom hywiki-directory "~/hywiki/"
   "Directory that holds all HyWiki pages in Org format.
 See `hywiki-org-publishing-directory' for exported pages in html format."
   :initialize #'custom-initialize-default
@@ -375,8 +375,9 @@ in `hywiki-mode'.")
 (defvar hywiki--directory-checksum ""
   "String checksum for `hywiki-directory' page names.")
 
-(defvar hywiki--directory-mod-time 0
-  "Last mod time for `hywiki-directory' or 0 if the value has not been read.")
+(defvar hywiki--directory-mod-time nil
+  "Last mod time for `hywiki-directory' or nil if the value has not been read.
+See `current-time' function for the mod time format.")
 
 ;; Redefine the `org-mode-syntax-table' for use in `hywiki-get-buttonize-characters'
 ;; so do not have to load all of Org mode there.
@@ -399,6 +400,8 @@ in `hywiki-mode'.")
 (defvar hywiki--buts nil)
 (defvar hywiki--but-end nil)
 (defvar hywiki--but-start nil)
+(defvar hywiki--buttonize-end (make-marker))   ;; This must always stay a marker
+(defvar hywiki--buttonize-start (make-marker)) ;; This must always stay a marker
 (defvar hywiki--current-page nil)
 (defvar hywiki--end nil)
 (defvar hywiki--highlighting-done-flag t)
@@ -420,13 +423,35 @@ Triggered by `post-self-insert-hook' for self-inserting characters."
     (hywiki-maybe-highlight-page-name)))
 
 (defun hywiki-buttonize-non-character-commands ()
-  "Turn any HyWikiWord before point into a highlighted Hyperbole button.
-Triggered by `post-command-hook' for non-character-commands, e.g.
-return/newline."
+  "Highlight any HyWikiWord before or after point as a Hyperbole button.
+Triggered by `post-command-hook' for non-character-commands, including
+deletion commands and those in `hywiki-non-character-commands'."
   (when (or (memq this-command hywiki-non-character-commands)
 	    (and (symbolp this-command)
 		 (string-match-p "\\`\\(org-\\)?delete-" (symbol-name this-command))))
-    (hywiki-maybe-highlight-page-name)))
+    (if (and (marker-position hywiki--buttonize-start)
+	     (marker-position hywiki--buttonize-end))
+	(hywiki-maybe-highlight-page-names
+	 hywiki--buttonize-start hywiki--buttonize-end)
+      (hywiki-maybe-highlight-page-name))))
+
+(defun hywiki-debuttonize-non-character-commands ()
+  "Dehighlight any HyWikiWord before or after point.
+Triggered by `pre-command-hook' for non-character-commands, including
+deletion commands and those in `hywiki-non-character-commands'."
+  (if (or (memq this-command hywiki-non-character-commands)
+	  (and (symbolp this-command)
+	       (string-match-p "\\`\\(org-\\)?delete-" (symbol-name this-command))))
+      (cl-destructuring-bind (start end)
+	  (hywiki-get-delimited-range)
+	;; Use these to store any range of a delimited HyWikiWord#section
+	(set-marker hywiki--buttonize-start start)
+	(set-marker hywiki--buttonize-end end)
+	(let ((hywiki-word-highlight-flag))
+	  (hywiki-maybe-dehighlight-page-names hywiki--buttonize-start
+					       hywiki--buttonize-end)))
+    (set-marker hywiki--buttonize-start nil)
+    (set-marker hywiki--buttonize-end nil)))
 
 (defun hywiki-buttonize-word (func start end face)
   "Create a HyWikiWord button by calling FUNC with START and END positions.
@@ -609,14 +634,18 @@ Use `hywiki-get-page' to determine whether a HyWiki page exists."
 	  ;; Remove any #section suffix in PAGE-NAME.
 	  (setq page-name (match-string-no-properties 1 page-name)))
 
-	(let ((page-file (hywiki-get-file page-name))
-	      pages-hasht)
-	  (unless (file-readable-p page-file)
-	    ;; Create any parent dirs necessary to create empty file
-	    (make-empty-file page-file t))
-	  (setq pages-hasht (hywiki-get-page-hasht))
-	  (unless (hash-get page-name pages-hasht)
+	(let* ((page-file (hywiki-get-file page-name))
+	       (page-file-readable (file-readable-p page-file))
+	       (pages-hasht (hywiki-get-page-hasht))
+	       (page-in-hasht (hash-get page-name pages-hasht)))
+	  (unless page-file-readable
+	    (write-region "" nil page-file nil 0))
+	  (unless page-in-hasht
 	    (hash-add page-file page-name pages-hasht))
+	  (unless (or (hyperb:stack-frame '(hywiki-maybe-highlight-page-names-in-frame))
+		      (and page-file-readable page-in-hasht))
+	    (hywiki-directory-set-mod-time)
+	    (hywiki-directory-set-checksum))
 	  (run-hooks 'hywiki-add-page-hook)
 	  page-file))
     (when (called-interactively-p 'interactive)
@@ -697,7 +726,7 @@ per file to the absolute value of MAX-MATCHES, if given and not 0.  If
 
 (defun hywiki-maybe-at-wikiword-beginning ()
   "Return non-nil if previous character is one preceding a HyWiki word.
-Does not test whether or not a page exists for the HyWiki word.
+Do not test whether or not a page exists for the HyWiki word.
 Use `hywiki-get-page' to determine whether a HyWiki page exists."
   ;; Ignore wikiwords preceded by any non-whitespace character, except
   ;; any of these: [({<"'`'
@@ -708,20 +737,25 @@ Use `hywiki-get-page' to determine whether a HyWiki page exists."
   "Display HyWiki page for wiki word at point, creating the page if needed.
 If found, return the full path of the page.
 
-If not on a wiki word and optional prefix ARG is null, emulate an
+If on a HyWikiWord without a wiki page, then prompt before creating
+the page.
+
+If not on a HyWikiWord and optional prefix ARG is null, emulate an
 Action Key press; with a prefix ARG, emulate an Assist Key press."
   (interactive "P")
   (let ((word (hywiki-word-at)))
     (if word
-	(hywiki-find-page word)
+	(hywiki-find-page word t)
       (hkey-either arg))))
 
-(defun hywiki-word-at (&optional range-flag)
-  "Return HyWiki word and optional #section at point or nil if not on one.
-With optional RANGE-FLAG non-nil and there is a HyWikiWord at point,
-return the tuple of values: (word word-start word-end) instead of a string,
+(defun hywiki-word-at ()
+  "Return HyWikiWord and optional #section at point or nil if not on one.
+Point must be prior to any whitespace character within #section.
 
-Does not test whether or not a page exists for the HyWiki word; call
+Return nil if the HyWikiWord is a prefixed, typed hy:HyWikiWord, since
+these are handled by the Org mode link handler.
+
+Do not test whether or not a page exists for the HyWiki word; call
 `hywiki-page-exists-p' without an argument for that.
 
 A call to `hywiki-active-in-current-buffer-p' at point must return non-nil
@@ -731,30 +765,33 @@ or this will return nil."
 	      (hproperty:char-property-range (point) 'face hywiki-word-face))
 	(buffer-substring-no-properties (car hywiki--range) (cdr hywiki--range))
       (save-excursion
-	(let* ((word-start-end (progn (when (looking-at "\\[\\[")
-					(goto-char (+ (point) 2)))
-				      (ibut:label-p t "[[" "]]" range-flag)))
-	       (wikiword (if range-flag (car word-start-end) word-start-end))
-	       start
-	       end)
+	(let ((wikiword (progn (when (looking-at "\\[\\[")
+				 (goto-char (+ (point) 2)))
+			       (hargs:delimited "[[" "]]"))))
 	  (if wikiword
-	      ;; Handle an Org link [[HyWikiWord]] [[hy:HyWikiWord]] or [[HyWikiWord#section]].
+	      ;; Handle an Org link [[HyWikiWord]] [[hy:HyWikiWord]]
+	      ;; or [[HyWikiWord#section][Description Text]].
 	      (progn
-		;; Don't use next line so don't have to load all of Org
-		;; mode just to check for HyWikiWords; however, disables
-		;; support for Org mode aliases.
-		;; (setq wikiword (org-link-expand-abbrev (org-link-unescape (string-trim wikiword))))
-		(setq wikiword (string-trim wikiword
-					    (format "[ \t\n\r]*\\(%s:\\)?"
-						    hywiki-org-link-type)))
-		;; Ignore prefixed, typed hy:HyWikiWord since Org mode will display those.
-		(when (hywiki-word-is-p wikiword)
-		  (if range-flag word-start-end wikiword)))
+		;; Get the HyWikiWord link reference, ignoring any
+		;; description given in the link
+		(setq wikiword (hywiki-strip-org-link wikiword))
+		(if (string-match (concat "\\`" hywiki-org-link-type ":") wikiword)
+		    ;; Ignore prefixed, typed hy:HyWikiWord since Org mode will
+		    ;; display those.
+		    nil
+		  ;; Don't use next line so don't have to load all of Org
+		  ;; mode just to check for HyWikiWords; however, disables
+		  ;; support for Org mode aliases.
+		  ;; (setq wikiword (org-link-expand-abbrev (org-link-unescape (string-trim wikiword))))
+		  (when (hywiki-word-is-p wikiword)
+		    wikiword)))
 	    ;; Handle a HyWiki word with optional #section; if it is an Org
 	    ;; link, it may optionally have a hy: link-type prefix.
 	    ;; Ignore wikiwords preceded by any non-whitespace
 	    ;; character, except any of these: "([\"'`'"
-            (let ((case-fold-search nil))
+            (let ((case-fold-search nil)
+		  start
+		  end)
 	      (skip-chars-backward "-_*#[:alnum:]")
 	      (when (hywiki-maybe-at-wikiword-beginning)
 		(cond ((looking-at hywiki--word-and-buttonize-character-regexp)
@@ -768,7 +805,7 @@ or this will return nil."
 			     ;; No following char
 			     wikiword (string-trim
 				       (buffer-substring-no-properties start end)))))
-		(if range-flag (list wikiword start end) wikiword)))))))))
+		wikiword))))))))
 
 ;;;###autoload
 (defun hywiki-word-consult-grep (word)
@@ -782,7 +819,10 @@ Default to any HyWikiWord at point."
 (defun hywiki-word-is-p (word)
   "Return non-nil if WORD is a HyWiki word and optional #section.
 The page for the word may not yet exist.  Use `hywiki-get-page'
-to determine whether a HyWiki word page exists."
+to determine whether a HyWiki word page exists.
+
+Return nil if WORD is a prefixed, typed hy:HyWikiWord, since
+these are handled by the Org mode link handler."
   (and (stringp word) (not (string-empty-p word))
        (let (case-fold-search)
 	 (or (string-match hywiki-word-with-optional-section-exact-regexp word)
@@ -798,9 +838,18 @@ interactively), limit dehighlighting to the region."
   (unless (or (eq hywiki-buffer-highlighted-state 'd)
 	      (hywiki-active-in-current-buffer-p))
     (hproperty:but-clear-all-in-list
-     (hproperty:but-get-all-in-region (or region-start (point-min))
-				      (or region-end (point-max))
-				      'face hywiki-word-face))
+     (hproperty:but-get-all-in-region
+      (if (markerp region-start)
+	  (if (marker-position region-start)
+	      region-start
+	    (point-min))
+	(or region-start (point-min)))
+      (if (markerp region-end)
+	  (if (marker-position region-end)
+	      region-end
+	    (point-max))
+	(or region-end (point-max)))
+      'face hywiki-word-face))
     (unless (or region-start region-end)
       (setq hywiki-buffer-highlighted-state 'd))))
 
@@ -811,18 +860,21 @@ interactively), limit dehighlighting to the region."
       (md5 (apply #'concat hywiki-page-files) nil nil nil t))))
 
 (defun hywiki-directory-get-mod-time ()
-  "Return the last mod time for `hywiki-directory' or 0."
-  (if (file-readable-p hywiki-directory)
-      (time-convert (file-attribute-modification-time
-		     (file-attributes hywiki-directory))
-		  'integer)
-    0))
+  "Return the last mod time for `hywiki-directory' or nil."
+  (when (file-readable-p hywiki-directory)
+    (time-convert (file-attribute-modification-time
+		   (file-attributes hywiki-directory))
+		  'list)))
 
 (defun hywiki-directory-modified-p ()
   "Return non-nil if any HyWiki page name change since last read."
-  (or (zerop hywiki--directory-mod-time)
-      (and (/= hywiki--directory-mod-time (hywiki-directory-get-mod-time))
-	   (not (string-equal hywiki--directory-checksum (hywiki-directory-get-checksum))))))
+  (or (null hywiki--directory-mod-time)
+      ;; Both dir mod-time and filename checksum over HyWiki page
+      ;; files must have changed for this to be an update to report.
+      ;; Don't change this logic as many other dir changes can occur
+      ;; that should not be reported here.
+      (not (or (equal hywiki--directory-mod-time (hywiki-directory-get-mod-time))
+	       (string-equal hywiki--directory-checksum (hywiki-directory-get-checksum))))))
 
 (defun hywiki-directory-set-checksum ()
   "Store the last page name checksum for `hywiki-directory' as a string."
@@ -847,50 +899,129 @@ and its option #section."
 	  (overlays-in (point-min) (point-max)))
     nil))
 
-
-(defun hywiki-maybe-highlight-balanced-pairs ()
-  "Before or after a balanced delimiter, highlight HyWikiWords within.
-Includes: (), {}, <> and [].  Excludes Org links and radio targets."
+(defun hywiki-get-delimited-range ()
+  "Before or after a balanced delimiter, return the delimited range list.
+If no such range, return \\='(nil nil).
+This includes the delimiters: (), {}, <>, [] and \"\" (double quotes)."
   (save-excursion
     (save-restriction
       ;; Limit balanced pair checks to the next two lines for speed
       (narrow-to-region (line-beginning-position) (line-end-position 2))
-      (cond ((memq (char-before) '(?\[ ?\<))
-	     (goto-char (1- (point)))
-	     ;; Clear any HyWikiWord highlighting within double opening
-	     ;; square or angle brackets, when this is a link or target
-	     (hywiki-maybe-highlight-org-element-forward))
-	    ((memq (char-after) '(?\[ ?\<))
-	     ;; Clear any HyWikiWord highlighting within double opening
-	     ;; square or angle brackets, when this is a link or target
-	     (hywiki-maybe-highlight-org-element-forward))
-	    ((memq (char-before) '(?\( ?\{))
-	     ;; Highlight any HyWikiWords within opening parens or braces
-	     (ignore-errors
+      (let ((result (ignore-errors
+		      (cond ((memq (char-before) '(?\[ ?\<))
+			     (goto-char (1- (point)))
+			     (hywiki--get-delimited-range-forward))
+			    ((memq (char-after) '(?\[ ?\<))
+			     (hywiki--get-delimited-range-forward))
+			    ((memq (char-before) '(?\( ?\{))
+			     (goto-char (1- (point)))
+			     (list (point) (scan-sexps (point) 1)))
+			    ((memq (char-after) '(?\( ?\{))
+			     (list (point) (scan-sexps (point) 1)))
+			    ((and (eq (char-before) ?\")
+				  (hypb:in-string-p))
+			     (goto-char (1- (point)))
+			     (list (point) (scan-sexps (point) 1)))
+			    ((and (eq (char-after) ?\")
+				  (hypb:in-string-p))
+			     (goto-char (1+ (point)))
+			     (list (point) (scan-sexps (point) -1)))
+			    ((memq (char-before) '(?\] ?\>))
+			     (hywiki--get-delimited-range-backward))
+			    ((memq (char-after) '(?\] ?\>))
+			     (goto-char (1+ (point)))
+			     (hywiki--get-delimited-range-backward))
+			    ((memq (char-before) '(?\) ?\}))
+			     (list (point) (scan-sexps (point) -1)))
+			    ((memq (char-after) '(?\) ?\}))
+			     (goto-char (1+ (point)))
+			     (list (point) (scan-sexps (point) -1)))
+			    ((and (eq (char-before) ?\")
+				  (not (hypb:in-string-p)))
+			     (list (point) (scan-sexps (point) -1)))
+			    ((and (eq (char-after) ?\")
+				  (not (hypb:in-string-p)))
+			     (list (point) (scan-sexps (point) 1)))))))
+	(if result
+	    (sort result #'<)
+	  (list nil nil))))))
+
+(defun hywiki-maybe-highlight-balanced-pairs ()
+  "Before or after a balanced delimiter, highlight HyWikiWords within.
+Include: (), {}, <>, [] and \"\" (double quotes).  Exclude Org links
+and radio targets.
+
+Ignore return value; it has no meaning."
+  (save-excursion
+    (save-restriction
+      (if (and (marker-position hywiki--buttonize-start)
+	       (marker-position hywiki--buttonize-end))
+	  (narrow-to-region hywiki--buttonize-start hywiki--buttonize-end)
+	;; Limit balanced pair checks to the next two lines for speed
+	(narrow-to-region (line-beginning-position) (line-end-position 2)))
+
+      ;; char-before
+      (ignore-errors
+	(cond ((memq (char-before) '(?\[ ?\<))
 	       (goto-char (1- (point)))
-	       (hywiki-maybe-highlight-sexp 1)))
-	    ((memq (char-before) '(?\] ?\>))
-	     ;; Clear any HyWikiWord highlighting within double closing
-	     ;; square or angle brackets, as this may be a link or target
-	     (hywiki-maybe-highlight-org-element-backward))
-	    ((memq (char-after) '(?\] ?\>))
-	     (goto-char (1+ (point)))
-	     ;; Clear any HyWikiWord highlighting within double closing
-	     ;; square or angle brackets, as this may be a link or target
-	     (hywiki-maybe-highlight-org-element-backward))
-	    ((memq (char-before) '(?\) ?\}))
-	     ;; Highlight any HyWikiWords within closing parens or braces
-	     (ignore-errors
-	       (hywiki-maybe-highlight-sexp -1)))))))
+	       ;; Clear any HyWikiWord highlighting within double opening
+	       ;; square or angle brackets, when this is a link or target
+	       (hywiki-maybe-highlight-org-element-forward))
+	      ((memq (char-before) '(?\( ?\{))
+	       ;; Highlight any HyWikiWords within opening parens or braces
+	       (goto-char (1- (point)))
+	       (hywiki-maybe-highlight-sexp 1))
+	      ((and (eq (char-before) ?\")
+		    (hypb:in-string-p))
+	       (goto-char (1- (point)))
+	       (hywiki-maybe-highlight-sexp 1))
+	      ((memq (char-before) '(?\] ?\>))
+	       ;; Clear any HyWikiWord highlighting within double closing
+	       ;; square or angle brackets, as this may be a link or target
+	       (hywiki-maybe-highlight-org-element-backward))
+	      ((memq (char-before) '(?\) ?\}))
+	       ;; Highlight any HyWikiWords within closing parens or braces
+	       (hywiki-maybe-highlight-sexp -1))
+	      ((and (eq (char-before) ?\")
+		    (not (hypb:in-string-p)))
+	       (hywiki-maybe-highlight-sexp -1))))
+
+      ;; char-after
+      (ignore-errors
+	(cond ((memq (char-after) '(?\[ ?\<))
+	       ;; Clear any HyWikiWord highlighting within double opening
+	       ;; square or angle brackets, when this is a link or target
+	       (hywiki-maybe-highlight-org-element-forward))
+	      ((memq (char-after) '(?\( ?\{))
+	       ;; Highlight any HyWikiWords within opening parens or braces
+	       (hywiki-maybe-highlight-sexp 1))
+	      ((and (eq (char-after) ?\")
+		    (hypb:in-string-p))
+	       (goto-char (1+ (point)))
+	       (hywiki-maybe-highlight-sexp -1))
+	      ((memq (char-after) '(?\] ?\>))
+	       (goto-char (1+ (point)))
+	       ;; Clear any HyWikiWord highlighting within double closing
+	       ;; square or angle brackets, as this may be a link or target
+	       (hywiki-maybe-highlight-org-element-backward))
+	      ((memq (char-after) '(?\) ?\}))
+	       ;; Highlight any HyWikiWords within closing parens or braces
+	       (goto-char (1+ (point)))
+	       (hywiki-maybe-highlight-sexp -1))
+	      ((and (eq (char-after) ?\")
+		    (not (hypb:in-string-p)))
+	       (hywiki-maybe-highlight-sexp 1)))))))
 
 ;;;###autoload
 (defun hywiki-maybe-highlight-page-name (&optional on-page-name)
   "Highlight any non-Org link HyWiki page#section at or one char before point.
 With optional ON-PAGE-NAME non-nil, assume point is within the page or
-section name.
+section name.  Otherwise, if `pre-command-hook' has set
+`hywiki--buttonize-start' `hywiki--buttonize-end' global variables,
+use these as the region in which to highlight.
 
-If in a programming mode, must be within a comment.
-Use `hywiki-word-face' to highlight.  Does not highlight references to
+If in a programming mode, must be within a comment.  Use
+`hywiki-word-face' to highlight.  Do not highlight references to
 the current page unless they have sections attached."
   (interactive)
   (when (and (hywiki-active-in-current-buffer-p)
@@ -907,61 +1038,67 @@ the current page unless they have sections attached."
       (setq hywiki--highlighting-done-flag nil)
       (with-syntax-table hbut:syntax-table
 	(save-excursion
-	  (unless on-page-name
-	    ;; after page name
-	    (skip-syntax-backward "-"))
+	  (save-restriction
+	    (when (and (marker-position hywiki--buttonize-start)
+		       (marker-position hywiki--buttonize-end))
+	      (narrow-to-region hywiki--buttonize-start hywiki--buttonize-end)
+	      (goto-char hywiki--buttonize-start))
 
-	  (hywiki-maybe-highlight-balanced-pairs)
-
-	  (unless hywiki--highlighting-done-flag
 	    (unless on-page-name
-	      ;; May be a closing delimiter that we have to skip past
-	      (skip-chars-backward (regexp-quote hywiki--buttonize-characters)))
-	    ;; Skip past HyWikiWord or section
-	    (skip-syntax-backward "^-$()<>._\"\'")
-	    (skip-chars-backward "-_*#[:alpha:]")
+	      ;; after page name
+	      (skip-syntax-backward "-"))
 
-	    (setq hywiki--save-case-fold-search case-fold-search
-		  case-fold-search nil
-		  hywiki--save-org-link-type-required hywiki-org-link-type-required
-		  hywiki-org-link-type-required t)
-	    (if (and (hywiki-maybe-at-wikiword-beginning)
-		     (looking-at hywiki--word-and-buttonize-character-regexp)
-		     (progn
-		       (setq hywiki--page-name (match-string-no-properties 1)
-			     hywiki--start (match-beginning 0)
-			     hywiki--end   (1- (match-end 0)))
-		       (and (hywiki-get-page hywiki--page-name)
-			    ;; Ignore wikiwords preceded by any non-whitespace character
-			    ;; (or (bolp) (memq (preceding-char) '(?\  ?\t)))
-			    )))
-		(progn
-		  (setq hywiki--current-page (hywiki-get-buffer-page-name))
-		  ;; Don't highlight current-page matches unless they
-		  ;; include a #section.
-		  (unless (string-equal hywiki--current-page
-					(buffer-substring-no-properties hywiki--start hywiki--end))
-		    (if (setq hywiki--buts (hproperty:but-get-all-in-region
-					    hywiki--start hywiki--end
-					    'face hywiki-word-face))
-			(if (> (length hywiki--buts) 1)
-			    (progn (hproperty:but-clear-all-in-list hywiki--buts)
-				   (hywiki-buttonize-word #'hproperty:but-add hywiki--start hywiki--end hywiki-word-face))
-			  ;; There is only one existing button
-			  (setq hywiki--buts (car hywiki--buts)
-				hywiki--but-start (hproperty:but-start hywiki--buts)
-				hywiki--but-end   (hproperty:but-end hywiki--buts))
-			  (unless (and (= hywiki--start hywiki--but-start)
-				       (= hywiki--end hywiki--but-end))
-			    (hproperty:but-delete hywiki--buts)
-			    (hywiki-buttonize-word #'hproperty:but-add hywiki--start hywiki--end hywiki-word-face)))
-		      (hywiki-buttonize-word #'hproperty:but-add hywiki--start hywiki--end hywiki-word-face))))
-	      ;; Remove any potential earlier highlighting since the
-	      ;; previous word may have changed.
+	    (hywiki-maybe-highlight-balanced-pairs)
+
+	    (unless hywiki--highlighting-done-flag
+	      (unless on-page-name
+		;; May be a closing delimiter that we have to skip past
+		(skip-chars-backward (regexp-quote hywiki--buttonize-characters)))
+	      ;; Skip past HyWikiWord or section
 	      (skip-syntax-backward "^-$()<>._\"\'")
-	      (hproperty:but-clear-all-in-list
-	       (hproperty:but-get-all-in-region (point) (1+ (point))
-						'face hywiki-word-face))))))))
+	      (skip-chars-backward "-_*#[:alpha:]")
+
+	      (setq hywiki--save-case-fold-search case-fold-search
+		    case-fold-search nil
+		    hywiki--save-org-link-type-required hywiki-org-link-type-required
+		    hywiki-org-link-type-required t)
+	      (if (and (hywiki-maybe-at-wikiword-beginning)
+		       (looking-at hywiki--word-and-buttonize-character-regexp)
+		       (progn
+			 (setq hywiki--page-name (match-string-no-properties 1)
+			       hywiki--start (match-beginning 0)
+			       hywiki--end   (1- (match-end 0)))
+			 (and (hywiki-get-page hywiki--page-name)
+			      ;; Ignore wikiwords preceded by any non-whitespace character
+			      ;; (or (bolp) (memq (preceding-char) '(?\  ?\t)))
+			      )))
+		  (progn
+		    (setq hywiki--current-page (hywiki-get-buffer-page-name))
+		    ;; Don't highlight current-page matches unless they
+		    ;; include a #section.
+		    (unless (string-equal hywiki--current-page
+					  (buffer-substring-no-properties hywiki--start hywiki--end))
+		      (if (setq hywiki--buts (hproperty:but-get-all-in-region
+					      hywiki--start hywiki--end
+					      'face hywiki-word-face))
+			  (if (> (length hywiki--buts) 1)
+			      (progn (hproperty:but-clear-all-in-list hywiki--buts)
+				     (hywiki-buttonize-word #'hproperty:but-add hywiki--start hywiki--end hywiki-word-face))
+			    ;; There is only one existing button
+			    (setq hywiki--buts (car hywiki--buts)
+				  hywiki--but-start (hproperty:but-start hywiki--buts)
+				  hywiki--but-end   (hproperty:but-end hywiki--buts))
+			    (unless (and (= hywiki--start hywiki--but-start)
+					 (= hywiki--end hywiki--but-end))
+			      (hproperty:but-delete hywiki--buts)
+			      (hywiki-buttonize-word #'hproperty:but-add hywiki--start hywiki--end hywiki-word-face)))
+			(hywiki-buttonize-word #'hproperty:but-add hywiki--start hywiki--end hywiki-word-face))))
+		;; Remove any potential earlier highlighting since the
+		;; previous word may have changed.
+		(skip-syntax-backward "^-$()<>._\"\'")
+		(hproperty:but-clear-all-in-list
+		 (hproperty:but-get-all-in-region (point) (1+ (point))
+						  'face hywiki-word-face)))))))))
 
 (defun hywiki-maybe-highlight-sexp (direction-number)
   "Handle HyWikiWord highlighting on a single square/angle bracket.
@@ -970,11 +1107,12 @@ DIRECTION-NUMBER is 1 for forward scanning and -1 for backward scanning."
 	 (sexp-end (scan-sexps sexp-start direction-number)))
     (when (and sexp-start sexp-end)
       (cl-destructuring-bind (sexp-start sexp-end)
-	  ;; Point may be at end of sexp, so ensure start and end may
+	  ;; Point may be at end of sexp, so start and end may
 	  ;; need to be reversed
 	  (list (min sexp-start sexp-end) (max sexp-start sexp-end))
-	;; Need to include char after page name or regexp matching
-	;; will not work
+	;; Increment sexp-start so regexp matching excludes the
+	;; delimiter and starts with the page name.  But include any
+	;; trailing delimiter or regexp matching will not work
 	(hywiki-maybe-highlight-page-names (1+ sexp-start) sexp-end)
 	(setq hywiki--highlighting-done-flag t)))))
 
@@ -986,14 +1124,15 @@ DIRECTION-NUMBER is 1 for forward scanning and -1 for backward scanning."
 			(and (char-after)
 			     (goto-char (1+ (point)))
 			     (eq (char-before) (char-before (1- (point))))))
+		;; double delimiters - dehighlight
 		(let* ((sexp-end (point))
 		       (sexp-start (scan-sexps sexp-end -1)))
 		  (when sexp-start
 		    (hproperty:but-clear-all-in-list
-		     (hproperty:but-get-all-in-region sexp-start sexp-end 'face hywiki-word-face))
+		     (hproperty:but-get-all-in-region
+		      sexp-start sexp-end 'face hywiki-word-face))
 		    (setq hywiki--highlighting-done-flag t)))))
-      ;; In a single closing square or angle
-      ;; bracket, need to highlight HyWikiWords
+      ;; single delimiters - highlight
       (hywiki-maybe-highlight-sexp -1))))
 
 (defun hywiki-maybe-highlight-org-element-forward ()
@@ -1004,22 +1143,22 @@ DIRECTION-NUMBER is 1 for forward scanning and -1 for backward scanning."
 			(and (char-before)
 			     (goto-char (1- (point)))
 			     (eq (char-after) (char-after (1+ (point))))))
+		;; double delimiters - dehighlight
 		(let* ((sexp-start (point))
 		       (sexp-end (scan-sexps sexp-start 1)))
-		  (when (and sexp-start sexp-end)
+		  (when sexp-end
 		    (hproperty:but-clear-all-in-list
-		     (hproperty:but-get-all-in-region sexp-start sexp-end
-						      'face hywiki-word-face))
+		     (hproperty:but-get-all-in-region
+		      sexp-start sexp-end 'face hywiki-word-face))
 		    (setq hywiki--highlighting-done-flag t)))))
-      ;; In a single opening square or angle
-      ;; bracket, need to highlight HyWikiWords
+      ;; single delimiters - highlight
       (hywiki-maybe-highlight-sexp 1))))
 
 ;;;###autoload
 (defun hywiki-maybe-highlight-page-names (&optional region-start region-end skip-lookups-update-flag)
   "Highlight each non-Org link HyWiki page#section in a buffer/region.
-With optional REGION-START and REGION-END positions (active
-region interactively), limit highlighting to the region.  With
+With optional REGION-START and REGION-END positions or markers (active
+region interactively), limit highlight adjustment to the region.  With
 optional SKIP-LOOKUPS-UPDATE-FLAG non-nil, HyWiki lookup tables
 should have already been updated and this is skipped.
 
@@ -1034,7 +1173,10 @@ disabled.  Highlight/dehighlight HyWiki page buffers when
   ;; Highlight HyWiki words in buffers where `hywiki-mode' is enabled
   ;; or HyWiki pages below `hywiki-directory'.
   (if (hywiki-active-in-current-buffer-p)
-      (unless (and (null region-start) (null region-end)
+      (unless (and (or (and (null region-start) (null region-end))
+		       (and (markerp region-start) (markerp region-end)
+			    (not (and (marker-position region-start)
+				      (marker-position region-end)))))
 		   (eq hywiki-buffer-highlighted-state 'h)
 		   (not (hywiki-directory-modified-p)))
 	(unless skip-lookups-update-flag
@@ -1048,9 +1190,12 @@ disabled.  Highlight/dehighlight HyWiki page buffers when
 		      hywiki--save-org-link-type-required hywiki-org-link-type-required
 		      hywiki-org-link-type-required t
 		      hywiki--current-page (hywiki-get-buffer-page-name))
-		(if (and region-start region-end)
-		    (narrow-to-region region-start region-end)
-		  (widen))
+		(cond ((and (markerp region-start) (markerp region-end))
+		       (when (and (marker-position region-start)
+				  (marker-position region-end))
+			   (narrow-to-region region-start region-end)))
+		      ((and region-start region-end)
+		       (narrow-to-region region-start region-end)))
 		(let ((hywiki-word-highlight-flag))
 		  (hywiki-maybe-dehighlight-page-names))
 		(dolist (hywiki-words-regexp hywiki--any-page-regexp-list)
@@ -1072,7 +1217,11 @@ disabled.  Highlight/dehighlight HyWiki page buffers when
 			  (when (hywiki-maybe-at-wikiword-beginning)
 			    (with-syntax-table hbut:syntax-table
 			      (skip-syntax-forward "^-\)$\>._\"\'"))
-			    (skip-chars-forward "-_*#[:alnum:]")
+			    (skip-chars-forward "-_*[:alnum:]")
+			    (skip-chars-forward "#")
+			    (skip-chars-forward (if (and region-start region-end)
+						    "-_* \t[:alnum:]"
+						  "-_*[:alnum:]"))
 			    (setq hywiki--end (point))
 			    ;; Don't highlight current-page matches unless they
 			    ;; include a #section.
@@ -1129,7 +1278,7 @@ If FRAME is t, then highlight in all windows across all frames, even
 invisible ones.  With optional SKIP-LOOKUPS-UPDATE-FLAG non-nil, HyWiki
 lookup tables should have already been updated and this is skipped.
 
-Use `hywiki-word-face' to highlight.  Does not highlight references to
+Use `hywiki-word-face' to highlight.  Do not highlight references to
 the current page unless they have sections attached."
   (walk-windows
    (lambda (window)
@@ -1234,7 +1383,8 @@ If deleted, update HyWikiWord highlighting across all frames."
       (delete-file buffer-file-name))
     (when (hywiki-directory-modified-p)
       ;; Rebuild lookup tables if any HyWiki page name has changed
-      (hywiki-get-page-hasht))
+      (hywiki-get-page-hasht)
+      t)
     nil))
 
 (defun hywiki-make-pages-hasht ()
@@ -1400,7 +1550,8 @@ word-start word-end) instead of a string,
 When using the word at point, a call to
 `hywiki-active-in-current-buffer-p' at point must return non-nil
 or this will return nil." 
-  (setq hywiki--page-name word)
+  (setq hywiki--page-name word
+	word (hywiki-strip-org-link word))
   (if (or (stringp word)
 	  (setq word (hywiki-word-at)))
       (unless (hywiki-get-page (hywiki-page-strip-section word))
@@ -1417,6 +1568,13 @@ or this will return nil."
 	  (list word (or start (car hywiki--range)) (or end (cdr hywiki--range)))
 	(list word start end))
     word))
+
+(defun hywiki-strip-org-link (link-str)
+  "Return the hy:HyWikiWord#section part of an Org link string.
+Strip any square bracket delimiters, any description and leading or
+trailing whitespace."
+  (when (and (stringp link-str) (not (string-empty-p link-str)))
+    (string-trim (car (delete "" (split-string link-str "\\[\\[\\|\\]\\[\\|\\]\\]"))))))
 
 (defun hywiki-page-strip-section (page-name)
   "Return PAGE-NAME with any optional #section stripped off.
@@ -1490,16 +1648,18 @@ Highlight/dehighlight HyWiki page names across all frames on change."
     (set symbol set-to-value)
     (if set-to-value
 	;; enabled
-	(progn (add-hook 'post-self-insert-hook 'hywiki-buttonize-character-commands)
-	       (add-hook 'post-command-hook     'hywiki-buttonize-non-character-commands 95)
+	(progn (add-hook 'pre-command-hook      'hywiki-debuttonize-non-character-commands 95)
+               (add-hook 'post-command-hook     'hywiki-buttonize-non-character-commands 95)
+	       (add-hook 'post-self-insert-hook 'hywiki-buttonize-character-commands)
 	       (add-hook 'window-buffer-change-functions
 			 'hywiki-maybe-highlight-page-names-in-frame)
 	       (add-to-list 'yank-handled-properties
 			    '(hywiki-word-face . hywiki-highlight-on-yank))
 	       (hywiki-maybe-highlight-page-names-in-frame t))
       ;; disabled
-      (remove-hook 'post-self-insert-hook 'hywiki-buttonize-character-commands)
+      (remove-hook 'pre-command-hook      'hywiki-debuttonize-non-character-commands)
       (remove-hook 'post-command-hook     'hywiki-buttonize-non-character-commands)
+      (remove-hook 'post-self-insert-hook 'hywiki-buttonize-character-commands)
       (hywiki-mode 0) ;; also dehighlights HyWiki words outside of HyWiki pages
       (remove-hook 'window-buffer-change-functions
 		   'hywiki-maybe-highlight-page-names-in-frame)
@@ -1507,6 +1667,30 @@ Highlight/dehighlight HyWiki page names across all frames on change."
       (setq yank-handled-properties
 	    (delete '(hywiki-word-face . hywiki-highlight-on-yank)
 		    yank-handled-properties)))))
+
+;;; ************************************************************************
+;;; Private functions
+;;; ************************************************************************
+
+(defun hywiki--get-delimited-range-backward ()
+  "Return a list of (start end) if not between/after end ]] or >>.
+Otherwise, return nil."
+  (save-excursion
+    (unless (or (eq (char-before) (char-before (1- (point))))
+		(and (char-after)
+		     (goto-char (1+ (point)))
+		     (eq (char-before) (char-before (1- (point))))))
+      (sort (list (point) (scan-sexps (point) -1)) #'<))))
+
+(defun hywiki--get-delimited-range-forward ()
+  "Return a list of (start end) if not between/before opening [[ or <<.
+Otherwise, return nil."
+  (save-excursion
+    (unless (or (eq (char-after) (char-after (1+ (point))))
+		(and (char-before)
+		     (goto-char (1- (point)))
+		     (eq (char-after) (char-after (1+ (point))))))
+      (list (point) (scan-sexps (point) 1)))))
 
 ;;; ************************************************************************
 ;;; Private initializations

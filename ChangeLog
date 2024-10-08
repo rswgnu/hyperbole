@@ -1,3 +1,80 @@
+2024-10-07  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--get-page-list-after-add-and-delete): Add
+    and update this test from Mats.
+
+* hywiki.el (hywiki-strip-org-link): Remove any Org link around HyWikiWord#section.
+	    (hywiki-page-exists-p): Call above function.
+	    (hywiki-word-is-p): Clarify in doc that hy:WikiWord returns nil since
+    Org mode handles such links.
+            (hywiki-word-at): Remove optional arg 'range-flag' since never used
+    and too complicated to always return a list with the range when given.
+
+2024-10-06  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-word-at): Update to handle HyWiki Org-type links with
+    descriptions, e.g. [[WikiWord][Description Text]].
+
+* hargs.el (hargs:delimited): Update doc of 'as-key' argument on use of 'none.
+
+* hasht.el (hash-map): Speed up by not consing key and value when don't need to.
+
+* hywiki.el (hywiki-add-page): Replace 'make-empty-file' with lower-level
+    'write-region' for efficiency.
+    (hywiki--directory-mod-time): Use nil as default value instead of 0.
+    (hywiki-directory-get-mod-time): Return nil if no mod-time or a list
+    that includes microseconds (previously integer return was only precision
+    of seconds).
+  test/hywiki-tests.el (hywiki-tests--directory-get-mod-time,
+                        hywiki-tests--directory-modified-p): Update to handle
+    new list format for mod-time.
+
+2024-10-05  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-kill-buffer-hook): Change to return t iff 'hywiki-directory'
+    change
+
+2024-09-30  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-maybe-highlight-page-names): Don't widen the buffer by
+    default as modes like the Koutliner and mail readers narrow to keep
+    certain data hidden from display or editing.
+
+2024-09-29  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-maybe-dehighlight-page-names): Add support for passing
+    markers as 'region-start' and 'region-end' args.
+
+* hproperty.el (hproperty:but-get-all-in-region): Fix to exit with first match
+    if 'property' arg is given.
+
+* hypb.el (hypb:in-string-p): Add.
+
+* hywiki.el (hywiki-word-activate): If on a HyWikiWord without a wiki page,
+    then prompt before creating the page.
+            (hywiki-maybe-highlight-balanced-pairs): Fix to handle HyWikiWords
+    within double quotes and re-highlight balanced expressions before and after
+    point since don't know if command is moving point forward or backward.  Also
+    limit buffer region to 'hywiki--buttonize-start' and 'hywiki--buttonize-end'
+    markers when set by 'pre-command-hook'.
+            (hywiki-maybe-highlight-page-names): Allow for whitespace in section
+    names when 'region-start' and 'region-end' are given.  And allow these two args
+    to be markers.
+            (hywiki-word-highlight-flag-changed): Add dehighlighting of HyWikiWords
+    after special commands like deletion to 'pre-command-hook'.  Leave
+    highlighting to 'post-command-hook'.  This allows dehighlighting of an an
+    entire balanced delimited HyWikiWord with a section that contains whitespace
+    before the delimiter is removed.
+           (hywiki-debuttonize-non-character-commands): Add to dehighlight
+    HyWikiWords for 'pre-command-hook'.
+           (hywiki--get-delimited-range-backward, hywiki--get-delimited-range-forward,
+            hywiki-get-delimited-range): Add to compute delimited range before
+    or after point that surrounds a HyWikiWord#section button, if any.
+           (hywiki-get-delimited-range, hywiki-maybe-highlight-balanced-pairs):
+
+    Fix to handle all cases of point being before or after delimiters since
+    for example can delete a delimiter forward or backward.
+
 2024-09-22  Bob Weiner  <rsw@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--get-page-list-when-new-wiki-directory):
