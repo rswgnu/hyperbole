@@ -1,3 +1,13 @@
+2024-10-08  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi: Remove duplicate manual title display in HTML output.
+  Makefile (TEXI2HTML): Modernize HTML css style via the "texinfo-klare.css"
+  style sheet; change body font size to be responsive to screen size with:
+    font-size: clamp(1rem, 2vw + 0.5rem, 2rem);
+  Add this file to the Makefile.
+  Also make "man/hyperbole.css" font-size responsive for use with Koutline
+  and HyWiki exports.
+
 2024-10-07  Bob Weiner  <rsw@gnu.org>
 
 * man/hyperbole.texi (Binding Minibuffer Menu Items): Document how to

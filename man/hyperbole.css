@@ -1,12 +1,19 @@
 <style type="text/css">
+
+@set WIDTH 100%
+
 body {
     font-family: Helvetica, arial, sans-serif;
-    font-size: 14px;
+    <!-- font-size: 16px; -->
+    font-size: clamp(1rem, 2vw + 0.5rem, 2rem);
     line-height: 1.6;
+    margin 0 auto;
+    max-width: 100%
     padding-top: 10px;
     padding-bottom: 10px;
     background-color: white;
-    padding: 30px; }
+    -webkit-text-size-adjust: 100%;
+    /* padding: 30px; */ }
 
 body > *:first-child {
     margin-top: 0 !important; }
@@ -32,6 +39,7 @@ h1, h2, h3, h4, h5, h6 {
     padding: 0;
     font-weight: bold;
     -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 100%;
     cursor: text;
     position: relative; }
 
@@ -148,7 +156,8 @@ blockquote > :last-child {
     margin-bottom: 0; }
 
 table {
-    padding: 0;border-collapse: collapse; }
+    border-collapse: collapse;
+    padding: 0; }
 table tr {
     border-top: 1px solid #cccccc;
     background-color: white;
@@ -304,7 +313,7 @@ sup {
 @media screen and (min-width: 914px) {
     body {
         width: 854px;
-        margin:0 auto;
+        margin: 0 auto;
     }
 }
 @media print {

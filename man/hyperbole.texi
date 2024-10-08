@@ -7,12 +7,17 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:      7-Oct-24 at 21:56:48 by Bob Weiner
+@c Last-Mod:      8-Oct-24 at 00:44:21 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
+@ifnothtml
 @settitle GNU Hyperbole Manual
+@end ifnothtml
 @c %**end of header (This is for running Texinfo on a region.)
+
+@set FONT-SIZE 16
+@set WIDTH 100%
 
 @c Emacs documentation style settings
 @c @documentencoding UTF-8
@@ -139,8 +144,7 @@ Texinfo markup language.
 
 @ifhtml
 @html
-<CENTER><H1>GNU Hyperbole</H1></CENTER>
-
+<!-- <CENTER><H1>GNU Hyperbole</H1></CENTER> -->
 <CENTER><H2>The Everyday Hypertextual Information Manager</H2></CENTER>
 
 <CENTER><H3><A HREF="mailto:rsw@@gnu.org">Say thanks or send a testimonial if you like Hyperbole.</A></H3></CENTER>
@@ -635,8 +639,7 @@ you.
 
 @xref{Buttons}, for an overview of Hyperbole buttons and how to use
 them.  Hyperbole's action-oriented button support is enabled via the
-global minor mode, @code{hyperbole-mode).
-
+global minor mode, @code{hyperbole-mode}.
 
 @xref{Menus}, for summaries of Hyperbole menu commands and how to use
 the minibuffer-based menus that work on any display that Emacs supports.
@@ -687,7 +690,7 @@ e-mail messages, faxes, voice mail and web pages.
 The rise of the web has demonstrated how hypertext technologies can be used
 to build massive organized repositories of scattered information.  But
 assembling information for the web still remains a great challenge and the
-data formats of the web are too structured to deal with the wide variety
+data formats of the web are too structured to de`al with the wide variety
 of information that people process.  Modern web development requires the
 use of many languages: HTML, JavaScript, and CSS.  This in itself prevents
 its use as the prime means of organizing and interlinking the constant
@@ -1074,10 +1077,16 @@ is run.  When @code{hyperbole-mode} is enabled, @code{hyperbole-mode-hook} and
 
 If you prefer a different key to activate Hyperbole, you can bind it as part
 of any setting of @code{hyperbole-init-hook} within your personal
-@file{~/.emacs} file.  For example, @code{(add-hook
-'hyperbole-init-hook (lambda () (global-set-key "\C-ch"
-'hyperbole--enable-mode) (global-set-key "\C-hh" 'view-hello-file)))}; then
-restart Emacs.
+@file{~/.emacs} file.  For example:
+@lisp
+(add-hook 'hyperbole-init-hook
+   (lambda () (global-set-key
+                "\C-ch" 'hyperbole--enable-mode)
+              (global-set-key
+                "\C-hh" 'view-hello-file)))
+@end lisp
+@noindent
+then restart Emacs.
 
 @node Smart Keys, Buttons, Usage, Top
 @chapter Smart Keys
@@ -1141,8 +1150,13 @@ If you set the variable, @code{hmouse-middle-flag}, to @samp{t} before
 loading Hyperbole, then you may also use the middle mouse key as the Action
 Key.  If you want both the middle mouse key as the Action Key and the
 right mouse key as the Assist Key for ease of use, then within your
-personal @file{~/.emacs} file, add: @code{(add-hook 'hyperbole-init-hook
-'hmouse-add-unshifted-smart-keys)} and then restart Emacs.
+personal @file{~/.emacs} file, add:
+@lisp
+(add-hook 'hyperbole-init-hook
+          'hmouse-add-unshifted-smart-keys)
+@end lisp
+@noindent
+and then restart Emacs.
 
 @cindex key binding, smart keys
 @cindex smart key commands
@@ -1163,7 +1177,11 @@ other mouse keys, though you won't be able to execute mouse drag actions with
 such key bindings.  @xref{Smart Mouse Key Drags}, and @pxref{Keyboard Drags}.
 
 To permanently change any of these key bindings, use:
-@code{(add-hook 'hyperbole-init-hook (lambda () (hkey-set-key <KEY> '<CMD>)},
+@lisp
+(add-hook 'hyperbole-init-hook
+          (lambda () (hkey-set-key <KEY> '<CMD>)
+@end lisp
+@noindent
 for example, @code{(hkey-set-key "\M-'" 'hkey-either)}.
 
 @c @cindex Paste Key
@@ -9366,8 +9384,12 @@ simply toggle Hyperbole minor mode off with the @code{hyperbole-mode}
 command.  There is no default key binding for this command; use @bkbd{M-x
 hyperbole-mode @key{RET}}.  Alternatively, you may select a key and bind it
 as part of any setting of @code{hyperbole-init-hook} within your
-personal @file{~/.emacs} file.  For example, @code{(add-hook
-'hyperbole-init-hook (lambda () (global-set-key "\C-ct" 'hyperbole-mode)))}.
+personal @file{~/.emacs} file.  For example:
+@lisp
+(add-hook 'hyperbole-init-hook
+          (lambda () (global-set-key
+                       "\C-ct" 'hyperbole-mode)))
+@end lisp
 
 @node Testing,  , Default Hyperbole Bindings, Hyperbole Key Bindings
 @section Testing

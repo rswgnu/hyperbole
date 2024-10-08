@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:      6-Oct-24 at 11:52:28 by Bob Weiner
+# Last-Mod:      8-Oct-24 at 00:19:12 by Bob Weiner
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -134,7 +134,8 @@ TEXI2INFO = makeinfo --no-split -c ASCII_PUNCTUATION=1
 # Command used to build the .html version of the user manual.
 # TEXI2HTML = id-texi2html -html_only -number -split_chapter # InfoDock-specific command
 # TEXI2HTML = makeinfo --html --split=chapter # Chapter splitting doesn't seem to work in 6.0
-TEXI2HTML = makeinfo --html --no-split --css-ref="hyperbole.css"
+# TEXI2HTML = makeinfo --html --no-split --css-include="hyperbole.css"
+TEXI2HTML = makeinfo --html --no-split --css-include="texinfo-klare.css"
 
 # Command used to build the .pdf version of the user manual.
 TEXI2PDF = makeinfo --pdf --no-split
@@ -231,7 +232,8 @@ HYPERBOLE_FILES = dir info html $(EL_SRC) $(EL_KOTL) \
         HY-CONCEPTS.kotl HY-NEWS HY-WHY.kotl $(wildcard hywiki/*.org) \
         INSTALL DEMO DEMO-ROLO.otl FAST-DEMO MANIFEST README.md TAGS _hypb \
         .hypb hyrolo.py smart-clib-sym topwin.py hyperbole-banner.png \
-	$(man_dir)/hkey-help.txt $(man_dir)/hyperbole.texi $(man_dir)/hyperbole.css
+	$(man_dir)/hkey-help.txt $(man_dir)/hyperbole.texi $(man_dir)/hyperbole.css \
+        $(man_dir)/texinfo-klare.css
 
 TEST_ERT_FILES = $(wildcard test/*tests.el) $(wildcard test/hy-test-*.el)
 
@@ -303,9 +305,9 @@ $(info_dir)/hyperbole.info: $(man_dir)/hyperbole.info
 	  $(INSTALL) im/*.{png,eps} $(info_dir)/im
 
 install-html: $(html_dir)/hyperbole.html
-$(html_dir)/hyperbole.html: $(man_dir)/hyperbole.html $(man_dir)/hyperbole.css
+$(html_dir)/hyperbole.html: $(man_dir)/hyperbole.html $(man_dir)/hyperbole.css $(man_dir)/texinfo-klare.css
 	$(MKDIR) $(html_dir)/im; \
-	  cd $(man_dir); $(INSTALL) hyperbole.html* hyperbole.css $(html_dir); \
+	  cd $(man_dir); $(INSTALL) hyperbole.html* hyperbole.css texinfo-klare.css $(html_dir); \
 	  $(INSTALL) im/*.{png,eps} $(html_dir)/im
 
 $(data_dir)/hkey-help.txt: $(man_dir)/hkey-help.txt
@@ -391,7 +393,7 @@ $(man_dir)/hyperbole.info: $(TEXINFO_SRC)
 	cd $(man_dir) && $(TEXI2INFO) hyperbole.texi
 
 html: $(man_dir)/hyperbole.html
-$(man_dir)/hyperbole.html: $(TEXINFO_SRC) $(man_dir)/hyperbole.css
+$(man_dir)/hyperbole.html: $(TEXINFO_SRC) $(man_dir)/hyperbole.css $(man_dir)/texinfo-klare.css
 	cd ${man_dir} && $(TEXI2HTML) hyperbole.texi
 
 pdf: $(man_dir)/hyperbole.pdf

@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <!-- This manual is for GNU Hyperbole
-(Edition 9.0.2pre, Published September, 2024).
+(Edition 9.0.2pre, Published October, 2024).
 
 Copyright (C) 1989-2023  Free Software Foundation, Inc.
 
@@ -40,6 +40,16 @@ See the GNU General Public License for more details in the file,
 <link href="dir.html#Top" rel="prev" title="(dir)">
 <style type="text/css">
 <!--
+/*
+   Custom CSS for HTML documents generated with Texinfo 6.x's makeinfo.
+   Public domain 2016 sirgazil. All rights waived.
+   https://codeberg.org/luis-felipe/texinfo-css/src/branch/trunk/static/css/texinfo-klare.css
+*/
+
+
+
+/* NATIVE ELEMENTS */
+
 a.copiable-anchor {visibility: hidden; text-decoration: none; line-height: 0em}
 a.summary-letter {text-decoration: none}
 blockquote.indentedblock {margin-right: 0em}
@@ -55,15 +65,245 @@ span.roman {font-family: initial; font-weight: normal}
 span.sansserif {font-family: sans-serif; font-weight: normal}
 span:hover a.copiable-anchor {visibility: visible}
 ul.no-bullet {list-style: none}
+a:link,
+a:visited {
+    color: #245C8A;
+    text-decoration: none;
+}
+
+a:active,
+a:focus,
+a:hover {
+    text-decoration: underline;
+}
+
+abbr,
+acronym {
+    cursor: help;
+}
+
+blockquote {
+    border-color: #D0D0D0;
+    border-style: none none none solid;
+    border-width: 0.5em;
+    margin-left: 0em;
+    padding-left: 1.5em;
+}
+
+body {
+    background-color: white;
+    box-shadow: 0 0 2px gray;
+    box-sizing: border-box;
+    color: #333;
+    font-family: sans-serif;
+    margin: 50px auto;
+    max-width: 960px;
+    padding: 50px;
+    <!-- font-size: 16px; -->
+    font-size: clamp(1rem, 2vw + 0.5rem, 2rem);
+}
+
+code,
+samp,
+tt,
+var {
+    color: saddlebrown;
+    font-size: 0.8em;
+}
+
+div.example,
+div.lisp {
+    margin: 0px;
+}
+
+dl {
+    margin: 3em 0em;
+}
+
+dl dl {
+    margin: 0em;
+}
+
+dt {
+    background-color: #D0D0D0;
+    padding: 0.5em;
+}
+
+dd dt {
+    background-color: transparent;
+    border-color: #D0D0D0;
+    border-style: none none none dotted;
+    border-width: 0.5em;
+    padding: 0.5em;
+}
+
+h1,
+h2,
+h2.contents-heading,
+h3,
+h4 {
+    padding: 20px 0px 0px 0px;
+    font-weight: normal;
+}
+
+h1 {
+    font-size: 2.4em;
+}
+
+h2 {
+    font-size: 2.2em;
+    font-weight: bold;
+}
+
+h3 {
+    font-size: 1.8em;
+}
+
+h4 {
+    font-size: 1.4em;
+}
+
+hr {
+    background-color: silver;
+    border-style: none;
+    height: 1px;
+    margin: 0px;
+}
+
+html {
+    background-color: #F5F5F5;
+}
+
+img {
+    max-width: 100%;
+}
+
+li {
+    padding: 5px;
+}
+
+pre.display,
+pre.example,
+pre.format,
+pre.lisp,
+pre.verbatim{
+    overflow: auto;
+}
+
+pre.example,
+pre.lisp,
+pre.verbatim {
+    background-color: #2D3743;
+    border-color: #000;
+    border-style: solid;
+    border-width: thin;
+    color: #E1E1E1;
+    font-size: smaller;
+    padding: 1em;
+}
+
+pre.menu-comment {
+    border-color: #E4E4E4;
+    border-bottom-style: solid;
+    border-width: thin;
+    font-family: sans;
+}
+
+table {
+    border-collapse: collapse;
+    margin: 40px 0px;
+}
+
+table.index-cp *,
+table.index-fn *,
+table.index-ky *,
+table.index-pg *,
+table.index-tp *,
+table.index-vr * {
+    background-color: inherit;
+    border-style: none;
+}
+
+td,
+th {
+    border-color: silver;
+    border-style: solid;
+    border-width: thin;
+    padding: 10px;
+}
+
+th {
+    background-color: #F5F5F5;
+}
+/* END NATIVE ELEMENTS */
+
+
+
+/* CLASSES */
+.contents {
+    margin-bottom: 4em;
+}
+
+.float {
+    margin: 3em 0em;
+}
+
+.float-caption {
+    font-size: smaller;
+    text-align: center;
+}
+
+.float > img {
+    display: block;
+    margin: auto;
+}
+
+.footnote {
+    font-size: smaller;
+    margin: 5em 0em;
+}
+
+.footnote h3 {
+    display: inline;
+    font-size: small;
+}
+
+.header {
+    background-color: #F2F2F2;
+    font-size: small;
+    padding: 0.2em 1em;
+}
+
+.key {
+    color: saddlebrown;
+    font-size: 0.8em;
+}
+
+.menu * {
+    border-style: none;
+}
+
+.menu td {
+    padding: 0.5em 0em;
+}
+
+.menu td:last-child {
+    width: 60%;
+}
+
+.menu th {
+    background-color: inherit;
+}
+/* END CLASSES */
+
 -->
 </style>
-<link rel="stylesheet" type="text/css" href="hyperbole.css">
 
 
 </head>
 
 <body lang="en">
-<h1 class="settitle" align="center">GNU Hyperbole Manual</h1>
+
 
 
 
@@ -88,8 +328,7 @@ Next: <a href="#Introduction" accesskey="n" rel="next">Introduction</a>, Previou
 </div>
 <span id="GNU-Hyperbole"></span><h2 class="unnumbered">GNU Hyperbole</h2>
 
-<CENTER><H1>GNU Hyperbole</H1></CENTER>
-
+<!-- <CENTER><H1>GNU Hyperbole</H1></CENTER> -->
 <CENTER><H2>The Everyday Hypertextual Information Manager</H2></CENTER>
 
 <CENTER><H3><A HREF="mailto:rsw@gnu.org">Say thanks or send a testimonial if you like Hyperbole.</A></H3></CENTER>
@@ -108,7 +347,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed September 1, 2024.
+Printed October 7, 2024.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -232,7 +471,7 @@ Hyperbole allows hypertext buttons to be embedded within unstructured and
 structured files, mail messages and news articles.  It offers intuitive
 keyboard and mouse-based control of information display within multiple
 windows.  It also provides point-and-click access to Info manuals, ftp
-archives, and the World-Wide Web.
+archives, the World-Wide Web and much more.
 </p>
 <span id="index-file_002c-FAST_002dDEMO"></span>
 <span id="index-Hyperbole-demo"></span>
@@ -273,17 +512,32 @@ provides a number of overlapping interaction methods that support differing
 work styles.  In such instances, you need learn only one technique that suits
 you.
 </p>
-<p>See <a href="#Buttons">Buttons</a>, for an overview of Hyperbole buttons and how to use them.
+<p>See <a href="#Buttons">Buttons</a>, for an overview of Hyperbole buttons and how to use
+them.  Hyperbole&rsquo;s action-oriented button support is enabled via the
+global minor mode, <code>hyperbole-mode</code>.
 </p>
 <p>See <a href="#Menus">Menus</a>, for summaries of Hyperbole menu commands and how to use
 the minibuffer-based menus that work on any display that Emacs supports.
+</p>
+<p>See <a href="#HyWiki">HyWiki</a>, for Hyperbole&rsquo;s markup-free, personal Wiki system for
+note-taking and automatic WikiWord highlighting and hyperlinking.  It
+extends Org mode.  HyWikiWord hyperlink buttons are automatically
+enabled for wiki pages below <code>hywiki-directory</code>.  To enable them
+in text buffers outside of this directory, enable the global minor
+mode, <code>hywiki-mode</code>.
+</p>
+<p>See <a href="#HyNote">HyNote</a>, for a start on the very early stages of Hyperbole&rsquo;s
+multi-format note taking system.  HyNote supports Org, Markdown,
+Koutline and Emacs Outline file formats.  HyNote works in any buffer
+where HyWiki support is active.
 </p>
 <p>See <a href="#HyControl">HyControl</a>, for how to quickly and interactively control what your
 Emacs windows and frames display and where they appear.
 </p>
 <p>See <a href="#Koutliner">Koutliner</a>, for concept and usage information on the
-autonumbered, hypertextual outliner.  See <a href="#Koutliner-Keys">Koutliner Keys</a>, for a full
-summary of the outliner commands that are bound to keys.
+autonumbered, hypertextual outliner.  It uses its own major mode.
+See <a href="#Koutliner-Keys">Koutliner Keys</a>, for a full summary of the outliner commands
+that are bound to keys.
 </p>
 <p>See <a href="#HyRolo">HyRolo</a>, for concept and usage information on the rapid lookup,
 hierarchical, full-text record management system included with Hyperbole.
@@ -317,7 +571,7 @@ e-mail messages, faxes, voice mail and web pages.
 <p>The rise of the web has demonstrated how hypertext technologies can be used
 to build massive organized repositories of scattered information.  But
 assembling information for the web still remains a great challenge and the
-data formats of the web are too structured to deal with the wide variety
+data formats of the web are too structured to de&lsquo;al with the wide variety
 of information that people process.  Modern web development requires the
 use of many languages: HTML, JavaScript, and CSS.  This in itself prevents
 its use as the prime means of organizing and interlinking the constant
@@ -738,10 +992,15 @@ is run.  When <code>hyperbole-mode</code> is enabled, <code>hyperbole-mode-hook<
 </p>
 <p>If you prefer a different key to activate Hyperbole, you can bind it as part
 of any setting of <code>hyperbole-init-hook</code> within your personal
-<samp>~/.emacs</samp> file.  For example, <code>(add-hook
-'hyperbole-init-hook (lambda () (global-set-key &quot;\C-ch&quot;
-'hyperbole--enable-mode) (global-set-key &quot;\C-hh&quot; 'view-hello-file)))</code>; then
-restart Emacs.
+<samp>~/.emacs</samp> file.  For example:
+</p><div class="example lisp">
+<pre class="lisp">(add-hook 'hyperbole-init-hook
+   (lambda () (global-set-key
+                &quot;\C-ch&quot; 'hyperbole--enable-mode)
+              (global-set-key
+                &quot;\C-hh&quot; 'view-hello-file)))
+</pre></div>
+<p>then restart Emacs.
 </p>
 <hr>
 </div>
@@ -816,8 +1075,12 @@ well as the standard Smart Key presses.
 loading Hyperbole, then you may also use the middle mouse key as the Action
 Key.  If you want both the middle mouse key as the Action Key and the
 right mouse key as the Assist Key for ease of use, then within your
-personal <samp>~/.emacs</samp> file, add: <code>(add-hook 'hyperbole-init-hook
-'hmouse-add-unshifted-smart-keys)</code> and then restart Emacs.
+personal <samp>~/.emacs</samp> file, add:
+</p><div class="example lisp">
+<pre class="lisp">(add-hook 'hyperbole-init-hook
+          'hmouse-add-unshifted-smart-keys)
+</pre></div>
+<p>and then restart Emacs.
 </p>
 <span id="index-key-binding_002c-smart-keys"></span>
 <span id="index-smart-key-commands"></span>
@@ -838,8 +1101,11 @@ other mouse keys, though you won&rsquo;t be able to execute mouse drag actions w
 such key bindings.  See <a href="#Smart-Mouse-Key-Drags">Smart Mouse Key Drags</a>, and see <a href="#Keyboard-Drags">Keyboard Drags</a>.
 </p>
 <p>To permanently change any of these key bindings, use:
-<code>(add-hook 'hyperbole-init-hook (lambda () (hkey-set-key &lt;KEY&gt; '&lt;CMD&gt;)</code>,
-for example, <code>(hkey-set-key &quot;\M-'&quot; 'hkey-either)</code>.
+</p><div class="example lisp">
+<pre class="lisp">(add-hook 'hyperbole-init-hook
+          (lambda () (hkey-set-key &lt;KEY&gt; '&lt;CMD&gt;)
+</pre></div>
+<p>for example, <code>(hkey-set-key &quot;\M-'&quot; 'hkey-either)</code>.
 </p>
 
 <hr>
@@ -4264,9 +4530,10 @@ These are good places to begin experimenting with button creation.
 <dd><p>Hyperbole option customization.  This includes whether ftp and www
 URLs are recognized by the <code>find-file</code> commands, where Hyperbole
 link referents are displayed, where URLs are displayed, where web
-search results are displayed, whether date stamps are added to rolo
-entries, and whether to use proportional or windowful scrolling when a
-Smart Key is pressed at the end of a line.
+search results are displayed, whether the activation key for each
+minibuffer menu item is highlighted or not, whether date stamps are
+added to rolo entries, and whether to use proportional or windowful
+scrolling when a Smart Key is pressed at the end of a line.
 See <a href="#Customization">Customization</a>.
 </p>
 <span id="index-menu_002c-KeyBindings"></span>
@@ -4585,10 +4852,10 @@ the following contexts:
 <span id="index-HyWikiWord-highlighting"></span>
 <p>As HyWikiWords are typed, highlighting occurs after a trailing
 whitespace or punctuation character is added, or when the HyWikiWord
-is surrounded by a matching pair of characters such as curly braces.
-Since Org links use double square brackets and Org targets use double
-or triple angle brackets, HyWikiWords within these delimiters are
-ignored once the brackets are in place.
+is surrounded by a matching pair of characters such as curly braces or
+single square brackets.  Since Org links use double square brackets
+and Org targets use double or triple angle brackets, HyWikiWords
+within these delimiters are ignored once the brackets are in place.
 </p>
 <span id="index-hywiki_002dword_002dhighlight_002dflag"></span>
 <p>The custom setting, <code>hywiki-word-highlight-flag</code> (default =
@@ -4794,7 +5061,7 @@ implicit button type that HyNote defines, <code>hynote-file</code>.
 <p>In the future, HyNote will also provide a universal way to easily link to
 information across many file formats.
 </p>
-<p>See also <a href="#HyWiki">HyWiki</a>.
+<p>For more, <a href="#HyWiki">HyWiki</a>.
 </p>
 
 <hr>
@@ -7982,11 +8249,11 @@ button is activated and does one of four things with LINK-EXPR:
 </li><li> invokes a function or action type of one argument, the button text sans the function name, to display it.
 </li></ol>
 
-<p>For example, if you use Python and have a &lsquo;<samp>PYTHONLIBPATH</samp>&rsquo; environment
+<p>For example, if you use Python and have a &lsquo;<samp>PYTHONPATH</samp>&rsquo; environment
 variable, then pressing <kbd>{C-x C-e}</kbd> <code>eval-last-sexp</code> after
 this expression:
 </p>
-<p><code>(defal pylib &quot;${PYTHONLIBPATH}/%s&quot;)</code>
+<p><code>(defal pylib &quot;${PYTHONPATH}/%s&quot;)</code>
 </p>
 <p>defines a new action button link type called ’pylib’ whose buttons
 take the form of:
@@ -9444,7 +9711,8 @@ be of interest to users.
 <li><a href="#Web-Search-Engines" accesskey="5">Web Search Engines</a></li>
 <li><a href="#Using-URLs-with-Find_002dFile" accesskey="6">Using URLs with Find-File</a></li>
 <li><a href="#Invisible-Text-Searches" accesskey="7">Invisible Text Searches</a></li>
-<li><a href="#Button-Colors" accesskey="8">Configuring Button Colors</a></li>
+<li><a href="#Highlight-Menu-Key-Toggle" accesskey="8">Highlight Menu Key Toggle</a></li>
+<li><a href="#Button-Colors" accesskey="9">Configuring Button Colors</a></li>
 </ul>
 <hr>
 <div class="subsection" id="Referent-Display">
@@ -9771,7 +10039,7 @@ menu.
 <div class="subsection" id="Invisible-Text-Searches">
 <div class="header">
 <p>
-Next: <a href="#Button-Colors" accesskey="n" rel="next">Configuring Button Colors</a>, Previous: <a href="#Using-URLs-with-Find_002dFile" accesskey="p" rel="prev">Using URLs with Find-File</a>, Up: <a href="#Customization" accesskey="u" rel="up">Customization</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Highlight-Menu-Key-Toggle" accesskey="n" rel="next">Highlight Menu Key Toggle</a>, Previous: <a href="#Using-URLs-with-Find_002dFile" accesskey="p" rel="prev">Using URLs with Find-File</a>, Up: <a href="#Customization" accesskey="u" rel="up">Customization</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <span id="Invisible-Text-Searches-1"></span><h4 class="subsection">B.2.7 Invisible Text Searches</h4>
 
@@ -9785,20 +10053,35 @@ through invisible/hidden text, making the text temporarily visible
 until point moves past that hidden part.  When a search match is
 selected, the surrounding text remains visible.
 </p>
-<p>You can temporarily disable searching of hidden text by typing <kbd>{M-s i}</kbd>
-while in an incremental search.  This key sequence toggles that
-setting and makes searches look at only visible text (or the reverse
-when invoked again).  The setting lasts only through the current
-interactive search.
+<p>You can temporarily disable searching of hidden text by typing
+<kbd>{M-s i}</kbd> while in an incremental search.  This key sequence
+toggles that setting and makes searches look only at visible text (or
+the reverse when invoked again).  The setting lasts through the
+current interactive search only.
+</p>
+<hr>
+</div>
+<div class="subsection" id="Highlight-Menu-Key-Toggle">
+<div class="header">
+<p>
+Next: <a href="#Button-Colors" accesskey="n" rel="next">Configuring Button Colors</a>, Previous: <a href="#Invisible-Text-Searches" accesskey="p" rel="prev">Invisible Text Searches</a>, Up: <a href="#Customization" accesskey="u" rel="up">Customization</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<span id="Highlight-Menu-Key-Toggle-1"></span><h4 class="subsection">B.2.8 Highlight Menu Key Toggle</h4>
+
+<span id="index-menu-item_002c-Cust_002fHighlight_002dMenu_002dKeys_002dToggle"></span>
+<span id="index-highlight-menu-keys"></span>
+<p>The Cust/Highlight-Menu-Keys-Toggle menu item toggles whether each
+menu item&rsquo;s activation key is highlighted or not.  This is on by
+default and typically bolds and underlines the highlighted key.
 </p>
 <hr>
 </div>
 <div class="subsection" id="Button-Colors">
 <div class="header">
 <p>
-Previous: <a href="#Invisible-Text-Searches" accesskey="p" rel="prev">Invisible Text Searches</a>, Up: <a href="#Customization" accesskey="u" rel="up">Customization</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Previous: <a href="#Highlight-Menu-Key-Toggle" accesskey="p" rel="prev">Highlight Menu Key Toggle</a>, Up: <a href="#Customization" accesskey="u" rel="up">Customization</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<span id="Configuring-Button-Colors"></span><h4 class="subsection">B.2.8 Configuring Button Colors</h4>
+<span id="Configuring-Button-Colors"></span><h4 class="subsection">B.2.9 Configuring Button Colors</h4>
 <span id="index-Emacs-support"></span>
 <span id="index-button-highlighting-1"></span>
 <span id="index-highlighting-buttons"></span>
@@ -9874,12 +10157,20 @@ Next: <a href="#Default-Hyperbole-Bindings" accesskey="n" rel="next">Default Hyp
 
 <span id="index-binding-keys"></span>
 <span id="index-minibuffer-menu-bindings"></span>
+<span id="index-global_002dset_002dkey"></span>
+<span id="index-global-menu-key-bindings"></span>
+<p>To programmatically bind <kbd>{C-c d}</kbd> to the Hyperbole minibuffer menu command
+Doc/Demo for example, use the following expression:
+</p>
+<p><code>(global-set-key &quot;\C-cd&quot; (kbd &quot;C-h h d d&quot;))</code>
+</p>
 <span id="index-hyperbole_002dset_002dkey"></span>
-<p>Use <kbd>{M-x hyperbole-set-key <span class="key">RET</span>}</kbd> to bind any global key to
-any Hyperbole minibuffer menu item.  This command will first prompt for the
-key sequence you want to use to activate the menu item.  Immediately
-after, it will display the Hyperbole top-level minibuffer menu.  Simply
-select the item you want to bind to your key.
+<p>To interactively bind a global key to a minibuffer menu item, use
+<kbd>{M-x hyperbole-set-key <span class="key">RET</span>}</kbd>.  This command will first
+prompt for the key sequence you want to use to activate the menu item.
+Immediately after, it will display the Hyperbole top-level minibuffer
+menu.  Simply type the keys to select the item you want to bind to
+your key.
 </p>
 <hr>
 </div>
@@ -10087,9 +10378,13 @@ simply toggle Hyperbole minor mode off with the <code>hyperbole-mode</code>
 command.  There is no default key binding for this command; use <kbd>{M-x
 hyperbole-mode <span class="key">RET</span>}</kbd>.  Alternatively, you may select a key and bind it
 as part of any setting of <code>hyperbole-init-hook</code> within your
-personal <samp>~/.emacs</samp> file.  For example, <code>(add-hook
-'hyperbole-init-hook (lambda () (global-set-key &quot;\C-ct&quot; 'hyperbole-mode)))</code>.
-</p>
+personal <samp>~/.emacs</samp> file.  For example:
+</p><div class="example lisp">
+<pre class="lisp">(add-hook 'hyperbole-init-hook
+          (lambda () (global-set-key
+                       &quot;\C-ct&quot; 'hyperbole-mode)))
+</pre></div>
+
 <hr>
 </div>
 <div class="section" id="Testing">
@@ -14273,6 +14568,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><th id="Function_fn_letter-G">G</th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-gbut_003aebut_002dprogram"><code>gbut:ebut-program</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Programmatic-Button-Creation">Programmatic Button Creation</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-gbut_003afile"><code>gbut:file</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Glossary">Glossary</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-global_002dset_002dkey"><code>global-set-key</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Binding-Minibuffer-Menu-Items">Binding Minibuffer Menu Items</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th id="Function_fn_letter-H">H</th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hbmap_003adir_002duser">hbmap:dir-user</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Files">Button Files</a></td></tr>
@@ -15278,6 +15574,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td valign="top"><a href="#index-global-button-link">global button link</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-global-button_002c-modify">global button, modify</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Questions-and-Answers">Questions and Answers</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-global-link-creation">global link creation</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Global-Buttons">Global Buttons</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-global-menu-key-bindings">global menu key bindings</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Binding-Minibuffer-Menu-Items">Binding Minibuffer Menu Items</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-glossary">glossary</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-Gmail-Contacts">Gmail Contacts</a>:</td><td>&nbsp;</td><td valign="top"><a href="#HyRolo-Settings">HyRolo Settings</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-GNU-Emacs">GNU Emacs</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hyperbole-Overview">Hyperbole Overview</a></td></tr>
@@ -15313,6 +15610,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td valign="top"><a href="#index-hide-tree">hide tree</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hiding">hiding</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hiding-signatures">hiding signatures</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-highlight-menu-keys">highlight menu keys</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Highlight-Menu-Key-Toggle">Highlight Menu Key Toggle</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-highlighting-buttons">highlighting buttons</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Button-Colors">Button Colors</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-history">history</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-hook-variables">hook variables</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Hook-Variables">Hook Variables</a></td></tr>
@@ -15624,6 +15922,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td valign="top"><a href="#index-menu-item_002c-Back_002dto_002dPrior_002dLocation">menu item, Back-to-Prior-Location</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu-item_002c-Cust_002fAll_002dOptions">menu item, Cust/All-Options</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Customization">Customization</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu-item_002c-Cust_002fDebug_002dToggle">menu item, Cust/Debug-Toggle</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Smart-Key-Debugging">Smart Key Debugging</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-menu-item_002c-Cust_002fHighlight_002dMenu_002dKeys_002dToggle">menu item, Cust/Highlight-Menu-Keys-Toggle</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Highlight-Menu-Key-Toggle">Highlight Menu Key Toggle</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu-item_002c-Cust_002fMsg_002dToggle_002dEbuts">menu item, Cust/Msg-Toggle-Ebuts</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu-item_002c-Cust_002fMsg_002dToggle_002dEbuts-1">menu item, Cust/Msg-Toggle-Ebuts</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Buttons-in-News">Buttons in News</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-menu-item_002c-Cust_002fOrg_002dM_002dRET">menu item, Cust/Org-M-RET</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
