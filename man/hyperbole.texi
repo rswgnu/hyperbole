@@ -1,4 +1,4 @@
- \input texinfo  @c -*- coding: utf-8 -*-
+\input texinfo  @c -*- coding: utf-8 -*-
 
 @c $Id$
 @c hyperbole.texi --- The GNU Hyperbole Manual
@@ -7,12 +7,17 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     21-Sep-24 at 18:10:46 by Bob Weiner
+@c Last-Mod:      8-Oct-24 at 00:44:21 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
+@ifnothtml
 @settitle GNU Hyperbole Manual
+@end ifnothtml
 @c %**end of header (This is for running Texinfo on a region.)
+
+@set FONT-SIZE 16
+@set WIDTH 100%
 
 @c Emacs documentation style settings
 @c @documentencoding UTF-8
@@ -25,8 +30,8 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED September, 2024
-@set UPDATED-MONTH September 2024
+@set UPDATED October, 2024
+@set UPDATED-MONTH October 2024
 @set EDITION 9.0.2pre
 @set VERSION 9.0.2pre
 
@@ -139,8 +144,7 @@ Texinfo markup language.
 
 @ifhtml
 @html
-<CENTER><H1>GNU Hyperbole</H1></CENTER>
-
+<!-- <CENTER><H1>GNU Hyperbole</H1></CENTER> -->
 <CENTER><H2>The Everyday Hypertextual Information Manager</H2></CENTER>
 
 <CENTER><H3><A HREF="mailto:rsw@@gnu.org">Say thanks or send a testimonial if you like Hyperbole.</A></H3></CENTER>
@@ -159,7 +163,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed September 21, 2024.
+Printed October 7, 2024.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -201,7 +205,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.2pre
-September 21, 2024
+October 7, 2024
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -440,6 +444,7 @@ Customization
 * Web Search Engines::
 * Using URLs with Find-File::
 * Invisible Text Searches::
+* Highlight Menu Key Toggle::
 * Button Colors::
 
 Hyperbole Key Bindings
@@ -634,8 +639,7 @@ you.
 
 @xref{Buttons}, for an overview of Hyperbole buttons and how to use
 them.  Hyperbole's action-oriented button support is enabled via the
-global minor mode, @code{hyperbole-mode).
-
+global minor mode, @code{hyperbole-mode}.
 
 @xref{Menus}, for summaries of Hyperbole menu commands and how to use
 the minibuffer-based menus that work on any display that Emacs supports.
@@ -686,7 +690,7 @@ e-mail messages, faxes, voice mail and web pages.
 The rise of the web has demonstrated how hypertext technologies can be used
 to build massive organized repositories of scattered information.  But
 assembling information for the web still remains a great challenge and the
-data formats of the web are too structured to deal with the wide variety
+data formats of the web are too structured to de`al with the wide variety
 of information that people process.  Modern web development requires the
 use of many languages: HTML, JavaScript, and CSS.  This in itself prevents
 its use as the prime means of organizing and interlinking the constant
@@ -1073,10 +1077,16 @@ is run.  When @code{hyperbole-mode} is enabled, @code{hyperbole-mode-hook} and
 
 If you prefer a different key to activate Hyperbole, you can bind it as part
 of any setting of @code{hyperbole-init-hook} within your personal
-@file{~/.emacs} file.  For example, @code{(add-hook
-'hyperbole-init-hook (lambda () (global-set-key "\C-ch"
-'hyperbole--enable-mode) (global-set-key "\C-hh" 'view-hello-file)))}; then
-restart Emacs.
+@file{~/.emacs} file.  For example:
+@lisp
+(add-hook 'hyperbole-init-hook
+   (lambda () (global-set-key
+                "\C-ch" 'hyperbole--enable-mode)
+              (global-set-key
+                "\C-hh" 'view-hello-file)))
+@end lisp
+@noindent
+then restart Emacs.
 
 @node Smart Keys, Buttons, Usage, Top
 @chapter Smart Keys
@@ -1140,8 +1150,13 @@ If you set the variable, @code{hmouse-middle-flag}, to @samp{t} before
 loading Hyperbole, then you may also use the middle mouse key as the Action
 Key.  If you want both the middle mouse key as the Action Key and the
 right mouse key as the Assist Key for ease of use, then within your
-personal @file{~/.emacs} file, add: @code{(add-hook 'hyperbole-init-hook
-'hmouse-add-unshifted-smart-keys)} and then restart Emacs.
+personal @file{~/.emacs} file, add:
+@lisp
+(add-hook 'hyperbole-init-hook
+          'hmouse-add-unshifted-smart-keys)
+@end lisp
+@noindent
+and then restart Emacs.
 
 @cindex key binding, smart keys
 @cindex smart key commands
@@ -1162,7 +1177,11 @@ other mouse keys, though you won't be able to execute mouse drag actions with
 such key bindings.  @xref{Smart Mouse Key Drags}, and @pxref{Keyboard Drags}.
 
 To permanently change any of these key bindings, use:
-@code{(add-hook 'hyperbole-init-hook (lambda () (hkey-set-key <KEY> '<CMD>)},
+@lisp
+(add-hook 'hyperbole-init-hook
+          (lambda () (hkey-set-key <KEY> '<CMD>)
+@end lisp
+@noindent
 for example, @code{(hkey-set-key "\M-'" 'hkey-either)}.
 
 @c @cindex Paste Key
@@ -4198,9 +4217,10 @@ These are good places to begin experimenting with button creation.
 Hyperbole option customization.  This includes whether ftp and www
 URLs are recognized by the @code{find-file} commands, where Hyperbole
 link referents are displayed, where URLs are displayed, where web
-search results are displayed, whether date stamps are added to rolo
-entries, and whether to use proportional or windowful scrolling when a
-Smart Key is pressed at the end of a line.
+search results are displayed, whether the activation key for each
+minibuffer menu item is highlighted or not, whether date stamps are
+added to rolo entries, and whether to use proportional or windowful
+scrolling when a Smart Key is pressed at the end of a line.
 @xref{Customization}.
 
 @cindex menu, KeyBindings
@@ -8785,6 +8805,7 @@ be of interest to users.
 * Web Search Engines::
 * Using URLs with Find-File::
 * Invisible Text Searches::
+* Highlight Menu Key Toggle::
 * Button Colors::
 @end menu
 
@@ -9078,7 +9099,7 @@ menu.
 @end float
 @sp 1
 
-@node Invisible Text Searches, Button Colors, Using URLs with Find-File, Customization
+@node Invisible Text Searches, Highlight Menu Key Toggle, Using URLs with Find-File, Customization
 @subsection Invisible Text Searches
 
 @cindex menu item, Isearch-Invisible
@@ -9091,13 +9112,22 @@ through invisible/hidden text, making the text temporarily visible
 until point moves past that hidden part.  When a search match is
 selected, the surrounding text remains visible.
 
-You can temporarily disable searching of hidden text by typing @bkbd{M-s i}
-while in an incremental search.  This key sequence toggles that
-setting and makes searches look at only visible text (or the reverse
-when invoked again).  The setting lasts only through the current
-interactive search.
+You can temporarily disable searching of hidden text by typing
+@bkbd{M-s i} while in an incremental search.  This key sequence
+toggles that setting and makes searches look only at visible text (or
+the reverse when invoked again).  The setting lasts through the
+current interactive search only.
 
-@node Button Colors,  , Invisible Text Searches, Customization
+@node Highlight Menu Key Toggle, Button Colors, Invisible Text Searches, Customization
+@subsection Highlight Menu Key Toggle
+
+@cindex menu item, Cust/Highlight-Menu-Keys-Toggle
+@cindex highlight menu keys
+The Cust/Highlight-Menu-Keys-Toggle menu item toggles whether each
+menu item's activation key is highlighted or not.  This is on by
+default and typically bolds and underlines the highlighted key.
+
+@node Button Colors,  , Highlight Menu Key Toggle, Customization
 @subsection  Configuring Button Colors
 @cindex Emacs support
 @cindex button highlighting
@@ -9161,12 +9191,20 @@ override Hyperbole's defaults.
 
 @cindex binding keys
 @cindex minibuffer menu bindings
+@findex global-set-key
+@cindex global menu key bindings
+To programmatically bind @bkbd{C-c d} to the Hyperbole minibuffer menu command
+Doc/Demo for example, use the following expression:
+
+@code{(global-set-key "\C-cd" (kbd "C-h h d d"))}
+
 @findex hyperbole-set-key
-Use @bkbd{M-x hyperbole-set-key @key{RET}} to bind any global key to
-any Hyperbole minibuffer menu item.  This command will first prompt for the
-key sequence you want to use to activate the menu item.  Immediately
-after, it will display the Hyperbole top-level minibuffer menu.  Simply
-select the item you want to bind to your key.
+To interactively bind a global key to a minibuffer menu item, use
+@bkbd{M-x hyperbole-set-key @key{RET}}.  This command will first
+prompt for the key sequence you want to use to activate the menu item.
+Immediately after, it will display the Hyperbole top-level minibuffer
+menu.  Simply type the keys to select the item you want to bind to
+your key.
 
 @node Default Hyperbole Bindings, Testing, Binding Minibuffer Menu Items, Hyperbole Key Bindings
 @section Default Hyperbole Bindings
@@ -9346,8 +9384,12 @@ simply toggle Hyperbole minor mode off with the @code{hyperbole-mode}
 command.  There is no default key binding for this command; use @bkbd{M-x
 hyperbole-mode @key{RET}}.  Alternatively, you may select a key and bind it
 as part of any setting of @code{hyperbole-init-hook} within your
-personal @file{~/.emacs} file.  For example, @code{(add-hook
-'hyperbole-init-hook (lambda () (global-set-key "\C-ct" 'hyperbole-mode)))}.
+personal @file{~/.emacs} file.  For example:
+@lisp
+(add-hook 'hyperbole-init-hook
+          (lambda () (global-set-key
+                       "\C-ct" 'hyperbole-mode)))
+@end lisp
 
 @node Testing,  , Default Hyperbole Bindings, Hyperbole Key Bindings
 @section Testing
