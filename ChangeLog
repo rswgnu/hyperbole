@@ -1,5 +1,9 @@
 2024-10-07  Bob Weiner  <rsw@gnu.org>
 
+* man/hyperbole.texi (Binding Minibuffer Menu Items): Document how to
+    programmatically bind a global key to a Hyperbole minibuffer menu item.
+                     (Highlight Menu Key Toggle): Add doc for this customization.
+
 * test/hywiki-tests.el (hywiki-tests--get-page-list-after-add-and-delete): Add
     and update this test from Mats.
 
