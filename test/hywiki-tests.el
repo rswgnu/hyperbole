@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:      6-Oct-24 at 12:38:13 by Bob Weiner
+;; Last-Mod:     18-Oct-24 at 22:44:05 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -165,21 +165,29 @@
 Both mod-time and checksum must be changed for a test to return true."
   (let ((hywiki--directory-mod-time nil))
     (should (hywiki-directory-modified-p)))
-  (let ((hywiki--directory-mod-time 2)
+  (let ((hywiki--directory-mod-time '(100 100 100 100))
 	(hywiki--directory-checksum "3"))
-    (mocklet ((hywiki-directory-get-mod-time => 2)
+
+    ;; Verify not modified checksum and mod-time.
+    (mocklet ((hywiki-directory-get-mod-time => '(100 100 100 100))
 	      (hywiki-directory-get-checksum => "3"))
       (should-not (hywiki-directory-modified-p)))
+
     ;; Next test case should never be able to occur since a change in
     ;; the filenames in the checksum necessitates a change in the
     ;; mod-time variable.  So the modified test should return nil.
-    (mocklet ((hywiki-directory-get-mod-time => 2)
+    ;; Verify modified checksum.
+    (mocklet ((hywiki-directory-get-mod-time => '(100 100 100 100))
 	      (hywiki-directory-get-checksum => "4"))
       (should-not (hywiki-directory-modified-p)))
-    (mocklet ((hywiki-directory-get-mod-time => 1)
+
+    ;; Verify modified mode-time.
+    (mocklet ((hywiki-directory-get-mod-time => '(10 10 10 10))
 	      (hywiki-directory-get-checksum => "3"))
       (should-not (hywiki-directory-modified-p)))
-    (mocklet ((hywiki-directory-get-mod-time => 1)
+
+    ;; Verify both mod-time and checksum modified.
+    (mocklet ((hywiki-directory-get-mod-time => '(10 10 10 10))
 	      (hywiki-directory-get-checksum => "4"))
       (should (hywiki-directory-modified-p)))))
 
