@@ -1,3 +1,9 @@
+2024-12-24  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--a-wikiword-in-hywiki-directory)
+    (hywiki-tests--wikiword-identified-with-delimiters): Add tests for
+    hywiki words with delimiters.
+
 2024-12-23  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--add-activity)
