@@ -1,3 +1,8 @@
+2024-10-22  Bob Weiner  <rsw@gnu.org>
+
+* Makefile: Use texi2any instead of makeinfo as is more likely to grab
+    the latest version.  Also add ASCII_PUNCTUATION option everywhere.
+
 2024-10-21  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-highlight-on-yank): Add extra char at end to support
