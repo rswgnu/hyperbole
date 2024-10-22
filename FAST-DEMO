@@ -87,18 +87,23 @@
   and keys.  Invest an hour learning Hyperbole now and speed your daily
   information management for years to come.
 
-  If you simply want to know what Hyperbole is, see the file "HY-ABOUT".
-  Hyperbole displays that file when you press {C-h h d a}.  Hyperbole assumes
-  you know how to use Emacs.  Otherwise, run the Emacs tutorial by pressing
-  {C-h t} first.
+  Hyperbole assumes you know how to use Emacs.  Otherwise, run the Emacs
+  tutorial by pressing {C-h t} first.
 
   You should be looking at this file within Emacs and Hyperbole should
   already be installed within your copy of Emacs.  To be sure, press 'C-h h'
   and you should see the Hyperbole menu in your minibuffer window at the
-  bottom of your current Emacs frame.  Press 'q' to quit out of this menu and
-  we can begin.  If Hyperbole is not installed, see the "INSTALL" file, in
-  the same directory as this file, for instructions on installing it.
+  bottom of your current Emacs frame.  Press 'q' to quit out of this menu
+  and we can begin.  If Hyperbole is not installed, see the "INSTALL" file,
+  in the same directory as this file, for instructions on installing it,
+  though {M-x package-install RET hyperbole RET} is typically all you need.
 
+  If you simply want to know what Hyperbole is, see the file "HY-ABOUT".
+  Hyperbole displays that file when you press the minibuffer menu command,
+  {C-h h d a}.  Any of Hyperbole's menu commands can be programmatically
+  bound to another key, like so:
+
+    (global-set-key "\C-cd" (kbd "C-h h d a"))
 
 * Implicit Buttons
 
@@ -192,10 +197,10 @@
 
 ** Key Series Implicit Buttons
 
-    A key series is an arbitrary length set of Emacs keystrokes surrounded by
-    braces, like a visual keyboard macro.  RET, SPC and ESC are translated
-    into their respective keys.  Activate them with {M-RET} or
-    SHIFT-MIDDLE-MOUSE.
+    A key series is an arbitrary length set of bound Emacs keystrokes
+    surrounded by braces, like a visual keyboard macro.  RET, SPC and
+    ESC are translated into their respective keys.  Activate them with
+    {M-RET} or SHIFT-MIDDLE-MOUSE.
 
     {C-h A}
 
@@ -226,12 +231,13 @@
 
     {C-x 4 d ${hyperb:dir} RET}
 
-       Dired the Hyperbole home directory based on its variable.  {M-RET} on
-       the directory itself will display the directory's value in the minibuffer.
+       Dired the Hyperbole home directory based on its variable.  {M-RET}
+       on the directory itself will display the directory's value in the
+       minibuffer.
 
-       Within this dired buffer, mark a few files with {m} and then press {@}
-       to display a window grid of those files only.  That works in Buffer
-       Menu and IBuffer modes as well.
+       Within this dired buffer, mark a few files with {m} and then press
+       {@} to display a window grid of those files only.  That works in
+       Buffer Menu and IBuffer modes as well.
 
     {C-x C-b C-x C-q M-x keep-lines RET .el$ RET C-x C-q}
 

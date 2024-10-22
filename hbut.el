@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     24-Aug-24 at 11:40:56 by Mats Lidell
+;; Last-Mod:     13-Oct-24 at 20:53:36 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2725,6 +2725,8 @@ Summary of operations based on inputs (name arg from \\='hbut:current attrs):
       ('actypes::link-to-string-match
        (insert (format "\"%s#%s%s\"" (hpath:shorten arg3) arg1
 		       (if (<= arg2 1) "" (concat ":I" (number-to-string arg2))))))
+      ('actypes::link-to-texinfo-node
+       (insert (format "\"%s#%s\"" (hpath:shorten arg1) arg2)))
       ('nil (error "(ibut:insert-text): actype must be a Hyperbole actype or Lisp function symbol, not '%s'" orig-actype))
       ;; Generic action button type
       (_ (insert (format "<%s%s%s>" (or (actype:def-symbol actype) actype)

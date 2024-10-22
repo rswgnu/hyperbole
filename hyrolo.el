@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      1-Sep-24 at 19:04:11 by Bob Weiner
+;; Last-Mod:     13-Oct-24 at 15:37:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -734,8 +734,8 @@ select it."
   (let ((all-files (hyrolo-get-file-list)))
     (when (or (called-interactively-p 'interactive)
 	      (null file))
-      (if (or (cadr all-files) ;; length > 1
-	      (not current-prefix-arg))
+      (if (or (not (cadr all-files)) ;; length <= 1
+	      current-prefix-arg)
 	  (setq file (car all-files))
 	(setq file (completing-read "Edit HyRolo file: "
 				    (mapcar #'list all-files)))))

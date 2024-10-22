@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10/31/93
-;; Last-Mod:      4-Oct-23 at 19:10:12 by Mats Lidell
+;; Last-Mod:     19-Oct-24 at 10:30:56 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -127,10 +127,8 @@ File is created with a single empty level 1 kotl cell."
     (princ ";; -*- Mode: kotl -*- \n")
     (prin1 kfile:version)
     (princ " ;; file-format\n\^_\n")
-    ;; Ensure that last cell has two newlines after it so that
-    ;; kfile:insert-attributes finds it.
     (goto-char (point-max))
-    (princ "\n\n\^_\n")
+    (princ "\^_\n")
     (princ "\^_\n;; depth-first kcell attributes\n")
     ;; Ensure that display is narrowed to cell region only.
     (kfile:narrow-to-kcells)
@@ -138,6 +136,8 @@ File is created with a single empty level 1 kotl cell."
     (if empty-flag
 	;; This is a new koutline file.  Always need at least one visible
 	;; cell within a view. Insert initial empty cell.
+	;; Ensure that last cell has two newlines after it so that
+	;; kfile:insert-attributes finds it.
 	(progn (kview:add-cell "1" 1)
 	       ;; Mark view unmodified, so if kill right away, there is no
 	       ;; prompt.
