@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     22-Oct-24 at 01:02:29 by Bob Weiner
+# Last-Mod:     25-Oct-24 at 22:17:00 by Bob Weiner
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -391,7 +391,7 @@ TEXINFO_SRC = $(man_dir)/hyperbole.texi $(man_dir)/hkey-help.txt $(man_dir)/im/*
 
 info: $(man_dir)/hyperbole.info
 $(man_dir)/hyperbole.info: $(TEXINFO_SRC)
-	cd $(man_dir) && $(TEXI2INFO) hyperbole.texi
+	cd $(man_dir) && $(TEXI2INFO) hyperbole.texi && (sed -e 's/texi2any/makeinfo/' hyperbole.info > h.info && mv h.info hyperbole.info)
 
 pdf: $(man_dir)/hyperbole.pdf
 $(man_dir)/hyperbole.pdf: $(TEXINFO_SRC)

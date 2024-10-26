@@ -1,3 +1,8 @@
+2024-10-25  Bob Weiner  <rsw@gnu.org>
+
+* Makefile (info): Replace any use of 'texi2any' in first line to 'makeinfo'
+    so Hyperbole Info index links work properly since Info checks for 'makeinfo'.
+
 2024-10-22  Bob Weiner  <rsw@gnu.org>
 
 * Makefile: Use texi2any instead of makeinfo as is more likely to grab
