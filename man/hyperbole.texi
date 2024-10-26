@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:      8-Oct-24 at 00:44:21 by Bob Weiner
+@c Last-Mod:     22-Oct-24 at 01:08:33 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -61,7 +61,7 @@
 This manual is for GNU Hyperbole
 (Edition @value{EDITION}, Published @value{UPDATED}).
 
-Copyright @copyright{} 1989-2023  Free Software Foundation, Inc.
+Copyright @copyright{} 1989-2024  Free Software Foundation, Inc.
 
 @quotation
 Permission is granted to copy, distribute and/or modify this document
@@ -85,12 +85,13 @@ See the GNU General Public License for more details in the file,
 @dircategory Emacs
 @direntry
 * Hyperbole: (hyperbole).      The Everyday Hypertextual Information Manager.
-     Use @bkbd{C-h h d d} for a demonstration.  GNU Hyperbole
-     offers context-sensitive mouse and keyboard keys that do the
-     right thing, a powerful contact manager, an advanced, auto-
-     numbered outliner with hyperlink anchors for each outline
-     cell, and easily editable and extensible hyperlink buttons,
-     even embeddable within mail and news messages.
+     Use @bkbd{C-h h d d} for a demonstration.  GNU Hyperbole offers
+     context-sensitive mouse and keyboard keys that do the right
+     thing, an Org-based Wiki generator with auto-wikiword
+     highlighting, a powerful contact manager, an advanced, auto-
+     numbered outliner with hyperlink anchors for each outline cell,
+     and easily editable and extensible hyperlink buttons, even
+     embeddable within mail and news messages.
 @end direntry
 
 @c
@@ -163,7 +164,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed October 7, 2024.
+Printed October 22, 2024.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -205,7 +206,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.2pre
-October 7, 2024
+October 22, 2024
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -4606,7 +4607,7 @@ It looks like this:
 
 @smallexample
 @noindent
-HyWiki>  Act Create Edit GrepConsult Help Info Link ModeToggle Org-M-RET/ Publish TagFind WikiWordConsult
+HyWiki>  Act Create FindPage GrepConsult Help Info Link ModeToggle Org-M-RET/ Publish TagFind WikiWordConsult
 @end smallexample
 
 @noindent
@@ -4628,11 +4629,13 @@ Activate HyWikiWord link at point.
 @item Create
 Create and display a new HyWiki page.  Shows existing page names to aid in new naming.
 
-@item Edit
-Prompt with completion for and display a HyWiki page ready for editing.
+@item FindPage
+Prompt with completion for and find a HyWiki page, typically editable.
+If the page is already in a buffer, point is left unchanged.
 
 @item GrepConsult
 Grep over HyWiki pages with interactive @code{hywiki-consult-grep}.
+Any words may be used.
 
 @item Help
 Report on a HyWikiWord's attributes.
@@ -4678,7 +4681,8 @@ Publish modified pages in the HyWiki to HTML; prefix arg to publish all pages.
 Find a matching Org tag across all HyWiki pages.
 
 @item WikiWordConsult
-Use @code{hywiki-consult-grep} to show occurrences of a prompted for HyWikiWord.
+Use @code{hywiki-consult-grep} to prompt for a HyWikiWord and then
+consult grep for and select an occurrence within the HyWiki.
 @end table
 
 

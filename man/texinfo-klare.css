@@ -50,7 +50,7 @@ samp,
 tt,
 var {
     color: saddlebrown;
-    font-size: 0.8em;
+    <!-- font-size: 0.8em; -->
 }
 
 div.example,

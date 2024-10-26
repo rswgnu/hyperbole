@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
-;; Last-Mod:      1-Sep-24 at 14:12:37 by Bob Weiner
+;; Last-Mod:     13-Oct-24 at 15:58:08 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -308,7 +308,7 @@ Return t if cutoff, else nil."
 	 "----"
 	 ["Activate"            hywiki-word-activate t]
 	 ["Create"              hywiki-add-page-and-display t]
-	 ["Edit"                hywiki-find-page t]
+	 ["Find-HyWiki-Page"    hywiki-find-page t]
 	 (when (fboundp 'consult-grep) ;; allow for autoloading
 	   ["Grep-Consult"        hywiki-consult-grep t])
 	 ["Help"                hkey-help t]

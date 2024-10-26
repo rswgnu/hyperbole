@@ -1,3 +1,94 @@
+2024-10-25  Bob Weiner  <rsw@gnu.org>
+
+* Makefile (info): Replace any use of 'texi2any' in first line to 'makeinfo'
+    so Hyperbole Info index links work properly since Info checks for 'makeinfo'.
+
+2024-10-22  Bob Weiner  <rsw@gnu.org>
+
+* Makefile: Use texi2any instead of makeinfo as is more likely to grab
+    the latest version.  Also add ASCII_PUNCTUATION option everywhere.
+
+2024-10-21  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-highlight-on-yank): Add extra char at end to support
+    highlighting any last HyWikiWord.
+
+2024-10-20  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-maybe-highlight-between-page-names,
+             hywiki-maybe-highlight-off-page-name,
+             hywiki-maybe-highlight-on-page-name): Add for use in
+   'post-self-insert-hook' idle HyWikiWord highlighter (setup from
+   'hywiki-buttonize-character-commands'.
+            (hywiki-maybe-dehighlight-between-page-names,
+             hywiki-maybe-dehighlight-off-page-name,
+             hywiki-maybe-dehighlight-on-page-name): Add for use in
+   'pre-command-hook' called via 'hywiki-debuttonize-non-character-commands'.
+            (hywiki-debuttonize-non-character-commands,
+             hywiki-maybe-dehighlight-sexp,
+             hywiki-maybe-highlight-page-names): Enable dehighlighting in
+   HyWiki pages by letting 'hywiki-word-highlight-flag' be nil.
+            (hywiki-maybe-highlight-page-names): Fix that were skipping forward
+   for section words even if # symbol was not found.
+            (hywiki-maybe-highlight-balanced-pairs): Make result a boolean value,
+   t if any balanced pair was found.
+
+2024-10-19  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki--maybe-de/highlight-org-element-backward): Add to handle
+    both highlighting and dehighlighting with public callers named:
+            (hywiki-maybe-dehighlight-org-element-backward,
+             hywiki-maybe-highlight-org-element-backward).
+            (hywiki--maybe-de/highlight-org-element-forward): Add to handle
+    both highlighting and dehighlighting with public callers named:
+            (hywiki-maybe-dehighlight-org-element-forward,
+             hywiki-maybe-highlight-org-element-forward).
+            (hywiki--maybe-de/highlight-sexp): Add to handle
+    both highlighting and dehighlighting sexps with public callers named:
+            (hywiki-maybe-dehighlight-sexp,
+             hywiki-maybe-highlight-sexp).
+            (hywiki-maybe-dehighlight-balanced-pairs): Add to dehighlight.
+	    (hywiki-maybe-dehighlight-page-name): Add as inverse to
+    highlight any page name at point function.
+            (hywiki-maybe-highlight-page-name): Change to work when point is
+    within a wiki word as a any point of a word may be edited, turning it
+    to or from a valid page name.
+
+* hywiki.el (hywiki-highlight-between-page-names-after-word): Add to highlight
+    any HyWikiWords between point after inserting a non-word character.
+            (hywiki-buttonize-character-commands): Remove conditionals and
+.   change to using an idle timer with a 0.3 second default delay.
+            (hywiki-maybe-highlight-page-names): Remove dehighlighting of
+    HyWikiWords between [] and <> brackets.
+            (hywiki-debuttonize-non-character-commands): Fix to dehighlight
+    non-WikiWord at point after a delete char command.
+
+* kotl/kfile.el (kfile:create): Remove unneeded insertion of extra 2
+    newlines after end of first cell as 'kview:add-cell' handleds this.
+
+2024-10-13  Bob Weiner  <rsw@gnu.org>
+
+* hproperty.el (hproperty:but-get-all-in-region): Optimize so val-list
+    is created only once per call.
+
+* hbut.el (ibut:insert-text):
+    Convert (link-to-texinfo-node
+             "/home/bw/Dropbox/emacs/hyperbole/man/hyperbole.texi"
+             "Implicit Button Types")
+    and insert something like "man/hyperbole.texi#Implicit Button Types"
+    so works properly.
+* FAST-DEMO (Introduction): Improve this section and add how to globally
+    bind a Hyperbole minibuffer command to another key sequence.
+
+* hui-mini.el (hui:menu-hywiki): Rename 'Edit' to 'FileFind'.
+              (hui:menu-rolo):   Rename 'Edit' to 'FindPage'.
+  hui-menu.el (hui-menu-hywiki): Rename 'Edit' to 'Find-HyWiki-Page'.
+  man/hyperbole.texi (HyWiki Menu): Rename 'Edit' to 'FindPage'.
+
+* hyrolo.el (hyrolo-find-file): Fix that interactive conditions for when to
+    choose among all files (no prefix arg) versus selecting the first, were
+    inverted.  Fixes Rolo/File menu item.
+
 2024-10-08  Bob Weiner  <rsw@gnu.org>
 
 * man/hyperbole.texi: Remove duplicate manual title display in HTML output.

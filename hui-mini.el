@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     11-Sep-24 at 08:51:59 by Mats Lidell
+;; Last-Mod:     13-Oct-24 at 16:03:25 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1030,7 +1030,7 @@ support underlined faces as well."
 	   "Activate HyWikiWord link at point or emulate a press of a Smart Key.")
 	 '("Create"         hywiki-add-page-and-display
 	    "Create and display a new HyWiki page.  Shows existing page names to aid in new naming.")
-	 '("Edit"           hywiki-find-page
+	 '("FindPage"       hywiki-find-page
 	   "Prompt with completion for and display a HyWiki page ready for editing.")
 	 (when (fboundp 'consult-grep) ;; allow for autoloading
 	   '("GrepConsult"    hywiki-consult-grep
@@ -1073,7 +1073,7 @@ support underlined faces as well."
            '("ConsultFind"      hyrolo-consult-grep           "Interactively narrow HyRolo matches using Consult/Vertico."))
 	 '("Display"          hyrolo-display-matches        "Display last found rolo matches again.")
 	 '("Edit"             hyrolo-edit                   "Edit an existing rolo entry.")
-	 '("File"             hyrolo-find-file              "Edit an existing rolo file.")
+	 '("FileFind"         hyrolo-find-file              "Find an existing rolo file.")
 	 (when (fboundp 'helm-org-rifle-files) ;; allow for autoloading
            '("HelmFind"         hyrolo-helm-org-rifle         "Interactively narrow HyRolo matches using Helm."))
 	 '("Info"             (id-info "(hyperbole)HyRolo") "Display manual section on HyRolo.")
