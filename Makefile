@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     27-Oct-24 at 20:56:09 by Mats Lidell
+# Last-Mod:     27-Oct-24 at 21:27:42 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -383,6 +383,12 @@ version:
 
 # Build the README.md.html and Info, HTML and Postscript versions of the user manual
 doc: version README.md.html manual
+
+# Convenience targets for regenerating the docs
+.PHONY: doc-clean doc-regenerate
+doc-clean:
+	$(RM) man/hyperbole.{log,aux,cp*,fn*,ky*,toc,vr*,info,pdf,html}
+doc-regenerate: doc-clean doc
 
 # Build the Info, HTML and Postscript versions of the user manual
 manual: info html pdf
