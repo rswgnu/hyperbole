@@ -6,7 +6,7 @@
 <!-- This manual is for GNU Hyperbole
 (Edition 9.0.2pre, Published October, 2024).
 
-Copyright (C) 1989-2024  Free Software Foundation, Inc.
+Copyright © 1989-2024  Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -41,14 +41,12 @@ See the GNU General Public License for more details in the file,
 <style type="text/css">
 <!--
 /*
-   Custom CSS for HTML documents generated with Texinfo 6.x's makeinfo.
-   Public domain 2016 sirgazil. All rights waived.
-   https://codeberg.org/luis-felipe/texinfo-css/src/branch/trunk/static/css/texinfo-klare.css
+   Custom CSS for HTML documents generated with Texinfo 7.x's makeinfo.
+   Public domain 2023 Luis Felipe López Acevedo. All rights waived.
 */
 
 
-
-/* NATIVE ELEMENTS */
+/* VARIABLES */
 
 a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
 a.summary-letter-printindex {text-decoration: none}
@@ -65,9 +63,40 @@ td.printindex-index-section {vertical-align: top; padding-left: 1em}
 th.entries-header-printindex {text-align:left}
 th.sections-header-printindex {text-align:left; padding-left: 1em}
 ul.mark-bullet {list-style-type: disc}
+ul.toc-numbered-mark {list-style: none}
+:root {
+    color-scheme: light dark;
+    /* Colors */
+    --bg-color: #F0F0F0;
+    --border-color: silver;
+    --link-color: #245C8A;
+    --sheet-color: white;
+    --sheet-shadow: gray;
+    --symbol-color: saddlebrown;
+    --text-color: #333;
+    /* Fonts */
+    --base-font-size: 16px;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-color: #191919;
+        --border-color: black;
+        --link-color: #8EB2CD;
+        --sheet-color: #222;
+        --sheet-shadow: var(--border-color);
+        --symbol-color: darkkhaki;
+        --text-color: #F5F5F5;
+    }
+}
+/* END VARIABLES */
+
+
+
+/* NATIVE ELEMENTS */
 a:link,
 a:visited {
-    color: #245C8A;
+    color: var(--link-color);
     text-decoration: none;
 }
 
@@ -83,7 +112,7 @@ acronym {
 }
 
 blockquote {
-    border-color: #D0D0D0;
+    border-color: var(--text-color);
     border-style: none none none solid;
     border-width: 0.5em;
     margin-left: 0em;
@@ -91,24 +120,22 @@ blockquote {
 }
 
 body {
-    background-color: white;
-    box-shadow: 0 0 2px gray;
+    background-color: var(--sheet-color);
+    box-shadow: 0 0 2px var(--sheet-shadow);
     box-sizing: border-box;
-    color: #333;
+    color: var(--text-color);
     font-family: sans-serif;
+    font-size: var(--base-font-size);
     margin: 50px auto;
     max-width: 960px;
     padding: 50px;
-    <!-- font-size: 16px; -->
-    font-size: clamp(1rem, 2vw + 0.5rem, 2rem);
 }
 
 code,
 samp,
 tt,
 var {
-    color: saddlebrown;
-    <!-- font-size: 0.8em; -->
+    color: var(--symbol-color);
 }
 
 div.example,
@@ -125,13 +152,13 @@ dl dl {
 }
 
 dt {
-    background-color: #D0D0D0;
+    background-color: var(--bg-color);
     padding: 0.5em;
 }
 
 dd dt {
     background-color: transparent;
-    border-color: #D0D0D0;
+    border-color: var(--border-color);
     border-style: none none none dotted;
     border-width: 0.5em;
     padding: 0.5em;
@@ -164,14 +191,14 @@ h4 {
 }
 
 hr {
-    background-color: silver;
+    background-color: var(--border-color);
     border-style: none;
     height: 1px;
     margin: 0px;
 }
 
 html {
-    background-color: #F5F5F5;
+    background-color: var(--bg-color);
 }
 
 img {
@@ -183,18 +210,18 @@ li {
 }
 
 pre.display,
-pre.example,
+pre.example-preformatted,
 pre.format,
-pre.lisp,
+pre.lisp-preformatted,
 pre.verbatim{
     overflow: auto;
 }
 
-pre.example,
-pre.lisp,
+pre.example-preformatted,
+pre.lisp-preformatted,
 pre.verbatim {
     background-color: #2D3743;
-    border-color: #000;
+    border-color: black;
     border-style: solid;
     border-width: thin;
     color: #E1E1E1;
@@ -202,11 +229,15 @@ pre.verbatim {
     padding: 1em;
 }
 
-pre.menu-comment {
-    border-color: #E4E4E4;
+pre.menu-comment-preformatted {
+    border-color: var(--bg-color);
     border-bottom-style: solid;
     border-width: thin;
     font-family: sans;
+}
+
+strong.def-name {
+    font-size: var(--base-font-size);
 }
 
 table {
@@ -214,26 +245,26 @@ table {
     margin: 40px 0px;
 }
 
-table.index-cp *,
-table.index-fn *,
-table.index-ky *,
-table.index-pg *,
-table.index-tp *,
-table.index-vr * {
+table.cp-entries-printindex *,
+table.fn-entries-printindex *,
+table.ky-entries-printindex *,
+table.pg-entries-printindex *,
+table.tp-entries-printindex *,
+table.vr-entries-printindex * {
     background-color: inherit;
     border-style: none;
 }
 
 td,
 th {
-    border-color: silver;
+    border-color: var(--border-color);
     border-style: solid;
     border-width: thin;
     padding: 10px;
 }
 
 th {
-    background-color: #F5F5F5;
+    background-color: var(--bg-color);
 }
 /* END NATIVE ELEMENTS */
 
@@ -244,11 +275,19 @@ th {
     margin-bottom: 4em;
 }
 
+.def-type {
+    color: var(--text-color);
+}
+
+.def-var-arguments {
+    color: var(--text-color);
+}
+
 .float {
     margin: 3em 0em;
 }
 
-.float-caption {
+.caption {
     font-size: smaller;
     text-align: center;
 }
@@ -268,15 +307,8 @@ th {
     font-size: small;
 }
 
-.header {
-    background-color: #F2F2F2;
-    font-size: small;
-    padding: 0.2em 1em;
-}
-
 .key {
-    color: saddlebrown;
-    font-size: 0.8em;
+    color: var(--symbol-color);
 }
 
 .menu * {
@@ -293,6 +325,12 @@ th {
 
 .menu th {
     background-color: inherit;
+}
+
+.nav-panel {
+    background-color: var(--bg-color);
+    font-size: small;
+    padding: 0.2em 1em;
 }
 /* END CLASSES */
 
@@ -321,12 +359,12 @@ th {
 
 
 
-<div class="unnumbered-level-extent" id="Top">
+<div class="top-level-extent" id="Top">
 <div class="nav-panel">
 <p>
 Next: <a href="#Introduction" accesskey="n" rel="next">Introduction</a>, Previous: <a href="dir.html#Top" accesskey="p" rel="prev">(dir)</a>, Up: <a href="dir.html#Top" accesskey="u" rel="up">(dir)</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<h2 class="unnumbered" id="GNU-Hyperbole"><span>GNU Hyperbole<a class="copiable-link" href="#GNU-Hyperbole"> &para;</a></span></h2>
+<h1 class="top" id="GNU-Hyperbole"><span>GNU Hyperbole<a class="copiable-link" href="#GNU-Hyperbole"> &para;</a></span></h1>
 
 <!-- <CENTER><H1>GNU Hyperbole</H1></CENTER> -->
 <CENTER><H2>The Everyday Hypertextual Information Manager</H2></CENTER>
@@ -399,8 +437,285 @@ often demonstrating its power in creative ways.  The Koutliner is
 dedicated to my lovely wife, Kathy.
 </p>
 
-<hr>
+<div class="element-shortcontents" id="SEC_Shortcontents">
+<h2 class="shortcontents-heading">Short Table of Contents</h2>
+
+<div class="shortcontents">
+<ul class="toc-numbered-mark">
+<li><a id="stoc-Introduction-1" href="#toc-Introduction-1">1 Introduction</a></li>
+<li><a id="stoc-Usage-1" href="#toc-Usage-1">2 Usage</a></li>
+<li><a id="stoc-Smart-Keys-1" href="#toc-Smart-Keys-1">3 Smart Keys</a></li>
+<li><a id="stoc-Buttons-1" href="#toc-Buttons-1">4 Buttons</a></li>
+<li><a id="stoc-Menus-1" href="#toc-Menus-1">5 Menus</a></li>
+<li><a id="stoc-HyWiki-1" href="#toc-HyWiki-1">6 HyWiki</a></li>
+<li><a id="stoc-HyNote-1" href="#toc-HyNote-1">7 HyNote</a></li>
+<li><a id="stoc-HyControl-1" href="#toc-HyControl-1">8 HyControl</a></li>
+<li><a id="stoc-Koutliner-1" href="#toc-Koutliner-1">9 Koutliner</a></li>
+<li><a id="stoc-HyRolo-1" href="#toc-HyRolo-1">10 HyRolo</a></li>
+<li><a id="stoc-Window-Configurations-1" href="#toc-Window-Configurations-1">11 Window Configurations</a></li>
+<li><a id="stoc-Developing-with-Hyperbole-1" href="#toc-Developing-with-Hyperbole-1">12 Developing with Hyperbole</a></li>
+<li><a id="stoc-Glossary-1" href="#toc-Glossary-1">Appendix A Glossary</a></li>
+<li><a id="stoc-Setup-1" href="#toc-Setup-1">Appendix B Setup</a></li>
+<li><a id="stoc-Hyperbole-Key-Bindings-1" href="#toc-Hyperbole-Key-Bindings-1">Appendix C Hyperbole Key Bindings</a></li>
+<li><a id="stoc-Koutliner-Keys-1" href="#toc-Koutliner-Keys-1">Appendix D Koutliner Keys</a></li>
+<li><a id="stoc-Smart-Key-Reference-1" href="#toc-Smart-Key-Reference-1">Appendix E Smart Key Reference</a></li>
+<li><a id="stoc-Suggestion-or-Bug-Reporting-1" href="#toc-Suggestion-or-Bug-Reporting-1">Appendix F Suggestion or Bug Reporting</a></li>
+<li><a id="stoc-Questions-and-Answers-1" href="#toc-Questions-and-Answers-1">Appendix G Questions and Answers</a></li>
+<li><a id="stoc-Future-Work-1" href="#toc-Future-Work-1">Appendix H Future Work</a></li>
+<li><a id="stoc-References-1" href="#toc-References-1">Appendix I References</a></li>
+<li><a id="stoc-Key-Index-1" href="#toc-Key-Index-1" rel="index">Key Index</a></li>
+<li><a id="stoc-Function_002c-Variable-and-File-Index" href="#toc-Function_002c-Variable-and-File-Index" rel="index">Function, Variable and File Index</a></li>
+<li><a id="stoc-Concept-Index-1" href="#toc-Concept-Index-1" rel="index">Concept Index</a></li>
+</ul>
 </div>
+</div>
+<div class="element-contents" id="SEC_Contents">
+<h2 class="contents-heading">Table of Contents</h2>
+
+<div class="contents">
+
+<ul class="toc-numbered-mark">
+  <li><a id="toc-Introduction-1" href="#Introduction">1 Introduction</a>
+  <ul class="toc-numbered-mark">
+    <li><a id="toc-Manual-Overview-1" href="#Manual-Overview">1.1 Manual Overview</a></li>
+    <li><a id="toc-Motivation-1" href="#Motivation">1.2 Motivation</a></li>
+    <li><a id="toc-Hyperbole-Overview-1" href="#Hyperbole-Overview">1.3 Hyperbole Overview</a></li>
+    <li><a id="toc-Mail-Lists-1" href="#Mail-Lists">1.4 Mail Lists</a></li>
+  </ul></li>
+  <li><a id="toc-Usage-1" href="#Usage">2 Usage</a>
+  <ul class="toc-numbered-mark">
+    <li><a id="toc-Invocation-1" href="#Invocation">2.1 Invocation</a></li>
+    <li><a id="toc-Documentation-1" href="#Documentation">2.2 Documentation</a></li>
+    <li><a id="toc-Hyperbole-Hooks-1" href="#Hyperbole-Hooks">2.3 Hyperbole Hooks</a></li>
+  </ul></li>
+  <li><a id="toc-Smart-Keys-1" href="#Smart-Keys">3 Smart Keys</a>
+  <ul class="toc-numbered-mark">
+    <li><a id="toc-Smart-Key-Bindings-1" href="#Smart-Key-Bindings">3.1 Smart Key Bindings</a></li>
+    <li><a id="toc-Smart-Key-Operations-1" href="#Smart-Key-Operations">3.2 Smart Key Operations</a></li>
+    <li><a id="toc-Smart-Key-Argument-Selection-1" href="#Smart-Key-Argument-Selection">3.3 Smart Key Argument Selection</a></li>
+    <li><a id="toc-Smart-Key-Debugging-1" href="#Smart-Key-Debugging">3.4 Smart Key Debugging</a></li>
+    <li><a id="toc-Smart-Key-Thing-Selection-1" href="#Smart-Key-Thing-Selection">3.5 Smart Key Thing Selection</a></li>
+    <li><a id="toc-Smart-Mouse-Key-Modeline-Clicks-1" href="#Smart-Mouse-Key-Modeline-Clicks">3.6 Smart Mouse Key Modeline Clicks</a></li>
+    <li><a id="toc-Smart-Mouse-Key-Drags-1" href="#Smart-Mouse-Key-Drags">3.7 Smart Mouse Key Drags</a>
+    <ul class="toc-numbered-mark">
+      <li><a id="toc-Creating-and-Deleting-Windows-1" href="#Creating-and-Deleting-Windows">3.7.1 Creating and Deleting Windows</a></li>
+      <li><a id="toc-Saving-and-Restoring-Window-Configurations-1" href="#Saving-and-Restoring-Window-Configurations">3.7.2 Saving and Restoring Window Configurations</a></li>
+      <li><a id="toc-Resizing-Windows-1" href="#Resizing-Windows">3.7.3 Resizing Windows</a></li>
+      <li><a id="toc-Moving-Frames-1" href="#Moving-Frames">3.7.4 Moving Frames</a></li>
+      <li><a id="toc-Dragging-Buffers_002c-Windows-and-Items" href="#Dragging-Buffers">3.7.5 Dragging Buffers, Windows and Items</a>
+      <ul class="toc-numbered-mark">
+        <li><a id="toc-Swapping-Buffers-1" href="#Swapping-Buffers">3.7.5.1 Swapping Buffers</a></li>
+        <li><a id="toc-Displaying-Buffers-1" href="#Displaying-Buffers">3.7.5.2 Displaying Buffers</a></li>
+        <li><a id="toc-Cloning-Windows-1" href="#Cloning-Windows">3.7.5.3 Cloning Windows</a></li>
+        <li><a id="toc-Displaying-Items-1" href="#Displaying-Items">3.7.5.4 Displaying Items</a></li>
+        <li><a id="toc-Keyboard-Drags-1" href="#Keyboard-Drags">3.7.5.5 Keyboard Drags</a></li>
+      </ul></li>
+    </ul></li>
+  </ul></li>
+  <li><a id="toc-Buttons-1" href="#Buttons">4 Buttons</a>
+  <ul class="toc-numbered-mark">
+    <li><a id="toc-Explicit-Buttons-1" href="#Explicit-Buttons">4.1 Explicit Buttons</a></li>
+    <li><a id="toc-Global-Buttons-1" href="#Global-Buttons">4.2 Global Buttons</a></li>
+    <li><a id="toc-Implicit-Buttons-1" href="#Implicit-Buttons">4.3 Implicit Buttons</a>
+    <ul class="toc-numbered-mark">
+      <li><a id="toc-Implicit-Button-Types-1" href="#Implicit-Button-Types">4.3.1 Implicit Button Types</a></li>
+      <li><a id="toc-Action-Buttons-1" href="#Action-Buttons">4.3.2 Action Buttons</a></li>
+    </ul></li>
+    <li><a id="toc-Button-Files-1" href="#Button-Files">4.4 Button Files</a></li>
+    <li><a id="toc-Action-Types-1" href="#Action-Types">4.5 Action Types</a></li>
+    <li><a id="toc-Button-Type-Precedence-1" href="#Button-Type-Precedence">4.6 Button Type Precedence</a></li>
+    <li><a id="toc-Utilizing-Explicit-Buttons-1" href="#Utilizing-Explicit-Buttons">4.7 Utilizing Explicit Buttons</a>
+    <ul class="toc-numbered-mark">
+      <li><a id="toc-Creation-1" href="#Creation">4.7.1 Creation</a>
+      <ul class="toc-numbered-mark">
+        <li><a id="toc-Creation-Via-Menus" href="#By-Menu">4.7.1.1 Creation Via Menus</a></li>
+        <li><a id="toc-Creation-Via-Buffer-Link" href="#By-Link">4.7.1.2 Creation Via Buffer Link</a></li>
+        <li><a id="toc-Creation-Via-Assist-Key-Drags" href="#By-Dragging">4.7.1.3 Creation Via Assist Key Drags</a></li>
+      </ul></li>
+      <li><a id="toc-Renaming-1" href="#Renaming">4.7.2 Renaming</a></li>
+      <li><a id="toc-Deletion-1" href="#Deletion">4.7.3 Deletion</a></li>
+      <li><a id="toc-Editing-1" href="#Editing">4.7.4 Editing</a></li>
+      <li><a id="toc-Searching-and-Summarizing-1" href="#Searching-and-Summarizing">4.7.5 Searching and Summarizing</a></li>
+      <li><a id="toc-Buttons-in-Mail-1" href="#Buttons-in-Mail">4.7.6 Buttons in Mail</a></li>
+      <li><a id="toc-Buttons-in-News-1" href="#Buttons-in-News">4.7.7 Buttons in News</a></li>
+    </ul></li>
+  </ul></li>
+  <li><a id="toc-Menus-1" href="#Menus">5 Menus</a></li>
+  <li><a id="toc-HyWiki-1" href="#HyWiki">6 HyWiki</a>
+  <ul class="toc-numbered-mark">
+    <li><a id="toc-HyWikiWords-1" href="#HyWikiWords">6.1 HyWikiWords</a></li>
+    <li><a id="toc-Publish-HyWiki-1" href="#Publish-HyWiki">6.2 Publish HyWiki</a></li>
+    <li><a id="toc-HyWiki-Menu-1" href="#HyWiki-Menu">6.3 HyWiki Menu</a></li>
+  </ul></li>
+  <li><a id="toc-HyNote-1" href="#HyNote">7 HyNote</a></li>
+  <li><a id="toc-HyControl-1" href="#HyControl">8 HyControl</a></li>
+  <li><a id="toc-Koutliner-1" href="#Koutliner">9 Koutliner</a>
+  <ul class="toc-numbered-mark">
+    <li><a id="toc-Menu-Commands-1" href="#Menu-Commands">9.1 Menu Commands</a></li>
+    <li><a id="toc-Creating-Outlines-1" href="#Creating-Outlines">9.2 Creating Outlines</a></li>
+    <li><a id="toc-Autonumbering-1" href="#Autonumbering">9.3 Autonumbering</a></li>
+    <li><a id="toc-Idstamps-1" href="#Idstamps">9.4 Idstamps</a></li>
+    <li><a id="toc-Editing-Outlines-1" href="#Editing-Outlines">9.5 Editing Outlines</a>
+    <ul class="toc-numbered-mark">
+      <li><a id="toc-Adding-and-Killing-1" href="#Adding-and-Killing">9.5.1 Adding and Killing</a></li>
+      <li><a id="toc-Promoting-and-Demoting-1" href="#Promoting-and-Demoting">9.5.2 Promoting and Demoting</a></li>
+      <li><a id="toc-Relocating-and-Copying-1" href="#Relocating-and-Copying">9.5.3 Relocating and Copying</a></li>
+      <li><a id="toc-Moving-Around-1" href="#Moving-Around">9.5.4 Moving Around</a></li>
+      <li><a id="toc-Filling-1" href="#Filling">9.5.5 Filling</a></li>
+      <li><a id="toc-Transposing-1" href="#Transposing">9.5.6 Transposing</a></li>
+      <li><a id="toc-Splitting-and-Appending-1" href="#Splitting-and-Appending">9.5.7 Splitting and Appending</a></li>
+      <li><a id="toc-Inserting-and-Importing-1" href="#Inserting-and-Importing">9.5.8 Inserting and Importing</a></li>
+      <li><a id="toc-Exporting-1" href="#Exporting">9.5.9 Exporting</a></li>
+    </ul></li>
+    <li><a id="toc-Viewing-Outlines-1" href="#Viewing-Outlines">9.6 Viewing Outlines</a>
+    <ul class="toc-numbered-mark">
+      <li><a id="toc-Hiding-and-Showing-1" href="#Hiding-and-Showing">9.6.1 Hiding and Showing</a></li>
+      <li><a id="toc-View-Specs-1" href="#View-Specs">9.6.2 View Specs</a></li>
+    </ul></li>
+    <li><a id="toc-Klinks-1" href="#Klinks">9.7 Klinks</a></li>
+    <li><a id="toc-Cell-Attributes-1" href="#Cell-Attributes">9.8 Cell Attributes</a></li>
+    <li><a id="toc-Koutliner-History-1" href="#Koutliner-History">9.9 Koutliner History</a></li>
+  </ul></li>
+  <li><a id="toc-HyRolo-1" href="#HyRolo">10 HyRolo</a>
+  <ul class="toc-numbered-mark">
+    <li><a id="toc-HyRolo-Concepts-1" href="#HyRolo-Concepts">10.1 HyRolo Concepts</a></li>
+    <li><a id="toc-Rolo-Menu" href="#HyRolo-Menu">10.2 Rolo Menu</a></li>
+    <li><a id="toc-HyRolo-Searching-1" href="#HyRolo-Searching">10.3 HyRolo Searching</a></li>
+    <li><a id="toc-HyRolo-Keys-1" href="#HyRolo-Keys">10.4 HyRolo Keys</a></li>
+    <li><a id="toc-HyRolo-Settings-1" href="#HyRolo-Settings">10.5 HyRolo Settings</a></li>
+  </ul></li>
+  <li><a id="toc-Window-Configurations-1" href="#Window-Configurations">11 Window Configurations</a></li>
+  <li><a id="toc-Developing-with-Hyperbole-1" href="#Developing-with-Hyperbole">12 Developing with Hyperbole</a>
+  <ul class="toc-numbered-mark">
+    <li><a id="toc-Hook-Variables-1" href="#Hook-Variables">12.1 Hook Variables</a></li>
+    <li><a id="toc-Creating-Types-1" href="#Creating-Types">12.2 Creating Types</a>
+    <ul class="toc-numbered-mark">
+      <li><a id="toc-Creating-Action-Types-1" href="#Creating-Action-Types">12.2.1 Creating Action Types</a></li>
+      <li><a id="toc-Creating-Implicit-Button-Types-1" href="#Creating-Implicit-Button-Types">12.2.2 Creating Implicit Button Types</a>
+      <ul class="toc-numbered-mark">
+        <li><a id="toc-Action-Button-Link-Types-1" href="#Action-Button-Link-Types">12.2.2.1 Action Button Link Types</a></li>
+        <li><a id="toc-Implicit-Button-Link-Types-1" href="#Implicit-Button-Link-Types">12.2.2.2 Implicit Button Link Types</a></li>
+        <li><a id="toc-Programmatic-Implicit-Button-Types-1" href="#Programmatic-Implicit-Button-Types">12.2.2.3 Programmatic Implicit Button Types</a></li>
+      </ul></li>
+    </ul></li>
+    <li><a id="toc-Explicit-Button-Technicalities-1" href="#Explicit-Button-Technicalities">12.3 Explicit Button Technicalities</a>
+    <ul class="toc-numbered-mark">
+      <li><a id="toc-Button-Label-Normalization-1" href="#Button-Label-Normalization">12.3.1 Button Label Normalization</a></li>
+      <li><a id="toc-Operational-and-Storage-Formats-1" href="#Operational-and-Storage-Formats">12.3.2 Operational and Storage Formats</a></li>
+      <li><a id="toc-Programmatic-Button-Creation-1" href="#Programmatic-Button-Creation">12.3.3 Programmatic Button Creation</a></li>
+    </ul></li>
+    <li><a id="toc-Encapsulating-Systems-1" href="#Encapsulating-Systems">12.4 Encapsulating Systems</a></li>
+    <li><a id="toc-Embedding-Hyperbole-1" href="#Embedding-Hyperbole">12.5 Embedding Hyperbole</a></li>
+  </ul></li>
+  <li><a id="toc-Glossary-1" href="#Glossary">Appendix A Glossary</a></li>
+  <li><a id="toc-Setup-1" href="#Setup">Appendix B Setup</a>
+  <ul class="toc-numbered-mark">
+    <li><a id="toc-Installation-1" href="#Installation">B.1 Installation</a>
+    <ul class="toc-numbered-mark">
+      <li><a id="toc-Elpa-Stable-Package-Installation-_0028Emacs-Package-Manager_0029" href="#Elpa-Stable-Package-Installation">B.1.1 Elpa Stable Package Installation (Emacs Package Manager)</a></li>
+      <li><a id="toc-Elpa-In_002dDevelopment-Package-Installation-1" href="#Elpa-In_002dDevelopment-Package-Installation">B.1.2 Elpa In-Development Package Installation</a></li>
+      <li><a id="toc-Git-In_002dDevelopment-Package-Installation-_0028Straight-Package-Manager_0029" href="#Git-In_002dDevelopment-Package-Installation">B.1.3 Git In-Development Package Installation (Straight Package Manager)</a></li>
+      <li><a id="toc-Manual-Tarball-Archive-Installation-1" href="#Manual-Tarball-Archive-Installation">B.1.4 Manual Tarball Archive Installation</a></li>
+    </ul></li>
+    <li><a id="toc-Customization-1" href="#Customization">B.2 Customization</a>
+    <ul class="toc-numbered-mark">
+      <li><a id="toc-Referent-Display-1" href="#Referent-Display">B.2.1 Referent Display</a></li>
+      <li><a id="toc-Internal-Viewers-1" href="#Internal-Viewers">B.2.2 Internal Viewers</a></li>
+      <li><a id="toc-External-Viewers-1" href="#External-Viewers">B.2.3 External Viewers</a></li>
+      <li><a id="toc-Link-Variable-Substitution-1" href="#Link-Variable-Substitution">B.2.4 Link Variable Substitution</a></li>
+      <li><a id="toc-Web-Search-Engines-1" href="#Web-Search-Engines">B.2.5 Web Search Engines</a></li>
+      <li><a id="toc-Using-URLs-with-Find_002dFile-1" href="#Using-URLs-with-Find_002dFile">B.2.6 Using URLs with Find-File</a></li>
+      <li><a id="toc-Invisible-Text-Searches-1" href="#Invisible-Text-Searches">B.2.7 Invisible Text Searches</a></li>
+      <li><a id="toc-Highlight-Menu-Key-Toggle-1" href="#Highlight-Menu-Key-Toggle">B.2.8 Highlight Menu Key Toggle</a></li>
+      <li><a id="toc-Configuring-Button-Colors" href="#Button-Colors">B.2.9 Configuring Button Colors</a></li>
+    </ul></li>
+  </ul></li>
+  <li><a id="toc-Hyperbole-Key-Bindings-1" href="#Hyperbole-Key-Bindings">Appendix C Hyperbole Key Bindings</a>
+  <ul class="toc-numbered-mark">
+    <li><a id="toc-Binding-Minibuffer-Menu-Items-1" href="#Binding-Minibuffer-Menu-Items">C.1 Binding Minibuffer Menu Items</a></li>
+    <li><a id="toc-Default-Hyperbole-Bindings-1" href="#Default-Hyperbole-Bindings">C.2 Default Hyperbole Bindings</a></li>
+    <li><a id="toc-Testing-1" href="#Testing">C.3 Testing</a></li>
+  </ul></li>
+  <li><a id="toc-Koutliner-Keys-1" href="#Koutliner-Keys">Appendix D Koutliner Keys</a></li>
+  <li><a id="toc-Smart-Key-Reference-1" href="#Smart-Key-Reference">Appendix E Smart Key Reference</a>
+  <ul class="toc-numbered-mark">
+    <li><a id="toc-Smart-Mouse-Keys-1" href="#Smart-Mouse-Keys">E.1 Smart Mouse Keys</a>
+    <ul class="toc-numbered-mark">
+      <li><a id="toc-Minibuffer-Menu-Activation-1" href="#Minibuffer-Menu-Activation">E.1.1 Minibuffer Menu Activation</a></li>
+      <li><a id="toc-Thing-Selection-1" href="#Thing-Selection">E.1.2 Thing Selection</a></li>
+      <li><a id="toc-Side_002dby_002dSide-Window-Resizing-1" href="#Side_002dby_002dSide-Window-Resizing">E.1.3 Side-by-Side Window Resizing</a></li>
+      <li><a id="toc-Modeline-Clicks-and-Drags-1" href="#Modeline-Clicks-and-Drags">E.1.4 Modeline Clicks and Drags</a></li>
+      <li><a id="toc-Smart-Mouse-Drags-between-Windows-1" href="#Smart-Mouse-Drags-between-Windows">E.1.5 Smart Mouse Drags between Windows</a></li>
+      <li><a id="toc-Smart-Mouse-Drags-within-a-Window-1" href="#Smart-Mouse-Drags-within-a-Window">E.1.6 Smart Mouse Drags within a Window</a></li>
+      <li><a id="toc-Smart-Mouse-Drags-outside-a-Window-1" href="#Smart-Mouse-Drags-outside-a-Window">E.1.7 Smart Mouse Drags outside a Window</a></li>
+    </ul></li>
+    <li><a id="toc-Smart-Keyboard-Keys-1" href="#Smart-Keyboard-Keys">E.2 Smart Keyboard Keys</a>
+    <ul class="toc-numbered-mark">
+      <li><a id="toc-Smart-Key-_002d-Company-Mode-1" href="#Smart-Key-_002d-Company-Mode">E.2.1 Smart Key - Company Mode</a></li>
+      <li><a id="toc-Smart-Key-_002d-Org-Mode-1" href="#Smart-Key-_002d-Org-Mode">E.2.2 Smart Key - Org Mode</a></li>
+      <li><a id="toc-Smart-Key-_002d-Ivy-1" href="#Smart-Key-_002d-Ivy">E.2.3 Smart Key - Ivy</a></li>
+      <li><a id="toc-Smart-Key-_002d-Treemacs-1" href="#Smart-Key-_002d-Treemacs">E.2.4 Smart Key - Treemacs</a></li>
+      <li><a id="toc-Smart-Key-_002d-Dired-Sidebar-Mode-1" href="#Smart-Key-_002d-Dired-Sidebar-Mode">E.2.5 Smart Key - Dired Sidebar Mode</a></li>
+      <li><a id="toc-Smart-Key-_002d-ERT-Results-Mode-1" href="#Smart-Key-_002d-ERT-Results-Mode">E.2.6 Smart Key - ERT Results Mode</a></li>
+      <li><a id="toc-Smart-Key-_002d-Emacs-Pushbuttons-1" href="#Smart-Key-_002d-Emacs-Pushbuttons">E.2.7 Smart Key - Emacs Pushbuttons</a></li>
+      <li><a id="toc-Smart-Key-_002d-Argument-Completion-1" href="#Smart-Key-_002d-Argument-Completion">E.2.8 Smart Key - Argument Completion</a></li>
+      <li><a id="toc-Smart-Key-_002d-ID-Edit-Mode-1" href="#Smart-Key-_002d-ID-Edit-Mode">E.2.9 Smart Key - ID Edit Mode</a></li>
+      <li><a id="toc-Smart-Key-_002d-Emacs-Cross_002dreferences-_0028Xrefs_0029-1" href="#Smart-Key-_002d-Emacs-Cross_002dreferences-_0028Xrefs_0029">E.2.10 Smart Key - Emacs Cross-references (Xrefs)</a></li>
+      <li><a id="toc-Smart-Key-_002d-Smart-Scrolling-1" href="#Smart-Key-_002d-Smart-Scrolling">E.2.11 Smart Key - Smart Scrolling</a></li>
+      <li><a id="toc-Smart-Key-_002d-Smart-Menus-1" href="#Smart-Key-_002d-Smart-Menus">E.2.12 Smart Key - Smart Menus</a></li>
+      <li><a id="toc-Smart-Key-_002d-Dired-Mode-1" href="#Smart-Key-_002d-Dired-Mode">E.2.13 Smart Key - Dired Mode</a></li>
+      <li><a id="toc-Smart-Key-_002d-Hyperbole-Buttons-1" href="#Smart-Key-_002d-Hyperbole-Buttons">E.2.14 Smart Key - Hyperbole Buttons</a></li>
+      <li><a id="toc-Smart-Key-_002d-View-Mode-1" href="#Smart-Key-_002d-View-Mode">E.2.15 Smart Key - View Mode</a></li>
+      <li><a id="toc-Smart-Key-_002d-Helm-Mode-1" href="#Smart-Key-_002d-Helm-Mode">E.2.16 Smart Key - Helm Mode</a></li>
+      <li><a id="toc-Smart-Key-_002d-Delimited-Things-1" href="#Smart-Key-_002d-Delimited-Things">E.2.17 Smart Key - Delimited Things</a></li>
+      <li><a id="toc-Smart-Key-_002d-Occurrence-Matches-1" href="#Smart-Key-_002d-Occurrence-Matches">E.2.18 Smart Key - Occurrence Matches</a></li>
+      <li><a id="toc-Smart-Key-_002d-The-Koutliner-1" href="#Smart-Key-_002d-The-Koutliner">E.2.19 Smart Key - The Koutliner</a></li>
+      <li><a id="toc-Smart-Key-_002d-Flymake-Mode-1" href="#Smart-Key-_002d-Flymake-Mode">E.2.20 Smart Key - Flymake Mode</a></li>
+      <li><a id="toc-Smart-Key-_002d-RDB-Mode-1" href="#Smart-Key-_002d-RDB-Mode">E.2.21 Smart Key - RDB Mode</a></li>
+      <li><a id="toc-Smart-Key-_002d-Help-Buffers-1" href="#Smart-Key-_002d-Help-Buffers">E.2.22 Smart Key - Help Buffers</a></li>
+      <li><a id="toc-Smart-Key-_002d-Custom-Mode-1" href="#Smart-Key-_002d-Custom-Mode">E.2.23 Smart Key - Custom Mode</a></li>
+      <li><a id="toc-Smart-Key-_002d-Bookmark-Mode-1" href="#Smart-Key-_002d-Bookmark-Mode">E.2.24 Smart Key - Bookmark Mode</a></li>
+      <li><a id="toc-Smart-Key-_002d-Pages-Directory-Mode-1" href="#Smart-Key-_002d-Pages-Directory-Mode">E.2.25 Smart Key - Pages Directory Mode</a></li>
+      <li><a id="toc-Smart-Key-_002d-Python-Source-Code-1" href="#Smart-Key-_002d-Python-Source-Code">E.2.26 Smart Key - Python Source Code</a></li>
+      <li><a id="toc-Smart-Key-_002d-C-Source-Code-1" href="#Smart-Key-_002d-C-Source-Code">E.2.27 Smart Key - C Source Code</a></li>
+      <li><a id="toc-Smart-Key-_002d-C_002b_002b-Source-Code-1" href="#Smart-Key-_002d-C_002b_002b-Source-Code">E.2.28 Smart Key - C++ Source Code</a></li>
+      <li><a id="toc-Smart-Key-_002d-Assembly-Source-Code-1" href="#Smart-Key-_002d-Assembly-Source-Code">E.2.29 Smart Key - Assembly Source Code</a></li>
+      <li><a id="toc-Smart-Key-_002d-Lisp-Source-Code-1" href="#Smart-Key-_002d-Lisp-Source-Code">E.2.30 Smart Key - Lisp Source Code</a></li>
+      <li><a id="toc-Smart-Key-_002d-Java-Source-Code-1" href="#Smart-Key-_002d-Java-Source-Code">E.2.31 Smart Key - Java Source Code</a></li>
+      <li><a id="toc-Smart-Key-_002d-JavaScript-Source-Code-1" href="#Smart-Key-_002d-JavaScript-Source-Code">E.2.32 Smart Key - JavaScript Source Code</a></li>
+      <li><a id="toc-Smart-Key-_002d-Objective_002dC-Source-Code-1" href="#Smart-Key-_002d-Objective_002dC-Source-Code">E.2.33 Smart Key - Objective-C Source Code</a></li>
+      <li><a id="toc-Smart-Key-_002d-Fortran-Source-Code-1" href="#Smart-Key-_002d-Fortran-Source-Code">E.2.34 Smart Key - Fortran Source Code</a></li>
+      <li><a id="toc-Smart-Key-_002d-Identifier-Menu-Mode-1" href="#Smart-Key-_002d-Identifier-Menu-Mode">E.2.35 Smart Key - Identifier Menu Mode</a></li>
+      <li><a id="toc-Smart-Key-_002d-Calendar-Mode-1" href="#Smart-Key-_002d-Calendar-Mode">E.2.36 Smart Key - Calendar Mode</a></li>
+      <li><a id="toc-Smart-Key-_002d-Man-Page-Apropos-1" href="#Smart-Key-_002d-Man-Page-Apropos">E.2.37 Smart Key - Man Page Apropos</a></li>
+      <li><a id="toc-Smart-Key-_002d-Emacs-Outline-Mode-1" href="#Smart-Key-_002d-Emacs-Outline-Mode">E.2.38 Smart Key - Emacs Outline Mode</a></li>
+      <li><a id="toc-Smart-Key-_002d-Info-Manuals-1" href="#Smart-Key-_002d-Info-Manuals">E.2.39 Smart Key - Info Manuals</a></li>
+      <li><a id="toc-Smart-Key-_002d-Email-Readers-1" href="#Smart-Key-_002d-Email-Readers">E.2.40 Smart Key - Email Readers</a></li>
+      <li><a id="toc-Smart-Key-_002d-GNUS-Newsreader-1" href="#Smart-Key-_002d-GNUS-Newsreader">E.2.41 Smart Key - GNUS Newsreader</a></li>
+      <li><a id="toc-Smart-Key-_002d-Buffer-Menus-1" href="#Smart-Key-_002d-Buffer-Menus">E.2.42 Smart Key - Buffer Menus</a></li>
+      <li><a id="toc-Smart-Key-_002d-Tar-File-Mode-1" href="#Smart-Key-_002d-Tar-File-Mode">E.2.43 Smart Key - Tar File Mode</a></li>
+      <li><a id="toc-Smart-Key-_002d-Man-Pages-1" href="#Smart-Key-_002d-Man-Pages">E.2.44 Smart Key - Man Pages</a></li>
+      <li><a id="toc-Smart-Key-_002d-WWW-URLs-1" href="#Smart-Key-_002d-WWW-URLs">E.2.45 Smart Key - WWW URLs</a></li>
+      <li><a id="toc-Smart-Key-_002d-HyRolo-Match-Buffers-1" href="#Smart-Key-_002d-HyRolo-Match-Buffers">E.2.46 Smart Key - HyRolo Match Buffers</a></li>
+      <li><a id="toc-Smart-Key-_002d-Image-Thumbnails-1" href="#Smart-Key-_002d-Image-Thumbnails">E.2.47 Smart Key - Image Thumbnails</a></li>
+      <li><a id="toc-Smart-Key-_002d-Gomoku-Game-1" href="#Smart-Key-_002d-Gomoku-Game">E.2.48 Smart Key - Gomoku Game</a></li>
+      <li><a id="toc-Smart-Key-_002d-Magit-Mode-1" href="#Smart-Key-_002d-Magit-Mode">E.2.49 Smart Key - Magit Mode</a></li>
+      <li><a id="toc-Smart-Key-_002d-The-OO_002dBrowser-1" href="#Smart-Key-_002d-The-OO_002dBrowser">E.2.50 Smart Key - The OO-Browser</a></li>
+      <li><a id="toc-Smart-Key-_002d-Todotext-Mode" href="#Smart-Key-_002d-Todotxt-Mode">E.2.51 Smart Key - Todotext Mode</a></li>
+      <li><a id="toc-Smart-Key-_002d-Default-Context-1" href="#Smart-Key-_002d-Default-Context">E.2.52 Smart Key - Default Context</a></li>
+    </ul></li>
+  </ul></li>
+  <li><a id="toc-Suggestion-or-Bug-Reporting-1" href="#Suggestion-or-Bug-Reporting">Appendix F Suggestion or Bug Reporting</a></li>
+  <li><a id="toc-Questions-and-Answers-1" href="#Questions-and-Answers">Appendix G Questions and Answers</a></li>
+  <li><a id="toc-Future-Work-1" href="#Future-Work">Appendix H Future Work</a></li>
+  <li><a id="toc-References-1" href="#References">Appendix I References</a></li>
+  <li><a id="toc-Key-Index-1" href="#Key-Index" rel="index">Key Index</a></li>
+  <li><a id="toc-Function_002c-Variable-and-File-Index" href="#Function" rel="index">Function, Variable and File Index</a></li>
+  <li><a id="toc-Concept-Index-1" href="#Concept-Index" rel="index">Concept Index</a></li>
+</ul>
+</div>
+</div>
+<hr>
 <div class="chapter-level-extent" id="Introduction">
 <div class="nav-panel">
 <p>
@@ -16230,6 +16545,7 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 </td></tr></table>
 </div>
 
+</div>
 </div>
 
 
