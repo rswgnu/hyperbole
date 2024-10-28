@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     27-Oct-24 at 18:13:11 by Bob Weiner
+@c Last-Mod:     27-Oct-24 at 23:09:15 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -141,7 +141,8 @@ Texinfo markup language.
 @c @setchapternewpage odd
 
 @node Top, Introduction, (dir), (dir)
-@unnumbered GNU Hyperbole
+@top GNU Hyperbole
+@c @unnumbered GNU Hyperbole
 
 @ifhtml
 @html

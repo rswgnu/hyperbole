@@ -19,6 +19,14 @@
     characters after deleted and then replaced.  Remove this function and call
     'hywiki-maybe-highlight-between-page-names' directly instead.
 
+2024-10-27  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (TEXI2HTML, HYPERBOLE_FILES, $(html_dir)/hyperbole.html),
+    $(man_dir)/hyperbole.html): Use texinfo-7.css, replaces texinfo-klare.css.
+    (doc-clean, doc-regenerate): Convenience targets for working with docs.
+
+* man/hyperbole.texi (Top): Add top node so contents section is generated.
+
 2024-10-25  Bob Weiner  <rsw@gnu.org>
 
 * Makefile (info): Replace any use of 'texi2any' in first line to 'makeinfo'
