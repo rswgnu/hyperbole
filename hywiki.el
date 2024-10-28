@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     21-Oct-24 at 23:48:07 by Bob Weiner
+;; Last-Mod:     28-Oct-24 at 01:43:34 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -189,7 +189,7 @@ Use nil for no HyWiki mode indicator."
 See `hywiki-org-publishing-directory' for exported pages in html format."
   :initialize #'custom-initialize-default
   :set (lambda (option value)
-	 (set option value)
+	 (set option (file-name-as-directory value))
 	 (hywiki-org-set-publish-project))
   :type 'string
   :group 'hyperbole-hywiki)
@@ -415,15 +415,11 @@ See `current-time' function for the mod time format.")
 ;;; hywiki minor mode
 ;;; ************************************************************************
 
-(defun hywiki-highlight-between-page-names-after-word ()
+(defun hywiki-buttonize-character-commands ()
   "Turn any HyWikiWords between point into highlighted Hyperbole buttons.
 Triggered by `post-self-insert-hook' for self-inserting characters.
 Highlight after inserting any non-word character."
-  (when (and (char-before) (/= (char-syntax (char-before)) ?w))
-    (hywiki-maybe-highlight-between-page-names)))
-
-(defun hywiki-buttonize-character-commands ()
-  (hywiki-highlight-between-page-names-after-word))
+  (hywiki-maybe-highlight-between-page-names))
 
 (defun hywiki-buttonize-non-character-commands ()
   "Highlight any HyWikiWord before or after point as a Hyperbole button.
@@ -644,11 +640,12 @@ Use `hywiki-get-page' to determine whether a HyWiki page exists."
 	(let* ((page-file (hywiki-get-file page-name))
 	       (page-file-readable (file-readable-p page-file))
 	       (pages-hasht (hywiki-get-page-hasht))
-	       (page-in-hasht (hash-get page-name pages-hasht)))
+	       (page-in-hasht (hywiki-get-page page-name)))
 	  (unless page-file-readable
 	    (write-region "" nil page-file nil 0))
 	  (unless page-in-hasht
-	    (hash-add page-file page-name pages-hasht))
+	    (hash-add page-file page-name pages-hasht)
+	    (setq hywiki--any-page-regexp-list nil))
 	  (unless (or (hyperb:stack-frame '(hywiki-maybe-highlight-page-names-in-frame))
 		      (and page-file-readable page-in-hasht))
 	    (hywiki-directory-set-mod-time)
@@ -835,6 +832,12 @@ these are handled by the Org mode link handler."
 	 (or (string-match hywiki-word-with-optional-section-exact-regexp word)
 	     (eq (string-match (concat "\\`" hywiki-word-with-optional-section-regexp "\\'") word)
 		 0)))))
+
+(defun hywiki-directory-edit ()
+  "Display and edit HyWiki pages in current `hywiki-directory'."
+  (interactive)
+  (dired (concat hywiki-directory "[[:upper:]][[:alpha:]]*"
+		 (regexp-quote hywiki-file-suffix))))
 
 (defun hywiki-directory-get-checksum ()
   "Compute and return the checksum for the current set of HyWiki pages."
@@ -1236,7 +1239,7 @@ the current page unless they have sections attached."
 			       hywiki--start (match-beginning 0)
 			       ;; This includes char after the page#section
 			       hywiki--end   (match-end 0))
-			  (hywiki-get-page hywiki--page-name)))
+			 (hywiki-get-page hywiki--page-name)))
 		  (progn
 		    (setq hywiki--current-page (hywiki-get-buffer-page-name))
 		    ;; Don't highlight current-page matches unless they
@@ -1520,6 +1523,23 @@ are typed in the buffer."
   (file-name-sans-extension (file-name-nondirectory
 			     (or buffer-file-name (buffer-name)))))
 
+(defun hywiki-get-file (file-stem-name)
+  "Return possibly non-existent path in `hywiki-directory' from FILE-STEM-NAME.
+No validation of FILE-STEM-NAME is done except an empty string or null
+value returns nil."
+  (make-directory hywiki-directory t)
+  (unless (or (null file-stem-name) (string-empty-p file-stem-name))
+    ;; Remove any #section from `file-stem-name' and make it singular
+    (setq file-stem-name
+	  (hywiki-get-singular-page-name
+	   (if (string-match "#" file-stem-name)
+	       (substring file-stem-name 0 (match-beginning 0))
+	     file-stem-name)))
+    (if (string-suffix-p hywiki-file-suffix file-stem-name)
+	(expand-file-name file-stem-name hywiki-directory)
+      (concat (expand-file-name
+	       file-stem-name hywiki-directory) hywiki-file-suffix))))
+
 (defun hywiki-get-page (page-name)
   "Return the absolute path of HyWiki PAGE-NAME or nil if it does not exist."
   (when (and (stringp page-name) (not (string-empty-p page-name))
@@ -1528,28 +1548,16 @@ are typed in the buffer."
       ;; Remove any #section suffix in PAGE-NAME.
       (setq page-name (match-string-no-properties 1 page-name)))
 
-    (or (hash-get page-name (hywiki-get-page-hasht))
-	;; If page exists but not yet in lookup hash table, add it.
-	(when (file-readable-p (hywiki-get-file page-name))
-	  (hywiki-add-page page-name))
-	;; Handle typical pluralized words ending in 's' (not preceded
-	;; by an 's') or 'es'
-	(when (string-match "es$" page-name)
-	  (hash-get (substring page-name 0 -2) (hywiki-get-page-hasht)))
-	(when (string-match ".[^eEsS]s$" page-name)
-	  (hash-get (substring page-name 0 -1) (hywiki-get-page-hasht))))))
-
-(defun hywiki-get-file (file-stem-name)
-  "Return possibly non-existent path in `hywiki-directory' from FILE-STEM-NAME.
-No validation of FILE-STEM-NAME is done."
-  (make-directory hywiki-directory t)
-  ;; Remove any #section from `file-stem-name'
-  (setq file-stem-name (if (string-match "#" file-stem-name)
-			   (substring file-stem-name 0 (match-beginning 0))
-			 file-stem-name))
-  (if (string-suffix-p hywiki-file-suffix file-stem-name)
-      (expand-file-name file-stem-name hywiki-directory)
-    (concat (expand-file-name file-stem-name hywiki-directory) hywiki-file-suffix)))
+    (let ((relative-page-file
+	   (or (hash-get page-name (hywiki-get-page-hasht))
+	       ;; Handle typical pluralized words ending in 's' (not preceded
+	       ;; by an 's') or 'es'
+	       (when (string-match "[eE][sS]$" page-name)
+		 (hash-get (substring page-name 0 -2) (hywiki-get-page-hasht)))
+	       (when (string-match ".[^eEsS]s$" page-name)
+		 (hash-get (substring page-name 0 -1) (hywiki-get-page-hasht))))))
+      (when (stringp relative-page-file)
+	(expand-file-name relative-page-file hywiki-directory)))))
 
 (defun hywiki-get-page-files ()
   "Return the list of existing HyWiki page file names.
@@ -1557,9 +1565,9 @@ These must end with `hywiki-file-suffix'."
   (when (stringp hywiki-directory)
     (make-directory hywiki-directory t)
     (when (file-readable-p hywiki-directory)
-      (directory-files-recursively
-       hywiki-directory (concat "^" hywiki-word-regexp
-				(regexp-quote hywiki-file-suffix) "$")))))
+      (directory-files
+       hywiki-directory nil (concat "^" hywiki-word-regexp
+				    (regexp-quote hywiki-file-suffix) "$")))))
 
 (defun hywiki-get-page-hasht ()
   "Return hash table of existing HyWiki pages.
@@ -1577,17 +1585,52 @@ regexps of page names."
     ;; page names has changed in `hywiki-directory'.
     (setq hywiki--any-page-regexp-list
 	  (mapcar (lambda (page-sublist)
+		    ;; Add plurals to the list
+		    (setq page-sublist
+			  (nconc page-sublist
+				 (mapcar #'hywiki-get-plural-page-name page-sublist)))
 		    (concat (regexp-opt page-sublist 'words)
 			    "\\("
 			    hywiki-word-section-regexp "?\\)"
 			    hywiki--buttonize-character-regexp))
 		  (hypb:split-seq-into-sublists
-		   (hash-map #'cdr hywiki--pages-hasht) 50)))
+		   (hash-map #'cdr hywiki--pages-hasht) 25)))
     (hywiki-maybe-highlight-page-names-in-frame t t)
     hywiki--pages-hasht))
 
 (defun hywiki-get-page-list ()
+  "Return a list of the HyWiki page names."
   (hash-map #'cdr (hywiki-get-page-hasht)))
+
+(defun hywiki-get-plural-page-name (page-name)
+  "Return the pluralized version of the given PAGE-NAME."
+  ;; You add "-es" to make a noun plural when the singular noun ends
+  ;; in "s", "x", "z", "sh", or "ch".  However, there are some
+  ;; exceptions to this rule, such as words ending in "-ch" that are
+  ;; pronounced with a hard "k", like "monarchs" and "stomachs".
+  (cond ((let ((case-fold-search t))
+	   (string-match-p "\\(es\\|.[^es]s\\)$" page-name))
+	 ;; Already plural
+	 page-name)
+	((let ((case-fold-search t))
+	   (string-match-p "\\(ch\\|sh\\|[sxz]\\)$" page-name))
+	 (concat page-name (if (string-match-p "[[:lower:]]" page-name)
+			       "es"
+			     "ES")))
+	(t (concat page-name (if (string-match-p "[[:lower:]]" page-name)
+				 "s"
+			       "S")))))
+
+(defun hywiki-get-singular-page-name (page-name)
+  "Return the singular version of the given PAGE-NAME."
+  (or (when (let ((case-fold-search t))
+	      (string-match-p "\\(ch\\|sh\\|[sxz]\\)es$" page-name))
+	(substring page-name 0 -2))
+      (when (let ((case-fold-search t))
+	      (and (string-match-p ".[^s]s$" page-name)
+		   (not (string-match-p "emacs$" page-name))))
+	(substring page-name 0 -1))
+      page-name))
 
 (defun hywiki-kill-buffer-hook ()
   "Delete file attached to HyWiki buffer if the file is zero-sized.
@@ -1604,9 +1647,10 @@ If deleted, update HyWikiWord highlighting across all frames."
 (defun hywiki-make-pages-hasht ()
   (let* ((page-files (hywiki-get-page-files))
 	 (page-elts (mapcar (lambda (file)
-			      (cons file (file-name-sans-extension (file-name-nondirectory file))))
+			      (cons file (file-name-sans-extension file)))
 			    page-files)))
-    (setq hywiki--pages-directory hywiki-directory
+    (setq hywiki--any-page-regexp-list nil
+	  hywiki--pages-directory hywiki-directory
 	  hywiki--pages-hasht (hash-make page-elts))))
 
 (eval-and-compile

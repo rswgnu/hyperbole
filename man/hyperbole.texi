@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     27-Oct-24 at 20:44:40 by Mats Lidell
+@c Last-Mod:     27-Oct-24 at 23:09:15 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -4608,7 +4608,7 @@ It looks like this:
 
 @smallexample
 @noindent
-HyWiki>  Act Create FindPage GrepConsult Help Info Link ModeToggle Org-M-RET/ Publish TagFind WikiWordConsult
+HyWiki>  Act Create EditPages FindPage GrepConsult Help Info Link ModeToggle Org-M-RET/ Publish TagFind WikiWordConsult
 @end smallexample
 
 @noindent
@@ -4629,6 +4629,9 @@ Activate HyWikiWord link at point.
 
 @item Create
 Create and display a new HyWiki page.  Shows existing page names to aid in new naming.
+
+@item EditPages
+Display and edit HyWiki pages in current @code{hywiki-directory}.
 
 @item FindPage
 Prompt with completion for and find a HyWiki page, typically editable.

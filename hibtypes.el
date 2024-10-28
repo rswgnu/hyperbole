@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     24-Aug-24 at 11:32:31 by Mats Lidell
+;; Last-Mod:     28-Oct-24 at 01:32:59 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1700,7 +1700,7 @@ If a boolean function or variable, display its value."
       (if (and start end)
 	  (ibut:label-set page-name start end)
 	(ibut:label-set page-name))
-      (hact 'hywiki-find-page page-name))))
+      (hact 'hywiki-find-page (hywiki-get-singular-page-name page-name)))))
 
 ;;; ========================================================================
 ;;; Inserts completion into minibuffer or other window.
