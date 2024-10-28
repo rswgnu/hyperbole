@@ -1,3 +1,24 @@
+2024-10-27  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-directory-edit): Add this command.
+            (hywiki-get-page-files): Fix so returns file names sans directory.
+    No subdirectories are allowed.
+            (hywiki-make-pages-hasht): Speed this up by removing now unneeded
+    'file-name-nondirectory' call.
+            (hywiki-directory): Ensure customization ends with a dir separator.
+  hui-mini.el (hui:menu-hywiki): Add 'EditPages'.
+  hui-menu.el (hui-menu-hywiki): Normalize menu names and add 'Edit-HyWiki-Pages'.
+  man/hyperbole.texi (HyWiki Menu): Add EditPages doc.
+            (hywiki-add-page): Change 'hash-get' call to 'hywiki-get-page' call
+  to improve abstraction and plural handling.
+            (hywiki-get-page): Update to expand page-file-name since stored as
+  a relative name now.
+            (hywiki-highlight-between-page-names-after-word): Remove conditional
+    (when (and (char-before) (/= (char-syntax (char-before)) ?w))) so that
+    WikiWords are highlighted immediately when typed, including first or middle
+    characters after deleted and then replaced.  Remove this function and call
+    'hywiki-maybe-highlight-between-page-names' directly instead.
+
 2024-10-25  Bob Weiner  <rsw@gnu.org>
 
 * Makefile (info): Replace any use of 'texi2any' in first line to 'makeinfo'
