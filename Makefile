@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     25-Oct-24 at 22:17:00 by Bob Weiner
+# Last-Mod:     27-Oct-24 at 21:27:42 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -136,7 +136,7 @@ TEXI2INFO = $(TEXICMD) --no-split -c ASCII_PUNCTUATION=1
 # TEXI2HTML = id-texi2html -html_only -number -split_chapter # InfoDock-specific command
 # TEXI2HTML = $(TEXICMD) --html --split=chapter # Chapter splitting doesn't seem to work in 6.0
 # TEXI2HTML = $(TEXICMD) --html --no-split --css-include="hyperbole.css"
-TEXI2HTML = $(TEXICMD) --html --no-split -c ASCII_PUNCTUATION=1 --css-include="texinfo-klare.css"
+TEXI2HTML = $(TEXICMD) --html --no-split -c ASCII_PUNCTUATION=1 --css-include="texinfo-7.css"
 
 # Command used to build the .pdf version of the user manual.
 TEXI2PDF = $(TEXICMD) --pdf --no-split -c ASCII_PUNCTUATION=1
@@ -234,7 +234,7 @@ HYPERBOLE_FILES = dir info html $(EL_SRC) $(EL_KOTL) \
         INSTALL DEMO DEMO-ROLO.otl FAST-DEMO MANIFEST README.md TAGS _hypb \
         .hypb hyrolo.py smart-clib-sym topwin.py hyperbole-banner.png \
 	$(man_dir)/hkey-help.txt $(man_dir)/hyperbole.texi $(man_dir)/hyperbole.css \
-        $(man_dir)/texinfo-klare.css
+        $(man_dir)/texinfo-7.css
 
 TEST_ERT_FILES = $(wildcard test/*tests.el) $(wildcard test/hy-test-*.el)
 
@@ -306,9 +306,9 @@ $(info_dir)/hyperbole.info: $(man_dir)/hyperbole.info
 	  $(INSTALL) im/*.{png,eps} $(info_dir)/im
 
 install-html: $(html_dir)/hyperbole.html
-$(html_dir)/hyperbole.html: $(man_dir)/hyperbole.html $(man_dir)/hyperbole.css $(man_dir)/texinfo-klare.css
+$(html_dir)/hyperbole.html: $(man_dir)/hyperbole.html $(man_dir)/hyperbole.css $(man_dir)/texinfo-7.css
 	$(MKDIR) $(html_dir)/im; \
-	  cd $(man_dir); $(INSTALL) hyperbole.html* hyperbole.css texinfo-klare.css $(html_dir); \
+	  cd $(man_dir); $(INSTALL) hyperbole.html* hyperbole.css texinfo-7.css $(html_dir); \
 	  $(INSTALL) im/*.{png,eps} $(html_dir)/im
 
 $(data_dir)/hkey-help.txt: $(man_dir)/hkey-help.txt
@@ -384,6 +384,12 @@ version:
 # Build the README.md.html and Info, HTML and Postscript versions of the user manual
 doc: version README.md.html manual
 
+# Convenience targets for regenerating the docs
+.PHONY: doc-clean doc-regenerate
+doc-clean:
+	$(RM) man/hyperbole.{log,aux,cp*,fn*,ky*,toc,vr*,info,pdf,html}
+doc-regenerate: doc-clean doc
+
 # Build the Info, HTML and Postscript versions of the user manual
 manual: info html pdf
 
@@ -398,7 +404,7 @@ $(man_dir)/hyperbole.pdf: $(TEXINFO_SRC)
 	cd $(man_dir) && $(TEXI2PDF) hyperbole.texi
 
 html: $(man_dir)/hyperbole.html pdf
-$(man_dir)/hyperbole.html: $(TEXINFO_SRC) $(man_dir)/hyperbole.css $(man_dir)/texinfo-klare.css
+$(man_dir)/hyperbole.html: $(TEXINFO_SRC) $(man_dir)/hyperbole.css $(man_dir)/texinfo-7.css
 	cd ${man_dir} && $(TEXI2HTML) hyperbole.texi
 
 # The `md_toc' table-of-contents generator program is available from:

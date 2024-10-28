@@ -1,15 +1,43 @@
 /*
-   Custom CSS for HTML documents generated with Texinfo 6.x's makeinfo.
-   Public domain 2016 sirgazil. All rights waived.
-   https://codeberg.org/luis-felipe/texinfo-css/src/branch/trunk/static/css/texinfo-klare.css
+   Custom CSS for HTML documents generated with Texinfo 7.x's makeinfo.
+   Public domain 2023 Luis Felipe López Acevedo. All rights waived.
 */
+
+
+/* VARIABLES */
+:root {
+    color-scheme: light dark;
+    /* Colors */
+    --bg-color: #F0F0F0;
+    --border-color: silver;
+    --link-color: #245C8A;
+    --sheet-color: white;
+    --sheet-shadow: gray;
+    --symbol-color: saddlebrown;
+    --text-color: #333;
+    /* Fonts */
+    --base-font-size: 16px;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-color: #191919;
+        --border-color: black;
+        --link-color: #8EB2CD;
+        --sheet-color: #222;
+        --sheet-shadow: var(--border-color);
+        --symbol-color: darkkhaki;
+        --text-color: #F5F5F5;
+    }
+}
+/* END VARIABLES */
 
 
 
 /* NATIVE ELEMENTS */
 a:link,
 a:visited {
-    color: #245C8A;
+    color: var(--link-color);
     text-decoration: none;
 }
 
@@ -25,7 +53,7 @@ acronym {
 }
 
 blockquote {
-    border-color: #D0D0D0;
+    border-color: var(--text-color);
     border-style: none none none solid;
     border-width: 0.5em;
     margin-left: 0em;
@@ -33,24 +61,22 @@ blockquote {
 }
 
 body {
-    background-color: white;
-    box-shadow: 0 0 2px gray;
+    background-color: var(--sheet-color);
+    box-shadow: 0 0 2px var(--sheet-shadow);
     box-sizing: border-box;
-    color: #333;
+    color: var(--text-color);
     font-family: sans-serif;
+    font-size: var(--base-font-size);
     margin: 50px auto;
     max-width: 960px;
     padding: 50px;
-    <!-- font-size: 16px; -->
-    font-size: clamp(1rem, 2vw + 0.5rem, 2rem);
 }
 
 code,
 samp,
 tt,
 var {
-    color: saddlebrown;
-    <!-- font-size: 0.8em; -->
+    color: var(--symbol-color);
 }
 
 div.example,
@@ -67,13 +93,13 @@ dl dl {
 }
 
 dt {
-    background-color: #D0D0D0;
+    background-color: var(--bg-color);
     padding: 0.5em;
 }
 
 dd dt {
     background-color: transparent;
-    border-color: #D0D0D0;
+    border-color: var(--border-color);
     border-style: none none none dotted;
     border-width: 0.5em;
     padding: 0.5em;
@@ -106,14 +132,14 @@ h4 {
 }
 
 hr {
-    background-color: silver;
+    background-color: var(--border-color);
     border-style: none;
     height: 1px;
     margin: 0px;
 }
 
 html {
-    background-color: #F5F5F5;
+    background-color: var(--bg-color);
 }
 
 img {
@@ -125,18 +151,18 @@ li {
 }
 
 pre.display,
-pre.example,
+pre.example-preformatted,
 pre.format,
-pre.lisp,
+pre.lisp-preformatted,
 pre.verbatim{
     overflow: auto;
 }
 
-pre.example,
-pre.lisp,
+pre.example-preformatted,
+pre.lisp-preformatted,
 pre.verbatim {
     background-color: #2D3743;
-    border-color: #000;
+    border-color: black;
     border-style: solid;
     border-width: thin;
     color: #E1E1E1;
@@ -144,11 +170,15 @@ pre.verbatim {
     padding: 1em;
 }
 
-pre.menu-comment {
-    border-color: #E4E4E4;
+pre.menu-comment-preformatted {
+    border-color: var(--bg-color);
     border-bottom-style: solid;
     border-width: thin;
     font-family: sans;
+}
+
+strong.def-name {
+    font-size: var(--base-font-size);
 }
 
 table {
@@ -156,26 +186,26 @@ table {
     margin: 40px 0px;
 }
 
-table.index-cp *,
-table.index-fn *,
-table.index-ky *,
-table.index-pg *,
-table.index-tp *,
-table.index-vr * {
+table.cp-entries-printindex *,
+table.fn-entries-printindex *,
+table.ky-entries-printindex *,
+table.pg-entries-printindex *,
+table.tp-entries-printindex *,
+table.vr-entries-printindex * {
     background-color: inherit;
     border-style: none;
 }
 
 td,
 th {
-    border-color: silver;
+    border-color: var(--border-color);
     border-style: solid;
     border-width: thin;
     padding: 10px;
 }
 
 th {
-    background-color: #F5F5F5;
+    background-color: var(--bg-color);
 }
 /* END NATIVE ELEMENTS */
 
@@ -186,11 +216,19 @@ th {
     margin-bottom: 4em;
 }
 
+.def-type {
+    color: var(--text-color);
+}
+
+.def-var-arguments {
+    color: var(--text-color);
+}
+
 .float {
     margin: 3em 0em;
 }
 
-.float-caption {
+.caption {
     font-size: smaller;
     text-align: center;
 }
@@ -210,15 +248,8 @@ th {
     font-size: small;
 }
 
-.header {
-    background-color: #F2F2F2;
-    font-size: small;
-    padding: 0.2em 1em;
-}
-
 .key {
-    color: saddlebrown;
-    font-size: 0.8em;
+    color: var(--symbol-color);
 }
 
 .menu * {
@@ -235,5 +266,11 @@ th {
 
 .menu th {
     background-color: inherit;
+}
+
+.nav-panel {
+    background-color: var(--bg-color);
+    font-size: small;
+    padding: 0.2em 1em;
 }
 /* END CLASSES */
