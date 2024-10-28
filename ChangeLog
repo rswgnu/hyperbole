@@ -1,3 +1,21 @@
+2024-10-28  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (hywiki-existing-word): Call action with the singular version
+    of the page name but leave the in-buffer page name version as the button
+    label.
+
+* hywiki.el (hywiki-get-plural-page-name, hywiki-get-singular-page-name): Add
+    to convert HyWiki page names between singular and plural.
+            (hywiki-get-page-hasht): Add plurals to the page name hash table
+    so are included when highlighting wikiwords in buffers.
+            (hywikig-get-file): Add check for null or empty string values and
+    make page name singular.
+            (hywiki-get-page): Remove call to 'hywiki-add-page' as it can cause
+    an infinite loop.
+            (hywiki-add-page, hywiki-make-pages-hasht): Reset
+    'hywiki--any-page-regexp-list' whenever hasht is rebuilt.  Otherwise,
+    highlihgting might not include new wikiwords in hasht.
+
 2024-10-27  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-directory-edit): Add this command.
@@ -18,6 +36,7 @@
     WikiWords are highlighted immediately when typed, including first or middle
     characters after deleted and then replaced.  Remove this function and call
     'hywiki-maybe-highlight-between-page-names' directly instead.
+            (hywiki-get-page-hasht): Add HyWikiWord optional plural support.
 
 2024-10-27  Mats Lidell  <matsl@gnu.org>
 
