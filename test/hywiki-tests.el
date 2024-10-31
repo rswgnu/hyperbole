@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     18-Oct-24 at 22:44:05 by Mats Lidell
+;; Last-Mod:      1-Nov-24 at 00:00:19 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -111,6 +111,17 @@
   (should (hywiki-word-is-p "WikiWord#section"))
   (should-not (hywiki-word-is-p "hy:WikiWord"))
   (should-not (hywiki-word-is-p "wikiWord")))
+
+(ert-deftest hywiki-tests--directory-edit ()
+  "Verify `hywiki-directory-edit' opens dired in right folder."
+  (let* ((hywiki-directory (file-name-as-directory (make-temp-file "hywiki" t)))
+         (wiki-page (hywiki-add-page "WikiWord")))
+    (unwind-protect
+        (progn
+          (hywiki-directory-edit)
+          (should (string= default-directory hywiki-directory)))
+      (hy-delete-file-and-buffer wiki-page)
+      (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--maybe-at-wikiword-beginning ()
   "Verify `hywiki-maybe-at-wikiword-beginning' identifies if maybe at beginning of WikiWord."

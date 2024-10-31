@@ -1,6 +1,10 @@
 2024-11-01  Mats Lidell  <matsl@gnu.org>
 
-* test/hywiki-tests.el (hywiki-tests--word-is-p): Add hywiki test.
+* hywiki.el (hywiki-directory-edit): Remove character classes. Not
+    supported by all shells.
+
+* test/hywiki-tests.el (hywiki-tests--word-is-p):
+    (hywiki-tests--directory-edit):  Add hywiki test.
 
 2024-10-28  Bob Weiner  <rsw@gnu.org>
 

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     28-Oct-24 at 01:43:34 by Bob Weiner
+;; Last-Mod:      1-Nov-24 at 00:00:19 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -836,7 +836,7 @@ these are handled by the Org mode link handler."
 (defun hywiki-directory-edit ()
   "Display and edit HyWiki pages in current `hywiki-directory'."
   (interactive)
-  (dired (concat hywiki-directory "[[:upper:]][[:alpha:]]*"
+  (dired (concat hywiki-directory "*"
 		 (regexp-quote hywiki-file-suffix))))
 
 (defun hywiki-directory-get-checksum ()
