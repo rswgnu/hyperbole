@@ -105,6 +105,13 @@
       (hywiki-mode -1)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
+(ert-deftest hywiki-tests--word-is-p ()
+  "Verify `hywiki-word-is-p' identifies WikiWords."
+  (should (hywiki-word-is-p "WikiWord"))
+  (should (hywiki-word-is-p "WikiWord#section"))
+  (should-not (hywiki-word-is-p "hy:WikiWord"))
+  (should-not (hywiki-word-is-p "wikiWord")))
+
 (ert-deftest hywiki-tests--maybe-at-wikiword-beginning ()
   "Verify `hywiki-maybe-at-wikiword-beginning' identifies if maybe at beginning of WikiWord."
   (with-temp-buffer
