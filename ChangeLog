@@ -2,7 +2,8 @@
 
 * test/hywiki-tests.el (hywiki-tests--word-is-p)
     (hywiki-tests--directory-edit)
-    (hywiki-tests--verify-face-property-when-editing-wikiword): Add hywiki
+    (hywiki-tests--verify-face-property-when-editing-wikiword)
+    (hywiki-tests--verify-face-property-when-editing-wikiword-first-char): Add hywiki
     tests.
 
 * hywiki.el (hywiki-directory-edit): Remove character classes. Not

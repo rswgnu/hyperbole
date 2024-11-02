@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:      2-Nov-24 at 18:23:22 by Mats Lidell
+;; Last-Mod:      2-Nov-24 at 23:29:41 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -272,7 +272,6 @@ Both mod-time and checksum must be changed for a test to return true."
 
 (ert-deftest hywiki-tests--face-property-for-wikiword-with-wikipage ()
   "Verify WikiWord for a wiki page gets face property hywiki-word-face."
-  (skip-unless (not noninteractive))
   (let* ((hsys-org-enable-smart-keys t)
          (hywiki-directory (make-temp-file "hywiki" t))
          (wikipage (hywiki-add-page "WikiWord")))
@@ -282,6 +281,7 @@ Both mod-time and checksum must be changed for a test to return true."
           (insert "WikiWord")
 	  (newline nil t)
           (goto-char 4)
+          (hywiki-maybe-highlight-page-names (point-min) (point-max))
           (should (hproperty:but-get (point) 'face hywiki-word-face)))
       (hywiki-mode 0)
       (hy-delete-file-and-buffer wikipage)
@@ -289,7 +289,6 @@ Both mod-time and checksum must be changed for a test to return true."
 
 (ert-deftest hywiki-tests--no-face-property-for-no-wikipage ()
   "Verify WikiWord for no wiki page does not get face property hywiki-word-face."
-  (skip-unless (not noninteractive))
   (let* ((hsys-org-enable-smart-keys t)
          (hywiki-directory (make-temp-file "hywiki" t)))
     (unwind-protect
@@ -298,32 +297,62 @@ Both mod-time and checksum must be changed for a test to return true."
           (insert "WikiWord")
 	  (newline nil t)
           (goto-char 4)
+          (hywiki-maybe-highlight-page-names (point-min) (point-max))
           (should-not (hproperty:but-get (point) 'face hywiki-word-face)))
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--verify-face-property-when-editing-wikiword ()
-  "Verify that the face property is added and removed when the WikiWord is edited."
-  :expected-result :failed
-  (skip-unless (not noninteractive))
+  "Verify face property changes when WikiWord is edited."
   (let* ((hywiki-directory (make-temp-file "hywiki" t))
-         (wikipage (hywiki-add-page "WikiWord"))
-         (wikipage2 (hywiki-add-page "AnyWord")))
+         (wikipage (hywiki-add-page "WikiWord")))
     (unwind-protect
-        (progn
-          (find-file wikipage2)
+        (with-temp-buffer
           (hywiki-mode 1)
-          (insert "Wikiord")
-	  (newline nil t)
+          (insert "Wikiord ")
           (goto-char 5)
           (should (looking-at-p "ord"))
+          (hywiki-maybe-highlight-page-names (point-min) (point-max))
           (should-not (hproperty:but-get (point) 'face hywiki-word-face))
 
           (insert "W")
           (goto-char 5)
           (should (looking-at-p "Word"))
+          (hywiki-maybe-highlight-page-names (point-min) (point-max))
+          (should (hproperty:but-get (point) 'face hywiki-word-face))
+
+          (delete-char 1)
+          (should (looking-at-p "ord"))
+          (hywiki-maybe-highlight-page-names (point-min) (point-max))
+          (should-not (hproperty:but-get (point) 'face hywiki-word-face)))
+      (hywiki-mode 0)
+      (hy-delete-files-and-buffers (list wikipage))
+      (hy-delete-dir-and-buffer hywiki-directory))))
+
+(ert-deftest hywiki-tests--verify-face-property-when-editing-wikiword-first-char ()
+  "Verify face property changes when WikiWord is edited in the first char position."
+  (let* ((hywiki-directory (make-temp-file "hywiki" t))
+         (wikipage (hywiki-add-page "WikiWord")))
+    (unwind-protect
+        (with-temp-buffer
+          (hywiki-mode 1)
+          (insert "WikiWord ")
+          (goto-char 1)
+          (should (looking-at-p "Wiki"))
+          (hywiki-maybe-highlight-page-names (point-min) (point-max))
+          (should (hproperty:but-get (point) 'face hywiki-word-face))
+
+          (delete-char 1)
+          (should (looking-at-p "iki"))
+          (hywiki-maybe-highlight-page-names (point-min) (point-max))
+          (should-not (hproperty:but-get (point) 'face hywiki-word-face))
+
+          (insert "W")
+          (goto-char 1)
+          (should (looking-at-p "Wiki"))
+          (hywiki-maybe-highlight-page-names (point-min) (point-max))
           (should (hproperty:but-get (point) 'face hywiki-word-face)))
       (hywiki-mode 0)
-      (hy-delete-files-and-buffers (list wikipage wikipage2))
+      (hy-delete-files-and-buffers (list wikipage))
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--convert-words-to-org-link ()
