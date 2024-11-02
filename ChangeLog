@@ -1,10 +1,12 @@
-2024-11-01  Mats Lidell  <matsl@gnu.org>
+2024-11-02  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--word-is-p)
+    (hywiki-tests--directory-edit)
+    (hywiki-tests--verify-face-property-when-editing-wikiword): Add hywiki
+    tests.
 
 * hywiki.el (hywiki-directory-edit): Remove character classes. Not
     supported by all shells.
-
-* test/hywiki-tests.el (hywiki-tests--word-is-p):
-    (hywiki-tests--directory-edit):  Add hywiki test.
 
 2024-10-28  Bob Weiner  <rsw@gnu.org>
 
