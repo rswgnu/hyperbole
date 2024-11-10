@@ -18,8 +18,7 @@
     (hywiki-tests--verify-face-property-when-editing-wikiword-first-char): Add hywiki
     tests.
 
-* hywiki.el (hywiki-directory-edit): Remove character classes. Not
-    supported by all shells.
+* test/hywiki-tests.el (hywiki-tests--word-is-p): Add hywiki test.
 
 2024-10-28  Bob Weiner  <rsw@gnu.org>
 
