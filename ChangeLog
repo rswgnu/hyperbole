@@ -1,3 +1,15 @@
+2024-11-10  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--add-hywiki-hooks)
+    (hywiki-tests--remove-hywiki-hooks, with-hywiki-buttonize-hooks)
+    (with-hywiki-buttonize-and-insert-hooks): Add functions and macros for
+    mimicking redisplay hook behavior and use these in the highlighting tests.
+    (hywiki-tests--face-property-for-wikiword-with-wikipage)
+    (hywiki-tests--no-face-property-for-no-wikipage)
+    (hywiki-tests--verify-face-property-when-editing-wikiword)
+    (hywiki-tests--verify-face-property-when-editing-wikiword-first-char):
+    Tests using the hook mimicking functions.
+
 2024-11-02  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--word-is-p)

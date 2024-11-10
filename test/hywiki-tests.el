@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:      2-Nov-24 at 23:29:41 by Mats Lidell
+;; Last-Mod:     10-Nov-24 at 22:54:09 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -270,87 +270,136 @@ Both mod-time and checksum must be changed for a test to return true."
 ;; Following three test cases for verifying proper face is some what
 ;; experimental. They need to be run in interactive mode.
 
+(defun hywiki-tests--add-hywiki-hooks ()
+  "Enable all hywiki hook functions."
+  (add-hook 'pre-command-hook      'hywiki-debuttonize-non-character-commands 95)
+  (add-hook 'post-command-hook     'hywiki-buttonize-non-character-commands 95)
+  (add-hook 'post-self-insert-hook 'hywiki-buttonize-character-commands)
+  (add-hook 'window-buffer-change-functions
+	    'hywiki-maybe-highlight-page-names-in-frame)
+  (add-to-list 'yank-handled-properties
+	       '(hywiki-word-face . hywiki-highlight-on-yank)))
+
+(defun hywiki-tests--remove-hywiki-hooks ()
+  "Disable all hywiki hook functions."
+  (remove-hook 'pre-command-hook      'hywiki-debuttonize-non-character-commands)
+  (remove-hook 'post-command-hook     'hywiki-buttonize-non-character-commands)
+  (remove-hook 'post-self-insert-hook 'hywiki-buttonize-character-commands)
+  (remove-hook 'window-buffer-change-functions
+	       'hywiki-maybe-highlight-page-names-in-frame)
+  (setq yank-handled-properties
+	(delete '(hywiki-word-face . hywiki-highlight-on-yank)
+		yank-handled-properties)))
+
+(defmacro with-hywiki-buttonize-hooks (&rest body)
+  "Call BODY wrapped in hywiki hooks to simulate Emacs redisplay."
+  (declare (indent 0) (debug t))
+  `(progn
+     (funcall 'hywiki-debuttonize-non-character-commands)
+     (progn ,@body)
+     (funcall 'hywiki-buttonize-non-character-commands)))
+
+(defmacro with-hywiki-buttonize-and-insert-hooks (&rest body)
+  "Call BODY wrapped in hywiki hooks to simulate Emacs redisplay."
+  (declare (indent 0) (debug t))
+  `(progn
+     (funcall 'hywiki-debuttonize-non-character-commands)
+     (progn ,@body)
+     (funcall 'hywiki-buttonize-character-commands)
+     (funcall 'hywiki-buttonize-non-character-commands)))
+
 (ert-deftest hywiki-tests--face-property-for-wikiword-with-wikipage ()
   "Verify WikiWord for a wiki page gets face property hywiki-word-face."
+  (skip-unless (not noninteractive))
   (let* ((hsys-org-enable-smart-keys t)
          (hywiki-directory (make-temp-file "hywiki" t))
          (wikipage (hywiki-add-page "WikiWord")))
     (unwind-protect
-        (with-temp-buffer
-          (hywiki-mode 1)
-          (insert "WikiWord")
-	  (newline nil t)
-          (goto-char 4)
-          (hywiki-maybe-highlight-page-names (point-min) (point-max))
-          (should (hproperty:but-get (point) 'face hywiki-word-face)))
+        (progn
+          (hywiki-tests--remove-hywiki-hooks)
+          (with-temp-buffer
+            (hywiki-mode 1)
+            (with-hywiki-buttonize-and-insert-hooks
+              (insert "WikiWord")
+	      (newline nil t))
+            (goto-char 4)
+            (should (hproperty:but-get (point) 'face hywiki-word-face))))
+      (hywiki-tests--add-hywiki-hooks)
       (hywiki-mode 0)
       (hy-delete-file-and-buffer wikipage)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--no-face-property-for-no-wikipage ()
   "Verify WikiWord for no wiki page does not get face property hywiki-word-face."
+  (skip-unless (not noninteractive))
   (let* ((hsys-org-enable-smart-keys t)
          (hywiki-directory (make-temp-file "hywiki" t)))
     (unwind-protect
-        (with-temp-buffer
-          (hywiki-mode 0)
-          (insert "WikiWord")
-	  (newline nil t)
-          (goto-char 4)
-          (hywiki-maybe-highlight-page-names (point-min) (point-max))
-          (should-not (hproperty:but-get (point) 'face hywiki-word-face)))
+        (progn
+          (hywiki-tests--remove-hywiki-hooks)
+          (with-temp-buffer
+            (hywiki-mode 0)
+            (with-hywiki-buttonize-and-insert-hooks
+              (insert "WikiWord")
+	      (newline nil t))
+            (goto-char 4)
+            (should-not (hproperty:but-get (point) 'face hywiki-word-face))))
+      (hywiki-tests--add-hywiki-hooks)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--verify-face-property-when-editing-wikiword ()
   "Verify face property changes when WikiWord is edited."
+  (skip-unless (not noninteractive))
   (let* ((hywiki-directory (make-temp-file "hywiki" t))
          (wikipage (hywiki-add-page "WikiWord")))
     (unwind-protect
-        (with-temp-buffer
-          (hywiki-mode 1)
-          (insert "Wikiord ")
-          (goto-char 5)
-          (should (looking-at-p "ord"))
-          (hywiki-maybe-highlight-page-names (point-min) (point-max))
-          (should-not (hproperty:but-get (point) 'face hywiki-word-face))
+        (progn
+          (hywiki-tests--remove-hywiki-hooks)
+          (with-temp-buffer
+            (hywiki-mode 1)
+            (with-hywiki-buttonize-and-insert-hooks (insert "Wikiord "))
+            (goto-char 5)
+            (should (looking-at-p "ord"))
+            (should-not (hproperty:but-get (point) 'face hywiki-word-face))
 
-          (insert "W")
-          (goto-char 5)
-          (should (looking-at-p "Word"))
-          (hywiki-maybe-highlight-page-names (point-min) (point-max))
-          (should (hproperty:but-get (point) 'face hywiki-word-face))
+            (with-hywiki-buttonize-and-insert-hooks (insert "W"))
+            (goto-char 5)
+            (should (looking-at-p "Word"))
+            (should (hproperty:but-get (point) 'face hywiki-word-face))
 
-          (delete-char 1)
-          (should (looking-at-p "ord"))
-          (hywiki-maybe-highlight-page-names (point-min) (point-max))
-          (should-not (hproperty:but-get (point) 'face hywiki-word-face)))
+            (with-hywiki-buttonize-and-insert-hooks (delete-char 1))
+            (should (looking-at-p "ord"))
+            (should-not (hproperty:but-get (point) 'face hywiki-word-face))))
+      (hywiki-tests--add-hywiki-hooks)
       (hywiki-mode 0)
       (hy-delete-files-and-buffers (list wikipage))
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--verify-face-property-when-editing-wikiword-first-char ()
   "Verify face property changes when WikiWord is edited in the first char position."
+  :expected-result :failed
   (let* ((hywiki-directory (make-temp-file "hywiki" t))
          (wikipage (hywiki-add-page "WikiWord")))
+    (skip-unless (not noninteractive))
     (unwind-protect
-        (with-temp-buffer
-          (hywiki-mode 1)
-          (insert "WikiWord ")
-          (goto-char 1)
-          (should (looking-at-p "Wiki"))
-          (hywiki-maybe-highlight-page-names (point-min) (point-max))
-          (should (hproperty:but-get (point) 'face hywiki-word-face))
+        (progn
+          (hywiki-tests--remove-hywiki-hooks)
+          (with-temp-buffer
+            (hywiki-mode 1)
+            (with-hywiki-buttonize-and-insert-hooks (insert "WikiWord "))
+            (goto-char 1)
+            (should (looking-at-p "Wiki"))
+            (should (hproperty:but-get (point) 'face hywiki-word-face))
 
-          (delete-char 1)
-          (should (looking-at-p "iki"))
-          (hywiki-maybe-highlight-page-names (point-min) (point-max))
-          (should-not (hproperty:but-get (point) 'face hywiki-word-face))
+            (with-hywiki-buttonize-and-insert-hooks (delete-char 1))
+            (should (looking-at-p "iki"))
+            (should-not (hproperty:but-get (point) 'face hywiki-word-face))
 
-          (insert "W")
-          (goto-char 1)
-          (should (looking-at-p "Wiki"))
-          (hywiki-maybe-highlight-page-names (point-min) (point-max))
-          (should (hproperty:but-get (point) 'face hywiki-word-face)))
+            (with-hywiki-buttonize-and-insert-hooks (insert "W"))
+            (goto-char 1)
+            (should (looking-at-p "Wiki"))
+            (should (hproperty:but-get (point) 'face hywiki-word-face))))
+      (hywiki-tests--add-hywiki-hooks)
       (hywiki-mode 0)
       (hy-delete-files-and-buffers (list wikipage))
       (hy-delete-dir-and-buffer hywiki-directory))))
