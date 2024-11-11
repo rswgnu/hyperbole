@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-Mar-94 at 23:37:28
-;; Last-Mod:     19-Jan-24 at 14:09:51 by Mats Lidell
+;; Last-Mod:     11-Nov-24 at 00:35:43 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -111,7 +111,8 @@
 
 ;;;###autoload
 (defun hui-menu-screen-commands ()
-  "Popup a menu of buffers, frames, and windows, allowing user to jump to one."
+  "Popup a menu of screen control and jump to menus.
+Jump to: HyWiki pages, buffers, frames, and windows."
   (interactive)
   (popup-menu '("Hyperbole Screen Commands" :filter hui-menu-modeline)))
 
@@ -177,6 +178,8 @@ Jump to chosen buffer."
 (defun hui-menu-modeline (_ignore)
   "Return a modeline menu."
   (list
+   ["HyWiki-Edit-Pages"  hywiki-directory-edit t]
+   "----"
    ["Control-Frames"  hycontrol-enable-frames-mode t]
    ["Control-Windows" hycontrol-enable-windows-mode t]
    "----"

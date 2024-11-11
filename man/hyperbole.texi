@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     27-Oct-24 at 23:09:15 by Bob Weiner
+@c Last-Mod:     10-Nov-24 at 16:01:31 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -56,6 +56,12 @@
 @kindex \key\
 @itemx @bkbd{\key\}
 @end macro
+
+@c In PDF output, like Info output, display only the label of an @uref
+@c or @url link when given.
+@tex
+\global\urefurlonlylinktrue
+@end tex
 
 @copying
 This manual is for GNU Hyperbole
@@ -602,14 +608,14 @@ archives, the World-Wide Web and much more.
 @cindex Hyperbole demo
 @cindex demo file
 @cindex tutorial
-This is a reference manual with extensive details about Hyperbole use.  If
-you prefer a simpler, more interactive introduction to Hyperbole, the
-@file{FAST-DEMO} file included in the Hyperbole distribution demonstrates
-many of Hyperbole's standard facilities without the need to read through this
-reference manual.  The @file{FAST-DEMO} is a good way to rapidly understand
-some of what Hyperbole can do for you.  Once Hyperbole is installed,
-(@pxref{Setup}), you can access the @file{FAST-DEMO} with the key sequence
-@bkbd{C-h h d d}.
+This is a reference manual with extensive details about Hyperbole use.
+If you prefer a simpler, more interactive introduction to Hyperbole,
+the @file{../FAST-DEMO} file included in the Hyperbole distribution
+demonstrates many of Hyperbole's standard facilities without the need
+to read through this reference manual.  The @file{../FAST-DEMO} is a good
+way to rapidly understand some of what Hyperbole can do for you.  Once
+Hyperbole is installed, (@pxref{Setup}), you can access the
+@file{../FAST-DEMO} with the key sequence @bkbd{C-h h d d}.
 
 @xref{Glossary}, for definitions of Hyperbole terms.  In some cases,
 terms are not precisely defined within the body of this manual since they
@@ -1027,7 +1033,7 @@ access to HyControl's window control menu if it was not already bound
 prior to Hyperbole's initialization.
 
 Videos demonstrating Hyperbole's features are listed at
-@url{https://gnu.org/s/hyperbole}.
+@uref{https://gnu.org/s/hyperbole}.
 
 The above are the best interactive ways to learn about Hyperbole.
 
@@ -1390,7 +1396,7 @@ Hyperbole has some radically cool ways to select regions of structured text
 or source code and to copy or move them between buffers with a single mouse
 drag or two key presses.  A great deal of smarts are built-in so that it
 does the right thing most of the time; many other attempts at similar
-behavior such as @file{thing.el} fail to deal with many file format
+behavior such as @file{thingatpt.el} fail to deal with many file format
 complexities.
 
 We use the term @dfn{things} to refer to structured entities that
@@ -1826,7 +1832,7 @@ are not supported without a window system.
 @cindex keyboard, jump to window
 For even faster keyboard-based display of items and drag emulations,
 use the Emacs package @code{ace-window}
-(see @url{https://elpa.gnu.org/packages/ace-window.html}).
+(see @uref{https://elpa.gnu.org/packages/ace-window.html}).
 
 The @dfn{ace-window} package assigns short letter IDs to each Emacs
 window and lets you jump to or operate upon a specific window by giving
@@ -2331,7 +2337,7 @@ Below is a list of standard implicit button types in the order in
 which Hyperbole tries to match to the types when looking for an
 implicit button (decreasing priority order).  @bkbd{C-h h i t
 @key{RET}} provides similar information.  See the Hyperbole file,
-@file{hibtypes.el}, for examples of how to define implicit button
+@file{../hibtypes.el}, for examples of how to define implicit button
 types (in the file, they are listed in reverse order, increasing in
 priority).
 
@@ -2798,11 +2804,11 @@ associated section.  Or try it in the Hyperbole @file{DEMO} file.
 @cindex C/C++ cross-reference
 @cindex Cscope
 @item cscope
-Jump to a C/C++ source line associated with a Cscope C analyzer output line.
-The cscope.el Lisp library available from the Emacs package manager
-must be loaded and the open source cscope program available from
-http://cscope.sf.net must be installed for this button type to do
-anything.
+Jump to a C/C++ source line associated with a Cscope C analyzer output
+line.  The cscope.el Lisp library available from the Emacs package
+manager must be loaded and the open source cscope program available
+from @uref{http://cscope.sf.net} must be installed for this button
+type to do anything.
 
 @findex ibtypes etags
 @cindex etags entry
@@ -4331,7 +4337,7 @@ Web/ -             Select a search engine and term and search with them or
                    which determines whether web search results are displayed
                    within Emacs or with an external web browser.  A short
                    video introduction to the Find/Web menu may be
-                   found at @url{https://youtu.be/8lMlJed0-OM}.
+                   found at @uref{https://youtu.be/8lMlJed0-OM}.
 
                    The Find/Web menu looks like this:
 
@@ -4620,33 +4626,54 @@ many files with interactive search pattern narrowing.
 @noindent
 Below are descriptions of each menu item.
 
-@findex hywiki-consult-grep
 @cindex HyWiki menu
 @cindex menu, HyWiki
 @table @asis
+@cindex HyWiki activate link 
 @item Act
 Activate HyWikiWord link at point.
 
+@cindex HyWiki create a page
 @item Create
-Create and display a new HyWiki page.  Shows existing page names to aid in new naming.
+Create and display a new HyWiki page.  Shows existing page names to
+aid in new naming.
 
+@vindex hywiki-directory
+@vindex action-key-modeline-buffer-id-function
+@findex dired
+@findex smart-treemacs-modeline
+@findex treemacs
+@cindex HyWiki dired
+@cindex HyWiki treemacs
+@cindex HyWiki edit pages
 @item EditPages
-Display and edit HyWiki pages in current @code{hywiki-directory}.
+Display and edit HyWiki pages in current @code{hywiki-directory}.  Use
+@code{dired} unless @code{action-key-modeline-buffer-id-function} is
+set to @code{smart-treemacs-modeline}, then use the @code{treemacs}
+package.
 
+
+@cindex HyWiki find/edit a page
 @item FindPage
 Prompt with completion for and find a HyWiki page, typically editable.
 If the page is already in a buffer, point is left unchanged.
 
+@cindex HyWiki interactive grep
+@findex hywiki-consult-grep
 @item GrepConsult
 Grep over HyWiki pages with interactive @code{hywiki-consult-grep}.
 Any words may be used.
 
+@cindex HyWikiWord attribute help
 @item Help
 Report on a HyWikiWord's attributes.
 
+@cindex HyWiki documentation
+@cindex HyWiki manual
 @item Info
 Display Hyperbole manual section on HyWiki.
 
+@cindex HyWikiWord link
 @item Link
 Prompt for and add a link at point to a HyWiki page.
 
@@ -4676,14 +4703,17 @@ undefined HyWikiWords; otherwise, you must use @bkbd{C-h h h c} to create a
 new HyWiki page instead.  Use @samp{None} if you want to
 use Org's @bkbd{M-@key{RET}} command in every context within Org mode.
 
+@cindex HyWiki publish to web
 @item Publish
 Publish modified pages in the HyWiki to HTML; prefix arg to publish all pages.
 
-@cindex HyWiki tag search
+@cindex HyWiki search for Org tags
 @cindex search, HyWiki tag
 @item TagFind
 Find a matching Org tag across all HyWiki pages.
 
+@cindex HyWikiWord interactive grep
+@findex hywiki-consult-grep
 @item WikiWordConsult
 Use @code{hywiki-consult-grep} to prompt for a HyWikiWord and then
 consult grep for and select an occurrence within the HyWiki.
@@ -5924,7 +5954,7 @@ have alphanumeric statement identifiers on the right side.  You can
 import such files while maintaining their outline structure.  Use
 @bkbd{M-x kimport:aug-post-outline @key{RET}} and you will be
 prompted for the Augment buffer or file to import and the koutline to
-create.  See @url{https://dougengelbart.org/content/view/148/} for more
+create.  See @uref{https://dougengelbart.org/content/view/148/} for more
 information.
 
 @node Exporting,  , Inserting and Importing, Editing Outlines
@@ -6966,7 +6996,7 @@ If you use Google/Gmail Contacts, you can configure the HyRolo to
 query your Google Contacts for matches.  First you must download and
 install the external @file{google-contacts} package using the Emacs
 Package Manager.  Then you must install the non-Emacs GNU Privacy
-Guard (GPG) package from @url{https://gnupg.org} so that
+Guard (GPG) package from @uref{https://gnupg.org} so that
 the @file{gpg} or @file{gpg2} executable is in your command-line
 search path.  Once these are in place, either restart Emacs or
 use @bkbd{M-x hyrolo-initialize-file-list @key{RET}} to add Google
@@ -8289,7 +8319,7 @@ the current buffer.  This number makes the label unique and so allows
 any number of buttons with the same base label within a single buffer.
 
 @item Jedi
-See also @url{https://tkf.github.io/emacs-jedi/latest/}.
+See also @uref{https://tkf.github.io/emacs-jedi/latest/}.
 
 Jedi is a Emacs package for Python completion, definition and documentation lookup.
 
@@ -8375,7 +8405,7 @@ See @b{Augment}.
 See @b{Link} or @b{Cell}.
 
 @item The OO-Browser
-See also @url{https://www.gnu.org/software/oo-browser}.
+See also @uref{https://www.gnu.org/software/oo-browser}.
 
 The GNU OO-Browser is a multi-windowed, interactive object-oriented class
 browser similar in use to the well-known Smalltalk browsers.  It runs
@@ -8721,12 +8751,12 @@ Download either:
 
 @table @asis
 @item 1. a stable release tar.gz source archive from either:
-@url{ftp://ftp.gnu.org/gnu/hyperbole/} or
-@url{http://ftpmirror.gnu.org/hyperbole/}, which will find the closest
+@uref{ftp://ftp.gnu.org/gnu/hyperbole/} or
+@uref{http://ftpmirror.gnu.org/hyperbole/}, which will find the closest
 mirror of the GNU ftp site and show it to you.
 
 @item 2. the latest in-development pre-release tar.gz source archive linked to at the top of this web page:
-@url{https://elpa.gnu.org/devel/hyperbole.html}.
+@uref{https://elpa.gnu.org/devel/hyperbole.html}.
 @end table
 
 Then decompress and unpack the archive to a directory of your
@@ -10558,18 +10588,16 @@ Treemacs items may be dragged with the Action Key to other windows for display.
 @group
 When in a Treemacs file browser buffer:
   ACTION KEY or ASSIST KEY
-     (1) on an entry icon, the treemacs TAB command is run to expand and
-         collapse the entry;
-     (2) elsewhere within an entry line, the item is displayed for editing,
-         normally in another window;
-     (3) at the end of an entry line: if an Action Key press, invokes
+     (1) on or to the left of an entry icon, run the treemacs TAB command
+         to expand or collapse the entry;
+     (2) elsewhere within an entry line, display the item, which may be a
+         directory, for editing, normally in another window;
+     (3) at the end of an entry line: if an Action Key press, invoke
          @code{action-key-eol-function}, typically to scroll up proportionally;
-         if an Assist Key press, invokes @code{assist-key-eol-function}, typically
+         if an Assist Key press, invoke @code{assist-key-eol-function}, typically
          to scroll down proportionally;
-     (4) on the first line of the buffer (other than the end of line),
-         dired is run on the current directory of this Treemacs;
-     (5) at the end of the first or last line of the buffer,
-         this Treemacs invocation is quit.
+     (4) at the end of the first or last line of the buffer, quit this
+         Treemacs invocation.
 @end group
 @end format
 
@@ -12098,7 +12126,7 @@ more deeply.  In fact, it makes sense to use them together and they
 are highly compatible.  The only overlap we see is that Org-mode has a
 more limited kind of hyperlinks and offers some BBDB integration as
 Hyperbole does.  For a list of some differences, see:
-@url{https://www.emacswiki.org/emacs/Hyperbole}.
+@uref{https://www.emacswiki.org/emacs/Hyperbole}.
 
 Org-mode offers traditional Emacs outlining, todo list management,
 agenda and diary management, so it is very complementary to Hyperbole.

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:     16-Sep-24 at 22:40:19 by Bob Weiner
+;; Last-Mod:     10-Nov-24 at 14:57:49 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -905,7 +905,9 @@ Used after selected buffer list is exhausted.")
 
 (defun hycontrol-window-display-buffer (window)
   "Given a WINDOW, choose the next appropriate buffer to display.
-Uses `hycontrol--buffer-list'.
+If WINDOW is dedicated, ignore it and do nothing.
+
+Uses hycontrol--buffer-list'.
 
 When `hycontrol--invert-display-buffer-predicates' is non-nil and not
 \\='ignore, the list of buffers used is further filtered using the
@@ -915,21 +917,22 @@ files.
 
 Filtering is disabled if a specific list of buffers is sent to the
 `hycontrol-make-windows-grid' function that calls this."
-  (let ((buf (car hycontrol--buffer-list-pointer)))
-    (setq hycontrol--buffer-list-pointer (cdr hycontrol--buffer-list-pointer))
-    (while (and buf (or (= (aref (buffer-name buf) 0) ?\ )
-			(and (not hycontrol--invert-display-buffer-predicates)
-			     (not (eval (cons 'or (hycontrol-display-buffer-predicate-results buf)))))
-			(and hycontrol--invert-display-buffer-predicates
-			     (not (eq hycontrol--invert-display-buffer-predicates 'ignore))
-			     (eval (cons 'or (hycontrol-display-buffer-predicate-results buf))))))
-      ;; Buffer is not one to display, get the next one and test again.
-      (setq buf (car hycontrol--buffer-list-pointer)
-	    hycontrol--buffer-list-pointer (cdr hycontrol--buffer-list-pointer)))
-    (set-window-buffer window
-		       (or buf
-			   ;; Out of buffers to display, display a blank one
-			   hycontrol--blank-buffer))))
+  (unless (or (null window) (window-dedicated-p window))
+    (let ((buf (car hycontrol--buffer-list-pointer)))
+      (setq hycontrol--buffer-list-pointer (cdr hycontrol--buffer-list-pointer))
+      (while (and buf (or (= (aref (buffer-name buf) 0) ?\ )
+			  (and (not hycontrol--invert-display-buffer-predicates)
+			       (not (eval (cons 'or (hycontrol-display-buffer-predicate-results buf)))))
+			  (and hycontrol--invert-display-buffer-predicates
+			       (not (eq hycontrol--invert-display-buffer-predicates 'ignore))
+			       (eval (cons 'or (hycontrol-display-buffer-predicate-results buf))))))
+	;; Buffer is not one to display, get the next one and test again.
+	(setq buf (car hycontrol--buffer-list-pointer)
+	      hycontrol--buffer-list-pointer (cdr hycontrol--buffer-list-pointer)))
+      (set-window-buffer window
+			 (or buf
+			     ;; Out of buffers to display, display a blank one
+			     hycontrol--blank-buffer)))))
 
 (defun hycontrol-window-display-buffer-with-repeats (window)
   "This is no longer used since Hyperbole V8.  Left here for reference.

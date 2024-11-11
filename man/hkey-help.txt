@@ -66,7 +66,7 @@ Mouse-only Control
     Buffer ID                   Dired on buffer's dir      Displays next buffer
                                   or on parent when a dir
     Other blank area            Action Key modeline hook   Assist Key modeline hook
-                                  Shows/Hides Buffer Menu    Popups Jump & Manage Menu
+                                  Shows/Hides Buffer Menu    Popups Screen & Jump Menus
 
   Drag in window, region active Error, not allowed         Error, not allowed
   Horizontal drag in a window   Splits window below        Deletes window

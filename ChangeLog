@@ -1,3 +1,60 @@
+2024-11-10  Bob Weiner  <rsw@gnu.org>
+
+* hui-window.el (action-key-modeline-left-edge-function,
+                 action-key-modeline-left-edge-function,
+                 assist-key-modeline-left-edge-function,
+                 action-key-modeline-right-edge-function): Add these
+    customizations.
+                (action-key-modeline-click-left-edge,
+                 assist-key-modeline-click-left-edge,
+                 action-key-modeline-click-right-edge,
+                 assist-key-modeline-click-right-edge): Add these functions
+    as defaults for the above customizations.
+                (hmouse-modeline-default-help-echo): Replacement for default
+    'mode-line-default-help-echo' function that produces mode line hover doc
+    for the Smart Mouse Keys.
+  hyperbole.el (hyperbole--enable-mode): Update mode-line hover doc in blank
+    areas for button-2 and button-3 if using unshifted Smart Keys.
+
+* hui-jmenu.el (hui-menu-modeline): Add HyWiki-Edit-Pages to display a list
+    of HyWiki page files either in dired or Treemacs.
+
+* hui-treemacs.el (require): Prompt to install package if not yet installed.
+
+* hui-window.el (hmouse-horizontal-assist-drag): Fix doc when one window only.
+
+* man/hyperbole.texi (HyWiki Menu): Add index entries per menu item.
+
+* hywiki.el (hywiki-directory-edit): Rename to 'hywiki-directory-dired-edit'.
+            (hywiki-directory-edit): Make a new version that supports
+    'treemacs' when 'action-key-modeline-buffer-id-function' is set to
+    'smart-treemacs-modeline.
+
+* hui-treemacs.el (smart-treemacs): Simplify and no longer call
+    'treemacs-node-buffer-and-position' which can trigger a marker error.
+                  (smart-treemacs-edit): Add to edit/display a dir in Treemacs.
+                  (smart-treemacs-modeline): Call above function.
+  hywiki.el (hywiki-directory-treemacs-edit): Add and call above function.
+
+* hycontrol.el (hycontrol-window-display-buffer): Fix to ignore any dedicated
+    windows and prevent an error typically generated when calling this from
+    'walk-windows' called within 'hycontrol-windows-grid'.  Makes window grids
+    work with Treemacs display, for example.
+
+* hui-treemacs.el (smart-treemacs): Fix invocation of TAB command on first line
+    entry (treat it like any other line except at eol).  Also, actually invoke
+    latest treemacs TAB command when defined rather that calling the default
+    command normally configured to the TAB key.  Ensure all func calls are
+    wrapped with 'hact'.
+                  (smart-treemacs-modeline): Ensure always displays just the
+    dir associated with the current buffer.  Wrap all func calls with 'hact'.
+  man/hyperbole.texi (Smart Key - Treemacs): Update doc to match above change.
+                  (smart-treemacs-quit): Add to ensure treemacs-quit is run
+    within the Treemacs window.
+
+* hywiki.el (hywiki-directory-edit): Support non-bash shells that cannot handle
+    character classes.
+
 2024-11-10  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--add-hywiki-hooks)
@@ -9,6 +66,21 @@
     (hywiki-tests--verify-face-property-when-editing-wikiword)
     (hywiki-tests--verify-face-property-when-editing-wikiword-first-char):
     Tests using the hook mimicking functions.
+
+2024-11-03  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-maybe-highlight-page-name, hywiki-maybe-dehighlight-page-name):
+    Change to use function (hywiki-get-buttonize-characters) rather than the
+    variable, hywiki--buttonize-characters, so do not move back over whitespace
+    when at the beginning of a HyWikiWord.
+
+* hyrolo.el (hyrolo-grep-file): Don't set grepped file to read-only since
+    this can later make org-capture fail.  (gh#rswgnu/hyperbole/599)
+
+2024-11-02  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi: Change all @url to @uref so display properly in
+    Info-format output.
 
 2024-11-02  Mats Lidell  <matsl@gnu.org>
 
@@ -36,7 +108,7 @@
     an infinite loop.
             (hywiki-add-page, hywiki-make-pages-hasht): Reset
     'hywiki--any-page-regexp-list' whenever hasht is rebuilt.  Otherwise,
-    highlihgting might not include new wikiwords in hasht.
+    highlighting might not include new wikiwords in hasht.
 
 2024-10-27  Bob Weiner  <rsw@gnu.org>
 

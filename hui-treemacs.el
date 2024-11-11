@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Nov-17
-;; Last-Mod:     20-Jan-24 at 20:20:00 by Mats Lidell
+;; Last-Mod:     10-Nov-24 at 17:27:30 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -26,7 +26,8 @@
 
 (or (require 'treemacs nil t)
     (and (package-installed-p 'treemacs)
-	 (package-activate 'treemacs)))
+	 (package-activate 'treemacs))
+    (hypb:require-package 'treemacs))
 
 (defvar treemacs-version)
 
@@ -39,10 +40,10 @@
 (declare-function treemacs "ext:treemacs")
 (declare-function treemacs-current-button "ext:treemacs-core-utils")
 (declare-function treemacs-current-visibility "ext:treemacs-scope")
-(declare-function treemacs-get-local-buffer "ext:treemacs-scope")
+(declare-function treemacs-get-local-window "ext:treemacs-scope")
 (declare-function treemacs-is-treemacs-window? "ext:treemacs-core-utils")
-(declare-function treemacs-node-buffer-and-position "etx:treemacs-mouse-interface")
-(declare-function treemacs-quit "ext:treemacs-core-utils")
+(declare-function treemacs-node-buffer-and-position "ext:treemacs-mouse-interface")
+(declare-function treemacs-quit "ext:treemacs-interface")
 (declare-function treemacs-toggle-node "ext:treemacs-interface")
 (defvar aw-ignored-buffers)
 
@@ -69,6 +70,25 @@
   (fset 'treemacs-quit #'bury-buffer))
 
 ;;;###autoload
+(defun smart-treemacs-edit (&optional dir)
+  "Use `treemacs' to edit optional DIR or the `default-directory'."
+  (let ((default-directory (if (stringp dir) dir default-directory)))
+    (cond ((fboundp #'treemacs-add-and-display-current-project-exclusively)
+	   (treemacs-add-and-display-current-project-exclusively))
+	  ;; Older obsoleted function
+	  ((fboundp #'treemacs-display-current-project-exclusively)
+	   (treemacs-display-current-project-exclusively))
+	  (t (treemacs)))))
+
+(defun smart-treemacs-quit (&optional arg)
+  "Quit treemacs visible in current frame with `bury-buffer'.
+With a prefix ARG call `treemacs-kill-buffer' instead."
+  (interactive "P")
+  (when (eq (treemacs-current-visibility) 'visible)
+    (with-selected-window (treemacs-get-local-window)
+      (treemacs-quit arg))))
+
+;;;###autoload
 (defun smart-treemacs ()
   "Use a single key or mouse key to manipulate directory entries.
 
@@ -77,37 +97,28 @@ caller has already checked that the key was pressed in an appropriate buffer
 and has moved the cursor there.
 
 If key is pressed:
- (1) on an entry icon, the treemacs TAB command is run to expand and
-     collapse the entry;
- (2) elsewhere within an entry line, the item is displayed for editing,
-     normally in another window;
- (3) at the end of an entry line: invoke `action-key-eol-function',
-     typically to scroll up proportionally, if an Action Key press; invoke
-     `assist-key-eol-function', typically to scroll down proportionally,
-     if an Asisst Key press;
- (4) on the first line of the buffer (other than the end of line),
-     Dired is run on the current directory of this Treemacs;
- (5) at the end of the first or last line of the buffer,
-     this Treemacs invocation is quit."
+ (1) on or to the left of an entry icon, run the treemacs TAB command
+     to expand or collapse the entry;
+ (2) elsewhere within an entry line, display the item, which may be a
+     directory, for editing, normally in another window;
+ (3) at the end of an entry line: if an Action Key press, invoke
+     `action-key-eol-function', typically to scroll up proportionally;
+     if an Asisst Key press, invoke `assist-key-eol-function', typically
+     to scroll down proportionally;
+ (4) at the end of the first or last line of the buffer, quit this
+     Treemacs invocation."
 
   (interactive)
-  (cond ((first-line-p)
-	 (if (eolp)
-	     (treemacs-quit)
-	   (hact 'link-to-directory default-directory)))
-	((and (last-line-p) (eolp))
-	 (treemacs-quit))
+  (cond ((and (eolp) (or (first-line-p) (last-line-p)))
+	 (hact 'smart-treemacs-quit))
 	((eolp)
-	 (funcall (if assist-flag assist-key-eol-function action-key-eol-function)))
-	(t (let ((over-icon (and (treemacs-current-button)
-				 (= (point) (- (button-start (treemacs-current-button)) 2))))
-		 (result (treemacs-node-buffer-and-position)))
-	     (if (and (not over-icon) result (or (bufferp result) (listp result)))
-		 (if (listp result)
-		     (hact 'link-to-buffer-tmp (seq-elt result 0) (seq-elt result 1))
-		   ;; (bufferp result)
-		   (hact 'link-to-buffer-tmp result))
-	       (treemacs-toggle-node current-prefix-arg))))))
+	 (hact 'funcall (if assist-flag assist-key-eol-function action-key-eol-function)))
+	(t (if (and (treemacs-current-button)
+		    (= (point) (- (button-start (treemacs-current-button)) 2)))
+	       ;; Before or on the entry's icon
+	       (hact 'treemacs-TAB-action current-prefix-arg)
+	     ;; On the entry, handles dirs, files and tag entries
+	     (hact 'treemacs-RET-action current-prefix-arg)))))
 
 ;;;###autoload
 (defun smart-treemacs-modeline ()
@@ -123,21 +134,23 @@ Suitable for use as a value of `action-key-modeline-buffer-id-function'."
    ;; Clicked on Treemacs buffer id
    ((if action-key-depress-window
 	(treemacs-is-treemacs-window? action-key-depress-window)
-      (string-match " Treemacs " (format-mode-line mode-line-format)))
+      (hact 'string-match " Treemacs " (format-mode-line mode-line-format)))
     ;; Quit/hide treemacs.
-    (treemacs-quit))
+    (hact 'treemacs-quit))
    ;;
    ;; Treemacs is visible and displaying the same dir as
    ;; the default dir of the clicked on modeline.
    ((and (eq (treemacs-current-visibility) 'visible)
 	 (string-equal (expand-file-name default-directory)
-		       (with-current-buffer (treemacs-get-local-buffer)
-			 default-directory)))
+		       (with-selected-window (treemacs-get-local-window)
+			 (save-excursion
+			   (goto-char (point-min))
+			   default-directory))))
     ;; Quit/hide treemacs.
-    (treemacs-quit))
+    (hact 'smart-treemacs-quit))
    ;;
    ;; Otherwise, invoke treemacs on the default dir of the clicked on modeline.
-   (t (treemacs))))
+   (t (hact 'smart-treemacs-edit))))
 
 (provide 'hui-treemacs)
 ;;; hui-treemacs.el ends here

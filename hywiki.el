@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     28-Oct-24 at 01:43:34 by Bob Weiner
+;; Last-Mod:     10-Nov-24 at 15:44:27 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -142,6 +142,7 @@
 (declare-function hsys-org-at-tags-p "hsys-org")
 (declare-function org-link-store-props "ol" (&rest plist))
 (declare-function org-publish-property "ox-publish" (property project &optional default))
+(declare-function smart-treemacs-edit "hui-treemacs" (&optional dir))
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -834,10 +835,33 @@ these are handled by the Org mode link handler."
 		 0)))))
 
 (defun hywiki-directory-edit ()
-  "Display and edit HyWiki pages in current `hywiki-directory'."
+  "Edit HyWiki pages in current `hywiki-directory'.
+Use `dired' unless `action-key-modeline-buffer-id-function' is set to
+`smart-treemacs-modeline', then use `treemacs'."
   (interactive)
-  (dired (concat hywiki-directory "[[:upper:]][[:alpha:]]*"
-		 (regexp-quote hywiki-file-suffix))))
+  (if (eq action-key-modeline-buffer-id-function #'smart-treemacs-modeline)
+      (hywiki-directory-treemacs-edit)
+    (hywiki-directory-dired-edit)))
+
+(defun hywiki-directory-dired-edit ()
+  "Use `dired' to edit HyWiki pages in current `hywiki-directory'."
+  (interactive)
+  (let ((case-fold-search nil)
+	(shell-name (or shell-file-name "")))
+    (if (string-match-p "bash\\(\\.exe\\)?$" shell-name)
+	(dired (concat hywiki-directory
+		       "[[:upper:]][[:alpha:]]*"
+		       (regexp-quote hywiki-file-suffix)))
+      (dired (cons hywiki-directory
+		   (directory-files hywiki-directory nil
+				    (format "^[A-Z][A-Za-z]*%s$"
+					    (regexp-quote hywiki-file-suffix))))))))
+
+(defun hywiki-directory-treemacs-edit ()
+  "Use `treemacs' to edit HyWiki pages in current `hywiki-directory'."
+  (interactive)
+  (require 'hui-treemacs)
+  (smart-treemacs-edit hywiki-directory))
 
 (defun hywiki-directory-get-checksum ()
   "Compute and return the checksum for the current set of HyWiki pages."
@@ -1149,7 +1173,7 @@ If in a programming mode, must be within a comment.  Use
 	  (unless hywiki--highlighting-done-flag
 	    (unless on-page-name
 	      ;; May be a closing delimiter that we have to skip past
-	      (skip-chars-backward (regexp-quote hywiki--buttonize-characters)))
+	      (skip-chars-backward (regexp-quote (hywiki-get-buttonize-characters))))
 	    ;; Skip past HyWikiWord or section
 	    (skip-syntax-backward "^-$()<>._\"\'")
 	    (skip-chars-backward "-_*#[:alpha:]")
@@ -1220,7 +1244,7 @@ the current page unless they have sections attached."
 	    (unless hywiki--highlighting-done-flag
 	      (unless on-page-name
 		;; May be a closing delimiter that we have to skip past
-		(skip-chars-backward (regexp-quote hywiki--buttonize-characters)))
+		(skip-chars-backward (regexp-quote (hywiki-get-buttonize-characters))))
 	      ;; Skip past HyWikiWord or section
 	      (skip-syntax-backward "^-$()<>._\"\'")
 	      (skip-chars-backward "-_*#[:alpha:]")
