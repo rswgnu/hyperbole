@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     13-Oct-24 at 15:37:40 by Bob Weiner
+;; Last-Mod:      3-Nov-24 at 09:37:58 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1996,8 +1996,12 @@ Return number of matching entries found."
 		   (setq incl-hdr nil
 			 max-matches (- max-matches)))))
 	  (set-buffer actual-buf)
-	  (when new-buf-flag
-	    (setq buffer-read-only t))
+
+	  ;; Comment out next two lines that could set source buffer
+	  ;; to read-only since this can break org-capture into the
+	  ;; buffer.  -- rsw, 2024-11-03
+	  ;; (when new-buf-flag
+	  ;;  (setq buffer-read-only t))
 
 	  (when (and headline-only
 		     (not (string-match (concat "\\`\\(" (regexp-quote "^") "\\|" (regexp-quote "\\`") "\\)") pattern)))
