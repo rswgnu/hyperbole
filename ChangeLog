@@ -55,6 +55,18 @@
 * hywiki.el (hywiki-directory-edit): Support non-bash shells that cannot handle
     character classes.
 
+2024-11-10  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--add-hywiki-hooks)
+    (hywiki-tests--remove-hywiki-hooks, with-hywiki-buttonize-hooks)
+    (with-hywiki-buttonize-and-insert-hooks): Add functions and macros for
+    mimicking redisplay hook behavior and use these in the highlighting tests.
+    (hywiki-tests--face-property-for-wikiword-with-wikipage)
+    (hywiki-tests--no-face-property-for-no-wikipage)
+    (hywiki-tests--verify-face-property-when-editing-wikiword)
+    (hywiki-tests--verify-face-property-when-editing-wikiword-first-char):
+    Tests using the hook mimicking functions.
+
 2024-11-03  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-maybe-highlight-page-name, hywiki-maybe-dehighlight-page-name):
@@ -69,6 +81,16 @@
 
 * man/hyperbole.texi: Change all @url to @uref so display properly in
     Info-format output.
+
+2024-11-02  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--word-is-p)
+    (hywiki-tests--directory-edit)
+    (hywiki-tests--verify-face-property-when-editing-wikiword)
+    (hywiki-tests--verify-face-property-when-editing-wikiword-first-char): Add hywiki
+    tests.
+
+* test/hywiki-tests.el (hywiki-tests--word-is-p): Add hywiki test.
 
 2024-10-28  Bob Weiner  <rsw@gnu.org>
 

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:      3-Oct-23 at 17:15:07 by Mats Lidell
+;; Last-Mod:      4-Nov-24 at 00:36:58 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -17,7 +17,7 @@
 ;;; Commentary:
 ;;
 ;; Implements a struct for ebut and ibut, a content type of a
-;; register.  See "(Emacs) Registers"
+;; register.  See "(Emacs)Registers"
 ;;
 
 (eval-when-compile (require 'cl-lib))
