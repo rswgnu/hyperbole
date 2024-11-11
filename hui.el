@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     29-Aug-24 at 17:08:21 by Bob Weiner
+;; Last-Mod:     10-Nov-24 at 15:44:56 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -127,7 +127,8 @@ point; see `hui:delimited-selectable-thing'."
 	       (indicate-copied-region)))))))
 
 ;; Override the {M-w} command from "simple.el" when hyperbole-mode is active
-;; to allow copying kcell references or regions.
+;; to allow copying kcell references, active regions and delimited
+;; areas (like sexpressions).
 ;;;###autoload
 (defun hui-kill-ring-save (beg end &optional region)
   "Save the active region as if killed, but don't kill it.

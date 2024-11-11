@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Sep-92
-;; Last-Mod:     21-Jan-24 at 10:32:38 by Bob Weiner
+;; Last-Mod:     11-Nov-24 at 00:20:41 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -91,6 +91,30 @@ of screen control commands."
 
 (defcustom assist-key-modeline-function #'hui-menu-screen-commands
   "Function to call when Assist Mouse Key is clicked in the center of a modeline."
+  :type 'function
+  :group 'hyperbole-keys)
+
+(defcustom action-key-modeline-left-edge-function #'action-key-modeline-click-left-edge
+  "*Function run on an Action Mouse Key click at a modeline left edge.
+To disable it, set it to #\\='ignore."
+  :type 'function
+  :group 'hyperbole-keys)
+
+(defcustom assist-key-modeline-left-edge-function #'assist-key-modeline-click-left-edge
+  "*Function run on an Assist Mouse Key click at a modeline left edge.
+To disable it, set it to #\\='ignore."
+  :type 'function
+  :group 'hyperbole-keys)
+
+(defcustom action-key-modeline-right-edge-function #'action-key-modeline-click-right-edge
+  "*Function run on an Action Mouse Key click at a modeline right edge.
+To disable it, set it to #\\='ignore."
+  :type 'function
+  :group 'hyperbole-keys)
+
+(defcustom assist-key-modeline-right-edge-function #'assist-key-modeline-click-right-edge
+  "*Function run on an Assist Mouse Key click at a modeline right edge.
+To disable it, set it to #\\='ignore."
   :type 'function
   :group 'hyperbole-keys)
 
@@ -272,6 +296,28 @@ and release to register a diagonal drag.")
 ;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
+
+(defalias 'action-key-modeline-click-left-edge 'bury-buffer
+  "Default function run on an Action Mouse Key click at a modeline left edge.")
+
+(defun assist-key-modeline-click-left-edge ()
+  "Default function run on an Assist Mouse Key click at a modeline left edge."
+  (if (fboundp 'last)
+      (switch-to-buffer (car (last (buffer-list))))
+    (let ((buffers (buffer-list)))
+      (switch-to-buffer (nth (1- (length buffers)) buffers)))))
+
+(defun action-key-modeline-click-right-edge ()
+  "Default function run on an Action Mouse Key click at a modeline right edge."
+  (if (eq major-mode 'Info-mode)
+      (quit-window)
+    (info)))
+
+(defun assist-key-modeline-click-right-edge ()
+  "Default function run on an Assist Mouse Key click at a modeline right edge."
+  (if (string-match "Hyperbole Smart Keys" (buffer-name))
+      (hkey-help-hide)
+    (hkey-summarize 'current-window)))
 
 (defun hmouse-at-item-p (start-window)
   "Return t if point is on an item draggable by Hyperbole, otherwise nil.
@@ -687,6 +733,58 @@ If free variable `assist-flag' is non-nil, uses Assist Key."
 		(<= (abs (- last-press-x right-side-ln))
 		    hmouse-side-sensitivity))))))
 
+;; Derived from bindings.el
+(defun hmouse-modeline-default-help-echo (window)
+  "Return default help echo text for WINDOW's mode line."
+  (let* ((frame (window-frame window))
+         (line-1a
+          ;; Show text to select window only if the window is not
+          ;; selected.
+          (not (eq window (frame-selected-window frame))))
+         (line-1b
+          ;; Show text to drag mode line if either the window is not
+          ;; at the bottom of its frame or the minibuffer window of
+          ;; this frame can be resized.  This matches a corresponding
+          ;; check in `mouse-drag-mode-line'.
+          (or (not (window-at-side-p window 'bottom))
+              (let ((mini-window (minibuffer-window frame)))
+                (and (eq frame (window-frame mini-window))
+                     (or (minibuffer-window-active-p mini-window)
+                         (not resize-mini-windows))))))
+         (line-2a
+	  (and (boundp 'hyperbole-mode) hyperbole-mode))
+         (line-2b
+          ;; Show text make window occupy the whole frame
+          ;; only if it doesn't already do that.
+          (not (eq window (frame-root-window frame))))
+         (line-3
+          ;; Show text to delete window only if that's possible.
+          (not (eq window (frame-root-window frame)))))
+    (when (or line-1a line-1b line-2a line-2b line-3)
+      (concat
+       (when (or line-1a line-1b)
+         (concat
+          "mouse-1: "
+	  (when line-2a "           ")
+          (when line-1a "Select window")
+          (when line-1b
+            (if line-1a " (drag to resize)" "Drag to resize"))
+          (when (or line-2a line-2b line-3) "\n")))
+       (cond (line-2a
+	      (concat
+               "mouse-2:            Show/hide buffer menu\n"
+               "mouse-2 right edge: Show/hide Info manuals buffer\n"))
+	     (line-2b
+              (concat
+               "mouse-2: Make window occupy whole frame"
+               (when line-3 "\n"))))
+       (cond (line-2a
+	      (concat
+               "mouse-3:            Screen Control and Jump Menus\n"
+               "mouse-3 right edge: Show/hide Action/Assist Key actions"))
+	     (line-3
+              "mouse-3: Remove window from frame"))))))
+
 (defun hmouse-read-only-toggle-key ()
   "Return the first toggle read-only mode key binding, or nil if none."
   (key-description (where-is-internal #'read-only-mode nil t)))
@@ -723,7 +821,7 @@ Beep and print message if the window cannot be split further."
 
 (defun hmouse-horizontal-assist-drag ()
   "Handle an Assist Key horizontal drag within a window: delete the current window.
-Beep and print message if the window cannot be split further."
+Beep and print message if the sole window which cannot be deleted."
   (condition-case ()
       (delete-window)
     (error (beep)
@@ -975,11 +1073,10 @@ If the Action Key is:
     (when (hmouse-modeline-click)
       (cond ((hmouse-emacs-at-modeline-buffer-id-p)
 	     (funcall action-key-modeline-buffer-id-function))
-	    ((hmouse-release-left-edge) (bury-buffer))
+	    ((hmouse-release-left-edge)
+	     (funcall action-key-modeline-left-edge-function))
 	    ((hmouse-release-right-edge)
-	     (if (eq major-mode 'Info-mode)
-		 (quit-window)
-	       (info)))
+	     (funcall action-key-modeline-right-edge-function))
 	    (t (funcall action-key-modeline-function))))))
 
 (defun assist-key-modeline ()
@@ -1004,21 +1101,15 @@ If the Assist Key is:
   ;; Modeline window resizing is now handled in assist-key-depress
   ;; via a call to mouse-drag-mode-line, providing live visual
   ;; feedback.
-  (let ((buffers)
-	(w (smart-window-of-coords assist-key-depress-args)))
+  (let ((w (smart-window-of-coords assist-key-depress-args)))
     (when w (select-window w))
     (when (hmouse-modeline-click)
 	   (cond ((hmouse-emacs-at-modeline-buffer-id-p)
 		  (next-buffer))
 		 ((hmouse-release-left-edge)
-		  (if (fboundp 'last)
-		      (switch-to-buffer (car (last (buffer-list))))
-		    (setq buffers (buffer-list))
-		    (switch-to-buffer (nth (1- (length buffers)) buffers))))
+		  (funcall assist-key-modeline-left-edge-function))
 		 ((hmouse-release-right-edge)
-		  (if (string-match "Hyperbole Smart Keys" (buffer-name))
-		      (hkey-help-hide)
-		    (hkey-summarize 'current-window)))
+		  (funcall assist-key-modeline-right-edge-function))
 		 (t (funcall assist-key-modeline-function))))))
 
 (defun hmouse-drag-p ()
