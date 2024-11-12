@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     28-Oct-24 at 01:32:59 by Bob Weiner
+;; Last-Mod:     12-Nov-24 at 20:12:49 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -76,6 +76,7 @@
 (declare-function htype:def-symbol "hact")
 (declare-function hui:help-ebut-highlight "hui")
 (declare-function hyperb:stack-frame "hversion")
+(declare-function hywiki-get-singular-page-name "hywiki")
 (declare-function hywiki-page-exists-p "hywiki")
 
 (declare-function set:member "set")
