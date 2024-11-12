@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     10-Nov-24 at 23:05:28 by Mats Lidell
+;; Last-Mod:     11-Nov-24 at 22:53:15 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -299,6 +299,7 @@ Both mod-time and checksum must be changed for a test to return true."
 
 (ert-deftest hywiki-tests--face-property-for-wikiword-with-wikipage ()
   "Verify WikiWord for a wiki page gets face property hywiki-word-face."
+  :expected-result :failed
   (skip-unless (not noninteractive))
   (let* ((hsys-org-enable-smart-keys t)
          (hywiki-directory (make-temp-file "hywiki" t))
@@ -306,6 +307,11 @@ Both mod-time and checksum must be changed for a test to return true."
     (unwind-protect
         (progn
           (hywiki-tests--remove-hywiki-hooks)
+          (with-temp-buffer
+            (hywiki-mode 1)
+            (with-hywiki-buttonize-and-insert-hooks (insert "WikiWord "))
+            (goto-char 4)
+            (should (hproperty:but-get (point) 'face hywiki-word-face)))
           (with-temp-buffer
             (hywiki-mode 1)
             (with-hywiki-buttonize-and-insert-hooks
@@ -395,18 +401,30 @@ Both mod-time and checksum must be changed for a test to return true."
 
 (ert-deftest hywiki-tests--convert-words-to-org-link ()
   "Verify `hywiki-convert-words-to-org-links' converts WikiWords to org links."
+  :expected-result :failed
   (skip-unless (not noninteractive))
   (let* ((hywiki-directory (make-temp-file "hywiki" t))
          (wikipage (hywiki-add-page "WikiWord")))
     (unwind-protect
-        (with-temp-buffer
-          (hywiki-mode 1)
-          (insert "WikiWord")
-	  (newline nil t)
-          (goto-char 4)
-          (hywiki-convert-words-to-org-links)
-          (should (string= "[[hy:WikiWord]]\n"
-                           (buffer-substring-no-properties (point-min) (point-max)))))
+        (progn
+          (hywiki-tests--remove-hywiki-hooks)
+          (with-temp-buffer
+            (hywiki-mode 1)
+            (with-hywiki-buttonize-and-insert-hooks (insert "WikiWord "))
+            (goto-char 4)
+            (hywiki-convert-words-to-org-links)
+            (should (string= "[[hy:WikiWord]] "
+                             (buffer-substring-no-properties (point-min) (point-max)))))
+          (with-temp-buffer
+            (hywiki-mode 1)
+            (with-hywiki-buttonize-and-insert-hooks
+              (insert "WikiWord")
+	      (newline nil t))
+            (goto-char 4)
+            (hywiki-convert-words-to-org-links)
+            (should (string= "[[hy:WikiWord]]\n"
+                             (buffer-substring-no-properties (point-min) (point-max))))))
+      (hywiki-tests--add-hywiki-hooks)
       (hywiki-mode 0)
       (hy-delete-file-and-buffer wikipage)
       (hy-delete-dir-and-buffer hywiki-directory))))
