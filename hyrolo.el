@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      3-Nov-24 at 09:37:58 by Bob Weiner
+;; Last-Mod:     12-Nov-24 at 20:21:19 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1973,7 +1973,8 @@ Return number of matching entries found."
   ;; Save pattern as last rolo search expression.
   (setq hyrolo-match-regexp pattern)
   ;;
-  (let ((new-buf-flag) (actual-buf)
+  (let (;;(new-buf-flag)
+        (actual-buf)
 	;; Temporarily disable magit-auto-revert-mode-enable-in-buffers for hyrolo
 	;; buffers; not needed and can slow/hang file loading
 	(after-change-major-mode-hook
@@ -1982,7 +1983,8 @@ Return number of matching entries found."
 	     (or (setq actual-buf (hyrolo-buffer-exists-p hyrolo-file-or-buf))
 		 (when (file-exists-p hyrolo-file-or-buf)
 		   (setq actual-buf (hyrolo-find-file-noselect hyrolo-file-or-buf)
-			 new-buf-flag t))))
+			 ;; new-buf-flag t
+                         ))))
 	(let ((num-found 0)
 	      (incl-hdr t)
 	      (stuck-negative-point 0)
