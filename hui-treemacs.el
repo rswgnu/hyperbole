@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Nov-17
-;; Last-Mod:     12-Nov-24 at 20:17:24 by Mats Lidell
+;; Last-Mod:     13-Nov-24 at 13:09:22 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -37,28 +37,27 @@
 ;;; ************************************************************************
 ;;; Public declarations
 ;;; ************************************************************************
+(defvar action-key-depress-window)      ; "hmouse-drv.el"
+(defvar action-key-eol-function)        ; "hmouse-drv.el"
+(defvar assist-flag)                    ; "hmouse-drv.el"
+(defvar assist-key-eol-function)        ; "hmouse-drv.el"
+(defvar aw-ignored-buffers)
+
+(declare-function first-line-p "hui-mouse")
+(declare-function hact "hact")
+(declare-function hypb:require-package "hypb")
+(declare-function last-line-p "hui-mouse")
+(declare-function package-activate "package")
 (declare-function treemacs "ext:treemacs")
+(declare-function treemacs-add-and-display-current-project-exclusively "ext:treemacs")
 (declare-function treemacs-current-button "ext:treemacs-core-utils")
 (declare-function treemacs-current-visibility "ext:treemacs-scope")
+(declare-function treemacs-display-current-project-exclusively "ext:treemacs")
 (declare-function treemacs-get-local-window "ext:treemacs-scope")
 (declare-function treemacs-is-treemacs-window? "ext:treemacs-core-utils")
 (declare-function treemacs-node-buffer-and-position "ext:treemacs-mouse-interface")
 (declare-function treemacs-quit "ext:treemacs-interface")
 (declare-function treemacs-toggle-node "ext:treemacs-interface")
-(declare-function treemacs-add-and-display-current-project-exclusively "ext:treemacs")
-(declare-function treemacs-display-current-project-exclusively "ext:treemacs")
-(defvar aw-ignored-buffers)
-
-(defvar assist-flag)                    ; "hmouse-drv.el"
-(defvar action-key-eol-function)        ; "hmouse-drv.el"
-(defvar assist-key-eol-function)        ; "hmouse-drv.el"
-(defvar action-key-depress-window)      ; "hmouse-drv.el"
-
-(declare-function first-line-p "hui-mouse")
-(declare-function last-line-p "hui-mouse")
-(declare-function hact "hact")
-(declare-function package-activate "package")
-(declare-function hypb:require-package "hypb")
 
 ;;; ************************************************************************
 ;;; smart-treemacs functions
