@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     10-Nov-24 at 15:44:27 by Bob Weiner
+;; Last-Mod:     13-Nov-24 at 13:13:51 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -136,9 +136,11 @@
 ;;; Public declarations
 ;;; ************************************************************************
 
+(defvar action-key-modeline-buffer-id-function)  ;; "hui-mouse"
 (defvar org-agenda-buffer-tmp-name)  ;; "org-agenda.el"
 (defvar org-export-with-broken-links);; "ox.el"
 (defvar org-publish-project-alist)   ;; "ox-publish.el"
+
 (declare-function hsys-org-at-tags-p "hsys-org")
 (declare-function org-link-store-props "ol" (&rest plist))
 (declare-function org-publish-property "ox-publish" (property project &optional default))

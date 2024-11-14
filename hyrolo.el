@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      3-Nov-24 at 09:37:58 by Bob Weiner
+;; Last-Mod:     13-Nov-24 at 13:17:36 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1973,7 +1973,7 @@ Return number of matching entries found."
   ;; Save pattern as last rolo search expression.
   (setq hyrolo-match-regexp pattern)
   ;;
-  (let ((new-buf-flag) (actual-buf)
+  (let ((actual-buf)
 	;; Temporarily disable magit-auto-revert-mode-enable-in-buffers for hyrolo
 	;; buffers; not needed and can slow/hang file loading
 	(after-change-major-mode-hook
@@ -1981,8 +1981,7 @@ Return number of matching entries found."
     (if (and (or (null max-matches) (eq max-matches t) (integerp max-matches))
 	     (or (setq actual-buf (hyrolo-buffer-exists-p hyrolo-file-or-buf))
 		 (when (file-exists-p hyrolo-file-or-buf)
-		   (setq actual-buf (hyrolo-find-file-noselect hyrolo-file-or-buf)
-			 new-buf-flag t))))
+		   (setq actual-buf (hyrolo-find-file-noselect hyrolo-file-or-buf)))))
 	(let ((num-found 0)
 	      (incl-hdr t)
 	      (stuck-negative-point 0)
@@ -1996,12 +1995,6 @@ Return number of matching entries found."
 		   (setq incl-hdr nil
 			 max-matches (- max-matches)))))
 	  (set-buffer actual-buf)
-
-	  ;; Comment out next two lines that could set source buffer
-	  ;; to read-only since this can break org-capture into the
-	  ;; buffer.  -- rsw, 2024-11-03
-	  ;; (when new-buf-flag
-	  ;;  (setq buffer-read-only t))
 
 	  (when (and headline-only
 		     (not (string-match (concat "\\`\\(" (regexp-quote "^") "\\|" (regexp-quote "\\`") "\\)") pattern)))

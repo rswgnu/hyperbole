@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     28-Oct-24 at 01:32:59 by Bob Weiner
+;; Last-Mod:     13-Nov-24 at 13:08:00 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -50,40 +50,36 @@
 ;;; Public declarations
 ;;; ************************************************************************
 
-(declare-function markdown-footnote-goto-text "ext:markdown")
-(declare-function markdown-footnote-marker-positions "ext:markdown")
-(declare-function markdown-footnote-return "ext:markdown")
-(declare-function markdown-link-p "ext:markdown")
-(declare-function markdown-link-url "ext:markdown")
-(declare-function markdown-reference-goto-definition "ext:markdown")
-(declare-function markdown-reference-goto-link "ext:markdown")
-(declare-function markdown-wiki-link-p "ext:markdown")
-(declare-function markdown-footnote-text-positions "ext:markdown")
-(declare-function org-roam-id-find "ext:org-roam")
+(defvar cscope-output-line-regexp)
+(defvar id-cflow-repeated-indicator)
 (defvar markdown-regex-link-reference)
 (defvar markdown-regex-reference-definition)
-
-(defvar id-cflow-repeated-indicator)
-
-(defvar cscope-output-line-regexp)
-
 (defvar org-uuid-regexp)
 
 (declare-function actype:eval "hact")
 (declare-function actype:identity "hact")
+(declare-function ert-test-boundp "ert")
 (declare-function hact "hact")
 (declare-function hpath:display-buffer "hpath")
 (declare-function htype:def-symbol "hact")
 (declare-function hui:help-ebut-highlight "hui")
 (declare-function hyperb:stack-frame "hversion")
+(declare-function hyrolo-get-file-list "hyrolo")
+(declare-function hywiki-get-singular-page-name "hywiki")
 (declare-function hywiki-page-exists-p "hywiki")
-
+(declare-function markdown-footnote-goto-text "ext:markdown")
+(declare-function markdown-footnote-marker-positions "ext:markdown")
+(declare-function markdown-footnote-return "ext:markdown")
+(declare-function markdown-footnote-text-positions "ext:markdown")
+(declare-function markdown-link-p "ext:markdown")
+(declare-function markdown-link-url "ext:markdown")
+(declare-function markdown-reference-goto-definition "ext:markdown")
+(declare-function markdown-reference-goto-link "ext:markdown")
+(declare-function markdown-wiki-link-p "ext:markdown")
+(declare-function org-roam-id-find "ext:org-roam")
 (declare-function set:member "set")
 (declare-function symset:add "hact")
 (declare-function symtable:add "hact")
-
-(declare-function hyrolo-get-file-list "hyrolo")
-(declare-function ert-test-boundp "ert")
 
 ;;; ************************************************************************
 ;;; Public implicit button types
