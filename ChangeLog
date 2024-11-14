@@ -1,3 +1,17 @@
+2024-11-13  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-maybe-dehighlight-page-name,
+             hywiki-maybe-highlight-page-name): Fix that newline was not
+   being skipped back over to see HyWikiWord since in Org mode it has
+   end-comment syntax (>) rather than whitespace syntax (-).
+  test/hywiki-tests.el (hywiki-tests--face-property-for-wikiword-with-wikipage):
+    The above fixes the 2nd test case here.
+  test/hywiki-tests.el (hywiki-tests--convert-words-to-org-link):
+    The above fixes this test.
+
+* hywiki.el (hywiki-highlight-on-yank): Fix off-by-one error when string
+    extends to (point-max).
+
 2024-11-10  Bob Weiner  <rsw@gnu.org>
 
 * hui-window.el (action-key-modeline-left-edge-function,
