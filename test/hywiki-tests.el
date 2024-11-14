@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     11-Nov-24 at 22:53:15 by Mats Lidell
+;; Last-Mod:     14-Nov-24 at 00:17:30 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -299,7 +299,6 @@ Both mod-time and checksum must be changed for a test to return true."
 
 (ert-deftest hywiki-tests--face-property-for-wikiword-with-wikipage ()
   "Verify WikiWord for a wiki page gets face property hywiki-word-face."
-  :expected-result :failed
   (skip-unless (not noninteractive))
   (let* ((hsys-org-enable-smart-keys t)
          (hywiki-directory (make-temp-file "hywiki" t))
@@ -316,7 +315,7 @@ Both mod-time and checksum must be changed for a test to return true."
             (hywiki-mode 1)
             (with-hywiki-buttonize-and-insert-hooks
               (insert "WikiWord")
-	      (newline nil t))
+	      (command-execute #'newline))
             (goto-char 4)
             (should (hproperty:but-get (point) 'face hywiki-word-face))))
       (hywiki-tests--add-hywiki-hooks)
@@ -401,7 +400,6 @@ Both mod-time and checksum must be changed for a test to return true."
 
 (ert-deftest hywiki-tests--convert-words-to-org-link ()
   "Verify `hywiki-convert-words-to-org-links' converts WikiWords to org links."
-  :expected-result :failed
   (skip-unless (not noninteractive))
   (let* ((hywiki-directory (make-temp-file "hywiki" t))
          (wikipage (hywiki-add-page "WikiWord")))

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     13-Nov-24 at 13:13:51 by Mats Lidell
+;; Last-Mod:     14-Nov-24 at 00:11:05 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -430,7 +430,7 @@ Triggered by `post-command-hook' for non-character-commands, including
 deletion commands and those in `hywiki-non-character-commands'."
   (when (or (memq this-command hywiki-non-character-commands)
 	    (and (symbolp this-command)
-		 (string-match-p "\\`\\(org-\\)?delete-" (symbol-name this-command))))
+		 (string-match-p "^\\(org-\\)?delete-\\|insert\\(-\\|$\\)" (symbol-name this-command))))
     (if (and (marker-position hywiki--buttonize-start)
 	     (marker-position hywiki--buttonize-end))
 	(hywiki-maybe-highlight-page-names
@@ -901,7 +901,7 @@ Use `dired' unless `action-key-modeline-buffer-id-function' is set to
 Have to add one character to the length of the yanked text so that any
 needed word-separator after the last character is included to induce
 highlighting any last HyWikiWord."
-  (hywiki-maybe-highlight-page-names start (max (1+ end) (point-max))))
+  (hywiki-maybe-highlight-page-names start (min (1+ end) (point-max))))
 
 (defun hywiki-map-words (func)
   "Apply FUNC across all HyWikiWords in the current buffer and return nil.
@@ -1168,7 +1168,7 @@ If in a programming mode, must be within a comment.  Use
 
 	  (unless on-page-name
 	    ;; after page name
-	    (skip-syntax-backward "-"))
+	    (skip-syntax-backward ">-"))
 
 	  (hywiki-maybe-dehighlight-balanced-pairs)
 
@@ -1239,7 +1239,7 @@ the current page unless they have sections attached."
 
 	    (unless on-page-name
 	      ;; after page name
-	      (skip-syntax-backward "-"))
+	      (skip-syntax-backward ">-"))
 
 	    (hywiki-maybe-highlight-balanced-pairs)
 
@@ -1310,16 +1310,18 @@ the current page unless they have sections attached."
 
 (defun hywiki-maybe-highlight-off-page-name ()
   "Highlight any non-Org link HyWiki page#section at or one char before point.
-If on a whitespace character or at end of buffer, handle highlighting
-for any previous word or punctuation.
+If at bobp or any preceding char is non-whitespace and any following character is
+whitespace or at eobp, handle highlighting for any previous word or punctuation.
 
 If in a programming mode, must be within a comment.  Use
 `hywiki-word-face' to highlight.  Do not highlight references to
 the current page unless they have sections attached."
   (hywiki-maybe-highlight-page-name
    ;; flag on-page-name if on a whitespace character
-   (or (= (point) (point-max))
-       (= (char-syntax (char-after)) ? ))))
+   (and (or (= (point) (point-max))
+	    (= (char-syntax (char-after)) ? ))
+	(or (= (point) (point-min))
+	    (/= (char-syntax (char-before)) ? )))))
 
 (defun hywiki-maybe-highlight-on-page-name ()
   "Highlight any non-Org link HyWiki page#section at or one char before point.
