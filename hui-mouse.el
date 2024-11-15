@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     19-Aug-24 at 22:17:10 by Bob Weiner
+;; Last-Mod:     15-Nov-24 at 23:01:31 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -298,7 +298,9 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
      . ((funcall (key-binding (kbd "RET"))) . (funcall (key-binding (kbd "RET")))))
     ;;
     ;; If at the end of a line (eol), invoke the associated Smart Key handler EOL handler.
-    ((smart-eolp)
+    ((and (smart-eolp)
+          (not (and (funcall hsys-org-mode-function)
+                    (not (equal hsys-org-enable-smart-keys t)))))
      . ((funcall action-key-eol-function) . (funcall assist-key-eol-function)))
     ;;
     ;; Handle any Org mode-specific contexts but give priority to Hyperbole
