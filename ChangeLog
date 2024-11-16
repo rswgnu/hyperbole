@@ -1,3 +1,7 @@
+2024-11-17  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (run-emacs): Run Emacs as a make target for use with docker.
+
 2024-11-16  Mats Lidell  <matsl@gnu.org>
 
 * test/hsys-org-tests.el (hsys-org--meta-return-on-end-of-line): Add test
