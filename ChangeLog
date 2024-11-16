@@ -1,3 +1,11 @@
+2024-11-16  Mats Lidell  <matsl@gnu.org>
+
+* test/hsys-org-tests.el (hsys-org--meta-return-on-end-of-line): Add test
+    case for eol action in org-mode.
+
+* hui-mouse.el (hkey-alist): Guard action-key-eol-function from acting
+    when we should delegate to org-mode.
+
 2024-11-13  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-maybe-dehighlight-page-name,

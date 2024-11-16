@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    23-Apr-21 at 20:55:00
-;; Last-Mod:     31-Jul-24 at 01:46:48 by Bob Weiner
+;; Last-Mod:     16-Nov-24 at 09:45:51 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -224,6 +224,58 @@ This is independent of the setting of `hsys-org-enable-smart-keys'."
             (hsys-org-at-tags-p => t)
             (hsys-org--agenda-tags-string => ":tag"))
     (should (string= "agenda-func" (hsys-org-get-agenda-tags #'agenda-func)))))
+
+(ert-deftest hsys-org--meta-return-on-end-of-line ()
+  "Verify end-of-line behaves as `org-mode' when smart keys not enabled."
+  (dolist (v '(nil :buttons))
+    (let ((hsys-org-enable-smart-keys v))
+      ;;; One line no return
+      (with-temp-buffer
+        (org-mode)
+        (insert "* h1")
+        (goto-char 1)
+        (end-of-line)
+        (with-mock
+          (mock (hsys-org-meta-return) => t)
+          (should (equal hsys-org-enable-smart-keys v)) ; Ert traceability
+          (should (action-key))))
+      ;;; Two lines
+      (with-temp-buffer
+        (org-mode)
+        (insert "* h1\n* h2\n")
+        (goto-char 1)
+        (end-of-line)
+        (with-mock
+          (mock (hsys-org-meta-return) => t)
+          (should (equal hsys-org-enable-smart-keys v)) ; Ert traceability
+          (should (action-key))))))
+  (let ((hsys-org-enable-smart-keys t)
+        (v t))
+    ;;; One line no return
+    ;; At end of line is also end of file so smart-eolp filters out
+    ;; this as a Hyperbole context and org instead picks it
+    ;; up. Possibly a confusing behavior!? Should eof only be when
+    ;; action is below last visible line to avoid this case?
+    (with-temp-buffer
+      (org-mode)
+      (insert "* h1")
+      (goto-char 1)
+      (end-of-line)
+      (with-mock
+        (mock (hsys-org-meta-return) => t)
+        (should (equal hsys-org-enable-smart-keys v)) ; Ert traceability
+        (should (action-key))))
+    ;;; Two lines
+    ;; Hyperbole context is active and smart scroll is triggered.
+    (with-temp-buffer
+      (org-mode)
+      (insert "* h1\n* h2\n")
+      (goto-char 1)
+      (end-of-line)
+      (with-mock
+        (mock (smart-scroll-up) => t)
+        (should (equal hsys-org-enable-smart-keys v)) ; Ert traceability
+        (should (action-key))))))
 
 (provide 'hsys-org-tests)
 
