@@ -4,7 +4,7 @@
     case for eol action in org-mode.
 
 * hui-mouse.el (hkey-alist): Guard action-key-eol-function from acting
-    when we should be delegate to org-mode.
+    when we should delegate to org-mode.
 
 2024-11-13  Bob Weiner  <rsw@gnu.org>
 

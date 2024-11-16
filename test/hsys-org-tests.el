@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    23-Apr-21 at 20:55:00
-;; Last-Mod:     16-Nov-24 at 00:14:35 by Mats Lidell
+;; Last-Mod:     16-Nov-24 at 09:45:51 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -266,7 +266,7 @@ This is independent of the setting of `hsys-org-enable-smart-keys'."
         (should (equal hsys-org-enable-smart-keys v)) ; Ert traceability
         (should (action-key))))
     ;;; Two lines
-    ;; Hyperbole context is active an smart scroll is triggered.
+    ;; Hyperbole context is active and smart scroll is triggered.
     (with-temp-buffer
       (org-mode)
       (insert "* h1\n* h2\n")
