@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     14-Nov-24 at 00:17:30 by Bob Weiner
+;; Last-Mod:     17-Nov-24 at 12:53:21 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -292,8 +292,8 @@ Both mod-time and checksum must be changed for a test to return true."
   "Call BODY wrapped in hywiki hooks to simulate Emacs redisplay."
   (declare (indent 0) (debug t))
   `(progn
-     (funcall 'hywiki-debuttonize-non-character-commands)
      (progn ,@body)
+     (funcall 'hywiki-debuttonize-non-character-commands)
      (funcall 'hywiki-buttonize-character-commands)
      (funcall 'hywiki-buttonize-non-character-commands)))
 
@@ -371,7 +371,6 @@ Both mod-time and checksum must be changed for a test to return true."
 
 (ert-deftest hywiki-tests--verify-face-property-when-editing-wikiword-first-char ()
   "Verify face property changes when WikiWord is edited in the first char position."
-  :expected-result :failed
   (let* ((hywiki-directory (make-temp-file "hywiki" t))
          (wikipage (hywiki-add-page "WikiWord")))
     (skip-unless (not noninteractive))
@@ -385,7 +384,8 @@ Both mod-time and checksum must be changed for a test to return true."
             (should (looking-at-p "Wiki"))
             (should (hproperty:but-get (point) 'face hywiki-word-face))
 
-            (with-hywiki-buttonize-and-insert-hooks (delete-char 1))
+	    (delete-char 1)
+	    (hywiki-maybe-dehighlight-page-name t)
             (should (looking-at-p "iki"))
             (should-not (hproperty:but-get (point) 'face hywiki-word-face))
 

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     19-Aug-24 at 22:17:10 by Bob Weiner
+;; Last-Mod:     17-Nov-24 at 12:01:54 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2216,8 +2216,8 @@ If key is pressed:
 
 ;;;###autoload
 (defun smart-eobp ()
-  "Return t if point is past the last visible buffer line with text."
-  (and (or (eobp)
+  "Return t if point is past the last visible buffer line with non-whitespace characters."
+  (and (or (and (eobp) (bolp))
 	   ;; On a blank line and nothing but whitespace until eob
 	   (save-excursion
 	     (beginning-of-line)
@@ -2226,7 +2226,9 @@ If key is pressed:
 	   (not (smart-outline-char-invisible-p (1- (point)))))))
 
 (defun smart-eolp ()
-  "Return t if point is at the end of a visible line but not the end of the buffer."
+  "Return t if point is at the end of a visible line.
+This includes the last buffer line if it contains any non-whitespace
+characters.  It excludes a blank line at the end of the buffer."
   ;; smart-helm handles eol for helm buffers
   (unless (or (and (smart-helm-alive-p) (equal (helm-buffer-get) (buffer-name)))
 	      ;; Allow for org global cycling at start of buffer on a
