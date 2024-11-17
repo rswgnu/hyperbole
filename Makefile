@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     27-Oct-24 at 21:27:42 by Mats Lidell
+# Last-Mod:     17-Nov-24 at 00:02:09 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -628,6 +628,11 @@ docker-run: docker-update
 # Update the docker image for the specified version of Emacs
 docker-update:
 	docker pull silex/emacs:${DOCKER_VERSION}
+
+# Target for running emacs in the container with hyperbole loaded.
+# Example: make docker version=29.4 targets="clean bin run-emacs"
+run-emacs:
+	emacs --eval "(progn (add-to-list 'load-path \"/hyperbole\") (require 'hyperbole) (hyperbole-mode 1))"
 
 # Run with coverage. Run tests given by testspec and monitor the
 # coverage for the specified file.

@@ -298,7 +298,9 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
      . ((funcall (key-binding (kbd "RET"))) . (funcall (key-binding (kbd "RET")))))
     ;;
     ;; If at the end of a line (eol), invoke the associated Smart Key handler EOL handler.
-    ((smart-eolp)
+    ((and (smart-eolp)
+          (not (and (funcall hsys-org-mode-function)
+                    (not (equal hsys-org-enable-smart-keys t)))))
      . ((funcall action-key-eol-function) . (funcall assist-key-eol-function)))
     ;;
     ;; Handle any Org mode-specific contexts but give priority to Hyperbole
