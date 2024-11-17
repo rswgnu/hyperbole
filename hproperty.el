@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Aug-92
-;; Last-Mod:     13-Oct-24 at 23:11:55 by Bob Weiner
+;; Last-Mod:     17-Nov-24 at 10:31:59 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -249,8 +249,9 @@ first button with that PROPERTY and VALUE only."
 			    hproperty:flash-face))))
       (delq nil
 	    (mapcar (lambda (overlay)
-		      (when (memq (overlay-get overlay (or property 'face))
-				  val-list)
+		      (when (and (bufferp (overlay-buffer overlay))
+				 (memq (overlay-get overlay (or property 'face))
+				       val-list))
 			(if property
 			    (throw 'first (list overlay))
 			  overlay)))

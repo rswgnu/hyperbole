@@ -1,3 +1,24 @@
+2024-11-17  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-word-at): Fix to exclude any char after the HyWikiWord, if any.
+
+* hproperty.el (hproperty:but-get-all-in-region): Return only overlays that still
+    point to some buffer (may have overlay references that have been deleted and point
+    to no buffer).
+
+* test/hywiki-tests.el (hywiki-tests--verify-face-property-when-editing-wikiword-first-char):
+    Fix middle test after delete-char from HyWikiWord.
+
+* hui-mouse.el (smart-eobp): Trigger only if eobp = eolp or if only
+    whitespace on line preceding eobp.
+
+2024-11-16  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-debuttonize-non-character-commands):
+    Remove  (let ((hywiki-word-highlight-flag))) which was preventing
+    dehighlighting at the start of a WikiWord when the first character
+    was deleted.
+
 2024-11-17  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (run-emacs): Run Emacs as a make target for use with docker.

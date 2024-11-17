@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     14-Nov-24 at 00:11:05 by Bob Weiner
+;; Last-Mod:     17-Nov-24 at 10:27:44 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -451,13 +451,12 @@ deletion commands and those in `hywiki-non-character-commands'."
       ;; Use these to store any range of a delimited HyWikiWord#section
       (set-marker hywiki--buttonize-start start)
       (set-marker hywiki--buttonize-end end)
-        ;; Enable dehighlighting in HyWiki pages
-      (let ((hywiki-word-highlight-flag))
-	(if (and start end)
-	    (hywiki-maybe-dehighlight-page-names hywiki--buttonize-start
-						 hywiki--buttonize-end)
-	  ;; Dehighlight any page name at point
-	  (hywiki-maybe-dehighlight-between-page-names))))))
+      ;; Enable dehighlighting in HyWiki pages
+      (if (and start end)
+	  (hywiki-maybe-dehighlight-page-names hywiki--buttonize-start
+					       hywiki--buttonize-end)
+	;; Dehighlight any page name at point
+	(hywiki-maybe-dehighlight-between-page-names)))))
 
 (defun hywiki-buttonize-word (func start end face)
   "Create a HyWikiWord button by calling FUNC with START and END positions.
@@ -803,7 +802,7 @@ or this will return nil."
 	      (when (hywiki-maybe-at-wikiword-beginning)
 		(cond ((looking-at hywiki--word-and-buttonize-character-regexp)
 		       (setq start (match-beginning 0)
-			     end (1- (match-end 0))
+			     end (match-beginning 3)
 			     wikiword (string-trim
 				       (buffer-substring-no-properties start end))))
 		      ((looking-at (concat hywiki-word-with-optional-section-regexp "\\'"))
@@ -1263,8 +1262,8 @@ the current page unless they have sections attached."
 		       (progn
 			 (setq hywiki--page-name (match-string-no-properties 1)
 			       hywiki--start (match-beginning 0)
-			       ;; This includes char after the page#section
-			       hywiki--end   (match-end 0))
+			       ;; This excludes optional char after the page#section
+			       hywiki--end   (match-beginning 3))
 			 (hywiki-get-page hywiki--page-name)))
 		  (progn
 		    (setq hywiki--current-page (hywiki-get-buffer-page-name))
@@ -1272,7 +1271,7 @@ the current page unless they have sections attached."
 		    ;; include a #section.
 		    (unless (string-equal hywiki--current-page
 					  (buffer-substring-no-properties
-					   hywiki--start (1- hywiki--end)))
+					   hywiki--start hywiki--end))
 		      (if (setq hywiki--buts (hproperty:but-get-all-in-region
 					      hywiki--start hywiki--end
 					      'face hywiki-word-face))
@@ -1285,7 +1284,7 @@ the current page unless they have sections attached."
 				  hywiki--but-start (hproperty:but-start hywiki--buts)
 				  hywiki--but-end   (hproperty:but-end hywiki--buts))
 			    (unless (and (= hywiki--start hywiki--but-start)
-					 (= (1- hywiki--end) hywiki--but-end))
+					 (= hywiki--end hywiki--but-end))
 			      (hproperty:but-delete hywiki--buts)
 			      (hywiki-maybe-highlight-page-names
 			       hywiki--start hywiki--end)))
@@ -2045,9 +2044,9 @@ DIRECTION-NUMBER is 1 for forward scanning and -1 for backward scanning."
   (setq hywiki--buttonize-characters
 	(concat "[]()<>{} \t\r\n'" (hywiki-get-buttonize-characters))
 	hywiki--buttonize-character-regexp
-	(concat "[]["
+	(concat "\\([]["
 		(regexp-quote (substring hywiki--buttonize-characters 2))
-		"]")
+		"]\\|$\\)")
 	hywiki--word-and-buttonize-character-regexp
 	(concat hywiki-word-with-optional-section-regexp
 		hywiki--buttonize-character-regexp)))
