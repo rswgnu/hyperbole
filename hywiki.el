@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     17-Nov-24 at 10:27:44 by Bob Weiner
+;; Last-Mod:     17-Nov-24 at 15:56:48 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1188,7 +1188,7 @@ If in a programming mode, must be within a comment.  Use
 		     (progn
 		       (setq hywiki--page-name (match-string-no-properties 1)
 			     hywiki--start (match-beginning 0)
-			     hywiki--end   (1- (match-end 0)))
+			     hywiki--end   (match-beginning 3))
 		       (and (hywiki-get-page hywiki--page-name)
 			    ;; Ignore wikiwords preceded by any non-whitespace character
 			    ;; (or (bolp) (memq (preceding-char) '(?\  ?\t)))

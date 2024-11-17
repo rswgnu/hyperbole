@@ -1,6 +1,7 @@
 2024-11-17  Bob Weiner  <rsw@gnu.org>
 
-* hywiki.el (hywiki-word-at): Fix to exclude any char after the HyWikiWord, if any.
+* hywiki.el (hywiki-word-at, hywiki-maybe-dehighlight-page-name): Fix to exclude
+    any char after the HyWikiWord, if any.
 
 * hproperty.el (hproperty:but-get-all-in-region): Return only overlays that still
     point to some buffer (may have overlay references that have been deleted and point
