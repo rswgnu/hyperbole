@@ -802,7 +802,7 @@ or this will return nil."
 	      (when (hywiki-maybe-at-wikiword-beginning)
 		(cond ((looking-at hywiki--word-and-buttonize-character-regexp)
 		       (setq start (match-beginning 0)
-			     end (1- (match-end 0))
+			     end (match-beginning 3)
 			     wikiword (string-trim
 				       (buffer-substring-no-properties start end))))
 		      ((looking-at (concat hywiki-word-with-optional-section-regexp "\\'"))
