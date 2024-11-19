@@ -1,3 +1,9 @@
+2024-11-19  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-maybe-highlight-page-name): Fix that adding
+    numbers to the middle of a HyWikiWord did not dehighlight it;
+    see updates at the end of this function.
+
 2024-11-18  Bob Weiner  <rsw@gnu.org>
 
 * hactypes.el (require): Remove require of 'man' and do it only in
