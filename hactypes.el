@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     30-Jun-24 at 17:12:44 by Bob Weiner
+;; Last-Mod:     18-Nov-24 at 23:27:33 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -18,7 +18,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(bookmark hvar hsettings comint hbut hpath hargs hmail man hsys-org)))
+(eval-and-compile (mapc #'require '(bookmark hvar hsettings comint hbut hpath hargs hmail hsys-org)))
 
 ;;; ************************************************************************
 ;;; Public declarations

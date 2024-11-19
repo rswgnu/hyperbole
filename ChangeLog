@@ -1,3 +1,9 @@
+2024-11-18  Bob Weiner  <rsw@gnu.org>
+
+* hactypes.el (require): Remove require of 'man' and do it only in
+    man-show where needed.  This may allow CI/CD build of docker Emacs
+    master branch that lacks 'man' package.
+
 2024-11-18  bw  <bw@norlinux>
 
 * hui-tests.el (hui--ibut-link-directly-to-org-header-first-column):
