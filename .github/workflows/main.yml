@@ -26,7 +26,6 @@ jobs:
       - name: Compile
         shell: bash
         run: |
-          apt-get update
           apt-get install man
           make bin 2>&1 | tee MAKE_BIN_OUTPUT
           echo "Number of warnings: $(grep "Warning:" MAKE_BIN_OUTPUT | wc -l)" >> $GITHUB_STEP_SUMMARY
