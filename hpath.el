@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     24-Aug-24 at 01:31:41 by Bob Weiner
+;; Last-Mod:     18-Nov-24 at 20:16:58 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -554,7 +554,7 @@ Used only if the function `image-mode' is defined."
 ;; link is later resolved.
 ;;
 (defcustom hpath:variables
-  '(hyperb:dir load-path exec-path Info-directory-list sm-directory)
+  '(hyperb:dir hywiki-directory load-path exec-path Info-directory-list sm-directory)
   "*List of Emacs Lisp variable symbols to substitute within matching link paths.
 Each variable value, if bound, must be either a pathname or a list of pathnames.
 When embedded within a path, the format is ${variable}."
@@ -940,14 +940,16 @@ if (hpath:remote-available-p) returns nil."
 
 (defun hpath:at-p (&optional type non-exist)
   "Return delimited path or non-delimited remote path at point, if any.
-Path is expanded and normalized.  World-Wide Web urls are ignored
-and therefore dealt with by other code.  Delimiters may be:
-double quotes, open and close single quote, whitespace, or
-Texinfo file references.  If optional TYPE is the symbol \\='file or
-\\='directory, then only that path type is accepted as a match.
-Only locally reachable paths are checked for existence.  With
-optional NON-EXIST, nonexistent local paths are allowed.
-Absolute pathnames must begin with a `/' or `~'."
+Path is expanded and normalized.  See `hpath:is-p' for how the path
+is normalized.
+
+World-Wide Web urls are ignored and therefore dealt with by other
+code.  Delimiters may be: double quotes, open and close single
+quote, whitespace, or Texinfo file references.  If optional TYPE
+is the symbol \\='file or \\='directory, then only that path type
+is accepted as a match.  Only locally reachable paths are checked
+for existence.  With optional NON-EXIST, nonexistent local paths
+are allowed.  Absolute pathnames must begin with a `/' or `~'."
   (let ((path (hpath:delimited-possible-path non-exist))
 	subpath)
     (when path
@@ -1063,7 +1065,7 @@ Make any existing path within a file buffer absolute before returning."
 			;; match to in-file #anchor references
 			(string-match "\\`#[^+\'\"<>#]+\\'" path))
 		   (setq path (concat mode-prefix buffer-file-name path)))
-		  ((string-match "\\`\\([^#]+\\)\\(#[^#+]*\\)\\'" path)
+		  ((string-match "\\`\\([^#]+\\)\\(#[^#+]*.*\\)\\'" path)
 		   ;; file and #anchor reference
 		   (setq suffix (match-string 2 path)
 			 path (match-string 1 path))
@@ -2024,12 +2026,25 @@ prior to calling this function."
 	  (error ""))
       var-group)))
 
-(defun hpath:shorten (path)
-  "Shorten and return a PATH.
+(defun hpath:shorten (path &optional relative-to)
+  "Shorten and return a PATH optionally RELATIVE-TO other path.
+If RELATIVE-TO is omitted or nil, set it to `default-directory'.
 Replace Emacs Lisp variables and environment variables (format of
 ${var}) with their values in PATH.  The first matching value for
 variables like `${PATH}' is used.  Then abbreviate any remaining
 path."
+  (setq path (expand-file-name (hpath:substitute-value path)))
+  (unless relative-to
+    (setq relative-to default-directory))
+  (when (stringp relative-to)
+    (setq relative-to (expand-file-name
+		       (hpath:substitute-value relative-to))
+	  path
+	  (cond ((string-equal path relative-to)
+		 "")
+		((string-equal (file-name-directory path) relative-to)
+		 (file-name-nondirectory path))
+		(t (hpath:relative-to path relative-to)))))
   (hpath:abbreviate-file-name (hpath:substitute-var path)))
 
 (defun hpath:substitute-value (path)
