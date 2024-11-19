@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     10-Nov-24 at 15:44:56 by Bob Weiner
+;; Last-Mod:     18-Nov-24 at 20:05:31 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1929,7 +1929,8 @@ Buffer without File      link-to-buffer-tmp"
 					  ;;
 					  ;; If current line starts with an outline-regexp prefix and
 					  ;; has a non-empty heading, use a link-to-string-match.
-					  ((and (derived-mode-p 'outline-mode 'org-mode 'kotl-mode)
+					  ((and buffer-file-name
+						(derived-mode-p 'outline-mode 'org-mode 'kotl-mode)
 						(stringp outline-regexp)
 						(save-excursion
 						  (beginning-of-line)
