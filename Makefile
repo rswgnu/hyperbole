@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     17-Nov-24 at 00:02:09 by Mats Lidell
+# Last-Mod:     23-Nov-24 at 11:23:02 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -191,7 +191,7 @@ PRELOADS = $(SITE_PRELOADS) -l ./hload-path.el -l ./hversion.el -l ./hyperbole.e
 
 # Compile in batch mode.  Load site-lisp/site-start.el, which may set load-path.
 # Show complete expression; do not abbreviate any exprs in batch logs with ...
-BATCHFLAGS = --batch --quick --eval "(progn (setq debug-on-error t) (setq backtrace-line-length 0) \
+BATCHFLAGS = --batch --quick --eval "(progn (setq backtrace-line-length 0) \
                                  (message \"  emacs-version = %s\n  system-configuration = %s\n  emacs = %s%s\n  load-path = %s\" emacs-version system-configuration invocation-directory invocation-name load-path))"
 
 EMACS_BATCH=$(EMACS) $(BATCHFLAGS) $(PRELOADS)
