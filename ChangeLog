@@ -1,3 +1,9 @@
+2024-11-23  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (BATCHFLAGS): Use debug-on-error's default value nil. Emacs 31
+    introduces calling man using with-demoted-errors which
+    causes an error when requiring man when debug-on-error is set to t.
+
 2024-11-19  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-maybe-highlight-page-name): Fix that adding
