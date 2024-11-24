@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     13-Nov-24 at 13:08:00 by Mats Lidell
+;; Last-Mod:     24-Nov-24 at 01:52:18 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1696,7 +1696,16 @@ If a boolean function or variable, display its value."
       (if (and start end)
 	  (ibut:label-set page-name start end)
 	(ibut:label-set page-name))
-      (hact 'hywiki-find-page (hywiki-get-singular-page-name page-name)))))
+      (hact 'hywiki-find-referent page-name))))
+
+(defun hywiki-existing-word:help (wikiword)
+  "When on a HyWikiWord, customize its referent type and link."
+  (interactive (list (hywiki-word-at)))
+  (unless (stringp wikiword)
+    (setq wikiword (hywiki-word-at)))
+  (when wikiword
+    (ibut:label-set wikiword (match-beginning 0) (match-end 0))
+    (hywiki-find-referent wikiword t)))
 
 ;;; ========================================================================
 ;;; Inserts completion into minibuffer or other window.

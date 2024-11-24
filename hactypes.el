@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     18-Nov-24 at 23:27:33 by Bob Weiner
+;; Last-Mod:     23-Nov-24 at 12:27:01 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -347,7 +347,10 @@ Interactively, KEY-FILE defaults to the current buffer's file name."
 	     (describe-symbol symbol)))))
 
 (defun  hactypes:link-to-file-interactively ()
-  "Get a path to link to and return it as a one item list."
+  "Get a path to link to and return it as a one item list.
+If the path is already read into a buffer, prompt the user whether to
+also include its current (point) and if so, include that as the second
+list item returned."
   (let ((prev-reading-p hargs:reading-type)
 	(existing-buf t)
 	path-buf)

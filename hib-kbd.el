@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    22-Nov-91 at 01:37:57
-;; Last-Mod:     30-Jun-24 at 02:19:16 by Bob Weiner
+;; Last-Mod:     23-Nov-24 at 21:15:04 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -298,7 +298,7 @@ The KEY-SERIES is without any surrounding {}.  Return the
 normalized but still human-readable format.  Use
 `kbd-key:key-series-to-events' to add the key series to Emacs'
 keyboad input queue, as if they had been typed by the user."
-  (interactive "kKeyboard key sequence to normalize (no {}): ")
+  (interactive "sKeyboard key sequence to normalize (no {}): ")
   ;;
   ;; Hyperbole developers: see  `edmacro-parse-keys' in "edmacro.el"
   ;; for further details on key formats.

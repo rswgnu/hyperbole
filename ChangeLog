@@ -1,3 +1,67 @@
+2024-11-24  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (hywiki-word:help): Add so Assist Key on a HyWikiWord
+    customizes its referent type and link.
+  hywiki.el its referent type and link.
+
+2024-11-23  Bob Weiner  <rsw@gnu.org>
+
+* hui.el (hui:link-possible-types): Allow for :CUSTOM_ID: in
+    addition to :ID: matches for Org IDs.
+
+* hib-kbd.el (kbd-key:normalize): Fix interactive expr to read
+    a string rather than a single key sequence.
+
+* hywiki.el (hywiki-get-wikiwords-obarray): Add.
+            (hywiki-read-new-page-name, hywiki-read-page-name):
+    Replace 'hywiki-get-page-list' completion table with
+    'hywiki-get-wikiwords-obarray' which is more efficient.
+            (hywiki-find-page): Rename to 'hywiki-find-referent'.
+    Rename 'hywiki-find-page-hook' to 'hywiki-find-referent-hook'.
+            (hywiki-word-activate): Change so automatically creates
+    pages that do not exist, except for the first HyWiki page, in
+    which case, prompts before creation.
+            (hywiki-display-page-function): Add this customization
+    function that displays HyWiki pages.
+            (hywiki-display-page): Add to use above variable to
+    display HyWiki pages.
+            (hywiki-word): Update doc with first page prompting.
+            (hywiki-maybe-highlight-page-names): Return nil so
+    'hywiki-display-referent' returns nil when this is called.
+            (hywiki-get-file, hywiki-display-referent): Improve
+    #section matching to ignore #autosave# file names.
+            (hywiki-allow-plurals-flag): Add new customization,
+    defaults to t to treat plural HyWikiWords the same as singular
+    ones.
+            (hywiki-get-page): Handle HyWikiWord plurals based on
+    the above flag.
+
+* hactypes.el: Document potential second arg of referent (point)
+    when referent is already read into a buffer and user wants
+    to link to the current point.
+
+* hywiki.el (hywiki-add-*): Add to allow each HyWikiWord to have
+    a custom referent when created with a prefix argument.  Referent
+    type is prompted for, similar to when creating other Hyperbole
+    buttons.
+            (hywiki-add-prompted-referent): Add to prompt for and
+    link a HyWikiWord to a custom referent or action type.
+            (hywiki-referent-menu): New minibuffer menu used by the
+    above function.
+            (hywiki-get-page): Expand to return all new possible
+    referent types.
+            (hywiki-display-referent): Add to display all of the
+    new referent types.
+            (hywiki-read-new-page-name): Use any potential WikiWord at
+    point as the default.
+
+2024-11-22  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-find-page): Add missing second interactive
+    arg value, current-prefix-arg.  Rewrite to allow for
+    different actions per HyWikiWord or a single overriding
+    function.
+
 2024-11-19  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-maybe-highlight-page-name): Fix that adding
@@ -9,8 +73,6 @@
 * hactypes.el (require): Remove require of 'man' and do it only in
     man-show where needed.  This may allow CI/CD build of docker Emacs
     master branch that lacks 'man' package.
-
-2024-11-18  bw  <bw@norlinux>
 
 * hui-tests.el (hui--ibut-link-directly-to-org-header-first-column):
     Remove dir from fileb when comparing to in-buffer filename and
