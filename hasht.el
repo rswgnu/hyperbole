@@ -8,7 +8,7 @@
 ;; AUTHOR:       Bob Weiner
 ;;
 ;; ORIG-DATE:    16-Mar-90 at 03:38:48
-;; LAST-MOD:      6-Oct-24 at 13:26:58 by Bob Weiner
+;; LAST-MOD:     24-Nov-24 at 15:20:44 by Bob Weiner
 ;;
 ;; Copyright (C) 1990-1995, 1997, 2016  Free Software Foundation, Inc.
 ;; See the file BR-COPY for license information.
@@ -65,11 +65,12 @@ It is sent the two values as arguments.")
 
 (defun hash-add (value key hash-table)
   "Add VALUE, any lisp object, referenced by KEY, a string, to HASH-TABLE.
-Replaces any VALUE previously referenced by KEY."
-  (if (hashp hash-table)
-      (let* ((obarray (hash-obarray hash-table))
-	     (sym (intern key obarray)))
-	(if sym (set sym value)))))
+Replace any VALUE previously referenced by KEY."
+  (when (hashp hash-table)
+    (let* ((obarray (hash-obarray hash-table))
+	   (sym (intern key obarray)))
+	(when sym
+	  (set sym value)))))
 
 (defun hash-copy (hash-table)
   "Return a copy of HASH-TABLE.
@@ -111,7 +112,7 @@ Return nil if KEY is not in HASH-TABLE or non-nil otherwise."
 	 (let ((htable-copy (hash-make (length (hash-obarray obj)))))
 	   (mapc
 	    (lambda (elt) (hash-add (car elt) (cdr elt) htable-copy))
-	    (hash-map 'hash-deep-copy obj))
+	    (hash-map #'hash-deep-copy obj))
 	   htable-copy))
 	((vectorp obj)
 	 ;; convert to list for mapping
@@ -141,10 +142,11 @@ Return nil if KEY is not in HASH-TABLE or non-nil otherwise."
   "Lookup KEY in HASH-TABLE and return associated value.
 If value is nil, this function does not tell you whether or not KEY is in the
 hash table.  Use `hash-key-p' instead for that function."
-  (if (hashp hash-table)
-      (let* ((obarray (hash-obarray hash-table))
-	     (sym (intern-soft key obarray)))
-	 (if (boundp sym) (symbol-value sym)))))
+  (when (hashp hash-table)
+    (let* ((obarray (hash-obarray hash-table))
+	   (sym (intern-soft key obarray)))
+      (when (boundp sym)
+	(symbol-value sym)))))
 
 (defun hash-make (initializer &optional reverse)
   "Create a hash table from INITIALIZER.
@@ -201,7 +203,7 @@ in reverse order of occurrence (they are prepended to the list)."
     (cons 'hasht obarray)))
 
 (defun hash-map (func hash-table)
-  "Return result of applying FUNC over each (<value> . <key>) in HASH-TABLE.
+  "Return list result of calling FUNC over each (<value> . <key>) in HASH-TABLE.
 <key> is a symbol.
 
 If FUNC is in '(cdr key second symbol-name), then return all <key>s as strings.
@@ -215,7 +217,8 @@ If FUNC is in '(car value first symbol-value), then return all <value>s."
 		   (t `(lambda (sym) (funcall ,func
 					      (cons (symbol-value sym)
 						    (symbol-name sym)))))))
-  (let ((result))
+  (let ((obarray (hash-obarray hash-table))
+	result)
     (mapatoms (lambda (sym)
 		(and (boundp sym)
 		     sym

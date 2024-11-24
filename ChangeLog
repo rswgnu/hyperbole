@@ -1,5 +1,41 @@
 2024-11-24  Bob Weiner  <rsw@gnu.org>
 
+* hmouse-drv.el (hkey-help): If a HyWikiWord ibut, save its referent as an
+    attribute.
+
+* hui-menu.el (hui-menu-hywiki): Rename 'Add-HyWiki-Link' to 'Insert-HyWiki-Link'.
+  hywiki.el   (hywiki-add-link): Rename to 'hywiki-insert-link'.
+
+* hywiki.el (hywiki-read-new-page-name, hywiki-read-page-name):
+    Rename to 'hywiki-word-read-new' and 'hywiki-word-read'.
+    Change prompt from "HyWiki Page Name" to "HyWikiWord" since
+    not all referents are pages any more.
+            (hywiki-word-grep): Add to compute and perform HyWikiWord grep.
+	    (hywiki-get-page): Rename to 'hywiki-get-referent'.
+	    (hywiki-get-singular-page-name): Rename to
+    'hywiki-get-singular-wikiword'.
+            (hywiki-get-plural-page-name): Rename to
+    'hywiki-get-plural-wikiword'.
+            (hywiki-page-exists-p): Rename to 'hywiki-referent-exists-p'
+    and improve doc string.
+            (hywiki-display-referent): Fix to use existing referent if any
+    before calling 'hywiki-add-page'.
+            (hywiki-referent-menu): Change 'Path' to 'Link' and add 'Page'
+    to reset to a standard HyWiki Page link.
+            (hywiki-add-path): Rename to 'hywiki-add-link'.
+            (hywiki-add-page): Remove unused 'prompt-flag' arg and replace
+    with optional 'force-flag' to force overwriting an existing HyWikiWord
+    referent.
+            (hywiki-add-to-page): Rename to 'hywiki-add-to-referent' and
+    rewrite to handle referents.  Change arg 'start-flag' to 'position'
+    of insert.
+
+* hactypes.el (link-to-buffer-tmp, link-to-file): Fix 'point' arg to
+    accept markers.
+
+* hywiki.el (hywiki-make-pages-hasht): Fix to maintain non-page referent
+    elements when rebuild the hash table.
+
 * hibtypes.el (hywiki-word:help): Add so Assist Key on a HyWikiWord
     customizes its referent type and link.
   hywiki.el its referent type and link.

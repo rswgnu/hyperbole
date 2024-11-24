@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     23-Nov-24 at 12:27:01 by Bob Weiner
+;; Last-Mod:     24-Nov-24 at 12:09:18 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -280,15 +280,15 @@ if any."
 
 (defact link-to-buffer-tmp (buffer &optional point)
   "Display a BUFFER scrolled to optional POINT.
-If POINT is given, the buffer is displayed with POINT at the top of
-the window.
+If POINT is given (an integer or marker), the buffer is displayed with
+POINT at the top of the window.
 
 This type of link is for use within a single editor session.  Use
 `link-to-file' instead for a permanent link."
   (interactive "bBuffer to link to: ")
   (if (or (stringp buffer) (bufferp buffer))
       (and (hpath:display-buffer buffer)
-	   (integerp point)
+	   (integer-or-marker-p point)
 	   (progn (goto-char (min (point-max) point))
 		  (recenter 0)))
     (hypb:error "(link-to-buffer-tmp): Not a current buffer: %s" buffer)))
@@ -426,7 +426,7 @@ the window or as close as possible."
 	;; the path that use within a key series may have introduced.
 	(setq path (hpath:trim path))
 	(and (hpath:find path)
-	     (integerp point)
+	     (integer-or-marker-p point)
 	     (progn (goto-char (min (point-max) point))
 		    (recenter 0))))
     (hypb:error "(link-to-file): Invalid file name: \"%s\"" path)))
