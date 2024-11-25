@@ -1,4 +1,22 @@
+2024-11-25  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-referent-menu): Make all menu calls interactive
+   and update all hywiki-add-* interactive specs to take any wikiword
+   at point and if not, then prompt with completion for one.
+
+* hui-mini.el (hui:menu-hywiki): HyWiki menu replace FindPage with
+    FindReferent.
+              (hui:menu-act): Fix improper closing parens before end
+    of setq causing a bug where always returned nil.
+
 2024-11-24  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-add-page-and-display): Add optional prefix arg
+    PROMPT-FLAG for use in 'hywiki-find-referent' call.  Rewrite.
+    Update doc.  This allows setting custom referent types when passing
+    a prefix arg to the the HyWiki/Create menu item.
+           (hywiki-display-page, hywiki-get-referent): Call 'hywiki-get-file'
+    to expand page file path, rather than doing it manually.  Return referent.
 
 * hmouse-drv.el (hkey-help): If a HyWikiWord ibut, save its referent as an
     attribute.
