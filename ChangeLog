@@ -1,3 +1,10 @@
+2024-11-24  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (website-local-devel): Update the website files locally for
+    development version.
+    (website-devel): Push local updates to go live at
+    https:/www.gnu.org/software/hyperbole/devel.
+
 2024-11-23  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (BATCHFLAGS): Use debug-on-error's default value nil. Emacs 31
