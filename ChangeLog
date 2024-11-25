@@ -1,3 +1,8 @@
+2024-11-25  Mats Lidell  <matsl@gnu.org>
+
+* .github/workflows/static.yaml: Static workflow for publishing the manual
+    to a static site using GitHub Pages.
+
 2024-11-24  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (website-local-devel): Update the website files locally for
