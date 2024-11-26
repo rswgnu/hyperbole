@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Mar-94 at 11:22:09
-;; Last-Mod:      3-Oct-23 at 16:43:12 by Mats Lidell
+;; Last-Mod:     25-Nov-24 at 22:11:56 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -91,11 +91,11 @@
       ["First-Cell"          kotl-mode:beginning-of-buffer  t]
       ["Last-Cell"           kotl-mode:end-of-buffer        t])
     '("Label-Type"
-      ["Alphanumeric (Default)"  (kview:set-label-type kview 'alpha)  t]
-      ["Legal"                   (kview:set-label-type kview 'legal)  t]
+      ["Alphanumeric (Default)"  (kview:set-label-type kotl-kview 'alpha)  t]
+      ["Legal"                   (kview:set-label-type kotl-kview 'legal)  t]
       ;; ["None"                    (kview:set-label-type kview 'no)     t]
       ;; ["Partial-Alpha"           (kview:set-label-type kview 'partial-alpha) t]
-      ["Permanent-Idstamp"       (kview:set-label-type kview 'id)     t]
+      ["Permanent-Idstamp"       (kview:set-label-type kotl-kview 'id)     t]
       ;; ["Stars"                   (kview:set-label-type kview 'star) t]
       "----"
       ["Set-Label-Separator"     kview:set-label-separator  t])

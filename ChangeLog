@@ -1,5 +1,7 @@
 2024-11-25  Mats Lidell  <matsl@gnu.org>
 
+* kotl/kmenu.el (kotl-menu-common-body): Use kotl-kview. 
+
 * .github/workflows/static.yaml: Static workflow for publishing the manual
     to a static site using GitHub Pages.
 
