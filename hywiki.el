@@ -758,7 +758,7 @@ or return nil if not.
 
 After successfully adding the activity, run `hywiki-add-referent-hook'.
 
-Use `hywiki-get-page' to determine whether WIKIWORD exists prior to
+Use `hywiki-get-referent' to determine whether WIKIWORD exists prior to
 calling this function."
   (interactive (list (or (hywiki-word-at)
 			 (hywiki-word-read-new "Add/Edit HyWikiWord: "))))
@@ -774,7 +774,7 @@ or return nil if not.
 
 After successfully adding the bookmark, run `hywiki-add-referent-hook'.
 
-Use `hywiki-get-page' to determine whether WIKIWORD exists prior to
+Use `hywiki-get-referent' to determine whether WIKIWORD exists prior to
 calling this function."
   (interactive (list (or (hywiki-word-at)
 			 (hywiki-word-read-new "Add/Edit HyWikiWord: "))))
@@ -803,7 +803,7 @@ or return nil if not.
 
 After successfully adding the actype, run `hywiki-add-referent-hook'.
 
-Use `hywiki-get-page' to determine whether WIKIWORD exists prior to
+Use `hywiki-get-referent' to determine whether WIKIWORD exists prior to
 calling this function."
   (interactive (list (or (hywiki-word-at)
 			 (hywiki-word-read-new "Add/Edit HyWikiWord: "))))
@@ -819,7 +819,7 @@ or return nil if not.
 
 After successfully adding the grep, run `hywiki-add-referent-hook'.
 
-Use `hywiki-get-page' to determine whether WIKIWORD exists prior to
+Use `hywiki-get-referent' to determine whether WIKIWORD exists prior to
 calling this function."
   (interactive (list (or (hywiki-word-at)
 			 (hywiki-word-read-new "Add/Edit HyWikiWord: "))))
@@ -833,7 +833,7 @@ or return nil if not.
 
 After successfully adding the button link, run `hywiki-add-referent-hook'.
 
-Use `hywiki-get-page' to determine whether WIKIWORD exists prior to
+Use `hywiki-get-referent' to determine whether WIKIWORD exists prior to
 calling this function."
   (interactive (list (or (hywiki-word-at)
 			 (hywiki-word-read-new "Add/Edit HyWikiWord: "))))
@@ -850,7 +850,7 @@ or return nil if not.
 
 After successfully adding the hyrolo search, run `hywiki-add-referent-hook'.
 
-Use `hywiki-get-page' to determine whether WIKIWORD exists prior to
+Use `hywiki-get-referent' to determine whether WIKIWORD exists prior to
 calling this function."
   (interactive (list (or (hywiki-word-at)
 			 (hywiki-word-read-new "Add/Edit HyWikiWord: "))))
@@ -866,7 +866,7 @@ or return nil if not.
 
 After successfully adding the Info index item, run `hywiki-add-referent-hook'.
 
-Use `hywiki-get-page' to determine whether WIKIWORD exists prior to
+Use `hywiki-get-referent' to determine whether WIKIWORD exists prior to
 calling this function."
   (interactive (list (or (hywiki-word-at)
 			 (hywiki-word-read-new "Add/Edit HyWikiWord: "))))
@@ -886,7 +886,7 @@ or return nil if not.
 
 After successfully adding the Info node, run `hywiki-add-referent-hook'.
 
-Use `hywiki-get-page' to determine whether WIKIWORD exists prior to
+Use `hywiki-get-referent' to determine whether WIKIWORD exists prior to
 calling this function."
   (interactive (list (or (hywiki-word-at)
 			 (hywiki-word-read-new "Add/Edit HyWikiWord: "))))
@@ -906,7 +906,7 @@ or return nil if not.
 
 After successfully adding the key series, run `hywiki-add-referent-hook'.
 
-Use `hywiki-get-page' to determine whether WIKIWORD exists prior to
+Use `hywiki-get-referent' to determine whether WIKIWORD exists prior to
 calling this function."
   (interactive (list (or (hywiki-word-at)
 			 (hywiki-word-read-new "Add/Edit HyWikiWord: "))))
@@ -923,7 +923,7 @@ or return nil if not.
 
 After successfully adding the path link, run `hywiki-add-referent-hook'.
 
-Use `hywiki-get-page' to determine whether WIKIWORD exists prior to
+Use `hywiki-get-referent' to determine whether WIKIWORD exists prior to
 calling this function."
   (interactive (list (or (hywiki-word-at)
 			 (hywiki-word-read-new "Add/Edit HyWikiWord: "))))
@@ -941,7 +941,7 @@ or return nil if not.
 
 After successfully adding the sexpression, run `hywiki-add-referent-hook'.
 
-Use `hywiki-get-page' to determine whether WIKIWORD exists prior to
+Use `hywiki-get-referent' to determine whether WIKIWORD exists prior to
 calling this function."
   (interactive (list (or (hywiki-word-at)
 			 (hywiki-word-read-new "Add/Edit HyWikiWord: "))))
@@ -968,7 +968,7 @@ or return nil if not.
 
 After successfully adding the action, run `hywiki-add-referent-hook'.
 
-Use `hywiki-get-page' to determine whether WIKIWORD exists prior to
+Use `hywiki-get-referent' to determine whether WIKIWORD exists prior to
 calling this function."
   (interactive (list (or (hywiki-word-at)
 			 (hywiki-word-read-new "Add/Edit HyWikiWord: "))))
@@ -991,7 +991,7 @@ ert test results mode, if this is the first HyWiki page in
 
 After successfully adding a page, run `hywiki-add-page-hook'.
 
-Use `hywiki-get-page' to determine whether a HyWiki page exists."
+Use `hywiki-get-referent' to determine whether a HyWiki page exists."
   (interactive (list (or (hywiki-word-at)
 			 (hywiki-word-read-new "Add/Edit HyWiki page: "))
 		     current-prefix-arg))
@@ -1030,7 +1030,7 @@ If there is no existing WIKIWORD referent, add a HyWiki page for it.
 See doc for `hywiki-find-referent' for use of optional prefix arg
 PROMPT-FLAG. 
 
-Use `hywiki-get-page' to determine whether a HyWiki page exists."
+Use `hywiki-get-referent' to determine whether a HyWiki page exists."
   (interactive (list (or (hywiki-word-at)
 			 (hywiki-word-read-new "Add and display HyWiki page: "))
 		     current-prefix-arg))
@@ -1050,7 +1050,7 @@ or return nil if not.
 
 After successfully adding the sexpression, run `hywiki-add-referent-hook'.
 
-Use `hywiki-get-page' to determine whether WIKIWORD exists prior to
+Use `hywiki-get-referent' to determine whether WIKIWORD exists prior to
 calling this function."
   (interactive (list (or (hywiki-word-at)
 			 (hywiki-word-read-new "Add/Edit HyWikiWord: "))))
@@ -1123,7 +1123,7 @@ per file to the absolute value of MAX-MATCHES, if given and not 0.  If
 (defun hywiki-maybe-at-wikiword-beginning ()
   "Return non-nil if previous character is one preceding a HyWiki word.
 Do not test whether or not a page exists for the HyWiki word.
-Use `hywiki-get-page' to determine whether a HyWiki page exists."
+Use `hywiki-get-referent' to determine whether a HyWiki page exists."
   ;; Ignore wikiwords preceded by any non-whitespace character, except
   ;; any of these: [({<"'`'
   (when (or (bolp) (cl-find (char-before) "\[\(\{\<\"'`\t\n\r\f "))
@@ -2391,7 +2391,7 @@ Search across `hywiki-directory'."
 
 (defun hywiki-word-is-p (word)
   "Return non-nil if WORD is a HyWiki word and optional #section.
-The page for the word may not yet exist.  Use `hywiki-get-page'
+The page for the word may not yet exist.  Use `hywiki-get-referent'
 to determine whether a HyWiki word page exists.
 
 Return nil if WORD is a prefixed, typed hy:HyWikiWord, since
