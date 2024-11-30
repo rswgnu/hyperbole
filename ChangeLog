@@ -1,3 +1,15 @@
+2024-12-16  Mats Lidell  <matsl@gnu.org>
+
+* hywiki.el (hywiki-add-referent-hook): Add defvar for hywiki-add-referent-hook.
+
+* test/hywiki-tests.el (hywiki-tests--get-singular-wikiword)
+   (hywiki-tests--get-plural-wikiword, hywiki-tests--add-referent)
+   (hywiki-tests--add-bookmark, hywiki-tests--add-command)
+   (hywiki-tests--add-find, hywiki-tests--add-global-button)
+   (hywiki-tests--add-hyrolo, hywiki-tests--add-info-index)
+   (hywiki-tests--add-info-node, hywiki-tests--add-key-series)
+   (hywiki-tests--add-link, hywiki-test--add-org-id): Tests.
+
 2024-12-16  Bob Weiner  <rsw@gnu.org>
 
 * test/hbut-tests.el: Change most "/tmp" to "/tmp/" for ease of comparison
