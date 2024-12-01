@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     25-Nov-24 at 01:30:55 by Bob Weiner
+;; Last-Mod:      1-Dec-24 at 12:54:16 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -118,13 +118,16 @@
 ;;; ************************************************************************
 
 (require 'cl-lib)     ;; For `cl-find'
+(require 'hactypes)   ;; For `link-to-file-interactively'
 (require 'hargs)
-(require 'hbut)       ;; For `hbut:syntax-table'
 (require 'hasht)
+(require 'hbut)       ;; For `hbut:syntax-table'
 (require 'hpath)
-(require 'hypb)       ;; Requires `seq'
 (require 'hproperty)
 (require 'hsys-consult)
+(require 'hui)        ;; For `hui:actype'
+(require 'hui-mini)   ;; For `hui:menu-act'
+(require 'hypb)       ;; Requires `seq'
 (require 'outline)    ;; For `outline-mode-syntax-table'
 (require 'thingatpt)
 
@@ -136,7 +139,8 @@
 ;;; Public declarations
 ;;; ************************************************************************
 
-(defvar action-key-modeline-buffer-id-function)  ;; "hui-mouse"
+(defvar action-key-modeline-buffer-id-function)  ;; "hui-mouse.el"
+(defvar bookmark-current-bookmark)               ;; "bookmark.el"
 (defvar hywiki-referent-menu nil)                ;; "hywiki.el"
 (defvar org-agenda-buffer-tmp-name)              ;; "org-agenda.el"
 (defvar org-export-with-broken-links)            ;; "ox.el"
@@ -145,8 +149,11 @@
 (declare-function activities-completing-read "activities" (:prompt prompt :default default))
 (declare-function activities-new "activities" (name))
 (declare-function activities-resume "activities" (activity :resetp resetp))
+(declare-function bookmark-completing-read "bookmark" (prompt &optional default))
+(declare-function bookmark-location "bookmark" (bookmark-name-or-record))
 (declare-function hsys-org-at-tags-p "hsys-org")
 (declare-function org-link-store-props "ol" (&rest plist))
+(declare-function org-roam-node-read "org-roam" (&optional initial-input filter-fn sort-fn require-match prompt))
 (declare-function org-publish-property "ox-publish" (property project &optional default))
 (declare-function smart-treemacs-edit "hui-treemacs" (&optional dir))
 

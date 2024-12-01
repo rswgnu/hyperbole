@@ -1,3 +1,8 @@
+2024-12-01  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el: Add additional require, defvar and declare-function to
+    remove byte-compiler warnings.
+
 2024-11-25  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-referent-menu): Make all menu calls interactive
