@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     17-Nov-24 at 12:53:21 by Bob Weiner
+;; Last-Mod:     24-Nov-24 at 16:43:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -36,7 +36,7 @@
           (with-mock
             (not-called hywiki-add-page)
             (should (string= hywiki-page-file
-                             (hywiki-get-page "WikiWord")))))
+                             (hywiki-get-referent "WikiWord")))))
       (hy-delete-file-and-buffer hywiki-page-file)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
@@ -62,7 +62,7 @@
         (with-temp-buffer
           (insert "[[hy:WikiWord]]")
           (goto-char 4)
-          (mocklet (((hywiki-add-page "WikiWord" nil) => wikifile))
+          (mocklet (((hywiki-add-page "WikiWord") => wikifile))
             (action-key)))
       (hy-delete-file-and-buffer wikifile))))
 
@@ -244,7 +244,7 @@ Both mod-time and checksum must be changed for a test to return true."
 (ert-deftest hywiki-tests--get-page-list-when-new-wiki-directory ()
   "Verify `hywiki-get-page-list' is empty for new `hywiki-directory'."
   (let* ((hywiki-directory (make-temp-file "hywiki" t))
-         (wiki-page (hywiki-add-page "WikiWord")))
+         (wikipage (hywiki-add-page "WikiWord")))
     (unwind-protect
         (progn
           (should (= 1 (length (hywiki-get-page-list))))
@@ -253,7 +253,7 @@ Both mod-time and checksum must be changed for a test to return true."
                 (progn
                   (should (= 0 (length (hywiki-get-page-list)))))
               (hy-delete-dir-and-buffer hywiki-directory))))
-      (hy-delete-file-and-buffer wiki-page)
+      (hy-delete-file-and-buffer wikipage)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 ;; Following three test cases for verifying proper face is some what

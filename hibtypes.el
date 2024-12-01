@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     13-Nov-24 at 13:08:00 by Mats Lidell
+;; Last-Mod:     24-Nov-24 at 14:41:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -65,8 +65,8 @@
 (declare-function hui:help-ebut-highlight "hui")
 (declare-function hyperb:stack-frame "hversion")
 (declare-function hyrolo-get-file-list "hyrolo")
-(declare-function hywiki-get-singular-page-name "hywiki")
-(declare-function hywiki-page-exists-p "hywiki")
+(declare-function hywiki-get-singular-wikiword "hywiki")
+(declare-function hywiki-referent-exists-p "hywiki")
 (declare-function markdown-footnote-goto-text "ext:markdown")
 (declare-function markdown-footnote-marker-positions "ext:markdown")
 (declare-function markdown-footnote-return "ext:markdown")
@@ -1689,14 +1689,23 @@ If a boolean function or variable, display its value."
 ;;; ========================================================================
 
 (defib hywiki-existing-word ()
-  "On a HyWiki word with an existing page, display its page and optional section."
-  (cl-destructuring-bind (page-name start end)
-      (hywiki-page-exists-p :range)
-    (when page-name
+  "On a HyWikiWord with an existing referent, display the referent."
+  (cl-destructuring-bind (wikiword start end)
+      (hywiki-referent-exists-p :range)
+    (when wikiword
       (if (and start end)
-	  (ibut:label-set page-name start end)
-	(ibut:label-set page-name))
-      (hact 'hywiki-find-page (hywiki-get-singular-page-name page-name)))))
+	  (ibut:label-set wikiword start end)
+	(ibut:label-set wikiword))
+      (hact 'hywiki-find-referent wikiword))))
+
+(defun hywiki-existing-word:help (wikiword)
+  "When on a HyWikiWord, customize its referent type and link."
+  (interactive (list (hywiki-word-at)))
+  (unless (stringp wikiword)
+    (setq wikiword (hywiki-word-at)))
+  (when wikiword
+    (ibut:label-set wikiword (match-beginning 0) (match-end 0))
+    (hywiki-find-referent wikiword t)))
 
 ;;; ========================================================================
 ;;; Inserts completion into minibuffer or other window.

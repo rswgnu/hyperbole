@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     25-Jun-24 at 02:13:58 by Bob Weiner
+;; Last-Mod:     24-Nov-24 at 16:27:49 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1142,8 +1142,17 @@ documentation is found."
 		    (when (memq cmd-sym '(hui:hbut-act hui:hbut-help))
 		      (let ((actype (or (actype:elisp-symbol (hattr:get 'hbut:current 'actype))
 					(hattr:get 'hbut:current 'actype)))
+			    (lbl-key (hattr:get 'hbut:current 'lbl-key))
 			    (categ (hattr:get 'hbut:current 'categ))
 			    (attributes (nthcdr 2 (hattr:list 'hbut:current))))
+
+			;; If a HyWikiWord ibut, save its referent as
+			;; an attribute.
+			(when (and (featurep 'hywiki)
+				   (eq actype #'hywiki-find-referent))
+			  (hattr:set 'hbut:current 'referent
+				     (hywiki-get-referent lbl-key)))
+
 			(princ (format "%s %s BUTTON SPECIFICS:\n"
 				       (htype:def-symbol
 					(if (eq categ 'explicit) actype categ))
