@@ -545,6 +545,7 @@ Note special meaning of `hywiki-allow-plurals-flag'."
 
 (ert-deftest hywiki-tests--add-referent ()
   "Verify `hywiki-add-referent'."
+  (defvar hywiki-add-referent-hook)
   (let ((hywiki-directory (make-temp-file "hywiki" t))
         (hywiki-add-referent-hook 'test-func))
     (unwind-protect
@@ -618,7 +619,7 @@ Note special meaning of `hywiki-allow-plurals-flag'."
   "Verify `hywiki-add-link'."
   (mocklet (((hactypes:link-to-file-interactively) => '("file" 20))
             ((hpath:file-position-to-line-and-column "file" 20) => "file:L2:C3")
-            ((hywiki-add-referent "WikiWord" "file:L1:C3") => 'path-referent))
+            ((hywiki-add-referent "WikiWord" "file:L2:C3") => 'path-referent))
     (should (equal 'path-referent (hywiki-add-link "WikiWord")))))
 
 (ert-deftest hywiki-test--add-org-id ()

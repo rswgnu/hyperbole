@@ -446,8 +446,6 @@ Only argument is the page name concatenated with optional #section."
   :type 'boolean
   :group 'hyperbole-hywiki)
 
-(defvar hywiki-add-referent-hook nil)
-
 ;;; ************************************************************************
 ;;; hywiki minor mode
 ;;; ************************************************************************
