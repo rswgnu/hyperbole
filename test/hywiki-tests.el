@@ -622,7 +622,7 @@ Note special meaning of `hywiki-allow-plurals-flag'."
             ((hywiki-add-referent "WikiWord" "file:L2:C3") => 'path-referent))
     (should (equal 'path-referent (hywiki-add-link "WikiWord")))))
 
-(ert-deftest hywiki-test--add-org-id ()
+(ert-deftest hywiki-tests--add-org-id ()
   "Verify `hywiki-add-org-id'."
   ;; Error case - Non org-mode buffer
   (let ((filea (make-temp-file "hypb" nil ".txt")))
