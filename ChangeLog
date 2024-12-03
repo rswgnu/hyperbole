@@ -9,7 +9,7 @@
    (hywiki-tests--add-hyrolo, hywiki-tests--add-info-index)
    (hywiki-tests--add-info-node, hywiki-tests--add-key-series)
    (hywiki-tests--add-link, hywiki-tests--add-org-id)
-   (hywiki-tests--get-page-list-for-new-wiki-directory-after-added--referent):
+   (hywiki-tests--get-page-list-for-new-wiki-directory-after-added-referent):
    Tests.
 
 2024-12-16  Bob Weiner  <rsw@gnu.org>
