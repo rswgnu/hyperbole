@@ -273,6 +273,22 @@ Both mod-time and checksum must be changed for a test to return true."
       (hy-delete-file-and-buffer wikipage)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
+(ert-deftest hywiki-tests--get-page-list-for-new-wiki-directory-after-added--referent ()
+  "Verify `hywiki-get-page-list' is empty for new `hywiki-directory'."
+  (defvar hywiki-add-referent-hook)
+  (let ((hywiki-directory (make-temp-file "hywiki" t))
+        (hywiki-add-referent-hook 'test-func))
+    (unwind-protect
+        (progn
+          (mocklet (((test-func) => t))
+            (should (eq 'referent (hywiki-add-referent "WikiWord" 'referent))))
+          (should (= 1 (length (hywiki-get-page-list))))
+          (let ((hywiki-directory (make-temp-file "hywiki" t)))
+            (unwind-protect
+                (should (= 0 (length (hywiki-get-page-list))))
+              (hy-delete-dir-and-buffer hywiki-directory))))
+      (hy-delete-dir-and-buffer hywiki-directory))))
+
 ;; Following three test cases for verifying proper face is some what
 ;; experimental. They need to be run in interactive mode.
 
