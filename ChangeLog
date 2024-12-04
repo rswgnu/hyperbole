@@ -2,7 +2,8 @@
 
 * hywiki.el (hywiki-add-referent-hook): Add defvar for hywiki-add-referent-hook.
 
-* test/hywiki-tests.el (hywiki-tests--get-singular-wikiword)
+* test/hywiki-tests.el (hywiki-tests--sections-with-dash-space)
+   (hywiki-tests--get-singular-wikiword)
    (hywiki-tests--get-plural-wikiword, hywiki-tests--add-referent)
    (hywiki-tests--add-bookmark, hywiki-tests--add-command)
    (hywiki-tests--add-find, hywiki-tests--add-global-button)

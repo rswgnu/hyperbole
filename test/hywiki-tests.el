@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     16-Dec-24 at 21:58:16 by Mats Lidell
+;; Last-Mod:     16-Dec-24 at 21:59:57 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -118,6 +118,31 @@
           (insert "-subsection")
           (goto-char 4)
           (should (string= "WikiWord#section-subsection" (hywiki-word-at))))
+      (hywiki-mode -1)
+      (hy-delete-dir-and-buffer hywiki-directory))))
+
+(ert-deftest hywiki-tests--sections-with-dash-space ()
+  "Verify `hywiki-word-at' finds sections with dash and space."
+  (let ((hywiki-directory (make-temp-file "hywiki" t)))
+    (unwind-protect
+        (progn
+          (with-temp-buffer
+            (hywiki-mode)
+            (insert "WikiWord#section rest is ignored")
+            (goto-char 4)
+            (should (string= "WikiWord#section" (hywiki-word-at))))
+
+          (with-temp-buffer
+            (hywiki-mode)
+            (insert "WikiWord#section-with-dash")
+            (goto-char 4)
+            (should (string= "WikiWord#section-with-dash" (hywiki-word-at))))
+
+          (with-temp-buffer
+            (hywiki-mode)
+            (insert "WikiWord#\"section-within-quotes\"")
+            (goto-char 4)
+            (should (string= "WikiWord#\"section-within-quotes\"" (hywiki-word-at)))))
       (hywiki-mode -1)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
