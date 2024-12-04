@@ -1,6 +1,7 @@
-2024-12-03  Mats Lidell  <matsl@gnu.org>
+2024-12-04  Mats Lidell  <matsl@gnu.org>
 
-* test/hywiki-tests.el (hywiki-tests--get-singular-wikiword)
+* test/hywiki-tests.el (hywiki-tests--sections-with-dash-space)
+   (hywiki-tests--get-singular-wikiword)
    (hywiki-tests--get-plural-wikiword, hywiki-tests--add-referent)
    (hywiki-tests--add-bookmark, hywiki-tests--add-command)
    (hywiki-tests--add-find, hywiki-tests--add-global-button)
