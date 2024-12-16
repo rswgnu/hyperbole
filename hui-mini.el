@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     27-Oct-24 at 18:10:37 by Bob Weiner
+;; Last-Mod:     15-Dec-24 at 22:43:50 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -19,9 +19,11 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(require 'hypb)
-(require 'hsettings)                    ; For hyperbole-web-search-alist
 (require 'browse-url)
+(require 'hsettings)                    ; For hyperbole-web-search-alist
+(require 'hypb)
+(unless (fboundp 'string-replace)
+  (load "subr")) ;; for `string-replace'
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -196,8 +198,8 @@ documentation, not the full text."
 		      (unless (eq act-form t)
 			(set--this-command-keys hui:menu-keys)
 			(setq show-menu nil
-			      this-command act-form)
-			      rtn (call-interactively act-form)))
+			      this-command act-form
+			      rtn (call-interactively act-form))))
 		     ((stringp act-form)
 		      (if (or doc-flag help-string-flag)
 			  (setq show-menu nil
@@ -207,8 +209,8 @@ documentation, not the full text."
 			))
 		     (t (set--this-command-keys hui:menu-keys)
 			(setq show-menu nil
-			      this-command act-form)
-			      rtn (eval act-form)))))
+			      this-command act-form
+			      rtn (eval act-form))))))
 	    (t (setq show-menu nil))))
     rtn))
 
@@ -1032,7 +1034,7 @@ support underlined faces as well."
 	    "Create and display a new HyWiki page.  Shows existing page names to aid in new naming.")
 	 '("EditPages"      hywiki-directory-edit
 	   "Display and edit HyWiki directory.")
-	 '("FindPage"       hywiki-find-page
+	 '("FindReferent"   hywiki-find-referent
 	   "Prompt with completion for and display a HyWiki page ready for editing.")
 	 (when (fboundp 'consult-grep) ;; allow for autoloading
 	   '("GrepConsult"    hywiki-consult-grep
@@ -1042,7 +1044,7 @@ support underlined faces as well."
 	 '("Info"           (id-info "(hyperbole)HyWiki")
 	   "Display Hyperbole manual section on HyWiki.")
 	 '("Link"           hywiki-add-link
-	   "Prompt for and add a link at point to a HyWiki page.")
+	   "Prompt for and add a HyWikiWord that links to a path and possible position.")
          '("ModeToggle"     hywiki-mode
 	   "Toggle whether HyWikiWords are highlighted and active in buffers outside of the HyWiki page directory.")
 	 '("Org-M-RET/"     (menu . cust-org)

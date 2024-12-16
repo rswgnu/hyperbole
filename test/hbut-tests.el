@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-may-21 at 09:33:00
-;; Last-Mod:     14-Apr-24 at 21:52:52 by Mats Lidell
+;; Last-Mod:     16-Dec-24 at 00:55:21 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -26,10 +26,10 @@
 (require 'hy-test-helpers "test/hy-test-helpers")
 
 (defun hbut-tests:should-match-tmp-folder (tmp)
-  "Check that TMP matches either of \"/tmp\" or \"/private/tmp\".
+  "Check that TMP matches either of \"/tmp/\" or \"/private/tmp/\".
 Needed since hyperbole expands all links to absolute paths and
-/tmp can be a symbolic link."
-  (should (and (stringp tmp) (string-match-p "\"?\\(/\\|./\\|/private/\\)tmp\"?\\'" tmp) t)))
+/tmp/ can be a symbolic link."
+  (should (and (stringp tmp) (string-match-p "\"?\\(/\\|./\\|/private/\\)tmp/\"?\\'" tmp) t)))
 
 (ert-deftest ebut-program-link-to-directory ()
   "Programatically create ebut with link-to-directory using `temporary-file-directory`."
@@ -75,7 +75,7 @@ Create button with link-to-directory using `temporary-file-directory`."
     (unwind-protect
         (progn
           (find-file file)
-          (ebut:program "label" 'link-to-directory "/tmp")
+          (ebut:program "label" 'link-to-directory "/tmp/")
           (should (hbut:at-p))
           (should (hui:hbut-delete))
           (should-not (hbut:at-p)))
@@ -84,7 +84,7 @@ Create button with link-to-directory using `temporary-file-directory`."
 (ert-deftest ebut-delete-removes-ebut-in-non-file-buffer ()
   "Remove an ebut from non file buffer."
   (with-temp-buffer
-    (ebut:program "label" 'link-to-directory "/tmp")
+    (ebut:program "label" 'link-to-directory "/tmp/")
     (should (hbut:at-p))
     (should (hui:hbut-delete))
     (should-not (hbut:at-p))))
@@ -93,7 +93,7 @@ Create button with link-to-directory using `temporary-file-directory`."
   "Remove an ebut from `message-mode' buffer."
   (with-temp-buffer
     (message-mode)
-    (ebut:program "label" 'link-to-directory "/tmp")
+    (ebut:program "label" 'link-to-directory "/tmp/")
     (should (hbut:at-p))
     (should (hui:hbut-delete))
     (should-not (hbut:at-p))))
@@ -105,8 +105,8 @@ Create button with link-to-directory using `temporary-file-directory`."
     (unwind-protect
 	(with-mock
           (mock (hpath:find-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => test-buffer)
-          (mock (ebut:program "label" 'link-to-directory "/tmp") => t)
-          (gbut:ebut-program "label" 'link-to-directory "/tmp"))
+          (mock (ebut:program "label" 'link-to-directory "/tmp/") => t)
+          (gbut:ebut-program "label" 'link-to-directory "/tmp/"))
       (hy-delete-file-and-buffer test-file))))
 
 (ert-deftest gbut-program-link-to-directory ()
@@ -117,7 +117,7 @@ Create button with link-to-directory using `temporary-file-directory`."
 	(progn
           (with-mock
             (mock (hpath:find-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => test-buffer)
-            (gbut:ebut-program "global" 'link-to-directory "/tmp"))
+            (gbut:ebut-program "global" 'link-to-directory "/tmp/"))
 	  (with-current-buffer test-buffer
             (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
             (hbut-tests:should-match-tmp-folder (car (hattr:get (hbut:at-p) 'args)))
@@ -181,7 +181,7 @@ Create button with link-to-directory using `temporary-file-directory`."
 (ert-deftest hypb:program-create-ebut-in-buffer ()
   "Create button with hypb:program in buffer."
   (with-temp-buffer
-    (ebut:program "label" 'link-to-directory "/tmp")
+    (ebut:program "label" 'link-to-directory "/tmp/")
     (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-directory))
     (hbut-tests:should-match-tmp-folder (car (hattr:get (hbut:at-p) 'args)))
     (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label"))))
@@ -189,10 +189,10 @@ Create button with link-to-directory using `temporary-file-directory`."
 (ert-deftest hypb:program-create-ebut-in-buffer-with-same-label ()
   "Create button with same label shall add number so it is unique."
   (with-temp-buffer
-    (ebut:program "label" 'link-to-directory "/tmp")
+    (ebut:program "label" 'link-to-directory "/tmp/")
     (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label"))
     (goto-char (point-max))
-    (ebut:program "label" 'link-to-directory "/tmp")
+    (ebut:program "label" 'link-to-directory "/tmp/")
     (goto-char (- (point-max) 2))
     (should (equal (hattr:get (hbut:at-p) 'lbl-key) "label:2"))))
 
@@ -218,8 +218,8 @@ Create button with link-to-directory using `temporary-file-directory`."
 (ert-deftest hbut-tests-ibut-program-link-to-directory ()
   "Programmatically create ibut link-to-directory."
   (with-temp-buffer
-    (ibut:program "name" 'link-to-directory "/tmp")
-    (should (string= "<[name]> - \"/tmp\"" (buffer-string)))))
+    (ibut:program "name" 'link-to-directory "/tmp/")
+    (should (string= "<[name]> - \"/tmp/\"" (buffer-string)))))
 
 (ert-deftest hbut-tests-ibut-program-link-to-file ()
   "Programatically create ibut link to file."
@@ -235,14 +235,15 @@ Create button with link-to-directory using `temporary-file-directory`."
 (ert-deftest hbut-tests-ibut-insert-text-link-to-dir ()
   "Insert link to dir."
   (with-temp-buffer
-    (ibut:program "name" 'link-to-directory "/tmp")
-    (should (string= "<[name]> - \"/tmp\"" (buffer-string)))
+    (ibut:program "name" 'link-to-directory "/tmp/")
+    (should (string= "<[name]> - \"/tmp/\"" (buffer-string)))
     (goto-char 3)
     (let ((but (ibut:at-p)))
+      (should but)
       (with-temp-buffer
         (ibut:insert-text but)
-	;; Allow for /tmp being a link to /private/tmp on Macos
-        (should (string-match "\"\\(/private\\)?/tmp\"" (buffer-string)))))))
+	;; Allow for /tmp/ being a link to /private/tmp/ on Macos
+        (should (string-match "\"\\(/private\\)?/tmp/\"" (buffer-string)))))))
 
 (ert-deftest hbut-tests-ibut-insert-annot-bib ()
   "Insert ibut to annot-bib, which must be attached to a file."
@@ -374,7 +375,7 @@ Create button with link-to-directory using `temporary-file-directory`."
   (with-temp-buffer
     ;; Create in-buffer and in-memory ibut
     (let (buf-str)
-      (insert "/tmp")
+      (insert "/tmp/")
       (goto-char 2)
       (should (hbut:at-p))
       (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
@@ -399,7 +400,7 @@ See #10 for the proper way to add an ibutton name.
   (with-temp-buffer
     ;; Create in-buffer and in-memory ibut
     (let (buf-str)
-      (insert "/tmp")
+      (insert "/tmp/")
       (goto-char 2)
       (should (hbut:at-p))
       ;; Test that ibut:operate errors and leaves in-buffer button unchanged
@@ -419,7 +420,7 @@ See #10 for the proper way to add an ibutton name.
   (hattr:clear 'hbut:current)
   (with-temp-buffer
     ;; Create in-buffer and in-memory ibut
-    (let ((ibut-str "<[name]> - /tmp")
+    (let ((ibut-str "<[name]> - /tmp/")
 	  buf-str)
       (insert ibut-str)
       (goto-char 2)
@@ -443,7 +444,7 @@ See #10 for the proper way to add an ibutton name.
   (hattr:clear 'hbut:current)
   (with-temp-buffer
     ;; Create in-buffer and in-memory ibut
-    (let ((ibut-str "<[name]> - /tmp")
+    (let ((ibut-str "<[name]> - /tmp/")
 	  buf-str)
       (insert ibut-str)
       (goto-char 2)
@@ -466,7 +467,7 @@ See #10 for the proper way to add an ibutton name.
   (hattr:clear 'hbut:current)
   (with-temp-buffer
     ;; Create in-buffer and in-memory ibut
-    (let ((ibut-str "<[name]> - \"/tmp\"")
+    (let ((ibut-str "<[name]> - \"/tmp/\"")
 	  buf-str)
       (insert ibut-str)
       (goto-char 2)
@@ -493,7 +494,7 @@ See #10 for the proper way to add an ibutton name.
   (hattr:clear 'hbut:current)
   (with-temp-buffer
     ;; Create in-buffer and in-memory ibut
-    (let ((ibut-str "<[name]> - /tmp")
+    (let ((ibut-str "<[name]> - /tmp/")
 	  buf-str)
       (insert ibut-str "\nabcd")
       (mark-whole-buffer)
@@ -518,7 +519,7 @@ See #10 for the proper way to add an ibutton name.
   (hattr:clear 'hbut:current)
   (with-temp-buffer
     ;; Create in-buffer and in-memory ibut
-    (let ((ibut-str "region - /tmp")
+    (let ((ibut-str "region - /tmp/")
 	  buf-str)
       (insert ibut-str)
       (goto-char (point-min))
@@ -541,7 +542,7 @@ See #10 for the proper way to add an ibutton name.
   (hattr:clear 'hbut:current)
   (with-temp-buffer
     ;; Create in-buffer and in-memory ibut
-    (let ((ibut-str "<[abcd]> - \"/tmp\"")
+    (let ((ibut-str "<[abcd]> - \"/tmp/\"")
 	  buf-str)
       (insert ibut-str)
       (mark-whole-buffer)
@@ -566,7 +567,7 @@ See #10 for the proper way to add an ibutton name.
   (hattr:clear 'hbut:current)
   (with-temp-buffer
     ;; Create in-buffer and in-memory ibut
-    (let ((ibut-str "<[name]> - \"/tmp\"")
+    (let ((ibut-str "<[name]> - \"/tmp/\"")
 	  buf-str)
       (insert ibut-str)
       (goto-char 2)
@@ -590,7 +591,7 @@ See #10 for the proper way to add an ibutton name.
   (hattr:clear 'hbut:current)
   (with-temp-buffer
     ;; Create in-buffer and in-memory ibut
-    (let ((ibut-str "/tmp")
+    (let ((ibut-str "/tmp/")
 	  buf-str)
       (insert ibut-str)
       (goto-char 2)
@@ -615,7 +616,7 @@ See #10 for the proper way to add an ibutton name.
   (hattr:clear 'hbut:current)
   (with-temp-buffer
     ;; Create in-buffer and in-memory ibut
-    (let ((ibut-str "\"/tmp\"")
+    (let ((ibut-str "\"/tmp/\"")
 	  buf-str)
       (insert ibut-str)
       (goto-char 2)
@@ -640,7 +641,7 @@ See #10 for the proper way to add an ibutton name.
   (hattr:clear 'hbut:current)
   (with-temp-buffer
     ;; Create in-buffer and in-memory ibut
-    (let ((ibut-str "<[name]> - \"/tmp\"")
+    (let ((ibut-str "<[name]> - \"/tmp/\"")
 	  buf-str)
       (insert ibut-str)
       (goto-char 2)
@@ -664,7 +665,7 @@ See #10 for the proper way to add an ibutton name.
   (hattr:clear 'hbut:current)
   (with-temp-buffer
     (let (buf-str)
-      (insert "<[name]> - /tmp")
+      (insert "<[name]> - /tmp/")
       (goto-char 2)
       (should (hbut:at-p))
       (set-mark (point-max))
@@ -685,7 +686,7 @@ See #10 for the proper way to add an ibutton name.
   (hattr:clear 'hbut:current)
   (with-temp-buffer
     (let (buf-str)
-      (insert "<[name]> - /tmp")
+      (insert "<[name]> - /tmp/")
       (goto-char 2)
       (should (hbut:at-p))
       (set-mark (point-max))
@@ -706,7 +707,7 @@ See #10 for the proper way to add an ibutton name.
   (hattr:clear 'hbut:current)
   (with-temp-buffer
     (let (buf-str)
-      (insert "/tmp")
+      (insert "/tmp/")
       (goto-char 2)
       (should (hbut:at-p))
       (set-mark (point-max))
@@ -727,7 +728,7 @@ See #10 for the proper way to add an ibutton name.
   (hattr:clear 'hbut:current)
   (with-temp-buffer
     (let (buf-str)
-      (insert "/tmp")
+      (insert "/tmp/")
       (goto-char 2)
       (should (hbut:at-p))
       (set-mark (point-max))

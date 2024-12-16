@@ -1,9 +1,152 @@
+2024-12-16  Bob Weiner  <rsw@gnu.org>
+
+* test/hbut-tests.el: Change most "/tmp" to "/tmp/" for ease of comparison
+    with 'default-directory'.
+
+2024-12-15  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--action-key-on-wikiword-displays-page):
+    Change mocklet call from 'hywiki-add-page' to newer
+    'hywiki-display-referent' to fix the test.
+
+* test/hywiki-tests.el (hywiki-tests--active-in-current-buffer-p): Force
+    'hywiki-mode' nil when testing that hywiki is not active.
+
+* hpath.el (hpath:shorten): Fix to normalize directory paths to end with
+    a dir separator char so compare properly to `default-directory'.
+
+* hbut.el (ebut:get): Remove unneeded local 'actype'.
+
+* test/hywiki-tests.el (hywiki-tests--assist-key-on-wikiword-displays-help):
+    Update to not use mocklet and to check WikiWord returned.
+
+* hywiki.el (hywiki-word, hywiki-word-at): Rewrite to get the proper
+    start and end buffer positions of any wikiword string, accounting for
+    Org link complexities much better than before.
+
+* hbut.el (hbut:source): Update doc to reflect that the caller must have
+    successfully searched for 'hbut:source-prefix' prior to calling this.
+          (ibut:set-name-and-label-key-p): Add set of ibut 'loc attribute
+    needed by a number of tests.
+
+* hmouse-tag.el (smart-tags-file-list, smart-ancestor-tag-files): Fix to
+    handle a list of directories as the first argument in which to look
+    for TAGS files, as used by 'smart-man-c-routine-ref' in "hui-mouse.el".
+  hui-mouse.el (smart-man-c-routine-ref): Update to support use of newer
+   'Man-header-file-path' variable.
+
+2024-12-02  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-clear-pages-hasht): Add and use in defcustom :set
+    method of `hywiki-directory' to ensure hash table is emptied including
+    all non-page referents when 'hywiki-directory' is changed.
+
+2024-12-01  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (action-key-depress, assist-key-depress, hkey-help): Add
+    calls to (hattr:clear 'hbut:current) to clear 'hbut:current' button
+    attributes before depress,
+
+* hbut.el (ibut:create): Move setting of 'hbut:current HyWiki 'referent
+    attribute from 'hkey-help' to this function, so works with all
+    ibutton reports.  Also, remove 'name-and-lbl-key-flag' from check
+    of whether to set attributes to the current button values.  Also,
+    move call of 'hbut:report' when called interactively to here from
+    'ibut:set-name-and-label-key-p' so works with all ibutton reports.
+          (ibut:set-name-and-label-key-p): Fix to return non-nil only when
+    'lbl-key' or 'name' are set.
+          (ebut:get): Remove Hyperbole V1 setting of 'referent' attribute
+    from (hbdata:referent) so as not to confuse new use of same attribute
+    for HyWiki referents.
+  hibtypes.el (action): Add :name arg to 'ibut:create' call.
+
+* hywiki.el (hywiki-display-page): Set 'referent' attribute for
+    current button.
+
+* hsys-org.el (hsys-org-link-at-p): Change to ignore [[hy:MyWikiWord]]
+    links.
+  hywiki.el (hywiki-word-at): Change to handle [[hy:MyWikiWord]] links.
+            (hywiki-strip-org-link): Also strip hy: prefix from a link.
+
+* hywiki.el (hywiki-get-plural-wikiword):  Return non-nil iff
+    'hywiki-allow-plurals-flag' is set.
+            (hywiki-get-page-hasht): Remove any nil return values from
+    calling 'hywiki-allow-plurals-flag'.
+            (hywiki-allow-plurals-flag): Reset 'hywiki--any-page-regexp-list'
+    whenever this variable is set.
+
+* test/hywiki-tests.el (hywiki-tests--action-key-on-wikiword-displays-page,
+                        hywiki-tests--assist-key-on-wikiword-displays-help):
+    Update to test Action and Assist Key behavior.
+
+* hywiki.el: Add additional require, defvar and declare-function to
+    remove byte-compiler warnings.
+
+2024-11-25  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-referent-menu): Make all menu calls interactive
+   and update all hywiki-add-* interactive specs to take any wikiword
+   at point and if not, then prompt with completion for one.
+
+* hui-mini.el (hui:menu-hywiki): HyWiki menu replace FindPage with
+    FindReferent.
+              (hui:menu-act): Fix improper closing parens before end
+    of setq causing a bug where always returned nil.
+
 2024-11-25  Mats Lidell  <matsl@gnu.org>
 
 * kotl/kmenu.el (kotl-menu-common-body): Use kotl-kview. 
 
 * .github/workflows/static.yaml: Static workflow for publishing the manual
     to a static site using GitHub Pages.
+
+2024-11-24  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-add-page-and-display): Add optional prefix arg
+    PROMPT-FLAG for use in 'hywiki-find-referent' call.  Rewrite.
+    Update doc.  This allows setting custom referent types when passing
+    a prefix arg to the the HyWiki/Create menu item.
+           (hywiki-display-page, hywiki-get-referent): Call 'hywiki-get-file'
+    to expand page file path, rather than doing it manually.  Return referent.
+
+* hmouse-drv.el (hkey-help): If a HyWikiWord ibut, save its referent as an
+    attribute.
+
+* hui-menu.el (hui-menu-hywiki): Rename 'Add-HyWiki-Link' to 'Insert-HyWiki-Link'.
+  hywiki.el   (hywiki-add-link): Rename to 'hywiki-insert-link'.
+
+* hywiki.el (hywiki-read-new-page-name, hywiki-read-page-name):
+    Rename to 'hywiki-word-read-new' and 'hywiki-word-read'.
+    Change prompt from "HyWiki Page Name" to "HyWikiWord" since
+    not all referents are pages any more.
+            (hywiki-word-grep): Add to compute and perform HyWikiWord grep.
+	    (hywiki-get-page): Rename to 'hywiki-get-referent'.
+	    (hywiki-get-singular-page-name): Rename to
+    'hywiki-get-singular-wikiword'.
+            (hywiki-get-plural-page-name): Rename to
+    'hywiki-get-plural-wikiword'.
+            (hywiki-page-exists-p): Rename to 'hywiki-referent-exists-p'
+    and improve doc string.
+            (hywiki-display-referent): Fix to use existing referent if any
+    before calling 'hywiki-add-page'.
+            (hywiki-referent-menu): Change 'Path' to 'Link' and add 'Page'
+    to reset to a standard HyWiki Page link.
+            (hywiki-add-path): Rename to 'hywiki-add-link'.
+            (hywiki-add-page): Remove unused 'prompt-flag' arg and replace
+    with optional 'force-flag' to force overwriting an existing HyWikiWord
+    referent.
+            (hywiki-add-to-page): Rename to 'hywiki-add-to-referent' and
+    rewrite to handle referents.  Change arg 'start-flag' to 'position'
+    of insert.
+
+* hactypes.el (link-to-buffer-tmp, link-to-file): Fix 'point' arg to
+    accept markers.
+
+* hywiki.el (hywiki-make-pages-hasht): Fix to maintain non-page referent
+    elements when rebuild the hash table.
+
+* hibtypes.el (hywiki-word:help): Add so Assist Key on a HyWikiWord
+    customizes its referent type and link.
 
 2024-11-24  Mats Lidell  <matsl@gnu.org>
 
@@ -12,11 +155,69 @@
     (website-devel): Push local updates to go live at
     https:/www.gnu.org/software/hyperbole/devel.
 
+2024-11-23  Bob Weiner  <rsw@gnu.org>
+
+* hui.el (hui:link-possible-types): Allow for :CUSTOM_ID: in
+    addition to :ID: matches for Org IDs.
+
+* hib-kbd.el (kbd-key:normalize): Fix interactive expr to read
+    a string rather than a single key sequence.
+
+* hywiki.el (hywiki-get-wikiwords-obarray): Add.
+            (hywiki-read-new-page-name, hywiki-read-page-name):
+    Replace 'hywiki-get-page-list' completion table with
+    'hywiki-get-wikiwords-obarray' which is more efficient.
+            (hywiki-find-page): Rename to 'hywiki-find-referent'.
+    Rename 'hywiki-find-page-hook' to 'hywiki-find-referent-hook'.
+            (hywiki-word-activate): Change so automatically creates
+    pages that do not exist, except for the first HyWiki page, in
+    which case, prompts before creation.
+            (hywiki-display-page-function): Add this customization
+    function that displays HyWiki pages.
+            (hywiki-display-page): Add to use above variable to
+    display HyWiki pages.
+            (hywiki-word): Update doc with first page prompting.
+            (hywiki-maybe-highlight-page-names): Return nil so
+    'hywiki-display-referent' returns nil when this is called.
+            (hywiki-get-file, hywiki-display-referent): Improve
+    #section matching to ignore #autosave# file names.
+            (hywiki-allow-plurals-flag): Add new customization,
+    defaults to t to treat plural HyWikiWords the same as singular
+    ones.
+            (hywiki-get-page): Handle HyWikiWord plurals based on
+    the above flag.
+
+* hactypes.el: Document potential second arg of referent (point)
+    when referent is already read into a buffer and user wants
+    to link to the current point.
+
+* hywiki.el (hywiki-add-*): Add to allow each HyWikiWord to have
+    a custom referent when created with a prefix argument.  Referent
+    type is prompted for, similar to when creating other Hyperbole
+    buttons.
+            (hywiki-add-prompted-referent): Add to prompt for and
+    link a HyWikiWord to a custom referent or action type.
+            (hywiki-referent-menu): New minibuffer menu used by the
+    above function.
+            (hywiki-get-page): Expand to return all new possible
+    referent types.
+            (hywiki-display-referent): Add to display all of the
+    new referent types.
+            (hywiki-read-new-page-name): Use any potential WikiWord at
+    point as the default.
+
 2024-11-23  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (BATCHFLAGS): Use debug-on-error's default value nil. Emacs 31
     introduces calling man using with-demoted-errors which
     causes an error when requiring man when debug-on-error is set to t.
+
+2024-11-22  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-find-page): Add missing second interactive
+    arg value, current-prefix-arg.  Rewrite to allow for
+    different actions per HyWikiWord or a single overriding
+    function.
 
 2024-11-19  Bob Weiner  <rsw@gnu.org>
 
@@ -29,8 +230,6 @@
 * hactypes.el (require): Remove require of 'man' and do it only in
     man-show where needed.  This may allow CI/CD build of docker Emacs
     master branch that lacks 'man' package.
-
-2024-11-18  bw  <bw@norlinux>
 
 * hui-tests.el (hui--ibut-link-directly-to-org-header-first-column):
     Remove dir from fileb when comparing to in-buffer filename and

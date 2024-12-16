@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     17-Nov-24 at 12:01:54 by Bob Weiner
+;; Last-Mod:     15-Dec-24 at 13:17:27 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1759,7 +1759,9 @@ locate the definition."
 				 (match-beginning 1) (match-end 1)))))))
     (if ref
 	(list 'smart-tags-display ref nil
-	      (smart-tags-file-list (and (boundp 'man-path) man-path))))))
+	      (smart-tags-file-list (or (and (boundp 'Man-header-file-path)
+					     Man-header-file-path)
+					(and (boundp 'man-path) man-path)))))))
 
 (defun smart-man-file-ref ()
   "Return form to eval to display file whose name is at point.

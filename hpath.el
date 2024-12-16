@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     18-Nov-24 at 20:16:58 by Bob Weiner
+;; Last-Mod:     15-Dec-24 at 23:45:41 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2034,6 +2034,10 @@ ${var}) with their values in PATH.  The first matching value for
 variables like `${PATH}' is used.  Then abbreviate any remaining
 path."
   (setq path (expand-file-name (hpath:substitute-value path)))
+  (when (file-directory-p path)
+    ;; Force path to have a final directory separator so comparisons
+    ;; to `default-directory' work
+    (setq path (file-name-as-directory path)))
   (unless relative-to
     (setq relative-to default-directory))
   (when (stringp relative-to)

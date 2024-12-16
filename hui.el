@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     18-Nov-24 at 20:05:31 by Bob Weiner
+;; Last-Mod:     23-Nov-24 at 20:35:50 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1848,9 +1848,9 @@ Buffer without File      link-to-buffer-tmp"
 		 (list (cond ((and (featurep 'org-id)
 				   (cond ((save-excursion
 					    (beginning-of-line)
-					    (when (looking-at "[ \t]*:ID:[ \t]+\\([^ \t\r\n\f]+\\)")
+					    (when (looking-at "[ \t]*:\\(CUSTOM_\\)?ID:[ \t]+\\([^ \t\r\n\f]+\\)")
 					      ;; Org ID definition
-					      (list 'link-to-org-id (match-string 1)))))
+					      (list 'link-to-org-id (match-string 2)))))
 					 (t (let* ((id (thing-at-point 'symbol t)) ;; Could be a uuid or some other form of id
 						   (bounds (when id (bounds-of-thing-at-point 'symbol)))
 						   (start (when bounds (car bounds)))

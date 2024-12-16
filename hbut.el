@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     18-Nov-24 at 20:17:13 by Bob Weiner
+;; Last-Mod:     15-Dec-24 at 22:35:20 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -45,6 +45,7 @@ Use the function, (hbut:max-len), to read the proper value.")
 
 (defvar hproperty:but-face)
 (defvar hproperty:ibut-face)
+(defvar hywiki-org-link-type)
 
 (declare-function hargs:delimited "hargs")
 (declare-function hargs:read-match "hargs")
@@ -61,6 +62,7 @@ Use the function, (hbut:max-len), to read the proper value.")
 (declare-function hui:ibut-rename "hui")
 (declare-function hui:key-dir "hui")
 (declare-function hui:key-src "hui")
+(declare-function hywiki-get-referent "hywiki")
 (declare-function kbd-key:act "hib-kbd")
 (declare-function kbd-key:is-p "hib-kbd")
 (declare-function org-context "org")
@@ -222,8 +224,7 @@ buffer.
 Return nil if no matching button is found."
   (hattr:clear 'hbut:current)
   (save-excursion
-    (let (actype
-	  but-data
+    (let (but-data
 	  key-dir
 	  key-file
 	  lbl-end
@@ -262,11 +263,7 @@ Return nil if no matching button is found."
 	  (hattr:set 'hbut:current 'categ 'explicit)
 	  (hattr:set 'hbut:current 'action nil)
 	  (hattr:set 'hbut:current 'actype
-		     (intern (setq actype (hbdata:actype but-data))))
-	  ;; Hyperbole V1 referent compatibility
-	  (when (= (length actype) 2)
-	    (hattr:set 'hbut:current 'referent
-		       (hbdata:referent but-data)))
+		     (intern (hbdata:actype but-data)))
 	  (hattr:set 'hbut:current 'args (hbdata:args but-data))
 	  (hattr:set 'hbut:current 'creator (hbdata:creator but-data))
 	  (hattr:set 'hbut:current
@@ -1711,7 +1708,9 @@ Return number of buttons reported on or nil if none."
 
 (defun    hbut:source (&optional full-flag)
   "Return Hyperbole source buffer or file given at point.
-If a file, always return a full path if optional FULL-FLAG is non-nil."
+If a file, always return a full path if optional FULL-FLAG is non-nil.
+Caller must have successfully searched for `hbut:source-prefix' prior
+to calling this."
   (save-excursion
     (goto-char (match-end 0))
     (cond ((looking-at "#<buffer \"?\\([^\n\"]+\\)\"?>")
@@ -1855,7 +1854,6 @@ attribute unless the button text is delimited.
 
 Any implicit button name must contain at least two characters,
 excluding delimiters, not just one."
-  (interactive)
   (let* ((opoint (point-marker))
 	 ;; Next line finds the name only if point is on it, not on the
 	 ;; text of the button.
@@ -1876,8 +1874,8 @@ excluding delimiters, not just one."
 				(progn
 				  ;; Move past up to 2 possible characters of ibut
 				  ;; delimiters; this prevents recognizing named,
-				  ;; delimited ibuts of a single character since no one
-				  ;; should need that.
+				  ;; delimited ibuts of a single character since
+				  ;; no one should need that.
 				  (goto-char (min (+ 2 (match-end 0)) (point-max)))
 				  (match-end 0))
 			      (prog1 (point)
@@ -1896,7 +1894,14 @@ excluding delimiters, not just one."
 	  (when lbl-start-end
 	    (setq lbl-key (nth 0 lbl-start-end)
 		  lbl-start (nth 1 lbl-start-end)
-		  lbl-end (nth 2 lbl-start-end)))
+		  lbl-end (nth 2 lbl-start-end))
+	    (when (and (stringp lbl-key)
+		       (string-prefix-p (concat hywiki-org-link-type ":") lbl-key t))
+	      ;; Remove any HyWiki org-link-type prefix
+	      (setq lbl-key (substring lbl-key 3)
+		    lbl-start (+ lbl-start (length hywiki-org-link-type) 1))))
+	  (hattr:set 'hbut:current   'loc (save-excursion
+					    (hbut:to-key-src 'full)))
 	  (when lbl-start
 	    (hattr:set 'hbut:current 'categ 'implicit)
 	    (hattr:set 'hbut:current 'lbl-key lbl-key)
@@ -1927,10 +1932,7 @@ excluding delimiters, not just one."
 	  (when (and name-start name-end)
 	    (hattr:set 'hbut:current 'name-start name-start)
 	    (hattr:set 'hbut:current 'name-end name-end))
-	  (when lbl-start
-	    (when (called-interactively-p 'any)
-	      (let (help-window-select)
-		(hbut:report)))
+	  (when (or lbl-key name)
 	    t))
       (goto-char opoint)
       (setq opoint nil))))
@@ -1951,6 +1953,7 @@ return nil if no implicit button is found at point.
 
 If a new button is created, store its attributes in the symbol,
 \\='hbut:current."
+  (interactive)
   ;; :args is ignored unless :categ or :action is also given.
 
   ;; `lbl-key' attribute will be set from `but-sym' if any, the button
@@ -2033,83 +2036,57 @@ If a new button is created, store its attributes in the symbol,
 		  name-start
 		  name-end)
 
-	      (cond ((and but-sym-flag current-name)
-		     (setq name current-name))
-		    ((or name name-and-lbl-key-flag))
-		    (current-name
-		     (setq name current-name)))
+	      (when (and current-name (or but-sym-flag (null name)))
+		(setq name current-name))
 	      (when name
 		(hattr:set 'hbut:current 'name name))
 
-	      (cond ((and but-sym-flag current-name-start)
-		     (setq name-start current-name-start))
-		    ((or name-start name-and-lbl-key-flag))
-		    (current-name-start
-		     (setq name-start current-name-start)))
+	      (when (and current-name-start (or but-sym-flag (null name-start)))
+		(setq name-start current-name-start))
 	      (when name-start
 		(hattr:set 'hbut:current 'name-start name-start))
 
-	      (cond ((and but-sym-flag current-name-end)
-		     (setq name-end current-name-end))
-		    ((or name-end name-and-lbl-key-flag))
-		    (current-name-end
-		     (setq name-end current-name-end)))
+	      (when (and current-name-end (or but-sym-flag (null name-end)))
+		(setq name-end current-name-end))
 	      (when name-end
 		(hattr:set 'hbut:current 'name-end name-end))
 
-	      (cond ((and but-sym-flag current-lbl-key)
-		     (setq lbl-key current-lbl-key))
-		    ((or lbl-key name-and-lbl-key-flag))
-		    (current-lbl-key
-		     (setq lbl-key current-lbl-key)))
+	      (when (and current-lbl-key (or but-sym-flag (null lbl-key)))
+		(setq lbl-key current-lbl-key))
 	      (when lbl-key
 		(hattr:set 'hbut:current 'lbl-key lbl-key))
 
-	      (cond ((and but-sym-flag current-lbl-start)
-		     (setq lbl-start current-lbl-start))
-		    ((or lbl-start name-and-lbl-key-flag))
-		    (current-lbl-start
-		     (setq lbl-start current-lbl-start)))
+	      (when (and current-lbl-start (or but-sym-flag (null lbl-start)))
+		(setq lbl-start current-lbl-start))
 	      (when lbl-start
 		(hattr:set 'hbut:current 'lbl-start lbl-start))
 
-	      (cond ((and but-sym-flag current-lbl-end)
-		     (setq lbl-end current-lbl-end))
-		    ((or lbl-end name-and-lbl-key-flag))
-		    (current-lbl-end
-		     (setq lbl-end current-lbl-end)))
+	      (when (and current-lbl-end (or but-sym-flag (null lbl-end)))
+		(setq lbl-end current-lbl-end))
 	      (when lbl-end
 		(hattr:set 'hbut:current 'lbl-end lbl-end))
 
-	      (cond ((and but-sym-flag current-loc)
-		     (setq loc current-loc))
-		    ((or loc (setq loc (save-excursion
-					 (hbut:to-key-src 'full)))))
-		    (current-loc
-		     (setq loc current-loc)))
+	      (when (and current-loc (or but-sym-flag (null loc)))
+		(setq loc (or (save-excursion
+				(hbut:to-key-src 'full))
+			      current-loc)))
 	      (when loc
 		(hattr:set 'hbut:current 'loc loc))
 
-	      (cond ((and but-sym-flag current-dir)
-		     (setq dir current-dir))
-		    ((or dir (setq dir (hui:key-dir (current-buffer)))))
-		    (current-dir
-		     (setq dir current-dir)))
+	      (when (and current-dir (or but-sym-flag (null dir)))
+		(setq dir (or (hui:key-dir (current-buffer))
+			      current-dir)))
 	      (when dir
 		(hattr:set 'hbut:current 'dir dir))
 
-	      (cond ((and but-sym-flag current-action)
-		     (setq action current-action))
-		    (action)
-		    (current-action
-		     (setq action current-action)))
+	      (when (and current-action (or but-sym-flag (null action)))
+		(setq action current-action))
 	      (when action
 		(hattr:set 'hbut:current 'action action))
 
-	      (cond ((and but-sym-flag current-categ)
+	      (cond ((and current-categ but-sym-flag)
 		     (setq categ current-categ))
-		    (categ)
-		    (t
+		    ((null categ)
 		     (setq categ (or is-type current-categ 'implicit))))
 	      (when categ
 		(hattr:set 'hbut:current 'categ categ))
@@ -2126,11 +2103,8 @@ If a new button is created, store its attributes in the symbol,
 		(when (eq (car args) #'hact)
 		  (setq args (cdr args))))
 
-	      (cond ((and but-sym-flag current-actype)
-		     (setq actype current-actype))
-		    (actype)
-		    (current-actype
-		     (setq actype current-actype)))
+	      (when (and current-actype (or but-sym-flag (null actype)))
+		(setq actype current-actype))
 	      (unless actype
 		(setq actype (or
 			      ;; Hyperbole action type
@@ -2140,7 +2114,16 @@ If a new button is created, store its attributes in the symbol,
 	      (hattr:set 'hbut:current 'actype actype)
 
 	      (when args
-		(hattr:set 'hbut:current 'args (if actype (cdr args) args))))
+		(hattr:set 'hbut:current 'args (if actype (cdr args) args)))
+
+	      (when (and lbl-key (eq actype #'hywiki-find-referent))
+		;; If a HyWikiWord ibut, save its referent as an attribute
+		(hattr:set 'hbut:current 'referent (hywiki-get-referent lbl-key)))
+
+	      (when lbl-key
+		(when (called-interactively-p 'any)
+		  (let (help-window-select)
+		    (hbut:report)))))
 
 	    (hbdata:ibut-instance-next (ibut:label-to-key name))))
       (set-marker opoint nil))))

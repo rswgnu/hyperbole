@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     19-Nov-24 at 00:21:19 by Bob Weiner
+;; Last-Mod:     16-Dec-24 at 01:03:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -118,14 +118,18 @@
 ;;; ************************************************************************
 
 (require 'cl-lib)     ;; For `cl-find'
+(require 'hactypes)   ;; For `link-to-file-interactively'
 (require 'hargs)
-(require 'hbut)       ;; For `hbut:syntax-table'
 (require 'hasht)
+(require 'hbut)       ;; For `hbut:syntax-table'
 (require 'hpath)
-(require 'hypb)       ;; Requires `seq'
 (require 'hproperty)
 (require 'hsys-consult)
+(require 'hui)        ;; For `hui:actype'
+(require 'hui-mini)   ;; For `hui:menu-act'
+(require 'hypb)       ;; Requires `seq'
 (require 'outline)    ;; For `outline-mode-syntax-table'
+(require 'subr-x)     ;; For `string-remove-prefix'
 (require 'thingatpt)
 
 (eval-and-compile
@@ -136,15 +140,78 @@
 ;;; Public declarations
 ;;; ************************************************************************
 
-(defvar action-key-modeline-buffer-id-function)  ;; "hui-mouse"
-(defvar org-agenda-buffer-tmp-name)  ;; "org-agenda.el"
-(defvar org-export-with-broken-links);; "ox.el"
-(defvar org-publish-project-alist)   ;; "ox-publish.el"
+(defvar action-key-modeline-buffer-id-function)  ;; "hui-mouse.el"
+(defvar bookmark-current-bookmark)               ;; "bookmark.el"
+(defvar hywiki-referent-menu nil)                ;; "hywiki.el"
+(defvar org-agenda-buffer-tmp-name)              ;; "org-agenda.el"
+(defvar org-export-with-broken-links)            ;; "ox.el"
+(defvar org-publish-project-alist)               ;; "ox-publish.el"
 
+(declare-function activities-completing-read "activities" (:prompt prompt :default default))
+(declare-function activities-new "activities" (name))
+(declare-function activities-resume "activities" (activity :resetp resetp))
+(declare-function bookmark-completing-read "bookmark" (prompt &optional default))
+(declare-function bookmark-location "bookmark" (bookmark-name-or-record))
 (declare-function hsys-org-at-tags-p "hsys-org")
 (declare-function org-link-store-props "ol" (&rest plist))
+(declare-function org-roam-node-read "org-roam" (&optional initial-input filter-fn sort-fn require-match prompt))
 (declare-function org-publish-property "ox-publish" (property project &optional default))
 (declare-function smart-treemacs-edit "hui-treemacs" (&optional dir))
+
+;;; ************************************************************************
+;;; Private variables
+;;; ************************************************************************
+
+;; Must be set after `hywiki-get-buttonize-characters' is defined
+(defconst hywiki--buttonize-characters nil
+  "String of single character keys bound to `hywiki-buttonize-character-commands'.
+Each such key self-inserts before highlighting any prior HyWiki word
+in `hywiki-mode'.")
+
+(defconst hywiki--buttonize-character-regexp nil
+  "Regexp matching a single separating character following a HyWiki word.")
+
+(defconst hywiki--word-and-buttonize-character-regexp nil
+  "Regexp matching HyWikiWord#section plus a valid word separating character.")
+
+(defvar hywiki--directory-checksum ""
+  "String checksum for `hywiki-directory' page names.")
+
+(defvar hywiki--directory-mod-time nil
+  "Last mod time for `hywiki-directory' or nil if the value has not been read.
+See `current-time' function for the mod time format.")
+
+;; Redefine the `org-mode-syntax-table' for use in `hywiki-get-buttonize-characters'
+;; so do not have to load all of Org mode there.
+(defvar hywiki--org-mode-syntax-table
+  (let ((st (make-syntax-table outline-mode-syntax-table)))
+    (modify-syntax-entry ?\" "\"" st)
+    (modify-syntax-entry ?\\ "_" st)
+    (modify-syntax-entry ?~ "_" st)
+    (modify-syntax-entry ?< "(>" st)
+    (modify-syntax-entry ?> ")<" st)
+    st)
+  "Standard syntax table for Org mode buffers with HyWiki support.")
+
+(defvar hywiki--pages-directory nil)
+(defvar hywiki--pages-hasht nil)
+
+;; Globally set these values to avoid using 'let' with stack allocations
+;; within `hywiki-maybe-highlight-page-name' frequently.
+(defvar hywiki--any-page-regexp-list nil)
+(defvar hywiki--buts nil)
+(defvar hywiki--but-end nil)
+(defvar hywiki--but-start nil)
+(defvar hywiki--buttonize-end (make-marker))   ;; This must always stay a marker
+(defvar hywiki--buttonize-start (make-marker)) ;; This must always stay a marker
+(defvar hywiki--current-page nil)
+(defvar hywiki--end nil)
+(defvar hywiki--highlighting-done-flag t)
+(defvar hywiki--page-name nil)
+(defvar hywiki--range nil)
+(defvar hywiki--save-case-fold-search nil)
+(defvar hywiki--save-org-link-type-required nil)
+(defvar hywiki--start nil)
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -192,7 +259,11 @@ Use nil for no HyWiki mode indicator."
 See `hywiki-org-publishing-directory' for exported pages in html format."
   :initialize #'custom-initialize-default
   :set (lambda (option value)
-	 (set option (file-name-as-directory value))
+	 (unless (and (boundp 'hywiki-directory)
+		      (equal hywiki-directory (file-name-as-directory value)))
+	   (set option (file-name-as-directory value))
+	   (hywiki-clear-pages-hasht)
+	   (hywiki-make-pages-hasht))
 	 (hywiki-org-set-publish-project))
   :type 'string
   :group 'hyperbole-hywiki)
@@ -314,7 +385,7 @@ where PATH is the un-resolvable reference."
 	 :with-toc nil)))
 
 (defvar-local hywiki-page-flag nil
-  "Set to t after a `find-file' of a HyWiki page file, else nil.
+  "Set to t after finding a HyWiki page file, else nil.
 The file must be below `hywiki-directory'.
 
 For reference, this is set when `window-buffer-change-functions' calls
@@ -355,64 +426,25 @@ the HyWiki word and grouping 2 is the #section with the # included.")
 
 (defcustom hywiki-word-face 'hywiki--word-face
   "Hyperbole face for HyWiki word highlighting."
-  :type 'face
   :initialize #'custom-initialize-default
+  :type 'face
   :group 'hyperbole-hywiki)
 
-;;; ************************************************************************
-;;; Private variables
-;;; ************************************************************************
+(defcustom hywiki-display-page-function #'hpath:find
+  "Hyperbole function to display HyWiki pages.
+Only argument is the page name concatenated with optional #section."
+  :initialize #'custom-initialize-default
+  :type 'string
+  :group 'hyperbole-hywiki)
 
-;; Must be set after `hywiki-get-buttonize-characters' is defined
-(defconst hywiki--buttonize-characters nil
-  "String of single character keys bound to `hywiki-buttonize-character-commands'.
-Each such key self-inserts before highlighting any prior HyWiki word
-in `hywiki-mode'.")
-
-(defconst hywiki--buttonize-character-regexp nil
-  "Regexp matching a single separating character following a HyWiki word.")
-
-(defconst hywiki--word-and-buttonize-character-regexp nil
-  "Regexp matching HyWikiWord#section plus a valid word separating character.")
-
-(defvar hywiki--directory-checksum ""
-  "String checksum for `hywiki-directory' page names.")
-
-(defvar hywiki--directory-mod-time nil
-  "Last mod time for `hywiki-directory' or nil if the value has not been read.
-See `current-time' function for the mod time format.")
-
-;; Redefine the `org-mode-syntax-table' for use in `hywiki-get-buttonize-characters'
-;; so do not have to load all of Org mode there.
-(defvar hywiki--org-mode-syntax-table
-  (let ((st (make-syntax-table outline-mode-syntax-table)))
-    (modify-syntax-entry ?\" "\"" st)
-    (modify-syntax-entry ?\\ "_" st)
-    (modify-syntax-entry ?~ "_" st)
-    (modify-syntax-entry ?< "(>" st)
-    (modify-syntax-entry ?> ")<" st)
-    st)
-  "Standard syntax table for Org mode buffers with HyWiki support.")
-
-(defvar hywiki--pages-directory nil)
-(defvar hywiki--pages-hasht nil)
-
-;; Globally set these values to avoid using 'let' with stack allocations
-;; within `hywiki-maybe-highlight-page-name' frequently.
-(defvar hywiki--any-page-regexp-list nil)
-(defvar hywiki--buts nil)
-(defvar hywiki--but-end nil)
-(defvar hywiki--but-start nil)
-(defvar hywiki--buttonize-end (make-marker))   ;; This must always stay a marker
-(defvar hywiki--buttonize-start (make-marker)) ;; This must always stay a marker
-(defvar hywiki--current-page nil)
-(defvar hywiki--end nil)
-(defvar hywiki--highlighting-done-flag t)
-(defvar hywiki--page-name nil)
-(defvar hywiki--range nil)
-(defvar hywiki--save-case-fold-search nil)
-(defvar hywiki--save-org-link-type-required nil)
-(defvar hywiki--start nil)
+(defcustom hywiki-allow-plurals-flag t
+  "Non-nil means plural HyWikiWords have the same referent as the singular form."
+  :initialize #'custom-initialize-default
+  :set (lambda (option value)
+	 (set option value)
+	 (setq hywiki--any-page-regexp-list nil))
+  :type 'boolean
+  :group 'hyperbole-hywiki)
 
 ;;; ************************************************************************
 ;;; hywiki minor mode
@@ -537,62 +569,190 @@ See the Info documentation at \"(hyperbole)HyWiki\".
 ;;; ************************************************************************
 
 (defib hywiki-word ()
-  "When on a HyWiki word, display its page and optional section.
-If the associated HyWiki page does not exist, create it automatically."
-  (let ((page-name (hywiki-word-at)))
-    (when page-name
-      (ibut:label-set page-name (match-beginning 0) (match-end 0))
-      (hact 'hywiki-find-page page-name))))
+  "When on a HyWikiWord, display its referent.
+If the associated HyWiki referent is a page and it does not exist,
+create it automatically unless it is the first HyWiki page to be
+created, in which case, prompt the user whether to create it to
+prevent any unexpected HyWiki use."
+  (let* ((wikiword-start-end (hywiki-word-at t))
+	 (wikiword (nth 0 wikiword-start-end))
+	 (start    (nth 1 wikiword-start-end))
+	 (end      (nth 2 wikiword-start-end)))
+    (when wikiword
+      (ibut:label-set wikiword start end)
+      (hact 'hywiki-find-referent wikiword))))
 
-;;;###autoload
-(defun hywiki-find-page (&optional page-name prompt-flag)
-  "Display HyWiki PAGE-NAME or a regular file with PAGE-NAME nil.
-Return the absolute path to any page successfully found; nil if
-failed or if displaying a regular file (read in via a `find-file'
-call).
+(defun hywiki-display-page (&optional wikiword)
+  "Display an optional WIKIWORD page and return the page file.
+Use `hywiki-display-page-function' to display the page.
 
-By default, create any non-existent page.  When not in batch mode,
-with optional PROMPT-FLAG t or if this is the first HyWiki page in
-`hywiki-directory', prompt to create if non-existent.  If
-PROMPT-FLAG is :existing or with a prefix argument when called
-interactively, return nil unless the page already exists.  After
-successfully finding a page and reading it into a buffer, run
-`hywiki-find-page-hook'."
-  (interactive (list (if current-prefix-arg
-			 (hywiki-read-page-name "Find existing HyWiki page: ")
-		       (hywiki-read-new-page-name "Find HyWiki page: "))))
-  (let ((in-page-flag (null page-name))
+If WIKIWORD is omitted or nil and `hywiki-display-page-function'
+is an interactive function, it is called interactively and prompts for
+an existing or new HyWikiWord."
+  (if (and (null wikiword) (commandp hywiki-display-page-function))
+      (call-interactively hywiki-display-page-function)
+    (when (null wikiword)
+      (setq wikiword (hywiki-word-read-new "Find HyWiki page: ")))
+    (let ((referent (hywiki-get-file wikiword)))
+      (funcall hywiki-display-page-function referent)
+      ;; Set 'referent attribute of current implicit button
+      (hattr:set 'hbut:current 'referent referent)
+      referent)))
+
+(defun hywiki-display-referent (&optional wikiword prompt-flag)
+  "Display HyWiki WIKIWORD or a regular file with WIKIWORD nil.
+Return the WIKIWORD's referent if successfully found or nil otherwise.
+
+For details, see documentation for `hywiki-find-referent'.
+After successfully finding a page and reading it into a buffer, run
+`hywiki-display-referent-hook'."
+  (let ((in-page-flag (null wikiword))
 	(in-hywiki-directory-flag (hywiki-in-page-p)))
-    (if (or (stringp page-name) in-hywiki-directory-flag)
+    (if (or (stringp wikiword) in-hywiki-directory-flag)
 	(progn
 	  (when in-page-flag
 	    ;; Current buffer must be the desired page
 	    (unless in-hywiki-directory-flag
-	      (error "(hywiki-find-page): No `page-name' given; buffer file must be in `hywiki-directory', not %s"
+	      (error "(hywiki-display-referent): No `wikiword' given; buffer file must be in `hywiki-directory', not %s"
 		     default-directory))
-	    (when (null buffer-file-name)
-	      (error "(hywiki-find-page): No `page-name' given; buffer must have an attached file"))
-	    (setq page-name (file-name-sans-extension (file-name-nondirectory buffer-file-name))))
-
-	  (let* ((section (when (string-match "#" page-name)
-			    (substring page-name (match-beginning 0))))
-		 (page-name (if (string-match "#" page-name)
-				(substring page-name 0 (match-beginning 0))
-			      page-name))
-		 (page-file (or (hywiki-get-page page-name)
-				(hywiki-add-page page-name prompt-flag))))
-	    (when page-file
+	    (unless buffer-file-name
+	      (error "(hywiki-display-referent): No `wikiword' given; buffer must have an attached file"))
+	    (setq wikiword (file-name-sans-extension (file-name-nondirectory buffer-file-name))))
+	  (when (string-match "#[^#]+$" wikiword)
+	    (setq wikiword (substring wikiword 0 (match-beginning 0))))
+	  (let* ((section (when (string-match "#[^#]+$" wikiword)
+			    (substring wikiword (match-beginning 0))))
+		 (referent (cond (prompt-flag
+				  (hywiki-add-prompted-referent wikiword))
+				 ((hywiki-get-referent wikiword))
+				 (t (hywiki-add-page wikiword)))))
+	    (when referent
 	      ;; Ensure highlight any page name at point in case called as a
 	      ;; Hyperbole action type
 	      (hywiki-maybe-highlight-page-name t)
-	      (unless in-page-flag (hpath:find (concat page-file section)))
+	      (cond ((or (symbolp referent) (functionp referent))
+		     ;; function or actype symbol
+		     (hact referent wikiword prompt-flag))
+		    ((and (consp referent) (fboundp (car referent)))
+		     ;; e.g. (kbd "key sequence")
+		     (eval referent))
+		    ((and (null referent) (stringp section)
+			  (string-match-p "^\\(#[^#]+\\)$" section))
+		     ;; "#in-buffer-section"
+		     (hywiki-display-page section))
+		    ((stringp referent)
+		     (let ((case-fold-search t))
+		       (cond
+			((string-match-p "^\\({.+}\\)$" referent)
+			 ;; "{key series}"
+			 (hact 'kbd-key referent))
+			((and (featurep 'org-id)
+			      (string-match "^\\(CUSTOM_\\)?ID:[ \t]+\\(.*[^ \t]\\)" referent))
+			 ;; "ID: org-id"
+			 (setq referent (match-string 2 referent))
+			 (hact 'link-to-org-id referent))
+			((string-match-p "^\\(<\\[.+\\]>\\|<(.+)>\\)$" referent)
+			 ;; "<(global explicit button name)>"
+			 ;; "<[global implicit button name]>"
+			 (gbut:act (string-trim (substring referent 2 -2))))
+			((string-match-p "^(.+).+$\\|.+\\.info\\([.#]\\|$\\)" referent)
+			 ;; (info-manual)node-or-index-item
+			 (hywiki-display-page referent))
+			(t
+			 ;; page path, the default
+			 (unless in-page-flag
+			   (hywiki-display-page (concat referent section))))))))
 	      (hywiki-maybe-highlight-page-names)
-	      (run-hooks 'hywiki-find-page-hook)
-	      page-file)))
-      ;; When called without a page-name and outside hywiki-directory,
+	      (run-hooks 'hywiki-display-referent-hook)
+	      referent)))
+      ;; When called without a wikiword and outside hywiki-directory,
       ;; just find as a regular file and use next line to highlight
       ;; HyWikiWords only if buffer was not previously highlighted.
-      (hywiki-maybe-highlight-page-names))))
+      (hywiki-maybe-highlight-page-names)
+      nil)))
+
+;;; ************************************************************************
+;;; Public referent menus and utility functions
+;;; ************************************************************************
+
+(unless hywiki-referent-menu
+  (makunbound 'hywiki-referent-menu))
+(defcustom hywiki-referent-menu
+  (delq nil
+	(list
+	 '("HyWiki Add>")
+	 (when (fboundp #'activities-new)
+	   '("Activity"   hywiki-add-activity
+	     "Add a HyWikiWord that activates a saved activity from the Activities package."))
+	 '("Bookmark"     hywiki-add-bookmark
+	   "Add a HyWikiWord that jumps to an Emacs bookmark.")
+	 '("Command"      hywiki-add-command
+	   "Add a HyWikiWord that runs an Emacs command or Hyperbole action type.")
+	 '("Find"         hywiki-add-find
+	   "Add a HyWikiWord that greps through `hywiki-directory' for its matches.")
+	 ;; "<(global explicit button name)>"
+	 ;; "<[global implicit button name]>"
+	 '("Gbut"         hywiki-add-global-button
+	   "Add a HyWikiWord that activates a named Hyperbole global button.")
+	 '("HyRolo"       hywiki-add-hyrolo
+	   "Add a HyWikiWord that searches `hyrolo-file-list' for matches.")
+	 ;; "{key series}" wikiword)
+	 '("Keys"         hywiki-add-key-series
+	   "Add a HyWikiWord that executes a key series.")
+	 ;; "(hyperbole)action implicit button"
+	 '("InfoIndex"    hywiki-add-info-index
+	   "Add a HyWikiWord that displays an Info index item.")
+	 ;; "(hyperbole)Smart Keys"
+	 '("infoNode"     hywiki-add-info-node
+	   "Add a HyWikiWord that displays an Info node.")
+	 '("LinkPath"     hywiki-add-link
+	   "Add a HyWikiWord that links to a path and possible position.")
+	 ;; "ID: org-id"
+	 '("OrgID"        hywiki-add-org-id
+	   "Add a HyWikiWord that displays an Org section given its Org ID.")
+	 '("orgRoamNode"  hywiki-add-org-roam-node
+	   "Add a HyWikiWord that displays an Org Roam node given its title.")
+	 ;; "pathname:line:col"
+	 ;; "#in-buffer-section"
+	 '("Page"         hywiki-add-page
+	   "Add/reset a HyWikiWord to link to its standard HyWiki page.")
+	 ;; e.g. (kbd "key sequence")
+	 '("Sexp"         hywiki-add-sexpresion
+	   "Add a HyWikiWord that evaluates an Elisp sexpression.")))
+  "*Menu of HyWikiWord custom referent types of the form:
+\(LABEL-STRING ACTION-SEXP DOC-STR)."
+  :set  (lambda (var value) (set-default var value))
+  :type '(cons (list string) (repeat (list string sexp string)))
+  :group 'hyperbole-buttons)
+
+(defun hywiki-add-prompted-referent (wikiword)
+  "Prompt for, add to HyWiki lookups and return a WIKIWORD custom referent."
+  (interactive (list (hywiki-word-read-new "Add/Edit HyWikiWord: ")))
+  (unless (stringp wikiword)
+    (setq wikiword (hywiki-word-read-new "Add/Edit HyWikiWord: ")))
+  (let ((referent
+	 (hui:menu-act 'hywiki-referent-menu
+		       (list (cons 'hywiki-referent-menu
+				   (cons (list (format "Set HyWiki '%s' Actype>"
+						       wikiword))
+					 (cdr hywiki-referent-menu)))))))
+    (or referent
+	(when (called-interactively-p 'interactive)
+	  (user-error "(hywiki-add-prompted-referent): Invalid HyWikiWord: '%s'; must be capitalized, all alpha" wikiword)))))
+
+(defun hywiki-add-referent (wikiword referent)
+  (when (hywiki-word-is-p wikiword)
+    (when (match-string-no-properties 2 wikiword)
+      ;; Remove any #section suffix in PAGE-NAME.
+      (setq wikiword (match-string-no-properties 1 wikiword)))
+    (hash-add referent (hywiki-get-singular-wikiword wikiword)
+	      (hywiki-get-page-hasht))
+    (setq hywiki--any-page-regexp-list nil)
+    (unless (hyperb:stack-frame '(hywiki-maybe-highlight-page-names-in-frame))
+      (hywiki-directory-set-mod-time)
+      (hywiki-directory-set-checksum))
+    (run-hooks 'hywiki-add-referent-hook)
+    referent))
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -608,33 +768,256 @@ Exclude the minibuffer if selected and return nil."
        (not (apply #'derived-mode-p hywiki-exclude-major-modes))
        (or hywiki-mode (hywiki-in-page-p))))
 
-;;;###autoload
-(defun hywiki-add-link ()
-  "Insert at point a link to a HyWiki page."
-  (interactive "*")
-  (insert (hywiki-read-page-name "Link to HyWiki page: "))
-  (hywiki-maybe-highlight-page-name))
+(defun hywiki-add-activity (wikiword)
+  "Make WIKIWORD resume a prompted for activity.
 
-(defun hywiki-add-page (page-name &optional prompt-flag)
+If WIKIWORD is invalid, trigger a `user-error' if called interactively
+or return nil if not.
+
+After successfully adding the activity, run `hywiki-add-referent-hook'.
+
+Use `hywiki-get-page' to determine whether WIKIWORD exists prior to
+calling this function."
+  (interactive (list (or (hywiki-word-at)
+			 (hywiki-word-read-new "Add/Edit HyWikiWord: "))))
+  (require 'activities)
+  (let ((activity (activities-completing-read :prompt "Resume activity" :default nil)))
+    (hywiki-add-referent wikiword `(activities-resume ,activity :resetp nil))))
+
+(defun hywiki-add-bookmark (wikiword)
+  "Make WIKIWORD display a bookmark and return the action.
+
+If WIKIWORD is invalid, trigger a `user-error' if called interactively
+or return nil if not.
+
+After successfully adding the bookmark, run `hywiki-add-referent-hook'.
+
+Use `hywiki-get-page' to determine whether WIKIWORD exists prior to
+calling this function."
+  (interactive (list (or (hywiki-word-at)
+			 (hywiki-word-read-new "Add/Edit HyWikiWord: "))))
+  (require 'bookmark)
+  (let* ((bookmark (bookmark-completing-read "Bookmark: "
+					     bookmark-current-bookmark))
+	 (loc (bookmark-location bookmark))
+	 ;; Use Hyperbole-specified display location
+	 (bkm-display `(progn
+			 (cond ((bufferp ,loc)
+				(hpath:display-buffer ,loc))
+			       ((get-buffer ,loc)
+				(hpath:display-buffer (get-buffer ,loc)))
+			       ((stringp ,loc)
+				(hywiki-display-page ,loc)))
+			 (bookmark-jump ,bookmark))))
+    (hywiki-add-referent wikiword bkm-display)))
+
+(defun hywiki-add-command (wikiword)
+  "Set a custom command symbol for WIKIWORD and return it.
+Command is the symbol used in the definition expression, which
+may be an Emacs command or a Hyperbole action type.
+
+If WIKIWORD is invalid, trigger a `user-error' if called interactively
+or return nil if not.
+
+After successfully adding the actype, run `hywiki-add-referent-hook'.
+
+Use `hywiki-get-page' to determine whether WIKIWORD exists prior to
+calling this function."
+  (interactive (list (or (hywiki-word-at)
+			 (hywiki-word-read-new "Add/Edit HyWikiWord: "))))
+  (let ((command (hui:actype nil (format "Command for %s: " wikiword))))
+    (hywiki-add-referent wikiword command)))
+
+(defun hywiki-add-find (wikiword)
+  "Make WIKIWORD grep across `hywiki-directory' for matches to itself.
+Return the command to invoke.
+
+If WIKIWORD is invalid, trigger a `user-error' if called interactively
+or return nil if not.
+
+After successfully adding the grep, run `hywiki-add-referent-hook'.
+
+Use `hywiki-get-page' to determine whether WIKIWORD exists prior to
+calling this function."
+  (interactive (list (or (hywiki-word-at)
+			 (hywiki-word-read-new "Add/Edit HyWikiWord: "))))
+  (hywiki-add-referent wikiword #'hywiki-word-grep))
+
+(defun hywiki-add-global-button (wikiword)
+  "Make WIKIWORD evaluate a prompted for global button.
+
+If WIKIWORD is invalid, trigger a `user-error' if called interactively
+or return nil if not.
+
+After successfully adding the button link, run `hywiki-add-referent-hook'.
+
+Use `hywiki-get-page' to determine whether WIKIWORD exists prior to
+calling this function."
+  (interactive (list (or (hywiki-word-at)
+			 (hywiki-word-read-new "Add/Edit HyWikiWord: "))))
+  (let ((gbut-name (hargs:read-match "Global button: "
+				     (mapcar #'list (gbut:label-list))
+				     nil t nil 'gbut)))
+    (hywiki-add-referent wikiword `(gbut:act ,gbut-name))))
+
+(defun hywiki-add-hyrolo (wikiword)
+  "Make WIKIWORD search and display `hyrolo-file-list' matches.
+
+If WIKIWORD is invalid, trigger a `user-error' if called interactively
+or return nil if not.
+
+After successfully adding the hyrolo search, run `hywiki-add-referent-hook'.
+
+Use `hywiki-get-page' to determine whether WIKIWORD exists prior to
+calling this function."
+  (interactive (list (or (hywiki-word-at)
+			 (hywiki-word-read-new "Add/Edit HyWikiWord: "))))
+  (require 'hyrolo)
+  ;; !! TODO: Change PaulAllenWinter to search for "Winter, Paul Allen".
+  (hywiki-add-referent wikiword `(hyrolo-fgrep ,wikiword)))
+
+(defun hywiki-add-info-index (wikiword)
+  "Make WIKIWORD display an Info manual index item and return it.
+
+If WIKIWORD is invalid, trigger a `user-error' if called interactively
+or return nil if not.
+
+After successfully adding the Info index item, run `hywiki-add-referent-hook'.
+
+Use `hywiki-get-page' to determine whether WIKIWORD exists prior to
+calling this function."
+  (interactive (list (or (hywiki-word-at)
+			 (hywiki-word-read-new "Add/Edit HyWikiWord: "))))
+  (let ((item (save-window-excursion
+		(info)
+		(Info-read-index-item-name "Info index item: "))))
+    (when (stringp item)
+      (unless (= (aref item 0) ?\()
+	(setq item (format "(%s)%s" (Info-current-filename-sans-extension) item)))
+      (hywiki-add-referent wikiword `(Info-goto-node ,item)))))
+
+(defun hywiki-add-info-node (wikiword)
+  "Make WIKIWORD display an Info manual node and return it.
+
+If WIKIWORD is invalid, trigger a `user-error' if called interactively
+or return nil if not.
+
+After successfully adding the Info node, run `hywiki-add-referent-hook'.
+
+Use `hywiki-get-page' to determine whether WIKIWORD exists prior to
+calling this function."
+  (interactive (list (or (hywiki-word-at)
+			 (hywiki-word-read-new "Add/Edit HyWikiWord: "))))
+  (let ((node (save-window-excursion
+		(info)
+		(Info-read-node-name "Info node: "))))
+    (when (stringp node)
+      (unless (= (aref node 0) ?\()
+	(setq node (format "(%s)%s" (Info-current-filename-sans-extension) node)))
+      (hywiki-add-referent wikiword `(Info-goto-node ,node)))))
+
+(defun hywiki-add-key-series (wikiword)
+  "Make WIKIWORD invoke a prompted for key series and return it.
+
+If WIKIWORD is invalid, trigger a `user-error' if called interactively
+or return nil if not.
+
+After successfully adding the key series, run `hywiki-add-referent-hook'.
+
+Use `hywiki-get-page' to determine whether WIKIWORD exists prior to
+calling this function."
+  (interactive (list (or (hywiki-word-at)
+			 (hywiki-word-read-new "Add/Edit HyWikiWord: "))))
+  (let ((key-series (read-string "Key series (with or without {}): ")))
+    (unless (string-match-p "\\`{.+}\\'" key-series)
+      (setq key-series (concat "{" (string-trim key-series) "}")))
+    (hywiki-add-referent wikiword key-series)))
+
+(defun hywiki-add-link (wikiword)
+  "Set a path link and possible position for WIKIWORD and return it.
+
+If WIKIWORD is invalid, trigger a `user-error' if called interactively
+or return nil if not.
+
+After successfully adding the path link, run `hywiki-add-referent-hook'.
+
+Use `hywiki-get-page' to determine whether WIKIWORD exists prior to
+calling this function."
+  (interactive (list (or (hywiki-word-at)
+			 (hywiki-word-read-new "Add/Edit HyWikiWord: "))))
+  (let ((referent (hactypes:link-to-file-interactively)))
+    (when (= (length referent) 2)
+      (setq referent (hpath:file-position-to-line-and-column
+		      (car referent) (cadr referent))))
+    (hywiki-add-referent wikiword referent)))
+
+(defun hywiki-add-org-id (wikiword)
+  "Make WIKIWORD evaluate a prompted for sexpression and return it.
+
+If WIKIWORD is invalid, trigger a `user-error' if called interactively
+or return nil if not.
+
+After successfully adding the sexpression, run `hywiki-add-referent-hook'.
+
+Use `hywiki-get-page' to determine whether WIKIWORD exists prior to
+calling this function."
+  (interactive (list (or (hywiki-word-at)
+			 (hywiki-word-read-new "Add/Edit HyWikiWord: "))))
+  (cl-destructuring-bind (_src-window referent-window)
+      (hmouse-choose-link-and-referent-windows)
+    (with-selected-window referent-window
+      (unless (hsys-org-mode-p)
+	(user-error "(hywiki-add-org-id): Referent buffer <%s> must be in org-mode, not %s"
+		    (buffer-name)
+		    major-mode))
+      (let ((org-id (org-id-get nil nil nil t)))
+	(when (and (null org-id) buffer-read-only)
+	  (user-error "(hywiki-add-org-id): Referent buffer <%s> point has no Org ID and buffer is read-only"
+		      (buffer-name)))
+	(unless org-id
+	  (setq org-id (org-id-get-create)))
+	(hywiki-add-referent wikiword (concat "ID: " org-id))))))
+
+(defun hywiki-add-org-roam-node (wikiword)
+  "Make WIKIWORD display an Org Roam Node and return the action.
+
+If WIKIWORD is invalid, trigger a `user-error' if called interactively
+or return nil if not.
+
+After successfully adding the action, run `hywiki-add-referent-hook'.
+
+Use `hywiki-get-page' to determine whether WIKIWORD exists prior to
+calling this function."
+  (interactive (list (or (hywiki-word-at)
+			 (hywiki-word-read-new "Add/Edit HyWikiWord: "))))
+  (require 'org-roam)
+  (let* ((org-roam-node (org-roam-node-read))
+	 (referent `(org-roam-node-open ,org-roam-node
+					(or (alist-get 'file org-link-frame-setup)
+					    (alist-get hpath:display-where hpath:display-where-alist)))))
+    (hywiki-add-referent wikiword referent)))
+
+(defun hywiki-add-page (page-name &optional force-flag)
   "Add or edit the HyWiki page for PAGE-NAME and return its file.
 If file exists already, just return it.  If PAGE-NAME is invalid,
 trigger a `user-error' if called interactively or return nil if
 not.
 
-By default, create any non-existent page.  When not in batch mode,
-with optional PROMPT-FLAG t or if this is the first HyWiki page in
-`hywiki-directory', prompt to create if non-existent.  If
-PROMPT-FLAG is :existing or with a prefix argument when called
-interactively, return nil unless the page already exists.  After
-successfully adding a page, run `hywiki-add-page-hook'.
+By default, create any non-existent page.  When not in batch or
+ert test results mode, if this is the first HyWiki page in
+`hywiki-directory', prompt to create it.
+
+After successfully adding a page, run `hywiki-add-page-hook'.
 
 Use `hywiki-get-page' to determine whether a HyWiki page exists."
-  (interactive (list (hywiki-read-new-page-name "Add/Edit HyWiki page: ")
+  (interactive (list (or (hywiki-word-at)
+			 (hywiki-word-read-new "Add/Edit HyWiki page: "))
 		     current-prefix-arg))
   (if (hywiki-word-is-p page-name)
-      (unless (or (eq prompt-flag :existing)
-		  (and prompt-flag (null noninteractive)
-		       (not (y-or-n-p (concat "Create new HyWiki page `" page-name "'? ")))))
+      (when (or noninteractive
+		(not (hash-empty-p (hywiki-get-page-hasht)))
+		(hyperb:stack-frame '(ert-run-test))
+		(y-or-n-p (concat "Create new HyWiki page `" page-name "'? ")))
 	(when (match-string-no-properties 2 page-name)
 	  ;; Remove any #section suffix in PAGE-NAME.
 	  (setq page-name (match-string-no-properties 1 page-name)))
@@ -642,51 +1025,76 @@ Use `hywiki-get-page' to determine whether a HyWiki page exists."
 	(let* ((page-file (hywiki-get-file page-name))
 	       (page-file-readable (file-readable-p page-file))
 	       (pages-hasht (hywiki-get-page-hasht))
-	       (page-in-hasht (hywiki-get-page page-name)))
+	       (page-in-hasht (hywiki-get-referent page-name)))
 	  (unless page-file-readable
-	    (write-region "" nil page-file nil 0))
-	  (unless page-in-hasht
+	    (if (file-writable-p page-file)
+		(write-region "" nil page-file nil 0)
+	      (user-error "(hywiki-add-page): No permission to write HyWikiWord page file:\n  \"%s\"" page-name)))
+	  (when (or force-flag (not page-in-hasht))
 	    (hash-add page-file page-name pages-hasht)
 	    (setq hywiki--any-page-regexp-list nil))
 	  (unless (or (hyperb:stack-frame '(hywiki-maybe-highlight-page-names-in-frame))
-		      (and page-file-readable page-in-hasht))
+		      (and (not force-flag) page-file-readable page-in-hasht))
 	    (hywiki-directory-set-mod-time)
 	    (hywiki-directory-set-checksum))
 	  (run-hooks 'hywiki-add-page-hook)
 	  page-file))
     (when (called-interactively-p 'interactive)
-      (user-error "(hywiki-add-page): Invalid page name: '%s'; must be capitalized, all alpha" page-name))))
+      (user-error "(hywiki-add-page): Invalid HyWikiWord: '%s'; must be capitalized, all alpha" page-name))))
 
-(defun hywiki-add-page-and-display (page-name)
-  "Add and display the HyWiki page for PAGE-NAME and return its file.
-If file exists already, just return it.  If PAGE-NAME is invalid,
-trigger a `user-error'.
+(defun hywiki-add-page-and-display (wikiword &optional prompt-flag)
+  "Display the HyWiki referent for WIKIWORD and return it.
+If there is no existing WIKIWORD referent, add a HyWiki page for it.
+See doc for `hywiki-find-referent' for use of optional prefix arg
+PROMPT-FLAG. 
 
 Use `hywiki-get-page' to determine whether a HyWiki page exists."
-  (interactive (list (hywiki-read-new-page-name "Add and display HyWiki page: ")))
-  (let ((page-file (hywiki-add-page page-name)))
-    (if page-file
-	(hywiki-find-page (file-name-base page-file))
-      (user-error "(hywiki-add-page-and-display): Invalid page name: '%s'; must be capitalized, all alpha" page-name))))
+  (interactive (list (or (hywiki-word-at)
+			 (hywiki-word-read-new "Add and display HyWiki page: "))
+		     current-prefix-arg))
+  (let* ((normalized-word (hywiki-get-singular-wikiword wikiword))
+	 (referent (hywiki-find-referent normalized-word prompt-flag)))
+    (cond (referent)
+	  ((and (null referent) (hywiki-word-is-p normalized-word))
+	   (when (hywiki-add-page normalized-word)
+	     (hywiki-display-page normalized-word)))
+	  (t (user-error "(hywiki-add-page-and-display): Invalid HyWikiWord: '%s'; must be capitalized, all alpha" wikiword)))))
 
-(defun hywiki-add-to-page (page-name text start-flag)
-  "Add to PAGE-NAME TEXT at page start with START-FLAG non-nil, else end.
-Create page if it does not exist.  If PAGE-NAME is invalid, return
+(defun hywiki-add-sexpression (wikiword)
+  "Make WIKIWORD evaluate a prompted for sexpression and return it.
+
+If WIKIWORD is invalid, trigger a `user-error' if called interactively
+or return nil if not.
+
+After successfully adding the sexpression, run `hywiki-add-referent-hook'.
+
+Use `hywiki-get-page' to determine whether WIKIWORD exists prior to
+calling this function."
+  (interactive (list (or (hywiki-word-at)
+			 (hywiki-word-read-new "Add/Edit HyWikiWord: "))))
+  (hywiki-add-referent wikiword (read--expression "Sexpression: ")))
+
+(defun hywiki-add-to-referent (wikiword text position)
+  "Display WIKIWORD referent and insert TEXT at POSITION.
+Create page if it does not exist.  If WIKIWORD is invalid, return
 nil, else return the file name of the page."
-  (let* ((page-file (hywiki-add-page page-name))
-	 (page-buf  (when page-file (find-file-noselect page-file))))
-    (when page-buf
+  (let* ((referent (hywiki-add-page wikiword)))
+    (when referent
+      (hywiki-find-referent wikiword)
+      (barf-if-buffer-read-only)
       (save-excursion
-	(with-current-buffer page-buf
-	  (barf-if-buffer-read-only)
-	  (save-restriction
-	    (widen)
-	    (goto-char (if start-flag (point-min) (point-max)))
-	    (unless (bolp) (insert (newline)))
-	    (insert text)
-	    (unless (bolp) (insert (newline)))
-	    (goto-char (if start-flag (point-min) (point-max)))
-	    page-file))))))
+	(save-restriction
+	  (widen)
+	  (when position
+	    (goto-char position))
+	  (unless (bolp)
+	    (insert (newline)))
+	  (insert text)
+	  (unless (bolp)
+	    (insert (newline)))
+	  (when position
+	    (goto-char position)))))
+    referent))
 
 (defun hywiki-at-tags-p (&optional at-tag-flag)
   "Return non-nil if point is in a HyWiki buffer and at Org tags."
@@ -695,7 +1103,7 @@ nil, else return the file name of the page."
 
 ;;;###autoload
 (defun hywiki-consult-grep (&optional regexp max-matches path-list)
-  "Interactively search `hywiki-directory' with a consult package grep command.
+  "Interactively search with a consult package grep command.
 Search for optional REGEXP up to MAX-MATCHES in PATH-LIST or `hywiki-directory'.
 
 Use ripgrep (rg) if found, otherwise, plain grep.  Initialize search with
@@ -738,102 +1146,6 @@ Use `hywiki-get-page' to determine whether a HyWiki page exists."
   ;; any of these: [({<"'`'
   (when (or (bolp) (cl-find (char-before) "\[\(\{\<\"'`\t\n\r\f "))
     t))
-
-(defun hywiki-word-activate (&optional arg)
-  "Display HyWiki page for wiki word at point, creating the page if needed.
-If found, return the full path of the page.
-
-If on a HyWikiWord without a wiki page, then prompt before creating
-the page.
-
-If not on a HyWikiWord and optional prefix ARG is null, emulate an
-Action Key press; with a prefix ARG, emulate an Assist Key press."
-  (interactive "P")
-  (let ((word (hywiki-word-at)))
-    (if word
-	(hywiki-find-page word t)
-      (hkey-either arg))))
-
-(defun hywiki-word-at ()
-  "Return HyWikiWord and optional #section at point or nil if not on one.
-Point must be prior to any whitespace character within #section.
-
-Return nil if the HyWikiWord is a prefixed, typed hy:HyWikiWord, since
-these are handled by the Org mode link handler.
-
-Do not test whether or not a page exists for the HyWiki word; call
-`hywiki-page-exists-p' without an argument for that.
-
-A call to `hywiki-active-in-current-buffer-p' at point must return non-nil
-or this will return nil."
-  (when (hywiki-active-in-current-buffer-p)
-    (if (setq hywiki--range
-	      (hproperty:char-property-range (point) 'face hywiki-word-face))
-	(buffer-substring-no-properties (car hywiki--range) (cdr hywiki--range))
-      (save-excursion
-	(let ((wikiword (progn (when (looking-at "\\[\\[")
-				 (goto-char (+ (point) 2)))
-			       (hargs:delimited "[[" "]]"))))
-	  (if wikiword
-	      ;; Handle an Org link [[HyWikiWord]] [[hy:HyWikiWord]]
-	      ;; or [[HyWikiWord#section][Description Text]].
-	      (progn
-		;; Get the HyWikiWord link reference, ignoring any
-		;; description given in the link
-		(setq wikiword (hywiki-strip-org-link wikiword))
-		(if (string-match (concat "\\`" hywiki-org-link-type ":") wikiword)
-		    ;; Ignore prefixed, typed hy:HyWikiWord since Org mode will
-		    ;; display those.
-		    nil
-		  ;; Don't use next line so don't have to load all of Org
-		  ;; mode just to check for HyWikiWords; however, disables
-		  ;; support for Org mode aliases.
-		  ;; (setq wikiword (org-link-expand-abbrev (org-link-unescape (string-trim wikiword))))
-		  (when (hywiki-word-is-p wikiword)
-		    wikiword)))
-	    ;; Handle a HyWiki word with optional #section; if it is an Org
-	    ;; link, it may optionally have a hy: link-type prefix.
-	    ;; Ignore wikiwords preceded by any non-whitespace
-	    ;; character, except any of these: "([\"'`'"
-            (let ((case-fold-search nil)
-		  start
-		  end)
-	      (skip-chars-backward "-_*#[:alnum:]")
-	      (when (hywiki-maybe-at-wikiword-beginning)
-		(cond ((looking-at hywiki--word-and-buttonize-character-regexp)
-		       (setq start (match-beginning 0)
-			     end (match-beginning 3)
-			     wikiword (string-trim
-				       (buffer-substring-no-properties start end))))
-		      ((looking-at (concat hywiki-word-with-optional-section-regexp "\\'"))
-		       (setq start (match-beginning 0)
-			     end   (match-end 0)
-			     ;; No following char
-			     wikiword (string-trim
-				       (buffer-substring-no-properties start end)))))
-		wikiword))))))))
-
-;;;###autoload
-(defun hywiki-word-consult-grep (word)
-  "Use `hywiki-consult-grep' to show occurrences of a prompted for HyWikiWord.
-Default to any HyWikiWord at point."
-  (interactive (list (hywiki-read-page-name)))
-  (if (and (stringp word) (not (string-empty-p word)))
-      (hywiki-consult-grep (concat "\\b" (regexp-quote word) "\\b"))
-    (user-error "(hywiki-word-consult-grep): Invalid HyWikiWord: '%s'; must be capitalized, all alpha" word)))
-
-(defun hywiki-word-is-p (word)
-  "Return non-nil if WORD is a HyWiki word and optional #section.
-The page for the word may not yet exist.  Use `hywiki-get-page'
-to determine whether a HyWiki word page exists.
-
-Return nil if WORD is a prefixed, typed hy:HyWikiWord, since
-these are handled by the Org mode link handler."
-  (and (stringp word) (not (string-empty-p word))
-       (let (case-fold-search)
-	 (or (string-match hywiki-word-with-optional-section-exact-regexp word)
-	     (eq (string-match (concat "\\`" hywiki-word-with-optional-section-regexp "\\'") word)
-		 0)))))
 
 (defun hywiki-directory-edit ()
   "Edit HyWiki pages in current `hywiki-directory'.
@@ -894,6 +1206,37 @@ Use `dired' unless `action-key-modeline-buffer-id-function' is set to
 (defun hywiki-directory-set-mod-time ()
   "Store the last page mod time for `hywiki-directory' as an integer."
   (setq hywiki--directory-mod-time (hywiki-directory-get-mod-time)))
+
+;;;###autoload
+(defun hywiki-find-referent (&optional wikiword prompt-flag)
+  "Display optional HyWiki WIKIWORD referent or if nil, use current buffer.
+If called interactively, prompt for a new or existing WIKIWORD
+and use any prefix argument as PROMPT-FLAG.
+
+Return the referent if successfully found or nil otherwise.
+See `hywiki-referent-menu' for valid referent types.
+
+If the referent is a HyWiki page:
+    Return the absolute path to any page successfully found; nil
+    if failed or if displaying a regular file (read in via a
+    `find-file' call).
+
+    By default, create any non-existent page.  When not in batch
+    mode, with optional PROMPT-FLAG t or if this is the first
+    HyWiki page in `hywiki-directory', prompt to create if
+    non-existent.  If PROMPT-FLAG is :existing or with a prefix
+    argument when called interactively, return nil unless the
+    page already exists.  After successfully finding a page and
+    reading it into a buffer, run `hywiki-display-referent-hook'.
+
+After successfully finding any kind of referent, run
+`hywiki-find-referent-hook'."
+  (interactive (list (hywiki-word-read-new "Add/Edit HyWikiWord: ")
+		     (when current-prefix-arg t)))
+  (let ((referent (hywiki-display-referent wikiword prompt-flag)))
+    (run-hooks 'hywiki-find-referent-hook)
+    
+    referent))
 
 (defun hywiki-highlight-on-yank (_prop-value start end)
   "Used in `yank-handled-properties' called with START and END pos of the text.
@@ -959,6 +1302,13 @@ This includes the delimiters: (), {}, <>, [] and \"\" (double quotes)."
 	(if result
 	    (sort result #'<)
 	  (list nil nil))))))
+
+;;;###autoload
+(defun hywiki-insert-link ()
+  "Insert at point a link to a HyWiki page."
+  (interactive "*")
+  (insert (hywiki-word-read "Link to HyWiki page: "))
+  (hywiki-maybe-highlight-page-name))
 
 (defun hywiki-maybe-dehighlight-balanced-pairs ()
   "Before or after a balanced delimiter, dehighlight HyWikiWords within.
@@ -1189,7 +1539,7 @@ If in a programming mode, must be within a comment.  Use
 		       (setq hywiki--page-name (match-string-no-properties 1)
 			     hywiki--start (match-beginning 0)
 			     hywiki--end   (match-beginning 3))
-		       (and (hywiki-get-page hywiki--page-name)
+		       (and (hywiki-get-referent hywiki--page-name)
 			    ;; Ignore wikiwords preceded by any non-whitespace character
 			    ;; (or (bolp) (memq (preceding-char) '(?\  ?\t)))
 			    )))
@@ -1264,7 +1614,7 @@ the current page unless they have sections attached."
 			       hywiki--start (match-beginning 0)
 			       ;; This excludes optional char after the page#section
 			       hywiki--end   (match-beginning 3))
-			 (hywiki-get-page hywiki--page-name)))
+			 (hywiki-get-referent hywiki--page-name)))
 		  (progn
 		    (setq hywiki--current-page (hywiki-get-buffer-page-name))
 		    ;; Don't highlight current-page matches unless they
@@ -1519,7 +1869,8 @@ value of `hywiki-word-highlight-flag' is changed."
     (hywiki-maybe-dehighlight-page-names region-start region-end))
   (unless (hyperb:stack-frame '(hywiki-maybe-highlight-page-names-in-frame))
     (hywiki-directory-set-mod-time)
-    (hywiki-directory-set-checksum)))
+    (hywiki-directory-set-checksum))
+  nil)
 
 (defun hywiki-maybe-highlight-page-names-in-frame (frame &optional skip-lookups-update-flag)
   "Highlight all non-Org link HyWiki page names displayed in FRAME.
@@ -1563,8 +1914,8 @@ value returns nil."
   (unless (or (null file-stem-name) (string-empty-p file-stem-name))
     ;; Remove any #section from `file-stem-name' and make it singular
     (setq file-stem-name
-	  (hywiki-get-singular-page-name
-	   (if (string-match "#" file-stem-name)
+	  (hywiki-get-singular-wikiword
+	   (if (string-match "#[^#]+$" file-stem-name)
 	       (substring file-stem-name 0 (match-beginning 0))
 	     file-stem-name)))
     (if (string-suffix-p hywiki-file-suffix file-stem-name)
@@ -1572,24 +1923,43 @@ value returns nil."
       (concat (expand-file-name
 	       file-stem-name hywiki-directory) hywiki-file-suffix))))
 
-(defun hywiki-get-page (page-name)
-  "Return the absolute path of HyWiki PAGE-NAME or nil if it does not exist."
-  (when (and (stringp page-name) (not (string-empty-p page-name))
-	     (string-match hywiki-word-with-optional-section-exact-regexp page-name))
-    (when (match-string-no-properties 2 page-name)
-      ;; Remove any #section suffix in PAGE-NAME.
-      (setq page-name (match-string-no-properties 1 page-name)))
-
-    (let ((relative-page-file
-	   (or (hash-get page-name (hywiki-get-page-hasht))
-	       ;; Handle typical pluralized words ending in 's' (not preceded
-	       ;; by an 's') or 'es'
-	       (when (string-match "[eE][sS]$" page-name)
-		 (hash-get (substring page-name 0 -2) (hywiki-get-page-hasht)))
-	       (when (string-match ".[^eEsS]s$" page-name)
-		 (hash-get (substring page-name 0 -1) (hywiki-get-page-hasht))))))
-      (when (stringp relative-page-file)
-	(expand-file-name relative-page-file hywiki-directory)))))
+(defun hywiki-get-referent (wikiword)
+  "Return the referent of HyWiki WIKIWORD or nil if it does not exist.
+If it is a pathname, expand it relative to `hywiki-directory'."
+  (when (and (stringp wikiword) (not (string-empty-p wikiword))
+	     (string-match hywiki-word-with-optional-section-exact-regexp wikiword))
+    (let* ((section (when (match-string-no-properties 2 wikiword)
+		      (prog1 (substring wikiword (match-beginning 2))
+			;; Remove any #section suffix in `wikiword'.
+			(setq wikiword (match-string-no-properties 1 wikiword)))))
+	   (referent (hash-get (hywiki-get-singular-wikiword wikiword)
+			       (hywiki-get-page-hasht))))
+      (cond ((or (symbolp referent) (functionp referent)
+		 (and (consp referent)
+		      (symbolp (car referent))
+		      (fboundp (car referent))))
+	     ;; function or actype symbol
+	     ;; e.g. (kbd "key sequence")
+	     referent)
+	    ((stringp referent)
+	     (let ((case-fold-search t))
+	       (cond ((and (null referent) (stringp section)
+			   (string-match-p "^\\(#[^#]+\\)$" section))
+		      ;; "#in-buffer-section"
+		      section)
+		     ((string-match-p "^\\({.+}\\|\\(CUSTOM_\\)?ID:[ \t]+.+\\|<\\[.+\\]>\\|<(.+)>\\)$"
+				      referent)
+		      ;; "{key series}"
+		      ;; "ID: org-id"
+		      ;; "<(global explicit button name)>"
+		      ;; "<[global implicit button name]>"
+		      referent)
+		     ((string-match-p "^(.+).+$\\|.+\\.info\\([.#]\\|$\\)" referent)
+		      ;; (info-manual)node-or-index-item
+		      referent)
+		     ;; path, expand to absolute
+		     (t (hywiki-get-file referent)))))
+	     (t nil)))))
 
 (defun hywiki-get-page-files ()
   "Return the list of existing HyWiki page file names.
@@ -1619,8 +1989,8 @@ regexps of page names."
 	  (mapcar (lambda (page-sublist)
 		    ;; Add plurals to the list
 		    (setq page-sublist
-			  (nconc page-sublist
-				 (mapcar #'hywiki-get-plural-page-name page-sublist)))
+			  (delq nil (nconc page-sublist
+					   (mapcar #'hywiki-get-plural-wikiword page-sublist))))
 		    (concat (regexp-opt page-sublist 'words)
 			    "\\("
 			    hywiki-word-section-regexp "?\\)"
@@ -1634,35 +2004,46 @@ regexps of page names."
   "Return a list of the HyWiki page names."
   (hash-map #'cdr (hywiki-get-page-hasht)))
 
-(defun hywiki-get-plural-page-name (page-name)
-  "Return the pluralized version of the given PAGE-NAME."
+(defun hywiki-get-wikiwords-obarray ()
+  "Return an obarray of existing HyWikiWords."
+  (cdr (hywiki-get-page-hasht)))
+
+(defun hywiki-get-plural-wikiword (wikiword)
+  "Return the pluralized version of the given WIKIWORD.
+`hywiki-allow-plurals-flag' must be non-nil or nil is always returned."
   ;; You add "-es" to make a noun plural when the singular noun ends
   ;; in "s", "x", "z", "sh", or "ch".  However, there are some
   ;; exceptions to this rule, such as words ending in "-ch" that are
   ;; pronounced with a hard "k", like "monarchs" and "stomachs".
-  (cond ((let ((case-fold-search t))
-	   (string-match-p "\\(es\\|.[^es]s\\)$" page-name))
-	 ;; Already plural
-	 page-name)
-	((let ((case-fold-search t))
-	   (string-match-p "\\(ch\\|sh\\|[sxz]\\)$" page-name))
-	 (concat page-name (if (string-match-p "[[:lower:]]" page-name)
-			       "es"
-			     "ES")))
-	(t (concat page-name (if (string-match-p "[[:lower:]]" page-name)
-				 "s"
-			       "S")))))
+  (when hywiki-allow-plurals-flag
+    (cond ((let ((case-fold-search t))
+	     (string-match-p "\\(es\\|.[^es]s\\)$" wikiword))
+	   ;; Already plural
+	   wikiword)
+	  ((let ((case-fold-search t))
+	     (string-match-p "\\(ch\\|sh\\|[sxz]\\)$" wikiword))
+	   (concat wikiword (if (string-match-p "[[:lower:]]" wikiword)
+				"es"
+			      "ES")))
+	  (t (concat wikiword (if (string-match-p "[[:lower:]]" wikiword)
+				  "s"
+				"S"))))))
 
-(defun hywiki-get-singular-page-name (page-name)
-  "Return the singular version of the given PAGE-NAME."
-  (or (when (let ((case-fold-search t))
-	      (string-match-p "\\(ch\\|sh\\|[sxz]\\)es$" page-name))
-	(substring page-name 0 -2))
-      (when (let ((case-fold-search t))
-	      (and (string-match-p ".[^s]s$" page-name)
-		   (not (string-match-p "emacs$" page-name))))
-	(substring page-name 0 -1))
-      page-name))
+(defun hywiki-get-singular-wikiword (wikiword)
+  "Return the singular version of the given WIKIWORD.
+If `hywiki-allow-plurals-flag' is nil, return WIKIWORD unchanged."
+  (if (and hywiki-allow-plurals-flag (stringp wikiword))
+      (or (when (let ((case-fold-search t))
+		  ;; Handle typical pluralized words ending in 's' (not preceded
+		  ;; by an 's') or 'es'
+		  (string-match-p "\\(ch\\|sh\\|[sxz]\\)es$" wikiword))
+	    (substring wikiword 0 -2))
+	  (when (let ((case-fold-search t))
+		  (and (string-match-p ".[^eEsS]s$" wikiword)
+		       (not (string-match-p "emacs$" wikiword))))
+	    (substring wikiword 0 -1))
+	  wikiword)
+    wikiword))
 
 (defun hywiki-kill-buffer-hook ()
   "Delete file attached to HyWiki buffer if the file is zero-sized.
@@ -1676,14 +2057,13 @@ If deleted, update HyWikiWord highlighting across all frames."
       t)
     nil))
 
-(defun hywiki-make-pages-hasht ()
-  (let* ((page-files (hywiki-get-page-files))
-	 (page-elts (mapcar (lambda (file)
-			      (cons file (file-name-sans-extension file)))
-			    page-files)))
-    (setq hywiki--any-page-regexp-list nil
-	  hywiki--pages-directory hywiki-directory
-	  hywiki--pages-hasht (hash-make page-elts))))
+(defun hywiki-clear-pages-hasht ()
+  "Clear all elements from the HyWiki referent hash table and return it."
+  (if (hashp hywiki--pages-hasht)
+      (progn (hash-map (lambda (key) (hash-delete key hywiki--pages-hasht))
+		       (hash-map #'cdr hywiki--pages-hasht))
+	     hywiki--pages-hasht)
+    (hash-make (length (hywiki-get-page-files)))))
 
 (eval-and-compile
   '(when (featurep 'company)
@@ -1701,6 +2081,32 @@ If deleted, update HyWikiWord highlighting across all frames."
 			 when (string-prefix-p prefix key)
 			 collect key))))
 	   ('sorted t))))))
+
+(defun hywiki-make-pages-hasht ()
+  (let* ((page-files (hywiki-get-page-files))
+	 (non-page-elts (when (hashp hywiki--pages-hasht)
+			  (delq nil
+				(hash-map #''hywiki-non-page-elts
+					  hywiki--pages-hasht))))
+	 (non-page-hasht (hash-make non-page-elts))
+	 (key)
+	 (page-elts (delq nil (mapcar (lambda (file)
+					(setq key (file-name-sans-extension file))
+					(unless (hash-get key non-page-hasht)
+					  (cons file key)))
+				      page-files))))
+    (setq hywiki--any-page-regexp-list nil
+	  hywiki--pages-directory hywiki-directory
+	  hywiki--pages-hasht (hash-merge (hash-make non-page-elts)
+					  (hash-make page-elts)))))
+
+(defun hywiki-non-page-elts (val-key)
+  (let ((suffix-regexp (concat (regexp-quote hywiki-file-suffix) "$"))
+	value)
+    (setq value (car val-key))
+    (unless (and (stringp value)
+		 (string-match-p suffix-regexp value))
+      val-key)))
 
 (defun hywiki-org-export-function (&rest _)
   "Add to `write-contents-functions' to convert HyWikiWord links to Org links.
@@ -1730,7 +2136,7 @@ If not found, set it up and return the new project properties."
   (concat
    (when hywiki-org-link-type-required
      (concat hywiki-org-link-type ":"))
-   (hywiki-read-page-name)))
+   (hywiki-word-read)))
 
 ;;; Next two functions derived from the denote package.
 ;;;###autoload
@@ -1777,7 +2183,7 @@ word section).  If page is not found, return nil."
            (word (if (and section (not (string-empty-p section)))
                      (substring link 0 (match-beginning 0))
 		   link))
-           (path (and word (hywiki-get-page word))))
+           (path (and word (hywiki-get-referent word))))
       (when path
 	(cond
 	 (full-data
@@ -1825,46 +2231,8 @@ variables."
   '(org-link-set-parameters hywiki-org-link-type
                             :complete #'hywiki-org-link-complete
 			    :export #'hywiki-org-link-export
-			    :follow #'hywiki-find-page
+			    :follow #'hywiki-find-referent
 			    :store #'hywiki-org-link-store))
-
-(defun hywiki-page-exists-p (&optional word start end)
-  "Return an existing HyWiki page name from optional WORD or word at point.
-Word may be of form: HyWikiWord#section with an optional #section.
-If no such page exists, return nil.
-
-If WORD is the symbol, :range, and there is a HyWikiWord at point
-with an existing page, then return the tuple of values: (word
-word-start word-end) instead of a string,
-
-When using the word at point, a call to
-`hywiki-active-in-current-buffer-p' at point must return non-nil
-or this will return nil." 
-  (setq hywiki--page-name word
-	word (hywiki-strip-org-link word))
-  (if (or (stringp word)
-	  (setq word (hywiki-word-at)))
-      (unless (hywiki-get-page (hywiki-page-strip-section word))
-	(setq word nil))
-    (setq word nil))
-  (when (and (listp word) (= (length word) 3))
-    (setq start (nth 1 word)
-	  end   (nth 2 word)
-	  word  (nth 0 word)))
-  (if (eq hywiki--page-name :range)
-      (if (and word (setq hywiki--range
-			  (hproperty:char-property-range
-			   (point) 'face hywiki-word-face)))
-	  (list word (or start (car hywiki--range)) (or end (cdr hywiki--range)))
-	(list word start end))
-    word))
-
-(defun hywiki-strip-org-link (link-str)
-  "Return the hy:HyWikiWord#section part of an Org link string.
-Strip any square bracket delimiters, any description and leading or
-trailing whitespace."
-  (when (and (stringp link-str) (not (string-empty-p link-str)))
-    (string-trim (car (delete "" (split-string link-str "\\[\\[\\|\\]\\[\\|\\]\\]"))))))
 
 (defun hywiki-page-strip-section (page-name)
   "Return PAGE-NAME with any optional #section stripped off.
@@ -1889,18 +2257,52 @@ Customize this directory with:
   (interactive "P")
   (org-publish-project "hywiki" all-pages-flag))
 
-(defun hywiki-read-new-page-name (&optional prompt)
-  "Prompt with completion for and return a new HyWiki page name."
-  (let ((completion-ignore-case t))
-    (completing-read (if (stringp prompt) prompt "HyWiki Page Name: ")
-		     (hywiki-get-page-list))))
+(defun hywiki-referent-exists-p (&optional word start end)
+  "Return an optional HyWiki WORD or word at point, if has an existing referent.
+If no such referent exists, return nil.
 
-(defun hywiki-read-page-name (&optional prompt)
-  "Prompt with completion for and return an existing HyWiki page name.
-If on a page name, immediately pressing RET will use that name as the default."
-  (let ((completion-ignore-case t))
-    (completing-read (if (stringp prompt) prompt "HyWiki Page Name: ")
-		     (hywiki-get-page-list) nil t nil nil (hywiki-word-at))))
+Word may be of form:
+ 1. HyWikiWord#section with an optional #section.
+ 2. If WORD is the symbol, :range, and there is a HyWikiWord at point
+    with an existing referent, return the tuple of values: (word
+    word-start word-end) instead of the word.
+
+When using the word at point, a call to `hywiki-active-in-current-buffer-p'
+at point must return non-nil or this function will return nil." 
+  (setq hywiki--page-name word
+	word (hywiki-strip-org-link word))
+  (if (or (stringp word)
+	  (setq word (hywiki-word-at)))
+      (unless (hywiki-get-referent
+	       (hywiki-get-singular-wikiword
+		(hywiki-page-strip-section word)))
+	(setq word nil))
+    (setq word nil))
+  (when (and (listp word) (= (length word) 3))
+    (setq start (nth 1 word)
+	  end   (nth 2 word)
+	  word  (nth 0 word)))
+  (if (eq hywiki--page-name :range)
+      (if (and word (setq hywiki--range
+			  (hproperty:char-property-range
+			   (point) 'face hywiki-word-face)))
+	  (list word (or start (car hywiki--range)) (or end (cdr hywiki--range)))
+	(list word start end))
+    word))
+
+(defun hywiki-strip-org-link (link-str)
+  "Return the hy:HyWikiWord#section part of an Org link string.
+Strip any square bracket delimiters, description and leading or
+trailing whitespace, and type prefix.  Return nil, if no match."
+  (when (and (stringp link-str) (not (string-empty-p link-str)))
+    (string-remove-prefix
+     (concat hywiki-org-link-type ":")
+     (let ((blank "[[:blank:]\r\n]+"))
+       (string-trim (car (delete ""
+				 (mapcar (lambda (str)
+					   (string-trim (replace-regexp-in-string blank " " str t t)
+							blank blank))
+					 (split-string link-str "\\[\\[\\|\\]\\[\\|\\]\\]")))))))))
 
 ;;;###autoload
 (defun hywiki-tags-view (&optional todo-only match view-buffer-name)
@@ -1929,6 +2331,143 @@ optional VIEW-BUFFER-NAME, use that rather than the default,
 			       nil
 			       ,org-agenda-buffer-name)))
       (forward-line 2))))
+
+(defun hywiki-word-activate (&optional arg)
+  "Display HyWiki referent for wikiword at point.
+If referent is a non-existent HyWiki page, create it.  When this
+is the first HyWiki page, prompt before creating in case this is
+not what was intended.
+
+If found, return the referent.
+
+If not on a HyWikiWord and optional prefix ARG is null, emulate an
+Action Key press; with a prefix ARG, emulate an Assist Key press."
+  (interactive "P")
+  (let ((word (hywiki-word-at)))
+    (if word
+	(hywiki-find-referent word)
+      (hkey-either arg))))
+
+(defun hywiki-word-at (&optional range-flag)
+  "Return HyWikiWord and optional #section at point or nil if not on one.
+Point must be prior to any whitespace character within #section.
+With optional RANGE-FLAG, return a list of (HyWikiWord start-position
+end-position); the positions are for only the HyWikiWord itself.
+
+Do not test whether or not a page exists for the HyWiki word; call
+`hywiki-referent-exists-p' without an argument for that.
+
+A call to `hywiki-active-in-current-buffer-p' at point must return non-nil
+or this will return nil."
+  (when (hywiki-active-in-current-buffer-p)
+    (if (setq hywiki--range
+	      (hproperty:char-property-range (point) 'face hywiki-word-face))
+	(buffer-substring-no-properties (car hywiki--range) (cdr hywiki--range))
+      (save-excursion
+	;; Don't use `cl-destructuring-bind' here since the `hargs:delimited' call
+	;; can return nil rather than the 3 arg list that would be required
+	(let* ((wikiword-start-end
+		(let ((start-regexp (concat "\\[\\[\\(" hywiki-org-link-type ":\\)?")))
+		  (save-excursion
+		    (skip-chars-backward (concat hywiki-org-link-type ":["))
+		    (when (looking-at start-regexp)
+		      (goto-char (match-end 0)))
+		    (hargs:delimited (concat "\\[\\[\\(" hywiki-org-link-type ":\\)?")
+				     "\\(\\]\\[\\|\\]\\]\\)" t t t))))
+	       (wikiword (nth 0 wikiword-start-end))
+	       (start    (nth 1 wikiword-start-end))
+	       (end      (nth 2 wikiword-start-end)))
+	  (when (if wikiword
+		    ;; Handle an Org link [[HyWikiWord]] [[hy:HyWikiWord]]
+		    ;; or [[HyWikiWord#section][Description Text]].
+		    ;; Get the HyWikiWord link reference, ignoring any
+		    ;; description given in the link
+		    ;; Don't use next line so don't have to load all of Org
+		    ;; mode just to check for HyWikiWords; however, disables
+		    ;; support for Org mode aliases.
+		    ;; (setq wikiword (org-link-expand-abbrev (org-link-unescape (string-trim wikiword))))
+		    (progn
+		      (setq wikiword (hywiki-strip-org-link wikiword))
+		      (when (and wikiword end)
+			;; Update start and end to newly stripped
+			;; string positions
+			(save-excursion
+			  (save-restriction
+			    (narrow-to-region start end)
+			    (goto-char (point-min))
+			    (when (search-forward wikiword nil t)
+			      (setq start (match-beginning 0)
+				    end   (match-end 0))))))
+		      (hywiki-word-is-p wikiword))
+		  ;; Handle a non-delimited HyWiki word with optional #section;
+		  ;; if it is an Org link, it may optionally have a hy:
+		  ;; link-type prefix.  Ignore wikiwords preceded by any
+		  ;; non-whitespace character, except any of these:
+		  ;; "([\"'`'"
+		  (let ((case-fold-search nil))
+		    (skip-chars-backward "-_*#[:alnum:]")
+		    (when (hywiki-maybe-at-wikiword-beginning)
+		      (cond ((looking-at hywiki--word-and-buttonize-character-regexp)
+			     (setq start (match-beginning 0)
+				   end (match-beginning 3)
+				   wikiword (string-trim
+					     (buffer-substring-no-properties start end))))
+			    ((looking-at (concat hywiki-word-with-optional-section-regexp "\\'"))
+			     (setq start (match-beginning 0)
+				   end   (match-end 0)
+				   ;; No following char
+				   wikiword (string-trim
+					     (buffer-substring-no-properties start end))))))))
+	    (if range-flag
+		(list wikiword start end)
+	      wikiword)))))))
+
+;;;###autoload
+(defun hywiki-word-consult-grep (word)
+  "Use `hywiki-consult-grep' to show occurrences of a prompted for HyWikiWord.
+Default to any HyWikiWord at point."
+  (interactive (list (hywiki-word-read)))
+  (if (and (stringp word) (not (string-empty-p word)))
+      (hywiki-consult-grep (concat "\\b" (regexp-quote word) "\\b"))
+    (user-error "(hywiki-word-consult-grep): Invalid HyWikiWord: '%s'; must be capitalized, all alpha" word)))
+
+(defun hywiki-word-grep (wikiword)
+  "Grep for occurrences of WIKIWORD with `consult-grep' or normal-grep'.
+Search across `hywiki-directory'."
+  (if (fboundp 'consult-grep) ;; allow for autoloading
+      (hywiki-word-consult-grep wikiword)
+    (grep (string-join (list grep-command (format "'%s'" wikiword)
+			     (concat (file-name-as-directory hywiki-directory)
+				     "*" hywiki-file-suffix))
+		       " "))))
+
+(defun hywiki-word-is-p (word)
+  "Return non-nil if WORD is a HyWiki word and optional #section.
+The page for the word may not yet exist.  Use `hywiki-get-page'
+to determine whether a HyWiki word page exists.
+
+Return nil if WORD is a prefixed, typed hy:HyWikiWord, since
+these are handled by the Org mode link handler."
+  (and (stringp word) (not (string-empty-p word))
+       (let (case-fold-search)
+	 (or (string-match hywiki-word-with-optional-section-exact-regexp word)
+	     (eq (string-match (concat "\\`" hywiki-word-with-optional-section-regexp "\\'") word)
+		 0)))))
+
+(defun hywiki-word-read-new (&optional prompt)
+  "Prompt with completion for and return a new HyWiki page name."
+  (let ((completion-ignore-case t))
+    (completing-read (if (stringp prompt) prompt "HyWikiWord: ")
+		     (hywiki-get-wikiwords-obarray)
+		     nil nil nil nil (hywiki-word-at))))
+
+(defun hywiki-word-read (&optional prompt)
+  "Prompt with completion for and return an existing HyWiki page name.
+If on a page name, immediately pressing RET will use that name as the default."
+  (let ((completion-ignore-case t))
+    (completing-read (if (stringp prompt) prompt "HyWikiWord: ")
+		     (hywiki-get-wikiwords-obarray)
+		     nil t nil nil (hywiki-word-at))))
 
 (defun hywiki-word-highlight-flag-changed (symbol set-to-value operation _where)
   "Watch function for variable ``hywiki-word-highlight-flag'.

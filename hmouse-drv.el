@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     25-Jun-24 at 02:13:58 by Bob Weiner
+;; Last-Mod:     15-Dec-24 at 22:38:04 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -63,14 +63,15 @@
 
 (declare-function hkey-quit-window "hmouse-drv") ; Alias defined in this file.
 
-(declare-function hattr:report "hbut")
-(declare-function hattr:list "hbut")
 (declare-function br-in-browser "hpath")
-(declare-function hbut:label "hbut")
+(declare-function hattr:clear "hbut")
 (declare-function hattr:get "hbut")
+(declare-function hattr:list "hbut")
+(declare-function hattr:report "hbut")
+(declare-function hbut:label "hbut")
+(declare-function hkey-set-key "hyperbole")
 (declare-function hui:ebut-link-directly "hui")
 (declare-function hui:ibut-link-directly "hui")
-(declare-function hkey-set-key "hyperbole")
 (declare-function org-todo "org")
 
 ;;; ************************************************************************
@@ -198,6 +199,8 @@ This permits the Smart Keys to behave as paste keys.")
 (defun action-key-depress (&rest args)
   "Register depress of the Hyperbole Action Mouse Key."
   (interactive)
+  (hattr:clear 'hbut:current)
+  (action-key-clear-variables)
   (cond (assist-key-depressed-flag
 	 (or action-key-help-flag
 	     (setq assist-key-help-flag t)))
@@ -223,6 +226,7 @@ This permits the Smart Keys to behave as paste keys.")
 (defun assist-key-depress (&rest args)
   "Register depress of the Hyperbole Assist Mouse Key."
   (interactive)
+  (assist-key-clear-variables)
   (cond (action-key-depressed-flag
 	 (or assist-key-help-flag
 	     (setq action-key-help-flag t)))
@@ -352,6 +356,7 @@ the `action-key-default-function' variable is run.  Return t
 unless the `action-key-default-function' variable is not bound to
 a valid function."
   (interactive)
+  (hattr:clear 'hbut:current)
   (action-key-clear-variables)
   (unwind-protect
       (prog1 (action-key-internal)
@@ -1052,6 +1057,7 @@ With optional ASSISTING prefix arg non-nil, display help for the
 Assist Key command.  Return non-nil iff associated help
 documentation is found."
   (interactive "P")
+  (hattr:clear 'hbut:current)
   (let* ((mouse-flag (when (mouse-event-p last-command-event)
 		       (or action-key-depress-position assist-key-depress-position)))
 	 (mouse-drag-flag (hmouse-drag-p))
@@ -1142,8 +1148,10 @@ documentation is found."
 		    (when (memq cmd-sym '(hui:hbut-act hui:hbut-help))
 		      (let ((actype (or (actype:elisp-symbol (hattr:get 'hbut:current 'actype))
 					(hattr:get 'hbut:current 'actype)))
+			    ;; (lbl-key (hattr:get 'hbut:current 'lbl-key))
 			    (categ (hattr:get 'hbut:current 'categ))
 			    (attributes (nthcdr 2 (hattr:list 'hbut:current))))
+
 			(princ (format "%s %s BUTTON SPECIFICS:\n"
 				       (htype:def-symbol
 					(if (eq categ 'explicit) actype categ))
@@ -1159,9 +1167,11 @@ documentation is found."
 					 (replace-regexp-in-string "^" "  " (documentation categ)
 								   nil t))))
 			(if assisting
-			    (let ((type-help-func (or (intern-soft
-						       (concat (htype:names 'ibtypes categ)
-							       ":help"))
+			    (let* ((custom-help-func (intern-soft
+						      (concat (htype:names 'ibtypes categ)
+							      ":help")))
+				   (type-help-func (or (and custom-help-func (fboundp custom-help-func)
+							    custom-help-func)
 						      'hbut:report)))
 			      (princ (format "\n%s ASSIST SPECIFICS:\n%s\n"
 					     type-help-func

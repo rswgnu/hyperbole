@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Apr-91
-;; Last-Mod:     18-Feb-24 at 11:32:03 by Mats Lidell
+;; Last-Mod:      2-Dec-24 at 01:48:15 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -253,7 +253,6 @@ entry, otherwise modify existing one.  Nil BUT-SYM means use
 	(let* ((actype)
 	       (hbdata (list (hattr:get b 'lbl-key)
 			     (hattr:get b 'action)
-			     ;; Hyperbole V1 referent compatibility, always nil in V2
 			     (hattr:get b 'referent)
 			     ;; Save actype without class prefix.
 			     (and (setq actype (hattr:get b 'actype))
