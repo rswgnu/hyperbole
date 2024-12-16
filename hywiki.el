@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     15-Dec-24 at 18:52:02 by Bob Weiner
+;; Last-Mod:     16-Dec-24 at 01:03:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -129,7 +129,7 @@
 (require 'hui-mini)   ;; For `hui:menu-act'
 (require 'hypb)       ;; Requires `seq'
 (require 'outline)    ;; For `outline-mode-syntax-table'
-(require 'subr-x)     ;; For `string-clean-whitespace' and `string-remove-prefix'
+(require 'subr-x)     ;; For `string-remove-prefix'
 (require 'thingatpt)
 
 (eval-and-compile
@@ -2297,9 +2297,12 @@ trailing whitespace, and type prefix.  Return nil, if no match."
   (when (and (stringp link-str) (not (string-empty-p link-str)))
     (string-remove-prefix
      (concat hywiki-org-link-type ":")
-     (string-trim (car (delete ""
-			       (mapcar #'string-clean-whitespace
-				       (split-string link-str "\\[\\[\\|\\]\\[\\|\\]\\]"))))))))
+     (let ((blank "[[:blank:]\r\n]+"))
+       (string-trim (car (delete ""
+				 (mapcar (lambda (str)
+					   (string-trim (replace-regexp-in-string blank " " str t t)
+							blank blank))
+					 (split-string link-str "\\[\\[\\|\\]\\[\\|\\]\\]")))))))))
 
 ;;;###autoload
 (defun hywiki-tags-view (&optional todo-only match view-buffer-name)

@@ -1,3 +1,8 @@
+2024-12-16  Bob Weiner  <rsw@gnu.org>
+
+* test/hbut-tests.el: Change most "/tmp" to "/tmp/" for ease of comparison
+    with 'default-directory'.
+
 2024-12-15  Bob Weiner  <rsw@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--action-key-on-wikiword-displays-page):
