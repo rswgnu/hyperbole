@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     30-Sep-24 at 01:00:10 by Bob Weiner
+;; Last-Mod:     15-Dec-24 at 22:49:02 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -33,6 +33,7 @@
 (declare-function helm-info "ext:helm")
 (declare-function helm-apropos "ext:helm")
 (declare-function devdocs-lookup "ext:devdocs")
+(declare-function native-comp-available-p "comp.c")
 
 ;; interaction-log
 (defvar ilog-buffer-name)

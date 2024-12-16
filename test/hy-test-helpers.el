@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:      6-Aug-24 at 00:09:45 by Mats Lidell
+;; Last-Mod:     15-Dec-24 at 14:24:42 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -72,12 +72,12 @@
 (cl-defun hy-test-helpers-verify-hattr-at-p (&key actype args loc lbl-key name)
   "Verify the attribute of hbut at point.
 Checks ACTYPE, ARGS, LOC, LBL-KEY and NAME."
-  (let ((hbut-at-p (hbut:at-p)))
-    (should (eq (hattr:get hbut-at-p 'actype) actype))
-    (should (equal (hattr:get hbut-at-p 'args) args))
-    (should (equal (hattr:get hbut-at-p 'loc) loc))
-    (should (equal (hattr:get hbut-at-p 'lbl-key) lbl-key))
-    (should (equal (hattr:get hbut-at-p 'name) name))))
+  (hbut:at-p)
+  (should (eq (hattr:get 'hbut:current 'actype) actype))
+  (should (equal (hattr:get 'hbut:current 'args) args))
+  (should (equal (hattr:get 'hbut:current 'loc) loc))
+  (should (equal (hattr:get 'hbut:current 'lbl-key) lbl-key))
+  (should (equal (hattr:get 'hbut:current 'name) name)))
 
 (defun hy-delete-file-and-buffer (file)
   "Delete FILE and buffer visiting file."

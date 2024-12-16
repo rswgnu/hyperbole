@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     24-Nov-24 at 14:41:45 by Bob Weiner
+;; Last-Mod:      1-Dec-24 at 20:33:59 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1571,6 +1571,7 @@ action type, function symbol to call or test to execute, i.e.
 <mail nil \"user@somewhere.org\">."
   (let ((hbut:max-len 0)
 	(lbl-key (hattr:get 'hbut:current 'lbl-key))
+	(name (hattr:get 'hbut:current 'name))
 	(start-pos (hattr:get 'hbut:current 'lbl-start))
 	(end-pos  (hattr:get 'hbut:current 'lbl-end))
         actype actype-sym action args lbl var-flag)
@@ -1647,8 +1648,9 @@ action type, function symbol to call or test to execute, i.e.
 
 	;; Create implicit button object and store in symbol hbut:current.
 	(ibut:label-set lbl)
-	(ibut:create :lbl-key lbl-key :lbl-start start-pos :lbl-end end-pos
-		     :categ 'ibtypes::action :actype actype :args args)
+	(ibut:create :name name :lbl-key lbl-key :lbl-start start-pos
+		     :lbl-end end-pos :categ 'ibtypes::action :actype actype
+		     :args args)
 
         ;; Necessary so can return a null value, which actype:act cannot.
         (let ((hrule:action
@@ -1697,15 +1699,6 @@ If a boolean function or variable, display its value."
 	  (ibut:label-set wikiword start end)
 	(ibut:label-set wikiword))
       (hact 'hywiki-find-referent wikiword))))
-
-(defun hywiki-existing-word:help (wikiword)
-  "When on a HyWikiWord, customize its referent type and link."
-  (interactive (list (hywiki-word-at)))
-  (unless (stringp wikiword)
-    (setq wikiword (hywiki-word-at)))
-  (when wikiword
-    (ibut:label-set wikiword (match-beginning 0) (match-end 0))
-    (hywiki-find-referent wikiword t)))
 
 ;;; ========================================================================
 ;;; Inserts completion into minibuffer or other window.

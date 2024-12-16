@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     16-Aug-24 at 22:30:09 by Mats Lidell
+;; Last-Mod:     16-Dec-24 at 00:34:24 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1115,24 +1115,31 @@ When optional NO-FLASH, do not flash."
 ;;; Private functions
 ;;; ************************************************************************
 
-(defun smart-ancestor-tag-files (&optional path name-of-tags-file)
-  "Walk up PATH tree looking for NAME-OF-TAGS-FILE.
-Return list from furthest to deepest (nearest)."
-  (or path (setq path default-directory))
+(defun smart-ancestor-tag-files (&optional dirs name-of-tags-file)
+  "Walk up DIRS trees looking for NAME-OF-TAGS-FILE.
+DIRS may be a list of directory or a single directory.
+Return a tags table list in DIRS order, where for each directory,
+list the found tags tables from furthest to nearest."
+  (or dirs (setq dirs default-directory))
   (let ((tags-table-list)
 	tags-file)
-    (while (and
-	    (stringp path)
-	    (setq path (file-name-directory path))
-	    (setq path (directory-file-name path))
-	    ;; Not at root directory
-	    (not (string-match
-		  (concat (file-name-as-directory ":?") "\\'")
-		  path)))
-      (setq tags-file (expand-file-name (or name-of-tags-file "TAGS") path))
-      (if (file-readable-p tags-file)
-	  (setq tags-table-list (cons tags-file tags-table-list))))
-    tags-table-list))
+    (apply #'nconc
+	   (mapcar (lambda (dir)
+		     (setq tags-table-list nil
+			   tags-file nil)
+		     (while (and
+			     (stringp dir)
+			     (setq dir (file-name-directory dir))
+			     (setq dir (directory-file-name dir))
+			     ;; Not at root directory
+			     (not (string-match
+				   (concat (file-name-as-directory ":?") "\\'")
+				   dir)))
+		       (setq tags-file (expand-file-name (or name-of-tags-file "TAGS") dir))
+		       (if (file-readable-p tags-file)
+			   (setq tags-table-list (cons tags-file tags-table-list))))
+		     tags-table-list)
+		   (if (listp dirs) dirs (list dirs))))))
 
 (defun smart-asm-include-file ()
   "If point is on an include file line, try to display file.
@@ -1562,27 +1569,39 @@ cannot be expanded via a tags file."
   (and (featurep 'hsys-org) (hsys-org-mode-p) (org-in-src-block-p t)))
 
 ;;;###autoload
-(defun smart-tags-file-list (&optional curr-dir-or-filename name-of-tags-file)
-  "Return tag files list for optional CURR-DIR-OR-FILENAME or `default-directory'.
-Optional NAME-OF-TAGS-FILE is the literal filename (no directory) for which
-to look.  If no tags file is found, an error is signaled."
-  (let* ((path (or (and (smart-tags-org-src-block-p) (hsys-org-get-value :dir))
-		   curr-dir-or-filename default-directory))
-	 (tags-table-list (smart-ancestor-tag-files path name-of-tags-file)))
-    ;; If no tags files were found and the current buffer may contain Emacs Lisp identifiers and
-    ;; is in a 'load-path' directory, then use the default Emacs Lisp tag table.
-    (if (and (not tags-table-list)
-	     (stringp curr-dir-or-filename)
-	     smart-emacs-tags-file
-	     (smart-emacs-lisp-mode-p)
-	     (let ((path (file-name-directory curr-dir-or-filename)))
-	       (when path
-		 (delq nil (mapcar
-			    (lambda (p)
-			      (when p
-				(equal (file-name-as-directory p) path)))
-			    load-path)))))
-	(setq tags-table-list (list smart-emacs-tags-file)))
+(defun smart-tags-file-list (&optional curr-dirs-or-filename name-of-tags-file)
+  "Return tag files list for optional CURR-DIRS-OR-FILENAME or `default-directory'.
+CURR-DIRS-OR-FILENAME may also be a list of directories in which to
+find tags files.  Tag files returned may not yet exist.
+
+Optional NAME-OF-TAGS-FILE is the literal filename (no directory) for
+which to look; when null, use \"TAGS\".  If the list returned is empty,
+signal an error."
+  (let* ((dirs (or (and (smart-tags-org-src-block-p) (hsys-org-get-value :dir))
+		   curr-dirs-or-filename default-directory))
+	 (tags-table-list (smart-ancestor-tag-files dirs name-of-tags-file)))
+    ;; If no tags files were found and the current buffer may contain
+    ;; Emacs Lisp identifiers and is in a 'load-path' directory, then
+    ;; use the default Emacs Lisp tag table.
+    (unless tags-table-list
+      (cond ((and (stringp curr-dirs-or-filename)
+		  smart-emacs-tags-file
+		  (smart-emacs-lisp-mode-p)
+		  (let ((dir (file-name-directory curr-dirs-or-filename)))
+		    (when dir
+		      (delq nil (mapcar
+				 (lambda (p)
+				   (when p
+				     (equal (file-name-as-directory p) dir)))
+				 load-path)))))
+	     (setq tags-table-list (list smart-emacs-tags-file)))
+	    ((and curr-dirs-or-filename (listp curr-dirs-or-filename))
+	     (setq tags-table-list
+		   (delq nil (mapcar
+			      (lambda (p)
+				(when (stringp p)
+				  (expand-file-name "TAGS" p)))
+			      curr-dirs-or-filename))))))
     ;; Return the appropriate tags file list.
     (cond (tags-table-list
 	   ;; GNU Emacs when tags tables are found or provided by the user
@@ -1593,7 +1612,7 @@ to look.  If no tags file is found, an error is signaled."
 	   tags-table-computed-list)
 	  ((when (boundp 'tags-file-name) tags-file-name)
 	   (list tags-file-name))
-	  (t (error "Needed tags file not found; see `man etags' for how to build one")))))
+	  (t (error "(smart-tags-file-list): Needed tags file not found; see `man etags' for how to build one")))))
 
 ;;; ************************************************************************
 ;;; Private functions

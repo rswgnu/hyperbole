@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     24-Nov-24 at 16:43:45 by Bob Weiner
+;; Last-Mod:     16-Dec-24 at 00:07:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -51,19 +51,34 @@
         (should-not (hywiki-add-page "notawikiword"))
       (hy-delete-dir-and-buffer hywiki-directory))))
 
-(ert-deftest hywiki-tests--wikiword-with-prefix-creates-a-new-page ()
+(ert-deftest hywiki-tests--action-key-on-wikiword-displays-page ()
   "Verify `action-key' on a prefixed WikiWord, outside of hywiki-directory, creates a new page."
   (defvar wikifile)
   (let ((hsys-org-enable-smart-keys t)
         (hywiki-directory (make-temp-file "hywiki" t))
-        (wikifile (make-temp-file "wikifile")))
-    (hywiki-mode -1)
+        (wikifile (make-temp-file "wikifile" nil ".org")))
     (unwind-protect
         (with-temp-buffer
+	  (hywiki-mode 1)
           (insert "[[hy:WikiWord]]")
           (goto-char 4)
-          (mocklet (((hywiki-add-page "WikiWord") => wikifile))
+          (mocklet (((hywiki-display-referent "WikiWord" nil) => wikifile))
             (action-key)))
+      (hy-delete-file-and-buffer wikifile))))
+
+(ert-deftest hywiki-tests--assist-key-on-wikiword-displays-help ()
+  "Verify `assist-key' on a prefixed WikiWord, outside of hywiki-directory, displays help for the WikiWord link."
+  (defvar wikifile)
+  (let ((hsys-org-enable-smart-keys t)
+        (hywiki-directory (make-temp-file "hywiki" t))
+        (wikifile (make-temp-file "wikifile" nil ".org")))
+    (unwind-protect
+        (with-temp-buffer
+	  (hywiki-mode 1)
+          (insert "[[hy:WikiWord]]")
+          (goto-char 4)
+          (should (string= "WikiWord" (hywiki-word-at)))
+          (assist-key))
       (hy-delete-file-and-buffer wikifile))))
 
 (ert-deftest hywiki-tests--not-a-wikiword-unless-in-hywiki-mode ()
@@ -152,8 +167,9 @@
             (should-not (hywiki-active-in-current-buffer-p)))
           (let ((hywiki-exclude-major-modes (list 'org-mode)))
             (should-not (hywiki-active-in-current-buffer-p)))
-          (mocklet ((hywiki-in-page-p => nil))
-            (should-not (hywiki-active-in-current-buffer-p)))
+	  (let (hywiki-mode)
+            (mocklet ((hywiki-in-page-p => nil))
+              (should-not (hywiki-active-in-current-buffer-p))))
           (dired-mode)
           (should-not (hywiki-active-in-current-buffer-p)))
       (hy-delete-file-and-buffer wiki-page)

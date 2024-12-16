@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     25-Nov-24 at 01:47:17 by Bob Weiner
+;; Last-Mod:     15-Dec-24 at 22:43:50 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -19,9 +19,11 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(require 'hypb)
-(require 'hsettings)                    ; For hyperbole-web-search-alist
 (require 'browse-url)
+(require 'hsettings)                    ; For hyperbole-web-search-alist
+(require 'hypb)
+(unless (fboundp 'string-replace)
+  (load "subr")) ;; for `string-replace'
 
 ;;; ************************************************************************
 ;;; Public declarations

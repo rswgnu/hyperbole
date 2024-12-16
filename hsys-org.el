@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     16-Sep-24 at 22:19:53 by Bob Weiner
+;; Last-Mod:     15-Dec-24 at 22:39:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -56,10 +56,11 @@
 (defvar hywiki-org-link-type-required)  ; "hywiki.el"
 (defvar org-agenda-buffer-tmp-name)     ; "org-agenda.el"
 
-(declare-function hywiki-at-tags-p "hywiki")
-(declare-function hywiki-tags-view "hywiki")
+(declare-function hycontrol-windows-grid "hycontrol")
 (declare-function hyrolo-tags-view "hyrolo")
 (declare-function hyrolo-at-tags-p "hyrolo")
+(declare-function hywiki-at-tags-p "hywiki")
+(declare-function hywiki-tags-view "hywiki")
 (declare-function hsys-org-roam-tags-view "hsys-org")
 
 (declare-function org-babel-get-src-block-info "org-babel")
@@ -496,25 +497,17 @@ Match to all todos if `keyword' is nil or the empty string."
 
 (defun hsys-org-link-at-p ()
   "Return non-nil iff point is on a square-bracketed Org mode link.
-Assume caller has already checked that the current buffer is in `org-mode'
-or is looking for an Org link in another buffer type."
+Ignore [[hy:HyWiki]] buttons and return nil (handle these as
+implicit buttons).  Assume caller has already checked that the
+current buffer is in `org-mode' or is looking for an Org link in
+another buffer type."
   (unless (or (smart-eolp) (smart-eobp))
     (with-suppressed-warnings nil
       (let ((in-org-link (org-in-regexp org-link-bracket-re nil t)))
 	(when in-org-link
 	  (save-match-data
-	    ;; If this Org link matches a HyWiki word, let Org handle
-	    ;; it with its normal internal link handling only if it
-	    ;; has a `hywiki-org-link-type' prefix or if
-	    ;; `hywiki-org-link-type-required' is non-nil.  Otherwise,
-	    ;; return nil from this function and let ibtypes handle this
-	    ;; as a HyWiki word.
-	    (if (fboundp 'hywiki-word-at)
-		(if (hywiki-word-at)
-		    (when (or hywiki-org-link-type-required
-			      (hyperb:stack-frame '(hywiki-word-at)))
-		      in-org-link)
-		  in-org-link)
+	    ;; If this Org link matches a potential HyWiki word, ignore it.
+	    (unless (and (fboundp 'hywiki-word-at) (hywiki-word-at))
 	      in-org-link)))))))
 
 ;; Assume caller has already checked that the current buffer is in org-mode.

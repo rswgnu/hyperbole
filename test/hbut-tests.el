@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-may-21 at 09:33:00
-;; Last-Mod:     14-Apr-24 at 21:52:52 by Mats Lidell
+;; Last-Mod:     15-Dec-24 at 23:48:34 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -239,10 +239,11 @@ Create button with link-to-directory using `temporary-file-directory`."
     (should (string= "<[name]> - \"/tmp\"" (buffer-string)))
     (goto-char 3)
     (let ((but (ibut:at-p)))
+      (should but)
       (with-temp-buffer
         (ibut:insert-text but)
 	;; Allow for /tmp being a link to /private/tmp on Macos
-        (should (string-match "\"\\(/private\\)?/tmp\"" (buffer-string)))))))
+        (should (string-match "\"\\(/private\\)?/tmp/\"" (buffer-string)))))))
 
 (ert-deftest hbut-tests-ibut-insert-annot-bib ()
   "Insert ibut to annot-bib, which must be attached to a file."
