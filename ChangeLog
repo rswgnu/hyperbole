@@ -1,3 +1,8 @@
+2024-12-16  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (docker-all-tests, docker-batch-tests): No byte compiling to
+    speed up running tests.
+
 2024-12-16  Bob Weiner  <rsw@gnu.org>
 
 * test/hbut-tests.el: Change most "/tmp" to "/tmp/" for ease of comparison
