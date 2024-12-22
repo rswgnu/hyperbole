@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     22-Dec-24 at 11:51:43 by Bob Weiner
+;; Last-Mod:     22-Dec-24 at 12:05:55 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -256,7 +256,9 @@ Use nil for no HyWiki mode indicator."
 
 ;;;###autoload
 (defun hywiki-let-directory (option value)
-  (set option value))
+  (set option value)
+  (hywiki-clear-pages-hasht)
+  (hywiki-make-pages-hasht))
 
 ;;;###autoload
 (defun hywiki-set-directory (option value)

@@ -6,6 +6,19 @@
             (hywiki-clear-pages-hasht): Simplify to nullify hywiki
     hash table and not try to reuse a previously build table.
 
+2024-12-16  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--sections-with-dash-space)
+   (hywiki-tests--get-singular-wikiword)
+   (hywiki-tests--get-plural-wikiword, hywiki-tests--add-referent)
+   (hywiki-tests--add-bookmark, hywiki-tests--add-command)
+   (hywiki-tests--add-find, hywiki-tests--add-global-button)
+   (hywiki-tests--add-hyrolo, hywiki-tests--add-info-index)
+   (hywiki-tests--add-info-node, hywiki-tests--add-key-series)
+   (hywiki-tests--add-link, hywiki-tests--add-org-id)
+   (hywiki-tests--get-page-list-for-new-wiki-directory-after-added-referent):
+   Tests.
+
 2024-12-16  Bob Weiner  <rsw@gnu.org>
 
 * test/hbut-tests.el: Change most "/tmp" to "/tmp/" for ease of comparison
@@ -103,7 +116,7 @@
 
 2024-11-25  Mats Lidell  <matsl@gnu.org>
 
-* kotl/kmenu.el (kotl-menu-common-body): Use kotl-kview. 
+* kotl/kmenu.el (kotl-menu-common-body): Use kotl-kview.
 
 * .github/workflows/static.yaml: Static workflow for publishing the manual
     to a static site using GitHub Pages.
