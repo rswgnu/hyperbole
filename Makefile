@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     24-Nov-24 at 22:28:43 by Mats Lidell
+# Last-Mod:     16-Dec-24 at 23:36:16 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -576,7 +576,7 @@ internal-docker-all-tests-ert-output:
 docker-all-tests:
 	@total_summary=$(shell mktemp); \
 	for i in $(DOCKER_VERSIONS); do printf "=== Emacs $$i ===\n" | tee -a $$total_summary; \
-		make docker version=$$i targets='clean bin internal-docker-all-tests-ert-output'; \
+		make docker version=$$i targets='clean internal-docker-all-tests-ert-output'; \
 		cat /tmp/ERT-OUTPUT-ERT | tee -a $$total_summary; \
 	done; \
 	printf "\n\n=== Summary ===\n"; cat $$total_summary; \
@@ -585,7 +585,7 @@ docker-all-tests:
 docker-batch-tests:
 	@total_summary=$(shell mktemp); build_summary=$(shell mktemp); \
 	for i in $(DOCKER_VERSIONS); do printf "=== Emacs $$i ===\n" | tee -a $$total_summary; \
-		make docker version=$$i targets='clean bin test' | tee $$build_summary; \
+		make docker version=$$i targets='clean test' | tee $$build_summary; \
 		sed -n -E '/^Ran [0123456789]+ tests/,/^make:/p' $$build_summary | head -n-1 | tee -a $$total_summary; \
 	done; \
 	printf "\n\n=== Summary ===\n"; cat $$total_summary; \
