@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-may-21 at 09:33:00
-;; Last-Mod:     16-Dec-24 at 00:55:21 by Bob Weiner
+;; Last-Mod:     22-Dec-24 at 21:58:44 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -223,7 +223,8 @@ Create button with link-to-directory using `temporary-file-directory`."
 
 (ert-deftest hbut-tests-ibut-program-link-to-file ()
   "Programatically create ibut link to file."
-  (let ((test-file (make-temp-file "ibut" nil ".txt")))
+  (let ((test-file (make-temp-file "ibut" nil ".txt"))
+        (default-directory "/home/user/directory/")) ; Make link be absolute
     (unwind-protect
         (with-temp-buffer
           (ibut:program "name" 'link-to-file test-file)
@@ -238,7 +239,8 @@ Create button with link-to-directory using `temporary-file-directory`."
     (ibut:program "name" 'link-to-directory "/tmp/")
     (should (string= "<[name]> - \"/tmp/\"" (buffer-string)))
     (goto-char 3)
-    (let ((but (ibut:at-p)))
+    (let ((but (ibut:at-p))
+          (default-directory "/home/user/directory/")) ; Make link be absolute
       (should but)
       (with-temp-buffer
         (ibut:insert-text but)
