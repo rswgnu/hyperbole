@@ -1,5 +1,12 @@
 2024-12-22  Bob Weiner  <rsw@gnu.org>
 
+* test/hywiki-tests.el (hywiki-tests--add-org-id): Fix final test
+    to just look for prefix of "ID: ".
+
+* hywiki.el (hywiki-clear-pages-hasht): Also clear
+    'hywiki--any-page-regexp-list'.
+            (hywiki-add-org-id): Fix first two lines of doc string.
+
 * test/hywiki-tests.el (hywiki-tests--add-org-id): Fix to not compare
     error string values since when compiled may not be a string but
     just a pair of indexes into one.

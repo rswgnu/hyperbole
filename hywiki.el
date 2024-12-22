@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     22-Dec-24 at 12:05:55 by Bob Weiner
+;; Last-Mod:     22-Dec-24 at 12:52:02 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -973,7 +973,8 @@ calling this function."
     (hywiki-add-referent wikiword referent)))
 
 (defun hywiki-add-org-id (wikiword)
-  "Make WIKIWORD evaluate a prompted for sexpression and return it.
+  "Make WIKIWORD display an Org file or headline with an Org id.
+If no id exists, it is created.  Return the string \"ID: org-id-string\".
 
 If WIKIWORD is invalid, trigger a `user-error' if called interactively
 or return nil if not.
@@ -2080,7 +2081,8 @@ If deleted, update HyWikiWord highlighting across all frames."
 
 (defun hywiki-clear-pages-hasht ()
   "Clear all elements from the HyWiki referent hash table and return it."
-  (setq hywiki--pages-hasht nil))
+  (setq hywiki--pages-hasht nil
+	hywiki--any-page-regexp-list nil))
 
 (eval-and-compile
   '(when (featurep 'company)
