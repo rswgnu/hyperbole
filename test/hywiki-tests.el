@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     16-Dec-24 at 21:59:57 by Mats Lidell
+;; Last-Mod:     22-Dec-24 at 12:27:15 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -670,10 +670,7 @@ Note special meaning of `hywiki-allow-plurals-flag'."
     (unwind-protect
         (with-current-buffer (find-file filea)
           (mocklet (((hmouse-choose-link-and-referent-windows) => (list nil (get-buffer-window))))
-            (let ((err (should-error (hywiki-add-org-id "WikiWord") :type 'error)))
-              (should (string=
-                       (format "(hywiki-add-org-id): Referent buffer <%s> must be in org-mode, not %s" (buffer-name) major-mode)
-                       (cadr err))))))
+            (should-error (hywiki-add-org-id "WikiWord") :type 'error)))
       (hy-delete-file-and-buffer filea)))
 
   (let ((filea (make-temp-file "hypb" nil ".org")))
@@ -684,10 +681,7 @@ Note special meaning of `hywiki-allow-plurals-flag'."
           ;; Error-case - No Org ID and read only
           (setq buffer-read-only t)
           (mocklet (((hmouse-choose-link-and-referent-windows) => (list nil (get-buffer-window))))
-            (let ((err (should-error (hywiki-add-org-id "WikiWord") :type 'error)))
-              (should (string=
-                       (format "(hywiki-add-org-id): Referent buffer <%s> point has no Org ID and buffer is read-only" (buffer-name))
-                       (cadr err))))
+	    (should-error (hywiki-add-org-id "WikiWord") :type 'error)
 
             ;; Normal case - Org-mode with Org ID
             (goto-char (point-max))

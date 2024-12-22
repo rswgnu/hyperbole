@@ -1,5 +1,9 @@
 2024-12-22  Bob Weiner  <rsw@gnu.org>
 
+* test/hywiki-tests.el (hywiki-tests--add-org-id): Fix to not compare
+    error string values since when compiled may not be a string but
+    just a pair of indexes into one.
+
 * hywiki.el (hywiki-let-directory, hywiki-set-directory,
     hywiki-directory-changed): Add to support 'let' changes of
     'hywiki-directory'.
