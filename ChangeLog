@@ -1,3 +1,8 @@
+2024-12-23  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--add-activity)
+    (hywiki-tests--add-org-roam-node): Add tests.
+
 2024-12-22  Bob Weiner  <rsw@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--add-org-id): Fix so :type
