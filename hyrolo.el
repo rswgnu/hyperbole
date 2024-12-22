@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     13-Nov-24 at 13:17:36 by Mats Lidell
+;; Last-Mod:     22-Dec-24 at 11:02:15 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -220,7 +220,7 @@ Function is called with 4 arguments: (SYMBOL SET-TO-VALUE OPERATION WHERE)."
     (hyrolo-set-file-list symbol set-to-value)))
 
 ;; This next line is needed to invoke `hyrolo-set-file-list' when
-;; `hyrolo-file-list' is changed via `setq' rather than
+;; `hyrolo-file-list' is changed via `setq' or `let' rather than
 ;; `customize-set-variable'.
 (add-variable-watcher 'hyrolo-file-list #'hyrolo-file-list-changed)
 

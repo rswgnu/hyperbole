@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     15-Dec-24 at 13:17:27 by Bob Weiner
+;; Last-Mod:     22-Dec-24 at 13:22:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1635,7 +1635,7 @@ If assist key is pressed:
 	       (magit-section-show section)
 	     (magit-section-hide section)))
           (t
-	   (if-let ((command (key-binding (kbd "RET"))))
+	   (if-let* ((command (key-binding (kbd "RET"))))
 	       (progn (setq last-command-event ?\()
 		      (setq this-command command)
 		      (smart-magit-display-file command))

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     16-Dec-24 at 01:03:45 by Bob Weiner
+;; Last-Mod:     22-Dec-24 at 16:31:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -254,19 +254,40 @@ Use nil for no HyWiki mode indicator."
 (defvar hywiki-file-suffix ".org"
   "File suffix (including period) to use when creating HyWiki pages.")
 
+;;;###autoload
+(defun hywiki-let-directory (option value)
+  (set option value)
+  (hywiki-clear-pages-hasht)
+  (hywiki-make-pages-hasht))
+
+;;;###autoload
+(defun hywiki-set-directory (option value)
+  (unless (and (boundp 'hywiki-directory)
+	       (equal hywiki-directory (file-name-as-directory value)))
+    (set-default option (file-name-as-directory value))
+    (hywiki-clear-pages-hasht)
+    (hywiki-make-pages-hasht))
+  (hywiki-org-set-publish-project))
+
 (defcustom hywiki-directory "~/hywiki/"
   "Directory that holds all HyWiki pages in Org format.
 See `hywiki-org-publishing-directory' for exported pages in html format."
   :initialize #'custom-initialize-default
-  :set (lambda (option value)
-	 (unless (and (boundp 'hywiki-directory)
-		      (equal hywiki-directory (file-name-as-directory value)))
-	   (set option (file-name-as-directory value))
-	   (hywiki-clear-pages-hasht)
-	   (hywiki-make-pages-hasht))
-	 (hywiki-org-set-publish-project))
+  :set #'hywiki-set-directory
   :type 'string
   :group 'hyperbole-hywiki)
+
+(defun hywiki-directory-changed (option set-to-value operation _where)
+  "Watch function for variable `hywiki-directory'.
+Function is called with 4 arguments: (SYMBOL SET-TO-VALUE OPERATION WHERE)."
+  (if (memq operation '(let unlet)) ;; not setting global value
+      (hywiki-let-directory option set-to-value)
+    (hywiki-set-directory option set-to-value)))
+
+;; This next line is needed to invoke `hywiki-set-directory' when
+;; `hywiki-directory' is changed via `setq' or `let' rather than
+;; `customize-set-variable'.
+(add-variable-watcher 'hywiki-directory #'hywiki-directory-changed)
 
 (defvar-local hywiki-buffer-highlighted-state nil
   "State of HyWikiWords highlighting in the associated buffer.
@@ -952,7 +973,8 @@ calling this function."
     (hywiki-add-referent wikiword referent)))
 
 (defun hywiki-add-org-id (wikiword)
-  "Make WIKIWORD evaluate a prompted for sexpression and return it.
+  "Make WIKIWORD display an Org file or headline with an Org id.
+If no id exists, it is created.  Return the string \"ID: org-id-string\".
 
 If WIKIWORD is invalid, trigger a `user-error' if called interactively
 or return nil if not.
@@ -970,7 +992,9 @@ calling this function."
 	(user-error "(hywiki-add-org-id): Referent buffer <%s> must be in org-mode, not %s"
 		    (buffer-name)
 		    major-mode))
-      (let ((org-id (org-id-get nil nil nil t)))
+      (let ((org-id (if (>= (action:param-count #'org-id-get) 4)
+			(org-id-get nil nil nil t)
+		      (org-id-get))))
 	(when (and (null org-id) buffer-read-only)
 	  (user-error "(hywiki-add-org-id): Referent buffer <%s> point has no Org ID and buffer is read-only"
 		      (buffer-name)))
@@ -2059,11 +2083,8 @@ If deleted, update HyWikiWord highlighting across all frames."
 
 (defun hywiki-clear-pages-hasht ()
   "Clear all elements from the HyWiki referent hash table and return it."
-  (if (hashp hywiki--pages-hasht)
-      (progn (hash-map (lambda (key) (hash-delete key hywiki--pages-hasht))
-		       (hash-map #'cdr hywiki--pages-hasht))
-	     hywiki--pages-hasht)
-    (hash-make (length (hywiki-get-page-files)))))
+  (setq hywiki--pages-hasht nil
+	hywiki--any-page-regexp-list nil))
 
 (eval-and-compile
   '(when (featurep 'company)
