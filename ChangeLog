@@ -1,5 +1,8 @@
 2024-12-22  Bob Weiner  <rsw@gnu.org>
 
+* hui-mouse.el (smart-magit-tab): Change 'if-let' (now obsolete)
+    to 'if-let*'.
+
 * test/hywiki-tests.el (hywiki-tests--add-org-id): Fix final test
     to just look for prefix of "ID: ".
 

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     22-Dec-24 at 12:53:29 by Bob Weiner
+;; Last-Mod:     22-Dec-24 at 13:11:54 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -687,7 +687,10 @@ Note special meaning of `hywiki-allow-plurals-flag'."
             (goto-char (point-max))
             (setq buffer-read-only nil)
             (defvar hywiki-test--org-id)
-            (should (string-prefix-p "ID: " (hywiki-add-org-id "WikiWord")))))
+	    (let ((result (hywiki-add-org-id "WikiWord")))
+	      (if (stringp result)
+		  (should (string-prefix-p "ID: " result))
+		(error "(hywiki-tests--add-org-id): result value is a non-string: %s" result)))))
       (hy-delete-file-and-buffer filea))))
 
 ;; hywiki-add-org-roam-node -- Requires org-roam
