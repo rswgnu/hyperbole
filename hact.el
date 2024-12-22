@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     17-Aug-24 at 15:09:52 by Bob Weiner
+;; Last-Mod:     22-Dec-24 at 16:03:11 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -332,6 +332,14 @@ TYPE and TYPE-CATEGORY are both symbols.  TYPE-CATEGORY must be one of
 (defun action:kbd-macro (macro &optional repeat-count)
   "Return Hyperbole action that execute a keyboard MACRO REPEAT-COUNT times."
   (list 'execute-kbd-macro macro repeat-count))
+
+(defun action:param-count (action)
+  "Return the number of args in ACTION's arg list.
+Keywords and special symbols like &optional and &key are excluded."
+  (length (seq-filter (lambda (sym) 
+			(not (or (keywordp sym)
+				 (string-match "^&" (symbol-name sym)))))
+		      (action:params action))))
 
 (defun action:params-emacs (def)
   "Return the argument list for the function DEF.

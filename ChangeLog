@@ -1,5 +1,13 @@
 2024-12-22  Bob Weiner  <rsw@gnu.org>
 
+* test/hywiki-tests.el (hywiki-tests--add-org-id): Fix so :type
+    argument is a list as required, not a symbol.
+
+* hact.el (action:param-count): Add and use in 'hywiki-add-org-id'.
+  hywiki.el (hywiki-add-org-id): Pre-9.7 versions of org-id-get
+    did not accept the 4th optional INHERIT arg, so fix by
+    conditionally sending this argument.
+
 * hui-mouse.el (smart-magit-tab): Change 'if-let' (now obsolete)
     to 'if-let*'.
 
