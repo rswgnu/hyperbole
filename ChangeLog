@@ -1,3 +1,11 @@
+2024-12-22  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-let-directory, hywiki-set-directory,
+    hywiki-directory-changed): Add to support 'let' changes of
+    'hywiki-directory'.
+            (hywiki-clear-pages-hasht): Simplify to nullify hywiki
+    hash table and not try to reuse a previously build table.
+
 2024-12-16  Bob Weiner  <rsw@gnu.org>
 
 * test/hbut-tests.el: Change most "/tmp" to "/tmp/" for ease of comparison
