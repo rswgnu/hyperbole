@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     24-Dec-24 at 00:15:00 by Mats Lidell
+;; Last-Mod:     24-Dec-24 at 00:48:15 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -120,24 +120,41 @@
     (unwind-protect
         (progn
           (hywiki-mode 1)
-          ;; Matches
+
+          ;; Matches a WikiWord
           (dolist (v '("WikiWord" "[WikiWord]" "[[WikiWord]]" "{WikiWord}" "(WikiWord)"
                        "<WikiWord>" "<<WikiWord>>" "{[[WikiWord]]}" "([[WikiWord]])"
                        "[WikiWord AnotherWord]"
                        ))
             (with-temp-buffer
+              (org-mode)
               (insert v)
 	      (newline nil t)
               (goto-char 6)
               (should (string= "WikiWord" (hywiki-word-at)))))
-          ;; No WikiWord matches but identifies as org link (Note: Not
-          ;; checked if target exists.)
-          (dolist (v '("[[hy:WikiWord]]" "[[hy:WikiWord\]]]" "[[WikiWord AnotherWord]]"))
+
+          ;; Identifies as org link (Note: Not checked if target
+          ;; exists.) AND matches WikiWord
+          (dolist (v '("[[hy:WikiWord]]" "[[hy:WikiWord\\]]]"))
             (with-temp-buffer
+              (org-mode)
               (insert v)
 	      (newline nil t)
               (goto-char 6)
-              (should (hsys-org-link-at-p))
+              (font-lock-ensure)
+              (should (hsys-org-face-at-p 'org-link))
+              (should (string= "WikiWord" (hywiki-word-at)))))
+
+          ;; Identifies as org link (Note: Not checked if target
+          ;; exists.) AND DOES NOT match WikiWord
+          (dolist (v '("[[WikiWord AnotherWord]]"))
+            (with-temp-buffer
+              (org-mode)
+              (insert v)
+	      (newline nil t)
+              (goto-char 6)
+              (font-lock-ensure)
+              (should (hsys-org-face-at-p 'org-link))
               (should-not (string= "WikiWord" (hywiki-word-at))))))
       (hywiki-mode 0)
       (hy-delete-dir-and-buffer hywiki-directory))))
