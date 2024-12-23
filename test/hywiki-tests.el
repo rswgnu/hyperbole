@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     22-Dec-24 at 16:22:44 by Bob Weiner
+;; Last-Mod:     23-Dec-24 at 00:21:51 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -597,7 +597,16 @@ Note special meaning of `hywiki-allow-plurals-flag'."
           (should (eq 'referent (hywiki-get-referent "WikiWord"))))
       (hy-delete-dir-and-buffer hywiki-directory))))
 
-;; hywiki-add-activity -- Requires activities
+(ert-deftest hywiki-tests--add-activity ()
+  "Verify `hywiki-add-activity'."
+  (let ((hywiki-directory (make-temp-file "hywiki" t)))
+    (unwind-protect
+        (progn
+          (mocklet (((require 'activities) => t)
+                    ((hywiki-add-referent "WikiWord" '(activities-resume "activity" :resetp nil)) => 'activity-referent)
+                    (activities-completing-read => "activity"))
+            (should (equal (hywiki-add-activity "WikiWord") 'activity-referent))))
+      (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--add-bookmark ()
   "Verify `hywiki-add-bookmark'."
@@ -693,7 +702,16 @@ Note special meaning of `hywiki-allow-plurals-flag'."
 		(error "(hywiki-tests--add-org-id): result value is a non-string: %s" result)))))
       (hy-delete-file-and-buffer filea))))
 
-;; hywiki-add-org-roam-node -- Requires org-roam
+(ert-deftest hywiki-tests--add-org-roam-node ()
+  "Verify `hywiki-add-org-roam-node'."
+  (let ((hywiki-directory (make-temp-file "hywiki" t)))
+    (unwind-protect
+        (progn
+          (mocklet (((require 'org-roam) => t)
+                    ((org-roam-node-read) => "org-roam-node")
+                    ((hywiki-add-referent "WikiWord" '(org-roam-node-open "org-roam-node" (or (alist-get 'file org-link-frame-setup) (alist-get hpath:display-where hpath:display-where-alist)))) => 'org-roam-referent))
+            (should (equal (hywiki-add-org-roam-node "WikiWord") 'org-roam-referent))))
+      (hy-delete-dir-and-buffer hywiki-directory))))
 
 (provide 'hywiki-tests)
 ;;; hywiki-tests.el ends here
