@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     23-Dec-24 at 00:21:51 by Mats Lidell
+;; Last-Mod:     24-Dec-24 at 00:48:15 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -22,6 +22,7 @@
 (require 'with-simulated-input)
 (require 'hy-test-helpers)
 (require 'hywiki)
+(require 'hsys-org)
 (require 'ox-publish)
 
 (ert-deftest hywiki-tests--hywiki-add-page--adds-file-in-wiki-folder ()
@@ -94,6 +95,67 @@
           (should-not (hywiki-word-at))
           (hywiki-mode 1)
           (should (string= "WikiWord" (hywiki-word-at))))
+      (hywiki-mode 0)
+      (hy-delete-dir-and-buffer hywiki-directory))))
+
+(ert-deftest hywiki-tests--a-wikiword-in-hywiki-directory ()
+  "Verify WikiWord is identified if in `hywiki-directory'."
+  (let* ((hsys-org-enable-smart-keys t)
+         (hywiki-directory (make-temp-file "hywiki" t))
+         (wiki-page (hywiki-add-page "WikiWord")))
+    (unwind-protect
+        (with-current-buffer (find-file-noselect wiki-page)
+          (hywiki-mode 0)
+          (insert "AnotherWikiWord")
+	  (newline nil t)
+          (goto-char 4)
+          (should (hywiki-word-at)))
+      (hy-delete-file-and-buffer wiki-page)
+      (hy-delete-dir-and-buffer hywiki-directory))))
+
+(ert-deftest hywiki-tests--wikiword-identified-with-delimiters ()
+  "Verify WikiWord is identified when surrounded by delimiters."
+  (let ((hsys-org-enable-smart-keys t)
+        (hywiki-directory (make-temp-file "hywiki" t)))
+    (unwind-protect
+        (progn
+          (hywiki-mode 1)
+
+          ;; Matches a WikiWord
+          (dolist (v '("WikiWord" "[WikiWord]" "[[WikiWord]]" "{WikiWord}" "(WikiWord)"
+                       "<WikiWord>" "<<WikiWord>>" "{[[WikiWord]]}" "([[WikiWord]])"
+                       "[WikiWord AnotherWord]"
+                       ))
+            (with-temp-buffer
+              (org-mode)
+              (insert v)
+	      (newline nil t)
+              (goto-char 6)
+              (should (string= "WikiWord" (hywiki-word-at)))))
+
+          ;; Identifies as org link (Note: Not checked if target
+          ;; exists.) AND matches WikiWord
+          (dolist (v '("[[hy:WikiWord]]" "[[hy:WikiWord\\]]]"))
+            (with-temp-buffer
+              (org-mode)
+              (insert v)
+	      (newline nil t)
+              (goto-char 6)
+              (font-lock-ensure)
+              (should (hsys-org-face-at-p 'org-link))
+              (should (string= "WikiWord" (hywiki-word-at)))))
+
+          ;; Identifies as org link (Note: Not checked if target
+          ;; exists.) AND DOES NOT match WikiWord
+          (dolist (v '("[[WikiWord AnotherWord]]"))
+            (with-temp-buffer
+              (org-mode)
+              (insert v)
+	      (newline nil t)
+              (goto-char 6)
+              (font-lock-ensure)
+              (should (hsys-org-face-at-p 'org-link))
+              (should-not (string= "WikiWord" (hywiki-word-at))))))
       (hywiki-mode 0)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
