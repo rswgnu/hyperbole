@@ -614,8 +614,10 @@ an existing or new HyWikiWord."
       (call-interactively hywiki-display-page-function)
     (when (null wikiword)
       (setq wikiword (hywiki-word-read-new "Find HyWiki page: ")))
-    (let ((referent (hywiki-get-file wikiword)))
-      (funcall hywiki-display-page-function referent)
+    (let ((referent (hywiki-get-file wikiword))
+          (section (when (string-match "#[^#]+$" wikiword)
+                     (substring wikiword (match-beginning 0)))))
+      (funcall hywiki-display-page-function (concat referent section))
       ;; Set 'referent attribute of current implicit button
       (hattr:set 'hbut:current 'referent referent)
       referent)))
@@ -639,10 +641,11 @@ After successfully finding a page and reading it into a buffer, run
 	    (unless buffer-file-name
 	      (error "(hywiki-display-referent): No `wikiword' given; buffer must have an attached file"))
 	    (setq wikiword (file-name-sans-extension (file-name-nondirectory buffer-file-name))))
-	  (when (string-match "#[^#]+$" wikiword)
-	    (setq wikiword (substring wikiword 0 (match-beginning 0))))
 	  (let* ((section (when (string-match "#[^#]+$" wikiword)
 			    (substring wikiword (match-beginning 0))))
+                 (wikiword (if (string-match "#[^#]+$" wikiword)
+	                       (substring wikiword 0 (match-beginning 0))
+                             wikiword))
 		 (referent (cond (prompt-flag
 				  (hywiki-add-prompted-referent wikiword))
 				 ((hywiki-get-referent wikiword))
