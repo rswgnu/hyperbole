@@ -11,6 +11,9 @@
     in Hyperbole.
             (hash-deep-copy): Add deep copy of cons cells.
 
+* hbut.el (ibut:create): When debug on error, display *Messages* buffer
+    with error message.
+
 2024-12-22  Bob Weiner  <rsw@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--add-org-id): Fix so :type
