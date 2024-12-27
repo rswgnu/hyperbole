@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     27-Dec-24 at 18:23:33 by Mats Lidell
+# Last-Mod:     27-Dec-24 at 20:27:26 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -195,8 +195,13 @@ PRELOADS = $(SITE_PRELOADS) -l ./hload-path.el -l ./hversion.el -l ./hyperbole.e
 BATCHFLAGS = --batch --quick --eval "(progn (setq backtrace-line-length 0) \
                                  (message \"  emacs-version = %s\n  system-configuration = %s\n  emacs = %s%s\n  load-path = %s\" emacs-version system-configuration invocation-directory invocation-name load-path))"
 
-EMACS_BATCH=$(EMACS) $(BATCHFLAGS) $(PRELOADS)
-EMACS_PLAIN_BATCH=$(EMACS) $(BATCHFLAGS)
+# Extra flags for byte and native compilation
+EXTRA_COMP_FLAGS = --eval "(progn \
+    (put 'if-let 'byte-obsolete-info nil) \
+    (put 'when-let 'byte-obsolete-info nil))"
+
+EMACS_BATCH=$(EMACS) $(BATCHFLAGS) $(EXTRA_COMP_FLAGS) $(PRELOADS)
+EMACS_PLAIN_BATCH=$(EMACS) $(BATCHFLAGS) $(EXTRA_COMP_FLAGS)
 
 # Directories other than the current directory in which to find files.
 # This doesn't seem to work in all versions of make, so we also add kotl/
@@ -333,11 +338,6 @@ else ifeq ($(origin HYPB_WARNINGS), environment)
 HYPB_BIN_WARN = --eval "(setq-default byte-compile-warnings '(${HYPB_WARNINGS}))"
 endif
 
-# Extra flags for byte and native compilation
-EXTRA_COMP_FLAGS = --eval "(progn \
-    (put 'if-let 'byte-obsolete-info nil) \
-    (put 'when-let 'byte-obsolete-info nil))"
-
 curr_dir = $(shell pwd)
 ifeq ($(HYPB_NATIVE_COMP),yes)
 %.elc: %.el
@@ -351,7 +351,7 @@ else
 	@printf "Compiling $<\n"
 	@$(EMACS) --batch --quick \
 	--eval "(progn (add-to-list 'load-path \"$(curr_dir)\") (add-to-list 'load-path \"$(curr_dir)/kotl\"))" \
-	${HYPB_BIN_WARN}  ${EXTRA_COMP_FLAGS} \
+	${HYPB_BIN_WARN} ${EXTRA_COMP_FLAGS} \
 	-f batch-byte-compile $<
 endif
 

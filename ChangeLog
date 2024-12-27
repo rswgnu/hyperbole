@@ -1,3 +1,8 @@
+2024-12-27  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (EXTRA_COMP_FLAGS): Macro for extra flags to Emacs for byte and
+    native compilation.
+
 2024-12-27  Bob Weiner  <rsw@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--add-activity,
