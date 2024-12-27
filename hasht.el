@@ -8,7 +8,7 @@
 ;; AUTHOR:       Bob Weiner
 ;;
 ;; ORIG-DATE:    16-Mar-90 at 03:38:48
-;; LAST-MOD:     24-Nov-24 at 15:20:44 by Bob Weiner
+;; LAST-MOD:     26-Dec-24 at 22:08:52 by Bob Weiner
 ;;
 ;; Copyright (C) 1990-1995, 1997, 2016  Free Software Foundation, Inc.
 ;; See the file BR-COPY for license information.
@@ -54,65 +54,58 @@
 It is sent the two values as arguments.")
 
 ;;; ************************************************************************
-;;; Public declarations
-;;; ************************************************************************
-
-(defvar hash-empty-htable)
-
-;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
 
 (defun hash-add (value key hash-table)
-  "Add VALUE, any lisp object, referenced by KEY, a string, to HASH-TABLE.
-Replace any VALUE previously referenced by KEY."
-  (when (hashp hash-table)
-    (let* ((obarray (hash-obarray hash-table))
-	   (sym (intern key obarray)))
-	(when sym
-	  (set sym value)))))
+  "Add and return VALUE of any type referenced by KEY, a string, to HASH-TABLE.
+Replace any VALUE previously referenced by KEY.  VALUE should not be
+nil or cannot determine whether VALUE was successfully added or not.
+Do nothing and return nil if KEY or HASH-TABLE are of the wrong type.
+Signal an error if anything goes wrong during addition."
+  (when (and (hash-table-p hash-table)
+	     (stringp key))
+    (puthash (intern key) value hash-table)))
 
 (defun hash-copy (hash-table)
   "Return a copy of HASH-TABLE.
 List and vector elements are shared across both tables."
-  (if (not (hashp hash-table))
-      (error "(hash-copy): Invalid hash-table: `%s'" hash-table))
-  (let ((htable-copy (hash-make (length (hash-obarray hash-table)))))
+  (unless (hash-table-p hash-table)
+    (error "(hash-copy): Invalid hash-table: `%s'" hash-table))
+  (let ((htable-copy (make-hash-table :size (length hash-table))))
     (hash-map
-     (lambda (elt) (hash-add (car elt) (cdr elt) htable-copy))
+     (lambda (val-key-cons) (hash-add (car val-key-cons) (cdr val-key-cons)
+				      htable-copy))
      hash-table)
     htable-copy))
 
 (defun hash-count (hash-table)
-  "Return number of elements stored in HASH-TABLE or nil if not a valid hash table."
-  (if (hashp hash-table)
-      (let ((obarray (hash-obarray hash-table))
-	    (count 0))
-	(mapatoms (lambda (sym)
-		    (and (boundp sym) sym (setq count (1+ count))))
-		  obarray)
-	count)))
+  "Return element count in HASH-TABLE or nil if not a valid hash table."
+  (when (hash-table-p hash-table)
+    (hash-table-count hash-table)))
 
 (defun hash-delete (key hash-table)
   "Delete element referenced by KEY, a string, from HASH-TABLE.
-Return nil if KEY is not in HASH-TABLE or non-nil otherwise."
-  (if (hashp hash-table)
-      (let* ((obarray (hash-obarray hash-table))
-	     (sym (intern-soft key obarray)))
-	(if sym
-	    (progn (makunbound sym)
-		   (unintern sym nil))))))
+Do nothing and return nil if KEY or HASH-TABLE are of the wrong type.
+Otherwise, Return nil if KEY is not in HASH-TABLE or t otherwise."
+  (when (and (hash-table-p hash-table)
+	     (stringp key))
+    (let ((key-sym (intern-soft key)))
+      (when (gethash key-sym hash-table)
+	(remhash key-sym hash-table)
+	t))))
 
 (defun hash-deep-copy (obj)
   "Return a copy of OBJ with new copies of all elements, except symbols."
   (cond ((null obj) nil)
 	((stringp obj)
 	 (copy-sequence obj))
-	((hashp obj)
-	 (let ((htable-copy (hash-make (length (hash-obarray obj)))))
-	   (mapc
-	    (lambda (elt) (hash-add (car elt) (cdr elt) htable-copy))
-	    (hash-map #'hash-deep-copy obj))
+	((hash-table-p obj)
+	 (let ((htable-copy (make-hash-table :size (length obj))))
+	   (maphash
+	    (lambda (key value)
+	      (puthash key (hash-deep-copy obj) htable-copy))
+	    obj)
 	   htable-copy))
 	((vectorp obj)
 	 ;; convert to list for mapping
@@ -120,87 +113,92 @@ Return nil if KEY is not in HASH-TABLE or non-nil otherwise."
 	 ;; Return as a vector
 	 (vconcat (mapcar 'hash-deep-copy obj)))
 	((atom obj) obj)
-	((nlistp obj)
-	 (error "(hash-deep-copy): Invalid type, `%s'" obj))
-	(t ;; list
-	 (cons (hash-deep-copy (car obj)) (hash-deep-copy (cdr obj))))))
+	((consp obj)  ;; cons or list
+	 (cons (hash-deep-copy (car obj)) (hash-deep-copy (cdr obj))))
+	(t (error "(hash-deep-copy): Invalid type, `%s'" obj))))
 
 (defun hash-empty-p (hash-table)
   "Return t if HASH-TABLE is empty, else nil."
-  (and (hashp hash-table) (equal hash-table hash-empty-htable)))
+  (and (hash-table-p hash-table) (hash-table-empty-p hash-table)))
 
 (defalias  'hash-get  'hash-lookup)
 
 (defun hash-key-p (key hash-table)
-  "Return non-nil iff KEY is in HASH-TABLE.  KEY's hash table symbol is returned."
-  (if (hashp hash-table)
-      (let* ((obarray (hash-obarray hash-table))
-	     (sym (intern-soft key obarray)))
-	 (if (boundp sym) sym))))
+  "Return non-nil iff KEY, a string, is in HASH-TABLE.
+KEY's hash table symbol is returned.  Do nothing and return nil
+if KEY or HASH-TABLE are of the wrong type."
+  (when (and (hash-table-p hash-table)
+	     (stringp key))
+    (let ((key-sym (intern-soft key)))
+      (when (gethash key-sym hash-table)
+	key-sym))))
 
 (defun hash-lookup (key hash-table)
-  "Lookup KEY in HASH-TABLE and return associated value.
-If value is nil, this function does not tell you whether or not KEY is in the
-hash table.  Use `hash-key-p' instead for that function."
-  (when (hashp hash-table)
-    (let* ((obarray (hash-obarray hash-table))
-	   (sym (intern-soft key obarray)))
-      (when (boundp sym)
-	(symbol-value sym)))))
+  "Lookup KEY, a string, in HASH-TABLE and return associated value.
+Do nothing and return nil if KEY or HASH-TABLE are of the wrong type.
+If value is nil, this function does not tell you whether or not KEY is
+in the hash table.  Use `hash-key-p' instead for that function."
+  (when (and (hash-table-p hash-table)
+	     (stringp key))
+    (let ((key-sym (intern-soft key)))
+      (gethash key-sym hash-table))))
 
 (defun hash-make (initializer &optional reverse)
-  "Create a hash table from INITIALIZER.
-INITIALIZER may be an alist with elements of the form (<value> . <key>) from
-which the hash table is built.  Alternatively, it may be a non-negative
-integer which is used as the minimum size of a new, empty hash table.
-Optional non-nil second argument REVERSE means INITIALIZER has elements of
-form (<key> . <value>)."
+  "Create and return a hash table from INITIALIZER.
+INITIALIZER may be an alist with elements of the form (<value>. <key>)
+from which the hash table is built (<key> must be a string).
+Alternatively, it may be a non-negative integer which is used as the
+minimum size of a new, empty hash table.  Optional non-nil second
+argument REVERSE means INITIALIZER has elements of form
+(<key> . <value>).
+
+The resultant value associated with a <key> is the <value> from the last
+entry in INITIALIZER with that <key>.  See `hash-make-prepend' to
+merge all the values for a given <key> instead."
   (cond ((integerp initializer)
 	 (if (>= initializer 0)
-	     (cons 'hasht (make-vector (hash-next-prime initializer) 0))
+	     (make-hash-table :size initializer)
 	   (error "(hash-make): Initializer must be >= 0, not `%s'"
 		  initializer)))
 	((numberp initializer) 
 	 (error "(hash-make): Initializer must be a positive integer, not `%f'"
 		initializer))
-	(t (let* ((vlen (hash-next-prime (length initializer)))
-		  (obarray (make-vector vlen 0))
+	(t (let* ((size (length initializer))
+		  (hash-table (make-hash-table :size size))
 		  key value sym)
-	     (mapc
-	      (lambda (cns)
-		(if (consp cns)
-		    (if reverse
-			(setq key (car cns) value (cdr cns))
-		      (setq key (cdr cns) value (car cns))))
-		(if (setq sym (intern key))
-		    (set sym value)))
-	      initializer)
-	     (cons 'hasht obarray)))))
+	     (mapc (lambda (cns)
+		     (when (consp cns)
+		       (if reverse
+			   (setq key (car cns) value (cdr cns))
+			 (setq key (cdr cns) value (car cns))))
+		     (when (setq sym (intern key))
+		       (puthash sym value hash-table)))
+		   initializer)
+	     hash-table))))
 
 (defun hash-make-prepend (initializer &optional reverse)
-  "Create a hash table from INITIALIZER.
+  "Create and return a hash table from INITIALIZER.
 INITIALIZER may be an alist with elements of the form (<value> . <key>) from
-which the hash table is built.  Optional non-nil second argument REVERSE
-means INITIALIZER has elements of form (<key> . <value>).
+which the hash table is built (<key> must be a string).  Optional
+non-nil second argument REVERSE means INITIALIZER has elements of form
+\(<key> . <value>).
 
 The resultant value associated with a <key> is a list of all of the <values>
 given in INITIALIZER entries which contain the <key>.  The values are listed
-in reverse order of occurrence (they are prepended to the list)."
-  (let* ((vlen (hash-next-prime (length initializer)))
-	 (obarray (make-vector vlen 0))
-	 key value sym)
+in reverse order of occurrence (they are prepended to the list).  See
+`hash-make' to use only the last value associated with a given <key>."
+  (let* ((hash-table (make-hash-table :size (length initializer)))
+	 key value key-sym)
     (mapc
      (lambda (cns)
-       (if (consp cns)
-	   (if reverse
-	       (setq key (car cns) value (cdr cns))
-	     (setq key (cdr cns) value (car cns))))
-       (setq sym (intern key))
-       (if (boundp sym)
-	   (set sym (cons value (symbol-value sym)))
-	 (set sym (cons value nil))))
+       (when (consp cns)
+	 (if reverse
+	     (setq key (car cns) value (cdr cns))
+	   (setq key (cdr cns) value (car cns))))
+       (when (setq key-sym (intern key))
+	 (puthash key-sym (cons value (gethash key-sym hash-table)) hash-table)))
      initializer)
-    (cons 'hasht obarray)))
+    hash-table))
 
 (defun hash-map (func hash-table)
   "Return list result of calling FUNC over each (<value> . <key>) in HASH-TABLE.
@@ -208,23 +206,20 @@ in reverse order of occurrence (they are prepended to the list)."
 
 If FUNC is in '(cdr key second symbol-name), then return all <key>s as strings.
 If FUNC is in '(car value first symbol-value), then return all <value>s."
-  (if (not (hashp hash-table))
-      (error "(hash-map): Invalid hash-table: `%s'" hash-table))
-  (setq func (cond ((memq func '(cdr key second symbol-name))
-		    #'symbol-name)
-		   ((memq func '(car value first symbol-value))
-		    #'symbol-value)
-		   (t `(lambda (sym) (funcall ,func
-					      (cons (symbol-value sym)
-						    (symbol-name sym)))))))
-  (let ((obarray (hash-obarray hash-table))
-	result)
-    (mapatoms (lambda (sym)
-		(and (boundp sym)
-		     sym
-		     (push (funcall func sym) result)))
-	      (hash-obarray hash-table))
-    result))
+  (unless (hash-table-p hash-table)
+    (error "(hash-map): Invalid hash-table: `%s'" hash-table))
+  (cond ((memq func '(cdr key second symbol-name))
+	 (mapcar #'symbol-name (hash-table-keys hash-table)))
+	((memq func '(car value first symbol-value))
+	 (hash-table-values hash-table))
+	(t (let (result)
+	     (maphash
+	      (lambda (key value)
+		(push (funcall func (cons value (symbol-name key)))
+		      key)
+		result)
+	      hash-table)
+	     result))))
 
 (defun hash-merge (&rest hash-tables)
   "Merge any number of HASH-TABLES.  Return resultant hash table.
@@ -235,17 +230,20 @@ than nil or a hash table.
 Use the value of `hash-merge-values-function' to merge the values of entries
 whose keys are the same."
   (let ((empty-ht (hash-make 1)))
-    (and (not (hashp (car hash-tables)))
+    (and (not (hash-table-p (car hash-tables)))
 	 (listp (car hash-tables))
 	 ;; Handle situation where a list of hash-tables is passed in as a
 	 ;; single argument, rather than as multiple arguments.
 	 (setq hash-tables (car hash-tables)))
-    (if (memq nil (mapcar (lambda (ht) (or (null ht) (hashp ht)))
+    (if (memq nil (mapcar (lambda (ht) (or (null ht) (hash-table-p ht)))
 			  hash-tables))
+	;; Return an empty hash table if any argument from the merge list is other
+	;; than nil or a hash table
 	empty-ht
+      ;; Remove empty hash tables
       (setq hash-tables
 	    (delq nil (mapcar (lambda (ht)
-				(if (hash-empty-p ht) nil ht))
+				(if (hash-table-empty-p ht) nil ht))
 			      hash-tables)))
       (let ((len (length hash-tables)))
 	(cond ((= len 0) empty-ht)
@@ -255,7 +253,7 @@ whose keys are the same."
 	      ;; hash misses are minimized.
 	      (t (let ((htable (hash-make
 				(ceiling
-				 (* 1.2 (apply '+ (mapcar 'hash-count
+				 (* 1.2 (apply '+ (mapcar 'hash-table-count
 							  hash-tables))))))
 		       key value)
 		   (mapc
@@ -263,14 +261,15 @@ whose keys are the same."
 		       (hash-map (lambda (val-key-cons)
 				   (setq value (car val-key-cons)
 					 key (cdr val-key-cons))
-				   (if (not (hash-key-p key htable))
-				       (hash-add value key htable)
-				     ;; Merge values
-				     (hash-add
-				      (funcall hash-merge-values-function
-					       (hash-get key htable)
-					       value)
-				      key htable)))
+				   (if (gethash key htable)
+				       ;; Merge values
+				       (puthash
+					key
+					(funcall hash-merge-values-function
+						 (gethash key htable)
+						 value)
+					htable)
+				     (puthash key value htable)))
 				 ht))
 		     hash-tables)
 		   htable)))))))
@@ -306,31 +305,28 @@ This is suitable for use as a value of `hash-merge-values-function'."
 	 (cons value1 value2))
 	(t (list value1 value2))))
 
-(make-obsolete 'hash-new 'hash-make "19.0")
-(defun hash-new (size)
-  "Return a new hash table of SIZE elements.
-This is obsolete.  Use `hash-make' instead."
-  (hash-make size))
-
 (defun hash-prepend (value key hash-table)
   "Prepend VALUE onto the list value referenced by KEY, a string, in HASH-TABLE.
-If KEY is not found in HASH-TABLE, it is added with a value of (list VALUE)."
-  (if (hashp hash-table)
-      (let* ((obarray (hash-obarray hash-table))
-	     (sym (intern key obarray)))
-	(if (boundp sym)
-	    (if (listp (symbol-value sym))
-		(set sym (cons value (symbol-value sym)))
-	      (error "(hash-prepend): `%s' key's value is not a list."
-		     key))
-	  (set sym (cons value nil))))))
+If KEY is not found in HASH-TABLE, it is added with a value of (list VALUE).
+
+Trigger an error if an existing VALUE is not a list.  Do nothing and return nil
+if KEY or HASH-TABLE are of the wrong type." 
+  (when (and (hash-table-p hash-table)
+	     (stringp key))
+      (let* ((key-sym (intern key))
+	     (key-val (gethash key-sym hash-table)))
+	(if key-sym
+	    (if (listp key-value) ;; allowed to be nil
+		(puthash key-sym (cons value key-value) hash-table)
+	      (error "(hash-prepend): `%s' key's value is not a list:" key key-val))
+	  (error "(hash-prepend): Invalid hash-table key: %s" key)))))
 
 (defun hash-prin1 (hash-table &optional stream)
   "Output the printed representation of HASH-TABLE as a list.
 Quoting characters are printed when needed to make output that `read'
 can handle, whenever this is possible.
 Output stream is STREAM, or value of `standard-output'."
-  (if (not (hashp hash-table))
+  (if (not (hash-table-p hash-table))
       (progn (prin1 hash-table stream)
 	     (princ "\n" stream))
     (princ "\(\n" stream)
@@ -342,87 +338,29 @@ Output stream is STREAM, or value of `standard-output'."
     (princ "\)\n" stream)))
 
 (defun hash-replace (value key hash-table)
-  "Replace VALUE referenced by KEY, a string, in HASH-TABLE.
+  "Replace VALUE referenced by KEY, a string, in HASH-TABLE and return VALUE.
+Do nothing and return nil if KEY or HASH-TABLE are of the wrong type.
 An error will occur if KEY is not found in HASH-TABLE."
-  (if (hashp hash-table)
-      (let* ((obarray (hash-obarray hash-table))
-	     (sym (intern-soft key obarray)))
-	(if (and (boundp sym) sym)
-	    (set sym value)
+  (when (and (hash-table-p hash-table)
+	     (stringp key))
+    (let ((key-sym (intern-soft key)))
+	(if (gethash key-sym hash-table)
+	    (puthash key-sym value hash-table)
 	  (error "(hash-replace): `%s' key not found in hash table." key)))))
-
-(defun hash-resize (hash-table new-size)
-  "Resize HASH-TABLE to NEW-SIZE without losing any elements and return new table.
-NEW-SIZE must be greater than 0.  Hashing works best if NEW-SIZE is a prime
-number.  See also `hash-next-prime'."
-  (if (< new-size 1)
-      (error "(hash-resize): Cannot resize hash table to size %d" new-size))
-  (let ((htable (hash-make new-size)))
-    (hash-map (lambda (elt)
-		(hash-add (car elt) (cdr elt) htable))
-	      hash-table)
-    htable))
-
-(defun hash-resize-p (hash-table)
-  "Resizes HASH-TABLE to 1.5 times its size if above 80% full.
-Returns new hash table when resized, else nil."
-  (if (hashp hash-table)
-      (let ((count (hash-count hash-table))
-	    (size (length (hash-obarray hash-table))))
-	(if (> (* count (/ count 5)) size)
-	    (hash-resize hash-table (hash-next-prime (+ size (/ size 2))))))))
 
 (defun hash-size (hash-table)
   "Return size of HASH-TABLE which is >= number of elements in the table.
 Return nil if not a valid hash table."
-  (if (hashp hash-table)
-      (length (hash-obarray hash-table))))
+  (when (hash-table-p hash-table)
+    (hash-table-size hash-table)))
+
 (defalias 'hash-length 'hash-size)
 
-(defun hashp (object)
-  "Return non-nil if OBJECT is a hash-table."
-  (and (listp object) (eq (car object) 'hasht)
-       (vectorp (cdr object))))
+(defalias 'hashp 'hash-table-p)
 
 ;;; ************************************************************************
 ;;; Private functions
 ;;; ************************************************************************
-
-(defun hash-next-prime (n)
-  "Return next prime number >= N."
-  (if (<= n 2)
-      2
-    (and (= (% n 2) 0) (setq n (1+ n)))
-    (while (not (hash-prime-p n))
-      (setq n (+ n 2)))
-    n))
-
-(defun hash-obarray (hash-table)
-  "Return symbol table (object array) portion of HASH-TABLE."
-  (cdr hash-table))
-
-(defun hash-prime-p (n)
-  "Return non-nil iff N is prime."
-  (if (< n 0) (setq n (- n)))
-  (let ((small-primes '(2 3 5 7 11 13 17 19 23 29 31 37 41 43 47 53 59 61 67 71 73 79 83 89)))
-    (cond ((< n 2) nil)
-	  ((< n 91) (if (memq n small-primes) t))
-	  ((< n 7921)  ;; 89, max small-prime, squared
-	   (let ((prime t)
-		 (pr-list small-primes))
-	     (while (and (setq pr-list (cdr pr-list))
-			 (setq prime (/= (% n (car pr-list)) 0))))
-	     prime))
-	  ((or (= (% n 3) 0) (= (% n 2) 0)) nil)
-	  ((let ((factor1 5)
-		 (factor2 7)
-		 (is-prime))
-	     (while (and (<= (* factor1 factor1) n)
-			 (setq is-prime (and (/= (% n factor1) 0)
-					     (/= (% n factor2) 0))))
-	       (setq factor1 (+ factor1 6)
-		     factor2 (+ factor2 6)))
-	     is-prime)))))
 
 (defun hash-set-of-strings (sorted-strings &optional count)
   "Return SORTED-STRINGS list with any duplicate entries removed.
@@ -430,20 +368,15 @@ Optional COUNT conses number of duplicates on to front of list before return."
   (and count (setq count 0))
   (let ((elt1) (elt2) (lst sorted-strings)
 	(test (if count
-		  (lambda (a b) (if (string-equal a b)
-				    (setq count (1+ count))))
-	        (lambda (a b) (string-equal a b)))))
+		  (lambda (a b)
+		    (when (string-equal a b)
+		      (setq count (1+ count))
+		      t))
+	        #'string-equal)))
     (while (setq elt1 (car lst) elt2 (car (cdr lst)))
       (if (funcall test elt1 elt2)
-	  (setcdr lst (cdr (cdr lst)))
+	  (setcdr lst (cddr lst))
 	(setq lst (cdr lst)))))
   (if count (cons count sorted-strings) sorted-strings))
-
-;;; ************************************************************************
-;;; Private variables
-;;; ************************************************************************
-
-(defvar hash-empty-htable (hash-make 1)
-  "Empty hash table used to test whether other hash tables are empty.")
 
 (provide 'hasht)

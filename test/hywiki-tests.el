@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     24-Dec-24 at 00:48:15 by Mats Lidell
+;; Last-Mod:     26-Dec-24 at 23:34:51 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -25,7 +25,7 @@
 (require 'hsys-org)
 (require 'ox-publish)
 
-(ert-deftest hywiki-tests--hywiki-add-page--adds-file-in-wiki-folder ()
+(ert-deftest hywiki-tests--hywiki-create-page--adds-file-in-wiki-folder ()
   "Verify add page creates file in wiki folder and sets hash table."
   (let* ((hsys-org-enable-smart-keys t)
          (hywiki-directory (make-temp-file "hywiki" t))
@@ -33,16 +33,16 @@
     (unwind-protect
 	(progn
           (should (string= hywiki-page-file
-                           (hywiki-add-page "WikiWord")))
+                           (cdr (hywiki-add-page "WikiWord"))))
           ;; Verify hash table is updated
           (with-mock
-            (not-called hywiki-add-page)
-            (should (string= hywiki-page-file
-                             (hywiki-get-referent "WikiWord")))))
+            (not-called hywiki-create-page)
+            (should (string= (file-name-nondirectory hywiki-page-file)
+			     (cdr (hywiki-get-referent "WikiWord"))))))
       (hy-delete-file-and-buffer hywiki-page-file)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
-(ert-deftest hywiki-tests--hywiki-add-page--adds-no-wiki-word-fails ()
+(ert-deftest hywiki-tests--hywiki-create-page--adds-no-wiki-word-fails ()
   "Verify add page requires a WikiWord."
   ;; Should not leave erroneously created file after test but leaving
   ;; added error cleanup till later if it is even needed!? No file
@@ -50,27 +50,25 @@
   ;; considered an error case that is.)
   (let ((hywiki-directory (make-temp-file "hywiki" t)))
     (unwind-protect
-        (should-not (hywiki-add-page "notawikiword"))
+        (should-not (cdr (hywiki-add-page "notawikiword")))
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--action-key-on-wikiword-displays-page ()
   "Verify `action-key' on a prefixed WikiWord, outside of hywiki-directory, creates a new page."
-  (defvar wikifile)
   (let ((hsys-org-enable-smart-keys t)
         (hywiki-directory (make-temp-file "hywiki" t))
-        (wikifile (make-temp-file "wikifile" nil ".org")))
+        (wikifile "WikiWord.org"))
     (unwind-protect
         (with-temp-buffer
 	  (hywiki-mode 1)
           (insert "[[hy:WikiWord]]")
           (goto-char 4)
-          (mocklet (((hywiki-display-referent "WikiWord" nil) => wikifile))
-            (action-key)))
+          (action-key)
+	  (should (equal (cons 'page wikifile) (hywiki-get-referent "WikiWord"))))
       (hy-delete-file-and-buffer wikifile))))
 
 (ert-deftest hywiki-tests--assist-key-on-wikiword-displays-help ()
   "Verify `assist-key' on a prefixed WikiWord, outside of hywiki-directory, displays help for the WikiWord link."
-  (defvar wikifile)
   (let ((hsys-org-enable-smart-keys t)
         (hywiki-directory (make-temp-file "hywiki" t))
         (wikifile (make-temp-file "wikifile" nil ".org")))
@@ -102,7 +100,8 @@
   "Verify WikiWord is identified if in `hywiki-directory'."
   (let* ((hsys-org-enable-smart-keys t)
          (hywiki-directory (make-temp-file "hywiki" t))
-         (wiki-page (hywiki-add-page "WikiWord")))
+         (referent (hywiki-add-page "WikiWord"))
+	 (wiki-page (cdr referent)))
     (unwind-protect
         (with-current-buffer (find-file-noselect wiki-page)
           (hywiki-mode 0)
@@ -232,7 +231,7 @@
 (ert-deftest hywiki-tests--in-page-p ()
   "Verify `hywiki-in-page-p' identifies a page in and outside of the wiki directory."
   (let* ((hywiki-directory (make-temp-file "hywiki" t))
-         (wiki-page (hywiki-add-page "WikiWord"))
+         (wiki-page (cdr (hywiki-add-page "WikiWord")))
          (no-wiki-page (make-temp-file "hypb")))
     (unwind-protect
         (progn
@@ -246,7 +245,7 @@
 (ert-deftest hywiki-tests--active-in-current-buffer-p ()
   "Verify `hywiki-active-in-current-buffer-p'."
   (let* ((hywiki-directory (make-temp-file "hywiki" t))
-         (wiki-page (hywiki-add-page "WikiWord"))
+         (wiki-page (cdr (hywiki-add-page "WikiWord")))
          (hywiki-word-highlight-flag t))
     (unwind-protect
         (with-current-buffer (find-file-noselect wiki-page)
@@ -303,76 +302,78 @@ Both mod-time and checksum must be changed for a test to return true."
       (should (hywiki-directory-modified-p)))))
 
 (ert-deftest hywiki-tests--get-page-list ()
-  "Verify `hywiki-get-page-list' returns one WikiWord."
+  "Verify `hywiki-get-wikiword-list' returns one WikiWord."
   (let* ((hywiki-directory (make-temp-file "hywiki" t))
-         (wiki-page (hywiki-add-page "WikiWord")))
+         (wiki-page (cdr (hywiki-add-page "WikiWord"))))
     (unwind-protect
         (progn
-          (should (equal '("WikiWord") (hywiki-get-page-list)))
-          (should (equal wiki-page (hywiki-add-page "WikiWord")))
-          (should (equal '("WikiWord") (hywiki-get-page-list))))
+          (should (equal '("WikiWord") (hywiki-get-wikiword-list)))
+          (should (equal wiki-page (cdr (hywiki-add-page "WikiWord"))))
+          (should (equal '("WikiWord") (hywiki-get-wikiword-list))))
       (hy-delete-file-and-buffer wiki-page)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--get-page-list-after-add-and-delete ()
-  "Verify `hywiki-get-page-list' is updated when a page is added and removed."
+  "Verify `hywiki-get-wikiword-list' is updated when a page is added and removed."
   (let* ((hywiki-directory (make-temp-file "hywiki" t))
-         (wiki-page (hywiki-add-page "WordOne")))
+         (wiki-page (cdr (hywiki-add-page "WordOne"))))
     (unwind-protect
-        (let ((wiki-page2 (hywiki-add-page "WordTwo")))
+        (let ((wiki-page2 (cdr (hywiki-add-page "WordTwo"))))
 	  (unwind-protect
               (should (set:equal '("WordOne" "WordTwo")
-				 (hywiki-get-page-list)))
+				 (hywiki-get-wikiword-list)))
 	    ;; This delay is necessary or the test can fail sporadically
 	    (sit-for 0.01)
             (hy-delete-file-and-buffer wiki-page2))
-	  (should (set:equal '("WordOne") (hywiki-get-page-list))))
+	  (should (set:equal '("WordOne") (hywiki-get-wikiword-list))))
       (hy-delete-file-and-buffer wiki-page)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--get-page-list-multiple-words ()
-  "Verify `hywiki-get-page-list' returns multiple WikiWords."
+  "Verify `hywiki-get-wikiword-list' returns multiple WikiWords."
   (let* ((hywiki-directory (make-temp-file "hywiki" t))
          (basename "WikiWord")
          (wiki-page-list nil))
     (unwind-protect
         (progn
           (dolist (char '("A" "B" "C" "D" "E" "F" "G" "H" "I" "J"))
-            (push (hywiki-add-page (format "%s%s" basename char)) wiki-page-list))
+            (push (cdr (hywiki-add-page (format "%s%s" basename char)))
+		  wiki-page-list))
           (should (= 10 (length wiki-page-list)))
-          (should (= 10 (length (hywiki-get-page-list))))
-          (should (= 10 (length (seq-uniq (hywiki-get-page-list))))))
+          (should (= 10 (length (hywiki-get-wikiword-list))))
+          (should (= 10 (length (seq-uniq (hywiki-get-wikiword-list))))))
       (hy-delete-files-and-buffers wiki-page-list)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--get-page-list-when-new-wiki-directory ()
-  "Verify `hywiki-get-page-list' is empty for new `hywiki-directory'."
+  "Verify `hywiki-get-wikiword-list' is empty for new `hywiki-directory'."
   (let* ((hywiki-directory (make-temp-file "hywiki" t))
-         (wikipage (hywiki-add-page "WikiWord")))
+         (wikipage (cdr (hywiki-add-page "WikiWord"))))
     (unwind-protect
         (progn
-          (should (= 1 (length (hywiki-get-page-list))))
+          (should (= 1 (length (hywiki-get-wikiword-list))))
           (let ((hywiki-directory (make-temp-file "hywiki" t)))
             (unwind-protect
                 (progn
-                  (should (= 0 (length (hywiki-get-page-list)))))
+                  (should (= 0 (length (hywiki-get-wikiword-list)))))
               (hy-delete-dir-and-buffer hywiki-directory))))
       (hy-delete-file-and-buffer wikipage)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--get-page-list-for-new-wiki-directory-after-added-referent ()
-  "Verify `hywiki-get-page-list' is empty for new `hywiki-directory'."
+  "Verify `hywiki-get-wikiword-list' is empty for new `hywiki-directory'."
   (defvar hywiki-add-referent-hook)
   (let ((hywiki-directory (make-temp-file "hywiki" t))
+	(referent '(page . "/tmp/a.org"))
         (hywiki-add-referent-hook 'test-func))
     (unwind-protect
         (progn
           (mocklet (((test-func) => t))
-            (should (eq 'referent (hywiki-add-referent "WikiWord" 'referent))))
-          (should (= 1 (length (hywiki-get-page-list))))
+            (should (equal referent (hywiki-add-referent "WikiWord" referent))))
+          (should (= 1 (length (hywiki-get-wikiword-list))))
           (let ((hywiki-directory (make-temp-file "hywiki" t)))
             (unwind-protect
-                (should (= 0 (length (hywiki-get-page-list))))
+                (should (zerop (length (hywiki-get-wikiword-list))))
               (hy-delete-dir-and-buffer hywiki-directory))))
       (hy-delete-dir-and-buffer hywiki-directory))))
 
@@ -385,7 +386,7 @@ Both mod-time and checksum must be changed for a test to return true."
   (add-hook 'post-command-hook     'hywiki-buttonize-non-character-commands 95)
   (add-hook 'post-self-insert-hook 'hywiki-buttonize-character-commands)
   (add-hook 'window-buffer-change-functions
-	    'hywiki-maybe-highlight-page-names-in-frame)
+	    'hywiki-maybe-highlight-wikiwords-in-frame)
   (add-to-list 'yank-handled-properties
 	       '(hywiki-word-face . hywiki-highlight-on-yank)))
 
@@ -395,7 +396,7 @@ Both mod-time and checksum must be changed for a test to return true."
   (remove-hook 'post-command-hook     'hywiki-buttonize-non-character-commands)
   (remove-hook 'post-self-insert-hook 'hywiki-buttonize-character-commands)
   (remove-hook 'window-buffer-change-functions
-	       'hywiki-maybe-highlight-page-names-in-frame)
+	       'hywiki-maybe-highlight-wikiwords-in-frame)
   (setq yank-handled-properties
 	(delete '(hywiki-word-face . hywiki-highlight-on-yank)
 		yank-handled-properties)))
@@ -422,7 +423,7 @@ Both mod-time and checksum must be changed for a test to return true."
   (skip-unless (not noninteractive))
   (let* ((hsys-org-enable-smart-keys t)
          (hywiki-directory (make-temp-file "hywiki" t))
-         (wikipage (hywiki-add-page "WikiWord")))
+         (wikipage (cdr (hywiki-add-page "WikiWord"))))
     (unwind-protect
         (progn
           (hywiki-tests--remove-hywiki-hooks)
@@ -465,7 +466,7 @@ Both mod-time and checksum must be changed for a test to return true."
   "Verify face property changes when WikiWord is edited."
   (skip-unless (not noninteractive))
   (let* ((hywiki-directory (make-temp-file "hywiki" t))
-         (wikipage (hywiki-add-page "WikiWord")))
+         (wikipage (cdr (hywiki-add-page "WikiWord"))))
     (unwind-protect
         (progn
           (hywiki-tests--remove-hywiki-hooks)
@@ -492,7 +493,7 @@ Both mod-time and checksum must be changed for a test to return true."
 (ert-deftest hywiki-tests--verify-face-property-when-editing-wikiword-first-char ()
   "Verify face property changes when WikiWord is edited in the first char position."
   (let* ((hywiki-directory (make-temp-file "hywiki" t))
-         (wikipage (hywiki-add-page "WikiWord")))
+         (wikipage (cdr (hywiki-add-page "WikiWord"))))
     (skip-unless (not noninteractive))
     (unwind-protect
         (progn
@@ -522,7 +523,7 @@ Both mod-time and checksum must be changed for a test to return true."
   "Verify `hywiki-convert-words-to-org-links' converts WikiWords to org links."
   (skip-unless (not noninteractive))
   (let* ((hywiki-directory (make-temp-file "hywiki" t))
-         (wikipage (hywiki-add-page "WikiWord")))
+         (wikipage (cdr (hywiki-add-page "WikiWord"))))
     (unwind-protect
         (progn
           (hywiki-tests--remove-hywiki-hooks)
@@ -588,40 +589,43 @@ Both mod-time and checksum must be changed for a test to return true."
   (should-not (hywiki-org-link-resolve 88)) ; Number
   (should-not (hywiki-org-link-resolve '("string"))) ; List
   (let* ((hywiki-directory (make-temp-file "hywiki" t))
-         (wikipage (hywiki-add-page "WikiWord")))
+         (wikipage (cdr (hywiki-add-page "WikiWord")))
+	 (filename (when wikipage (file-name-nondirectory wikipage))))
     (unwind-protect
         (progn
           (should-not (hywiki-org-link-resolve "NoWikiWord"))
-          (should (string= wikipage (hywiki-org-link-resolve "WikiWord")))
-          (should (string= wikipage (hywiki-org-link-resolve "hy:WikiWord")))
-          (should (string= (concat wikipage "::section") (hywiki-org-link-resolve "WikiWord#section"))))
+          (should (when filename (string= filename (hywiki-org-link-resolve "WikiWord"))))
+          (should (when filename (string= filename (hywiki-org-link-resolve "hy:WikiWord"))))
+          (should (when filename (string= (concat filename "::section")
+					  (hywiki-org-link-resolve "WikiWord#section")))))
       (hy-delete-file-and-buffer wikipage)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--org-link-export ()
   "Verify `hywiki-org-link-export' output for different formats."
   (let* ((hywiki-directory (make-temp-file "hywiki" t))
-         (wikipage (hywiki-add-page "WikiWord")))
+         (wikipage (cdr (hywiki-add-page "WikiWord")))
+	 (filename (when wikipage (file-name-nondirectory wikipage))))
     (unwind-protect
         (progn
           (should (string-match-p
-                   (format "\\[hy\\] <doc:.*%s>" wikipage)
+                   (format "\\[hy\\] <doc:.*%s>" filename)
                    (hywiki-org-link-export "WikiWord" "doc" 'ascii)))
           (should (string-match-p
                    (format "<a href=\".*%s\">doc</a>"
-                           (replace-regexp-in-string "\\.org" ".html" wikipage))
+                           (replace-regexp-in-string "\\.org" ".html" filename))
                    (hywiki-org-link-export "WikiWord" "doc" 'html)))
           (should (string-match-p
-                   (format "\\[doc\\](.*%s)" wikipage)
+                   (format "\\[doc\\](.*%s)" filename)
                    (hywiki-org-link-export "WikiWord" "doc" 'md)))
           (should (string-match-p
-                   (format "\\href{.*%s}{doc}" wikipage)
+                   (format "\\href{.*%s}{doc}" filename)
                    (hywiki-org-link-export "WikiWord" "doc" 'latex)))
           (should (string-match-p
-                   (format "@uref{.*%s,doc}" wikipage)
+                   (format "@uref{.*%s,doc}" filename)
                    (hywiki-org-link-export "WikiWord" "doc" 'texinfo)))
           (should (string-match-p
-                   (format ".*%s" wikipage)
+                   (format ".*%s" filename)
                    (hywiki-org-link-export "WikiWord" "doc" 'unknown)))
           (should (string= "NotAWikiPage" (hywiki-org-link-export "NotAWikiPage" "doc" 'ascii))))
       (hy-delete-file-and-buffer wikipage)
@@ -649,25 +653,26 @@ Note special meaning of `hywiki-allow-plurals-flag'."
 (ert-deftest hywiki-tests--add-referent ()
   "Verify `hywiki-add-referent'."
   (defvar hywiki-add-referent-hook)
-  (let ((hywiki-directory (make-temp-file "hywiki" t))
-        (hywiki-add-referent-hook 'test-func))
+  (let* ((hywiki-directory (make-temp-file "hywiki" t))
+	 (file "/tmp/a.org")
+	 (referent (cons 'page file)))
     (unwind-protect
         (progn
-          (should-not (hywiki-add-referent "notawikiword" 'referent))
-          (mocklet (((test-func) => t))
-            (should (eq 'referent (hywiki-add-referent "WikiWord" 'referent))))
-          (should (eq 'referent (hywiki-get-referent "WikiWord"))))
+          (should-not (hywiki-add-referent "notawikiword" referent))
+          (should (hywiki-add-referent "WikiWord" referent))
+          (should (equal referent (hywiki-get-referent "WikiWord"))))
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--add-activity ()
   "Verify `hywiki-add-activity'."
-  (let ((hywiki-directory (make-temp-file "hywiki" t)))
+  (let ((hywiki-directory (make-temp-file "hywiki" t))
+	(wikiword "WikiWord"))
     (unwind-protect
-        (progn
-          (mocklet (((require 'activities) => t)
-                    ((hywiki-add-referent "WikiWord" '(activities-resume "activity" :resetp nil)) => 'activity-referent)
-                    (activities-completing-read => "activity"))
-            (should (equal (hywiki-add-activity "WikiWord") 'activity-referent))))
+        (mocklet ((require => t)
+                  (activities-completing-read => "activity"))
+          (hywiki-add-activity wikiword)
+          (should (equal '(activity . "activity")
+			 (hywiki-get-referent wikiword))))
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--add-bookmark ()
@@ -676,103 +681,132 @@ Note special meaning of `hywiki-allow-plurals-flag'."
     (unwind-protect
         (progn
           (mocklet ((bookmark-completing-read => ""))
-            (should-error (hywiki-add-bookmark "WikiWord"))))
-          (mocklet ((bookmark-completing-read => 'bkmark))
-            (should (equal '(bookmark-jump bkmark) (caddr (hywiki-add-bookmark "WikiWord")))))
+            (should-error (hywiki-add-bookmark "WikiWord")))
+          (mocklet ((bookmark-completing-read => "bkmark"))
+            (should (equal '(bookmark . "bkmark") (hywiki-add-bookmark "WikiWord")))))
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--add-command ()
   "Verify `hywiki-add-command'."
-  (mocklet ((hui:actype => 'command)
-            ((hywiki-add-referent "WikiWord" 'command) => 'command))
-    (should (eq 'command (hywiki-add-command "WikiWord")))))
+  (let ((hywiki-directory (make-temp-file "hywiki" t))
+	(wikiword "WikiWord"))
+    (unwind-protect
+	(mocklet ((hui:actype => 'hpath:find))
+	  (hywiki-add-command wikiword)
+	  (should (equal '(command . hpath:find)
+			 (hywiki-get-referent wikiword))))
+      (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--add-find ()
   "Verify `hywiki-add-find'."
-  (mocklet (((hywiki-add-referent "WikiWord" #'hywiki-word-grep) => 'word-grep))
-    (should (eq 'word-grep (hywiki-add-find "WikiWord")))))
+  (let* ((wikiword "WikiWord")
+	 (referent '(find . hywiki-word-grep)))
+    (hywiki-add-find wikiword)
+    (should (equal referent (hywiki-get-referent wikiword)))))
 
 (ert-deftest hywiki-tests--add-global-button ()
   "Verify `hywiki-add-global-button'."
-  (mocklet ((hargs:read-match => "gbtn")
-            ((hywiki-add-referent "WikiWord" '(gbut:act "gbtn")) => 'gbut-referent))
-    (should (equal 'gbut-referent (hywiki-add-global-button "WikiWord")))))
+  (let ((hywiki-directory (make-temp-file "hywiki" t)))
+    (unwind-protect
+	(mocklet ((hargs:read-match => "gbtn"))
+	  (should (equal '(global-button . "gbtn") (hywiki-add-global-button "WikiWord"))))
+      (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--add-hyrolo ()
   "Verify `hywiki-add-hyrolo'."
-  (mocklet (((hywiki-add-referent "WikiWord" '(hyrolo-fgrep "WikiWord")) => 'hyrolo-referent))
-    (should (equal 'hyrolo-referent (hywiki-add-hyrolo "WikiWord")))))
+  (let ((hywiki-directory (make-temp-file "hywiki" t)))
+    (unwind-protect
+	(progn
+	  (hywiki-add-hyrolo "WikiWord")
+	  (should (equal '(hyrolo . hyrolo-fgrep) (hywiki-get-referent "WikiWord"))))
+      (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--add-info-index ()
   "Verify `hywiki-add-info-index'."
-  (mocklet (((info) => t)
-	    ((Info-read-index-item-name "Info index item: ") => "index-name")
-            ((Info-current-filename-sans-extension) => "info")
-            ((hywiki-add-referent "WikiWord" '(Info-goto-node "(info)index-name")) => 'info-referent))
-    (should (equal 'info-referent (hywiki-add-info-index "WikiWord")))))
+  (let ((hywiki-directory (make-temp-file "hywiki" t)))
+    (unwind-protect
+	(mocklet (((info) => t)
+		  ((Info-read-index-item-name "Info index item: ") => "index-name")
+		  ((Info-current-filename-sans-extension) => "info"))
+	  (hywiki-add-info-index "WikiWord")
+	  (should (equal '(info-index . "(info)index-name") (hywiki-get-referent "WikiWord"))))
+      (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--add-info-node ()
   "Verify `hywiki-add-info-node'."
-  (mocklet (((info) => t)
-	    ((Info-read-node-name "Info node: ") => "node-name")
-            ((Info-current-filename-sans-extension) => "info")
-            ((hywiki-add-referent "WikiWord" '(Info-goto-node "(info)node-name")) => 'info-referent))
-    (should (equal 'info-referent (hywiki-add-info-node "WikiWord")))))
+  (let ((hywiki-directory (make-temp-file "hywiki" t)))
+    (unwind-protect
+	(mocklet (((info) => t)
+		  ((Info-read-node-name "Info node: ") => "node-name")
+		  ((Info-current-filename-sans-extension) => "info"))
+	  (hywiki-add-info-node "WikiWord")
+	  (should (equal '(info-node . "(info)node-name") (hywiki-get-referent "WikiWord"))))
+      (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--add-key-series ()
   "Verify `hywiki-add-key-series'."
-  (mocklet (((hywiki-add-referent "WikiWord" "{ABC}") => 'key-series-referent))
-    (with-simulated-input "ABC RET"
-      (should (equal 'key-series-referent (hywiki-add-key-series "WikiWord"))))
-    (with-simulated-input "{ABC} RET"
-      (should (equal 'key-series-referent (hywiki-add-key-series "WikiWord"))))))
+  (let ((hywiki-directory (make-temp-file "hywiki" t)))
+    (unwind-protect
+	(progn
+	  (with-simulated-input "ABC RET"
+	    (hywiki-add-key-series "WikiWord")
+	    (should (equal '(key-series . "{ABC}") (hywiki-get-referent "WikiWord"))))
+	  (with-simulated-input "{ABC} RET"
+	    (hywiki-add-key-series "WikiWord")
+	    (should (equal '(key-series . "{ABC}") (hywiki-get-referent "WikiWord")))))
+      (hy-delete-dir-and-buffer hywiki-directory))))
 
-(ert-deftest hywiki-tests--add-link ()
-  "Verify `hywiki-add-link'."
-  (mocklet (((hactypes:link-to-file-interactively) => '("file" 20))
-            ((hpath:file-position-to-line-and-column "file" 20) => "file:L2:C3")
-            ((hywiki-add-referent "WikiWord" "file:L2:C3") => 'path-referent))
-    (should (equal 'path-referent (hywiki-add-link "WikiWord")))))
+(ert-deftest hywiki-tests--add-path-link ()
+  "Verify `hywiki-add-path-link'."
+  (let ((hywiki-directory (make-temp-file "hywiki" t))
+	(wikiword "WikiWord"))
+    (unwind-protect
+	(progn (hywiki-add-path-link wikiword "file" 20)
+	       (should (equal '(path-link . "file:L1")
+			      (hywiki-get-referent wikiword))))
+      (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--add-org-id ()
   "Verify `hywiki-add-org-id'."
   ;; Error case - Non org-mode buffer
-  (let ((filea (make-temp-file "hypb" nil ".txt")))
-    (unwind-protect
-        (with-current-buffer (find-file filea)
-          (mocklet (((hmouse-choose-link-and-referent-windows) => (list nil (get-buffer-window))))
-            (should-error (hywiki-add-org-id "WikiWord") :type '(error))))
-      (hy-delete-file-and-buffer filea)))
+  (let ((wikiword "WikiWord"))
+    (let ((filea (make-temp-file "hypb" nil ".txt")))
+      (unwind-protect
+          (with-current-buffer (find-file filea)
+            (mocklet (((hmouse-choose-link-and-referent-windows) => (list nil (get-buffer-window))))
+              (should-error (hywiki-add-org-id wikiword) :type '(error))))
+	(hy-delete-file-and-buffer filea)))
 
-  (let ((filea (make-temp-file "hypb" nil ".org")))
-    (unwind-protect
-        (with-current-buffer (find-file filea)
-          (insert "* header\n")
+    (let ((filea (make-temp-file "hypb" nil ".org")))
+      (unwind-protect
+          (with-current-buffer (find-file filea)
+            (insert "* header\n")
 
-          ;; Error-case - No Org ID and read only
-          (setq buffer-read-only t)
-          (mocklet (((hmouse-choose-link-and-referent-windows) => (list nil (get-buffer-window))))
-	    (should-error (hywiki-add-org-id "WikiWord") :type '(error))
+            ;; Error-case - No Org ID and read only
+            (setq buffer-read-only t)
+            (mocklet (((hmouse-choose-link-and-referent-windows) => (list nil (get-buffer-window))))
+	      (should-error (hywiki-add-org-id wikiword) :type '(error))
 
-            ;; Normal case - Org-mode with Org ID
-            (goto-char (point-max))
-            (setq buffer-read-only nil)
-            (defvar hywiki-test--org-id)
-	    (let ((result (hywiki-add-org-id "WikiWord")))
-	      (if (stringp result)
-		  (should (string-prefix-p "ID: " result))
-		(error "(hywiki-tests--add-org-id): result value is a non-string: %s" result)))))
-      (hy-delete-file-and-buffer filea))))
+              ;; Normal case - Org-mode with Org ID
+              (goto-char (point-max))
+              (setq buffer-read-only nil)
+              (defvar hywiki-test--org-id)
+	      (let ((referent-value (cdr (hywiki-add-org-id wikiword))))
+		(if (stringp referent-value)
+		    (should (string-prefix-p "ID: " referent-value))
+		  (error "(hywiki-tests--add-org-id): referent value is a non-string: %s" referent-value)))))
+	(hy-delete-file-and-buffer filea)))))
 
 (ert-deftest hywiki-tests--add-org-roam-node ()
   "Verify `hywiki-add-org-roam-node'."
-  (let ((hywiki-directory (make-temp-file "hywiki" t)))
+  (let ((hywiki-directory (make-temp-file "hywiki" t))
+	(wikiword "WikiWord"))
     (unwind-protect
-        (progn
-          (mocklet (((require 'org-roam) => t)
-                    ((org-roam-node-read) => "org-roam-node")
-                    ((hywiki-add-referent "WikiWord" '(org-roam-node-open "org-roam-node" (or (alist-get 'file org-link-frame-setup) (alist-get hpath:display-where hpath:display-where-alist)))) => 'org-roam-referent))
-            (should (equal (hywiki-add-org-roam-node "WikiWord") 'org-roam-referent))))
+        (mocklet ((require => t)
+                  ((org-roam-node-read) => "org-roam-node"))
+	  (hywiki-add-org-roam-node wikiword)
+          (should (equal '(org-roam-node . "org-roam-node")
+			 (hywiki-get-referent wikiword))))
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 (provide 'hywiki-tests)

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     15-Dec-24 at 22:35:20 by Bob Weiner
+;; Last-Mod:     26-Dec-24 at 13:22:18 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2006,6 +2006,7 @@ If a new button is created, store its attributes in the symbol,
 			   (when (condition-case err
 				     (and itype (setq args (funcall itype)))
 				   (error (progn (message "%S: %S" itype err)
+						 (switch-to-buffer "*Messages*")
 						 ;; Show full stack trace
 						 (debug))))
 			     (setq is-type itype)

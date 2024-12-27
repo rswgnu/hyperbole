@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     15-Dec-24 at 22:43:50 by Bob Weiner
+;; Last-Mod:     23-Dec-24 at 14:18:06 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1030,7 +1030,7 @@ support underlined faces as well."
 	 '("HyWiki>")
 	 '("Act"            hywiki-word-activate
 	   "Activate HyWikiWord link at point or emulate a press of a Smart Key.")
-	 '("Create"         hywiki-add-page-and-display
+	 '("Create"         hywiki-create-page-and-display
 	    "Create and display a new HyWiki page.  Shows existing page names to aid in new naming.")
 	 '("EditPages"      hywiki-directory-edit
 	   "Display and edit HyWiki directory.")
@@ -1043,7 +1043,7 @@ support underlined faces as well."
 	   "Report on a HyWikiWord's attributes.")
 	 '("Info"           (id-info "(hyperbole)HyWiki")
 	   "Display Hyperbole manual section on HyWiki.")
-	 '("Link"           hywiki-add-link
+	 '("Link"           hywiki-add-path-link
 	   "Prompt for and add a HyWikiWord that links to a path and possible position.")
          '("ModeToggle"     hywiki-mode
 	   "Toggle whether HyWikiWords are highlighted and active in buffers outside of the HyWiki page directory.")

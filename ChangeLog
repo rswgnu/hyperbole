@@ -1,8 +1,96 @@
+2024-12-26  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--add-activity,
+                        hywiki-tests--add-org-id): Fix Mats prior updates
+    to work with new typed referents.
+
+* hywiki.el (hywiki-add-path-link): Add optional FILE and POS arguments
+    to better evaluate intermittent test bug in 'hywiki-tests--add-path-link'.
+    It fails on a call to this function only when all tests are run; never
+    fails interactively.
+
+* test/hy-test-dependencies.el (load "pcomplete"): Only on rsw's linux
+    system, load this library to eliminate cyclic dependency errors in
+    11 tests.
+
+* hasht.el: Rewrite to use Emacs built-in hash tables while keeping the
+    same calling interace as before.
+            (hash-map): Fix bug where 'func' was not quoted when embedded
+    within lambda function.
+            (hash-resize, hash-resize-p, hash-next-prime, hash-obarray,
+             hash-prime-p): Remove, no longer needed nor used
+    in Hyperbole.
+            (hash-deep-copy): Add deep copy of cons cells.
+
+* hbut.el (ibut:create): When debug on error, display *Messages* buffer
+    with error message.
+
+* hywiki.el (hywiki-make-referent-hasht): Optimize when no non-page
+    entries.
+
+* hywiki.el (hywiki-add-page): Return '(page . "<page-file-path>")
+    rather than just "<page-file-path>".  Update doc string.
+            (hywiki-add-to-referent): Update doc string.
+	    (hywiki-display-referent): Remove unneeded clauses
+    due to new typed referents.  Update doc string.
+            (hywiki-find-referent): Update doc string.
+            (hywiki-display-referent-type): Update doc string with
+    computed display function name.
+	    (hywiki-get-referent): Rewrite to handled typed referents.
+            (hywiki-display-page): Fix to allow both typed referents
+    and file-name alone as referent input.
+            (hywiki-add-referent): Trigger error if 'hash-add' call fails
+    and fix doc string to cover all return values.
+            (hywiki-validate-referent): Add to validate referents before
+    adding to the HyWiki hash table.  Use in 'hywiki-add-referent'.
+
+2024-12-25  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-org-link-resolve): Fix doc to include all possible
+    return value types and rewrite to new typed referents.
+
+2024-12-24  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el: Rename all 'page(s)-hasht' to 'referent-hasht'.
+             (hywiki-non-page-elts): Rewrite to new typed
+    referents and inline the function.
+             Rename 'hywiki--any-page-regexp-list' to
+    'hywiki--any-wikiword-regexp-list'.
+             Rename 'hywiki-maybe-highlight-page-names-in-frame'
+    to 'hywiki-maybe-highlight-wikiwords-in-frame'.
+             Rename 'hywiki-get-page-list' to 'hywiki-get-wikiword-list'.
+
 2024-12-24  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--a-wikiword-in-hywiki-directory)
     (hywiki-tests--wikiword-identified-with-delimiters): Add tests for
     hywiki words with delimiters.
+
+2024-12-23  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--add-*): Rewrite to handle typed
+    referents.
+
+* hywiki.el (hywiki-add-link): Rename to 'hywiki-add-path-link'.
+            (hywiki-add-page): Document optional 'force-flag' arg.
+	    (hywiki-add-page-and-display): Improve doc on prompting
+    for a referent type.
+            (hywiki-add-page-and-display): Rename to
+    'hywiki-create-page-and-display'.
+            (hywiki-referent-prompt-flag): Add this new customization.
+            (hywiki-create-page-and-display): Set prompt-flag t if
+    call-interactively and 'hywiki-referent-prompt-flag' is non-nil.
+            (hywiki-display-referent-type): Add to display referents
+    other than pages.
+            (hywiki-display-referent): Call above function.
+	    (hywiki-add-*): Rewrite all referent add functions to just
+    store the referent value and add hywiki-display-* functions to perform
+    the referent display instead.  This allows for easy addition of new
+    referent types.
+            (hywiki-display-page-function): Fix doc to say function takes
+    a pathname, not a HyWiki page name.
+            (hywiki-create-page): Add type to hash value so is a cons of
+    (page . <page-file-path>).
 
 2024-12-23  Mats Lidell  <matsl@gnu.org>
 
@@ -11,6 +99,11 @@
 
 2024-12-22  Bob Weiner  <rsw@gnu.org>
 
+* hywiki.el (hywiki-find-referent): Fix doc string to describe how
+    a prefix arg prompts for the type of referent to link to.
+            (hywiki-add-prompted-referent, hywiki-referent-menu):
+    Set 'hkey-value' to wikiword to pass to expressions in this menu,
+    invoked via the Smart Keys.
 * test/hywiki-tests.el (hywiki-tests--add-org-id): Fix so :type
     argument is a list as required, not a symbol.
 

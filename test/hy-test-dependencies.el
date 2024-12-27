@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:16:00
-;; Last-Mod:     10-Mar-24 at 20:56:45 by Bob Weiner
+;; Last-Mod:     26-Dec-24 at 22:40:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -24,6 +24,10 @@
 (require 'hload-path)
 (require 'hyperbole)
 (add-to-list 'load-path (expand-file-name "test" hyperb:dir))
+(when (equal (system-name) "norlinux")
+  ;; Next load line resolves a cyclic dependency issue that breaks 11 tests
+  ;; on rsw's linux system; please leave it here.
+  (load "pcomplete"))
 
 (defun hy-test-ensure-package-installed (pkg-symbol)
   (unless (package-installed-p pkg-symbol)
