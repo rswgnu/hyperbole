@@ -1,3 +1,14 @@
+2024-12-27  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-display-referent): Stop removing any #section from
+    wikiword sent to referent functions.
+            (hywiki-add-prompted-referent): Remove #section from wikiword
+    before creating hywiki-referent-menu prefix string.
+            (hywiki--add-section-to-referent): Add to insert #section into
+    referent value.  Use in 'hywiki-get-referent'.
+            (hywiki-display-page , hywiki-display-referent, hywiki-get-referent):
+    Exclude # from 'section' for consistency.
+
 2024-12-26  Bob Weiner  <rsw@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--add-activity,

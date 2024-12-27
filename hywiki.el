@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     26-Dec-24 at 22:52:28 by Bob Weiner
+;; Last-Mod:     27-Dec-24 at 11:10:28 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -640,21 +640,23 @@ After successfully finding a page and reading it into a buffer, run
 	    (unless buffer-file-name
 	      (error "(hywiki-display-referent): No `wikiword' given; buffer must have an attached file"))
 	    (setq wikiword (file-name-sans-extension (file-name-nondirectory buffer-file-name))))
-	  (when (string-match "#[^#]+$" wikiword)
-	    (setq wikiword (substring wikiword 0 (match-beginning 0))))
-	  (let* ((referent (cond (prompt-flag
-				  (hywiki-add-prompted-referent wikiword))
-				 ((hywiki-get-referent wikiword))
-				 (t (hywiki-add-page wikiword))))
-		 (referent-value (cdr referent)))
-	    (when referent
-	      ;; Ensure highlight any page name at point in case called as a
+	  (let* ((section (when (string-match "#[^#]+$" wikiword)
+			    (substring wikiword (1+ (match-beginning 0)))))
+		 (htable-referent (cond (prompt-flag
+					 (hywiki-add-prompted-referent wikiword))
+					((hywiki-get-referent wikiword))
+					(t (hywiki-add-page wikiword))))
+		 referent)
+ 	    ;; HyWikiWord instance may contain a section that must be
+	    ;; added to the referent value.
+	    (if (not (setq referent (hywiki--add-section-to-referent
+				     section htable-referent)))
+		(error "(hywiki-display-referent): Invalid `%s' referent: %s"
+		       wikiword htable-referent)
+ 	      ;; Ensure highlight any page name at point in case called as a
 	      ;; Hyperbole action type
 	      (hywiki-maybe-highlight-page-name t)
-	      (if (and (consp referent) (not (listp referent-value)))
-		  (hywiki-display-referent-type wikiword referent)
-		(error "(hywiki-display-referent): Invalid `%s' referent: %s"
-		       wikiword referent))
+	      (hywiki-display-referent-type wikiword referent)
 	      (hywiki-maybe-highlight-page-names)
 	      (run-hooks 'hywiki-display-referent-hook)
 	      referent)))
@@ -728,14 +730,16 @@ After successfully finding a page and reading it into a buffer, run
 	 (hui:menu-act 'hywiki-referent-menu
 		       (list (cons 'hywiki-referent-menu
 				   (cons (list (format "%s RefType>"
-						       wikiword))
+						       (if (string-match "#[^#]+$" wikiword)
+							   (substring wikiword 0 (match-beginning 0))
+							 wikiword)))
 					 (cdr hywiki-referent-menu)))))))
     (or referent
 	(when (called-interactively-p 'interactive)
 	  (user-error "(hywiki-add-prompted-referent): Invalid HyWikiWord: '%s'; must be capitalized, all alpha" wikiword)))))
 
 (defun hywiki-add-referent (wikiword referent)
-  "Add WIKIWORD that displays REFERENT to HyWiki.
+  "Add WIKIWORD (sans any #section) that displays REFERENT to HyWiki.
 Return REFERENT if WIKIWORD is of valid format, otherwise return nil.
 REFERENT must be a cons of (<referent-type) . <referent-value>) or
 an error is triggered."
@@ -1098,7 +1102,8 @@ Use `hywiki-get-referent' to determine whether a HyWiki page exists."
   "Display an optional WIKIWORD page and return the page file.
 Use `hywiki-display-page-function' to display the page.
 
-If REFERENT is provided, the page file is its `cdr'.
+If REFERENT is provided, its `cdr' is the page file with any #section
+from the WIKIWORD included.
 
 If WIKIWORD is omitted or nil and `hywiki-display-page-function'
 is an interactive function, it is called interactively and prompts for
@@ -2021,18 +2026,13 @@ value returns nil."
 If it is a pathname, expand it relative to `hywiki-directory'."
   (when (and (stringp wikiword) (not (string-empty-p wikiword))
 	     (string-match hywiki-word-with-optional-section-exact-regexp wikiword))
-    (let* ((_section (when (match-string-no-properties 2 wikiword)
-		       (prog1 (substring wikiword (match-beginning 2))
-			 ;; Remove any #section suffix in `wikiword'.
-			 (setq wikiword (match-string-no-properties 1 wikiword)))))
+    (let* ((section (when (match-string-no-properties 2 wikiword)
+		      (prog1 (substring wikiword (1+ (match-beginning 2)))
+			;; Remove any #section suffix in `wikiword'.
+			(setq wikiword (match-string-no-properties 1 wikiword)))))
 	   (referent (hash-get (hywiki-get-singular-wikiword wikiword)
-			       (hywiki-get-referent-hasht)))
-	   (referent-type (car referent))
-	   (referent-value (cdr referent)))
-      (when (and (consp referent)
-		 (symbolp referent-type)
-		 (not (listp referent-value)))
-	referent))))
+			       (hywiki-get-referent-hasht))))
+      (hywiki--add-section-to-referent section referent))))
 
 (defun hywiki-get-page-files ()
   "Return the list of existing HyWiki page file names.
@@ -2585,6 +2585,29 @@ Highlight/dehighlight HyWiki page names across all frames on change."
 ;;; ************************************************************************
 ;;; Private functions
 ;;; ************************************************************************
+
+(defun hywiki--add-section-to-referent (section referent)
+  "Add #SECTION to REFERENT's value and return REFERENT.
+SECTION excludes # prefix  Return nil if any input is invalid."
+  (if (or (null section) (and (stringp section) (string-empty-p section)))
+      referent
+    (when (consp referent)
+      (let ((referent-type (car referent))
+	    (referent-value (cdr referent)))
+	(when (and (symbolp referent-type) referent-value)
+	  (if (and (stringp section)
+		   (stringp referent-value)
+		   (memq referent-type '(page path-link))
+		   (not (seq-contains-p referent-value ?# #'=)))
+	      ;; Need to insert #section into referent's value
+	      (progn
+		(if (string-match hpath:line-and-column-regexp referent-value)
+		    (setq referent-value (concat (substring 0 (match-beginning 0))
+						 "#" section
+						 (match-string 0 referent-value)))
+		  (setq referent-value (concat referent-value "#" section)))
+		(cons referent-type referent-value))
+	    referent))))))
 
 (defun hywiki--get-delimited-range-backward ()
   "Return a list of (start end) if not between/after end ]] or >>.
