@@ -1,5 +1,9 @@
 2024-12-26  Bob Weiner  <rsw@gnu.org>
 
+* test/hywiki-tests.el (hywiki-tests--add-activity,
+                        hywiki-tests--add-org-id): Fix Mats prior updates
+    to work with new typed referents.
+
 * hywiki.el (hywiki-add-path-link): Add optional FILE and POS arguments
     to better evaluate intermittent test bug in 'hywiki-tests--add-path-link'.
     It fails on a call to this function only when all tests are run; never
@@ -56,6 +60,12 @@
     to 'hywiki-maybe-highlight-wikiwords-in-frame'.
              Rename 'hywiki-get-page-list' to 'hywiki-get-wikiword-list'.
 
+2024-12-24  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--a-wikiword-in-hywiki-directory)
+    (hywiki-tests--wikiword-identified-with-delimiters): Add tests for
+    hywiki words with delimiters.
+
 2024-12-23  Bob Weiner  <rsw@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--add-*): Rewrite to handle typed
@@ -81,6 +91,11 @@
     a pathname, not a HyWiki page name.
             (hywiki-create-page): Add type to hash value so is a cons of
     (page . <page-file-path>).
+
+2024-12-23  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--add-activity)
+    (hywiki-tests--add-org-roam-node): Add tests.
 
 2024-12-22  Bob Weiner  <rsw@gnu.org>
 

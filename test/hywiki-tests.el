@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     26-Dec-24 at 22:49:26 by Bob Weiner
+;; Last-Mod:     26-Dec-24 at 23:34:51 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -22,6 +22,7 @@
 (require 'with-simulated-input)
 (require 'hy-test-helpers)
 (require 'hywiki)
+(require 'hsys-org)
 (require 'ox-publish)
 
 (ert-deftest hywiki-tests--hywiki-create-page--adds-file-in-wiki-folder ()
@@ -92,6 +93,68 @@
           (should-not (hywiki-word-at))
           (hywiki-mode 1)
           (should (string= "WikiWord" (hywiki-word-at))))
+      (hywiki-mode 0)
+      (hy-delete-dir-and-buffer hywiki-directory))))
+
+(ert-deftest hywiki-tests--a-wikiword-in-hywiki-directory ()
+  "Verify WikiWord is identified if in `hywiki-directory'."
+  (let* ((hsys-org-enable-smart-keys t)
+         (hywiki-directory (make-temp-file "hywiki" t))
+         (referent (hywiki-add-page "WikiWord"))
+	 (wiki-page (cdr referent)))
+    (unwind-protect
+        (with-current-buffer (find-file-noselect wiki-page)
+          (hywiki-mode 0)
+          (insert "AnotherWikiWord")
+	  (newline nil t)
+          (goto-char 4)
+          (should (hywiki-word-at)))
+      (hy-delete-file-and-buffer wiki-page)
+      (hy-delete-dir-and-buffer hywiki-directory))))
+
+(ert-deftest hywiki-tests--wikiword-identified-with-delimiters ()
+  "Verify WikiWord is identified when surrounded by delimiters."
+  (let ((hsys-org-enable-smart-keys t)
+        (hywiki-directory (make-temp-file "hywiki" t)))
+    (unwind-protect
+        (progn
+          (hywiki-mode 1)
+
+          ;; Matches a WikiWord
+          (dolist (v '("WikiWord" "[WikiWord]" "[[WikiWord]]" "{WikiWord}" "(WikiWord)"
+                       "<WikiWord>" "<<WikiWord>>" "{[[WikiWord]]}" "([[WikiWord]])"
+                       "[WikiWord AnotherWord]"
+                       ))
+            (with-temp-buffer
+              (org-mode)
+              (insert v)
+	      (newline nil t)
+              (goto-char 6)
+              (should (string= "WikiWord" (hywiki-word-at)))))
+
+          ;; Identifies as org link (Note: Not checked if target
+          ;; exists.) AND matches WikiWord
+          (dolist (v '("[[hy:WikiWord]]" "[[hy:WikiWord\\]]]"))
+            (with-temp-buffer
+              (org-mode)
+              (insert v)
+	      (newline nil t)
+              (goto-char 6)
+              (font-lock-ensure)
+              (should (hsys-org-face-at-p 'org-link))
+              (should (string= "WikiWord" (hywiki-word-at)))))
+
+          ;; Identifies as org link (Note: Not checked if target
+          ;; exists.) AND DOES NOT match WikiWord
+          (dolist (v '("[[WikiWord AnotherWord]]"))
+            (with-temp-buffer
+              (org-mode)
+              (insert v)
+	      (newline nil t)
+              (goto-char 6)
+              (font-lock-ensure)
+              (should (hsys-org-face-at-p 'org-link))
+              (should-not (string= "WikiWord" (hywiki-word-at))))))
       (hywiki-mode 0)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
@@ -600,7 +663,17 @@ Note special meaning of `hywiki-allow-plurals-flag'."
           (should (equal referent (hywiki-get-referent "WikiWord"))))
       (hy-delete-dir-and-buffer hywiki-directory))))
 
-;; hywiki-add-activity -- Requires activities
+(ert-deftest hywiki-tests--add-activity ()
+  "Verify `hywiki-add-activity'."
+  (let ((hywiki-directory (make-temp-file "hywiki" t))
+	(wikiword "WikiWord"))
+    (unwind-protect
+        (mocklet ((require => t)
+                  (activities-completing-read => "activity"))
+          (hywiki-add-activity wikiword)
+          (should (equal '(activity . "activity")
+			 (hywiki-get-referent wikiword))))
+      (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--add-bookmark ()
   "Verify `hywiki-add-bookmark'."
@@ -696,34 +769,45 @@ Note special meaning of `hywiki-allow-plurals-flag'."
 (ert-deftest hywiki-tests--add-org-id ()
   "Verify `hywiki-add-org-id'."
   ;; Error case - Non org-mode buffer
-  (let ((filea (make-temp-file "hypb" nil ".txt")))
+  (let ((wikiword "WikiWord"))
+    (let ((filea (make-temp-file "hypb" nil ".txt")))
+      (unwind-protect
+          (with-current-buffer (find-file filea)
+            (mocklet (((hmouse-choose-link-and-referent-windows) => (list nil (get-buffer-window))))
+              (should-error (hywiki-add-org-id wikiword) :type '(error))))
+	(hy-delete-file-and-buffer filea)))
+
+    (let ((filea (make-temp-file "hypb" nil ".org")))
+      (unwind-protect
+          (with-current-buffer (find-file filea)
+            (insert "* header\n")
+
+            ;; Error-case - No Org ID and read only
+            (setq buffer-read-only t)
+            (mocklet (((hmouse-choose-link-and-referent-windows) => (list nil (get-buffer-window))))
+	      (should-error (hywiki-add-org-id wikiword) :type '(error))
+
+              ;; Normal case - Org-mode with Org ID
+              (goto-char (point-max))
+              (setq buffer-read-only nil)
+              (defvar hywiki-test--org-id)
+	      (let ((referent-value (cdr (hywiki-add-org-id wikiword))))
+		(if (stringp referent-value)
+		    (should (string-prefix-p "ID: " referent-value))
+		  (error "(hywiki-tests--add-org-id): referent value is a non-string: %s" referent-value)))))
+	(hy-delete-file-and-buffer filea)))))
+
+(ert-deftest hywiki-tests--add-org-roam-node ()
+  "Verify `hywiki-add-org-roam-node'."
+  (let ((hywiki-directory (make-temp-file "hywiki" t))
+	(wikiword "WikiWord"))
     (unwind-protect
-        (with-current-buffer (find-file filea)
-          (mocklet (((hmouse-choose-link-and-referent-windows) => (list nil (get-buffer-window))))
-            (should-error (hywiki-add-org-id "WikiWord") :type '(error))))
-      (hy-delete-file-and-buffer filea)))
-
-  (let ((filea (make-temp-file "hypb" nil ".org")))
-    (unwind-protect
-        (with-current-buffer (find-file filea)
-          (insert "* header\n")
-
-          ;; Error-case - No Org ID and read only
-          (setq buffer-read-only t)
-          (mocklet (((hmouse-choose-link-and-referent-windows) => (list nil (get-buffer-window))))
-	    (should-error (hywiki-add-org-id "WikiWord") :type '(error))
-
-            ;; Normal case - Org-mode with Org ID
-            (goto-char (point-max))
-            (setq buffer-read-only nil)
-            (defvar hywiki-test--org-id)
-	    (let ((referent-value (cdr (hywiki-add-org-id "WikiWord"))))
-	      (if (stringp referent-value)
-		  (should (string-prefix-p "ID: " referent-value))
-		(error "(hywiki-tests--add-org-id): referent value is a non-string: %s" referent-value)))))
-      (hy-delete-file-and-buffer filea))))
-
-;; hywiki-add-org-roam-node -- Requires org-roam
+        (mocklet ((require => t)
+                  ((org-roam-node-read) => "org-roam-node"))
+	  (hywiki-add-org-roam-node wikiword)
+          (should (equal '(org-roam-node . "org-roam-node")
+			 (hywiki-get-referent wikiword))))
+      (hy-delete-dir-and-buffer hywiki-directory))))
 
 (provide 'hywiki-tests)
 ;;; hywiki-tests.el ends here
