@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     16-Dec-24 at 23:36:16 by Mats Lidell
+# Last-Mod:     27-Dec-24 at 18:23:33 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -321,8 +321,7 @@ src: autoloads tags
 
 # Byte compile files but apply a filter for either including or
 # removing warnings.  See variable {C-hv byte-compile-warnings RET} for
-# list of warnings that can be controlled.  Default is set to suppress
-# warnings for long docstrings.
+# list of warnings that can be controlled.
 #
 # Example for getting warnings for obsolete functions and variables
 #   HYPB_WARNINGS="free-vars" make bin
@@ -334,20 +333,25 @@ else ifeq ($(origin HYPB_WARNINGS), environment)
 HYPB_BIN_WARN = --eval "(setq-default byte-compile-warnings '(${HYPB_WARNINGS}))"
 endif
 
+# Extra flags for byte and native compilation
+EXTRA_COMP_FLAGS = --eval "(progn \
+    (put 'if-let 'byte-obsolete-info nil) \
+    (put 'when-let 'byte-obsolete-info nil))"
+
 curr_dir = $(shell pwd)
 ifeq ($(HYPB_NATIVE_COMP),yes)
 %.elc: %.el
 	@printf "Compiling $<\n"
 	@$(EMACS) --batch --quick \
 	--eval "(progn (add-to-list 'load-path \"$(curr_dir)\") (add-to-list 'load-path \"$(curr_dir)/kotl\"))" \
-	${HYPB_BIN_WARN} \
+	${HYPB_BIN_WARN} ${EXTRA_COMP_FLAGS} \
 	-f batch-native-compile $<
 else
 %.elc: %.el
 	@printf "Compiling $<\n"
 	@$(EMACS) --batch --quick \
 	--eval "(progn (add-to-list 'load-path \"$(curr_dir)\") (add-to-list 'load-path \"$(curr_dir)/kotl\"))" \
-	${HYPB_BIN_WARN} \
+	${HYPB_BIN_WARN}  ${EXTRA_COMP_FLAGS} \
 	-f batch-byte-compile $<
 endif
 
