@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Aug-92
-;; Last-Mod:     17-Nov-24 at 10:31:59 by Bob Weiner
+;; Last-Mod:     27-Dec-24 at 23:15:05 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -283,8 +283,8 @@ See `hproperty:but-get'."
 (defun hproperty:char-property-start (pos property value)
   "From POS, return the start of text PROPERTY with VALUE overlapping POS.
 Otherwise, return nil.  Value must be a symbol."
-  (when-let ((val (hproperty:char-property-contains-p pos property value))
-	     (prev pos))
+  (when-let* ((val (hproperty:char-property-contains-p pos property value))
+	      (prev pos))
     ;; Can't use `previous-single-char-property-change' below
     ;; because it checks for any change in the property value, not
     ;; just if the property contains the value desired.
@@ -296,8 +296,8 @@ Otherwise, return nil.  Value must be a symbol."
 (defun hproperty:char-property-end (pos property value)
   "From POS, return the end of text PROPERTY with VALUE overlapping POS.
 Otherwise, return nil.  Value must be a symbol."
-  (when-let ((val (hproperty:char-property-contains-p pos property value))
-	     (next pos))
+  (when-let* ((val (hproperty:char-property-contains-p pos property value))
+	      (next pos))
     ;; Can't use `next-single-char-property-change' below
     ;; because it checks for any change in the property value, not
     ;; just if the property contains the value desired.

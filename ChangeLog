@@ -1,3 +1,10 @@
+2024-12-27  Mats Lidell  <matsl@gnu.org>
+
+* hywiki.el (hywiki-add-to-referent): Use when-let*.
+
+* hproperty.el (hproperty:char-property-start)
+    (hproperty:char-property-end): Use when-let*.
+
 2024-12-27  Bob Weiner  <rsw@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--add-activity,
