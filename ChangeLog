@@ -1,3 +1,7 @@
+* test/hy-test-dependencies.el (load "pcomplete"): Only on rsw's linux
+    system, load this library to eliminate cyclic dependency errors in
+    11 tests.
+
 2024-12-22  Bob Weiner  <rsw@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--add-org-id): Fix so :type
