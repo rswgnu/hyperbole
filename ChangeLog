@@ -2,6 +2,15 @@
     system, load this library to eliminate cyclic dependency errors in
     11 tests.
 
+* hasht.el: Rewrite to use Emacs built-in hash tables while keeping the
+    same calling interace as before.
+            (hash-map): Fix bug where 'func' was not quoted when embedded
+    within lambda function.
+            (hash-resize, hash-resize-p, hash-next-prime, hash-obarray,
+             hash-prime-p): Remove, no longer needed nor used
+    in Hyperbole.
+            (hash-deep-copy): Add deep copy of cons cells.
+
 2024-12-22  Bob Weiner  <rsw@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--add-org-id): Fix so :type
