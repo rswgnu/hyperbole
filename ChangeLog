@@ -1,5 +1,15 @@
 2024-12-27  Bob Weiner  <rsw@gnu.org>
 
+* test/hywiki-tests.el (hywiki-tests--add-activity,
+                        hywiki-tests--add-org-roam-node): Change 'require'
+    to 'hypb:require-package' so prompt user to install package when needed.
+
+* hywiki.el (hywiki-word-read, hywiki-word-read-new): Fix by replacing call
+    to 'hywiki-get-wikiwords-obarray' with 'hywiki-get-referent-hasht'.
+            (hywiki-get-wikiwords-obarray): Remove, no longer used.
+	    (hywiki-display-*): Fix to take referent-value rather than referent
+    since already know the type when such functions are called.
+
 * hywiki.el (hywiki-display-referent): Stop removing any #section from
     wikiword sent to referent functions.
             (hywiki-add-prompted-referent): Remove #section from wikiword
@@ -8,6 +18,9 @@
     referent value.  Use in 'hywiki-get-referent'.
             (hywiki-display-page , hywiki-display-referent, hywiki-get-referent):
     Exclude # from 'section' for consistency.
+            (hywiki-add-activity, hywiki-add-org-roam-node): Use
+    'hypb:require-package' to install activity or org-roam package as required
+    when invoking these functions.
 
 2024-12-26  Bob Weiner  <rsw@gnu.org>
 

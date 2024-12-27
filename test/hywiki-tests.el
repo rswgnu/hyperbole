@@ -668,7 +668,7 @@ Note special meaning of `hywiki-allow-plurals-flag'."
   (let ((hywiki-directory (make-temp-file "hywiki" t))
 	(wikiword "WikiWord"))
     (unwind-protect
-        (mocklet ((require => t)
+        (mocklet (((hypb:require-package 'activities) => t)
                   (activities-completing-read => "activity"))
           (hywiki-add-activity wikiword)
           (should (equal '(activity . "activity")
@@ -802,7 +802,7 @@ Note special meaning of `hywiki-allow-plurals-flag'."
   (let ((hywiki-directory (make-temp-file "hywiki" t))
 	(wikiword "WikiWord"))
     (unwind-protect
-        (mocklet ((require => t)
+        (mocklet (((hypb:require-package 'org-roam) => t)
                   ((org-roam-node-read) => "org-roam-node"))
 	  (hywiki-add-org-roam-node wikiword)
           (should (equal '(org-roam-node . "org-roam-node")
