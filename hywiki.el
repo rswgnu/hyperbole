@@ -1163,7 +1163,7 @@ calling this function."
   "Display WIKIWORD referent and insert TEXT at POSITION.
 Create page if it does not exist.  If WIKIWORD is invalid, return
 nil, else return '(page . \"<page-file-path>\")."
-  (when-let ((referent (hywiki-add-page wikiword)))
+  (when-let* ((referent (hywiki-add-page wikiword)))
     (hywiki-find-referent wikiword)
     (barf-if-buffer-read-only)
     (save-excursion
