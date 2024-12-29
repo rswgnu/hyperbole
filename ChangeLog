@@ -1,3 +1,13 @@
+2024-12-28  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-convert-words-to-org-links): Error if called within a
+    read-only buffer.
+            (hywiki-map-words): Widen buffer before gathering all wikiwords.
+	    (hywiki-org-make-publish-project-alist): Add :html-link-home,
+    :html-preamble, :sitemap-filename, and :with-date properties.
+            (hywiki-get-file): Fix to handle #section suffix which fixes
+    navigating to sections from HyWikiWord#section links.
+
 2024-12-27  Mats Lidell  <matsl@gnu.org>
 
 * hywiki.el (hywiki-add-to-referent): Use when-let*.
