@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     22-Dec-24 at 13:22:26 by Bob Weiner
+;; Last-Mod:     29-Dec-24 at 12:29:33 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2220,7 +2220,7 @@ If key is pressed:
 
 ;;;###autoload
 (defun smart-eobp ()
-  "Return t if point is past the last visible buffer line with non-whitespace characters."
+  "Return t if point is past the last visible non-whitespace buffer line."
   (and (or (and (eobp) (bolp))
 	   ;; On a blank line and nothing but whitespace until eob
 	   (save-excursion

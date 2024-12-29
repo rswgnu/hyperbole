@@ -8,7 +8,7 @@
 ;; AUTHOR:       Bob Weiner
 ;;
 ;; ORIG-DATE:    16-Mar-90 at 03:38:48
-;; LAST-MOD:     26-Dec-24 at 22:08:52 by Bob Weiner
+;; LAST-MOD:     29-Dec-24 at 12:37:57 by Mats Lidell
 ;;
 ;; Copyright (C) 1990-1995, 1997, 2016  Free Software Foundation, Inc.
 ;; See the file BR-COPY for license information.
@@ -204,8 +204,9 @@ in reverse order of occurrence (they are prepended to the list).  See
   "Return list result of calling FUNC over each (<value> . <key>) in HASH-TABLE.
 <key> is a symbol.
 
-If FUNC is in '(cdr key second symbol-name), then return all <key>s as strings.
-If FUNC is in '(car value first symbol-value), then return all <value>s."
+If FUNC is in \\='(cdr key second symbol-name), then return all <key>s
+as strings.  If FUNC is in \\='(car value first symbol-value), then
+return all <value>s."
   (unless (hash-table-p hash-table)
     (error "(hash-map): Invalid hash-table: `%s'" hash-table))
   (cond ((memq func '(cdr key second symbol-name))
