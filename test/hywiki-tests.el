@@ -731,10 +731,10 @@ Note special meaning of `hywiki-allow-plurals-flag'."
   "Verify `hywiki-add-info-index'."
   (let ((hywiki-directory (make-temp-file "hywiki" t)))
     (unwind-protect
-        (with-simulated-input "Top RET"
+        (with-simulated-input "files RET"
           (info "emacs")
 	  (hywiki-add-info-index "WikiWord")
-	  (should (equal '(info-index . "(emacs)Top") (hywiki-get-referent "WikiWord"))))
+	  (should (equal '(info-index . "(emacs)files") (hywiki-get-referent "WikiWord"))))
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--add-info-node ()
