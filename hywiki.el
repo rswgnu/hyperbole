@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     27-Dec-24 at 12:44:20 by Bob Weiner
+;; Last-Mod:     29-Dec-24 at 14:17:18 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -393,18 +393,24 @@ where PATH is the un-resolvable reference."
 	 :html-head (format
 		     "<link rel=\"stylesheet\" type=\"text/css\" href=\"%sman/hyperbole.css\"/>"
 		     hyperb:dir)
-	 ;; :html-link-home "theindex.html"
+	 :html-link-home "index.html"
 	 ;; :html-link-up "theindex.html"
 	 ;; !! TODO: The :makeindex property is disabled for now, until a process is
 	 ;; developed to force the Org publish process to regenerate the
 	 ;; index after index entries are inserted into the temporary Org
 	 ;; buffer prior to export to HTML.
+	 :html-postamble t
+	 :html-postable-format '(("en" "<p class=\"author\">Author: %a (%e)</p>
+                                  <p class=\"last-mod\">Last Modified: %C</p>
+                                  <p class=\"creator\">%c</p>"))
 	 :makeindex nil
-	 :publishing-function hywiki-org-publishing-function
 	 :publishing-directory hywiki-org-publishing-directory
+	 :publishing-function hywiki-org-publishing-function
 	 :section-numbers t
+	 :sitemap-filename "index.org"
 	 ;; sitemap (TOC) is stored in "sitemap.html"
 	 :sitemap-title hywiki-org-publishing-sitemap-title
+	 :with-date t
 	 :with-toc nil)))
 
 (defvar-local hywiki-page-flag nil
@@ -1202,6 +1208,7 @@ per file to the absolute value of MAX-MATCHES, if given and not 0.  If
 
 (defun hywiki-convert-words-to-org-links ()
   "Convert all highlighted HyWiki words in current buffer to Org links."
+  (barf-if-buffer-read-only)
   (let ((make-index (hywiki-org-get-publish-property :makeindex))
 	wiki-word)
     (hywiki-map-words (lambda (overlay)
@@ -1332,14 +1339,16 @@ highlighting any last HyWikiWord."
 
 (defun hywiki-map-words (func)
   "Apply FUNC across all HyWikiWords in the current buffer and return nil.
-FUNC takes 1 argument, the start and end buffer positions of each word
-and its option #section."
+FUNC takes 1 argument, the Emacs overlay spanning the start and end buffer
+positions of each HyWikiWord and its optional #section."
   (save-excursion
-    (mapc (lambda (overlay)
-	    (when (eq (overlay-get overlay 'face) hywiki-word-face)
-	      (funcall func overlay)))
-	  (overlays-in (point-min) (point-max)))
-    nil))
+    (save-restriction
+      (widen)
+      (mapc (lambda (overlay)
+	      (when (eq (overlay-get overlay 'face) hywiki-word-face)
+		(funcall func overlay)))
+	    (overlays-in (point-min) (point-max)))))
+  nil)
 
 (defun hywiki-get-delimited-range ()
   "Before or after a balanced delimiter, return the delimited range list.
@@ -1996,21 +2005,25 @@ are typed in the buffer."
 
 (defun hywiki-get-file (file-stem-name)
   "Return possibly non-existent path in `hywiki-directory' from FILE-STEM-NAME.
+FILE-STEM-NAME should not contain a directory and may have or may omit
+`hywiki-file-suffix' and an optional trailing #section.
+
 No validation of FILE-STEM-NAME is done except an empty string or null
 value returns nil."
   (make-directory hywiki-directory t)
   (unless (or (null file-stem-name) (string-empty-p file-stem-name))
-    ;; Remove any #section from `file-stem-name' and make it singular
-    (setq file-stem-name
-	  (hywiki-get-singular-wikiword
-	   (if (string-match "#[^#]+$" file-stem-name)
-	       (substring file-stem-name 0 (match-beginning 0))
-	     file-stem-name)))
-    (if (string-suffix-p hywiki-file-suffix file-stem-name)
-	(expand-file-name file-stem-name hywiki-directory)
-      (concat (expand-file-name
-	       file-stem-name hywiki-directory)
-	      hywiki-file-suffix))))
+    (let (file-name
+	  section)
+      ;; Remove any #section from `file-stem-name' and make it singular
+      (if (string-match "#[^#]+$" file-stem-name)
+	  (setq section (match-string 0 file-stem-name)
+		file-name (hywiki-get-singular-wikiword
+			   (substring file-stem-name 0 (match-beginning 0))))
+	(setq file-name file-stem-name))
+      (concat (expand-file-name file-name hywiki-directory)
+	      (unless (string-suffix-p hywiki-file-suffix file-name)
+		hywiki-file-suffix)
+	      section))))
 
 (defun hywiki-get-referent (wikiword)
   "Return the referent of HyWiki WIKIWORD or nil if it does not exist.
