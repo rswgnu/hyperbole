@@ -317,9 +317,9 @@ if KEY or HASH-TABLE are of the wrong type."
       (let* ((key-sym (intern key))
 	     (key-val (gethash key-sym hash-table)))
 	(if key-sym
-	    (if (listp key-value) ;; allowed to be nil
-		(puthash key-sym (cons value key-value) hash-table)
-	      (error "(hash-prepend): `%s' key's value is not a list:" key key-val))
+	    (if (listp key-val) ;; allowed to be nil
+		(puthash key-sym (cons value key-val) hash-table)
+	      (error "(hash-prepend): `%s' key's value `%s' is not a list:" key key-val))
 	  (error "(hash-prepend): Invalid hash-table key: %s" key)))))
 
 (defun hash-prin1 (hash-table &optional stream)
