@@ -687,7 +687,8 @@ Note special meaning of `hywiki-allow-plurals-flag'."
             (should-error (hywiki-add-bookmark "WikiWord")))
           (bookmark-set "bookmark")
           (with-simulated-input "bookmark RET"
-            (should (equal '(bookmark . "bookmark") (hywiki-add-bookmark "WikiWord")))))
+            (hywiki-add-bookmark "WikiWord")
+            (should (equal '(bookmark . "bookmark") (hywiki-get-referent "WikiWord")))))
       (hy-delete-file-and-buffer file)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
