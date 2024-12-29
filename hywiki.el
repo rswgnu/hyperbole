@@ -1027,7 +1027,7 @@ calling this function."
 
 (defun hywiki-add-page (page-name &optional force-flag)
   "Add a new or return any existing HyWiki page path for PAGE-NAME.
-Returned format is: '(page . \"<page-file-path>\") or nil when none.
+Returned format is: \\='(page . \"<page-file-path>\") or nil when none.
 
 With optional FORCE-FLAG non-nil, force an update to the page's
 modification time.  If PAGE-NAME is invalid, trigger a
@@ -1162,7 +1162,7 @@ calling this function."
 (defun hywiki-add-to-referent (wikiword text position)
   "Display WIKIWORD referent and insert TEXT at POSITION.
 Create page if it does not exist.  If WIKIWORD is invalid, return
-nil, else return '(page . \"<page-file-path>\")."
+nil, else return \\='(page . \"<page-file-path>\")."
   (when-let* ((referent (hywiki-add-page wikiword)))
     (hywiki-find-referent wikiword)
     (barf-if-buffer-read-only)
@@ -1303,7 +1303,7 @@ Return the referent if successfully found or nil otherwise.
 A valid referent is a cons of (<referent-type> . <referent-value>).
 
 If the referent is a HyWiki page:
-    Return a cons of the symbol 'page and the absolute path
+    Return a cons of the symbol \\='page and the absolute path
     to any page successfully found.  Return nil if failed or
     if displaying a regular file (read in via a `find-file' call).
 
@@ -1752,8 +1752,9 @@ the current page unless they have sections attached."
 
 (defun hywiki-maybe-highlight-off-page-name ()
   "Highlight any non-Org link HyWiki page#section at or one char before point.
-If at bobp or any preceding char is non-whitespace and any following character is
-whitespace or at eobp, handle highlighting for any previous word or punctuation.
+If at bobp or any preceding char is non-whitespace and any following
+character is whitespace or at eobp, handle highlighting for any previous
+word or punctuation.
 
 If in a programming mode, must be within a comment.  Use
 `hywiki-word-face' to highlight.  Do not highlight references to
