@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:     5-Apr-21 at 18:53:10
-;; Last-Mod:     30-Dec-24 at 16:28:26 by Mats Lidell
+;; Last-Mod:     30-Dec-24 at 23:37:03 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -81,7 +81,7 @@ See Emacs bug#74042 related to usage of texi2any."
   (unwind-protect
       (progn
         (Info-goto-node "(Hyperbole)Top")
-        (should (set:equal '("Key Index" "Function" "Concept Index") (Info-index-nodes))))
+        (should (set:equal '("Key Index" "Function Index" "Concept Index") (Info-index-nodes))))
     (hy-test-helpers:kill-buffer "*info*")))
 
 ;; This file can't be byte-compiled without the `el-mock' package (because of
