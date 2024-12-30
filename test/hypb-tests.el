@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:     5-Apr-21 at 18:53:10
-;; Last-Mod:     14-May-23 at 23:12:39 by Mats Lidell
+;; Last-Mod:     30-Dec-24 at 23:37:03 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -22,6 +22,7 @@
 (require 'hbut)
 (require 'ert)
 (require 'el-mock)
+(require 'hy-test-helpers)
 
 (ert-deftest hypb:installation-type-test ()
   "Verify installation type alternatives."
@@ -73,6 +74,15 @@
   (should (= (hypb:oct-to-int 10) 8))
   (should (= (hypb:oct-to-int 2000) 1024))
   (should-error (hypb:oct-to-int 8) :type 'error))
+
+(ert-deftest hypb--verify-info-index-is-correct ()
+  "Verify that Hyperbole info page indexes are identified.
+See Emacs bug#74042 related to usage of texi2any."
+  (unwind-protect
+      (progn
+        (Info-goto-node "(Hyperbole)Top")
+        (should (set:equal '("Key Index" "Function Index" "Concept Index") (Info-index-nodes))))
+    (hy-test-helpers:kill-buffer "*info*")))
 
 ;; This file can't be byte-compiled without the `el-mock' package (because of
 ;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.

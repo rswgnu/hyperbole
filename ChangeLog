@@ -1,3 +1,8 @@
+2024-12-30  Mats Lidell  <matsl@gnu.org>
+
+* test/hypb-tests.el (hypb--verify-info-index-is-correct): Ensure info
+    index is correct.
+
 2024-12-28  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-convert-words-to-org-links): Error if called within a

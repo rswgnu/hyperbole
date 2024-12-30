@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     10-Nov-24 at 16:01:31 by Bob Weiner
+@c Last-Mod:     30-Dec-24 at 23:34:55 by Mats Lidell
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -287,7 +287,7 @@ dedicated to my lovely wife, Kathy.
 * Future Work::
 * References::
 * Key Index::
-* Function::
+* Function Index::
 * Concept Index::
 
 @detailmenu
@@ -12453,17 +12453,17 @@ Austin, TX, ACM: NY,NY, 1989, pp. 37-42.
 @c Indices
 @c ***************************
 
-@node Key Index, Function, References, Top
+@node Key Index, Function Index, References, Top
 @unnumbered Key Index
 
 @printindex ky
 
-@node Function, Concept Index, Key Index, Top
+@node Function Index, Concept Index, Key Index, Top
 @unnumbered Function, Variable and File Index
 
 @printindex fn
 
-@node Concept Index,  , Function, Top
+@node Concept Index,  , Function Index, Top
 @unnumbered Concept Index
 
 @printindex cp
