@@ -1,4 +1,7 @@
-2025-01-01  Mats Lidell  <matsl@gnu.org>
+2025-01-02  Mats Lidell  <matsl@gnu.org>
+
+* test/hactypes-tests.el (hactypes-tests--link-to-Info-index-item): Verify
+    actypes::link-to-Info-index-item.
 
 * test/hywiki-tests.el (hywiki-tests--add-info-index): Update test to
     verify Info index display.
