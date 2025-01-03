@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:      8-Jul-23 at 14:11:49 by Bob Weiner
+;; Last-Mod:      3-Jan-25 at 23:52:37 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -19,6 +19,7 @@
 ;;; Code:
 
 (require 'ert)
+(require 'el-mock)
 (require 'hactypes)
 (require 'hy-test-helpers "test/hy-test-helpers")
 
@@ -31,6 +32,21 @@
 (ert-deftest display-boolean-false-test ()
   (should (actypes::display-boolean nil))
     (hy-test-helpers:should-last-message "Result = nil; Boolean value = False"))
+
+(ert-deftest hactypes-tests--link-to-Info-index-item ()
+  "Verify `actypes::link-to-Info-index-item'."
+  (should-error (actypes::link-to-Info-index-item "wrong-format") :type 'error)
+  (should-error (actypes::link-to-Info-index-item "(unknown-file)unknown-index-item") :type 'error)
+  (mocklet (((id-info-item "(infofile)index-item") => t))
+    (actypes::link-to-Info-index-item "(infofile)index-item"))
+  (unwind-protect
+      (progn
+        (actypes::link-to-Info-index-item "(hyperbole)hyperb:dir")
+        (should (string-prefix-p "*info*" (buffer-name)))
+        (should (string= "hyperbole" (file-name-nondirectory Info-current-file)))
+        (should (string= "Documentation" Info-current-node))
+        (should (looking-at-p "The Hyperbole Manual is a reference manual, not a simple introduction\\.")))
+    (kill-matching-buffers "^\\*info\\*" nil t)))
 
 (provide 'hactypes-tests)
 ;;; hactypes-tests.el ends here

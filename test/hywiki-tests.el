@@ -725,11 +725,15 @@ Note special meaning of `hywiki-allow-plurals-flag'."
   "Verify `hywiki-add-info-index'."
   (let ((hywiki-directory (make-temp-file "hywiki" t)))
     (unwind-protect
-	(mocklet (((info) => t)
-		  ((Info-read-index-item-name "Info index item: ") => "index-name")
-		  ((Info-current-filename-sans-extension) => "info"))
-	  (hywiki-add-info-index "WikiWord")
-	  (should (equal '(info-index . "(info)index-name") (hywiki-get-referent "WikiWord"))))
+        (progn
+	  (mocklet (((info) => t)
+		    ((Info-read-index-item-name "Info index item: ") => "index-name")
+		    ((Info-current-filename-sans-extension) => "info"))
+	    (hywiki-add-info-index "WikiWord")
+	    (should (equal '(info-index . "(info)index-name") (hywiki-get-referent "WikiWord"))))
+          ;; Verify display of referent
+          (mocklet (((hact 'link-to-Info-index-item "(info)index-name") => t))
+            (hywiki-display-referent "WikiWord")))
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--add-info-node ()
