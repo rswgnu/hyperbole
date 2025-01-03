@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:      2-Jan-25 at 22:32:05 by Mats Lidell
+;; Last-Mod:      3-Jan-25 at 23:52:37 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -44,7 +44,8 @@
         (actypes::link-to-Info-index-item "(hyperbole)hyperb:dir")
         (should (string-prefix-p "*info*" (buffer-name)))
         (should (string= "hyperbole" (file-name-nondirectory Info-current-file)))
-        (should (string= "Documentation" Info-current-node)))
+        (should (string= "Documentation" Info-current-node))
+        (should (looking-at-p "The Hyperbole Manual is a reference manual, not a simple introduction\\.")))
     (kill-matching-buffers "^\\*info\\*" nil t)))
 
 (provide 'hactypes-tests)
