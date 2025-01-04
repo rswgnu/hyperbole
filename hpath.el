@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     15-Dec-24 at 23:45:41 by Bob Weiner
+;; Last-Mod:      4-Jan-25 at 13:55:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -65,8 +65,14 @@ Default is nil since this can slow down normal file finding."
   :set (lambda (_symbol _value) (call-interactively #'hpath:find-file-urls-mode))
   :group 'hyperbole-buttons)
 
+(defconst hpath:line-and-column-numbers
+  ":L?\\([-+]?[0-9]+\\)\\(:C?\\([-+]?[0-9]+\\)\\)?"
+  "Regexp matching a line number and optional column number.
+Path, line and column numbers are colon separated.  Group 1 is the
+1-based line number.  Group 3 is the 0-based column number.")
+
 (defconst hpath:line-and-column-regexp
-  ":L?\\([-+]?[0-9]+\\)\\(:C?\\([-+]?[0-9]+\\)\\)?\\s-*\\'"
+  (concat hpath:line-and-column-numbers "\\s-*\\'")
   "Regexp matching a trailing line number and optional column number.
 Path, line and column numbers are colon separated.  Group 1 is the
 1-based line number.  Group 3 is the 0-based column number.")

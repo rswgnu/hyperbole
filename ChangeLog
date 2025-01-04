@@ -1,3 +1,21 @@
+2025-01-04  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-word-line-and-column-numbers-regexp): Add and use
+   in 'hywiki-word-with-optional-section-regexp' and
+   'hywiki-word-with-optional-section-exact-regexp'.
+            (hywiki-get-referent, hywiki-page-strip-section): Update to
+   handle optional line and col numbers.
+            (hywiki--word-and-buttonize-character-regexp): Update to make
+   Group 1 be all but any last delimiter character.
+
+* hpath.el (hpath:line-and-column-numbers): Add to match line and column numbers
+    without including any anchoring to the end of a larger regexp.  Use in
+    'hpath:line-and-column-regexp' and "hywiki.el".
+
+* hbut.el (ibut:set-name-and-label-key-p): Rewrite to not set any hbut:current
+    attributes unless find a valid 'lbl-start', so do not end up with a partial
+    set of insufficient attributes.
+
 2024-12-28  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-convert-words-to-org-links): Error if called within a

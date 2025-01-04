@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     29-Dec-24 at 14:17:18 by Bob Weiner
+;; Last-Mod:      4-Jan-25 at 15:26:25 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -174,7 +174,8 @@ in `hywiki-mode'.")
   "Regexp matching a single separating character following a HyWiki word.")
 
 (defconst hywiki--word-and-buttonize-character-regexp nil
-  "Regexp matching HyWikiWord#section plus a valid word separating character.")
+  "Regexp matching HyWikiWord#section plus a valid word separating character.
+Group 1 is the entire HyWikiWord#section:Lnum:Cnum expression.")
 
 (defvar hywiki--directory-checksum ""
   "String checksum for `hywiki-directory' page names.")
@@ -436,20 +437,39 @@ Nil by default."
 After the first # character, this may contain any non-square-bracket,
 non-# and non-whitespace characters.")
 
+(defconst hywiki-word-line-and-column-numbers-regexp
+  (concat "\\(" hpath:line-and-column-numbers "\\)")
+  "Group 2 is the 1-based line number.
+Group 4 is the optional 0-based column number.")
+
 (defconst hywiki-word-with-optional-section-regexp
-  (concat hywiki-word-regexp hywiki-word-section-regexp "?")
-  "Regexp that matches a HyWiki word with an optional #section.
+  (concat hywiki-word-regexp hywiki-word-section-regexp "?"
+	  hywiki-word-line-and-column-numbers-regexp "?")
+  "Regexp for a HyWiki word with an optional #section, :Lline-num, :Ccol-num.
 Section may not contain whitespace or square brackets.  Use '-' to
-substitute for spaces in the section/headline name.  Grouping 1 is
-the HyWiki word and grouping 2 is the #section with the # included.")
+substitute for spaces in the section/headline name.
+
+Group 1 is the HyWiki word.
+Group 2 is any optional #section with the # included.
+Group 4 is any optional 1-based line number to jump to for any
+file-based referents (relative to any section given).
+Group 6 is any optional 0-based column number to jump to for any
+file-based referents.")
 
 (defconst hywiki-word-with-optional-section-exact-regexp
-  (concat "\\`" hywiki-word-regexp "\\(#[^][\n\r\f]+\\)?\\'")
+  (concat "\\`" hywiki-word-regexp "\\(#[^][\n\r\f]+\\)?"
+	  hywiki-word-line-and-column-numbers-regexp "?\\'")
   "Exact match regexp for a HyWiki word with an optional #section.
 The section may contain spaces or tabs but not square brackets;
 it is preferable, however, to substitute '-' for whitespace in
-the section/headline name to simplify recognition.  Grouping 1 is
-the HyWiki word and grouping 2 is the #section with the # included.")
+the section/headline name to simplify recognition.
+
+Group 1 is the HyWiki word.
+Group 2 is any optional #section with the # included.
+Group 4 is any optional 1-based line number to jump to for any
+file-based referents (relative to any section given).
+Group 6 is any optional 0-based column number to jump to for any
+file-based referents.")
 
 (defface hywiki--word-face
   '((((min-colors 88) (background dark)) (:foreground "orange"))
@@ -1633,9 +1653,9 @@ If in a programming mode, must be within a comment.  Use
 	    (if (and (hywiki-maybe-at-wikiword-beginning)
 		     (looking-at hywiki--word-and-buttonize-character-regexp)
 		     (progn
-		       (setq hywiki--page-name (match-string-no-properties 1)
-			     hywiki--start (match-beginning 0)
-			     hywiki--end   (match-beginning 3))
+		       (setq hywiki--page-name (match-string-no-properties 2)
+			     hywiki--start (match-beginning 1)
+			     hywiki--end   (match-end 1))
 		       (and (hywiki-get-referent hywiki--page-name)
 			    ;; Ignore wikiwords preceded by any non-whitespace character
 			    ;; (or (bolp) (memq (preceding-char) '(?\  ?\t)))
@@ -1707,10 +1727,10 @@ the current page unless they have sections attached."
 	      (if (and (hywiki-maybe-at-wikiword-beginning)
 		       (looking-at hywiki--word-and-buttonize-character-regexp)
 		       (progn
-			 (setq hywiki--page-name (match-string-no-properties 1)
-			       hywiki--start (match-beginning 0)
+			 (setq hywiki--page-name (match-string-no-properties 2)
+			       hywiki--start (match-beginning 1)
 			       ;; This excludes optional char after the page#section
-			       hywiki--end   (match-beginning 3))
+			       hywiki--end   (match-end 1))
 			 (hywiki-get-referent hywiki--page-name)))
 		  (progn
 		    (setq hywiki--current-page (hywiki-get-buffer-page-name))
@@ -2030,10 +2050,15 @@ value returns nil."
 If it is a pathname, expand it relative to `hywiki-directory'."
   (when (and (stringp wikiword) (not (string-empty-p wikiword))
 	     (string-match hywiki-word-with-optional-section-exact-regexp wikiword))
-    (let* ((section (when (match-string-no-properties 2 wikiword)
-		      (prog1 (substring wikiword (1+ (match-beginning 2)))
-			;; Remove any #section suffix in `wikiword'.
-			(setq wikiword (match-string-no-properties 1 wikiword)))))
+    (let* ((section (cond ((match-beginning 2)
+			   (prog1 (substring wikiword (1+ (match-beginning 2)))
+			     ;; Remove any #section suffix in `wikiword'.
+			     (setq wikiword (match-string-no-properties 1 wikiword))))
+			  ((match-beginning 4)
+			   (prog1 (substring wikiword (match-beginning 4))
+			     ;; Remove any :Lnum:Cnum suffix in `wikiword'.
+			     (setq wikiword (match-string-no-properties
+					     1 wikiword))))))
 	   (referent (hash-get (hywiki-get-singular-wikiword wikiword)
 			       (hywiki-get-referent-hasht))))
       (hywiki--add-section-to-referent section referent))))
@@ -2309,12 +2334,12 @@ variables."
 			    :store #'hywiki-org-link-store))
 
 (defun hywiki-page-strip-section (page-name)
-  "Return PAGE-NAME with any optional #section stripped off.
+  "Return PAGE-NAME with any optional #section:Lnum:Cnum stripped off.
 If an empty string or not a string, return nil."
   (when (and (stringp page-name) (not (string-empty-p page-name)))
     (if (and (string-match hywiki-word-with-optional-section-exact-regexp page-name)
-	     (match-string-no-properties 2 page-name))
-	;; Remove any #section suffix in PAGE-NAME.
+	     (or (match-beginning 2) (match-beginning 4)))
+	;; Remove any #section:Lnum:Cnum suffix in PAGE-NAME.
 	(match-string-no-properties 1 page-name)
       page-name)))
 
@@ -2434,8 +2459,9 @@ Action Key press; with a prefix ARG, emulate an Assist Key press."
       (hkey-either arg))))
 
 (defun hywiki-word-at (&optional range-flag)
-  "Return HyWikiWord and optional #section at point or nil if not on one.
-Point must be prior to any whitespace character within #section.
+  "Return HyWikiWord and optional #section:Lnum:Cnum at point or nil.
+Point should be on the HyWikiWord itself.
+
 With optional RANGE-FLAG, return a list of (HyWikiWord start-position
 end-position); the positions are for only the HyWikiWord itself.
 
@@ -2484,17 +2510,17 @@ or this will return nil."
 			      (setq start (match-beginning 0)
 				    end   (match-end 0))))))
 		      (hywiki-word-is-p wikiword))
-		  ;; Handle a non-delimited HyWiki word with optional #section;
-		  ;; if it is an Org link, it may optionally have a hy:
-		  ;; link-type prefix.  Ignore wikiwords preceded by any
-		  ;; non-whitespace character, except any of these:
-		  ;; "([\"'`'"
+		  ;; Handle a non-delimited HyWiki word with optional
+		  ;; #section:Lnum:Cnum; if it is an Org link, it may
+		  ;; optionally have a hy: link-type prefix.  Ignore
+		  ;; wikiwords preceded by any non-whitespace
+		  ;; character, except any of these: "([\"'`'"
 		  (let ((case-fold-search nil))
 		    (skip-chars-backward "-_*#[:alnum:]")
 		    (when (hywiki-maybe-at-wikiword-beginning)
 		      (cond ((looking-at hywiki--word-and-buttonize-character-regexp)
-			     (setq start (match-beginning 0)
-				   end (match-beginning 3)
+			     (setq start (match-beginning 1)
+				   end (match-end 1)
 				   wikiword (string-trim
 					     (buffer-substring-no-properties start end))))
 			    ((looking-at (concat hywiki-word-with-optional-section-regexp "\\'"))
@@ -2700,7 +2726,7 @@ DIRECTION-NUMBER is 1 for forward scanning and -1 for backward scanning."
 		(regexp-quote (substring hywiki--buttonize-characters 2))
 		"]\\|$\\)")
 	hywiki--word-and-buttonize-character-regexp
-	(concat hywiki-word-with-optional-section-regexp
+	(concat "\\(" hywiki-word-with-optional-section-regexp "\\)"
 		hywiki--buttonize-character-regexp)))
 
 ;;; ************************************************************************
