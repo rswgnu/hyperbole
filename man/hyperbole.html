@@ -359,6 +359,7 @@ th {
 
 
 
+
 <div class="top-level-extent" id="Top">
 <div class="nav-panel">
 <p>
@@ -710,7 +711,7 @@ dedicated to my lovely wife, Kathy.
   <li><a id="toc-Future-Work-1" href="#Future-Work">Appendix H Future Work</a></li>
   <li><a id="toc-References-1" href="#References">Appendix I References</a></li>
   <li><a id="toc-Key-Index-1" href="#Key-Index" rel="index">Key Index</a></li>
-  <li><a id="toc-Function_002c-Variable-and-File-Index" href="#Function" rel="index">Function, Variable and File Index</a></li>
+  <li><a id="toc-Function_002c-Variable-and-File-Index" href="#Function-Index" rel="index">Function, Variable and File Index</a></li>
   <li><a id="toc-Concept-Index-1" href="#Concept-Index" rel="index">Concept Index</a></li>
 </ul>
 </div>
@@ -792,14 +793,14 @@ archives, the World-Wide Web and much more.
 <a class="index-entry-id" id="index-Hyperbole-demo"></a>
 <a class="index-entry-id" id="index-demo-file"></a>
 <a class="index-entry-id" id="index-tutorial"></a>
-<p>This is a reference manual with extensive details about Hyperbole use.  If
-you prefer a simpler, more interactive introduction to Hyperbole, the
-<samp class="file">FAST-DEMO</samp> file included in the Hyperbole distribution demonstrates
-many of Hyperbole&rsquo;s standard facilities without the need to read through this
-reference manual.  The <samp class="file">FAST-DEMO</samp> is a good way to rapidly understand
-some of what Hyperbole can do for you.  Once Hyperbole is installed,
-(see <a class="pxref" href="#Setup">Setup</a>), you can access the <samp class="file">FAST-DEMO</samp> with the key sequence
-<kbd class="kbd">{C-h h d d}</kbd>.
+<p>This is a reference manual with extensive details about Hyperbole use.
+If you prefer a simpler, more interactive introduction to Hyperbole,
+the <samp class="file">../FAST-DEMO</samp> file included in the Hyperbole distribution
+demonstrates many of Hyperbole&rsquo;s standard facilities without the need
+to read through this reference manual.  The <samp class="file">../FAST-DEMO</samp> is a good
+way to rapidly understand some of what Hyperbole can do for you.  Once
+Hyperbole is installed, (see <a class="pxref" href="#Setup">Setup</a>), you can access the
+<samp class="file">../FAST-DEMO</samp> with the key sequence <kbd class="kbd">{C-h h d d}</kbd>.
 </p>
 <p>See <a class="xref" href="#Glossary">Glossary</a>, for definitions of Hyperbole terms.  In some cases,
 terms are not precisely defined within the body of this manual since they
@@ -1243,7 +1244,7 @@ access to HyControl&rsquo;s window control menu if it was not already bound
 prior to Hyperbole&rsquo;s initialization.
 </p>
 <p>Videos demonstrating Hyperbole&rsquo;s features are listed at
-<a class="url" href="https://gnu.org/s/hyperbole">https://gnu.org/s/hyperbole</a>.
+<a class="uref" href="https://gnu.org/s/hyperbole">https://gnu.org/s/hyperbole</a>.
 </p>
 <p>The above are the best interactive ways to learn about Hyperbole.
 </p>
@@ -1531,7 +1532,7 @@ Mouse-only Control
     Buffer ID                   Dired on buffer's dir      Displays next buffer
                                   or on parent when a dir
     Other blank area            Action Key modeline hook   Assist Key modeline hook
-                                  Shows/Hides Buffer Menu    Popups Jump &amp; Manage Menu
+                                  Shows/Hides Buffer Menu    Popups Screen &amp; Jump Menus
 
   Drag in window, region active Error, not allowed         Error, not allowed
   Horizontal drag in a window   Splits window below        Deletes window
@@ -1763,7 +1764,7 @@ Next: <a href="#Smart-Mouse-Key-Modeline-Clicks" accesskey="n" rel="next">Smart 
 or source code and to copy or move them between buffers with a single mouse
 drag or two key presses.  A great deal of smarts are built-in so that it
 does the right thing most of the time; many other attempts at similar
-behavior such as <samp class="file">thing.el</samp> fail to deal with many file format
+behavior such as <samp class="file">thingatpt.el</samp> fail to deal with many file format
 complexities.
 </p>
 <p>We use the term <em class="dfn">things</em> to refer to structured entities that
@@ -2265,7 +2266,7 @@ are not supported without a window system.
 <a class="index-entry-id" id="index-keyboard_002c-jump-to-window"></a>
 <p>For even faster keyboard-based display of items and drag emulations,
 use the Emacs package <code class="code">ace-window</code>
-(see <a class="url" href="https://elpa.gnu.org/packages/ace-window.html">https://elpa.gnu.org/packages/ace-window.html</a>).
+(see <a class="uref" href="https://elpa.gnu.org/packages/ace-window.html">https://elpa.gnu.org/packages/ace-window.html</a>).
 </p>
 <p>The <em class="dfn">ace-window</em> package assigns short letter IDs to each Emacs
 window and lets you jump to or operate upon a specific window by giving
@@ -2776,7 +2777,7 @@ Next: <a href="#Action-Buttons" accesskey="n" rel="next">Action Buttons</a>, Pre
 which Hyperbole tries to match to the types when looking for an
 implicit button (decreasing priority order).  <kbd class="kbd">{C-h h i t
 <kbd class="key">RET</kbd>}</kbd> provides similar information.  See the Hyperbole file,
-<samp class="file">hibtypes.el</samp>, for examples of how to define implicit button
+<samp class="file">../hibtypes.el</samp>, for examples of how to define implicit button
 types (in the file, they are listed in reverse order, increasing in
 priority).
 </p>
@@ -3219,11 +3220,11 @@ associated section.  Or try it in the Hyperbole <samp class="file">DEMO</samp> f
 <a class="index-entry-id" id="index-C_002fC_002b_002b-cross_002dreference"></a>
 <a class="index-entry-id" id="index-Cscope"></a>
 <a id="index-ibtypes-cscope"></a><span><code class="code">cscope</code><a class="copiable-link" href="#index-ibtypes-cscope"> &para;</a></span></dt>
-<dd><p>Jump to a C/C++ source line associated with a Cscope C analyzer output line.
-The cscope.el Lisp library available from the Emacs package manager
-must be loaded and the open source cscope program available from
-http://cscope.sf.net must be installed for this button type to do
-anything.
+<dd><p>Jump to a C/C++ source line associated with a Cscope C analyzer output
+line.  The cscope.el Lisp library available from the Emacs package
+manager must be loaded and the open source cscope program available
+from <a class="uref" href="http://cscope.sf.net">http://cscope.sf.net</a> must be installed for this button
+type to do anything.
 </p>
 </dd>
 <dt><a class="index-entry-id" id="index-etags-entry"></a>
@@ -4841,7 +4842,7 @@ access to popular web search engines.
                    which determines whether web search results are displayed
                    within Emacs or with an external web browser.  A short
                    video introduction to the Find/Web menu may be
-                   found at <a class="url" href="https://youtu.be/8lMlJed0-OM">https://youtu.be/8lMlJed0-OM</a>.
+                   found at <a class="uref" href="https://youtu.be/8lMlJed0-OM">https://youtu.be/8lMlJed0-OM</a>.
 </p>
 <p>The Find/Web menu looks like this:
 </p>
@@ -5140,7 +5141,7 @@ Previous: <a href="#Publish-HyWiki" accesskey="p" rel="prev">Publish HyWiki</a>,
 It looks like this:
 </p>
 <div class="example smallexample">
-<pre class="example-preformatted">HyWiki&gt;  Act Create FindPage GrepConsult Help Info Link ModeToggle Org-M-RET/ Publish TagFind WikiWordConsult
+<pre class="example-preformatted">HyWiki&gt;  Act Create EditPages FindPage GrepConsult Help Info Link ModeToggle Org-M-RET/ Publish TagFind WikiWordConsult
 </pre></div>
 
 <p>The GrepConsult and WikiWordConsult items appear only when the Consult
@@ -5150,37 +5151,54 @@ many files with interactive search pattern narrowing.
 </p>
 <p>Below are descriptions of each menu item.
 </p>
-<a class="index-entry-id" id="index-hywiki_002dconsult_002dgrep"></a>
 <a class="index-entry-id" id="index-HyWiki-menu"></a>
 <a class="index-entry-id" id="index-menu_002c-HyWiki-2"></a>
 <dl class="table">
-<dt>Act</dt>
+<dt><a id="index-HyWiki-activate-link"></a><span>Act<a class="copiable-link" href="#index-HyWiki-activate-link"> &para;</a></span></dt>
 <dd><p>Activate HyWikiWord link at point.
 </p>
 </dd>
-<dt>Create</dt>
-<dd><p>Create and display a new HyWiki page.  Shows existing page names to aid in new naming.
+<dt><a id="index-HyWiki-create-a-page"></a><span>Create<a class="copiable-link" href="#index-HyWiki-create-a-page"> &para;</a></span></dt>
+<dd><p>Create and display a new HyWiki page.  Shows existing page names to
+aid in new naming.
 </p>
 </dd>
-<dt>FindPage</dt>
+<dt><a class="index-entry-id" id="index-action_002dkey_002dmodeline_002dbuffer_002did_002dfunction"></a>
+<a class="index-entry-id" id="index-dired-1"></a>
+<a class="index-entry-id" id="index-smart_002dtreemacs_002dmodeline"></a>
+<a class="index-entry-id" id="index-treemacs"></a>
+<a class="index-entry-id" id="index-HyWiki-dired"></a>
+<a class="index-entry-id" id="index-HyWiki-treemacs"></a>
+<a class="index-entry-id" id="index-HyWiki-edit-pages"></a>
+<a id="index-hywiki_002ddirectory-1"></a><span>EditPages<a class="copiable-link" href="#index-hywiki_002ddirectory-1"> &para;</a></span></dt>
+<dd><p>Display and edit HyWiki pages in current <code class="code">hywiki-directory</code>.  Use
+<code class="code">dired</code> unless <code class="code">action-key-modeline-buffer-id-function</code> is
+set to <code class="code">smart-treemacs-modeline</code>, then use the <code class="code">treemacs</code>
+package.
+</p>
+
+</dd>
+<dt><a id="index-HyWiki-find_002fedit-a-page"></a><span>FindPage<a class="copiable-link" href="#index-HyWiki-find_002fedit-a-page"> &para;</a></span></dt>
 <dd><p>Prompt with completion for and find a HyWiki page, typically editable.
 If the page is already in a buffer, point is left unchanged.
 </p>
 </dd>
-<dt>GrepConsult</dt>
+<dt><a class="index-entry-id" id="index-hywiki_002dconsult_002dgrep"></a>
+<a id="index-HyWiki-interactive-grep"></a><span>GrepConsult<a class="copiable-link" href="#index-HyWiki-interactive-grep"> &para;</a></span></dt>
 <dd><p>Grep over HyWiki pages with interactive <code class="code">hywiki-consult-grep</code>.
 Any words may be used.
 </p>
 </dd>
-<dt>Help</dt>
+<dt><a id="index-HyWikiWord-attribute-help"></a><span>Help<a class="copiable-link" href="#index-HyWikiWord-attribute-help"> &para;</a></span></dt>
 <dd><p>Report on a HyWikiWord&rsquo;s attributes.
 </p>
 </dd>
-<dt>Info</dt>
+<dt><a class="index-entry-id" id="index-HyWiki-manual"></a>
+<a id="index-HyWiki-documentation"></a><span>Info<a class="copiable-link" href="#index-HyWiki-documentation"> &para;</a></span></dt>
 <dd><p>Display Hyperbole manual section on HyWiki.
 </p>
 </dd>
-<dt>Link</dt>
+<dt><a id="index-HyWikiWord-link"></a><span>Link<a class="copiable-link" href="#index-HyWikiWord-link"> &para;</a></span></dt>
 <dd><p>Prompt for and add a link at point to a HyWiki page.
 </p>
 </dd>
@@ -5210,16 +5228,17 @@ new HyWiki page instead.  Use &lsquo;<samp class="samp">None</samp>&rsquo; if yo
 use Org&rsquo;s <kbd class="kbd">{M-<kbd class="key">RET</kbd>}</kbd> command in every context within Org mode.
 </p>
 </dd>
-<dt>Publish</dt>
+<dt><a id="index-HyWiki-publish-to-web"></a><span>Publish<a class="copiable-link" href="#index-HyWiki-publish-to-web"> &para;</a></span></dt>
 <dd><p>Publish modified pages in the HyWiki to HTML; prefix arg to publish all pages.
 </p>
 </dd>
 <dt><a class="index-entry-id" id="index-search_002c-HyWiki-tag"></a>
-<a id="index-HyWiki-tag-search"></a><span>TagFind<a class="copiable-link" href="#index-HyWiki-tag-search"> &para;</a></span></dt>
+<a id="index-HyWiki-search-for-Org-tags"></a><span>TagFind<a class="copiable-link" href="#index-HyWiki-search-for-Org-tags"> &para;</a></span></dt>
 <dd><p>Find a matching Org tag across all HyWiki pages.
 </p>
 </dd>
-<dt>WikiWordConsult</dt>
+<dt><a class="index-entry-id" id="index-hywiki_002dconsult_002dgrep-1"></a>
+<a id="index-HyWikiWord-interactive-grep"></a><span>WikiWordConsult<a class="copiable-link" href="#index-HyWikiWord-interactive-grep"> &para;</a></span></dt>
 <dd><p>Use <code class="code">hywiki-consult-grep</code> to prompt for a HyWikiWord and then
 consult grep for and select an occurrence within the HyWiki.
 </p></dd>
@@ -6633,7 +6652,7 @@ have alphanumeric statement identifiers on the right side.  You can
 import such files while maintaining their outline structure.  Use
 <kbd class="kbd">{M-x kimport:aug-post-outline <kbd class="key">RET</kbd>}</kbd> and you will be
 prompted for the Augment buffer or file to import and the koutline to
-create.  See <a class="url" href="https://dougengelbart.org/content/view/148/">https://dougengelbart.org/content/view/148/</a> for more
+create.  See <a class="uref" href="https://dougengelbart.org/content/view/148/">https://dougengelbart.org/content/view/148/</a> for more
 information.
 </p>
 <hr>
@@ -7756,7 +7775,7 @@ BBDB entries, just finding them.
 query your Google Contacts for matches.  First you must download and
 install the external <samp class="file">google-contacts</samp> package using the Emacs
 Package Manager.  Then you must install the non-Emacs GNU Privacy
-Guard (GPG) package from <a class="url" href="https://gnupg.org">https://gnupg.org</a> so that
+Guard (GPG) package from <a class="uref" href="https://gnupg.org">https://gnupg.org</a> so that
 the <samp class="file">gpg</samp> or <samp class="file">gpg2</samp> executable is in your command-line
 search path.  Once these are in place, either restart Emacs or
 use <kbd class="kbd">{M-x hyrolo-initialize-file-list <kbd class="key">RET</kbd>}</kbd> to add Google
@@ -9216,7 +9235,7 @@ any number of buttons with the same base label within a single buffer.
 </p>
 </dd>
 <dt><b class="b">Jedi</b></dt>
-<dd><p>See also <a class="url" href="https://tkf.github.io/emacs-jedi/latest/">https://tkf.github.io/emacs-jedi/latest/</a>.
+<dd><p>See also <a class="uref" href="https://tkf.github.io/emacs-jedi/latest/">https://tkf.github.io/emacs-jedi/latest/</a>.
 </p>
 <p>Jedi is a Emacs package for Python completion, definition and documentation lookup.
 </p>
@@ -9317,7 +9336,7 @@ menus end with a forward slash, &lsquo;<samp class="samp">/</samp>&rsquo;.
 </p>
 </dd>
 <dt><b class="b">The OO-Browser</b></dt>
-<dd><p>See also <a class="url" href="https://www.gnu.org/software/oo-browser">https://www.gnu.org/software/oo-browser</a>.
+<dd><p>See also <a class="uref" href="https://www.gnu.org/software/oo-browser">https://www.gnu.org/software/oo-browser</a>.
 </p>
 <p>The GNU OO-Browser is a multi-windowed, interactive object-oriented class
 browser similar in use to the well-known Smalltalk browsers.  It runs
@@ -9708,13 +9727,13 @@ everything by hand, then you can obtain Hyperbole from a tarball:
 </p>
 <dl class="table">
 <dt>1. a stable release tar.gz source archive from either:</dt>
-<dd><p><a class="url" href="ftp://ftp.gnu.org/gnu/hyperbole/">ftp://ftp.gnu.org/gnu/hyperbole/</a> or
-<a class="url" href="http://ftpmirror.gnu.org/hyperbole/">http://ftpmirror.gnu.org/hyperbole/</a>, which will find the closest
+<dd><p><a class="uref" href="ftp://ftp.gnu.org/gnu/hyperbole/">ftp://ftp.gnu.org/gnu/hyperbole/</a> or
+<a class="uref" href="http://ftpmirror.gnu.org/hyperbole/">http://ftpmirror.gnu.org/hyperbole/</a>, which will find the closest
 mirror of the GNU ftp site and show it to you.
 </p>
 </dd>
 <dt>2. the latest in-development pre-release tar.gz source archive linked to at the top of this web page:</dt>
-<dd><p><a class="url" href="https://elpa.gnu.org/devel/hyperbole.html">https://elpa.gnu.org/devel/hyperbole.html</a>.
+<dd><p><a class="uref" href="https://elpa.gnu.org/devel/hyperbole.html">https://elpa.gnu.org/devel/hyperbole.html</a>.
 </p></dd>
 </dl>
 
@@ -11679,18 +11698,16 @@ See <a class="xref" href="#Displaying-Items">Displaying Items</a>.
 <div class="format">
 <div class="group"><pre class="format-preformatted">When in a Treemacs file browser buffer:
   ACTION KEY or ASSIST KEY
-     (1) on an entry icon, the treemacs TAB command is run to expand and
-         collapse the entry;
-     (2) elsewhere within an entry line, the item is displayed for editing,
-         normally in another window;
-     (3) at the end of an entry line: if an Action Key press, invokes
+     (1) on or to the left of an entry icon, run the treemacs TAB command
+         to expand or collapse the entry;
+     (2) elsewhere within an entry line, display the item, which may be a
+         directory, for editing, normally in another window;
+     (3) at the end of an entry line: if an Action Key press, invoke
          <code class="code">action-key-eol-function</code>, typically to scroll up proportionally;
-         if an Assist Key press, invokes <code class="code">assist-key-eol-function</code>, typically
+         if an Assist Key press, invoke <code class="code">assist-key-eol-function</code>, typically
          to scroll down proportionally;
-     (4) on the first line of the buffer (other than the end of line),
-         dired is run on the current directory of this Treemacs;
-     (5) at the end of the first or last line of the buffer,
-         this Treemacs invocation is quit.
+     (4) at the end of the first or last line of the buffer, quit this
+         Treemacs invocation.
 </pre></div></div>
 
 <hr>
@@ -13352,7 +13369,7 @@ more deeply.  In fact, it makes sense to use them together and they
 are highly compatible.  The only overlap we see is that Org-mode has a
 more limited kind of hyperlinks and offers some BBDB integration as
 Hyperbole does.  For a list of some differences, see:
-<a class="url" href="https://www.emacswiki.org/emacs/Hyperbole">https://www.emacswiki.org/emacs/Hyperbole</a>.
+<a class="uref" href="https://www.emacswiki.org/emacs/Hyperbole">https://www.emacswiki.org/emacs/Hyperbole</a>.
 </p>
 <p>Org-mode offers traditional Emacs outlining, todo list management,
 agenda and diary management, so it is very complementary to Hyperbole.
@@ -13714,7 +13731,7 @@ Austin, TX, ACM: NY,NY, 1989, pp. 37-42.
 <div class="unnumbered-level-extent" id="Key-Index">
 <div class="nav-panel">
 <p>
-Next: <a href="#Function" accesskey="n" rel="next">Function, Variable and File Index</a>, Previous: <a href="#References" accesskey="p" rel="prev">References</a>, Up: <a href="#Top" accesskey="u" rel="up">GNU Hyperbole</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Function-Index" accesskey="n" rel="next">Function, Variable and File Index</a>, Previous: <a href="#References" accesskey="p" rel="prev">References</a>, Up: <a href="#Top" accesskey="u" rel="up">GNU Hyperbole</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <h2 class="unnumbered" id="Key-Index-1"><span>Key Index<a class="copiable-link" href="#Key-Index-1"> &para;</a></span></h2>
 
@@ -14325,7 +14342,7 @@ Next: <a href="#Function" accesskey="n" rel="next">Function, Variable and File I
 
 <hr>
 </div>
-<div class="unnumbered-level-extent" id="Function">
+<div class="unnumbered-level-extent" id="Function-Index">
 <div class="nav-panel">
 <p>
 Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previous: <a href="#Key-Index" accesskey="p" rel="prev">Key Index</a>, Up: <a href="#Top" accesskey="u" rel="up">GNU Hyperbole</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
@@ -14333,45 +14350,47 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <h2 class="unnumbered" id="Function_002c-Variable-and-File-Index"><span>Function, Variable and File Index<a class="copiable-link" href="#Function_002c-Variable-and-File-Index"> &para;</a></span></h2>
 
 <div class="printindex fn-printindex">
-<table class="fn-letters-header-printindex"><tr><th>Jump to: &nbsp; </th><td><a class="summary-letter-printindex" href="#Function_fn_letter-A"><b>A</b></a>
+<table class="fn-letters-header-printindex"><tr><th>Jump to: &nbsp; </th><td><a class="summary-letter-printindex" href="#Function-Index_fn_letter-A"><b>A</b></a>
  &nbsp; 
-<a class="summary-letter-printindex" href="#Function_fn_letter-B"><b>B</b></a>
+<a class="summary-letter-printindex" href="#Function-Index_fn_letter-B"><b>B</b></a>
  &nbsp; 
-<a class="summary-letter-printindex" href="#Function_fn_letter-C"><b>C</b></a>
+<a class="summary-letter-printindex" href="#Function-Index_fn_letter-C"><b>C</b></a>
  &nbsp; 
-<a class="summary-letter-printindex" href="#Function_fn_letter-D"><b>D</b></a>
+<a class="summary-letter-printindex" href="#Function-Index_fn_letter-D"><b>D</b></a>
  &nbsp; 
-<a class="summary-letter-printindex" href="#Function_fn_letter-E"><b>E</b></a>
+<a class="summary-letter-printindex" href="#Function-Index_fn_letter-E"><b>E</b></a>
  &nbsp; 
-<a class="summary-letter-printindex" href="#Function_fn_letter-F"><b>F</b></a>
+<a class="summary-letter-printindex" href="#Function-Index_fn_letter-F"><b>F</b></a>
  &nbsp; 
-<a class="summary-letter-printindex" href="#Function_fn_letter-G"><b>G</b></a>
+<a class="summary-letter-printindex" href="#Function-Index_fn_letter-G"><b>G</b></a>
  &nbsp; 
-<a class="summary-letter-printindex" href="#Function_fn_letter-H"><b>H</b></a>
+<a class="summary-letter-printindex" href="#Function-Index_fn_letter-H"><b>H</b></a>
  &nbsp; 
-<a class="summary-letter-printindex" href="#Function_fn_letter-I"><b>I</b></a>
+<a class="summary-letter-printindex" href="#Function-Index_fn_letter-I"><b>I</b></a>
  &nbsp; 
-<a class="summary-letter-printindex" href="#Function_fn_letter-K"><b>K</b></a>
+<a class="summary-letter-printindex" href="#Function-Index_fn_letter-K"><b>K</b></a>
  &nbsp; 
-<a class="summary-letter-printindex" href="#Function_fn_letter-L"><b>L</b></a>
+<a class="summary-letter-printindex" href="#Function-Index_fn_letter-L"><b>L</b></a>
  &nbsp; 
-<a class="summary-letter-printindex" href="#Function_fn_letter-M"><b>M</b></a>
+<a class="summary-letter-printindex" href="#Function-Index_fn_letter-M"><b>M</b></a>
  &nbsp; 
-<a class="summary-letter-printindex" href="#Function_fn_letter-O"><b>O</b></a>
+<a class="summary-letter-printindex" href="#Function-Index_fn_letter-O"><b>O</b></a>
  &nbsp; 
-<a class="summary-letter-printindex" href="#Function_fn_letter-R"><b>R</b></a>
+<a class="summary-letter-printindex" href="#Function-Index_fn_letter-R"><b>R</b></a>
  &nbsp; 
-<a class="summary-letter-printindex" href="#Function_fn_letter-S"><b>S</b></a>
+<a class="summary-letter-printindex" href="#Function-Index_fn_letter-S"><b>S</b></a>
  &nbsp; 
-<a class="summary-letter-printindex" href="#Function_fn_letter-W"><b>W</b></a>
+<a class="summary-letter-printindex" href="#Function-Index_fn_letter-T"><b>T</b></a>
  &nbsp; 
-<a class="summary-letter-printindex" href="#Function_fn_letter-Z"><b>Z</b></a>
+<a class="summary-letter-printindex" href="#Function-Index_fn_letter-W"><b>W</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Function-Index_fn_letter-Z"><b>Z</b></a>
  &nbsp; 
 </td></tr></table>
 <table class="fn-entries-printindex" border="0">
 <tr><td></td><th class="entries-header-printindex">Index Entry</th><th class="sections-header-printindex">Section</th></tr>
 <tr><td colspan="3"><hr></td></tr>
-<tr><th id="Function_fn_letter-A">A</th></tr>
+<tr><th id="Function-Index_fn_letter-A">A</th></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-ace_002dwindow-1"><code>ace-window</code></a></td><td class="printindex-index-section"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-action_002dact_002dhook">action-act-hook</a></td><td class="printindex-index-section"><a href="#Hook-Variables">Hook Variables</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-action_002dkey"><code>action-key</code></a></td><td class="printindex-index-section"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
@@ -14381,6 +14400,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td class="printindex-index-entry"><a href="#index-action_002dkey_002deol_002dfunction">action-key-eol-function</a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Smart-Scrolling">Smart Key - Smart Scrolling</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-action_002dkey_002dminibuffer_002dfunction">action-key-minibuffer-function</a></td><td class="printindex-index-section"><a href="#Minibuffer-Menu-Activation">Minibuffer Menu Activation</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-action_002dkey_002dmodeline"><code>action-key-modeline</code></a></td><td class="printindex-index-section"><a href="#Smart-Mouse-Key-Modeline-Clicks">Smart Mouse Key Modeline Clicks</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-action_002dkey_002dmodeline_002dbuffer_002did_002dfunction">action-key-modeline-buffer-id-function</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-action_002dkey_002dmodeline_002dfunction">action-key-modeline-function</a></td><td class="printindex-index-section"><a href="#Smart-Mouse-Key-Modeline-Clicks">Smart Mouse Key Modeline Clicks</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-action_002dkey_002dmodeline_002dfunction-1">action-key-modeline-function</a></td><td class="printindex-index-section"><a href="#Modeline-Clicks-and-Drags">Modeline Clicks and Drags</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-action_002dkey_002drelease_002dhook">action-key-release-hook</a></td><td class="printindex-index-section"><a href="#Hook-Variables">Hook Variables</a></td></tr>
@@ -14449,13 +14469,13 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td class="printindex-index-entry"><a href="#index-assist_002dkey_002drelease_002dhook">assist-key-release-hook</a></td><td class="printindex-index-section"><a href="#Hook-Variables">Hook Variables</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-assist_002dmouse_002dkey"><code>assist-mouse-key</code></a></td><td class="printindex-index-section"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
 <tr><td colspan="3"><hr></td></tr>
-<tr><th id="Function_fn_letter-B">B</th></tr>
+<tr><th id="Function-Index_fn_letter-B">B</th></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-browse_002durl_002dbrowser_002dfunction">browse-url-browser-function</a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-browse_002durl_002dbrowser_002dfunction-1">browse-url-browser-function</a></td><td class="printindex-index-section"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-browse_002durl_002dbrowser_002dfunction-2">browse-url-browser-function</a></td><td class="printindex-index-section"><a href="#Exporting">Exporting</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-browse_002durl_002dbrowser_002dfunction-3">browse-url-browser-function</a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-WWW-URLs">Smart Key - WWW URLs</a></td></tr>
 <tr><td colspan="3"><hr></td></tr>
-<tr><th id="Function_fn_letter-C">C</th></tr>
+<tr><th id="Function-Index_fn_letter-C">C</th></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-c_002b_002b_002dcpp_002dinclude_002dpath">c++-cpp-include-path</a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-C_002b_002b-Source-Code">Smart Key - C++ Source Code</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-c_002b_002b_002dinclude_002dpath">c++-include-path</a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-C_002b_002b-Source-Code">Smart Key - C++ Source Code</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-class_002c-ebut">class, ebut</a></td><td class="printindex-index-section"><a href="#Operational-and-Storage-Formats">Operational and Storage Formats</a></td></tr>
@@ -14469,14 +14489,15 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td class="printindex-index-entry"><a href="#index-customize_002dbrowse"><code>customize-browse</code></a></td><td class="printindex-index-section"><a href="#Customization">Customization</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-customize_002dvariable"><code>customize-variable</code></a></td><td class="printindex-index-section"><a href="#Customization">Customization</a></td></tr>
 <tr><td colspan="3"><hr></td></tr>
-<tr><th id="Function_fn_letter-D">D</th></tr>
+<tr><th id="Function-Index_fn_letter-D">D</th></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-defact"><code>defact</code></a></td><td class="printindex-index-section"><a href="#Creating-Action-Types">Creating Action Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-defib"><code>defib</code></a></td><td class="printindex-index-section"><a href="#Programmatic-Implicit-Button-Types">Programmatic Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-dir_002c-_007e_002f_002ehyperb">dir, ~/.hyperb</a></td><td class="printindex-index-section"><a href="#Button-Files">Button Files</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-dired-1"><code>dired</code></a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-dired_002djump"><code>dired-jump</code></a></td><td class="printindex-index-section"><a href="#Smart-Mouse-Key-Modeline-Clicks">Smart Mouse Key Modeline Clicks</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-drag_002dwith_002dmode_002dline">drag-with-mode-line</a></td><td class="printindex-index-section"><a href="#Moving-Frames">Moving Frames</a></td></tr>
 <tr><td colspan="3"><hr></td></tr>
-<tr><th id="Function_fn_letter-E">E</th></tr>
+<tr><th id="Function-Index_fn_letter-E">E</th></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-ebut_002dcreate_002dhook">ebut-create-hook</a></td><td class="printindex-index-section"><a href="#Hook-Variables">Hook Variables</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-ebut_002ddelete_002dhook">ebut-delete-hook</a></td><td class="printindex-index-section"><a href="#Hook-Variables">Hook Variables</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-ebut_002dmodify_002dhook">ebut-modify-hook</a></td><td class="printindex-index-section"><a href="#Hook-Variables">Hook Variables</a></td></tr>
@@ -14487,7 +14508,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td class="printindex-index-entry"><a href="#index-eval_002ddefun"><code>eval-defun</code></a></td><td class="printindex-index-section"><a href="#Creating-Types">Creating Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-eval_002dlast_002dsexp"><code>eval-last-sexp</code></a></td><td class="printindex-index-section"><a href="#Creating-Types">Creating Types</a></td></tr>
 <tr><td colspan="3"><hr></td></tr>
-<tr><th id="Function_fn_letter-F">F</th></tr>
+<tr><th id="Function-Index_fn_letter-F">F</th></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-file_002c-_002eemacs">file, .emacs</a></td><td class="printindex-index-section"><a href="#Invocation">Invocation</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-file_002c-_002eemacs-1">file, .emacs</a></td><td class="printindex-index-section"><a href="#Renaming">Renaming</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-file_002c-_002eemacs-2">file, .emacs</a></td><td class="printindex-index-section"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
@@ -14538,12 +14559,12 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td class="printindex-index-entry"><a href="#index-flymake_002dstart"><code>flymake-start</code></a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Flymake-Mode">Smart Key - Flymake Mode</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-flymake_002dswitch_002dto_002dlog_002dbuffer"><code>flymake-switch-to-log-buffer</code></a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Flymake-Mode">Smart Key - Flymake Mode</a></td></tr>
 <tr><td colspan="3"><hr></td></tr>
-<tr><th id="Function_fn_letter-G">G</th></tr>
+<tr><th id="Function-Index_fn_letter-G">G</th></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-gbut_003aebut_002dprogram"><code>gbut:ebut-program</code></a></td><td class="printindex-index-section"><a href="#Programmatic-Button-Creation">Programmatic Button Creation</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-gbut_003afile"><code>gbut:file</code></a></td><td class="printindex-index-section"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-global_002dset_002dkey"><code>global-set-key</code></a></td><td class="printindex-index-section"><a href="#Binding-Minibuffer-Menu-Items">Binding Minibuffer Menu Items</a></td></tr>
 <tr><td colspan="3"><hr></td></tr>
-<tr><th id="Function_fn_letter-H">H</th></tr>
+<tr><th id="Function-Index_fn_letter-H">H</th></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hbmap_003adir_002duser">hbmap:dir-user</a></td><td class="printindex-index-section"><a href="#Button-Files">Button Files</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hbmap_003afilename">hbmap:filename</a></td><td class="printindex-index-section"><a href="#Button-Files">Button Files</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hbut_003acurrent">hbut:current</a></td><td class="printindex-index-section"><a href="#Hook-Variables">Hook Variables</a></td></tr>
@@ -14722,7 +14743,9 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hywconfig_002dyank_002dpop-1"><code>hywconfig-yank-pop</code></a></td><td class="printindex-index-section"><a href="#Window-Configurations">Window Configurations</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki_002dactive_002din_002dcurrent_002dbuffer_002dp"><code>hywiki-active-in-current-buffer-p</code></a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki_002dconsult_002dgrep"><code>hywiki-consult-grep</code></a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki_002dconsult_002dgrep-1"><code>hywiki-consult-grep</code></a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki_002ddirectory">hywiki-directory</a></td><td class="printindex-index-section"><a href="#HyWiki">HyWiki</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki_002ddirectory-1">hywiki-directory</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki_002dexclude_002dmajor_002dmodes">hywiki-exclude-major-modes</a></td><td class="printindex-index-section"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki_002dhighlight_002dall_002din_002dprog_002dmodes">hywiki-highlight-all-in-prog-modes</a></td><td class="printindex-index-section"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki_002dmode-2"><code>hywiki-mode</code></a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
@@ -14736,7 +14759,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki_002dpublish_002dto_002dhtml"><code>hywiki-publish-to-html</code></a></td><td class="printindex-index-section"><a href="#Publish-HyWiki">Publish HyWiki</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki_002dword_002dhighlight_002dflag">hywiki-word-highlight-flag</a></td><td class="printindex-index-section"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td colspan="3"><hr></td></tr>
-<tr><th id="Function_fn_letter-I">I</th></tr>
+<tr><th id="Function-Index_fn_letter-I">I</th></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-ibtype_003acreate"><code>ibtype:create</code></a></td><td class="printindex-index-section"><a href="#Programmatic-Implicit-Button-Types">Programmatic Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-ibtype_003adelete"><code>ibtype:delete</code></a></td><td class="printindex-index-section"><a href="#Programmatic-Implicit-Button-Types">Programmatic Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-ibtypes-action"><code>ibtypes action</code></a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
@@ -14800,7 +14823,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Info_002dglobal_002dprev"><code>Info-global-prev</code></a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Info-Manuals">Smart Key - Info Manuals</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-interactive"><code>interactive</code></a></td><td class="printindex-index-section"><a href="#Creating-Action-Types">Creating Action Types</a></td></tr>
 <tr><td colspan="3"><hr></td></tr>
-<tr><th id="Function_fn_letter-K">K</th></tr>
+<tr><th id="Function-Index_fn_letter-K">K</th></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-kcell_003aref_002dto_002did"><code>kcell:ref-to-id</code></a></td><td class="printindex-index-section"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-kexport_003adisplay"><code>kexport:display</code></a></td><td class="printindex-index-section"><a href="#Exporting">Exporting</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-kexport_003ahtml"><code>kexport:html</code></a></td><td class="printindex-index-section"><a href="#Exporting">Exporting</a></td></tr>
@@ -14940,16 +14963,16 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td class="printindex-index-entry"><a href="#index-kvspec_003atoggle_002dblank_002dlines"><code>kvspec:toggle-blank-lines</code></a></td><td class="printindex-index-section"><a href="#Menu-Commands">Menu Commands</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-kvspec_003atoggle_002dblank_002dlines-1"><code>kvspec:toggle-blank-lines</code></a></td><td class="printindex-index-section"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
 <tr><td colspan="3"><hr></td></tr>
-<tr><th id="Function_fn_letter-L">L</th></tr>
+<tr><th id="Function-Index_fn_letter-L">L</th></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-link_002dto_002dfile"><code>link-to-file</code></a></td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-locate_002dcommand">locate-command</a></td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td colspan="3"><hr></td></tr>
-<tr><th id="Function_fn_letter-M">M</th></tr>
+<tr><th id="Function-Index_fn_letter-M">M</th></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-mail"><code>mail</code></a></td><td class="printindex-index-section"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-mail_002dyank_002doriginal">mail-yank-original</a></td><td class="printindex-index-section"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-mark_002deven_002dif_002dinactive">mark-even-if-inactive</a></td><td class="printindex-index-section"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td colspan="3"><hr></td></tr>
-<tr><th id="Function_fn_letter-O">O</th></tr>
+<tr><th id="Function-Index_fn_letter-O">O</th></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-objc_002dcpp_002dinclude_002dpath">objc-cpp-include-path</a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Objective_002dC-Source-Code">Smart Key - Objective-C Source Code</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-objc_002dinclude_002dpath">objc-include-path</a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Objective_002dC-Source-Code">Smart Key - Objective-C Source Code</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-org_002dctrl_002dc_002dctrl_002dc"><code>org-ctrl-c-ctrl-c</code></a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
@@ -14960,10 +14983,10 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td class="printindex-index-entry"><a href="#index-outline_002dminor_002dmode-1"><code>outline-minor-mode</code></a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Emacs-Outline-Mode">Smart Key - Emacs Outline Mode</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-outline_002dmode-1"><code>outline-mode</code></a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Emacs-Outline-Mode">Smart Key - Emacs Outline Mode</a></td></tr>
 <tr><td colspan="3"><hr></td></tr>
-<tr><th id="Function_fn_letter-R">R</th></tr>
+<tr><th id="Function-Index_fn_letter-R">R</th></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-run_002dhooks"><code>run-hooks</code></a></td><td class="printindex-index-section"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td colspan="3"><hr></td></tr>
-<tr><th id="Function_fn_letter-S">S</th></tr>
+<tr><th id="Function-Index_fn_letter-S">S</th></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-selective_002ddisplay">selective-display</a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Emacs-Outline-Mode">Smart Key - Emacs Outline Mode</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-smail_003acomment">smail:comment</a></td><td class="printindex-index-section"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-smart_002dasm_002dinclude_002dpath">smart-asm-include-path</a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Assembly-Source-Code">Smart Key - Assembly Source Code</a></td></tr>
@@ -14973,47 +14996,53 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td class="printindex-index-entry"><a href="#index-smart_002djava_002dpackage_002dpath">smart-java-package-path</a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Java-Source-Code">Smart Key - Java Source Code</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-smart_002dman_002dc_002droutine_002dref">smart-man-c-routine-ref</a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Man-Pages">Smart Key - Man Pages</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-smart_002dscroll_002dproportional">smart-scroll-proportional</a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Smart-Scrolling">Smart Key - Smart Scrolling</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-smart_002dtreemacs_002dmodeline"><code>smart-treemacs-modeline</code></a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td colspan="3"><hr></td></tr>
-<tr><th id="Function_fn_letter-W">W</th></tr>
+<tr><th id="Function-Index_fn_letter-T">T</th></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-treemacs"><code>treemacs</code></a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td colspan="3"><hr></td></tr>
+<tr><th id="Function-Index_fn_letter-W">W</th></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-write_002dfile_002dhooks">write-file-hooks</a></td><td class="printindex-index-section"><a href="#Hook-Variables">Hook Variables</a></td></tr>
 <tr><td colspan="3"><hr></td></tr>
-<tr><th id="Function_fn_letter-Z">Z</th></tr>
+<tr><th id="Function-Index_fn_letter-Z">Z</th></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-zoom_002dfrm_002eel"><code>zoom-frm.el</code></a></td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td colspan="3"><hr></td></tr>
 </table>
-<table class="fn-letters-footer-printindex"><tr><th>Jump to: &nbsp; </th><td><a class="summary-letter-printindex" href="#Function_fn_letter-A"><b>A</b></a>
+<table class="fn-letters-footer-printindex"><tr><th>Jump to: &nbsp; </th><td><a class="summary-letter-printindex" href="#Function-Index_fn_letter-A"><b>A</b></a>
  &nbsp; 
-<a class="summary-letter-printindex" href="#Function_fn_letter-B"><b>B</b></a>
+<a class="summary-letter-printindex" href="#Function-Index_fn_letter-B"><b>B</b></a>
  &nbsp; 
-<a class="summary-letter-printindex" href="#Function_fn_letter-C"><b>C</b></a>
+<a class="summary-letter-printindex" href="#Function-Index_fn_letter-C"><b>C</b></a>
  &nbsp; 
-<a class="summary-letter-printindex" href="#Function_fn_letter-D"><b>D</b></a>
+<a class="summary-letter-printindex" href="#Function-Index_fn_letter-D"><b>D</b></a>
  &nbsp; 
-<a class="summary-letter-printindex" href="#Function_fn_letter-E"><b>E</b></a>
+<a class="summary-letter-printindex" href="#Function-Index_fn_letter-E"><b>E</b></a>
  &nbsp; 
-<a class="summary-letter-printindex" href="#Function_fn_letter-F"><b>F</b></a>
+<a class="summary-letter-printindex" href="#Function-Index_fn_letter-F"><b>F</b></a>
  &nbsp; 
-<a class="summary-letter-printindex" href="#Function_fn_letter-G"><b>G</b></a>
+<a class="summary-letter-printindex" href="#Function-Index_fn_letter-G"><b>G</b></a>
  &nbsp; 
-<a class="summary-letter-printindex" href="#Function_fn_letter-H"><b>H</b></a>
+<a class="summary-letter-printindex" href="#Function-Index_fn_letter-H"><b>H</b></a>
  &nbsp; 
-<a class="summary-letter-printindex" href="#Function_fn_letter-I"><b>I</b></a>
+<a class="summary-letter-printindex" href="#Function-Index_fn_letter-I"><b>I</b></a>
  &nbsp; 
-<a class="summary-letter-printindex" href="#Function_fn_letter-K"><b>K</b></a>
+<a class="summary-letter-printindex" href="#Function-Index_fn_letter-K"><b>K</b></a>
  &nbsp; 
-<a class="summary-letter-printindex" href="#Function_fn_letter-L"><b>L</b></a>
+<a class="summary-letter-printindex" href="#Function-Index_fn_letter-L"><b>L</b></a>
  &nbsp; 
-<a class="summary-letter-printindex" href="#Function_fn_letter-M"><b>M</b></a>
+<a class="summary-letter-printindex" href="#Function-Index_fn_letter-M"><b>M</b></a>
  &nbsp; 
-<a class="summary-letter-printindex" href="#Function_fn_letter-O"><b>O</b></a>
+<a class="summary-letter-printindex" href="#Function-Index_fn_letter-O"><b>O</b></a>
  &nbsp; 
-<a class="summary-letter-printindex" href="#Function_fn_letter-R"><b>R</b></a>
+<a class="summary-letter-printindex" href="#Function-Index_fn_letter-R"><b>R</b></a>
  &nbsp; 
-<a class="summary-letter-printindex" href="#Function_fn_letter-S"><b>S</b></a>
+<a class="summary-letter-printindex" href="#Function-Index_fn_letter-S"><b>S</b></a>
  &nbsp; 
-<a class="summary-letter-printindex" href="#Function_fn_letter-W"><b>W</b></a>
+<a class="summary-letter-printindex" href="#Function-Index_fn_letter-T"><b>T</b></a>
  &nbsp; 
-<a class="summary-letter-printindex" href="#Function_fn_letter-Z"><b>Z</b></a>
+<a class="summary-letter-printindex" href="#Function-Index_fn_letter-W"><b>W</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Function-Index_fn_letter-Z"><b>Z</b></a>
  &nbsp; 
 </td></tr></table>
 </div>
@@ -15023,7 +15052,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <div class="unnumbered-level-extent" id="Concept-Index">
 <div class="nav-panel">
 <p>
-Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and File Index</a>, Up: <a href="#Top" accesskey="u" rel="up">GNU Hyperbole</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable and File Index</a>, Up: <a href="#Top" accesskey="u" rel="up">GNU Hyperbole</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <h2 class="unnumbered" id="Concept-Index-1"><span>Concept Index<a class="copiable-link" href="#Concept-Index-1"> &para;</a></span></h2>
 
@@ -15648,26 +15677,39 @@ Previous: <a href="#Function" accesskey="p" rel="prev">Function, Variable and Fi
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hywconfig-commands">hywconfig commands</a></td><td class="printindex-index-section"><a href="#Window-Configurations">Window Configurations</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki">HyWiki</a></td><td class="printindex-index-section"><a href="#HyWiki">HyWiki</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-Action-Key">HyWiki Action Key</a></td><td class="printindex-index-section"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-activate-link">HyWiki activate link</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-create-a-page">HyWiki create a page</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-dired">HyWiki dired</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-documentation">HyWiki documentation</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-edit-pages">HyWiki edit pages</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-exclude-modes">HyWiki exclude modes</a></td><td class="printindex-index-section"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki-existing-word">hywiki existing word</a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-export-to-HTML">HyWiki export to HTML</a></td><td class="printindex-index-section"><a href="#Publish-HyWiki">Publish HyWiki</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-find_002fedit-a-page">HyWiki find/edit a page</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-interactive-grep">HyWiki interactive grep</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-manual">HyWiki manual</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-menu">HyWiki menu</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-mode">HyWiki mode</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-Org-link-format">HyWiki Org link format</a></td><td class="printindex-index-section"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-Org-publish">HyWiki Org publish</a></td><td class="printindex-index-section"><a href="#Publish-HyWiki">Publish HyWiki</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-programming-modes">HyWiki programming modes</a></td><td class="printindex-index-section"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-publish">HyWiki publish</a></td><td class="printindex-index-section"><a href="#Publish-HyWiki">Publish HyWiki</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-publish-to-web">HyWiki publish to web</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-publishing-directory">HyWiki publishing directory</a></td><td class="printindex-index-section"><a href="#Publish-HyWiki">Publish HyWiki</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-publishing-function">HyWiki publishing function</a></td><td class="printindex-index-section"><a href="#Publish-HyWiki">Publish HyWiki</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-search-for-Org-tags">HyWiki search for Org tags</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-section-link">HyWiki section link</a></td><td class="printindex-index-section"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-tag-search">HyWiki tag search</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-treemacs">HyWiki treemacs</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki-word">hywiki word</a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki_002dmode">hywiki-mode</a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki_002dmode-1">hywiki-mode</a></td><td class="printindex-index-section"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWikiWord">HyWikiWord</a></td><td class="printindex-index-section"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-HyWikiWord-attribute-help">HyWikiWord attribute help</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWikiWord-contexts">HyWikiWord contexts</a></td><td class="printindex-index-section"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWikiWord-create">HyWikiWord create</a></td><td class="printindex-index-section"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWikiWord-highlighting">HyWikiWord highlighting</a></td><td class="printindex-index-section"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-HyWikiWord-interactive-grep">HyWikiWord interactive grep</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-HyWikiWord-link">HyWikiWord link</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWikiWord_002c-outside-the-wiki">HyWikiWord, outside the wiki</a></td><td class="printindex-index-section"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWikiWords-outside-hywiki_002ddirectory">HyWikiWords outside hywiki-directory</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td colspan="3"><hr></td></tr>
