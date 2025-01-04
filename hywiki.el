@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:      4-Jan-25 at 15:26:25 by Bob Weiner
+;; Last-Mod:      4-Jan-25 at 16:36:48 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -565,7 +565,7 @@ the button."
     ;; (start-key . end-key) range of keys.
     (map-keymap (lambda (key cmd) (setq key-cmds (cons (cons key cmd) key-cmds))) (current-global-map))
     (dolist (key-cmd key-cmds (concat (seq-difference (nreverse result)
-						      "-_*#" #'=)))
+						      "-_*#:" #'=)))
       (setq key (car key-cmd)
 	    cmd (cdr key-cmd))
       (when (eq cmd 'self-insert-command)
@@ -1644,7 +1644,7 @@ If in a programming mode, must be within a comment.  Use
 	      (skip-chars-backward (regexp-quote (hywiki-get-buttonize-characters))))
 	    ;; Skip past HyWikiWord or section
 	    (skip-syntax-backward "^-$()<>._\"\'")
-	    (skip-chars-backward "-_*#[:alpha:]")
+	    (skip-chars-backward "-_*#:[:alnum:]")
 
 	    (setq hywiki--save-case-fold-search case-fold-search
 		  case-fold-search nil
@@ -1715,7 +1715,7 @@ the current page unless they have sections attached."
 		(skip-chars-backward (regexp-quote (hywiki-get-buttonize-characters))))
 	      ;; Skip past HyWikiWord or section
 	      (skip-syntax-backward "^-$()<>._\"\'")
-	      (skip-chars-backward "-_*#[:alpha:]")
+	      (skip-chars-backward "-_*#:[:alnum:]")
 
 	      (setq hywiki--save-case-fold-search case-fold-search
 		    case-fold-search nil
@@ -1926,17 +1926,17 @@ value of `hywiki-word-highlight-flag' is changed."
 			(save-excursion
 			  (goto-char hywiki--start)
 			  ;; Otherwise, highlight any HyWikiWord found, including
-			  ;; any #section.
+			  ;; any #section:Lnum:Cnum.
 			  (when (hywiki-maybe-at-wikiword-beginning)
-			    (or   (unless (hyperb:stack-frame '(hywiki-maybe-highlight-balanced-pairs))
-				    (hywiki-maybe-highlight-balanced-pairs))
+			    (or (unless (hyperb:stack-frame '(hywiki-maybe-highlight-balanced-pairs))
+				  (hywiki-maybe-highlight-balanced-pairs))
 				(progn (with-syntax-table hbut:syntax-table
 					 (skip-syntax-forward "^-\)$\>._\"\'"))
 				       (skip-chars-forward "-_*[:alnum:]")
-				       (unless (zerop (skip-chars-forward "#"))
+				       (unless (zerop (skip-chars-forward "#:"))
 					 (skip-chars-forward (if (and region-start region-end)
-								 "-_* \t[:alnum:]"
-							       "-_*[:alnum:]")))
+								 "-_*: \t[:alnum:]"
+							       "-_*:[:alnum:]")))
 				       (setq hywiki--end (point))
 				       ;; Don't highlight current-page matches unless they
 				       ;; include a #section.
@@ -2517,7 +2517,7 @@ or this will return nil."
 		  ;; wikiwords preceded by any non-whitespace
 		  ;; character, except any of these: "([\"'`'"
 		  (let ((case-fold-search nil))
-		    (skip-chars-backward "-_*#[:alnum:]")
+		    (skip-chars-backward "-_*#:[:alnum:]")
 		    (when (hywiki-maybe-at-wikiword-beginning)
 		      (cond ((looking-at hywiki--word-and-buttonize-character-regexp)
 			     (setq start (match-beginning 1)
