@@ -1,5 +1,8 @@
 2025-01-04  Bob Weiner  <rsw@gnu.org>
 
+* hbut.el (ibut:set-name-and-label-key-p): Revert some changes to avoid
+    failures in recognition of ibuttons.
+
 * hywiki.el (hywiki-word-line-and-column-numbers-regexp): Add and use
     in 'hywiki-word-with-optional-section-regexp' and
     'hywiki-word-with-optional-section-exact-regexp'.
