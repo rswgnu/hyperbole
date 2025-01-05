@@ -260,7 +260,7 @@ If V3-FLAG is true, read as a version-3 buffer."
 Leave outline file expanded with structure data showing unless optional
 VISIBLE-ONLY-P is non-nil.  Signal an error if kotl is not attached to a file."
   (let* ((top (kview:top-cell kotl-kview))
-	 (file buffer-file-name)
+	 (file (hypb:buffer-file-name))
 	 (label-type (kview:label-type kotl-kview))
 	 (label-min-width (kview:label-min-width kotl-kview))
 	 (label-separator (kview:label-separator kotl-kview))
@@ -341,9 +341,9 @@ VISIBLE-ONLY-P is non-nil.  Signal an error if kotl is not attached to a file."
   (when (or (null file) (string-equal file ""))
     (error "(kfile:write): Invalid file name, \"%s\"" file))
   ;; If arg is just a directory, use same file name, but in that directory.
-  (when (and (file-directory-p file) buffer-file-name)
+  (when (and (file-directory-p file) (hypb:buffer-file-name))
     (setq file (concat (file-name-as-directory file)
-		       (file-name-nondirectory buffer-file-name))))
+		       (file-name-nondirectory (hypb:buffer-file-name)))))
   (set-visited-file-name file)
   ;; Set-visited-file-name clears local-write-file-hooks that we use to save
   ;; koutlines properly, so reinitialize local variables.

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     15-Dec-24 at 22:39:45 by Bob Weiner
+;; Last-Mod:      5-Jan-25 at 12:06:01 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -33,6 +33,7 @@
 (eval-when-compile (require 'hmouse-drv))
 (require 'hproperty) ;; requires 'hbut
 (require 'hsys-consult)
+(require 'hypb)
 (require 'org)
 (require 'org-element)
 (require 'org-fold nil t)
@@ -431,9 +432,9 @@ per file to the absolute value of MAX-MATCHES, if given and not 0.  If
   "Return non-nil if point is in an `org-directory' buffer and at Org tags."
   (and (featurep 'org)
        (or at-tag-flag (hsys-org-at-tags-p))
-       (or (and buffer-file-name
+       (or (and (hypb:buffer-file-name)
 		(string-prefix-p (expand-file-name org-directory)
-				 buffer-file-name))
+				 (hypb:buffer-file-name)))
 	   (string-prefix-p "*Org Agenda*" (buffer-name)))))
 
 (defun hsys-org-get-value (attribute)

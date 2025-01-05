@@ -567,7 +567,7 @@ where cell-ref is as described in the documentation for
 Koutline file."
   (when (derived-mode-p 'kotl-mode)
     (klink:set-yank-handler
-     (format "<%s, %s=%s>" buffer-file-name
+     (format "<%s, %s=%s>" (hypb:buffer-file-name)
 	     (kcell-view:label pos) (kcell-view:idstamp pos)))))
 
 (defun kcell-view:reference (&optional pos relative-dir)
@@ -579,7 +579,7 @@ RELATIVE-DIR (or `default-directory' if RELATIVE-DIR is not given
 or is nil), before it is returned."
   (when (derived-mode-p 'kotl-mode)
     (klink:set-yank-handler
-     (format "<%s, %s=%s>" (hpath:relative-to buffer-file-name relative-dir)
+     (format "<%s, %s=%s>" (hpath:relative-to (hypb:buffer-file-name) relative-dir)
 	     (kcell-view:label pos) (kcell-view:idstamp pos)))))
 
 (defun kcell-view:remove-attr (attribute &optional pos)

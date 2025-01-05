@@ -256,10 +256,10 @@ placed.
 
 \"* \" = level 1, \"** \" = level 2 in outline and so on."
   (interactive "fImport from star delimited cells buffer/file: \nFBuffer/file to insert cells into: \nP")
-  (when (and buffer-file-name (directory-name-p import-from))
-    (setq import-from buffer-file-name))
-  (when (and buffer-file-name (directory-name-p output-to))
-    (setq output-to (concat (file-name-sans-extension buffer-file-name) ".kotl")))
+  (when (and (hypb:buffer-file-name) (directory-name-p import-from))
+    (setq import-from (hypb:buffer-file-name)))
+  (when (and (hypb:buffer-file-name) (directory-name-p output-to))
+    (setq output-to (concat (file-name-sans-extension (hypb:buffer-file-name)) ".kotl")))
   (let ((output-level 1) (klabel "1") (count 0)
 	max-pos-and-count initially-empty-output no-renumber orig-point total)
     ;; Don't change the order of import-from and output-to inits here.
@@ -336,10 +336,10 @@ Import Koutlines with their structure intact.  Import text
 paragraphs as a sequence of same level cells.  The variable,
 `paragraph-start,' is used to determine paragraphs."
   (interactive "FImport from text/koutline buffer/file: \nFInsert cells into koutline buffer/file: \nP")
-  (when (and buffer-file-name (directory-name-p import-from))
-    (setq import-from buffer-file-name))
-  (when (and buffer-file-name (directory-name-p output-to))
-    (setq output-to (concat (file-name-sans-extension buffer-file-name) ".kotl")))
+  (when (and (hypb:buffer-file-name) (directory-name-p import-from))
+    (setq import-from (hypb:buffer-file-name)))
+  (when (and (hypb:buffer-file-name) (directory-name-p output-to))
+    (setq output-to (concat (file-name-sans-extension (hypb:buffer-file-name)) ".kotl")))
   (let ((output-level 1) (klabel "1") (count 0)
         initially-empty-output no-renumber orig-point total)
     ;; Don't change the order of import-from and output-to inits here.

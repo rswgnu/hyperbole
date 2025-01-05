@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:      4-Jan-25 at 22:24:25 by Bob Weiner
+;; Last-Mod:      5-Jan-25 at 11:17:55 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -663,9 +663,9 @@ After successfully finding a page and reading it into a buffer, run
 	    (unless in-hywiki-directory-flag
 	      (error "(hywiki-display-referent): No `wikiword' given; buffer file must be in `hywiki-directory', not %s"
 		     default-directory))
-	    (unless buffer-file-name
+	    (unless (hypb:buffer-file-name)
 	      (error "(hywiki-display-referent): No `wikiword' given; buffer must have an attached file"))
-	    (setq wikiword (file-name-sans-extension (file-name-nondirectory buffer-file-name))))
+	    (setq wikiword (file-name-sans-extension (file-name-nondirectory (hypb:buffer-file-name)))))
 	  (let* ((section (when (string-match "#[^#]+$" wikiword)
 			    (substring wikiword (1+ (match-beginning 0)))))
 		 (htable-referent (cond (prompt-flag
@@ -2023,7 +2023,7 @@ are typed in the buffer."
 (defun hywiki-get-buffer-page-name ()
   "Extract the page name from the buffer file name or else buffer name."
   (file-name-sans-extension (file-name-nondirectory
-			     (or buffer-file-name (buffer-name)))))
+			     (or (hypb:buffer-file-name) (buffer-name)))))
 
 (defun hywiki-get-file (file-stem-name)
   "Return possibly non-existent path in `hywiki-directory' from FILE-STEM-NAME.
@@ -2152,7 +2152,7 @@ If `hywiki-allow-plurals-flag' is nil, return WIKIWORD unchanged."
 If deleted, update HyWikiWord highlighting across all frames."
   (when (hywiki-in-page-p)
     (when (hypb:empty-file-p)
-      (delete-file buffer-file-name))
+      (delete-file (hypb:buffer-file-name)))
     (when (hywiki-directory-modified-p)
       ;; Rebuild lookup tables if any HyWiki page name has changed
       (hywiki-get-referent-hasht)
@@ -2313,8 +2313,8 @@ If page is not found, return nil."
 		 (not (looking-at "^$")))
       (goto-char (point-min))
       (insert "#+TITLE: "
-	      (if buffer-file-name
-		  (file-name-base buffer-file-name)
+	      (if (hypb:buffer-file-name)
+		  (file-name-base (hypb:buffer-file-name))
 		(buffer-name))
 	      "\n"))))
 

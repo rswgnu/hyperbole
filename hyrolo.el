@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     22-Dec-24 at 11:02:15 by Bob Weiner
+;; Last-Mod:      5-Jan-25 at 11:15:09 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -527,9 +527,9 @@ entry which begins with the parent string."
 		(>= (point) (match-beginning 1))
 		(< (point) (match-end 1))))
        (or (string-prefix-p "*HyRolo" (buffer-name))
-	   (and buffer-file-name
+	   (and (hypb:buffer-file-name)
 		(apply #'derived-mode-p '(org-mode org-agenda-mode))
-		(member buffer-file-name (hyrolo-get-file-list))
+		(member (hypb:buffer-file-name) (hyrolo-get-file-list))
 		t))))
 
 ;;;###autoload
@@ -902,7 +902,7 @@ Return t if entry is killed, nil otherwise."
     (save-excursion
       (if (hyrolo-to name file-list)
 	  (progn
-	    (setq file buffer-file-name)
+	    (setq file (hypb:buffer-file-name))
 	    (if (file-writable-p file)
 		(let ((kill-op
 		       (lambda (start _level-len)
@@ -1014,7 +1014,7 @@ or NAME is invalid, return nil."
   (put 'hyrolo-markdown-mode 'derived-mode-parent 'markdown-mode)
 
   (when buffer-read-only
-    (when (or (not (buffer-file-name)) (file-writable-p (buffer-file-name)))
+    (when (or (not (hypb:buffer-file-name)) (file-writable-p (hypb:buffer-file-name)))
       (setq-local buffer-read-only nil)))
   ;; Natural Markdown tab width
   (setq tab-width 4)
@@ -1319,14 +1319,14 @@ Return list of number of groupings at each entry level."
 		  (format "Sort rolo file (default %s): "
 			  (file-name-nondirectory
 			   (setq default
-				 (if (and buffer-file-name
+				 (if (and (hypb:buffer-file-name)
 					  (memq
 					   t (mapcar
 					      (lambda (file)
-						(equal buffer-file-name
+						(equal (hypb:buffer-file-name)
 						       (expand-file-name file)))
 					      (hyrolo-get-file-list))))
-				     buffer-file-name
+				     (hypb:buffer-file-name)
 				   (car (hyrolo-get-file-list))))))
 		  (mapcar #'list (hyrolo-get-file-list))))
 	   (if (string-empty-p file) default file))))
@@ -2038,7 +2038,7 @@ Return number of matching entries found."
 			    (throw 'stuck (- (point))))
 			  (or count-only
 			      (when (and (zerop num-found) incl-hdr)
-				(let* ((src (or (buffer-file-name actual-buf)
+				(let* ((src (or (hypb:buffer-file-name actual-buf)
 						actual-buf))
 				       (src-line
 					(format

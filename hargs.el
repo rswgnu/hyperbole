@@ -678,7 +678,7 @@ Handles all of the interactive argument types that `hargs:iform-read' does."
 	       (no-default nil)
 	       ;; Possibly non-existent file name
 	       ((hpath:at-p 'file 'non-exist))
-	       ((buffer-file-name))))
+	       ((hypb:buffer-file-name))))
 	((eq hargs:reading-type 'directory)
 	 (cond ((derived-mode-p 'dired-mode)
 		(let ((dir (or (smart-dired-pathname-up-to-point t)
@@ -715,8 +715,8 @@ Handles all of the interactive argument types that `hargs:iform-read' does."
 		    (concat "(" file ")" node))
 		   (t node)))))
 	((eq hargs:reading-type 'mail)
-	 (and (hmail:reader-p) buffer-file-name
-	      (prin1-to-string (list (rmail:msg-id-get) buffer-file-name))))
+	 (and (hmail:reader-p) (hypb:buffer-file-name)
+	      (prin1-to-string (list (rmail:msg-id-get) (hypb:buffer-file-name)))))
 	((eq hargs:reading-type 'symbol)
 	 (let ((sym (hargs:find-tag-default)))
 	   (when (or (fboundp sym) (boundp sym)) sym)))

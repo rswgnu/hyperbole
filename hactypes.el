@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     24-Nov-24 at 12:09:18 by Bob Weiner
+;; Last-Mod:      5-Jan-25 at 11:15:09 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -327,7 +327,7 @@ Interactively, KEY-FILE defaults to the current buffer's file name."
         normalized-file)
     (if key-file
         (setq normalized-file (hpath:normalize key-file))
-      (setq normalized-file buffer-file-name))
+      (setq normalized-file (hypb:buffer-file-name)))
 
     (if (setq but (when normalized-file (ebut:get key nil normalized-file)))
         (hbut:act but)
@@ -528,7 +528,7 @@ on the implicit button to which to link."
   (interactive
    (let ((ibut-name-key (ibut:at-p t)))
      (cond (ibut-name-key
-	    (list ibut-name-key (or buffer-file-name (buffer-name)) (point)))
+	    (list ibut-name-key (or (hypb:buffer-file-name) (buffer-name)) (point)))
 	   ;; !! TODO: If default is null below and are creating, rather than editing
 	   ;; the link, it would be better to throw an error than create
 	   ;; an invalid link, but it is difficult to tell which operation
@@ -546,9 +546,9 @@ on the implicit button to which to link."
 	normalized-file)
     (if but-src
 	(unless (and (get-buffer but-src)
-		     (not (buffer-file-name (get-buffer but-src))))
+		     (not (hypb:buffer-file-name (get-buffer but-src))))
 	  (setq normalized-file (hpath:normalize but-src)))
-      (setq normalized-file (hpath:normalize buffer-file-name)))
+      (setq normalized-file (hpath:normalize (hypb:buffer-file-name))))
     (when but-src
       (set-buffer (or (get-buffer but-src) (get-file-buffer normalized-file))))
     (widen)
@@ -584,12 +584,12 @@ If CELL-REF is nil, show the first cell in the view."
 	       ;; matching of path is likely to be wrong in
 	       ;; certain cases, e.g. with mount point or os path
 	       ;; alterations.
-	       buffer-file-name
+	       (hypb:buffer-file-name)
 	       file
 	       (or (null file)
 		   (string-empty-p file)
 		   (equal (file-name-nondirectory file)
-			  (file-name-nondirectory buffer-file-name))))
+			  (file-name-nondirectory (hypb:buffer-file-name)))))
     (when (or (null file) (string-empty-p file))
       (setq file (hbut:get-key-src t)))
     (if (stringp file)
@@ -698,7 +698,7 @@ FILE may be a string or nil, in which case the current buffer is used."
       (setq file (expand-file-name file (hpath:expand "${hyperb:dir}/man/"))))
     (if file
         (set-buffer (find-file-noselect (hpath:substitute-value file)))
-      (setq file buffer-file-name))
+      (setq file (hypb:buffer-file-name)))
     (save-excursion
       (goto-char (point-min))
       (if (re-search-forward (format "^@node[ \t]+%s *[,\n\r]" node) nil t)

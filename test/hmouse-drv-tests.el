@@ -112,7 +112,7 @@
           (insert "<<<DEMO>>>")
           (goto-char 4)
           (action-key)
-          (should (string= (expand-file-name "DEMO" hyperb:dir) buffer-file-name)))
+          (should (string= (expand-file-name "DEMO" hyperb:dir) (hypb:buffer-file-name))))
       (hy-test-helpers:kill-buffer "DEMO")
       (ibtype:delete 'ibtypes::defil-path-it))))
 
@@ -284,7 +284,7 @@
         (goto-char 2)
         (action-key)
         (should (equal major-mode 'emacs-lisp-mode))
-        (should (buffer-file-name))
+        (should (hypb:buffer-file-name))
         (should (string= "hyperbole.el" (buffer-name))))
     (hy-test-helpers:kill-buffer "hyperbole.el")))
 
@@ -297,7 +297,7 @@
           (insert (concat "\"" file ":1\""))
           (goto-char 2)
           (action-key)
-          (should (string= file (buffer-file-name)))
+          (should (string= file (hypb:buffer-file-name)))
           (should (looking-at "Line1")))
       (hy-delete-file-and-buffer file))))
 
@@ -316,7 +316,7 @@
           (should (looking-at-p (concat "\"" file ":2\"")))
           (forward-char 2)
           (action-key)
-          (should (string= file (buffer-file-name)))
+          (should (string= file (hypb:buffer-file-name)))
           (should (looking-at "Line2")))
       (hy-delete-file-and-buffer file)
       (hy-delete-file-and-buffer ibutfile))))
@@ -330,7 +330,7 @@
           (insert (concat "\"" file "#Anchor\""))
           (goto-char 2)
           (action-key)
-          (should (string= file (buffer-file-name)))
+          (should (string= file (hypb:buffer-file-name)))
           (should (looking-at "\* Anchor")))
       (hy-delete-file-and-buffer file))))
 
@@ -343,7 +343,7 @@
         (insert (concat "\"" file "#Anchor Plus\""))
         (goto-char 2)
         (action-key)
-        (should (string= file (buffer-file-name)))
+        (should (string= file (hypb:buffer-file-name)))
         (should (looking-at "\* Anchor Plus \(Parenthesised text follows\)")))
     (hy-delete-file-and-buffer file))))
 
@@ -372,7 +372,7 @@
         (insert (concat "\"" file "#Anchor:2\""))
         (goto-char 2)
         (action-key)
-        (should (string= file (buffer-file-name)))
+        (should (string= file (hypb:buffer-file-name)))
         (should (looking-at "Next Line")))
     (hy-delete-file-and-buffer file))))
 
@@ -385,7 +385,7 @@
           (insert (concat "\"" file "#Anchor:2:5\""))
           (goto-char 2)
           (action-key)
-          (should (string= file (buffer-file-name)))
+          (should (string= file (hypb:buffer-file-name)))
           (should (= (line-number-at-pos) 3))
           (should (= (current-column) 5))
           (should (looking-at "Line")))

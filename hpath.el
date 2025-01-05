@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:      4-Jan-25 at 13:55:40 by Bob Weiner
+;; Last-Mod:      5-Jan-25 at 11:15:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1065,12 +1065,12 @@ Make any existing path within a file buffer absolute before returning."
 		    (= ?# (aref suffix 0))))
 	  (progn
 	    (setq path (concat prefix path suffix))
-	    (cond ((and buffer-file-name
+	    (cond ((and (hypb:buffer-file-name)
 			;; ignore HTML color strings
 			(not (string-match "\\`#[0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f]\\'" path))
 			;; match to in-file #anchor references
 			(string-match "\\`#[^+\'\"<>#]+\\'" path))
-		   (setq path (concat mode-prefix buffer-file-name path)))
+		   (setq path (concat mode-prefix (hypb:buffer-file-name) path)))
 		  ((string-match "\\`\\([^#]+\\)\\(#[^#+]*.*\\)\\'" path)
 		   ;; file and #anchor reference
 		   (setq suffix (match-string 2 path)
@@ -1509,7 +1509,7 @@ but locational suffixes within the file are utilized."
 	      path-with-anchor path
 	      path (if (match-end 1)
 		       (substring path 0 (match-end 1))
-		     (or buffer-file-name "")))
+		     (or (hypb:buffer-file-name) "")))
 	;; 'anchor' may improperly include trailing punctuation;
 	;; remove it if so.
 	(when (string-match "\\s.+\\'" anchor)
@@ -1587,10 +1587,10 @@ but locational suffixes within the file are utilized."
 			    ;; matching of path is likely to be wrong in
 			    ;; certain cases, e.g. with mount point or os path
 			    ;; alterations.
-			    (when (or (null buffer-file-name)
-				      (and buffer-file-name
+			    (when (or (null (hypb:buffer-file-name))
+				      (and (hypb:buffer-file-name)
 				       (equal (file-name-nondirectory path)
-					      (file-name-nondirectory buffer-file-name))))
+					      (file-name-nondirectory (hypb:buffer-file-name)))))
 			      (cond ((and anchor kotl-flag)
 				     (klink:act path-with-anchor anchor-start-pos))
 				    ((or hash anchor)
@@ -1651,13 +1651,13 @@ of the buffer."
 				    (referent-regexp (format
 						      (cond ((or (derived-mode-p 'outline-mode) ;; Includes Org mode
 								 ;; Treat all caps filenames without suffix like outlines, e.g. README, INSTALL.
-								 (and buffer-file-name
-								      (string-match-p "\\`[A-Z][A-Z0-9]+\\'" buffer-file-name)))
+								 (and (hypb:buffer-file-name)
+								      (string-match-p "\\`[A-Z][A-Z0-9]+\\'" (hypb:buffer-file-name))))
 							     hpath:outline-section-pattern)
-							    ((or prog-mode (null buffer-file-name))
+							    ((or prog-mode (null (hypb:buffer-file-name)))
 							     "%s")
-							    ((or (and buffer-file-name
-								      (string-match-p hpath:markdown-suffix-regexp buffer-file-name))
+							    ((or (and (hypb:buffer-file-name)
+								      (string-match-p hpath:markdown-suffix-regexp (hypb:buffer-file-name)))
 								 (memq major-mode hpath:shell-modes))
 							     hpath:markdown-section-pattern)
 							    ((derived-mode-p 'texinfo-mode)
@@ -1885,7 +1885,7 @@ form is what is returned for PATH."
 (defun hpath:push-tag-mark ()
   "Add a tag return marker at point if within a programming language file buffer.
 Is a no-op if the function `push-tag-mark' is not available."
-  (and buffer-file-name
+  (and (hypb:buffer-file-name)
        comment-start
        (not (memq last-command
 		  '(xref-find-definitions find-tag find-tag-other-window tags-loop-continue)))
@@ -2231,7 +2231,7 @@ ${var}) with their values in FILENAME's path.  The first matching
 value for variables like `${PATH}' is used."
   (let ((buf (hpath:find-noselect filename)))
     (if buf
-	(hpath:validate (hpath:substitute-value (buffer-file-name buf)))
+	(hpath:validate (hpath:substitute-value (hypb:buffer-file-name buf)))
       (error "(hpath:normalize): '\"%s\" is not a readable filename" filename))))
 
 (defun hpath:validate (path)

@@ -8,7 +8,7 @@
 ;; AUTHOR:       Bob Weiner
 ;;
 ;; ORIG-DATE:    16-Mar-90 at 03:38:48
-;; LAST-MOD:     29-Dec-24 at 12:37:57 by Mats Lidell
+;; LAST-MOD:      5-Jan-25 at 12:21:16 by Bob Weiner
 ;;
 ;; Copyright (C) 1990-1995, 1997, 2016  Free Software Foundation, Inc.
 ;; See the file BR-COPY for license information.
@@ -45,6 +45,12 @@
 ;;   Public and private function names are alphabetized for easy location.
 
 ;;; Code:
+;;; ************************************************************************
+;;; Other required Elisp libraries
+;;; ************************************************************************
+
+(require 'subr-x)   ; for `hash-table-keys/values', `hash-table-empty-p'
+
 ;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************

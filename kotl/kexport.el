@@ -374,9 +374,9 @@ By default, this retains newlines within cells as they are.  With
 optional prefix arg, SOFT-NEWLINES-FLAG, hard newlines are not
 used.  Also converts Urls and Klinks into Html hyperlinks."
   (interactive "P")
-  (let ((export-from buffer-file-name)
-  	(output-to (concat (file-name-sans-extension buffer-file-name) ".html")))
-    (if (and buffer-file-name (string-match "\\.kotl?\\'" buffer-file-name))
+  (let ((export-from (hypb:buffer-file-name))
+  	(output-to (concat (file-name-sans-extension (hypb:buffer-file-name)) ".html")))
+    (if (and (hypb:buffer-file-name) (string-match "\\.kotl?\\'" (hypb:buffer-file-name)))
 	(kexport:html export-from output-to soft-newlines-flag)
       (error "(kexport:koutline): current buffer must be a Koutline .kotl file"))
     output-to))
@@ -405,7 +405,7 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
   Make delimited pathnames into file links (but not if within klinks).
   Copy attributes stored in cell 0 and attributes from each cell."
   (interactive (list (read-file-name
-		      "Koutline buffer/file to export: " nil buffer-file-name t)
+		      "Koutline buffer/file to export: " nil (hypb:buffer-file-name) t)
 		     (read-file-name "HTML buffer/file to save to: ")
 		     current-prefix-arg))
   (let* ((export-buf-name
@@ -438,12 +438,12 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
     (with-current-buffer standard-output
       (font-lock-mode 0) ;; Prevent syntax highlighting
       (setq buffer-read-only nil
-	    kexport:output-filename buffer-file-name)
+	    kexport:output-filename (hypb:buffer-file-name))
       (erase-buffer))
     (with-current-buffer export-buf-name
       (save-excursion
 	(kotl-mode:beginning-of-buffer)
-	(setq kexport:input-filename buffer-file-name)
+	(setq kexport:input-filename (hypb:buffer-file-name))
 
 	;; If called interactively, prompt user for the title to use.
 	(if (called-interactively-p 'interactive)
@@ -453,7 +453,7 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
 	  ;; none, then the name of the current file sans the .kotl suffix.
 	  (unless title
 	    (setq title (file-name-sans-extension (file-name-nondirectory
-						   buffer-file-name))))
+						   (hypb:buffer-file-name)))))
 	  (when (string-match "\n" title)
 	    (setq title (substring title 0 (match-beginning 0)))))
 

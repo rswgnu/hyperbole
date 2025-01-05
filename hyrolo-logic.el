@@ -276,7 +276,7 @@ Return the number of evaluations of SEXP that match entries."
       (let ((result (eval sexp `((start . ,start) (end . ,end)))))
 	(unless count-only
 	  (and result (= num-found 0)
-	       (let* ((src (or (buffer-file-name hyrolo-buf)
+	       (let* ((src (or (hypb:buffer-file-name hyrolo-buf)
 			       hyrolo-buf))
 		      (src-line
 		       (format
@@ -332,7 +332,7 @@ Return the number of evaluations of SEXP that match entries."
 		    end (hyrolo-to-entry-end include-sub-entries))
 	      (unless count-only
 		(and result (= num-found 0)
-		     (let* ((src (or (buffer-file-name hyrolo-buf)
+		     (let* ((src (or (hypb:buffer-file-name hyrolo-buf)
 				     hyrolo-buf))
 			    (src-line
 			     (format

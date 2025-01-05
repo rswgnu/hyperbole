@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      1-Dec-24 at 20:33:59 by Bob Weiner
+;; Last-Mod:      5-Jan-25 at 11:15:09 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -230,7 +230,7 @@ in all buffers."
             (not (or (hmail:lister-p) (hnews:lister-p))))
            (when (boundp 'hyrolo-display-buffer)
              (equal (buffer-name) hyrolo-display-buffer))
-           (and buffer-file-name
+           (and (hypb:buffer-file-name)
                 (boundp 'hyrolo-file-list)
                 (set:member (current-buffer)
                             (mapcar #'get-file-buffer (hyrolo-get-file-list))))))
@@ -418,7 +418,7 @@ in buffers whose names begin with a space or asterisk character, must
 not be in a programming mode, Markdown or Org buffer and must have an
 attached file."
   (and (not (bolp))
-       buffer-file-name
+       (hypb:buffer-file-name)
        (let ((chr (aref (buffer-name) 0)))
          (not (or (eq chr ?\ ) (eq chr ?*))))
        (not (apply #'derived-mode-p
@@ -515,7 +515,7 @@ Url links are handled elsewhere."
                        (ibut:label-set (match-string-no-properties 0) (match-beginning 0) (match-end 0))
                        (setq npoint (point))
                        (goto-char opoint)
-                       (hact 'link-to-file buffer-file-name npoint))
+                       (hact 'link-to-file (hypb:buffer-file-name) npoint))
                    ;; Follows an absolute file link.
                    (markdown-follow-inline-link-p opoint))
                ;; May be on the name of an infile link, so move to the
@@ -730,8 +730,8 @@ line."
 Display selected files.  Each file name must be at the beginning of the line
 or may be preceded by some semicolons and must be followed by one or more
 spaces and then another non-space, non-parenthesis, non-brace character."
-  (when buffer-file-name
-    (let ((file (file-name-nondirectory buffer-file-name))
+  (when (hypb:buffer-file-name)
+    (let ((file (file-name-nondirectory (hypb:buffer-file-name)))
           entry start end)
       (when (and (or (string-equal file "DIR")
                      (string-match "\\`MANIFEST\\(\\..+\\)?\\'" file))
@@ -1416,7 +1416,7 @@ documentation string is displayed."
                                    (match-string-no-properties 2))
                          ;; Derive file name from the source file name.
                          (let ((nodename (match-string-no-properties 2))
-                               (file (file-name-nondirectory buffer-file-name)))
+                               (file (file-name-nondirectory (hypb:buffer-file-name))))
                            (if show-texinfo-node
                                nodename
                              (format "(%s)%s"

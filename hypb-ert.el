@@ -122,7 +122,7 @@ the assist-key is pressed), edebug the test when it is run."
       (unless test-sym
 	(setq test-sym (intern-soft test-name)))
       (when (and test-sym (ert-test-boundp test-sym))
-	(when (and buffer-file-name (string-prefix-p hyperb:dir buffer-file-name))
+	(when (and (hypb:buffer-file-name) (string-prefix-p hyperb:dir (hypb:buffer-file-name)))
 	  (hypb-ert-require-libraries))
 	(when (hypb-ert test-sym)
 	  t)))))
