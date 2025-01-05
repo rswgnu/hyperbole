@@ -21,6 +21,16 @@
     attributes unless find a valid 'lbl-start', so do not end up with a partial
     set of insufficient attributes.
 
+2025-01-02  Mats Lidell  <matsl@gnu.org>
+
+* test/hactypes-tests.el (hactypes-tests--link-to-Info-index-item): Verify
+    actypes::link-to-Info-index-item.
+
+* test/hywiki-tests.el (hywiki-tests--add-info-index): Update test to
+    verify Info index display.
+
+* hywiki.el (hywiki-display-info-index): Use link-to-Info-index-item.
+
 2024-12-30  Mats Lidell  <matsl@gnu.org>
 
 * test/hypb-tests.el (hypb--verify-info-index-is-correct): Ensure info

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     26-Dec-24 at 23:34:51 by Bob Weiner
+;; Last-Mod:     28-Dec-24 at 16:58:48 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -677,13 +677,19 @@ Note special meaning of `hywiki-allow-plurals-flag'."
 
 (ert-deftest hywiki-tests--add-bookmark ()
   "Verify `hywiki-add-bookmark'."
-  (let ((hywiki-directory (make-temp-file "hywiki" t)))
+  (let ((hywiki-directory (make-temp-file "hywiki" t))
+        (bookmark-alist nil)
+        (file (make-temp-file "hypb.txt")))
     (unwind-protect
         (progn
-          (mocklet ((bookmark-completing-read => ""))
+          (find-file file)
+          (with-simulated-input "RET"
             (should-error (hywiki-add-bookmark "WikiWord")))
-          (mocklet ((bookmark-completing-read => "bkmark"))
-            (should (equal '(bookmark . "bkmark") (hywiki-add-bookmark "WikiWord")))))
+          (bookmark-set "bookmark")
+          (with-simulated-input "bookmark RET"
+            (hywiki-add-bookmark "WikiWord")
+            (should (equal '(bookmark . "bookmark") (hywiki-get-referent "WikiWord")))))
+      (hy-delete-file-and-buffer file)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--add-command ()
@@ -691,7 +697,7 @@ Note special meaning of `hywiki-allow-plurals-flag'."
   (let ((hywiki-directory (make-temp-file "hywiki" t))
 	(wikiword "WikiWord"))
     (unwind-protect
-	(mocklet ((hui:actype => 'hpath:find))
+	(with-simulated-input "hpath:find RET"
 	  (hywiki-add-command wikiword)
 	  (should (equal '(command . hpath:find)
 			 (hywiki-get-referent wikiword))))
@@ -725,22 +731,19 @@ Note special meaning of `hywiki-allow-plurals-flag'."
   "Verify `hywiki-add-info-index'."
   (let ((hywiki-directory (make-temp-file "hywiki" t)))
     (unwind-protect
-	(mocklet (((info) => t)
-		  ((Info-read-index-item-name "Info index item: ") => "index-name")
-		  ((Info-current-filename-sans-extension) => "info"))
+        (with-simulated-input "files RET"
+          (info "emacs")
 	  (hywiki-add-info-index "WikiWord")
-	  (should (equal '(info-index . "(info)index-name") (hywiki-get-referent "WikiWord"))))
+	  (should (equal '(info-index . "(emacs)files") (hywiki-get-referent "WikiWord"))))
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--add-info-node ()
   "Verify `hywiki-add-info-node'."
   (let ((hywiki-directory (make-temp-file "hywiki" t)))
     (unwind-protect
-	(mocklet (((info) => t)
-		  ((Info-read-node-name "Info node: ") => "node-name")
-		  ((Info-current-filename-sans-extension) => "info"))
+	(with-simulated-input "(emacs) RET"
 	  (hywiki-add-info-node "WikiWord")
-	  (should (equal '(info-node . "(info)node-name") (hywiki-get-referent "WikiWord"))))
+	  (should (equal '(info-node . "(emacs)") (hywiki-get-referent "WikiWord"))))
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--add-key-series ()

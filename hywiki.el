@@ -951,8 +951,8 @@ calling this function."
 	(setq item (format "(%s)%s" (Info-current-filename-sans-extension) item)))
       (hywiki-add-referent wikiword (cons 'info-index item)))))
 
-(defun hywiki-display-info-index (_wikiword referent)
-  (Info-goto-node (cdr referent)))
+(defun hywiki-display-info-index (_wikiword item-name)
+  (hact 'link-to-Info-index-item item-name))
 
 (defun hywiki-add-info-node (wikiword)
   "Make WIKIWORD display an Info manual node and return it.
