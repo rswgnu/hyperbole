@@ -118,7 +118,7 @@ return an absolute klink string.  Klink returned is of the form:
 `kcell:ref-to-id' for valid cell-ref formats."
   (when (and (derived-mode-p 'kotl-mode) label-and-pos (listp label-and-pos))
     (let* ((file-and-cell-ref (klink:parse (car label-and-pos)))
-	   (file (or (car file-and-cell-ref) buffer-file-name))
+	   (file (or (car file-and-cell-ref) (hypb:buffer-file-name)))
 	   (cell-ref (nth 1 file-and-cell-ref)))
       (klink:set-yank-handler
        (format "<%s#%s>" (expand-file-name file) cell-ref)))))
@@ -151,7 +151,7 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
 	  file-ref  (car reference)
 	  cell-ref  (nth 1 reference))
     ;; Don't need filename if link is to a cell in current buffer.
-    (when (and file-ref (equal buffer-file-name
+    (when (and file-ref (equal (hypb:buffer-file-name)
 			       (expand-file-name file-ref default-directory)))
       (setq file-ref nil))
     (cond (file-ref
@@ -375,11 +375,11 @@ Assume point is in klink referent buffer, where the klink points."
       (let* ((file (match-string 1 klink))
 	     (rest (match-string 2 klink))
 	     (dir (file-name-directory file)))
-	(cond ((equal file buffer-file-name)
+	(cond ((equal file (hypb:buffer-file-name))
 	       ;; Remove the klink filename since yanking into the
 	       ;; same file
 	       (insert (format "<#%s" rest)))
-	      ((and buffer-file-name (equal dir (file-name-directory buffer-file-name)))
+	      ((and (hypb:buffer-file-name) (equal dir (file-name-directory (hypb:buffer-file-name))))
 	       ;; Use filename without dir since yanking into same directory
 	       (insert (format "<%s#%s" (file-name-nondirectory file) rest)))
 	      (t (insert klink))))

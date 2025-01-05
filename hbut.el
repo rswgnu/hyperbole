@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      5-Jan-25 at 01:12:45 by Bob Weiner
+;; Last-Mod:      5-Jan-25 at 11:27:31 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -552,7 +552,7 @@ button is found in the current buffer."
 		   (re-search-backward regexp nil t)))
 	     (goto-char (+ (match-beginning 0) (length ebut:label-start))))))
 
-    (when (or (not buffer-file-name) (hmail:editor-p) (hmail:reader-p))
+    (when (or (not (hypb:buffer-file-name)) (hmail:editor-p) (hmail:reader-p))
       (widen)
       (hmail:msg-narrow))
 
@@ -614,7 +614,7 @@ labels only; optional MATCH-PART enables partial matches."
 	      (setq currbuf (and (file-readable-p currfile)
 				 (find-file-noselect currfile))
 		    dir (file-name-directory currfile))
-	    (setq currfile (buffer-file-name currbuf)))
+	    (setq currfile (hypb:buffer-file-name currbuf)))
 	  (and currfile currbuf
 	       (unwind-protect
 		   (setq src-matches
@@ -834,7 +834,7 @@ delimiters.  With POS-FLAG non-nil, return the list of label-or-key,
 but-start-position, but-end-position.  Positions include
 delimiters.  With TWO-LINES-FLAG non-nil, constrain label search
 to two lines."
-  (when (equal buffer-file-name (gbut:file))
+  (when (equal (hypb:buffer-file-name) (gbut:file))
     (hbut:label-p as-label start-delim end-delim pos-flag two-lines-flag)))
 
 (defun    gbut:save-buffer ()
@@ -1055,7 +1055,7 @@ Default is the symbol hbut:current."
 		    (delim-text-start (hattr:get hbut 'lbl-start))
 		    (delim-text-end (hattr:get hbut 'lbl-end)))
 	       (if (and name-key
-			(or (equal loc buffer-file-name)
+			(or (equal loc (hypb:buffer-file-name))
 			    (equal loc (current-buffer)))
 			(equal name-key (ibut:label-to-key (hattr:get hbut 'name))))
 		   (unless (and delim-text-start delim-text-end
@@ -1064,7 +1064,7 @@ Default is the symbol hbut:current."
 		     (goto-char delim-text-start)
 		     (skip-chars-forward "^-_a-zA-Z0-9"))
 		 ;; Here handle when there is no name preceding the implicit button.
-		 (unless (and (or (equal loc buffer-file-name)
+		 (unless (and (or (equal loc (hypb:buffer-file-name))
 				  (equal loc (current-buffer)))
 			      delim-text-start delim-text-end
 			      (< delim-text-start (point))
@@ -1297,10 +1297,10 @@ is given."
 						 cd 0 (string-match "\\s +\\'" cd)))
 				       (expand-file-name cd wd))
 			      wd)))
-			 (buffer-file-name
+			 ((hypb:buffer-file-name)
 			  (if full-flag
-			      buffer-file-name
-			    (file-name-nondirectory buffer-file-name)))
+			      (hypb:buffer-file-name)
+			    (file-name-nondirectory (hypb:buffer-file-name))))
 			 ;; Handle any preceding @loc hyp-source implicit button location references.
 			 ;; This is used in report buffers of explicit buttons, i.e. hui:hbut-report
 			 ;; as well as the *HyRolo* display matches buffer.
@@ -1347,10 +1347,10 @@ This is used to obtain the source of Hyperbole buttons for buffers that
 represent the output of particular document formatters."
   (when (or (eq major-mode 'Info-mode)
 	    (string-match "\\.info\\(-[0-9]+\\)?$" (buffer-name)))
-    (let ((src (and buffer-file-name
+    (let ((src (and (hypb:buffer-file-name)
 		    (substring
-		     buffer-file-name
-		     0 (string-match "\\.[^.]+$" buffer-file-name)))))
+		     (hypb:buffer-file-name)
+		     0 (string-match "\\.[^.]+$" (hypb:buffer-file-name))))))
       (cond ((file-exists-p (concat src ".texi"))
 	     (concat src ".texi"))
 	    ((file-exists-p (concat src ".texinfo"))
@@ -1747,7 +1747,7 @@ button label.  Return the symbol for the button, else nil."
 Keys in optional KEY-SRC or the current buffer."
   (save-excursion
     (save-restriction
-      (if (hbdata:to-entry-buf (or key-src (buffer-file-name)))
+      (if (hbdata:to-entry-buf (or key-src (hypb:buffer-file-name)))
 	  (let (hbuts)
 	    (save-restriction
 	      (narrow-to-region (point) (if (search-forward "\f" nil t)

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     21-Jan-24 at 23:26:00 by Bob Weiner
+;; Last-Mod:      5-Jan-25 at 11:15:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -230,7 +230,7 @@ It provides the following keys:
 	      (kfile:narrow-to-kcells)
 	    (kfile:read
 	     (current-buffer)
-	     (and buffer-file-name (file-exists-p buffer-file-name))
+	     (and (hypb:buffer-file-name) (file-exists-p (hypb:buffer-file-name)))
 	     version)
 	    (kvspec:activate))
 	;; New koutline buffer or a foreign text buffer that must be converted to

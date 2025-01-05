@@ -1540,7 +1540,7 @@ body
           (hyrolo-grep "body")
           (hyrolo-next-match)
           (action-key)
-          (should (string= (buffer-file-name) org-file1))
+          (should (string= (hypb:buffer-file-name) org-file1))
           (should (looking-at-p "body")))
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))
@@ -1554,7 +1554,7 @@ body
           (hyrolo-grep "h-org")
           (hyrolo-next-match)
           (action-key)
-          (should (string= (buffer-file-name) org-file1))
+          (should (string= (hypb:buffer-file-name) org-file1))
           (should (looking-at-p "h-org 1$")))
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))
@@ -1568,7 +1568,7 @@ body
           (hyrolo-grep "body")
           (hyrolo-next-match)
           (action-key)
-          (should (string= (buffer-file-name) kotl-file1))
+          (should (string= (hypb:buffer-file-name) kotl-file1))
           (should (looking-at-p "body$"))
           (should (string= (buffer-substring-no-properties (point-min) (point-max))
                            "\
@@ -1591,7 +1591,7 @@ body
           (hyrolo-grep "h-kotl")
           (hyrolo-next-match)
           (action-key)
-          (should (string= (buffer-file-name) kotl-file1))
+          (should (string= (hypb:buffer-file-name) kotl-file1))
           (should (looking-at-p "h-kotl$"))
           (should (string= (buffer-substring-no-properties (point-min) (point-max))
                            "\
@@ -1614,7 +1614,7 @@ body
           (hyrolo-grep "body2")
           (hyrolo-next-match)
           (action-key)
-          (should (string= (buffer-file-name) kotl-file1))
+          (should (string= (hypb:buffer-file-name) kotl-file1))
           (should (looking-at-p "body2$"))
           (should (string= (buffer-substring-no-properties (point-min) (point-max))
                            "\
@@ -1637,7 +1637,7 @@ body
 	  (kotl-mode:beginning-of-buffer)
           (hyrolo-grep "h2")
           (action-key)
-          (should (string= (buffer-file-name) kotl-file1))
+          (should (string= (hypb:buffer-file-name) kotl-file1))
           (should (looking-at-p "h1 / h2$"))
           (should (string= (buffer-substring-no-properties (point-min) (point-max))
                            "\

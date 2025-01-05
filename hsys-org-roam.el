@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-23 at 11:20:15 by Bob Weiner
-;; Last-Mod:     11-Aug-24 at 00:46:33 by Bob Weiner
+;; Last-Mod:      5-Jan-25 at 12:06:23 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -26,6 +26,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
+(require 'hypb)
 (require 'package)
 
 ;;; ************************************************************************
@@ -64,9 +65,9 @@ Actual grep function used is given by the variable,
   "Return non-nil if point is in an `org-roam-directory' buffer and at Org tags."
   (and (featurep 'org-roam)
        (or at-tag-flag (hsys-org-at-tags-p))
-       (and buffer-file-name
+       (and (hypb:buffer-file-name)
 	    (string-prefix-p (expand-file-name org-roam-directory)
-			     buffer-file-name))))
+			     (hypb:buffer-file-name)))))
 
 ;;;###autoload
 (defun hsys-org-roam-tags-view (&optional todo-only match view-buffer-name)

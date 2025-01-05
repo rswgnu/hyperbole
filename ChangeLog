@@ -1,5 +1,12 @@
 2025-01-05  Bob Weiner  <rsw@gnu.org>
 
+* hypb.el: Add 'hypb:buffer-file-name' to handle indirect buffers whose
+    file name is only in its base buffer and replace all uses of the
+    variable 'buffer-file-name' with this call.  This allows creation
+    of explicit buttons in indirect buffers.
+  hbmap.el, hmail.el, hmoccur.el, hmouse-info.el, hsys-org.el, hsys-org-roam.el:
+    Add (require 'hypb) for 'hypb:buffer-file-name’ definition.
+
 * hyperbole.el (hkey-initialize): Override {C-w} in 'hyperbole-mode-map'
     as has long been done with {M-w}.
   hui.el (hui:kill-region, hui-kill-region): Add to kill delimited things

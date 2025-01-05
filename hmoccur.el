@@ -3,7 +3,7 @@
 ;; Author:       Markus Freericks <Mfx@cs.tu-berlin.de> / Bob Weiner
 ;;
 ;; Orig-Date:     1-Aug-91
-;; Last-Mod:     17-Jan-24 at 23:57:46 by Mats Lidell
+;; Last-Mod:      5-Jan-25 at 12:05:07 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -48,6 +48,12 @@
 ;; C-c C-c gets you to the occurence
 
 ;;; Code:
+;;; ************************************************************************
+;;; Other required Elisp libraries
+;;; ************************************************************************
+
+(require 'hypb)
+
 ;;; ************************************************************************
 ;;; Public declarations
 ;;; ************************************************************************
@@ -106,7 +112,7 @@ With optional NO-FOLD-SEARCH non-nil do case sensitive search.
 	      buffers (cdr buffers))
 	(if currfile
 	    (setq currbuf (find-file-noselect currfile))
-	  (setq currfile (buffer-file-name currbuf)))
+	  (setq currfile (hypb:buffer-file-name currbuf)))
 	(if (or (not currfile) (not currbuf))
 	    nil
 	  (set-buffer currbuf)

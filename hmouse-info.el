@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Apr-89
-;; Last-Mod:     18-Jan-24 at 19:08:48 by Mats Lidell
+;; Last-Mod:      5-Jan-25 at 12:12:30 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -23,6 +23,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
+(require 'hypb)
 (require 'info)
 
 ;;; ************************************************************************
@@ -170,7 +171,8 @@ which label point is on, and return t.  Otherwise, return nil."
   ;; Test if on 1st line of node, i.e. node header
   ;;
   (when (first-line-p)
-    (let ((nodename "Top") (filep nil))
+    (let ((nodename "Top")
+	  filep)
       (save-excursion
 	(if (and
 	     (re-search-forward "[:, \t\n\r]" nil t)
@@ -187,7 +189,8 @@ which label point is on, and return t.  Otherwise, return nil."
       (setq nodename
 	    (cond ((eq (aref nodename 0) ?\() nodename)
 		  (filep (concat "(" nodename ")" "Top"))
-		  (buffer-file-name (concat "(" buffer-file-name ")" nodename))
+		  ((hypb:buffer-file-name)
+		   (concat "(" (hypb:buffer-file-name) ")" nodename))
 		  (t nodename)))
       (Info-goto-node nodename)
       t)))

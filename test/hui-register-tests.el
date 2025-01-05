@@ -35,7 +35,7 @@
             (should (equal (hui-register-but-link content) 'link-to-ibut))
             (should (markerp (hui-register-but-mpos content)))
             (should (equal (marker-buffer (hui-register-but-mpos content)) (current-buffer)))
-            (should (equal (hui-register-but-file content) (buffer-file-name)))))
+            (should (equal (hui-register-but-file content) (hypb:buffer-file-name)))))
       (hy-delete-file-and-buffer file))))
 
 (ert-deftest hui-register-test--register-val-jump-to ()
@@ -51,7 +51,7 @@
             (set-buffer "*scratch*")
             (should (equal (buffer-name) "*scratch*"))
             (register-val-jump-to content nil)
-            (should (equal (buffer-file-name) file))
+            (should (equal (hypb:buffer-file-name) file))
             (should (equal pos (point)))))
       (hy-delete-file-and-buffer file))))
 
@@ -69,7 +69,7 @@
 	    ;; Inserts ebut into file2 that contains an ilink in file1
 	    ;; that jumps to ${HOME}
             (register-val-insert content)
-            (should (equal (buffer-file-name) file2))
+            (should (equal (hypb:buffer-file-name) file2))
             (goto-char 5)
             (should (ebut:at-p))
             (action-key)
@@ -90,7 +90,7 @@
           (let ((content (hui-register-struct-at-point)))
             (find-file file2)
             (register-val-insert content)
-            (should (equal (buffer-file-name) file2))
+            (should (equal (hypb:buffer-file-name) file2))
             (goto-char 5)
             (should (ebut:at-p))
             (action-key)

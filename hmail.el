@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-Oct-91 at 18:38:05
-;; Last-Mod:     10-Mar-24 at 11:52:34 by Bob Weiner
+;; Last-Mod:      5-Jan-25 at 12:01:15 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -31,6 +31,12 @@
 ;;   with Hyperbole.
 
 ;;; Code:
+;;; ************************************************************************
+;;; Other required Elisp libraries
+;;; ************************************************************************
+
+(require 'hypb)
+
 ;;; ************************************************************************
 ;;; Public declarations
 ;;; ************************************************************************
@@ -101,7 +107,7 @@ Return t if button data is found, else nil."
 	       (hmail:msg-narrow)
 	       t)
 	      ((or (hmail:lister-p) (hnews:lister-p)) t)
-	      ((or (not buffer-file-name)
+	      ((or (not (hypb:buffer-file-name))
 		   (memq major-mode (list hmail:composer hnews:reader
 					  hnews:composer)))
 	       (widen)

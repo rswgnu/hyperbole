@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:      4-Jan-25 at 21:04:54 by Bob Weiner
+;; Last-Mod:      5-Jan-25 at 11:15:09 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -161,7 +161,7 @@
 
 (defvar hycontrol-display-buffer-predicate-list
   ;; Display only buffers attached to files.
-  (list #'buffer-file-name)
+  (list #'hypb:buffer-file-name)
   "List of single buffer/name predicates.
 If any predicate returns non-nil for a buffer, include that buffer in
 the list to display in the windows created by `hycontrol-windows-grid'.

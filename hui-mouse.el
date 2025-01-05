@@ -378,7 +378,7 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 	 (string-match "-Elements\\'" (buffer-name))
 	 (and (boundp 'br-feature-tags-file)
 	      (stringp br-feature-tags-file)
-	      (equal br-feature-tags-file buffer-file-name)))
+	      (equal br-feature-tags-file (hypb:buffer-file-name))))
      . ((smart-element) . (hkey-help)))
     ;;
     ;; View major mode
@@ -445,7 +445,7 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
     ;;
     ;; Python files - ensure this comes before Imenu for more advanced
     ;; definition lookups
-    ((and (or (and (derived-mode-p '(python-mode python-ts-mode)) buffer-file-name)
+    ((and (or (and (derived-mode-p '(python-mode python-ts-mode)) (hypb:buffer-file-name))
 	      (and (featurep 'hsys-org) (hsys-org-mode-p)
 		   (equal (hsys-org-get-value :language) "python"))
 	      (let ((case-fold-search))
@@ -454,17 +454,17 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
      . ((smart-python hkey-value) . (smart-python hkey-value 'next-tag)))
     ;;
     ((and (memq major-mode '(c-mode c-ts-mode))
-	  buffer-file-name (smart-c-at-tag-p))
+	  (hypb:buffer-file-name) (smart-c-at-tag-p))
      . ((smart-c) . (smart-c nil 'next-tag)))
     ;;
-    ((and (memq major-mode '(c++-mode c++-ts-mode)) buffer-file-name
+    ((and (memq major-mode '(c++-mode c++-ts-mode)) (hypb:buffer-file-name)
 	  ;; Don't use smart-c++-at-tag-p here since it will prevent #include
 	  ;; lines from matching.
 	  (smart-c-at-tag-p))
      . ((smart-c++) . (smart-c++ nil 'next-tag)))
     ;;
     ((and (eq major-mode 'asm-mode)
-	  buffer-file-name (smart-asm-at-tag-p))
+	  (hypb:buffer-file-name) (smart-asm-at-tag-p))
      . ((smart-asm) . (smart-asm nil 'next-tag)))
     ;;
     ((setq hkey-value nil
@@ -480,7 +480,7 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
      . ((smart-lisp) . (smart-lisp 'show-doc)))
     ;;
     ;;
-    ((and (memq major-mode '(java-mode java-ts-mode)) buffer-file-name
+    ((and (memq major-mode '(java-mode java-ts-mode)) (hypb:buffer-file-name)
 	  (or (smart-java-at-tag-p)
 	      ;; Also handle Java @see cross-references.
 	      (looking-at "@see[ \t]+")
@@ -490,11 +490,11 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
      . ((smart-java) . (smart-java nil 'next-tag)))
     ;;
     ((and (memq major-mode '(html-mode javascript-mode js-mode js-ts-mode js2-mode js3-mode web-mode))
-	  buffer-file-name
+	  (hypb:buffer-file-name)
 	  (smart-javascript-at-tag-p))
      . ((smart-javascript) . (smart-javascript nil 'next-tag)))
     ;;
-    ((and (eq major-mode 'objc-mode) buffer-file-name
+    ((and (eq major-mode 'objc-mode) (hypb:buffer-file-name)
 	  (smart-objc-at-tag-p))
      . ((smart-objc) . (smart-objc nil 'next-tag)))
     ;;
@@ -504,7 +504,7 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 	(imenu-choose-buffer-index)))
     ;;
     ((and (memq major-mode '(fortran-mode f90-mode))
-	  buffer-file-name (smart-fortran-at-tag-p))
+	  (hypb:buffer-file-name) (smart-fortran-at-tag-p))
      . ((smart-fortran) . (smart-fortran nil 'next-tag)))
     ;;
     ((eq major-mode 'calendar-mode)
@@ -1713,9 +1713,9 @@ local variable containing its pathname."
 		     (progn (and (boundp 'man-path) man-path
 				 (setq ref (hpath:symlink-referent man-path)))
 			    t))
-		 (if buffer-file-name
+		 (if (hypb:buffer-file-name)
 		     (string-match "/man/" (setq ref (hpath:symlink-referent
-						      buffer-file-name))))))
+						      (hypb:buffer-file-name)))))))
 	(setq ref nil)
       (or (setq ref (or (smart-man-file-ref)
 			(smart-man-c-routine-ref)))
@@ -1975,10 +1975,10 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
 (defun smart-org-bob-and-non-heading-p ()
   "Check whether {TAB} should globally `org-cycle' at point."
   (and (bobp)
-       buffer-file-name
+       (hypb:buffer-file-name)
        (derived-mode-p 'org-mode)
        (not (org-at-heading-p))
-       (member buffer-file-name
+       (member (hypb:buffer-file-name)
 	       (hpath:expand-list hsys-org-cycle-bob-file-list))))
 
 ;;; ************************************************************************

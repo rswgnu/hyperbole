@@ -139,7 +139,7 @@
     (unwind-protect
         (progn
           (find-file kotl-file)
-          (should (string-match-p (concat "Local in buffer " (file-name-nondirectory (buffer-file-name)))
+          (should (string-match-p (concat "Local in buffer " (file-name-nondirectory (hypb:buffer-file-name)))
                                   (describe-variable 'kotl-kview))))
       (hy-delete-file-and-buffer kotl-file))))
 

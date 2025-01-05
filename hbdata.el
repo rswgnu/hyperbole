@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Apr-91
-;; Last-Mod:      2-Dec-24 at 01:48:15 by Bob Weiner
+;; Last-Mod:      5-Jan-25 at 11:15:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -196,7 +196,7 @@ If the hbdata buffer is blank/empty, kill it and remove the associated file."
 	       (when (looking-at empty-hbdata-file)
 		 (setq kill t)))
 	     (when kill
-	       (let ((fname buffer-file-name))
+	       (let ((fname (hypb:buffer-file-name)))
 		 (erase-buffer) (save-buffer) (kill-buffer nil)
 		 (hbmap:dir-remove (file-name-directory fname))
 		 (delete-file fname))))))))
@@ -390,7 +390,7 @@ Return value of evaluation when a matching entry is found or nil."
 	    (progn
 	      (when (get-buffer key-src)
 		(set-buffer key-src)
-		(unless buffer-file-name
+		(unless (hypb:buffer-file-name)
 		  (cond ((hmail:editor-p)
 			 (setq end-func (lambda ()
 					  (hmail:msg-narrow))))
@@ -421,7 +421,7 @@ Return value of evaluation when a matching entry is found or nil."
 							    (hmail:hbdata-start))))))))
 	      (setq found (hbdata:to-entry-buf key-src directory create-flag)))
 	  (when found
-	    (unless buffer-file-name
+	    (unless (hypb:buffer-file-name)
 	      ;; Point must be left after hbdata separator or the logic
 	      ;; below could fail.  Buffer should be widened already.
 	      (goto-char (point-min))
@@ -445,14 +445,14 @@ Return value of evaluation when a matching entry is found or nil."
 
 (defun hbdata:is-but-data-stored-in-buffer (key-src)
   "True if we store but-data in the buffer rather than in a file."
-  ;; Drafts of mail messages now have a buffer-file-name since they
+  ;; Drafts of mail messages now have a `buffer-file-name' since they
   ;; are temporarily saved to a file until sent.  But but-data still
   ;; should be stored in the mail buffer itself, so check explicitly
   ;; whether is a mail composition buffer in such cases.
   (or (hmail:mode-is-p)
       (and (get-buffer key-src)
            (set-buffer key-src)
-	   (not buffer-file-name))))
+	   (not (hypb:buffer-file-name)))))
 
 (defun hbdata:to-entry-in-buffer (create)
   "Move point to end of line in but data in current buffer.
@@ -541,7 +541,7 @@ a button instance string to append to button label or t when first instance.
 On failure, return nil."
   (let ((cons (hbdata:ebut-build orig-lbl-key but-sym new-lbl-key))
 	entry lbl-instance)
-    (unless (or (and buffer-file-name (not (file-writable-p buffer-file-name)))
+    (unless (or (and (hypb:buffer-file-name) (not (file-writable-p (hypb:buffer-file-name))))
 		(null cons))
       (setq entry (car cons) lbl-instance (cdr cons))
       (prin1 entry (current-buffer))

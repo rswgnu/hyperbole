@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 06:34:05
-;; Last-Mod:      3-Oct-23 at 17:49:44 by Mats Lidell
+;; Last-Mod:      5-Jan-25 at 12:00:29 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -15,6 +15,12 @@
 ;;; Commentary:
 
 ;;; Code:
+;;; ************************************************************************
+;;; Other required Elisp libraries
+;;; ************************************************************************
+
+(require 'hypb)
+
 ;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************
@@ -120,7 +126,7 @@ the error.  Optional NO-SAVE disables saving of the map after operation."
 		   (eval form)
 		   (cond (no-save
 			  t)
-			 ((file-writable-p buffer-file-name)
+			 ((file-writable-p (hypb:buffer-file-name))
 			  (save-buffer)
 			  t)
 			 (t 'hbmap-not-writable))))

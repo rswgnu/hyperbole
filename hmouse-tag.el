@@ -1155,7 +1155,7 @@ Look for include file in `smart-asm-include-path' and add suffix \".ins\" or
 		 (path)
 		 (dir-list smart-asm-include-path))
 	     (goto-char opoint)
-	     (setq dir-list (cons (file-name-directory buffer-file-name)
+	     (setq dir-list (cons (file-name-directory (hypb:buffer-file-name))
 				  dir-list))
 	     (if (string-match "\\." file)
 		 (setq file (regexp-quote file))
@@ -1203,7 +1203,7 @@ Look for include file in `smart-c-cpp-include-path' and in directory list
 	  (goto-char opoint)
 	  (setq dir-list (if (eq incl-type ?<)
 			     (append dir-list smart-c-cpp-include-path)
-			   (cons (file-name-directory buffer-file-name)
+			   (cons (file-name-directory (hypb:buffer-file-name))
 				 dir-list)))
 	  (while dir-list
 	    (setq path (expand-file-name file (car dir-list))
@@ -1326,7 +1326,7 @@ package for class and feature lookups."
   ;; fairly bad form anyway.
   ;;
   (let ((opoint (point)))
-    (if (and (memq major-mode '(java-mode java-ts-mode)) buffer-file-name
+    (if (and (memq major-mode '(java-mode java-ts-mode)) (hypb:buffer-file-name)
 	     (fboundp 'br-env-load)
 	     (or (looking-at "@see[ \t]+")
 		 (and (re-search-backward "[@\n\r\f]" nil t)

@@ -42,7 +42,7 @@
       (hypb:error "Point must be at a Hyperbole button"))
     (make-hui-register-but
      :label label
-     :file (buffer-file-name)
+     :file (hypb:buffer-file-name)
      :mpos (point-marker)
      :link (if ebut-label 'link-to-ebut 'link-to-ibut))))
 
