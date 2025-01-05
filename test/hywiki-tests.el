@@ -53,7 +53,7 @@
         (should-not (cdr (hywiki-add-page "notawikiword")))
       (hy-delete-dir-and-buffer hywiki-directory))))
 
-(ert-deftest hywiki-tests--action-key-on-hy-wikiword-displays-page ()
+(ert-deftest hywiki-tests--action-key-on-hywikiword-displays-page ()
   "Verify `action-key' on a prefixed WikiWord, outside of hywiki-directory, creates a new page."
   (let ((hsys-org-enable-smart-keys t)
         (hywiki-directory (make-temp-file "hywiki" t))
@@ -68,7 +68,7 @@
       (hy-delete-file-and-buffer (expand-file-name wikifile hywiki-directory))
       (hy-delete-dir-and-buffer hywiki-directory))))
 
-(ert-deftest hywiki-tests--assist-key-on-hy-wikiword-displays-help ()
+(ert-deftest hywiki-tests--assist-key-on-hywikiword-displays-help ()
   "Verify `assist-key' on a prefixed WikiWord, outside of hywiki-directory, displays help for the WikiWord link."
   (let ((hsys-org-enable-smart-keys t)
         (hywiki-directory (make-temp-file "hywiki" t)))
