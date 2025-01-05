@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      4-Jan-25 at 20:05:31 by Bob Weiner
+;; Last-Mod:      5-Jan-25 at 01:12:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2119,8 +2119,9 @@ If a new button is created, store its attributes in the symbol,
 
 	      (when (and lbl-key (eq actype #'hywiki-find-referent))
 		;; If a HyWikiWord ibut, save its referent as an attribute
-		(hattr:set 'hbut:current 'referent (hywiki-get-referent lbl-key)))
-
+		(let ((referent (hywiki-get-referent lbl-key)))
+		  (hattr:set 'hbut:current 'referent-type (car referent))
+		  (hattr:set 'hbut:current 'referent-value (cdr referent))))
 	      (when lbl-key
 		(when (called-interactively-p 'any)
 		  (let (help-window-select)
@@ -2327,16 +2328,21 @@ If LABEL is a list, it is assumed to contain all arguments.
 For legacy reasons, the label here is actually the text of the
 implicit button matched contextually and never the optional <[name]>
 preceding the text."
-  (cond ((stringp label)
-	 (hattr:set 'hbut:current 'lbl-key (hbut:label-to-key label))
-	 (when start (hattr:set    'hbut:current 'lbl-start start))
-	 (when end   (hattr:set    'hbut:current 'lbl-end   end)))
-	((and label (listp label))
-	 (hattr:set 'hbut:current 'lbl-key (hbut:label-to-key (car label)))
-	 (hattr:set 'hbut:current 'lbl-start (nth 1 label))
-	 (hattr:set 'hbut:current 'lbl-end (nth 2 label)))
-	(t (error "(ibut:label-set): Invalid label arg: `%s'" label)))
-  label)
+  (save-match-data
+    (cond ((stringp label)
+	   (hattr:set 'hbut:current 'loc (save-excursion
+					   (hbut:to-key-src 'full)))
+	   (hattr:set 'hbut:current 'lbl-key (hbut:label-to-key label))
+	   (when start (hattr:set    'hbut:current 'lbl-start start))
+	   (when end   (hattr:set    'hbut:current 'lbl-end   end)))
+	  ((and label (listp label))
+	   (hattr:set 'hbut:current 'loc (save-excursion
+					   (hbut:to-key-src 'full)))
+	   (hattr:set 'hbut:current 'lbl-key (hbut:label-to-key (car label)))
+	   (hattr:set 'hbut:current 'lbl-start (nth 1 label))
+	   (hattr:set 'hbut:current 'lbl-end (nth 2 label)))
+	  (t (error "(ibut:label-set): Invalid label arg: `%s'" label)))
+    label))
 
 (defun    ibut:label-sort-keys (lbl-keys)
   "Return a sorted list of ibutton LBL-KEYS with highest instance number first."

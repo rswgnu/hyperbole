@@ -9,7 +9,7 @@
 ;; Maintainer:   Robert Weiner <rsw@gnu.org>
 ;; Maintainers:  Robert Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:      06-Oct-92 at 11:52:51
-;; Last-Mod:     11-Nov-24 at 00:03:01 by Bob Weiner
+;; Last-Mod:      5-Jan-25 at 00:55:48 by Bob Weiner
 ;; Released:     10-Mar-24
 ;; Version:      9.0.2pre
 ;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -309,9 +309,17 @@ of the commands."
     ;; of unit selected each time.
     (hkey-maybe-set-key "\C-c\C-m" #'hui-select-thing)
     ;;
-    ;; Override the {M-w} command from "simple.el" when hyperbole-mode is active
-    ;; to allow copying delimited things, kcell references or regions to the kill ring.
-    (hkey-set-key [remap kill-ring-save] #'hui-kill-ring-save)
+    ;; Override the {C-w} command from either "completion.el" or
+    ;; "simple.el" when hyperbole-mode is active to allow killing
+    ;; kcell references, active regions and delimited areas (like
+    ;; sexpressions).
+    (hkey-set-key [remap completion-kill-region] #'hui-kill-region)
+    (hkey-set-key [remap kill-region]            #'hui-kill-region)
+    ;;
+    ;; Override the {M-w} command from "simple.el" when hyperbole-mode
+    ;; is active to allow copying delimited things, kcell references
+    ;; or regions to the kill ring.
+    (hkey-set-key [remap kill-ring-save]         #'hui-kill-ring-save)
     ;;
     ;; Override the {C-x r s} command from "register.el" when hyperbole-mode is active
     ;; to allow copying delimited things, kcell references or regions to a register.

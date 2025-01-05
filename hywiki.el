@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:      4-Jan-25 at 16:36:48 by Bob Weiner
+;; Last-Mod:      4-Jan-25 at 22:24:25 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1136,8 +1136,9 @@ an existing or new HyWikiWord."
       (setq wikiword (hywiki-word-read-new "Find HyWiki page: ")))
     (let ((file (hywiki-get-file (or file-name wikiword))))
       (funcall hywiki-display-page-function file)
-      ;; Set 'referent attribute of current implicit button
-      (hattr:set 'hbut:current 'referent (cons 'page file))
+      ;; Set referent attributes of current implicit button
+      (hattr:set 'hbut:current 'referent-type 'page)
+      (hattr:set 'hbut:current 'referent-value file)
       file)))
 
 (defun hywiki-add-path-link (wikiword &optional file pos)
