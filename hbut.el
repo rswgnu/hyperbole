@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     26-Dec-24 at 13:22:18 by Bob Weiner
+;; Last-Mod:      4-Jan-25 at 20:05:31 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1848,9 +1848,9 @@ button text (not name); without these, try a series of matching
 delimiters (double quotes, angle brackets, braces and square
 brackets).
 
-This will not set the \\='name attribute unless there is a <[name]>
-prefix.  This will not set the \\='lbl-key or the \\='lbl-end location
-attribute unless the button text is delimited.
+This will not set any button attributes aside from \\='lbl-start
+unless valid button text is found and is delimited.  For example,
+this will return nil on a non-delimited pathname implicit button.
 
 Any implicit button name must contain at least two characters,
 excluding delimiters, not just one."
@@ -1900,9 +1900,9 @@ excluding delimiters, not just one."
 	      ;; Remove any HyWiki org-link-type prefix
 	      (setq lbl-key (substring lbl-key 3)
 		    lbl-start (+ lbl-start (length hywiki-org-link-type) 1))))
-	  (hattr:set 'hbut:current   'loc (save-excursion
-					    (hbut:to-key-src 'full)))
 	  (when lbl-start
+	    (hattr:set 'hbut:current   'loc (save-excursion
+					      (hbut:to-key-src 'full)))
 	    (hattr:set 'hbut:current 'categ 'implicit)
 	    (hattr:set 'hbut:current 'lbl-key lbl-key)
 	    (hattr:set 'hbut:current 'lbl-start lbl-start)
@@ -1927,15 +1927,15 @@ excluding delimiters, not just one."
 		    name-start     (nth 1 name-start-end)
 		    name-end       (nth 2 name-start-end))))
 
-	  (when name
+	  (when (and lbl-start name)
 	    (hattr:set 'hbut:current 'name name))
-	  (when (and name-start name-end)
+	  (when (and lbl-start name-start name-end)
 	    (hattr:set 'hbut:current 'name-start name-start)
 	    (hattr:set 'hbut:current 'name-end name-end))
-	  (when (or lbl-key name)
+	  (when lbl-start
 	    t))
       (goto-char opoint)
-      (setq opoint nil))))
+      (set-marker opoint nil))))
 
 (cl-defun ibut:create (&optional &key but-sym name lbl-key lbl-start lbl-end
 				 loc dir categ actype args action)
