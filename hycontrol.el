@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:     10-Nov-24 at 14:57:49 by Bob Weiner
+;; Last-Mod:      4-Jan-25 at 21:04:54 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -130,7 +130,8 @@
 ;; Avoid any potential library name conflict by giving the load directory.
 (require 'set (expand-file-name "set" hyperb:dir))
 (eval-and-compile
-  (require 'framemove nil t) ;; Elpa package
+  ;; Get from: https://github.com/emacsmirror/framemove/blob/master/framemove.el
+  (require 'framemove nil t)
   (require 'windmove))
 ;; Frame face enlarging/shrinking (zooming) requires this separately available library.
 ;; Everything else works fine without it, so don't make it a required dependency.
@@ -1538,7 +1539,11 @@ Heights are given in screen percentages by the list
 
 ;;; Move among frames
 (defun hycontrol-framemove-direction (direction)
-  (hypb:require-package 'framemove)
+  ;; The framemove package is no longer available via a package archive;
+  ;; it must be installed manually if you want to use this function.
+  (unless (featurep 'framemove)
+    (error "(hycontrol-framemove-direction): Requires manual installation of:\n  %s"
+	   "https://github.com/emacsmirror/framemove/blob/master/framemove.el"))
   (fm-next-frame direction))
 
 (defun hycontrol-framemove-up ()

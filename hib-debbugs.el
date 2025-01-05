@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Jun-16 at 14:24:53
-;; Last-Mod:     30-Jun-24 at 03:16:07 by Bob Weiner
+;; Last-Mod:      4-Jan-25 at 21:57:09 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -118,11 +118,11 @@ Note that `issue' or `debbugs' may be used as well in place of `bug'."
 		       (match-beginning 1) (match-end 2))
 		      (match-beginning 1)
 		      (match-end 2))
-      (if (and (match-beginning 3) (string-equal "?" (match-string 3)))
+      (if (and (match-beginning 3) (string-equal "?" (match-string-no-properties 3)))
 	  (hact 'debbugs-gnu-query:string (buffer-substring-no-properties
 					   (or (match-beginning 1) (match-beginning 2))
 					   (match-end 4)))
-	(hact 'debbugs-gnu-query (string-to-number (match-string 2)))))))
+	(hact 'debbugs-gnu-query (string-to-number (match-string-no-properties 2)))))))
 
 (defact debbugs-gnu-query (id)
   "Display the discussion of Gnu debbugs ID (a positive integer)."
@@ -237,8 +237,8 @@ attributes."
 	  (skip-chars-backward " \t\n\r\f")
 	  (skip-chars-backward "bugdiseBUGDISE#") ;; bug, debbugs or issue
 	  ;; Allow for bug#222?package=hyperbole&severity=high as well as bug222, or bug#222.
-	  (or (looking-at "[ \t\n\r\f]*\\(bug#?\\|debbugs#?\\|issue#?\\)[ \t\n\r\f]*#?\\([1-9][0-9]*\\)?\\(\\?\\)\\([a-z=&0-9%;()]+\\)")
-	      (looking-at "[ \t\n\r\f]*\\(bug#?\\|debbugs#?\\|issue#?\\)[ \t\n\r\f]*#?\\([1-9][0-9]*\\)[\].,;?:!\)\>\}]?\\([ \t\n\r\f]\\|\\'\\)"))))))
+	  (or (looking-at "\\<\\(bug#?\\|debbugs#?\\|issue#?\\)[ \t\n\r\f]*#?\\([1-9][0-9]*\\)?\\(\\?\\)\\([a-z=&0-9%;()]+\\)\\>")
+	      (looking-at "\\<\\(bug#?\\|debbugs#?\\|issue#?\\)[ \t\n\r\f]*#?\\([1-9][0-9]*\\)\\>\\(\\)\\(\\)"))))))
 	      ;; Ignore matches like  #222, so this is not confused with "hib-social.el" social references.
 	      ;; (looking-at "[ \t\n\r\f]*\\(bug\\|debbugs\\|issue\\)?[ \t\n\r\f]*#\\([1-9][0-9]*\\)[\].,;?!\)\>\}]?\\([ \t\n\r\f]\\|\\'\\)")
 

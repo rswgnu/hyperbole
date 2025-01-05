@@ -1,4 +1,25 @@
+2025-01-05  Bob Weiner  <rsw@gnu.org>
+
+* hyperbole.el (hkey-initialize): Override {C-w} in 'hyperbole-mode-map'
+    as has long been done with {M-w}.
+  hui.el (hui:kill-region, hui-kill-region): Add to kill delimited things
+    at point without the need to visually select them.
+
 2025-01-04  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:create):
+  hywiki.el (hywiki-display-page):
+  hbdata.el (hbdata:ebut-build): Change referent to referent-type and
+    referent-value.
+
+* hbut.el (ibut:label-set): Set 'loc attribute and 'save-match-data'.
+
+* hib-debbugs.el (debbugs-query:at-p): Simplify to use word separators
+    and thus support double quoted "bug#123".
+
+* hycontrol.el (hycontrol-framemove-direction): If "framemove.el" is not
+    manually installed (no package available), trigger an error that shows
+    where to get it from.
 
 * hbut.el (ibut:set-name-and-label-key-p): Revert some changes to avoid
     failures in recognition of ibuttons.
