@@ -1,5 +1,22 @@
 2025-01-05  Bob Weiner  <rsw@gnu.org>
 
+* hywiki.el (hywiki-org-link-resolve, hywiki-org-link-export): Handle
+    :Lnum:Cnum at the end of a link.
+    (hywiki--add-section-to-referent): Rename to 'hywiki--add-suffix-to-referent'.
+    (hywiki-get-referent, hywiki-display-referent): Handle :Lnum:Cnum at the end
+      of a HyWikiWord reference.
+    (hywiki-word-suffix-regexp): Add.
+    (hywiki-word-with-optional-spaces-section-exact-regexp): Add.
+    (hywiki-word-*-section-*-regexp): Rename to 'hywiki-word-*-suffix-*-regexp'.
+
+* hui-mini.el (hui:menu-hyperbole-prefix): Remove outer 'kbd' call so returned
+    value stays as a string.
+              (hui:menu-this-command-keys): Add to produce a string sequence
+    of keys that invoke a Hyperbole menu command.
+              (hui:menu-act, hui:menu-choose, hui:menu-item): Fix bug#75380
+    by handling when 'hyperbole' command is bound to a non-string key.  Allow
+    'hui:menu-items' to be a vector rather than only a string.
+
 * hypb.el: Add 'hypb:buffer-file-name' to handle indirect buffers whose
     file name is only in its base buffer and replace all uses of the
     variable 'buffer-file-name' with this call.  This allows creation

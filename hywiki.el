@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:      5-Jan-25 at 11:17:55 by Bob Weiner
+;; Last-Mod:      6-Jan-25 at 20:27:04 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -442,7 +442,7 @@ non-# and non-whitespace characters.")
   "Group 2 is the 1-based line number.
 Group 4 is the optional 0-based column number.")
 
-(defconst hywiki-word-with-optional-section-regexp
+(defconst hywiki-word-with-optional-suffix-regexp
   (concat hywiki-word-regexp hywiki-word-section-regexp "?"
 	  hywiki-word-line-and-column-numbers-regexp "?")
   "Regexp for a HyWiki word with an optional #section, :Lline-num, :Ccol-num.
@@ -456,7 +456,20 @@ file-based referents (relative to any section given).
 Group 6 is any optional 0-based column number to jump to for any
 file-based referents.")
 
-(defconst hywiki-word-with-optional-section-exact-regexp
+(defconst hywiki-word-with-optional-spaces-suffix-exact-regexp
+  (concat "\\`" hywiki-word-with-optional-suffix-regexp "\\'")
+  "Exact regexp for a HyWiki word with optional #section, :Lline-num, :Ccol-num.
+Section may not contain whitespace or square brackets.  Use '-' to
+substitute for spaces in the section/headline name.
+
+Group 1 is the HyWiki word.
+Group 2 is any optional #section with the # included.
+Group 4 is any optional 1-based line number to jump to for any
+file-based referents (relative to any section given).
+Group 6 is any optional 0-based column number to jump to for any
+file-based referents.")
+
+(defconst hywiki-word-with-optional-suffix-exact-regexp
   (concat "\\`" hywiki-word-regexp "\\(#[^][\n\r\f]+\\)?"
 	  hywiki-word-line-and-column-numbers-regexp "?\\'")
   "Exact match regexp for a HyWiki word with an optional #section.
@@ -470,6 +483,11 @@ Group 4 is any optional 1-based line number to jump to for any
 file-based referents (relative to any section given).
 Group 6 is any optional 0-based column number to jump to for any
 file-based referents.")
+
+(defconst hywiki-word-suffix-regexp "\\(#\\|::\\|:L\\)\\(.+\\)\\'"
+  "Regexp matching any trailing part of a HyWikiWord reference.
+It may be a section or a line number reference.  Group one is the type
+of reference and group two is the rest of the suffix reference.")
 
 (defface hywiki--word-face
   '((((min-colors 88) (background dark)) (:foreground "orange"))
@@ -666,19 +684,15 @@ After successfully finding a page and reading it into a buffer, run
 	    (unless (hypb:buffer-file-name)
 	      (error "(hywiki-display-referent): No `wikiword' given; buffer must have an attached file"))
 	    (setq wikiword (file-name-sans-extension (file-name-nondirectory (hypb:buffer-file-name)))))
-	  (let* ((section (when (string-match "#[^#]+$" wikiword)
-			    (substring wikiword (1+ (match-beginning 0)))))
-		 (htable-referent (cond (prompt-flag
+	  (let* ((suffix (when (string-match hywiki-word-suffix-regexp wikiword)
+			   (substring wikiword (match-beginning 0))))
+		 (referent (cond (prompt-flag
 					 (hywiki-add-prompted-referent wikiword))
 					((hywiki-get-referent wikiword))
-					(t (hywiki-add-page wikiword))))
-		 referent)
- 	    ;; HyWikiWord instance may contain a section that must be
-	    ;; added to the referent value.
-	    (if (not (setq referent (hywiki--add-section-to-referent
-				     section htable-referent)))
+					(t (hywiki-add-page wikiword)))))
+	    (if (not referent)
 		(error "(hywiki-display-referent): Invalid `%s' referent: %s"
-		       wikiword htable-referent)
+		       wikiword referent)
  	      ;; Ensure highlight any page name at point in case called as a
 	      ;; Hyperbole action type
 	      (hywiki-maybe-highlight-page-name t)
@@ -756,7 +770,7 @@ After successfully finding a page and reading it into a buffer, run
 	 (hui:menu-act 'hywiki-referent-menu
 		       (list (cons 'hywiki-referent-menu
 				   (cons (list (format "%s RefType>"
-						       (if (string-match "#[^#]+$" wikiword)
+						       (if (string-match hywiki-word-suffix-regexp wikiword)
 							   (substring wikiword 0 (match-beginning 0))
 							 wikiword)))
 					 (cdr hywiki-referent-menu)))))))
@@ -765,9 +779,9 @@ After successfully finding a page and reading it into a buffer, run
 	  (user-error "(hywiki-add-prompted-referent): Invalid HyWikiWord: '%s'; must be capitalized, all alpha" wikiword)))))
 
 (defun hywiki-add-referent (wikiword referent)
-  "Add WIKIWORD (sans any #section) that displays REFERENT to HyWiki.
+  "Add WIKIWORD (sans any suffix) that displays REFERENT to HyWiki.
 Return REFERENT if WIKIWORD is of valid format, otherwise return nil.
-REFERENT must be a cons of (<referent-type) . <referent-value>) or
+REFERENT must be a cons of (<referent-type> . <referent-value>) or
 an error is triggered."
   (hywiki-validate-referent referent)
   (when (hywiki-word-is-p wikiword)
@@ -2036,8 +2050,8 @@ value returns nil."
   (unless (or (null file-stem-name) (string-empty-p file-stem-name))
     (let (file-name
 	  section)
-      ;; Remove any #section from `file-stem-name' and make it singular
-      (if (string-match "#[^#]+$" file-stem-name)
+      ;; Remove any suffix from `file-stem-name' and make it singular
+      (if (string-match hywiki-word-suffix-regexp file-stem-name)
 	  (setq section (match-string 0 file-stem-name)
 		file-name (hywiki-get-singular-wikiword
 			   (substring file-stem-name 0 (match-beginning 0))))
@@ -2051,19 +2065,19 @@ value returns nil."
   "Return the referent of HyWiki WIKIWORD or nil if it does not exist.
 If it is a pathname, expand it relative to `hywiki-directory'."
   (when (and (stringp wikiword) (not (string-empty-p wikiword))
-	     (string-match hywiki-word-with-optional-section-exact-regexp wikiword))
-    (let* ((section (cond ((match-beginning 2)
-			   (prog1 (substring wikiword (1+ (match-beginning 2)))
-			     ;; Remove any #section suffix in `wikiword'.
-			     (setq wikiword (match-string-no-properties 1 wikiword))))
-			  ((match-beginning 4)
-			   (prog1 (substring wikiword (match-beginning 4))
-			     ;; Remove any :Lnum:Cnum suffix in `wikiword'.
-			     (setq wikiword (match-string-no-properties
-					     1 wikiword))))))
+	     (string-match hywiki-word-with-optional-suffix-exact-regexp wikiword))
+    (let* ((suffix (cond ((match-beginning 2)
+			  (prog1 (substring wikiword (match-beginning 2))
+			    ;; Remove any #section suffix in `wikiword'.
+			    (setq wikiword (match-string-no-properties 1 wikiword))))
+			 ((match-beginning 4)
+			  (prog1 (substring wikiword (match-beginning 4))
+			    ;; Remove any :Lnum:Cnum suffix in `wikiword'.
+			    (setq wikiword (match-string-no-properties
+					    1 wikiword))))))
 	   (referent (hash-get (hywiki-get-singular-wikiword wikiword)
 			       (hywiki-get-referent-hasht))))
-      (hywiki--add-section-to-referent section referent))))
+      referent)))
 
 (defun hywiki-get-page-files ()
   "Return the list of existing HyWiki page file names.
@@ -2242,25 +2256,23 @@ If not found, set it up and return the new project properties."
   "Export a HyWikiWord Org-format `hy:' link to various formats.
 The LINK, DESCRIPTION, and FORMAT are provided by the export
 backend."
-  (let* ((path-word-section (hywiki-org-link-resolve link :full-data))
-         (path (when path-word-section
-		 (file-relative-name (nth 0 path-word-section))))
+  (let* ((path-word-suffix (hywiki-org-link-resolve link :full-data))
+         (path (when path-word-suffix
+		 (file-relative-name (nth 0 path-word-suffix))))
          (path-stem (when path
 		      (file-name-sans-extension path)))
-         (word (when path-word-section
-		 (nth 1 path-word-section)))
-         (section (when path-word-section
-		    (nth 2 path-word-section)))
+         (word (nth 1 path-word-suffix))
+         (suffix (nth 2 path-word-suffix))
          (desc (cond (description)
-                     (section (when word
-				(format "%s#%s" word section)))
+                     (suffix (when word
+			       (format "%s%s" word suffix)))
                      (word)
 		     (t ""))))
     (if path
 	(pcase format
 	  (`ascii (format "[%s] <%s:%s>" hywiki-org-link-type desc path))
 	  (`html (format "<a href=\"%s.html%s\">%s</a>"
-			 path-stem (if section (concat "#" section) "")
+			 path-stem (or suffix "")
 			 desc))
 	  (`latex (format "\\href{%s}{%s}" (replace-regexp-in-string "[\\{}$%&_#~^]" "\\\\\\&" path) desc))
 	  (`md (format "[%s](%s)" desc path))
@@ -2269,18 +2281,21 @@ backend."
       link)))
 
 (defun hywiki-org-link-resolve (link &optional full-data)
-  "Resolve HyWiki word LINK to page, with or without additional section.
+  "Resolve HyWiki word LINK to page.
+Link may end with optional suffix of the form: (#|::)section:Lnum:Cnum.
 With optional FULL-DATA non-nil, return a list in the form of (filename
-word section); otherwise, with a section, return filename::section and
-without a section, return just filename.  Filename excludes the path.
-If page is not found, return nil."
+word suffix); otherwise, with a section, return filename::section, with
+just line and optionally column numbers, return filename:Lnum:Cnum and
+without any suffix, return just the filename.  Filename excludes the path.
+If the page is not found, return nil."
   (when (stringp link)
     (when (string-match (concat "\\`" hywiki-org-link-type ":") link)
       ;; Remove hy: link prefix
       (setq link (substring link (match-end 0))))
-    (let* ((section (and (string-match "\\(#\\|::\\)\\(.*\\)\\'" link)
-			 (match-string 2 link)))
-           (word (if (and section (not (string-empty-p section)))
+    (let* ((suffix-type (and (string-match hywiki-word-suffix-regexp link)
+			     (match-string 1 link)))
+	   (suffix (and suffix-type (match-string 2 link)))
+           (word (if (and suffix (not (string-empty-p suffix)))
                      (substring link 0 (match-beginning 0))
 		   link))
            (referent (and word (hywiki-get-referent word)))
@@ -2288,9 +2303,11 @@ If page is not found, return nil."
       (when (stringp filename)
 	(cond
 	 (full-data
-	  (list filename word section))
-	 ((and section (not (string-empty-p section)))
-	  (concat filename "::" section))
+	  (list filename word (concat suffix-type suffix)))
+	 ((and suffix (not (string-empty-p suffix)))
+	  (if (equal suffix-type ":L")
+	      (concat filename suffix-type suffix)
+	    (concat filename "::" suffix)))
 	 (t filename))))))
 
 (defun hywiki-org-link-store ()
@@ -2339,7 +2356,7 @@ variables."
   "Return PAGE-NAME with any optional #section:Lnum:Cnum stripped off.
 If an empty string or not a string, return nil."
   (when (and (stringp page-name) (not (string-empty-p page-name)))
-    (if (and (string-match hywiki-word-with-optional-section-exact-regexp page-name)
+    (if (and (string-match hywiki-word-with-optional-suffix-exact-regexp page-name)
 	     (or (match-beginning 2) (match-beginning 4)))
 	;; Remove any #section:Lnum:Cnum suffix in PAGE-NAME.
 	(match-string-no-properties 1 page-name)
@@ -2525,7 +2542,7 @@ or this will return nil."
 				   end (match-end 1)
 				   wikiword (string-trim
 					     (buffer-substring-no-properties start end))))
-			    ((looking-at (concat hywiki-word-with-optional-section-regexp "\\'"))
+			    ((looking-at (concat hywiki-word-with-optional-suffix-regexp "\\'"))
 			     (setq start (match-beginning 0)
 				   end   (match-end 0)
 				   ;; No following char
@@ -2555,7 +2572,7 @@ Search across `hywiki-directory'."
 		       " "))))
 
 (defun hywiki-word-is-p (word)
-  "Return non-nil if WORD is a HyWiki word and optional #section.
+  "Return non-nil if WORD is a HyWiki word and optional #section:Lnum:Cnum.
 WORD may not yet have a referent (non-existent).  Use `hywiki-get-referent'
 to determine whether a HyWikiWord referent exists. 
 
@@ -2563,8 +2580,9 @@ Return nil if WORD is a prefixed, typed hy:HyWikiWord, since
 these are handled by the Org mode link handler."
   (and (stringp word) (not (string-empty-p word))
        (let (case-fold-search)
-	 (or (string-match hywiki-word-with-optional-section-exact-regexp word)
-	     (eq (string-match (concat "\\`" hywiki-word-with-optional-section-regexp "\\'") word)
+	 (or (string-match hywiki-word-with-optional-suffix-exact-regexp word)
+	     ;; For now this next version allows spaces and tabs in the suffix part
+	     (eq (string-match hywiki-word-with-optional-spaces-suffix-exact-regexp word)
 		 0)))))
 
 (defun hywiki-word-read (&optional prompt)
@@ -2614,28 +2632,30 @@ Highlight/dehighlight HyWiki page names across all frames on change."
 ;;; Private functions
 ;;; ************************************************************************
 
-(defun hywiki--add-section-to-referent (section referent)
-  "Add #SECTION to REFERENT's value and return REFERENT.
-SECTION excludes # prefix  Return nil if any input is invalid."
-  (if (or (null section) (and (stringp section) (string-empty-p section)))
-      referent
-    (when (consp referent)
-      (let ((referent-type (car referent))
-	    (referent-value (cdr referent)))
-	(when (and (symbolp referent-type) referent-value)
-	  (if (and (stringp section)
-		   (stringp referent-value)
-		   (memq referent-type '(page path-link))
-		   (not (seq-contains-p referent-value ?# #'=)))
-	      ;; Need to insert #section into referent's value
-	      (progn
-		(if (string-match hpath:line-and-column-regexp referent-value)
-		    (setq referent-value (concat (substring 0 (match-beginning 0))
-						 "#" section
-						 (match-string 0 referent-value)))
-		  (setq referent-value (concat referent-value "#" section)))
-		(cons referent-type referent-value))
-	    referent))))))
+;; (defun hywiki--add-suffix-to-referent (suffix referent)
+;;   "Add SUFFIX to REFERENT's value and return REFERENT.
+;; SUFFIX includes its type prefix, e.g. #.  Return nil if any input is
+;; invalid."
+;;   (if (or (null suffix) (and (stringp suffix) (string-empty-p suffix)))
+;;       referent
+;;     (when (consp referent)
+;;       (let ((referent-type (car referent))
+;; 	    (referent-value (cdr referent)))
+;; 	(when (and (symbolp referent-type) referent-value)
+;; 	  (if (and (stringp suffix)
+;; 		   (stringp referent-value)
+;; 		   (memq referent-type '(page path-link))
+;; 		   (not (seq-contains-p referent-value ?# #'=)))
+;; 	      ;; Need to insert #suffix into referent's value
+;; 	      (progn
+;; 		(setq referent-value
+;; 		      (if (string-match hpath:line-and-column-regexp referent-value)
+;; 			  (concat (substring 0 (match-beginning 0))
+;; 				  suffix
+;; 				  (match-string 0 referent-value))
+;; 			(concat referent-value suffix)))
+;; 		(cons referent-type referent-value))
+;; 	    referent))))))
 
 (defun hywiki--get-delimited-range-backward ()
   "Return a list of (start end) if not between/after end ]] or >>.
@@ -2728,7 +2748,7 @@ DIRECTION-NUMBER is 1 for forward scanning and -1 for backward scanning."
 		(regexp-quote (substring hywiki--buttonize-characters 2))
 		"]\\|$\\)")
 	hywiki--word-and-buttonize-character-regexp
-	(concat "\\(" hywiki-word-with-optional-section-regexp "\\)"
+	(concat "\\(" hywiki-word-with-optional-suffix-regexp "\\)"
 		hywiki--buttonize-character-regexp)))
 
 ;;; ************************************************************************
