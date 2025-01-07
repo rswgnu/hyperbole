@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     13-Jul-24 at 23:42:26 by Mats Lidell
+;; Last-Mod:      9-Jan-25 at 23:03:37 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1171,6 +1171,120 @@ With point on label suggest that ibut for rename."
           (gbut:ebut-program "global" 'eval-elisp ''(should (string= current-folder default-directory)))
           (gbut:act "global"))
       (hy-delete-file-and-buffer global-but-file))))
+
+(ert-deftest hui--kill-region ()
+  "Verify `hui-kill-region'."
+  (with-temp-buffer
+    (transient-mark-mode 1)
+    (insert "123")
+    (goto-char 1)
+
+    ;; No mark set
+    (should-error (hui-kill-region) :type 'error)
+
+    (set-mark (point))
+    (hui-kill-region)
+    (should (looking-at-p "123"))
+
+    (goto-char (point-max))
+    (should (region-active-p))
+    (hui-kill-region)
+    (beginning-of-buffer)
+    (should (string= "" (buffer-string)))
+
+    (insert "123(456)789")
+    (goto-char 1)
+    (set-mark (point))
+    (goto-char 4)
+    (deactivate-mark)
+    (should-not (region-active-p))
+    (funcall-interactively 'hui-kill-region)
+    (if noninteractive
+        (should (string= "(456)789" (buffer-string)))
+      (should (string= "123789" (buffer-string))))
+
+    (delete-region (point-min) (point-max))
+    (insert "123(456)789")
+    (goto-char 1)
+    (set-mark (point))
+    (goto-char 4)
+    (should (region-active-p))
+    (funcall-interactively 'hui-kill-region)
+    (should (string= "(456)789" (buffer-string)))
+
+    (delete-region (point-min) (point-max))
+    (insert "123(456)789")
+    (goto-char 1)
+    (set-mark (point))
+    (goto-char 4)
+    (deactivate-mark)
+    (should-not (region-active-p))
+    (hui-kill-region)
+    (should (string= "(456)789" (buffer-string)))
+
+    (delete-region (point-min) (point-max))
+    (insert "123(456)789")
+    (goto-char 1)
+    (set-mark (point))
+    (goto-char 4)
+    (should (region-active-p))
+    (hui-kill-region)
+    (should (string= "(456)789" (buffer-string))))
+
+  (with-temp-buffer
+    (transient-mark-mode 0)
+    (insert "123")
+    (goto-char 1)
+
+    ;; No mark set
+    (should-error (hui-kill-region) :type 'error)
+
+    (set-mark (point))
+    (hui-kill-region)
+    (should (looking-at-p "123"))
+
+    (goto-char (point-max))
+    (should-not (region-active-p))
+    (hui-kill-region)
+    (beginning-of-buffer)
+    (should (string= "" (buffer-string)))
+
+    (insert "123(456)789")
+    (goto-char 1)
+    (set-mark (point))
+    (goto-char 4)
+    (deactivate-mark)
+    (should-not (region-active-p))
+    (funcall-interactively 'hui-kill-region)
+    (should (string= "(456)789" (buffer-string)))
+
+    (delete-region (point-min) (point-max))
+    (insert "123(456)789")
+    (goto-char 1)
+    (set-mark (point))
+    (goto-char 4)
+    (should-not (region-active-p))
+    (funcall-interactively 'hui-kill-region)
+    (should (string= "(456)789" (buffer-string)))
+
+    (delete-region (point-min) (point-max))
+    (insert "123(456)789")
+    (goto-char 1)
+    (set-mark (point))
+    (goto-char 4)
+    (deactivate-mark)
+    (should-not (region-active-p))
+    (hui-kill-region)
+    (should (string= "(456)789" (buffer-string)))
+
+    (delete-region (point-min) (point-max))
+    (insert "123(456)789")
+    (goto-char 1)
+    (set-mark (point))
+    (goto-char 4)
+    (should-not (region-active-p))
+    (hui-kill-region)
+    (should (string= "(456)789" (buffer-string)))))
 
 ;; This file can't be byte-compiled without `with-simulated-input' which
 ;; is not part of the actual dependencies, so:

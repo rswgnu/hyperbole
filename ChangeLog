@@ -1,5 +1,7 @@
 2025-01-09  Mats Lidell  <matsl@gnu.org>
 
+* test/hui-tests.el (hui--kill-region): Test.
+
 * test/MANIFEST: Add hycontrol-tests.el
 
 * hycontrol.el (hycontrol-framemove-direction): Quit hycontrol before
