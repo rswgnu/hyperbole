@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:      5-Jan-25 at 11:15:09 by Bob Weiner
+;; Last-Mod:      8-Jan-25 at 22:49:42 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1542,6 +1542,7 @@ Heights are given in screen percentages by the list
   ;; The framemove package is no longer available via a package archive;
   ;; it must be installed manually if you want to use this function.
   (unless (featurep 'framemove)
+    (hycontrol-quit)
     (error "(hycontrol-framemove-direction): Requires manual installation of:\n  %s"
 	   "https://github.com/emacsmirror/framemove/blob/master/framemove.el"))
   (fm-next-frame direction))
