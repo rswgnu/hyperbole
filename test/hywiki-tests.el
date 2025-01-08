@@ -129,6 +129,7 @@
               (action-key)
               (should (string= hywiki-page-file (buffer-file-name)))
 	      (should (looking-at-p (regexp-quote v))))))
+      (hywiki-mode 0)
       (hy-delete-file-and-buffer hywiki-page-file)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
