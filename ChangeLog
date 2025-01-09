@@ -1,4 +1,6 @@
-2025-01-08  Mats Lidell  <matsl@gnu.org>
+2025-01-09  Mats Lidell  <matsl@gnu.org>
+
+* test/MANIFEST: Add hycontrol-tests.el
 
 * hycontrol.el (hycontrol-framemove-direction): Quit hycontrol before
     displaying error message.
