@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:      5-Jan-25 at 12:24:47 by Bob Weiner
+;; Last-Mod:     11-Jan-25 at 23:39:13 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -134,7 +134,7 @@ point; see `hui:delimited-selectable-thing'."
 ;; to allow killing kcell references, active regions and delimited
 ;; areas (like sexpressions).
 ;;;###autoload
-(defun hui-kill-region (&optional beg end)
+(defun hui-kill-region (&optional beg end interactive)
   "Kill between point and mark.
 The text is deleted but saved in the kill ring.
 The command \\[yank] can retrieve it from there.
@@ -148,18 +148,18 @@ If the previous command was also a kill command,
 the text killed this time appends to the text killed last time
 to make one entry in the kill ring.
 Patched to remove the most recent completion."
-  (interactive "r")
+  (interactive "r\np")
   (cond ((eq last-command 'complete)
 	 (hui:kill-region beg end))
 	((or (use-region-p)
 	     (null transient-mark-mode)
-	     (not (called-interactively-p 'interactive)))
+	     (not interactive))
 	 (unless (and beg end)
 	   (setq beg (region-beginning)
 		 end (region-end)))
 	 (hui:kill-region beg end))
 	(t (when (or (not (and beg end))
-		     (called-interactively-p 'interactive))
+                     interactive)
 	     (cond ((hui-select-delimited-thing)
 		    (setq beg (region-beginning)
 			  end (region-end)))

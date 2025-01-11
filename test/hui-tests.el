@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     11-Jan-25 at 01:10:02 by Mats Lidell
+;; Last-Mod:     11-Jan-25 at 23:40:55 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1184,8 +1184,7 @@ With point on label suggest that ibut for rename."
 
       (set-mark (point))
       (goto-char 4)
-      (mocklet ((called-interactively-p => t))
-        (funcall-interactively 'hui-kill-region (region-beginning) (region-end)))
+      (call-interactively #'hui-kill-region)
       (should (string= "{def}ghi" (buffer-string)))
 
       (erase-buffer)
@@ -1194,8 +1193,7 @@ With point on label suggest that ibut for rename."
       (set-mark (point))
       (goto-char 4)
       (deactivate-mark)
-      (mocklet ((called-interactively-p => t))
-        (funcall-interactively 'hui-kill-region (region-beginning) (region-end)))
+      (call-interactively #'hui-kill-region)
       (should (string= "abcghi" (buffer-string)))
 
       (erase-buffer)
@@ -1204,8 +1202,7 @@ With point on label suggest that ibut for rename."
       (set-mark (point))
       (goto-char 5)
       (deactivate-mark)
-      (mocklet ((called-interactively-p => t))
-        (funcall-interactively 'hui-kill-region (region-beginning) (region-end)))
+      (call-interactively #'hui-kill-region)
       (should (string= "def}ghi" (buffer-string))))
 
     (let ((transient-mark-mode nil))
@@ -1215,8 +1212,7 @@ With point on label suggest that ibut for rename."
       (set-mark (point))
       (goto-char 4)
       (deactivate-mark)
-      (mocklet ((called-interactively-p => t))
-        (funcall-interactively 'hui-kill-region (region-beginning) (region-end)))
+      (call-interactively #'hui-kill-region)
       (should (string= "{def}ghi" (buffer-string))))))
 
 ;; This file can't be byte-compiled without `with-simulated-input' which
