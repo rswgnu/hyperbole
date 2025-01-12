@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     11-Jan-25 at 23:40:55 by Mats Lidell
+;; Last-Mod:     13-Jan-25 at 00:58:15 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1180,7 +1180,7 @@ With point on label suggest that ibut for rename."
       (goto-char 1)
 
       ;; No mark set
-      (should-error (hui-kill-region) :type 'error)
+      (should-error (call-interactively #'hui-kill-region) :type 'error)
 
       (set-mark (point))
       (goto-char 4)
@@ -1209,11 +1209,37 @@ With point on label suggest that ibut for rename."
       (erase-buffer)
       (insert "abc{def}ghi")
       (goto-char 1)
+      (set-mark nil)
+
+      ;; No mark set
+      (should-error (call-interactively #'hui-kill-region) :type 'error)
+
+      (erase-buffer)
+      (insert "abc{def}ghi")
+      (goto-char 1)
+      (set-mark (point))
+      (goto-char 4)
+      (activate-mark)
+      (call-interactively #'hui-kill-region)
+      (should (string= "{def}ghi" (buffer-string)))
+
+      (erase-buffer)
+      (insert "abc{def}ghi")
+      (goto-char 1)
       (set-mark (point))
       (goto-char 4)
       (deactivate-mark)
       (call-interactively #'hui-kill-region)
-      (should (string= "{def}ghi" (buffer-string))))))
+      (should (string= "abcghi" (buffer-string)))
+
+      (erase-buffer)
+      (insert "abc{def}ghi")
+      (goto-char 1)
+      (set-mark (point))
+      (goto-char 5)
+      (deactivate-mark)
+      (call-interactively #'hui-kill-region)
+      (should (string= "def}ghi" (buffer-string))))))
 
 ;; This file can't be byte-compiled without `with-simulated-input' which
 ;; is not part of the actual dependencies, so:

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     11-Jan-25 at 23:39:13 by Mats Lidell
+;; Last-Mod:     13-Jan-25 at 00:57:43 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -133,6 +133,7 @@ point; see `hui:delimited-selectable-thing'."
 ;; either "completion.el" or "simple.el" when hyperbole-mode is active
 ;; to allow killing kcell references, active regions and delimited
 ;; areas (like sexpressions).
+
 ;;;###autoload
 (defun hui-kill-region (&optional beg end interactive)
   "Kill between point and mark.
@@ -151,22 +152,20 @@ Patched to remove the most recent completion."
   (interactive "r\np")
   (cond ((eq last-command 'complete)
 	 (hui:kill-region beg end))
-	((or (use-region-p)
-	     (null transient-mark-mode)
-	     (not interactive))
+	((and transient-mark-mode
+              (or (use-region-p)
+	          (not interactive)))
 	 (unless (and beg end)
 	   (setq beg (region-beginning)
 		 end (region-end)))
 	 (hui:kill-region beg end))
-	(t (when (or (not (and beg end))
-                     interactive)
-	     (cond ((hui-select-delimited-thing)
-		    (setq beg (region-beginning)
-			  end (region-end)))
-		   ((let ((thing-beg-end (hui:delimited-selectable-thing-and-bounds)))
-		      (when thing-beg-end
-			(setq beg (nth 1 thing-beg-end)
-			      end (nth 2 thing-beg-end)))))))
+	(t (cond ((hui-select-delimited-thing)
+		  (setq beg (region-beginning)
+			end (region-end)))
+		 ((let ((thing-beg-end (hui:delimited-selectable-thing-and-bounds)))
+		    (when thing-beg-end
+		      (setq beg (nth 1 thing-beg-end)
+			    end (nth 2 thing-beg-end))))))
 	   (when (and beg end)
 	     (hui:kill-region beg end)))))
 
