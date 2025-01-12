@@ -10,6 +10,8 @@
     tests for verifying display of pages with and without sections.
     (hywiki-tests--wikiword-identified-with-delimiters): Add test for
     WikiWord with a single hash mark.
+    (hywiki-tests--action-key-on-wikiword-and-line-column-displays-page):
+    Test line and column specifiers with WikiWords.
 
 2025-01-09  Mats Lidell  <matsl@gnu.org>
 

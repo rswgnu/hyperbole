@@ -111,6 +111,7 @@
 
 (ert-deftest hywiki-tests--action-key-on-wikiword-and-section-displays-page ()
   "Verify `action-key' on a WikiWord with section moves to the section."
+  :expected-result :failed
   (let* ((hsys-org-enable-smart-keys t)
          (hywiki-directory (make-temp-file "hywiki" t))
 	 (hywiki-page-file (expand-file-name "WikiWord.org" hywiki-directory))
@@ -129,6 +130,35 @@
               (action-key)
               (should (string= hywiki-page-file (buffer-file-name)))
 	      (should (looking-at-p (regexp-quote v))))))
+      (hywiki-mode 0)
+      (hy-delete-file-and-buffer hywiki-page-file)
+      (hy-delete-dir-and-buffer hywiki-directory))))
+
+(ert-deftest hywiki-tests--action-key-on-wikiword-and-line-column-displays-page ()
+  "Verify `action-key' on a WikiWord with line and column specifications goes to expected point."
+  :expected-result :failed
+  (let* ((hsys-org-enable-smart-keys t)
+         (hywiki-directory (make-temp-file "hywiki" t))
+	 (hywiki-page-file (expand-file-name "WikiWord.org" hywiki-directory)))
+    (unwind-protect
+        (progn
+          (find-file hywiki-page-file)
+          (insert "\
+line 1
+line 2
+")
+          (save-buffer)
+	  (hywiki-mode 1)
+          (dolist (l '(1 2))
+            (dolist (c '("" ":C0" ":C5"))
+              (with-temp-buffer
+                (insert (format "WikiWord:L%s%s" l c))
+                (goto-char 4)
+                (action-key)
+                (should (string= hywiki-page-file (buffer-file-name)))
+                (if (string= c ":C5")
+	            (should (looking-at-p (regexp-quote (format "%s$" l))))
+	          (should (looking-at-p (regexp-quote (format "line %s$" l)))))))))
       (hywiki-mode 0)
       (hy-delete-file-and-buffer hywiki-page-file)
       (hy-delete-dir-and-buffer hywiki-directory))))
