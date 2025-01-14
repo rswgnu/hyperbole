@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     13-Jan-25 at 00:57:43 by Mats Lidell
+;; Last-Mod:     13-Jan-25 at 23:34:56 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -159,6 +159,8 @@ Patched to remove the most recent completion."
 	   (setq beg (region-beginning)
 		 end (region-end)))
 	 (hui:kill-region beg end))
+        ((and (not interactive) beg end)
+         (hui:kill-region beg end))
 	(t (cond ((hui-select-delimited-thing)
 		  (setq beg (region-beginning)
 			end (region-end)))
