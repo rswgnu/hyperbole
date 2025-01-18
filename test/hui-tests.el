@@ -1,9 +1,9 @@
-;;; hui-tests.el --- tests for hui.el Hyperbole UI          -*- lexical-binding: t; -*-
+;ui-tests.el --- tests for hui.el Hyperbole UI          -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     14-Jan-25 at 14:46:42 by Mats Lidell
+;; Last-Mod:     19-Jan-25 at 00:25:05 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1282,6 +1282,59 @@ With point on label suggest that ibut for rename."
 
       (hui-kill-region (region-beginning) (region-end))
       (should (string= "def}ghi" (buffer-string))))))
+
+(ert-deftest hui--kill-region-multiple-kill ()
+  "Verify `hui-kill-region' saves to the yank ring on multiple kills.
+See test case `kill-whole-line-after-other-kill' and others in
+simple-tests.el for prior art of forcing values on `last-command'."
+  ;; Two regions
+  (with-temp-buffer
+    (let ((transient-mark-mode t))
+      (insert "123456")
+      (goto-char 2)
+      (set-mark (point))
+      (goto-char 4)
+      (call-interactively #'hui-kill-region)
+      (goto-char 2)
+      (set-mark (point))
+      (goto-char 4)
+      (setq last-command #'kill-region)
+      (call-interactively #'hui-kill-region)
+      (should (string= "16" (buffer-string)))
+      (should (string= "2345" (car kill-ring)))))
+
+  ;; Kill line followed by kill of a region
+  (with-temp-buffer
+    (let ((transient-mark-mode t))
+      (insert "\
+line 1
+1234")
+      (goto-char 1)
+      (set-mark (point))
+      (setq last-command #'ignore)
+      (kill-line 1)
+      (goto-char 2)
+      (set-mark (point))
+      (goto-char 4)
+      (setq last-command #'kill-region)
+      (call-interactively #'hui-kill-region)
+      (should (string= "14" (buffer-string)))
+      (should (string= "line 1\n23" (car kill-ring)))))
+
+  ;; Two consecutive kill thing
+  (with-temp-buffer
+    (let ((transient-mark-mode t))
+      (insert "abc{def}{ghi}jkl")
+      (goto-char 1)
+      (set-mark (point))
+      (goto-char 4)
+      (deactivate-mark)
+      (setq last-command #'ignore)
+      (call-interactively #'hui-kill-region)
+      (setq last-command #'kill-region)
+      (call-interactively #'hui-kill-region)
+      (should (string= "abcjkl" (buffer-string)))
+      (should (string= "{def}{ghi}" (car kill-ring))))))
 
 ;; This file can't be byte-compiled without `with-simulated-input' which
 ;; is not part of the actual dependencies, so:

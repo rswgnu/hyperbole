@@ -1,6 +1,9 @@
-2025-01-09  Mats Lidell  <matsl@gnu.org>
+2025-01-19  Mats Lidell  <matsl@gnu.org>
 
-* test/hui-tests.el (hui--kill-region): Test.
+* test/hui-tests.el (hui--kill-region-multiple-kill, hui--kill-region):
+    Test hui-kill-region. 
+
+2025-01-09  Mats Lidell  <matsl@gnu.org>
 
 * test/MANIFEST: Add hycontrol-tests.el
 
