@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     19-Jan-25 at 00:25:05 by Mats Lidell
+;; Last-Mod:     19-Jan-25 at 00:46:05 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -604,6 +604,7 @@ Ensure modifying the button but keeping the label does not create a double label
           (insert "a")
           (kotl-mode:newline 1)
           (insert "b")
+          (setq last-command #'ignore)
           (hui-kill-ring-save (region-beginning) (region-end))
           (should (string= (current-kill 0 t) "a\nb")))
       (hy-delete-file-and-buffer kotl-file))))
