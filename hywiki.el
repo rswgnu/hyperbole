@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     18-Jan-25 at 22:17:01 by Bob Weiner
+;; Last-Mod:     18-Jan-25 at 23:45:34 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -458,7 +458,7 @@ non-# and non-whitespace characters.")
 Group 4 is the optional 0-based column number.")
 
 (defconst hywiki-word-with-optional-suffix-regexp
-  (concat hywiki-word-regexp hywiki-word-section-regexp "?"
+  (concat hywiki-word-regexp hywiki-word-section-regexp "??"
 	  hywiki-word-line-and-column-numbers-regexp "?")
   "Regexp for a HyWiki word with an optional #section, :Lline-num, :Ccol-num.
 Section may not contain whitespace or square brackets.  Use '-' to
@@ -485,7 +485,7 @@ Group 6 is any optional 0-based column number to jump to for any
 file-based referents.")
 
 (defconst hywiki-word-with-optional-suffix-exact-regexp
-  (concat "\\`" hywiki-word-regexp "\\(#[^][\n\r\f]+\\)?"
+  (concat "\\`" hywiki-word-regexp "\\(#[^][\n\r\f]+\\)??"
 	  hywiki-word-line-and-column-numbers-regexp "?\\'")
   "Exact match regexp for a HyWiki word with an optional #section.
 The section may contain spaces or tabs but not square brackets;
@@ -2246,8 +2246,7 @@ regexps of wikiwords, if the hash table is out-of-date."
 			    (delq nil (nconc wikiword-sublist
 					     (mapcar #'hywiki-get-plural-wikiword wikiword-sublist))))
 		      (concat (regexp-opt wikiword-sublist 'words)
-			      "\\("
-			      hywiki-word-section-regexp "?\\)"
+			      "\\(" hywiki-word-section-regexp "??" hywiki-word-line-and-column-numbers-regexp "?" "\\)"
 			      hywiki--buttonize-character-regexp))
 		    (hypb:split-seq-into-sublists
 		     (hash-map #'cdr hywiki--referent-hasht) 25)))

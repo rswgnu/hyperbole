@@ -1,5 +1,9 @@
 2025-01-18  Bob Weiner  <rsw@gnu.org>
 
+* hywiki.el (hywiki-get-referent-hasht): Fix when building
+    'hywiki--any-wikiword-regexp-list', allow for either or both #section
+    and :Lnum:Cnum.  This fixes not highlighting "WikiWord:L2".
+
 * hyrolo.el (hyrolo-refresh-file-list): Add to refresh internal expanded list
     of HyRolo search files.
   test/hyrolo-tests.el (hyrolo-tests--get-file-list): Fix this test by using
