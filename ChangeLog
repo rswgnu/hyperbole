@@ -1,3 +1,8 @@
+2025-01-19  Mats Lidell  <matsl@gnu.org>
+
+* test/hui-tests.el (hui--kill-region-multiple-kill, hui--kill-region):
+    Test hui-kill-region. 
+
 2025-01-18  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-get-referent-hasht): Fix when building

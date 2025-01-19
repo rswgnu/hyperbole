@@ -1,9 +1,9 @@
-;;; hui-tests.el --- tests for hui.el Hyperbole UI          -*- lexical-binding: t; -*-
+;ui-tests.el --- tests for hui.el Hyperbole UI          -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     13-Jul-24 at 23:42:26 by Mats Lidell
+;; Last-Mod:     19-Jan-25 at 00:46:05 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -604,6 +604,7 @@ Ensure modifying the button but keeping the label does not create a double label
           (insert "a")
           (kotl-mode:newline 1)
           (insert "b")
+          (setq last-command #'ignore)
           (hui-kill-ring-save (region-beginning) (region-end))
           (should (string= (current-kill 0 t) "a\nb")))
       (hy-delete-file-and-buffer kotl-file))))
@@ -1171,6 +1172,170 @@ With point on label suggest that ibut for rename."
           (gbut:ebut-program "global" 'eval-elisp ''(should (string= current-folder default-directory)))
           (gbut:act "global"))
       (hy-delete-file-and-buffer global-but-file))))
+
+(ert-deftest hui--kill-region ()
+  "Verify `hui-kill-region'."
+  (with-temp-buffer
+    (let ((transient-mark-mode t))
+      (insert "abc{def}ghi")
+      (goto-char 1)
+      (set-mark nil)
+
+      ;; No mark set
+      (should-error (call-interactively #'hui-kill-region) :type 'error)
+
+      (set-mark (point))
+      (goto-char 4)
+      (call-interactively #'hui-kill-region)
+      (should (string= "{def}ghi" (buffer-string)))
+
+      (erase-buffer)
+      (insert "abc{def}ghi")
+      (goto-char 1)
+      (set-mark (point))
+      (goto-char 4)
+      (deactivate-mark)
+      (call-interactively #'hui-kill-region)
+      (should (string= "abcghi" (buffer-string)))
+
+      (erase-buffer)
+      (insert "abc{def}ghi")
+      (goto-char 1)
+      (set-mark (point))
+      (goto-char 5)
+      (deactivate-mark)
+      (call-interactively #'hui-kill-region)
+      (should (string= "def}ghi" (buffer-string)))
+
+      ;; Not interactive
+      (erase-buffer)
+      (insert "abc{def}ghi")
+      (goto-char 1)
+      (set-mark (point))
+      (goto-char 4)
+      (hui-kill-region)
+      (should (string= "{def}ghi" (buffer-string)))
+
+      (erase-buffer)
+      (insert "abc{def}ghi")
+      (goto-char 1)
+      (set-mark (point))
+      (goto-char 4)
+      (deactivate-mark)
+      (hui-kill-region)
+      (should (string= "{def}ghi" (buffer-string))))
+
+    (let ((transient-mark-mode nil))
+      (erase-buffer)
+      (insert "abc{def}ghi")
+      (goto-char 1)
+      (set-mark nil)
+
+      ;; No mark set
+      (should-error (call-interactively #'hui-kill-region) :type 'error)
+
+      (set-mark (point))
+      (goto-char 4)
+      (call-interactively #'hui-kill-region)
+      (should (string= "abcghi" (buffer-string)))
+
+      (erase-buffer)
+      (insert "abc{def}ghi")
+      (goto-char 1)
+      (set-mark (point))
+      (goto-char 4)
+      (call-interactively #'hui-kill-region)
+      (should (string= "abcghi" (buffer-string)))
+
+      (erase-buffer)
+      (insert "abc{def}ghi")
+      (goto-char 1)
+      (set-mark (point))
+      (goto-char 5)
+      (call-interactively #'hui-kill-region)
+      (should (string= "def}ghi" (buffer-string)))
+
+      ;; Not interactive
+
+      (erase-buffer)
+      (insert "abc{def}ghi")
+      (goto-char 1)
+      (set-mark (point))
+      (goto-char 4)
+      (hui-kill-region)
+      (should (string= "abcghi" (buffer-string)))
+
+      (erase-buffer)
+      (insert "abc{def}ghi")
+      (goto-char 1)
+      (set-mark (point))
+      (goto-char 4)
+      (hui-kill-region (region-beginning) (region-end))
+      (should (string= "{def}ghi" (buffer-string)))
+
+      (erase-buffer)
+      (insert "abc{def}ghi")
+      (goto-char 1)
+      (set-mark (point))
+      (goto-char 5)
+      (hui-kill-region)
+      (should (string= "abc{def}ghi" (buffer-string))) ;; Nothing
+
+      (hui-kill-region (region-beginning) (region-end))
+      (should (string= "def}ghi" (buffer-string))))))
+
+(ert-deftest hui--kill-region-multiple-kill ()
+  "Verify `hui-kill-region' saves to the yank ring on multiple kills.
+See test case `kill-whole-line-after-other-kill' and others in
+simple-tests.el for prior art of forcing values on `last-command'."
+  ;; Two regions
+  (with-temp-buffer
+    (let ((transient-mark-mode t))
+      (insert "123456")
+      (goto-char 2)
+      (set-mark (point))
+      (goto-char 4)
+      (call-interactively #'hui-kill-region)
+      (goto-char 2)
+      (set-mark (point))
+      (goto-char 4)
+      (setq last-command #'kill-region)
+      (call-interactively #'hui-kill-region)
+      (should (string= "16" (buffer-string)))
+      (should (string= "2345" (car kill-ring)))))
+
+  ;; Kill line followed by kill of a region
+  (with-temp-buffer
+    (let ((transient-mark-mode t))
+      (insert "\
+line 1
+1234")
+      (goto-char 1)
+      (set-mark (point))
+      (setq last-command #'ignore)
+      (kill-line 1)
+      (goto-char 2)
+      (set-mark (point))
+      (goto-char 4)
+      (setq last-command #'kill-region)
+      (call-interactively #'hui-kill-region)
+      (should (string= "14" (buffer-string)))
+      (should (string= "line 1\n23" (car kill-ring)))))
+
+  ;; Two consecutive kill thing
+  (with-temp-buffer
+    (let ((transient-mark-mode t))
+      (insert "abc{def}{ghi}jkl")
+      (goto-char 1)
+      (set-mark (point))
+      (goto-char 4)
+      (deactivate-mark)
+      (setq last-command #'ignore)
+      (call-interactively #'hui-kill-region)
+      (setq last-command #'kill-region)
+      (call-interactively #'hui-kill-region)
+      (should (string= "abcjkl" (buffer-string)))
+      (should (string= "{def}{ghi}" (car kill-ring))))))
 
 ;; This file can't be byte-compiled without `with-simulated-input' which
 ;; is not part of the actual dependencies, so:
