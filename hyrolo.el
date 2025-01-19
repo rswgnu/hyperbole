@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      5-Jan-25 at 11:15:09 by Bob Weiner
+;; Last-Mod:     18-Jan-25 at 22:45:52 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1279,6 +1279,12 @@ Raise an error if a match is not found."
 		 (setq buffer-file-name (expand-file-name new-file))))
 	     (message "(HyRolo): Your personal rolo file is now: \"%s\"."
 		      new-file))))
+
+(defun hyrolo-refresh-file-list ()
+  "Refresh from disk the internal list of files given by `hyrolo-file-list'."
+  (setq hyrolo--expanded-file-list (hyrolo-expand-path-list hyrolo-file-list))
+  (when (hyrolo-any-file-type-problem-p)
+    (error "(HyRolo): Invalid files used in `hyrolo-file-list'; see the *HyRolo Errors* buffer")))
 
 (defun hyrolo-set-display-buffer ()
   "Set display buffer."

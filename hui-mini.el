@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:      5-Jan-25 at 17:12:41 by Bob Weiner
+;; Last-Mod:     18-Jan-25 at 13:57:49 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1038,8 +1038,8 @@ support underlined faces as well."
 	 '("HyWiki>")
 	 '("Act"            hywiki-word-activate
 	   "Activate HyWikiWord link at point or emulate a press of a Smart Key.")
-	 '("Create"         hywiki-create-page-and-display
-	    "Create and display a new HyWiki page.  Shows existing page names to aid in new naming.")
+	 '("Create"         hywiki-word-create-and-display
+	    "Create and display a new HyWiki referent, prompting with any existing referent names.")
 	 '("EditPages"      hywiki-directory-edit
 	   "Display and edit HyWiki directory.")
 	 '("FindReferent"   hywiki-find-referent

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     28-Dec-24 at 22:14:33 by Mats Lidell
+;; Last-Mod:     18-Jan-25 at 19:33:24 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -897,7 +897,8 @@ Note special meaning of `hywiki-allow-plurals-flag'."
 	(wikiword "WikiWord"))
     (unwind-protect
         (mocklet (((hypb:require-package 'org-roam) => t)
-                  ((org-roam-node-read) => "org-roam-node"))
+		  ((org-roam-node-read) => t)
+		  ((org-roam-node-title t) => "org-roam-node"))
 	  (hywiki-add-org-roam-node wikiword)
           (should (equal '(org-roam-node . "org-roam-node")
 			 (hywiki-get-referent wikiword))))
