@@ -1,5 +1,10 @@
 2025-01-18  Bob Weiner  <rsw@gnu.org>
 
+* hyrolo.el (hyrolo-refresh-file-list): Add to refresh internal expanded list
+    of HyRolo search files.
+  test/hyrolo-tests.el (hyrolo-tests--get-file-list): Fix this test by using
+    the above function.
+
 * hproperty.el (hproperty:but-get-first-in-region): Add so is clear when
     want only the first button matching 'property' and 'value'.  Call
     in 'hproperty:but-get'.
