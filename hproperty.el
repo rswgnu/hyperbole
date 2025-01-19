@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Aug-92
-;; Last-Mod:     27-Dec-24 at 23:15:05 by Mats Lidell
+;; Last-Mod:     18-Jan-25 at 20:53:20 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -239,29 +239,40 @@ See `hproperty:but-get'."
 
 (defun hproperty:but-get-all-in-region (start end &optional property value)
   "Return all buttons in the current buffer between START and END.
-If optional PROPERTY and non-nil VALUE are given, return a list of the
-first button with that PROPERTY and VALUE only."
+If optional PROPERTY and non-nil VALUE are given, return only matching
+buttons.
+
+Use `hproperty:but-get-first-in-region' instead if you want only the first
+matching button."
+  (let ((val-list (if property
+		      (list value)
+		    (list hproperty:but-face
+			  hproperty:ibut-face
+			  hproperty:flash-face))))
+    (delq nil
+	  (mapcar (lambda (overlay)
+		    (and (bufferp (overlay-buffer overlay))
+			 (memq (overlay-get overlay (or property 'face))
+			       val-list)
+			 overlay))
+		  (overlays-in start end)))))
+
+(defun hproperty:but-get-first-in-region (start end property value)
+  "Return first button in current buf between START & END with PROPERTY & VALUE.
+Return nil if none."
   (catch 'first
-    (let ((val-list (if property
-			(list value)
-		      (list hproperty:but-face
-			    hproperty:ibut-face
-			    hproperty:flash-face))))
-      (delq nil
-	    (mapcar (lambda (overlay)
-		      (when (and (bufferp (overlay-buffer overlay))
-				 (memq (overlay-get overlay (or property 'face))
-				       val-list))
-			(if property
-			    (throw 'first (list overlay))
-			  overlay)))
-		    (overlays-in start end))))))
+    (mapc (lambda (overlay)
+	    (when (and (bufferp (overlay-buffer overlay))
+		       (memq (overlay-get overlay property)
+			     (list value)))
+	      (throw 'first (list overlay))))
+	  (overlays-in start end))))
 
 (defun hproperty:but-get (&optional pos property value)
   "Return button at optional POS or point.
 If optional PROPERTY and VALUE are given, return only the first button
 with that PROPERTY and VALUE."
-  (car (hproperty:but-get-all-in-region pos (1+ pos) property value)))
+  (car (hproperty:but-get-first-in-region pos (1+ pos) property value)))
 
 (defun hproperty:but-start (hproperty-but)
   "Return the end position of an HPROPERTY-BUT.
