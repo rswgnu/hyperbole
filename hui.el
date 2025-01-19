@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     13-Jan-25 at 23:34:56 by Mats Lidell
+;; Last-Mod:     19-Jan-25 at 11:53:44 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -135,8 +135,8 @@ point; see `hui:delimited-selectable-thing'."
 ;; areas (like sexpressions).
 
 ;;;###autoload
-(defun hui-kill-region (&optional beg end interactive)
-  "Kill between point and mark.
+(defun hui-kill-region (beg end &optional region interactive)
+  "Kill (\"cut\") between point and mark.
 The text is deleted but saved in the kill ring.
 The command \\[yank] can retrieve it from there.
 \(If you want to kill and then yank immediately, use \\[copy-region-as-kill].)
@@ -149,27 +149,18 @@ If the previous command was also a kill command,
 the text killed this time appends to the text killed last time
 to make one entry in the kill ring.
 Patched to remove the most recent completion."
-  (interactive "r\np")
-  (cond ((eq last-command 'complete)
-	 (hui:kill-region beg end))
-	((and transient-mark-mode
+  (interactive (list (mark) (point) 'region (prefix-numeric-value current-prefix-arg)))
+  (cond ((and transient-mark-mode
               (or (use-region-p)
 	          (not interactive)))
 	 (unless (and beg end)
 	   (setq beg (region-beginning)
-		 end (region-end)))
-	 (hui:kill-region beg end))
-        ((and (not interactive) beg end)
-         (hui:kill-region beg end))
-	(t (cond ((hui-select-delimited-thing)
-		  (setq beg (region-beginning)
-			end (region-end)))
-		 ((let ((thing-beg-end (hui:delimited-selectable-thing-and-bounds)))
-		    (when thing-beg-end
-		      (setq beg (nth 1 thing-beg-end)
-			    end (nth 2 thing-beg-end))))))
-	   (when (and beg end)
-	     (hui:kill-region beg end)))))
+		 end (region-end))))
+	((hui-select-delimited-thing)
+	 (setq beg (region-beginning)
+	       end (region-end))))
+  ;; If there is no mark, this call should trigger an error
+  (hui:kill-region beg end region interactive))
 
 ;; In "hyperbole.el", use this to override the {M-w} command from
 ;; "simple.el" when hyperbole-mode is active to allow copying kcell
@@ -1855,16 +1846,22 @@ string arguments."
 	  (ibut:operate))
       (ibut:operate))))
 
-(defun hui:kill-region (beg end)
+(defun hui:kill-region (beg end &optional region interactive)
   "Invoke context-sensitive kill-region command "
   (cond ((derived-mode-p 'kotl-mode)
-         (kotl-mode:kill-region beg end))
-	((eq last-command 'complete)
+	 (if interactive
+	     (call-interactively #'kotl-mode:kill-region)
+           (kotl-mode:kill-region beg end)))
+	((and (fboundp 'dynamic-completion-mode)
+	      dynamic-completion-mode
+	      (eq last-command 'complete))
 	 (delete-region (point) cmpl-last-insert-location)
 	 (insert cmpl-original-string)
 	 (setq completion-to-accept nil))
 	(t
-	 (kill-region beg end))))
+	 (if interactive
+	     (call-interactively #'kill-region)
+	   (kill-region beg end region)))))
 
 (defun hui:link-possible-types ()
   "Return list of possible link action types during editing of a Hyperbole button.

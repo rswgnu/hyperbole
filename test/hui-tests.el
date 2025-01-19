@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     19-Jan-25 at 00:46:05 by Mats Lidell
+;; Last-Mod:     19-Jan-25 at 11:07:35 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1213,7 +1213,7 @@ With point on label suggest that ibut for rename."
       (goto-char 1)
       (set-mark (point))
       (goto-char 4)
-      (hui-kill-region)
+      (hui-kill-region (mark t) (point) 'region)
       (should (string= "{def}ghi" (buffer-string)))
 
       (erase-buffer)
@@ -1222,7 +1222,7 @@ With point on label suggest that ibut for rename."
       (set-mark (point))
       (goto-char 4)
       (deactivate-mark)
-      (hui-kill-region)
+      (hui-kill-region (mark t) (point) 'region)
       (should (string= "{def}ghi" (buffer-string))))
 
     (let ((transient-mark-mode nil))
@@ -1262,7 +1262,7 @@ With point on label suggest that ibut for rename."
       (goto-char 1)
       (set-mark (point))
       (goto-char 4)
-      (hui-kill-region)
+      (hui-kill-region (mark t) (point) 'region)
       (should (string= "abcghi" (buffer-string)))
 
       (erase-buffer)
@@ -1270,7 +1270,7 @@ With point on label suggest that ibut for rename."
       (goto-char 1)
       (set-mark (point))
       (goto-char 4)
-      (hui-kill-region (region-beginning) (region-end))
+      (hui-kill-region (mark t) (point) 'region)
       (should (string= "{def}ghi" (buffer-string)))
 
       (erase-buffer)
@@ -1278,10 +1278,10 @@ With point on label suggest that ibut for rename."
       (goto-char 1)
       (set-mark (point))
       (goto-char 5)
-      (hui-kill-region)
+      (hui-kill-region (mark t) (point) 'region)
       (should (string= "abc{def}ghi" (buffer-string))) ;; Nothing
 
-      (hui-kill-region (region-beginning) (region-end))
+      (hui-kill-region (mark t) (point) 'region)
       (should (string= "def}ghi" (buffer-string))))))
 
 (ert-deftest hui--kill-region-multiple-kill ()

@@ -1,7 +1,15 @@
+2025-01-19  Bob Weiner  <rsw@gnu.org>
+
+* hui.el (hui:kill-region): Update to only apply completion behavior when
+    'dynamic-completion-mode' is enabled and call subfunctions interactively
+    in interactive flag is set.
+         (hui-kill-region): Simplify 'hui-select-delimited-thing'.
+	 (hui:kill-region): 
+
 2025-01-19  Mats Lidell  <matsl@gnu.org>
 
 * test/hui-tests.el (hui--kill-region-multiple-kill, hui--kill-region):
-    Test hui-kill-region. 
+    Test hui-kill-region.
 
 2025-01-18  Bob Weiner  <rsw@gnu.org>
 
