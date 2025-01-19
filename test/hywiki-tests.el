@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     28-Dec-24 at 16:58:48 by Mats Lidell
+;; Last-Mod:     18-Jan-25 at 19:33:24 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -53,7 +53,7 @@
         (should-not (cdr (hywiki-add-page "notawikiword")))
       (hy-delete-dir-and-buffer hywiki-directory))))
 
-(ert-deftest hywiki-tests--action-key-on-wikiword-displays-page ()
+(ert-deftest hywiki-tests--action-key-on-hywikiword-displays-page ()
   "Verify `action-key' on a prefixed WikiWord, outside of hywiki-directory, creates a new page."
   (let ((hsys-org-enable-smart-keys t)
         (hywiki-directory (make-temp-file "hywiki" t))
@@ -65,21 +65,103 @@
           (goto-char 4)
           (action-key)
 	  (should (equal (cons 'page wikifile) (hywiki-get-referent "WikiWord"))))
-      (hy-delete-file-and-buffer wikifile))))
+      (hy-delete-file-and-buffer (expand-file-name wikifile hywiki-directory))
+      (hy-delete-dir-and-buffer hywiki-directory))))
 
-(ert-deftest hywiki-tests--assist-key-on-wikiword-displays-help ()
+(ert-deftest hywiki-tests--assist-key-on-hywikiword-displays-help ()
   "Verify `assist-key' on a prefixed WikiWord, outside of hywiki-directory, displays help for the WikiWord link."
   (let ((hsys-org-enable-smart-keys t)
-        (hywiki-directory (make-temp-file "hywiki" t))
-        (wikifile (make-temp-file "wikifile" nil ".org")))
+        (hywiki-directory (make-temp-file "hywiki" t)))
     (unwind-protect
         (with-temp-buffer
 	  (hywiki-mode 1)
           (insert "[[hy:WikiWord]]")
-          (goto-char 4)
+          (goto-char 6)
           (should (string= "WikiWord" (hywiki-word-at)))
-          (assist-key))
-      (hy-delete-file-and-buffer wikifile))))
+          (delete-other-windows)
+          (assist-key)
+          (other-window 1)
+          (should (string-prefix-p "*Help: Hyperbole " (buffer-name))))
+      (hy-delete-dir-and-buffer hywiki-directory))))
+
+(ert-deftest hywiki-tests--action-key-on-wikiword-displays-page ()
+  "Verify `action-key' on a WikiWord, outside of hywiki-directory, creates a new page."
+  (let* ((hsys-org-enable-smart-keys t)
+         (hywiki-directory (make-temp-file "hywiki" t))
+         (hywiki-page-file (expand-file-name "WikiWord.org" hywiki-directory)))
+    (unwind-protect
+        (dolist (v '(nil t)) ;; Verify the file exists the second time
+          (if v
+              (should (file-exists-p hywiki-page-file))
+            (should-not (file-exists-p hywiki-page-file)))
+          (with-temp-buffer
+	    (hywiki-mode 1)
+            (insert "WikiWord\n")
+            (goto-char 4)
+            (action-key)
+            (should (string= hywiki-page-file (buffer-file-name)))
+            (should (equal (cons 'page (file-name-nondirectory hywiki-page-file))
+                           (hywiki-get-referent "WikiWord")))
+            (if v
+                (should (looking-at-p "WikiWord page"))
+              (insert "WikiWord page")
+              (goto-char (point-min)))))
+      (hy-delete-file-and-buffer hywiki-page-file)
+      (hy-delete-dir-and-buffer hywiki-directory))))
+
+(ert-deftest hywiki-tests--action-key-on-wikiword-and-section-displays-page ()
+  "Verify `action-key' on a WikiWord with section moves to the section."
+  :expected-result :failed
+  (let* ((hsys-org-enable-smart-keys t)
+         (hywiki-directory (make-temp-file "hywiki" t))
+	 (hywiki-page-file (expand-file-name "WikiWord.org" hywiki-directory))
+         (sections '("* Header" "** SubHeader" "*** SubSubHeader")))
+    (unwind-protect
+        (progn
+          (find-file hywiki-page-file)
+          (dolist (v sections)
+            (insert (format "%s\nbody\n" v)))
+          (save-buffer)
+	  (hywiki-mode 1)
+          (dolist (v sections)
+            (with-temp-buffer
+              (insert "WikiWord#" (cadr (split-string v " ")))
+              (goto-char 4)
+              (action-key)
+              (should (string= hywiki-page-file (buffer-file-name)))
+	      (should (looking-at-p (regexp-quote v))))))
+      (hywiki-mode 0)
+      (hy-delete-file-and-buffer hywiki-page-file)
+      (hy-delete-dir-and-buffer hywiki-directory))))
+
+(ert-deftest hywiki-tests--action-key-on-wikiword-and-line-column-displays-page ()
+  "Verify `action-key' on a WikiWord with line and column specifications goes to expected point."
+  :expected-result :failed
+  (let* ((hsys-org-enable-smart-keys t)
+         (hywiki-directory (make-temp-file "hywiki" t))
+	 (hywiki-page-file (expand-file-name "WikiWord.org" hywiki-directory)))
+    (unwind-protect
+        (progn
+          (find-file hywiki-page-file)
+          (insert "\
+line 1
+line 2
+")
+          (save-buffer)
+	  (hywiki-mode 1)
+          (dolist (l '(1 2))
+            (dolist (c '("" ":C0" ":C5"))
+              (with-temp-buffer
+                (insert (format "WikiWord:L%s%s" l c))
+                (goto-char 4)
+                (action-key)
+                (should (string= hywiki-page-file (buffer-file-name)))
+                (if (string= c ":C5")
+	            (should (looking-at-p (regexp-quote (format "%s$" l))))
+	          (should (looking-at-p (regexp-quote (format "line %s$" l)))))))))
+      (hywiki-mode 0)
+      (hy-delete-file-and-buffer hywiki-page-file)
+      (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--not-a-wikiword-unless-in-hywiki-mode ()
   "Verify WikiWord is not a WikiWord unless in `hywiki-mode'."
@@ -131,6 +213,15 @@
 	      (newline nil t)
               (goto-char 6)
               (should (string= "WikiWord" (hywiki-word-at)))))
+
+          ;; Does not match as a WikiWord
+          (dolist (v '("WikiWord#"))
+            (with-temp-buffer
+              (org-mode)
+              (insert v)
+	      (newline nil t)
+              (goto-char 6)
+              (should-not (string= "WikiWord" (hywiki-word-at)))))
 
           ;; Identifies as org link (Note: Not checked if target
           ;; exists.) AND matches WikiWord
@@ -806,7 +897,8 @@ Note special meaning of `hywiki-allow-plurals-flag'."
 	(wikiword "WikiWord"))
     (unwind-protect
         (mocklet (((hypb:require-package 'org-roam) => t)
-                  ((org-roam-node-read) => "org-roam-node"))
+		  ((org-roam-node-read) => t)
+		  ((org-roam-node-title t) => "org-roam-node"))
 	  (hywiki-add-org-roam-node wikiword)
           (should (equal '(org-roam-node . "org-roam-node")
 			 (hywiki-get-referent wikiword))))

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     11-Sep-24 at 23:56:02 by Mats Lidell
+;; Last-Mod:     18-Jan-25 at 22:46:39 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -472,7 +472,6 @@ Match a string in the second cell."
 
 (ert-deftest hyrolo-tests--get-file-list ()
   "Verify `hyrolo-get-file-list` includes added files."
-  :expected-result :failed
   (let* ((folder (make-temp-file "hypb" t))
          (prefix (expand-file-name "hypb" folder))
          (org-file (make-temp-file prefix nil ".org"))
@@ -482,7 +481,8 @@ Match a string in the second cell."
           (should (= 1 (length (hyrolo-get-file-list))))
           (let ((org2-file (make-temp-file prefix nil ".org")))
             (unwind-protect
-                (should (= 2 (length (hyrolo-get-file-list))))
+		(progn (hyrolo-refresh-file-list)
+                       (should (= 2 (length (hyrolo-get-file-list)))))
               (hy-delete-file-and-buffer org2-file))))
       (dolist (f (list org-file))
         (hy-delete-file-and-buffer f))

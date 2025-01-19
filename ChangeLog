@@ -3,6 +3,81 @@
 * test/hui-tests.el (hui--kill-region-multiple-kill, hui--kill-region):
     Test hui-kill-region. 
 
+2025-01-18  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-get-referent-hasht): Fix when building
+    'hywiki--any-wikiword-regexp-list', allow for either or both #section
+    and :Lnum:Cnum.  This fixes not highlighting "WikiWord:L2".
+
+* hyrolo.el (hyrolo-refresh-file-list): Add to refresh internal expanded list
+    of HyRolo search files.
+  test/hyrolo-tests.el (hyrolo-tests--get-file-list): Fix this test by using
+    the above function.
+
+* hproperty.el (hproperty:but-get-first-in-region): Add so is clear when
+    want only the first button matching 'property' and 'value'.  Call
+    in 'hproperty:but-get'.
+               (hproperty:but-get-all-in-region): Change to return all
+    matches for 'property' and 'value' to fix major HyWiki problem with
+    not dehighlighting WikiWords when a page is deleted.
+
+* test/hywiki-tests.el (hywiki-tests--add-org-roam-node): Fix mocks.
+
+* hui-mini.el (hui:menu-hywiki): Change HyWiki/Create to call
+    'hywiki-word-create-and-display'.
+
+* hywiki.el (hywiki-display-referent-type): Help user with an error if
+    'referent-type' is invalid.
+            (hywiki-allow-suffix-referent-types): Add to specify referent
+    types that support suffixes.
+            (hywiki--add-suffix-to-referent): Uncomment and use in
+    'hywiki-display-referent'.
+            (hywiki-add-prompted-referent): Rename to 'hywiki-create-referent'.
+	    (hywiki-create-referent-and-display): Add.
+	    (hywiki-word-create-and-display): Add and use for HyWiki/Create.
+            (hywiki-add-page): Display message about HyWikiWord page being
+     added or existing when called interactively.
+            (hywiki-create-referent): Display message showing referent when
+     called interactively or with new optional prefix arg 'message-flag'.
+            (hywiki-create-page): Alias to 'hywiki-add-page' for consistency
+     with 'hywiki-create-referent'.
+            (hywiki-word-at): Fix to utilize 'range-flag' when
+    on a highlighted wikiword.
+            (hywiki-display-referent-type): If point is on a HyWikiWord that
+    matches the one given as an argument, then set the current implicit button
+    attributes of referent-type and referent-value.  Specific types of referent
+    display functions can override the value setting if need be.
+            (hywiki-page-strip-section): Rename to 'hywiki-word-strip-suffix'.
+            (hywiki-word-at-point): Add to return wikiword stripped of any suffix.
+            (hywiki-get-singular-wikiword): Strip any suffix from wikiword.
+            (hywiki-referent-exists-p): Let 'hywiki-get-referent' make word singular
+    and remove suffix.
+            (hywiki-word-read, hywiki-word-read-new): Update doc to use referent
+    instead of page and call 'hywiki-word-at-point' instead of 'hywiki-word-at'.
+            (hywiki-word-create): Add and autoload to create but not display
+    a referent for a HyWikiWord.  Useful as a key binding.
+            (hywiki-add-org-roam-node): Fix to set referent-value to node title
+    rather than the node itself.
+            (hywiki-add-org-roam-node, hywiki-display-org-roam-node): Fix to use
+    Org Roam node title/headline rather than the node itself.
+            (hywiki-mode): Improve doc.
+            (hywiki-display-info-node): Use 'link-to-Info-node' action type.
+
+2025-01-12  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el
+    (hywiki-tests--action-key-on-hywikiword-displays-page): Rename so
+    hy:WikiWord is mentioned. Fix removal of temp files.
+    (hywiki-tests--assist-key-on-hywikiword-displays-help): Rename so
+    hy:WikiWord is mentioned and refactor to verify help buffer is shown.
+    (hywiki-tests--action-key-on-wikiword-displays-page)
+    (hywiki-tests--action-key-on-wikiword-and-section-displays-page): New
+    tests for verifying display of pages with and without sections.
+    (hywiki-tests--wikiword-identified-with-delimiters): Add test for
+    WikiWord with a single hash mark.
+    (hywiki-tests--action-key-on-wikiword-and-line-column-displays-page):
+    Test line and column specifiers with WikiWords.
+
 2025-01-09  Mats Lidell  <matsl@gnu.org>
 
 * test/MANIFEST: Add hycontrol-tests.el
