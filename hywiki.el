@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     18-Jan-25 at 23:45:34 by Bob Weiner
+;; Last-Mod:     21-Jan-25 at 00:20:28 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -166,9 +166,11 @@
 (declare-function bookmark-location "bookmark" (bookmark-name-or-record))
 (declare-function hsys-org-at-tags-p "hsys-org")
 (declare-function org-link-store-props "ol" (&rest plist))
+(declare-function org-publish-property "ox-publish" (property project &optional default))
+(declare-function org-roam-node-from-title-or-alias "org-roam-node" (s &optional nocase))
 (declare-function org-roam-node-open "org-roam" (note &optional cmd force))
 (declare-function org-roam-node-read "org-roam" (&optional initial-input filter-fn sort-fn require-match prompt))
-(declare-function org-publish-property "ox-publish" (property project &optional default))
+(declare-function org-roam-node-title "org-roam-node" (node))
 (declare-function smart-treemacs-edit "hui-treemacs" (&optional dir))
 
 ;;; ************************************************************************
