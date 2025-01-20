@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Jan-25
-;; Last-Mod:     20-Jan-25 at 02:00:12 by Bob Weiner
+;; Last-Mod:     20-Jan-25 at 23:57:21 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -47,6 +47,7 @@
 ;;; ************************************************************************
 
 (require 'hbut)  ;; For defib
+(require 'hmouse-tag)  ;; For smart-lisp
 
 ;;; ************************************************************************
 ;;; Implicit button types
