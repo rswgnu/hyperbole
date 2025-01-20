@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     20-Jan-25 at 20:13:23 by Mats Lidell
+;; Last-Mod:     20-Jan-25 at 20:21:34 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -116,16 +116,6 @@ and the default WORD-LENGTH is 4."
         (setq result (concat result " ")))
       (setq result (concat result (char-to-string (elt chars (random (length chars)))))))
     (replace-regexp-in-string "[[:space:]]" "" (capitalize result))))
-
-(ert-deftest hy-test-make-random-wikiword ()
-  "Verify `hy-make-random-wikiword'."
-  (should (= 12 (length (hy-make-random-wikiword))))
-  (dolist (wwl '(3 9 21))
-    (dolist (wl '(2 3 9))
-      (let ((ww (hy-make-random-wikiword wwl wl)))
-        (should (= wwl (length ww)))
-        (should (char-uppercase-p (string-to-char (substring ww 0 1))))
-        (should-not (char-uppercase-p (string-to-char (substring ww 1 2))))))))
 
 (provide 'hy-test-helpers)
 ;;; hy-test-helpers.el ends here
