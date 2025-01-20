@@ -1,5 +1,15 @@
 2025-01-19  Bob Weiner  <rsw@gnu.org>
 
+* hsys-ert.el (ert-should): Add this new file and implicit button type.
+    See the Commentary therein for details.
+  hibtypes.el (load "hsys-ert"): Load above ibtype at near lowest priority.
+  hui-mouse.el (hkey-alist): Move priority of ert-results-mode to after
+    (hbut:at-p) so can define implicit buttons in this mode that override
+    the standard behavior.
+  man/hyperbole.texi (Smart Key - ERT Results Mode): Update order in the
+    Hyperbole manual.  Also add `ert-should' ibtype.
+  MANIFEST, Makefile (EL_COMPILE): Add "hsys-ert.el".
+
 * hui.el (hui:kill-region): Update to only apply completion behavior when
     'dynamic-completion-mode' is enabled and call subfunctions interactively
     in interactive flag is set.

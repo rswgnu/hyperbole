@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     30-Dec-24 at 23:34:55 by Mats Lidell
+@c Last-Mod:     19-Jan-25 at 18:06:31 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,8 +30,8 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED October, 2024
-@set UPDATED-MONTH October 2024
+@set UPDATED January, 2025
+@set UPDATED-MONTH January 2025
 @set EDITION 9.0.2pre
 @set VERSION 9.0.2pre
 
@@ -67,7 +67,7 @@
 This manual is for GNU Hyperbole
 (Edition @value{EDITION}, Published @value{UPDATED}).
 
-Copyright @copyright{} 1989-2024  Free Software Foundation, Inc.
+Copyright @copyright{} 1989-2025  Free Software Foundation, Inc.
 
 @quotation
 Permission is granted to copy, distribute and/or modify this document
@@ -158,7 +158,7 @@ Texinfo markup language.
 <CENTER><H3><A HREF="mailto:rsw@@gnu.org">Say thanks or send a testimonial if you like Hyperbole.</A></H3></CENTER>
 
 
-<P>Copyright &copy; 1989-2024  Free Software Foundation, Inc.</P>
+<P>Copyright &copy; 1989-2025  Free Software Foundation, Inc.</P>
 
 <P>GNU Hyperbole is available for use, modification, and distribution under
 the terms of the GNU General Public License (GPL) Version 3 or later,
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed October 22, 2024.
+Printed January 19, 2025.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -199,7 +199,7 @@ Printed October 22, 2024.
 
 @sp 2
 @noindent
-Copyright @copyright{} 1989-2024  Free Software Foundation, Inc.
+Copyright @copyright{} 1989-2025  Free Software Foundation, Inc.
 
 GNU Hyperbole is available for use, modification, and distribution
 under the terms of the GNU General Public License (GPL) Version 3 or
@@ -213,7 +213,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.2pre
-October 22, 2024
+January 19, 2025
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -483,7 +483,6 @@ Smart Keyboard Keys
 * Smart Key - Ivy::
 * Smart Key - Treemacs::
 * Smart Key - Dired Sidebar Mode::
-* Smart Key - ERT Results Mode::
 * Smart Key - Emacs Pushbuttons::
 * Smart Key - Argument Completion::
 * Smart Key - ID Edit Mode::
@@ -494,6 +493,7 @@ Smart Keyboard Keys
 * Smart Key - Hyperbole Buttons::
 * Smart Key - View Mode::
 * Smart Key - Helm Mode::
+* Smart Key - ERT Results Mode::
 * Smart Key - Delimited Things::
 * Smart Key - Occurrence Matches::
 * Smart Key - The Koutliner::
@@ -3056,6 +3056,20 @@ When on a HyNote file name stem, display the file and its optional
 section.  This type is active only in buffers where
 @code{hywiki-active-in-current-buffer-p} is true.  This may require
 that the global minor mode @code{hywiki-mode} has been enabled.
+
+@findex ibtypes ert-should
+@findex ert-results-mode
+@cindex ert
+@cindex tests
+@cindex ert results
+@cindex test results
+@item ert-should
+When on an Emacs Regression Test (ERT) result and not on the first
+line of a result (its name), on a button or at the end of line, search
+for a matching @code{should} clause in the source buffer where the
+associated test is defined.  This speeds debugging when a single test
+name contains many subtests, each with their own unique @code{should}
+clauses.
 @end table
 
 @node Action Buttons,  , Implicit Button Types, Implicit Buttons
@@ -10424,7 +10438,6 @@ If dragged from an Emacs window to outside of Emacs:
 * Smart Key - Ivy::
 * Smart Key - Treemacs::
 * Smart Key - Dired Sidebar Mode::
-* Smart Key - ERT Results Mode::
 * Smart Key - Emacs Pushbuttons::
 * Smart Key - Argument Completion::
 * Smart Key - ID Edit Mode::
@@ -10435,6 +10448,7 @@ If dragged from an Emacs window to outside of Emacs:
 * Smart Key - Hyperbole Buttons::
 * Smart Key - View Mode::
 * Smart Key - Helm Mode::
+* Smart Key - ERT Results Mode::
 * Smart Key - Delimited Things::
 * Smart Key - Occurrence Matches::
 * Smart Key - The Koutliner::
@@ -10601,7 +10615,7 @@ When in a Treemacs file browser buffer:
 @end group
 @end format
 
-@node Smart Key - Dired Sidebar Mode, Smart Key - ERT Results Mode, Smart Key - Treemacs, Smart Keyboard Keys
+@node Smart Key - Dired Sidebar Mode, Smart Key - Emacs Pushbuttons, Smart Key - Treemacs, Smart Keyboard Keys
 @subsection Smart Key - Dired Sidebar Mode
 
 @cindex dired-sidebar-mode
@@ -10629,35 +10643,7 @@ When in a dired-sidebar buffer:
 @end group
 @end format
 
-@node Smart Key - ERT Results Mode, Smart Key - Emacs Pushbuttons, Smart Key - Dired Sidebar Mode, Smart Keyboard Keys
-@subsection Smart Key - ERT Results Mode
-
-@cindex ert-results-mode
-@cindex elisp testing
-@cindex ert
-@cindex regression testing
-@format
-@group
-When in an Emacs Regression Test (ERT) results buffer:
-  ACTION KEY
-     Filters @code{ert-results-mode} test results entries to those
-     matching the result status of the entry at point.  Does nothing
-     if there is no entry at point.
-
-     With point on any of the statistics lines in the top section of the
-     results buffer, does the following:
-       Selector: - toggles showing/hiding all test results
-       Passed:   - shows passed tests only
-       Failed:   - shows failed tests only
-       Skipped:  - shows skipped tests only
-       Total:    - shows all tests
-  ASSIST KEY
-     Displays help documentation for the @code{ert-results-mode} test at point,
-     if any.  Triggers an error if there is no test result at or before point."
-@end group
-@end format
-
-@node Smart Key - Emacs Pushbuttons, Smart Key - Argument Completion, Smart Key - ERT Results Mode, Smart Keyboard Keys
+@node Smart Key - Emacs Pushbuttons, Smart Key - Argument Completion, Smart Key - Dired Sidebar Mode, Smart Keyboard Keys
 @subsection Smart Key - Emacs Pushbuttons
 
 @format
@@ -10865,7 +10851,7 @@ If pressed within a buffer in View major or minor mode:
 @end group
 @end format
 
-@node Smart Key - Helm Mode, Smart Key - Delimited Things, Smart Key - View Mode, Smart Keyboard Keys
+@node Smart Key - Helm Mode, Smart Key - ERT Results Mode, Smart Key - View Mode, Smart Keyboard Keys
 @subsection Smart Key - Helm Mode
 
 Because of the way helm is written, you may need a modified version of
@@ -10907,7 +10893,35 @@ If pressed within a buffer in helm major mode:
 @end group
 @end format
 
-@node Smart Key - Delimited Things, Smart Key - Occurrence Matches, Smart Key - Helm Mode, Smart Keyboard Keys
+@node Smart Key - ERT Results Mode, Smart Key - Delimited Things, Smart Key - Helm Mode, Smart Keyboard Keys
+@subsection Smart Key - ERT Results Mode
+
+@cindex ert-results-mode
+@cindex elisp testing
+@cindex ert
+@cindex regression testing
+@format
+@group
+When in an Emacs Regression Test (ERT) results buffer:
+  ACTION KEY
+     Filters @code{ert-results-mode} test results entries to those
+     matching the result status of the entry at point.  Does nothing
+     if there is no entry at point.
+
+     With point on any of the statistics lines in the top section of the
+     results buffer, does the following:
+       Selector: - toggles showing/hiding all test results
+       Passed:   - shows passed tests only
+       Failed:   - shows failed tests only
+       Skipped:  - shows skipped tests only
+       Total:    - shows all tests
+  ASSIST KEY
+     Displays help documentation for the @code{ert-results-mode} test at point,
+     if any.  Triggers an error if there is no test result at or before point."
+@end group
+@end format
+
+@node Smart Key - Delimited Things, Smart Key - Occurrence Matches, Smart Key - ERT Results Mode, Smart Keyboard Keys
 @subsection Smart Key - Delimited Things
 
 @cindex thing

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     29-Dec-24 at 12:29:33 by Mats Lidell
+;; Last-Mod:     19-Jan-25 at 16:40:13 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -248,11 +248,6 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
     ((eq major-mode 'dired-sidebar-mode)
      . ((smart-dired-sidebar) . (smart-dired-sidebar)))
     ;;
-    ((and (eq major-mode 'ert-results-mode)
-	  (featurep 'ert-results)
-	  (setq hkey-value (ert-results-filter-status-p)))
-     . ((smart-ert-results hkey-value) . (smart-ert-results-assist hkey-value)))
-    ;;
     ;; Handle Emacs push buttons in buffers
     ((and (fboundp 'button-at) (button-at (point)))
      . ((smart-push-button nil (mouse-event-p last-command-event))
@@ -368,6 +363,11 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 			       (smart-helm-at-header)
 			       (smart-helm-line-has-action))))
      . ((smart-helm) . (smart-helm-assist)))
+    ;;
+    ((and (eq major-mode 'ert-results-mode)
+	  (featurep 'ert-results)
+	  (setq hkey-value (ert-results-filter-status-p)))
+     . ((smart-ert-results hkey-value) . (smart-ert-results-assist hkey-value)))
     ;;
     ;; Support the OO-Browser when available.  It is a separate Emacs
     ;; package not included with Hyperbole.  Within an OO-Browser
