@@ -107,6 +107,7 @@ topwin.py            - Python script to find the topmost macOS app window at a s
 
 * --- EXTERNAL SYSTEM ENCAPSULATIONS ---
 hsys-consult.el      - Hyperbole interactive consult-grep convenience functions
+hsys-ert.el          - Hyperbole support for jumping to ert 'should' source lines
 hsys-flymake.el      - Add missing source buffer keymap to flymake linter
 hsys-org.el          - GNU Hyperbole support functions for Org mode
 hsys-org-roam.el     - GNU Hyperbole support functions for Org Roam

@@ -1,7 +1,54 @@
+2025-01-20  Bob Weiner  <rsw@gnu.org>
+
+* hsys-ert.el (require 'hbut): For 'defib'.
+
+* test/hui-tests.el (hui--kill-highlighted-region,
+                     hui--kill-non-highlighted-region): Separate and rename
+    these tests.  Rearrange letters in each subtest so can find which should
+    is being called.
+
+* hui.el (hui:validate-region): Add to check for valid region args.
+         (hui-kill-ring-save): Call above function.
+
+* test/hui-tests.el (hui--kill-region,
+                     hui--kill-region-multiple-kill): Add let of
+    'mark-even-if-inactive'.  Also, interactively, set beg and end only
+    if 'mark-active' is non-nil.
+
+2025-01-19  Bob Weiner  <rsw@gnu.org>
+
+* hui.el (hui:kill-region): Complete doc string.  Set 'region' arg to nil when
+    killing a delimited region at point.  Also use 'hui-select-at-delimited-thing-p'
+    instead of 'hui-select-delimited-thing'.
+         (hui:delimited-selectable-thing)
+          hui:delimited-selectable-thing-and-bounds): Fix so doesn't create an
+    in-memory Hyperbole button at point if already doing so in a prior stack frame.
+    The latter is used in 'hui-kill-ring-save' bound to {M-w} in 'hyperbole-mode'.
+         (require 'hversion): Since 'hyperb:stack-frame' is defined there and
+    used herein.
+
+* hsys-ert.el (ert-should): Add this new file and implicit button type.
+    See the Commentary therein for details.
+  hibtypes.el (load "hsys-ert"): Load above ibtype at near lowest priority.
+  hui-mouse.el (hkey-alist): Move priority of ert-results-mode to after
+    (hbut:at-p) so can define implicit buttons in this mode that override
+    the standard behavior.
+  man/hyperbole.texi (Smart Key - ERT Results Mode): Update order in the
+    Hyperbole manual.  Also add `ert-should' ibtype.
+  MANIFEST, Makefile (EL_COMPILE): Add "hsys-ert.el".
+
+* hypb.el (hypb:with-marker): Add context macro for setting a buffer marker
+    and automatically setting it to nil at the end of the context.
+
+* hui.el (hui:kill-region): Update to only apply completion behavior when
+    'dynamic-completion-mode' is enabled and call subfunctions interactively
+    in interactive flag is set.
+         (hui-kill-region): Simplify 'hui-select-delimited-thing'.
+
 2025-01-19  Mats Lidell  <matsl@gnu.org>
 
 * test/hui-tests.el (hui--kill-region-multiple-kill, hui--kill-region):
-    Test hui-kill-region. 
+    Test hui-kill-region.
 
 2025-01-18  Bob Weiner  <rsw@gnu.org>
 

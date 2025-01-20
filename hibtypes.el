@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      5-Jan-25 at 11:15:09 by Bob Weiner
+;; Last-Mod:     19-Jan-25 at 17:56:38 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -90,6 +90,12 @@
 ;; Don't use require below here for any libraries with ibtypes in
 ;; them.  Use load instead to ensure are reloaded when resetting
 ;; ibtype priorities.
+
+;;; ========================================================================
+;;; Supports jumping to Emacs Regression Test (ert) 'should' source lines
+;;; ========================================================================
+
+(load "hsys-ert")
 
 ;;; ========================================================================
 ;;; Displays Org and Org Roam files and sections by name link

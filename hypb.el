@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:      5-Jan-25 at 11:16:50 by Bob Weiner
+;; Last-Mod:     19-Jan-25 at 15:01:21 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1082,6 +1082,21 @@ Optional first arg MINIBUFFER-FLAG t means include the minibuffer window
 in the list, even if it is not active.  If MINIBUFFER-FLAG is neither t
 nor nil it means to not count the minibuffer window even if it is active."
   (window-list nil minibuffer-flag))
+
+;;;###autoload
+(defmacro hypb:with-marker (marker &rest body)
+  "Set MARKER while executing BODY, then set MARKER to nil.
+Return result of last BODY expression."
+  (declare (indent 1) (debug t))
+  `(prog1 (progn
+	    (unless (symbolp ',marker)
+	      (error "(with-marker): `marker' must be a symbol, not: '%s'" marker))
+	    (unless (boundp ',marker)
+	      (setq ,marker nil))
+	    (unless (markerp ,marker)
+	      (setq ,marker (make-marker)))
+	    ,@body)
+     (set-marker ,marker nil)))
 
 ;;; ************************************************************************
 ;;; About Hyperbole Setup

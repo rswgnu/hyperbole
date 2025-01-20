@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:      9-Sep-24 at 22:25:55 by Bob Weiner
+;; Last-Mod:     19-Jan-25 at 10:04:03 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -67,12 +67,12 @@
 ;;      kill ring
 ;;    `hui-select-and-kill-thing' - kill the syntactical unit at point
 ;;    `hui-select-goto-matching-tag' - In modes listed in the variable,
-;;    `hui-select-markup-modes'), move point to the
-;;      start of the tag paired with the closest tag that point is within or
-;;      which it precedes, so you can quickly jump back and forth between
-;;      open and close tags.  In these modes, this is bound to {C-c .}
-;;    `hui-select-at-p' - predicate to test if a buffer position (or point) starts
-;;      or ends a matching syntactical region (excluding a single character).
+;;    `hui-select-markup-modes', move point to the  start of the tag paired
+;;      with the closest tag that point is within or which it precedes, so
+;;      you can quickly jump back and forth between open and close tags.  In
+;;      these modes, this is bound to {C-c .}
+;;    `hui-select-at-p' - predicate to test if a buffer position (or point)
+;;     starts or ends a matching syntactical region (excluding a single character).
 ;;
 ;;   ---------------
 ;;   SETUP IF USED SEPARATELY FROM HYPERBOLE (otherwise ignore):
