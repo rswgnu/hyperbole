@@ -1,5 +1,7 @@
 2025-01-20  Bob Weiner  <rsw@gnu.org>
 
+* hsys-ert.el (require 'hbut): For 'defib'.
+
 * test/hui-tests.el (hui--kill-highlighted-region,
                      hui--kill-non-highlighted-region): Separate and rename
     these tests.  Rearrange letters in each subtest so can find which should

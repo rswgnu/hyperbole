@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Jan-25
-;; Last-Mod:     19-Jan-25 at 21:42:20 by Bob Weiner
+;; Last-Mod:     20-Jan-25 at 02:00:12 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -41,6 +41,12 @@
 ;;      Action Key.
 
 ;;; Code:
+
+;;; ************************************************************************
+;;; Other required Elisp libraries
+;;; ************************************************************************
+
+(require 'hbut)  ;; For defib
 
 ;;; ************************************************************************
 ;;; Implicit button types
