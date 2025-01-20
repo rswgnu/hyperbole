@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     20-Jan-25 at 00:40:40 by Bob Weiner
+;; Last-Mod:     21-Jan-25 at 00:23:41 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2047,7 +2047,7 @@ Buffer without File      link-to-buffer-tmp"
 	  lst))
 
 (defun hui:validate-region (beg end region)
-  "Trigger a user error unless both BEG and END are whole numbers or REGION is non-nil."
+  "Trigger a user error unless BEG and END are whole numbers or REGION is non-nil."
   (unless (or (and (number-or-marker-p beg) (number-or-marker-p end)) region)
     (user-error "The mark is not set now, so there is no region")))
 
