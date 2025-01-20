@@ -10,6 +10,9 @@
     Hyperbole manual.  Also add `ert-should' ibtype.
   MANIFEST, Makefile (EL_COMPILE): Add "hsys-ert.el".
 
+* hypb.el (hypb:with-marker): Add context macro for setting a buffer marker
+    and automatically setting it to nil at the end of the context.
+
 * hui.el (hui:kill-region): Update to only apply completion behavior when
     'dynamic-completion-mode' is enabled and call subfunctions interactively
     in interactive flag is set.
