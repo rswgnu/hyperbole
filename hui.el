@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     19-Jan-25 at 11:53:44 by Bob Weiner
+;; Last-Mod:     20-Jan-25 at 00:40:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -19,6 +19,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
+(require 'hversion)
 (require 'hargs)
 ;; Avoid any potential library name conflict by giving the load directory.
 (require 'set (expand-file-name "set" hyperb:dir))
@@ -133,7 +134,6 @@ point; see `hui:delimited-selectable-thing'."
 ;; either "completion.el" or "simple.el" when hyperbole-mode is active
 ;; to allow killing kcell references, active regions and delimited
 ;; areas (like sexpressions).
-
 ;;;###autoload
 (defun hui-kill-region (beg end &optional region interactive)
   "Kill (\"cut\") between point and mark.
@@ -149,18 +149,32 @@ If the previous command was also a kill command,
 the text killed this time appends to the text killed last time
 to make one entry in the kill ring.
 Patched to remove the most recent completion."
-  (interactive (list (mark) (point) 'region (prefix-numeric-value current-prefix-arg)))
+  ;; Pass mark first, then point, because the order matters when
+  ;; calling `kill-append'.
+  (interactive (list (when mark-active (mark))
+		     (when mark-active (point))
+		     'region (prefix-numeric-value current-prefix-arg)))
   (cond ((and transient-mark-mode
               (or (use-region-p)
 	          (not interactive)))
 	 (unless (and beg end)
 	   (setq beg (region-beginning)
 		 end (region-end))))
-	((hui-select-delimited-thing)
-	 (setq beg (region-beginning)
-	       end (region-end))))
+	((and transient-mark-mode (not mark-even-if-inactive)
+	      (let* ((major-mode 'fundamental-mode)
+		     ;; Setting the major mode prevents hui-select from
+		     ;; suppressing use of `hui-select-syntax-table'
+		     ;; if in one of `hui-select-ignore-quoted-sexp-modes'.
+		     (sel-func (hui-select-at-delimited-thing-p))
+		     beg-end)
+		(when sel-func
+		  (setq beg-end (funcall sel-func (point))
+			beg (car beg-end)
+			end (cdr beg-end)
+			region nil)
+		  t)))))
   ;; If there is no mark, this call should trigger an error
-  (hui:kill-region beg end region interactive))
+  (hui:kill-region beg end region))
 
 ;; In "hyperbole.el", use this to override the {M-w} command from
 ;; "simple.el" when hyperbole-mode is active to allow copying kcell
@@ -199,13 +213,15 @@ visual feedback indicating the extent of the region being copied."
     (if (or (use-region-p)
 	    (null transient-mark-mode)
 	    (not (called-interactively-p 'interactive)))
-        (if (derived-mode-p 'kotl-mode)
-            (kotl-mode:copy-region-as-kill beg end)
+	(if (derived-mode-p 'kotl-mode)
+	    (kotl-mode:copy-region-as-kill beg end)
+	  (hui:validate-region beg end region)
 	  (copy-region-as-kill beg end region))
       (setq thing (hui:delimited-selectable-thing))
       (if (stringp thing)
 	  (progn (kill-new thing)
 		 (setq deactivate-mark t))
+	(hui:validate-region beg end region)
 	(copy-region-as-kill beg end region)))
     ;; This use of called-interactively-p is correct because the code it
     ;; controls just gives the user visual feedback.
@@ -290,19 +306,20 @@ With point:
   (cond ((klink:absolute (klink:at-p)))
 	((derived-mode-p 'kotl-mode)
 	 (kcell-view:absolute-reference))
-	((let* ((hbut (hbut:at-p))
-		(start (when hbut (hattr:get hbut 'lbl-start)))
-		(end (when hbut (hattr:get hbut 'lbl-end))))
-	   (and start end
-		(buffer-substring-no-properties start end))))
+	((and (not (hyperb:stack-frame '(hui-kill-ring-save hbut:at-p ibut:at-p ebut:at-p)))
+	      (let* ((hbut (hbut:at-p))
+		     (start (when hbut (hattr:get hbut 'lbl-start)))
+		     (end (when hbut (hattr:get hbut 'lbl-end))))
+		(and start end
+		     (buffer-substring-no-properties start end)))))
 	((hui-select-at-delimited-thing-p)
 	 (hui-select-get-thing))))
 
 (defun hui:delimited-selectable-thing-and-bounds ()
   "Return a list of any delimited selectable thing at point.
-The list is (<string> <start position of thing> <end position of thing>)
-or nil if none.  Start and end may be nil if thing was
-generated rather than extracted from a region."
+The list is (<thing-string> <thing-start> <thing-end>)
+or nil if none.  Start and end may be nil if the thing
+was generated rather than extracted from a region."
   (let (thing-and-bounds thing start end)
     (cond ((setq thing-and-bounds (klink:at-p))
 	   (when thing-and-bounds
@@ -310,9 +327,10 @@ generated rather than extracted from a region."
 	     thing-and-bounds))
 	  ((derived-mode-p 'kotl-mode)
 	   (list (kcell-view:absolute-reference)))
-	  ((setq thing (hbut:at-p)
-		 start (when thing (hattr:get thing 'lbl-start))
-		 end (when thing (hattr:get thing 'lbl-end)))
+	  ((and (not (hyperb:stack-frame '(hui-kill-ring-save hbut:at-p ibut:at-p ebut:at-p)))
+		(setq thing (hbut:at-p)
+		      start (when thing (hattr:get thing 'lbl-start))
+		      end (when thing (hattr:get thing 'lbl-end))))
 	   (and start end
 		(list (buffer-substring-no-properties start end) start end)))
 	  ((hui-select-at-delimited-thing-p)
@@ -1846,22 +1864,20 @@ string arguments."
 	  (ibut:operate))
       (ibut:operate))))
 
-(defun hui:kill-region (beg end &optional region interactive)
-  "Invoke context-sensitive kill-region command "
+(defun hui:kill-region (beg end &optional region)
+  "Invoke context-sensitive kill-region command over BEG and END.
+Third optional arg, REGION, when non-nil is sent to any call of
+`kill-region' and used to invoke the `region-extract-function'
+which determines the region, ignoring BEG and END."
   (cond ((derived-mode-p 'kotl-mode)
-	 (if interactive
-	     (call-interactively #'kotl-mode:kill-region)
-           (kotl-mode:kill-region beg end)))
+         (kotl-mode:kill-region beg end))
 	((and (fboundp 'dynamic-completion-mode)
 	      dynamic-completion-mode
 	      (eq last-command 'complete))
 	 (delete-region (point) cmpl-last-insert-location)
 	 (insert cmpl-original-string)
 	 (setq completion-to-accept nil))
-	(t
-	 (if interactive
-	     (call-interactively #'kill-region)
-	   (kill-region beg end region)))))
+	(t (kill-region beg end region))))
 
 (defun hui:link-possible-types ()
   "Return list of possible link action types during editing of a Hyperbole button.
@@ -2029,6 +2045,11 @@ Buffer without File      link-to-buffer-tmp"
   "Return LST, a list, with text properties removed from any string elements."
   (mapcar (lambda (elt) (if (stringp elt) (substring-no-properties elt) elt))
 	  lst))
+
+(defun hui:validate-region (beg end region)
+  "Trigger a user error unless both BEG and END are whole numbers or REGION is non-nil."
+  (unless (or (and (number-or-marker-p beg) (number-or-marker-p end)) region)
+    (user-error "The mark is not set now, so there is no region")))
 
 (provide 'hui)
 
