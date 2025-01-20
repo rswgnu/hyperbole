@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    20-Jan-25 at 20:22:05
-;; Last-Mod:     20-Jan-25 at 20:44:26 by Mats Lidell
+;; Last-Mod:     20-Jan-25 at 20:56:51 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -20,6 +20,15 @@
 
 (require 'ert)
 (require 'hy-test-helpers)
+
+(unless (fboundp #'char-uppercase-p)
+  (defun char-uppercase-p (char)
+    "Return non-nil if CHAR is an upper-case character.
+If the Unicode tables are not yet available, e.g. during bootstrap,
+then gives correct answers only for ASCII characters."
+    (cond ((unicode-property-table-internal 'lowercase)
+           (characterp (get-char-code-property char 'lowercase)))
+          ((<= ?A char ?Z)))))
 
 (ert-deftest test-helpers-test--make-random-wikiword ()
   "Verify hy-make-random-wikiword."
