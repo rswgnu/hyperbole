@@ -1,3 +1,13 @@
+2025-01-20  Mats Lidell  <matsl@gnu.org>
+
+* test/test-helpers-tests.el (test-helpers-test--make-random-wikiword):
+    Add test.
+
+* test/MANIFEST: Test file for the test helpers.
+
+* test/hy-test-helpers.el (hy-make-random-wikiword): Helper for making
+    random WikiWords.
+
 2025-01-20  Bob Weiner  <rsw@gnu.org>
 
 * hsys-ert.el (require 'hbut): For 'defib'.

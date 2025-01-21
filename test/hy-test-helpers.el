@@ -3,11 +3,11 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     15-Dec-24 at 14:24:42 by Bob Weiner
+;; Last-Mod:     21-Jan-25 at 17:02:36 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; Copyright (C) 2021-2024  Free Software Foundation, Inc.
+;; Copyright (C) 2021-2025  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -99,6 +99,23 @@ Checks ACTYPE, ARGS, LOC, LBL-KEY and NAME."
     (when buf
       (kill-buffer buf))
     (delete-directory dir)))
+
+(defun hy-make-random-wikiword (&optional length word-length)
+  "Create a random WikiWord (string).
+The WikiWord will have a total of LENGTH characters.  Each word part of
+the WikiWord will have WORD-LENGTH characters.  The default LENGTH is 12
+and the default WORD-LENGTH is 4."
+  (unless length
+    (setq length 12))
+  (unless word-length
+    (setq word-length 4))
+  (let ((chars (vconcat (number-sequence ?a ?z)))
+        (result ""))
+    (dotimes (i length)
+      (when (zerop (mod i word-length))
+        (setq result (concat result " ")))
+      (setq result (concat result (char-to-string (elt chars (random (length chars)))))))
+    (replace-regexp-in-string "[[:space:]]" "" (capitalize result))))
 
 (provide 'hy-test-helpers)
 ;;; hy-test-helpers.el ends here

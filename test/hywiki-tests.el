@@ -7,7 +7,7 @@
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; Copyright (C) 2024  Free Software Foundation, Inc.
+;; Copyright (C) 2024-2025  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -893,16 +893,36 @@ Note special meaning of `hywiki-allow-plurals-flag'."
 
 (ert-deftest hywiki-tests--add-org-roam-node ()
   "Verify `hywiki-add-org-roam-node'."
-  (let ((hywiki-directory (make-temp-file "hywiki" t))
-	(wikiword "WikiWord"))
+  (let* ((hywiki-directory (make-temp-file "hywiki" t))
+         (wiki-page (cdr (hywiki-add-page "FirstWord")))
+	 (wikiword (hy-make-random-wikiword)))
     (unwind-protect
         (mocklet (((hypb:require-package 'org-roam) => t)
-		  ((org-roam-node-read) => t)
-		  ((org-roam-node-title t) => "org-roam-node"))
+		  ((org-roam-node-read) => "node")
+		  ((org-roam-node-title "node") => "node-title"))
 	  (hywiki-add-org-roam-node wikiword)
-          (should (equal '(org-roam-node . "org-roam-node")
+          (should (equal '(org-roam-node . "node-title")
 			 (hywiki-get-referent wikiword))))
+      (hy-delete-file-and-buffer wiki-page)
       (hy-delete-dir-and-buffer hywiki-directory))))
+
+;;; FIXME
+;; Without creating an initial page the test case above oddly fails on
+;; first run when executed interactively in a fresh Emacs. Such as
+;; running "make all-tests" in a shell. Why?
+;;
+;; (ert-deftest hywiki-tests--add-org-roam-node ()
+;;   "Verify `hywiki-add-org-roam-node'."
+;;   (let* ((hywiki-directory (make-temp-file "hywiki" t))
+;; 	 (wikiword (hy-make-random-wikiword)))
+;;     (unwind-protect
+;;         (mocklet (((hypb:require-package 'org-roam) => t)
+;; 		  ((org-roam-node-read) => "node")
+;; 		  ((org-roam-node-title "node") => "node-title"))
+;; 	  (hywiki-add-org-roam-node wikiword)
+;;           (should (equal '(org-roam-node . "node-title")
+;; 			 (hywiki-get-referent wikiword))))
+;;       (hy-delete-dir-and-buffer hywiki-directory))))
 
 (provide 'hywiki-tests)
 ;;; hywiki-tests.el ends here
