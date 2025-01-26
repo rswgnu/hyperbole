@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     19-Jan-25 at 10:04:03 by Bob Weiner
+;; Last-Mod:     26-Jan-25 at 17:04:55 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -894,7 +894,8 @@ Return t if selected, else nil."
 	  (goto-char (match-end 0)))))))
 
 (defun hui-select-at-delimited-sexp-p ()
-  "Select a delimited sexp."
+  "Return non-nil if at the start or on the end char of an sexpression.
+Use `hui-select-mark-delimited-sexp' to select it."
   (unless (eolp)
     (let ((syn-before (if (char-before) (char-syntax (char-before)) 0))
 	  (syn-after  (if (char-after)  (char-syntax (char-after)) 0)))

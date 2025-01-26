@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     18-Jan-25 at 19:33:24 by Bob Weiner
+;; Last-Mod:     26-Jan-25 at 18:22:58 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -111,7 +111,6 @@
 
 (ert-deftest hywiki-tests--action-key-on-wikiword-and-section-displays-page ()
   "Verify `action-key' on a WikiWord with section moves to the section."
-  :expected-result :failed
   (let* ((hsys-org-enable-smart-keys t)
          (hywiki-directory (make-temp-file "hywiki" t))
 	 (hywiki-page-file (expand-file-name "WikiWord.org" hywiki-directory))
@@ -136,7 +135,6 @@
 
 (ert-deftest hywiki-tests--action-key-on-wikiword-and-line-column-displays-page ()
   "Verify `action-key' on a WikiWord with line and column specifications goes to expected point."
-  :expected-result :failed
   (let* ((hsys-org-enable-smart-keys t)
          (hywiki-directory (make-temp-file "hywiki" t))
 	 (hywiki-page-file (expand-file-name "WikiWord.org" hywiki-directory)))
@@ -157,8 +155,8 @@ line 2
                 (action-key)
                 (should (string= hywiki-page-file (buffer-file-name)))
                 (if (string= c ":C5")
-	            (should (looking-at-p (regexp-quote (format "%s$" l))))
-	          (should (looking-at-p (regexp-quote (format "line %s$" l)))))))))
+	            (should (looking-at-p (format "%s$" l)))
+	          (should (looking-at-p (format "line %s$" l))))))))
       (hywiki-mode 0)
       (hy-delete-file-and-buffer hywiki-page-file)
       (hy-delete-dir-and-buffer hywiki-directory))))
