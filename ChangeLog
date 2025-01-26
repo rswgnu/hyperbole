@@ -4,8 +4,14 @@
                         hywiki-tests--action-key-on-wikiword-and-line-column-displays-page):
     Fix both of these so they no longer fail.
 
+* hasht.el (hash-prin1): Add 'reverse' arg and use in 'hywiki-cache-save'.
+
 * README.md: Update to show HTML, Info and PDF links to the Hyperbole Manual
     as the first section in this file for easy reference.
+
+* hasht.el: Change to use lexical scope.
+           (hash-make): Speed up by referencing 'reverse' value only once.
+           (hashp): Remove, use builtin 'hash-table-p' instead.
 
 2025-01-20  Mats Lidell  <matsl@gnu.org>
 

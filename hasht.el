@@ -1,32 +1,16 @@
-;;!emacs
+;;; hasht.el --- Create hash tables from lists and operate on them  -*- lexical-binding: t -*-
 ;;
-;; FILE:         hasht.el
-;; SUMMARY:      Create hash tables from lists and operate on them.
-;; USAGE:        GNU Emacs Lisp Library
-;; KEYWORDS:     extensions, tools
+;; Author:       Bob Weiner
 ;;
-;; AUTHOR:       Bob Weiner
+;; Orig-Date:    16-Mar-90 at 03:38:48
+;; Last-Mod:     26-Jan-25 at 18:30:30 by Bob Weiner
 ;;
-;; ORIG-DATE:    16-Mar-90 at 03:38:48
-;; LAST-MOD:      5-Jan-25 at 12:21:16 by Bob Weiner
+;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; Copyright (C) 1990-1995, 1997, 2016  Free Software Foundation, Inc.
-;; See the file BR-COPY for license information.
+;; Copyright (C) 1990-1995, 1997, 2016, 2024, 2025  Free Software Foundation, Inc.
+;; See the "HY-COPY" file for license information.
 ;;
-;; This file is part of the OO-Browser.
-
-;; The OO-Browser is free software: you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; The OO-Browser is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with the OO-Browser.  If not, see <http://www.gnu.org/licenses/>.
+;; This file is part of GNU Hyperbole.
 
 ;;; Commentary:
 ;;
@@ -43,6 +27,7 @@
 ;;   factor of between 8 and 10 to 1 over those for an unsorted list.
 ;;
 ;;   Public and private function names are alphabetized for easy location.
+
 
 ;;; Code:
 ;;; ************************************************************************
@@ -109,7 +94,7 @@ Otherwise, Return nil if KEY is not in HASH-TABLE or t otherwise."
 	((hash-table-p obj)
 	 (let ((htable-copy (make-hash-table :size (length obj))))
 	   (maphash
-	    (lambda (key value)
+	    (lambda (key _value)
 	      (puthash key (hash-deep-copy obj) htable-copy))
 	    obj)
 	   htable-copy))
@@ -172,14 +157,19 @@ merge all the values for a given <key> instead."
 	(t (let* ((size (length initializer))
 		  (hash-table (make-hash-table :size size))
 		  key value sym)
-	     (mapc (lambda (cns)
-		     (when (consp cns)
-		       (if reverse
-			   (setq key (car cns) value (cdr cns))
-			 (setq key (cdr cns) value (car cns))))
-		     (when (setq sym (intern key))
-		       (puthash sym value hash-table)))
-		   initializer)
+	     (if reverse
+		 (mapc (lambda (cns)
+			 (when (consp cns)
+			   (setq key (car cns) value (cdr cns)))
+			 (when (setq sym (intern key))
+			   (puthash sym value hash-table)))
+		       initializer)
+	       (mapc (lambda (cns)
+		       (when (consp cns)
+			 (setq key (cdr cns) value (car cns)))
+		       (when (setq sym (intern key))
+			 (puthash sym value hash-table)))
+		     initializer))
 	     hash-table))))
 
 (defun hash-make-prepend (initializer &optional reverse)
@@ -219,7 +209,7 @@ return all <value>s."
 	 (mapcar #'symbol-name (hash-table-keys hash-table)))
 	((memq func '(car value first symbol-value))
 	 (hash-table-values hash-table))
-	(t (let (result)
+	(t (let ((result nil))
 	     (maphash
 	      (lambda (key value)
 		(push (funcall func (cons value (symbol-name key)))
@@ -281,7 +271,7 @@ whose keys are the same."
 		     hash-tables)
 		   htable)))))))
 
-(defun hash-merge-first-value (value1 value2)
+(defun hash-merge-first-value (value1 _value2)
   "Return a copy of VALUE1 for use in a hash table merge.
 
 This is suitable for use as a value of `hash-merge-values-function'."
@@ -328,20 +318,28 @@ if KEY or HASH-TABLE are of the wrong type."
 	      (error "(hash-prepend): `%s' key's value `%s' is not a list:" key key-val))
 	  (error "(hash-prepend): Invalid hash-table key: %s" key)))))
 
-(defun hash-prin1 (hash-table &optional stream)
+(defun hash-prin1 (hash-table &optional stream reverse)
   "Output the printed representation of HASH-TABLE as a list.
 Quoting characters are printed when needed to make output that `read'
 can handle, whenever this is possible.
-Output stream is STREAM, or value of `standard-output'."
+Output stream is optional STREAM, or the value of `standard-output'.
+With optional REVERSE non-nil, print each element with its key and
+value in reverse order to that stored in the hash table."
   (if (not (hash-table-p hash-table))
       (progn (prin1 hash-table stream)
 	     (princ "\n" stream))
     (princ "\(\n" stream)
-    (hash-map
-     (lambda (val-key-cons)
-       (prin1 val-key-cons stream)
-       (princ "\n" stream))
-     hash-table)
+    (if reverse
+	(hash-map
+	 (lambda (val-key-cons)
+	   (prin1 (cons (cdr val-key-cons) (car val-key-cons)) stream)
+	   (princ "\n" stream))
+	 hash-table)
+      (hash-map
+       (lambda (val-key-cons)
+	 (prin1 val-key-cons stream)
+	 (princ "\n" stream))
+       hash-table))
     (princ "\)\n" stream)))
 
 (defun hash-replace (value key hash-table)
@@ -362,8 +360,6 @@ Return nil if not a valid hash table."
     (hash-table-size hash-table)))
 
 (defalias 'hash-length 'hash-size)
-
-(defalias 'hashp 'hash-table-p)
 
 ;;; ************************************************************************
 ;;; Private functions
