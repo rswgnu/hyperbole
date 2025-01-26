@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     16-Dec-24 at 00:34:24 by Bob Weiner
+;; Last-Mod:     26-Jan-25 at 10:33:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -416,7 +416,7 @@ When optional NO-FLASH, do not flash."
   ;; Beyond Lisp files, Emacs Lisp symbols appear frequently in Byte-Compiled
   ;; buffers, debugger buffers, program ChangeLog buffers, Help buffers,
   ;; *Warnings*, *Flymake log* and *Flymake diagnostics buffers.
-  (or (apply #'derived-mode-p '(emacs-lisp-mode lisp-interaction-mode
+  (or (apply #'derived-mode-p '(emacs-lisp-mode lisp-data-mode lisp-interaction-mode
 				debugger-mode ert-results-mode))
       (string-match-p (concat "\\`\\*\\(Warnings\\|Flymake log\\|Compile-Log\\(-Show\\)?\\)\\*"
 			      "\\|\\`\\*Flymake diagnostics")

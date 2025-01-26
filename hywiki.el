@@ -3,11 +3,11 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     21-Jan-25 at 00:20:28 by Mats Lidell
+;; Last-Mod:     26-Jan-25 at 18:01:00 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; Copyright (C) 2024  Free Software Foundation, Inc.
+;; Copyright (C) 2024-2025  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -210,7 +210,11 @@ See `current-time' function for the mod time format.")
   "Standard syntax table for Org mode buffers with HyWiki support.")
 
 (defvar hywiki--pages-directory nil)
-(defvar hywiki--referent-hasht nil)
+(defvar hywiki--referent-alist nil
+  "HyWiki alist generated from `hywiki--referent-hasht' for storage in cache.
+Each element is of the form: (wikiword . (referent-type . referent-value)).")
+(defvar hywiki--referent-hasht nil
+  "HyWiki hash table for fast WikiWord referent lookup.")
 
 ;; Globally set these values to avoid using 'let' with stack allocations
 ;; within `hywiki-maybe-highlight-page-name' frequently.
@@ -282,7 +286,8 @@ Use nil for no HyWiki mode indicator."
 ;;;###autoload
 (defun hywiki-set-directory (option value)
   (unless (and (boundp 'hywiki-directory)
-	       (equal hywiki-directory (file-name-as-directory value)))
+	       (equal hywiki-directory (file-name-as-directory value))
+	       (hash-table-p hywiki--referent-hasht))
     (set-default option (file-name-as-directory value))
     (hywiki-clear-referent-hasht)
     (hywiki-make-referent-hasht))
@@ -825,8 +830,7 @@ an error is triggered."
 		      (hywiki-get-referent-hasht)))
     (setq hywiki--any-wikiword-regexp-list nil)
     (unless (hyperb:stack-frame '(hywiki-maybe-highlight-wikiwords-in-frame))
-      (hywiki-directory-set-mod-time)
-      (hywiki-directory-set-checksum))
+      (hywiki-cache-save))
     (run-hooks 'hywiki-add-referent-hook)
     referent))
 
@@ -1182,8 +1186,7 @@ Use `hywiki-get-referent' to determine whether a HyWiki page exists."
 	      (message "HyWikiWord page exists: \"%s\"" page-file)))
 	  (unless (or (hyperb:stack-frame '(hywiki-maybe-highlight-wikiwords-in-frame))
 		      (and (not force-flag) page-file-readable page-in-hasht))
-	    (hywiki-directory-set-mod-time)
-	    (hywiki-directory-set-checksum))
+	    (hywiki-cache-save))
 	  (run-hooks 'hywiki-add-page-hook)
 	  (when page-file (cons 'page page-file))))
     (when (called-interactively-p 'interactive)
@@ -1465,8 +1468,15 @@ Use `dired' unless `action-key-modeline-buffer-id-function' is set to
   (setq hywiki--directory-checksum (hywiki-directory-get-checksum)))
 
 (defun hywiki-directory-set-mod-time ()
-  "Store the last page mod time for `hywiki-directory' as an integer."
+  "Store the last page mod time for `hywiki-directory'.
+Use `time-since' to see the time in seconds since this modification time."
   (setq hywiki--directory-mod-time (hywiki-directory-get-mod-time)))
+
+(defun hywiki-maybe-directory-updated ()
+  "When a HyWiki directory is modified, reset its modified time and checksum."
+  (hywiki-directory-set-mod-time)
+  (hywiki-directory-set-checksum))
+
 
 ;;;###autoload
 (defun hywiki-find-referent (&optional wikiword prompt-flag)
@@ -2136,8 +2146,7 @@ value of `hywiki-word-highlight-flag' is changed."
     ;; when `hywiki-word-highlight-flag' is nil.
     (hywiki-maybe-dehighlight-page-names region-start region-end))
   (unless (hyperb:stack-frame '(hywiki-maybe-highlight-wikiwords-in-frame))
-    (hywiki-directory-set-mod-time)
-    (hywiki-directory-set-checksum))
+    (hywiki-maybe-directory-updated))
   nil)
 
 (defun hywiki-maybe-highlight-wikiwords-in-frame (frame &optional skip-lookups-update-flag)
@@ -2156,8 +2165,7 @@ the current page unless they have sections attached."
        (sit-for 0)
        (hywiki-maybe-highlight-page-names nil nil skip-lookups-update-flag)))
    nil frame)
-  (hywiki-directory-set-mod-time)
-  (hywiki-directory-set-checksum))
+  (hywiki-maybe-directory-updated))
 
 (defun hywiki-in-page-p ()
   "Return non-nil if the current buffer is a HyWiki page.
@@ -2232,9 +2240,9 @@ regexps of wikiwords, if the hash table is out-of-date."
       (if (and (equal hywiki--pages-directory hywiki-directory)
 	       ;; If page files changed, have to rebuild referent hash table
 	       (not (hywiki-directory-modified-p))
-	       hywiki--referent-hasht)
+	       (hash-table-p hywiki--referent-hasht)
+	       (not (hash-empty-p hywiki--referent-hasht)))
 	  hywiki--referent-hasht
-	(setq hywiki--any-wikiword-regexp-list nil)
 	;; Rebuild referent hash table
 	(hywiki-make-referent-hasht))
     (unless hywiki--any-wikiword-regexp-list
@@ -2335,27 +2343,112 @@ If deleted, update HyWikiWord highlighting across all frames."
 			 collect key))))
 	   ('sorted t))))))
 
+(defvar hywiki-cache-default-file ".hywiki.eld"
+  "Standard file name for storing cached data for a HyWiki.")
+
+(defvar hywiki-cache-file nil
+  "Current HyWiki cache file, if any.
+If nil, use: (expand-file-name hywiki-cache-default-file hywiki-directory).")
+
+(defun hywiki-cache-default-file (&optional directory)
+  "Return a HyWiki cache file for optional DIRECTORY or `hywiki-directory'.
+The filename is either the string value of `hywiki-cache-file', or else the
+value of `hywiki-cache-default-file'.  The filename returned is an
+absolute path."
+  (expand-file-name (or hywiki-cache-file hywiki-cache-default-file)
+		    (or directory hywiki-directory)))
+
+(defun hywiki-cache-edit (cache-file)
+  "Read in CACHE-FILE for editing and disable undo and backups within it."
+  (prog1 (set-buffer (find-file-noselect cache-file))
+    (buffer-disable-undo (current-buffer))
+    (make-local-variable 'make-backup-files)
+    (make-local-variable 'backup-inhibited)
+    (setq make-backup-files nil
+	  backup-inhibited t
+	  buffer-read-only nil)))
+
+(defun hywiki-cache-save (&optional save-file)
+  "Save the modified Environment to a file given by optional SAVE-FILE or `hywiki-cache-file'.
+Also saves and potentially sets `hywiki--directory-mod-time' and
+ hywiki--directory-checksum'."
+  (when (or (not (stringp save-file)) (equal save-file ""))
+    (setq save-file (hywiki-cache-default-file)))
+  (setq save-file (expand-file-name save-file hywiki-directory))
+  (or (file-writable-p save-file)
+      (error "(hywiki-cache-save): Non-writable Environment file, \"%s\"" save-file))
+  (let ((buf (get-file-buffer save-file)))
+    (and buf (kill-buffer buf)))
+  (let ((dir (or (file-name-directory save-file)
+		 default-directory)))
+    (or (file-writable-p dir)
+	(error "(hywiki-cache-save): Non-writable Environment directory, \"%s\"" dir)))
+  (save-window-excursion
+    (let ((standard-output (hywiki-cache-edit save-file)))
+      (with-current-buffer standard-output
+	(erase-buffer)
+	(princ ";; -*- mode:lisp-data; coding: utf-8-emacs; -*-\n")
+
+	(princ (format "\n(setq\nhyperb:version %S\n" hyperb:version))
+
+	(princ (format "\nhywiki-directory %S\n" hywiki-directory))
+
+	;; Save last `hywiki-directory' mod time and checksum, nil if none.
+	(princ (format "\nhywiki--directory-mod-time '%S\n" (hywiki-directory-set-mod-time)))
+
+	(princ (format "\nhywiki--directory-checksum %S\n"
+		       (hywiki-directory-set-checksum)))
+
+	(princ "\nhywiki--referent-alist\n'")
+	(hash-prin1 (hywiki-get-referent-hasht) nil t)
+	(princ ")\n")
+
+	(save-buffer)
+	(set-buffer-modified-p nil)
+	(kill-buffer standard-output)))))
+
 (defun hywiki-make-referent-hasht ()
   "Rebuld referent hasht from list of HyWiki page files and non-page entries."
-  (let* ((page-files (hywiki-get-page-files))
-	 (non-page-elts (when (hashp hywiki--referent-hasht)
-			  (delq nil
-				(hash-map 'hywiki-non-page-elt
-				 hywiki--referent-hasht))))
-	 (non-page-hasht (hash-make non-page-elts))
-	 (key)
-	 (page-elts (delq nil (mapcar (lambda (file)
-					(setq key (file-name-sans-extension file))
-					(unless (hash-get key non-page-hasht)
-					  (cons (cons 'page file) key)))
-				      page-files))))
-    (setq hywiki--any-wikiword-regexp-list nil
-	  hywiki--pages-directory hywiki-directory
-	  hywiki--referent-hasht
-	  (if non-page-elts
- 	      (hash-merge non-page-hasht
-			  (hash-make page-elts))
-	    (hash-make page-elts)))))
+  (setq hywiki--any-wikiword-regexp-list nil
+	hywiki--pages-directory hywiki-directory)
+  ;; Try to load from a .hywiki.eld cache file if up-to-date
+  (let* ((cache-file (hywiki-cache-default-file))
+	 (cache-buffer (when (file-readable-p cache-file)
+			 (find-file-noselect cache-file)))
+	 (hywiki-loaded-flag (when cache-buffer
+			       (with-current-buffer cache-buffer
+				 (widen)
+				 (goto-char (point-min))
+				 ;; Skip past initial comments
+				 (when (re-search-forward "^(" nil t)
+				   (goto-char (1- (point)))
+				   (condition-case ()
+				       (progn (eval (read (buffer-string)))
+					      t)
+				     (error nil)))))))
+  (if (and hywiki-loaded-flag (not (hywiki-directory-modified-p)))
+	;; Rebuild from loaded data
+	(setq hywiki--referent-hasht (hash-make hywiki--referent-alist t)
+	      hywiki--referent-alist nil)
+      ;; Read `hywiki-directory' for current page files and merge with
+      ;; non-page referents
+      (let* ((page-files (hywiki-get-page-files))
+	     (non-page-elts (when (hash-table-p hywiki--referent-hasht)
+			      (delq nil
+				    (hash-map 'hywiki-non-page-elt
+					      hywiki--referent-hasht))))
+	     (non-page-hasht (hash-make non-page-elts))
+	     (key)
+	     (page-elts (delq nil (mapcar (lambda (file)
+					    (setq key (file-name-sans-extension file))
+					    (unless (hash-get key non-page-hasht)
+					      (cons (cons 'page file) key)))
+					  page-files))))
+	(setq hywiki--referent-hasht
+	      (if non-page-elts
+ 		  (hash-merge non-page-hasht
+			      (hash-make page-elts))
+		(hash-make page-elts)))))))
 
 (defun hywiki-non-page-elt (val-key)
   (unless (eq (caar val-key) 'page) val-key))

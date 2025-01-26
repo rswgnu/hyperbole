@@ -4,10 +4,36 @@
                         hywiki-tests--action-key-on-wikiword-and-line-column-displays-page):
     Fix both of these so they no longer fail.
 
+* test/hy-test-helpers.el (hy-delete-dir-and-buffer): Add support for
+    deleting automatically created HyWiki cache .hywiki.eld file
+    before trying to delete directory.
+
+* hui-select.el (hui-select-at-delimited-sexp-p): Correct doc.
+
+* hywiki.el (hywiki-get-referent-hasht): Load/build referent hash table
+  t if invalid or empty.
+
 * hasht.el (hash-prin1): Add 'reverse' arg and use in 'hywiki-cache-save'.
+
+* hywiki.el (hywiki-maybe-highlight-page-names,
+             hywiki-maybe-highlight-wikiwords-in-frame, hywiki-add-page):
+    Replace calls to 'hywiki-directory-set-mod-time' and
+    'hywiki-directory-set-checksum' with 'hywiki-env-save'.
+            (hywiki--referent-alist): Add.
+            (hywiki-cache-default-file, hywiki-cache-file, hywiki-cache-default-file,
+             hywiki-cache-edit, hywiki-cache-save): Add to save HyWikiWord referent
+    relations in a persistent cache.  This makes HyWikis with multiple referent
+    types work across Emacs sessions.
+            (hywiki-make-referent-hasht): Add load from persistent cache.
 
 * README.md: Update to show HTML, Info and PDF links to the Hyperbole Manual
     as the first section in this file for easy reference.
+
+* hmouse-tag.el (smart-emacs-lisp-mode-p): Add 'lisp-data-mode' support for
+    .eld files.
+
+* hywiki.el (hywiki-set-directory): Ensure hash table has been created if
+    skip call 'hywiki-make-referent-hasht'.
 
 * hasht.el: Change to use lexical scope.
            (hash-make): Speed up by referencing 'reverse' value only once.
