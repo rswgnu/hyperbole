@@ -1,3 +1,7 @@
+2025-01-27  Mats Lidell  <matsl@gnu.org>
+
+* hywiki.el (hywiki-cache-save): Shorten docstring.
+
 2025-01-26  Mats Lidell  <matsl@gnu.org>
 
 * .github/workflows/static.yaml: Remove deploy static content to pages

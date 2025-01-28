@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     26-Jan-25 at 18:01:00 by Bob Weiner
+;; Last-Mod:     27-Jan-25 at 18:17:45 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2369,9 +2369,10 @@ absolute path."
 	  buffer-read-only nil)))
 
 (defun hywiki-cache-save (&optional save-file)
-  "Save the modified Environment to a file given by optional SAVE-FILE or `hywiki-cache-file'.
-Also saves and potentially sets `hywiki--directory-mod-time' and
- hywiki--directory-checksum'."
+  "Save the modified Environment to a file.
+The file is given by optional SAVE-FILE or `hywiki-cache-file'.  Also
+save and potentially set `hywiki--directory-mod-time' and
+`hywiki--directory-checksum'."
   (when (or (not (stringp save-file)) (equal save-file ""))
     (setq save-file (hywiki-cache-default-file)))
   (setq save-file (expand-file-name save-file hywiki-directory))
