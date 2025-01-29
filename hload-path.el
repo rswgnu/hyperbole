@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    29-Jun-16 at 14:39:33
-;; Last-Mod:     21-Mar-24 at 11:35:21 by Bob Weiner
+;; Last-Mod:     29-Jan-25 at 09:56:50 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -187,10 +187,10 @@ This is used only when running from git source and not a package release."
 	 (kotl-autoloads (expand-file-name "kotl/kotl-autoloads.el")))
     (unless (featurep 'hyperbole-autoloads)
       (when (file-readable-p hypb-autoloads)
-        (load-file hypb-autoloads)))
+        (load hypb-autoloads nil t)))
     (unless (featurep 'kotl-autoloads)
       (when (file-readable-p kotl-autoloads)
-        (load-file kotl-autoloads)))))
+        (load kotl-autoloads nil t)))))
 
 ;; Ensure *-autoloads.el files are already generated or generate them.
 ;; Then ensure they are loaded.

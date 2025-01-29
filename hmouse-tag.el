@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     26-Jan-25 at 10:33:32 by Bob Weiner
+;; Last-Mod:     29-Jan-25 at 20:12:31 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -25,7 +25,7 @@
     ;; Force use of .elc file here since otherwise the bin/etags
     ;; executable might be found in a user's load-path by the load
     ;; command.
-    (load "etags.elc" t nil t)))
+    (load "etags.elc" t t t)))
 
 (require 'hsys-xref)
 

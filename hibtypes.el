@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     19-Jan-25 at 17:56:38 by Bob Weiner
+;; Last-Mod:     29-Jan-25 at 10:07:49 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -95,19 +95,19 @@
 ;;; Supports jumping to Emacs Regression Test (ert) 'should' source lines
 ;;; ========================================================================
 
-(load "hsys-ert")
+(load "hsys-ert" nil t)
 
 ;;; ========================================================================
 ;;; Displays Org and Org Roam files and sections by name link
 ;;; ========================================================================
 
-(load "hynote")
+(load "hynote" nil t)
 
 ;;; ========================================================================
 ;;; Creates and displays personal wiki pages and sections with auto-wikiword links
 ;;; ========================================================================
 
-(load "hywiki")
+(load "hywiki" nil t)
 
 ;;; ========================================================================
 ;;; Jumps to source line from Python traceback lines
@@ -128,13 +128,13 @@ line and check for a source reference line again."
 ;;; ert-deftest ibtype executes current ert test when on first line of def.
 ;;; ========================================================================
 
-(load "hypb-ert")
+(load "hypb-ert" nil t)
 
 ;;; ========================================================================
 ;;; Handles social media hashtag and username references, e.g. twitter#myhashtag
 ;;; ========================================================================
 
-(load "hib-social")
+(load "hib-social" nil t)
 
 ;;; ========================================================================
 ;;; Displays Org Roam and Org IDs.
@@ -366,7 +366,7 @@ display options."
 ;;; Follows URLs by invoking a web browser.
 ;;; ========================================================================
 
-(load "hsys-www")
+(load "hsys-www" nil t)
 
 ;;; ========================================================================
 ;;; Uses web browser to display links to Hyperbole HTML manual sections;
@@ -755,13 +755,13 @@ spaces and then another non-space, non-parenthesis, non-brace character."
 ;;; Handles Gnu debbugs issue ids, e.g. bug#45678 or just 45678.
 ;;; ========================================================================
 
-(load "hib-debbugs")
+(load "hib-debbugs" nil t)
 
 ;;; ========================================================================
 ;;; Executes or documents command bindings of brace delimited key sequences.
 ;;; ========================================================================
 
-(load "hib-kbd")
+(load "hib-kbd" nil t)
 
 ;;; ========================================================================
 ;;; Makes Internet RFC references retrieve the RFC.
@@ -823,7 +823,7 @@ Requires the Emacs builtin Tramp library for ftp file retrievals."
 ;;; Follows links to Hyperbole Koutliner cells.
 ;;; ========================================================================
 
-(load "klink")
+(load "klink" nil t)
 
 ;;; ========================================================================
 ;;; Links to Hyperbole button types
