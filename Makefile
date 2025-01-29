@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     29-Jan-25 at 17:15:04 by Mats Lidell
+# Last-Mod:     29-Jan-25 at 22:02:28 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -331,16 +331,16 @@ $(data_dir)/hkey-help.txt: $(man_dir)/hkey-help.txt
 src: autoloads tags
 
 # Byte compile files but apply a filter for either including or
-# removing warnings.  See variable {C-hv byte-compile-warnings RET} for
-# list of warnings that can be controlled.  Default is set to suppress
-# warnings for long docstrings.
+# removing warnings.  See variable {C-hv byte-compile-warnings RET}
+# for list of warnings that can be controlled.  Default is set to 'all
+# from emacs versions that define `byte-compile--emacs-build-warning-types'.
 #
 # Example for getting warnings for obsolete functions and variables
 #   HYPB_WARNINGS="free-vars" make bin
 # Example for surpressing the free-vars warnings
 #   HYPB_WARNINGS="not free-vars" make bin
 ifeq ($(origin HYPB_WARNINGS), undefined)
-HYPB_BIN_WARN =
+HYPB_BIN_WARN = --eval "(setq-default byte-compile-warnings (if (boundp 'byte-compile--emacs-build-warning-types) 'all t))"
 else ifeq ($(origin HYPB_WARNINGS), environment)
 HYPB_BIN_WARN = --eval "(setq-default byte-compile-warnings '(${HYPB_WARNINGS}))"
 endif
@@ -350,13 +350,13 @@ ifeq ($(HYPB_NATIVE_COMP),yes)
 %.elc: %.el
 	$(HYPB_ELN_ELC)$(EMACS) --batch --quick \
 	--eval "(progn (add-to-list 'load-path \"$(curr_dir)\") (add-to-list 'load-path \"$(curr_dir)/kotl\"))" \
-	${HYPB_BIN_WARN} \
+	-l bytecomp ${HYPB_BIN_WARN} \
 	-f batch-native-compile $<
 else
 %.elc: %.el
 	$(HYPB_ELC)$(EMACS) --batch --quick \
 	--eval "(progn (add-to-list 'load-path \"$(curr_dir)\") (add-to-list 'load-path \"$(curr_dir)/kotl\"))" \
-	${HYPB_BIN_WARN} \
+	-l bytecomp ${HYPB_BIN_WARN} \
 	-f batch-byte-compile $<
 endif
 
