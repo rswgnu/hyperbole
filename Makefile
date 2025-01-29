@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     19-Jan-25 at 17:53:51 by Bob Weiner
+# Last-Mod:     29-Jan-25 at 17:15:04 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -187,13 +187,21 @@ DOCKER_VERSIONS=27.2 28.2 29.4 master
 #                     NO CHANGES REQUIRED BELOW HERE.                    #
 ##########################################################################
 
+# Verbosity macros - Prefer short messages for each command. Uncomment
+# for seeing the full command.
+HYPB_GEN     = @$(info $.  GEN      $@)
+HYPB_ELC     = @$(info $.  ELC      $@)
+HYPB_ELC_ELN = @$(info $.  ELC+ELN  $@)
+HYPB_at      = @
+
 # Libraries that must be pre-loaded before trying to byte-compile anything.
 PRELOADS = $(SITE_PRELOADS) -l ./hload-path.el -l ./hversion.el -l ./hyperbole.el 
 
 # Compile in batch mode.  Load site-lisp/site-start.el, which may set load-path.
 # Show complete expression; do not abbreviate any exprs in batch logs with ...
-BATCHFLAGS = --batch --quick --eval "(progn (setq backtrace-line-length 0) \
-                                 (message \"  emacs-version = %s\n  system-configuration = %s\n  emacs = %s%s\n  load-path = %s\" emacs-version system-configuration invocation-directory invocation-name load-path))"
+BATCHFLAGS = --batch --quick --eval "(setq backtrace-line-length 0)"
+
+VERSIONFLAGS = --eval "(message \"  emacs-version = %s\n  system-configuration = %s\n  emacs = %s%s\n  load-path = %s\" emacs-version system-configuration invocation-directory invocation-name load-path)"
 
 EMACS_BATCH=$(EMACS) $(BATCHFLAGS) $(PRELOADS)
 EMACS_PLAIN_BATCH=$(EMACS) $(BATCHFLAGS)
@@ -298,6 +306,9 @@ echo:
 	@echo "TERM: $(TERM)"
 	@echo "DISPLAY: $(DISPLAY)"
 
+emacs-environment:
+	@$(EMACS_PLAIN_BATCH) $(VERSIONFLAGS)
+
 install: elc install-info install-html $(data_dir)/hkey-help.txt
 
 install-info: $(info_dir)/hyperbole.info
@@ -337,15 +348,13 @@ endif
 curr_dir = $(shell pwd)
 ifeq ($(HYPB_NATIVE_COMP),yes)
 %.elc: %.el
-	@printf "Compiling $<\n"
-	@$(EMACS) --batch --quick \
+	$(HYPB_ELN_ELC)$(EMACS) --batch --quick \
 	--eval "(progn (add-to-list 'load-path \"$(curr_dir)\") (add-to-list 'load-path \"$(curr_dir)/kotl\"))" \
 	${HYPB_BIN_WARN} \
 	-f batch-native-compile $<
 else
 %.elc: %.el
-	@printf "Compiling $<\n"
-	@$(EMACS) --batch --quick \
+	$(HYPB_ELC)$(EMACS) --batch --quick \
 	--eval "(progn (add-to-list 'load-path \"$(curr_dir)\") (add-to-list 'load-path \"$(curr_dir)/kotl\"))" \
 	${HYPB_BIN_WARN} \
 	-f batch-byte-compile $<
@@ -354,7 +363,7 @@ endif
 new-bin: autoloads $(ELC_KOTL) $(ELC_COMPILE)
 
 remove-elc:
-	$(RM) *.elc kotl/*.elc
+	$(HYPB_at)$(RM) *.elc kotl/*.elc
 
 # Remove and then rebuild all byte-compiled .elc files, even those .elc files
 # which do not yet exist, plus build TAGS file.
@@ -366,10 +375,10 @@ eln: echo src
 
 tags: TAGS
 TAGS: $(EL_TAGS)
-	$(ETAGS) --regex='{lisp}/(ert-deftest[ \t]+\([^ \t\n\r\f()]+\)/' $(EL_TAGS)
+	$(HYPB_GEN)$(ETAGS) --regex='{lisp}/(ert-deftest[ \t]+\([^ \t\n\r\f()]+\)/' $(EL_TAGS)
 
 clean:
-	$(RM) hyperbole-autoloads.el kotl/kotl-autoloads.el $(ELC_COMPILE) $(ELC_KOTL) TAGS test/*.elc
+	$(HYPB_at)$(RM) hyperbole-autoloads.el kotl/kotl-autoloads.el $(ELC_COMPILE) $(ELC_KOTL) TAGS test/*.elc
 
 version:
 	@echo ""
@@ -470,10 +479,10 @@ ftp: package $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz
 autoloads: kotl/kotl-autoloads.el hyperbole-autoloads.el
 
 hyperbole-autoloads.el: $(EL_COMPILE)
-	$(EMACS_BATCH) --debug --eval "(progn (setq generated-autoload-file (expand-file-name \"hyperbole-autoloads.el\") backup-inhibited t) (let (find-file-hooks) (hload-path--make-directory-autoloads \".\" generated-autoload-file)))"
+	$(HYPB_GEN)$(EMACS_BATCH) --debug --eval "(progn (setq generated-autoload-file (expand-file-name \"hyperbole-autoloads.el\") backup-inhibited t) (let (find-file-hooks) (hload-path--make-directory-autoloads \".\" generated-autoload-file)))"
 
 kotl/kotl-autoloads.el: $(EL_KOTL)
-	$(EMACS_PLAIN_BATCH) --debug --eval "(let ((autoload-file (expand-file-name \"kotl/kotl-autoloads.el\")) (backup-inhibited t) (find-file-hooks)) (if (functionp (quote make-directory-autoloads)) (make-directory-autoloads \"kotl/\" autoload-file) (progn (setq generated-autoload-file autoload-file) (update-directory-autoloads \"kotl/\"))))"
+	$(HYPB_GEN)$(EMACS_PLAIN_BATCH) --debug --eval "(let ((autoload-file (expand-file-name \"kotl/kotl-autoloads.el\")) (backup-inhibited t) (find-file-hooks)) (if (functionp (quote make-directory-autoloads)) (make-directory-autoloads \"kotl/\" autoload-file) (progn (setq generated-autoload-file autoload-file) (update-directory-autoloads \"kotl/\"))))"
 
 # Used for ftp.gnu.org tarball distributions.
 $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz:
