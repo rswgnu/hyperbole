@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     19-Jan-25 at 15:01:21 by Bob Weiner
+;; Last-Mod:     29-Jan-25 at 20:27:07 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1029,9 +1029,9 @@ found match."
 (defun hypb:toggle-isearch-invisible (&optional arg)
   "Toggle interactive invisible searching on or off.
 This determines whether to search inside invisible text or not.
-Toggles the variable ‘isearch-invisible’ between values
-nil and a non-nil value of the option ‘search-invisible’
-\(or ‘open’ if ‘search-invisible’ is nil).
+Toggles the variable `isearch-invisible' between values
+nil and a non-nil value of the option `search-invisible’
+\(or `open' if `search-invisible' is nil).
 
 With optional prefix ARG > 0, turn on searching invisible text.
 If ARG <= 0, turn search only visible text."

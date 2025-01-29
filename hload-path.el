@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    29-Jun-16 at 14:39:33
-;; Last-Mod:     29-Jan-25 at 09:56:50 by Mats Lidell
+;; Last-Mod:     29-Jan-25 at 19:07:46 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -136,7 +136,7 @@ DIR can be either a single directory or a list of
 directories.  (The latter usage is discouraged.)
 
 The autoloads will be written to OUTPUT-FILE.  If any Lisp file
-binds ‘generated-autoload-file’ as a file-local variable, write
+binds `generated-autoload-file' as a file-local variable, write
 its autoloads into the specified file instead.
 
 The function does NOT recursively descend into subdirectories of the

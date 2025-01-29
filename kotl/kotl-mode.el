@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:      5-Jan-25 at 11:15:10 by Bob Weiner
+;; Last-Mod:     29-Jan-25 at 18:57:50 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -3166,7 +3166,7 @@ When called interactively, it displays the value in the minibuffer."
 ;;; ------------------------------------------------------------------------
 
 (defun kotl-mode:org-delete-backward-char (n)
-  "Like ‘delete-backward-char’, insert whitespace at field end in tables.
+  "Like `delete-backward-char', insert whitespace at field end in tables.
 When deleting backwards, in tables this function will insert whitespace in
 front of the next \"|\" separator, to keep the table aligned.  The table will
 still be marked for re-alignment if the field did fill the entire column,
@@ -3176,7 +3176,7 @@ because, in this case the deletion might narrow the column."
    (lambda () (org-delete-backward-char n))))
 
 (defun kotl-mode:org-delete-char (n)
-  "Like ‘delete-char’, but insert whitespace at field end in tables.
+  "Like `delete-char', but insert whitespace at field end in tables.
 When deleting characters, in tables this function will insert whitespace in
 front of the next \"|\" separator, to keep the table aligned.  The table will
 still be marked for re-alignment if the field did fill the entire column,
