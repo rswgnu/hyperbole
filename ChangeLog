@@ -1,3 +1,14 @@
+2025-01-30  Mats Lidell  <matsl@gnu.org>
+
+* test/hui-mini-tests.el (hui--menu-read-from-minibuffer): Unit test.
+
+* test/MANIFEST: Added hui-mini-tests.el.
+
+* test/hui-mini-tests.el: New file. Test for hui-mini.
+
+* hui-mini.el (hui:menu-read-from-minibuffer): Use
+    replace-regexp-in-string for compatibility with Emacs 27.2.
+
 2025-01-29  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (HYPB_GEN, HYPB_ELC, HYPB_ELC_ELN, HYPB_at): Verbosity macros.

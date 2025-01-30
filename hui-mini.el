@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     18-Jan-25 at 13:57:49 by Bob Weiner
+;; Last-Mod:     30-Jan-25 at 19:44:11 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -22,8 +22,6 @@
 (require 'browse-url)
 (require 'hsettings)                    ; For hyperbole-web-search-alist
 (require 'hypb)
-(unless (fboundp 'string-replace)
-  (load "subr")) ;; for `string-replace'
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -424,9 +422,9 @@ Allows custom handling of menu lines before selecting an item."
 				   org-m-ret-options))
 	   (current-name (cdr (assq hsys-org-enable-smart-keys option-lookups))))
       (when (and (stringp current-name) (stringp initial-contents))
-	(setq initial-contents (string-replace current-name
-					       (concat "==" current-name "==")
-					       initial-contents)))))
+	(setq initial-contents (replace-regexp-in-string (regexp-quote current-name)
+					                 (concat "==" current-name "==")
+					                 initial-contents)))))
   (setq initial-contents (hui:menu-maybe-highlight-item-keys initial-contents))
   (read-from-minibuffer prompt initial-contents keymap read
 			hist default-value inherit-input-method))
