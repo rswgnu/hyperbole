@@ -1,3 +1,8 @@
+2025-01-30  Mats Lidell  <matsl@gnu.org>
+
+* hui-mini.el (hui:menu-read-from-minibuffer): Use
+    replace-regexp-in-string for compatibility with Emacs 27.2.
+
 2025-01-29  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (HYPB_GEN, HYPB_ELC, HYPB_ELC_ELN, HYPB_at): Verbosity macros.
