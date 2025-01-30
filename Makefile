@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     29-Jan-25 at 22:02:28 by Mats Lidell
+# Last-Mod:     30-Jan-25 at 09:30:52 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -348,7 +348,7 @@ endif
 curr_dir = $(shell pwd)
 ifeq ($(HYPB_NATIVE_COMP),yes)
 %.elc: %.el
-	$(HYPB_ELN_ELC)$(EMACS) --batch --quick \
+	$(HYPB_ELC_ELN)$(EMACS) --batch --quick \
 	--eval "(progn (add-to-list 'load-path \"$(curr_dir)\") (add-to-list 'load-path \"$(curr_dir)/kotl\"))" \
 	-l bytecomp ${HYPB_BIN_WARN} \
 	-f batch-native-compile $<
