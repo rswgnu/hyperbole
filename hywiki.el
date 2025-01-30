@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     27-Jan-25 at 18:17:45 by Mats Lidell
+;; Last-Mod:     29-Jan-25 at 19:13:12 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1199,7 +1199,7 @@ This replaces any existing referent the WIKIWORD may have.
 
 With either `hywiki-referent-prompt-flag' set or optional prefix ARG,
 prompt for and choose a typed referent, otherwise, create and/or display
-a HyWiki page.  See ‘hywiki-referent-menu’ for valid referent types.
+a HyWiki page.  See `hywiki-referent-menu' for valid referent types.
 
 Use `hywiki-get-referent' to test for and retrieve an existing HyWikiWord
 referent."
@@ -1222,7 +1222,7 @@ referent."
 If there is no existing WIKIWORD referent, add one.
 With either `hywiki-referent-prompt-flag' set or optional prefix ARG,
 prompt for and choose a typed referent, otherwise, create and/or display
-a HyWiki page.  See ‘hywiki-referent-menu’ for valid referent types.
+a HyWiki page.  See `hywiki-referent-menu' for valid referent types.
 
 Use `hywiki-get-referent' to determine whether a HyWikiWord referent
 exists."
@@ -1242,7 +1242,7 @@ exists."
 (defun hywiki-create-referent-and-display (wikiword)
   "Display the HyWiki referent for WIKIWORD and return it.
 If there is no existing WIKIWORD referent, prompt for and choose
-a referent type; see ‘hywiki-referent-menu’ for valid referent
+a referent type; see `hywiki-referent-menu' for valid referent
 types.
 
 Use `hywiki-get-referent' to determine whether a HyWikiWord referent
@@ -1255,7 +1255,7 @@ exists."
   "Display the HyWiki referent for WIKIWORD and return it.
 If there is no existing WIKIWORD referent, add a HyWiki page for
 it unless optional prefix arg, PROMPT-FLAG, is given, then prompt
-for and create another referent type.  See ‘hywiki-referent-menu’
+for and create another referent type.  See `hywiki-referent-menu'
 for valid referent types.
 
 Use `hywiki-get-referent' to determine whether a HyWiki page exists."

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     27-Jan-24 at 23:43:15 by Bob Weiner
+;; Last-Mod:     29-Jan-25 at 19:07:24 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1011,9 +1011,9 @@ than the bounds of the active region.
 
 FUNC should take no arguments and should operate upon the cell at point.
 
-`lbl-sep-len’ contains the label separator length.
+`lbl-sep-len' contains the label separator length.
 
-See also `kview:map-tree', `kview:map-branch’, and ‘kview:map-siblings’."
+See also `kview:map-tree', `kview:map-branch', and `kview:map-siblings'."
   (with-current-buffer (kview:buffer kview)
     (save-excursion
       (let* ((results)

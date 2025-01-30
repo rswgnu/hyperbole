@@ -1,3 +1,10 @@
+2025-01-29  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (HYPB_GEN, HYPB_ELC, HYPB_ELC_ELN, HYPB_at): Verbosity macros.
+    (VERSIONFLAGS, emacs-environment): Extract to own target to reduce
+    noise in regular builds.
+    (HYPB_BIN_WARN): Set default to 'all.
+
 2025-01-27  Mats Lidell  <matsl@gnu.org>
 
 * hywiki.el (hywiki-cache-save): Shorten docstring.

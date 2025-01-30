@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:      8-Jan-25 at 22:49:42 by Mats Lidell
+;; Last-Mod:     29-Jan-25 at 19:05:16 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -839,7 +839,7 @@ HEIGHT lines but that the idea of the actual height of the frame should
 not be changed.
 
 Optional fourth argument PIXELWISE non-nil means that FRAME should be
-HEIGHT pixels high.  Note: When ‘frame-resize-pixelwise’ is nil, some
+HEIGHT pixels high.  Note: When `frame-resize-pixelwise’ is nil, some
 window managers may refuse to honor a HEIGHT that is not an integer
 multiple of the default frame font height."
   (let ((frame-resize-pixelwise t))
@@ -863,7 +863,7 @@ bottom edge of FRAME’s display."
 Ensure frame fits within the screen size.
 
 Optional argument PIXELWISE non-nil means to measure in pixels.  Note:
-When ‘frame-resize-pixelwise’ is nil, some window managers may refuse to
+When `frame-resize-pixelwise’ is nil, some window managers may refuse to
 honor a WIDTH that is not an integer multiple of the default frame font
 width or a HEIGHT that is not an integer multiple of the default frame
 font height."
@@ -880,7 +880,7 @@ columns but that the idea of the actual width of the frame should not
 be changed.
 
 Optional fourth argument PIXELWISE non-nil means that FRAME should be
-WIDTH pixels wide.  Note: When ‘frame-resize-pixelwise’ is nil, some
+WIDTH pixels wide.  Note: When `frame-resize-pixelwise’ is nil, some
 window managers may refuse to honor a WIDTH that is not an integer
 multiple of the default frame font width."
   (let ((x-origin (hycontrol-frame-x-origin))

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     26-Jan-25 at 10:33:32 by Bob Weiner
+;; Last-Mod:     29-Jan-25 at 20:26:54 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -25,7 +25,7 @@
     ;; Force use of .elc file here since otherwise the bin/etags
     ;; executable might be found in a user's load-path by the load
     ;; command.
-    (load "etags.elc" t nil t)))
+    (load "etags.elc" t t t)))
 
 (require 'hsys-xref)
 
@@ -68,22 +68,22 @@
 
 (defconst find-defact-regexp "^\\s-*(defact\\s-+%s\\s-"
   "The regexp used to search for a Hyperbole action type definition.
-Note it must contain a ‘%s’ at the place where ‘format’
+Note it must contain a '%s' at the place where `format'
 should insert the action type definition name.")
 
 (defconst find-defal-regexp "^\\s-*(defal\\s-+%s\\s-"
   "The regexp used to search for a Hyperbole action link type definition.
-Note it must contain a ‘%s’ at the place where ‘format’
+Note it must contain a '%s' at the place where `format'
 should insert the action link type definition name.")
 
 (defconst find-defib-regexp "^\\s-*(defib\\s-+%s\\s-"
   "The regexp used to search for a Hyperbole implicit button type definition.
-Note it must contain a ‘%s’ at the place where ‘format’
+Note it must contain a '%s' at the place where `format'
 should insert the implicit button type definition name.")
 
 (defconst find-defil-regexp "^\\s-*(defil\\s-+%s\\s-"
   "The regexp used to search for a Hyperbole implicit link type definition.
-Note it must contain a ‘%s’ at the place where ‘format’
+Note it must contain a '%s' at the place where `format’
 should insert the implicit link type definition name.")
 
 ;; Change ert-deftest lookups to use this regexp rather than the
@@ -94,7 +94,7 @@ should insert the implicit link type definition name.")
 ;; entry in `find-function-regexp-alist' is a regexp.
 (defconst find-ert-test-regexp "^\\s-*(ert-deftest\\s-+%s\\s-"
   "The regexp used to search for an ert test definition.
-Note it must contain a ‘%s’ at the place where ‘format’
+Note it must contain a '%s' at the place where `format'
 should insert the implicit link type definition name.")
 
 ;; Add Hyperbole def types to `find-function-regexp-alist'.
