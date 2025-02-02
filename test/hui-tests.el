@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:      2-Feb-25 at 11:50:31 by Bob Weiner
+;; Last-Mod:      2-Feb-25 at 22:19:25 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1172,6 +1172,78 @@ With point on label suggest that ibut for rename."
           (gbut:ebut-program "global" 'eval-elisp ''(should (string= current-folder default-directory)))
           (gbut:act "global"))
       (hy-delete-file-and-buffer global-but-file))))
+
+(ert-deftest hui--kill-highlighted-region-default-settings ()
+  "Verify `hui-kill-region'.
+The Emacs default settings are used, i.e. both `transient-mark-mode' and
+`mark-even-if-inactive' are enabled."
+  (with-temp-buffer
+    (let ((transient-mark-mode t)
+	  (mark-even-if-inactive t))
+      (insert "abc{def}ghi")
+      (goto-char 1)
+      (set-mark nil)
+
+      ;; No mark set
+      (condition-case err
+          (call-interactively #'hui-kill-region)
+        (error
+         (progn
+           (should (memq (car err) (list 'error 'user-error)))
+           (should (string-match "The mark is not set now, so there is no region" (cadr err))))))
+
+      (set-mark (point))
+      (goto-char 4)
+      (call-interactively #'hui-kill-region)
+      (should (string= "{def}ghi" (buffer-string)))
+
+      (erase-buffer)
+      (insert "abc{def}hig")
+      (goto-char 1)
+      (set-mark (point))
+      (goto-char 4)
+      (deactivate-mark)
+      (call-interactively #'hui-kill-region)
+      (should (string= "abchig" (buffer-string)))
+
+      (erase-buffer)
+      (insert "abc{def}igh")
+      (goto-char 1)
+      (set-mark (point))
+      (goto-char 4)
+      (activate-mark)
+      (call-interactively #'hui-kill-region)
+      (should (string= "{def}igh" (buffer-string)))
+
+      (erase-buffer)
+      (insert "bca{def}ghi")
+      (goto-char 1)
+      (set-mark (point))
+      (goto-char 5)
+      (deactivate-mark)
+      (call-interactively #'hui-kill-region)
+      (should (string= "def}ghi" (buffer-string)))
+
+      ;; Not interactive
+      (erase-buffer)
+      (insert "cab{efd}ghi")
+      (goto-char 1)
+      (set-mark (point))
+      (goto-char 4)
+      (activate-mark)
+      (hui-kill-region (mark t) (point))
+      (should (string= "{efd}ghi" (buffer-string)))
+
+      ;; Pick up region if beg or end is not set.
+      (erase-buffer)
+      (insert "bac{def}ghi")
+      (goto-char 1)
+      (set-mark (point))
+      (goto-char 4)
+      (deactivate-mark)
+      (hui-kill-region nil nil)
+      (should (string= "{def}ghi" (buffer-string))))))
+
 
 (ert-deftest hui--kill-highlighted-region ()
   "Verify `hui-kill-region'.
