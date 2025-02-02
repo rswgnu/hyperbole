@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Acpr-24 at 22:41:13
-;; Last-Mod:      2-Feb-25 at 14:26:00 by Bob Weiner
+;; Last-Mod:      2-Feb-25 at 14:45:23 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -579,14 +579,15 @@ deletion commands and those in `hywiki-non-character-commands'."
 	      (when (memq closing-char '(?\) ?\"))
 		(delete-char -1)
 	        (insert " "))
+	      (goto-char hywiki--buttonize-start)
 	      (hywiki-maybe-highlight-between-page-names)
-	      (when (memq closing-char '(?\) ?\"))
-		(delete-char -1)
-		(insert closing-char))
 	      (when (memq opening-char '(?\( ?\"))
-		(goto-char hywiki--buttonize-start)
 		(delete-char 1)
-		(insert opening-char))))
+		(insert opening-char))
+	      (when (memq closing-char '(?\) ?\"))
+		(goto-char (1+ hywiki--buttonize-end))
+		(delete-char -1)
+		(insert closing-char))))
 	(hywiki-maybe-highlight-between-page-names)))))
 
 (defun hywiki-debuttonize-non-character-commands ()

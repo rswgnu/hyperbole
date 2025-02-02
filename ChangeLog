@@ -5,6 +5,8 @@
     This requires that if a closing delimiter is removed that the opening
     delimiter is temporarily removed so highlighting can proceed properly.
     Then the opening delimiter is reinserted, invisibly to the user.
+            (hywiki-buttonize-non-character-commands): One more fix to
+    highlight with point at the beginning of the previously delimited region.
 
 * hui.el (hui-kill-region): Fix to default 'beg' arg to (mark) only when
     'interactive-flag' is non-nil.
