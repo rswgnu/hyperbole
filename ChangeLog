@@ -1,3 +1,8 @@
+2025-02-02  Mats Lidell  <matsl@gnu.org>
+
+* test/hui-tests.el (hui--kill-highlighted-region-default-settings): Add test for hui-kill-region
+    with the default settings for transient-mark-mode and mark-even-if-inactive.
+
 2025-02-02  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-buttonize-non-character-commands): Simplify to improve
