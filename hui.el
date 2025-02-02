@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:      2-Feb-25 at 11:49:18 by Bob Weiner
+;; Last-Mod:      2-Feb-25 at 12:40:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -135,7 +135,7 @@ point; see `hui:delimited-selectable-thing'."
 ;; to allow killing kcell references, active regions and delimited
 ;; areas (like sexpressions).
 ;;;###autoload
-(defun hui-kill-region (beg end &optional region interactive)
+(defun hui-kill-region (beg end &optional region interactive-flag)
   "Kill (\"cut\") between point and mark.
 The text is deleted but saved in the kill ring.
 The command \\[yank] can retrieve it from there.
@@ -156,7 +156,7 @@ Patched to remove the most recent completion."
 		     'region (prefix-numeric-value current-prefix-arg)))
   (cond ((and transient-mark-mode
               (or (use-region-p)
-	          (not interactive)))
+	          (not interactive-flag)))
 	 (unless (and beg end)
 	   (setq beg (region-beginning)
 		 end (region-end))))
@@ -173,8 +173,8 @@ Patched to remove the most recent completion."
 			end (cdr beg-end)
 			region nil)
 		  t))))
-	(t   (setq beg (mark)
-		   end (point))))
+	(interactive-flag (setq beg (mark)
+				end (point))))
 
   ;; If there is no mark, this call should trigger an error
   (hui:kill-region beg end region))
@@ -212,22 +212,31 @@ visual feedback indicating the extent of the region being copied."
   (interactive (list (when mark-active (mark))
 		     (when mark-active (point))
 		     (prefix-numeric-value current-prefix-arg)))
+  (setq this-command 'kill-ring-save)
   (let (thing)
     (if (or (use-region-p)
 	    (null transient-mark-mode)
 	    (not (called-interactively-p 'interactive)))
 	(if (derived-mode-p 'kotl-mode)
 	    (kotl-mode:copy-region-as-kill beg end)
+	  (when (and (called-interactively-p 'interactive)
+		     (or (null beg) (null end)))
+	    (setq beg (mark)
+		  end (point)))
 	  (hui:validate-region beg end region)
 	  (copy-region-as-kill beg end region))
       (setq thing (hui:delimited-selectable-thing))
       (if (stringp thing)
 	  (progn (kill-new thing)
 		 (setq deactivate-mark t))
+	(when (and (called-interactively-p 'interactive)
+		   (or (null beg) (null end)))
+	  (setq beg (mark)
+		end (point)))
 	(hui:validate-region beg end region)
 	(copy-region-as-kill beg end region)))
-    ;; This use of called-interactively-p is correct because the code it
-    ;; controls just gives the user visual feedback.
+    ;; This use of `called-interactively-p' is correct because the
+    ;; code it controls just gives the user visual feedback.
     (when (called-interactively-p 'interactive)
       (if thing
 	  (message "Saved selectable thing: %s" thing)
