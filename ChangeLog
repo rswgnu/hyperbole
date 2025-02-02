@@ -1,5 +1,11 @@
 2025-02-02  Bob Weiner  <rsw@gnu.org>
 
+* hui.el (hui-kill-region): Fix to default 'beg' arg to (mark) only when
+    'interactive-flag' is non-nil.
+         (hui-kill-ring-save): Fix to set 'beg' and 'end' to (mark) and
+    (point) when needed and called interactively.  Also, set 'this-command'
+    to 'kill-ring-save'.
+
 * test/hui-tests.el (hui--kill-empty-region-twice): Remove assume failure.
 
 * hui.el (hui-kill-region): Remove use of (not mark-even-if-inactive) in 2nd
