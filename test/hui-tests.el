@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:      2-Feb-25 at 00:15:17 by Mats Lidell
+;; Last-Mod:      2-Feb-25 at 11:50:31 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1303,7 +1303,6 @@ enabled."
 (ert-deftest hui--kill-empty-region-twice ()
   "Verify that an empty region can be killed twice.
 Mimics the test case of setting a mark and hitting `C-w' twice."
-  :expected-result :failed
   (with-temp-buffer
     (let ((transient-mark-mode t)
 	  (mark-even-if-inactive t)

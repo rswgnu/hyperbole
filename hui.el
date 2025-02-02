@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     21-Jan-25 at 00:23:41 by Mats Lidell
+;; Last-Mod:      2-Feb-25 at 11:49:18 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -160,7 +160,7 @@ Patched to remove the most recent completion."
 	 (unless (and beg end)
 	   (setq beg (region-beginning)
 		 end (region-end))))
-	((and transient-mark-mode (not mark-even-if-inactive)
+	((and transient-mark-mode
 	      (let* ((major-mode 'fundamental-mode)
 		     ;; Setting the major mode prevents hui-select from
 		     ;; suppressing use of `hui-select-syntax-table'
@@ -172,7 +172,10 @@ Patched to remove the most recent completion."
 			beg (car beg-end)
 			end (cdr beg-end)
 			region nil)
-		  t)))))
+		  t))))
+	(t   (setq beg (mark)
+		   end (point))))
+
   ;; If there is no mark, this call should trigger an error
   (hui:kill-region beg end region))
 
@@ -1869,6 +1872,7 @@ string arguments."
 Third optional arg, REGION, when non-nil is sent to any call of
 `kill-region' and used to invoke the `region-extract-function'
 which determines the region, ignoring BEG and END."
+  (setq this-command #'kill-region)
   (cond ((derived-mode-p 'kotl-mode)
          (kotl-mode:kill-region beg end))
 	((and (fboundp 'dynamic-completion-mode)
