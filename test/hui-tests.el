@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     21-Jan-25 at 17:05:46 by Mats Lidell
+;; Last-Mod:      2-Feb-25 at 00:15:17 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1299,6 +1299,24 @@ enabled."
 
       (hui-kill-region (mark t) (point))
       (should (string= "def}hig" (buffer-string))))))
+
+(ert-deftest hui--kill-empty-region-twice ()
+  "Verify that an empty region can be killed twice.
+Mimics the test case of setting a mark and hitting `C-w' twice."
+  :expected-result :failed
+  (with-temp-buffer
+    (let ((transient-mark-mode t)
+	  (mark-even-if-inactive t)
+          last-command)
+      (insert "foo bar")
+      (goto-char 4)
+      (set-mark (point))
+      (call-interactively #'hui-kill-region)
+      ;; Prepare second call to be setup as kill-region would leave
+      ;; the state when calling it using C-w.
+      (setq mark-active nil)
+      (setq last-command #'kill-region)
+      (call-interactively #'hui-kill-region))))
 
 (ert-deftest hui--kill-region-multiple-kill ()
   "Verify `hui-kill-region' saves to the yank ring on multiple kills.
