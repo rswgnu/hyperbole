@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:      5-Jan-25 at 11:15:10 by Bob Weiner
+;; Last-Mod:      2-Feb-25 at 07:38:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1612,6 +1612,17 @@ but locational suffixes within the file are utilized."
 				(kotl-mode:to-valid-position))
 			      (current-buffer)))))))))))
 
+(defun hpath:normalize-markup-anchor (anchor)
+  "Convert ANCHOR from current buffer into a a string matching its referent."
+  (if (or (derived-mode-p 'prog-mode)
+	  (string-match-p "-.* \\| .*-" anchor))
+      anchor
+    ;; In Markdown or outline modes '-' characters in `anchor' are
+    ;; converted to spaces at the point of definition unless anchor
+    ;; contains both '-' and space characters, in which case no
+    ;; conversion occurs.
+    (subst-char-in-string ?- ?\  anchor)))
+
 (defun hpath:to-markup-anchor (hash anchor &optional instance-num)
   "Ignore HASH when ANCHOR is non-null and move point to ANCHOR string if found.
 Move point to beginning of buffer if HASH is non-nil and ANCHOR is null.
@@ -1639,15 +1650,9 @@ of the buffer."
 			     (let* ((opoint (point))
 				    (prog-mode (derived-mode-p 'prog-mode))
 				    ;; Markdown or outline link ids are case
-				    ;; insensitive and - characters are converted to
-				    ;; spaces at the point of definition unless
-				    ;; anchor contains both - and space characters,
-				    ;; then no conversion occurs.
+				    ;; insensitive.
 				    (case-fold-search (not prog-mode))
-				    (anchor-name (if (or prog-mode
-							 (string-match-p "-.* \\| .*-" anchor))
-						     anchor
-						   (subst-char-in-string ?- ?\  anchor)))
+				    (anchor-name (hpath:normalize-markup-anchor anchor))
 				    (referent-regexp (format
 						      (cond ((or (derived-mode-p 'outline-mode) ;; Includes Org mode
 								 ;; Treat all caps filenames without suffix like outlines, e.g. README, INSTALL.

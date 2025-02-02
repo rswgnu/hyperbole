@@ -2,8 +2,8 @@
 ;;
 ;; Author:       Bob Weiner
 ;;
-;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     29-Jan-25 at 19:13:12 by Mats Lidell
+;; Orig-Date:    21-Acpr-24 at 22:41:13
+;; Last-Mod:      2-Feb-25 at 14:45:23 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -114,7 +114,7 @@
 ;;
 ;; This section summarizes HyWikiWord Actions based on the
 ;;
-;; hywiki-create-referent-flag    When nil                   When t
+;; hywiki-referent-prompt-flag      When nil                   When t
 ;;  -------------------------------------------------------------------------------------
 ;;  Action Key              hywiki-word-create-and-display 
 ;;    or HyWiki/Create      Create Page and Display          Create Referent and Display
@@ -550,39 +550,64 @@ Non-nil is the default."
   "Turn any HyWikiWords between point into highlighted Hyperbole buttons.
 Triggered by `post-self-insert-hook' for self-inserting characters.
 Highlight after inserting any non-word character."
-  (hywiki-maybe-highlight-between-page-names))
+  (unless (or (minibuffer-window-active-p (selected-window))
+	      (and (boundp 'edebug-active) edebug-active
+		   (active-minibuffer-window)))
+    (hywiki-maybe-highlight-between-page-names)))
 
 (defun hywiki-buttonize-non-character-commands ()
   "Highlight any HyWikiWord before or after point as a Hyperbole button.
 Triggered by `post-command-hook' for non-character-commands, including
 deletion commands and those in `hywiki-non-character-commands'."
-  (when (or (memq this-command hywiki-non-character-commands)
-	    (and (symbolp this-command)
-		 (string-match-p "^\\(org-\\)?delete-\\|insert\\(-\\|$\\)" (symbol-name this-command))))
-    (if (and (marker-position hywiki--buttonize-start)
-	     (marker-position hywiki--buttonize-end))
-	(hywiki-maybe-highlight-page-names
-	 hywiki--buttonize-start hywiki--buttonize-end)
-      (hywiki-maybe-highlight-between-page-names))
-    (set-marker hywiki--buttonize-start nil)
-    (set-marker hywiki--buttonize-end nil)))
+  (unless (or (minibuffer-window-active-p (selected-window))
+	      (and (boundp 'edebug-active) edebug-active
+		   (active-minibuffer-window)))
+    (when (or (memq this-command hywiki-non-character-commands)
+	      (and (symbolp this-command)
+		   (string-match-p "^\\(org-\\)?delete-\\|-delete-\\|insert\\(-\\|$\\)" (symbol-name this-command))))
+      (if (and (marker-position hywiki--buttonize-start)
+	       (marker-position hywiki--buttonize-end))
+	  (save-excursion
+	    (goto-char hywiki--buttonize-start)
+	    (let ((opening-char (char-after))
+		  closing-char)
+	      (when (memq opening-char '(?\( ?\"))
+		(delete-char 1)
+		(insert " "))
+	      (goto-char hywiki--buttonize-end)
+	      (setq closing-char (char-before))
+	      (when (memq closing-char '(?\) ?\"))
+		(delete-char -1)
+	        (insert " "))
+	      (goto-char hywiki--buttonize-start)
+	      (hywiki-maybe-highlight-between-page-names)
+	      (when (memq opening-char '(?\( ?\"))
+		(delete-char 1)
+		(insert opening-char))
+	      (when (memq closing-char '(?\) ?\"))
+		(goto-char (1+ hywiki--buttonize-end))
+		(delete-char -1)
+		(insert closing-char))))
+	(hywiki-maybe-highlight-between-page-names)))))
 
 (defun hywiki-debuttonize-non-character-commands ()
   "Dehighlight any HyWikiWord before or after point.
 Triggered by `pre-command-hook' for non-character-commands, including
 deletion commands and those in `hywiki-non-character-commands'."
+  (when (and (markerp hywiki--buttonize-start) (markerp hywiki--buttonize-end))
+    (set-marker hywiki--buttonize-start nil)
+    (set-marker hywiki--buttonize-end nil))
   (when (or (memq this-command hywiki-non-character-commands)
 	    (and (symbolp this-command)
-		 (string-match-p "\\`\\(org-\\)?delete-" (symbol-name this-command))))
+		 (string-match-p "\\`\\(org-\\)?delete-\\|-delete-"
+				 (symbol-name this-command))))
     (cl-destructuring-bind (start end)
 	(hywiki-get-delimited-range) ;; includes delimiters
       ;; Use these to store any range of a delimited HyWikiWord#section
       (set-marker hywiki--buttonize-start start)
       (set-marker hywiki--buttonize-end end)
       ;; Enable dehighlighting in HyWiki pages
-      (if (and start end)
-	  (hywiki-maybe-dehighlight-page-names hywiki--buttonize-start
-					       hywiki--buttonize-end)
+      (unless (and start end)
 	;; Dehighlight any page name at point
 	(hywiki-maybe-dehighlight-between-page-names)))))
 
@@ -865,6 +890,7 @@ with the referent."
 Exclude the minibuffer if selected and return nil."
   (and hywiki-word-highlight-flag
        (not (minibuffer-window-active-p (selected-window)))
+       (not (and (boundp 'edebug-active) edebug-active (active-minibuffer-window)))
        (or (derived-mode-p 'kotl-mode)
 	   (not (eq (get major-mode 'mode-class) 'special)))
        (not (apply #'derived-mode-p hywiki-exclude-major-modes))
@@ -1167,7 +1193,7 @@ Use `hywiki-get-referent' to determine whether a HyWiki page exists."
 	  ;; Remove any #section suffix in PAGE-NAME.
 	  (setq page-name (match-string-no-properties 1 page-name)))
 
-	(let* ((page-file (hywiki-get-file page-name))
+	(let* ((page-file (hywiki-get-page-file page-name))
 	       (page-file-readable (file-readable-p page-file))
 	       (referent-hasht (hywiki-get-referent-hasht))
 	       (page-in-hasht (hywiki-get-referent page-name)))
@@ -1286,7 +1312,7 @@ an existing or new HyWikiWord."
       (call-interactively hywiki-display-page-function)
     (when (null wikiword)
       (setq wikiword (hywiki-word-read-new "Find HyWiki page: ")))
-    (let ((file (hywiki-get-file (or file-name wikiword))))
+    (let ((file (hywiki-get-page-file (or file-name wikiword))))
       (funcall hywiki-display-page-function file)
       ;; Set referent attributes of current implicit button
       (hattr:set 'hbut:current 'referent-type 'page)
@@ -1538,44 +1564,45 @@ This includes the delimiters: (), {}, <>, [] and \"\" (double quotes)."
     (save-restriction
       ;; Limit balanced pair checks to the next two lines for speed
       (narrow-to-region (line-beginning-position) (line-end-position 2))
-      (let ((result (ignore-errors
-		      (cond
-		       ;; Handle opening delimiters
-		       ((memq (char-before) '(?\[ ?\<))
-			(goto-char (1- (point)))
-			(hywiki--get-delimited-range-forward))
-		       ((memq (char-after) '(?\[ ?\<))
-			(hywiki--get-delimited-range-forward))
-		       ((memq (char-before) '(?\( ?\{))
-			(goto-char (1- (point)))
-			(list (point) (scan-sexps (point) 1)))
-		       ((memq (char-after) '(?\( ?\{))
-			(list (point) (scan-sexps (point) 1)))
-		       ((and (eq (char-before) ?\")
-			     (hypb:in-string-p))
-			(goto-char (1- (point)))
-			(list (point) (scan-sexps (point) 1)))
-		       ((and (eq (char-after) ?\")
-			     (hypb:in-string-p))
-			(goto-char (1+ (point)))
-			(list (point) (scan-sexps (point) -1)))
-		       ;; Handle closing delimiters
-		       ((memq (char-before) '(?\] ?\>))
-			(hywiki--get-delimited-range-backward))
-		       ((memq (char-after) '(?\] ?\>))
-			(goto-char (1+ (point)))
-			(hywiki--get-delimited-range-backward))
-		       ((memq (char-before) '(?\) ?\}))
-			(list (point) (scan-sexps (point) -1)))
-		       ((memq (char-after) '(?\) ?\}))
-			(goto-char (1+ (point)))
-			(list (point) (scan-sexps (point) -1)))
-		       ((and (eq (char-before) ?\")
-			     (not (hypb:in-string-p)))
-			(list (point) (scan-sexps (point) -1)))
-		       ((and (eq (char-after) ?\")
-			     (not (hypb:in-string-p)))
-			(list (point) (scan-sexps (point) 1)))))))
+      (let ((result (condition-case nil
+			(cond
+			 ;; Handle opening delimiters
+			 ((memq (char-before) '(?\[ ?\<))
+			  (goto-char (1- (point)))
+			  (hywiki--get-delimited-range-forward))
+			 ((memq (char-after) '(?\[ ?\<))
+			  (hywiki--get-delimited-range-forward))
+			 ((memq (char-before) '(?\( ?\{))
+			  (goto-char (1- (point)))
+			  (list (point) (scan-sexps (point) 1)))
+			 ((memq (char-after) '(?\( ?\{))
+			  (list (point) (scan-sexps (point) 1)))
+			 ((and (eq (char-before) ?\")
+			       (hypb:in-string-p))
+			  (goto-char (1- (point)))
+			  (list (point) (scan-sexps (point) 1)))
+			 ((and (eq (char-after) ?\")
+			       (hypb:in-string-p))
+			  (goto-char (1+ (point)))
+			  (list (point) (scan-sexps (point) -1)))
+			 ;; Handle closing delimiters
+			 ((memq (char-before) '(?\] ?\>))
+			  (hywiki--get-delimited-range-backward))
+			 ((memq (char-after) '(?\] ?\>))
+			  (goto-char (1+ (point)))
+			  (hywiki--get-delimited-range-backward))
+			 ((memq (char-before) '(?\) ?\}))
+			  (list (point) (scan-sexps (point) -1)))
+			 ((memq (char-after) '(?\) ?\}))
+			  (goto-char (1+ (point)))
+			  (list (point) (scan-sexps (point) -1)))
+			 ((and (eq (char-before) ?\")
+			       (not (hypb:in-string-p)))
+			  (list (point) (scan-sexps (point) -1)))
+			 ((and (eq (char-after) ?\")
+			       (not (hypb:in-string-p)))
+			  (list (point) (scan-sexps (point) 1))))
+		      (error nil))))
 	(if result
 	    (sort result #'<)
 	  (list nil nil))))))
@@ -1669,67 +1696,70 @@ Return t if no errors and a pair was found, else nil."
 	(narrow-to-region (line-beginning-position) (line-end-position 2)))
 
       (let ((result t))
-	;; char-before
-	(setq result
-	      (ignore-errors
-		(cond ((memq (char-before) '(?\[ ?\<))
-		       (goto-char (1- (point)))
-		       ;; Highlight any HyWikiWords within single opening
-		       ;; square or angle brackets
-		       ;; Dehighlight HyWikiWords within double opening square
-		       ;; or angle brackets, as these are Org links and targets
-		       (hywiki-maybe-highlight-org-element-forward))
-		      ((memq (char-before) '(?\( ?\{))
-		       ;; Highlight any HyWikiWords within opening parens or braces
-		       (goto-char (1- (point)))
-		       (hywiki-maybe-highlight-sexp 1))
-		      ((and (eq (char-before) ?\")
-			    (hypb:in-string-p))
-		       (goto-char (1- (point)))
-		       (hywiki-maybe-highlight-sexp 1))
-		      ((memq (char-before) '(?\] ?\>))
-		       ;; Dehighlight HyWikiWords within double closing square
-		       ;; or angle brackets, as these are Org links and targets
-		       (hywiki-maybe-highlight-org-element-backward))
-		      ((memq (char-before) '(?\) ?\}))
-		       ;; Highlight any HyWikiWords within closing parens or braces
-		       (hywiki-maybe-highlight-sexp -1))
-		      ((and (eq (char-before) ?\")
-			    (not (hypb:in-string-p)))
-		       ;; Highlight HyWikiWords in any string preceding point
-		       (hywiki-maybe-highlight-sexp -1)))))
+	(condition-case nil
+	    ;; char-before
+	    (cond ((memq (char-before) '(?\[ ?\<))
+		   (goto-char (1- (point)))
+		   ;; Highlight any HyWikiWords within single opening
+		   ;; square or angle brackets
+		   ;; Dehighlight HyWikiWords within double opening square
+		   ;; or angle brackets, as these are Org links and targets
+		   (hywiki-maybe-highlight-org-element-forward))
+		  ((memq (char-before) '(?\( ?\{))
+		   ;; Highlight any HyWikiWords within opening parens or braces
+		   (goto-char (1- (point)))
+		   (hywiki-maybe-highlight-sexp 1))
+		  ((and (eq (char-before) ?\")
+			(hypb:in-string-p))
+		   (goto-char (1- (point)))
+		   (hywiki-maybe-highlight-sexp 1))
+		  ((memq (char-before) '(?\] ?\>))
+		   ;; Dehighlight HyWikiWords within double closing square
+		   ;; or angle brackets, as these are Org links and targets
+		   (hywiki-maybe-highlight-org-element-backward))
+		  ((memq (char-before) '(?\) ?\}))
+		   ;; Highlight any HyWikiWords within closing parens or braces
+		   (hywiki-maybe-highlight-sexp -1))
+		  ((and (eq (char-before) ?\")
+			(not (hypb:in-string-p)))
+		   ;; Highlight HyWikiWords in any string preceding point
+		   (hywiki-maybe-highlight-sexp -1))
+		  (t (setq result nil)))
+	  (error (setq result nil)))
 
-	;; char-after
-	(setq result
-	      (ignore-errors
-		(cond ((memq (char-after) '(?\[ ?\<))
-		       ;; Highlight any HyWikiWords within single opening
-		       ;; square or angle brackets
-		       ;; Dehighlight HyWikiWords within double opening square
-		       ;; or angle brackets, as these are Org links and targets
-		       (hywiki-maybe-highlight-org-element-forward))
-		      ((memq (char-after) '(?\( ?\{))
-		       ;; Highlight any HyWikiWords within opening parens or braces
-		       (hywiki-maybe-highlight-sexp 1))
-		      ((and (eq (char-after) ?\")
-			    (hypb:in-string-p))
-		       (goto-char (1+ (point)))
-		       (hywiki-maybe-highlight-sexp -1))
-		      ((memq (char-after) '(?\] ?\>))
-		       (goto-char (1+ (point)))
-		       ;; Highlight any HyWikiWords within single closing
-		       ;; square or angle brackets
-		       ;; Dehighlight HyWikiWords within double closing square
-		       ;; or angle brackets, as these are Org links and targets
-		       (hywiki-maybe-highlight-org-element-backward))
-		      ((memq (char-after) '(?\) ?\}))
-		       ;; Highlight any HyWikiWords within closing parens or braces
-		       (goto-char (1+ (point)))
-		       (hywiki-maybe-highlight-sexp -1))
-		      ((and (eq (char-after) ?\")
-			    (not (hypb:in-string-p)))
-		       ;; Highlight HyWikiWords in any string following point
-		       (hywiki-maybe-highlight-sexp 1)))))
+	(when result
+	  (condition-case nil
+	      ;; char-after
+	      (cond ((memq (char-after) '(?\[ ?\<))
+		     ;; Highlight any HyWikiWords within single opening
+		     ;; square or angle brackets
+		     ;; Dehighlight HyWikiWords within double opening square
+		     ;; or angle brackets, as these are Org links and targets
+		     (hywiki-maybe-highlight-org-element-forward))
+		    ((memq (char-after) '(?\( ?\{))
+		     ;; Highlight any HyWikiWords within opening parens or braces
+		     (hywiki-maybe-highlight-sexp 1))
+		    ((and (eq (char-after) ?\")
+			  (hypb:in-string-p))
+		     (goto-char (1+ (point)))
+		     (hywiki-maybe-highlight-sexp -1))
+		    ((memq (char-after) '(?\] ?\>))
+		     (goto-char (1+ (point)))
+		     ;; Highlight any HyWikiWords within single closing
+		     ;; square or angle brackets
+		     ;; Dehighlight HyWikiWords within double closing square
+		     ;; or angle brackets, as these are Org links and targets
+		     (hywiki-maybe-highlight-org-element-backward))
+		    ((memq (char-after) '(?\) ?\}))
+		     ;; Highlight any HyWikiWords within closing parens or braces
+		     (goto-char (1+ (point)))
+		     (hywiki-maybe-highlight-sexp -1))
+		    ((and (eq (char-after) ?\")
+			  (not (hypb:in-string-p)))
+		     ;; Highlight HyWikiWords in any string following point
+		     (hywiki-maybe-highlight-sexp 1))
+		    (t (setq result nil)))
+	    (error (setq result nil))))
 	(when result t)))))
 
 (defun hywiki-maybe-dehighlight-between-page-names ()
@@ -1816,10 +1846,7 @@ If in a programming mode, must be within a comment.  Use
 		       (setq hywiki--page-name (match-string-no-properties 2)
 			     hywiki--start (match-beginning 1)
 			     hywiki--end   (match-end 1))
-		       (and (hywiki-get-referent hywiki--page-name)
-			    ;; Ignore wikiwords preceded by any non-whitespace character
-			    ;; (or (bolp) (memq (preceding-char) '(?\  ?\t)))
-			    )))
+		       (hywiki-get-referent hywiki--page-name)))
 		(when (setq hywiki--buts (hproperty:but-get-all-in-region
 					  hywiki--start hywiki--end
 					  'face hywiki-word-face))
@@ -1849,9 +1876,9 @@ the current page unless they have sections attached."
 		 ;; Non-nil if match is inside a comment
 		 (nth 4 (syntax-ppss))
 	       t)
-	   ;;  (or on-page-name
-	   ;;	 (cl-find (char-syntax last-command-event)
-	   ;;		  " _()<>$.\"'"))
+	     ;;  (or on-page-name
+	     ;;	 (cl-find (char-syntax last-command-event)
+	     ;;		  " _()<>$.\"'"))
              (not executing-kbd-macro)
              (not noninteractive))
       (setq hywiki--highlighting-done-flag nil)
@@ -1867,9 +1894,9 @@ the current page unless they have sections attached."
 	      ;; after page name
 	      (skip-syntax-backward ">-"))
 
-	    (hywiki-maybe-highlight-balanced-pairs)
+	    (unless (or hywiki--highlighting-done-flag
+ 			(hywiki-maybe-highlight-balanced-pairs))
 
-	    (unless hywiki--highlighting-done-flag
 	      (unless on-page-name
 		;; May be a closing delimiter that we have to skip past
 		(skip-chars-backward (regexp-quote (hywiki-get-buttonize-characters))))
@@ -2182,7 +2209,7 @@ are typed in the buffer."
   (file-name-sans-extension (file-name-nondirectory
 			     (or (hypb:buffer-file-name) (buffer-name)))))
 
-(defun hywiki-get-file (file-stem-name)
+(defun hywiki-get-page-file (file-stem-name)
   "Return possibly non-existent path in `hywiki-directory' from FILE-STEM-NAME.
 FILE-STEM-NAME should not contain a directory and may have or may omit
 `hywiki-file-suffix' and an optional trailing #section.
@@ -2968,11 +2995,11 @@ DIRECTION-NUMBER is 1 for forward scanning and -1 for backward scanning."
     (when (and sexp-start sexp-end)
       (cl-destructuring-bind (start end)
 	  ;; Point may be at end of sexp, so start and end may
-	  ;; need to be reversed
+	  ;; need to be reversed.
 	  (list (min sexp-start sexp-end) (max sexp-start sexp-end))
     	;; Increment sexp-start so regexp matching excludes the
 	;; delimiter and starts with the page name.  But include any
-	;; trailing delimiter or regexp matching will not work
+	;; trailing delimiter or regexp matching will not work.
 	(funcall func (1+ start) end)
 	(setq hywiki--highlighting-done-flag nil)))))
 
