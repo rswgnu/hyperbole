@@ -1,3 +1,17 @@
+2025-02-02  Bob Weiner  <rsw@gnu.org>
+
+* test/hui-tests.el (hui--kill-empty-region-twice): Remove assume failure.
+
+* hui.el (hui-kill-region): Remove use of (not mark-even-if-inactive) in 2nd
+    cond clause since we want to be able to select a delimited region regardless
+    of any mark setting when Hyperbole is active.
+
+    Fix error when mark is set and mark-even-if-inactive is t and hyperbole-mode
+    is t, but no highlighted region, then two C-w calls in a row used to trigger
+    an error but should just do nothing silently if not on a delimiter.
+
+* hyperbole.el (hyperbole--mark-even-if-inactive): Remove, not used.
+
 2025-02-01  Mats Lidell  <matsl@gnu.org>
 
 * test/hui-tests.el (hui--kill-empty-region-twice): Unit test.

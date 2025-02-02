@@ -9,7 +9,7 @@
 ;; Maintainer:   Robert Weiner <rsw@gnu.org>
 ;; Maintainers:  Robert Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:      06-Oct-92 at 11:52:51
-;; Last-Mod:      5-Jan-25 at 00:55:48 by Bob Weiner
+;; Last-Mod:      2-Feb-25 at 07:27:43 by Bob Weiner
 ;; Released:     10-Mar-24
 ;; Version:      9.0.2pre
 ;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -157,9 +157,6 @@ Info documentation at \"(hyperbole)Top\".
   (if hyperbole-mode
       (hyperbole--enable-mode)
     (hyperbole--disable-mode)))
-
-(defvar hyperbole--mark-even-if-inactive
-  "Stores value of `mark-even-if-inactive' prior to enabling `hyperbole-mode'.")
 
 ;;; ************************************************************************
 ;;; Public declarations
