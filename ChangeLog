@@ -1,3 +1,8 @@
+2025-02-05  Mats Lidell  <matsl@gnu.org>
+
+* hywiki.el (hywiki-add-org-id): Suppress byte compile warnings for calling org-id-get with
+    different number of args. Later versions have a fourth optional arg that we use.
+
 2025-02-02  Mats Lidell  <matsl@gnu.org>
 
 * test/hui-tests.el (hui--kill-highlighted-region-default-settings): Add test for hui-kill-region
