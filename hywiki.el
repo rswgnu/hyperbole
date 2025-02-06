@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Acpr-24 at 22:41:13
-;; Last-Mod:      5-Feb-25 at 22:21:38 by Mats Lidell
+;; Last-Mod:      6-Feb-25 at 23:35:41 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2455,10 +2455,10 @@ save and potentially set `hywiki--directory-mod-time' and
 				       (progn (eval (read (buffer-string)))
 					      t)
 				     (error nil)))))))
-  (if (and hywiki-loaded-flag (not (hywiki-directory-modified-p)))
+    (if (and hywiki-loaded-flag (not (hywiki-directory-modified-p)))
 	;; Rebuild from loaded data
-	(setq hywiki--referent-hasht (hash-make hywiki--referent-alist t)
-	      hywiki--referent-alist nil)
+        (prog1 (setq hywiki--referent-hasht (hash-make hywiki--referent-alist t))
+	  (setq hywiki--referent-alist nil))
       ;; Read `hywiki-directory' for current page files and merge with
       ;; non-page referents
       (let* ((page-files (hywiki-get-page-files))

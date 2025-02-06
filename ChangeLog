@@ -1,3 +1,12 @@
+2025-02-07  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--save-referent)
+    (hywiki-tests--save-referent-use-hyperbole-menu): Tests for using the
+    cached page and referent data.
+
+* hywiki.el (hywiki-make-referent-hasht): Return hasht when rebuilding from
+    load data.
+
 2025-02-05  Mats Lidell  <matsl@gnu.org>
 
 * hywiki.el (hywiki-add-org-id): Suppress byte compile warnings for calling org-id-get with
