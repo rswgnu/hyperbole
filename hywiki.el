@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Acpr-24 at 22:41:13
-;; Last-Mod:      6-Feb-25 at 23:35:41 by Mats Lidell
+;; Last-Mod:      8-Feb-25 at 22:56:32 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1409,6 +1409,7 @@ per file to the absolute value of MAX-MATCHES, if given and not 0.  If
 (defun hywiki-convert-words-to-org-links ()
   "Convert all highlighted HyWiki words in current buffer to Org links."
   (barf-if-buffer-read-only)
+  (hywiki-maybe-highlight-page-names)
   (let ((make-index (hywiki-org-get-publish-property :makeindex))
 	wiki-word)
     (hywiki-map-words (lambda (overlay)
@@ -2482,11 +2483,18 @@ save and potentially set `hywiki--directory-mod-time' and
 (defun hywiki-non-page-elt (val-key)
   (unless (eq (caar val-key) 'page) val-key))
 
+(defun hywiki--sitemap-file ()
+  "Return file name for the sitemap file."
+  (expand-file-name
+   (org-publish-property :sitemap-filename (hywiki-org-get-publish-project))
+   (org-publish-property :base-directory (hywiki-org-get-publish-project))))
+
 (defun hywiki-org-export-function (&rest _)
   "Add to `write-contents-functions' to convert HyWikiWord links to Org links.
 This is done automatically by loading HyWiki."
   (require 'org-element)
   (when (and (derived-mode-p 'org-mode)
+             (not (string= (hywiki--sitemap-file) (buffer-file-name)))
 	     (hyperb:stack-frame '(org-export-copy-buffer)))
     (hywiki-convert-words-to-org-links)
     (hywiki-org-maybe-add-title)))

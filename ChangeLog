@@ -1,3 +1,11 @@
+2025-02-08  Mats Lidell  <matsl@gnu.org>
+
+* hywiki.el (hywiki--sitemap-file): Helper function for getting the sitemap
+    file-name.
+    (hywiki-org-export-function): Only use org publishing for the sitemap file.
+    (hywiki-convert-words-to-org-links): Highlight wiki page names so overlays
+    are defined before looking for them.
+
 2025-02-07  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--save-referent)
