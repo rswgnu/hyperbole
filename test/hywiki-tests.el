@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     26-Jan-25 at 18:22:58 by Bob Weiner
+;; Last-Mod:      7-Feb-25 at 10:01:25 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -921,6 +921,64 @@ Note special meaning of `hywiki-allow-plurals-flag'."
 ;;           (should (equal '(org-roam-node . "node-title")
 ;; 			 (hywiki-get-referent wikiword))))
 ;;       (hy-delete-dir-and-buffer hywiki-directory))))
+
+(ert-deftest hywiki-tests--save-referent ()
+  "Verify saving and loading a referent works."
+  (let* ((hywiki-directory (make-temp-file "hywiki" t))
+         (wiki-page (cdr (hywiki-add-page "WikiPage" )))
+	 (wiki-referent "WikiReferent"))
+    (unwind-protect
+        (progn
+          (find-file wiki-page)
+          (insert wiki-referent)
+          (goto-char 4)
+          (with-simulated-input "ABC RET"
+	    (hywiki-add-key-series wiki-referent))
+	  (should (equal '(key-series . "{ABC}") (hywiki-get-referent wiki-referent)))
+          (should (string= wiki-referent (buffer-string)))
+          (should (file-exists-p (hywiki-cache-default-file)))
+
+          ;; Simulate reload from cache
+          (setq hywiki--referent-hasht nil)
+          (hywiki-make-referent-hasht)
+          (should (equal '(key-series . "{ABC}") (hywiki-get-referent wiki-referent))))
+      (hy-delete-files-and-buffers (list wiki-page (hywiki-cache-default-file)))
+      (hy-delete-dir-and-buffer hywiki-directory))))
+
+(ert-deftest hywiki-tests--save-referent-use-hyperbole-menu ()
+  "Verify saving and loading a referent works when using Hyperbole's menu."
+  :expected-result :failed
+  ;; The entered key series is inserted into the WikiWord file. See
+  ;; comment below.
+  (skip-unless (not noninteractive))
+  (let* ((hywiki-directory (make-temp-file "hywiki" t))
+         (wiki-page (cdr (hywiki-add-page "WikiPage" )))
+	 (wiki-referent "WikiReferent"))
+    (unwind-protect
+        (progn
+          (find-file wiki-page)
+          (insert wiki-referent)
+          (goto-char 4)
+
+          (should (hact 'kbd-key "C-u C-h hhck{ABC} RET"))
+          (hy-test-helpers:consume-input-events)
+
+          ;; The buffer contents is changed and now reads
+          ;; "Wik{ABC}iReferent" as the next should verifies. The
+          ;; second should is the expected behavior. No change in the
+          ;; WikiPage buffer.
+          (should (string= "Wik{ABC}iReferent" (buffer-substring-no-properties (point-min) (point-max))))
+          (should (string= wiki-referent (buffer-substring-no-properties (point-min) (point-max))))
+
+          (should (file-exists-p (hywiki-cache-default-file)))
+	  (should (equal '(key-series . "{ABC}") (hywiki-get-referent wiki-referent)))
+
+          ;; Simulate reload from cache
+          (setq hywiki--referent-hasht nil)
+          (hywiki-make-referent-hasht)
+          (should (equal '(key-series . "{ABC}") (hywiki-get-referent wiki-referent))))
+      (hy-delete-files-and-buffers (list wiki-page (hywiki-cache-default-file)))
+      (hy-delete-dir-and-buffer hywiki-directory))))
 
 (provide 'hywiki-tests)
 ;;; hywiki-tests.el ends here
