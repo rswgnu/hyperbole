@@ -15,6 +15,22 @@
 * hywiki.el (hywiki-make-referent-hasht): Return hasht when rebuilding from
     load data.
 
+2025-02-07  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki--extend-yanked-region): Add and call in 'hywiki-highlight-on-yank'
+    to extend a yanked region to include the rest of a delimited pair or string.
+
+* hui-select.el (hui-select-string-p): Fix to make multi-line string selection
+    work properly whether on the opening or closing double quote mark, using
+    'scan-sexps'.  Update doc string.
+
+2025-02-06  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-debuttonize-non-character-commands,
+             hywiki-buttonize-non-character-commands): Add support for 'kill'
+    commands and fix that removing a trailing delimiter did not rehighlight
+    HyWikiWords properly.
+
 2025-02-05  Mats Lidell  <matsl@gnu.org>
 
 * hywiki.el (hywiki-add-org-id): Suppress byte compile warnings for calling org-id-get with
