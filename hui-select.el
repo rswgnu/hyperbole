@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     26-Jan-25 at 17:04:55 by Bob Weiner
+;; Last-Mod:      7-Feb-25 at 00:15:47 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -108,6 +108,7 @@
 ;;; ************************************************************************
 
 (require 'hvar)
+(require 'hypb)         ;; for hypb:in-string-p
 (eval-when-compile
   (require 'mhtml-mode) ;; for MHTML and HTML modes
   (require 'sgml-mode)  ;; for SGML mode
@@ -1036,49 +1037,65 @@ Return the updated cons cell."
       nil
     hui-select-region))
 
-(defun hui-select-string-p (&optional start-delim end-delim)
-  "Return (start . end) of string whose first line point is in or directly before.
-Positions include delimiters.  String is delimited by double quotes unless
-optional START-DELIM and END-DELIM (strings) are given.
-Returns nil if not within a string."
-  (let ((opoint (point))
-	(count 0)
-	bol start delim-regexp start-regexp end-regexp)
-    (or start-delim (setq start-delim "\""))
-    (or end-delim (setq end-delim "\""))
-    ;; Special case for the empty string.
-    (if (looking-at (concat (regexp-quote start-delim)
-			    (regexp-quote end-delim)))
-	(hui-select-set-region (point) (match-end 0))
-      (setq start-regexp (concat "\\(^\\|[^\\]\\)\\("
-				 (regexp-quote start-delim) "\\)")
-	    end-regexp   (concat "[^\\]\\(" (regexp-quote end-delim) "\\)")
-	    delim-regexp (concat start-regexp "\\|" end-regexp))
-      (save-excursion
-	(beginning-of-line)
-	(setq bol (point))
-	(while (re-search-forward delim-regexp opoint t)
-	  (setq count (1+ count))
-	  ;; This is so we don't miss the closing delimiter of an empty
-	  ;; string.
-	  (if (and (= (point) (1+ bol))
-		   (looking-at (regexp-quote end-delim)))
-	      (setq count (1+ count))
-	    (unless (bobp)
-              (backward-char 1))))
-	(goto-char opoint)
-	;; If found an even # of starting and ending delimiters before
-	;; opoint, then opoint is at the start of a string, where we want it.
-	(if (zerop (mod count 2))
-	    (unless (bobp)
-              (backward-char 1))
-	  (re-search-backward start-regexp nil t))
-	;; Point is now before the start of the string.
-	(when (re-search-forward start-regexp nil t)
-	  (setq start (match-beginning 2))
-	  (when (re-search-forward end-regexp nil t)
-	    (hui-select-set-region start (point))))))))
 
+(defun hui-select-string-p (&optional start-delim end-delim)
+  "Return (start . end) of a string.
+Works when on a delim or on the first line with point in the
+string or directly before it.  Positions include delimiters.
+String is delimited by double quotes unless optional START-DELIM
+and END-DELIM (strings) are given.  Returns nil if not within a
+string."
+  (unless start-delim (setq start-delim "\""))
+  (unless end-delim (setq end-delim "\""))
+  (or (and (equal start-delim "\"") (equal end-delim "\"")
+	   (ignore-errors
+	     (cond ((and (= (char-after) ?\")
+			 (/= (char-before) ?\\))
+		    (if (hypb:in-string-p)
+			(hui-select-set-region (scan-sexps (1+ (point)) -1)
+					       (1+ (point)))
+		      (hui-select-set-region (point) (scan-sexps (point) 1))))
+		   ((and (= (char-before) ?\")
+			 (/= (char-before (1- (point))) ?\\))
+		    (if (hypb:in-string-p)
+			(hui-select-set-region (1- (point)) (scan-sexps (1- (point)) 1))
+		      (hui-select-set-region (scan-sexps (1- (point)) -1)
+					     (point)))))))
+      (let ((opoint (point))
+	    (count 0)
+	    bol start delim-regexp start-regexp end-regexp)
+	;; Special case for the empty string.
+	(if (looking-at (concat (regexp-quote start-delim)
+				(regexp-quote end-delim)))
+	    (hui-select-set-region (point) (match-end 0))
+	  (setq start-regexp (concat "\\(^\\|[^\\]\\)\\("
+				     (regexp-quote start-delim) "\\)")
+		end-regexp   (concat "[^\\]\\(" (regexp-quote end-delim) "\\)")
+		delim-regexp (concat start-regexp "\\|" end-regexp))
+	  (save-excursion
+	    (beginning-of-line)
+	    (setq bol (point))
+	    (while (re-search-forward delim-regexp opoint t)
+	      (setq count (1+ count))
+	      ;; This is so we don't miss the closing delimiter of an empty
+	      ;; string.
+	      (if (and (= (point) (1+ bol))
+		       (looking-at (regexp-quote end-delim)))
+		  (setq count (1+ count))
+		(unless (bobp)
+		  (backward-char 1))))
+	    (goto-char opoint)
+	    ;; If found an even # of starting and ending delimiters before
+	    ;; opoint, then opoint is at the start of a string, where we want it.
+	    (if (zerop (mod count 2))
+		(unless (bobp)
+		  (backward-char 1))
+	      (re-search-backward start-regexp nil t))
+	    ;; Point is now before the start of the string.
+	    (when (re-search-forward start-regexp nil t)
+	      (setq start (match-beginning 2))
+	      (when (re-search-forward end-regexp nil t)
+		(hui-select-set-region start (point)))))))))
 ;;;
 ;;; Code selections
 ;;;
