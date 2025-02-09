@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Acpr-24 at 22:41:13
-;; Last-Mod:     23-Feb-25 at 11:50:21 by Bob Weiner
+;; Last-Mod:     27-Feb-25 at 09:27:46 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2491,7 +2491,10 @@ save and potentially set `hywiki--directory-mod-time' and
   (or (file-writable-p save-file)
       (error "(hywiki-cache-save): Non-writable Environment file, \"%s\"" save-file))
   (let ((buf (get-file-buffer save-file)))
-    (and buf (kill-buffer buf)))
+    (and buf
+         (with-current-buffer buf
+           (set-buffer-modified-p nil)
+           (kill-buffer (current-buffer)))))
   (let ((dir (or (file-name-directory save-file)
 		 default-directory)))
     (or (file-writable-p dir)
