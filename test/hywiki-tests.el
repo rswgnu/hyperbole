@@ -980,5 +980,17 @@ Note special meaning of `hywiki-allow-plurals-flag'."
       (hy-delete-files-and-buffers (list wiki-page (hywiki-cache-default-file)))
       (hy-delete-dir-and-buffer hywiki-directory))))
 
+(ert-deftest hywiki-tests--delete-parenthesised-char ()
+  "Verify removing a char between parentheses only removes the char.
+See gh#rswgnu/hyperbole/669."
+  :expected-result :failed
+  (with-temp-buffer
+    (insert "(a)")
+    (goto-char 2)
+    (let ((this-command #'delete-char))
+      (with-hywiki-buttonize-hooks
+        (delete-char 1)))
+    (should (string= "()" (buffer-substring-no-properties (point-min) (point-max))))))
+
 (provide 'hywiki-tests)
 ;;; hywiki-tests.el ends here
