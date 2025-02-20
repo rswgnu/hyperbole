@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     19-Feb-25 at 20:51:38 by Bob Weiner
+;; Last-Mod:     19-Feb-25 at 21:30:51 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -674,15 +674,17 @@ they contain that match `hyrolo-file-suffix-regexp'.  Then, if
 `find-file-wildcards' is non-nil (the default), any files
 containing [char-matches] or * wildcards are expanded to their
 matches."
-  (unless paths
-    (setq paths
-	  (delq nil
-		(list (if (file-readable-p "~/.rolo.org")
+  (let ((default-file (if (file-readable-p "~/.rolo.org")
 			  "~/.rolo.org"
-			"~/.rolo.otl")
-		      (if (and (boundp 'bbdb-file) (stringp bbdb-file)) bbdb-file)
-		      (when (hyrolo-google-contacts-p) google-contacts-buffer-name)))))
-  (hpath:expand-list paths hyrolo-file-suffix-regexp #'file-readable-p))
+			"~/.rolo.otl")))
+    (unless paths
+      (setq paths
+	    (delq nil
+		  (list default-file
+			(if (and (boundp 'bbdb-file) (stringp bbdb-file)) bbdb-file)
+			(when (hyrolo-google-contacts-p) google-contacts-buffer-name)))))
+    (or (hpath:expand-list paths hyrolo-file-suffix-regexp #'file-readable-p)
+	(hpath:expand-list (list default-file) hyrolo-file-suffix-regexp))))
 
 ;;;###autoload
 (defun hyrolo-fgrep (string &optional max-matches hyrolo-file count-only headline-only no-display)

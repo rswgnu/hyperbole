@@ -1,5 +1,8 @@
 2025-02-19  Bob Weiner  <rsw@gnu.org>
 
+* hyrolo.el (hyrolo-expand-path-list): Fix to include a default file name
+    even when the file does not yet exist.
+
 * test/hyrolo-tests.el (hyrolo-test--expand-path-list): Expand matching
     filename.
 
