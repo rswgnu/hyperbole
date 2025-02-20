@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     19-Feb-25 at 21:30:51 by Bob Weiner
+;; Last-Mod:     19-Feb-25 at 21:41:13 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -684,7 +684,7 @@ matches."
 			(if (and (boundp 'bbdb-file) (stringp bbdb-file)) bbdb-file)
 			(when (hyrolo-google-contacts-p) google-contacts-buffer-name)))))
     (or (hpath:expand-list paths hyrolo-file-suffix-regexp #'file-readable-p)
-	(hpath:expand-list (list default-file) hyrolo-file-suffix-regexp))))
+	(list (expand-file-name default-file)))))
 
 ;;;###autoload
 (defun hyrolo-fgrep (string &optional max-matches hyrolo-file count-only headline-only no-display)
