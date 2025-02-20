@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     18-Jan-25 at 22:45:52 by Bob Weiner
+;; Last-Mod:     19-Feb-25 at 21:41:13 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -316,8 +316,6 @@ of the match or nil when no match.")
 (declare-function hyrolo-fgrep-logical "hyrolo-logic")
 
 (defvar hproperty:highlight-face)
-
-;; '("~/.rolo.otl" "~/.rolo.org")
 
 (defcustom hyrolo-highlight-face 'match
   "Face used to highlight rolo search matches."
@@ -676,12 +674,17 @@ they contain that match `hyrolo-file-suffix-regexp'.  Then, if
 `find-file-wildcards' is non-nil (the default), any files
 containing [char-matches] or * wildcards are expanded to their
 matches."
-  (if paths
-      (hpath:expand-list paths hyrolo-file-suffix-regexp #'file-readable-p)
-    (delq nil
-	  (list "~/.rolo.otl"
-		(if (and (boundp 'bbdb-file) (stringp bbdb-file)) bbdb-file)
-		(when (hyrolo-google-contacts-p) google-contacts-buffer-name)))))
+  (let ((default-file (if (file-readable-p "~/.rolo.org")
+			  "~/.rolo.org"
+			"~/.rolo.otl")))
+    (unless paths
+      (setq paths
+	    (delq nil
+		  (list default-file
+			(if (and (boundp 'bbdb-file) (stringp bbdb-file)) bbdb-file)
+			(when (hyrolo-google-contacts-p) google-contacts-buffer-name)))))
+    (or (hpath:expand-list paths hyrolo-file-suffix-regexp #'file-readable-p)
+	(list (expand-file-name default-file)))))
 
 ;;;###autoload
 (defun hyrolo-fgrep (string &optional max-matches hyrolo-file count-only headline-only no-display)
@@ -782,7 +785,8 @@ If ARG is zero, move to the beginning of the current line."
 (defun hyrolo-get-file-list ()
   "Return the current expanded list of HyRolo search files."
   (if (equal hyrolo-file-list (symbol-value 'hyrolo-file-list))
-      (or hyrolo--expanded-file-list hyrolo-file-list)
+      (or hyrolo--expanded-file-list hyrolo-file-list
+	  (hyrolo-expand-path-list nil))
     ;; lexical-binding is enabled and there is a local binding of
     ;; `hyrolo-file-list', so expand it.
     (hyrolo-expand-path-list hyrolo-file-list)))

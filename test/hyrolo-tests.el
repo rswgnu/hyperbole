@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     21-Jan-25 at 17:04:35 by Mats Lidell
+;; Last-Mod:     19-Feb-25 at 21:08:39 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1678,7 +1678,8 @@ match
 
 (ert-deftest hyrolo-test--expand-path-list ()
   "Verify `hyrolo-expand-path-list'."
-  (should (equal (hyrolo-expand-path-list nil) '("~/.rolo.otl")))
+  (should (equal (hyrolo-expand-path-list nil)
+		 (list (expand-file-name "~/.rolo.otl"))))
   (let ((bbdb-file nil))
     (mocklet (((hpath:expand-list
                 '("/file1")

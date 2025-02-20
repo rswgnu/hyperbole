@@ -1,3 +1,16 @@
+2025-02-19  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-expand-path-list): Fix to include a default file name
+    even when the file does not yet exist.
+
+* test/hyrolo-tests.el (hyrolo-test--expand-path-list): Expand matching
+    filename.
+
+* hyrolo.el (hyrolo-expand-path-list): Use default "~/.rolo.org" when it
+    exists and is readable.  Fixes gh#rswgnu/hyperbole/672 and bug#76424.
+            (hyrolo-get-file-list): Return a default rolo file when `hyrolo-
+    file-list' is nil.
+
 2025-02-08  Mats Lidell  <matsl@gnu.org>
 
 * hywiki.el (hywiki--sitemap-file): Helper function for getting the sitemap
