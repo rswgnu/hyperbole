@@ -249,25 +249,24 @@ line 2
 
 (ert-deftest hywiki-tests--at-wikiword-finds-word-and-section ()
   "Verify `hywiki-word-at' finds WikiWord and section if available."
-  (let ((hywiki-directory (make-temp-file "hywiki" t)))
+  (let ((hywiki-directory (make-temp-file "hywiki" t))
+        (words '("WikiWord" "WikiWord:L1" "WikiWord:L1:C2"
+                 "WikiWord#section" "WikiWord#section:L1" "WikiWord#section:L1:C2"
+                 "WikiWord#section-subsection" "WikiWord#section-subsection:L1" "WikiWord#section-subsection:L1:C2"
+                 ;; FIXME: Uncomment when implemented.
+                 ;; ("(WikiWord#section with spaces)" . "WikiWord#section with spaces")
+                 ;; ("(WikiWord#section)" . "WikiWord#section")
+                 )))
     (unwind-protect
         (with-temp-buffer
           (hywiki-mode)
-          (insert "WikiWord")
-          (goto-char 4)
-          (should (string= "WikiWord" (hywiki-word-at)))
-
-          ;; Section
-          (goto-char (point-max))
-          (insert "#section")
-          (goto-char 4)
-          (should (string= "WikiWord#section" (hywiki-word-at)))
-
-          ;; Section with dash
-          (goto-char (point-max))
-          (insert "-subsection")
-          (goto-char 4)
-          (should (string= "WikiWord#section-subsection" (hywiki-word-at))))
+          (dolist (w words)
+            (let ((in (if (stringp w) w (car w)))
+                  (expect (if (stringp w) w (cdr w))))
+              (erase-buffer)
+              (insert in)
+              (goto-char 4)
+              (should (string= expect (hywiki-word-at))))))
       (hywiki-mode -1)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
