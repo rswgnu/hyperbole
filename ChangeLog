@@ -1,5 +1,8 @@
 2025-02-19  Bob Weiner  <rsw@gnu.org>
 
+* test/hyrolo-tests.el (hyrolo-test--expand-path-list): Expand matching
+    filename.
+
 * hyrolo.el (hyrolo-expand-path-list): Use default "~/.rolo.org" when it
     exists and is readable.  Fixes gh#rswgnu/hyperbole/672 and bug#76424.
             (hyrolo-get-file-list): Return a default rolo file when `hyrolo-
