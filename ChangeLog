@@ -1,3 +1,10 @@
+2025-02-24  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--action-key-moves-to-word-and-section):
+    Test action-key on WikiWords with section and line info.
+    (hywiki-tests--published-html-links-to-word-and-section): Verify html
+    links to sections are generated.
+
 2025-02-23  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-referent-menu): Re-add accidentally deleted "Keys" key
