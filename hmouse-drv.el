@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     15-Dec-24 at 22:38:04 by Bob Weiner
+;; Last-Mod:     22-Feb-25 at 11:52:57 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1115,6 +1115,81 @@ documentation is found."
 		       (format "%s %sKey"
 			       (if assisting "Assist" "Action")
 			       (if mouse-flag "Mouse " "")))
+
+		    ;; Print Hyperbole button attributes
+		    (when (or (memq cmd-sym '(hui:hbut-act hui:hbut-help))
+			      (hattr:get 'hbut:current 'actype))
+		      (let* ((actype (or (actype:elisp-symbol (hattr:get 'hbut:current 'actype))
+					 (hattr:get 'hbut:current 'actype)))
+			     ;; (lbl-key (hattr:get 'hbut:current 'lbl-key))
+			     (categ (hattr:get 'hbut:current 'categ))
+			     (attributes (nthcdr 2 (hattr:list 'hbut:current)))
+			     (but-def-symbol (htype:def-symbol
+					      (if (eq categ 'explicit) actype categ))))
+
+			(princ (format "%s %s SPECIFICS:\n"
+				       (or but-def-symbol
+					   (htype:def-symbol actype))
+				       (cond ((eq categ 'explicit)
+					      "EXPLICIT BUTTON")
+					     (categ
+					      "IMPLICIT BUTTON")
+					     (t "ACTION TYPE"))))
+			(when (and assisting
+				   (or (plist-member attributes 'actype)
+				       (plist-member attributes 'action)))
+			  (setq attributes (copy-sequence attributes))
+			  (hypb:remove-from-plist attributes 'actype)
+			  (hypb:remove-from-plist attributes 'action))
+			(hattr:report attributes)
+			(unless (or assisting
+				    (eq categ 'explicit)
+				    (null categ)
+				    (not (fboundp categ))
+				    (null (documentation categ)))
+			  ;; Include implicit button's ibtype doc
+			  (princ (format "\n%s\n"
+					 (replace-regexp-in-string "^" "  " (documentation categ)
+								   nil t))))
+			(if assisting
+			    (let* ((ibtype-name (htype:names 'ibtypes categ))
+				   (custom-help-func (when (stringp ibtype-name)
+						       (intern-soft
+							(concat ibtype-name ":help"))))
+				   (type-help-func (or (and custom-help-func
+							    (fboundp custom-help-func)
+							    custom-help-func)
+						      'hbut:report)))
+			      (princ (format "\n%s ASSIST KEY SPECIFICS:\n%s\n"
+					     type-help-func
+					     (replace-regexp-in-string
+					      "^" "  " (documentation type-help-func)
+					      nil t))))
+			  (when (and (symbolp actype)
+				     (fboundp actype)
+				     (documentation actype))
+			    (princ (format "\n%s ACTION KEY SPECIFICS:\n%s\n"
+					   (or (actype:def-symbol actype) actype)
+					   (replace-regexp-in-string "^" "  " (documentation actype)
+								     nil t)))))
+			(terpri)))
+
+		    ;; Print Emacs push-button attributes
+		    (when (memq cmd-sym '(smart-push-button smart-push-button-help))
+		      (let* ((button (button-at (point)))
+			     (attributes (when button (hattr:list button))))
+			(when attributes
+			  (princ (format "%s BUTTON SPECIFICS:\n"
+					 (button-label button)))
+			  (hattr:report attributes)
+			  ;; text-property buttons are represented as markers
+			  (unless (markerp button)
+			    (princ (format "\n%s ACTION SPECIFICS:\n%s\n"
+					   (plist-get attributes 'action)
+					   (replace-regexp-in-string "^" "  " (actype:doc button t)
+								     nil t))))
+			  (terpri))))
+
 		    (princ (format "A %s of the %s %sKey"
 				   (if mouse-flag
 				       (if mouse-drag-flag "drag" "click")
@@ -1142,66 +1217,7 @@ documentation is found."
 			      (terpri) (terpri)
 			      (princ (replace-regexp-in-string "^" "  " doc nil t))
 			      (terpri) (terpri)))
-			  calls)
-
-		    ;; Print Hyperbole button attributes
-		    (when (memq cmd-sym '(hui:hbut-act hui:hbut-help))
-		      (let ((actype (or (actype:elisp-symbol (hattr:get 'hbut:current 'actype))
-					(hattr:get 'hbut:current 'actype)))
-			    ;; (lbl-key (hattr:get 'hbut:current 'lbl-key))
-			    (categ (hattr:get 'hbut:current 'categ))
-			    (attributes (nthcdr 2 (hattr:list 'hbut:current))))
-
-			(princ (format "%s %s BUTTON SPECIFICS:\n"
-				       (htype:def-symbol
-					(if (eq categ 'explicit) actype categ))
-				       (if (eq categ 'explicit) "EXPLICIT" "IMPLICIT")))
-			(hattr:report attributes)
-			(unless (or assisting
-				    (eq categ 'explicit)
-				    (null categ)
-				    (not (fboundp categ))
-				    (null (documentation categ)))
-			  ;; Include implicit button's ibtype doc
-			  (princ (format "\n%s\n"
-					 (replace-regexp-in-string "^" "  " (documentation categ)
-								   nil t))))
-			(if assisting
-			    (let* ((custom-help-func (intern-soft
-						      (concat (htype:names 'ibtypes categ)
-							      ":help")))
-				   (type-help-func (or (and custom-help-func (fboundp custom-help-func)
-							    custom-help-func)
-						      'hbut:report)))
-			      (princ (format "\n%s ASSIST SPECIFICS:\n%s\n"
-					     type-help-func
-					     (replace-regexp-in-string
-					      "^" "  " (documentation type-help-func)
-					      nil t))))
-			  (when (and (symbolp actype)
-				     (fboundp actype)
-				     (documentation actype))
-			    (princ (format "\n%s ACTION SPECIFICS:\n%s\n"
-					   (or (actype:def-symbol actype) actype)
-					   (replace-regexp-in-string "^" "  " (documentation actype)
-								     nil t)))))))
-
-		    ;; Print Emacs push-button attributes
-		    (when (memq cmd-sym '(smart-push-button smart-push-button-help))
-		      (let* ((button (button-at (point)))
-			     (attributes (when button (hattr:list button))))
-			(when attributes
-			  (princ (format "%s BUTTON SPECIFICS:\n"
-					 (button-label button)))
-			  (hattr:report attributes)
-			  ;; text-property buttons are represented as markers
-			  (unless (markerp button)
-			    (princ (format "\n%s ACTION SPECIFICS:\n%s\n"
-					   (plist-get attributes 'action)
-					   (replace-regexp-in-string "^" "  " (actype:doc button t)
-								     nil t)))))))
-
-		    (terpri)))
+			  calls)))
 		"")
 	    (message "No %s Key command for current context."
 		     (if assisting "Assist" "Action"))))

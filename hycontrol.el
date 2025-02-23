@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:     29-Jan-25 at 19:05:16 by Mats Lidell
+;; Last-Mod:     22-Feb-25 at 09:41:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -135,7 +135,10 @@
   (require 'windmove))
 ;; Frame face enlarging/shrinking (zooming) requires this separately available library.
 ;; Everything else works fine without it, so don't make it a required dependency.
-(require 'zoom-frm nil t)
+;; It also requires the separate library, 'frame-cmds', so ignore any
+;; errors if that library is not found as well.
+(ignore-errors
+  (require 'zoom-frm nil t))
 
 ;;; ************************************************************************
 ;;; Public declarations

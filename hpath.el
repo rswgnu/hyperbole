@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:      2-Feb-25 at 07:38:26 by Bob Weiner
+;; Last-Mod:     16-Feb-25 at 10:04:57 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1612,8 +1612,18 @@ but locational suffixes within the file are utilized."
 				(kotl-mode:to-valid-position))
 			      (current-buffer)))))))))))
 
-(defun hpath:normalize-markup-anchor (anchor)
-  "Convert ANCHOR from current buffer into a a string matching its referent."
+(defun hpath:spaces-to-dashes-markup-anchor (anchor)
+  "Replace dashes with spaces in ANCHOR if not a prog mode and no existing dashes."
+  (if (or (derived-mode-p 'prog-mode)
+	  (string-match-p "-.* \\| .*-" anchor))
+      anchor
+    ;; In Markdown or outline modes '-' characters in `anchor' are
+    ;; converted to dashes in references unless anchor contains both
+    ;; '-' and space characters, in which case no conversion occurs.
+    (subst-char-in-string ?\  ?- anchor)))
+
+(defun hpath:dashes-to-spaces-markup-anchor (anchor)
+  "Replace spaces with dashes with spaces in ANCHOR if not a prog mode and no existing dashes."
   (if (or (derived-mode-p 'prog-mode)
 	  (string-match-p "-.* \\| .*-" anchor))
       anchor
@@ -1652,7 +1662,7 @@ of the buffer."
 				    ;; Markdown or outline link ids are case
 				    ;; insensitive.
 				    (case-fold-search (not prog-mode))
-				    (anchor-name (hpath:normalize-markup-anchor anchor))
+				    (anchor-name (hpath:dashes-to-spaces-markup-anchor anchor))
 				    (referent-regexp (format
 						      (cond ((or (derived-mode-p 'outline-mode) ;; Includes Org mode
 								 ;; Treat all caps filenames without suffix like outlines, e.g. README, INSTALL.

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     19-Jan-25 at 16:40:13 by Bob Weiner
+;; Last-Mod:     22-Feb-25 at 16:18:02 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -292,7 +292,8 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 	      (smart-helm-alive-p)))
      . ((funcall (key-binding (kbd "RET"))) . (funcall (key-binding (kbd "RET")))))
     ;;
-    ;; If at the end of a line (eol), invoke the associated Smart Key handler EOL handler.
+    ;; If at the end of a line (eol), invoke the associated Smart Key
+    ;; handler EOL handler.
     ((and (smart-eolp)
           (not (and (funcall hsys-org-mode-function)
                     (not (equal hsys-org-enable-smart-keys t)))))
@@ -390,8 +391,8 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
     ;; ends at point.  For markup pairs, point must be at the first
     ;; character of the opening or closing tag.
     ((hui-select-at-delimited-thing-p)
-     . ((hui-select-delimited-thing) . (progn (hui-select-delimited-thing)
-					      (hmouse-kill-region))))
+     . ((hui-select-thing) . (progn (hui-select-thing)
+				    (hmouse-kill-region))))
     ;;
     ;; If the prior test failed and point is at the start or end of an
     ;; sexpression, mark it for editing or kill it (assist key).  This
@@ -413,7 +414,8 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
     ((eq major-mode 'kotl-mode)
      . ((kotl-mode:action-key) . (kotl-mode:assist-key)))
     ;;
-    ;; If in the flymake linter list of issues buffer, jump to or show issue at point
+    ;; If in the flymake linter list of issues buffer, jump to or show
+    ;; issue at point.
     ((eq major-mode 'flymake-diagnostics-buffer-mode)
      . ((flymake-goto-diagnostic (point)) . (flymake-show-diagnostic (point) t)))
     ;;
