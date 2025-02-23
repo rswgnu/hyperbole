@@ -1,5 +1,8 @@
 2025-02-23  Bob Weiner  <rsw@gnu.org>
 
+* hywiki.el (hywiki-referent-menu): Re-add accidentally deleted "Keys" key
+    series referent type in the menu.
+
 * test/hywiki-tests.el (hywiki-tests--convert-words-to-org-link): Fix to not
     expect 'hy:' prefix in HyWiki Org links.
                        (hywiki-tests--add-org-roam-node): Handle all calls to

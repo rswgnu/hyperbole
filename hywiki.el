@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Acpr-24 at 22:41:13
-;; Last-Mod:     23-Feb-25 at 11:05:28 by Bob Weiner
+;; Last-Mod:     23-Feb-25 at 11:50:21 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -830,9 +830,12 @@ After successfully finding a page and reading it into a buffer, run
 	 ;; "(hyperbole)action implicit button"
 	 '("InfoIndex"    (hywiki-add-info-index hkey-value)
 	   "Add a HyWikiWord that displays an Info index item.")
-	 ;; "(hyperbole)Smart Keys"
+	 ;; "{key series}" wikiword
+	 '("Keys"         (hywiki-add-key-series hkey-value)
+	   "Add a HyWikiWord that executes a key series.")
 	 '("pathLink"     (hywiki-add-path-link hkey-value)
 	   "Add a HyWikiWord that links to a path and possible position.")
+	 ;; "(hyperbole)Smart Keys"
 	 '("infoNode"     (hywiki-add-info-node hkey-value)
 	   "Add a HyWikiWord that displays an Info node.")
 	 ;; "ID: org-id"
