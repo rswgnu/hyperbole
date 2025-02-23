@@ -10,6 +10,10 @@
     so does not include extra whitespace and matches the result when
     'hui-select-thing' is called interactively.
 
+* hycontrol.el (require 'zoom-frm): Wrap in an 'ignore-errors' so if its
+    required library, 'frame-cmds' is not installed, no error occurs and
+    HyControl behaves works without the library.
+
 2025-02-19  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-expand-path-list): Fix to include a default file name
