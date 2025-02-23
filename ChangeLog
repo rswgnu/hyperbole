@@ -1,3 +1,18 @@
+2025-02-23  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-get-referent): Fix suffix match to use group 3 and add
+    suffix to referent-value here.
+            (hywiki-display-referent): Remove adding suffix to referent-value here.
+
+2025-02-22  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-publish-to-html): Advise 'org-export-get-reference' to use
+    modified Org headings as html ids.
+            (hywiki--org-export-get-reference,
+             hywiki--org-export-new-title-reference,
+             hywiki--org-format-reference): Add to implement the above new html
+    id generation scheme.
+
 * hui-select.el (hui-select-punctuation): Add 'hui-select-markup-pair' so if
     on the opening char of an HTML tag for example with punctuation syntax,
     it is treated as a markup pair from `hui-select-thing'.
@@ -9,6 +24,16 @@
     condition to call 'hui-select-thing' instead of 'hui-select-delimited-thing'
     so does not include extra whitespace and matches the result when
     'hui-select-thing' is called interactively.
+
+* hywiki.el (hywiki-referent-exists-p):
+    Fix bug where 'word' was given as the symbol :range to use as a flag
+    but then the call to 'hywiki-strip-org-link' mistakenly set it to nil.
+            (hywiki-word-set-auto-highlighting): Add so can call interactively
+    to restore HyWikiWord auto-highlighting after a command hook error.  Call
+    when enabling 'hywiki-mode'.
+
+    Fix bug where :range flag was not passed to 'hywiki-word-at' call;
+    manifested as selecting an entire string rather than the wikiword at point.
 
 * hsys-ert.el (ert-should): Constrain matches for this ibtype to the current
     line when not in 'ert-results-mode'.  This fixes a problem of having this
@@ -31,11 +56,32 @@
     When displaying Assist Key help, remove actype and action attributes
     from button or actype display.
 
+* hywiki.el (hywiki-directory-dired-edit): Remove bash-specific file
+    filtering since names the dir after the filter regex and this is
+    unattractive.  Using directory-files to filter instead works fine.
+    Also, use 'hywiki-word-regexp' to match to page names rather than
+    a hardcoded regexp.
+
 * hycontrol.el (require 'zoom-frm): Wrap in an 'ignore-errors' so if its
     required library, 'frame-cmds' is not installed, no error occurs and
     HyControl behaves works without the library.
 
+* test/hact-tests.el (hact-tests--action-params-with-lambdas): Eliminate
+    byte compiler 'unused args' errors by starting args with underscore.
+
 2025-02-19  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-maybe-dehighlight-page-name,
+             hywiki-maybe-highlight-page-name,
+             hywiki-maybe-highlight-page-names): In
+    non-'hywiki-highlight-all-in-prog-modes', highlight only in strings
+    as well as comments.
+            (hywiki-buttonize-non-character-commands,
+            hywiki-debuttonize-non-character-commands): Don't trigger these
+    pre- and post-command hooks in non-'hywiki-highlight-all-in-prog-modes' when
+    outside of strings and comments.
+            (hywiki-word-at): Whe match to wikiword via face highlight, ensure
+    it matches to the wikiword format regexp.
 
 * hyrolo.el (hyrolo-expand-path-list): Fix to include a default file name
     even when the file does not yet exist.
@@ -57,6 +103,24 @@
     backwards with point after an ending double quote.
     When compile, add (require 'hbut) for 'hbut:syntax-table'.  Fix string
     selection in 'text-mode' by using 'hbut:syntax-table'.
+
+* hywiki.el (hywiki-org-link-export): In html and markdown conversion, call
+    'hpath:spaces-to-dashes-markup-anchor'.
+            (hywiki-referent-menu): Fix missing s typo in 'hywiki-add-sexpression'.
+	    (hywiki-convert-words-to-org-links, hywiki-org-link-export):
+    Update doc string with specific formatting.
+            (hywiki-org-link-resolve): Rewrite to return full referent when not
+    a pathname.
+            (hywiki-referent-menu): Rename 'LinkPath' to 'pathLink' and properly
+    alphabetize entries by invocation character (first capital letter).
+            (hywiki-word-to-org-link): Add to convert a single HyWikiWord reference
+    to an Org link for use during publishing.  Use in `hywiki-convert-words-to-org-links'.
+
+2025-02-09  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el hpath:spaces-to-dashes-markup-anchor): Add.
+           (hpath:normalize-markup-anchor): Rename to
+    'hpath:dashes-to-spaces-markup-anchor'.
 
 2025-02-08  Mats Lidell  <matsl@gnu.org>
 
