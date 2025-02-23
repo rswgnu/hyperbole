@@ -10,6 +10,12 @@
     so does not include extra whitespace and matches the result when
     'hui-select-thing' is called interactively.
 
+* hsys-ert.el (ert-should): Constrain matches for this ibtype to the current
+    line when not in 'ert-results-mode'.  This fixes a problem of having this
+    ibtype trigger in the "*scratch*" buffer for example where an
+    'ert-test-failed match is found but it is far way and unconnected to the
+    current point.
+
 * hycontrol.el (require 'zoom-frm): Wrap in an 'ignore-errors' so if its
     required library, 'frame-cmds' is not installed, no error occurs and
     HyControl behaves works without the library.

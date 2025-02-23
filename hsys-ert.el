@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Jan-25
-;; Last-Mod:     20-Jan-25 at 23:57:21 by Mats Lidell
+;; Last-Mod:     22-Feb-25 at 12:20:29 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -57,11 +57,15 @@
   "Jump to the source code definition of a should expr from an ert test failure.
 If on the first line of a failure, jump to the source definition of the
 associated test."
-  (when (or (derived-mode-p 'ert-results-mode)
-            (save-excursion
-              (forward-line 0)
-              (or (search-backward "(ert-test-failed\n" nil t)
-                  (search-forward "(ert-test-failed\n" nil t))))
+  (when (or (and (derived-mode-p 'ert-results-mode)
+		 (save-excursion
+		   (forward-line 0)
+		   (or (search-backward "(ert-test-failed\n" nil t)
+                       (search-forward "(ert-test-failed\n" nil t))))
+	    ;; In any other mode, consider only the current line
+	    (save-excursion
+	      (forward-line 0)
+              (search-forward "(ert-test-failed" (line-end-position) t)))
     (catch 'exit
     (save-excursion
       (save-restriction
