@@ -16,6 +16,21 @@
     'ert-test-failed match is found but it is far way and unconnected to the
     current point.
 
+* hmouse-drv.el (hkey-help):
+    Update {C-h A} Hyperbole help so button information is displayed at
+    the top before long Action/Assist Key behavior description.
+
+    In cases like the multi-context 'smart-org' handler where a specific
+    action type is triggered without defining an implicit button, display
+    the action type information at the top as well, so it is clear the
+    specific action that will be taken at point.
+
+    Fix bug where 'categ' is nil and 'htype:names' returns a list of all
+    type names to 'concat' since expecting only a single name.
+
+    When displaying Assist Key help, remove actype and action attributes
+    from button or actype display.
+
 * hycontrol.el (require 'zoom-frm): Wrap in an 'ignore-errors' so if its
     required library, 'frame-cmds' is not installed, no error occurs and
     HyControl behaves works without the library.
