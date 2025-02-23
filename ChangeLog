@@ -1,5 +1,10 @@
 2025-02-23  Bob Weiner  <rsw@gnu.org>
 
+* test/hywiki-tests.el (hywiki-tests--convert-words-to-org-link): Fix to not
+    expect 'hy:' prefix in HyWiki Org links.
+                       (hywiki-tests--add-org-roam-node): Handle all calls to
+    'org-roam-node-title'.
+
 * hywiki.el (hywiki-get-referent): Fix suffix match to use group 3 and add
     suffix to referent-value here.
             (hywiki-display-referent): Remove adding suffix to referent-value here.

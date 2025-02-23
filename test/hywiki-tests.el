@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:      7-Feb-25 at 10:01:25 by Mats Lidell
+;; Last-Mod:     23-Feb-25 at 11:04:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -621,7 +621,7 @@ Both mod-time and checksum must be changed for a test to return true."
             (with-hywiki-buttonize-and-insert-hooks (insert "WikiWord "))
             (goto-char 4)
             (hywiki-convert-words-to-org-links)
-            (should (string= "[[hy:WikiWord]] "
+            (should (string= "[[WikiWord]] "
                              (buffer-substring-no-properties (point-min) (point-max)))))
           (with-temp-buffer
             (hywiki-mode 1)
@@ -630,7 +630,7 @@ Both mod-time and checksum must be changed for a test to return true."
 	      (newline nil t))
             (goto-char 4)
             (hywiki-convert-words-to-org-links)
-            (should (string= "[[hy:WikiWord]]\n"
+            (should (string= "[[WikiWord]]\n"
                              (buffer-substring-no-properties (point-min) (point-max))))))
       (hywiki-tests--add-hywiki-hooks)
       (hywiki-mode 0)
@@ -694,24 +694,24 @@ Both mod-time and checksum must be changed for a test to return true."
   "Verify `hywiki-org-link-export' output for different formats."
   (let* ((hywiki-directory (make-temp-file "hywiki" t))
          (wikipage (cdr (hywiki-add-page "WikiWord")))
-	 (filename (when wikipage (file-name-nondirectory wikipage))))
+	 (filename (when wikipage (file-name-nondirectory wikipage)))
+	 (filename-stem (when filename (file-name-sans-extension filename))))
     (unwind-protect
         (progn
           (should (string-match-p
                    (format "\\[hy\\] <doc:.*%s>" filename)
                    (hywiki-org-link-export "WikiWord" "doc" 'ascii)))
           (should (string-match-p
-                   (format "<a href=\".*%s\">doc</a>"
-                           (replace-regexp-in-string "\\.org" ".html" filename))
+                   (format "<a href=\".*%s.html\">doc</a>" filename-stem)
                    (hywiki-org-link-export "WikiWord" "doc" 'html)))
           (should (string-match-p
-                   (format "\\[doc\\](.*%s)" filename)
+                   (format "\\[doc\\](.*%s.md)" filename-stem)
                    (hywiki-org-link-export "WikiWord" "doc" 'md)))
           (should (string-match-p
-                   (format "\\href{.*%s}{doc}" filename)
+                   (format "\\href{.*%s.latex}{doc}" filename-stem)
                    (hywiki-org-link-export "WikiWord" "doc" 'latex)))
           (should (string-match-p
-                   (format "@uref{.*%s,doc}" filename)
+                   (format "@uref{.*%s.texi,doc}" filename-stem)
                    (hywiki-org-link-export "WikiWord" "doc" 'texinfo)))
           (should (string-match-p
                    (format ".*%s" filename)
@@ -892,16 +892,14 @@ Note special meaning of `hywiki-allow-plurals-flag'."
 (ert-deftest hywiki-tests--add-org-roam-node ()
   "Verify `hywiki-add-org-roam-node'."
   (let* ((hywiki-directory (make-temp-file "hywiki" t))
-         (wiki-page (cdr (hywiki-add-page "FirstWord")))
 	 (wikiword (hy-make-random-wikiword)))
     (unwind-protect
         (mocklet (((hypb:require-package 'org-roam) => t)
 		  ((org-roam-node-read) => "node")
-		  ((org-roam-node-title "node") => "node-title"))
+		  (org-roam-node-title => "node-title"))
 	  (hywiki-add-org-roam-node wikiword)
           (should (equal '(org-roam-node . "node-title")
 			 (hywiki-get-referent wikiword))))
-      (hy-delete-file-and-buffer wiki-page)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 ;;; FIXME

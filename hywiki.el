@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Acpr-24 at 22:41:13
-;; Last-Mod:     23-Feb-25 at 02:21:03 by Bob Weiner
+;; Last-Mod:     23-Feb-25 at 11:05:28 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1457,7 +1457,7 @@ publish process."
 			(delete-region (overlay-start overlay)
 				       (overlay-end overlay))
 			(delete-overlay overlay)
-			(if (setq org-link (hywiki-word-to-org-link wikiword nil))
+			(if (setq org-link (hywiki-word-to-org-link wikiword-and-section nil))
 			    (insert org-link)
 			  (message
 			   "(hywiki-convert-words-to-org-links): \"%s\" in \"%s\" produced nil org link output"
@@ -1486,7 +1486,8 @@ publish process."
 	(unless (and suffix (not (string-empty-p suffix)))
 	  (setq suffix nil))
 	(setq suffix-no-hashmark (when suffix (substring suffix 1)))
-	(when (string-equal path (file-name-nondirectory buffer-file-name))
+	(when (or (not buffer-file-name)
+		  (string-equal path (file-name-nondirectory buffer-file-name)))
 	  (setq path nil))
 	(cond (desc
 	       (if path
@@ -2625,11 +2626,11 @@ backend."
 			 (hpath:spaces-to-dashes-markup-anchor
 			  (or suffix ""))
 			 desc))
-	  (`latex (format "\\href{%s}{%s}" (replace-regexp-in-string "[\\{}$%&_#~^]" "\\\\\\&" path) desc))
+	  (`latex (format "\\href{%s.latex}{%s}" (replace-regexp-in-string "[\\{}$%&_#~^]" "\\\\\\&" path-stem) desc))
 	  (`md (format "[%s](%s.md%s)" desc path-stem
 		       (hpath:spaces-to-dashes-markup-anchor
 			(or suffix ""))))
-	  (`texinfo (format "@uref{%s,%s}" path desc))
+	  (`texinfo (format "@uref{%s.texi,%s}" path-stem desc))
 	  (_ path))
       link)))
 
