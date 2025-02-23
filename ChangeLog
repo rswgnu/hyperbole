@@ -74,6 +74,11 @@
 * test/hact-tests.el (hact-tests--action-params-with-lambdas): Eliminate
     byte compiler 'unused args' errors by starting args with underscore.
 
+2025-02-21  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--delete-parenthesised-char): Verify
+    reported delete char issue for elisp mode.
+
 2025-02-19  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-maybe-dehighlight-page-name,
