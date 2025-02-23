@@ -1,3 +1,15 @@
+* hui-select.el (hui-select-punctuation): Add 'hui-select-markup-pair' so if
+    on the opening char of an HTML tag for example with punctuation syntax,
+    it is treated as a markup pair from `hui-select-thing'.
+                (hui-select-thing): Change return value to be the region selected
+    so can be used as a delimited regional selection predicate like so:
+    (hui-select-delimited-thing-call #'hui-select-thing).
+
+* hui-mouse.el (hkey-alist): Change action for 'hui-select-at-delimited-thing-p'
+    condition to call 'hui-select-thing' instead of 'hui-select-delimited-thing'
+    so does not include extra whitespace and matches the result when
+    'hui-select-thing' is called interactively.
+
 2025-02-19  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-expand-path-list): Fix to include a default file name
@@ -10,6 +22,16 @@
     exists and is readable.  Fixes gh#rswgnu/hyperbole/672 and bug#76424.
             (hyrolo-get-file-list): Return a default rolo file when `hyrolo-
     file-list' is nil.
+
+2025-02-16  Bob Weiner  <rsw@gnu.org>
+
+* hui-select.el (hui-select-punctuation): Add (hui-select-string pos) call
+    when on a double quote since sometimes double quotes have punctuation syntax,
+    e.g. text-mode.
+                (hui-select-string-p): Fix off-by-one error when scan-sexps
+    backwards with point after an ending double quote.
+    When compile, add (require 'hbut) for 'hbut:syntax-table'.  Fix string
+    selection in 'text-mode' by using 'hbut:syntax-table'.
 
 2025-02-08  Mats Lidell  <matsl@gnu.org>
 
