@@ -3268,8 +3268,8 @@ matching DATUM before creating a new reference."
          (ref (hywiki--org-format-reference title))
          (parent (org-element-property :parent datum))
 	 raw-parent)
-    (while (--any (equal ref (car it))
-                  cache)
+    (while (cl-some (lambda (elt) (equal ref (car elt)))
+                    cache)
       ;; Title not unique: make it so.
       (if parent
           ;; Append ancestor title.

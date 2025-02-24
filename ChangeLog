@@ -2,6 +2,8 @@
 
 * hywiki.el (hywiki-referent-menu): Re-add accidentally deleted "Keys" key
     series referent type in the menu.
+            (hywiki--org-export-new-title-reference): Replace '--any' call from
+    dash.el package with 'cl-some'.
 
 * test/hywiki-tests.el (hywiki-tests--convert-words-to-org-link): Fix to not
     expect 'hy:' prefix in HyWiki Org links.
