@@ -1,9 +1,37 @@
+2025-02-25  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-word-with-optional-spaces-suffix-exact-regexp): Remove
+    use in 'hywiki-word-is-p' and replace with
+    'hywiki-word-with-optional-suffix-exact-regexp' which actually allows spaces.
+            (hywiki-word-at): Add support for finding delimited WikiWords with
+    #sections that contain multiple space separated words and returning the
+    wikiword, start and end.
+            (hywiki-word-at): Fix last 'looking-at' expression to not match to
+    end of buffer.
+            (hywiki-buttonize-character-commands,
+             hywiki-buttonize-non-character-commands,
+             hywiki-debuttonize-non-character-commands): Rewrite and simplify.
+
+2025-02-24  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki--maybe-de/highlight-sexp): Ensure return the result of
+    calling 'func'.
+            (hywiki-buttonize-non-character-commands): Remove insert commands
+    handled by 'hywiki-buttonize-character-commands' attached to
+    'post-self-insert-hook'.
+            (hywiki-non-hook-context-p): Add.
+
 2025-02-23  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-referent-menu): Re-add accidentally deleted "Keys" key
     series referent type in the menu.
+            (hywiki-set-directory): Call as part of loading hywiki.el to ensure
+    HyWiki Org project publish settings are initialized.
             (hywiki--org-export-new-title-reference): Replace '--any' call from
     dash.el package with 'cl-some'.
+            (hywiki-buttonize-character-commands): In prog modes, limit to comments
+    and strings.  If within a delimited pair, highlight #sections with multiple
+    words.
 
 * test/hywiki-tests.el (hywiki-tests--convert-words-to-org-link): Fix to not
     expect 'hy:' prefix in HyWiki Org links.

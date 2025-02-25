@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:      6-Oct-24 at 22:47:25 by Bob Weiner
+;; Last-Mod:     25-Feb-25 at 02:16:13 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -221,7 +221,7 @@ button key (no spaces)."
 	;; disk drive prefix, in which case the backslash is
 	;; considered part of a pathname.
 	(and (if (and (> end (point-min))
-		      (= (char-before end) ?\\)
+		      (= (or (char-before end) 0) ?\\)
 		      (not (string-match (concat "\\(\\`[\\][\\]\\)\\|"
 						 hpath:mswindows-mount-prefix)
 					 (hargs:buffer-substring start end))))

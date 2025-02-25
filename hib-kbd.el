@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    22-Nov-91 at 01:37:57
-;; Last-Mod:     23-Nov-24 at 21:15:04 by Bob Weiner
+;; Last-Mod:     25-Feb-25 at 02:14:39 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -144,7 +144,10 @@ Any key sequence within the series must be a string of one of the following:
 		  ;; In Texinfo, allow for @bkbd{} or @kbd{}, so an
 		  ;; alpha char preceding
 		  (and (derived-mode-p 'texinfo-mode)
-		       (= (char-syntax (char-before start)) ?w)))
+		       (= (if (char-before start)
+			      (char-syntax (char-before start))
+			    0)
+			  ?w)))
 	  (when (and (stringp key-series) (not (string-empty-p key-series)))
 	    ;; Replace any ${} internal or env vars; leave
 	    ;; $VAR untouched for the shell to evaluate.

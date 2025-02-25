@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     23-Feb-25 at 11:04:10 by Bob Weiner
+;; Last-Mod:     24-Feb-25 at 00:46:05 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -958,14 +958,13 @@ Note special meaning of `hywiki-allow-plurals-flag'."
           (insert wiki-referent)
           (goto-char 4)
 
-          (should (hact 'kbd-key "C-u C-h hhck{ABC} RET"))
-          (hy-test-helpers:consume-input-events)
+          (kbd-key:act "C-u C-h h h c")
+          ;; (hy-test-helpers:consume-input-events)
+	  (sit-for 0.1)
+          (kbd-key:act "k {ABC} RET")
+          ;; (hy-test-helpers:consume-input-events)
 
-          ;; The buffer contents is changed and now reads
-          ;; "Wik{ABC}iReferent" as the next should verifies. The
-          ;; second should is the expected behavior. No change in the
-          ;; WikiPage buffer.
-          (should (string= "Wik{ABC}iReferent" (buffer-substring-no-properties (point-min) (point-max))))
+          ;; The expected behavior here is no change in the WikiPage buffer
           (should (string= wiki-referent (buffer-substring-no-properties (point-min) (point-max))))
 
           (should (file-exists-p (hywiki-cache-default-file)))
@@ -981,7 +980,6 @@ Note special meaning of `hywiki-allow-plurals-flag'."
 (ert-deftest hywiki-tests--delete-parenthesised-char ()
   "Verify removing a char between parentheses only removes the char.
 See gh#rswgnu/hyperbole/669."
-  :expected-result :failed
   (with-temp-buffer
     (insert "(a)")
     (goto-char 2)
