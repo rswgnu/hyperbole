@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     23-Feb-25 at 11:04:10 by Bob Weiner
+;; Last-Mod:     22-Feb-25 at 22:46:38 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -249,25 +249,24 @@ line 2
 
 (ert-deftest hywiki-tests--at-wikiword-finds-word-and-section ()
   "Verify `hywiki-word-at' finds WikiWord and section if available."
-  (let ((hywiki-directory (make-temp-file "hywiki" t)))
+  (let ((hywiki-directory (make-temp-file "hywiki" t))
+        (words '("WikiWord" "WikiWord:L1" "WikiWord:L1:C2"
+                 "WikiWord#section" "WikiWord#section:L1" "WikiWord#section:L1:C2"
+                 "WikiWord#section-subsection" "WikiWord#section-subsection:L1" "WikiWord#section-subsection:L1:C2"
+                 ;; FIXME: Uncomment when implemented.
+                 ;; ("(WikiWord#section with spaces)" . "WikiWord#section with spaces")
+                 ;; ("(WikiWord#section)" . "WikiWord#section")
+                 )))
     (unwind-protect
         (with-temp-buffer
           (hywiki-mode)
-          (insert "WikiWord")
-          (goto-char 4)
-          (should (string= "WikiWord" (hywiki-word-at)))
-
-          ;; Section
-          (goto-char (point-max))
-          (insert "#section")
-          (goto-char 4)
-          (should (string= "WikiWord#section" (hywiki-word-at)))
-
-          ;; Section with dash
-          (goto-char (point-max))
-          (insert "-subsection")
-          (goto-char 4)
-          (should (string= "WikiWord#section-subsection" (hywiki-word-at))))
+          (dolist (w words)
+            (let ((in (if (stringp w) w (car w)))
+                  (expect (if (stringp w) w (cdr w))))
+              (erase-buffer)
+              (insert in)
+              (goto-char 4)
+              (should (string= expect (hywiki-word-at))))))
       (hywiki-mode -1)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
@@ -718,6 +717,112 @@ Both mod-time and checksum must be changed for a test to return true."
                    (hywiki-org-link-export "WikiWord" "doc" 'unknown)))
           (should (string= "NotAWikiPage" (hywiki-org-link-export "NotAWikiPage" "doc" 'ascii))))
       (hy-delete-file-and-buffer wikipage)
+      (hy-delete-dir-and-buffer hywiki-directory))))
+
+(ert-deftest hywiki-tests--action-key-moves-to-word-and-section ()
+  "Verify action key on a WikiWord with section, line and column works."
+  (let* ((hywiki-directory (make-temp-file "hywiki" t))
+         (wikipage (cdr (hywiki-add-page "WikiWord")))
+         (words '(("WikiWord:L1" . "First line")
+                  ("WikiWord:L1:C2" . "rst line")
+                  ("WikiWord#Asection" . "* Asection")
+                  ("WikiWord#Asection:L1" . "* Asection")
+                  ("WikiWord#Asection:L2" . "body A")
+                  ("WikiWord#Asection:L2:C2" . "dy A")
+                  ("WikiWord#Bsection-subsection" . "** Bsection subsection")
+                  ("WikiWord#Bsection-subsection:L2" . "body B")
+                  ("WikiWord#Bsection-subsection:L2:C2" . "dy B")
+                  ;; FIXME: Uncomment when implemented.
+                  ;; ("(WikiWord#Bsection subsection)" . "** Bsection subsection")
+                  ;; ("(WikiWord#Asection)" . "* Asection")
+                  )))
+    (unwind-protect
+        (progn
+          ;; Setup target WikiWord
+          (with-current-buffer (find-file-noselect wikipage)
+            (insert "\
+First line
+* Asection
+body A
+** Bsection subsection
+body B
+")
+            (save-buffer))
+          ;; Create temp buffers with WikiWord links to the target
+          ;; WikiWord page and verify they work.
+          (with-temp-buffer
+            (hywiki-mode)
+            (dolist (w words)
+              (let ((wiki-link (car w))
+                    (expected-str-at-pos (cdr w)))
+                (erase-buffer)
+                (insert wiki-link)
+                (goto-char 4)
+                (save-excursion
+                  (action-key)
+                  ;; (should (string-prefix-p "WikiWord.org" (buffer-name)))
+                  (should (looking-at-p expected-str-at-pos)))))))
+      (hywiki-mode -1)
+      (hy-delete-file-and-buffer wikipage)
+      (hy-delete-dir-and-buffer hywiki-directory))))
+
+(ert-deftest hywiki-tests--published-html-links-to-word-and-section ()
+  "Verify published html links to WikiWord and section."
+  :expected-result :failed
+  (let* ((hywiki-directory (make-temp-file "hywiki_" t))
+         (hywiki-org-publishing-directory (make-temp-file "public_html_" t))
+         (wikipage (cdr (hywiki-add-page "WikiPage")))
+         (wikipage-html (expand-file-name "WikiPage.html" hywiki-org-publishing-directory))
+         (wikiword (cdr (hywiki-add-page "WikiWord")))
+         (wikiword-html (expand-file-name "WikiWord.html" hywiki-org-publishing-directory)))
+    (unwind-protect
+        (progn
+          (hywiki-org-set-publish-project)
+          (should (file-exists-p hywiki-directory))
+          (should (file-exists-p wikipage))
+          (should (file-exists-p wikiword))
+
+          ;; Setup wiki pages for WikiWord and WikiPage.
+          (with-current-buffer (find-file-noselect wikiword)
+            (insert "\
+First line
+* Asection
+body A
+** Bsection subsection
+body B
+")
+            (save-buffer))
+          (with-current-buffer (find-file-noselect wikipage)
+            (insert "\
+WikiWord
+WikiWord#Asection
+WikiWord#Bsection-subsection
+")
+            (save-buffer))
+
+          ;; Export the wiki
+          (hywiki-publish-to-html t)
+
+          ;; Verify files and folder are generated
+          (should (file-exists-p hywiki-org-publishing-directory))
+          (should (file-exists-p wikipage-html))
+          (should (file-exists-p wikiword-html))
+
+          ;; Verify links are generated
+          (with-current-buffer (find-file-noselect wikipage-html)
+            ;; (First check we even get the wikipage with sections)
+            (should (>= 1 (count-matches (regexp-quote "WikiWord") (point-min) (point-max))))
+            (should (= 1 (count-matches (regexp-quote "WikiWord#Asection") (point-min) (point-max))))
+            (should (= 1 (count-matches (regexp-quote "WikiWord#Bsection-subsection") (point-min) (point-max))))
+
+            ;; Then verify the href links are generated
+            (should (= 1 (count-matches (regexp-quote "<a href=\"WikiWord.html\">WikiWord</a>") (point-min) (point-max))))
+            (should (= 1 (count-matches (regexp-quote "<a href=\"WikiWord.html#Asection\">WikiWord#ASection</a>") (point-min) (point-max))))
+            (should (= 1 (count-matches (regexp-quote "<a href=\"WikiWord.html#Bsection-subsection\">WikiWord#Bsection-subsection</a>") (point-min) (point-max))))))
+      (hy-delete-files-and-buffers (list wikipage wikiword wikipage-html wikiword-html
+                                         (expand-file-name "index.org" hywiki-directory)
+                                         (expand-file-name "index.html" hywiki-org-publishing-directory)))
+      (hy-delete-dir-and-buffer hywiki-org-publishing-directory)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--get-singular-wikiword ()
