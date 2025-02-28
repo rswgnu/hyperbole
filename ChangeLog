@@ -1,3 +1,8 @@
+2025-02-28  Mats Lidell  <matsl@gnu.org>
+
+* .github/workflows/main.yml (jobs): Remove 27.2 from the versions to
+    test in the CI.
+
 2025-02-24  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--action-key-moves-to-word-and-section):
