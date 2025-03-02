@@ -2491,10 +2491,7 @@ save and potentially set `hywiki--directory-mod-time' and
   (or (file-writable-p save-file)
       (error "(hywiki-cache-save): Non-writable Environment file, \"%s\"" save-file))
   (let ((buf (get-file-buffer save-file)))
-    (and buf
-         (with-current-buffer buf
-           (set-buffer-modified-p nil)
-           (kill-buffer (current-buffer)))))
+    (and buf (kill-buffer buf)))
   (let ((dir (or (file-name-directory save-file)
 		 default-directory)))
     (or (file-writable-p dir)
