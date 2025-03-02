@@ -1,7 +1,7 @@
 2025-02-27  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--referent-test): Add macro with
-    boiler plate code for the referens save and restore tests.
+    boiler plate code for the reference save and restore tests.
     (hywiki-tests--save-referent-keyseries)
     (hywiki-tests--save-referent-keyseries-use-menu)
     (hywiki-tests--save-referent-bookmark)
@@ -16,7 +16,7 @@
     (hywiki-tests--save-referent-path-link)
     (hywiki-tests--save-referent-org-id)
     (hywiki-tests--save-referent-org-roam-node)
-    (hywiki-tests--save-referent-org-roam-node-use-menu): Save and restor
+    (hywiki-tests--save-referent-org-roam-node-use-menu): Save and restore
     referent tests.
 
 * hywiki.el (hywiki-cache-save): Do not ask if non saved cache file should
