@@ -1,3 +1,24 @@
+2025-03-02  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--referent-test): Add macro with
+    boiler plate code for the reference save and restore tests.
+    (hywiki-tests--save-referent-keyseries)
+    (hywiki-tests--save-referent-keyseries-use-menu)
+    (hywiki-tests--save-referent-bookmark)
+    (hywiki-tests--save-referent-bookmark-use-menu)
+    (hywiki-tests--save-referent-find)
+    (hywiki-tests--save-referent-global-button)
+    (hywiki-tests--save-referent-global-button-use-menu)
+    (hywiki-tests--save-referent-hyrolo)
+    (hywiki-tests--save-referent-info-index)
+    (hywiki-tests--save-referent-info-node)
+    (hywiki-tests--save-referent-info-node-use-menu)
+    (hywiki-tests--save-referent-path-link)
+    (hywiki-tests--save-referent-org-id)
+    (hywiki-tests--save-referent-org-roam-node)
+    (hywiki-tests--save-referent-org-roam-node-use-menu): Save and restore
+    referent tests.
+
 2025-02-28  Mats Lidell  <matsl@gnu.org>
 
 * .github/workflows/main.yml (jobs): Remove 27.2 from the versions to
