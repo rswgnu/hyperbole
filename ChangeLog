@@ -1,4 +1,4 @@
-2025-02-27  Mats Lidell  <matsl@gnu.org>
+2025-03-02  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--referent-test): Add macro with
     boiler plate code for the reference save and restore tests.
@@ -23,6 +23,7 @@
 
 * .github/workflows/main.yml (jobs): Remove 27.2 from the versions to
     test in the CI.
+
 2025-02-24  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--action-key-moves-to-word-and-section):

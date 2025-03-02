@@ -1243,7 +1243,7 @@ up the test."
            (hy-test-helpers:consume-input-events))
        (hy-delete-file-and-buffer test-file)))))
 
-;; Hyrolo
+;; HyRolo
 ;; FIXME: The search is over the name of the WikiWord which is likely
 ;; not what was intended. Test below is for completeness.
 (ert-deftest hywiki-tests--save-referent-hyrolo ()
