@@ -1363,20 +1363,26 @@ See gh#rswgnu/hyperbole/669."
 
 (ert-deftest hywiki-tests--word-face-at-p ()
   "Verify `hywiki-word-face-at-p'."
-  (with-temp-buffer
-    (insert "WikiWord")
-    (goto-char 4)
-    (should-not (hywiki-word-face-at-p))
-
-    (erase-buffer)
+  (skip-unless (not noninteractive))
+  (let* ((hywiki-directory (make-temp-file "hywiki" t))
+         (wiki-page (cdr (hywiki-add-page "WikiWord"))))
+    (with-temp-buffer
+      (insert "WikiWord")
+      (goto-char 4)
+      (should-not (hywiki-word-face-at-p)))
     (unwind-protect
         (progn
           (hywiki-tests--remove-hywiki-hooks)
-          (hywiki-mode 1)
-          (with-hywiki-buttonize-and-insert-hooks (insert "WikiWord"))
-          (goto-char 4)
-          (should (hywiki-word-face-at-p)))
-      (hywiki-tests--add-hywiki-hooks))))
+          (with-temp-buffer
+            (hywiki-mode 1)
+            (with-hywiki-buttonize-and-insert-hooks
+              (insert "WikiWord")
+              (command-execute #'newline))
+            (goto-char 4)
+            (should (hywiki-word-face-at-p))))
+      (hywiki-tests--add-hywiki-hooks)
+      (hy-delete-file-and-buffer wiki-page)
+      (hy-delete-dir-and-buffer hywiki-directory))))
 
 (provide 'hywiki-tests)
 ;;; hywiki-tests.el ends here
