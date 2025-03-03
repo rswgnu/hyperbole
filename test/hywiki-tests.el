@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     27-Feb-25 at 09:28:06 by Mats Lidell
+;; Last-Mod:      3-Mar-25 at 00:10:35 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -501,8 +501,8 @@ Both mod-time and checksum must be changed for a test to return true."
   "Call BODY wrapped in hywiki hooks to simulate Emacs redisplay."
   (declare (indent 0) (debug t))
   `(progn
-     (progn ,@body)
      (funcall 'hywiki-debuttonize-non-character-commands)
+     (progn ,@body)
      (funcall 'hywiki-buttonize-character-commands)
      (funcall 'hywiki-buttonize-non-character-commands)))
 
@@ -519,14 +519,14 @@ Both mod-time and checksum must be changed for a test to return true."
             (hywiki-mode 1)
             (with-hywiki-buttonize-and-insert-hooks (insert "WikiWord "))
             (goto-char 4)
-            (should (hproperty:but-get (point) 'face hywiki-word-face)))
+            (should (hywiki-word-face-at-p)))
           (with-temp-buffer
             (hywiki-mode 1)
             (with-hywiki-buttonize-and-insert-hooks
               (insert "WikiWord")
 	      (command-execute #'newline))
             (goto-char 4)
-            (should (hproperty:but-get (point) 'face hywiki-word-face))))
+            (should (hywiki-word-face-at-p))))
       (hywiki-tests--add-hywiki-hooks)
       (hywiki-mode 0)
       (hy-delete-file-and-buffer wikipage)
@@ -546,7 +546,7 @@ Both mod-time and checksum must be changed for a test to return true."
               (insert "WikiWord")
 	      (newline nil t))
             (goto-char 4)
-            (should-not (hproperty:but-get (point) 'face hywiki-word-face))))
+            (should-not (hywiki-word-face-at-p))))
       (hywiki-tests--add-hywiki-hooks)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
@@ -563,16 +563,16 @@ Both mod-time and checksum must be changed for a test to return true."
             (with-hywiki-buttonize-and-insert-hooks (insert "Wikiord "))
             (goto-char 5)
             (should (looking-at-p "ord"))
-            (should-not (hproperty:but-get (point) 'face hywiki-word-face))
+            (should-not (hywiki-word-face-at-p))
 
             (with-hywiki-buttonize-and-insert-hooks (insert "W"))
             (goto-char 5)
             (should (looking-at-p "Word"))
-            (should (hproperty:but-get (point) 'face hywiki-word-face))
+            (should (hywiki-word-face-at-p))
 
             (with-hywiki-buttonize-and-insert-hooks (delete-char 1))
             (should (looking-at-p "ord"))
-            (should-not (hproperty:but-get (point) 'face hywiki-word-face))))
+            (should-not (hywiki-word-face-at-p))))
       (hywiki-tests--add-hywiki-hooks)
       (hywiki-mode 0)
       (hy-delete-files-and-buffers (list wikipage))
@@ -591,17 +591,17 @@ Both mod-time and checksum must be changed for a test to return true."
             (with-hywiki-buttonize-and-insert-hooks (insert "WikiWord "))
             (goto-char 1)
             (should (looking-at-p "Wiki"))
-            (should (hproperty:but-get (point) 'face hywiki-word-face))
+            (should (hywiki-word-face-at-p))
 
 	    (delete-char 1)
 	    (hywiki-maybe-dehighlight-page-name t)
             (should (looking-at-p "iki"))
-            (should-not (hproperty:but-get (point) 'face hywiki-word-face))
+            (should-not (hywiki-word-face-at-p))
 
             (with-hywiki-buttonize-and-insert-hooks (insert "W"))
             (goto-char 1)
             (should (looking-at-p "Wiki"))
-            (should (hproperty:but-get (point) 'face hywiki-word-face))))
+            (should (hywiki-word-face-at-p))))
       (hywiki-tests--add-hywiki-hooks)
       (hywiki-mode 0)
       (hy-delete-files-and-buffers (list wikipage))
@@ -1360,6 +1360,29 @@ See gh#rswgnu/hyperbole/669."
       (with-hywiki-buttonize-hooks
         (delete-char 1)))
     (should (string= "()" (buffer-substring-no-properties (point-min) (point-max))))))
+
+(ert-deftest hywiki-tests--word-face-at-p ()
+  "Verify `hywiki-word-face-at-p'."
+  (skip-unless (not noninteractive))
+  (let* ((hywiki-directory (make-temp-file "hywiki" t))
+         (wiki-page (cdr (hywiki-add-page "WikiWord"))))
+    (with-temp-buffer
+      (insert "WikiWord")
+      (goto-char 4)
+      (should-not (hywiki-word-face-at-p)))
+    (unwind-protect
+        (progn
+          (hywiki-tests--remove-hywiki-hooks)
+          (with-temp-buffer
+            (hywiki-mode 1)
+            (with-hywiki-buttonize-and-insert-hooks
+              (insert "WikiWord")
+              (command-execute #'newline))
+            (goto-char 4)
+            (should (hywiki-word-face-at-p))))
+      (hywiki-tests--add-hywiki-hooks)
+      (hy-delete-file-and-buffer wiki-page)
+      (hy-delete-dir-and-buffer hywiki-directory))))
 
 (provide 'hywiki-tests)
 ;;; hywiki-tests.el ends here

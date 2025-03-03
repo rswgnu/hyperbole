@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Acpr-24 at 22:41:13
-;; Last-Mod:     23-Feb-25 at 11:50:21 by Bob Weiner
+;; Last-Mod:      3-Mar-25 at 00:01:19 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2928,6 +2928,10 @@ or this will return nil."
   "Return singular HyWikiWord at point with its suffix stripped or nil.
 Point should be on the HyWikiWord itself."
   (hywiki-get-singular-wikiword (hywiki-word-strip-suffix (hywiki-word-at))))
+
+(defun hywiki-word-face-at-p ()
+  "Non-nil if but at point has `hywiki-word-face' property."
+  (hproperty:but-get (point) 'face hywiki-word-face))
 
 ;;;###autoload
 (defun hywiki-word-consult-grep (word)

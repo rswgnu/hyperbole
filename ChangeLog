@@ -1,3 +1,11 @@
+2025-03-03  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--word-face-at-p): Add unit test.
+    (with-hywiki-buttonize-and-insert-hooks): Move debuttonize before body.
+
+* hywiki.el (hywiki-word-face-at-p): Add predicate for hywiki-word-face
+    and use it in hywiki-tests.
+
 2025-03-02  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--referent-test): Add macro with
