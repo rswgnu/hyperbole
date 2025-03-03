@@ -1,5 +1,7 @@
 2025-03-03  Mats Lidell  <matsl@gnu.org>
 
+* Makefile (DOCKER_VERSIONS): Remove 27.2.
+
 * test/hywiki-tests.el (hywiki-tests--word-face-at-p): Add unit test.
     (with-hywiki-buttonize-and-insert-hooks): Move debuttonize before body.
 
