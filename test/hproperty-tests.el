@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:     6-Aug-24 at 20:32:51
-;; Last-Mod:      6-Aug-24 at 21:59:39 by Mats Lidell
+;; Last-Mod:      4-Mar-25 at 17:04:46 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -37,4 +37,12 @@
       (should (hproperty:but-p)))))
 
 (provide 'hproperty-tests)
+
+;; This file can't be byte-compiled without the `el-mock' package
+;; which is not a dependency of Hyperbole.
+;;
+;; Local Variables:
+;; no-byte-compile: t
+;; End:
+
 ;;; hproperty-tests.el ends here

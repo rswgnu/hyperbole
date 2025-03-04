@@ -1385,4 +1385,12 @@ See gh#rswgnu/hyperbole/669."
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 (provide 'hywiki-tests)
+
+;; This file can't be byte-compiled without the `el-mock' package
+;; which is not a dependency of Hyperbole.
+;;
+;; Local Variables:
+;; no-byte-compile: t
+;; End:
+
 ;;; hywiki-tests.el ends here

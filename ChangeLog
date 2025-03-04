@@ -1,5 +1,14 @@
 2025-03-04  Mats Lidell  <matsl@gnu.org>
 
+* test/hywiki-tests.el:
+  test/hycontrol-tests.el:
+  test/hui-mini-tests.el:
+  test/hproperty-tests.el:
+  test/hactypes-tests.el: Add local-variable section disabling
+    byte-compilation to avoid error message during user
+    installation. The message comes from these files depend on el-mock
+    which is not a package dependency.
+
 * .github/workflows/main.yml (jobs): Add 30.1 to CI
 
 2025-03-03  Mats Lidell  <matsl@gnu.org>
