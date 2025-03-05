@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:     8-Jan-25 at 22:52:00
-;; Last-Mod:     21-Jan-25 at 17:03:54 by Mats Lidell
+;; Last-Mod:      4-Mar-25 at 17:06:26 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -30,4 +30,12 @@
       (should (string-match "Requires manual installation" (cadr err))))))
 
 (provide 'hycontrol-tests)
+
+;; This file can't be byte-compiled without the `el-mock' package
+;; which is not a dependency of Hyperbole.
+;;
+;; Local Variables:
+;; no-byte-compile: t
+;; End:
+
 ;;; hycontrol-tests.el ends here
