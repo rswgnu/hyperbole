@@ -1,3 +1,7 @@
+2025-03-04  Mats Lidell  <matsl@gnu.org>
+
+* .github/workflows/main.yml (jobs): Add 30.1 to CI
+
 2025-03-03  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (DOCKER_VERSIONS): Remove 27.2.
