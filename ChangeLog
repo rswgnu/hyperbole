@@ -1,5 +1,7 @@
 2025-03-07  Mats Lidell  <matsl@gnu.org>
 
+* hui-select.el (hbut:syntax-table): Public declare var.
+
 * test/hpath-tests.el (hpath--spaces-to-dashes-markup-anchor)
     (hpath--dashes-to-spaces-markup-anchor): Add tests.
 
