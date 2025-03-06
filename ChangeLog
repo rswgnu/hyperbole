@@ -1,3 +1,8 @@
+2025-03-07  Mats Lidell  <matsl@gnu.org>
+
+* test/hpath-tests.el (hpath--spaces-to-dashes-markup-anchor)
+    (hpath--dashes-to-spaces-markup-anchor): Add tests.
+
 2025-03-04  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el:
