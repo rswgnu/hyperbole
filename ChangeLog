@@ -1,5 +1,8 @@
 2025-03-07  Mats Lidell  <matsl@gnu.org>
 
+* hywiki.el (hywiki-convert-words-to-org-links)
+    (hywiki--org-export-get-reference): Fix docstrings.
+
 * hui-select.el (hbut:syntax-table): Public declare var.
 
 * test/hpath-tests.el (hpath--spaces-to-dashes-markup-anchor)
