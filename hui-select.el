@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     22-Feb-25 at 22:15:12 by Bob Weiner
+;; Last-Mod:      7-Mar-25 at 00:39:21 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -327,6 +327,7 @@ Used to include a final line when marking indented code.")
 ;;; Public declarations
 ;;; ************************************************************************
 
+(defvar hbut:syntax-table)              ; "hbut.el"
 (defvar help-mode-syntax-table)         ; "help-mode.el"
 (defvar hkey-init)                      ; "hyperbole.el"
 (defvar hkey-value)                     ; "hui-mouse.el"
