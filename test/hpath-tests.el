@@ -466,18 +466,26 @@ dir/subdir:
 (ert-deftest hpath--spaces-to-dashes-markup-anchor ()
   "Verify `hpath:spaces-to-dashes-markup-anchor'."
   (with-temp-buffer
+    ;; Normal case: Replace space wih dash.
     (should (string= "a-b-c" (hpath:spaces-to-dashes-markup-anchor "a b c")))
+    ;; Mixed case: No conversion.
     (should (string= "a b-c" (hpath:spaces-to-dashes-markup-anchor "a b-c")))
+    ;; Prog-mode: No conversion.
     (prog-mode)
+    (should (string= "a b c" (hpath:spaces-to-dashes-markup-anchor "a b c")))
     (should (string= "a-b-c" (hpath:spaces-to-dashes-markup-anchor "a-b-c")))
     (should (string= "a b-c" (hpath:spaces-to-dashes-markup-anchor "a b-c")))))
 
 (ert-deftest hpath--dashes-to-spaces-markup-anchor ()
   "Verify `hpath:dashes-to-spaces-markup-anchor'."
   (with-temp-buffer
+    ;; Normal case: Replace dash with space.
     (should (string= "a b c" (hpath:dashes-to-spaces-markup-anchor "a-b-c")))
+    ;; Mixed case: No conversion.
     (should (string= "a b-c" (hpath:dashes-to-spaces-markup-anchor "a b-c")))
+    ;; Prog-mode: No conversion.
     (prog-mode)
+    (should (string= "a b c" (hpath:spaces-to-dashes-markup-anchor "a b c")))
     (should (string= "a-b-c" (hpath:dashes-to-spaces-markup-anchor "a-b-c")))
     (should (string= "a b-c" (hpath:dashes-to-spaces-markup-anchor "a b-c")))))
 
