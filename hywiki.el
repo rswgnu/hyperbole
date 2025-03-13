@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Acpr-24 at 22:41:13
-;; Last-Mod:      3-Mar-25 at 00:01:19 by Mats Lidell
+;; Last-Mod:      7-Mar-25 at 01:00:19 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1433,7 +1433,8 @@ For example, the link:
 or
   \"[[hy:WikiWord#Multi-Word Section]]\"
 is converted to:
-  \"[[file:<hywiki-directory>/WikiWord.org::Multi-Word Section][WikiWord#Multi-Word Section]]\".
+  \"[[file:<hywiki-directory>/WikiWord.org::Multi-Word Section]
+    [WikiWord#Multi-Word Section]]\".
 
 If the reference is in a file within the `hywiki-directory', it
 simplifies to:
@@ -3213,17 +3214,17 @@ DATUM is either an element or an object.  INFO is the current
 export state, as a plist.
 
 References for the current document are stored in
-‘:internal-references’ property.  Its value is an alist with
+`:internal-references' property.  Its value is an alist with
 associations of the following types:
 
   (REFERENCE . DATUM) and (SEARCH-CELL . ID)
 
 REFERENCE is the reference string to be used for object or
 element DATUM.  SEARCH-CELL is a search cell, as returned by
-‘org-export-search-cells’.  ID is a number or a string uniquely
+`org-export-search-cells'.  ID is a number or a string uniquely
 identifying DATUM within the document.
 
-This function also checks ‘:crossrefs’ property for search cells
+This function also checks `:crossrefs' property for search cells
 matching DATUM before creating a new reference."
   (let ((cache (plist-get info :internal-references)))
     (or (car (rassq datum cache))
