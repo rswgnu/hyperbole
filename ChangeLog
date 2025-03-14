@@ -1,3 +1,7 @@
+2025-04-07  Mats Lidell  <matsl@gnu.org>
+
+* hui-mouse.el (hkey-alist): Accept M-RET with vertico for all vertico input.
+
 2025-04-06  Mats Lidell  <matsl@gnu.org>
 
 * test/hy-test-helpers.el (hy-test-run-failing-flag): Set to non-nil to
