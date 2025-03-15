@@ -2,6 +2,13 @@
 
 * hui-mouse.el (hkey-alist): Accept M-RET with vertico for all vertico input.
 
+* test/MANIFEST: Add hui-mouse-tests.el
+
+* test/hui-mouse-tests.el (hui-mouse-tests--hkey-alist): Verify a
+    predicate setting leads to the proper action.
+    (hui-mouse-tests--hkey-get-action): Helper that gets primary action
+    and assist action from hkey-alist for the predicates in effect.
+
 2025-04-06  Mats Lidell  <matsl@gnu.org>
 
 * test/hy-test-helpers.el (hy-test-run-failing-flag): Set to non-nil to
