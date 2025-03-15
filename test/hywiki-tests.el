@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:      3-Mar-25 at 00:10:35 by Mats Lidell
+;; Last-Mod:     17-Mar-25 at 11:44:34 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -24,6 +24,17 @@
 (require 'hywiki)
 (require 'hsys-org)
 (require 'ox-publish)
+
+(defun hywiki-tests--command-execute (cmd &rest rest)
+  "Run CMD, with optional REST params, between calls to pre and post hooks.
+This is for simulating the command loop."
+  (setq last-command this-command)
+  (setq this-command cmd)
+  (run-hooks 'pre-command-hook)
+  (if rest
+      (apply cmd rest)
+    (command-execute cmd))
+  (run-hooks 'post-command-hook))
 
 (ert-deftest hywiki-tests--hywiki-create-page--adds-file-in-wiki-folder ()
   "Verify add page creates file in wiki folder and sets hash table."
@@ -65,6 +76,7 @@
           (goto-char 4)
           (action-key)
 	  (should (equal (cons 'page wikifile) (hywiki-get-referent "WikiWord"))))
+      (hywiki-mode 0)
       (hy-delete-file-and-buffer (expand-file-name wikifile hywiki-directory))
       (hy-delete-dir-and-buffer hywiki-directory))))
 
@@ -82,6 +94,7 @@
           (assist-key)
           (other-window 1)
           (should (string-prefix-p "*Help: Hyperbole " (buffer-name))))
+      (hywiki-mode 0)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--action-key-on-wikiword-displays-page ()
@@ -106,6 +119,7 @@
                 (should (looking-at-p "WikiWord page"))
               (insert "WikiWord page")
               (goto-char (point-min)))))
+      (hywiki-mode 0)
       (hy-delete-file-and-buffer hywiki-page-file)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
@@ -259,7 +273,7 @@ line 2
                  )))
     (unwind-protect
         (with-temp-buffer
-          (hywiki-mode)
+          (hywiki-mode 1)
           (dolist (w words)
             (let ((in (if (stringp w) w (car w)))
                   (expect (if (stringp w) w (cdr w))))
@@ -267,7 +281,7 @@ line 2
               (insert in)
               (goto-char 4)
               (should (string= expect (hywiki-word-at))))))
-      (hywiki-mode -1)
+      (hywiki-mode 0)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--sections-with-dash-space ()
@@ -275,24 +289,20 @@ line 2
   (let ((hywiki-directory (make-temp-file "hywiki" t)))
     (unwind-protect
         (progn
+          (hywiki-mode 1)
           (with-temp-buffer
-            (hywiki-mode)
             (insert "WikiWord#section rest is ignored")
             (goto-char 4)
             (should (string= "WikiWord#section" (hywiki-word-at))))
-
           (with-temp-buffer
-            (hywiki-mode)
             (insert "WikiWord#section-with-dash")
             (goto-char 4)
             (should (string= "WikiWord#section-with-dash" (hywiki-word-at))))
-
           (with-temp-buffer
-            (hywiki-mode)
             (insert "WikiWord#\"section-within-quotes\"")
             (goto-char 4)
             (should (string= "WikiWord#\"section-within-quotes\"" (hywiki-word-at)))))
-      (hywiki-mode -1)
+      (hywiki-mode 0)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--word-is-p ()
@@ -465,46 +475,8 @@ Both mod-time and checksum must be changed for a test to return true."
               (hy-delete-dir-and-buffer hywiki-directory))))
       (hy-delete-dir-and-buffer hywiki-directory))))
 
-;; Following three test cases for verifying proper face is some what
+;; Following test cases for verifying proper face is some what
 ;; experimental. They need to be run in interactive mode.
-
-(defun hywiki-tests--add-hywiki-hooks ()
-  "Enable all hywiki hook functions."
-  (add-hook 'pre-command-hook      'hywiki-debuttonize-non-character-commands 95)
-  (add-hook 'post-command-hook     'hywiki-buttonize-non-character-commands 95)
-  (add-hook 'post-self-insert-hook 'hywiki-buttonize-character-commands)
-  (add-hook 'window-buffer-change-functions
-	    'hywiki-maybe-highlight-wikiwords-in-frame)
-  (add-to-list 'yank-handled-properties
-	       '(hywiki-word-face . hywiki-highlight-on-yank)))
-
-(defun hywiki-tests--remove-hywiki-hooks ()
-  "Disable all hywiki hook functions."
-  (remove-hook 'pre-command-hook      'hywiki-debuttonize-non-character-commands)
-  (remove-hook 'post-command-hook     'hywiki-buttonize-non-character-commands)
-  (remove-hook 'post-self-insert-hook 'hywiki-buttonize-character-commands)
-  (remove-hook 'window-buffer-change-functions
-	       'hywiki-maybe-highlight-wikiwords-in-frame)
-  (setq yank-handled-properties
-	(delete '(hywiki-word-face . hywiki-highlight-on-yank)
-		yank-handled-properties)))
-
-(defmacro with-hywiki-buttonize-hooks (&rest body)
-  "Call BODY wrapped in hywiki hooks to simulate Emacs redisplay."
-  (declare (indent 0) (debug t))
-  `(progn
-     (funcall 'hywiki-debuttonize-non-character-commands)
-     (progn ,@body)
-     (funcall 'hywiki-buttonize-non-character-commands)))
-
-(defmacro with-hywiki-buttonize-and-insert-hooks (&rest body)
-  "Call BODY wrapped in hywiki hooks to simulate Emacs redisplay."
-  (declare (indent 0) (debug t))
-  `(progn
-     (funcall 'hywiki-debuttonize-non-character-commands)
-     (progn ,@body)
-     (funcall 'hywiki-buttonize-character-commands)
-     (funcall 'hywiki-buttonize-non-character-commands)))
 
 (ert-deftest hywiki-tests--face-property-for-wikiword-with-wikipage ()
   "Verify WikiWord for a wiki page gets face property hywiki-word-face."
@@ -514,20 +486,17 @@ Both mod-time and checksum must be changed for a test to return true."
          (wikipage (cdr (hywiki-add-page "WikiWord"))))
     (unwind-protect
         (progn
-          (hywiki-tests--remove-hywiki-hooks)
+          (hywiki-mode 1)
           (with-temp-buffer
-            (hywiki-mode 1)
-            (with-hywiki-buttonize-and-insert-hooks (insert "WikiWord "))
+            (insert "WikiWor")
+	    (hywiki-tests--command-execute #'self-insert-command 1 ?d)
             (goto-char 4)
             (should (hywiki-word-face-at-p)))
           (with-temp-buffer
-            (hywiki-mode 1)
-            (with-hywiki-buttonize-and-insert-hooks
-              (insert "WikiWord")
-	      (command-execute #'newline))
+            (insert "WikiWord")
+	    (hywiki-tests--command-execute #'newline 1 'interactive)
             (goto-char 4)
             (should (hywiki-word-face-at-p))))
-      (hywiki-tests--add-hywiki-hooks)
       (hywiki-mode 0)
       (hy-delete-file-and-buffer wikipage)
       (hy-delete-dir-and-buffer hywiki-directory))))
@@ -539,15 +508,12 @@ Both mod-time and checksum must be changed for a test to return true."
          (hywiki-directory (make-temp-file "hywiki" t)))
     (unwind-protect
         (progn
-          (hywiki-tests--remove-hywiki-hooks)
           (with-temp-buffer
             (hywiki-mode 0)
-            (with-hywiki-buttonize-and-insert-hooks
-              (insert "WikiWord")
-	      (newline nil t))
+            (insert "WikiWor")
+	    (hywiki-tests--command-execute #'self-insert-command 1 ?d)
             (goto-char 4)
             (should-not (hywiki-word-face-at-p))))
-      (hywiki-tests--add-hywiki-hooks)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--verify-face-property-when-editing-wikiword ()
@@ -557,23 +523,22 @@ Both mod-time and checksum must be changed for a test to return true."
          (wikipage (cdr (hywiki-add-page "WikiWord"))))
     (unwind-protect
         (progn
-          (hywiki-tests--remove-hywiki-hooks)
           (with-temp-buffer
             (hywiki-mode 1)
-            (with-hywiki-buttonize-and-insert-hooks (insert "Wikiord "))
+            (insert "Wikiord")
+            (hywiki-tests--command-execute #'self-insert-command 1 ? )
             (goto-char 5)
-            (should (looking-at-p "ord"))
+            (should (looking-at-p "ord "))
             (should-not (hywiki-word-face-at-p))
 
-            (with-hywiki-buttonize-and-insert-hooks (insert "W"))
+            (hywiki-tests--command-execute #'self-insert-command 1 ?W)
             (goto-char 5)
-            (should (looking-at-p "Word"))
+            (should (looking-at-p "Word "))
             (should (hywiki-word-face-at-p))
 
-            (with-hywiki-buttonize-and-insert-hooks (delete-char 1))
-            (should (looking-at-p "ord"))
+            (hywiki-tests--command-execute #'delete-char 1)
+            (should (looking-at-p "ord "))
             (should-not (hywiki-word-face-at-p))))
-      (hywiki-tests--add-hywiki-hooks)
       (hywiki-mode 0)
       (hy-delete-files-and-buffers (list wikipage))
       (hy-delete-dir-and-buffer hywiki-directory))))
@@ -585,24 +550,22 @@ Both mod-time and checksum must be changed for a test to return true."
     (skip-unless (not noninteractive))
     (unwind-protect
         (progn
-          (hywiki-tests--remove-hywiki-hooks)
           (with-temp-buffer
             (hywiki-mode 1)
-            (with-hywiki-buttonize-and-insert-hooks (insert "WikiWord "))
+            (insert "WikiWord")
+            (hywiki-tests--command-execute #'self-insert-command 1 ? )
             (goto-char 1)
-            (should (looking-at-p "Wiki"))
+            (should (looking-at-p "WikiWord"))
             (should (hywiki-word-face-at-p))
 
-	    (delete-char 1)
-	    (hywiki-maybe-dehighlight-page-name t)
-            (should (looking-at-p "iki"))
+	    (hywiki-tests--command-execute #'delete-char 1)
+            (should (looking-at-p "ikiWord"))
             (should-not (hywiki-word-face-at-p))
 
-            (with-hywiki-buttonize-and-insert-hooks (insert "W"))
+            (hywiki-tests--command-execute #'self-insert-command 1 ?W)
             (goto-char 1)
-            (should (looking-at-p "Wiki"))
+            (should (looking-at-p "WikiWord"))
             (should (hywiki-word-face-at-p))))
-      (hywiki-tests--add-hywiki-hooks)
       (hywiki-mode 0)
       (hy-delete-files-and-buffers (list wikipage))
       (hy-delete-dir-and-buffer hywiki-directory))))
@@ -614,24 +577,21 @@ Both mod-time and checksum must be changed for a test to return true."
          (wikipage (cdr (hywiki-add-page "WikiWord"))))
     (unwind-protect
         (progn
-          (hywiki-tests--remove-hywiki-hooks)
+          (hywiki-mode 1)
           (with-temp-buffer
-            (hywiki-mode 1)
-            (with-hywiki-buttonize-and-insert-hooks (insert "WikiWord "))
+            (insert "WikiWord")
+            (hywiki-tests--command-execute #'self-insert-command 1 ? )
             (goto-char 4)
             (hywiki-convert-words-to-org-links)
             (should (string= "[[WikiWord]] "
                              (buffer-substring-no-properties (point-min) (point-max)))))
           (with-temp-buffer
-            (hywiki-mode 1)
-            (with-hywiki-buttonize-and-insert-hooks
-              (insert "WikiWord")
-	      (newline nil t))
+            (insert "WikiWor")
+	    (hywiki-tests--command-execute #'self-insert-command 1 ?d)
             (goto-char 4)
             (hywiki-convert-words-to-org-links)
-            (should (string= "[[WikiWord]]\n"
+            (should (string= "[[WikiWord]]"
                              (buffer-substring-no-properties (point-min) (point-max))))))
-      (hywiki-tests--add-hywiki-hooks)
       (hywiki-mode 0)
       (hy-delete-file-and-buffer wikipage)
       (hy-delete-dir-and-buffer hywiki-directory))))
@@ -751,7 +711,7 @@ body B
           ;; Create temp buffers with WikiWord links to the target
           ;; WikiWord page and verify they work.
           (with-temp-buffer
-            (hywiki-mode)
+            (hywiki-mode 1)
             (dolist (w words)
               (let ((wiki-link (car w))
                     (expected-str-at-pos (cdr w)))
@@ -762,7 +722,7 @@ body B
                   (action-key)
                   ;; (should (string-prefix-p "WikiWord.org" (buffer-name)))
                   (should (looking-at-p expected-str-at-pos)))))))
-      (hywiki-mode -1)
+      (hywiki-mode 0)
       (hy-delete-file-and-buffer wikipage)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
@@ -1356,9 +1316,7 @@ See gh#rswgnu/hyperbole/669."
   (with-temp-buffer
     (insert "(a)")
     (goto-char 2)
-    (let ((this-command #'delete-char))
-      (with-hywiki-buttonize-hooks
-        (delete-char 1)))
+    (hywiki-tests--command-execute #'delete-char 1)
     (should (string= "()" (buffer-substring-no-properties (point-min) (point-max))))))
 
 (ert-deftest hywiki-tests--word-face-at-p ()
@@ -1367,20 +1325,20 @@ See gh#rswgnu/hyperbole/669."
   (let* ((hywiki-directory (make-temp-file "hywiki" t))
          (wiki-page (cdr (hywiki-add-page "WikiWord"))))
     (with-temp-buffer
-      (insert "WikiWord")
+      (hywiki-mode 0)
+      (insert "WikiWor")
+      (hywiki-tests--command-execute #'self-insert-command 1 ?d)
       (goto-char 4)
       (should-not (hywiki-word-face-at-p)))
     (unwind-protect
         (progn
-          (hywiki-tests--remove-hywiki-hooks)
           (with-temp-buffer
             (hywiki-mode 1)
-            (with-hywiki-buttonize-and-insert-hooks
-              (insert "WikiWord")
-              (command-execute #'newline))
+            (insert "WikiWor")
+	    (hywiki-tests--command-execute #'self-insert-command 1 ?d)
             (goto-char 4)
             (should (hywiki-word-face-at-p))))
-      (hywiki-tests--add-hywiki-hooks)
+      (hywiki-mode 0)
       (hy-delete-file-and-buffer wiki-page)
       (hy-delete-dir-and-buffer hywiki-directory))))
 

@@ -1,3 +1,14 @@
+2025-03-17  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--add-hywiki-hooks)
+    (hywiki-tests--remove-hywiki-hooks, with-hywiki-buttonize-hooks)
+    (with-hywiki-buttonize-and-insert-hooks): Remove helpers for running
+    hooks, replaced by hywiki-tests--command-execute.
+
+* test/hywiki-tests.el (hywiki-tests--command-execute): Function that runs
+    command while also executing the pre and post command hooks. Use it
+    instead of the with-hywiki-buttonize macros.
+
 2025-03-07  Mats Lidell  <matsl@gnu.org>
 
 * hywiki.el (hywiki-convert-words-to-org-links)
