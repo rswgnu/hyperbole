@@ -11,7 +11,7 @@
 GNU Hyperbole (pronounced Ga-new Hi-per-bo-lee), or just Hyperbole, is
 an efficient and programmable hypertextual information management
 system implemented as a GNU Emacs package.  It works well on GNU Emacs
-27.2 or above.  (See also: "HY-WHY.kotl" for Hyperbole uses).
+28 or above.  (See also: "HY-WHY.kotl" for Hyperbole uses).
 
 Hyperbole includes easy-to-use, powerful hypertextual buttons without
 the need to learn a markup language; a hierarchical, record-based

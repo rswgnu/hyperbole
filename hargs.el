@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:     25-Feb-25 at 02:16:13 by Bob Weiner
+;; Last-Mod:     27-Feb-25 at 21:21:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -525,8 +525,14 @@ following sexpression is returned.  Otherwise, the innermost sexpression
 that point is within is returned or nil if none."
   (let ((not-quoted
 	 '(condition-case ()
-	      (not (and (eq (char-syntax (char-after (- (point) 2))) ?\\)
-			(not (eq (char-syntax (char-after (- (point) 3))) ?\\))))
+	      (not (and (= (if (char-after (- (point) 2))
+			       (char-syntax (char-after (- (point) 2)))
+			     0)
+			   ?\\)
+			(not (= (if (char-after (- (point) 3))
+				    (char-syntax (char-after (- (point) 3)))
+				  0)
+				?\\))))
 	    (error t))))
     (save-excursion
       (ignore-errors

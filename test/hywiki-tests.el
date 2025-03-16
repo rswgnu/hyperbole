@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     24-Feb-25 at 00:46:05 by Bob Weiner
+;; Last-Mod:     14-Mar-25 at 17:35:00 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -203,14 +203,16 @@ line 2
           ;; Matches a WikiWord
           (dolist (v '("WikiWord" "[WikiWord]" "[[WikiWord]]" "{WikiWord}" "(WikiWord)"
                        "<WikiWord>" "<<WikiWord>>" "{[[WikiWord]]}" "([[WikiWord]])"
-                       "[WikiWord AnotherWord]"
+                       "[WikiWord AnotherWord WikiWord WikiWord]"
                        ))
             (with-temp-buffer
               (org-mode)
               (insert v)
 	      (newline nil t)
               (goto-char 6)
-              (should (string= "WikiWord" (hywiki-word-at)))))
+              (if (string= "WikiWord" (hywiki-word-at))
+		  (should t)
+		(should-not v))))
 
           ;; Does not match as a WikiWord
           (dolist (v '("WikiWord#"))
@@ -219,7 +221,9 @@ line 2
               (insert v)
 	      (newline nil t)
               (goto-char 6)
-              (should-not (string= "WikiWord" (hywiki-word-at)))))
+	      (if (string= "WikiWord" (hywiki-word-at))
+		  (should-not v)
+		(should t))))
 
           ;; Identifies as org link (Note: Not checked if target
           ;; exists.) AND matches WikiWord
@@ -231,7 +235,9 @@ line 2
               (goto-char 6)
               (font-lock-ensure)
               (should (hsys-org-face-at-p 'org-link))
-              (should (string= "WikiWord" (hywiki-word-at)))))
+	      (if (string= "WikiWord" (hywiki-word-at))
+		  (should t)
+		(should-not v))))
 
           ;; Identifies as org link (Note: Not checked if target
           ;; exists.) AND DOES NOT match WikiWord
@@ -243,7 +249,9 @@ line 2
               (goto-char 6)
               (font-lock-ensure)
               (should (hsys-org-face-at-p 'org-link))
-              (should-not (string= "WikiWord" (hywiki-word-at))))))
+              (if (string= "WikiWord" (hywiki-word-at))
+		  (should-not v)
+		(should t)))))
       (hywiki-mode 0)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
@@ -503,6 +511,7 @@ Both mod-time and checksum must be changed for a test to return true."
   (declare (indent 0) (debug t))
   `(progn
      (progn ,@body)
+     (setq this-command 'org-return)
      (funcall 'hywiki-debuttonize-non-character-commands)
      (funcall 'hywiki-buttonize-character-commands)
      (funcall 'hywiki-buttonize-non-character-commands)))
@@ -561,17 +570,20 @@ Both mod-time and checksum must be changed for a test to return true."
           (hywiki-tests--remove-hywiki-hooks)
           (with-temp-buffer
             (hywiki-mode 1)
-            (with-hywiki-buttonize-and-insert-hooks (insert "Wikiord "))
-            (goto-char 5)
+            (with-hywiki-buttonize-and-insert-hooks
+	      (insert "Wikiord ")
+              (goto-char 5))
             (should (looking-at-p "ord"))
             (should-not (hproperty:but-get (point) 'face hywiki-word-face))
 
-            (with-hywiki-buttonize-and-insert-hooks (insert "W"))
-            (goto-char 5)
+            (with-hywiki-buttonize-and-insert-hooks
+	      (insert "W")
+              (goto-char 5))
             (should (looking-at-p "Word"))
             (should (hproperty:but-get (point) 'face hywiki-word-face))
 
-            (with-hywiki-buttonize-and-insert-hooks (delete-char 1))
+            (with-hywiki-buttonize-and-insert-hooks
+	      (delete-char 1))
             (should (looking-at-p "ord"))
             (should-not (hproperty:but-get (point) 'face hywiki-word-face))))
       (hywiki-tests--add-hywiki-hooks)
@@ -581,32 +593,35 @@ Both mod-time and checksum must be changed for a test to return true."
 
 (ert-deftest hywiki-tests--verify-face-property-when-editing-wikiword-first-char ()
   "Verify face property changes when WikiWord is edited in the first char position."
-  (let* ((hywiki-directory (make-temp-file "hywiki" t))
-         (wikipage (cdr (hywiki-add-page "WikiWord"))))
-    (skip-unless (not noninteractive))
-    (unwind-protect
-        (progn
-          (hywiki-tests--remove-hywiki-hooks)
-          (with-temp-buffer
+  (skip-unless (not noninteractive))
+  (with-temp-buffer
+    (let* ((hywiki-directory (make-temp-file "hywiki" t))
+           (wikipage (cdr (hywiki-add-page "WikiWord"))))
+      (unwind-protect
+          (progn
+            (hywiki-tests--remove-hywiki-hooks)
             (hywiki-mode 1)
             (with-hywiki-buttonize-and-insert-hooks (insert "WikiWord "))
             (goto-char 1)
             (should (looking-at-p "Wiki"))
             (should (hproperty:but-get (point) 'face hywiki-word-face))
 
-	    (delete-char 1)
-	    (hywiki-maybe-dehighlight-page-name t)
+            (with-hywiki-buttonize-and-insert-hooks
+	      (delete-char 1))
             (should (looking-at-p "iki"))
             (should-not (hproperty:but-get (point) 'face hywiki-word-face))
 
-            (with-hywiki-buttonize-and-insert-hooks (insert "W"))
-            (goto-char 1)
+            (with-hywiki-buttonize-and-insert-hooks
+	      (insert "W")
+              (goto-char 1))
             (should (looking-at-p "Wiki"))
-            (should (hproperty:but-get (point) 'face hywiki-word-face))))
-      (hywiki-tests--add-hywiki-hooks)
-      (hywiki-mode 0)
-      (hy-delete-files-and-buffers (list wikipage))
-      (hy-delete-dir-and-buffer hywiki-directory))))
+            (should (hproperty:but-get (point) 'face hywiki-word-face)))
+	;; !! FIXME: Uncomment these lines.
+	;; (hywiki-tests--add-hywiki-hooks)
+	;; (hywiki-mode 0)
+	;; (hy-delete-files-and-buffers (list wikipage))
+	;; (hy-delete-dir-and-buffer hywiki-directory)
+	))))
 
 (ert-deftest hywiki-tests--convert-words-to-org-link ()
   "Verify `hywiki-convert-words-to-org-links' converts WikiWords to org links."
@@ -894,7 +909,8 @@ Note special meaning of `hywiki-allow-plurals-flag'."
   (let* ((hywiki-directory (make-temp-file "hywiki" t))
 	 (wikiword (hy-make-random-wikiword)))
     (unwind-protect
-        (mocklet (((hypb:require-package 'org-roam) => t)
+        (mocklet ((cl-struct-org-roam-node-tags => nil)
+		  ((hypb:require-package 'org-roam) => t)
 		  ((org-roam-node-read) => "node")
 		  (org-roam-node-title => "node-title"))
 	  (hywiki-add-org-roam-node wikiword)

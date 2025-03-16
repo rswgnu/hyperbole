@@ -2,11 +2,22 @@
 
 [We work on Hyperbole as a gift to the Emacs community and request you
  send us a thank you or a testimonial describing your usage if you like
- Hyperbole (mailto:rsw@gnu.org)].
+ Hyperbole to [rsw@gnu.org](mailto:rsw@gnu.org)].
 
 [TOC]
 
 ![Hyperbole screenshot of the Koutliner, DEMO file and HyRolo](man/im/hyperbole-cv.png)
+
+## Reference Manual
+
+Hyperbole has many features you can explore interactively or by reading sections of
+the reference manual:
+
+   - [Browse Hyperbole Web Manual](man/hyperbole.html)
+
+   - [In Emacs, Browse Hyperbole Info Manual](man/hyperbole.info)
+
+   - [Display or Print PDF Manual](man/hyperbole.pdf)
 
 ## Videos
 
@@ -135,7 +146,7 @@ keyboard and mouse-based control of information display within multiple
 windows.  It also provides point-and-click access to World-Wide Web URLs,
 Info manuals, ftp archives, etc.
 
-Hyperbole works well on GNU Emacs 27.2 or above.  It is designed and written
+Hyperbole works well on GNU Emacs 28 or above.  It is designed and written
 by Bob Weiner.  It is maintained by him and Mats Lidell.  Its main
 distribution site is: <https://www.gnu.org/software/hyperbole/>.  If any
 term in here is new or unfamiliar to you, you can look it up in the
@@ -228,9 +239,9 @@ not a simple introduction.  It is included in the "man/" subdirectory
 of the Hyperbole package directory in four forms:
 
 [hyperbole.info](man/hyperbole.info)   - online Info browser version  
-[hyperbole.html](man/hyperbole.html)   - web HTML version  
+[hyperbole.html](man/hyperbole.html)   - web version  
 [hyperbole.pdf](man/hyperbole.pdf)     - printable version  
-[hyperbole.texi](man/hyperbole.texi)   - source form  
+[hyperbole.texi](man/hyperbole.texi)   - source version  
 
 The Hyperbole package installation places the Info version of this manual
 where needed and adds an entry for Hyperbole into the Info directory under

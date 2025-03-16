@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:      5-Jan-25 at 12:06:01 by Bob Weiner
+;; Last-Mod:      9-Mar-25 at 10:47:48 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -497,19 +497,16 @@ Match to all todos if `keyword' is nil or the empty string."
       (looking-at org-babel-src-block-regexp))))
 
 (defun hsys-org-link-at-p ()
-  "Return non-nil iff point is on a square-bracketed Org mode link.
+  "Return non-nil iff point is on an Org mode link.
 Ignore [[hy:HyWiki]] buttons and return nil (handle these as
 implicit buttons).  Assume caller has already checked that the
 current buffer is in `org-mode' or is looking for an Org link in
 another buffer type."
   (unless (or (smart-eolp) (smart-eobp))
-    (with-suppressed-warnings nil
-      (let ((in-org-link (org-in-regexp org-link-bracket-re nil t)))
-	(when in-org-link
-	  (save-match-data
-	    ;; If this Org link matches a potential HyWiki word, ignore it.
-	    (unless (and (fboundp 'hywiki-word-at) (hywiki-word-at))
-	      in-org-link)))))))
+    (when (eq 'link (plist-get (hsys-org-thing-at-p) :type))
+      (save-match-data
+	;; If this Org link matches a potential HyWiki word, ignore it.
+	(not (and (fboundp 'hywiki-word-at) (hywiki-word-at)))))))
 
 ;; Assume caller has already checked that the current buffer is in org-mode.
 (defun hsys-org-heading-at-p (&optional _)
@@ -524,6 +521,35 @@ The target is the definition and the target link is the referent.
 Assume caller has already checked that the current buffer is in
 `org-mode'."
   (hsys-org-face-at-p 'org-target))
+
+;; Derived from `org-open-at-point' in "org.el".
+(defun hsys-org-thing-at-p ()
+  "Return a plist of properties for Org thing at point or nil if none.
+The plist form is: (:type <type> :value <value> :context <context>).
+The thing can be a link, citation, timestamp, footnote, src-block or
+tags.
+
+On top of syntactically correct links, this function also works
+on links and timestamps in comments, node properties, and
+keywords if point is on something looking like a timestamp or a
+link."
+  (when (derived-mode-p 'org-mode)
+    (org-load-modules-maybe)
+    ;; Org's regex matching can fail in non-thing contexts; return nil then
+    (let* ((context
+	    ;; Only consider supported types, even if they are not the
+	    ;; closest one.
+	    (org-element-lineage
+	     (org-element-context)
+	     '(citation citation-reference clock comment comment-block
+			footnote-definition footnote-reference headline
+			inline-src-block inlinetask keyword link node-property
+			planning src-block timestamp)
+	     t))
+	   (type (org-element-type context))
+	   (value (org-element-property :value context)))
+      (when type
+	(list :type type :value value :context context)))))
 
 (defun hsys-org-todo-at-p ()
   "Return non-nil iff point is on an Org mode todo keyword.

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     29-Jan-25 at 10:07:49 by Mats Lidell
+;; Last-Mod:      2-Mar-25 at 12:05:51 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1591,10 +1591,19 @@ action type, function symbol to call or test to execute, i.e.
     ;;     at the end of the buffer
     ;;     or is followed by a space, punctuation or grouping character.
     (when (and lbl-key (or (null (char-before start-pos))
-                           (memq (char-syntax (char-before start-pos)) '(?\  ?\> ?\( ?\))))
-	       (not (memq (char-syntax (char-after (1+ start-pos))) '(?\  ?\>)))
+                           (memq (if (char-before start-pos)
+				     (char-syntax (char-before start-pos))
+				   0)
+				 '(?\  ?\> ?\( ?\))))
+	       (not (memq (if (char-after (1+ start-pos))
+			      (char-syntax (char-after (1+ start-pos)))
+			    0)
+			  '(?\  ?\>)))
 	       (or (null (char-after end-pos))
-                   (memq (char-syntax (char-after end-pos)) '(?\  ?\> ?. ?\( ?\)))
+                   (memq (if (char-after end-pos)
+			     (char-syntax (char-after end-pos))
+			   0)
+			 '(?\  ?\> ?. ?\( ?\)))
                    ;; Some of these characters may have symbol-constituent syntax
                    ;; rather than punctuation, so check them individually.
                    (memq (char-after end-pos) '(?. ?, ?\; ?: ?! ?\' ?\"))))

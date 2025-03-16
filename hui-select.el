@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     25-Feb-25 at 02:24:41 by Bob Weiner
+;; Last-Mod:     27-Feb-25 at 21:24:19 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -915,7 +915,7 @@ end sexp delimiters, ignore it, and return nil."
 			  (when (region-active-p) (deactivate-mark))
 			  (mark-sexp) t)))
     (ignore-errors
-      (let ((syn-after (char-syntax (char-after)))
+      (let ((syn-after (if (char-after) (char-syntax (char-after)) 0))
 	    syn-before)
 	(cond ((eq syn-after ?\()
 	       (funcall mark-sexp-func))
