@@ -1,4 +1,17 @@
+2025-03-17  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-maybe-dehighlight-between-page-names): Fix to dehighlight
+    at point if on a highlighted prior WikiWork.
+            (hywiki--buttonize-characters): Add missing double quote char as
+    a match char to fix "WikiWord" not highlighting in a file when read in.
+
 2025-03-16  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki--rehighlight-at-point): Fix to dehighlight when the first
+    char of a wikiword is deleted.
+            (hywiki--maybe-rehighlight-at-point): Add maybe to the name.
+            (hywiki-maybe-dehighlight-page-name): Extract from above function
+    and use this standalone.
 
 * HY-ABOUT:
   MELPA-RECIPE.el:

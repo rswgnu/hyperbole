@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Acpr-24 at 22:41:13
-;; Last-Mod:     16-Mar-25 at 10:05:36 by Bob Weiner
+;; Last-Mod:     17-Mar-25 at 23:13:09 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -562,6 +562,12 @@ Highlight after inserting any non-word character."
   ;; does nothing.
   (unless (setq hywiki--flag (hywiki-non-hook-context-p))
     (setq hywiki--range nil)
+
+    ;; Dehighlight any previously highlighted WikiWord at point
+    ;; before we move to the start of any current WikiWord and
+    ;; rehighlight that.
+    (hywiki--maybe-dehighlight-at-point)
+
     (save-excursion
       (cond ((marker-position hywiki--buttonize-start)
 	     ;; Point was before or after a WikiWord delimiter
@@ -581,7 +587,7 @@ Highlight after inserting any non-word character."
 		       t)
 		   (setq hywiki--range nil)))))
 
-      (hywiki--rehighlight-at-point))))
+      (hywiki--maybe-rehighlight-at-point))))
 
 (defun hywiki-buttonize-non-character-commands ()
   "Highlight any HyWikiWord before or after point as a Hyperbole button.
@@ -592,6 +598,11 @@ deletion commands and those in `hywiki-non-character-commands'."
 	      (and (symbolp this-command)
 		   (string-match-p "^\\(org-\\)?\\(delete-\\|kill-\\)\\|\\(-delete\\|-kill\\)\\(-\\|$\\)" (symbol-name this-command))))
       (setq hywiki--range nil)
+
+      ;; Dehighlight any previously highlighted WikiWord at point
+      ;; before we move to the start of any current WikiWord and
+      ;; rehighlight that.
+      (hywiki--maybe-dehighlight-at-point)
 
       (save-excursion
 	(cond ((marker-position hywiki--buttonize-start)
@@ -610,35 +621,59 @@ deletion commands and those in `hywiki-non-character-commands'."
 		       t)
 		   (setq hywiki--range nil)))))
 
-	(hywiki--rehighlight-at-point)))))
+	(hywiki--maybe-rehighlight-at-point)))))
 
-(defun hywiki--rehighlight-at-point ()
-  ;; Dehighlight any existing word only if the editing command
-  ;; has changed the word-only part of the WikiWord reference
-  (when (and hywiki--word-pre-command hywiki--range
+(defun hywiki--maybe-dehighlight-at-point ()
+  "Dehighlight any existing HyWikiWord when needed.
+That is, only if the editing command has changed the word-only part of
+the HyWikiWord reference."
+  (when (and hywiki--word-pre-command
 	     (not (equal hywiki--word-pre-command
-			 (hywiki-get-singular-wikiword (car hywiki--range)))))
+			 (hywiki-get-singular-wikiword
+			  (or (car hywiki--range)
+			      (when (and (marker-position hywiki--buttonize-start)
+					 (marker-position hywiki--buttonize-end))
+				(buffer-substring hywiki--buttonize-start
+						  hywiki--buttonize-end))
+			      (when (and (setq hywiki--range (hywiki-word-at :range))
+					 (nth 1 hywiki--range))
+				(prog1 (nth 1 hywiki--range)
+				  (setq hywiki--range nil)))
+)))))
     ;; Dehighlight if point is on or between a HyWikiWord
-    (hywiki-maybe-dehighlight-between-page-names))
+    (hywiki-maybe-dehighlight-between-page-names)))
+
+(defun hywiki--maybe-rehighlight-at-point ()
+  "Dehighlight any existing HyWikiWord when needed.
+That is, only if the editing command has changed the word-only part of
+the HyWikiWord reference."
+
+  (hywiki--maybe-dehighlight-at-point)
 
   ;; Highlight wikiwords around point as needed
-  (cond (hywiki--range
-	 (hywiki-maybe-highlight-on-page-name))
-	((and (marker-position hywiki--buttonize-start)
-	      (marker-position hywiki--buttonize-end))
-	 (hywiki--maybe-de/highlight-sexp
-	  #'hywiki-maybe-highlight-page-names 1
-	  hywiki--buttonize-start hywiki--buttonize-end))
-	(t (hywiki-maybe-highlight-between-page-names)))
+  (when hywiki--range
+    (hywiki-maybe-highlight-on-page-name))
 
+  (when (and (marker-position hywiki--buttonize-start)
+	      (marker-position hywiki--buttonize-end))
+    (hywiki--maybe-de/highlight-sexp
+     #'hywiki-maybe-highlight-page-names 1
+     hywiki--buttonize-start hywiki--buttonize-end))
+
+  (cond ((= (char-syntax (or (char-before) 0)) ?\ )
+	 (goto-char (1- (point)))
+	 (hywiki-maybe-highlight-between-page-names))
+	((= (char-syntax (or (char-after) 0)) ?\ )
+	 (hywiki-maybe-highlight-between-page-names)))
+
+  (setq hywiki--word-pre-command nil)
   (set-marker hywiki--buttonize-start nil)
   (set-marker hywiki--buttonize-end nil))
 
 (defun hywiki-debuttonize-non-character-commands ()
   "Store any HyWikiWord before or after point for later comparison.
-Triggered by `pre-command-hook' for non-character-commands, including
+Triggered by `pre-command-hook' for non-character -commands, including
 deletion commands and those in `hywiki-non-character-commands'."
-  (setq hywiki--word-pre-command nil)
   (when (and (markerp hywiki--buttonize-start) (markerp hywiki--buttonize-end))
     (set-marker hywiki--buttonize-start nil)
     (set-marker hywiki--buttonize-end nil))
@@ -1871,24 +1906,24 @@ Return t if no errors and a pair was found, else nil."
 
 (defun hywiki-maybe-dehighlight-between-page-names ()
   "Dehighlight any non-Org link HyWiki page#section between point.
-If in a programming mode, must be within a comment.  Use
+If in a programming mode, must be within a comment or string.  Use
 `hywiki-word-face' to dehighlight."
-  (cond ((hproperty:char-property-range (point) 'face hywiki-word-face)
-	 ;; This is called in pre-command-hook before any chars are
-	 ;; deleted, so have to dehighlight it though it still temporarily
-	 ;; may be a valid HyWikiWord.
-	 (hywiki-maybe-dehighlight-on-page-name))
-	((cl-destructuring-bind (start end)
-	    (hywiki-at-range-delimiter)
-	  (when (and start end)
-	    (save-excursion
-	      (goto-char (1+ start))
-	      (and (hproperty:char-property-range (point) 'face hywiki-word-face)
-		   (equal (hywiki-referent-exists-p :range)
-			  '(nil nil nil))
-		   ;; non-existing wikiword
-		   (hywiki-maybe-dehighlight-on-page-name)))
-	    t)))
+  (when (hproperty:char-property-range (point) 'face hywiki-word-face)
+    (hproperty:but-clear-all-in-list
+     (hproperty:but-get-all-in-region (point) (1+ (point))
+				      'face hywiki-word-face)))
+
+  (cond ((cl-destructuring-bind (start end)
+	     (hywiki-at-range-delimiter)
+	   (when (and start end)
+	     (save-excursion
+	       (goto-char (1+ start))
+	       (and (hproperty:char-property-range (point) 'face hywiki-word-face)
+		    (equal (hywiki-referent-exists-p :range)
+			   '(nil nil nil))
+		    ;; non-existing wikiword
+		    (hywiki-maybe-dehighlight-on-page-name)))
+	     t)))
 	((looking-at "[ \t\n\r\f]")
 	 (hywiki-maybe-dehighlight-off-page-name)
 	 (hywiki-maybe-dehighlight-on-page-name))))
@@ -1926,6 +1961,8 @@ use these as the region in which to dehighlight.
 If in a programming mode, must be within a comment.  Use
 `hywiki-word-face' to dehighlight."
   (interactive)
+  (setq hywiki--start nil
+	hywiki--end   nil)
   (when (and (hywiki-active-in-current-buffer-p)
 	     (if (and (derived-mode-p 'prog-mode)
 		      (not (apply #'derived-mode-p hywiki-highlight-all-in-prog-modes)))
@@ -1964,23 +2001,21 @@ If in a programming mode, must be within a comment.  Use
 		  case-fold-search nil
 		  hywiki--save-org-link-type-required hywiki-org-link-type-required
 		  hywiki-org-link-type-required t)
-	    (if (and (hywiki-maybe-at-wikiword-beginning)
-		     (looking-at hywiki--word-and-buttonize-character-regexp)
-		     (progn
-		       (setq hywiki--word-only (match-string-no-properties 2)
-			     hywiki--start (match-beginning 1)
-			     hywiki--end   (match-end 1))
-		       (hywiki-get-referent hywiki--word-only)))
-		(when (setq hywiki--buts (hproperty:but-get-all-in-region
-					  hywiki--start hywiki--end
-					  'face hywiki-word-face))
-		  (hproperty:but-clear-all-in-list hywiki--buts))
+	    (unless (and (hywiki-maybe-at-wikiword-beginning)
+			 (looking-at hywiki--word-and-buttonize-character-regexp)
+			 (progn
+			   (setq hywiki--word-only (match-string-no-properties 2)
+				 hywiki--start (match-beginning 1)
+				 hywiki--end   (match-end 1))
+			   (hywiki-get-referent hywiki--word-only)))
 	      ;; Remove any potential earlier highlighting since the
 	      ;; previous word may have changed.
-	      (skip-syntax-backward "^-$()<>._\"\'")
-	      (hproperty:but-clear-all-in-list
-	       (hproperty:but-get-all-in-region (point) (1+ (point))
-						'face hywiki-word-face)))))))))
+	      (skip-syntax-backward "^-$()<>._\"\'"))
+
+	    (hproperty:but-clear-all-in-list
+	     (hproperty:but-get-all-in-region (or hywiki--start (point))
+					      (or hywiki--end (1+ (point)))
+					      'face hywiki-word-face))))))))
 
 ;;;###autoload
 (defun hywiki-maybe-highlight-page-name (&optional on-page-name)
@@ -2917,7 +2952,7 @@ Action Key press; with a prefix ARG, emulate an Assist Key press."
 
 (defun hywiki-word-at (&optional range-flag)
   "Return potential HyWikiWord and optional #section:Lnum:Cnum at point or nil.
-If the HyWikiWord is delimited, Point must be within the delimiters.
+If the HyWikiWord is delimited, point must be within the delimiters.
 
 With optional RANGE-FLAG, return a list of (HyWikiWord start-position
 end-position); the positions include the entire
@@ -3432,7 +3467,7 @@ matching DATUM before creating a new reference."
 ;; Must be set after `hywiki-get-buttonize-characters' is defined
 (unless hywiki--buttonize-characters
   (setq hywiki--buttonize-characters
-	(concat "[]()<>{} \t\r\n'" (hywiki-get-buttonize-characters))
+	(concat "[]()<>{}\"' \t\r\n" (hywiki-get-buttonize-characters))
 	hywiki--buttonize-character-regexp
 	(concat "\\([]["
 		(regexp-quote (substring hywiki--buttonize-characters 2))
