@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     17-Mar-25 at 11:44:34 by Mats Lidell
+;; Last-Mod:     18-Mar-25 at 16:19:07 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -771,7 +771,7 @@ WikiWord#Bsection-subsection
           ;; Verify links are generated
           (with-current-buffer (find-file-noselect wikipage-html)
             ;; (First check we even get the wikipage with sections)
-            (should (>= 1 (count-matches (regexp-quote "WikiWord") (point-min) (point-max))))
+            (should (<= 1 (count-matches (regexp-quote "WikiWord") (point-min) (point-max))))
             (should (= 1 (count-matches (regexp-quote "WikiWord#Asection") (point-min) (point-max))))
             (should (= 1 (count-matches (regexp-quote "WikiWord#Bsection-subsection") (point-min) (point-max))))
 

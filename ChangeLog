@@ -1,3 +1,9 @@
+2025-03-18  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el
+    (hywiki-tests--published-html-links-to-word-and-section): Fix should
+    check.
+
 2025-03-17  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--add-hywiki-hooks)
