@@ -1,3 +1,11 @@
+2025-03-23  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--run-test-case)
+    (hywiki-tests--wikiword-step-check-verification-example-1)
+    (hywiki-tests--wikiword-step-check-verification-example-2, lorem-ipsum)
+    (hywiki-tests--wikiword-step-check-verification-example-3): Introduce
+    DSL for testing Hywiki words.
+
 2025-03-20  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (DOCKER_VERSIONS): Include 30.1.

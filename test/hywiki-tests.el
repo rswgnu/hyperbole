@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     19-Mar-25 at 17:00:58 by Mats Lidell
+;; Last-Mod:     19-Mar-25 at 19:59:12 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1362,6 +1362,140 @@ See gh#rswgnu/hyperbole/669."
               (should (hywiki-word-face-at-p))))
         (hy-delete-file-and-buffer wiki-page)
         (hy-delete-dir-and-buffer hywiki-directory)))))
+
+(defun hywiki-tests--run-test-case (test-case)
+  "Run the TEST-CASE from point.
+Point movement is relative to point when the function is called."
+  (let ((origin (point)))
+    (should (listp test-case))           ; For traceability
+    (dolist (steps test-case)
+      (let ((step (car steps))
+            (vfy (cdr steps)))
+        (cond ((stringp step)
+               (dolist (ch (string-to-list step))
+                 (hywiki-tests--command-execute #'self-insert-command 1 ch)
+                 (save-excursion
+                   (goto-char (1- (point)))
+                   (if vfy
+                       (should (hywiki-word-at))
+                     (should-not (hywiki-word-at))))))
+              ((integerp step)
+               (let ((forward (> step 0)))
+                 (dotimes (_ (abs step))
+                   (if forward
+                       (hywiki-tests--command-execute #'delete-forward-char 1)
+                     (hywiki-tests--command-execute #'backward-delete-char 1))
+                   (if vfy
+                       (should (hywiki-word-at))
+                     (should-not (hywiki-word-at))))))
+              ((and (symbolp step) (string-prefix-p "p" (symbol-name step)))
+               (let* ((pos (string-to-number (substring (symbol-name step) 1)))
+                      (newpos (+ origin (1- pos))))
+                 (when (or (> 0 newpos) (< (point-max) newpos))
+                   (ert-fail (format "New point: '%s' is outside of buffer" newpos)))
+                 (goto-char newpos))
+               (if vfy
+                   (should (hywiki-word-at))
+                 (should-not (hywiki-word-at))))
+              (t (ert-fail (format "Unknown step: '%s' in WikiWord verification" step))))))))
+
+(defconst hywiki-tests--wikiword-step-check
+  '(
+    (("H") ("i" . t) (-1))
+    (("H") ("iHo" . t) ("#") ("s" . t))
+    (("H") ("iHo" . t) ("#") ("s" . t) (-1) (-1 . t))
+    (("H") ("iHo" . t) ("#") ("s" . t) (-1) (-3 . t) (-1) ("i" . t))
+    (("H") ("iHo" . t) ("#") ("s " . t) ("n"))
+    (("H") ("iHo" . t) ("#") ("s " . t) (" n"))
+    (("(H") ("iHo" . t) ("#") ("s" . t))
+    (("(H") ("iHo" . t) ("#") ("s " . t))
+    (("(H") ("iHo" . t) ("#") ("s)" . t))
+    ; (("(H") ("iHo" . t) ("#") ("s " . t) ("n") (")" . t))
+    )
+  "Verification machinery for WikiWords.
+List of test cases.  Each test case consists of cons cells with an
+operation and the expected state of the WikiWord being constructed.
+Operations are either a string or a number where a number is the number
+of chars to be deleted.")
+
+(ert-deftest hywiki-tests--wikiword-step-check-verification-example-1 ()
+  "Run the step check to verify WikiWord is identified under change.
+Performs each operation from the step check and verifies if the
+resulting state at point is a WikiWord or not."
+  (hywiki-tests--preserve-hywiki-mode
+   (let* ((hywiki-directory (make-temp-file "hywiki" t)))
+    (unwind-protect
+        (progn
+          (hywiki-mode 1)
+          (dolist (testcase hywiki-tests--wikiword-step-check)
+            (with-temp-buffer
+              (hywiki-tests--run-test-case testcase))))
+      (hy-delete-dir-and-buffer hywiki-directory)))))
+
+(ert-deftest hywiki-tests--wikiword-step-check-verification-example-2 ()
+  "Run the step check to verify WikiWord is identified under change.
+Performs each operation from the step check and verifies if the
+resulting state at point is a WikiWord or not."
+  (hywiki-tests--preserve-hywiki-mode
+   (let* ((hywiki-directory (make-temp-file "hywiki" t)))
+     (unwind-protect
+         (progn
+           (hywiki-mode 1)
+           (with-temp-buffer
+             (hywiki-tests--run-test-case
+              '(("H") ("iHo" . t) (p1 . t) (1)))))
+       (hy-delete-dir-and-buffer hywiki-directory)))))
+
+(defconst lorem-ipsum "\
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
+aliquet diam euismod turpis ultricies, et porta sem blandit. Sed vitae."
+  "Bulk text for in the middle of text tests.")
+
+(ert-deftest hywiki-tests--wikiword-step-check-verification-example-3 ()
+  "Run the step check to verify WikiWord is identified under change.
+Performs each operation from the step check and verifies if the
+resulting state at point is a WikiWord or not."
+  (hywiki-tests--preserve-hywiki-mode
+   (let* ((hywiki-directory (make-temp-file "hywiki" t)))
+     (unwind-protect
+         (progn
+           (hywiki-mode 1)
+           (with-temp-buffer
+             (insert "Hiho")
+             (goto-char 3)
+             (hywiki-tests--run-test-case
+              '((" " . t) ; Hi is identified as WikiWord here, correct?
+                (p-2 . t) (p2) (-1 . t))))
+           (with-temp-buffer
+             (insert "HiHo")
+             (goto-char 1)
+             (hywiki-tests--run-test-case
+              '((p3 . t)
+                (" " . t) ; Hi is identified as WikiWord here, correct?
+                (p1 . t) (p4 . t) (-1 . t))))
+           (with-temp-buffer
+             (insert lorem-ipsum)
+             (goto-char (/ (point-max) 2))
+             (let ((pos (point)))
+               (insert " HiHo ")
+               (goto-char (1+ pos))
+               (should (looking-at-p "HiHo ")))
+             (hywiki-tests--run-test-case
+              '((p3 . t)
+                (" " . t) ; Hi is identified as WikiWord here, correct?
+                (p1 . t) (p4 . t) (-1 . t))))
+           (with-temp-buffer
+             (insert lorem-ipsum)
+             (goto-char (/ (point-max) 2))
+             (let ((pos (point)))
+               (insert " Hiho ")
+               (goto-char (1+ pos))
+               (should (looking-at-p "HiHo ")))
+             (hywiki-tests--run-test-case
+              '((p3 . t)
+                (" " . t) ; Hi is identified as WikiWord here, correct?
+                (p1 . t) (p4) (-1 . t)))))
+       (hy-delete-dir-and-buffer hywiki-directory)))))
 
 (provide 'hywiki-tests)
 
