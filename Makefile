@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     20-Mar-25 at 18:36:15 by Mats Lidell
+# Last-Mod:     20-Mar-25 at 18:49:45 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -656,6 +656,9 @@ docker-update:
 # Example: make docker version=29.4 targets="clean bin run-emacs"
 run-emacs:
 	emacs --eval "(progn (add-to-list 'load-path \"/hyperbole\") (require 'hyperbole) (hyperbole-mode 1))"
+
+docker-clean:
+	docker rm elpa-local
 
 # Run with coverage. Run tests given by testspec and monitor the
 # coverage for the specified file.

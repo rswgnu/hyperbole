@@ -5,6 +5,8 @@
     runs.
     (recompile-docker-elpa): Recompile elpa folder to ensure files are
     compiled with the same Emacs as used.
+    (docker-clean): Remove the elpa volume, useful for starting with a
+    fresh download of the required packages.
 
 2025-03-18  Mats Lidell  <matsl@gnu.org>
 
