@@ -1,6 +1,10 @@
 2025-03-20  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (DOCKER_VERSIONS): Include 30.1.
+    (docker-run): Use a volume for the elpa folder to reuse between docker
+    runs.
+    (recompile-docker-elpa): Recompile elpa folder to ensure files are
+    compiled with the same Emacs as used.
 
 2025-03-18  Mats Lidell  <matsl@gnu.org>
 

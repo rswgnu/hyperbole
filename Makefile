@@ -637,11 +637,16 @@ else
 DOCKER_VERSION = master-ci
 endif
 
+recompile-docker-elpa:
+	$(EMACS_BATCH) --eval "(byte-recompile-directory \"/root/.emacs.d/elpa\" 0 'force)"
+
 docker: docker-update
-	docker run -v $$(pwd):/hypb -v /tmp:/hypb-tmp -it --rm silex/emacs:${DOCKER_VERSION} bash -c "cp -a /hypb /hyperbole && make -C hyperbole ${DOCKER_TARGETS}"
+	docker run --mount type=volume,src=elpa-local,dst=/root/.emacs.d/elpa \
+	-v $$(pwd):/hypb -v /tmp:/hypb-tmp -it --rm silex/emacs:${DOCKER_VERSION} bash -c "cp -a /hypb /hyperbole && make -C hyperbole recompile-docker-elpa ${DOCKER_TARGETS}"
 
 docker-run: docker-update
-	docker run -v $$(pwd):/hypb -v /tmp:/hypb-tmp -it --rm silex/emacs:${DOCKER_VERSION}
+	docker run --mount type=volume,src=elpa-local,dst=/root/.emacs.d/elpa \
+	-v $$(pwd):/hypb -v /tmp:/hypb-tmp -it --rm silex/emacs:${DOCKER_VERSION}
 
 # Update the docker image for the specified version of Emacs
 docker-update:
