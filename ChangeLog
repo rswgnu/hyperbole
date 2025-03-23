@@ -20,6 +20,10 @@
     (hywiki-tests--remove-hywiki-hooks, with-hywiki-buttonize-hooks)
     (with-hywiki-buttonize-and-insert-hooks): Remove helpers for running
     hooks, replaced by hywiki-tests--command-execute.
+    (hywiki-tests--preserve-hywiki-mode): Macro that restores the current
+    state of hywiki-mode so test case will not change users setting. Use
+    it for all tests setting hywiki-mode.
+    (hywiki-tests--verify-preserve-hywiki-mode): Unit test of the macro.
 
 * test/hywiki-tests.el (hywiki-tests--command-execute): Function that runs
     command while also executing the pre and post command hooks. Use it
