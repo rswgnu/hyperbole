@@ -1440,7 +1440,7 @@ resulting state at point is a WikiWord or not."
               (hywiki-tests--run-test-case testcase))))
       (hy-delete-dir-and-buffer hywiki-directory)))))
 
-(defconst lorem-ipsum "\
+(defconst hywiki-tests--lorem-ipsum "\
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
 aliquet diam euismod turpis ultricies, et porta sem blandit. Sed vitae."
   "Bulk text for in the middle of text tests.")
