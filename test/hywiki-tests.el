@@ -1364,8 +1364,8 @@ See gh#rswgnu/hyperbole/669."
         (hy-delete-dir-and-buffer hywiki-directory)))))
 
 (defun hywiki-tests--verify-hywiki-word (expected)
-  "Verify `hywiki-word-at' returns t if w wikiword i EXPECTED.
-If EXPECTED is a string also very the wikiword matches the string."
+  "Verify that `hywiki-word-at' returns t if a wikiword is EXPECTED.
+If EXPECTED is a string also very that the wikiword matches the string."
   (if (not expected)
       (should-not (hywiki-word-at))
     (if (stringp expected)
@@ -1454,7 +1454,7 @@ Insert test in the middle of other text."
          (progn
            (hywiki-mode 1)
            (with-temp-buffer
-             (insert lorem-ipsum)
+             (insert hywiki-tests--lorem-ipsum)
              (goto-char (/ (point-max) 2))
              (let ((pos (point)))
                (insert " HiHo ")
@@ -1465,7 +1465,7 @@ Insert test in the middle of other text."
                 (" " . "Hi")
                 (p1 . t) (p4 . t) (-1 . t))))
            (with-temp-buffer
-             (insert lorem-ipsum)
+             (insert hywiki-tests--lorem-ipsum)
              (goto-char (/ (point-max) 2))
              (let ((pos (point)))
                (insert " Hiho ")
