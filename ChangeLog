@@ -1,5 +1,7 @@
 2025-04-17  Mats Lidell  <matsl@gnu.org>
 
+* man/im/*.eps: Remove embedded postscript files.
+
 * HY-TALK/improve-performance.png: Not used.
 
 * man/im/wgrid4x3.png: Not used.
