@@ -2,7 +2,7 @@
 
 * test/hywiki-tests.el (hywiki-tests--run-test-case): Run DSL for testing
     Hywiki words.
-    (lorem-ipsum): Surrounding test text.
+    (hywiki-tests--lorem-ipsum): Surrounding test text.
     (hywiki-tests--verify-hywiki-word): DSL verification helper.
     (hywiki-tests--wikiword-step-check-verification)
     (hywiki-tests--wikiword-step-check-verification-with-surrounding-text):

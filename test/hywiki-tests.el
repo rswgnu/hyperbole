@@ -1365,7 +1365,8 @@ See gh#rswgnu/hyperbole/669."
 
 (defun hywiki-tests--verify-hywiki-word (expected)
   "Verify that `hywiki-word-at' returns t if a wikiword is EXPECTED.
-If EXPECTED is a string also very that the wikiword matches the string."
+If EXPECTED is a string also verify that the wikiword matches the
+string."
   (if (not expected)
       (should-not (hywiki-word-at))
     (if (stringp expected)
@@ -1378,7 +1379,7 @@ Each test case consists of cons cells with an operation and the expected
 state of the WikiWord being constructed.  Operations are either a string
 to be inserted, a number of chars to be deleted or a symbol p<number>
 for where to move point.  The expected state is either nil for not a
-wikiword or Non-nil for a wikiword.  If equal to a string it is checked
+wikiword or non-nil for a wikiword.  If equal to a string it is checked
 for match with the wikiword.  Movement of point is relative to point
 when the function is called."
   (let ((origin (point)))
