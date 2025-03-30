@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:      3-Jan-25 at 23:52:37 by Mats Lidell
+;; Last-Mod:      4-Mar-25 at 17:05:59 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -49,4 +49,12 @@
     (kill-matching-buffers "^\\*info\\*" nil t)))
 
 (provide 'hactypes-tests)
+
+;; This file can't be byte-compiled without the `el-mock' package
+;; which is not a dependency of Hyperbole.
+;;
+;; Local Variables:
+;; no-byte-compile: t
+;; End:
+
 ;;; hactypes-tests.el ends here

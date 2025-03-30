@@ -3,9 +3,9 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     16-Mar-25 at 10:20:44 by Bob Weiner
+# Last-Mod:     30-Mar-25 at 10:36:42 by Bob Weiner
 #
-# Copyright (C) 1994-2023  Free Software Foundation, Inc.
+# Copyright (C) 1994-2025  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
 #
 # This file is part of GNU Hyperbole.
@@ -637,11 +637,16 @@ else
 DOCKER_VERSION = master-ci
 endif
 
+recompile-docker-elpa:
+	$(EMACS_BATCH) --eval "(byte-recompile-directory \"/root/.emacs.d/elpa\" 0 'force)"
+
 docker: docker-update
-	docker run -v $$(pwd):/hypb -v /tmp:/hypb-tmp -it --rm silex/emacs:${DOCKER_VERSION} bash -c "cp -a /hypb /hyperbole && make -C hyperbole ${DOCKER_TARGETS}"
+	docker run --mount type=volume,src=elpa-local,dst=/root/.emacs.d/elpa \
+	-v $$(pwd):/hypb -v /tmp:/hypb-tmp -it --rm silex/emacs:${DOCKER_VERSION} bash -c "cp -a /hypb /hyperbole && make -C hyperbole recompile-docker-elpa ${DOCKER_TARGETS}"
 
 docker-run: docker-update
-	docker run -v $$(pwd):/hypb -v /tmp:/hypb-tmp -it --rm silex/emacs:${DOCKER_VERSION}
+	docker run --mount type=volume,src=elpa-local,dst=/root/.emacs.d/elpa \
+	-v $$(pwd):/hypb -v /tmp:/hypb-tmp -it --rm silex/emacs:${DOCKER_VERSION}
 
 # Update the docker image for the specified version of Emacs
 docker-update:
@@ -651,6 +656,9 @@ docker-update:
 # Example: make docker version=29.4 targets="clean bin run-emacs"
 run-emacs:
 	emacs --eval "(progn (add-to-list 'load-path \"/hyperbole\") (require 'hyperbole) (hyperbole-mode 1))"
+
+docker-clean:
+	docker rm elpa-local
 
 # Run with coverage. Run tests given by testspec and monitor the
 # coverage for the specified file.

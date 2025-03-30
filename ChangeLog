@@ -1,3 +1,44 @@
+2025-03-23  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--run-test-case): Run DSL for testing
+    Hywiki words.
+    (hywiki-tests--lorem-ipsum): Surrounding test text.
+    (hywiki-tests--verify-hywiki-word): DSL verification helper.
+    (hywiki-tests--wikiword-step-check-verification)
+    (hywiki-tests--wikiword-step-check-verification-with-surrounding-text):
+    DSL based tests of WikiWords.
+
+2025-03-20  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (DOCKER_VERSIONS): Include 30.1.
+    (docker-run): Use a volume for the elpa folder to reuse between docker
+    runs.
+    (recompile-docker-elpa): Recompile elpa folder to ensure files are
+    compiled with the same Emacs as used.
+    (docker-clean): Remove the elpa volume, useful for starting with a
+    fresh download of the required packages.
+
+2025-03-18  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el
+    (hywiki-tests--published-html-links-to-word-and-section): Fix should
+    check.
+
+2025-03-17  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--add-hywiki-hooks)
+    (hywiki-tests--remove-hywiki-hooks, with-hywiki-buttonize-hooks)
+    (with-hywiki-buttonize-and-insert-hooks): Remove helpers for running
+    hooks, replaced by hywiki-tests--command-execute.
+    (hywiki-tests--preserve-hywiki-mode): Macro that restores the current
+    state of hywiki-mode so test case will not change users setting. Use
+    it for all tests setting hywiki-mode.
+    (hywiki-tests--verify-preserve-hywiki-mode): Unit test of the macro.
+
+* test/hywiki-tests.el (hywiki-tests--command-execute): Function that runs
+    command while also executing the pre and post command hooks. Use it
+    instead of the with-hywiki-buttonize macros.
+
 2025-03-17  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-maybe-dehighlight-between-page-names): Fix to dehighlight
@@ -118,6 +159,72 @@ value to be [[WikiWord]] not [[file:WikiWord.org][WikiWord]].
     handled by 'hywiki-buttonize-character-commands' attached to
     'post-self-insert-hook'.
             (hywiki-non-hook-context-p): Add.
+
+2025-03-07  Mats Lidell  <matsl@gnu.org>
+
+* hywiki.el (hywiki-convert-words-to-org-links)
+    (hywiki--org-export-get-reference): Fix docstrings.
+
+* hui-select.el (hbut:syntax-table): Public declare var.
+
+* test/hpath-tests.el (hpath--spaces-to-dashes-markup-anchor)
+    (hpath--dashes-to-spaces-markup-anchor): Add tests.
+
+2025-03-04  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el:
+  test/hycontrol-tests.el:
+  test/hui-mini-tests.el:
+  test/hproperty-tests.el:
+  test/hactypes-tests.el: Add local-variable section disabling
+    byte-compilation to avoid error message during user
+    installation. The message comes from these files depend on el-mock
+    which is not a package dependency.
+
+* .github/workflows/main.yml (jobs): Add 30.1 to CI
+
+2025-03-03  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (DOCKER_VERSIONS): Remove 27.2.
+
+* test/hywiki-tests.el (hywiki-tests--word-face-at-p): Add unit test.
+    (with-hywiki-buttonize-and-insert-hooks): Move debuttonize before body.
+
+* hywiki.el (hywiki-word-face-at-p): Add predicate for hywiki-word-face
+    and use it in hywiki-tests.
+
+2025-03-02  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--referent-test): Add macro with
+    boiler plate code for the reference save and restore tests.
+    (hywiki-tests--save-referent-keyseries)
+    (hywiki-tests--save-referent-keyseries-use-menu)
+    (hywiki-tests--save-referent-bookmark)
+    (hywiki-tests--save-referent-bookmark-use-menu)
+    (hywiki-tests--save-referent-find)
+    (hywiki-tests--save-referent-global-button)
+    (hywiki-tests--save-referent-global-button-use-menu)
+    (hywiki-tests--save-referent-hyrolo)
+    (hywiki-tests--save-referent-info-index)
+    (hywiki-tests--save-referent-info-node)
+    (hywiki-tests--save-referent-info-node-use-menu)
+    (hywiki-tests--save-referent-path-link)
+    (hywiki-tests--save-referent-org-id)
+    (hywiki-tests--save-referent-org-roam-node)
+    (hywiki-tests--save-referent-org-roam-node-use-menu): Save and restore
+    referent tests.
+
+2025-02-28  Mats Lidell  <matsl@gnu.org>
+
+* .github/workflows/main.yml (jobs): Remove 27.2 from the versions to
+    test in the CI.
+
+2025-02-24  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--action-key-moves-to-word-and-section):
+    Test action-key on WikiWords with section and line info.
+    (hywiki-tests--published-html-links-to-word-and-section): Verify html
+    links to sections are generated.
 
 2025-02-23  Bob Weiner  <rsw@gnu.org>
 

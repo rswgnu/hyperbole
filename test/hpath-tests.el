@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 23:26:00
-;; Last-Mod:     15-Jul-24 at 00:07:11 by Mats Lidell
+;; Last-Mod:      7-Mar-25 at 10:21:48 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -462,6 +462,32 @@ dir/subdir:
       (hpath:to-markup-anchor t nil)
       (should (= (line-number-at-pos) 1))
       (should (= (current-column) 0)))))
+
+(ert-deftest hpath--spaces-to-dashes-markup-anchor ()
+  "Verify `hpath:spaces-to-dashes-markup-anchor'."
+  (with-temp-buffer
+    ;; Normal case: Replace space wih dash.
+    (should (string= "a-b-c" (hpath:spaces-to-dashes-markup-anchor "a b c")))
+    ;; Mixed case: No conversion.
+    (should (string= "a b-c" (hpath:spaces-to-dashes-markup-anchor "a b-c")))
+    ;; Prog-mode: No conversion.
+    (prog-mode)
+    (should (string= "a b c" (hpath:spaces-to-dashes-markup-anchor "a b c")))
+    (should (string= "a-b-c" (hpath:spaces-to-dashes-markup-anchor "a-b-c")))
+    (should (string= "a b-c" (hpath:spaces-to-dashes-markup-anchor "a b-c")))))
+
+(ert-deftest hpath--dashes-to-spaces-markup-anchor ()
+  "Verify `hpath:dashes-to-spaces-markup-anchor'."
+  (with-temp-buffer
+    ;; Normal case: Replace dash with space.
+    (should (string= "a b c" (hpath:dashes-to-spaces-markup-anchor "a-b-c")))
+    ;; Mixed case: No conversion.
+    (should (string= "a b-c" (hpath:dashes-to-spaces-markup-anchor "a b-c")))
+    ;; Prog-mode: No conversion.
+    (prog-mode)
+    (should (string= "a b c" (hpath:spaces-to-dashes-markup-anchor "a b c")))
+    (should (string= "a-b-c" (hpath:dashes-to-spaces-markup-anchor "a-b-c")))
+    (should (string= "a b-c" (hpath:dashes-to-spaces-markup-anchor "a b-c")))))
 
 (provide 'hpath-tests)
 

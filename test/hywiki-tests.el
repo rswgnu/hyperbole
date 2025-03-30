@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     14-Mar-25 at 17:35:00 by Bob Weiner
+;; Last-Mod:     30-Mar-25 at 10:45:03 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -24,6 +24,35 @@
 (require 'hywiki)
 (require 'hsys-org)
 (require 'ox-publish)
+
+(defun hywiki-tests--command-execute (cmd &rest rest)
+  "Run CMD, with optional REST params, between calls to pre and post hooks.
+This is for simulating the command loop."
+  (setq last-command this-command)
+  (setq this-command cmd)
+  (run-hooks 'pre-command-hook)
+  (if rest
+      (apply cmd rest)
+    (command-execute cmd))
+  (run-hooks 'post-command-hook))
+
+(defmacro hywiki-tests--preserve-hywiki-mode (&rest body)
+  "Restore hywiki-mode after running BODY."
+  (declare (indent 0) (debug t))
+  `(let ((current-hywiki-mode hywiki-mode))
+     (unwind-protect
+	 (progn ,@body)
+       (hywiki-mode (if current-hywiki-mode 1 0)))))
+
+(ert-deftest hywiki-tests--verify-preserve-hywiki-mode ()
+  "Verify `hywiki-tests--preserve-hywiki-mode' restores `hywiki-mode'."
+  (hywiki-tests--preserve-hywiki-mode
+    (hywiki-mode 1)
+    (hywiki-tests--preserve-hywiki-mode
+      (should hywiki-mode)
+      (hywiki-mode 0)
+      (should-not hywiki-mode))
+    (should hywiki-mode)))
 
 (ert-deftest hywiki-tests--hywiki-create-page--adds-file-in-wiki-folder ()
   "Verify add page creates file in wiki folder and sets hash table."
@@ -55,150 +84,155 @@
 
 (ert-deftest hywiki-tests--action-key-on-hywikiword-displays-page ()
   "Verify `action-key' on a prefixed WikiWord, outside of hywiki-directory, creates a new page."
-  (let ((hsys-org-enable-smart-keys t)
-        (hywiki-directory (make-temp-file "hywiki" t))
-        (wikifile "WikiWord.org"))
-    (unwind-protect
-        (with-temp-buffer
-	  (hywiki-mode 1)
-          (insert "[[hy:WikiWord]]")
-          (goto-char 4)
-          (action-key)
-	  (should (equal (cons 'page wikifile) (hywiki-get-referent "WikiWord"))))
-      (hy-delete-file-and-buffer (expand-file-name wikifile hywiki-directory))
-      (hy-delete-dir-and-buffer hywiki-directory))))
+  (hywiki-tests--preserve-hywiki-mode
+    (let ((hsys-org-enable-smart-keys t)
+          (hywiki-directory (make-temp-file "hywiki" t))
+          (wikifile "WikiWord.org"))
+      (unwind-protect
+          (with-temp-buffer
+	    (hywiki-mode 1)
+            (insert "[[hy:WikiWord]]")
+            (goto-char 4)
+            (action-key)
+	    (should (equal (cons 'page wikifile) (hywiki-get-referent "WikiWord"))))
+        (hy-delete-file-and-buffer (expand-file-name wikifile hywiki-directory))
+        (hy-delete-dir-and-buffer hywiki-directory)))))
 
 (ert-deftest hywiki-tests--assist-key-on-hywikiword-displays-help ()
   "Verify `assist-key' on a prefixed WikiWord, outside of hywiki-directory, displays help for the WikiWord link."
-  (let ((hsys-org-enable-smart-keys t)
-        (hywiki-directory (make-temp-file "hywiki" t)))
-    (unwind-protect
-        (with-temp-buffer
-	  (hywiki-mode 1)
-          (insert "[[hy:WikiWord]]")
-          (goto-char 6)
-          (should (string= "WikiWord" (hywiki-word-at)))
-          (delete-other-windows)
-          (assist-key)
-          (other-window 1)
-          (should (string-prefix-p "*Help: Hyperbole " (buffer-name))))
-      (hy-delete-dir-and-buffer hywiki-directory))))
+  (hywiki-tests--preserve-hywiki-mode
+    (let ((hsys-org-enable-smart-keys t)
+          (hywiki-directory (make-temp-file "hywiki" t)))
+      (unwind-protect
+          (with-temp-buffer
+	    (hywiki-mode 1)
+            (insert "[[hy:WikiWord]]")
+            (goto-char 6)
+            (should (string= "WikiWord" (hywiki-word-at)))
+            (delete-other-windows)
+            (assist-key)
+            (other-window 1)
+            (should (string-prefix-p "*Help: Hyperbole " (buffer-name))))
+        (hy-delete-dir-and-buffer hywiki-directory)))))
 
 (ert-deftest hywiki-tests--action-key-on-wikiword-displays-page ()
   "Verify `action-key' on a WikiWord, outside of hywiki-directory, creates a new page."
-  (let* ((hsys-org-enable-smart-keys t)
-         (hywiki-directory (make-temp-file "hywiki" t))
-         (hywiki-page-file (expand-file-name "WikiWord.org" hywiki-directory)))
-    (unwind-protect
-        (dolist (v '(nil t)) ;; Verify the file exists the second time
-          (if v
-              (should (file-exists-p hywiki-page-file))
-            (should-not (file-exists-p hywiki-page-file)))
-          (with-temp-buffer
-	    (hywiki-mode 1)
-            (insert "WikiWord\n")
-            (goto-char 4)
-            (action-key)
-            (should (string= hywiki-page-file (buffer-file-name)))
-            (should (equal (cons 'page (file-name-nondirectory hywiki-page-file))
-                           (hywiki-get-referent "WikiWord")))
+  (hywiki-tests--preserve-hywiki-mode
+    (let* ((hsys-org-enable-smart-keys t)
+           (hywiki-directory (make-temp-file "hywiki" t))
+           (hywiki-page-file (expand-file-name "WikiWord.org" hywiki-directory)))
+      (unwind-protect
+          (dolist (v '(nil t)) ;; Verify the file exists the second time
             (if v
-                (should (looking-at-p "WikiWord page"))
-              (insert "WikiWord page")
-              (goto-char (point-min)))))
-      (hy-delete-file-and-buffer hywiki-page-file)
-      (hy-delete-dir-and-buffer hywiki-directory))))
-
-(ert-deftest hywiki-tests--action-key-on-wikiword-and-section-displays-page ()
-  "Verify `action-key' on a WikiWord with section moves to the section."
-  (let* ((hsys-org-enable-smart-keys t)
-         (hywiki-directory (make-temp-file "hywiki" t))
-	 (hywiki-page-file (expand-file-name "WikiWord.org" hywiki-directory))
-         (sections '("* Header" "** SubHeader" "*** SubSubHeader")))
-    (unwind-protect
-        (progn
-          (find-file hywiki-page-file)
-          (dolist (v sections)
-            (insert (format "%s\nbody\n" v)))
-          (save-buffer)
-	  (hywiki-mode 1)
-          (dolist (v sections)
+                (should (file-exists-p hywiki-page-file))
+              (should-not (file-exists-p hywiki-page-file)))
             (with-temp-buffer
-              (insert "WikiWord#" (cadr (split-string v " ")))
+	      (hywiki-mode 1)
+              (insert "WikiWord\n")
               (goto-char 4)
               (action-key)
               (should (string= hywiki-page-file (buffer-file-name)))
-	      (should (looking-at-p (regexp-quote v))))))
-      (hywiki-mode 0)
-      (hy-delete-file-and-buffer hywiki-page-file)
-      (hy-delete-dir-and-buffer hywiki-directory))))
+              (should (equal (cons 'page (file-name-nondirectory hywiki-page-file))
+                             (hywiki-get-referent "WikiWord")))
+              (if v
+                  (should (looking-at-p "WikiWord page"))
+                (insert "WikiWord page")
+                (goto-char (point-min)))))
+        (hy-delete-file-and-buffer hywiki-page-file)
+        (hy-delete-dir-and-buffer hywiki-directory)))))
 
-(ert-deftest hywiki-tests--action-key-on-wikiword-and-line-column-displays-page ()
-  "Verify `action-key' on a WikiWord with line and column specifications goes to expected point."
-  (let* ((hsys-org-enable-smart-keys t)
-         (hywiki-directory (make-temp-file "hywiki" t))
-	 (hywiki-page-file (expand-file-name "WikiWord.org" hywiki-directory)))
-    (unwind-protect
-        (progn
-          (find-file hywiki-page-file)
-          (insert "\
-line 1
-line 2
-")
-          (save-buffer)
-	  (hywiki-mode 1)
-          (dolist (l '(1 2))
-            (dolist (c '("" ":C0" ":C5"))
+(ert-deftest hywiki-tests--action-key-on-wikiword-and-section-displays-page ()
+  "Verify `action-key' on a WikiWord with section moves to the section."
+  (hywiki-tests--preserve-hywiki-mode
+    (let* ((hsys-org-enable-smart-keys t)
+           (hywiki-directory (make-temp-file "hywiki" t))
+	   (hywiki-page-file (expand-file-name "WikiWord.org" hywiki-directory))
+           (sections '("* Header" "** SubHeader" "*** SubSubHeader")))
+      (unwind-protect
+          (progn
+            (find-file hywiki-page-file)
+            (dolist (v sections)
+              (insert (format "%s\nbody\n" v)))
+            (save-buffer)
+	    (hywiki-mode 1)
+            (dolist (v sections)
               (with-temp-buffer
-                (insert (format "WikiWord:L%s%s" l c))
+                (insert "WikiWord#" (cadr (split-string v " ")))
                 (goto-char 4)
                 (action-key)
                 (should (string= hywiki-page-file (buffer-file-name)))
-                (if (string= c ":C5")
-	            (should (looking-at-p (format "%s$" l)))
-	          (should (looking-at-p (format "line %s$" l))))))))
-      (hywiki-mode 0)
-      (hy-delete-file-and-buffer hywiki-page-file)
-      (hy-delete-dir-and-buffer hywiki-directory))))
+	        (should (looking-at-p (regexp-quote v))))))
+        (hy-delete-file-and-buffer hywiki-page-file)
+        (hy-delete-dir-and-buffer hywiki-directory)))))
+
+(ert-deftest hywiki-tests--action-key-on-wikiword-and-line-column-displays-page ()
+  "Verify `action-key' on a WikiWord with line and column specifications goes to expected point."
+  (hywiki-tests--preserve-hywiki-mode
+    (let* ((hsys-org-enable-smart-keys t)
+           (hywiki-directory (make-temp-file "hywiki" t))
+	   (hywiki-page-file (expand-file-name "WikiWord.org" hywiki-directory)))
+      (unwind-protect
+          (progn
+            (find-file hywiki-page-file)
+            (insert "\
+line 1
+line 2
+")
+            (save-buffer)
+	    (hywiki-mode 1)
+            (dolist (l '(1 2))
+              (dolist (c '("" ":C0" ":C5"))
+                (with-temp-buffer
+                  (insert (format "WikiWord:L%s%s" l c))
+                  (goto-char 4)
+                  (action-key)
+                  (should (string= hywiki-page-file (buffer-file-name)))
+                  (if (string= c ":C5")
+	              (should (looking-at-p (format "%s$" l)))
+	            (should (looking-at-p (format "line %s$" l))))))))
+        (hy-delete-file-and-buffer hywiki-page-file)
+        (hy-delete-dir-and-buffer hywiki-directory)))))
 
 (ert-deftest hywiki-tests--not-a-wikiword-unless-in-hywiki-mode ()
   "Verify WikiWord is not a WikiWord unless in `hywiki-mode'."
-  (let ((hsys-org-enable-smart-keys t)
-        (hywiki-directory (make-temp-file "hywiki" t)))
-    (unwind-protect
-        (with-temp-buffer
-          (hywiki-mode 0)
-          (insert "WikiWord")
-          (goto-char 4)
-          (should-not (hywiki-word-at))
-          (hywiki-mode 1)
-          (should (string= "WikiWord" (hywiki-word-at))))
-      (hywiki-mode 0)
-      (hy-delete-dir-and-buffer hywiki-directory))))
+  (hywiki-tests--preserve-hywiki-mode
+    (let ((hsys-org-enable-smart-keys t)
+          (hywiki-directory (make-temp-file "hywiki" t)))
+      (unwind-protect
+          (with-temp-buffer
+            (hywiki-mode 0)
+            (insert "WikiWord")
+            (goto-char 4)
+            (should-not (hywiki-word-at))
+            (hywiki-mode 1)
+            (should (string= "WikiWord" (hywiki-word-at))))
+        (hy-delete-dir-and-buffer hywiki-directory)))))
 
 (ert-deftest hywiki-tests--a-wikiword-in-hywiki-directory ()
   "Verify WikiWord is identified if in `hywiki-directory'."
-  (let* ((hsys-org-enable-smart-keys t)
-         (hywiki-directory (make-temp-file "hywiki" t))
-         (referent (hywiki-add-page "WikiWord"))
-	 (wiki-page (cdr referent)))
-    (unwind-protect
-        (with-current-buffer (find-file-noselect wiki-page)
-          (hywiki-mode 0)
-          (insert "AnotherWikiWord")
-	  (newline nil t)
-          (goto-char 4)
-          (should (hywiki-word-at)))
-      (hy-delete-file-and-buffer wiki-page)
-      (hy-delete-dir-and-buffer hywiki-directory))))
+  (hywiki-tests--preserve-hywiki-mode
+    (let* ((hsys-org-enable-smart-keys t)
+           (hywiki-directory (make-temp-file "hywiki" t))
+           (referent (hywiki-add-page "WikiWord"))
+	   (wiki-page (cdr referent)))
+      (unwind-protect
+          (with-current-buffer (find-file-noselect wiki-page)
+            (hywiki-mode 0)
+            (insert "AnotherWikiWord")
+	    (newline nil t)
+            (goto-char 4)
+            (should (hywiki-word-at)))
+        (hy-delete-file-and-buffer wiki-page)
+        (hy-delete-dir-and-buffer hywiki-directory)))))
 
 (ert-deftest hywiki-tests--wikiword-identified-with-delimiters ()
   "Verify WikiWord is identified when surrounded by delimiters."
-  (let ((hsys-org-enable-smart-keys t)
-        (hywiki-directory (make-temp-file "hywiki" t)))
-    (unwind-protect
-        (progn
-          (hywiki-mode 1)
+  (hywiki-tests--preserve-hywiki-mode
+    (let ((hsys-org-enable-smart-keys t)
+          (hywiki-directory (make-temp-file "hywiki" t)))
+      (unwind-protect
+          (progn
+            (hywiki-mode 1)
 
           ;; Matches a WikiWord
           (dolist (v '("WikiWord" "[WikiWord]" "[[WikiWord]]" "{WikiWord}" "(WikiWord)"
@@ -253,56 +287,51 @@ line 2
 		  (should-not v)
 		(should t)))))
       (hywiki-mode 0)
-      (hy-delete-dir-and-buffer hywiki-directory))))
+      (hy-delete-dir-and-buffer hywiki-directory)))))
 
 (ert-deftest hywiki-tests--at-wikiword-finds-word-and-section ()
   "Verify `hywiki-word-at' finds WikiWord and section if available."
-  (let ((hywiki-directory (make-temp-file "hywiki" t)))
-    (unwind-protect
-        (with-temp-buffer
-          (hywiki-mode)
-          (insert "WikiWord")
-          (goto-char 4)
-          (should (string= "WikiWord" (hywiki-word-at)))
-
-          ;; Section
-          (goto-char (point-max))
-          (insert "#section")
-          (goto-char 4)
-          (should (string= "WikiWord#section" (hywiki-word-at)))
-
-          ;; Section with dash
-          (goto-char (point-max))
-          (insert "-subsection")
-          (goto-char 4)
-          (should (string= "WikiWord#section-subsection" (hywiki-word-at))))
-      (hywiki-mode -1)
-      (hy-delete-dir-and-buffer hywiki-directory))))
+  (hywiki-tests--preserve-hywiki-mode
+    (let ((hywiki-directory (make-temp-file "hywiki" t))
+          (words '("WikiWord" "WikiWord:L1" "WikiWord:L1:C2"
+                   "WikiWord#section" "WikiWord#section:L1" "WikiWord#section:L1:C2"
+                   "WikiWord#section-subsection" "WikiWord#section-subsection:L1" "WikiWord#section-subsection:L1:C2"
+                   ;; !! FIXME: Uncomment when implemented.
+                   ;; ("(WikiWord#section with spaces)" . "WikiWord#section with spaces")
+                   ;; ("(WikiWord#section)" . "WikiWord#section")
+                   )))
+      (unwind-protect
+          (with-temp-buffer
+            (hywiki-mode 1)
+            (dolist (w words)
+              (let ((in (if (stringp w) w (car w)))
+                    (expect (if (stringp w) w (cdr w))))
+                (erase-buffer)
+                (insert in)
+                (goto-char 4)
+                (should (string= expect (hywiki-word-at))))))
+        (hy-delete-dir-and-buffer hywiki-directory)))))
 
 (ert-deftest hywiki-tests--sections-with-dash-space ()
   "Verify `hywiki-word-at' finds sections with dash and space."
-  (let ((hywiki-directory (make-temp-file "hywiki" t)))
-    (unwind-protect
-        (progn
-          (with-temp-buffer
-            (hywiki-mode)
-            (insert "WikiWord#section rest is ignored")
-            (goto-char 4)
-            (should (string= "WikiWord#section" (hywiki-word-at))))
-
-          (with-temp-buffer
-            (hywiki-mode)
-            (insert "WikiWord#section-with-dash")
-            (goto-char 4)
-            (should (string= "WikiWord#section-with-dash" (hywiki-word-at))))
-
-          (with-temp-buffer
-            (hywiki-mode)
-            (insert "WikiWord#\"section-within-quotes\"")
-            (goto-char 4)
-            (should (string= "WikiWord#\"section-within-quotes\"" (hywiki-word-at)))))
-      (hywiki-mode -1)
-      (hy-delete-dir-and-buffer hywiki-directory))))
+  (hywiki-tests--preserve-hywiki-mode
+    (let ((hywiki-directory (make-temp-file "hywiki" t)))
+      (unwind-protect
+          (progn
+            (hywiki-mode 1)
+            (with-temp-buffer
+              (insert "WikiWord#section rest is ignored")
+              (goto-char 4)
+              (should (string= "WikiWord#section" (hywiki-word-at))))
+            (with-temp-buffer
+              (insert "WikiWord#section-with-dash")
+              (goto-char 4)
+              (should (string= "WikiWord#section-with-dash" (hywiki-word-at))))
+            (with-temp-buffer
+              (insert "WikiWord#\"section-within-quotes\"")
+              (goto-char 4)
+              (should (string= "WikiWord#\"section-within-quotes\"" (hywiki-word-at)))))
+        (hy-delete-dir-and-buffer hywiki-directory)))))
 
 (ert-deftest hywiki-tests--word-is-p ()
   "Verify `hywiki-word-is-p' identifies WikiWords."
@@ -474,183 +503,127 @@ Both mod-time and checksum must be changed for a test to return true."
               (hy-delete-dir-and-buffer hywiki-directory))))
       (hy-delete-dir-and-buffer hywiki-directory))))
 
-;; Following three test cases for verifying proper face is some what
+;; Following test cases for verifying proper face is some what
 ;; experimental. They need to be run in interactive mode.
-
-(defun hywiki-tests--add-hywiki-hooks ()
-  "Enable all hywiki hook functions."
-  (add-hook 'pre-command-hook      'hywiki-debuttonize-non-character-commands 95)
-  (add-hook 'post-command-hook     'hywiki-buttonize-non-character-commands 95)
-  (add-hook 'post-self-insert-hook 'hywiki-buttonize-character-commands)
-  (add-hook 'window-buffer-change-functions
-	    'hywiki-maybe-highlight-wikiwords-in-frame)
-  (add-to-list 'yank-handled-properties
-	       '(hywiki-word-face . hywiki-highlight-on-yank)))
-
-(defun hywiki-tests--remove-hywiki-hooks ()
-  "Disable all hywiki hook functions."
-  (remove-hook 'pre-command-hook      'hywiki-debuttonize-non-character-commands)
-  (remove-hook 'post-command-hook     'hywiki-buttonize-non-character-commands)
-  (remove-hook 'post-self-insert-hook 'hywiki-buttonize-character-commands)
-  (remove-hook 'window-buffer-change-functions
-	       'hywiki-maybe-highlight-wikiwords-in-frame)
-  (setq yank-handled-properties
-	(delete '(hywiki-word-face . hywiki-highlight-on-yank)
-		yank-handled-properties)))
-
-(defmacro with-hywiki-buttonize-hooks (&rest body)
-  "Call BODY wrapped in hywiki hooks to simulate Emacs redisplay."
-  (declare (indent 0) (debug t))
-  `(progn
-     (funcall 'hywiki-debuttonize-non-character-commands)
-     (progn ,@body)
-     (funcall 'hywiki-buttonize-non-character-commands)))
-
-(defmacro with-hywiki-buttonize-and-insert-hooks (&rest body)
-  "Call BODY wrapped in hywiki hooks to simulate Emacs redisplay."
-  (declare (indent 0) (debug t))
-  `(progn
-     (progn ,@body)
-     (setq this-command 'org-return)
-     (funcall 'hywiki-debuttonize-non-character-commands)
-     (funcall 'hywiki-buttonize-character-commands)
-     (funcall 'hywiki-buttonize-non-character-commands)))
 
 (ert-deftest hywiki-tests--face-property-for-wikiword-with-wikipage ()
   "Verify WikiWord for a wiki page gets face property hywiki-word-face."
   (skip-unless (not noninteractive))
-  (let* ((hsys-org-enable-smart-keys t)
-         (hywiki-directory (make-temp-file "hywiki" t))
-         (wikipage (cdr (hywiki-add-page "WikiWord"))))
-    (unwind-protect
-        (progn
-          (hywiki-tests--remove-hywiki-hooks)
-          (with-temp-buffer
+  (hywiki-tests--preserve-hywiki-mode
+    (let* ((hsys-org-enable-smart-keys t)
+           (hywiki-directory (make-temp-file "hywiki" t))
+           (wikipage (cdr (hywiki-add-page "WikiWord"))))
+      (unwind-protect
+          (progn
             (hywiki-mode 1)
-            (with-hywiki-buttonize-and-insert-hooks (insert "WikiWord "))
-            (goto-char 4)
-            (should (hproperty:but-get (point) 'face hywiki-word-face)))
-          (with-temp-buffer
-            (hywiki-mode 1)
-            (with-hywiki-buttonize-and-insert-hooks
+            (with-temp-buffer
+              (insert "WikiWor")
+	      (hywiki-tests--command-execute #'self-insert-command 1 ?d)
+              (goto-char 4)
+              (should (hywiki-word-face-at-p)))
+            (with-temp-buffer
               (insert "WikiWord")
-	      (command-execute #'newline))
-            (goto-char 4)
-            (should (hproperty:but-get (point) 'face hywiki-word-face))))
-      (hywiki-tests--add-hywiki-hooks)
-      (hywiki-mode 0)
-      (hy-delete-file-and-buffer wikipage)
-      (hy-delete-dir-and-buffer hywiki-directory))))
+	      (hywiki-tests--command-execute #'newline 1 'interactive)
+              (goto-char 4)
+              (should (hywiki-word-face-at-p))))
+        (hy-delete-file-and-buffer wikipage)
+        (hy-delete-dir-and-buffer hywiki-directory)))))
 
 (ert-deftest hywiki-tests--no-face-property-for-no-wikipage ()
   "Verify WikiWord for no wiki page does not get face property hywiki-word-face."
   (skip-unless (not noninteractive))
-  (let* ((hsys-org-enable-smart-keys t)
-         (hywiki-directory (make-temp-file "hywiki" t)))
-    (unwind-protect
-        (progn
-          (hywiki-tests--remove-hywiki-hooks)
-          (with-temp-buffer
-            (hywiki-mode 0)
-            (with-hywiki-buttonize-and-insert-hooks
-              (insert "WikiWord")
-	      (newline nil t))
-            (goto-char 4)
-            (should-not (hproperty:but-get (point) 'face hywiki-word-face))))
-      (hywiki-tests--add-hywiki-hooks)
-      (hy-delete-dir-and-buffer hywiki-directory))))
+  (hywiki-tests--preserve-hywiki-mode
+    (let* ((hsys-org-enable-smart-keys t)
+           (hywiki-directory (make-temp-file "hywiki" t)))
+      (unwind-protect
+          (progn
+            (with-temp-buffer
+              (hywiki-mode 0)
+              (insert "WikiWor")
+	      (hywiki-tests--command-execute #'self-insert-command 1 ?d)
+              (goto-char 4)
+              (should-not (hywiki-word-face-at-p))))
+        (hy-delete-dir-and-buffer hywiki-directory)))))
 
 (ert-deftest hywiki-tests--verify-face-property-when-editing-wikiword ()
   "Verify face property changes when WikiWord is edited."
   (skip-unless (not noninteractive))
-  (let* ((hywiki-directory (make-temp-file "hywiki" t))
-         (wikipage (cdr (hywiki-add-page "WikiWord"))))
-    (unwind-protect
-        (progn
-          (hywiki-tests--remove-hywiki-hooks)
-          (with-temp-buffer
-            (hywiki-mode 1)
-            (with-hywiki-buttonize-and-insert-hooks
-	      (insert "Wikiord ")
-              (goto-char 5))
-            (should (looking-at-p "ord"))
-            (should-not (hproperty:but-get (point) 'face hywiki-word-face))
-
-            (with-hywiki-buttonize-and-insert-hooks
-	      (insert "W")
-              (goto-char 5))
-            (should (looking-at-p "Word"))
-            (should (hproperty:but-get (point) 'face hywiki-word-face))
-
-            (with-hywiki-buttonize-and-insert-hooks
-	      (delete-char 1))
-            (should (looking-at-p "ord"))
-            (should-not (hproperty:but-get (point) 'face hywiki-word-face))))
-      (hywiki-tests--add-hywiki-hooks)
-      (hywiki-mode 0)
-      (hy-delete-files-and-buffers (list wikipage))
-      (hy-delete-dir-and-buffer hywiki-directory))))
-
-(ert-deftest hywiki-tests--verify-face-property-when-editing-wikiword-first-char ()
-  "Verify face property changes when WikiWord is edited in the first char position."
-  (skip-unless (not noninteractive))
-  (with-temp-buffer
+  (hywiki-tests--preserve-hywiki-mode
     (let* ((hywiki-directory (make-temp-file "hywiki" t))
            (wikipage (cdr (hywiki-add-page "WikiWord"))))
       (unwind-protect
           (progn
-            (hywiki-tests--remove-hywiki-hooks)
-            (hywiki-mode 1)
-            (with-hywiki-buttonize-and-insert-hooks (insert "WikiWord "))
-            (goto-char 1)
-            (should (looking-at-p "Wiki"))
-            (should (hproperty:but-get (point) 'face hywiki-word-face))
+            (with-temp-buffer
+              (hywiki-mode 1)
+              (insert "Wikiord")
+              (hywiki-tests--command-execute #'self-insert-command 1 ? )
+              (goto-char 5)
+              (should (looking-at-p "ord "))
+              (should-not (hywiki-word-face-at-p))
 
-            (with-hywiki-buttonize-and-insert-hooks
-	      (delete-char 1))
-            (should (looking-at-p "iki"))
-            (should-not (hproperty:but-get (point) 'face hywiki-word-face))
+              (hywiki-tests--command-execute #'self-insert-command 1 ?W)
+              (goto-char 5)
+              (should (looking-at-p "Word "))
+              (should (hywiki-word-face-at-p))
 
-            (with-hywiki-buttonize-and-insert-hooks
-	      (insert "W")
-              (goto-char 1))
-            (should (looking-at-p "Wiki"))
-            (should (hproperty:but-get (point) 'face hywiki-word-face)))
-	;; !! FIXME: Uncomment these lines.
-	;; (hywiki-tests--add-hywiki-hooks)
-	;; (hywiki-mode 0)
-	;; (hy-delete-files-and-buffers (list wikipage))
-	;; (hy-delete-dir-and-buffer hywiki-directory)
-	))))
+              (hywiki-tests--command-execute #'delete-char 1)
+              (should (looking-at-p "ord "))
+              (should-not (hywiki-word-face-at-p))))
+        (hy-delete-files-and-buffers (list wikipage))
+        (hy-delete-dir-and-buffer hywiki-directory)))))
+
+(ert-deftest hywiki-tests--verify-face-property-when-editing-wikiword-first-char ()
+  "Verify face property changes when WikiWord is edited in the first char position."
+  (skip-unless (not noninteractive))
+  (hywiki-tests--preserve-hywiki-mode
+    (let* ((hywiki-directory (make-temp-file "hywiki" t))
+           (wikipage (cdr (hywiki-add-page "WikiWord"))))
+      (unwind-protect
+          (progn
+            (with-temp-buffer
+              (hywiki-mode 1)
+              (insert "WikiWord")
+              (hywiki-tests--command-execute #'self-insert-command 1 ? )
+              (goto-char 1)
+              (should (looking-at-p "WikiWord"))
+              (should (hywiki-word-face-at-p))
+
+	      (hywiki-tests--command-execute #'delete-char 1)
+              (should (looking-at-p "ikiWord"))
+              (should-not (hywiki-word-face-at-p))
+
+              (hywiki-tests--command-execute #'self-insert-command 1 ?W)
+              (goto-char 1)
+              (should (looking-at-p "WikiWord"))
+              (should (hywiki-word-face-at-p))))
+        (hy-delete-files-and-buffers (list wikipage))
+        (hy-delete-dir-and-buffer hywiki-directory)))))
 
 (ert-deftest hywiki-tests--convert-words-to-org-link ()
   "Verify `hywiki-convert-words-to-org-links' converts WikiWords to org links."
   (skip-unless (not noninteractive))
-  (let* ((hywiki-directory (make-temp-file "hywiki" t))
-         (wikipage (cdr (hywiki-add-page "WikiWord"))))
-    (unwind-protect
-        (progn
-          (hywiki-tests--remove-hywiki-hooks)
-          (with-temp-buffer
+  (hywiki-tests--preserve-hywiki-mode
+    (let* ((hywiki-directory (make-temp-file "hywiki" t))
+           (wikipage (cdr (hywiki-add-page "WikiWord"))))
+      (unwind-protect
+          (progn
             (hywiki-mode 1)
-            (with-hywiki-buttonize-and-insert-hooks (insert "WikiWord "))
-            (goto-char 4)
-            (hywiki-convert-words-to-org-links)
-            (should (string= "[[WikiWord]] "
-                             (buffer-substring-no-properties (point-min) (point-max)))))
-          (with-temp-buffer
-            (hywiki-mode 1)
-            (with-hywiki-buttonize-and-insert-hooks
+            (with-temp-buffer
               (insert "WikiWord")
-	      (newline nil t))
-            (goto-char 4)
-            (hywiki-convert-words-to-org-links)
-            (should (string= "[[WikiWord]]\n"
-                             (buffer-substring-no-properties (point-min) (point-max))))))
-      (hywiki-tests--add-hywiki-hooks)
-      (hywiki-mode 0)
-      (hy-delete-file-and-buffer wikipage)
-      (hy-delete-dir-and-buffer hywiki-directory))))
+              (hywiki-tests--command-execute #'self-insert-command 1 ? )
+              (goto-char 4)
+              (hywiki-convert-words-to-org-links)
+              (should (string= "[[WikiWord]] "
+                               (buffer-substring-no-properties (point-min) (point-max)))))
+            (with-temp-buffer
+              (insert "WikiWor")
+	      (hywiki-tests--command-execute #'self-insert-command 1 ?d)
+              (goto-char 4)
+              (hywiki-convert-words-to-org-links)
+              (should (string= "[[WikiWord]]"
+                               (buffer-substring-no-properties (point-min) (point-max))))))
+        (hy-delete-file-and-buffer wikipage)
+        (hy-delete-dir-and-buffer hywiki-directory)))))
 
 (ert-deftest hywiki-tests--at-tags-p ()
   "Verify `hywiki-at-tags-p'."
@@ -735,6 +708,112 @@ Both mod-time and checksum must be changed for a test to return true."
       (hy-delete-file-and-buffer wikipage)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
+(ert-deftest hywiki-tests--action-key-moves-to-word-and-section ()
+  "Verify action key on a WikiWord with section, line and column works."
+  (hywiki-tests--preserve-hywiki-mode
+    (let* ((hywiki-directory (make-temp-file "hywiki" t))
+           (wikipage (cdr (hywiki-add-page "WikiWord")))
+           (words '(("WikiWord:L1" . "First line")
+                    ("WikiWord:L1:C2" . "rst line")
+                    ("WikiWord#Asection" . "* Asection")
+                    ("WikiWord#Asection:L1" . "* Asection")
+                    ("WikiWord#Asection:L2" . "body A")
+                    ("WikiWord#Asection:L2:C2" . "dy A")
+                    ("WikiWord#Bsection-subsection" . "** Bsection subsection")
+                    ("WikiWord#Bsection-subsection:L2" . "body B")
+                    ("WikiWord#Bsection-subsection:L2:C2" . "dy B")
+                    ;; FIXME: Uncomment when implemented.
+                    ;; ("(WikiWord#Bsection subsection)" . "** Bsection subsection")
+                    ;; ("(WikiWord#Asection)" . "* Asection")
+                    )))
+      (unwind-protect
+          (progn
+            ;; Setup target WikiWord
+            (with-current-buffer (find-file-noselect wikipage)
+              (insert "\
+First line
+* Asection
+body A
+** Bsection subsection
+body B
+")
+              (save-buffer))
+            ;; Create temp buffers with WikiWord links to the target
+            ;; WikiWord page and verify they work.
+            (with-temp-buffer
+              (hywiki-mode 1)
+              (dolist (w words)
+                (let ((wiki-link (car w))
+                      (expected-str-at-pos (cdr w)))
+                  (erase-buffer)
+                  (insert wiki-link)
+                  (goto-char 4)
+                  (save-excursion
+                    (action-key)
+                    ;; (should (string-prefix-p "WikiWord.org" (buffer-name)))
+                    (should (looking-at-p expected-str-at-pos)))))))
+        (hy-delete-file-and-buffer wikipage)
+        (hy-delete-dir-and-buffer hywiki-directory)))))
+
+(ert-deftest hywiki-tests--published-html-links-to-word-and-section ()
+  "Verify published html links to WikiWord and section."
+  :expected-result :failed
+  (let* ((hywiki-directory (make-temp-file "hywiki_" t))
+         (hywiki-org-publishing-directory (make-temp-file "public_html_" t))
+         (wikipage (cdr (hywiki-add-page "WikiPage")))
+         (wikipage-html (expand-file-name "WikiPage.html" hywiki-org-publishing-directory))
+         (wikiword (cdr (hywiki-add-page "WikiWord")))
+         (wikiword-html (expand-file-name "WikiWord.html" hywiki-org-publishing-directory)))
+    (unwind-protect
+        (progn
+          (hywiki-org-set-publish-project)
+          (should (file-exists-p hywiki-directory))
+          (should (file-exists-p wikipage))
+          (should (file-exists-p wikiword))
+
+          ;; Setup wiki pages for WikiWord and WikiPage.
+          (with-current-buffer (find-file-noselect wikiword)
+            (insert "\
+First line
+* Asection
+body A
+** Bsection subsection
+body B
+")
+            (save-buffer))
+          (with-current-buffer (find-file-noselect wikipage)
+            (insert "\
+WikiWord
+WikiWord#Asection
+WikiWord#Bsection-subsection
+")
+            (save-buffer))
+
+          ;; Export the wiki
+          (hywiki-publish-to-html t)
+
+          ;; Verify files and folder are generated
+          (should (file-exists-p hywiki-org-publishing-directory))
+          (should (file-exists-p wikipage-html))
+          (should (file-exists-p wikiword-html))
+
+          ;; Verify links are generated
+          (with-current-buffer (find-file-noselect wikipage-html)
+            ;; (First check we even get the wikipage with sections)
+            (should (<= 1 (count-matches (regexp-quote "WikiWord") (point-min) (point-max))))
+            (should (= 1 (count-matches (regexp-quote "WikiWord#Asection") (point-min) (point-max))))
+            (should (= 1 (count-matches (regexp-quote "WikiWord#Bsection-subsection") (point-min) (point-max))))
+
+            ;; Then verify the href links are generated
+            (should (= 1 (count-matches (regexp-quote "<a href=\"WikiWord.html\">WikiWord</a>") (point-min) (point-max))))
+            (should (= 1 (count-matches (regexp-quote "<a href=\"WikiWord.html#Asection\">WikiWord#ASection</a>") (point-min) (point-max))))
+            (should (= 1 (count-matches (regexp-quote "<a href=\"WikiWord.html#Bsection-subsection\">WikiWord#Bsection-subsection</a>") (point-min) (point-max))))))
+      (hy-delete-files-and-buffers (list wikipage wikiword wikipage-html wikiword-html
+                                         (expand-file-name "index.org" hywiki-directory)
+                                         (expand-file-name "index.html" hywiki-org-publishing-directory)))
+      (hy-delete-dir-and-buffer hywiki-org-publishing-directory)
+      (hy-delete-dir-and-buffer hywiki-directory))))
+
 (ert-deftest hywiki-tests--get-singular-wikiword ()
   "Verify plural WikiWord is converted to singular.
 Note special meaning of `hywiki-allow-plurals-flag'."
@@ -809,8 +888,9 @@ Note special meaning of `hywiki-allow-plurals-flag'."
 
 (ert-deftest hywiki-tests--add-find ()
   "Verify `hywiki-add-find'."
-  (let* ((wikiword "WikiWord")
-	 (referent '(find . hywiki-word-grep)))
+  (let ((hywiki-directory (make-temp-file "hywiki" t))
+        (wikiword "WikiWord")
+	(referent '(find . hywiki-word-grep)))
     (hywiki-add-find wikiword)
     (should (equal referent (hywiki-get-referent wikiword)))))
 
@@ -876,33 +956,36 @@ Note special meaning of `hywiki-allow-plurals-flag'."
 (ert-deftest hywiki-tests--add-org-id ()
   "Verify `hywiki-add-org-id'."
   ;; Error case - Non org-mode buffer
-  (let ((wikiword "WikiWord"))
-    (let ((filea (make-temp-file "hypb" nil ".txt")))
-      (unwind-protect
-          (with-current-buffer (find-file filea)
-            (mocklet (((hmouse-choose-link-and-referent-windows) => (list nil (get-buffer-window))))
-              (should-error (hywiki-add-org-id wikiword) :type '(error))))
-	(hy-delete-file-and-buffer filea)))
+  (let ((wikiword "WikiWord")
+        (hywiki-directory (make-temp-file "hywiki" t)))
+    (unwind-protect
+        (progn
+          (let ((filea (make-temp-file "hypb" nil ".txt")))
+            (unwind-protect
+                (with-current-buffer (find-file filea)
+                  (mocklet (((hmouse-choose-link-and-referent-windows) => (list nil (get-buffer-window))))
+                    (should-error (hywiki-add-org-id wikiword) :type '(error))))
+	      (hy-delete-file-and-buffer filea)))
 
-    (let ((filea (make-temp-file "hypb" nil ".org")))
-      (unwind-protect
-          (with-current-buffer (find-file filea)
-            (insert "* header\n")
+          (let ((filea (make-temp-file "hypb" nil ".org")))
+            (unwind-protect
+                (with-current-buffer (find-file filea)
+                  (insert "* header\n")
 
-            ;; Error-case - No Org ID and read only
-            (setq buffer-read-only t)
-            (mocklet (((hmouse-choose-link-and-referent-windows) => (list nil (get-buffer-window))))
-	      (should-error (hywiki-add-org-id wikiword) :type '(error))
+                  ;; Error-case - No Org ID and read only
+                  (setq buffer-read-only t)
+                  (mocklet (((hmouse-choose-link-and-referent-windows) => (list nil (get-buffer-window))))
+	            (should-error (hywiki-add-org-id wikiword) :type '(error))
 
-              ;; Normal case - Org-mode with Org ID
-              (goto-char (point-max))
-              (setq buffer-read-only nil)
-              (defvar hywiki-test--org-id)
-	      (let ((referent-value (cdr (hywiki-add-org-id wikiword))))
-		(if (stringp referent-value)
-		    (should (string-prefix-p "ID: " referent-value))
-		  (error "(hywiki-tests--add-org-id): referent value is a non-string: %s" referent-value)))))
-	(hy-delete-file-and-buffer filea)))))
+                    ;; Normal case - Org-mode with Org ID
+                    (goto-char (point-max))
+                    (setq buffer-read-only nil)
+	            (let ((referent-value (cdr (hywiki-add-org-id wikiword))))
+		      (if (stringp referent-value)
+		          (should (string-prefix-p "ID: " referent-value))
+		        (error "(hywiki-tests--add-org-id): referent value is a non-string: %s" referent-value)))))
+	      (hy-delete-file-and-buffer filea))))
+      (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--add-org-roam-node ()
   "Verify `hywiki-add-org-roam-node'."
@@ -936,62 +1019,327 @@ Note special meaning of `hywiki-allow-plurals-flag'."
 ;; 			 (hywiki-get-referent wikiword))))
 ;;       (hy-delete-dir-and-buffer hywiki-directory))))
 
-(ert-deftest hywiki-tests--save-referent ()
-  "Verify saving and loading a referent works."
-  (let* ((hywiki-directory (make-temp-file "hywiki" t))
-         (wiki-page (cdr (hywiki-add-page "WikiPage" )))
-	 (wiki-referent "WikiReferent"))
-    (unwind-protect
-        (progn
-          (find-file wiki-page)
-          (insert wiki-referent)
-          (goto-char 4)
-          (with-simulated-input "ABC RET"
-	    (hywiki-add-key-series wiki-referent))
-	  (should (equal '(key-series . "{ABC}") (hywiki-get-referent wiki-referent)))
-          (should (string= wiki-referent (buffer-string)))
-          (should (file-exists-p (hywiki-cache-default-file)))
+(defmacro hywiki-tests--referent-test (expected &rest prepare)
+  "Referent test boilerplate code.
+EXPECTED is the result expected from hywiki-get-referent.  PREPARE sets
+up the test."
+  (declare (indent 0) (debug t))
+  `(let* ((hywiki-directory (make-temp-file "hywiki" t))
+          (wiki-page (cdr (hywiki-add-page "WikiPage" )))
+	  (wiki-referent "WikiReferent")
+          (mode-require-final-newline nil))
+     (unwind-protect
+         (progn
+           (should (equal '("WikiPage") (hywiki-get-wikiword-list)))
+           (find-file wiki-page)
+           (insert wiki-referent)
+           (save-buffer)
+           (goto-char 4)
 
-          ;; Simulate reload from cache
-          (setq hywiki--referent-hasht nil)
-          (hywiki-make-referent-hasht)
-          (should (equal '(key-series . "{ABC}") (hywiki-get-referent wiki-referent))))
-      (hy-delete-files-and-buffers (list wiki-page (hywiki-cache-default-file)))
-      (hy-delete-dir-and-buffer hywiki-directory))))
+           ,@prepare
 
-(ert-deftest hywiki-tests--save-referent-use-hyperbole-menu ()
-  "Verify saving and loading a referent works when using Hyperbole's menu."
+           (should (equal ,expected (hywiki-get-referent wiki-referent)))
+
+           (should (string= wiki-referent (buffer-string)))
+           (should (file-exists-p (hywiki-cache-default-file)))
+
+           ;; Simulate reload from cache
+           (hywiki-cache-save)
+           (setq hywiki--referent-hasht nil)
+           (hywiki-make-referent-hasht)
+
+           (should (equal ,expected (hywiki-get-referent wiki-referent))))
+
+       (hy-delete-files-and-buffers (list wiki-page (hywiki-cache-default-file)))
+       (hy-delete-dir-and-buffer hywiki-directory))))
+
+(ert-deftest hywiki-tests--save-referent-keyseries ()
+  "Verify saving and loading a referent keyseries works ."
+  (hywiki-tests--referent-test
+   (cons 'key-series "{ABC}")
+   (with-simulated-input "ABC RET"
+     (hywiki-add-key-series wiki-referent))))
+
+;; FIXME: Not stable. Can sometimes succeed.
+(ert-deftest hywiki-tests--save-referent-keyseries-use-menu ()
+  "Verify saving and loading a referent keyseries works using Hyperbole's menu."
   :expected-result :failed
-  ;; The entered key series is inserted into the WikiWord file. See
-  ;; comment below.
+  ; The failure is intermittent. See expanded test case below.
   (skip-unless (not noninteractive))
-  (let* ((hywiki-directory (make-temp-file "hywiki" t))
-         (wiki-page (cdr (hywiki-add-page "WikiPage" )))
-	 (wiki-referent "WikiReferent"))
-    (unwind-protect
-        (progn
-          (find-file wiki-page)
-          (insert wiki-referent)
-          (goto-char 4)
+  (hywiki-tests--referent-test
+   (cons 'key-series "{ABC}")
+   (should (hact 'kbd-key "C-u C-h hhck{ABC} RET"))
+   (hy-test-helpers:consume-input-events)))
 
-          (kbd-key:act "C-u C-h h h c")
-          ;; (hy-test-helpers:consume-input-events)
-	  (sit-for 0.1)
-          (kbd-key:act "k {ABC} RET")
-          ;; (hy-test-helpers:consume-input-events)
+;; !! TODO: Have to make this work or remove it.
+;; Expanded for easier debugging
+;; (ert-deftest hywiki-tests--save-referent-keyseries-use--menu-expanded ()
+;;   "Verify saving and loading a referent works when using Hyperbole's menu."
+;;   :expected-result :failed
+;;   ;; The entered key series is inserted into the WikiWord file. See
+;;   ;; comment below. The failure is intermittent.
+;;   (skip-unless (not noninteractive))
+;;   (let* ((hywiki-directory (make-temp-file "hywiki" t))
+;;          (wiki-page (cdr (hywiki-add-page "WikiPage" )))
+;; 	 (wiki-referent "WikiReferent")
+;;          (mode-require-final-newline nil))
+;;     (unwind-protect
+;;         (progn
+;;           (find-file wiki-page)
+;;           (insert wiki-referent)
+;;           (save-buffer)
+;;           (goto-char 4)
 
-          ;; The expected behavior here is no change in the WikiPage buffer
-          (should (string= wiki-referent (buffer-substring-no-properties (point-min) (point-max))))
+;;           (should (hact 'kbd-key "C-u C-h hhck{ABC} RET"))
+;;           (hy-test-helpers:consume-input-events)
 
-          (should (file-exists-p (hywiki-cache-default-file)))
-	  (should (equal '(key-series . "{ABC}") (hywiki-get-referent wiki-referent)))
+;;           ;; The buffer contents is changed and now reads
+;;           ;; "Wik{ABC}iReferent" as the next should verifies. The
+;;           ;; second should is the expected behavior. No change in the
+;;           ;; WikiPage buffer.
+;;           (should (string= "Wik{ABC}iReferent" (buffer-substring-no-properties (point-min) (point-max))))
+;;           (should (string= wiki-referent (buffer-substring-no-properties (point-min) (point-max))))
 
-          ;; Simulate reload from cache
-          (setq hywiki--referent-hasht nil)
-          (hywiki-make-referent-hasht)
-          (should (equal '(key-series . "{ABC}") (hywiki-get-referent wiki-referent))))
-      (hy-delete-files-and-buffers (list wiki-page (hywiki-cache-default-file)))
-      (hy-delete-dir-and-buffer hywiki-directory))))
+;;           (should (file-exists-p (hywiki-cache-default-file)))
+;; 	  (should (equal '(key-series . "{ABC}") (hywiki-get-referent wiki-referent)))
+
+;;           ;; Simulate reload from cache
+;;           (hywiki-cache-save)
+;;           (setq hywiki--referent-hasht nil)
+;;           (hywiki-make-referent-hasht)
+
+;;           (should (equal '(key-series . "{ABC}") (hywiki-get-referent wiki-referent))))
+;;       (hy-delete-files-and-buffers (list wiki-page (hywiki-cache-default-file)))
+;;       (hy-delete-dir-and-buffer hywiki-directory))))
+
+;; Bookmark
+(ert-deftest hywiki-tests--save-referent-bookmark ()
+  "Verify saving and loading a referent bookmark works."
+  (hywiki-tests--referent-test
+   (cons 'bookmark "bmark")
+   (bookmark-set "bmark")
+   (with-simulated-input "bmark RET"
+     (hywiki-add-bookmark wiki-referent))))
+
+(ert-deftest hywiki-tests--save-referent-bookmark-use-menu ()
+  "Verify saving and loading a referent bookmark works using Hyperbole's menu."
+  (skip-unless (not noninteractive))
+  (hywiki-tests--referent-test
+   (cons 'bookmark "bmark")
+   (bookmark-set "bmark")
+   (should (hact 'kbd-key "C-u C-h hhcb bmark RET"))
+   (hy-test-helpers:consume-input-events)))
+
+;; Command
+
+;; (defun hywiki-tests--command (_wikiword)
+;;   "Test command."
+;;   (interactive)
+;;   t)
+
+;; ;; FIXME: Command get the referent as argument which is not useful.
+;; (ert-deftest hywiki-tests--save-referent-command ()
+;;   "Verify saving and loading a referent command works."
+;;   (hywiki-tests--referent-test
+;;    (cons 'command #'hywiki-tests--command)
+;;    (with-simulated-input "hywiki-tests--command RET"
+;;      (hywiki-add-command wiki-referent))))
+
+;; (ert-deftest hywiki-tests--save-referent-command-use-menu ()
+;;   "Verify saving and loading a referent command works using Hyperbole's menu.."
+;;   (skip-unless (not noninteractive))
+;;   (hywiki-tests--referent-test
+;;    (cons 'command #'hpath:find)
+;;    (should (hact 'kbd-key "C-u C-h hhcc hpath:find RET"))
+;;    (hy-test-helpers:consume-input-events)))
+
+;; Expanded for debugging
+;; FIXME: There is a race here. It mostly fails but on rerun it can be
+;; made to work.
+;; (ert-deftest hywiki-tests--save-referent-command-use-menu-expanded ()
+;;   "Verify saving and loading a referent bookmark works using Hyperbole's menu.."
+;;   (skip-unless (not noninteractive))
+;;   (let* ((hywiki-directory (make-temp-file "hywiki" t))
+;;          (wiki-page (cdr (hywiki-add-page "WikiPage" )))
+;; 	 (wiki-referent "WikiReferent")
+;;          (mode-require-final-newline nil))
+;;     (unwind-protect
+;;         (progn
+;;           (find-file wiki-page)
+;;           (insert wiki-referent)
+;;           (save-buffer)
+;;           (goto-char 4)
+
+;;           (should (hact 'kbd-key "C-u C-h hhcc hpath:find RET"))
+;;           (hy-test-helpers:consume-input-events)
+
+;;           (should (string= wiki-referent (buffer-substring-no-properties (point-min) (point-max))))
+;;           (should (file-exists-p (hywiki-cache-default-file)))
+;; 	  (should (equal (cons 'command #'hpath:find) (hywiki-get-referent wiki-referent)))
+
+;;           ;; Simulate reload from cache
+;;           (hywiki-cache-save)
+;;           (setq hywiki--referent-hasht nil)
+;;           (hywiki-make-referent-hasht)
+
+;; 	  (should (equal (cons 'command #'hpath:find) (hywiki-get-referent wiki-referent))))
+;;       (hy-delete-files-and-buffers (list wiki-page (hywiki-cache-default-file)))
+;;       (hy-delete-dir-and-buffer hywiki-directory))))
+
+;; Find
+(ert-deftest hywiki-tests--save-referent-find ()
+  "Verify saving and loading a referent find works."
+  (hywiki-tests--referent-test
+   (cons 'find #'hywiki-word-grep)
+   (hywiki-add-find wiki-referent)))
+
+;; FIXME - Find defaults to search the referent which is not a likely
+;; use case. Should it not prompt user for the search string and
+;; not assume the referent is what you want to search for?
+
+;; FIXME - fails on 28.2 if executed with other test case!?
+;; (ert-deftest hywiki-tests--save-referent-find-use-menu ()
+;;   "Verify saving and loading a referent find works using Hyperbole's menu.."
+;;   (skip-unless (not noninteractive))
+;;   (hywiki-tests--referent-test
+;;    (cons 'find #'hywiki-word-grep)
+;;    (with-mock
+;;     (mock (hywiki-word-grep "WikiReferent") => t)
+;;     (should (hact 'kbd-key "C-u C-h hhcf"))
+;;     (hy-test-helpers:consume-input-events))))
+
+;; Global-button
+(ert-deftest hywiki-tests--save-referent-global-button ()
+  "Verify saving and loading a referent global-button works."
+  (hywiki-tests--referent-test
+   (cons 'global-button "gbtn")
+   (mocklet ((hargs:read-match => "gbtn"))
+     (hywiki-add-global-button wiki-referent))))
+
+(ert-deftest hywiki-tests--save-referent-global-button-use-menu ()
+  "Verify saving and loading a referent global-button works using Hyperbole's menu."
+  (skip-unless (not noninteractive))
+  (hywiki-tests--referent-test
+   (cons 'global-button "global")
+
+   (defvar test-buffer)
+   (let* ((test-file (make-temp-file "gbut" nil ".txt"))
+          (test-buffer (find-file-noselect test-file)))
+     (unwind-protect
+         (with-mock
+           (mock (hpath:find-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => test-buffer)
+           (stub gbut:label-list => (list "global"))
+           (mock (gbut:act "global") => t)
+           (gbut:ebut-program "global" 'link-to-file test-file)
+           (should (hact 'kbd-key "C-u C-h hhcg global RET"))
+           (hy-test-helpers:consume-input-events))
+       (hy-delete-file-and-buffer test-file)))))
+
+;; HyRolo
+;; FIXME: The search is over the name of the WikiWord which is likely
+;; not what was intended. Test below is for completeness.
+(ert-deftest hywiki-tests--save-referent-hyrolo ()
+  "Verify saving and loading a referent hyrolo works."
+  (hywiki-tests--referent-test
+   (cons 'hyrolo #'hyrolo-fgrep)
+   (hywiki-add-hyrolo wiki-referent)))
+
+;; Info index
+(ert-deftest hywiki-tests--save-referent-info-index ()
+  "Verify saving and loading a referent info index works."
+  (hywiki-tests--referent-test
+   (cons 'info-index "(emacs)files")
+   (save-excursion
+     (with-simulated-input "files RET"
+       (info "emacs")
+       (hywiki-add-info-index wiki-referent)))))
+
+;; FIXME: Does not work properly. Ends prematurely on reading in index
+;; item, at least if starting from scratch, i.e., no *info* buffer
+;; already created.
+;; --
+;; (ert-deftest hywiki-tests--save-referent-info-index-use-menu ()
+;;   "Verify saving and loading a referent info index works using Hyperbole's menu."
+;;   (skip-unless (not noninteractive))
+;;   (hywiki-tests--referent-test
+;;    (cons 'info-index "(emacs)files")
+;;    (save-excursion
+;;      (unwind-protect
+;;          (progn
+;;            (should (hact 'kbd-key "C-u C-h hhcim emacs RET i files RET"))
+;;            (hy-test-helpers:consume-input-events))
+;;        (kill-buffer "*info*")))))
+
+;; Info node
+(ert-deftest hywiki-tests--save-referent-info-node ()
+  "Verify saving and loading a referent info node works."
+  (hywiki-tests--referent-test
+   (cons 'info-node "(emacs)")
+   (save-excursion
+     (unwind-protect
+         (with-simulated-input "(emacs) RET"
+           (hywiki-add-info-node wiki-referent))
+       (kill-buffer "*info*")))))
+
+(ert-deftest hywiki-tests--save-referent-info-node-use-menu ()
+  "Verify saving and loading a referent info node works using Hyperbole's menu."
+  (skip-unless (not noninteractive))
+  (hywiki-tests--referent-test
+   (cons 'info-node "(emacs)")
+   (save-excursion
+     (unwind-protect
+         (progn
+           (should (hact 'kbd-key "C-u C-h hhcn (emacs) RET"))
+           (hy-test-helpers:consume-input-events))
+       (kill-buffer "*info*")))))
+
+;; Path link
+(ert-deftest hywiki-tests--save-referent-path-link ()
+  "Verify saving and loading a referent path link works."
+  (hywiki-tests--referent-test
+   (cons 'path-link "file:L1")
+   (hywiki-add-path-link wiki-referent "file" 1)))
+
+;; Org id
+(ert-deftest hywiki-tests--save-referent-org-id ()
+  "Verify saving and loading a referent org id works."
+  (hywiki-tests--referent-test
+   (cons 'org-id "ID: generated-org-id")
+   (save-excursion
+     (let ((filea (make-temp-file "hypb" nil ".org")))
+      (unwind-protect
+          (with-current-buffer (find-file filea)
+            (insert "* header\n")
+            (mocklet (((hmouse-choose-link-and-referent-windows) => (list nil (get-buffer-window)))
+                      ((org-id-get-create) => "generated-org-id"))
+              (goto-char (point-max))
+	      (hywiki-add-org-id wiki-referent)))
+	(hy-delete-file-and-buffer filea))))))
+
+;; FIXME: Org-id links does not seem to work.
+;; FIXME: Add test using Hyperbole's menu.
+
+;; Org roam
+(ert-deftest hywiki-tests--save-referent-org-roam-node ()
+  "Verify saving and loading a referent org roam node works."
+  (hywiki-tests--referent-test
+   (cons 'org-roam-node "node-title")
+   (mocklet (((hypb:require-package 'org-roam) => t)
+	     ((org-roam-node-read) => "node")
+	     ((org-roam-node-title "node") => "node-title"))
+     (hywiki-add-org-roam-node wiki-referent))))
+
+(ert-deftest hywiki-tests--save-referent-org-roam-node-use-menu ()
+  "Verify saving and loading a referent org roam node works using Hyperbole's menu."
+  (skip-unless (not noninteractive))
+  (hywiki-tests--referent-test
+   (cons 'org-roam-node "node-title")
+   (mocklet (((hypb:require-package 'org-roam) => t)
+	     ((org-roam-node-read) => "node")
+	     ((org-roam-node-title "node") => "node-title")
+             (hywiki-display-org-roam-node => t))
+     (should (hact 'kbd-key "C-u C-h hhcr"))
+     (hy-test-helpers:consume-input-events))))
 
 (ert-deftest hywiki-tests--delete-parenthesised-char ()
   "Verify removing a char between parentheses only removes the char.
@@ -999,10 +1347,154 @@ See gh#rswgnu/hyperbole/669."
   (with-temp-buffer
     (insert "(a)")
     (goto-char 2)
-    (let ((this-command #'delete-char))
-      (with-hywiki-buttonize-hooks
-        (delete-char 1)))
+    (hywiki-tests--command-execute #'delete-char 1)
     (should (string= "()" (buffer-substring-no-properties (point-min) (point-max))))))
 
+(ert-deftest hywiki-tests--word-face-at-p ()
+  "Verify `hywiki-word-face-at-p'."
+  (skip-unless (not noninteractive))
+  (hywiki-tests--preserve-hywiki-mode
+    (let* ((hywiki-directory (make-temp-file "hywiki" t))
+           (wiki-page (cdr (hywiki-add-page "WikiWord"))))
+      (with-temp-buffer
+        (hywiki-mode 0)
+        (insert "WikiWor")
+        (hywiki-tests--command-execute #'self-insert-command 1 ?d)
+        (goto-char 4)
+        (should-not (hywiki-word-face-at-p)))
+      (unwind-protect
+          (progn
+            (with-temp-buffer
+              (hywiki-mode 1)
+              (insert "WikiWor")
+	      (hywiki-tests--command-execute #'self-insert-command 1 ?d)
+              (goto-char 4)
+              (should (hywiki-word-face-at-p))))
+        (hy-delete-file-and-buffer wiki-page)
+        (hy-delete-dir-and-buffer hywiki-directory)))))
+
+(defun hywiki-tests--verify-hywiki-word (expected)
+  "Verify that `hywiki-word-at' returns t if a wikiword is EXPECTED.
+If EXPECTED is a string also verify that the wikiword matches the
+string."
+  (if (not expected)
+      (should-not (hywiki-word-at))
+    (if (stringp expected)
+        (should (string= expected (hywiki-word-at)))
+      (should (hywiki-word-at)))))
+
+(defun hywiki-tests--run-test-case (test-case)
+  "Run the TEST-CASE from point.
+Each test case consists of cons cells with an operation and the expected
+state of the WikiWord being constructed.  Operations are either a string
+to be inserted, a number of chars to be deleted or a symbol p<number>
+for where to move point.  The expected state is either nil for not a
+wikiword or non-nil for a wikiword.  If equal to a string it is checked
+for match with the wikiword.  Movement of point is relative to point
+when the function is called."
+  (let ((origin (point)))
+    (should (listp test-case))           ; For traceability
+    (dolist (steps test-case)
+      (let ((step (car steps))
+            (vfy (cdr steps)))
+        (cond ((stringp step)
+               (dolist (ch (string-to-list step))
+                 (hywiki-tests--command-execute #'self-insert-command 1 ch)
+                 (save-excursion
+                   (goto-char (1- (point)))
+                   (hywiki-tests--verify-hywiki-word vfy))))
+              ((integerp step)
+               (let ((forward (> step 0)))
+                 (dotimes (_ (abs step))
+                   (if forward
+                       (hywiki-tests--command-execute #'delete-forward-char 1)
+                     (hywiki-tests--command-execute #'backward-delete-char 1))
+                   (hywiki-tests--verify-hywiki-word vfy))))
+              ((and (symbolp step) (string-prefix-p "p" (symbol-name step)))
+               (let* ((pos (string-to-number (substring (symbol-name step) 1)))
+                      (newpos (+ origin (1- pos))))
+                 (when (or (> 0 newpos) (< (point-max) newpos))
+                   (ert-fail (format "New point: '%s' is outside of buffer" newpos)))
+                 (goto-char newpos))
+               (hywiki-tests--verify-hywiki-word vfy))
+              (t (ert-fail (format "Unknown step: '%s' in WikiWord verification" step))))))))
+
+(defconst hywiki-tests--wikiword-step-check
+  '(
+    (("H") ("i" . "Hi"))
+    (("H") ("iHo" . t) ("#") ("s " . "HiHo#s"))
+    (("H") ("iHo" . t) ("#") ("s" . t) (-1) (-1 . "HiHo"))
+    (("H") ("iHo" . t) ("#") ("s" . t) (-1) (-3 . t) (-1) ("i" . "Hi"))
+    (("H") ("iHo" . t) ("#") ("s " . t) ("n"))
+    (("H") ("iHo" . t) ("#") ("s " . t) (" n"))
+    ;; With delimiters
+    (("(H") ("iHo" . t) ("#") ("s" . "HiHo#s") (" " . "HiHo#s"))
+    (("(H") ("iHo" . t) ("#") ("s" . "HiHo#s") (")" . "HiHo#s)")) ; Delimiter part of WikiWord. See below too.
+    (("(H") ("iHo" . t) ("#") ("s" . "HiHo#s") ("-" . "HiHo#s-") ("n" . "HiHo#s-n") (")" . "HiHo#s-n)"))
+    ;; Insert and delete between WikiWords
+    (("H") ("iHo" . t) (p3 . t) (" " . "Hi") (p4 . "Ho") (-1 . "HiHo"))
+    (("H") ("iho" . t) (p3 . t) (" " . "Hi") (p4) (-1 . "Hiho"))
+    )
+  "List of test cases for WikiWords.")
+
+(ert-deftest hywiki-tests--wikiword-step-check-verification ()
+  "Run the step check to verify WikiWord is identified under change.
+Performs each operation from the step check and verifies if the
+resulting state at point is a WikiWord or not."
+  (hywiki-tests--preserve-hywiki-mode
+   (let* ((hywiki-directory (make-temp-file "hywiki" t)))
+    (unwind-protect
+        (progn
+          (hywiki-mode 1)
+          (dolist (testcase hywiki-tests--wikiword-step-check)
+            (with-temp-buffer
+              (hywiki-tests--run-test-case testcase))))
+      (hy-delete-dir-and-buffer hywiki-directory)))))
+
+(defconst hywiki-tests--lorem-ipsum "\
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
+aliquet diam euismod turpis ultricies, et porta sem blandit. Sed vitae."
+  "Bulk text for in the middle of text tests.")
+
+(ert-deftest hywiki-tests--wikiword-step-check-verification-with-surrounding-text ()
+  "Run the step check to verify WikiWord is identified under change.
+Insert test in the middle of other text."
+  (hywiki-tests--preserve-hywiki-mode
+   (let* ((hywiki-directory (make-temp-file "hywiki" t)))
+     (unwind-protect
+         (progn
+           (hywiki-mode 1)
+           (with-temp-buffer
+             (insert hywiki-tests--lorem-ipsum)
+             (goto-char (/ (point-max) 2))
+             (let ((pos (point)))
+               (insert " HiHo ")
+               (goto-char (1+ pos))
+               (should (looking-at-p "HiHo ")))
+             (hywiki-tests--run-test-case
+              '((p3 . t)
+                (" " . "Hi")
+                (p1 . t) (p4 . t) (-1 . t))))
+           (with-temp-buffer
+             (insert hywiki-tests--lorem-ipsum)
+             (goto-char (/ (point-max) 2))
+             (let ((pos (point)))
+               (insert " Hiho ")
+               (goto-char (1+ pos))
+               (should (looking-at-p "Hiho ")))
+             (hywiki-tests--run-test-case
+              '((p3 . t)
+                (" " . "Hi")
+                (p1 . t) (p4) (-1 . "Hiho")))))
+       (hy-delete-dir-and-buffer hywiki-directory)))))
+
 (provide 'hywiki-tests)
+
+;; This file can't be byte-compiled without the `el-mock' package
+;; which is not a dependency of Hyperbole.
+;;
+;; Local Variables:
+;; no-byte-compile: t
+;; End:
+
 ;;; hywiki-tests.el ends here

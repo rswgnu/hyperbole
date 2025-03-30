@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Acpr-24 at 22:41:13
-;; Last-Mod:     17-Mar-25 at 23:13:09 by Bob Weiner
+;; Last-Mod:     30-Mar-25 at 10:39:00 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -3088,6 +3088,10 @@ A call to `hywiki-active-in-current-buffer-p' at point must return non-nil
 or this will return nil."
   (hywiki-get-singular-wikiword (hywiki-word-strip-suffix (hywiki-word-at))))
 
+(defun hywiki-word-face-at-p ()
+  "Non-nil if but at point has `hywiki-word-face' property."
+  (hproperty:but-get (point) 'face hywiki-word-face))
+
 ;;;###autoload
 (defun hywiki-word-consult-grep (word)
   "Use `hywiki-consult-grep' to show occurrences of a prompted for HyWikiWord.
@@ -3370,17 +3374,17 @@ DATUM is either an element or an object.  INFO is the current
 export state, as a plist.
 
 References for the current document are stored in
-‘:internal-references’ property.  Its value is an alist with
+`:internal-references' property.  Its value is an alist with
 associations of the following types:
 
   (REFERENCE . DATUM) and (SEARCH-CELL . ID)
 
 REFERENCE is the reference string to be used for object or
 element DATUM.  SEARCH-CELL is a search cell, as returned by
-‘org-export-search-cells’.  ID is a number or a string uniquely
+`org-export-search-cells'.  ID is a number or a string uniquely
 identifying DATUM within the document.
 
-This function also checks ‘:crossrefs’ property for search cells
+This function also checks `:crossrefs' property for search cells
 matching DATUM before creating a new reference."
   (let ((cache (plist-get info :internal-references)))
     (or (car (rassq datum cache))

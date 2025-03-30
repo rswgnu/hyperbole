@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    30-Jan-25 at 22:39:37
-;; Last-Mod:     30-Jan-25 at 23:28:18 by Mats Lidell
+;; Last-Mod:      4-Mar-25 at 17:06:50 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -33,4 +33,12 @@
         (should (hui:menu-read-from-minibuffer "" (format "Org M-RET %s" menu-string) hui:menu-mode-map nil t))))))
 
 (provide 'hui-mini-tests)
+
+;; This file can't be byte-compiled without the `el-mock' package
+;; which is not a dependency of Hyperbole.
+;;
+;; Local Variables:
+;; no-byte-compile: t
+;; End:
+
 ;;; hui-mini-tests.el ends here
