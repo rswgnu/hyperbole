@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     26-Jan-25 at 18:24:56 by Bob Weiner
+;; Last-Mod:     31-Mar-25 at 00:38:43 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -123,6 +123,9 @@ and the default WORD-LENGTH is 4."
         (setq result (concat result " ")))
       (setq result (concat result (char-to-string (elt chars (random (length chars)))))))
     (replace-regexp-in-string "[[:space:]]" "" (capitalize result))))
+
+(defvar hy-test-failure nil
+  "When non-nil run test cases that are known to fail.")
 
 (provide 'hy-test-helpers)
 ;;; hy-test-helpers.el ends here
