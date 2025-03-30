@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     30-Mar-25 at 10:45:03 by Bob Weiner
+;; Last-Mod:     30-Mar-25 at 15:18:37 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1429,8 +1429,8 @@ when the function is called."
     (("H") ("iHo" . t) ("#") ("s " . t) (" n"))
     ;; With delimiters
     (("(H") ("iHo" . t) ("#") ("s" . "HiHo#s") (" " . "HiHo#s"))
-    (("(H") ("iHo" . t) ("#") ("s" . "HiHo#s") (")" . "HiHo#s)")) ; Delimiter part of WikiWord. See below too.
-    (("(H") ("iHo" . t) ("#") ("s" . "HiHo#s") ("-" . "HiHo#s-") ("n" . "HiHo#s-n") (")" . "HiHo#s-n)"))
+    (("(H") ("iHo" . t) ("#") ("s" . "HiHo#s") (")" . "HiHo#s"))
+    (("(H") ("iHo" . t) ("#") ("s" . "HiHo#s") ("-" . "HiHo#s-") ("n" . "HiHo#s-n") (")" . "HiHo#s-n"))
     ;; Insert and delete between WikiWords
     (("H") ("iHo" . t) (p3 . t) (" " . "Hi") (p4 . "Ho") (-1 . "HiHo"))
     (("H") ("iho" . t) (p3 . t) (" " . "Hi") (p4) (-1 . "Hiho"))

@@ -1,3 +1,17 @@
+2025-03-30  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--wikiword-step-check): Fix by removing
+    matching to trailing delimiters, since that is now fixed.
+
+* hywiki.el (hywiki-word-at): Fix so if not in a delimited HyWikiWord reference
+    or if such a reference contains more than one non-section word, then
+    disallow spaces in section names.
+    (hywiki-delimited-p): Add and use in above function.
+    (hywiki--get-delimited-range-backward, hywiki--get-delimited-range-forward):
+       Clarify required point position and inclusion of delimiters in the range.
+    (hywiki-word-highlighted-at-p): Add to return any highlighted wikiword ref
+       at point.
+
 2025-03-23  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--run-test-case): Run DSL for testing
