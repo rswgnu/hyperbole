@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:      7-Mar-25 at 00:39:21 by Mats Lidell
+;; Last-Mod:     27-Feb-25 at 21:24:19 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -327,7 +327,6 @@ Used to include a final line when marking indented code.")
 ;;; Public declarations
 ;;; ************************************************************************
 
-(defvar hbut:syntax-table)              ; "hbut.el"
 (defvar help-mode-syntax-table)         ; "help-mode.el"
 (defvar hkey-init)                      ; "hyperbole.el"
 (defvar hkey-value)                     ; "hui-mouse.el"
@@ -431,13 +430,13 @@ returned is the function to call to select that syntactic unit."
   (unless (smart-eobp)
     (or (numberp pos) (setq pos (point)))
     (setq hui-select-previous 'char)
-    (let* ((syntax (char-syntax (or (char-after pos) (char-before pos))))
+    (let* ((syntax (char-syntax (or (char-after pos) (char-before pos) 0)))
 	   (pair (assq syntax hui-select-syntax-alist)))
       (and pair (or hui-select-whitespace (not (eq (cdr pair) 'thing-whitespace)))
 	   ;; Ignore matches that are preceded by '\' as a quote, e.g. ?\'
 	   (or (not (char-after pos))
 	       (= pos (point-min))
-	       (and (char-before pos) (/= ?\\ (char-before pos))))
+	       (and (char-before pos) (/= ?\\ (or (char-before pos) 0))))
 	   (cdr pair)))))
 
 ;;;###autoload
@@ -850,7 +849,7 @@ If an error occurs during syntax scanning, return nil."
   (setq hui-select-previous 'char)
   (if (save-excursion (goto-char pos) (eolp))
       (hui-select-line pos)
-    (let* ((syntax (char-syntax (or (char-after pos) (char-before pos))))
+    (let* ((syntax (char-syntax (or (char-after pos) (char-before pos) 0)))
 	   (pair (assq syntax hui-select-syntax-alist)))
       (cond ((and pair
 		  (or hui-select-whitespace
@@ -904,7 +903,7 @@ Use `hui-select-mark-delimited-sexp' to select it."
 	  (syn-after  (if (char-after)  (char-syntax (char-after)) 0)))
       (or (and (/= syn-before ?\\) (or (= syn-after ?\() (= syn-after ?\))))
 	  (and (= syn-before ?\)) (char-before (1- (point)))
-	       (/= ?\\ (char-syntax (char-before (1- (point))))))))))
+	       (/= ?\\ (if (char-before (1- (point))) (char-syntax (char-before (1- (point)))) 0)))))))
 
 (defun hui-select-mark-delimited-sexp ()
   "When point is before or after an sexp deactivate the mark and mark the sexp.
@@ -916,7 +915,7 @@ end sexp delimiters, ignore it, and return nil."
 			  (when (region-active-p) (deactivate-mark))
 			  (mark-sexp) t)))
     (ignore-errors
-      (let ((syn-after (char-syntax (char-after)))
+      (let ((syn-after (if (char-after) (char-syntax (char-after)) 0))
 	    syn-before)
 	(cond ((eq syn-after ?\()
 	       (funcall mark-sexp-func))
@@ -925,7 +924,7 @@ end sexp delimiters, ignore it, and return nil."
 	       (backward-sexp)
 	       (funcall mark-sexp-func))
 	      ((and (not (eolp))
-		    (setq syn-before (char-syntax (char-before)))
+		    (setq syn-before (if (char-before) (char-syntax (char-before)) 0))
 		    (eq syn-before ?\)))
 	       (backward-sexp)
 	       (funcall mark-sexp-func)))))))
@@ -1051,14 +1050,14 @@ string."
   (with-syntax-table hbut:syntax-table
     (or (and (equal start-delim "\"") (equal end-delim "\"")
 	     (ignore-errors
-	       (cond ((and (= (char-after) ?\")
-			   (/= (char-before) ?\\))
+	       (cond ((and (= (or (char-after) 0) ?\")
+			   (/= (or (char-before) 0) ?\\))
 		      (if (hypb:in-string-p)
 			  (hui-select-set-region (1+ (point))
 						 (scan-sexps (1+ (point)) -1))
 			(hui-select-set-region (point) (scan-sexps (point) 1))))
-		     ((and (= (char-before) ?\")
-			   (/= (char-before (1- (point))) ?\\))
+		     ((and (= (or (char-before) 0) ?\")
+			   (/= (or (char-before (1- (point))) 0) ?\\))
 		      (if (hypb:in-string-p)
 			  (hui-select-set-region (1- (point)) (scan-sexps (1- (point)) 1))
 			(hui-select-set-region (point) (scan-sexps (point) -1)))))))
@@ -1339,8 +1338,8 @@ included in the list, hui-select-brace-modes."
 The region includes sexpressions before and after POS"
   (or (hui-select-markup-pair pos)
       (hui-select-delimited-thing-call #'hui-select-thing)
-      (and (or (and (= (char-after) ?\") (/= (char-before) ?\\))
-	       (and (= (char-before) ?\") (/= (char-before (1- (point))) ?\\)))
+      (and (or (and (= (or (char-after) 0) ?\") (/= (or (char-before) 0) ?\\))
+	       (and (= (or (char-before) 0) ?\") (/= (or (char-before (1- (point))) 0) ?\\)))
 	   (hui-select-string pos))
       (hui-select-comment pos)
       (hui-select-preprocessor-def pos)
@@ -1348,9 +1347,9 @@ The region includes sexpressions before and after POS"
       (save-excursion
 	(setq hui-select-previous 'punctuation)
 	(goto-char (min (1+ pos) (point-max)))
-	(cond ((and (char-after pos) (= ?\  (char-syntax (char-after pos))))
+	(cond ((and (char-after pos) (= ?\  (if (char-after pos) (char-syntax (char-after pos)) 0)))
 	       (hui-select-set-region pos (1+ pos)))
-	      ((and (char-before pos) (= ?\  (char-syntax (char-before pos))))
+	      ((and (char-before pos) (= ?\  (if (char-before pos) (char-syntax (char-before pos)) 0)))
 	       (hui-select-set-region (1- pos) pos))
 	      (t (goto-char pos)
 		 (ignore-errors (hui-select-set-region

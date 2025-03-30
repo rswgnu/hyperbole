@@ -146,7 +146,7 @@ keyboard and mouse-based control of information display within multiple
 windows.  It also provides point-and-click access to World-Wide Web URLs,
 Info manuals, ftp archives, etc.
 
-Hyperbole works well on GNU Emacs 27.2 or above.  It is designed and written
+Hyperbole works well on GNU Emacs 28 or above.  It is designed and written
 by Bob Weiner.  It is maintained by him and Mats Lidell.  Its main
 distribution site is: <https://www.gnu.org/software/hyperbole/>.  If any
 term in here is new or unfamiliar to you, you can look it up in the

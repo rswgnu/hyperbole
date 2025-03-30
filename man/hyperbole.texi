@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     19-Jan-25 at 18:06:31 by Bob Weiner
+@c Last-Mod:     16-Mar-25 at 10:23:12 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,8 +30,8 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED January, 2025
-@set UPDATED-MONTH January 2025
+@set UPDATED March, 2025
+@set UPDATED-MONTH March 2025
 @set EDITION 9.0.2pre
 @set VERSION 9.0.2pre
 
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed January 19, 2025.
+Printed March 16, 2025.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -213,7 +213,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.2pre
-January 19, 2025
+March 16, 2025
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -538,8 +538,8 @@ Smart Keyboard Keys
 @chapter Introduction
 
 This edition of the GNU Hyperbole Manual is for use with any version
-9.0.2pre or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs 27.2
-or higher.  It will trigger an error if your Emacs is older.
+9.0.2pre or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs
+28 or higher.  It will trigger an error if your Emacs is older.
 
 This chapter summarizes the structure of the rest of the manual,
 describes Hyperbole, lists some of its potential applications, and
@@ -8628,8 +8628,8 @@ the GNU Emacs Manual}).
 @group
 ;; Below are the lines to add:
 
-(when (< emacs-major-version 27)
-  (error "Hyperbole requires Emacs 27 or above, not %d"
+(when (< emacs-major-version 28)
+  (error "Hyperbole requires Emacs 28 or above, not %d"
          emacs-major-version))
 (require 'package)
 (unless (package-installed-p 'hyperbole)
@@ -8677,8 +8677,8 @@ the GNU Emacs Manual}).
 @group
 ;; Below are the lines to add:
 
-(when (< emacs-major-version 27)
-  (error "Hyperbole requires Emacs 27 or above, not %d"
+(when (< emacs-major-version 28)
+  (error "Hyperbole requires Emacs 28 or above, not %d"
          emacs-major-version))
 (require 'package)
 (add-to-list 'package-archives
@@ -8724,8 +8724,8 @@ the GNU Emacs Manual}).
 @group
 ;; Use this in your Emacs init file to install Straight
 (progn
-  (when (< emacs-major-version 27)
-    (error "Hyperbole requires Emacs 27 or above, not %d"
+  (when (< emacs-major-version 28)
+    (error "Hyperbole requires Emacs 28 or above, not %d"
            emacs-major-version))
   (defvar bootstrap-version)
   (setq package-enable-at-startup nil)
@@ -8785,8 +8785,8 @@ lines to your personal Emacs initialization file, @file{~/.emacs}:
 @lisp
 @group
 (unless (and (featurep 'hyperbole) hyperbole-mode)
-  (when (< emacs-major-version 27)
-    (error "Hyperbole requires Emacs 27 or above, not %d"
+  (when (< emacs-major-version 28)
+    (error "Hyperbole requires Emacs 28 or above, not %d"
            emacs-major-version))
   (push "<directory-ending-with-hyperbole-where-you-unpacked>"
         load-path)

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Aug-92
-;; Last-Mod:     18-Jan-25 at 20:53:20 by Bob Weiner
+;; Last-Mod:     27-Feb-25 at 22:50:13 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -273,6 +273,13 @@ Return nil if none."
 If optional PROPERTY and VALUE are given, return only the first button
 with that PROPERTY and VALUE."
   (car (hproperty:but-get-first-in-region pos (1+ pos) property value)))
+
+(defun hproperty:but-move (hproperty-but start end &optional buffer)
+  "Set the endpoints of HPROPERTY-BUT to START and END in optional BUFFER.
+If BUFFER is nil and HPROPERTY-BUT has no buffer, put it in the current buffer;
+otherwise, if BUFFER is omitted, leave HPROPERTY-BUT in the same
+buffer it presently inhabits."
+  (move-overlay hproperty-but start end buffer))
 
 (defun hproperty:but-start (hproperty-but)
   "Return the end position of an HPROPERTY-BUT.

@@ -1,3 +1,17 @@
+2025-03-30  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--wikiword-step-check): Fix by removing
+    matching to trailing delimiters, since that is now fixed.
+
+* hywiki.el (hywiki-word-at): Fix so if not in a delimited HyWikiWord reference
+    or if such a reference contains more than one non-section word, then
+    disallow spaces in section names.
+    (hywiki-delimited-p): Add and use in above function.
+    (hywiki--get-delimited-range-backward, hywiki--get-delimited-range-forward):
+       Clarify required point position and inclusion of delimiters in the range.
+    (hywiki-word-highlighted-at-p): Add to return any highlighted wikiword ref
+       at point.
+
 2025-03-23  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--run-test-case): Run DSL for testing
@@ -38,6 +52,127 @@
 * test/hywiki-tests.el (hywiki-tests--command-execute): Function that runs
     command while also executing the pre and post command hooks. Use it
     instead of the with-hywiki-buttonize macros.
+
+2025-03-17  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-maybe-dehighlight-between-page-names): Fix to dehighlight
+    at point if on a highlighted prior WikiWork.
+            (hywiki--buttonize-characters): Add missing double quote char as
+    a match char to fix "WikiWord" not highlighting in a file when read in.
+
+2025-03-16  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki--rehighlight-at-point): Fix to dehighlight when the first
+    char of a wikiword is deleted.
+            (hywiki--maybe-rehighlight-at-point): Add maybe to the name.
+            (hywiki-maybe-dehighlight-page-name): Extract from above function
+    and use this standalone.
+
+* HY-ABOUT:
+  MELPA-RECIPE.el:
+  README.md:
+  man/hyperbole.texi:
+  hyperbole-pkg.el ("hyperbole"): Update requirement to Emacs version 28 from
+    27.2 since Markdown mode now requires this.
+
+2025-03-14  Bob Weiner  <rsw@gnu.org>
+
+* hypb.el (hypb:in-string-p): Made return the start position of the string
+
+* hywiki.el (hywiki--page-name): Rename to 'hywiki--word-only'.
+            (hywiki--word-pre-command): Add for use in command hooks.
+            (hywiki-debuttonize-non-character-commands,
+             hywiki-buttonize-character-commands,
+             hywiki-buttonize-non-character-commands): Rewrite all of these
+    to capture the first HyWikiWord and then only dehighlight in post hooks
+    if the HyWikiWords has changed.
+
+2025-03-13  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-word-at): Clarify :range return value in doc string.
+
+2025-03-08  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-word-at): Fix so hy:WikiWord is recognized without any
+    delimiters.
+  hsys-org.el (hsys-org-link-at-p): Fix to handle Org links without square or
+    angle brackets, e.g. file:WikiWord.org.
+              (hsys-org-thing-at-p): Add to test if point is on a specific org
+    construct type, e.g. a link.
+              (hsys-org-link-at-p): Remove 'with-suppressed-warnings' since
+    inner call to 'hsys-org-thing-at-p' is now run only when in org mode.
+
+* test/hywiki-tests.el (hywiki-tests--convert-words-to-org-link): Fix expected
+value to be [[WikiWord]] not [[file:WikiWord.org][WikiWord]].
+
+2025-03-07  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--wikiword-identified-with-delimiters):
+    Fix to show which wikiword item fails.
+
+* hywiki.el (hywiki-maybe-highlight-page-name): Fix to eliminate narrowing
+    of region that hides any balanced delimiters around a HyWikiWord.  Also
+    generalize HyWikiWord range finding using updated 'hywiki-word-at'.
+            (hywiki-word-at): Fix to allow whitespace between delimiters and
+    between #section words when delimited.  Also, if not on a wikiword and
+    'range-flag' is non-nil, return '(nil nil nil).
+
+2025-03-06  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-maybe-highlight-between-page-names): Allow for whitespace
+    after opening delimiter.
+
+2025-03-02  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--convert-words-to-org-link): Fix expected
+    link match strings.
+
+* hsys-xref.el (hsys-xref-identifier-at-point): Fix to return nil if xref returns
+    a pathname as an identifier.  This fixes a problem with the Action Key
+    triggering the wrong action; it should recognize it as a pathname.
+
+* test/hywiki-tests.el (hywiki-tests--add-org-roam-node): Mock variable,
+    `cl-struct-org-roam-node-tags' needed when org-roam package is not installed.
+
+2025-02-27  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki--maybe-de/highlight-sexp): Fix to narrow to region of
+    current HyWikiWord range before calling 'func'.
+            (hywiki--maybe-de/highlight-sexp): Add optional 'sexp-start' and
+    'sexp-end' args when known; range should include delimiters.
+            (hywiki-buttonize-character-commands,
+             hywiki-buttonize-non-character-commands): Pass 'hywiki--buttonize-start'
+    and 'hywiki--buttonize-end' positions to 'hywiki--maybe-de/highlight-sexp'
+    when known rather than recomputing.
+
+* hproperty.el (hproperty:but-move): Add and use in "hywiki.el".
+
+* hywiki.el (hywiki-get-delimited-range): Rename to 'hywiki-at-range-delimiter'.
+            (hywiki-referent-exists-p): Fix return value doc when given :range
+    arg.  Fix to send word string rather than tuple to 'hywiki-get-referent'.
+
+2025-02-25  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-word-with-optional-spaces-suffix-exact-regexp): Remove
+    use in 'hywiki-word-is-p' and replace with
+    'hywiki-word-with-optional-suffix-exact-regexp' which actually allows spaces.
+            (hywiki-word-at): Add support for finding delimited WikiWords with
+    #sections that contain multiple space separated words and returning the
+    wikiword, start and end.
+            (hywiki-word-at): Fix last 'looking-at' expression to not match to
+    end of buffer.
+            (hywiki-buttonize-character-commands,
+             hywiki-buttonize-non-character-commands,
+             hywiki-debuttonize-non-character-commands): Rewrite and simplify.
+
+2025-02-24  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki--maybe-de/highlight-sexp): Ensure return the result of
+    calling 'func'.
+            (hywiki-buttonize-non-character-commands): Remove insert commands
+    handled by 'hywiki-buttonize-character-commands' attached to
+    'post-self-insert-hook'.
+            (hywiki-non-hook-context-p): Add.
 
 2025-03-07  Mats Lidell  <matsl@gnu.org>
 
@@ -109,8 +244,13 @@
 
 * hywiki.el (hywiki-referent-menu): Re-add accidentally deleted "Keys" key
     series referent type in the menu.
+            (hywiki-set-directory): Call as part of loading hywiki.el to ensure
+    HyWiki Org project publish settings are initialized.
             (hywiki--org-export-new-title-reference): Replace '--any' call from
     dash.el package with 'cl-some'.
+            (hywiki-buttonize-character-commands): In prog modes, limit to comments
+    and strings.  If within a delimited pair, highlight #sections with multiple
+    words.
 
 * test/hywiki-tests.el (hywiki-tests--convert-words-to-org-link): Fix to not
     expect 'hy:' prefix in HyWiki Org links.

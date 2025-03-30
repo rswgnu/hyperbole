@@ -7,14 +7,14 @@
 ;; e-mail:       matsl@gnu.org
 ;;
 ;; orig-date:    16-Feb-22 at 23:28:49
-;; last-mod:     23-Aug-24 at 13:27:11 by Bob Weiner
+;; last-mod:     16-Mar-25 at 10:15:23 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
 ;; Copyright (C) 2021-2024  Free Software Foundation, Inc.
 ;; Licensed under the GNU General Public License, version 3.
 ;;
-;; This file is not part of Emacs.  It requires Emacs 27.2 or above.
+;; This file is not part of Emacs.  It requires Emacs 28 or above.
 ;; This file is part of Hyperbole.
 ;;
 ;;; Commentary:
