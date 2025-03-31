@@ -879,11 +879,14 @@ Note special meaning of `hywiki-allow-plurals-flag'."
 
 (ert-deftest hywiki-tests--add-find ()
   "Verify `hywiki-add-find'."
-  (let ((hywiki-directory (make-temp-file "hywiki" t))
-        (wikiword "WikiWord")
-	(referent '(find . hywiki-word-grep)))
-    (hywiki-add-find wikiword)
-    (should (equal referent (hywiki-get-referent wikiword)))))
+  (let* ((hywiki-directory (make-temp-file "hywiki" t))
+         (wikiword "WikiWord")
+	 (referent '(find . hywiki-word-grep)))
+    (unwind-protect
+        (progn
+          (hywiki-add-find wikiword)
+          (should (equal referent (hywiki-get-referent wikiword))))
+      (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--add-global-button ()
   "Verify `hywiki-add-global-button'."
