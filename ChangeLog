@@ -1,3 +1,9 @@
+2025-04-06  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--run-test-case): Remove per char
+    verification in DSL. Just verify after each insert or remove as whole.
+    (hywiki-tests--wikiword-step-check): Simplify tests after DSL change.
+
 2025-03-30  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--add-find): Remove hywiki-directory
