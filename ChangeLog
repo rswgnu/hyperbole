@@ -1,5 +1,11 @@
 2025-04-06  Mats Lidell  <matsl@gnu.org>
 
+* test/hy-test-helpers.el (hy-test-run-failing-flag): Set to non-nil to
+    activate failing test cases. Used by HYPB_ERT_FAILURE.
+
+* Makefile (HYPB_ERT_FAILURE): Command line controlled macro that tells if
+    failing test cases should be run.
+
 * test/hywiki-tests.el (hywiki-tests--run-test-case): Remove per char
     verification in DSL. Just verify after each insert or remove as whole.
     (hywiki-tests--wikiword-step-check): Simplify tests after DSL change.

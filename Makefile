@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     20-Mar-25 at 18:49:45 by Mats Lidell
+# Last-Mod:      6-Apr-25 at 19:45:20 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -538,6 +538,9 @@ else
 HYPB_ERT_BATCH = (ert-run-tests-batch-and-exit)
 HYPB_ERT_INTERACTIVE = (ert-run-tests-interactively t)
 endif
+ifeq ($(origin failure), command line)
+HYPB_ERT_FAILURE = (setq hy-test-run-failing-flag ${failure})
+endif
 
 # For full backtrace run make test FULL_BT=<anything or even empty>
 ifeq ($(origin FULL_BT), command line)
@@ -553,7 +556,7 @@ test-ert:
 	--eval "(let ((auto-save-default) (ert-batch-print-level 10) \
 	              (ert-batch-print-length nil) \
 	              $(HYPB_ERT_BATCH_BT) (ert-batch-backtrace-right-margin 2048)) \
-	           $(LOAD_TEST_ERT_FILES) $(HYPB_ERT_BATCH))"
+	           $(LOAD_TEST_ERT_FILES) $(HYPB_ERT_FAILURE) $(HYPB_ERT_BATCH))"
 
 # Run all tests by starting an Emacs that runs the tests interactively in windowed mode.
 all-tests: test-all
@@ -562,14 +565,14 @@ test-all:
 ifeq ($(TERM), dumb)
 ifneq (,$(findstring .apple.,$(DISPLAY)))
         # Found, on MacOS
-	TERM=xterm-256color $(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ((auto-save-default)) $(LOAD_TEST_ERT_FILES) $(HYPB_ERT_INTERACTIVE))"
+	TERM=xterm-256color $(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ((auto-save-default)) $(LOAD_TEST_ERT_FILES) $(HYPB_ERT_FAILURE) $(HYPB_ERT_INTERACTIVE))"
 else
         # Not found, set TERM so tests will at least run within parent Emacs session
-	TERM=vt100 $(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ($(LET_VARIABLES)) $(LOAD_TEST_ERT_FILES) $(HYPB_ERT_INTERACTIVE))"
+	TERM=vt100 $(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ($(LET_VARIABLES)) $(LOAD_TEST_ERT_FILES) $(HYPB_ERT_FAILURE) $(HYPB_ERT_INTERACTIVE))"
 endif
 else
         # Typical case, run emacs normally
-	$(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ($(LET_VARIABLES)) $(LOAD_TEST_ERT_FILES) $(HYPB_ERT_INTERACTIVE))"
+	$(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ($(LET_VARIABLES)) $(LOAD_TEST_ERT_FILES) $(HYPB_ERT_FAILURE) $(HYPB_ERT_INTERACTIVE))"
 endif
 
 test-all-output:
