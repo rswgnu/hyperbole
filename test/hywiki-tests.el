@@ -1372,9 +1372,11 @@ If EXPECTED is a string also verify that the wikiword matches the
 string."
   (if (not expected)
       (should-not (hywiki-word-at))
-    (if (stringp expected)
-        (should (string= expected (hywiki-word-at)))
-      (should (hywiki-word-at)))))
+    (let ((hywiki-word-found (hywiki-word-at)))
+      (if (stringp expected)
+          (should (string= expected hywiki-word-found))
+        (should hywiki-word-found))
+      (should (hywiki-word-is-p hywiki-word-found)))))
 
 (defun hywiki-tests--run-test-case (test-case)
   "Run the TEST-CASE from point.
@@ -1382,27 +1384,32 @@ Each test case consists of cons cells with an operation and the expected
 state of the WikiWord being constructed.  Operations are either a string
 to be inserted, a number of chars to be deleted or a symbol p<number>
 for where to move point.  The expected state is either nil for not a
-wikiword or non-nil for a wikiword.  If equal to a string it is checked
-for match with the wikiword.  Movement of point is relative to point
-when the function is called."
+wikiword or non-nil for a wikiword.  The state is checked after all
+chars of the string are inserted.  If equal to a string it is checked for
+match with the wikiword.  Movement of point is relative to point when
+the function is called."
   (let ((origin (point)))
-    (should (listp test-case))           ; For traceability
+
+    ;; For traceability when looking through the list of should
+    ;; clauses in a failing test.
+    (should (listp test-case))
+
     (dolist (steps test-case)
       (let ((step (car steps))
             (vfy (cdr steps)))
         (cond ((stringp step)
                (dolist (ch (string-to-list step))
-                 (hywiki-tests--command-execute #'self-insert-command 1 ch)
-                 (save-excursion
-                   (goto-char (1- (point)))
-                   (hywiki-tests--verify-hywiki-word vfy))))
+                 (hywiki-tests--command-execute #'self-insert-command 1 ch))
+               (save-excursion
+                 (goto-char (1- (point)))
+                 (hywiki-tests--verify-hywiki-word vfy)))
               ((integerp step)
                (let ((forward (> step 0)))
                  (dotimes (_ (abs step))
                    (if forward
                        (hywiki-tests--command-execute #'delete-forward-char 1)
-                     (hywiki-tests--command-execute #'backward-delete-char 1))
-                   (hywiki-tests--verify-hywiki-word vfy))))
+                     (hywiki-tests--command-execute #'backward-delete-char 1)))
+                 (hywiki-tests--verify-hywiki-word vfy)))
               ((and (symbolp step) (string-prefix-p "p" (symbol-name step)))
                (let* ((pos (string-to-number (substring (symbol-name step) 1)))
                       (newpos (+ origin (1- pos))))
@@ -1414,19 +1421,20 @@ when the function is called."
 
 (defconst hywiki-tests--wikiword-step-check
   '(
-    (("H") ("i" . "Hi"))
-    (("H") ("iHo" . t) ("#") ("s " . "HiHo#s"))
-    (("H") ("iHo" . t) ("#") ("s" . t) (-1) (-1 . "HiHo"))
-    (("H") ("iHo" . t) ("#") ("s" . t) (-1) (-3 . t) (-1) ("i" . "Hi"))
-    (("H") ("iHo" . t) ("#") ("s " . t) ("n"))
-    (("H") ("iHo" . t) ("#") ("s " . t) (" n"))
+    (("Hi" . "Hi"))
+    (("HiHo" . t) ("#"))
+    (("HiHo" . t) ("#s " . "HiHo#s"))
+    (("HiHo" . t) ("#s" . t) (-2 . "HiHo"))
+    (("HiHo#s" . t) (-4 . t) (-1) ("i" . "Hi"))
+    (("HiHo#s " . t) ("n"))
+    (("HiHo#s " . t) (" n"))
     ;; With delimiters
-    (("(H") ("iHo" . t) ("#") ("s" . "HiHo#s") (" " . "HiHo#s"))
-    (("(H") ("iHo" . t) ("#") ("s" . "HiHo#s") (")" . "HiHo#s)")) ; Delimiter part of WikiWord. See below too.
-    (("(H") ("iHo" . t) ("#") ("s" . "HiHo#s") ("-" . "HiHo#s-") ("n" . "HiHo#s-n") (")" . "HiHo#s-n)"))
+    (("(HiHo#s" . "HiHo#s") (" " . "HiHo#s"))
+    (("(HiHo#s" . "HiHo#s") (")" . "HiHo#s)")) ; Delimiter part of WikiWord. See below too.
+    (("(HiHo#s" . "HiHo#s") ("-" . "HiHo#s-") ("n" . "HiHo#s-n") (")" . "HiHo#s-n)"))
     ;; Insert and delete between WikiWords
-    (("H") ("iHo" . t) (p3 . t) (" " . "Hi") (p4 . "Ho") (-1 . "HiHo"))
-    (("H") ("iho" . t) (p3 . t) (" " . "Hi") (p4) (-1 . "Hiho"))
+    (("HiHo" . t) (p3 . t) (" " . "Hi") (p4 . "Ho") (-1 . "HiHo"))
+    (("Hiho" . t) (p3 . t) (" " . "Hi") (p4) (-1 . "Hiho"))
     )
   "List of test cases for WikiWords.")
 
