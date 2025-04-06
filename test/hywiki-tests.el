@@ -1372,11 +1372,11 @@ If EXPECTED is a string also verify that the wikiword matches the
 string."
   (if (not expected)
       (should-not (hywiki-word-at))
-    (let ((hywiki-found (hywiki-word-at)))
+    (let ((hywiki-word-found (hywiki-word-at)))
       (if (stringp expected)
-          (should (string= expected hywiki-found))
-        (should hywiki-found))
-      (should (hywiki-word-is-p hywiki-found)))))
+          (should (string= expected hywiki-word-found))
+        (should hywiki-word-found))
+      (should (hywiki-word-is-p hywiki-word-found)))))
 
 (defun hywiki-tests--run-test-case (test-case)
   "Run the TEST-CASE from point.
@@ -1385,7 +1385,7 @@ state of the WikiWord being constructed.  Operations are either a string
 to be inserted, a number of chars to be deleted or a symbol p<number>
 for where to move point.  The expected state is either nil for not a
 wikiword or non-nil for a wikiword.  The state is checked after all
-chars of the string is inserted.  If equal to a string it is checked for
+chars of the string are inserted.  If equal to a string it is checked for
 match with the wikiword.  Movement of point is relative to point when
 the function is called."
   (let ((origin (point)))
