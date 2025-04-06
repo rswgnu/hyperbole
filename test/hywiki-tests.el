@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:      5-Apr-25 at 16:34:30 by Bob Weiner
+;; Last-Mod:      6-Apr-25 at 18:35:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1399,6 +1399,9 @@ when the function is called."
             (vfy (cdr steps)))
         (cond ((stringp step)
                (dolist (ch (string-to-list step))
+		 (unless (characterp ch)
+		   (message "(hywiki-tests--run-test-case):\n  steps = %s\n  test-case = %s" steps test-case)
+		   (debug))
                  (hywiki-tests--command-execute #'self-insert-command 1 ch)
                  (save-excursion
                    (goto-char (1- (point)))
@@ -1487,6 +1490,51 @@ Insert test in the middle of other text."
                 (" " . "Hi")
                 (p1 . t) (p4) (-1 . "Hiho")))))
        (hy-delete-dir-and-buffer hywiki-directory)))))
+
+(ert-deftest hywiki-tests--wikiword-identified-in-emacs-lisp-mode ()
+  "Verify WikiWord is identified when surrounded by delimiters in `emacs-lisp-mode'."
+  (hywiki-tests--preserve-hywiki-mode
+    (let ((hsys-org-enable-smart-keys t)
+          (hywiki-directory (make-temp-file "hywiki" t)))
+      (unwind-protect
+          (progn
+            (hywiki-mode 1)
+
+            ;; Matches a WikiWord
+            (dolist (v '("WikiWord" "[WikiWord]" "[[WikiWord]]" "{WikiWord}" "(WikiWord)"
+                         "<WikiWord>" "<<WikiWord>>" "{[[WikiWord]]}" "([[WikiWord]])"
+                         "[WikiWord AnotherWord]"
+                         ))
+              (with-temp-buffer
+                (emacs-lisp-mode)
+                (insert (format ";; %s" v))
+                (hywiki-tests--command-execute #'newline 1 'interactive)
+                (goto-char 9)
+                (should (string= "WikiWord" (hywiki-word-at))))
+
+              (with-temp-buffer
+                (emacs-lisp-mode)
+                (insert (format  "(setq var \"%s\")" v))
+                (hywiki-tests--command-execute #'newline 1 'interactive)
+                (goto-char 16)
+                (should (string= "WikiWord" (hywiki-word-at)))))
+
+            ;; Does not match as a WikiWord
+            (dolist (v '("WikiWord#"))
+              (with-temp-buffer
+                (emacs-lisp-mode)
+                (insert (format ";; %s" v))
+                (hywiki-tests--command-execute #'newline 1 'interactive)
+                (goto-char 9)
+                (should-not (hywiki-word-at)))
+
+              (with-temp-buffer
+                (emacs-lisp-mode)
+                (insert (format  "(setq var \"%s\")" v))
+                (hywiki-tests--command-execute #'newline 1 'interactive)
+                (goto-char 16)
+                (should-not (hywiki-word-at)))))
+        (hy-delete-dir-and-buffer hywiki-directory)))))
 
 (provide 'hywiki-tests)
 

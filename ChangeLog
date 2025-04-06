@@ -1,3 +1,23 @@
+2025-04-06  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--wikiword-identified-in-emacs-lisp-mode):
+    Add this test from Mats with one correction.
+
+* hywiki.el (require cl-lib): Remove use.
+            (hywiki--org-export-new-title-reference): Remove use of 'cl-incf'.
+	    (hywiki-maybe-at-wikiword-beginning,
+             hywiki-maybe-dehighlight-page-name,
+             hywiki-maybe-highlight-page-name
+             hywiki-word-at): Replace 'cl-find' with 'string-match' for speed.
+	    (hywiki-buttonize-character-commands): Fix 'post-self-insert-hook'
+    so it highlights wikiwords after a closing delimiter is inserted.
+            (hywiki--maybe-rehighlight-at-point): Remove nullifying of
+    'hywiki--word-pre-command', 'hywiki--buttonize-start', 'hywiki--buttonize-end'
+    and move this to the start of the hywiki 'pre-command-hook'
+    (hywiki-debuttonize-non-character-commands) so they are not nullified
+    by 'post-command-hook' before they can be used by 'post-self-insert-hook'.
+            (hywiki-delimited-p): Add support for strings as well.
+
 2025-04-05  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-word-at, hywiki-word-is-p): If has a #section, ensure
