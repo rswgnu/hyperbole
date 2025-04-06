@@ -1372,9 +1372,11 @@ If EXPECTED is a string also verify that the wikiword matches the
 string."
   (if (not expected)
       (should-not (hywiki-word-at))
-    (if (stringp expected)
-        (should (string= expected (hywiki-word-at)))
-      (should (hywiki-word-at)))))
+    (let ((hywiki-found (hywiki-word-at)))
+      (if (stringp expected)
+          (should (string= expected hywiki-found))
+        (should hywiki-found))
+      (should (hywiki-word-is-p hywiki-found)))))
 
 (defun hywiki-tests--run-test-case (test-case)
   "Run the TEST-CASE from point.

@@ -3,6 +3,8 @@
 * test/hywiki-tests.el (hywiki-tests--run-test-case): Remove per char
     verification in DSL. Just verify after each insert or remove as whole.
     (hywiki-tests--wikiword-step-check): Simplify tests after DSL change.
+    (hywiki-tests--verify-hywiki-word): Add verification that
+    hywiki-word-is-p agrees with hywiki-word-at.
 
 2025-03-30  Mats Lidell  <matsl@gnu.org>
 
