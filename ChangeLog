@@ -1,3 +1,13 @@
+2025-04-05  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-word-at, hywiki-word-is-p): If has a #section, ensure
+    there are no invalid chars.
+            (hywiki-word-at): Fix missing test for double quote as an opening
+    delimiter.
+
+* test/hywiki-tests.el (hywiki-tests--sections-with-dash-space): Update code
+    to ensure #section cannot contain quote marks.
+
 2025-03-30  Bob Weiner  <rsw@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--wikiword-step-check): Fix by removing

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     30-Mar-25 at 15:18:37 by Bob Weiner
+;; Last-Mod:      5-Apr-25 at 16:34:30 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -330,7 +330,7 @@ line 2
             (with-temp-buffer
               (insert "WikiWord#\"section-within-quotes\"")
               (goto-char 4)
-              (should (string= "WikiWord#\"section-within-quotes\"" (hywiki-word-at)))))
+              (should-not (string= "WikiWord#\"section-within-quotes\"" (hywiki-word-at)))))
         (hy-delete-dir-and-buffer hywiki-directory)))))
 
 (ert-deftest hywiki-tests--word-is-p ()
@@ -1289,7 +1289,7 @@ up the test."
    (save-excursion
      (unwind-protect
          (progn
-           (should (hact 'kbd-key "C-u C-h hhcn (emacs) RET"))
+           (should (hact 'kbd-key "C-u C-h hhc MyWiki RET n (emacs) RET"))
            (hy-test-helpers:consume-input-events))
        (kill-buffer "*info*")))))
 

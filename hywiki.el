@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Acpr-24 at 22:41:13
-;; Last-Mod:     30-Mar-25 at 15:13:08 by Bob Weiner
+;; Last-Mod:      5-Apr-25 at 19:00:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -148,6 +148,7 @@
 (require 'hui-mini)   ;; For `hui:menu-act'
 (require 'hypb)       ;; Requires `seq'
 (require 'outline)    ;; For `outline-mode-syntax-table'
+(require 'seq)        ;; For 'seq-contains-p'
 (require 'subr-x)     ;; For `string-remove-prefix'
 (require 'thingatpt)
 
@@ -586,6 +587,14 @@ Highlight after inserting any non-word character."
 		       (skip-chars-backward "-" (line-beginning-position))
 		       t)
 		   (setq hywiki--range nil)))))
+
+      ;; For some reason this first rehighlighting is needed to ensure
+      ;; any wikiword before an inserted whitespace character is
+      ;; properly highlighted when separating two words.  When run in
+      ;; debug mode, it is not needed.
+      (save-excursion
+	(goto-char (max (1- (point)) (point-min)))
+	(hywiki--maybe-rehighlight-at-point))
 
       (hywiki--maybe-rehighlight-at-point))))
 
@@ -3005,7 +3014,7 @@ or this will return nil."
 	       (start    (nth 1 wikiword-start-end))
 	       (end      (nth 2 wikiword-start-end)))
 	  (with-syntax-table hywiki--org-mode-syntax-table
-	    (if (cond (wikiword
+	    (if (and (cond (wikiword
 		       ;; Handle an Org link [[HyWikiWord]] [[hy:HyWikiWord]]
 		       ;; or [[HyWikiWord#section][Description Text]].
 		       ;; Get the HyWikiWord link reference, ignoring any
@@ -3054,7 +3063,7 @@ or this will return nil."
 					;; the delimiters, so reprocess and do
 					;; not allow spaces in the #section part
 					(memq (char-syntax (or (char-before) 0))
-					      '(?\( ?\<))))
+					      '(?\( ?\< ?\"))))
 			   (goto-char opoint)
 			   (skip-syntax-backward "^-$()<>._\"\'" bol)
 			   ;; Move to start of wikiword reference
@@ -3103,6 +3112,11 @@ or this will return nil."
 					  ;; No following char
 					  wikiword (string-trim
 						    (buffer-substring-no-properties start end)))))))))
+		     ;; If `wikiword' has a #section, ensure there are
+		     ;; no invalid chars
+		     (if (and (stringp wikiword) (string-match "#" wikiword))
+			 (string-match "#[^][#()<>{}\"\n\r\f]+\\'" wikiword)
+		       t))
 		(if range-flag
 		    (list wikiword start end)
 		  wikiword)
@@ -3170,12 +3184,16 @@ Return nil if WORD is a prefixed, typed hy:HyWikiWord, since
 these are handled by the Org mode link handler."
   (and (stringp word) (not (string-empty-p word))
        (let (case-fold-search)
-	 (or (string-match hywiki-word-with-optional-suffix-exact-regexp word)
-	     ;; For now this next version allows spaces and tabs in
-	     ;; the suffix part
-	     (eq 0 (string-match
-		    hywiki-word-with-optional-suffix-exact-regexp
-		    word))))))
+	 (and (or (string-match hywiki-word-with-optional-suffix-exact-regexp word)
+		  ;; For now this next version allows spaces and tabs in
+		  ;; the suffix part
+		  (eq 0 (string-match
+			 hywiki-word-with-optional-suffix-exact-regexp
+			 word)))
+	      ;; If has a #section, ensure there are no invalid chars
+	      (if (string-match "#" word)
+		  (string-match "#[^][#()<>{}\"\n\r\f]+\\'" word)
+		t)))))
 
 (defun hywiki-word-read (&optional prompt)
   "Prompt with completion for and return an existing HyWikiWord.
