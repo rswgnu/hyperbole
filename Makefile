@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     31-Mar-25 at 00:35:45 by Mats Lidell
+# Last-Mod:      6-Apr-25 at 19:45:20 by Mats Lidell
 #
 # Copyright (C) 1994-2023  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -539,7 +539,7 @@ HYPB_ERT_BATCH = (ert-run-tests-batch-and-exit)
 HYPB_ERT_INTERACTIVE = (ert-run-tests-interactively t)
 endif
 ifeq ($(origin failure), command line)
-HYPB_ERT_FAILURE = (setq hy-test-failure ${failure})
+HYPB_ERT_FAILURE = (setq hy-test-run-failing-flag ${failure})
 endif
 
 # For full backtrace run make test FULL_BT=<anything or even empty>
