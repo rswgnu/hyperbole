@@ -1,3 +1,32 @@
+2025-04-12  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--wikiword-step-check): Fix to not expect
+    closing paren delimiter as part of the WikiWord.
+
+* hywiki.el (hywiki-at-range-delimiter): Handle if scan-sexps returns nil then
+    return '(nil nil).
+
+* hypb.el (hypb:in-string-p): Update to handle change-log-mode which disables
+    syntax parsing and so is handled with a string search.
+
+* hmouse-drv.el (hkey-actions): Add for use in Hyperbole testing and call from
+    "test/hui-mouse-tests.el".
+
+* hui-mouse.el (hkey-alist): Ignore 'ivy-mode' if 'vertico-mode' is actively
+    prompting for an argument and allow for this outside of the minibuffer
+    since vertico may prompt within another buffer.  Also, ignore the value
+    of hargs:reading-type here, otherwise, it will not catch all uses of
+    'vertico-mode'.
+
+2025-04-07  Mats Lidell  <matsl@gnu.org>
+
+* test/MANIFEST: Add hui-mouse-tests.el
+
+* test/hui-mouse-tests.el (hui-mouse-tests--hkey-alist): Verify a
+    predicate setting leads to the proper action.
+    (hui-mouse-tests--hkey-get-action): Helper that gets primary action
+    and assist action from hkey-alist for the predicates in effect.
+
 2025-04-06  Bob Weiner  <rsw@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--wikiword-identified-in-emacs-lisp-mode):

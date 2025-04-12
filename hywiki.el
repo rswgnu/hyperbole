@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Acpr-24 at 22:41:13
-;; Last-Mod:      6-Apr-25 at 18:27:25 by Bob Weiner
+;; Last-Mod:     12-Apr-25 at 17:04:06 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1718,7 +1718,7 @@ This includes the delimiters: (), {}, <>, [] and \"\" (double quotes)."
 			       (not (hypb:in-string-p)))
 			  (list (point) (scan-sexps (point) 1))))
 		      (error nil))))
-	(if result
+	(if (and result (integerp (nth 0 result)) (integerp (nth 1 result)))
 	    (sort result #'<)
 	  (list nil nil))))))
 

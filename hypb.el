@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     15-Mar-25 at 09:06:58 by Bob Weiner
+;; Last-Mod:     12-Apr-25 at 16:58:59 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -664,13 +664,17 @@ This will this install the Emacs helm package when needed."
 		      help-file))))))
 
 (defun hypb:in-string-p ()
-  "Return non-nil iff point is in a double quoted string."
-  (syntax-ppss-flush-cache (line-beginning-position))
-  (let ((sexp-state-list (syntax-ppss)))
-    ;; if in a string
-    (when (nth 3 sexp-state-list)
-      ;; return start of str position (opening quote)
-      (nth 8 sexp-state-list))))
+  "Return non-nil iff point is in the first line of a double quoted string."
+  (if (derived-mode-p 'change-log-mode)
+      ;; limited to single line strings; count must be odd to be
+      ;; inside a string
+      (when (cl-oddp (count-matches "\"" (line-beginning-position) (point)))
+	(save-excursion (search-backward "\"" (line-beginning-position) t)))
+    (syntax-ppss-flush-cache (line-beginning-position))
+    (let ((sexp-state-list (syntax-ppss)))
+      (when (eq ?\" (nth 3 sexp-state-list))   ; in a double quoted string
+	;; return start of str position (opening quote)
+	(nth 8 sexp-state-list)))))
 
 (defun hypb:indirect-function (obj)
   "Return the function at the end of OBJ's function chain.

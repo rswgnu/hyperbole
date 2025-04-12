@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     12-Apr-25 at 13:16:10 by Bob Weiner
+;; Last-Mod:     12-Apr-25 at 17:00:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1292,7 +1292,8 @@ up the test."
    (save-excursion
      (unwind-protect
          (progn
-           (should (hact 'kbd-key "C-u C-h hhc MyWiki RET n (emacs) RET"))
+           ;; (should (hact 'kbd-key "C-u C-h hhc MyWiki RET n (emacs) RET"))
+           (should (hact 'kbd-key "C-u C-h hhcn (emacs) RET"))
            (hy-test-helpers:consume-input-events))
        (kill-buffer "*info*")))))
 
@@ -1440,8 +1441,8 @@ the function is called."
     (("HiHo#s " . t) (" n"))
     ;; With delimiters
     (("(HiHo#s" . "HiHo#s") (" " . "HiHo#s"))
-    (("(HiHo#s" . "HiHo#s") (")" . "HiHo#s)")) ; Delimiter part of WikiWord. See below too.
-    (("(HiHo#s" . "HiHo#s") ("-" . "HiHo#s-") ("n" . "HiHo#s-n") (")" . "HiHo#s-n)"))
+    (("(HiHo#s" . "HiHo#s") (")" . "HiHo#s")) ; Delimiter part of WikiWord. See below too.
+    (("(HiHo#s" . "HiHo#s") ("-" . "HiHo#s-") ("n" . "HiHo#s-n") (")" . "HiHo#s-n"))
     ;; Insert and delete between WikiWords
     (("HiHo" . t) (p3 . t) (" " . "Hi") (p4 . "Ho") (-1 . "HiHo"))
     (("Hiho" . t) (p3 . t) (" " . "Hi") (p4) (-1 . "Hiho"))
