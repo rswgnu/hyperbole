@@ -18,6 +18,20 @@
     by 'post-command-hook' before they can be used by 'post-self-insert-hook'.
             (hywiki-delimited-p): Add support for strings as well.
 
+2025-04-06  Mats Lidell  <matsl@gnu.org>
+
+* test/hy-test-helpers.el (hy-test-run-failing-flag): Set to non-nil to
+    activate failing test cases. Used by HYPB_ERT_FAILURE.
+
+* Makefile (HYPB_ERT_FAILURE): Command line controlled macro that tells if
+    failing test cases should be run.
+
+* test/hywiki-tests.el (hywiki-tests--run-test-case): Remove per char
+    verification in DSL. Just verify after each insert or remove as whole.
+    (hywiki-tests--wikiword-step-check): Simplify tests after DSL change.
+    (hywiki-tests--verify-hywiki-word): Add verification that
+    hywiki-word-is-p agrees with hywiki-word-at.
+
 2025-04-05  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-word-at, hywiki-word-is-p): If has a #section, ensure
