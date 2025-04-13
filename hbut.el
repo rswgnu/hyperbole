@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      5-Jan-25 at 11:27:31 by Bob Weiner
+;; Last-Mod:     13-Apr-25 at 11:20:12 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -946,6 +946,13 @@ Return TO-HBUT."
 (defun    hattr:get (obj-symbol attr-symbol)
   "Return value of OBJ-SYMBOL's attribute ATTR-SYMBOL."
   (get obj-symbol attr-symbol))
+
+(defun hattr:is-p (attr value &optional hbut-symbol)
+  "Return t if ATTR has VALUE for 'hbut:current or optional HBUT-SYMBOL."
+  (and (symbolp attr) attr 
+       (eq (hattr:get (or (and (symbolp hbut-symbol) hbut-symbol) 'hbut:current)
+		      attr)
+	   value)))
 
 (defun    hattr:list (obj)
   "Return a property list of OBJ's attributes.
