@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Acpr-24 at 22:41:13
-;; Last-Mod:     12-Apr-25 at 17:04:06 by Bob Weiner
+;; Last-Mod:     13-Apr-25 at 02:03:01 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -357,7 +357,7 @@ Presently, there are no key bindings; this is for future use.")
   "HyWiki string prefix type for Org links.  Excludes trailing colon.")
 
 (defvar hywiki-org-link-type-required t
-  "When non-nil, HyWiki Org links must start with `hywiki-org-link-type':.
+  "When t, [[hy:HyWiki Org links]] must start with `hywiki-org-link-type':.
 Otherwise, this prefix is not needed and HyWiki word Org links
 override standard Org link lookups.  See \"(org)Internal Links\".")
 
@@ -439,6 +439,7 @@ where PATH is the un-resolvable reference."
 	 :publishing-directory hywiki-org-publishing-directory
 	 :publishing-function hywiki-org-publishing-function
 	 :section-numbers t
+	 :shell "shell-command"
 	 :sitemap-filename "index.org"
 	 ;; sitemap (TOC) is stored in "sitemap.html"
 	 :sitemap-title hywiki-org-publishing-sitemap-title
@@ -1476,7 +1477,9 @@ simplifies to:
 The finalized Org link is then exported to html format by the Org
 publish process."
   (barf-if-buffer-read-only)
-  (hywiki-maybe-highlight-page-names)
+  ;; Need to be explicit about the region here so does not use markers
+  ;; from a region pointing to another buffer
+  (hywiki-maybe-highlight-page-names (point-min) (point-max))
   (let ((make-index (hywiki-org-get-publish-property :makeindex))
 	org-link
 	wikiword-and-section
@@ -1737,8 +1740,7 @@ and radio targets.
 Ignore return value; it has no meaning."
   (save-excursion
     (save-restriction
-      (if (and (marker-position hywiki--buttonize-start)
-	       (marker-position hywiki--buttonize-end))
+      (if (hywiki--buttonized-region-p)
 	  (narrow-to-region hywiki--buttonize-start hywiki--buttonize-end)
 	;; Limit balanced pair checks to the next two lines for speed
 	(narrow-to-region (line-beginning-position) (line-end-position 2)))
@@ -1804,8 +1806,7 @@ and radio targets.
 Return t if no errors and a pair was found, else nil."
   (save-excursion
     (save-restriction
-      (if (and (marker-position hywiki--buttonize-start)
-	       (marker-position hywiki--buttonize-end))
+      (if (hywiki--buttonized-region-p)
 	  (narrow-to-region hywiki--buttonize-start hywiki--buttonize-end)
 	;; Limit balanced pair checks to the next two lines for speed
 	(narrow-to-region (line-beginning-position) (line-end-position 2)))
@@ -1952,8 +1953,7 @@ If in a programming mode, must be within a comment.  Use
     (with-syntax-table hbut:syntax-table
       (save-excursion
 	(save-restriction
-	  (when (and (marker-position hywiki--buttonize-start)
-		     (marker-position hywiki--buttonize-end))
+	  (when (hywiki--buttonized-region-p)
 	    (narrow-to-region hywiki--buttonize-start hywiki--buttonize-end)
 	    (goto-char hywiki--buttonize-start))
 
@@ -2017,8 +2017,7 @@ the current page unless they have sections attached."
       (setq hywiki--highlighting-done-flag nil)
       (with-syntax-table hbut:syntax-table
 	(save-excursion
-	  (when (and (marker-position hywiki--buttonize-start)
-		     (marker-position hywiki--buttonize-end))
+	  (when (hywiki--buttonized-region-p)
 	    (goto-char hywiki--buttonize-start))
 
 	  (unless on-page-name
@@ -2568,7 +2567,8 @@ save and potentially set `hywiki--directory-mod-time' and
   (let ((buf (get-file-buffer save-file)))
     (when buf
       (if (buffer-modified-p buf)
-	  (error "(hywiki-cache-save): Attempt to kill modified Environment file failed to save, \"%s\"" save-file)
+	  (save-buffer)
+	;; (error "(hywiki-cache-save): Attempt to kill modified Environment file failed to save, \"%s\"" save-file)
 	(kill-buffer buf))))
   (let ((dir (or (file-name-directory save-file)
 		 default-directory)))
@@ -2791,6 +2791,7 @@ variables."
                             :complete #'hywiki-org-link-complete
 			    :export #'hywiki-org-link-export
 			    :follow #'hywiki-find-referent
+			    :htmlize-link #'hywiki-section-to-headline-reference
 			    :store #'hywiki-org-link-store))
 
 (defun hywiki-word-strip-suffix (page-name)
@@ -2815,8 +2816,8 @@ Customize this directory with:
     {M-x customize-variable RET hywiki-org-publishing-directory RET}."
   (interactive "P")
   ;; Export Org to html with useful link ids.
-  ;; Instead of random ids like \"orga1b2c3\", use heading titles,
-  ;; made unique when necessary."
+  ;; Instead of random ids like "orga1b2c3", use heading titles with
+  ;; spaces replaced with dashes, made unique when necessary.
   (unwind-protect
       (progn
 	(advice-add #'org-export-get-reference :override #'hywiki--org-export-get-reference)
@@ -2854,6 +2855,17 @@ at point must return non-nil or this function will return nil."
       (or (hywiki-word-at :range)
 	  (list word start end))
     word))
+
+(defun hywiki-section-to-headline-reference ()
+  "Replace file#section dashes with spaces to match to an Org headline.
+Does replacement only when not in a programming mode and section
+contains no spaces."
+ (let ((link (get-text-property (point) 'org-link)))
+   (if (and link (string-match "#" link))
+       (let* ((file (substring link 0 (match-beginning 0)))
+              (section (substring link (match-beginning 0))))
+	 (concat file (hpath:dashes-to-spaces-markup-anchor section)))
+     link)))
 
 (defun hywiki-strip-org-link (link-str)
   "Return the hy:HyWikiWord#section part of an Org link string.
@@ -3265,6 +3277,13 @@ auto-highlighting."
 ;;; Private functions
 ;;; ************************************************************************
 
+(defun hywiki--buttonized-region-p ()
+  "Return non-nil when hywiki--buttonize-start/end point to the current buffer."
+  (and (marker-position hywiki--buttonize-start)
+       (eq (marker-buffer hywiki--buttonize-start) (current-buffer))
+       (marker-position hywiki--buttonize-end)
+       (eq (marker-buffer hywiki--buttonize-end) (current-buffer))))
+
 (defun hywiki--add-suffix-to-referent (suffix referent)
   "Add SUFFIX to REFERENT's value and return REFERENT.
 SUFFIX includes its type prefix, e.g. #.  Return nil if any input is
@@ -3431,8 +3450,7 @@ the HyWikiWord reference."
 	     (not (equal hywiki--word-pre-command
 			 (hywiki-get-singular-wikiword
 			  (or (car hywiki--range)
-			      (when (and (marker-position hywiki--buttonize-start)
-					 (marker-position hywiki--buttonize-end))
+			      (when (hywiki--buttonized-region-p)
 				(buffer-substring hywiki--buttonize-start
 						  hywiki--buttonize-end))
 			      (when (and (setq hywiki--range (hywiki-word-at :range))
@@ -3456,8 +3474,7 @@ This must be called within a `save-excursion' or it may move point."
   (when hywiki--range
     (hywiki-maybe-highlight-on-page-name))
 
-  (when (and (marker-position hywiki--buttonize-start)
-	     (marker-position hywiki--buttonize-end))
+  (when (hywiki--buttonized-region-p)
     (hywiki--maybe-de/highlight-sexp
      #'hywiki-maybe-highlight-page-names 1
      hywiki--buttonize-start hywiki--buttonize-end))

@@ -1,4 +1,33 @@
+2025-04-13  Bob Weiner  <rsw@gnu.org>
+
+* hsys-org.el (hsys-org-thing-at-p): Fix to work outside of Org mode by
+    suppressing warnings and ignoring Org regex errors.  This fixes two
+    hsys-org tests where the 'www-url' ibtype fired instead of
+    'org-link-outside-org-mode'.
+              (hsys-org-link-at-p): Rewrite to fix sending back (start . end)
+    positions when on a link, to be used as an implicit button label.
+
+* hywiki.el (hywiki-section-to-headline-reference): Add to convert #section
+    dashes to spaces for matching to Org headlines.
+            (org-link-set-parameters): Set HyWiki's link type to call the above
+    function on HyWiki links so they properly match Org headlines.
+
 2025-04-12  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-cache-save): Change to save any modified cache rather than
+    triggering an error (which can occur during regression testing).  This fixes
+    the `hywiki-tests--save-referent-info-node-use-menu' test.
+            (hywiki--buttonized-region-p): Add so buttonized region tests are
+    always handled correctly.  Use in the functions below.
+            (hywiki-convert-words-to-org-links,
+             hywiki-maybe-dehighlight-balanced-pairs,
+             hywiki-maybe-highlight-balanced-pairs,
+             hywiki-maybe-dehighlight-page-name,
+             hywiki-maybe-highlight-page-name,
+             hywiki--maybe-dehighlight-at-point,
+             hywiki--maybe-rehighlight-at-point): Fix to avoid using region
+    markers in a buffer other than the current one.  This also fixes a bug when
+    doing HyWiki exports to html and referencing the wrong buffer.
 
 * test/hywiki-tests.el (hywiki-tests--wikiword-step-check): Fix to not expect
     closing paren delimiter as part of the WikiWord.

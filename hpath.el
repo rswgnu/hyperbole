@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:      7-Mar-25 at 00:22:47 by Mats Lidell
+;; Last-Mod:     13-Apr-25 at 01:06:44 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1613,7 +1613,7 @@ but locational suffixes within the file are utilized."
 			      (current-buffer)))))))))))
 
 (defun hpath:spaces-to-dashes-markup-anchor (anchor)
-  "Replace dashes with spaces in ANCHOR if not a prog mode and no existing dashes."
+  "Replace spaces with dashes in ANCHOR if not a prog mode and no existing dashes."
   (if (or (derived-mode-p 'prog-mode)
 	  (string-match-p "-.* \\| .*-" anchor))
       anchor
@@ -1623,7 +1623,7 @@ but locational suffixes within the file are utilized."
     (subst-char-in-string ?\  ?- anchor)))
 
 (defun hpath:dashes-to-spaces-markup-anchor (anchor)
-  "Replace dashes with spaces in ANCHOR if not a prog mode and no existing dashes."
+  "Replace dashes with spaces in ANCHOR if not a prog mode and no existing spaces."
   (if (or (derived-mode-p 'prog-mode)
 	  (string-match-p "-.* \\| .*-" anchor))
       anchor
