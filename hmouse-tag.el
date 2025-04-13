@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     29-Jan-25 at 20:26:54 by Mats Lidell
+;; Last-Mod:     12-Apr-25 at 18:46:48 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -90,7 +90,7 @@ should insert the implicit link type definition name.")
 ;; default, `xref-find-definitions', so is not dependent on TAGS
 ;; tables or the `default-directory' in the ERT results buffer.  When
 ;; a test is loaded, its symbol property, `ert--test', holds the
-;; absolute path to its file, and find-function uses that when its
+;; absolute path to its file, and `find-function' uses that when its
 ;; entry in `find-function-regexp-alist' is a regexp.
 (defconst find-ert-test-regexp "^\\s-*(ert-deftest\\s-+%s\\s-"
   "The regexp used to search for an ert test definition.

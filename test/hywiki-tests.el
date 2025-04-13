@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     19-Mar-25 at 19:59:12 by Mats Lidell
+;; Last-Mod:     12-Apr-25 at 17:00:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -234,51 +234,60 @@ line 2
           (progn
             (hywiki-mode 1)
 
-            ;; Matches a WikiWord
-            (dolist (v '("WikiWord" "[WikiWord]" "[[WikiWord]]" "{WikiWord}" "(WikiWord)"
-                         "<WikiWord>" "<<WikiWord>>" "{[[WikiWord]]}" "([[WikiWord]])"
-                         "[WikiWord AnotherWord]"
-                         ))
-              (with-temp-buffer
-                (org-mode)
-                (insert v)
-	        (newline nil t)
-                (goto-char 6)
-                (should (string= "WikiWord" (hywiki-word-at)))))
+          ;; Matches a WikiWord
+          (dolist (v '("WikiWord" "[WikiWord]" "[[WikiWord]]" "{WikiWord}" "(WikiWord)"
+                       "<WikiWord>" "<<WikiWord>>" "{[[WikiWord]]}" "([[WikiWord]])"
+                       "[WikiWord AnotherWord WikiWord WikiWord]"
+                       ))
+            (with-temp-buffer
+              (org-mode)
+              (insert v)
+	      (newline nil t)
+              (goto-char 6)
+              (if (string= "WikiWord" (hywiki-word-at))
+		  (should t)
+		(should-not v))))
 
-            ;; Does not match as a WikiWord
-            (dolist (v '("WikiWord#"))
-              (with-temp-buffer
-                (org-mode)
-                (insert v)
-	        (newline nil t)
-                (goto-char 6)
-                (should-not (string= "WikiWord" (hywiki-word-at)))))
+          ;; Does not match as a WikiWord
+          (dolist (v '("WikiWord#"))
+            (with-temp-buffer
+              (org-mode)
+              (insert v)
+	      (newline nil t)
+              (goto-char 6)
+	      (if (string= "WikiWord" (hywiki-word-at))
+		  (should-not v)
+		(should t))))
 
-            ;; Identifies as org link (Note: Not checked if target
-            ;; exists.) AND matches WikiWord
-            (dolist (v '("[[hy:WikiWord]]" "[[hy:WikiWord\\]]]"))
-              (with-temp-buffer
-                (org-mode)
-                (insert v)
-	        (newline nil t)
-                (goto-char 6)
-                (font-lock-ensure)
-                (should (hsys-org-face-at-p 'org-link))
-                (should (string= "WikiWord" (hywiki-word-at)))))
+          ;; Identifies as org link (Note: Not checked if target
+          ;; exists.) AND matches WikiWord
+          (dolist (v '("[[hy:WikiWord]]" "[[hy:WikiWord\\]]]"))
+            (with-temp-buffer
+              (org-mode)
+              (insert v)
+	      (newline nil t)
+              (goto-char 6)
+              (font-lock-ensure)
+              (should (hsys-org-face-at-p 'org-link))
+	      (if (string= "WikiWord" (hywiki-word-at))
+		  (should t)
+		(should-not v))))
 
-            ;; Identifies as org link (Note: Not checked if target
-            ;; exists.) AND DOES NOT match WikiWord
-            (dolist (v '("[[WikiWord AnotherWord]]"))
-              (with-temp-buffer
-                (org-mode)
-                (insert v)
-	        (newline nil t)
-                (goto-char 6)
-                (font-lock-ensure)
-                (should (hsys-org-face-at-p 'org-link))
-                (should-not (string= "WikiWord" (hywiki-word-at))))))
-        (hy-delete-dir-and-buffer hywiki-directory)))))
+          ;; Identifies as org link (Note: Not checked if target
+          ;; exists.) AND DOES NOT match WikiWord
+          (dolist (v '("[[WikiWord AnotherWord]]"))
+            (with-temp-buffer
+              (org-mode)
+              (insert v)
+	      (newline nil t)
+              (goto-char 6)
+              (font-lock-ensure)
+              (should (hsys-org-face-at-p 'org-link))
+              (if (string= "WikiWord" (hywiki-word-at))
+		  (should-not v)
+		(should t)))))
+      (hywiki-mode 0)
+      (hy-delete-dir-and-buffer hywiki-directory)))))
 
 (ert-deftest hywiki-tests--at-wikiword-finds-word-and-section ()
   "Verify `hywiki-word-at' finds WikiWord and section if available."
@@ -287,7 +296,7 @@ line 2
           (words '("WikiWord" "WikiWord:L1" "WikiWord:L1:C2"
                    "WikiWord#section" "WikiWord#section:L1" "WikiWord#section:L1:C2"
                    "WikiWord#section-subsection" "WikiWord#section-subsection:L1" "WikiWord#section-subsection:L1:C2"
-                   ;; FIXME: Uncomment when implemented.
+                   ;; !! FIXME: Uncomment when implemented.
                    ;; ("(WikiWord#section with spaces)" . "WikiWord#section with spaces")
                    ;; ("(WikiWord#section)" . "WikiWord#section")
                    )))
@@ -321,7 +330,7 @@ line 2
             (with-temp-buffer
               (insert "WikiWord#\"section-within-quotes\"")
               (goto-char 4)
-              (should (string= "WikiWord#\"section-within-quotes\"" (hywiki-word-at)))))
+              (should-not (string= "WikiWord#\"section-within-quotes\"" (hywiki-word-at)))))
         (hy-delete-dir-and-buffer hywiki-directory)))))
 
 (ert-deftest hywiki-tests--word-is-p ()
@@ -986,7 +995,8 @@ Note special meaning of `hywiki-allow-plurals-flag'."
   (let* ((hywiki-directory (make-temp-file "hywiki" t))
 	 (wikiword (hy-make-random-wikiword)))
     (unwind-protect
-        (mocklet (((hypb:require-package 'org-roam) => t)
+        (mocklet ((cl-struct-org-roam-node-tags => nil)
+		  ((hypb:require-package 'org-roam) => t)
 		  ((org-roam-node-read) => "node")
 		  (org-roam-node-title => "node-title"))
 	  (hywiki-add-org-roam-node wikiword)
@@ -1064,6 +1074,7 @@ up the test."
    (should (hact 'kbd-key "C-u C-h hhck{ABC} RET"))
    (hy-test-helpers:consume-input-events)))
 
+;; !! TODO: Have to make this work or remove it.
 ;; Expanded for easier debugging
 ;; (ert-deftest hywiki-tests--save-referent-keyseries-use--menu-expanded ()
 ;;   "Verify saving and loading a referent works when using Hyperbole's menu."
@@ -1281,6 +1292,7 @@ up the test."
    (save-excursion
      (unwind-protect
          (progn
+           ;; (should (hact 'kbd-key "C-u C-h hhc MyWiki RET n (emacs) RET"))
            (should (hact 'kbd-key "C-u C-h hhcn (emacs) RET"))
            (hy-test-helpers:consume-input-events))
        (kill-buffer "*info*")))))
@@ -1336,7 +1348,6 @@ up the test."
 (ert-deftest hywiki-tests--delete-parenthesised-char ()
   "Verify removing a char between parentheses only removes the char.
 See gh#rswgnu/hyperbole/669."
-  :expected-result :failed
   (with-temp-buffer
     (insert "(a)")
     (goto-char 2)
@@ -1430,8 +1441,8 @@ the function is called."
     (("HiHo#s " . t) (" n"))
     ;; With delimiters
     (("(HiHo#s" . "HiHo#s") (" " . "HiHo#s"))
-    (("(HiHo#s" . "HiHo#s") (")" . "HiHo#s)")) ; Delimiter part of WikiWord. See below too.
-    (("(HiHo#s" . "HiHo#s") ("-" . "HiHo#s-") ("n" . "HiHo#s-n") (")" . "HiHo#s-n)"))
+    (("(HiHo#s" . "HiHo#s") (")" . "HiHo#s")) ; Delimiter part of WikiWord. See below too.
+    (("(HiHo#s" . "HiHo#s") ("-" . "HiHo#s-") ("n" . "HiHo#s-n") (")" . "HiHo#s-n"))
     ;; Insert and delete between WikiWords
     (("HiHo" . t) (p3 . t) (" " . "Hi") (p4 . "Ho") (-1 . "HiHo"))
     (("Hiho" . t) (p3 . t) (" " . "Hi") (p4) (-1 . "Hiho"))
@@ -1488,6 +1499,51 @@ Insert test in the middle of other text."
                 (" " . "Hi")
                 (p1 . t) (p4) (-1 . "Hiho")))))
        (hy-delete-dir-and-buffer hywiki-directory)))))
+
+(ert-deftest hywiki-tests--wikiword-identified-in-emacs-lisp-mode ()
+  "Verify WikiWord is identified when surrounded by delimiters in `emacs-lisp-mode'."
+  (hywiki-tests--preserve-hywiki-mode
+    (let ((hsys-org-enable-smart-keys t)
+          (hywiki-directory (make-temp-file "hywiki" t)))
+      (unwind-protect
+          (progn
+            (hywiki-mode 1)
+
+            ;; Matches a WikiWord
+            (dolist (v '("WikiWord" "[WikiWord]" "[[WikiWord]]" "{WikiWord}" "(WikiWord)"
+                         "<WikiWord>" "<<WikiWord>>" "{[[WikiWord]]}" "([[WikiWord]])"
+                         "[WikiWord AnotherWord]"
+                         ))
+              (with-temp-buffer
+                (emacs-lisp-mode)
+                (insert (format ";; %s" v))
+                (hywiki-tests--command-execute #'newline 1 'interactive)
+                (goto-char 9)
+                (should (string= "WikiWord" (hywiki-word-at))))
+
+              (with-temp-buffer
+                (emacs-lisp-mode)
+                (insert (format  "(setq var \"%s\")" v))
+                (hywiki-tests--command-execute #'newline 1 'interactive)
+                (goto-char 16)
+                (should (string= "WikiWord" (hywiki-word-at)))))
+
+            ;; Does not match as a WikiWord
+            (dolist (v '("WikiWord#"))
+              (with-temp-buffer
+                (emacs-lisp-mode)
+                (insert (format ";; %s" v))
+                (hywiki-tests--command-execute #'newline 1 'interactive)
+                (goto-char 9)
+                (should-not (hywiki-word-at)))
+
+              (with-temp-buffer
+                (emacs-lisp-mode)
+                (insert (format  "(setq var \"%s\")" v))
+                (hywiki-tests--command-execute #'newline 1 'interactive)
+                (goto-char 16)
+                (should-not (hywiki-word-at)))))
+        (hy-delete-dir-and-buffer hywiki-directory)))))
 
 (provide 'hywiki-tests)
 

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     22-Feb-25 at 11:52:57 by Bob Weiner
+;; Last-Mod:     12-Apr-25 at 15:47:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -991,6 +991,19 @@ frame instead."
       (if (fboundp 'mouse-drag-frame-move) ;; From Emacs 28
           (mouse-drag-frame-move start-event)
         (mouse-drag-frame start-event 'move))))))
+
+(defun hkey-actions ()
+  "Return the cons of the Action and Assist Key actions at point.
+Useful in testing Smart Key contexts."
+  (let ((hkey-forms hkey-alist)
+	pred-value hkey-actions hkey-form pred)
+    (while (and (null pred-value) (setq hkey-form (car hkey-forms)))
+      (if (setq hkey-actions (cdr hkey-form)
+	        pred (car hkey-form)
+		pred-value (hypb:eval-debug pred))
+          nil
+	(setq hkey-forms (cdr hkey-forms))))
+    hkey-actions))
 
 (defun hkey-debug (pred pred-value hkey-action)
   "Display a message with the context and values from Smart Key activation."

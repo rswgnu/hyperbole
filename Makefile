@@ -3,9 +3,9 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:      6-Apr-25 at 19:45:20 by Mats Lidell
+# Last-Mod:     12-Apr-25 at 13:15:02 by Bob Weiner
 #
-# Copyright (C) 1994-2023  Free Software Foundation, Inc.
+# Copyright (C) 1994-2025  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
 #
 # This file is part of GNU Hyperbole.
@@ -81,7 +81,7 @@
 #
 #               To interactively run a docker version of Emacs with Hyperbole:
 #                   make docker-run              - default to running master
-#                   make docker-run version=27.2 - run Emacs V27.2
+#                   make docker-run version=28.2 - run Emacs V28.2
 #
 #               To build and test a dockerized version of Emacs with Hyperbole:
 #                   make docker                  - defaults: version=master targets='clean bin test'

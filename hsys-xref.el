@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     14-Apr-24 at 19:03:32 by Bob Weiner
+;; Last-Mod:      2-Mar-25 at 18:11:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -49,7 +49,9 @@
   (car (hsys-xref-definitions identifier)))
 
 (defun hsys-xref-identifier-at-point ()
-  (xref-backend-identifier-at-point (xref-find-backend)))
+  ;; Return nil if xref returns a pathname as an identifier
+  (unless (hpath:at-p nil t)
+    (xref-backend-identifier-at-point (xref-find-backend))))
 
 (defun hsys-xref-item-buffer (item)
   "Return the buffer in which xref ITEM is defined."

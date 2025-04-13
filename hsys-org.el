@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:      5-Jan-25 at 12:06:01 by Bob Weiner
+;; Last-Mod:     13-Apr-25 at 04:30:30 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -497,19 +497,50 @@ Match to all todos if `keyword' is nil or the empty string."
       (looking-at org-babel-src-block-regexp))))
 
 (defun hsys-org-link-at-p ()
-  "Return non-nil iff point is on a square-bracketed Org mode link.
+  "Return (start . end) iff point is on an Org mode link, else nil.
+Start and end are the buffer positions of the label that point is on
+delimited by square brackets.
+
 Ignore [[hy:HyWiki]] buttons and return nil (handle these as
 implicit buttons).  Assume caller has already checked that the
 current buffer is in `org-mode' or is looking for an Org link in
-another buffer type."
+a non-Org buffer type."
   (unless (or (smart-eolp) (smart-eobp))
-    (with-suppressed-warnings nil
-      (let ((in-org-link (org-in-regexp org-link-bracket-re nil t)))
-	(when in-org-link
-	  (save-match-data
-	    ;; If this Org link matches a potential HyWiki word, ignore it.
-	    (unless (and (fboundp 'hywiki-word-at) (hywiki-word-at))
-	      in-org-link)))))))
+    (if (derived-mode-p 'org-mode)
+	(let* ((org-plist (hsys-org-thing-at-p))
+	       (type (plist-get org-plist :type))
+	       (path (plist-get org-plist :path))
+	       label-start-end)
+	  (when (eq type 'link)
+	    (save-match-data
+	      ;; If this Org link matches a potential HyWiki word, ignore it.
+	      (when (not (and (fboundp 'hywiki-word-at) (hywiki-word-at)))
+		(if (setq label-start-end (ibut:label-p t "[" "]" t))
+		    (cons (nth 1 label-start-end) (nth 2 label-start-end))
+		  t)))))
+      ;; non-Org mode (can't call org-element (which
+      ;; hsys-org-thing-at-p calls) outside of Org mode
+      (when (bound-and-true-p org-link-bracket-re)
+        (let ((pos (point)))
+          (when (save-excursion
+		  (or
+		   ;; Check if point is inside a link
+		   (and (re-search-backward org-link-bracket-re
+					    (line-beginning-position) t)
+			(> pos (point))
+			(< pos (match-end 0)))
+		   ;; If not found before, check if we're in the middle of a link
+		   (and (forward-line 0)
+			(re-search-forward org-link-bracket-re
+					   (line-end-position 2) t)
+			(> (point) pos)
+			(< pos (match-end 0)))))
+	    (save-match-data
+	      ;; If this Org link matches a potential HyWiki word, ignore it.
+	      (when (not (and (fboundp 'hywiki-word-at) (hywiki-word-at)))
+		(if (setq label-start-end (ibut:label-p t "[" "]" t))
+		    (cons (nth 1 label-start-end) (nth 2 label-start-end))
+		  t)))))))))
 
 ;; Assume caller has already checked that the current buffer is in org-mode.
 (defun hsys-org-heading-at-p (&optional _)
@@ -524,6 +555,43 @@ The target is the definition and the target link is the referent.
 Assume caller has already checked that the current buffer is in
 `org-mode'."
   (hsys-org-face-at-p 'org-target))
+
+;; Derived from `org-open-at-point' in "org.el".
+(defun hsys-org-thing-at-p ()
+  "Return a plist of properties for Org thing at point or nil if none.
+This must work on Org links outside of Org mode.
+
+The plist form is: (:type <type> :value <value> :context <context>).
+The thing can be a link, citation, timestamp, footnote, src-block or
+tags.
+
+On top of syntactically correct links, this function also works
+on links and timestamps in comments, node properties, and
+keywords if point is on something looking like a timestamp or a
+link."
+  (ignore-errors
+    (org-load-modules-maybe)
+    ;; Org regex matching can fail in non-thing contexts, so we ignore
+    ;; these errors and return nil then.  Org-element will also warn to
+    ;; not use it outside of Org mode although it works, so we suppress
+    ;; those warnings as well.
+    (let* ((warning-minimum-level :error)
+	   (warning-suppress-types '(org-element rx))
+	   (warning-suppress-log-types '(org-element rx))
+	   (context
+	    ;; Only consider supported types, even if they are not the
+	    ;; closest one.
+	    (org-element-lineage
+	     (org-element-context)
+	     '(citation citation-reference clock comment comment-block
+			footnote-definition footnote-reference headline
+			inline-src-block inlinetask keyword link node-property
+			planning src-block timestamp)
+	     t))
+	   (type (org-element-type context))
+	   (value (org-element-property :value context)))
+      (when type
+	(list :type type :value value :context context)))))
 
 (defun hsys-org-todo-at-p ()
   "Return non-nil iff point is on an Org mode todo keyword.

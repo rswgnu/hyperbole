@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     22-Feb-25 at 16:18:02 by Bob Weiner
+;; Last-Mod:     12-Apr-25 at 14:29:25 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -253,20 +253,19 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
      . ((smart-push-button nil (mouse-event-p last-command-event))
 	. (smart-push-button-help nil (mouse-event-p last-command-event))))
     ;;
-    ;; If in the minibuffer and reading an argument with vertico
-    ;; run the vertico command on {M-RET} which accepts the first
-    ;; line of minibuffer input, rather than any candidate.
-    ((and hargs:reading-type
-	  (> (minibuffer-depth) 0)
-	  (eq (selected-window) (minibuffer-window))
-	  (not (bound-and-true-p ivy-mode))
-	  (and (bound-and-true-p vertico-mode)
-	       ;; Is vertico prompting for an argument?
-	       (vertico--command-p nil (current-buffer))))
-     . ((vertico-exit-input) . (vertico-exit-input)))
+    ;; If in a window reading an argument with vertico, run the
+    ;; vertico command on {M-RET} which by default accepts the
+    ;; existing input at the prompt rather than the candidate pointed
+    ;; to.
+    ((and (bound-and-true-p vertico-mode)
+	  ;; Is vertico prompting for an argument?
+	  (vertico--command-p nil (current-buffer)))
+     . ((funcall (lookup-key vertico-map (kbd "M-RET"))) 
+	. (funcall (lookup-key vertico-map (kbd "M-RET")))))
     ;;
-    ;; If in the minibuffer and reading an argument (aside from
-    ;; with vertico or ivy), accept argument or give completion help.
+    ;; If in the minibuffer and reading a non-menu Hyperbole argument
+    ;; (aside from with vertico or ivy), accept the argument or give
+    ;; completion help.
     ((and hargs:reading-type
 	  (> (minibuffer-depth) 0)
 	  (eq (selected-window) (minibuffer-window))

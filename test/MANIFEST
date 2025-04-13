@@ -13,6 +13,7 @@ hpath-tests.el          - unit tests for hpath
 hsettings-test.el       - unit tests for hsettings
 hsys-org-tests.el       - hsys-org tests
 hui-mini-tests.el       - hui-mini tests
+hui-mouse-tests.el      - hui-mouse and hkey-alist Action Key tests
 hui-register-tests.el   - test for hui-register
 hui-select-tests.el     - hui-select tests
 hui-tests.el            - tests for hui.el Hyperbole UI
