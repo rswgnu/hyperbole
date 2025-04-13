@@ -1,5 +1,8 @@
 2025-04-13  Bob Weiner  <rsw@gnu.org>
 
+* test/hsys-org-tests.el (hsys-org--meta-return-on-end-of-line): Add
+    mocks back in to prevent scrolling eob or bob errors.
+
 * test/hmouse-drv-tests.el (hbut-man-apropos-test, hbut-info-node-test,
     hbut-ib-url-with-label, hbut-mail-address-test,
     hbut-pathname-test, hbut-pathname-lisp-variable-test,

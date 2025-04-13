@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    23-Apr-21 at 20:55:00
-;; Last-Mod:     13-Apr-25 at 14:50:53 by Bob Weiner
+;; Last-Mod:     13-Apr-25 at 16:20:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -236,18 +236,22 @@ This is independent of the setting of `hsys-org-enable-smart-keys'."
         (insert "* h1")
         (goto-char 1)
         (end-of-line)
-        (should (equal hsys-org-enable-smart-keys v)) ; Ert traceability
-        (should (action-key))
-	(should (hattr:actype-is-p 'hsys-org-meta-return)))
+        (with-mock
+          (mock (hsys-org-meta-return) => t)
+          (should (equal hsys-org-enable-smart-keys v)) ; Ert traceability
+          (should (action-key))
+	  (should (hattr:actype-is-p 'hsys-org-meta-return))))
       ;; Two lines with text and returns: smart-org triggers with nil or :buttons setting
       (with-temp-buffer
         (org-mode)
         (insert "* h1\n* h2\n")
         (goto-char 1)
         (end-of-line)
-        (should (equal hsys-org-enable-smart-keys v)) ; Ert traceability
-        (should (action-key))
-	(should (hattr:actype-is-p 'hsys-org-meta-return)))))
+        (with-mock
+          (mock (hsys-org-meta-return) => t)
+          (should (equal hsys-org-enable-smart-keys v)) ; Ert traceability
+          (should (action-key))
+	  (should (hattr:actype-is-p 'hsys-org-meta-return))))))
 
   (let ((hsys-org-enable-smart-keys t)
         (v t))
@@ -257,18 +261,22 @@ This is independent of the setting of `hsys-org-enable-smart-keys'."
       (insert "* h1")
       (goto-char 1)
       (end-of-line)
-      (should (equal hsys-org-enable-smart-keys v)) ; Ert traceability
-      (should (action-key))
-      (should (hattr:actype-is-p 'smart-scroll-up)))
+      (with-mock
+        (mock (smart-scroll-up) => t)
+	(should (equal hsys-org-enable-smart-keys v)) ; Ert traceability
+	(should (action-key))
+	(should (hattr:actype-is-p 'smart-scroll-up))))
     ;; Two lines with text and returns: smart-eolp triggers with t setting
     (with-temp-buffer
       (org-mode)
       (insert "* h1\n* h2\n")
       (goto-char 1)
       (end-of-line)
-      (should (equal hsys-org-enable-smart-keys v)) ; Ert traceability
-      (should (action-key))
-      (should (hattr:actype-is-p 'smart-scroll-up)))))
+      (with-mock
+        (mock (smart-scroll-up) => t)
+	(should (equal hsys-org-enable-smart-keys v)) ; Ert traceability
+	(should (action-key))
+	(should (hattr:actype-is-p 'smart-scroll-up))))))
 
 (provide 'hsys-org-tests)
 
