@@ -1,5 +1,7 @@
 2025-04-13  Bob Weiner  <rsw@gnu.org>
 
+* hbut.el (hattr:is-p): Add to abstract testing of hattr values.
+
 * hsys-org.el (hsys-org-thing-at-p): Fix to work outside of Org mode by
     suppressing warnings and ignoring Org regex errors.  This fixes two
     hsys-org tests where the 'www-url' ibtype fired instead of

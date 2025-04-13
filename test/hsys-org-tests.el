@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    23-Apr-21 at 20:55:00
-;; Last-Mod:     13-Apr-25 at 03:23:46 by Bob Weiner
+;; Last-Mod:     13-Apr-25 at 11:23:02 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -140,7 +140,8 @@ This is independent of the setting of `hsys-org-enable-smart-keys'."
             (insert "[[file:/tmp/abc][file]]\n")
             (goto-char 6)
             (should (equal hsys-org-enable-smart-keys v)) ; Traceability
-            (should (action-key)))))))
+            (should (action-key))
+	    (should (hattr:is-p 'actype #'org-open-at-point-global)))))))
 
 (ert-deftest hsys-org--org-outside-org-mode-tmp-file ()
   "Org links in a non `org-mode' file should work.
@@ -155,7 +156,8 @@ This is independent of the setting of `hsys-org-enable-smart-keys'."
             (let ((hsys-org-enable-smart-keys v))
               (mocklet (((org-open-at-point-global) => t))
                 (should (equal hsys-org-enable-smart-keys v)) ; Traceability
-                (should (action-key))))))
+                (should (action-key))
+		(should (hattr:is-p 'actype #'org-open-at-point-global))))))
       (hy-delete-file-and-buffer file))))
 
 (ert-deftest hsys-org--at-tags-p ()
