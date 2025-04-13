@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    23-Apr-21 at 20:55:00
-;; Last-Mod:     13-Apr-25 at 11:23:02 by Bob Weiner
+;; Last-Mod:     13-Apr-25 at 16:20:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -141,7 +141,7 @@ This is independent of the setting of `hsys-org-enable-smart-keys'."
             (goto-char 6)
             (should (equal hsys-org-enable-smart-keys v)) ; Traceability
             (should (action-key))
-	    (should (hattr:is-p 'actype #'org-open-at-point-global)))))))
+	    (should (hattr:ibtype-is-p 'org-link-outside-org-mode)))))))
 
 (ert-deftest hsys-org--org-outside-org-mode-tmp-file ()
   "Org links in a non `org-mode' file should work.
@@ -157,7 +157,7 @@ This is independent of the setting of `hsys-org-enable-smart-keys'."
               (mocklet (((org-open-at-point-global) => t))
                 (should (equal hsys-org-enable-smart-keys v)) ; Traceability
                 (should (action-key))
-		(should (hattr:is-p 'actype #'org-open-at-point-global))))))
+		(should (hattr:ibtype-is-p 'org-link-outside-org-mode))))))
       (hy-delete-file-and-buffer file))))
 
 (ert-deftest hsys-org--at-tags-p ()
@@ -227,7 +227,7 @@ This is independent of the setting of `hsys-org-enable-smart-keys'."
     (should (string= "agenda-func" (hsys-org-get-agenda-tags #'agenda-func)))))
 
 (ert-deftest hsys-org--meta-return-on-end-of-line ()
-  "Verify end-of-line behaves as `org-mode' when smart keys not enabled."
+  "Verify end-of-line behaves as `org-mode' when smart keys are not enabled."
   (dolist (v '(nil :buttons))
     (let ((hsys-org-enable-smart-keys v))
       ;; One line with text, no return: smart-org triggers with nil or :buttons setting
@@ -239,7 +239,8 @@ This is independent of the setting of `hsys-org-enable-smart-keys'."
         (with-mock
           (mock (hsys-org-meta-return) => t)
           (should (equal hsys-org-enable-smart-keys v)) ; Ert traceability
-          (should (action-key))))
+          (should (action-key))
+	  (should (hattr:actype-is-p 'hsys-org-meta-return))))
       ;; Two lines with text and returns: smart-org triggers with nil or :buttons setting
       (with-temp-buffer
         (org-mode)
@@ -249,7 +250,9 @@ This is independent of the setting of `hsys-org-enable-smart-keys'."
         (with-mock
           (mock (hsys-org-meta-return) => t)
           (should (equal hsys-org-enable-smart-keys v)) ; Ert traceability
-          (should (action-key))))))
+          (should (action-key))
+	  (should (hattr:actype-is-p 'hsys-org-meta-return))))))
+
   (let ((hsys-org-enable-smart-keys t)
         (v t))
     ;; One line with text, no return: smart-eolp triggers with t setting
@@ -260,8 +263,9 @@ This is independent of the setting of `hsys-org-enable-smart-keys'."
       (end-of-line)
       (with-mock
         (mock (smart-scroll-up) => t)
-        (should (equal hsys-org-enable-smart-keys v)) ; Ert traceability
-        (should (action-key))))
+	(should (equal hsys-org-enable-smart-keys v)) ; Ert traceability
+	(should (action-key))
+	(should (hattr:actype-is-p 'smart-scroll-up))))
     ;; Two lines with text and returns: smart-eolp triggers with t setting
     (with-temp-buffer
       (org-mode)
@@ -270,8 +274,9 @@ This is independent of the setting of `hsys-org-enable-smart-keys'."
       (end-of-line)
       (with-mock
         (mock (smart-scroll-up) => t)
-        (should (equal hsys-org-enable-smart-keys v)) ; Ert traceability
-        (should (action-key))))))
+	(should (equal hsys-org-enable-smart-keys v)) ; Ert traceability
+	(should (action-key))
+	(should (hattr:actype-is-p 'smart-scroll-up))))))
 
 (provide 'hsys-org-tests)
 

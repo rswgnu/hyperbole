@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 22:52:00
-;; Last-Mod:     16-Jun-24 at 18:46:42 by Mats Lidell
+;; Last-Mod:     13-Apr-25 at 15:43:05 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -182,7 +182,8 @@
     (insert "<[PR34]>: \"https://github.com/rswgnu/hyperbole/pull/34\"")
     (goto-char 4)
     (let ((browse-url-browser-function 'hbut-defal-url))
-      (action-key))))
+      (action-key))
+    (should (hattr:ibtype-is-p 'www-url))))
 
 (ert-deftest hbut-ib-create-label ()
   "Create a label for an implicit button."
@@ -244,7 +245,8 @@
         (goto-char 2)
         (let ((mail-user-agent 'sendmail-user-agent))
           (action-key))
-        (should (string= "*mail*" (buffer-name))))
+	(should (hattr:ibtype-is-p 'mail-address))
+        (should (string-match "mail\\*" (buffer-name))))
     (hy-test-helpers:kill-buffer "*mail*")))
 
 ;; Path name
@@ -255,6 +257,7 @@
         (goto-char 2)
 	(let ((enable-local-variables nil))
           (action-key))
+	(should (hattr:ibtype-is-p 'pathname))
         (should (string= "DEMO" (buffer-name))))
     (hy-test-helpers:kill-buffer "DEMO")))
 
@@ -265,6 +268,7 @@
         (goto-char 2)
 	(let ((enable-local-variables nil))
           (action-key))
+	(should (hattr:ibtype-is-p 'pathname))
         (should (string= "DEMO" (buffer-name))))
     (hy-test-helpers:kill-buffer "DEMO")))
 
@@ -273,6 +277,7 @@
     (insert "\"${HOME}\"")
     (goto-char 2)
     (action-key)
+    (should (hattr:ibtype-is-p 'pathname))
     (should (equal major-mode 'dired-mode))
     (should (equal (expand-file-name default-directory)
 		   (file-name-as-directory (getenv "HOME"))))))
@@ -283,6 +288,7 @@
         (insert "\"hyperbole.el\"")
         (goto-char 2)
         (action-key)
+	(should (hattr:ibtype-is-p 'pathname))
         (should (equal major-mode 'emacs-lisp-mode))
         (should (hypb:buffer-file-name))
         (should (string= "hyperbole.el" (buffer-name))))
@@ -297,6 +303,7 @@
           (insert (concat "\"" file ":1\""))
           (goto-char 2)
           (action-key)
+	  (should (hattr:ibtype-is-p 'pathname-line-and-column))
           (should (string= file (hypb:buffer-file-name)))
           (should (looking-at "Line1")))
       (hy-delete-file-and-buffer file))))
@@ -316,6 +323,7 @@
           (should (looking-at-p (concat "\"" file ":2\"")))
           (forward-char 2)
           (action-key)
+	  (should (hattr:ibtype-is-p 'pathname-line-and-column))
           (should (string= file (hypb:buffer-file-name)))
           (should (looking-at "Line2")))
       (hy-delete-file-and-buffer file)
@@ -330,6 +338,7 @@
           (insert (concat "\"" file "#Anchor\""))
           (goto-char 2)
           (action-key)
+	  (should (hattr:ibtype-is-p 'pathname))
           (should (string= file (hypb:buffer-file-name)))
           (should (looking-at "\* Anchor")))
       (hy-delete-file-and-buffer file))))
@@ -343,6 +352,7 @@
         (insert (concat "\"" file "#Anchor Plus\""))
         (goto-char 2)
         (action-key)
+	(should (hattr:ibtype-is-p 'pathname))
         (should (string= file (hypb:buffer-file-name)))
         (should (looking-at "\* Anchor Plus \(Parenthesised text follows\)")))
     (hy-delete-file-and-buffer file))))
@@ -372,6 +382,7 @@
         (insert (concat "\"" file "#Anchor:2\""))
         (goto-char 2)
         (action-key)
+	(should (hattr:ibtype-is-p 'pathname-line-and-column))
         (should (string= file (hypb:buffer-file-name)))
         (should (looking-at "Next Line")))
     (hy-delete-file-and-buffer file))))
@@ -385,6 +396,7 @@
           (insert (concat "\"" file "#Anchor:2:5\""))
           (goto-char 2)
           (action-key)
+	  (should (hattr:ibtype-is-p 'pathname-line-and-column))
           (should (string= file (hypb:buffer-file-name)))
           (should (= (line-number-at-pos) 3))
           (should (= (current-column) 5))
@@ -398,6 +410,7 @@
         (insert "\"${load-path}/hypb.el:11:5\"")
         (goto-char 2)
         (action-key)
+	(should (hattr:ibtype-is-p 'pathname-line-and-column))
         (should (string= "hypb.el" (buffer-name)))
         (should (= (line-number-at-pos) 11))
         (should (= (current-column) 5)))
@@ -409,6 +422,7 @@
     (insert "\"-${hyperb:dir}/test/hy-test-dependencies.el\"")
     (goto-char 2)
     (action-key)
+    (should (hattr:ibtype-is-p 'pathname))
     (hy-test-helpers:should-last-message "Loading")
     (hy-test-helpers:should-last-message "hy-test-dependencies.el")))
 
@@ -419,6 +433,7 @@
         (insert "\"/tmp\"")
         (goto-char 2)
         (action-key)
+	(should (hattr:ibtype-is-p 'pathname))
         (should (string-equal default-directory "/tmp/"))
         (should (eq major-mode 'dired-mode)))
     (hy-test-helpers:kill-buffer "tmp")))
@@ -434,6 +449,7 @@
           (action-key)
         (error
          (progn
+	   (should-not (hattr:ibtype-is-p 'pathname))
            (should (equal (car err) 'error))
            (should (string-match
                     "(Hyperbole Action Key): No action defined for this context; try another location"
@@ -450,6 +466,7 @@
         (forward-char 4)
         (let ((default-directory (expand-file-name "test" hyperb:dir)))
           (action-key)
+	  (should (hattr:ibtype-is-p 'ctags))
           (should (looking-at "(defun hy-test-helpers:consume-input-events"))))
     (hy-test-helpers:kill-buffer "hy-test-helpers.el")))
 
@@ -467,6 +484,7 @@
         (forward-char 10)
         (let ((default-directory (expand-file-name "test" hyperb:dir)))
           (action-key)
+	  (should (hattr:ibtype-is-p 'etags))
           (set-buffer "hy-test-helpers.el")
           (should (looking-at "(defun hy-test-helpers:consume-input-events"))))
     (hy-test-helpers:kill-buffer "hy-test-helpers.el")))
@@ -479,6 +497,7 @@
         (goto-char (point-min))
         (re-search-forward "^[ \t]*\\* Koutl")
         (action-key)
+	(should (hattr:ibtype-is-p 'text-toc))
         (should (bolp))
         (should (looking-at "^[ \t]*\\* Koutliner")))
     (hy-test-helpers:kill-buffer "DEMO")))
@@ -493,6 +512,7 @@
         (forward-char -2)
         (let ((hpath:display-where 'this-window))
           (action-key)
+	  (should (hattr:ibtype-is-p 'dir-summary))
           (should (string= "HY-ABOUT" (buffer-name)))))
     (hy-test-helpers:kill-buffer "MANIFEST")
     (hy-test-helpers:kill-buffer "HY-ABOUT")))
@@ -505,7 +525,8 @@
       (goto-char 2)
       (with-mock
         (mock (actypes::link-to-rfc "822") => t)
-        (should (action-key))))))
+	(should (action-key))
+	(should (hattr:ibtype-is-p 'rfc))))))
 
 ;; man-apropos
 (ert-deftest hbut-man-apropos-test ()
@@ -514,7 +535,8 @@
     (goto-char 4)
     (with-mock
      (mock (man "rm(1)") => t)
-     (action-key))))
+     (should (action-key))
+     (should (hattr:ibtype-is-p 'man-apropos)))))
 
 ;; info-node
 (ert-deftest hbut-info-node-test ()
@@ -524,6 +546,7 @@
         (insert "\"(emacs)Top\"")
         (goto-char 6)
         (action-key)
+	(should (hattr:ibtype-is-p 'Info-node))
         (should (string= "*info*" (buffer-name))))
     (hy-test-helpers:kill-buffer "*info*")))
 
@@ -566,7 +589,7 @@
         (should was-called)))))
 
 (ert-deftest hbut-load-modifier-with-plain-file-loads-file-from-load-path ()
-  "Path prefix - filename without directory will load from`load-path'."
+  "Path prefix - filename without directory will load from `load-path'."
   (setq features (delq 'tutorial features))
   (with-temp-buffer
     (insert "\"-tutorial.el\"")

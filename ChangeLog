@@ -1,6 +1,37 @@
 2025-04-13  Bob Weiner  <rsw@gnu.org>
 
+* test/hsys-org-tests.el (hsys-org--meta-return-on-end-of-line): Add
+    mocks back in to prevent scrolling eob or bob errors.
+
+* test/hmouse-drv-tests.el (hbut-man-apropos-test, hbut-info-node-test,
+    hbut-ib-url-with-label, hbut-mail-address-test,
+    hbut-pathname-test, hbut-pathname-lisp-variable-test,
+    hbut-pathname-env-variable-test,
+    hbut-pathname-emacs-lisp-file-test, hbut-pathname-line-test,
+    hbut-pathname-line-test-duplicate, hbut-pathname-anchor-test,
+    hbut-pathname-anchor-trailing-text, hbut-pathname-anchor-line-test,
+    hbut-pathname-line-column-test,
+    hbut-pathname-load-path-line-column-test,
+    hbut-pathname-with-dash-loads-file-test,
+    hbut-pathname-directory-test,
+    hbut-pathname-dot-slash-in-other-folder-should-fail-test,
+    hbut-ctags-vgrind-test, hbut-etags-test, hbut-dir-summary-test):
+    Test for ibtype match after calling (action-key).
+
+* hui-mouse.el (hkey-alist): When (smart-eolp), use hact instead of
+    funcall to run action/assist-key-eol-functions.
+
+* test/hsys-org-tests.el (hsys-org--org-outside-org-mode-tmp-buffer,
+                          hsys-org--org-outside-org-mode-tmp-file): Test
+    for ibtype match instead of actype.
+* test/hmouse-drv-tests.el (hbut-rfc-test):
+  test/hsys-org-tests.el (hsys-org--meta-return-on-end-of-line,
+                          hsys-org--meta-return-on-end-of-line): Replace
+    all mock calls with hattr:actype-is-p checks instead.
+
 * hbut.el (hattr:is-p): Add to abstract testing of hattr values.
+          (hattr:actype-is-p, hattr:ibtype-is-p): Add these convenience
+    functions for testing for specific ibtype and actype activations.
 
 * hsys-org.el (hsys-org-thing-at-p): Fix to work outside of Org mode by
     suppressing warnings and ignoring Org regex errors.  This fixes two
