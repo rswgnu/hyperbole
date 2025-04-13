@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     12-Apr-25 at 14:29:25 by Bob Weiner
+;; Last-Mod:     13-Apr-25 at 14:49:05 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -296,7 +296,7 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
     ((and (smart-eolp)
           (not (and (funcall hsys-org-mode-function)
                     (not (equal hsys-org-enable-smart-keys t)))))
-     . ((funcall action-key-eol-function) . (funcall assist-key-eol-function)))
+     . ((hact action-key-eol-function) . (hact assist-key-eol-function)))
     ;;
     ;; Handle any Org mode-specific contexts but give priority to Hyperbole
     ;; buttons prior to cycling Org headlines
