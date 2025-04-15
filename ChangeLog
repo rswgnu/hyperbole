@@ -1,5 +1,12 @@
 2025-04-15  Mats Lidell  <matsl@gnu.org>
 
+* test/hywiki-tests.el (hywiki-tests--command)
+    (hywiki-tests--save-referent-command)
+    (hywiki-tests--save-referent-command-use-menu)
+    (hywiki-tests--save-referent-find-use-menu)
+    (hywiki-tests--save-referent-info-index-use-menu): Clean up
+    hywiki-tests.el from FIXME comments and add the related tests.
+
 * hui-mouse.el (hkey-alist): Cleanup. Remove whitespace.
 
 * test/hui-mouse-tests.el (hui-mouse-tests--hkey-alist): Defvar

@@ -722,7 +722,7 @@ Both mod-time and checksum must be changed for a test to return true."
                     ("WikiWord#Bsection-subsection" . "** Bsection subsection")
                     ("WikiWord#Bsection-subsection:L2" . "body B")
                     ("WikiWord#Bsection-subsection:L2:C2" . "dy B")
-                    ;; FIXME: Uncomment when implemented.
+                    ;; !! FIXME: Uncomment when implemented.
                     ;; ("(WikiWord#Bsection subsection)" . "** Bsection subsection")
                     ;; ("(WikiWord#Asection)" . "* Asection")
                     )))
@@ -1004,24 +1004,6 @@ Note special meaning of `hywiki-allow-plurals-flag'."
 			 (hywiki-get-referent wikiword))))
       (hy-delete-dir-and-buffer hywiki-directory))))
 
-;;; FIXME
-;; Without creating an initial page the test case above oddly fails on
-;; first run when executed interactively in a fresh Emacs. Such as
-;; running "make all-tests" in a shell. Why?
-;;
-;; (ert-deftest hywiki-tests--add-org-roam-node ()
-;;   "Verify `hywiki-add-org-roam-node'."
-;;   (let* ((hywiki-directory (make-temp-file "hywiki" t))
-;; 	 (wikiword (hy-make-random-wikiword)))
-;;     (unwind-protect
-;;         (mocklet (((hypb:require-package 'org-roam) => t)
-;; 		  ((org-roam-node-read) => "node")
-;; 		  ((org-roam-node-title "node") => "node-title"))
-;; 	  (hywiki-add-org-roam-node wikiword)
-;;           (should (equal '(org-roam-node . "node-title")
-;; 			 (hywiki-get-referent wikiword))))
-;;       (hy-delete-dir-and-buffer hywiki-directory))))
-
 (defmacro hywiki-tests--referent-test (expected &rest prepare)
   "Referent test boilerplate code.
 EXPECTED is the result expected from hywiki-get-referent.  PREPARE sets
@@ -1070,50 +1052,9 @@ up the test."
   ; The failure is intermittent. See expanded test case below.
   (skip-unless (not noninteractive))
   (hywiki-tests--referent-test
-   (cons 'key-series "{ABC}")
-   (should (hact 'kbd-key "C-u C-h hhck{ABC} RET"))
-   (hy-test-helpers:consume-input-events)))
-
-;; !! TODO: Have to make this work or remove it.
-;; Expanded for easier debugging
-;; (ert-deftest hywiki-tests--save-referent-keyseries-use--menu-expanded ()
-;;   "Verify saving and loading a referent works when using Hyperbole's menu."
-;;   :expected-result :failed
-;;   ;; The entered key series is inserted into the WikiWord file. See
-;;   ;; comment below. The failure is intermittent.
-;;   (skip-unless (not noninteractive))
-;;   (let* ((hywiki-directory (make-temp-file "hywiki" t))
-;;          (wiki-page (cdr (hywiki-add-page "WikiPage" )))
-;; 	 (wiki-referent "WikiReferent")
-;;          (mode-require-final-newline nil))
-;;     (unwind-protect
-;;         (progn
-;;           (find-file wiki-page)
-;;           (insert wiki-referent)
-;;           (save-buffer)
-;;           (goto-char 4)
-
-;;           (should (hact 'kbd-key "C-u C-h hhck{ABC} RET"))
-;;           (hy-test-helpers:consume-input-events)
-
-;;           ;; The buffer contents is changed and now reads
-;;           ;; "Wik{ABC}iReferent" as the next should verifies. The
-;;           ;; second should is the expected behavior. No change in the
-;;           ;; WikiPage buffer.
-;;           (should (string= "Wik{ABC}iReferent" (buffer-substring-no-properties (point-min) (point-max))))
-;;           (should (string= wiki-referent (buffer-substring-no-properties (point-min) (point-max))))
-
-;;           (should (file-exists-p (hywiki-cache-default-file)))
-;; 	  (should (equal '(key-series . "{ABC}") (hywiki-get-referent wiki-referent)))
-
-;;           ;; Simulate reload from cache
-;;           (hywiki-cache-save)
-;;           (setq hywiki--referent-hasht nil)
-;;           (hywiki-make-referent-hasht)
-
-;;           (should (equal '(key-series . "{ABC}") (hywiki-get-referent wiki-referent))))
-;;       (hy-delete-files-and-buffers (list wiki-page (hywiki-cache-default-file)))
-;;       (hy-delete-dir-and-buffer hywiki-directory))))
+    (cons 'key-series "{ABC}")
+    (should (hact 'kbd-key "C-u C-h hhck{ABC} RET"))
+    (hy-test-helpers:consume-input-events)))
 
 ;; Bookmark
 (ert-deftest hywiki-tests--save-referent-bookmark ()
@@ -1135,81 +1076,43 @@ up the test."
 
 ;; Command
 
-;; (defun hywiki-tests--command (_wikiword)
-;;   "Test command."
-;;   (interactive)
-;;   t)
+(defun hywiki-tests--command (wikiword)
+  "Test command."
+  (interactive)
+  (should (string= "WikiReferent" wikiword)))
 
-;; ;; FIXME: Command get the referent as argument which is not useful.
-;; (ert-deftest hywiki-tests--save-referent-command ()
-;;   "Verify saving and loading a referent command works."
-;;   (hywiki-tests--referent-test
-;;    (cons 'command #'hywiki-tests--command)
-;;    (with-simulated-input "hywiki-tests--command RET"
-;;      (hywiki-add-command wiki-referent))))
+(ert-deftest hywiki-tests--save-referent-command ()
+  "Verify saving and loading a referent command works."
+  (hywiki-tests--referent-test
+    (cons 'command #'hywiki-tests--command)
+    (with-simulated-input "hywiki-tests--command RET"
+      (hywiki-add-command wiki-referent))))
 
-;; (ert-deftest hywiki-tests--save-referent-command-use-menu ()
-;;   "Verify saving and loading a referent command works using Hyperbole's menu.."
-;;   (skip-unless (not noninteractive))
-;;   (hywiki-tests--referent-test
-;;    (cons 'command #'hpath:find)
-;;    (should (hact 'kbd-key "C-u C-h hhcc hpath:find RET"))
-;;    (hy-test-helpers:consume-input-events)))
-
-;; Expanded for debugging
-;; FIXME: There is a race here. It mostly fails but on rerun it can be
-;; made to work.
-;; (ert-deftest hywiki-tests--save-referent-command-use-menu-expanded ()
-;;   "Verify saving and loading a referent bookmark works using Hyperbole's menu.."
-;;   (skip-unless (not noninteractive))
-;;   (let* ((hywiki-directory (make-temp-file "hywiki" t))
-;;          (wiki-page (cdr (hywiki-add-page "WikiPage" )))
-;; 	 (wiki-referent "WikiReferent")
-;;          (mode-require-final-newline nil))
-;;     (unwind-protect
-;;         (progn
-;;           (find-file wiki-page)
-;;           (insert wiki-referent)
-;;           (save-buffer)
-;;           (goto-char 4)
-
-;;           (should (hact 'kbd-key "C-u C-h hhcc hpath:find RET"))
-;;           (hy-test-helpers:consume-input-events)
-
-;;           (should (string= wiki-referent (buffer-substring-no-properties (point-min) (point-max))))
-;;           (should (file-exists-p (hywiki-cache-default-file)))
-;; 	  (should (equal (cons 'command #'hpath:find) (hywiki-get-referent wiki-referent)))
-
-;;           ;; Simulate reload from cache
-;;           (hywiki-cache-save)
-;;           (setq hywiki--referent-hasht nil)
-;;           (hywiki-make-referent-hasht)
-
-;; 	  (should (equal (cons 'command #'hpath:find) (hywiki-get-referent wiki-referent))))
-;;       (hy-delete-files-and-buffers (list wiki-page (hywiki-cache-default-file)))
-;;       (hy-delete-dir-and-buffer hywiki-directory))))
+(ert-deftest hywiki-tests--save-referent-command-use-menu ()
+  "Verify saving and loading a referent command works using Hyperbole's menu.."
+  (skip-unless (not noninteractive))
+  (hywiki-tests--referent-test
+    (cons 'command #'hywiki-tests--command)
+    (should (hact 'kbd-key "C-u C-h hhcc hywiki-tests--command RET"))
+    (hy-test-helpers:consume-input-events)))
 
 ;; Find
 (ert-deftest hywiki-tests--save-referent-find ()
   "Verify saving and loading a referent find works."
   (hywiki-tests--referent-test
-   (cons 'find #'hywiki-word-grep)
-   (hywiki-add-find wiki-referent)))
+    (cons 'find #'hywiki-word-grep)
+    (hywiki-add-find wiki-referent)))
 
-;; FIXME - Find defaults to search the referent which is not a likely
-;; use case. Should it not prompt user for the search string and
-;; not assume the referent is what you want to search for?
-
-;; FIXME - fails on 28.2 if executed with other test case!?
-;; (ert-deftest hywiki-tests--save-referent-find-use-menu ()
-;;   "Verify saving and loading a referent find works using Hyperbole's menu.."
-;;   (skip-unless (not noninteractive))
-;;   (hywiki-tests--referent-test
-;;    (cons 'find #'hywiki-word-grep)
-;;    (with-mock
-;;     (mock (hywiki-word-grep "WikiReferent") => t)
-;;     (should (hact 'kbd-key "C-u C-h hhcf"))
-;;     (hy-test-helpers:consume-input-events))))
+(ert-deftest hywiki-tests--save-referent-find-use-menu ()
+  "Verify saving and loading a referent find works using Hyperbole's menu.."
+  (skip-unless (not noninteractive))
+  (skip-unless (not (version< emacs-version "29"))) ;; Fails on 28!?
+  (hywiki-tests--referent-test
+    (cons 'find #'hywiki-word-grep)
+    (with-mock
+      (mock (hywiki-word-grep "WikiReferent") => t)
+      (should (hact 'kbd-key "C-u C-h hhcf"))
+      (hy-test-helpers:consume-input-events))))
 
 ;; Global-button
 (ert-deftest hywiki-tests--save-referent-global-button ()
@@ -1239,8 +1142,6 @@ up the test."
        (hy-delete-file-and-buffer test-file)))))
 
 ;; HyRolo
-;; FIXME: The search is over the name of the WikiWord which is likely
-;; not what was intended. Test below is for completeness.
 (ert-deftest hywiki-tests--save-referent-hyrolo ()
   "Verify saving and loading a referent hyrolo works."
   (hywiki-tests--referent-test
@@ -1257,21 +1158,17 @@ up the test."
        (info "emacs")
        (hywiki-add-info-index wiki-referent)))))
 
-;; FIXME: Does not work properly. Ends prematurely on reading in index
-;; item, at least if starting from scratch, i.e., no *info* buffer
-;; already created.
-;; --
-;; (ert-deftest hywiki-tests--save-referent-info-index-use-menu ()
-;;   "Verify saving and loading a referent info index works using Hyperbole's menu."
-;;   (skip-unless (not noninteractive))
-;;   (hywiki-tests--referent-test
-;;    (cons 'info-index "(emacs)files")
-;;    (save-excursion
-;;      (unwind-protect
-;;          (progn
-;;            (should (hact 'kbd-key "C-u C-h hhcim emacs RET i files RET"))
-;;            (hy-test-helpers:consume-input-events))
-;;        (kill-buffer "*info*")))))
+(ert-deftest hywiki-tests--save-referent-info-index-use-menu ()
+  "Verify saving and loading a referent info index works using Hyperbole's menu."
+  (skip-unless (not noninteractive))
+  (hywiki-tests--referent-test
+    (cons 'info-index "(emacs)files")
+    (save-excursion
+      (unwind-protect
+          (progn
+            (should (hact 'kbd-key "C-u C-h hhci (emacs)files RET"))
+            (hy-test-helpers:consume-input-events))
+        (kill-buffer "*info*")))))
 
 ;; Info node
 (ert-deftest hywiki-tests--save-referent-info-node ()
@@ -1320,8 +1217,7 @@ up the test."
 	      (hywiki-add-org-id wiki-referent)))
 	(hy-delete-file-and-buffer filea))))))
 
-;; FIXME: Org-id links does not seem to work.
-;; FIXME: Add test using Hyperbole's menu.
+;; FIXME: Add Org-id links tests.
 
 ;; Org roam
 (ert-deftest hywiki-tests--save-referent-org-roam-node ()
