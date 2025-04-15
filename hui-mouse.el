@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     13-Apr-25 at 14:49:05 by Bob Weiner
+;; Last-Mod:     15-Apr-25 at 12:51:50 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -260,7 +260,7 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
     ((and (bound-and-true-p vertico-mode)
 	  ;; Is vertico prompting for an argument?
 	  (vertico--command-p nil (current-buffer)))
-     . ((funcall (lookup-key vertico-map (kbd "M-RET"))) 
+     . ((funcall (lookup-key vertico-map (kbd "M-RET")))
 	. (funcall (lookup-key vertico-map (kbd "M-RET")))))
     ;;
     ;; If in the minibuffer and reading a non-menu Hyperbole argument
