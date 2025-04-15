@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    15-Mar-25 at 22:39:37
-;; Last-Mod:     15-Apr-25 at 01:03:12 by Bob Weiner
+;; Last-Mod:     15-Apr-25 at 13:13:21 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -34,16 +34,14 @@
     (should (equal (hkey-actions)
                    (cons '(smart-dired-sidebar) '(smart-dired-sidebar)))))
 
-  ;; !! FIXME: In CI/CD tests, the hkey-alist smart-prog-at-tag-p is
-  ;; triggering instead of the vertico clause.  Works interactively
-  ;; but maybe needs more context specification.  Disable for now.
   ;; Vertico
-  ;; (let ((ivy-mode nil)
-  ;;       (vertico-mode t))
-  ;;   (mocklet ((vertico--command-p => t))
-  ;;     (should (equal (hkey-actions)
-  ;; 		     (cons '(funcall (lookup-key vertico-map (kbd "M-RET")))
-  ;; 			   '(funcall (lookup-key vertico-map (kbd "M-RET"))))))))
+  (defvar vertico-mode)
+  (let ((ivy-mode nil)
+        (vertico-mode t))
+    (mocklet ((vertico--command-p => t))
+      (should (equal (hkey-actions)
+		     (cons '(funcall (lookup-key vertico-map (kbd "M-RET")))
+			   '(funcall (lookup-key vertico-map (kbd "M-RET"))))))))
   )
 
 (provide 'hui-mouse-tests)
