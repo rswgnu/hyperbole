@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:      2-Feb-25 at 12:40:26 by Bob Weiner
+;; Last-Mod:     14-Apr-25 at 23:27:50 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1643,7 +1643,8 @@ completion of all labeled buttons within the current buffer."
 	     (ibut:to-text (hattr:get but 'lbl-key)))
 	   (setq text-start (point-marker))
 	   (hui:but-flash)
-	   (prog1 (apply hrule:action operation `(',but))
+	   (unwind-protect
+	       (apply hrule:action operation `(',but))
 	     ;; Restore point as it was prior to `text-start' move
 	     ;; if the action switched buffers or did not move point
 	     ;; within the current buffer.
