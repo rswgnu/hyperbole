@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     12-Apr-25 at 15:47:32 by Bob Weiner
+;; Last-Mod:     14-Apr-25 at 22:57:56 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -996,14 +996,21 @@ frame instead."
   "Return the cons of the Action and Assist Key actions at point.
 Useful in testing Smart Key contexts."
   (let ((hkey-forms hkey-alist)
+	(pred-point (point-marker))
 	pred-value hkey-actions hkey-form pred)
-    (while (and (null pred-value) (setq hkey-form (car hkey-forms)))
-      (if (setq hkey-actions (cdr hkey-form)
-	        pred (car hkey-form)
-		pred-value (hypb:eval-debug pred))
-          nil
-	(setq hkey-forms (cdr hkey-forms))))
-    hkey-actions))
+    (unwind-protect
+	(progn
+	  (while (and (null pred-value) (setq hkey-form (car hkey-forms)))
+	    (setq hkey-actions (cdr hkey-form)
+	          pred (car hkey-form)
+		  pred-value (hypb:eval-debug pred))
+	    (unless (equal (point-marker) pred-point)
+	      (hypb:error "(Hyperbole): predicate %s improperly moved point from %s to %s"
+			  pred (point) pred-point))
+	    (unless pred-value
+	      (setq hkey-forms (cdr hkey-forms))))
+	  hkey-actions)
+      (set-marker pred-point nil))))
 
 (defun hkey-debug (pred pred-value hkey-action)
   "Display a message with the context and values from Smart Key activation."
@@ -1044,25 +1051,30 @@ predicate is found."
 	(assist-flag assisting)
 	(pred-point (point-marker))
 	pred-value hkey-action hkey-form pred)
-    (while (and (null pred-value) (setq hkey-form (car hkey-forms)))
-      (if (setq hkey-action (if assisting (cddr hkey-form) (cadr hkey-form))
-		pred (car hkey-form)
-		pred-value (hypb:eval-debug pred))
-	  (progn
+    (unwind-protect
+	(progn
+	  (while (and (null pred-value) (setq hkey-form (car hkey-forms)))
+	    (setq hkey-action (if assisting (cddr hkey-form) (cadr hkey-form))
+		  pred (car hkey-form)
+		  pred-value (hypb:eval-debug pred))
 	    ;; Any Smart Key predicate should leave point unchanged.
 	    ;; Trigger an error if not.
 	    (unless (equal (point-marker) pred-point)
-	      (hypb:error "(Hyperbole): `%s' predicate failed to restore point to %s" pred pred-point))
-	    (set-marker pred-point nil)
-	    ;; Conditionally debug after Smart Key release and evaluation
-	    ;; of matching predicate but before hkey-action is executed.
-	    (when hkey-debug
-	      (hkey-debug pred pred-value hkey-action))
-	    (if hkey-debug
-		(hypb:eval-debug hkey-action)
-	      (eval hkey-action)))
-	(setq hkey-forms (cdr hkey-forms))))
-    pred-value))
+	      (hypb:error "(Hyperbole): predicate %s improperly moved point from %s to %s"
+			  pred (point) pred-point))
+	    (if pred-value
+		;; Found the ibtype for the current context
+		(progn
+		  ;; Conditionally debug after Smart Key release and evaluation
+		  ;; of matching predicate but before hkey-action is executed.
+		  (when hkey-debug
+		    (hkey-debug pred pred-value hkey-action))
+		  (if hkey-debug
+		      (hypb:eval-debug hkey-action)
+		    (eval hkey-action)))
+	      (setq hkey-forms (cdr hkey-forms))))
+	  pred-value)
+      (set-marker pred-point nil))))
 
 (defun hkey-help (&optional assisting)
   "Display help for the Action Key command in current context.
@@ -1077,11 +1089,19 @@ documentation is found."
 	 (hkey-forms (if mouse-flag hmouse-alist hkey-alist))
 	 (hrule:action #'actype:identity)
 	 (assist-flag assisting)
-	 hkey-form pred-value call calls cmd-sym doc)
-    (while (and (null pred-value) (setq hkey-form (car hkey-forms)))
-      (or (setq pred-value (hypb:eval-debug (car hkey-form)))
-	  (setq hkey-forms (cdr hkey-forms))))
-    (if pred-value
+	 (pred-point (point-marker))
+	 hkey-form pred pred-value call calls cmd-sym doc)
+      (unwind-protect
+	  (while (and (null pred-value) (setq hkey-form (car hkey-forms)))
+	    (or (setq pred (car hkey-form)
+		      pred-value (hypb:eval-debug pred))
+		(setq hkey-forms (cdr hkey-forms)))
+	    ;; Any Smart Key predicate should leave point unchanged.
+	    ;; Trigger an error if not.
+	    (unless (equal (point-marker) pred-point)
+	      (hypb:error "(Hyperbole): `%s' predicate left point at %s and failed to restore it to %s" pred (point) pred-point)))
+	(set-marker pred-point nil))
+      (if pred-value
 	(setq call (if assisting (cdr (cdr hkey-form))
 		     (cadr hkey-form))
 	      cmd-sym (if (eq (car call) #'funcall)

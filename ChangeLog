@@ -1,3 +1,19 @@
+2025-04-14  Bob Weiner  <rsw@gnu.org>
+
+* test/hui-mouse-tests.el (hui-mouse-tests--hkey-alist): Update with new
+    vertico hkey-actions.
+
+* hui.el (hui:hbut-operate): Add an unwind-protect to code that restores
+    point in cases where calling the `operation' triggers an error.  Fixes
+    improper point movement in hywiki-display-page with a #section ref
+    where the section is not found and an error is raised.
+
+* hbut.el (ibut:create):
+  hmouse-drv.el (hkey-execute, hkey-actions, hkey-help): Change so point
+    moved error is thrown for any ibtype predicate tested, not just the
+    one selected; this will simplify tracking down bad ibtypes.  Also
+    ensure pred-point marker is always set to nil after use.
+
 2025-04-13  Bob Weiner  <rsw@gnu.org>
 
 * test/hsys-org-tests.el (hsys-org--meta-return-on-end-of-line): Add
