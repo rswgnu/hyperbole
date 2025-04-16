@@ -537,10 +537,9 @@ a non-Org buffer type."
 	    (save-match-data
 	      ;; If this Org link matches a potential HyWiki word, ignore it.
 	      (when (not (and (fboundp 'hywiki-word-at) (hywiki-word-at)))
-                (let ((label-start-end (ibut:label-p t "[" "]" t)))
-		  (if label-start-end
-		      (cons (nth 1 label-start-end) (nth 2 label-start-end))
-		    t))))))))))
+		(if (setq label-start-end (ibut:label-p t "[" "]" t))
+		    (cons (nth 1 label-start-end) (nth 2 label-start-end))
+		  t)))))))))
 
 ;; Assume caller has already checked that the current buffer is in org-mode.
 (defun hsys-org-heading-at-p (&optional _)
