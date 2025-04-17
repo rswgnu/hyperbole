@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:      2-Mar-25 at 18:11:45 by Bob Weiner
+;; Last-Mod:     14-Apr-25 at 15:51:27 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -27,6 +27,7 @@
 ;;; ************************************************************************
 
 (declare-function smart-emacs-lisp-mode-p "hmouse-tag")
+(declare-function hpath:at-p "hpath")
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -49,7 +50,7 @@
   (car (hsys-xref-definitions identifier)))
 
 (defun hsys-xref-identifier-at-point ()
-  ;; Return nil if xref returns a pathname as an identifier
+  "Return nil if xref returns a pathname as an identifier."
   (unless (hpath:at-p nil t)
     (xref-backend-identifier-at-point (xref-find-backend))))
 

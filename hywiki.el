@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Acpr-24 at 22:41:13
-;; Last-Mod:     13-Apr-25 at 02:03:01 by Bob Weiner
+;; Last-Mod:     14-Apr-25 at 15:54:03 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2833,7 +2833,7 @@ Word may be of form:
  2. If WORD is the symbol, :range, and there is a HyWikiWord at point
     with an existing referent, return the tuple of values: (word
     word-start word-end) instead of the word; otherwise, return the tuple
-    '(nil nil nil).
+    \='(nil nil nil).
 
 When using the word at point, a call to `hywiki-active-in-current-buffer-p'
 at point must return non-nil or this function will return nil."

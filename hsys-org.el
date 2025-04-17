@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     13-Apr-25 at 04:30:30 by Bob Weiner
+;; Last-Mod:     14-Apr-25 at 15:47:21 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -509,7 +509,6 @@ a non-Org buffer type."
     (if (derived-mode-p 'org-mode)
 	(let* ((org-plist (hsys-org-thing-at-p))
 	       (type (plist-get org-plist :type))
-	       (path (plist-get org-plist :path))
 	       label-start-end)
 	  (when (eq type 'link)
 	    (save-match-data
@@ -538,10 +537,9 @@ a non-Org buffer type."
 	    (save-match-data
 	      ;; If this Org link matches a potential HyWiki word, ignore it.
 	      (when (not (and (fboundp 'hywiki-word-at) (hywiki-word-at)))
-                (let ((label-start-end (ibut:label-p t "[" "]" t)))
-		  (if label-start-end
-		      (cons (nth 1 label-start-end) (nth 2 label-start-end))
-		    t))))))))))
+		(if (setq label-start-end (ibut:label-p t "[" "]" t))
+		    (cons (nth 1 label-start-end) (nth 2 label-start-end))
+		  t)))))))))
 
 ;; Assume caller has already checked that the current buffer is in org-mode.
 (defun hsys-org-heading-at-p (&optional _)
