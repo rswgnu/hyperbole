@@ -1,3 +1,10 @@
+2025-04-17  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el
+    (hywiki-tests--wikiword-identified-in-strings-in-emacs-lisp-mode): Add
+    test for WikiWords in strings in emacs-lisp-mode. Test is behind
+    failure flag.
+
 2025-04-15  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--command)
