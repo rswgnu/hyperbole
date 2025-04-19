@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     12-Apr-25 at 16:58:59 by Bob Weiner
+;; Last-Mod:     18-Apr-25 at 21:38:23 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -663,18 +663,18 @@ This will this install the Emacs helm package when needed."
 	       (error "(hypb:hkey-help-file): Non-existent file: \"%s\""
 		      help-file))))))
 
-(defun hypb:in-string-p ()
-  "Return non-nil iff point is in the first line of a double quoted string."
-  (if (derived-mode-p 'change-log-mode)
-      ;; limited to single line strings; count must be odd to be
-      ;; inside a string
-      (when (cl-oddp (count-matches "\"" (line-beginning-position) (point)))
-	(save-excursion (search-backward "\"" (line-beginning-position) t)))
-    (syntax-ppss-flush-cache (line-beginning-position))
-    (let ((sexp-state-list (syntax-ppss)))
-      (when (eq ?\" (nth 3 sexp-state-list))   ; in a double quoted string
-	;; return start of str position (opening quote)
-	(nth 8 sexp-state-list)))))
+(defun hypb:in-string-p (&optional max-lines)
+  "Return t iff point is within a double quoted string."
+  (save-restriction
+    (when (integerp max-lines)
+      (narrow-to-region (line-beginning-position)
+			(line-end-position max-lines)))
+    ;; Don't use `syntax-ppss' here as it fails to ignore backquoted
+    ;; double quote characters in strings and doesn't work in
+    ;; `change-log-mode' due to its syntax-table.
+    (and (cl-oddp (count-matches "\\(^\\|[^\\]\\)\"" (point-min) (point)))
+	 (save-excursion (re-search-forward "\\(^\\|[^\\]\\)\"" nil t))
+	 t)))
 
 (defun hypb:indirect-function (obj)
   "Return the function at the end of OBJ's function chain.
