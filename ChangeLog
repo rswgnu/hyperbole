@@ -8,6 +8,17 @@
 * hypb.el (hypb:in-string-p): Fix by removing `syntax-ppss' calls and using
     regexp searches for double quoted delimiters instead.
 
+2025-04-17  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el
+    (hywiki-tests--wikiword-identified-in-strings-in-emacs-lisp-mode): Add
+    test for WikiWords in strings in emacs-lisp-mode. Test is behind
+    failure flag.
+
+* man/im/*.eps: Remove embedded postscript files.
+* HY-TALK/improve-performance.png: Not used.
+* man/im/wgrid4x3.png: Not used.
+
 2025-04-15  Bob Weiner  <rsw@gnu.org>
 
 * hypb.el (hypb:in-string-p): Add optional 'max-lines' arg to limit the
