@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Acpr-24 at 22:41:13
-;; Last-Mod:     14-Apr-25 at 15:54:03 by Mats Lidell
+;; Last-Mod:     18-Apr-25 at 21:59:30 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -3045,22 +3045,23 @@ or this will return nil."
 			     ;; Move to start of wikiword reference
 			     (skip-chars-backward "-_*#:[:alnum:]" bol)
 			     (skip-syntax-backward "-" bol))
-			   (when (and (or (bolp)
-					  (string-match (regexp-quote
-							 (char-to-string (char-before)))
-							"\[\(\{\<\""))
-				      (progn
-					(skip-chars-forward " \t")
-					(hywiki-maybe-at-wikiword-beginning))
-				      (looking-at (concat
-						   hywiki-word-regexp
-						   "\\(#[^][#()<>{}\"\n\r\f]+\\)?"
-						   hywiki-word-line-and-column-numbers-regexp "?"))
-				      ;; Can't be followed by a # character
-				      (/= (or (char-after (match-end 0)) 0)
-					  ?#)
-				      (progn (goto-char (match-end 0))
-					     (skip-syntax-forward "-")))
+			   (when (and
+				  ;; (or (bolp)
+				  ;;     (string-match (regexp-quote
+				  ;; 		     (char-to-string (char-before)))
+				  ;; 		    "\[\(\{\<\""))
+				  (progn
+				    (skip-chars-forward " \t")
+				    (hywiki-maybe-at-wikiword-beginning))
+				  (looking-at (concat
+					       hywiki-word-regexp
+					       "\\(#[^][#()<>{}\"\n\r\f]+\\)?"
+					       hywiki-word-line-and-column-numbers-regexp "?"))
+				  ;; Can't be followed by a # character
+				  (/= (or (char-after (match-end 0)) 0)
+				      ?#)
+				  (progn (goto-char (match-end 0))
+					 (skip-syntax-forward "-")))
 			     (setq start (match-beginning 0)
 				   end   (match-end 0)
 				   ;; No following char

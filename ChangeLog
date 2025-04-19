@@ -1,3 +1,13 @@
+2025-04-18  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-word-at): Remove unneeded clause that checks for opening
+    delimiters a second time within a delimited set of WikiWords.  This fixes
+    an error of returning the prior WikiWord within a delimited group due to
+    moving back past leading whitespace.
+
+* hypb.el (hypb:in-string-p): Fix by removing `syntax-ppss' calls and using
+    regexp searches for double quoted delimiters instead.
+
 2025-04-17  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el
@@ -6,10 +16,13 @@
     failure flag.
 
 * man/im/*.eps: Remove embedded postscript files.
-
 * HY-TALK/improve-performance.png: Not used.
-
 * man/im/wgrid4x3.png: Not used.
+
+2025-04-15  Bob Weiner  <rsw@gnu.org>
+
+* hypb.el (hypb:in-string-p): Add optional 'max-lines' arg to limit the
+   search to that many full buffer lines starting with the line beginning
 
 2025-04-15  Mats Lidell  <matsl@gnu.org>
 
