@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:      2-Feb-25 at 22:19:25 by Mats Lidell
+;; Last-Mod:     20-Apr-25 at 15:12:11 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -871,12 +871,12 @@ With point on label suggest that ibut for rename."
           (find-file filea)
           (hui:ibut-link-directly (get-buffer-window)
                                   (get-buffer-window (get-file-buffer fileb)))
-          (should (string= (buffer-string) (concat "\"" (file-name-nondirectory fileb) "#header:L1:C1\"")))
+          (should (string= (buffer-string) (concat "\"" (file-name-nondirectory fileb) "#header\"")))
           (goto-char (point-min))
           (search-forward "#")
           (action-key)
           (should (string= (buffer-name) (file-name-nondirectory fileb)))
-          (should (= (point) 2)))
+          (should (= (point) 1)))
       (hy-delete-file-and-buffer filea)
       (hy-delete-file-and-buffer fileb))))
 
@@ -1129,13 +1129,13 @@ With point on label suggest that ibut for rename."
     (mark-word)
     (hy-test-helpers:ensure-link-possible-type 'link-to-string-match))
 
-  ;; Outline Heading          link-to-string-match
+  ;; Outline Heading          link-to-file
   (let ((file (make-temp-file "hypb" nil ".otl" "* heading\nbody\n")))
     (unwind-protect
         (progn
           (find-file file)
           (goto-char 1)
-          (hy-test-helpers:ensure-link-possible-type 'link-to-string-match))
+          (hy-test-helpers:ensure-link-possible-type 'link-to-file))
       (hy-delete-file-and-buffer file)))
 
   ;; Buffer attached to File  link-to-file

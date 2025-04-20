@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     29-Jan-25 at 18:57:50 by Mats Lidell
+;; Last-Mod:     20-Apr-25 at 01:05:24 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1465,7 +1465,8 @@ doc string for `insert-for-yank-1', which see."
 
 (defun kotl-mode:backward-cell (arg)
   "Move to prefix ARGth prior visible cell (same level) within current view.
-Return number of cells left to move."
+Return number of cells left to move.  Error if called interactively and
+cannot move to the desired cell."
   (interactive "p")
   (kotl-mode:maintain-region-highlight)
   (if (< arg 0)
@@ -1626,7 +1627,8 @@ Leave point at the start of the cell."
     (kotl-mode:beginning-of-cell)))
 
 (defun kotl-mode:down-level (arg)
-  "Move down prefix ARG levels lower within current tree."
+  "Move down prefix ARG levels lower within current tree.
+Error if called interactively and cannot move to the desired cell."
   (interactive "p")
   (kotl-mode:maintain-region-highlight)
   (if (< arg 0)
@@ -1638,12 +1640,14 @@ Leave point at the start of the cell."
 	(unless child
 	  (setq child t))
 	(setq arg (1- arg)))
-      ;; Signal an error if couldn't move down at least 1 child level.
+      ;; Signal an error if called interactively and couldn't move
+      ;; down at least 1 child level.
       (or child
 	  (progn
 	    (goto-char (mark t))
 	    (pop-mark)
-	    (error "(kotl-mode:down-level): No child level to which to move"))))))
+	    (when (called-interactively-p 'interactive)
+	      (error "(kotl-mode:down-level): No child level to which to move")))))))
 
 (defun kotl-mode:end-of-buffer ()
   "Move point to end of buffer and return point."
@@ -1729,7 +1733,8 @@ already within the first sibling cell."
 
 (defun kotl-mode:forward-cell (arg)
   "Move to prefix ARGth following cell (same level) within current view.
-Return number of cells left to move."
+Return number of cells left to move.  Error if called interactively and
+cannot move to the desired cell."
   (interactive "p")
   (kotl-mode:maintain-region-highlight)
   (if (< arg 0)
@@ -1964,7 +1969,8 @@ The paragraph marked is the one that contains point or follows point."
   (kotl-mode:beginning-of-buffer))
 
 (defun kotl-mode:next-cell (arg)
-  "Move to prefix ARGth next cell (any level) within current view."
+  "Move to prefix ARGth next cell (any level) within current view.
+Error if called interactively and cannot move to the desired cell."
   (interactive "p")
   (kotl-mode:maintain-region-highlight)
   (if (< arg 0)
@@ -1973,7 +1979,7 @@ The paragraph marked is the one that contains point or follows point."
 	  (lbl-sep-len (kview:label-separator-length kotl-kview)))
       (while (and (> arg 0) (setq next (kcell-view:next t lbl-sep-len)))
 	(setq arg (1- arg)))
-      (if next
+      (if (or next (not (called-interactively-p 'interactive)))
 	  arg
 	(error "(kotl-mode:next-cell): Last cell")))))
 
@@ -2044,7 +2050,8 @@ non-nil iff there is a next tree within the koutline."
   (point))
 
 (defun kotl-mode:previous-cell (arg)
-  "Move to prefix ARGth previous cell (any level) within current view."
+  "Move to prefix ARGth previous cell (any level) within current view.
+Error if called interactively and cannot move to the desired cell."
   (interactive "p")
   (kotl-mode:maintain-region-highlight)
   (if (< arg 0)
@@ -2060,7 +2067,7 @@ non-nil iff there is a next tree within the koutline."
       (while (and (> arg 0) (setq previous
 				  (kcell-view:previous t lbl-sep-len)))
 	(setq arg (1- arg)))
-      (if previous
+      (if (or previous (not (called-interactively-p 'interactive)))
 	  arg
 	(error "(kotl-mode:previous-cell): First cell")))))
 
@@ -2095,7 +2102,8 @@ If at tail cell already, do nothing and return nil."
     moved))
 
 (defun kotl-mode:up-level (arg)
-  "Move up prefix ARG levels higher in current outline view."
+  "Move up prefix ARG levels higher in current outline view.
+Error if called interactively and cannot move to the desired cell."
   (interactive "p")
   (kotl-mode:maintain-region-highlight)
   (if (< arg 0)
@@ -2108,13 +2116,14 @@ If at tail cell already, do nothing and return nil."
       (while (and (> arg 0) (setq result (kcell-view:parent t lbl-sep-len)))
 	(or parent (setq parent result))
 	(setq arg (if (eq result 0) 0 (1- arg))))
-      ;; Signal an error if couldn't move up at least 1 parent level.
+      ;; Signal an error if called interactively and couldn't move up
+      ;; at least 1 parent level.
       (or (and parent (not (eq parent 0)))
 	  (progn
 	    (goto-char (mark t))
 	    (pop-mark)
-	    (error "(kotl-mode:up-level): No parent level to which to move"))))))
-
+	(when (called-interactively-p 'interactive)
+	  (error "(kotl-mode:up-level): No parent level to which to move")))))))
 
 ;;; ------------------------------------------------------------------------
 ;;; Predicates
@@ -2287,8 +2296,10 @@ If assist-key is pressed:
   (interactive "*")
   (kotl-mode:add-cell '(4)))
 
-(defun kotl-mode:add-parent ()
-  "Add a new cell to current kview as sibling of current cell's parent."
+(defun kotl-mode:add-after-parent ()
+  "Add a new cell to current kview after current cell's parent.
+If parent is the hidden root cell 0, then add as the first cell of the
+outline.  Otherwise, add it as the next sibling of the parent cell."
   (interactive "*")
   (kotl-mode:add-cell -1))
 
@@ -2313,32 +2324,39 @@ Return last newly added cell."
   (let ((klabel (kcell-view:label))
 	(lbl-sep-len (kview:label-separator-length kotl-kview))
 	cell-level new-cell sibling-p child-p start parent
-	cells-to-add)
+	cells-to-add parent-level)
     (setq cell-level (kcell-view:level nil lbl-sep-len)
 	  child-p (equal relative-level '(4))
 	  sibling-p (and (not child-p)
 			 (cond ((not relative-level) 1)
 			       ((>= (prefix-numeric-value relative-level) 0)
 				(prefix-numeric-value relative-level))))
+	  parent-level (1- cell-level)
 	  cells-to-add (or sibling-p 1))
     (if child-p
 	(setq cell-level (1+ cell-level))
       (unless sibling-p
-	;; Add as following sibling of current cell's parent.
-	;; Move to parent.
-	(setq cell-level (1- cell-level)
+	(setq cell-level (if (zerop parent-level) cell-level (1- cell-level))
 	      start (point)
 	      parent (kcell-view:parent nil lbl-sep-len))
-	(unless (eq parent t)
+	(unless (memq parent '(0 t))
 	  (goto-char start)
 	  (error
 	   "(kotl-mode:add-cell): No higher level at which to add cell")))
-      ;; Skip from point past any children to next cell.
-      (when (kotl-mode:next-tree)
-	;; If found a new tree, then move back to prior cell so can add
-	;; new cell after it.
-	(kcell-view:previous nil lbl-sep-len)))
-    (goto-char (kcell-view:end))
+      (if (and (eq parent 0) (eq cell-level 1))
+	  ;; Add as first child of hidden root cell 0, i.e. as the first
+	  ;; cell in the outline
+	  (goto-char (point-min))
+	;; Add as following sibling of current cell's parent.
+	;; Move to parent.
+	;; Skip from point past any children to next cell.
+	(when (kotl-mode:next-tree)
+	  ;; If found a new tree, then move back to prior cell so can add
+	  ;; new cell after it.
+	  (kcell-view:previous nil lbl-sep-len))))
+
+    (unless (eq parent 0)
+      (goto-char (kcell-view:end)))
     ;;
     ;; Insert new cells into view.
     (if (= cells-to-add 1)
@@ -2374,6 +2392,16 @@ Return last newly added cell."
     ;; Leave point within last newly added cell and return this cell.
     (kotl-mode:beginning-of-cell)
     new-cell))
+
+(defun kotl-mode:add-prior-cell ()
+  "Add a new cell to current kview as a prior sibling of the current cell."
+  (interactive "*")
+  (cond ((kotl-mode:backward-cell 1)
+	 (kotl-mode:add-cell 1))
+	((kotl-mode:up-level 1)
+	 (kotl-mode:add-cell '(4)))
+	(t
+	 (kotl-mode:add-after-parent))))
 
 (defun kotl-mode:demote-tree (arg)
   "Move current tree a maximum of prefix ARG levels lower in current view.
@@ -3728,7 +3756,7 @@ Leave point at end of line now residing at START."
 	(define-key kotl-mode-map "\C-c\C-n"  'kotl-mode:next-cell)
 	(define-key kotl-mode-map "\C-c\C-o"  'kotl-mode:overview)
 	(define-key kotl-mode-map "\C-c\C-p"  'kotl-mode:previous-cell)
-	(define-key kotl-mode-map "\C-cp"     'kotl-mode:add-parent)
+	(define-key kotl-mode-map "\C-cp"     'kotl-mode:add-after-parent)
 	(if (memq (global-key-binding "\M-q") '(fill-paragraph
 						fill-paragraph-or-region))
 	    (progn

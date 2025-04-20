@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:     21-Mar-24 at 10:53:08 by Bob Weiner
+;; Last-Mod:     20-Apr-25 at 00:28:41 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -493,7 +493,7 @@
           (insert "1")
           (kotl-mode:add-child)
           (insert "1a")
-          (kotl-mode:add-parent)
+          (kotl-mode:add-after-parent)
           (insert "2")
 
           (kotl-mode:previous-cell 1)
@@ -515,7 +515,7 @@
           (insert "1")
           (kotl-mode:add-child)
           (insert "1a")
-          (kotl-mode:add-parent)
+          (kotl-mode:add-after-parent)
           (insert "2")
 
           (kotl-mode:previous-cell 1)
@@ -977,7 +977,7 @@ optional DEPTH the number of sub cells are created to that depth."
     (make-kotl-mode-tests--func :func #'klink:create :args '("1a"))
     (make-kotl-mode-tests--func :func #'kotl-mode:add-cell)
     (make-kotl-mode-tests--func :func #'kotl-mode:add-child)
-    (make-kotl-mode-tests--func :func #'kotl-mode:add-parent)
+    (make-kotl-mode-tests--func :func #'kotl-mode:add-after-parent)
     (make-kotl-mode-tests--func :func #'kotl-mode:append-cell :args '("1a" "1a1"))
     (make-kotl-mode-tests--func :func #'kotl-mode:back-to-indentation)
     (make-kotl-mode-tests--func :func #'kotl-mode:backward-cell :args '(1))

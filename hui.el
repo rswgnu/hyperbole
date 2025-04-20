@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     14-Apr-25 at 23:27:50 by Bob Weiner
+;; Last-Mod:     20-Apr-25 at 15:15:12 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1473,11 +1473,15 @@ Trigger an error if DEFAULT-ACTYPE is invalid."
     (setq default-actype (symbol-name default-actype)
 	  default-actype (actype:def-symbol default-actype)
 	  default-actype (when default-actype (symbol-name default-actype))))
-  (if (or (null default-actype) (stringp default-actype))
+  (if (or (null default-actype)
+	  (and (stringp default-actype)
+	       (commandp (actype:elisp-symbol default-actype))))
       (let ((actype-name
 	     (hargs:read-match (or prompt "Button's action type: ")
 			       (nconc
-				(mapcar #'list (htype:names 'actypes))
+				(mapcar (lambda (sym)
+					  (list (symbol-name (actype:def-symbol sym))))
+					(seq-filter #'commandp (htype:category 'actypes)))
 				(mapcar #'list (all-completions "" obarray
 								(lambda (sym) (commandp sym t)))))
 			       nil t default-actype 'actype)))
@@ -1917,7 +1921,7 @@ Directory Name           link-to-directory
 File Name                link-to-file
 Koutline Cell            link-to-kcell
 Single-line Region       link-to-string-match
-Outline Heading          link-to-string-match
+Outline Heading          link-to-file
 Buffer attached to File  link-to-file
 EOL in Dired Buffer      link-to-directory (Dired dir)
 Buffer without File      link-to-buffer-tmp"
@@ -2026,13 +2030,14 @@ Buffer without File      link-to-buffer-tmp"
 						  (when (not (string-empty-p heading))
 						    (save-excursion
 						      (end-of-line)
-						      (while (search-backward heading nil t)
+						      (while (re-search-backward (format hpath:outline-section-pattern (regexp-quote heading))
+										 nil t)
 							(setq instance-num (1+ instance-num))))
-						    (list 'link-to-string-match
-							  (if (zerop (current-column))
-							      heading
-							    (format "%s:L1:C%d" heading (current-column)))
-							  instance-num (hypb:buffer-file-name))))))
+						    (list 'link-to-file
+							  (format "%s#%s%s"
+								  (hypb:buffer-file-name)
+								  heading
+								  (if (> instance-num 1) (format ":I%d" instance-num) "")))))))
 					  ((hypb:buffer-file-name)
 					   (list 'link-to-file (hypb:buffer-file-name) (point)))
 					  ((derived-mode-p 'dired-mode)

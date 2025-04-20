@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     16-Mar-25 at 10:23:12 by Bob Weiner
+@c Last-Mod:     20-Apr-25 at 15:14:53 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,8 +30,8 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED March, 2025
-@set UPDATED-MONTH March 2025
+@set UPDATED April, 2025
+@set UPDATED-MONTH April 2025
 @set EDITION 9.0.2pre
 @set VERSION 9.0.2pre
 
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed March 16, 2025.
+Printed April 20, 2025.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -213,7 +213,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.2pre
-March 16, 2025
+April 20, 2025
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -3836,7 +3836,7 @@ Mail Reader Message      link-to-mail
 Directory Name           link-to-directory
 Filename                 link-to-file
 Koutline Cell            link-to-kcell
-Outline Heading          link-to-string-match
+Outline Heading          link-to-file
 Buffer attached to File  link-to-file
 Buffer without File      link-to-buffer-tmp
 @end example
@@ -9498,6 +9498,12 @@ REFERENCE should be a cell-ref or a string containing "filename, cell-ref".
 See the documentation for @code{(kcell:ref-to-id)} for valid cell-ref
 formats.
 
+@findex kotl-mode:add-after-parent
+@item kotl-mode:add-after-parent  @bkbd{C-c p}
+Add a new cell to current kview after current cell's parent.
+If parent is the hidden root cell 0, then add as the first cell of the
+outline.  Otherwise, add it as the next sibling of the parent cell.
+
 @findex kotl-mode:add-cell
 @item kotl-mode:add-cell  @bkbd{C-j}
 Add a cell following current cell at optional RELATIVE-LEVEL with CONTENTS string.
@@ -9512,9 +9518,9 @@ Return last newly added cell.
 @item kotl-mode:add-child  @bkbd{C-c a}
 Add a new cell to current kview as first child of current cell.
 
-@findex kotl-mode:add-parent
-@item kotl-mode:add-parent  @bkbd{C-c p}
-Add a new cell to current kview as sibling of current cell's parent.
+@findex kotl-mode:add-prior-cell
+@item kotl-mode:add-prior-cell
+Add a new cell to current kview as a prior sibling of the current cell.
 
 @findex kotl-mode:append-cell
 @item kotl-mode:append-cell  @bkbd{C-c +}
