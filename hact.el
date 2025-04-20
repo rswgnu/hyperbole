@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     22-Dec-24 at 16:03:11 by Bob Weiner
+;; Last-Mod:     19-Apr-25 at 19:03:44 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -218,7 +218,7 @@ Assume PROPERTY is a valid set.  Use `eq' for comparison."
   (and htype-sym (hypb:indirect-function htype-sym)))
 
 (defun    htype:category (type-category)
-  "Return list of symbols in Hyperbole TYPE-CATEGORY in priority order.
+  "Return list of Elisp symbols in Hyperbole TYPE-CATEGORY in priority order.
 Symbols contain category component.
 TYPE-CATEGORY should be `actypes', `ibtypes' or nil for all."
   (let ((def-symbols (symset:get type-category 'symbols))
@@ -512,7 +512,11 @@ The type uses PARAMS to perform DEFAULT-ACTION (list of the rest of the
 arguments).  A call to this function is syntactically the same as for
 `defun', but a doc string is required.
 Return symbol created when successful, else nil."
-  (declare (doc-string 3))
+  (declare (indent defun)
+           (doc-string 3)
+           (debug (&define name lambda-list
+                           [&optional stringp] ; Doc string, if present.
+                           def-body)))
   `(progn
      (symtable:add ',type symtable:actypes)
      (htype:create ,type actypes ,doc ,params ,default-action nil)))

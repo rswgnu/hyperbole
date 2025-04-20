@@ -1,3 +1,12 @@
+* hibtypes.el (hywiki-existing-word):
+  hywiki.el (hywiki-word): Fix so if point is on an existing pathname that
+    is also a WikiWord, it jumps to the pathname rather than displaying the
+    WikiWord referent.  Also add (require 'hibtypes) to support this.
+
+* hywiki.el (hywiki-referent-exists-p): Remove (hywiki-word-at :range)
+    call since this did not also check for whether a referent exists.  This
+    fixes a bug in 'hywiki-existing-word'.
+
 2025-04-18  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-word-at): Remove unneeded clause that checks for opening
