@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     16-Apr-25 at 10:42:06 by Mats Lidell
+;; Last-Mod:     20-Apr-25 at 15:16:34 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2700,6 +2700,13 @@ Summary of operations based on inputs (name arg from \\='hbut:current attrs):
       ('actypes::link-to-ebut (progn (insert "<elink:" arg1)
 				     (when arg2 (insert ": " arg2))
 				     (insert ">")))
+      ('actypes::link-to-file
+       ;; arg2 when given is a buffer position
+       (insert "\""
+	       (if arg2
+		   (hpath:file-position-to-line-and-column arg1 arg2)
+		 (hpath:shorten arg1))
+	       "\""))
       ('actypes::link-to-ibut (progn (insert "<ilink:" arg1)
 				     (when arg2 (insert ": " arg2))
 				     (insert ">")))

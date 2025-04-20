@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Mar-94 at 11:22:09
-;; Last-Mod:     25-Nov-24 at 22:11:56 by Mats Lidell
+;; Last-Mod:     20-Apr-25 at 00:28:33 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -43,9 +43,9 @@
       ["Promote"             kotl-mode:promote-tree
        :active t :keys "M-TAB"]
       "----"
+      ["Add-After-Parent"    kotl-mode:add-after-parent     t]
       ["Add-Child"           kotl-mode:add-child            t]
       ["Add-Cell"            kotl-mode:add-cell             t]
-      ["Add-Parent"          kotl-mode:add-parent           t]
       ["Append-Cell"         kotl-mode:append-cell          t]
       ["Split-Cell"          kotl-mode:split-cell           t]
       "----"

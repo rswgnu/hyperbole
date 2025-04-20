@@ -38,9 +38,11 @@
             least two characters long.
 
        3b3. Cell Creation: {C-j} adds a new cell as a sibling following the
-            current cell.  A non-negative prefix argument, {C-u C-j} or {C-c
-            a} adds the cell as a child of the current cell.  {C-c p} adds the
-            cell as the sibling of the current cell's parent.
+            current cell.  {C-u C-j} or {C-c a} adds the cell as a child of
+            the current cell.  Any other positive prefix arg to {C-j} adds
+            that many following cells at the same level as the current one.
+            {C-c p} adds the cell as the sibling of the current cell's
+            parent.
 
        3b4. Cell and Tree Deletion: {C-c C-k} kills the current cell and its
             entire subtree.  {C-c k} kills the contents of a cell from point

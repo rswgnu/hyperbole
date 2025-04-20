@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     16-Jun-24 at 18:38:13 by Mats Lidell
+;; Last-Mod:     20-Apr-25 at 14:55:17 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -811,17 +811,22 @@ enough files with matching mode loaded."
     (hy-test-helpers:kill-buffer "DEMO")))
 
 (ert-deftest fast-demo-display-kotl-starting-from-cell ()
-  "Verify a kotl file can be displayed from cell ref."
-  (unwind-protect
-      (let ((default-directory hyperb:dir))
-        (with-temp-buffer
-          (insert "<kotl/EXAMPLE.kotl#3b10|c2en>")
+  "Verify a kotl file can be displayed properly from a cell ref."
+  (let ((default-directory)
+	(buf))
+    (unwind-protect
+	(with-temp-buffer
+	  (setq default-directory hyperb:dir)
+          (insert (format "<%skotl/EXAMPLE.kotl#3b10|c2en>"
+			  default-directory))
           (goto-char 5)
           (action-key)
-          (should (string= "EXAMPLE.kotl" (buffer-name)))
-          ;; FIXME: Add verification of lines per cell
-          (should (looking-at-p "Cell Transposition:"))))
-    (hy-test-helpers:kill-buffer "EXAMPLE.kotl")))
+	  (setq buf (current-buffer))
+          (should (string-suffix-p "EXAMPLE.kotl" buffer-file-name))
+          (should (looking-at-p "Cell Transposition:"))
+	  ;; Ensure visible cell length is cutoff at 2 lines
+	  (should (= 2 (hypb:string-count-matches "\n" (kcell-view:contents)))))
+      (hy-test-helpers:kill-buffer buf))))
 
 (provide 'demo-tests)
 

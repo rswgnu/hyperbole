@@ -1,3 +1,45 @@
+2025-04-20  Bob Weiner  <rsw@gnu.org>
+
+* test/hui-tests.el (hui--link-possible-types): Change Outline Heading
+    to use 'link-to-file' now.
+                    (hui--ibut-link-directly-to-org-header-second-column):
+    Fix to new handling of outline headings.
+
+* test/demo-tests.el (fast-demo-display-kotl-starting-from-cell): Fix
+    to use Hyperbole source EXAMPLE.kotl rather than per user file
+    which may have been edited.  Also add check of count of visible lines
+    in the current cell.
+
+* kotl/kotl-mode.el (kotl-mode:add-prior-cell): Add to insert a cell
+    prior to the current cell at the same level as the current cell.
+
+* kotl/kmenu.el (kotl-menu-common-body): Change 'Add-Parent' to
+    'Add-After-Parent'.
+
+* kotl/kotl-mode.el (kotl-mode:add-parent): Rename to
+   'kotl-mode:add-after-parent'.
+
+2025-04-19  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode:add-cell): Fix handling of 0 and negative
+   prefix args.  0 on a level 1 cell means add as the first child of the
+   parent root cell, i.e. as the first outline cell.  0 at any lower level
+   means add as the next sibling of the parent cell.
+                    (kotl-mode:down-level, kotl-mode:up-level,
+                     kotl-mode:backward-cell, kotl-mode:forward-cell,
+                     kotl-mode:previous-cell, kotl-mode:next-cell): Trigger
+   error only if called interactively; if not interactive and cannot move
+   to any expected cell, return nil.
+
+* hui.el (hui:actype): Fix to ensure only interactive actypes are returned
+    so when an explict button is created, it can prompt for the parameters
+    associated with the actype (otherwise, it will just get nil).
+         (hui:link-possible-types): Update link to outline heading handler
+    to use 'link-to-file' instead of 'link-to-string-match'.  Ignore the
+    column number of point and for instance number of the #section, count
+    only matches to heading lines, i.e. with 'outline-regexp'.
+  hbut.el (ibut:insert-text): Add support for 'link-to-file'.
+
 * hibtypes.el (hywiki-existing-word):
   hywiki.el (hywiki-word): Fix so if point is on an existing pathname that
     is also a WikiWord, it jumps to the pathname rather than displaying the
