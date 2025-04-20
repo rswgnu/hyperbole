@@ -1460,6 +1460,28 @@ Insert test in the middle of other text."
               (should (search-forward v))
               (should (string= v (hywiki-word-at)))))))))
 
+(ert-deftest hywiki-tests--filename-same-as-wiki-word ()
+  "Regular files should not be WikiWords even when hywiki-mode is active."
+  (hywiki-tests--preserve-hywiki-mode
+    (let* ((hywiki-directory (make-temp-file "hywiki" t))
+           (wiki-page (cdr (hywiki-add-page "DEMO")))
+           (default-directory hyperb:dir))
+      (unwind-protect
+          (with-temp-buffer
+            (insert "\"DEMO\" \"DEMO.org\"\n")
+            (goto-char 2)
+            (should (looking-at-p "DEMO\" "))
+            (hywiki-mode 0)
+            (should (string= "ibtypes::pathname" (hattr:get (ibut:at-p) 'categ)))
+            (hywiki-mode 1)
+            (should (string= "ibtypes::pathname" (hattr:get (ibut:at-p) 'categ)))
+            (goto-char 9)
+            ;; Verify that using the org extension selects the WikiWord.
+            (should (looking-at-p "DEMO\\.org\""))
+            (should (string= "ibtypes::hywiki-existing-word" (hattr:get (ibut:at-p) 'categ))))
+        (hy-delete-file-and-buffer wiki-page)
+        (hy-delete-dir-and-buffer hywiki-directory)))))
+
 (provide 'hywiki-tests)
 
 ;; This file can't be byte-compiled without the `el-mock' package
