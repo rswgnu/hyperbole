@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      2-Mar-25 at 12:05:51 by Bob Weiner
+;; Last-Mod:     19-Apr-25 at 17:51:14 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1710,10 +1710,12 @@ If a boolean function or variable, display its value."
   (cl-destructuring-bind (wikiword start end)
       (hywiki-referent-exists-p :range)
     (when wikiword
-      (if (and start end)
-	  (ibut:label-set wikiword start end)
-	(ibut:label-set wikiword))
-      (hact 'hywiki-find-referent wikiword))))
+      (unless (or (ibtypes::pathname-line-and-column)
+		  (ibtypes::pathname))
+	(if (and start end)
+	    (ibut:label-set wikiword start end)
+	  (ibut:label-set wikiword))
+	(hact 'hywiki-find-referent wikiword)))))
 
 ;;; ========================================================================
 ;;; Inserts completion into minibuffer or other window.

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Acpr-24 at 22:41:13
-;; Last-Mod:     18-Apr-25 at 21:59:30 by Bob Weiner
+;; Last-Mod:     19-Apr-25 at 22:52:58 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -140,6 +140,8 @@
 (require 'hargs)
 (require 'hasht)
 (require 'hbut)       ;; For `hbut:syntax-table'
+;; (unless (featurep 'hibtypes)
+;;   (require 'hibtypes))   ;; For `pathname' and `pathname-line-and-column'
 (require 'hpath)
 (require 'hproperty)
 (require 'hsys-consult)
@@ -777,8 +779,10 @@ Existing HyWikiWords are handled by the implicit button type
 	 (start    (nth 1 wikiword-start-end))
 	 (end      (nth 2 wikiword-start-end)))
     (when wikiword
-      (ibut:label-set wikiword start end)
-      (hact 'hywiki-word-create-and-display wikiword))))
+      (unless (or (ibtypes::pathname-line-and-column)
+		  (ibtypes::pathname))
+	(ibut:label-set wikiword start end)
+	(hact 'hywiki-word-create-and-display wikiword)))))
 
 (defun hywiki-display-referent-type (wikiword referent)
   "Display WIKIWORD REFERENT, a cons of (<referent-type> . <referent-value>).
@@ -2223,8 +2227,8 @@ disabled.  Highlight/dehighlight HyWiki page buffers whenever the
 value of `hywiki-word-highlight-flag' is changed."
   (interactive (when (use-region-p) (list (region-beginning) (region-end))))
   ;; Avoid doing many lets for efficiency.
-  ;; Highlight HyWiki words in buffers where `hywiki-mode' is enabled
-  ;; or HyWiki pages below `hywiki-directory'.
+  ;; Highlight HyWiki words throughout buffers where `hywiki-mode' is enabled
+  ;; or HyWiki pages below `hywiki-directory' whenever displayed in a window.
   (if (hywiki-active-in-current-buffer-p)
       (unless (and (or (and (null region-start) (null region-end))
 		       (and (markerp region-start) (markerp region-end)
@@ -2852,8 +2856,7 @@ at point must return non-nil or this function will return nil."
 	  ;; first above
 	  word  (nth 0 word)))
   (if (eq hywiki--word-only :range)
-      (or (hywiki-word-at :range)
-	  (list word start end))
+      (list word start end)
     word))
 
 (defun hywiki-section-to-headline-reference ()
@@ -3632,11 +3635,11 @@ matching DATUM before creating a new reference."
 (add-variable-watcher 'hywiki-word-highlight-flag
 		      'hywiki-word-highlight-flag-changed)
 
-;; Sets HyWiki page auto-HyWikiWord highlighting and `yank-handled-properties'
+;; Set HyWiki page auto-HyWikiWord highlighting and `yank-handled-properties'
 (hywiki-word-highlight-flag-changed 'hywiki-word-highlight-flag
 				    hywiki-word-highlight-flag 'set nil)
 
-;; Ensures HyWiki referent lookup table is initialized as are HyWiki Org
+;; Ensure HyWiki referent lookup table is initialized as are HyWiki Org
 ;; Publish settings.
 (hywiki-set-directory 'hywiki-directory hywiki-directory)
 
