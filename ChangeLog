@@ -1,3 +1,8 @@
+2025-04-20  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--filename-same-as-wiki-word): Add
+    test for filename being the same as a WikiWord.
+
 2025-04-20  Bob Weiner  <rsw@gnu.org>
 
 * test/hui-tests.el (hui--link-possible-types): Change Outline Heading
