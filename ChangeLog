@@ -5,7 +5,7 @@
 
 * hsys-org.el (hsys-org-link-at-p): Reinsert let binding of label-start-end.
 
-* hbut.el (ibut:insert-text): Remove shaddowed pcase.
+* hbut.el (ibut:insert-text): Remove shadowed pcase.
 
 2025-04-20  Mats Lidell  <matsl@gnu.org>
 
