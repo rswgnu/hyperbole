@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Acpr-24 at 22:41:13
-;; Last-Mod:     19-Apr-25 at 22:52:58 by Bob Weiner
+;; Last-Mod:     20-Apr-25 at 22:27:39 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -175,6 +175,8 @@
 (declare-function bookmark-completing-read "bookmark" (prompt &optional default))
 (declare-function bookmark-location "bookmark" (bookmark-name-or-record))
 (declare-function hsys-org-at-tags-p "hsys-org")
+(declare-function ibtypes::pathname "hpath")
+(declare-function ibtypes::pathname-line-and-column "hpath")
 (declare-function org-link-store-props "ol" (&rest plist))
 (declare-function org-publish-property "ox-publish" (property project &optional default))
 (declare-function org-roam-node-from-title-or-alias "org-roam-node" (s &optional nocase))

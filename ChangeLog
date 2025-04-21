@@ -1,3 +1,12 @@
+2025-04-21  Mats Lidell  <matsl@gnu.org>
+
+* hywiki.el (ibtypes::pathname, ibtypes::pathname-line-and-column):
+    Declare functions from hpath.
+
+* hsys-org.el (hsys-org-link-at-p): Reinsert let binding of label-start-end.
+
+* hbut.el (ibut:insert-text): Remove shadowed pcase.
+
 2025-04-20  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--filename-same-as-wiki-word): Add
