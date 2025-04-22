@@ -1343,6 +1343,10 @@ the function is called."
     (("HiHo" . t) (p3 . t) (" " . "Hi") (p4 . "Ho") (-1 . "HiHo"))
     (("Hiho" . t) (p3 . t) (" " . "Hi") (p4) (-1 . "Hiho"))
     (("hiHo") (p3) (" ") (p4 . "Ho") (-1))
+    ;; With double quotes
+    (("\"HiHo\"" . t) (p4 . t) (" " . "Hi") (p5 . "Ho") (-1 . "HiHo"))
+    (("\"Hiho\"" . t) (p4 . t) (" " . "Hi") (p5) (-1 . "Hiho"))
+    (("\"hiHo\"") (p4) (" ") (p5 . "Ho") (-1))
     )
   "List of test cases for WikiWords.")
 
