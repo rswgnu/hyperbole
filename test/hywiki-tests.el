@@ -1347,6 +1347,8 @@ the function is called."
     (("\"HiHo\"" . t) (p4 . t) (" " . "Hi") (p5 . "Ho") (-1 . "HiHo"))
     (("\"Hiho\"" . t) (p4 . t) (" " . "Hi") (p5) (-1 . "Hiho"))
     (("\"hiHo\"") (p4) (" ") (p5 . "Ho") (-1))
+    (("\"Hi\"Ho" . t) (p5 . "Ho") (" " . "Ho") (p4 . "Hi"))
+    (("Hi\"Ho\"" . t) (p3 . "Hi") (" " . "Hi") (p4) (p5 . "Ho"))
     )
   "List of test cases for WikiWords.")
 
