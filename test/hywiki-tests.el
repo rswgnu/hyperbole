@@ -1339,9 +1339,16 @@ the function is called."
     (("(HiHo#s" . "HiHo#s") (" " . "HiHo#s"))
     (("(HiHo#s" . "HiHo#s") (")" . "HiHo#s")) ; Delimiter part of WikiWord. See below too.
     (("(HiHo#s" . "HiHo#s") ("-" . "HiHo#s-") ("n" . "HiHo#s-n") (")" . "HiHo#s-n"))
-    ;; Insert and delete between WikiWords
+    ;; Insert and delete between WikiWords and non WikiWords
     (("HiHo" . t) (p3 . t) (" " . "Hi") (p4 . "Ho") (-1 . "HiHo"))
     (("Hiho" . t) (p3 . t) (" " . "Hi") (p4) (-1 . "Hiho"))
+    (("hiHo") (p3) (" ") (p4 . "Ho") (-1))
+    ;; With double quotes
+    (("\"HiHo\"" . t) (p4 . t) (" " . "Hi") (p5 . "Ho") (-1 . "HiHo"))
+    (("\"Hiho\"" . t) (p4 . t) (" " . "Hi") (p5) (-1 . "Hiho"))
+    (("\"hiHo\"") (p4) (" ") (p5 . "Ho") (-1))
+    (("\"Hi\"Ho" . t) (p5 . "Ho") (" " . "Ho") (p4 . "Hi"))
+    (("Hi\"Ho\"" . t) (p3 . "Hi") (" " . "Hi") (p4) (p5 . "Ho"))
     )
   "List of test cases for WikiWords.")
 

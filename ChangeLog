@@ -1,5 +1,8 @@
 2025-04-21  Mats Lidell  <matsl@gnu.org>
 
+* test/hywiki-tests.el (hywiki-tests--wikiword-step-check): Update test
+    sequence.
+
 * hywiki.el (ibtypes::pathname, ibtypes::pathname-line-and-column):
     Declare functions from hpath.
 
