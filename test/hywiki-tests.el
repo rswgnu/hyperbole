@@ -1273,13 +1273,29 @@ See gh#rswgnu/hyperbole/669."
         (hy-delete-file-and-buffer wiki-page)
         (hy-delete-dir-and-buffer hywiki-directory)))))
 
+(defun hywiki-tests--word-n-face-at ()
+  "Non-nil if at a WikiWord and it has `hywiki--word-face'."
+  (cl-destructuring-bind (word beg end) (hywiki-word-at :range)
+    (when word
+      (when (hy-test-word-face-at-region beg end)
+        word))))
+
+(defvar hywiki-tests--with-face-test nil
+  "Non-nil to perform face validation of WikiWord.")
+
+(defun hywiki-tests--word-at ()
+  "Choose what test to perform based on value of `hywiki-tests--with-face-test'."
+  (if hywiki-tests--with-face-test
+      (hywiki-tests--word-n-face-at)
+    (hywiki-word-at)))
+
 (defun hywiki-tests--verify-hywiki-word (expected)
   "Verify that `hywiki-word-at' returns t if a wikiword is EXPECTED.
 If EXPECTED is a string also verify that the wikiword matches the
 string."
   (if (not expected)
-      (should-not (hywiki-word-at))
-    (let ((hywiki-word-found (hywiki-word-at)))
+      (should-not (hywiki-tests--word-at))
+    (let ((hywiki-word-found (hywiki-tests--word-at)))
       (if (stringp expected)
           (should (string= expected hywiki-word-found))
         (should hywiki-word-found))
@@ -1365,6 +1381,27 @@ resulting state at point is a WikiWord or not."
             (with-temp-buffer
               (hywiki-tests--run-test-case testcase))))
       (hy-delete-dir-and-buffer hywiki-directory)))))
+
+(ert-deftest hywiki-tests--wikiword-step-check-verification-with-faces ()
+  "Run the step check to verify WikiWord is identified under change.
+Performs each operation from the step check and verifies if the
+resulting state at point is a WikiWord or not."
+  (skip-unless hy-test-run-failing-flag)
+  (hywiki-tests--preserve-hywiki-mode
+    (let* ((hywiki-directory (make-temp-file "hywiki" t))
+           (wikiHiHo (cdr (hywiki-add-page "HiHo")))
+           (wikiHi (cdr (hywiki-add-page "Hi")))
+           (wikiHo (cdr (hywiki-add-page "Ho")))
+           (wiki-page-list (list wikiHiHo wikiHi wikiHo))
+           (hywiki-tests--with-face-test t))
+      (unwind-protect
+          (progn
+            (hywiki-mode 1)
+            (dolist (testcase hywiki-tests--wikiword-step-check)
+              (with-temp-buffer
+                (hywiki-tests--run-test-case testcase))))
+        (hy-delete-files-and-buffers wiki-page-list)
+        (hy-delete-dir-and-buffer hywiki-directory)))))
 
 (defconst hywiki-tests--lorem-ipsum "\
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
