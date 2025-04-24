@@ -136,7 +136,7 @@ and the default WORD-LENGTH is 4."
         (cl-return t))))
 
 (defun hy-test-word-face-at-region (beg end)
-  "Non-nil if all chars in region [BEG, END] has `hywiki--word-face'."
+  "Non-nil if all chars in region [BEG, END] have `hywiki--word-face'."
   (interactive "r")
   (let (no-face)
     (while (and (< beg end) (not no-face))
