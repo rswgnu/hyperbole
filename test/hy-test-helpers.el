@@ -21,7 +21,6 @@
 (require 'ert)
 (require 'hmouse-drv)                   ; For `action-key'
 (eval-when-compile (require 'cl-lib))
-(require 'hywiki)
 
 (defun hy-test-helpers:consume-input-events ()
   "Use `recursive-edit' to consume the events kbd-key generates."
