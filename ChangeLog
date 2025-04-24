@@ -1,5 +1,10 @@
 2025-04-26  Mats Lidell  <matsl@gnu.org>
 
+* hywiki.el (hywiki-word-face-at-p): Add optional pos to enable reuse.
+
+* test/hy-test-helpers.el (hy-test-word-face-at-region): Simplify by
+    reusing hywiki-word-face-at-p.
+
 * test/hywiki-tests.el
     (hywiki-tests--wikiword-step-check-verification-with-faces): Add
     missing WikiWord, Hiho, required by the test. Enable the test for CI.
