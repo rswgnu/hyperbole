@@ -1386,6 +1386,7 @@ resulting state at point is a WikiWord or not."
   "Run the step check to verify WikiWord is identified under change.
 Performs each operation from the step check and verifies if the
 resulting state at point is a WikiWord or not."
+  (skip-unless (not noninteractive))
   (hywiki-tests--preserve-hywiki-mode
     (let* ((hywiki-directory (make-temp-file "hywiki" t))
            (wikiHiHo (cdr (hywiki-add-page "HiHo")))
