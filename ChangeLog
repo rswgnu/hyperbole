@@ -13,6 +13,12 @@
 * test/hibtypes-tests.el (ibtypes::ctags-vgrind-test)
     (ibtypes::etags-test): Use test resources.
 
+2025-04-24  Mats Lidell  <matsl@gnu.org>
+
+* hsys-org.el: Require 'warnings to get definition of variables
+    `warning-minimum-level' and `warning-suppress-log-types' else causing
+    byte compilation warnings.
+
 2025-04-23  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--word-n-face-at): Verify that point
