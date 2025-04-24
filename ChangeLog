@@ -1,5 +1,9 @@
 2025-04-26  Mats Lidell  <matsl@gnu.org>
 
+* test/hywiki-tests.el
+    (hywiki-tests--wikiword-step-check-verification-with-faces): Add
+    missing WikiWord, Hiho, required by the test. Enable the test for CI.
+
 * test/hywiki-tests.el:
 * test/hui-tests.el:
 * test/hmouse-info-tests.el:
