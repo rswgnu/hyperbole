@@ -1,3 +1,20 @@
+2025-04-23  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--word-n-face-at): Verify that point
+    is at a WikiWord where WikiWord has hywiki--word-face set.
+    (hywiki-tests--with-face-test): Control type of WikiWord check.
+    (hywiki-tests--word-at): Use either hywiki-word-at or
+    hywiki-tests--word-n-face-at controlled by
+    hywiki-tests--with-face-test.
+    (hywiki-tests--verify-hywiki-word): Use hywiki-tests--word-at.
+    (hywiki-tests--wikiword-step-check-verification-with-faces): Run the
+    step-check test verifying WikiWords and faces. Test is behind failure
+    flag.
+
+* test/hy-test-helpers.el (hy-test-word-face-at-point): Check if
+    hywiki--word-face is set at point.
+    (hy-test-word-face-at-region): Check that region has hywiki--word-face set.
+
 2025-04-21  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--wikiword-step-check): Update test
