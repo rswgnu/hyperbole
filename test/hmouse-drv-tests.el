@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 22:52:00
-;; Last-Mod:     13-Apr-25 at 15:43:05 by Bob Weiner
+;; Last-Mod:     24-Apr-25 at 23:21:25 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -20,6 +20,7 @@
 ;;; Code:
 
 (require 'ert)
+(require 'ert-x)
 (require 'hbut)
 (require 'el-mock)
 (require 'with-simulated-input)
@@ -457,37 +458,33 @@
 
 ;; ctags
 ; Seems ctags -v does not give the proper answer
-;; FIXME: Rewrite to not depend on hy-test-helpers.el
 (ert-deftest hbut-ctags-vgrind-test ()
   (unwind-protect
       (with-temp-buffer
-        (insert "hy-test-helpers:consume-input-events hy-test-helpers.el 25\n")
+        (insert "test-func test-data.el 19\n")
         (goto-char (point-min))
         (forward-char 4)
-        (let ((default-directory (expand-file-name "test" hyperb:dir)))
+        (let ((default-directory (ert-resource-directory)))
           (action-key)
 	  (should (hattr:ibtype-is-p 'ctags))
-          (should (looking-at "(defun hy-test-helpers:consume-input-events"))))
-    (hy-test-helpers:kill-buffer "hy-test-helpers.el")))
+          (should (looking-at "(defun test-func"))))
+    (hy-test-helpers:kill-buffer "test-data.el")))
 
 ;; etags
-;; FIXME: Rewrite to not depend on hy-test-helpers.el
 (ert-deftest hbut-etags-test ()
-  (unwind-protect
-      (with-temp-buffer
-        (insert "\n")
-        (insert "hy-test-helpers.el,237\n")
-        (insert "(defun hy-test-helpers:consume-input-events 25,518\n")
-        (rename-buffer (concat "TAGS" (buffer-name)))
-        (goto-char (point-min))
-        (forward-line 2)
-        (forward-char 10)
-        (let ((default-directory (expand-file-name "test" hyperb:dir)))
-          (action-key)
-	  (should (hattr:ibtype-is-p 'etags))
-          (set-buffer "hy-test-helpers.el")
-          (should (looking-at "(defun hy-test-helpers:consume-input-events"))))
-    (hy-test-helpers:kill-buffer "hy-test-helpers.el")))
+  (let ((tags (find-file (ert-resource-file "TAGS"))))
+    (unwind-protect
+        (with-current-buffer tags
+          (goto-char (point-min))
+          (forward-line 2)
+          (forward-char 10)
+          (let ((default-directory (ert-resource-directory)))
+            (action-key)
+	    (should (hattr:ibtype-is-p 'etags))
+            (set-buffer "test-data.el")
+            (should (looking-at "(defun test-func"))))
+      (hy-test-helpers:kill-buffer "test-data.el")
+      (hy-test-helpers:kill-buffer tags))))
 
 ;; text-toc
 (ert-deftest hbut-text-toc-test ()

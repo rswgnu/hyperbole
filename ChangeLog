@@ -1,3 +1,18 @@
+2025-04-25  Mats Lidell  <matsl@gnu.org>
+
+* test/MANIFEST: Add resource folders.
+
+* test/hmouse-drv-resources/test-data.el:
+  test/hmouse-drv-resources/TAGS:
+  test/hibtypes-resources/test-data.el:
+  test/hibtypes-resources/TAGS: Test resources.
+
+* test/hmouse-drv-tests.el (hbut-ctags-vgrind-test, hbut-etags-test): Use
+    test resources.
+
+* test/hibtypes-tests.el (ibtypes::ctags-vgrind-test)
+    (ibtypes::etags-test): Use test resources.
+
 2025-04-23  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--word-n-face-at): Verify that point

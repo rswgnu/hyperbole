@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:45:00
-;; Last-Mod:      8-Sep-24 at 00:48:52 by Mats Lidell
+;; Last-Mod:     24-Apr-25 at 23:49:38 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -19,6 +19,7 @@
 ;;; Code:
 
 (require 'ert)
+(require 'ert-x)
 (require 'hibtypes)
 (require 'info)
 (require 'el-mock)
@@ -215,36 +216,32 @@
 
 ;; ctags
 ;; Seems ctags -v does not give the proper answer
-;; FIXME: Rewrite to not depend on hy-test-helpers.el
 (ert-deftest ibtypes::ctags-vgrind-test ()
-  (unwind-protect
-      (with-temp-buffer
-        (insert "hy-test-helpers:consume-input-events hy-test-helpers.el 25\n")
-        (goto-char (point-min))
-        (forward-char 4)
-        (let ((default-directory (expand-file-name "test" hyperb:dir)))
+  (let ((default-directory (ert-resource-directory)))
+    (unwind-protect
+        (with-temp-buffer
+          (insert "test-func test-data.el 19\n")
+          (goto-char (point-min))
+          (forward-char 4)
           (ibtypes::ctags)
-          (set-buffer "hy-test-helpers.el")
-          (should (looking-at "(defun hy-test-helpers:consume-input-events"))))
-    (kill-buffer "hy-test-helpers.el")))
+          (set-buffer "test-data.el")
+          (should (looking-at "(defun test-func")))
+      (hy-test-helpers:kill-buffer "test-data.el"))))
 
 ;; etags
-;; FIXME: Rewrite to not depend on hy-test-helpers.el
 (ert-deftest ibtypes::etags-test ()
-  (unwind-protect
-      (with-temp-buffer
-        (insert "\n")
-        (insert "hy-test-helpers.el,237\n")
-        (insert "(defun hy-test-helpers:consume-input-events 25,518\n")
-        (rename-buffer (concat "TAGS" (buffer-name)))
-        (goto-char (point-min))
-        (forward-line 2)
-        (forward-char 10)
-        (let ((default-directory (expand-file-name "test" hyperb:dir)))
+  (let ((tags (find-file (ert-resource-file "TAGS")))
+        (default-directory (ert-resource-directory)))
+    (unwind-protect
+        (with-current-buffer tags
+          (goto-char (point-min))
+          (forward-line 2)
+          (forward-char 10)
           (ibtypes::etags)
-          (set-buffer "hy-test-helpers.el")
-          (should (looking-at "(defun hy-test-helpers:consume-input-events"))))
-    (kill-buffer "hy-test-helpers.el")))
+          (set-buffer "test-data.el")
+          (should (looking-at "(defun test-func")))
+      (hy-test-helpers:kill-buffer "test-data.el")
+      (hy-test-helpers:kill-buffer tags))))
 
 ;; cscope
 
