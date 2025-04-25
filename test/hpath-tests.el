@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 23:26:00
-;; Last-Mod:      7-Mar-25 at 10:21:48 by Mats Lidell
+;; Last-Mod:     25-Apr-25 at 21:51:39 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -491,7 +491,7 @@ dir/subdir:
 
 (provide 'hpath-tests)
 
-:; This file can't be byte-compiled without the `el-mock' package
+;; This file can't be byte-compiled without the `el-mock' package
 ;; which is not a dependency of Hyperbole.
 ;;
 ;; Local Variables:

@@ -19,7 +19,7 @@
 
 (require 'ert)
 (require 'el-mock)
-(require 'with-simulated-input)
+(require 'ert-x)
 (require 'hy-test-helpers)
 (require 'hywiki)
 (require 'hsys-org)
@@ -866,10 +866,10 @@ Note special meaning of `hywiki-allow-plurals-flag'."
     (unwind-protect
         (progn
           (find-file file)
-          (with-simulated-input "RET"
+          (ert-simulate-keys "\r"
             (should-error (hywiki-add-bookmark "WikiWord")))
           (bookmark-set "bookmark")
-          (with-simulated-input "bookmark RET"
+          (ert-simulate-keys "bookmark\r"
             (hywiki-add-bookmark "WikiWord")
             (should (equal '(bookmark . "bookmark") (hywiki-get-referent "WikiWord")))))
       (hy-delete-file-and-buffer file)
@@ -880,7 +880,7 @@ Note special meaning of `hywiki-allow-plurals-flag'."
   (let ((hywiki-directory (make-temp-file "hywiki" t))
 	(wikiword "WikiWord"))
     (unwind-protect
-	(with-simulated-input "hpath:find RET"
+	(ert-simulate-keys "hpath:find\r"
 	  (hywiki-add-command wikiword)
 	  (should (equal '(command . hpath:find)
 			 (hywiki-get-referent wikiword))))
@@ -918,7 +918,7 @@ Note special meaning of `hywiki-allow-plurals-flag'."
   "Verify `hywiki-add-info-index'."
   (let ((hywiki-directory (make-temp-file "hywiki" t)))
     (unwind-protect
-        (with-simulated-input "files RET"
+        (ert-simulate-keys "files\r"
           (info "emacs")
 	  (hywiki-add-info-index "WikiWord")
 	  (should (equal '(info-index . "(emacs)files") (hywiki-get-referent "WikiWord"))))
@@ -928,7 +928,7 @@ Note special meaning of `hywiki-allow-plurals-flag'."
   "Verify `hywiki-add-info-node'."
   (let ((hywiki-directory (make-temp-file "hywiki" t)))
     (unwind-protect
-	(with-simulated-input "(emacs) RET"
+	(ert-simulate-keys "(emacs)\r"
 	  (hywiki-add-info-node "WikiWord")
 	  (should (equal '(info-node . "(emacs)") (hywiki-get-referent "WikiWord"))))
       (hy-delete-dir-and-buffer hywiki-directory))))
@@ -938,10 +938,10 @@ Note special meaning of `hywiki-allow-plurals-flag'."
   (let ((hywiki-directory (make-temp-file "hywiki" t)))
     (unwind-protect
 	(progn
-	  (with-simulated-input "ABC RET"
+	  (ert-simulate-keys "ABC\r"
 	    (hywiki-add-key-series "WikiWord")
 	    (should (equal '(key-series . "{ABC}") (hywiki-get-referent "WikiWord"))))
-	  (with-simulated-input "{ABC} RET"
+	  (ert-simulate-keys "{ABC}\r"
 	    (hywiki-add-key-series "WikiWord")
 	    (should (equal '(key-series . "{ABC}") (hywiki-get-referent "WikiWord")))))
       (hy-delete-dir-and-buffer hywiki-directory))))
@@ -1042,7 +1042,7 @@ up the test."
   "Verify saving and loading a referent keyseries works ."
   (hywiki-tests--referent-test
    (cons 'key-series "{ABC}")
-   (with-simulated-input "ABC RET"
+   (ert-simulate-keys "ABC\r"
      (hywiki-add-key-series wiki-referent))))
 
 ;; FIXME: Not stable. Can sometimes succeed.
@@ -1062,7 +1062,7 @@ up the test."
   (hywiki-tests--referent-test
    (cons 'bookmark "bmark")
    (bookmark-set "bmark")
-   (with-simulated-input "bmark RET"
+   (ert-simulate-keys "bmark\r"
      (hywiki-add-bookmark wiki-referent))))
 
 (ert-deftest hywiki-tests--save-referent-bookmark-use-menu ()
@@ -1085,7 +1085,7 @@ up the test."
   "Verify saving and loading a referent command works."
   (hywiki-tests--referent-test
     (cons 'command #'hywiki-tests--command)
-    (with-simulated-input "hywiki-tests--command RET"
+    (ert-simulate-keys "hywiki-tests--command\r"
       (hywiki-add-command wiki-referent))))
 
 (ert-deftest hywiki-tests--save-referent-command-use-menu ()
@@ -1154,7 +1154,7 @@ up the test."
   (hywiki-tests--referent-test
    (cons 'info-index "(emacs)files")
    (save-excursion
-     (with-simulated-input "files RET"
+     (ert-simulate-keys "files\r"
        (info "emacs")
        (hywiki-add-info-index wiki-referent)))))
 
@@ -1177,7 +1177,7 @@ up the test."
    (cons 'info-node "(emacs)")
    (save-excursion
      (unwind-protect
-         (with-simulated-input "(emacs) RET"
+         (ert-simulate-keys "(emacs)\r"
            (hywiki-add-info-node wiki-referent))
        (kill-buffer "*info*")))))
 

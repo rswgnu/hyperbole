@@ -1,3 +1,14 @@
+2025-04-26  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el:
+* test/hui-tests.el:
+* test/hmouse-info-tests.el:
+* test/hmouse-drv-tests.el:
+* test/hargs-tests.el: Use ert-simulate-keys. Replaces external dependency
+    on with-simulated-input.
+
+* test/hy-test-dependencies.el: Remove dependency on with-simulated-input.
+
 2025-04-25  Mats Lidell  <matsl@gnu.org>
 
 * hsys-org.el: Require 'warnings to get definition of variables
