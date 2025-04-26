@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:16:00
-;; Last-Mod:     26-Dec-24 at 22:40:40 by Bob Weiner
+;; Last-Mod:     25-Apr-25 at 19:28:36 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -36,7 +36,7 @@
   (require pkg-symbol))
 
 (mapc (lambda (sym) (hy-test-ensure-package-installed sym))
-      '(el-mock with-simulated-input))
+      '(el-mock))
 
 ;; Needed when `hypb:display-file-with-logo' uses `org-mode'
 (setq hsys-org-enable-smart-keys t)

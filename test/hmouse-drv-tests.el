@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 22:52:00
-;; Last-Mod:     24-Apr-25 at 23:21:25 by Mats Lidell
+;; Last-Mod:     25-Apr-25 at 10:01:41 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -23,7 +23,6 @@
 (require 'ert-x)
 (require 'hbut)
 (require 'el-mock)
-(require 'with-simulated-input)
 (require 'hy-test-helpers "test/hy-test-helpers")
 
 (ert-deftest hbut-defal ()
@@ -191,7 +190,7 @@
   (with-temp-buffer
     (insert "\"/tmp\"\n")
     (goto-char 3)
-    (with-simulated-input "TMP RET"
+    (ert-simulate-keys "TMP\r"
       (let ((enable-recursive-minibuffers t))
 	(hui:ibut-label-create)
 	(should (string= "<[TMP]> - \"/tmp\"\n" (buffer-string)))))))
@@ -201,7 +200,7 @@
   (with-temp-buffer
     (insert "<[LBL]>: \"/tmp\"\n")
     (goto-char 14)
-    (with-simulated-input "TMP RET"
+    (ert-simulate-keys "TMP\r"
       (condition-case err
           (hui:ibut-label-create)
         (error
@@ -656,10 +655,8 @@ The frame setup is mocked."
       (hy-delete-file-and-buffer filea)
       (hy-delete-file-and-buffer fileb))))
 
-;; This file can't be byte-compiled without the `el-mock' and
-;; `with-simulated-input' package (because of the use of the
-;; `with-mock' and `with-simulated-input' macro), which is not a
-;; dependency of Hyperbole.
+;; This file can't be byte-compiled without the `el-mock' package
+;; which is not a dependency of Hyperbole.
 ;;  Local Variables:
 ;;  no-byte-compile: t
 ;;  End:

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    04-Feb-22 at 23:00:00
-;; Last-Mod:     20-Jan-24 at 19:38:11 by Mats Lidell
+;; Last-Mod:     25-Apr-25 at 19:57:44 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -19,7 +19,7 @@
 ;;; Code:
 
 (require 'ert)
-(require 'with-simulated-input)
+(require 'ert-x)
 (require 'hargs)
 (require 'hy-test-helpers "test/hy-test-helpers")
 
@@ -29,15 +29,15 @@
   (let ((file (make-temp-file "hypb")))
     (unwind-protect
         (progn
-          (with-simulated-input "xyz RET"
+          (ert-simulate-keys "xyz\r"
             (should (string= (hargs:get "+I: ") "xyz")))
-          (with-simulated-input "xyz RET"
+          (ert-simulate-keys "xyz\r"
             (should (string= (hargs:get "+L: ") "xyz")))
-          (with-simulated-input '((insert "xyz" file) "RET")'
+          (ert-simulate-keys (concat "(\"xyz\" \"" file "\")\r")
             (should (equal (hargs:get "+M: ") (list "xyz" file))))
-          (with-simulated-input "xyz RET"
+          (ert-simulate-keys "xyz\r"
             (should (string= (hargs:get "+V: ") "xyz")))
-          (with-simulated-input "xyz RET"
+          (ert-simulate-keys "xyz\r"
             (should (string= (hargs:get "+X: ") "(dir)xyz")))
           (should-error (hargs:get "+A: ") :type 'error))
       (hy-delete-file-and-buffer file))))
@@ -66,12 +66,6 @@
       (goto-char (car v))
       (should (string= (cadr v) (hargs:sexpression-p)))
       (should (string= (caddr v) (hargs:sexpression-p t))))))
-
-;; This file can't be byte-compiled without `with-simulated-input' which
-;; is not part of the actual dependencies, so:
-;;   Local Variables:
-;;   no-byte-compile: t
-;;   End:
 
 (provide 'hargs-tests)
 ;;; hargs-tests.el ends here
