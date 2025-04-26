@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     17-Apr-25 at 23:03:11 by Mats Lidell
+# Last-Mod:     12-Apr-25 at 13:15:02 by Bob Weiner
 #
 # Copyright (C) 1994-2025  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -213,7 +213,7 @@ VPATH = kotl man
 
 EL_COMPILE = hact.el hactypes.el hargs.el hbdata.el hbmap.el hbut.el \
 	     hgnus.el hhist.el hib-debbugs.el hib-doc-id.el hib-kbd.el \
-	     hib-social.el hibtypes.el hib-smerge.el \
+	     hib-social.el hibtypes.el \
 	     hinit.el hload-path.el hmail.el hmh.el hmoccur.el hmouse-info.el \
 	     hmouse-drv.el hmouse-key.el hmouse-mod.el hmouse-sh.el hmouse-tag.el \
 	     hpath.el hproperty.el hrmail.el hsettings.el hsmail.el hsys-consult.el \

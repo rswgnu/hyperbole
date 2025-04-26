@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     19-Apr-25 at 17:51:14 by Bob Weiner
+;; Last-Mod:     26-Apr-25 at 10:19:22 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -45,6 +45,7 @@
 (require 'org-macs) ;; for org-uuid-regexp
 (require 'subr-x) ;; for string-trim
 (require 'thingatpt)
+(eval-when-compile (require 'smerge-mode))
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -1736,6 +1737,26 @@ If a boolean function or variable, display its value."
 
 ;; If you want to to disable ALL Hyperbole support within Org major
 ;; and minor modes, set the custom option `hsys-org-enable-smart-keys' to nil.
+
+;;; ========================================================================
+;;; Resolve merge conflicts in smerge-mode
+;;; ========================================================================
+
+(defib smerge ()
+  "Act on conflicts in merge buffers, i.e. when smerge-mode is active."
+  (when (bound-and-true-p smerge-mode)
+    (let (op)
+      (save-excursion
+        (beginning-of-line)
+        (cond ((looking-at smerge-end-re)
+               (setq op 'smerge-keep-lower))
+              ((looking-at smerge-begin-re)
+               (setq op 'smerge-keep-upper))
+              ((looking-at smerge-lower-re)
+               (setq op 'smerge-keep-all))))
+      (when op
+        (ibut:label-set (match-string-no-properties 0) (match-beginning 0) (match-end 0))
+        (hact op)))))
 
 (run-hooks 'hibtypes-end-load-hook)
 (provide 'hibtypes)

@@ -9,13 +9,9 @@
     (hywiki-tests--wikiword-step-check-verification-with-faces): Add
     missing WikiWord, Hiho, required by the test. Enable the test for CI.
 
+* hibtypes.el (smerge): Add ibut smerge.
+
 * hui-mouse.el (smart-magit): Add smerge support in magit-status-mode.
-
-* MANIFEST:
-  Makefile: Add hib-smerge.el
-
-* hib-smerge.el (hypb-smerge): Add ibut for using smerge in merged
-    buffers.
 
 * test/hywiki-tests.el:
 * test/hui-tests.el:
