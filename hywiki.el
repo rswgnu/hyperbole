@@ -3173,9 +3173,11 @@ a HyWikiWord at point."
 	    (= (matching-paren (char-before (nth 1 range)))
 	       (char-after (nth 2 range))))))))
 
-(defun hywiki-word-face-at-p ()
-  "Non-nil if but at point has `hywiki-word-face' property."
-  (hproperty:but-get (point) 'face hywiki-word-face))
+(defun hywiki-word-face-at-p (&optional pos)
+  "Non-nil if but at point or optional POS has `hywiki-word-face' property."
+  (unless pos
+    (setq pos (point)))
+  (hproperty:but-get pos 'face hywiki-word-face))
 
 ;;;###autoload
 (defun hywiki-word-consult-grep (word)

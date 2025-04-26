@@ -127,20 +127,12 @@ and the default WORD-LENGTH is 4."
 (defvar hy-test-run-failing-flag nil
   "Non-nil means test cases that are known to fail will be tried.")
 
-(defun hy-test-word-face-at-point (&optional pos)
-  "Non-nil if `hywiki--word-face' at POS."
-  (unless pos
-    (setq pos (point)))
-  (cl-dolist (ol (overlays-at pos) nil)
-    (if (equal (overlay-get ol 'face) 'hywiki--word-face)
-        (cl-return t))))
-
 (defun hy-test-word-face-at-region (beg end)
   "Non-nil if all chars in region [BEG, END] have `hywiki--word-face'."
   (interactive "r")
   (let (no-face)
     (while (and (< beg end) (not no-face))
-      (unless (hy-test-word-face-at-point beg)
+      (unless (hywiki-word-face-at-p beg)
         (setq no-face t))
       (setq beg (1+ beg)))
     (not no-face)))
