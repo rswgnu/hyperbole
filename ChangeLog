@@ -1,5 +1,9 @@
 2025-04-25  Mats Lidell  <matsl@gnu.org>
 
+* hsys-org.el: Require 'warnings to get definition of variables
+    `warning-minimum-level' and `warning-suppress-log-types' else causing
+    byte compilation warnings.
+
 * test/MANIFEST: Add resource folders.
 
 * test/hmouse-drv-resources/test-data.el:

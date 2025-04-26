@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     20-Apr-25 at 22:25:14 by Mats Lidell
+;; Last-Mod:     24-Apr-25 at 15:31:03 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -39,6 +39,7 @@
 (require 'org-fold nil t)
 (require 'org-macs)
 (require 'package)
+(require 'warnings)
 ;; Avoid any potential library name conflict by giving the load directory.
 (require 'set (expand-file-name "set" hyperb:dir))
 
