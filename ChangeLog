@@ -37,6 +37,9 @@
 
 2025-04-26  Mats Lidell  <matsl@gnu.org>
 
+* man/hyperbole.texi (Implicit Button Types): smerge ibut.
+    (Smart Key - Magit Mode): Merge conflict lines.
+
 * hibtypes.el (smerge): Add ibut smerge.
 
 * hui-mouse.el (smart-magit): Add smerge support in magit-status-mode.
