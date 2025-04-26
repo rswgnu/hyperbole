@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     15-Apr-25 at 12:51:50 by Mats Lidell
+;; Last-Mod:     25-Apr-25 at 23:35:04 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1575,13 +1575,25 @@ If key is pressed:
      point (\"RET\" key binding) but display based on the value of
      `hpath:display-where'."
   (interactive)
-  (cond ((last-line-p)
-	 (call-interactively (key-binding "q")))
-	((eolp)
-	 (smart-scroll-up))
-	(t
-	 (let ((magit-display-buffer-function #'hpath:display-buffer))
-	   (call-interactively #'smart-magit-tab)))))
+  (let (op)
+    (cond ((last-line-p)
+	   (call-interactively (key-binding "q")))
+	  ((eolp)
+	   (smart-scroll-up))
+          ((and
+            (eq major-mode 'magit-status-mode)
+            (save-excursion
+              (beginning-of-line)
+              (cond ((looking-at (regexp-quote "++>>>>>>>"))
+                     (setq op 'magit-smerge-keep-lower))
+                    ((looking-at (regexp-quote "++<<<<<<<"))
+                     (setq op 'magit-smerge-keep-upper))
+                    ((looking-at (regexp-quote "++======="))
+                     (setq op 'magit-smerge-keep-all)))))
+           (call-interactively op))
+	  (t
+	   (let ((magit-display-buffer-function #'hpath:display-buffer))
+	     (call-interactively #'smart-magit-tab))))))
 
 (defun smart-magit-assist ()
   "Use an assist key or mouse key to jump to source and to hide/show changes.

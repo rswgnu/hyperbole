@@ -33,3 +33,7 @@ kotl-orgtbl-tests.el    - kotl orgtbl tests
 set-tests.el            - mathematical set library tests
 smart-org-tests.el      - smart-org-el tests
 test-helpers-tests.el   - unit test of the test helpers
+
+--- HYPERBOLE TEST RESOURCES ---
+hibtypes-resources      - test resources for hibtypes-tests
+hmouse-drv-resources    - test resources for hmouse-drv-tests

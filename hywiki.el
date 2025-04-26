@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Acpr-24 at 22:41:13
-;; Last-Mod:     19-Apr-25 at 22:52:58 by Bob Weiner
+;; Last-Mod:     20-Apr-25 at 22:27:39 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -175,6 +175,8 @@
 (declare-function bookmark-completing-read "bookmark" (prompt &optional default))
 (declare-function bookmark-location "bookmark" (bookmark-name-or-record))
 (declare-function hsys-org-at-tags-p "hsys-org")
+(declare-function ibtypes::pathname "hpath")
+(declare-function ibtypes::pathname-line-and-column "hpath")
 (declare-function org-link-store-props "ol" (&rest plist))
 (declare-function org-publish-property "ox-publish" (property project &optional default))
 (declare-function org-roam-node-from-title-or-alias "org-roam-node" (s &optional nocase))
@@ -3171,9 +3173,11 @@ a HyWikiWord at point."
 	    (= (matching-paren (char-before (nth 1 range)))
 	       (char-after (nth 2 range))))))))
 
-(defun hywiki-word-face-at-p ()
-  "Non-nil if but at point has `hywiki-word-face' property."
-  (hproperty:but-get (point) 'face hywiki-word-face))
+(defun hywiki-word-face-at-p (&optional pos)
+  "Non-nil if but at point or optional POS has `hywiki-word-face' property."
+  (unless pos
+    (setq pos (point)))
+  (hproperty:but-get pos 'face hywiki-word-face))
 
 ;;;###autoload
 (defun hywiki-word-consult-grep (word)

@@ -19,7 +19,7 @@
 
 (require 'ert)
 (require 'el-mock)
-(require 'with-simulated-input)
+(require 'ert-x)
 (require 'hy-test-helpers)
 (require 'hywiki)
 (require 'hsys-org)
@@ -866,10 +866,10 @@ Note special meaning of `hywiki-allow-plurals-flag'."
     (unwind-protect
         (progn
           (find-file file)
-          (with-simulated-input "RET"
+          (ert-simulate-keys "\r"
             (should-error (hywiki-add-bookmark "WikiWord")))
           (bookmark-set "bookmark")
-          (with-simulated-input "bookmark RET"
+          (ert-simulate-keys "bookmark\r"
             (hywiki-add-bookmark "WikiWord")
             (should (equal '(bookmark . "bookmark") (hywiki-get-referent "WikiWord")))))
       (hy-delete-file-and-buffer file)
@@ -880,7 +880,7 @@ Note special meaning of `hywiki-allow-plurals-flag'."
   (let ((hywiki-directory (make-temp-file "hywiki" t))
 	(wikiword "WikiWord"))
     (unwind-protect
-	(with-simulated-input "hpath:find RET"
+	(ert-simulate-keys "hpath:find\r"
 	  (hywiki-add-command wikiword)
 	  (should (equal '(command . hpath:find)
 			 (hywiki-get-referent wikiword))))
@@ -918,7 +918,7 @@ Note special meaning of `hywiki-allow-plurals-flag'."
   "Verify `hywiki-add-info-index'."
   (let ((hywiki-directory (make-temp-file "hywiki" t)))
     (unwind-protect
-        (with-simulated-input "files RET"
+        (ert-simulate-keys "files\r"
           (info "emacs")
 	  (hywiki-add-info-index "WikiWord")
 	  (should (equal '(info-index . "(emacs)files") (hywiki-get-referent "WikiWord"))))
@@ -928,7 +928,7 @@ Note special meaning of `hywiki-allow-plurals-flag'."
   "Verify `hywiki-add-info-node'."
   (let ((hywiki-directory (make-temp-file "hywiki" t)))
     (unwind-protect
-	(with-simulated-input "(emacs) RET"
+	(ert-simulate-keys "(emacs)\r"
 	  (hywiki-add-info-node "WikiWord")
 	  (should (equal '(info-node . "(emacs)") (hywiki-get-referent "WikiWord"))))
       (hy-delete-dir-and-buffer hywiki-directory))))
@@ -938,10 +938,10 @@ Note special meaning of `hywiki-allow-plurals-flag'."
   (let ((hywiki-directory (make-temp-file "hywiki" t)))
     (unwind-protect
 	(progn
-	  (with-simulated-input "ABC RET"
+	  (ert-simulate-keys "ABC\r"
 	    (hywiki-add-key-series "WikiWord")
 	    (should (equal '(key-series . "{ABC}") (hywiki-get-referent "WikiWord"))))
-	  (with-simulated-input "{ABC} RET"
+	  (ert-simulate-keys "{ABC}\r"
 	    (hywiki-add-key-series "WikiWord")
 	    (should (equal '(key-series . "{ABC}") (hywiki-get-referent "WikiWord")))))
       (hy-delete-dir-and-buffer hywiki-directory))))
@@ -1042,7 +1042,7 @@ up the test."
   "Verify saving and loading a referent keyseries works ."
   (hywiki-tests--referent-test
    (cons 'key-series "{ABC}")
-   (with-simulated-input "ABC RET"
+   (ert-simulate-keys "ABC\r"
      (hywiki-add-key-series wiki-referent))))
 
 ;; FIXME: Not stable. Can sometimes succeed.
@@ -1062,7 +1062,7 @@ up the test."
   (hywiki-tests--referent-test
    (cons 'bookmark "bmark")
    (bookmark-set "bmark")
-   (with-simulated-input "bmark RET"
+   (ert-simulate-keys "bmark\r"
      (hywiki-add-bookmark wiki-referent))))
 
 (ert-deftest hywiki-tests--save-referent-bookmark-use-menu ()
@@ -1085,7 +1085,7 @@ up the test."
   "Verify saving and loading a referent command works."
   (hywiki-tests--referent-test
     (cons 'command #'hywiki-tests--command)
-    (with-simulated-input "hywiki-tests--command RET"
+    (ert-simulate-keys "hywiki-tests--command\r"
       (hywiki-add-command wiki-referent))))
 
 (ert-deftest hywiki-tests--save-referent-command-use-menu ()
@@ -1154,7 +1154,7 @@ up the test."
   (hywiki-tests--referent-test
    (cons 'info-index "(emacs)files")
    (save-excursion
-     (with-simulated-input "files RET"
+     (ert-simulate-keys "files\r"
        (info "emacs")
        (hywiki-add-info-index wiki-referent)))))
 
@@ -1177,7 +1177,7 @@ up the test."
    (cons 'info-node "(emacs)")
    (save-excursion
      (unwind-protect
-         (with-simulated-input "(emacs) RET"
+         (ert-simulate-keys "(emacs)\r"
            (hywiki-add-info-node wiki-referent))
        (kill-buffer "*info*")))))
 
@@ -1273,13 +1273,29 @@ See gh#rswgnu/hyperbole/669."
         (hy-delete-file-and-buffer wiki-page)
         (hy-delete-dir-and-buffer hywiki-directory)))))
 
+(defun hywiki-tests--word-n-face-at ()
+  "Non-nil if at a WikiWord and it has `hywiki--word-face'."
+  (cl-destructuring-bind (word beg end) (hywiki-word-at :range)
+    (when word
+      (when (hy-test-word-face-at-region beg end)
+        word))))
+
+(defvar hywiki-tests--with-face-test nil
+  "Non-nil to perform face validation of WikiWord.")
+
+(defun hywiki-tests--word-at ()
+  "Choose what test to perform based on value of `hywiki-tests--with-face-test'."
+  (if hywiki-tests--with-face-test
+      (hywiki-tests--word-n-face-at)
+    (hywiki-word-at)))
+
 (defun hywiki-tests--verify-hywiki-word (expected)
   "Verify that `hywiki-word-at' returns t if a wikiword is EXPECTED.
 If EXPECTED is a string also verify that the wikiword matches the
 string."
   (if (not expected)
-      (should-not (hywiki-word-at))
-    (let ((hywiki-word-found (hywiki-word-at)))
+      (should-not (hywiki-tests--word-at))
+    (let ((hywiki-word-found (hywiki-tests--word-at)))
       (if (stringp expected)
           (should (string= expected hywiki-word-found))
         (should hywiki-word-found))
@@ -1339,9 +1355,16 @@ the function is called."
     (("(HiHo#s" . "HiHo#s") (" " . "HiHo#s"))
     (("(HiHo#s" . "HiHo#s") (")" . "HiHo#s")) ; Delimiter part of WikiWord. See below too.
     (("(HiHo#s" . "HiHo#s") ("-" . "HiHo#s-") ("n" . "HiHo#s-n") (")" . "HiHo#s-n"))
-    ;; Insert and delete between WikiWords
+    ;; Insert and delete between WikiWords and non WikiWords
     (("HiHo" . t) (p3 . t) (" " . "Hi") (p4 . "Ho") (-1 . "HiHo"))
     (("Hiho" . t) (p3 . t) (" " . "Hi") (p4) (-1 . "Hiho"))
+    (("hiHo") (p3) (" ") (p4 . "Ho") (-1))
+    ;; With double quotes
+    (("\"HiHo\"" . t) (p4 . t) (" " . "Hi") (p5 . "Ho") (-1 . "HiHo"))
+    (("\"Hiho\"" . t) (p4 . t) (" " . "Hi") (p5) (-1 . "Hiho"))
+    (("\"hiHo\"") (p4) (" ") (p5 . "Ho") (-1))
+    (("\"Hi\"Ho" . t) (p5 . "Ho") (" " . "Ho") (p4 . "Hi"))
+    (("Hi\"Ho\"" . t) (p3 . "Hi") (" " . "Hi") (p4) (p5 . "Ho"))
     )
   "List of test cases for WikiWords.")
 
@@ -1358,6 +1381,28 @@ resulting state at point is a WikiWord or not."
             (with-temp-buffer
               (hywiki-tests--run-test-case testcase))))
       (hy-delete-dir-and-buffer hywiki-directory)))))
+
+(ert-deftest hywiki-tests--wikiword-step-check-verification-with-faces ()
+  "Run the step check to verify WikiWord is identified under change.
+Performs each operation from the step check and verifies if the
+resulting state at point is a WikiWord or not."
+  (skip-unless (not noninteractive))
+  (hywiki-tests--preserve-hywiki-mode
+    (let* ((hywiki-directory (make-temp-file "hywiki" t))
+           (wikiHiHo (cdr (hywiki-add-page "HiHo")))
+           (wikiHiho (cdr (hywiki-add-page "Hiho")))
+           (wikiHi (cdr (hywiki-add-page "Hi")))
+           (wikiHo (cdr (hywiki-add-page "Ho")))
+           (wiki-page-list (list wikiHiHo wikiHiho wikiHi wikiHo))
+           (hywiki-tests--with-face-test t))
+      (unwind-protect
+          (progn
+            (hywiki-mode 1)
+            (dolist (testcase hywiki-tests--wikiword-step-check)
+              (with-temp-buffer
+                (hywiki-tests--run-test-case testcase))))
+        (hy-delete-files-and-buffers wiki-page-list)
+        (hy-delete-dir-and-buffer hywiki-directory)))))
 
 (defconst hywiki-tests--lorem-ipsum "\
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
@@ -1459,6 +1504,28 @@ Insert test in the middle of other text."
             (dolist (v words)
               (should (search-forward v))
               (should (string= v (hywiki-word-at)))))))))
+
+(ert-deftest hywiki-tests--filename-same-as-wiki-word ()
+  "Regular files should not be WikiWords even when hywiki-mode is active."
+  (hywiki-tests--preserve-hywiki-mode
+    (let* ((hywiki-directory (make-temp-file "hywiki" t))
+           (wiki-page (cdr (hywiki-add-page "DEMO")))
+           (default-directory hyperb:dir))
+      (unwind-protect
+          (with-temp-buffer
+            (insert "\"DEMO\" \"DEMO.org\"\n")
+            (goto-char 2)
+            (should (looking-at-p "DEMO\" "))
+            (hywiki-mode 0)
+            (should (string= "ibtypes::pathname" (hattr:get (ibut:at-p) 'categ)))
+            (hywiki-mode 1)
+            (should (string= "ibtypes::pathname" (hattr:get (ibut:at-p) 'categ)))
+            (goto-char 9)
+            ;; Verify that using the org extension selects the WikiWord.
+            (should (looking-at-p "DEMO\\.org\""))
+            (should (string= "ibtypes::hywiki-existing-word" (hattr:get (ibut:at-p) 'categ))))
+        (hy-delete-file-and-buffer wiki-page)
+        (hy-delete-dir-and-buffer hywiki-directory)))))
 
 (provide 'hywiki-tests)
 
