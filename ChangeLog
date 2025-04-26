@@ -1,3 +1,10 @@
+2025-04-26  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:insert-text): Remove duplicate 'actypes::link-to-file' clause.
+
+* hpath.el (hpath:file-position-to-line-and-column): Fix to shorten path
+    in the current directory, not within the buffer of path.
+
 2025-04-20  Bob Weiner  <rsw@gnu.org>
 
 * test/hui-tests.el (hui--link-possible-types): Change Outline Heading
