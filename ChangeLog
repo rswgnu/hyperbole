@@ -1,5 +1,9 @@
 2025-04-26  Mats Lidell  <matsl@gnu.org>
 
+* hibtypes.el (smerge): Add ibut smerge.
+
+* hui-mouse.el (smart-magit): Add smerge support in magit-status-mode.
+
 * hywiki.el (hywiki-word-face-at-p): Add optional pos to enable reuse.
 
 * test/hy-test-helpers.el (hy-test-word-face-at-region): Simplify by
