@@ -9,6 +9,14 @@
 
 2025-04-27  Bob Weiner  <rsw@gnu.org>
 
+* hypb.el (hypb:in-string-p): Add missing 'save-match-data' so when used with
+    another search, this does not overwrite the matches.  This fixes HyWikiWords
+    in yanked regions not highlighting.
+
+* hyrolo.el (hyrolo-grep-file): Disable 'hywiki-mode' highlighting when reading
+    in HyRolo search buffers to maintain speed and not have all the HyWikiWords
+    distracting from matches found in the *HyRolo* match buffer.
+
 * test/hywiki-tests.el (hywiki-tests--save-referent-keyseries-use-menu): Rewrite
     and enable this test.
 

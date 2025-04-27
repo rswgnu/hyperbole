@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     27-Apr-25 at 02:47:39 by Bob Weiner
+;; Last-Mod:     27-Apr-25 at 10:11:50 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -781,9 +781,9 @@ body B
             (save-buffer))
           (with-current-buffer (find-file-noselect wikipage)
             (insert "\
-WikiWord
-WikiWord#Asection
-WikiWord#Bsection-subsection
+* WikiWord
+* WikiWord#Asection
+* WikiWord#Bsection-subsection
 ")
             (save-buffer))
 
