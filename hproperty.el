@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Aug-92
-;; Last-Mod:     27-Feb-25 at 22:50:13 by Bob Weiner
+;; Last-Mod:     26-Apr-25 at 20:25:33 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -258,7 +258,7 @@ matching button."
 		  (overlays-in start end)))))
 
 (defun hproperty:but-get-first-in-region (start end property value)
-  "Return first button in current buf between START & END with PROPERTY & VALUE.
+  "Return list of first button between START & END with PROPERTY & VALUE.
 Return nil if none."
   (catch 'first
     (mapc (lambda (overlay)
