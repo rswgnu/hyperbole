@@ -1,3 +1,8 @@
+2025-04-27  Mats Lidell  <matsl@gnu.org>
+
+* man/hyperbole.texi (Implicit Button Types): smerge ibut.
+    (Smart Key - Magit Mode): Merge conflict lines.
+
 2025-04-27  Bob Weiner  <rsw@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--save-referent-keyseries-use-menu): Rewrite
