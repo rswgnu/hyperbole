@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     19-Feb-25 at 21:41:13 by Bob Weiner
+;; Last-Mod:     27-Apr-25 at 11:12:58 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1984,6 +1984,8 @@ Return number of matching entries found."
   (setq hyrolo-match-regexp pattern)
   ;;
   (let ((actual-buf)
+	;; Temporarily disable hywiki-mode for speed
+	(hywiki-mode)
 	;; Temporarily disable magit-auto-revert-mode-enable-in-buffers for hyrolo
 	;; buffers; not needed and can slow/hang file loading
 	(after-change-major-mode-hook

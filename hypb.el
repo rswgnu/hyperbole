@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     18-Apr-25 at 21:38:23 by Bob Weiner
+;; Last-Mod:     27-Apr-25 at 12:03:07 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -672,9 +672,10 @@ This will this install the Emacs helm package when needed."
     ;; Don't use `syntax-ppss' here as it fails to ignore backquoted
     ;; double quote characters in strings and doesn't work in
     ;; `change-log-mode' due to its syntax-table.
-    (and (cl-oddp (count-matches "\\(^\\|[^\\]\\)\"" (point-min) (point)))
-	 (save-excursion (re-search-forward "\\(^\\|[^\\]\\)\"" nil t))
-	 t)))
+    (save-match-data
+      (and (cl-oddp (count-matches "\\(^\\|[^\\]\\)\"" (point-min) (point)))
+	   (save-excursion (re-search-forward "\\(^\\|[^\\]\\)\"" nil t))
+	   t))))
 
 (defun hypb:indirect-function (obj)
   "Return the function at the end of OBJ's function chain.
