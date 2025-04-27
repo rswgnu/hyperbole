@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     13-Apr-25 at 01:06:44 by Bob Weiner
+;; Last-Mod:     26-Apr-25 at 10:22:42 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1401,17 +1401,19 @@ Parse out the parts and return a list, else nil."
 	  (list file))))))
 
 (defun hpath:file-position-to-line-and-column (path position)
-  "Return \"path:line-num:col-num\" given PATH and character POSITION.
-The path in the result is abbreviated when possible."
-  (with-current-buffer (find-file-noselect path)
-    (save-excursion
-      (goto-char position)
-      (if (zerop (current-column))
-	  (format "%s:L%d" (hpath:shorten path) (line-number-at-pos (point) t))
-	(format "%s:L%d:C%d"
-		(hpath:shorten path)
-		(line-number-at-pos (point) t)
-		(current-column))))))
+  "Return \"path:L<line-num>:C<col-num>\" given PATH and character POSITION.
+If col-num is 0, the :C<col-num> is excluded.  The path in the
+result is abbreviated relative to the caller's buffer directory."
+  (let ((shortened-path (hpath:shorten path)))
+    (with-current-buffer (find-file-noselect path)
+      (save-excursion
+	(goto-char position)
+	(if (zerop (current-column))
+	    (format "%s:L%d" shortened-path (line-number-at-pos (point) t))
+	  (format "%s:L%d:C%d"
+		  shortened-path
+		  (line-number-at-pos (point) t)
+		  (current-column)))))))
 
 (defun hpath:find-noselect (filename)
   "Find but don't display FILENAME.

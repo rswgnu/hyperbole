@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     26-Apr-25 at 10:19:22 by Mats Lidell
+;; Last-Mod:     27-Apr-25 at 00:40:38 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1755,8 +1755,9 @@ If a boolean function or variable, display its value."
               ((looking-at smerge-lower-re)
                (setq op 'smerge-keep-all))))
       (when op
+      (save-excursion
         (ibut:label-set (match-string-no-properties 0) (match-beginning 0) (match-end 0))
-        (hact op)))))
+        (hact op))))))
 
 (run-hooks 'hibtypes-end-load-hook)
 (provide 'hibtypes)

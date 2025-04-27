@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Acpr-24 at 22:41:13
-;; Last-Mod:     20-Apr-25 at 22:27:39 by Mats Lidell
+;; Last-Mod:     27-Apr-25 at 01:21:36 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -916,7 +916,8 @@ an error is triggered."
 		      (hywiki-get-referent-hasht)))
     (setq hywiki--any-wikiword-regexp-list nil)
     (unless (hyperb:stack-frame '(hywiki-maybe-highlight-wikiwords-in-frame))
-      (hywiki-cache-save))
+      (hywiki-cache-save)
+      (hywiki-maybe-highlight-wikiwords-in-frame t))
     (run-hooks 'hywiki-add-referent-hook)
     referent))
 
@@ -977,7 +978,7 @@ calling this function."
   (activities-resume activity :resetp nil))
 
 (defun hywiki-add-bookmark (wikiword)
-  "Make WIKIWORD display a bookmark and return the action.
+  "Make WIKIWORD display a bookmark at point and return the action.
 
 If WIKIWORD is invalid, trigger a `user-error' if called interactively
 or return nil if not.
@@ -987,13 +988,12 @@ After successfully adding the bookmark, run `hywiki-add-referent-hook'.
 Use `hywiki-get-referent' to determine whether WIKIWORD exists prior to
 calling this function."
   (interactive (list (or (hywiki-word-at)
-			 (hywiki-word-read-new "Add/Edit HyWikiWord: "))))
+			 (hywiki-word-read-new "Add/Edit Bookmark HyWikiWord: "))))
   (require 'bookmark)
-  (let ((bookmark (bookmark-completing-read "Bookmark: "
-					    bookmark-current-bookmark)))
-    (if (string-empty-p bookmark)
-	(error "(hywiki-add-bookmark): No bookmark specified")
-      (hywiki-add-referent wikiword (cons 'bookmark bookmark)))))
+  (if (string-empty-p wikiword)
+      (error "(hywiki-add-bookmark): No bookmark specified")
+    (bookmark-set wikiword)
+    (hywiki-add-referent wikiword (cons 'bookmark wikiword))))
 
 (defun hywiki-display-bookmark (_wikiword bookmark)
   (let ((loc (bookmark-location bookmark)))
@@ -2843,23 +2843,23 @@ Word may be of form:
 
 When using the word at point, a call to `hywiki-active-in-current-buffer-p'
 at point must return non-nil or this function will return nil."
-  (setq hywiki--word-only word)
-  (when (stringp word)
-    (setq word (hywiki-strip-org-link word)))
-  (if (or (stringp word)
-	  (setq word (hywiki-word-at word)))
-      (unless (hywiki-get-referent (if (stringp word) word (nth 0 word)))
-	(setq word nil))
-    (setq word nil))
-  (when (and (listp word) (= (length word) 3))
-    (setq start (nth 1 word)
-	  end   (nth 2 word)
-	  ;; `word' must be set last so list version can be referenced
-	  ;; first above
-	  word  (nth 0 word)))
-  (if (eq hywiki--word-only :range)
-      (list word start end)
-    word))
+  (let ((save-input-word word))
+    (when (stringp word)
+      (setq word (hywiki-strip-org-link word)))
+    (if (or (stringp word)
+	    (setq word (hywiki-word-at word)))
+	(unless (hywiki-get-referent (if (stringp word) word (nth 0 word)))
+	  (setq word nil))
+      (setq word nil))
+    (when (and (listp word) (= (length word) 3))
+      (setq start (nth 1 word)
+	    end   (nth 2 word)
+	    ;; `word' must be set last so list version can be referenced
+	    ;; first above
+	    word  (nth 0 word)))
+    (if (eq save-input-word :range)
+	(list word start end)
+      word)))
 
 (defun hywiki-section-to-headline-reference ()
   "Replace file#section dashes with spaces to match to an Org headline.
@@ -3138,7 +3138,13 @@ or this will return nil."
 			 (string-match "#[^][#()<>{}\"\n\r\f]+\\'" wikiword)
 		       t))
 		(if range-flag
-		    (list wikiword start end)
+		    (progn
+		      ;; Ensure wikiword is highlighted before returning it
+		      (and wikiword start end
+			   (not (hproperty:but-get start 'face hywiki-word-face))
+			   (hywiki-referent-exists-p wikiword)
+			   (hproperty:but-add start end hywiki-word-face))
+		      (list wikiword start end))
 		  wikiword)
 	      (when range-flag
 		'(nil nil nil))))))
@@ -3177,6 +3183,8 @@ a HyWikiWord at point."
   "Non-nil if but at point or optional POS has `hywiki-word-face' property."
   (unless pos
     (setq pos (point)))
+  ;; Sometimes this can return a left over button/overlay that points
+  ;; to no buffer.  Ignore this case.
   (hproperty:but-get pos 'face hywiki-word-face))
 
 ;;;###autoload

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     18-Apr-25 at 22:22:11 by Bob Weiner
+;; Last-Mod:     27-Apr-25 at 02:47:39 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -552,23 +552,21 @@ Both mod-time and checksum must be changed for a test to return true."
     (let* ((hywiki-directory (make-temp-file "hywiki" t))
            (wikipage (cdr (hywiki-add-page "WikiWord"))))
       (unwind-protect
-          (progn
-            (with-temp-buffer
-              (hywiki-mode 1)
-              (insert "Wikiord")
-              (hywiki-tests--command-execute #'self-insert-command 1 ? )
-              (goto-char 5)
-              (should (looking-at-p "ord "))
-              (should-not (hywiki-word-face-at-p))
+          (with-temp-buffer
+            (hywiki-mode 1)
+            (insert "Wikiord ")
+            (goto-char 5)
+            (should (looking-at-p "ord "))
+            (should-not (hywiki-word-face-at-p))
 
-              (hywiki-tests--command-execute #'self-insert-command 1 ?W)
-              (goto-char 5)
-              (should (looking-at-p "Word "))
-              (should (hywiki-word-face-at-p))
+            (hywiki-tests--command-execute #'self-insert-command 1 ?W)
+            (goto-char 5)
+            (should (looking-at-p "Word "))
+            (should (hywiki-word-face-at-p))
 
-              (hywiki-tests--command-execute #'delete-char 1)
-              (should (looking-at-p "ord "))
-              (should-not (hywiki-word-face-at-p))))
+            (hywiki-tests--command-execute #'delete-char 1)
+            (should (looking-at-p "ord "))
+            (should-not (hywiki-word-face-at-p)))
         (hy-delete-files-and-buffers (list wikipage))
         (hy-delete-dir-and-buffer hywiki-directory)))))
 
@@ -860,6 +858,7 @@ Note special meaning of `hywiki-allow-plurals-flag'."
 
 (ert-deftest hywiki-tests--add-bookmark ()
   "Verify `hywiki-add-bookmark'."
+  (require 'bookmark)
   (let ((hywiki-directory (make-temp-file "hywiki" t))
         (bookmark-alist nil)
         (file (make-temp-file "hypb.txt")))
@@ -867,11 +866,11 @@ Note special meaning of `hywiki-allow-plurals-flag'."
         (progn
           (find-file file)
           (ert-simulate-keys "\r"
-            (should-error (hywiki-add-bookmark "WikiWord")))
-          (bookmark-set "bookmark")
-          (ert-simulate-keys "bookmark\r"
+            (should-error (hywiki-add-bookmark "")))
+          (ert-simulate-keys "WikiWord\r"
             (hywiki-add-bookmark "WikiWord")
-            (should (equal '(bookmark . "bookmark") (hywiki-get-referent "WikiWord")))))
+            (should (equal '(bookmark . "WikiWord")
+			   (hywiki-get-referent "WikiWord")))))
       (hy-delete-file-and-buffer file)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
@@ -1010,13 +1009,15 @@ EXPECTED is the result expected from hywiki-get-referent.  PREPARE sets
 up the test."
   (declare (indent 0) (debug t))
   `(let* ((hywiki-directory (make-temp-file "hywiki" t))
-          (wiki-page (cdr (hywiki-add-page "WikiPage" )))
 	  (wiki-referent "WikiReferent")
-          (mode-require-final-newline nil))
+          (wiki-page (cdr (hywiki-add-page "WikiPage" )))
+          (mode-require-final-newline nil)
+	  wiki-page-buffer)
      (unwind-protect
-         (progn
+         (save-excursion
            (should (equal '("WikiPage") (hywiki-get-wikiword-list)))
-           (find-file wiki-page)
+	   (setq wiki-page-buffer (find-file wiki-page))
+	   (erase-buffer)
            (insert wiki-referent)
            (save-buffer)
            (goto-char 4)
@@ -1024,9 +1025,10 @@ up the test."
            ,@prepare
 
            (should (equal ,expected (hywiki-get-referent wiki-referent)))
-
-           (should (string= wiki-referent (buffer-string)))
            (should (file-exists-p (hywiki-cache-default-file)))
+	   (set-buffer wiki-page-buffer)
+           (should (string= wiki-referent (buffer-substring-no-properties
+					   (point-min) (point-max))))
 
            ;; Simulate reload from cache
            (hywiki-cache-save)
@@ -1045,37 +1047,40 @@ up the test."
    (ert-simulate-keys "ABC\r"
      (hywiki-add-key-series wiki-referent))))
 
-;; FIXME: Not stable. Can sometimes succeed.
 (ert-deftest hywiki-tests--save-referent-keyseries-use-menu ()
   "Verify saving and loading a referent keyseries works using Hyperbole's menu."
-  :expected-result :failed
   ; The failure is intermittent. See expanded test case below.
   (skip-unless (not noninteractive))
-  (hywiki-tests--referent-test
-    (cons 'key-series "{ABC}")
-    (should (hact 'kbd-key "C-u C-h hhck{ABC} RET"))
-    (hy-test-helpers:consume-input-events)))
+  `(let* ((hywiki-directory (make-temp-file "hywiki" t))
+          (wiki-page (cdr (hywiki-add-page "WikiPage" )))
+          (mode-require-final-newline nil)
+	  wiki-page-buffer)
+     (unwind-protect
+         (save-excursion
+	   (setq wiki-page-buffer (find-file wiki-page))
+	   (erase-buffer)
+	   (insert "WikiWord")
+           (save-buffer)
+           (goto-char 4)
+	   (should (hact 'kbd-key "C-u C-h hhck {C-e SPC ABC} RET"))
+	   (should (equal (cons 'key-series "C-e SPC {ABC}")
+			  (hywiki-get-referent "WikiWord")))
+	   (should (string-equal "Wiki{C-e ABC}Referent"
+				 (buffer-substring-no-properties
+				  (point-min)
+				  (point-max)))))
+       (hy-delete-files-and-buffers (list wiki-page (hywiki-cache-default-file)))
+       (hy-delete-dir-and-buffer hywiki-directory))))
 
 ;; Bookmark
 (ert-deftest hywiki-tests--save-referent-bookmark ()
   "Verify saving and loading a referent bookmark works."
   (hywiki-tests--referent-test
-   (cons 'bookmark "bmark")
-   (bookmark-set "bmark")
-   (ert-simulate-keys "bmark\r"
+   (cons 'bookmark wiki-referent)
+   (ert-simulate-keys (concat wiki-referent "\r")
      (hywiki-add-bookmark wiki-referent))))
 
-(ert-deftest hywiki-tests--save-referent-bookmark-use-menu ()
-  "Verify saving and loading a referent bookmark works using Hyperbole's menu."
-  (skip-unless (not noninteractive))
-  (hywiki-tests--referent-test
-   (cons 'bookmark "bmark")
-   (bookmark-set "bmark")
-   (should (hact 'kbd-key "C-u C-h hhcb bmark RET"))
-   (hy-test-helpers:consume-input-events)))
-
 ;; Command
-
 (defun hywiki-tests--command (wikiword)
   "Test command."
   (interactive)

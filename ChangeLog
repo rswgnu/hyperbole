@@ -1,3 +1,40 @@
+2025-04-27  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--save-referent-keyseries-use-menu): Rewrite
+    and enable this test.
+
+* hywiki.el (hywiki-referent-exists-p): Fix to stop using global which could be
+    overwritten and cause failures; use let of 'save-input-word' instead.
+
+2025-04-26  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--verify-face-property-when-editing-wikiword):
+    Rewrite and eliminate false wikiword highlighting.
+
+                       (hywiki-tests--save-referent-bookmark-use-menu): This
+    test was unstable and unneeded (could not read the Hyperbole minibuffer
+    menu prompts properly), so I removed it.  'hywiki-tests--save-referent-bookmark'
+    is enough of a test.
+
+* hywiki.el (hywiki-word-at): When called with :range flag, ensure any
+    existing HyWikiWord reference is highlighted before returning.  This
+    helps with wikiword highlighting taking precedence over 'font-lock-mode'.
+
+* hywiki.el (hywiki-add-bookmark): Fix to actually create the bookmark
+    and to not prompt for a bookmark name when called non-interactively.
+  test/hywiki-tests.el (hywiki-tests--add-bookmark): Fix
+                       (hywiki-tests--save-referent-bookmark): Fix to
+    use 'wiki-referent' from 'hywiki-tests--referent-test' call.
+                       (hywiki-tests--referent-test): Fix to return buffer
+    string with no properties to simplify comparisons.
+                       (hywiki-add-referent): This may create a new HyWikiWord
+    so highlight any occurrences of it in all windows across all frames.
+
+* hbut.el (ibut:insert-text): Remove duplicate 'actypes::link-to-file' clause.
+
+* hpath.el (hpath:file-position-to-line-and-column): Fix to shorten path
+    in the current directory, not within the buffer of path.
+
 2025-04-26  Mats Lidell  <matsl@gnu.org>
 
 * hibtypes.el (smerge): Add ibut smerge.
