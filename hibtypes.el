@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     27-Apr-25 at 17:17:18 by Mats Lidell
+;; Last-Mod:     27-Apr-25 at 17:30:02 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -45,7 +45,7 @@
 (require 'org-macs) ;; for org-uuid-regexp
 (require 'subr-x) ;; for string-trim
 (require 'thingatpt)
-(require 'smerge-mode) ;; for smerge-keep-{all,upper,lower}
+(require 'smerge-mode) ;; for smerge-keep-{all, upper, lower}
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -1747,12 +1747,11 @@ If a boolean function or variable, display its value."
 On a merge conflict marker, keep either the upper, both or the lower
 version of the conflict."
   (when (bound-and-true-p smerge-mode)
-    (let ((op
-           (save-excursion
-             (beginning-of-line)
-             (cond ((looking-at smerge-end-re) #'smerge-keep-lower)
-                   ((looking-at smerge-begin-re) #'smerge-keep-upper)
-                   ((looking-at smerge-lower-re) #'smerge-keep-all)))))
+    (let ((op (save-excursion
+                (beginning-of-line)
+                (cond ((looking-at smerge-end-re) #'smerge-keep-lower)
+                      ((looking-at smerge-begin-re) #'smerge-keep-upper)
+                      ((looking-at smerge-lower-re) #'smerge-keep-all)))))
       (when op
         (save-excursion
           (ibut:label-set (match-string-no-properties 0) (match-beginning 0) (match-end 0))
