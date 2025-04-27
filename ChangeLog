@@ -1,5 +1,9 @@
 2025-04-27  Mats Lidell  <matsl@gnu.org>
 
+* hywiki.el (hywiki-word-face-at-p):
+* hibtypes.el (smerge): Use or instead of setq. Thanks Stefan Monnier for
+    the suggestion.
+
 * man/hyperbole.texi (Implicit Button Types): smerge ibut.
     (Smart Key - Magit Mode): Merge conflict lines.
 

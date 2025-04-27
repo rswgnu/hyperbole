@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Acpr-24 at 22:41:13
-;; Last-Mod:     27-Apr-25 at 01:21:36 by Bob Weiner
+;; Last-Mod:     27-Apr-25 at 14:35:33 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -3181,11 +3181,9 @@ a HyWikiWord at point."
 
 (defun hywiki-word-face-at-p (&optional pos)
   "Non-nil if but at point or optional POS has `hywiki-word-face' property."
-  (unless pos
-    (setq pos (point)))
   ;; Sometimes this can return a left over button/overlay that points
   ;; to no buffer.  Ignore this case.
-  (hproperty:but-get pos 'face hywiki-word-face))
+  (hproperty:but-get (or pos (point)) 'face hywiki-word-face))
 
 ;;;###autoload
 (defun hywiki-word-consult-grep (word)
