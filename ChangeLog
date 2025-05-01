@@ -1,3 +1,9 @@
+2025-05-01  Mats Lidell  <matsl@gnu.org>
+
+* test/hbut-tests.el (hbut-tests--hattr-is-p)
+    (hbut-tests--hattr-ibtype-is-p, hbut-tests--hattr-actype-is-p): Unit
+    tests.
+
 2025-04-28  Mats Lidell  <matsl@gnu.org>
 
 * man/.dir-locals.el: Add before-save-hook for automating date updates.

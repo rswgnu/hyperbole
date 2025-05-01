@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-may-21 at 09:33:00
-;; Last-Mod:     22-Dec-24 at 21:58:44 by Mats Lidell
+;; Last-Mod:      1-May-25 at 23:33:16 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -794,6 +794,31 @@ See #10 for the proper way to add an ibutton name.
                   (hpath:find-noselect => (find-file-noselect global-but-file)))
           (gbut:act "Link"))
       (hy-delete-file-and-buffer global-but-file))))
+
+(ert-deftest hbut-tests--hattr-is-p ()
+  "Verify `hattr:is-p'."
+  (should-not (hattr:is-p "non symbol" 'any))
+  (should-not (hattr:is-p nil 'any))
+  (mocklet (((hattr:get 'hbut:current 'symbol) => 'value))
+    (should (hattr:is-p 'symbol 'value))
+    (should-not (hattr:is-p 'symbol 'other-value)))
+  (mocklet (((hattr:get 'hbut-symbol 'symbol) => 'value))
+    (should (hattr:is-p 'symbol 'value 'hbut-symbol))
+    (should-not (hattr:is-p 'symbol 'other-value 'hbut-symbol))))
+
+(ert-deftest hbut-tests--hattr-ibtype-is-p ()
+  "Verify `hattr:ibtype-is-p'."
+  (mocklet (((hattr:is-p 'categ 'ibtype nil) => t))
+    (should (hattr:ibtype-is-p 'ibtype)))
+  (mocklet (((hattr:is-p 'categ 'ibtype 'ibut-symbol) => t))
+    (should (hattr:ibtype-is-p 'ibtype 'ibut-symbol))))
+
+(ert-deftest hbut-tests--hattr-actype-is-p ()
+  "Verify `hattr:actype-is-p'."
+  (mocklet (((hattr:is-p 'actype 'ibtype nil) => t))
+    (should (hattr:actype-is-p 'ibtype)))
+  (mocklet (((hattr:is-p 'actype 'ibtype 'ibut-symbol) => t))
+    (should (hattr:actype-is-p 'ibtype 'ibut-symbol))))
 
 ;; This file can't be byte-compiled without the `el-mock' package (because of
 ;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.
