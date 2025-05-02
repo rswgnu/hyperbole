@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     14-Apr-25 at 22:57:56 by Bob Weiner
+;; Last-Mod:      7-May-25 at 21:52:27 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1001,13 +1001,13 @@ Useful in testing Smart Key contexts."
     (unwind-protect
 	(progn
 	  (while (and (null pred-value) (setq hkey-form (car hkey-forms)))
-	    (setq hkey-actions (cdr hkey-form)
-	          pred (car hkey-form)
+	    (setq pred (car hkey-form)
 		  pred-value (hypb:eval-debug pred))
 	    (unless (equal (point-marker) pred-point)
 	      (hypb:error "(Hyperbole): predicate %s improperly moved point from %s to %s"
 			  pred (point) pred-point))
-	    (unless pred-value
+	    (if pred-value
+                (setq hkey-actions (cdr hkey-form))
 	      (setq hkey-forms (cdr hkey-forms))))
 	  hkey-actions)
       (set-marker pred-point nil))))
