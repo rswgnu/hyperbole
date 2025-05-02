@@ -1,3 +1,7 @@
+2025-04-28  Mats Lidell  <matsl@gnu.org>
+
+* man/.dir-locals.el: Add before-save-hook for automating date updates.
+
 2025-04-27  Mats Lidell  <matsl@gnu.org>
 
 * man/hyperbole.texi (Implicit Button Types): Add anchor to all ibtypes.
