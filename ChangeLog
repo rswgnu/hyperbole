@@ -1,12 +1,50 @@
+2025-05-04  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode:add-after-parent): Add back in to add successive
+    sibling cells of a parent cell or if at the top-level, as the first cells in
+    the outline.
+  test/kotl-mode-tests.el (kotl-mode-tests--sanity-check-function-list): Add
+    'kotl-mode:add-after-parent'.
+
+2025-05-03  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode:add-cell): Update doc string and handling of
+    negative prefix args to add that many cells prior to the current cell.  Also,
+    change 0 arg to add a single cell as the parent's first child.
+                    (kotl-mode:add-child): Use prefix arg to add a sequence
+    of child cells.
+                    (kotl-mode:add-below-parent): Rename from
+    'kotl-mode:add-after-parent'.  Use prefix arg to add a sequence of initial
+    children cells below the parent of the current cell.
+                    (kotl-mode:add-prior-cell): Use prefix arg to add a sequence
+    of prior sibling cells or with C-u, add as the initial cells at the start of
+    the current cell level (first children of its parent).
+
 2025-05-01  Mats Lidell  <matsl@gnu.org>
 
 * test/hbut-tests.el (hbut-tests--hattr-is-p)
     (hbut-tests--hattr-ibtype-is-p, hbut-tests--hattr-actype-is-p): Unit
     tests.
 
+2025-04-29  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode:add-prior-cell): Add optional prefix arg flag
+    to add that many prior sibling cells unless on a level 1 cell or when given
+    a single C-u prefand when given insert cell as the the parent's first child.
+    Bind this to {C-c p}.
+                   (kotl-mode:add-before-parent): Add prior sibling to parent
+    cell.  If on top-level, add first cell at that level.
+  kotl/kmenu.el (kotl-menu-common-body): Add above function to Koutline menu
+    as well as 'kotl-mode:add-below-parent'.
+
 2025-04-28  Mats Lidell  <matsl@gnu.org>
 
 * man/.dir-locals.el: Add before-save-hook for automating date updates.
+
+2025-04-27  Mats Lidell  <matsl@gnu.org>
+
+* hywiki.el   (hywiki-word-face-at-p):
+  hibtypes.el (smerge): Use or instead of setq. Thanks Stefan Monnier for
 
 2025-04-27  Mats Lidell  <matsl@gnu.org>
 
@@ -17,7 +55,7 @@
     the suggestion.
 
 * man/hyperbole.texi (Implicit Button Types): smerge ibut.
-    (Smart Key - Magit Mode): Merge conflict lines.
+                     (Smart Key - Magit Mode): Merge conflict lines.
 
 2025-04-27  Bob Weiner  <rsw@gnu.org>
 
@@ -156,11 +194,11 @@
 * kotl/kotl-mode.el (kotl-mode:add-prior-cell): Add to insert a cell
     prior to the current cell at the same level as the current cell.
 
-* kotl/kmenu.el (kotl-menu-common-body): Change 'Add-Parent' to
-    'Add-After-Parent'.
+* kotl/kmenu.el (kotl-menu-common-body): Change 'Add-Parent' to two
+    commands: 'Add-After-Parent and 'Add-Below-Parent'.
 
 * kotl/kotl-mode.el (kotl-mode:add-parent): Rename to
-   'kotl-mode:add-after-parent'.
+   'kotl-mode:add-below-parent'.
 
 2025-04-19  Bob Weiner  <rsw@gnu.org>
 

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Acpr-24 at 22:41:13
-;; Last-Mod:     27-Apr-25 at 12:19:38 by Bob Weiner
+;; Last-Mod:      4-May-25 at 10:46:18 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -551,7 +551,7 @@ Non-nil is the default."
 
 (defun hywiki-debuttonize-non-character-commands ()
   "Store any HyWikiWord before or after point for later comparison.
-Triggered by `pre-command-hook' for non-character -commands, including
+Triggered by `pre-command-hook' for non-character commands, including
 deletion commands and those in `hywiki-non-character-commands'."
   (setq hywiki--word-pre-command nil)
   (set-marker hywiki--buttonize-start nil)

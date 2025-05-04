@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     27-Apr-25 at 17:00:36 by Mats Lidell
+@c Last-Mod:      4-May-25 at 10:45:09 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,8 +30,8 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED April, 2025
-@set UPDATED-MONTH April 2025
+@set UPDATED May, 2025
+@set UPDATED-MONTH May 2025
 @set EDITION 9.0.2pre
 @set VERSION 9.0.2pre
 
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed April 27, 2025.
+Printed May 4, 2025.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -213,7 +213,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.2pre
-April 27, 2025
+May 4, 2025
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -9560,8 +9560,8 @@ REFERENCE should be a cell-ref or a string containing "filename, cell-ref".
 See the documentation for @code{(kcell:ref-to-id)} for valid cell-ref
 formats.
 
-@findex kotl-mode:add-after-parent
-@item kotl-mode:add-after-parent  @bkbd{C-c p}
+@findex kotl-mode:add-below-parent
+@item kotl-mode:add-below-parent  @bkbd{C-c p}
 Add a new cell to current kview after current cell's parent.
 If parent is the hidden root cell 0, then add as the first cell of the
 outline.  Otherwise, add it as the next sibling of the parent cell.
@@ -10910,10 +10910,10 @@ When pressed on a Hyperbole button:
 @cindex view mode
 @format
 @group
-If pressed within a buffer in View major or minor mode:
+If pressed within a buffer in View minor mode:
   ACTION KEY
-     Scrolls the buffer forward a windowful.  If at the last line of the
-     buffer, instead quits from view mode.
+     Scrolls the buffer forward a windowful; if last line is visible, move to the
+     last line.  If at the last line of the buffer, instead quits from view mode.
   ASSIST KEY
      Scrolls the buffer backward a windowful.
 @end group

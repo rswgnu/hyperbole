@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Mar-94 at 11:22:09
-;; Last-Mod:     20-Apr-25 at 00:28:33 by Bob Weiner
+;; Last-Mod:      4-May-25 at 11:24:29 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -44,6 +44,8 @@
        :active t :keys "M-TAB"]
       "----"
       ["Add-After-Parent"    kotl-mode:add-after-parent     t]
+      ["Add-Before-Parent"   kotl-mode:add-before-parent    t]
+      ["Add-Below-Parent"    kotl-mode:add-below-parent     t]
       ["Add-Child"           kotl-mode:add-child            t]
       ["Add-Cell"            kotl-mode:add-cell             t]
       ["Append-Cell"         kotl-mode:append-cell          t]
