@@ -20,6 +20,12 @@
     of prior sibling cells or with C-u, add as the initial cells at the start of
     the current cell level (first children of its parent).
 
+2025-05-01  Mats Lidell  <matsl@gnu.org>
+
+* test/hbut-tests.el (hbut-tests--hattr-is-p)
+    (hbut-tests--hattr-ibtype-is-p, hbut-tests--hattr-actype-is-p): Unit
+    tests.
+
 2025-04-29  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kotl-mode.el (kotl-mode:add-prior-cell): Add optional prefix arg flag
@@ -31,10 +37,21 @@
   kotl/kmenu.el (kotl-menu-common-body): Add above function to Koutline menu
     as well as 'kotl-mode:add-below-parent'.
 
+2025-04-28  Mats Lidell  <matsl@gnu.org>
+
+* man/.dir-locals.el: Add before-save-hook for automating date updates.
+
 2025-04-27  Mats Lidell  <matsl@gnu.org>
 
 * hywiki.el   (hywiki-word-face-at-p):
   hibtypes.el (smerge): Use or instead of setq. Thanks Stefan Monnier for
+
+2025-04-27  Mats Lidell  <matsl@gnu.org>
+
+* man/hyperbole.texi (Implicit Button Types): Add anchor to all ibtypes.
+
+* hywiki.el (hywiki-word-face-at-p):
+* hibtypes.el (smerge): Use or instead of setq. Thanks Stefan Monnier for
     the suggestion.
 
 * man/hyperbole.texi (Implicit Button Types): smerge ibut.

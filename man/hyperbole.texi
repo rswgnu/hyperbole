@@ -2494,6 +2494,7 @@ The following table summarizes the effect of this option setting.
 @findex ibtypes doc-id
 @cindex online library
 @cindex document identifier
+@anchor{doc-id}
 @item doc-id
 Display a document from a local document library given its id.  Ids must be
 delimited by @code{doc-id-start} and @code{doc-id-end} and must match the
@@ -2516,12 +2517,14 @@ resolution from within the @code{magit-status-mode}.
 
 @findex ibtypes completion
 @cindex completion
+@anchor{completion}
 @item completion
 Insert the completion at point (from a completions buffer) into the
 minibuffer or the other window.
 
 @findex ibtypes hywiki-existing-word
 @cindex hywiki existing word
+@anchor{hywiki-existing-word}
 @item hywiki-existing-word
 When on a HyWiki word with an existing page, display its page and
 optional section.
@@ -2531,6 +2534,7 @@ optional section.
 @cindex action implicit button
 @cindex function call implicit button
 @cindex variable display implicit button
+@anchor{action}
 @item action
 The Action Button type.  At point, activate any of: an Elisp variable, a
 Hyperbole action-type, or an Elisp function call surrounded by <> rather than
@@ -2539,6 +2543,7 @@ Hyperbole action-type, or an Elisp function call surrounded by <> rather than
 @findex ibtypes hyp-source
 @cindex Hyperbole report
 @vindex file, DEMO
+@anchor{hyp-source}
 @item hyp-source
 Turn source location entries following an `@@loc>' line in Hyperbole
 reports into buttons that jump to the associated location.  For
@@ -2549,6 +2554,7 @@ buffer behaves the same as the corresponding button in the original
 
 @findex ibtypes hyp-address
 @cindex Hyperbole mail list
+@anchor{hyp-address}
 @item hyp-address
 Within a mail or Usenet news composer window, make a Hyperbole
 support/discussion e-mail address insert Hyperbole environment and
@@ -2560,6 +2566,7 @@ would activate this implicit button type.
 
 @findex ibtypes Info-node
 @cindex Info node
+@anchor{Info-node}
 @item Info-node
 Make a "(filename)nodename" button display the associated Info node.
 Also make a "(filename)itemname" button display the associated Info
@@ -2570,6 +2577,7 @@ index item.  Examples are "(hyperbole)Implicit Buttons" and
 @cindex GNUS push-buttons
 @cindex hiding signatures
 @cindex signatures, hiding
+@anchor{gnus-push-button}
 @item gnus-push-button
 Activate GNUS-specific article push-buttons, e.g. for hiding signatures.  GNUS
 is a news and mail reader.
@@ -2577,6 +2585,7 @@ is a news and mail reader.
 @findex ibtypes texinfo-ref
 @cindex Texinfo cross-reference
 @cindex cross-reference, Texinfo
+@anchor{texinfo-ref}
 @item texinfo-ref
 Display Texinfo, Info node or help associated with Texinfo node, menu item,
 @@xref, @@pxref, @@ref, @@code, @@findex, @@var or @@vindex at point.  If
@@ -2590,6 +2599,7 @@ documentation string is displayed.
 
 @findex ibtypes patch-msg
 @cindex patch output
+@anchor{patch-msg}
 @item patch-msg
 Jump to the source code associated with output from the @samp{patch}
 program.  Patch applies diffs to source code.
@@ -2599,6 +2609,7 @@ program.  Patch applies diffs to source code.
 @cindex Emacs Lisp compiler error
 @cindex compiler error
 @cindex Emacs Regression Test (ERT) symbol
+@anchor{elisp-compiler-msg}
 @item elisp-compiler-msg
 Jump to source code for definition associated with an Emacs Lisp
 byte-compiler error message or ERT test output line.  Works when
@@ -2616,6 +2627,7 @@ activated anywhere within such a line.
 @cindex python traceback
 @cindex python error
 @cindex source line
+@anchor{debugger-source}
 @item debugger-source
 Jump to the source line associated with a debugger stack frame or
 breakpoint line.  This works with gdb, dbx, and xdb.  Such lines are
@@ -2627,12 +2639,14 @@ pytype error.
 @cindex grep
 @cindex compiler error
 @cindex match lines
+@anchor{grep-msg}
 @item grep-msg
 Jump to the line associated with a grep or compilation error message.
 Messages are recognized in any buffer.
 
 @findex ibtypes hyrolo-stuck-msg
 @cindex hyrolo error
+@anchor{hyrolo-stuck-msg}
 @item hyrolo-stuck-msg
 Jump to the position where a HyRolo search has become stuck from the error.
 Such errors are recognized in any buffer.
@@ -2641,6 +2655,7 @@ Such errors are recognized in any buffer.
 @cindex grep
 @cindex ripgrep
 @cindex match lines
+@anchor{ripgrep-msg}
 @item ripgrep-msg
 Jump to a line associated with a ripgrep (rg) line numbered msg.
 Ripgrep outputs each pathname once, followed by all matching lines in
@@ -2650,6 +2665,7 @@ helm completion buffer).
 @findex ibtypes ipython-stack-frame
 @cindex ipython
 @cindex stack frame
+@anchor{ipython-stack-frame}
 @item ipython-stack-frame
 Jump to the line associated with an ipython stack frame line numbered
 msg.  ipython outputs each pathname once followed by all matching
@@ -2660,6 +2676,7 @@ than a helm completion buffer).
 @cindex line and column
 @cindex pathname, line and column
 @findex ibtypes pathname-line-and-column
+@anchor{pathname-line-and-column}
 @item pathname-line-and-column
 Make a valid @file{pathname:line-num[:column-num]} pattern display the
 path at @emph{line-num} and optional @emph{column-num}.  Also works
@@ -2672,6 +2689,7 @@ for line and C for column.
 @cindex implicit button link
 @cindex link to implicit button
 @cindex ilink
+@anchor{ilink}
 @item link-to-ibut <ilink>
 At point, activate a link to an implicit button within the current
 buffer.  This executes the linked to implicit button's action in the
@@ -2685,6 +2703,7 @@ e.g. <ilink: my series of keys: $@{hyperb:dir@}/HYPB>.
 @cindex global button link
 @cindex link to global button
 @cindex glink
+@anchor{glink}
 @item link-to-gbut <glink>
 At point, activate a link to a global button.  This executes the
 linked to global button's action in the context of the current buffer.
@@ -2695,6 +2714,7 @@ Recognizes the format '<glink:' button_label '>', e.g. <glink: open todos>.
 @cindex explicit button link
 @cindex link to explicit button
 @cindex elink
+@anchor{elink}
 @item link-to-ebut <elink>
 At point, activate a link to an explicit button within the current
 buffer.  This executes the linked to explicit button's action in the
@@ -2708,6 +2728,7 @@ e.g. <elink: project-list: ~/projs>."
 @cindex klink
 @cindex koutline link
 @cindex kcell link
+@anchor{klink}
 @item klink
 Follow a link delimited by <> to a koutline cell.
 See the documentation for @code{actypes::link-to-kotl} for valid link
@@ -2717,6 +2738,7 @@ specifiers.
 @cindex UNIX manual
 @cindex man pages
 @cindex man apropos
+@anchor{man-apropos}
 @item man-apropos
 Make man apropos entries (from @samp{man -k}) display associated man pages
 when selected.
@@ -2727,6 +2749,7 @@ when selected.
 @cindex RFC
 @cindex remote file
 @cindex http
+@anchor{rfc}
 @item rfc
 Retrieve and display an Internet Request for Comments (RFC) standards
 document referenced at point.  The following formats are recognized:
@@ -2738,6 +2761,7 @@ the location from which to retrieve RFCs via HTTP.
 @cindex key sequence
 @cindex series of keys
 @cindex kbd function
+@anchor{kbd-key}
 @item kbd-key
 Execute a key series (series of key sequences) around point,
 delimited by curly braces, @{@}.  Key series should be in
@@ -2756,6 +2780,7 @@ Any key sequence must be a string of one of the following:
 @findex ibtypes debbugs-gnu-mode
 @cindex bug tracking
 @cindex issue tracking
+@anchor{debbugs-gnu-mode}
 @item debbugs-gnu-mode
 Debbugs is a client-server issue tracker used by GNU free software
 projects, including Hyperbole, to manage issues and maintain threads
@@ -2767,6 +2792,7 @@ pretty prints the status of the issue to a window below the listing
 window.
 
 @findex ibtypes debbugs-gnu-query
+@anchor{debbugs-gnu-query}
 @item debbugs-gnu-query
 Display the results of a Debbugs query based on a bug reference string
 around point.  This works in most types of buffers.  If the query
@@ -2790,6 +2816,7 @@ the @file{hib-debbugs.el} file for detailed query format information.
 @findex ibtypes dir-summary
 @vindex file, MANIFEST
 @vindex file, DIR
+@anchor{dir-summary}
 @item dir-summary
 Detect filename buttons in files named "MANIFEST" or "DIR".  Display selected
 files.  Each filename must be at the beginning of the line and must be
@@ -2799,6 +2826,7 @@ non-brace character.
 @findex ibtypes text-toc
 @cindex table of contents
 @cindex toc implicit button type
+@anchor{text-toc}
 @item text-toc
 Jump to the text file section referenced by a table of contents (toc)
 entry at point.  This works in any text derived major mode buffer with
@@ -2815,6 +2843,7 @@ associated section.  Or try it in the Hyperbole @file{DEMO} file.
 @cindex C/C++ call trees
 @cindex C/C++ cross-reference
 @cindex Cscope
+@anchor{cscope}
 @item cscope
 Jump to a C/C++ source line associated with a Cscope C analyzer output
 line.  The cscope.el Lisp library available from the Emacs package
@@ -2826,6 +2855,7 @@ type to do anything.
 @cindex etags entry
 @cindex TAGS file
 @cindex tag
+@anchor{etags}
 @item etags
 Jump to the source line associated with an etags file entry in a TAGS buffer.
 If on a tag entry line, jump to the source line for the tag.  If on a
@@ -2834,6 +2864,7 @@ pathname line or line preceding it, jump to the associated file.
 @findex ibtypes ctags
 @cindex ctags entry
 @cindex tags file
+@anchor{ctags}
 @item ctags
 Jump to the source line associated with a ctags file entry in any buffer.
 Ctags files are used by old editors like vi to lookup identifiers.
@@ -2843,6 +2874,7 @@ Emacs uses the newer, more flexible Etags format.
 @cindex C call tree
 @cindex call tree, C
 @cindex C flow graph
+@anchor{id-cflow}
 @item id-cflow
 Expand or collapse C call trees and jump to code definitions.
 Requires cross-reference tables built by the external @code{cxref}
@@ -2853,18 +2885,21 @@ program.
 @cindex Request For Comment
 @cindex RFC
 @cindex table of contents
+@anchor{rfc-toc}
 @item rfc-toc
 Summarize contents of an Internet rfc from anywhere within an rfc buffer.
 Each line of the summary may be selected to jump to the associated section.
 
 @findex ibtypes markdown-internal-link
 @cindex markdown link
+@anchor{markdown-internal-link}
 @item markdown-internal-link
 Display any in-file Markdown link referent.  Pathnames and urls are
 handled elsewhere.
   
 @findex ibtypes org-link-outside-org-mode
 @cindex Org link, outside Org
+@anchor{org-link-outside-org-mode}
 @item org-link-outside-org-mode
 @noindent
 Activate an Org link outside of an Org buffer.
@@ -2876,6 +2911,7 @@ Activate an Org link outside of an Org buffer.
 @cindex git grep
 @cindex git log grep/match
 @cindex version control
+@anchor{git-commit-reference}
 @item git-commit-reference
 Display the changeset for a git commit reference, e.g. commit a55e21, typically
 produced by git log.  Hyperbole also includes two commands, @code{hypb:fgrep-git-log}
@@ -2886,6 +2922,7 @@ press displays the associated changeset.
 @findex ibtypes annot-bib
 @cindex bibliography
 @cindex reference
+@anchor{annot-bib}
 @item annot-bib
 Display annotated bibliography entries defined within the same buffer
 as the reference.  References must be delimited by square brackets, must
@@ -2894,6 +2931,7 @@ whose names begin with a ` ' or `*' character.
 
 @findex ibtypes hyp-html-manual
 @cindex hyperbole manual ibtype
+@anchor{hyp-html-manual}
 @item hyp-manual
 When on a Hyperbole manual file path, display it.  For example,
 display @file{hyperbole.html#Smart Keys} in a web browser using the
@@ -2913,6 +2951,7 @@ Info browser.
 @cindex Action Key, web browsing
 @kindex Action Key, web browsing
 @vindex browse-url-browser-function
+@anchor{www-url}
 @item www-url
 When not in an Emacs web browser buffer, follow any non-ftp URL (link) at point.
 The variable, @code{browse-url-browser-function}, may be used to customize
@@ -2932,6 +2971,7 @@ like www.gnu.org, are also recognized.
 @cindex environment variables
 @cindex Emacs Lisp variables
 @cindex Lisp variables
+@anchor{pathname}
 @item pathname
 Make a valid pathname display the path entry.  Also works for
 delimited and non-delimited remote pathnames, Texinfo @@file@{@}
@@ -2973,6 +3013,7 @@ least four paths within the variable value for this to work.
 @cindex e-mail address
 @cindex rolo address
 @cindex address
+@anchor{mail-address}
 @item mail-address
 If on an e-mail address in a specific buffer type, compose mail to that
 address in another window. Applies to any major mode descended from those
@@ -2985,6 +3026,7 @@ active in all buffers.
 @findex ibtypes org-id
 @cindex Org IDs
 @cindex Org Roam IDs
+@anchor{org-id}
 @item org-id
 With an Action Key press on an Org Roam or Org node ID at point,
 display the associated node.  If on the :ID: definition line, display
@@ -2998,6 +3040,7 @@ a message about how to copy the id.
 @cindex testing
 @cindex ert tests
 @cindex Emacs Regression Test framework
+@anchor{hyperbole-run-test-definition}
 @item hyperbole-run-test-definition
 With an Action Key press on the name in the first line of an ert test
 def, evaluate and run the ERT test.  With an Assist Key press instead,
@@ -3009,6 +3052,7 @@ edebug the test and step through it.
 @cindex social media
 @cindex social reference
 @vindex hibtypes-social-default-service
+@anchor{social-reference}
 @item social-reference
 Display the web page associated with a social media hashtag or
 username reference at point.
@@ -3031,6 +3075,7 @@ x#hashtag.
 @findex ibtypes hyperbole-run-tests
 @cindex ert
 @cindex testing
+@anchor{hyperbole-run-tests}
 @item hyperbole-run-tests
 Recognize Action Buttons of the form @code{<hyperbole-run-tests
 test-selector>} which when activated run Hyperbole tests using the ERT
@@ -3038,6 +3083,7 @@ framework.  The @code{test-selector} argument is as described in
 @code{ert-select-tests}.
 
 @findex ibtypes hyperbole-run-test
+@anchor{hyperbole-run-test}
 @item hyperbole-run-test
 Recognize Action Buttons of the form @code{<hyperbole-run-test
 test-name>} which when activated run individual Hyperbole tests, each
@@ -3046,6 +3092,7 @@ given by the @code{<test-name>} argument, an unquoted name.
 @findex ibtypes python-tb-previous-line
 @cindex python traceback
 @cindex stack frame
+@anchor{python-tb-previous-line}
 @item python-tb-previous-line
 Move to prior line with potential Python line ref.  In Python,
 tracebacks may be on a line just below the source reference line so
@@ -3054,6 +3101,7 @@ source reference line again.
 
 @findex ibtypes hywiki-word
 @cindex hywiki word
+@anchor{hywiki-word}
 @item hywiki-word
 When on a HyWiki word, display its page and optional section.  If the
 associated HyWiki page does not exist, create it automatically.
@@ -3063,6 +3111,7 @@ associated HyWiki page does not exist, create it automatically.
 @findex hywiki-mode
 @cindex hynote file
 @cindex hywiki-mode
+@anchor{hynote-file}
 @item hynote-file
 When on a HyNote file name stem, display the file and its optional
 section.  This type is active only in buffers where
@@ -3075,6 +3124,7 @@ that the global minor mode @code{hywiki-mode} has been enabled.
 @cindex tests
 @cindex ert results
 @cindex test results
+@anchor{ert-should}
 @item ert-should
 When on an Emacs Regression Test (ERT) result and not on the first
 line of a result (its name), on a button or at the end of line, search
