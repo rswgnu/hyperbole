@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:     20-Apr-25 at 00:28:41 by Bob Weiner
+;; Last-Mod:      4-May-25 at 11:16:56 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -975,9 +975,10 @@ optional DEPTH the number of sub cells are created to that depth."
     (make-kotl-mode-tests--func :func #'kimport:insert-file :ignore t)
     (make-kotl-mode-tests--func :func #'kimport:insert-register :args '(?a))
     (make-kotl-mode-tests--func :func #'klink:create :args '("1a"))
+    (make-kotl-mode-tests--func :func #'kotl-mode:add-after-parent)
     (make-kotl-mode-tests--func :func #'kotl-mode:add-cell)
     (make-kotl-mode-tests--func :func #'kotl-mode:add-child)
-    (make-kotl-mode-tests--func :func #'kotl-mode:add-after-parent)
+    (make-kotl-mode-tests--func :func #'kotl-mode:add-below-parent)
     (make-kotl-mode-tests--func :func #'kotl-mode:append-cell :args '("1a" "1a1"))
     (make-kotl-mode-tests--func :func #'kotl-mode:back-to-indentation)
     (make-kotl-mode-tests--func :func #'kotl-mode:backward-cell :args '(1))
@@ -1073,7 +1074,7 @@ optional DEPTH the number of sub cells are created to that depth."
     (make-kotl-mode-tests--func :func #'kvspec:activate)
     (make-kotl-mode-tests--func :func #'kvspec:toggle-blank-lines))
   "List of functions to sanity check and their arguments if needed.
-Functions that does not allow themselves to be checked in this way are
+Functions that do not allow themselves to be checked in this way are
 marked with :ignore t")
 
 (defun kotl-mode--sanity-check-function (function args)

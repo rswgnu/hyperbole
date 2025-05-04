@@ -14,20 +14,21 @@
 
    3. Features implemented include:
 
-     3a. Full on screen editing (just like a Macintosh).  Click to type in a
-         node (we call them cells) and just enter text.  Structure is
-         automatically maintained for you.  All of the standard Emacs editor
-         command set is supported both through keyboard, menu and mouse
-         interaction.  Menu usage is documented in the Hyperbole Manual; this
-         document discusses features and their associated keyboard commands
-         only.
+     3a. Full on-screen editing without the need for any markup.
+         Click to type in a node (we call them cells) and just enter
+         text.  Structure is automatically maintained for you.  All of
+         the standard Emacs editor command set is supported both
+         through keyboard, menu and mouse interaction.  Menu usage is
+         documented in the Hyperbole Manual; this document discusses
+         features and their associated keyboard commands only.
 
      3b. Advanced outline processing
 
-       3b1. Autonumbering: Full auto-numbering in Augment (1a2) or legal
-            (1.1.2) formats.  Augment style is the default.  Use {C-c C-l ?}
-            to see the full set of label types and to select a different
-            label type.
+       3b1. Autonumbering: Full auto-numbering in Augment (1a2) or
+            legal (1.1.2) formats.  Augment style is the default
+            because it is shorter and quicker to read.  Use {C-c C-l
+            ?}  to see the full set of label types and to select a
+            different label type.
 
        3b2. Label Separators: By default, the Koutliner separates labels from
             cell contents by two spaces.  If you want to change the separator
@@ -40,8 +41,17 @@
        3b3. Cell Creation: {C-j} adds a new cell as a sibling following the
             current cell.  {C-u C-j} or {C-c a} adds the cell as a child of
             the current cell.  Any other positive prefix arg to {C-j} adds
-            that many following cells at the same level as the current one.
-            {C-c p} adds the cell as the sibling of the current cell's
+            that many following cells at the same level as the current
+            one.  A negative prefix arg to {C-j} adds that many
+            preceding cells at the same level as the current one.  And
+            a zero prefix arg adds a new cell as the first one in the
+            outline at the top level.
+            
+            {C-c p} adds the cell as the preceding sibling of the current
+            cell, i.e. a new cell immediately prior to the current cell at
+            the same level; same as {C-u -1 C-j}.
+            
+            {C-u C-c p} adds the cell as the sibling of the current cell's
             parent.
 
        3b4. Cell and Tree Deletion: {C-c C-k} kills the current cell and its

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     20-Apr-25 at 01:05:24 by Bob Weiner
+;; Last-Mod:      4-May-25 at 11:13:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2122,8 +2122,8 @@ Error if called interactively and cannot move to the desired cell."
 	  (progn
 	    (goto-char (mark t))
 	    (pop-mark)
-	(when (called-interactively-p 'interactive)
-	  (error "(kotl-mode:up-level): No parent level to which to move")))))))
+	    (when (called-interactively-p 'interactive)
+	      (error "(kotl-mode:up-level): No parent level to which to move")))))))
 
 ;;; ------------------------------------------------------------------------
 ;;; Predicates
@@ -2291,117 +2291,249 @@ If assist-key is pressed:
 ;;; Structure Editing
 ;;; ------------------------------------------------------------------------
 
-(defun kotl-mode:add-child ()
-  "Add a new cell to current kview as first child of current cell."
-  (interactive "*")
-  (kotl-mode:add-cell '(4)))
+(defun kotl-mode:add-child (&optional cells-to-add contents plist no-fill)
+  "Add new cells as children of the current cell.
+Return the last one added.
 
-(defun kotl-mode:add-after-parent ()
-  "Add a new cell to current kview after current cell's parent.
-If parent is the hidden root cell 0, then add as the first cell of the
-outline.  Otherwise, add it as the next sibling of the parent cell."
-  (interactive "*")
-  (kotl-mode:add-cell -1))
+Optional prefix arg number of CELLS-TO-ADD defaults to 1.  Add
+new cells with optional CONTENTS string, attributes in PLIST, a
+property list, and NO-FILL flag to prevent any filling of
+CONTENTS."
+  (interactive "*p")
+  (when (null cells-to-add) (setq cells-to-add 1))
+  (unless (and (natnump cells-to-add) (/= cells-to-add 0))
+    (error "(kotl-mode:add-child): `cells-to-add' must be a positive integer"))
+  ;; Add first cell as a child and then any more as siblings of that one
+  (let ((last-added-cell (kotl-mode:add-cell '(4) contents plist no-fill)))
+    (if (> (setq cells-to-add (1- cells-to-add)) 0)
+	(kotl-mode:add-cell cells-to-add contents plist no-fill)
+      last-added-cell)))
+
+(defun kotl-mode:add-after-parent (&optional cells-to-add contents plist no-fill)
+  "Add succeeding sibling cells to the current cell's parent.
+Return the last one added.
+
+If on the first level of the outline (parent is the hidden root cell
+0), insert cells at the start of the outline.
+
+Optional prefix arg number of CELLS-TO-ADD defaults to 1.  Add
+new cells with optional CONTENTS string, attributes in PLIST, a
+property list, and NO-FILL flag to prevent any filling of
+CONTENTS."
+  (interactive "*p")
+  (when (null cells-to-add) (setq cells-to-add 1))
+  (unless (and (natnump cells-to-add) (/= cells-to-add 0))
+    (error "(kotl-mode:add-after-parent): `cells-to-add' must be a positive integer"))
+  ;; Add first cell as the prior sibling to the parent or if at level
+  ;; 1 in the outline, add as the first outline cell
+  (if (kotl-mode:up-level 1)
+      ;; Add preceding sibling cells to parent
+      (kotl-mode:add-cell cells-to-add contents plist no-fill)
+    ;; Add as first outline cell
+    (kotl-mode:add-cell 0 contents plist no-fill)
+    (setq cells-to-add (1- cells-to-add))
+    (when (> cells-to-add 0)
+      (kotl-mode:add-cell cells-to-add contents plist no-fill))))
+
+(defun kotl-mode:add-below-parent (&optional cells-to-add contents plist no-fill)
+  "Add new cells as initial children of the current cell's parent.
+Return the last one added.
+
+Optional prefix arg number of CELLS-TO-ADD defaults to 1.  Add
+new cells with optional CONTENTS string, attributes in PLIST, a
+property list, and NO-FILL flag to prevent any filling of
+CONTENTS."
+  (interactive "*p")
+  (when (null cells-to-add) (setq cells-to-add 1))
+  (unless (and (natnump cells-to-add) (/= cells-to-add 0))
+    (error "(kotl-mode:add-below-parent): `cells-to-add' must be a positive integer"))
+  ;; Add first cell as the first child of the parent and then any more
+  ;; as siblings of that one
+  (let ((last-added-cell
+	 (if (kotl-mode:up-level 1)
+	     ;; Add preceding sibling cell when on first cell at
+	     ;; current level other than level 1
+	     (kotl-mode:add-cell '(4) contents plist no-fill)
+	   (kotl-mode:beginning-of-buffer)
+	   ;; Add preceding sibling when on level 1 first cell
+	   (kotl-mode:add-cell 0 contents plist no-fill))))
+    (if (> (setq cells-to-add (1- cells-to-add)) 0)
+	(kotl-mode:add-cell cells-to-add contents plist no-fill)
+      last-added-cell)))
+
+(defun kotl-mode:add-before-parent (&optional cells-to-add contents plist no-fill)
+  "Add prior sibling cells to the current cell's parent.
+Return the last one added.
+
+If on the first level of the outline (parent is the hidden root cell
+0), insert cells at the start of the outline.
+
+Optional prefix arg number of CELLS-TO-ADD defaults to 1.  Add
+new cells with optional CONTENTS string, attributes in PLIST, a
+property list, and NO-FILL flag to prevent any filling of
+CONTENTS."
+  (interactive "*p")
+  (when (null cells-to-add) (setq cells-to-add 1))
+  (unless (and (natnump cells-to-add) (/= cells-to-add 0))
+    (error "(kotl-mode:add-before-parent): `cells-to-add' must be a positive integer"))
+  ;; Add first cell as the prior sibling to the parent or if at level
+  ;; 1 in the outline, add as the first outline cell
+  (let ((last-added-cell
+	 (if (kotl-mode:up-level 1)
+	     ;; Add preceding sibling cell to parent
+	     (kotl-mode:add-cell -1 contents plist no-fill)
+	   ;; Add as first outline cell
+	   (kotl-mode:beginning-of-buffer)
+	   (kotl-mode:add-cell 1 contents plist no-fill))))
+    (if (> (setq cells-to-add (1- cells-to-add)) 0)
+	(kotl-mode:add-cell cells-to-add contents plist no-fill)
+      last-added-cell)))
 
 (defun kotl-mode:add-cell (&optional relative-level contents plist no-fill)
-  "Add a cell.
-Add cell following current cell at optional RELATIVE-LEVEL with
-CONTENTS string, attributes in PLIST, a property list, and
-NO-FILL flag to prevent any filling of CONTENTS.
+  "Add one or more Koutline cells and return the last one added.
+Add new cells relative to the current cell at optional
+RELATIVE-LEVEL with CONTENTS string, attributes in PLIST, a
+property list, and NO-FILL flag to prevent any filling of
+CONTENTS.
 
-Optional prefix arg RELATIVE-LEVEL means either:
+Optional prefix arg RELATIVE-LEVEL means one of the following:
 
- 1. add as the next sibling if nil or >= 0;
- 2. as the first child if equal to (4), given by the universal argument, {C-u};
- 3. otherwise, as the first sibling of the current cell's parent.
-
-If added as the next sibling of the current level, then RELATIVE-LEVEL is
-used as a repeat count for the number of cells to add.
-
-Return last newly added cell."
+ 1. when = 0, add as the parent's first child cell (first cell in list);
+ 2. when < 0, add that number of cells as preceding siblings;
+ 3. when '(4) (universal arg, C-u), add as the first child of the current cell;
+ 4. when > 0 or nil (meaning 1), add that number of cells as following siblings."
   (interactive "*P")
+  (unless (or (integerp relative-level) (listp relative-level) )
+    (error "(kotl-mode:add-cell): `relative-level' must be an integer or a list of integers, not '%s'" relative-level))
   (or (stringp contents) (setq contents nil))
-  (let ((klabel (kcell-view:label))
-	(lbl-sep-len (kview:label-separator-length kotl-kview))
-	cell-level new-cell sibling-p child-p start parent
-	cells-to-add parent-level)
-    (setq cell-level (kcell-view:level nil lbl-sep-len)
-	  child-p (equal relative-level '(4))
-	  sibling-p (and (not child-p)
-			 (cond ((not relative-level) 1)
-			       ((>= (prefix-numeric-value relative-level) 0)
-				(prefix-numeric-value relative-level))))
-	  parent-level (1- cell-level)
-	  cells-to-add (or sibling-p 1))
-    (if child-p
-	(setq cell-level (1+ cell-level))
-      (unless sibling-p
-	(setq cell-level (if (zerop parent-level) cell-level (1- cell-level))
-	      start (point)
-	      parent (kcell-view:parent nil lbl-sep-len))
-	(unless (memq parent '(0 t))
-	  (goto-char start)
-	  (error
-	   "(kotl-mode:add-cell): No higher level at which to add cell")))
-      (if (and (eq parent 0) (eq cell-level 1))
-	  ;; Add as first child of hidden root cell 0, i.e. as the first
-	  ;; cell in the outline
-	  (goto-char (point-min))
-	;; Add as following sibling of current cell's parent.
-	;; Move to parent.
-	;; Skip from point past any children to next cell.
-	(when (kotl-mode:next-tree)
-	  ;; If found a new tree, then move back to prior cell so can add
-	  ;; new cell after it.
-	  (kcell-view:previous nil lbl-sep-len))))
+  (cond ((and (zerop (prefix-numeric-value relative-level))
+	      (progn (kotl-mode:beginning-of-buffer)
+		     (setq relative-level -1)
+		     ;; Fall through to add first child of root parent cell 0
+		     nil)))
+        ((and (< (prefix-numeric-value relative-level) 0)
+	      (cond ((zerop (kotl-mode:backward-cell 1))
+		     ;; Add preceding sibling if not on first cell at current level
+		     (kotl-mode:add-cell (abs (prefix-numeric-value relative-level))
+					 contents plist no-fill))
+		    ((kotl-mode:up-level 1)
+		     ;; Add preceding sibling cell when on first cell at
+		     ;; current level other than level 1
+		     (kotl-mode:add-child (abs (prefix-numeric-value relative-level))
+					  contents plist no-fill))
+		    ;; Fall through to add first children of root parent cell 0
+		    (t nil))))
+	(t (let ((klabel (kcell-view:label))
+		 (lbl-sep-len (kview:label-separator-length kotl-kview))
+		 cell-level new-cell sibling-p child-p start parent
+		 cells-to-add parent-level decrement-func)
+	     (setq cell-level (kcell-view:level nil lbl-sep-len)
+		   child-p (equal relative-level '(4))
+		   sibling-p (unless child-p
+			       (cond ((not relative-level) 1)
+				     ((>= (prefix-numeric-value relative-level) 0)
+				      (prefix-numeric-value relative-level))))
+		   parent-level (1- cell-level)
+		   cells-to-add (or sibling-p
+				    (and (not child-p)
+					 (prefix-numeric-value relative-level))
+				    1))
+	     (if child-p
+		 (setq cell-level (1+ cell-level))
+	       (unless sibling-p
+		 (setq cell-level (if (zerop parent-level) cell-level (1- cell-level))
+		       start (point)
+		       parent (kcell-view:parent nil lbl-sep-len))
+		 (unless (memq parent '(0 t))
+		   (goto-char start)
+		   (error
+		    "(kotl-mode:add-cell): No higher level at which to add cell")))
+	       (if (and (eq parent 0) (eq cell-level 1))
+		   ;; Add as first child of hidden root cell 0, i.e. as the first
+		   ;; cell in the outline
+		   (goto-char (point-min))
+		 ;; Add as following sibling of current cell's parent.
+		 ;; Move to parent.
+		 ;; Skip from point past any children to next cell.
+		 (when (kotl-mode:next-tree)
+		   ;; If found a new tree, then move back to prior cell so can add
+		   ;; new cell after it.
+		   (kcell-view:previous nil lbl-sep-len))))
 
-    (unless (eq parent 0)
-      (goto-char (kcell-view:end)))
-    ;;
-    ;; Insert new cells into view.
-    (if (= cells-to-add 1)
-	(setq klabel
-	      (cond (sibling-p
-		     (klabel:increment klabel))
-		    (child-p
-		     (kview:id-increment kotl-kview)
-		     (klabel:child klabel))
-		    ;; add as sibling of parent of current cell
-		    (t (klabel:increment (klabel:parent klabel))))
-	      new-cell (kview:add-cell klabel cell-level contents plist
-				       no-fill sibling-p))
-      ;;
-      ;; sibling-p must be true if we are looping here so there is no need to
-      ;; conditionalize how to increment the labels.
-      (while (>= (setq cells-to-add (1- cells-to-add)) 0)
-	(setq klabel (klabel:increment klabel)
-	      ;; Since new cells are at the same level as old one, don't fill
-	      ;; any of their intial contents.
-	      new-cell (kview:add-cell klabel cell-level contents plist t))))
-    ;;
-    ;; Move back to last inserted cell and then move to its following
-    ;; sibling if any.
-    (kotl-mode:to-valid-position t)
-    (save-excursion
-      (when (kcell-view:forward nil lbl-sep-len)
-	(let ((label-type (kview:label-type kotl-kview)))
-	  (when (memq label-type '(alpha legal partial-alpha))
-	    ;; Update the labels of these siblings and their subtrees.
-	    (klabel-type:update-labels (klabel:increment klabel))))))
-    ;;
-    ;; Leave point within last newly added cell and return this cell.
-    (kotl-mode:beginning-of-cell)
-    new-cell))
+	     (unless (eq parent 0)
+	       (goto-char (kcell-view:end)))
+	     ;;
+	     ;; Insert new cells into view.
+	     (if (= cells-to-add 1)
+		 (setq klabel
+		       (cond (sibling-p
+			      (klabel:increment klabel))
+			     (child-p
+			      (kview:id-increment kotl-kview)
+			      (klabel:child klabel))
+			     ;; add as sibling of parent of current cell
+			     (t (klabel:increment (klabel:parent klabel))))
+		       new-cell (kview:add-cell klabel cell-level contents plist
+						no-fill sibling-p))
+	       ;;
+	       ;; sibling-p must be number of cells to add if we are looping
+	       ;; here, so there is no need to conditionalize how to
+	       ;; increment the labels
+	       (setq decrement-func (if (> cells-to-add 0) #'1- #'1+))
+	       (let ((count cells-to-add))
+		 (while (/= count 0)
+		   ;; If cells-to-add is negative, cells are inserted
+		   ;; before current cell, so the first time through
+		   ;; the loop, don't increment the klabel or it will be
+		   ;; off by 1.
+		   (unless (and (= count cells-to-add)
+				(< cells-to-add 0))
+		     (setq klabel (klabel:increment klabel)))
+		   ;; Since new cells are at the same level as old
+		   ;; one, don't fill any of their intial contents.
+		   (setq new-cell (kview:add-cell klabel cell-level contents plist t)
+			 count (funcall decrement-func count)))))
+	     ;;
+	     ;; Move back to last inserted cell and then move to its following
+	     ;; sibling if any.
+	     (kotl-mode:to-valid-position t)
+	     (save-excursion
+	       (when (kcell-view:forward nil lbl-sep-len)
+		 (let ((label-type (kview:label-type kotl-kview)))
+		   (when (memq label-type '(alpha legal partial-alpha))
+		     ;; Update the labels of these siblings and their subtrees.
+		     (klabel-type:update-labels (klabel:increment klabel))))))
+	     ;;
+	     ;; Leave point within last newly added cell and return this cell.
+	     (kotl-mode:beginning-of-cell)
+	     new-cell))))
 
-(defun kotl-mode:add-prior-cell ()
-  "Add a new cell to current kview as a prior sibling of the current cell."
-  (interactive "*")
-  (cond ((kotl-mode:backward-cell 1)
-	 (kotl-mode:add-cell 1))
-	((kotl-mode:up-level 1)
-	 (kotl-mode:add-cell '(4)))
-	(t
-	 (kotl-mode:add-after-parent))))
+(defun kotl-mode:add-prior-cell (&optional cells-to-add contents plist no-fill)
+  "Add prior sibling cells to the current cell.
+Optional prefix arg number of CELLS-TO-ADD defaults to 1.  Given
+a single universal arg, C-u, for CELLS-TO-ADD, add a single cell
+as the first child of the current cell's parent.  Always return the
+last cell added.
+
+Add new cells with optional CONTENTS string, attributes in PLIST,
+a property list, and NO-FILL flag to prevent any filling of
+CONTENTS."
+  (interactive "*p")
+  (when (null cells-to-add) (setq cells-to-add 1))
+  (unless (and (natnump cells-to-add) (/= cells-to-add 0))
+    (error "(kotl-mode:add-prior-cell): `cells-to-add' must be a positive integer"))
+  (if (eq cells-to-add '(4))
+      (kotl-mode:add-below-parent)
+    (cond ((zerop (kotl-mode:backward-cell 1))
+	   ;; Add preceding sibling if not on first cell at current level
+	   (kotl-mode:add-cell cells-to-add contents plist no-fill))
+	  ((kotl-mode:up-level 1)
+	   ;; Add preceding sibling cell when on first cell at
+	   ;; current level other than level 1
+	   (kotl-mode:add-child cells-to-add contents plist no-fill))
+	  (t
+	   ;; Add preceding sibling when on level 1 first cell
+	   (kotl-mode:add-below-parent cells-to-add contents plist no-fill)))))
 
 (defun kotl-mode:demote-tree (arg)
   "Move current tree a maximum of prefix ARG levels lower in current view.
@@ -3756,7 +3888,7 @@ Leave point at end of line now residing at START."
 	(define-key kotl-mode-map "\C-c\C-n"  'kotl-mode:next-cell)
 	(define-key kotl-mode-map "\C-c\C-o"  'kotl-mode:overview)
 	(define-key kotl-mode-map "\C-c\C-p"  'kotl-mode:previous-cell)
-	(define-key kotl-mode-map "\C-cp"     'kotl-mode:add-after-parent)
+	(define-key kotl-mode-map "\C-cp"     'kotl-mode:add-prior-cell)
 	(if (memq (global-key-binding "\M-q") '(fill-paragraph
 						fill-paragraph-or-region))
 	    (progn
