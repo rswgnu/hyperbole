@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:      7-May-25 at 21:52:27 by Mats Lidell
+;; Last-Mod:      7-May-25 at 22:20:47 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -996,21 +996,24 @@ frame instead."
   "Return the cons of the Action and Assist Key actions at point.
 Useful in testing Smart Key contexts."
   (let ((hkey-forms hkey-alist)
-	(pred-point (point-marker))
+        (pred-point (point-marker))
 	pred-value hkey-actions hkey-form pred)
-    (unwind-protect
-	(progn
-	  (while (and (null pred-value) (setq hkey-form (car hkey-forms)))
-	    (setq pred (car hkey-form)
-		  pred-value (hypb:eval-debug pred))
-	    (unless (equal (point-marker) pred-point)
-	      (hypb:error "(Hyperbole): predicate %s improperly moved point from %s to %s"
-			  pred (point) pred-point))
-	    (if pred-value
-                (setq hkey-actions (cdr hkey-form))
-	      (setq hkey-forms (cdr hkey-forms))))
-	  hkey-actions)
-      (set-marker pred-point nil))))
+    (progn
+      (while (and (null pred-value) (setq hkey-form (car hkey-forms)))
+	(setq pred (car hkey-form)
+	      pred-value (hypb:eval-debug pred))
+	(unless (equal (point-marker) pred-point)
+	  (hypb:error "(Hyperbole): predicate %s improperly moved point from %s to %s"
+		      pred (point) pred-point))
+	(if pred-value
+            (progn
+              ;; Conditionally debug after Smart Key release and evaluation
+	      ;; of matching predicate but before hkey-action is executed.
+	      (when hkey-debug
+		(hkey-debug pred pred-value (if assist-flag (cdr hkey-actions) (car hkey-actions))))
+              (setq hkey-actions (cdr hkey-form)))
+	  (setq hkey-forms (cdr hkey-forms))))
+      hkey-actions)))
 
 (defun hkey-debug (pred pred-value hkey-action)
   "Display a message with the context and values from Smart Key activation."
@@ -1047,33 +1050,17 @@ Non-nil ASSISTING means evaluate second form (Assist Key form),
 otherwise evaluate first form.  Return non-nil iff a non-nil
 predicate is found."
   ;; Keep in mind that hkey-alist may be set to hmouse-alist here, with additional predicates.
-  (let ((hkey-forms hkey-alist)
-	(assist-flag assisting)
-	(pred-point (point-marker))
-	pred-value hkey-action hkey-form pred)
+  (let ((assist-flag assisting)
+	(pred-point (point-marker)))
     (unwind-protect
-	(progn
-	  (while (and (null pred-value) (setq hkey-form (car hkey-forms)))
-	    (setq hkey-action (if assisting (cddr hkey-form) (cadr hkey-form))
-		  pred (car hkey-form)
-		  pred-value (hypb:eval-debug pred))
-	    ;; Any Smart Key predicate should leave point unchanged.
-	    ;; Trigger an error if not.
-	    (unless (equal (point-marker) pred-point)
-	      (hypb:error "(Hyperbole): predicate %s improperly moved point from %s to %s"
-			  pred (point) pred-point))
-	    (if pred-value
-		;; Found the ibtype for the current context
-		(progn
-		  ;; Conditionally debug after Smart Key release and evaluation
-		  ;; of matching predicate but before hkey-action is executed.
-		  (when hkey-debug
-		    (hkey-debug pred pred-value hkey-action))
-		  (if hkey-debug
-		      (hypb:eval-debug hkey-action)
-		    (eval hkey-action)))
-	      (setq hkey-forms (cdr hkey-forms))))
-	  pred-value)
+	(let* ((hkey-actions (hkey-actions))
+               (hkey-action (if assisting (cdr hkey-actions) (car hkey-actions))))
+	  (if hkey-action
+	      ;; Found the ibtype for the current context
+	      (if hkey-debug
+		  (hypb:eval-debug hkey-action)
+		(eval hkey-action)))
+	  hkey-action)
       (set-marker pred-point nil))))
 
 (defun hkey-help (&optional assisting)
