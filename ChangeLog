@@ -1,4 +1,7 @@
-2025-05-07  Mats Lidell  <matsl@gnu.org>
+2025-05-08  Mats Lidell  <matsl@gnu.org>
+
+* hui-mouse.el (hkey-alist): Use deprecated but still supported calling
+    convention for backwards compatibility.
 
 * test/hui-mouse-tests.el (hui-mouse-tests--hkey-alist): Udate test to
     cover all predicates in hkey-alist.

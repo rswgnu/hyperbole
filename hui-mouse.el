@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:      4-May-25 at 10:38:03 by Bob Weiner
+;; Last-Mod:      8-May-25 at 10:25:38 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -442,7 +442,7 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
     ;;
     ;; Python files - ensure this comes before Imenu for more advanced
     ;; definition lookups
-    ((and (or (and (derived-mode-p '(python-mode python-ts-mode)) (hypb:buffer-file-name))
+    ((and (or (and (derived-mode-p 'python-mode 'python-ts-mode) (hypb:buffer-file-name))
 	      (and (featurep 'hsys-org) (hsys-org-mode-p)
 		   (equal (hsys-org-get-value :language) "python"))
 	      (let ((case-fold-search))
