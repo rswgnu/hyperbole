@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:      7-May-25 at 22:20:47 by Mats Lidell
+;; Last-Mod:     10-May-25 at 00:19:45 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -992,29 +992,6 @@ frame instead."
           (mouse-drag-frame-move start-event)
         (mouse-drag-frame start-event 'move))))))
 
-(defun hkey-actions ()
-  "Return the cons of the Action and Assist Key actions at point.
-Useful in testing Smart Key contexts."
-  (let ((hkey-forms hkey-alist)
-        (pred-point (point-marker))
-	pred-value hkey-actions hkey-form pred)
-    (progn
-      (while (and (null pred-value) (setq hkey-form (car hkey-forms)))
-	(setq pred (car hkey-form)
-	      pred-value (hypb:eval-debug pred))
-	(unless (equal (point-marker) pred-point)
-	  (hypb:error "(Hyperbole): predicate %s improperly moved point from %s to %s"
-		      pred (point) pred-point))
-	(if pred-value
-            (progn
-              ;; Conditionally debug after Smart Key release and evaluation
-	      ;; of matching predicate but before hkey-action is executed.
-	      (when hkey-debug
-		(hkey-debug pred pred-value (if assist-flag (cdr hkey-actions) (car hkey-actions))))
-              (setq hkey-actions (cdr hkey-form)))
-	  (setq hkey-forms (cdr hkey-forms))))
-      hkey-actions)))
-
 (defun hkey-debug (pred pred-value hkey-action)
   "Display a message with the context and values from Smart Key activation."
   (message (concat "(HyDebug) %sContext: %s; %s: %s; Buf: %s; Mode: %s; MinibufDepth: %s\n"
@@ -1043,6 +1020,29 @@ Useful in testing Smart Key contexts."
 	   action-key-release-window
 	   assist-key-depress-window
 	   assist-key-release-window))
+
+(defun hkey-actions ()
+  "Return the cons of the Action and Assist Key actions at point.
+Useful in testing Smart Key contexts."
+  (let ((hkey-forms hkey-alist)
+        (pred-point (point-marker))
+	pred-value hkey-actions hkey-form pred)
+    (progn
+      (while (and (null pred-value) (setq hkey-form (car hkey-forms)))
+	(setq pred (car hkey-form)
+	      pred-value (hypb:eval-debug pred))
+	(unless (equal (point-marker) pred-point)
+	  (hypb:error "(Hyperbole): predicate %s improperly moved point from %s to %s"
+		      pred (point) pred-point))
+	(if pred-value
+            (progn
+              (setq hkey-actions (cdr hkey-form))
+              ;; Conditionally debug after Smart Key release and evaluation
+	      ;; of matching predicate but before hkey-action is executed.
+	      (when hkey-debug
+		(hkey-debug pred pred-value (if assist-flag (cdr hkey-actions) (car hkey-actions)))))
+	  (setq hkey-forms (cdr hkey-forms))))
+      hkey-actions)))
 
 (defun hkey-execute (assisting)
   "Evaluate Action Key form for first non-nil predicate from `hkey-alist'.
