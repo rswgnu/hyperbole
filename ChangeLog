@@ -1,3 +1,13 @@
+2025-05-08  Mats Lidell  <matsl@gnu.org>
+
+* hui-mouse.el (hkey-alist): Use deprecated but still supported calling
+    convention for backwards compatibility.
+
+* test/hui-mouse-tests.el (hui-mouse-tests--hkey-alist): Udate test to
+    cover all predicates in hkey-alist.
+
+* hmouse-drv.el (hkey-actions): Return nil when no predicate is non-nil.
+
 2025-05-04  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kotl-mode.el (kotl-mode:add-after-parent): Add back in to add successive
