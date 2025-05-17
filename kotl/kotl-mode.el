@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     18-May-25 at 10:16:26 by Bob Weiner
+;; Last-Mod:     20-May-25 at 00:35:26 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2400,7 +2400,7 @@ Optional prefix arg RELATIVE-LEVEL means one of the following:
 
  1. when = 0, add as the parent's first child cell (first cell in list);
  2. when < 0, add that number of cells as preceding siblings;
- 3. when '(4) (universal arg, C-u), add as the first child of the current cell;
+ 3. when \\='(4) (universal arg, \\`C-u'), add as the first child of the current cell;
  4. when > 0 or nil (meaning 1), add that number of cells as following siblings."
   (interactive "*P")
   (unless (or (integerp relative-level) (listp relative-level) )
@@ -2511,7 +2511,7 @@ Optional prefix arg RELATIVE-LEVEL means one of the following:
 (defun kotl-mode:add-prior-cell (&optional cells-to-add contents plist no-fill)
   "Add prior sibling cells to the current cell.
 Optional prefix arg number of CELLS-TO-ADD defaults to 1.  Given
-a single universal arg, C-u, for CELLS-TO-ADD, add a single cell
+a single universal arg, \\`C-u', for CELLS-TO-ADD, add a single cell
 as the first child of the current cell's parent.  Always return the
 last cell added.
 

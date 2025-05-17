@@ -1,3 +1,7 @@
+2025-05-20  Mats Lidell  <matsl@gnu.org>
+
+* test/kotl-mode-tests.el (kotl-mode--add-prior-cell): Add test.
+
 2025-05-19  Bob Weiner  <rsw@gnu.org>
 
 * test/demo-tests.el (fast-demo-elisp-or-env-vars): Fix to move past opening

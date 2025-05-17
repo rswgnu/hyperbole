@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     19-May-25 at 01:28:31 by Bob Weiner
+;; Last-Mod:     20-May-25 at 23:46:09 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -691,7 +691,7 @@ non-quoted quote mark.
 Quoting conventions recognized are:
   double-quotes:                 \"str\";
   Markdown triple backticks:     ```str```;
-  Python single-quotes:          'str';
+  Python single-quotes:          \\='str\\=';
   Python triple single-quotes:   '''str''';
   Python triple double-quotes:   \"\"\"str\"\"\";
   Texinfo open and close quotes: ``str''."
