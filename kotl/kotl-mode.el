@@ -2522,7 +2522,7 @@ CONTENTS."
   (when (null cells-to-add) (setq cells-to-add 1))
   (unless (and (natnump cells-to-add) (/= cells-to-add 0))
     (error "(kotl-mode:add-prior-cell): `cells-to-add' must be a positive integer"))
-  (if (eq cells-to-add '(4))
+  (if (eq cells-to-add 4)
       (kotl-mode:add-below-parent)
     (cond ((zerop (kotl-mode:backward-cell 1))
 	   ;; Add preceding sibling if not on first cell at current level

@@ -1,3 +1,10 @@
+2025-05-18  Mats Lidell  <matsl@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode:add-prior-cell): Prefix arg with
+    interactive "p" is a number.
+
+* test/kotl-mode-tests.el (kotl-mode--add-prior-cell): Add test.
+
 2025-05-12  Mats Lidell  <matsl@gnu.org>
 
 * test/hmouse-drv-tests.el (hmouse-drv--hkey-actions): Test hkey-actions.
