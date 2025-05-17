@@ -1,3 +1,11 @@
+2025-05-12  Mats Lidell  <matsl@gnu.org>
+
+* test/hmouse-drv-tests.el (hmouse-drv--hkey-actions): Test hkey-actions.
+    (hmouse-drv--hkey-execute): Test hkey-execute.
+    (hmouse-drv--hkey-execute-called, hmouse-drv--hkey-execute-action)
+    (hmouse-drv--hkey-execute-assist): Helpers used in hkey-execute
+    verification.
+
 2025-05-08  Mats Lidell  <matsl@gnu.org>
 
 * hui-mouse.el (hkey-alist): Use deprecated but still supported calling
