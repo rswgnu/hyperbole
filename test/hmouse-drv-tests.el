@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 22:52:00
-;; Last-Mod:     12-May-25 at 15:57:39 by Mats Lidell
+;; Last-Mod:     17-May-25 at 16:07:56 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -685,7 +685,7 @@ The frame setup is mocked."
 (defun hmouse-drv--hkey-execute-action () "Action." (setq hmouse-drv--hkey-execute-called "action"))
 (defun hmouse-drv--hkey-execute-assist () "Assist." (setq hmouse-drv--hkey-execute-called "assist"))
 
-(ert-deftest hmouse-drv--hkey-exekute ()
+(ert-deftest hmouse-drv--hkey-execute ()
   "Verify `hkey-execute'."
   ;; No action
   (let ((hkey-alist '((nil . ("action" . "assist")))))
