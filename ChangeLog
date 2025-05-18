@@ -1,3 +1,16 @@
+2025-05-18  Bob Weiner  <rsw@gnu.org>
+
+* hypb.el (hypb:in-string-p): Make heuristic to optimize performance; search
+    back only until the beginning of the first line prior to point that contains
+    a non-quoted double quote mark.  Also add support for 'texinfo-mode' strings
+    where both "String1" and ``String2'' may be used.  Add support for
+    'python-mode' single and triple string delimiters as well.
+          (hypb:in-string-modes-regexps): Add for use in 'hypb:in-string-p'.
+    Allows customization of major modes with unique string delimiters.
+
+* kotl/kotl-mode.el (kotl-mode:add-prior-cell): Fix to send raw C-u value
+    with (interactive "*P") instead of "p".
+
 2025-05-12  Mats Lidell  <matsl@gnu.org>
 
 * test/hmouse-drv-tests.el (hmouse-drv--hkey-actions): Test hkey-actions.
