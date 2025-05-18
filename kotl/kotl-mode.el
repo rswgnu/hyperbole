@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:      4-May-25 at 11:13:26 by Bob Weiner
+;; Last-Mod:     18-May-25 at 10:16:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2518,12 +2518,13 @@ last cell added.
 Add new cells with optional CONTENTS string, attributes in PLIST,
 a property list, and NO-FILL flag to prevent any filling of
 CONTENTS."
-  (interactive "*p")
+  (interactive "*P")
   (when (null cells-to-add) (setq cells-to-add 1))
-  (unless (and (natnump cells-to-add) (/= cells-to-add 0))
-    (error "(kotl-mode:add-prior-cell): `cells-to-add' must be a positive integer"))
-  (if (eq cells-to-add '(4))
+  (if (equal cells-to-add '(4))
       (kotl-mode:add-below-parent)
+    (setq cells-to-add (prefix-numeric-value cells-to-add))
+    (unless (and (natnump cells-to-add) (/= cells-to-add 0))
+      (error "(kotl-mode:add-prior-cell): `cells-to-add' must be a positive integer"))
     (cond ((zerop (kotl-mode:backward-cell 1))
 	   ;; Add preceding sibling if not on first cell at current level
 	   (kotl-mode:add-cell cells-to-add contents plist no-fill))
@@ -2533,7 +2534,8 @@ CONTENTS."
 	   (kotl-mode:add-child cells-to-add contents plist no-fill))
 	  (t
 	   ;; Add preceding sibling when on level 1 first cell
-	   (kotl-mode:add-below-parent cells-to-add contents plist no-fill)))))
+	   (kotl-mode:add-below-parent cells-to-add
+				       contents plist no-fill)))))
 
 (defun kotl-mode:demote-tree (arg)
   "Move current tree a maximum of prefix ARG levels lower in current view.

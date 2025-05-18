@@ -1,3 +1,6 @@
+* kotl/kotl-mode.el (kotl-mode:add-prior-cell): Fix to send raw C-u value
+    with (interactive "*P") instead of "p".
+
 2025-05-04  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kotl-mode.el (kotl-mode:add-after-parent): Add back in to add successive
