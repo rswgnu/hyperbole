@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     26-May-25 at 00:15:37 by Bob Weiner
+;; Last-Mod:     31-May-25 at 15:35:55 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -126,6 +126,7 @@ operate as it normally does within Org mode contexts.
 (defact org-link (&optional link)
   "Follow an optional Org mode LINK to its target.
 If LINK is nil, follow any link at point.  Otherwise, trigger an error."
+  (interactive "sOrg link: ")
   (if (stringp link)
       ;; open as if in Org mode even if not
       (org-link-open-from-string link)
