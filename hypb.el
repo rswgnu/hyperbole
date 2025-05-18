@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     27-Apr-25 at 12:03:07 by Bob Weiner
+;; Last-Mod:     18-May-25 at 17:40:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -67,6 +67,22 @@
 (defconst hypb:help-buf-prefix "*Help: Hyperbole "
   "Prefix attached to all native Hyperbole help buffer names.
 This should end with a space.")
+
+(defcustom hypb:in-string-modes-regexps
+  '(let ((open-regexp "\\(^\\|[^\\]\\)\\(%s\\)")
+	 (close-regexp "\\(^\\|[^\\]\\)\\(%s\\)"))
+     (cond ((derived-mode-p 'python-mode)
+	    (list (format open-regexp "\"\\|'''\\|\"\"\"\\|'")
+		  (format close-regexp "\"\\|'''\\|\"\"\"\\|'")))
+	   ((derived-mode-p 'texinfo-mode)
+	    (list (format open-regexp "\"\\|``")
+		  (format close-regexp "\"\\|''")))
+	   (t
+	    (list (format open-regexp "\"")
+		  (format close-regexp "\"")))))
+  "Return a list of open/close string delimiter regexps for `hypb:in-string-p'."
+  :type 'sexp
+  :group 'hyperbole-commands)
 
 (defvar hypb:mail-address-mode-list
   '(fundamental-mode prog-mode text-mode)
@@ -664,7 +680,20 @@ This will this install the Emacs helm package when needed."
 		      help-file))))))
 
 (defun hypb:in-string-p (&optional max-lines)
-  "Return t iff point is within a double quoted string."
+  "Return t iff point is within a string.
+
+To prevent searching back to the buffer start and producing slow
+performance, this limits its count of quotes found prior to point
+to the beginning of the first line prior to point that contains a
+non-quoted quote mark.
+
+Quoting conventions recognized are:
+  double-quotes:                 \"str\";
+  Markdown triple backticks:     ```str```;
+  Python single-quotes:          'str';
+  Python triple single-quotes:   '''str''';
+  Python triple double-quotes:   \"\"\"str\"\"\";
+  Texinfo open and close quotes: ``str''."
   (save-restriction
     (when (integerp max-lines)
       (narrow-to-region (line-beginning-position)
@@ -672,10 +701,40 @@ This will this install the Emacs helm package when needed."
     ;; Don't use `syntax-ppss' here as it fails to ignore backquoted
     ;; double quote characters in strings and doesn't work in
     ;; `change-log-mode' due to its syntax-table.
-    (save-match-data
-      (and (cl-oddp (count-matches "\\(^\\|[^\\]\\)\"" (point-min) (point)))
-	   (save-excursion (re-search-forward "\\(^\\|[^\\]\\)\"" nil t))
-	   t))))
+    (let ((opoint (point))
+	  (start (point-min))
+	  (open-match-string ""))
+      (cl-destructuring-bind (open-regexp close-regexp)
+	  (eval hypb:in-string-modes-regexps)
+	(cond ((derived-mode-p 'python-mode)
+	       (setq open-regexp  (format open-regexp "\"\\|'''\\|\"\"\"\\|'")
+		     close-regexp (format close-regexp "\"\\|'''\\|\"\"\"\\|'")))
+	      ((derived-mode-p 'texinfo-mode)
+	       (setq open-regexp  (format open-regexp "\"\\|``")
+		     close-regexp (format close-regexp "\"\\|''")))
+	      (t
+	       (setq open-regexp  (format open-regexp "\"")
+		     close-regexp (format close-regexp "\""))))
+	(save-match-data
+	  (when (re-search-backward open-regexp nil t)
+	    (setq open-match-string (match-string 2))
+	    (forward-line 0)
+	    (setq start (point))
+	    (goto-char opoint)
+	    (if (and (derived-mode-p 'texinfo-mode)
+		     (string-equal open-match-string texinfo-open-quote))
+		(and (cl-oddp (- (count-matches (regexp-quote open-match-string)
+						start (point))
+				 (count-matches (regexp-quote texinfo-close-quote)
+						start (point))))
+		     (save-excursion (search-forward texinfo-close-quote nil t))
+		     t)
+	      (and (cl-oddp (count-matches
+			     (format "\\(^\\|[^\\]\\)\\(%s\\)"
+				     (regexp-quote open-match-string))
+			     start (point)))
+		   (save-excursion (re-search-forward close-regexp nil t))
+		   t))))))))
 
 (defun hypb:indirect-function (obj)
   "Return the function at the end of OBJ's function chain.
