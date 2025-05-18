@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 22:52:00
-;; Last-Mod:     25-Apr-25 at 10:01:41 by Mats Lidell
+;; Last-Mod:     17-May-25 at 16:07:56 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -654,6 +654,57 @@ The frame setup is mocked."
                              result)))))
       (hy-delete-file-and-buffer filea)
       (hy-delete-file-and-buffer fileb))))
+
+(ert-deftest hmouse-drv--hkey-actions ()
+  "Verify `hkey-actions'."
+  ;; No action
+  (let ((hkey-alist '((nil . ((action) . (assist))))))
+    (should-not (hkey-actions)))
+
+  (let ((hkey-alist '((t . ((action) . (assist))))))
+    ;; Normal case
+    (should (equal (hkey-actions) '((action) assist)))
+
+    ;; Point is moved by predicate
+    (let ((marker 1))
+      (cl-letf (((symbol-function 'point-marker)
+                 (lambda () (setq marker (1+ marker)))))
+        (let ((err (should-error (hkey-actions) :type 'error)))
+          (should (string-match-p
+                   (format "(Hyperbole): predicate %s improperly moved point from %s to %s" t 1 2)
+                   (cadr err))))))
+
+    ;; Debug is called for action and assist.
+    (let ((hkey-debug t))
+      (dolist (v '(nil t))
+        (let ((assist-flag v))
+          (mocklet (((hkey-debug t t (if assist-flag '(assist) '(action))) => t))
+            (should (equal (hkey-actions) '((action) assist)))))))))
+
+(defvar hmouse-drv--hkey-execute-called nil "For checking what method was called.")
+(defun hmouse-drv--hkey-execute-action () "Action." (setq hmouse-drv--hkey-execute-called "action"))
+(defun hmouse-drv--hkey-execute-assist () "Assist." (setq hmouse-drv--hkey-execute-called "assist"))
+
+(ert-deftest hmouse-drv--hkey-execute ()
+  "Verify `hkey-execute'."
+  ;; No action
+  (let ((hkey-alist '((nil . ("action" . "assist")))))
+    (should-not (hkey-execute nil)))
+
+  ;; Normal case with action or assist
+  (let ((hkey-alist '((t . ((hmouse-drv--hkey-execute-action) . (hmouse-drv--hkey-execute-assist)))))
+        hmouse-drv--hkey-execute-called)
+    ;; Action
+    (should (equal (hkey-execute nil) '(hmouse-drv--hkey-execute-action)))
+    (should (string= hmouse-drv--hkey-execute-called "action"))
+    ;; Assist
+    (should (equal (hkey-execute t) '(hmouse-drv--hkey-execute-assist)))
+    (should (string= hmouse-drv--hkey-execute-called "assist"))
+
+    ;; Print debug info
+    (let ((hkey-debug t))
+      (mocklet (((hypb:eval-debug *) => t))
+        (should (equal (hkey-execute nil) '(hmouse-drv--hkey-execute-action)))))))
 
 ;; This file can't be byte-compiled without the `el-mock' package
 ;; which is not a dependency of Hyperbole.
