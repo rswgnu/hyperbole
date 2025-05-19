@@ -1,3 +1,8 @@
+2025-05-19  Bob Weiner  <rsw@gnu.org>
+
+* hypb.el (hypb:in-string-p): Fix open quote detection heuristics including
+    subtracting quoted delimiters from overall counts.
+
 2025-05-18  Bob Weiner  <rsw@gnu.org>
 
 * hui-mouse.el (hkey-alist): Move hui-select clauses up before (hbut:at-p)
