@@ -1,5 +1,10 @@
 2025-05-19  Bob Weiner  <rsw@gnu.org>
 
+* test/demo-tests.el (fast-demo-elisp-or-env-vars): Fix to move past opening
+    brace so does not trigger hui-select.
+    (demo-smart-mouse-keys-ref-test, demo-man-apropos-test): Make similar fixes.
+  test/hmouse-drv-tests.el (hbut-rfc-test): Make similar fixes.
+
 * hypb.el (hypb:in-string-p): Fix open quote detection heuristics including
     subtracting quoted delimiters from overall counts.
 

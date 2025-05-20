@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     20-Apr-25 at 14:55:17 by Bob Weiner
+;; Last-Mod:     19-May-25 at 22:53:23 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -42,7 +42,8 @@
       (let ((enable-local-variables nil))
         (hypb:display-file-with-logo "DEMO")
         (goto-char (point-min))
-        (re-search-forward "#Smart Keys")
+	;; Omit last char of string from search so ends on a non-quote char
+        (re-search-forward "#Smart Key")
         (action-key)
         (should (bolp))
         (should (looking-at "^\\* Smart")))
@@ -387,11 +388,11 @@
       (hy-test-helpers:kill-buffer "DEMO")
       (hy-test-helpers:kill-buffer "*Occur*"))))
 
-;; Man appropos
-(ert-deftest demo-man-appropos-test ()
+;; Man apropos
+(ert-deftest demo-man-apropos-test ()
   (with-temp-buffer
     (insert "rm (1)   - remove")
-    (goto-char 4)
+    (goto-char 2)
     (with-mock
       (mock (man "rm(1)") => t)
       (action-key))))
@@ -450,10 +451,10 @@
   (unwind-protect
       (with-temp-buffer
         (insert "\"${hyperb:dir}/HY-NEWS\"")
-        (goto-char 3)
+        (goto-char 4)
         (action-key)
         (should (string= (buffer-name (current-buffer)) "HY-NEWS")))
-  (hy-test-helpers:kill-buffer "HY-NEWS")))
+    (hy-test-helpers:kill-buffer "HY-NEWS")))
 
 (ert-deftest fast-demo-elisp-library-in-load-path ()
   "Verify ibut to Elisp library works."

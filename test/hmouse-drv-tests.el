@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 22:52:00
-;; Last-Mod:     17-May-25 at 16:07:56 by Mats Lidell
+;; Last-Mod:     19-May-25 at 22:53:55 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -528,7 +528,7 @@
 (ert-deftest hbut-man-apropos-test ()
   (with-temp-buffer
     (insert "rm (1)   - remove")
-    (goto-char 4)
+    (goto-char 2)
     (with-mock
      (mock (man "rm(1)") => t)
      (should (action-key))
