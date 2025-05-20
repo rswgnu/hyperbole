@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:      4-May-25 at 11:16:56 by Bob Weiner
+;; Last-Mod:     20-May-25 at 00:38:20 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1101,6 +1101,27 @@ marked with :ignore t")
     (unless (kotl-mode-tests--func-ignore f)
       (kotl-mode--sanity-check-function (kotl-mode-tests--func-func f)
                                         (kotl-mode-tests--func-args f)))))
+
+(ert-deftest kotl-mode--add-prior-cell ()
+  "Verify `kotl-mode:add-prior-cell'."
+  (with-temp-buffer
+    (kotl-mode)
+    (let ((current-prefix-arg -4))
+      (should-error (call-interactively #'kotl-mode:add-prior-cell)))
+    (let ((current-prefix-arg '(4)))
+      (mocklet (((kotl-mode:add-below-parent) => t))
+        (should (call-interactively #'kotl-mode:add-prior-cell))))
+    (let ((current-prefix-arg 1))
+      (mocklet (((kotl-mode:backward-cell 1) => 0)
+                ((kotl-mode:add-cell 1 nil nil nil) => t))
+        (should (call-interactively #'kotl-mode:add-prior-cell)))
+      (mocklet (((kotl-mode:backward-cell 1) => 1))
+        (mocklet (((kotl-mode:up-level 1) => t)
+                  ((kotl-mode:add-child 1 nil nil nil) => t))
+          (should (call-interactively #'kotl-mode:add-prior-cell)))
+        (mocklet (((kotl-mode:up-level 1) => nil)
+                  ((kotl-mode:add-below-parent 1 nil nil nil) => t))
+          (should (call-interactively #'kotl-mode:add-prior-cell)))))))
 
 (provide 'kotl-mode-tests)
 
