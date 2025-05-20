@@ -1,4 +1,20 @@
+2025-05-19  Bob Weiner  <rsw@gnu.org>
+
+* test/demo-tests.el (fast-demo-elisp-or-env-vars): Fix to move past opening
+    brace so does not trigger hui-select.
+    (demo-smart-mouse-keys-ref-test, demo-man-apropos-test): Make similar fixes.
+  test/hmouse-drv-tests.el (hbut-rfc-test): Make similar fixes.
+
+* hypb.el (hypb:in-string-p): Fix open quote detection heuristics including
+    subtracting quoted delimiters from overall counts.
+
 2025-05-18  Bob Weiner  <rsw@gnu.org>
+
+* hui-mouse.el (hkey-alist): Move hui-select clauses up before (hbut:at-p)
+    call so for example, if on the trailing delimiter surrounding a HyWikiWord,
+    the delimited whole is marked rather than activating the HyWikiWord.
+  man/hyperbole.texi (Smart Key - Magit Mode, Smart Key - Delimited Things):
+    Reorder to comde before (Smart Key - Hyperbole Buttons).
 
 * hypb.el (hypb:in-string-p): Make heuristic to optimize performance; search
     back only until the beginning of the first line prior to point that contains

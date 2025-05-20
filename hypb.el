@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     18-May-25 at 17:40:45 by Bob Weiner
+;; Last-Mod:     19-May-25 at 01:28:31 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -75,12 +75,13 @@ This should end with a space.")
 	    (list (format open-regexp "\"\\|'''\\|\"\"\"\\|'")
 		  (format close-regexp "\"\\|'''\\|\"\"\"\\|'")))
 	   ((derived-mode-p 'texinfo-mode)
-	    (list (format open-regexp "\"\\|``")
-		  (format close-regexp "\"\\|''")))
+	    (list (format open-regexp "``\\|\"")
+		  (format close-regexp "''\\|\"")))
 	   (t
 	    (list (format open-regexp "\"")
 		  (format close-regexp "\"")))))
-  "Return a list of open/close string delimiter regexps for `hypb:in-string-p'."
+  "Return a list of open/close string delimiter regexps for `hypb:in-string-p'.
+Or clauses in regexps must be arranged from longest match to shortest match."
   :type 'sexp
   :group 'hyperbole-commands)
 
@@ -694,47 +695,60 @@ Quoting conventions recognized are:
   Python triple single-quotes:   '''str''';
   Python triple double-quotes:   \"\"\"str\"\"\";
   Texinfo open and close quotes: ``str''."
-  (save-restriction
-    (when (integerp max-lines)
-      (narrow-to-region (line-beginning-position)
-			(line-end-position max-lines)))
-    ;; Don't use `syntax-ppss' here as it fails to ignore backquoted
-    ;; double quote characters in strings and doesn't work in
-    ;; `change-log-mode' due to its syntax-table.
-    (let ((opoint (point))
-	  (start (point-min))
-	  (open-match-string ""))
-      (cl-destructuring-bind (open-regexp close-regexp)
-	  (eval hypb:in-string-modes-regexps)
-	(cond ((derived-mode-p 'python-mode)
-	       (setq open-regexp  (format open-regexp "\"\\|'''\\|\"\"\"\\|'")
-		     close-regexp (format close-regexp "\"\\|'''\\|\"\"\"\\|'")))
-	      ((derived-mode-p 'texinfo-mode)
-	       (setq open-regexp  (format open-regexp "\"\\|``")
-		     close-regexp (format close-regexp "\"\\|''")))
-	      (t
-	       (setq open-regexp  (format open-regexp "\"")
-		     close-regexp (format close-regexp "\""))))
-	(save-match-data
-	  (when (re-search-backward open-regexp nil t)
-	    (setq open-match-string (match-string 2))
-	    (forward-line 0)
-	    (setq start (point))
-	    (goto-char opoint)
-	    (if (and (derived-mode-p 'texinfo-mode)
-		     (string-equal open-match-string texinfo-open-quote))
+  (save-excursion
+    (save-restriction
+      (when (integerp max-lines)
+	(narrow-to-region (line-beginning-position)
+			  (line-end-position max-lines)))
+      ;; Don't use `syntax-ppss' here as it fails to ignore backquoted
+      ;; double quote characters in strings and doesn't work in
+      ;; `change-log-mode' due to its syntax-table.
+      (let ((opoint (point))
+	    (start (point-min))
+	    (open-match-string ""))
+	(cl-destructuring-bind (open-regexp close-regexp)
+	    (eval hypb:in-string-modes-regexps)
+	  (save-match-data
+	    (when (and (re-search-backward open-regexp nil t)
+		       (setq open-match-string (match-string 2))
+		       ;; If this is the start of a string, it must be
+		       ;; at the start of line, preceded by whitespace
+		       ;; or preceded by another string end sequence.
+		       (save-match-data
+			 (or (string-empty-p (match-string 1))
+			     (string-search (match-string 1) " \t\n\r\f")
+			     (progn (goto-char (1+ (point)))
+				    (looking-back close-regexp nil)))))
+	      (forward-line 0)
+	      (setq start (point))
+	      (goto-char opoint)
+	      (if (and (derived-mode-p 'texinfo-mode)
+		       (string-equal open-match-string texinfo-open-quote))
+		  (and (cl-oddp (- (count-matches (regexp-quote open-match-string)
+						  start (point))
+				   ;; Subtract any backslash quoted delimiters
+				   (count-matches
+				    (format "[\\]\\(%s\\)"
+					    (regexp-quote open-match-string))
+				    start (point))
+				   (count-matches (regexp-quote texinfo-close-quote)
+						  start (point))
+				   ;; Subtract any backslash quoted delimiters
+				   (count-matches
+				    (format "[\\]\\(%s\\)"
+					    (regexp-quote texinfo-close-quote))
+				    start (point))))
+		       (search-forward texinfo-close-quote nil t)
+		       t)
 		(and (cl-oddp (- (count-matches (regexp-quote open-match-string)
 						start (point))
-				 (count-matches (regexp-quote texinfo-close-quote)
-						start (point))))
-		     (save-excursion (search-forward texinfo-close-quote nil t))
-		     t)
-	      (and (cl-oddp (count-matches
-			     (format "\\(^\\|[^\\]\\)\\(%s\\)"
-				     (regexp-quote open-match-string))
-			     start (point)))
-		   (save-excursion (re-search-forward close-regexp nil t))
-		   t))))))))
+				 ;; Subtract any backslash quoted delimiters
+				 (count-matches
+				  (format "[\\]\\(%s\\)"
+					  (regexp-quote open-match-string))
+				  start (point))))
+		     (re-search-forward close-regexp nil t)
+		     t)))))))))
 
 (defun hypb:indirect-function (obj)
   "Return the function at the end of OBJ's function chain.
