@@ -1,3 +1,7 @@
+2025-05-23  Mats Lidell  <matsl@gnu.org>
+
+* test/hypb-tests.el (hypb--in-string-p): Add basic test of quote handling.
+
 2025-05-23  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-word-with-optional-suffix-regexp): Change #section
