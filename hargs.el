@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:     27-Feb-25 at 21:21:40 by Bob Weiner
+;; Last-Mod:     22-May-25 at 22:49:03 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -128,10 +128,11 @@ line.  START-DELIM and END-DELIM are strings that specify the
 argument delimiters.  With optional START-REGEXP-FLAG non-nil,
 START-DELIM is treated as a regular expression.  END-REGEXP-FLAG
 is similar.  With optional LIST-POSITIONS-FLAG, return list
-of (string-matched start-pos end-pos).  Optional
-EXCLUDE-REGEXP is compared against the match string with its delimiters
-included; any string that matches this regexp is ignored.  With optional
-AS-KEY = \\='none, return t rather than the string result.  Any other
+of (string-matched start-pos end-pos), where the positions
+exclude the delimiters.  Optional EXCLUDE-REGEXP is compared
+against the match string with its delimiters included; any string
+that matches this regexp is ignored.  With optional AS-KEY =
+\\='none, return t rather than the string result.  Any other
 non-nil value, means return the string normalized as a Hyperbole
 button key (no spaces)." 
   (let* ((opoint (point))
