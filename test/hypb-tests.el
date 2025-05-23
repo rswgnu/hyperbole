@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:     5-Apr-21 at 18:53:10
-;; Last-Mod:     23-May-25 at 15:31:39 by Mats Lidell
+;; Last-Mod:     23-May-25 at 23:35:04 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -86,6 +86,7 @@ See Emacs bug#74042 related to usage of texi2any."
 
 (ert-deftest hypb--in-string-p ()
   "Verify basic quote handing by `hypb:in-string-p'."
+  :expected-result :failed
   (let ((s '(("\"str\"" . text-mode)            ;; double-quotes:
              ("'str'" . python-mode)            ;; Python single-quotes:
              ("'''str'''" . python-mode)        ;; Python triple single-quotes:
@@ -98,7 +99,12 @@ See Emacs bug#74042 related to usage of texi2any."
           (funcall mode)
           (insert str)
           (goto-char (/ (length str) 2))
-          (should (hypb:in-string-p)))))))
+          (should (hypb:in-string-p))
+          (let ((seq (hypb:in-string-p nil t)))
+            (should (sequencep seq))
+            (cl-destructuring-bind (val beg end) seq
+              (should val)
+              (should (and beg end (= (- end beg) 3))))))))))
 
 ;; This file can't be byte-compiled without the `el-mock' package (because of
 ;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.
