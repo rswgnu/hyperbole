@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:     5-Apr-21 at 18:53:10
-;; Last-Mod:     23-May-25 at 23:35:04 by Mats Lidell
+;; Last-Mod:     24-May-25 at 00:14:16 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -105,6 +105,25 @@ See Emacs bug#74042 related to usage of texi2any."
             (cl-destructuring-bind (val beg end) seq
               (should val)
               (should (and beg end (= (- end beg) 3))))))))))
+
+(ert-deftest hypb--in-string-p--max-lines ()
+  "Verify max lines handing by `hypb:in-string-p'."
+  (with-temp-buffer
+    (insert "\
+\"1
+2
+\"")
+    (goto-line 1) (move-to-column 1)
+    ;; First line. Line starts with quote.
+    (should-not (hypb:in-string-p 1))
+    (should-not (hypb:in-string-p 2))
+    (should (hypb:in-string-p 3))
+    (should (hypb:in-string-p 99))
+
+    ;; Second line. No quote on the line.
+    (goto-line 2)
+    (dotimes (l 5)
+      (should-not (hypb:in-string-p l)))))
 
 ;; This file can't be byte-compiled without the `el-mock' package (because of
 ;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.

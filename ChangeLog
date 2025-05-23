@@ -1,4 +1,6 @@
-2025-05-23  Mats Lidell  <matsl@gnu.org>
+2025-05-24  Mats Lidell  <matsl@gnu.org>
+
+* test/hypb-tests.el (hypb--in-string-p--max-lines): Add test of max-lines.
 
 * test/hypb-tests.el (hypb--in-string-p): Add basic test of quote handling.
 
