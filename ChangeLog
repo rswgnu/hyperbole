@@ -1,3 +1,23 @@
+2025-05-23  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-word-with-optional-suffix-regexp): Change #section
+    expression ordinality from "??" to "?" to get longest rather than
+    shortest match.
+            (hywiki-word-with-optional-suffix-exact-regexp): Fix to not
+    allow # within a section.
+            (hywiki-word-at): Fix to allow spaces in #section only if the
+    delimited string is a single HyWikiWord reference.
+
+2025-05-22  Bob Weiner  <rsw@gnu.org>
+
+* hypb.el (hypb:in-string-p): Doc optional MAX-LINES arg.  Add optional
+    RANGE-FLAG arg that returns (string-matched start-pos end pos) for
+    a match.
+
+* hywiki.el (hywiki-delimited-p): Ensure string check is limited to 2-lines
+    to match limit in the documentation.  Make any non-nil value returned
+    be a list of (string-matched start-pos end-pos).
+
 2025-05-20  Mats Lidell  <matsl@gnu.org>
 
 * test/kotl-mode-tests.el (kotl-mode--add-prior-cell): Add test.

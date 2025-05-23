@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     20-May-25 at 23:46:09 by Mats Lidell
+;; Last-Mod:     22-May-25 at 23:01:15 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -680,8 +680,13 @@ This will this install the Emacs helm package when needed."
 	       (error "(hypb:hkey-help-file): Non-existent file: \"%s\""
 		      help-file))))))
 
-(defun hypb:in-string-p (&optional max-lines)
-  "Return t iff point is within a string.
+(defun hypb:in-string-p (&optional max-lines range-flag)
+  "Return non-nil iff point is within a string.
+
+With optional MAX-LINES, an integer, match only within that many
+lines from point.  With optional RANGE-FLAG, return list
+of (string-matched start-pos end-pos), where the positions
+exclude the delimiters.
 
 To prevent searching back to the buffer start and producing slow
 performance, this limits its count of quotes found prior to point
@@ -705,12 +710,15 @@ Quoting conventions recognized are:
       ;; `change-log-mode' due to its syntax-table.
       (let ((opoint (point))
 	    (start (point-min))
-	    (open-match-string ""))
+	    (open-match-string "")
+	    str-start
+	    str-end)
 	(cl-destructuring-bind (open-regexp close-regexp)
 	    (eval hypb:in-string-modes-regexps)
 	  (save-match-data
 	    (when (and (re-search-backward open-regexp nil t)
-		       (setq open-match-string (match-string 2))
+		       (setq open-match-string (match-string 2)
+			     str-start (match-end 2))
 		       ;; If this is the start of a string, it must be
 		       ;; at the start of line, preceded by whitespace
 		       ;; or preceded by another string end sequence.
@@ -748,7 +756,11 @@ Quoting conventions recognized are:
 					  (regexp-quote open-match-string))
 				  start (point))))
 		     (re-search-forward close-regexp nil t)
-		     t)))))))))
+		     (if range-flag
+			 (progn
+			   (setq str-end (match-beginning 2))
+			   (list (buffer-substring-no-properties str-start str-end) str-start str-end))
+		       t))))))))))
 
 (defun hypb:indirect-function (obj)
   "Return the function at the end of OBJ's function chain.
