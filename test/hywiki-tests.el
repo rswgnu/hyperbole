@@ -296,9 +296,8 @@ line 2
           (words '("WikiWord" "WikiWord:L1" "WikiWord:L1:C2"
                    "WikiWord#section" "WikiWord#section:L1" "WikiWord#section:L1:C2"
                    "WikiWord#section-subsection" "WikiWord#section-subsection:L1" "WikiWord#section-subsection:L1:C2"
-                   ;; !! FIXME: Uncomment when implemented.
-                   ;; ("(WikiWord#section with spaces)" . "WikiWord#section with spaces")
-                   ;; ("(WikiWord#section)" . "WikiWord#section")
+                   ("(WikiWord#section with spaces)" . "WikiWord#section with spaces")
+                   ("(WikiWord#section)" . "WikiWord#section")
                    )))
       (unwind-protect
           (with-temp-buffer
@@ -328,9 +327,13 @@ line 2
               (goto-char 4)
               (should (string= "WikiWord#section-with-dash" (hywiki-word-at))))
             (with-temp-buffer
+              (insert "WikiWord#section-with#hash")
+              (goto-char 4)
+              (should-not (hywiki-word-at)))
+            (with-temp-buffer
               (insert "WikiWord#\"section-within-quotes\"")
               (goto-char 4)
-              (should-not (string= "WikiWord#\"section-within-quotes\"" (hywiki-word-at)))))
+              (should-not (hywiki-word-at))))
         (hy-delete-dir-and-buffer hywiki-directory)))))
 
 (ert-deftest hywiki-tests--word-is-p ()
@@ -720,9 +723,8 @@ Both mod-time and checksum must be changed for a test to return true."
                     ("WikiWord#Bsection-subsection" . "** Bsection subsection")
                     ("WikiWord#Bsection-subsection:L2" . "body B")
                     ("WikiWord#Bsection-subsection:L2:C2" . "dy B")
-                    ;; !! FIXME: Uncomment when implemented.
-                    ;; ("(WikiWord#Bsection subsection)" . "** Bsection subsection")
-                    ;; ("(WikiWord#Asection)" . "* Asection")
+                    ("(WikiWord#Bsection subsection)" . "** Bsection subsection")
+                    ("(WikiWord#Asection)" . "* Asection")
                     )))
       (unwind-protect
           (progn
