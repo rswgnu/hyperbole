@@ -2,7 +2,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     4-Jul-24 at 09:57:18
-;; Last-Mod:     12-Jul-24 at 22:05:30 by Mats Lidell
+;; Last-Mod:     26-May-25 at 03:30:20 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -81,7 +81,7 @@
 	  (kill-buffer buf))))))
 
 ;;;###autoload
-(defun hsys-consult-grep (grep-includes ripgrep-globs &optional regexp max-matches path-list)
+(defun hsys-consult-grep (grep-includes ripgrep-globs &optional regexp max-matches path-list prompt)
   "Interactively search PATH-LIST with a consult package grep command.
 
 With GREP-INCLUDES or RIPGREP-GLOBS file suffixes to include, search
@@ -90,7 +90,9 @@ for optional REGEXP up to MAX-MATCHES in PATH-LIST.
 Use ripgrep (rg) if found, otherwise, plain grep.  Initialize search with
 optional REGEXP and interactively prompt for changes.  Limit matches
 per file to the absolute value of MAX-MATCHES, if given and not 0.  If
-0, match to headlines only (lines that start with a '^[*#]+[ \t]+' regexp)."
+0, match to headlines only (lines that start with a '^[*#]+[ \t]+' regexp).
+With optional PROMPT string, use this as the first part of the grep prompt;
+omit any trailing colon and space in the prompt."
   (unless (package-installed-p 'consult)
     (package-install 'consult))
   (require 'consult)
@@ -117,22 +119,7 @@ per file to the absolute value of MAX-MATCHES, if given and not 0.  If
 				path))
 			    path-list)
 		  path-list)))
-    (hsys-consult--grep-paths paths regexp max-matches)))
-
-;;;###autoload
-(defun hsys-consult-org-grep-tags-p ()
-  "When on an Org tag, return appropriate `consult-grep' function.
-Use `default-directory' and buffer name to determine which function to
-call."
-  (when (hsys-org-at-tags-p)
-    (cond ((hsys-org-directory-at-tags-p t)
-	   #'hsys-consult-org-grep-tags)
-	  ((hsys-org-roam-directory-at-tags-p t)
-	   #'hsys-consult-org-roam-grep-tags)
-	  ((hywiki-at-tags-p t)
-	   #'hsys-consult-hywiki-grep-tags)
-	  ((hyrolo-at-tags-p t)
-	   #'hsys-consult-hyrolo-grep-tags))))
+    (hsys-consult--grep-paths paths regexp max-matches prompt)))
 
 (defun hsys-consult-grep-tags (org-consult-grep-function)
   "When on an Org tag, call ORG-CONSULT-GREP-FUNCTION to find matches.
@@ -159,6 +146,21 @@ If on a colon, match to sections with all tags around point;
 otherwise, just match to the single tag around point."
   (interactive)
   (hsys-consult-grep-tags #'hywiki-consult-grep))
+
+;;;###autoload
+(defun hsys-consult-org-grep-tags-p ()
+  "When on an Org tag, return appropriate `consult-grep' function.
+Use `default-directory' and buffer name to determine which function to
+call."
+  (when (hsys-org-at-tags-p)
+    (cond ((hsys-org-directory-at-tags-p t)
+	   #'hsys-consult-org-grep-tags)
+	  ((hsys-org-roam-directory-at-tags-p t)
+	   #'hsys-consult-org-roam-grep-tags)
+	  ((hywiki-at-tags-p t)
+	   #'hsys-consult-hywiki-grep-tags)
+	  ((hyrolo-at-tags-p t)
+	   #'hsys-consult-hyrolo-grep-tags))))
 
 (defun hsys-consult-org-grep-tags ()
   "When on an `org-directory' tag, use `consult-grep' to list dir tag matches.
@@ -194,7 +196,8 @@ that start with the '^[*#]+[ \t]*' regexp)."
 	    (if (listp consult-ripgrep-args)
 		(append consult-ripgrep-args (list "--glob *.org"))
               (concat consult-ripgrep-args " --glob *.org"))))
-       (hsys-consult--grep-paths (list org-roam-directory) regexp max-matches)))))
+       (hsys-consult--grep-paths (list org-roam-directory) regexp max-matches
+				 "Grep Org Roam Nodes")))))
 
 ;;;###autoload
 (defun hsys-consult-org-roam-title ()
@@ -204,11 +207,28 @@ that start with the '^[*#]+[ \t]*' regexp)."
    (lambda ()
      (org-roam-node-find nil nil (lambda (node) (zerop (org-roam-node-level node)))))))
 
+;;;###autoload
+(defun hsys-consult-selected-candidate (consult-command &optional no-properties-flag)
+  "Return the input from interactively calling CONSULT-COMMAND, a symbol.
+CONSULT-COMMAND is called with no arguments.  Add optional
+NO-PROPERTIES-FLAG non-nil to strip the properties from the
+returned input string."
+  (unless (commandp consult-command)
+    (user-error "(hsys-consult-selected-candidate): First arg must be a command, not `%s'" consult-command))
+  (save-excursion
+    (save-window-excursion
+      (cl-flet ((mapcar (lambda (state-function)
+			  `(,state-function () cand))
+			(apropos-internal "consult--.+-state" #'fboundp)))
+	(if no-properties-flag
+	    (substring-no-properties (or (call-interactively consult-command) ""))
+	  (call-interactively consult-command))))))
+
 ;;; ************************************************************************
 ;;; Private functions
 ;;; ************************************************************************
 
-(defun hsys-consult--grep-paths (paths &optional regexp max-matches)
+(defun hsys-consult--grep-paths (paths &optional regexp max-matches prompt)
   "Interactively search PATHS with a consult package grep command.
 Use ripgrep (rg) if found, otherwise, plain grep.  Interactively
 show all matches from PATHS; see the documentation for the `dir'
@@ -216,8 +236,11 @@ argument in `consult-grep' for valid values of PATHS.
 
 Initialize search with optional REGEXP and interactively prompt
 for changes.  Limit matches per file to the absolute value of
-MAX-MATCHES, if given and not 0.  If 0, match to the start of
-headline text only (lines that start with a '^[*#]+[ \t]*' regexp)."
+optional MAX-MATCHES, if given and not 0.  If 0, match to the
+start of headline text only (lines that start with a '^[*#]+[
+\t]*' regexp).  With optional PROMPT string, use this as the first
+part of the grep prompt; omit any trailing colon and space in the
+prompt."
   (unless (package-installed-p 'consult)
     (package-install 'consult))
   (require 'consult)
@@ -245,16 +268,18 @@ headline text only (lines that start with a '^[*#]+[ \t]*' regexp)."
 					      (list (format "-m %d" (abs max-matches))))
 				    (concat consult-ripgrep-args
 					    (format " -m %d" (abs max-matches))))
-				consult-ripgrep-args))
-	(grep-func (cond ((executable-find "rg")
-			  #'consult-ripgrep)
-			 (t #'consult-grep))))
+				consult-ripgrep-args)))
     ;; Consult split style usually uses '#' as a separator char but
     ;; that interferes with matching to Markdown # chars at the start
     ;; of a line in the regexp, so disable the separator char as it is
     ;; not needed for simple regexp searches.
     (let ((consult-async-split-style nil))
-      (funcall grep-func paths regexp))))
+      (if (executable-find "rg")
+	  (consult--grep (or prompt "Ripgrep")
+			 #'consult--ripgrep-make-builder paths regexp)
+	(consult--grep (or prompt "Grep")
+		       #'consult--grep-make-builder paths regexp)))))
+
 
 (defun hsys-consult--org-grep-tags-string ()
   "When on or between Org tags, return a `consult-grep' match string for them.

@@ -1,3 +1,27 @@
+2025-05-26  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-set-display-buffer): Don't enable 'hyrolo-mode' when
+    within a `hyrolo-yank' command so that the yanked-to-buffer's mode
+    is not changed (since 'hyrolo-display-buffer' is set to this).
+            (hyrolo-add-match): Don't highlight any matches inserted by
+    'hyrolo-yank'.
+            (hyrolo-yank): Add support for fast completion via 'consult-grep'.
+	    (hyrolo-consult-yank-grep): Add to support above function.
+
+2025-05-25  Bob Weiner  <rsw@gnu.org>
+
+* hsys-consult.el (hsys-consult-selected-candidate): Add autoloaded function
+    to return the candidate selected from commands like 'hyrolo-consult-grep'.
+                  (hsys-consult--grep-paths, hsys-consult-grep): Add
+    additional arg 'prompt' to change the first part of the 'consult-grep'
+    prompt.
+                  (hsys-consult-org-roam-grep): Pass in a prompt to
+    'hsys-consult--grep-paths' call.
+  hyrolo.el (hyrolo-consult-grep):
+  hywiki.el (hywiki-consult-grep):
+  hsys-org.el (hsys-org-consult-grep): Optionally pass in a prompt for the
+   'hsys-consult-grep' call.
+
 2025-05-23  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-word-with-optional-suffix-regexp): Change #section
