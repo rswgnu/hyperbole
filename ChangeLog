@@ -1,4 +1,4 @@
-2025-05-26  Mats Lidell  <matsl@gnu.org>
+2025-05-27  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--sections-with-dash-space): Add test
     for section with # character.
@@ -7,6 +7,8 @@
     test. It is supported now.
     (hywiki-tests--nonexistent-wikiword-with-section-should-create-wikiword):
     Add test for a new WikiWord when initially given with a section.
+    (hywiki-tests--sections-with-space-and-delimited-string): Add test of
+    space in #section while delimited string.
 
 2025-05-26  Bob Weiner  <rsw@gnu.org>
 

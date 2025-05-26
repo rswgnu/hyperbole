@@ -336,6 +336,31 @@ line 2
               (should-not (hywiki-word-at))))
         (hy-delete-dir-and-buffer hywiki-directory)))))
 
+(ert-deftest hywiki-tests--sections-with-space-and-delimited-string ()
+  "Verify `hywiki-word-at' with space and delimited string.
+Only allow spaces in #section if the delimited string is a single
+HyWikiWord reference."
+  (hywiki-tests--preserve-hywiki-mode
+    (let ((hywiki-directory (make-temp-file "hywiki" t)))
+      (unwind-protect
+          (progn
+            (hywiki-mode 1)
+            (with-temp-buffer           ; Delimited string allow space
+              (insert "\"WikiWord#section rest\"")
+              (goto-char 4)
+              (should (string= "WikiWord#section rest" (hywiki-word-at))))
+            (with-temp-buffer           ; Not a single WikiWord reference so no space
+              (insert "\"WikiPage WikiWord#section rest\"")
+              (goto-char 4)
+              (should (string= "WikiPage" (hywiki-word-at)))
+              (goto-char 20)
+              (should (string= "WikiWord#section" (hywiki-word-at))))
+            (with-temp-buffer           ; Single WikiWord reference (WikiPage is part of section)
+              (insert "\"WikiWord#section rest WikiPage\"")
+              (goto-char 4)
+              (should (string= "WikiWord#section rest WikiPage" (hywiki-word-at)))))
+        (hy-delete-dir-and-buffer hywiki-directory)))))
+
 (ert-deftest hywiki-tests--word-is-p ()
   "Verify `hywiki-word-is-p' identifies WikiWords."
   (should (hywiki-word-is-p "WikiWord"))
