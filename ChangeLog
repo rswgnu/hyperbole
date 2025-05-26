@@ -22,6 +22,12 @@
   hsys-org.el (hsys-org-consult-grep): Optionally pass in a prompt for the
    'hsys-consult-grep' call.
 
+2025-05-24  Mats Lidell  <matsl@gnu.org>
+
+* test/hypb-tests.el (hypb--in-string-p--max-lines): Add test of max-lines.
+
+* test/hypb-tests.el (hypb--in-string-p): Add basic test of quote handling.
+
 2025-05-23  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-word-with-optional-suffix-regexp): Change #section
