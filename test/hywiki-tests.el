@@ -1534,6 +1534,25 @@ Insert test in the middle of other text."
         (hy-delete-file-and-buffer wiki-page)
         (hy-delete-dir-and-buffer hywiki-directory)))))
 
+(ert-deftest hywiki-tests--nonexistent-wikiword-with-section-should-create-wikiword ()
+  "Verify that action-key on a new WikiWord with section only creates WikiWord.org.
+Bug - creates WikiWord.org#section"
+  :expected-result :failed
+  (hywiki-tests--preserve-hywiki-mode
+    (let* ((hywiki-directory (make-temp-file "hywiki" t))
+           (hywiki-page (expand-file-name "WikiWord.org" hywiki-directory))
+           (hywiki-page-with-section (expand-file-name "WikiWord.org#section" hywiki-directory)))
+      (unwind-protect
+          (with-temp-buffer
+            (hywiki-mode 1)
+            (insert "WikiWord#section")
+            (goto-char 4)
+            (action-key)
+            (should-not (file-exists-p hywiki-page-with-section))
+            (should (file-exists-p hywiki-page)))
+        (hy-delete-files-and-buffers (list hywiki-page hywiki-page-with-section))
+        (hy-delete-dir-and-buffer hywiki-directory)))))
+
 (provide 'hywiki-tests)
 
 ;; This file can't be byte-compiled without the `el-mock' package
