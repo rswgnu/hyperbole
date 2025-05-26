@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     27-Apr-25 at 11:12:58 by Bob Weiner
+;; Last-Mod:     26-May-25 at 03:29:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -531,21 +531,26 @@ entry which begins with the parent string."
 		t))))
 
 ;;;###autoload
-(defun hyrolo-consult-grep (&optional regexp max-matches path-list)
+(defun hyrolo-consult-grep (&optional regexp max-matches path-list prompt)
   "Interactively search paths with a consult package grep command.
 Search for optional REGEXP up to MAX-MATCHES in PATH-LIST or `hyrolo-file-list'.
 
 Use ripgrep (rg) if found, otherwise, plain grep.  Initialize search with
 optional REGEXP and interactively prompt for changes.  Limit matches
 per file to the absolute value of MAX-MATCHES, if given and not 0.  If
-0, match to headlines only (lines that start with a '^[*#]+[ \t]+' regexp)."
+0, match to headlines only (lines that start with a '^[*#]+[ \t]+' regexp).
+With optional PROMPT string, use this as the first part of the grep prompt;
+omit any trailing colon and space in the prompt."
   (interactive "i\nP")
   (let* ((grep-includes (concat "--include *.kot --include *.kotl"
 				" --include *.md --include *.markdown --include *.mkd --include *.mdown --include *.mkdn --include *.mdwn"
 				" --include *.org --include *.otl --include *.outl"))
 	 (ripgrep-globs "--glob *.{kot,kotl,md,markdown,mkd,mdown,mkdn,mdwn,org,otl,outl}"))
     (hsys-consult-grep grep-includes ripgrep-globs
-		       regexp max-matches (or path-list hyrolo-file-list))))
+		       regexp max-matches (or path-list hyrolo-file-list)
+		       (or prompt (if (eq max-matches 0)
+				      "Grep HyRolo headlines"
+				    "Grep HyRolo files")))))
 
 ;;;###autoload
 (defun hyrolo-display-matches (&optional display-buf return-to-buffer)
@@ -803,12 +808,13 @@ HEADLINE-ONLY searches only the first line of entries, not the
 full text.  Optional NO-DISPLAY non-nil retrieves entries but
 does not display.
 
-Nil value of MAX-MATCHES means find all entries that match, t value means find
-all matching entries but omit file headers, negative values mean find up to the
-inverse of that number of matching entries and omit file headers.
+Nil value of MAX-MATCHES means find all entries that match, t
+value means find all matching entries but omit file headers,
+negative values mean find up to the inverse of that number of
+matching entries and omit file headers.
 
-Return number of entries matched.  See also documentation for the variable
-\`hyrolo-file-list'."
+Return number of entries matched.  See also documentation for the
+variable \`hyrolo-file-list'."
   (interactive "sFind rolo regular expression: \nP")
   (unless (or (integerp max-matches) (memq max-matches '(nil t)))
     (setq max-matches (prefix-numeric-value max-matches)))
@@ -1293,7 +1299,8 @@ Raise an error if a match is not found."
 (defun hyrolo-set-display-buffer ()
   "Set display buffer."
   (prog1 (set-buffer (get-buffer-create hyrolo-display-buffer))
-    (unless (eq major-mode 'hyrolo-mode)
+    (unless (or (eq major-mode 'hyrolo-mode)
+		(hyperb:stack-frame '(hyrolo-yank)))
       (hyrolo-mode))
     (setq buffer-read-only nil)))
 
@@ -1510,18 +1517,27 @@ hyrolo-file-list."
     total-matches))
 
 ;;;###autoload
-(defun hyrolo-yank (name &optional regexp-p)
-  "Insert at point the first rolo entry matching NAME.
-With optional prefix arg, REGEXP-P, treats NAME as a regular expression instead
-of a string."
-  (interactive "sInsert rolo entry named: \nP")
+(defun hyrolo-yank (name &optional regexp-flag)
+  "Insert at point the first rolo entry with a headline containing NAME.
+With optional prefix arg, REGEXP-FLAG, treat NAME as a regular expression
+instead of a string."
+  (interactive (list 
+		(if (featurep 'consult)
+		    (hsys-consult-selected-candidate 'hyrolo-consult-yank-grep t)
+		  (read-string "Yank rolo headline matching: "))
+		current-prefix-arg))
   (let ((hyrolo-display-buffer (current-buffer))
 	(start (point))
 	found)
     (save-excursion
-      (setq found (if regexp-p
-		      (hyrolo-grep name -1)
-		    (hyrolo-grep (regexp-quote name) -1))))
+      (setq found
+	    (if (and (featurep 'consult)
+		     (string-match "\\([^ \t\n\r\"'`]*[^ \t\n\r:\"'`0-9]\\): ?\\([1-9][0-9]*\\)[ :]"
+				   name))
+		(hyrolo-grep-file (match-string-no-properties 1 name)
+				  (regexp-quote (substring name (match-end 0)))
+				  -1 nil t)
+	      (hyrolo-grep (if regexp-flag name (regexp-quote name)) -1 nil nil t))))
     ;; Let user reformat the region just yanked.
     (if (= found 1)
 	(funcall hyrolo-yank-reformat-function start (point)))
@@ -2009,7 +2025,12 @@ Return number of matching entries found."
 	  (set-buffer actual-buf)
 
 	  (when (and headline-only
-		     (not (string-match (concat "\\`\\(" (regexp-quote "^") "\\|" (regexp-quote "\\`") "\\)") pattern)))
+		     (not (string-match (concat "\\`\\([*#]+[ \t]+\\|"
+						"\\\\\\*+[ \t]+\\|"
+						"#+[ \t]+\\|"
+						(regexp-quote "^") "\\|"
+						(regexp-quote "\\`") "\\)")
+					pattern)))
 	    ;; If matching only to headlines and pattern is not already
 	    ;; anchored to the beginning of lines, add a file-type-specific
 	    ;; headline prefix regexp to the pattern to match.
@@ -2243,12 +2264,12 @@ Calls the functions given by `hyrolo-mode-hook'.
   (run-mode-hooks 'hyrolo-mode-hook))
 
 (defun hyrolo-next-regexp-match (regexp)
-  "In a HyRolo source buffer, Move past next occurrence of REGEXP.
+  "In a HyRolo source buffer, move past next occurrence of REGEXP.
 When found, return the match start position; otherwise, return nil."
   (when (re-search-forward regexp nil t)
     (match-beginning 0)))
 
-;; The *HyRolo* buffer uses hyrolo-org-mode and hyrolo-markdown-mode
+;; The *HyRolo* buffer uses `hyrolo-org-mode' and `hyrolo-markdown-mode'
 ;; on Org and Markdown files that it reads to speed loading and
 ;; searching.  This next function switches such buffers to their
 ;; normal modes whenever they are displayed.
@@ -2805,10 +2826,11 @@ Entry is inserted before point.  The region is between START to END."
     (set-buffer (get-buffer-create hyrolo-display-buffer))
     (setq opoint (point))
     (insert (funcall hyrolo-display-format-function hyrolo-entry))
-    (hyrolo-highlight-matches regexp opoint
-			      (if headline-only
-				  (save-excursion (goto-char opoint) (line-end-position))
-				(point)))
+    (unless (hyperb:stack-frame '(hyrolo-yank))
+      (hyrolo-highlight-matches regexp opoint
+				(if headline-only
+				    (save-excursion (goto-char opoint) (line-end-position))
+				  (point))))
     (set-buffer hyrolo-buf)))
 
 (defun hyrolo-any-file-type-problem-p ()
@@ -2903,6 +2925,12 @@ HYROLO-BUF may be a file-name, `buffer-name', or buffer."
 				  (get-buffer hyrolo-buf))
 			     hyrolo-buf))
 	     (buffer-list))))
+
+(defun hyrolo-consult-yank-grep ()
+  "Support function for `hyrolo-yank'."
+  (interactive)
+  (let ((consult-preview-key nil))
+    (hyrolo-consult-grep nil 0 nil "Yank rolo headline matching")))
 
 (defun hyrolo-current-date ()
   "Return the current date (a string) in a form used for rolo entry insertion."

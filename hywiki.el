@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Acpr-24 at 22:41:13
-;; Last-Mod:     23-May-25 at 02:39:29 by Bob Weiner
+;; Last-Mod:     26-May-25 at 00:16:02 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1453,19 +1453,24 @@ nil, else return \\='(page . \"<page-file-path>\")."
        (or (hywiki-in-page-p) (string-prefix-p "*HyWiki Tags*" (buffer-name)))))
 
 ;;;###autoload
-(defun hywiki-consult-grep (&optional regexp max-matches path-list)
+(defun hywiki-consult-grep (&optional regexp max-matches path-list prompt)
   "Interactively search with a consult package grep command.
 Search for optional REGEXP up to MAX-MATCHES in PATH-LIST or `hywiki-directory'.
 
 Use ripgrep (rg) if found, otherwise, plain grep.  Initialize search with
 optional REGEXP and interactively prompt for changes.  Limit matches
 per file to the absolute value of MAX-MATCHES, if given and not 0.  If
-0, match to headlines only (lines that start with a '^[*#]+[ \t]+' regexp)."
+0, match to headlines only (lines that start with a '^[*#]+[ \t]+' regexp).
+With optional PROMPT string, use this as the first part of the grep prompt;
+omit any trailing colon and space in the prompt."
   (interactive "i\nP")
   (let* ((grep-includes "--include *.org")
 	 (ripgrep-globs "--glob *.org"))
     (hsys-consult-grep grep-includes ripgrep-globs
-		       regexp max-matches (or path-list (list hywiki-directory)))))
+		       regexp max-matches (or path-list (list hywiki-directory))
+		       (or prompt (if (eq max-matches 0)
+				      "Grep HyWiki dir headlines"
+				    "Grep HyWiki dir")))))
 
 (defun hywiki-convert-words-to-org-links ()
   "Convert all highlighted HyWiki words in current buffer to Org links.

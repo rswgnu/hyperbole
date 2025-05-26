@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     24-Apr-25 at 15:31:03 by Mats Lidell
+;; Last-Mod:     26-May-25 at 00:15:37 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -376,19 +376,24 @@ Do nothing if called outside of `org-mode'."
       (org-meta-return))))
 
 ;;;###autoload
-(defun hsys-org-consult-grep (&optional regexp max-matches path-list)
+(defun hsys-org-consult-grep (&optional regexp max-matches path-list prompt)
   "Interactively search `org-directory' with a consult package grep command.
 Search for optional REGEXP up to MAX-MATCHES in PATH-LIST or `org-directory'.
 
 Use ripgrep (rg) if found, otherwise, plain grep.  Initialize search with
 optional REGEXP and interactively prompt for changes.  Limit matches
 per file to the absolute value of MAX-MATCHES, if given and not 0.  If
-0, match to headlines only (lines that start with a '^[*#]+[ \t]+' regexp)."
+0, match to headlines only (lines that start with a '^[*#]+[ \t]+' regexp).
+With optional PROMPT string, use this as the first part of the grep prompt;
+omit any trailing colon and space in the prompt."
   (interactive "i\nP")
   (let* ((grep-includes "--include *.org")
 	 (ripgrep-globs "--glob *.org"))
     (hsys-consult-grep grep-includes ripgrep-globs
-		       regexp max-matches (or path-list (list org-directory)))))
+		       regexp max-matches (or path-list (list org-directory))
+		       (or prompt (if (eq max-matches 0)
+				      "Grep Org dir headlines"
+				    "Grep Org dir")))))
 
 ;;;###autoload
 (defun hsys-org-mode-p ()
