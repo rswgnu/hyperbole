@@ -1,5 +1,8 @@
 2025-05-27  Bob Weiner  <rsw@gnu.org>
 
+* test/hywiki-tests.el (hywiki-tests--published-html-links-to-word-and-section):
+    Bug is fixed, so remove expected fail and enable this test.
+
 * hywiki.el (hywiki-word-is-p): Save match data so when returns it represents
     the match to the whole HyWikiWord referent, if any.  This fixes a bug
     that created HyWikiWord page files with the section name attached.
