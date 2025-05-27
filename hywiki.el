@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Acpr-24 at 22:41:13
-;; Last-Mod:     26-May-25 at 00:16:02 by Bob Weiner
+;; Last-Mod:     27-May-25 at 02:05:56 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -3242,10 +3242,11 @@ these are handled by the Org mode link handler."
 		  (eq 0 (string-match
 			 hywiki-word-with-optional-suffix-exact-regexp
 			 word)))
-	      ;; If has a #section, ensure there are no invalid chars
-	      (if (string-match "#" word)
-		  (string-match "#[^][#()<>{}\"\n\r\f]+\\'" word)
-		t)))))
+	      (save-match-data
+		;; If has a #section, ensure there are no invalid chars
+		(if (string-match "#" word)
+		    (string-match "#[^][#()<>{}\"\n\r\f]+\\'" word)
+		  t))))))
 
 (defun hywiki-word-read (&optional prompt)
   "Prompt with completion for and return an existing HyWikiWord.

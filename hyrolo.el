@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     26-May-25 at 03:29:26 by Bob Weiner
+;; Last-Mod:     27-May-25 at 01:22:36 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1519,6 +1519,9 @@ hyrolo-file-list."
 ;;;###autoload
 (defun hyrolo-yank (name &optional regexp-flag)
   "Insert at point the first rolo entry with a headline containing NAME.
+If the `consult' package is loaded, interactively select and complete
+the entry to be inserted.
+
 With optional prefix arg, REGEXP-FLAG, treat NAME as a regular expression
 instead of a string."
   (interactive (list 

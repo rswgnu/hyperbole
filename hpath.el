@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     26-Apr-25 at 10:22:42 by Bob Weiner
+;; Last-Mod:     27-May-25 at 00:41:20 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1178,14 +1178,15 @@ end-pos) or nil."
 
 ;;;###autoload
 (defun hpath:display-buffer (buffer &optional display-where)
-  "Display and select BUFFER at optional DISPLAY-WHERE or at `hpath:display-where'.
+  "Create and select BUFFER at optional DISPLAY-WHERE or at `hpath:display-where'.
 BUFFER must be a buffer or a buffer name.
 
 See the documentation of `hpath:display-buffer-alist' for valid
 values of DISPLAY-WHERE.  Return the window in which the buffer
 is displayed or nil if not displayed because BUFFER is invalid."
   (interactive "bDisplay buffer: ")
-  (if (stringp buffer) (setq buffer (get-buffer buffer)))
+  (when (stringp buffer)
+    (setq buffer (get-buffer-create buffer)))
   (when buffer
     ;; RSW 4/30/2016 - Commented out in case interferes with Smart Key
     ;; selection and yanking of the region via drags.
@@ -1209,8 +1210,8 @@ window in which the buffer is displayed."
   (if (= (length (frame-list)) 1)
       (select-frame (make-frame))
     (other-frame 1))
-  (if (br-in-browser)
-      (br-to-view-window))
+  (when (br-in-browser)
+    (br-to-view-window))
   (switch-to-buffer buffer)
   (selected-window))
 

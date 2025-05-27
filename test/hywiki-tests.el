@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     27-Apr-25 at 10:11:50 by Bob Weiner
+;; Last-Mod:     27-May-25 at 02:14:49 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1560,9 +1560,7 @@ Insert test in the middle of other text."
         (hy-delete-dir-and-buffer hywiki-directory)))))
 
 (ert-deftest hywiki-tests--nonexistent-wikiword-with-section-should-create-wikiword ()
-  "Verify that action-key on a new WikiWord with section only creates WikiWord.org.
-Bug - creates WikiWord.org#section"
-  :expected-result :failed
+  "Verify action-key on a new WikiWord#section creates proper page filename."
   (hywiki-tests--preserve-hywiki-mode
     (let* ((hywiki-directory (make-temp-file "hywiki" t))
            (hywiki-page (expand-file-name "WikiWord.org" hywiki-directory))
