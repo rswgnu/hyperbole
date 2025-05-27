@@ -296,9 +296,8 @@ line 2
           (words '("WikiWord" "WikiWord:L1" "WikiWord:L1:C2"
                    "WikiWord#section" "WikiWord#section:L1" "WikiWord#section:L1:C2"
                    "WikiWord#section-subsection" "WikiWord#section-subsection:L1" "WikiWord#section-subsection:L1:C2"
-                   ;; !! FIXME: Uncomment when implemented.
-                   ;; ("(WikiWord#section with spaces)" . "WikiWord#section with spaces")
-                   ;; ("(WikiWord#section)" . "WikiWord#section")
+                   ("(WikiWord#section with spaces)" . "WikiWord#section with spaces")
+                   ("(WikiWord#section)" . "WikiWord#section")
                    )))
       (unwind-protect
           (with-temp-buffer
@@ -328,9 +327,38 @@ line 2
               (goto-char 4)
               (should (string= "WikiWord#section-with-dash" (hywiki-word-at))))
             (with-temp-buffer
+              (insert "WikiWord#section-with#hash")
+              (goto-char 4)
+              (should-not (hywiki-word-at)))
+            (with-temp-buffer
               (insert "WikiWord#\"section-within-quotes\"")
               (goto-char 4)
-              (should-not (string= "WikiWord#\"section-within-quotes\"" (hywiki-word-at)))))
+              (should-not (hywiki-word-at))))
+        (hy-delete-dir-and-buffer hywiki-directory)))))
+
+(ert-deftest hywiki-tests--sections-with-space-and-delimited-string ()
+  "Verify `hywiki-word-at' with space and delimited string.
+Only allow spaces in #section if the delimited string is a single
+HyWikiWord reference."
+  (hywiki-tests--preserve-hywiki-mode
+    (let ((hywiki-directory (make-temp-file "hywiki" t)))
+      (unwind-protect
+          (progn
+            (hywiki-mode 1)
+            (with-temp-buffer           ; Delimited string allow space
+              (insert "\"WikiWord#section rest\"")
+              (goto-char 4)
+              (should (string= "WikiWord#section rest" (hywiki-word-at))))
+            (with-temp-buffer           ; Not a single WikiWord reference so no space
+              (insert "\"WikiPage WikiWord#section rest\"")
+              (goto-char 4)
+              (should (string= "WikiPage" (hywiki-word-at)))
+              (goto-char 20)
+              (should (string= "WikiWord#section" (hywiki-word-at))))
+            (with-temp-buffer           ; Single WikiWord reference (WikiPage is part of section)
+              (insert "\"WikiWord#section rest WikiPage\"")
+              (goto-char 4)
+              (should (string= "WikiWord#section rest WikiPage" (hywiki-word-at)))))
         (hy-delete-dir-and-buffer hywiki-directory)))))
 
 (ert-deftest hywiki-tests--word-is-p ()
@@ -720,9 +748,8 @@ Both mod-time and checksum must be changed for a test to return true."
                     ("WikiWord#Bsection-subsection" . "** Bsection subsection")
                     ("WikiWord#Bsection-subsection:L2" . "body B")
                     ("WikiWord#Bsection-subsection:L2:C2" . "dy B")
-                    ;; !! FIXME: Uncomment when implemented.
-                    ;; ("(WikiWord#Bsection subsection)" . "** Bsection subsection")
-                    ;; ("(WikiWord#Asection)" . "* Asection")
+                    ("(WikiWord#Bsection subsection)" . "** Bsection subsection")
+                    ("(WikiWord#Asection)" . "* Asection")
                     )))
       (unwind-protect
           (progn
@@ -1530,6 +1557,25 @@ Insert test in the middle of other text."
             (should (looking-at-p "DEMO\\.org\""))
             (should (string= "ibtypes::hywiki-existing-word" (hattr:get (ibut:at-p) 'categ))))
         (hy-delete-file-and-buffer wiki-page)
+        (hy-delete-dir-and-buffer hywiki-directory)))))
+
+(ert-deftest hywiki-tests--nonexistent-wikiword-with-section-should-create-wikiword ()
+  "Verify that action-key on a new WikiWord with section only creates WikiWord.org.
+Bug - creates WikiWord.org#section"
+  :expected-result :failed
+  (hywiki-tests--preserve-hywiki-mode
+    (let* ((hywiki-directory (make-temp-file "hywiki" t))
+           (hywiki-page (expand-file-name "WikiWord.org" hywiki-directory))
+           (hywiki-page-with-section (expand-file-name "WikiWord.org#section" hywiki-directory)))
+      (unwind-protect
+          (with-temp-buffer
+            (hywiki-mode 1)
+            (insert "WikiWord#section")
+            (goto-char 4)
+            (action-key)
+            (should-not (file-exists-p hywiki-page-with-section))
+            (should (file-exists-p hywiki-page)))
+        (hy-delete-files-and-buffers (list hywiki-page hywiki-page-with-section))
         (hy-delete-dir-and-buffer hywiki-directory)))))
 
 (provide 'hywiki-tests)

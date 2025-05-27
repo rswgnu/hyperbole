@@ -10,6 +10,18 @@
 * hpath.el (hpath:display-buffer): When given a buffer name, create the
     buffer if it doesn't exist.
 
+2025-05-27  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--sections-with-dash-space): Add test
+    for section with # character.
+    (hywiki-tests--action-key-moves-to-word-and-section):
+    (hywiki-tests--at-wikiword-finds-word-and-section): Use commented out
+    test. It is supported now.
+    (hywiki-tests--nonexistent-wikiword-with-section-should-create-wikiword):
+    Add test for a new WikiWord when initially given with a section.
+    (hywiki-tests--sections-with-space-and-delimited-string): Add test of
+    space in #section while delimited string.
+
 2025-05-26  Bob Weiner  <rsw@gnu.org>
 
 * hactypes.el (link-to-compose-mail): Add new actype.  Compose email inside
