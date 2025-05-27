@@ -1,5 +1,8 @@
 2025-05-27  Bob Weiner  <rsw@gnu.org>
 
+* test/hyrolo-tests.el (hyrolo-tests--mail-to): Fix to latest action updates
+    in ibtype 'mail-address' which 'hyrolo-mail-to' relies on.
+
 * test/hywiki-tests.el (hywiki-tests--published-html-links-to-word-and-section):
     Bug is fixed, so remove expected fail and enable this test.
 
