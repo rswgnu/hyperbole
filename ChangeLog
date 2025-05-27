@@ -1,5 +1,9 @@
 2025-05-27  Bob Weiner  <rsw@gnu.org>
 
+* hywiki.el (hywiki-word-is-p): Save match data so when returns it represents
+    the match to the whole HyWikiWord referent, if any.  This fixes a bug
+    that created HyWikiWord page files with the section name attached.
+
 * hsmail.el (mail-send-hook): Remove this setting since 'message-send-hook'
     has replaced it in modern Emacs.
 
