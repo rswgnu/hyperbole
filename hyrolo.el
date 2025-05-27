@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     27-May-25 at 01:22:36 by Bob Weiner
+;; Last-Mod:     27-May-25 at 23:47:02 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -92,6 +92,7 @@
 (declare-function hbut:get-key-src "hbut")
 (declare-function org-outline-level "org")
 
+(defvar consult-preview-key)            ; "ext:consult.el"
 (defvar org-directory)                  ; "org.el"
 (defvar org-mode-map)                   ; "org-keys.el"
 (defvar org-mode-syntax-table)          ; "org.el"
