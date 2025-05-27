@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Apr-94 at 17:17:39 by Bob Weiner
-;; Last-Mod:     18-Jan-24 at 23:59:15 by Mats Lidell
+;; Last-Mod:     27-May-25 at 00:57:00 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -132,6 +132,22 @@ is used.  Valid values of this variable include `browse-url-default-browser' and
 	(browse-url url)
 	(message "Sending %s to %s...done" url browser))
     (error "(www-url): `browse-url-browser-function' must be set to a web browser invoking function")))
+
+(defun www-url-compose-mail (to &optional subject body &rest _ignore)
+  "Compose a mailto url and open it in the default `browse-url' web browser.
+TO is the recipient's email address.  Optional SUBJECT and BODY
+are included as parameters in the mailto url."
+  (let ((browse-url-mailto-function browse-url-browser-function)
+	(mailto (if (string-prefix-p "mailto:" to) to (concat "mailto:" to))))
+    ;; Add subject if provided
+    (when subject
+      (setq mailto (concat mailto "?subject=" (url-encode-string subject))))
+    ;; Add body if provided
+    (when body
+      (unless subject
+        (setq mailto (concat mailto "?")))
+      (setq mailto (concat mailto "&body=" (url-encode-string body))))
+    (hact 'www-url mailto)))
 
 ;;;###autoload
 (defun www-url-expand-file-name (path &optional dir)

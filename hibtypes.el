@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     27-Apr-25 at 17:30:02 by Mats Lidell
+;; Last-Mod:     27-May-25 at 01:13:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -215,10 +215,17 @@ If the referenced location is found, return non-nil."
 
 (defib mail-address ()
   "If on an e-mail address, compose mail to that address in another window.
+To compose email in your default web browser:
+  (setq mail-user-agent 'browse-url)
+  (put mail-user-agent 'composefunc #'www-url-compose-mail)
 
-Applies to any major mode in `hypb:mail-address-mode-list', the HyRolo match
-buffer, any buffer attached to a file in `hyrolo-file-list', or any buffer with
-\"mail\" or \"rolo\" (case-insensitive) within its name.
+To restore to using Emacs to compose mail:
+  (setq mail-user-agent 'message-user-agent)
+
+This implicit button type applies in any major mode listed in
+`hypb:mail-address-mode-list', the HyRolo match buffer, any buffer
+attached to a file in `hyrolo-file-list', or any buffer with \"mail\" or
+\"rolo\" (case-insensitive) within its name.
 
 If `hypb:mail-address-mode-list' is set to nil, this button type is active
 in all buffers."
@@ -244,7 +251,7 @@ in all buffers."
     (let ((address (mail-address-at-p)))
       (when address
         (ibut:label-set address (match-beginning 1) (match-end 1))
-        (hact 'compose-mail-other-window address)))))
+        (hact 'link-to-compose-mail address)))))
 
 ;;; ========================================================================
 ;;; Displays files and directories when a valid pathname is activated.

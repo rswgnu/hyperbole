@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-May-91 at 04:50:20
-;; Last-Mod:     27-Aug-23 at 12:39:11 by Bob Weiner
+;; Last-Mod:     27-May-25 at 00:29:16 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -41,8 +41,11 @@ for a comment.")
 
 ;; Used by 'message-send' in Emacs "message.el".
 (add-hook 'message-send-hook  #'smail:widen)
+
 ;; Used by 'mail-send' in Emacs "sendmail.el".
-(add-hook 'mail-send-hook  #'smail:widen)
+;; message-mode has replaced mail-mode, so remove the following hook
+;; -- rsw 2025-05-26
+;; (add-hook 'mail-send-hook  #'smail:widen)
 
 ;; For compatibility with Supercite and GNU Emacs.
 ;; message-mode defines message-yank-prefix - mail-yank-prefix removed

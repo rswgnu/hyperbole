@@ -1,4 +1,20 @@
+2025-05-27  Bob Weiner  <rsw@gnu.org>
+
+* hsmail.el (mail-send-hook): Remove this setting since 'message-send-hook'
+    has replaced it in modern Emacs.
+
+* hpath.el (hpath:display-buffer): When given a buffer name, create the
+    buffer if it doesn't exist.
+
 2025-05-26  Bob Weiner  <rsw@gnu.org>
+
+* hactypes.el (link-to-compose-mail): Add new actype.  Compose email inside
+    Emacs or in default web browser if 'mail-user-agent' is set to 'browse-url'.
+  hsys-www.el (www-url-compose-mail): Add and call this from above actype.
+  hibtypes.el (mail-address): Call above actype allowing any email address
+    to compose mail in a user's default external web browser.  Add to doc
+    string how to configure mail composition, {C-x m}, to use this
+    external browser.
 
 * hyrolo.el (hyrolo-set-display-buffer): Don't enable 'hyrolo-mode' when
     within a `hyrolo-yank' command so that the yanked-to-buffer's mode
