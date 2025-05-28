@@ -1,5 +1,14 @@
 2025-05-27  Bob Weiner  <rsw@gnu.org>
 
+* hypb.el (hypb:in-string-p): Fix 'texinfo-mode' string not returning a list
+    when 'range-flag' is given.
+  test/hypb-tests.el (hypb--in-string-p): Enable this test since fixed now.
+
+* kotl/kotl-mode.el (kotl-mode:setup-keymap): Remap 'goto-line' and
+    'goto-line-relative' keys to 'kotl-mode:goto-line-relative'.
+                    (kotl-mode:goto-line, kotl-mode:goto-line-relative): Add
+    to goto a relative line number in the Koutline.
+
 * test/hyrolo-tests.el (hyrolo-tests--mail-to): Fix to latest action updates
     in ibtype 'mail-address' which 'hyrolo-mail-to' relies on.
 

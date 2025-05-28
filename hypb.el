@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     22-May-25 at 23:01:15 by Bob Weiner
+;; Last-Mod:     27-May-25 at 22:00:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -747,7 +747,12 @@ Quoting conventions recognized are:
 					    (regexp-quote texinfo-close-quote))
 				    start (point))))
 		       (search-forward texinfo-close-quote nil t)
-		       t)
+		       (if range-flag
+			   (progn
+			     (setq str-end (match-beginning 0))
+			     (list (buffer-substring-no-properties str-start str-end)
+				   str-start str-end))
+			 t))
 		(and (cl-oddp (- (count-matches (regexp-quote open-match-string)
 						start (point))
 				 ;; Subtract any backslash quoted delimiters
@@ -759,7 +764,8 @@ Quoting conventions recognized are:
 		     (if range-flag
 			 (progn
 			   (setq str-end (match-beginning 2))
-			   (list (buffer-substring-no-properties str-start str-end) str-start str-end))
+			   (list (buffer-substring-no-properties str-start str-end)
+				 str-start str-end))
 		       t))))))))))
 
 (defun hypb:indirect-function (obj)

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:     5-Apr-21 at 18:53:10
-;; Last-Mod:     24-May-25 at 00:14:16 by Mats Lidell
+;; Last-Mod:     27-May-25 at 22:01:13 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -86,7 +86,6 @@ See Emacs bug#74042 related to usage of texi2any."
 
 (ert-deftest hypb--in-string-p ()
   "Verify basic quote handing by `hypb:in-string-p'."
-  :expected-result :failed
   (let ((s '(("\"str\"" . text-mode)            ;; double-quotes:
              ("'str'" . python-mode)            ;; Python single-quotes:
              ("'''str'''" . python-mode)        ;; Python triple single-quotes:
