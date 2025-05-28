@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     20-May-25 at 00:35:26 by Mats Lidell
+;; Last-Mod:     27-May-25 at 21:28:51 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1927,6 +1927,60 @@ not move)."
       (goto-char opoint)
       nil)))
 
+(defun kotl-mode:goto-line (line &optional buffer relative)
+  "Go to LINE, counting from line 1 at beginning of buffer.
+If called interactively, a numeric prefix argument specifies
+LINE; without a numeric prefix argument, read LINE from the
+minibuffer.
+
+If optional argument BUFFER is non-nil, switch to that buffer and
+move to line LINE there.  If called interactively with \\[universal-argument]
+as argument, BUFFER is the most recently selected other buffer.
+
+Optional argument RELATIVE is ignored and its value is always set to
+t, so counting starts at the beginning of the accessible portion of
+the narrowed Koutline buffer.
+
+Prior to moving point, this function sets the mark (without
+activating it), unless Transient Mark mode is enabled and the
+mark is already active.
+
+This function is usually the wrong thing to use in a Lisp program.
+What you probably want instead is something like:
+  (goto-char (point-min))
+  (forward-line (1- N))
+If at all possible, an even better solution is to use char counts
+rather than line counts."
+  (declare (interactive-only forward-line))
+  (interactive (goto-line-read-args))
+  (setq relative t) ;; Always use relative lines in `kotl-mode'.
+  ;; Switch to the desired buffer, one way or another.
+  (if buffer
+      (let ((window (get-buffer-window buffer)))
+	(if window (select-window window)
+	  (switch-to-buffer-other-window buffer))))
+  ;; Leave mark at previous position
+  (or (region-active-p) (push-mark))
+  ;; Move to the specified line number in that buffer.
+  (let ((pos (save-restriction
+               (unless relative (widen))
+               (goto-char (point-min))
+               (if (eq selective-display t)
+                   (re-search-forward "[\n\C-m]" nil 'end (1- line))
+                 (forward-line (1- line)))
+               (point))))
+    (goto-char pos)
+    (kotl-mode:to-valid-position)))
+
+(defun kotl-mode:goto-line-relative (line &optional buffer)
+  "Go to LINE, counting from line at (point-min).
+The line number is relative to the accessible portion of the narrowed
+buffer.  The argument BUFFER is the same as in the function `goto-line'."
+  (declare (interactive-only forward-line))
+  (interactive (goto-line-read-args t))
+  (with-suppressed-warnings ((interactive-only goto-line))
+    (kotl-mode:goto-line line buffer t)))
+
 (defun kotl-mode:head-cell ()
   "Move point to the start of first visible cell at same level as current cell.
 If at head cell already, do nothing and return nil."
@@ -3799,6 +3853,8 @@ Leave point at end of line now residing at START."
 	     forward-para
 	     forward-paragraph
 	     forward-sentence
+	     goto-line
+	     goto-line-relative
 	     just-one-space
 	     kill-word
 	     kill-line
