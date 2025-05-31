@@ -1,5 +1,15 @@
 2025-05-31  Mats Lidell  <matsl@gnu.org>
 
+* hyrolo.el (consult-preview-key): Defvar var from consult.
+
+* hsys-consult.el (consult--grep, consult--grep-make-builder)
+    (consult--ripgrep-make-builder): Declare functions from consult.
+
+* hibtypes.el (mail-address): Fix docstring single quotes.
+
+* hactypes.el (mapc): Require hsys-www.
+    (link-to-compose-mail): Fix docstring typo.
+
 * hsys-org.el (org-link): Add interactive spec for prompting user for an
     org link.
 

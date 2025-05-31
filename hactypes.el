@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     27-May-25 at 01:53:49 by Bob Weiner
+;; Last-Mod:     27-May-25 at 23:33:07 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -18,7 +18,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(bookmark hvar hsettings comint hbut hpath hargs hmail hsys-org)))
+(eval-and-compile (mapc #'require '(bookmark hvar hsettings comint hbut hpath hargs hmail hsys-org hsys-www)))
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -294,7 +294,7 @@ This type of link is for use within a single editor session.  Use
     (hypb:error "(link-to-buffer-tmp): Not a current buffer: %s" buffer)))
 
 (defact link-to-compose-mail (to &optional subject body &rest _ignore)
-  "Compose an email TO address with optionmal SUBJECT and BODY.
+  "Compose an email TO address with optional SUBJECT and BODY.
 If `mail-user-agent' is `browse-url', do this in the default web browser."
   (if (eq mail-user-agent 'browse-url)
       (www-url-compose-mail to subject body)
