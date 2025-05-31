@@ -809,9 +809,9 @@ body B
             (save-buffer))
           (with-current-buffer (find-file-noselect wikipage)
             (insert "\
-* WikiWord
-* WikiWord#Asection
-* WikiWord#Bsection-subsection
+WikiWord
+WikiWord#Asection
+\"WikiWord#Bsection subsection\"
 ")
             (save-buffer))
 
@@ -828,12 +828,12 @@ body B
             ;; (First check we even get the wikipage with sections)
             (should (<= 1 (count-matches (regexp-quote "WikiWord") (point-min) (point-max))))
             (should (= 1 (count-matches (regexp-quote "WikiWord#Asection") (point-min) (point-max))))
-            (should (= 1 (count-matches (regexp-quote "WikiWord#Bsection-subsection") (point-min) (point-max))))
+            (should (= 1 (count-matches (regexp-quote "WikiWord#Bsection subsection") (point-min) (point-max))))
 
             ;; Then verify the href links are generated
             (should (= 1 (count-matches (regexp-quote "<a href=\"WikiWord.html\">WikiWord</a>") (point-min) (point-max))))
-            (should (= 1 (count-matches (regexp-quote "<a href=\"WikiWord.html#Asection\">WikiWord#ASection</a>") (point-min) (point-max))))
-            (should (= 1 (count-matches (regexp-quote "<a href=\"WikiWord.html#Bsection-subsection\">WikiWord#Bsection-subsection</a>") (point-min) (point-max))))))
+            (should (= 1 (count-matches (regexp-quote "<a href=\"WikiWord.html#Asection\">WikiWord#Asection</a>") (point-min) (point-max))))
+            (should (= 1 (count-matches (regexp-quote "<a href=\"WikiWord.html#Bsection-subsection\">WikiWord#Bsection subsection</a>") (point-min) (point-max))))))
       (hy-delete-files-and-buffers (list wikipage wikiword wikipage-html wikiword-html
                                          (expand-file-name "index.org" hywiki-directory)
                                          (expand-file-name "index.html" hywiki-org-publishing-directory)))
