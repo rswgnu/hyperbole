@@ -784,6 +784,7 @@ body B
   "Verify published html links to WikiWord and section."
   :expected-result :failed
   (let* ((hywiki-directory (make-temp-file "hywiki_" t))
+         org-publish-project-alist
          (hywiki-org-publishing-directory (make-temp-file "public_html_" t))
          (wikipage (cdr (hywiki-add-page "WikiPage")))
          (wikipage-html (expand-file-name "WikiPage.html" hywiki-org-publishing-directory))
