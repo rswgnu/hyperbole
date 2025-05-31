@@ -1,3 +1,8 @@
+2025-05-31  Mats Lidell  <matsl@gnu.org>
+
+* hsys-org.el (org-link): Add interactive spec for prompting user for an
+    org link.
+
 2025-05-27  Bob Weiner  <rsw@gnu.org>
 
 * hypb.el (hypb:in-string-p): Fix 'texinfo-mode' string not returning a list
