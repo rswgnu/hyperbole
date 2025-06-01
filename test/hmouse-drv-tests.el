@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 22:52:00
-;; Last-Mod:     19-May-25 at 22:53:55 by Bob Weiner
+;; Last-Mod:      1-Jun-25 at 00:48:17 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -421,10 +421,11 @@
   (with-temp-buffer
     (insert "\"-${hyperb:dir}/test/hy-test-dependencies.el\"")
     (goto-char 2)
-    (action-key)
-    (should (hattr:ibtype-is-p 'pathname))
-    (hy-test-helpers:should-last-message "Loading")
-    (hy-test-helpers:should-last-message "hy-test-dependencies.el")))
+    (ert-with-message-capture cap
+      (action-key)
+      (should (hattr:ibtype-is-p 'pathname))
+      (should (string-search "Loading" cap))
+      (should (string-search "hy-test-dependencies.el" cap)))))
 
 (ert-deftest hbut-pathname-directory-test ()
   "Pathname with directory opens Dired."

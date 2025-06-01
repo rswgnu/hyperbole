@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     27-May-25 at 02:28:30 by Bob Weiner
+;; Last-Mod:      1-Jun-25 at 10:16:31 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -28,7 +28,6 @@
 (require 'kotl-mode)
 
 (declare-function hy-test-helpers:consume-input-events "hy-test-helpers")
-(declare-function hy-test-helpers:should-last-message "hy-test-helpers")
 
 (ert-deftest hyrolo-add-items-at-multiple-levels ()
   "`hyrolo-add` can add items at different levels."

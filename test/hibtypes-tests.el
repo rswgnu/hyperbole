@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:45:00
-;; Last-Mod:     24-Apr-25 at 23:49:38 by Mats Lidell
+;; Last-Mod:      1-Jun-25 at 10:41:15 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -26,7 +26,6 @@
 (require 'hy-test-helpers "test/hy-test-helpers")
 
 (declare-function hy-test-helpers:consume-input-events "hy-test-helpers")
-(declare-function hy-test-helpers:should-last-message "hy-test-helpers")
 
 ;; Mail address
 (ert-deftest mail-address-at-p-test ()
@@ -149,9 +148,10 @@
   (with-temp-buffer
     (insert "\"-${hyperb:dir}/test/hy-test-dependencies.el\"")
     (goto-char 2)
-    (ibtypes::pathname)
-    (hy-test-helpers:should-last-message "Loading")
-    (hy-test-helpers:should-last-message "hy-test-dependencies.el")))
+    (ert-with-message-capture cap
+      (ibtypes::pathname)
+      (string-search "Loading" cap)
+      (string-search "hy-test-dependencies.el" cap))))
 
 (ert-deftest ibtypes::pathname-dot-slash-in-other-folder-test ()
   "Invalid pathname that starts with ./ triggers an error when resolved."

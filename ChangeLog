@@ -1,3 +1,8 @@
+2025-06-01  Mats Lidell  <matsl@gnu.org>
+
+* test/hy-test-helpers.el (hy-test-helpers:should-last-message): Remove
+    helper. Use ert-with-message-capture instead.
+
 2025-05-31  Mats Lidell  <matsl@gnu.org>
 
 * hyrolo.el (consult-preview-key): Defvar var from consult.
