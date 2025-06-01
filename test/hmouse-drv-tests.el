@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 22:52:00
-;; Last-Mod:      1-Jun-25 at 00:48:17 by Mats Lidell
+;; Last-Mod:      1-Jun-25 at 23:31:35 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -424,8 +424,8 @@
     (ert-with-message-capture cap
       (action-key)
       (should (hattr:ibtype-is-p 'pathname))
-      (should (string-search "Loading" cap))
-      (should (string-search "hy-test-dependencies.el" cap)))))
+      (hy-test-helpers:should-last-message "Loading" cap)
+      (hy-test-helpers:should-last-message "hy-test-dependencies.el" cap))))
 
 (ert-deftest hbut-pathname-directory-test ()
   "Pathname with directory opens Dired."

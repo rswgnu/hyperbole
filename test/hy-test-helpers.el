@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:      1-Jun-25 at 10:40:15 by Mats Lidell
+;; Last-Mod:      1-Jun-25 at 23:22:27 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -33,6 +33,10 @@
 	 (first-type (caar possible-types)))
     (should (= (length possible-types) 1))
     (should (equal first-type type))))
+
+(defun hy-test-helpers:should-last-message (msg captured)
+  "Verify MSG is in CAPTURED text."
+  (should (string-search msg captured)))
 
 (defun hy-test-helpers:action-key-should-call-hpath:find (str)
   "Call action-key and check that hpath:find was called with STR."

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    14-Apr-22 at 23:45:52
-;; Last-Mod:      1-Jun-25 at 11:12:02 by Mats Lidell
+;; Last-Mod:      1-Jun-25 at 23:40:09 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -120,7 +120,7 @@
     ;; error
     (ert-with-message-capture cap
       (should-not (hui-select-thing))
-      (should (string-search "(hui-select-boundaries): ‘buffer’ is the largest selectable region" cap)))))
+      (hy-test-helpers:should-last-message "(hui-select-boundaries): ‘buffer’ is the largest selectable region" cap))))
 
 (ert-deftest hui-select--thing-interactive-prints-type-of-match ()
   "`hui-select-thing' selects bigger sections of text when called repeatedly.
@@ -134,40 +134,40 @@ Verifies right type of match is printed when `hui-select-display-type' is set to
 
       (ert-with-message-capture cap
         (should (call-interactively 'hui-select-thing))
-        (should (string-search "word" cap)))
+        (hy-test-helpers:should-last-message "word" cap))
       (should (string= (buffer-substring-no-properties (region-beginning) (region-end)) "word"))
 
       (ert-with-message-capture cap
         (should (call-interactively 'hui-select-thing))
-        (should (string-search "symbol" cap)))
+        (hy-test-helpers:should-last-message "symbol" cap))
       (should (string= (buffer-substring-no-properties (region-beginning) (region-end)) "word."))
 
       (ert-with-message-capture cap
         (should (call-interactively 'hui-select-thing))
-        (should (string-search "sentence" cap)))
+        (hy-test-helpers:should-last-message "sentence" cap))
       (should (string= (buffer-substring-no-properties (region-beginning) (region-end)) "One word."))
 
       (ert-with-message-capture cap
         (should (call-interactively 'hui-select-thing))
-        (should (string-search "line" cap)))
+        (hy-test-helpers:should-last-message "line" cap))
       (should (string= (buffer-substring-no-properties (region-beginning) (region-end))
                        "line.  One word."))
 
       (ert-with-message-capture cap
         (should (call-interactively 'hui-select-thing))
-        (should (string-search "paragraph" cap)))
+        (hy-test-helpers:should-last-message "paragraph" cap))
       (should (string= (buffer-substring-no-properties (region-beginning) (region-end))
                        "\nParagraph\nline.  One word."))
 
       (ert-with-message-capture cap
         (should (call-interactively 'hui-select-thing))
-        (should (string-search "buffer" cap)))
+        (hy-test-helpers:should-last-message "buffer" cap))
       (should (string= (buffer-substring-no-properties (region-beginning) (region-end))
                        "Buffer\n\nParagraph\nline.  One word."))
 
       (ert-with-message-capture cap
         (should-not (call-interactively 'hui-select-thing))
-        (should (string-search "(hui-select-boundaries): ‘buffer’ is the largest selectable region" cap))))))
+        (hy-test-helpers:should-last-message "(hui-select-boundaries): ‘buffer’ is the largest selectable region" cap)))))
 
 (provide 'hui-select-tests)
 ;;; hui-select-tests.el ends here

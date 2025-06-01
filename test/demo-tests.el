@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:      1-Jun-25 at 10:43:57 by Mats Lidell
+;; Last-Mod:      1-Jun-25 at 23:31:35 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -213,7 +213,7 @@
     (goto-char 2)
     (ert-with-message-capture cap
       (action-key)
-      (should (string-search "4" cap)))))
+      (hy-test-helpers:should-last-message "4" cap))))
 
 (ert-deftest demo-implicit-button-action-button-sexp-test ()
   (with-temp-buffer
@@ -231,8 +231,8 @@
  	     (hsettings-buf (buffer-name (nth 0 bufs)))
 	     (hactypes-buf  (buffer-name (nth 1 bufs)))
 	     (hibtypes-buf  (buffer-name (nth 2 bufs))))
-        (should (and (string-search "Last 3 buffers are" cap)
-		     (string-search "hsettings.el" hsettings-buf)
+        (hy-test-helpers:should-last-message "Last 3 buffers are" cap)
+        (should (and (string-search "hsettings.el" hsettings-buf)
 		     (string-search "hactypes.el"  hactypes-buf)
 		     (string-search "hibtypes.el"  hibtypes-buf)))))))
 
@@ -242,7 +242,7 @@
     (goto-char 2)
     (ert-with-message-capture cap
       (action-key)
-      (should (string-search "Result = nil; Boolean value = False" cap)))))
+      (hy-test-helpers:should-last-message "Result = nil; Boolean value = False" cap))))
 
 (ert-deftest demo-implicit-button-hash-link-test ()
   (unwind-protect
