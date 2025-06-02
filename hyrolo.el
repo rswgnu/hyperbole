@@ -92,6 +92,7 @@
 (declare-function hbut:get-key-src "hbut")
 (declare-function org-outline-level "org")
 
+(defvar consult-preview-key)            ; "ext:consult.el"
 (defvar org-directory)                  ; "org.el"
 (defvar org-mode-map)                   ; "org-keys.el"
 (defvar org-mode-syntax-table)          ; "org.el"
