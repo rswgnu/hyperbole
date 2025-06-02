@@ -2,7 +2,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     4-Jul-24 at 09:57:18
-;; Last-Mod:     26-May-25 at 03:30:20 by Bob Weiner
+;; Last-Mod:      2-Jun-25 at 00:29:20 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -81,7 +81,8 @@
 	  (kill-buffer buf))))))
 
 ;;;###autoload
-(defun hsys-consult-grep (grep-includes ripgrep-globs &optional regexp max-matches path-list prompt)
+(defun hsys-consult-grep (grep-includes ripgrep-globs &optional regexp max-matches
+					path-list prompt)
   "Interactively search PATH-LIST with a consult package grep command.
 
 With GREP-INCLUDES or RIPGREP-GLOBS file suffixes to include, search
@@ -91,6 +92,7 @@ Use ripgrep (rg) if found, otherwise, plain grep.  Initialize search with
 optional REGEXP and interactively prompt for changes.  Limit matches
 per file to the absolute value of MAX-MATCHES, if given and not 0.  If
 0, match to headlines only (lines that start with a '^[*#]+[ \t]+' regexp).
+
 With optional PROMPT string, use this as the first part of the grep prompt;
 omit any trailing colon and space in the prompt."
   (unless (package-installed-p 'consult)
@@ -120,6 +122,30 @@ omit any trailing colon and space in the prompt."
 			    path-list)
 		  path-list)))
     (hsys-consult--grep-paths paths regexp max-matches prompt)))
+
+(defun hsys-consult-grep-headlines-with-prompt (grep-function prompt
+					        &optional regexp)
+  "Call Hyperbole consult GREP-FUNCTION over headlines with PROMPT.
+Optional REGEXP is the initial pattern for the grep.
+Suppress preview and return the selected \"file:line:line-contents\".
+
+GREP-FUNCTION must take these arguments: regexp max-matches path-list
+prompt."
+  (let ((consult-preview-key nil))
+    (funcall grep-function regexp 0 nil prompt)))
+
+(defun hsys-consult-grep-headlines-read-regexp (grep-function prompt
+						&optional regexp)
+  "With `consult', completing read a string with GREP-FUNCTION and PROMPT.
+Optional REGEXP is the initial pattern for the grep."
+  (if (fboundp 'consult-grep)
+      (substring-no-properties
+       (hsys-consult-selected-candidate
+	#'hsys-consult-grep-headlines-with-prompt
+	grep-function
+	prompt
+	regexp))
+    (read-regexp (concat prompt ": ") regexp)))
 
 (defun hsys-consult-grep-tags (org-consult-grep-function)
   "When on an Org tag, call ORG-CONSULT-GREP-FUNCTION to find matches.
@@ -208,21 +234,17 @@ that start with the '^[*#]+[ \t]*' regexp)."
      (org-roam-node-find nil nil (lambda (node) (zerop (org-roam-node-level node)))))))
 
 ;;;###autoload
-(defun hsys-consult-selected-candidate (consult-command &optional no-properties-flag)
-  "Return the input from interactively calling CONSULT-COMMAND, a symbol.
-CONSULT-COMMAND is called with no arguments.  Add optional
-NO-PROPERTIES-FLAG non-nil to strip the properties from the
-returned input string."
-  (unless (commandp consult-command)
-    (user-error "(hsys-consult-selected-candidate): First arg must be a command, not `%s'" consult-command))
+(defun hsys-consult-selected-candidate (consult-function &rest args)
+  "Return the input from calling CONSULT-FUNCTION, a symbol, with rest of ARGS."
+  (unless (fboundp consult-function)
+    (user-error "(hsys-consult-selected-candidate): First arg must be a bound function, not `%s'"
+		consult-function))
   (save-excursion
     (save-window-excursion
-      (cl-flet ((mapcar (lambda (state-function)
-			  `(,state-function () cand))
-			(apropos-internal "consult--.+-state" #'fboundp)))
-	(if no-properties-flag
-	    (substring-no-properties (or (call-interactively consult-command) ""))
-	  (call-interactively consult-command))))))
+      (eval `(cl-flet ((mapcar (lambda (state-function)
+				 `(,state-function () cand))
+			       (apropos-internal "consult--.+-state" #'fboundp)))
+	       (apply ',consult-function ',args))))))
 
 ;;; ************************************************************************
 ;;; Private functions
@@ -238,9 +260,10 @@ Initialize search with optional REGEXP and interactively prompt
 for changes.  Limit matches per file to the absolute value of
 optional MAX-MATCHES, if given and not 0.  If 0, match to the
 start of headline text only (lines that start with a '^[*#]+[
-\t]*' regexp).  With optional PROMPT string, use this as the first
-part of the grep prompt; omit any trailing colon and space in the
-prompt."
+\t]*' regexp).
+
+With optional PROMPT string, use this as the first part of the
+grep prompt; omit any trailing colon and space in the prompt."
   (unless (package-installed-p 'consult)
     (package-install 'consult))
   (require 'consult)
