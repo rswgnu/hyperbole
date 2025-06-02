@@ -4,6 +4,10 @@
     be sent to the browser for display even though recognized as a url.  Had
     to add "https://" to the front of any such url.
 
+* hywiki.el (hywiki-org-make-publish-project-alist): Add
+    :html-prefer-user-labels t to make Org use normalized headlines as href
+    IDs.
+
 * hypb.el (hypb:in-string-p): Fix 'texinfo-mode' string not returning a list
     when 'range-flag' is given.
   test/hypb-tests.el (hypb--in-string-p): Enable this test since fixed now.
