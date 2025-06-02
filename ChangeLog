@@ -1,5 +1,9 @@
 2025-05-27  Bob Weiner  <rsw@gnu.org>
 
+* hsys-www.el (www-url): Fix bug where "www.google.com" would not actually
+    be sent to the browser for display even though recognized as a url.  Had
+    to add "https://" to the front of any such url.
+
 * hypb.el (hypb:in-string-p): Fix 'texinfo-mode' string not returning a list
     when 'range-flag' is given.
   test/hypb-tests.el (hypb--in-string-p): Enable this test since fixed now.
