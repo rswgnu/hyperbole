@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:      1-Jun-25 at 23:31:35 by Mats Lidell
+;; Last-Mod:      2-Jun-25 at 10:39:14 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -409,7 +409,7 @@
         (ert-with-message-capture cap
           (should (hact 'kbd-key "C-h h a factorial RET"))
           (hy-test-helpers:consume-input-events)
-          (string-search "Factorial of 5 = 120" cap)))
+          (hy-test-helpers:should-last-message "Factorial of 5 = 120" cap)))
     (hy-test-helpers:kill-buffer "DEMO")))
 
 (ert-deftest demo-factorial-ebutton-test ()
@@ -421,7 +421,7 @@
         (forward-char -5)
         (ert-with-message-capture cap
           (action-key)
-          (string-search "Factorial of 5 = 120" cap)))
+          (hy-test-helpers:should-last-message "Factorial of 5 = 120" cap)))
     (hy-test-helpers:kill-buffer "DEMO")))
 
 ;;; Fast demo
@@ -788,7 +788,7 @@ enough files with matching mode loaded."
     (goto-char 2)
     (ert-with-message-capture cap
       (action-key)
-      (string-search (format "fill-column = %d" (current-fill-column)) cap))))
+      (hy-test-helpers:should-last-message (format "fill-column = %d" (current-fill-column)) cap))))
 
 (ert-deftest fast-demo-display-demo-using-action-buttons ()
   "Verify the three ways show in the demo works."

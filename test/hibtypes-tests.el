@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:45:00
-;; Last-Mod:      1-Jun-25 at 10:41:15 by Mats Lidell
+;; Last-Mod:      2-Jun-25 at 10:39:56 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -150,8 +150,8 @@
     (goto-char 2)
     (ert-with-message-capture cap
       (ibtypes::pathname)
-      (string-search "Loading" cap)
-      (string-search "hy-test-dependencies.el" cap))))
+      (hy-test-helpers:should-last-message "Loading" cap)
+      (hy-test-helpers:should-last-message "hy-test-dependencies.el" cap))))
 
 (ert-deftest ibtypes::pathname-dot-slash-in-other-folder-test ()
   "Invalid pathname that starts with ./ triggers an error when resolved."
