@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    14-Apr-22 at 23:45:52
-;; Last-Mod:     20-Jan-24 at 15:44:04 by Mats Lidell
+;; Last-Mod:      1-Jun-25 at 23:40:09 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -24,10 +24,9 @@
 ;;; ************************************************************************
 
 (require 'ert)
+(require 'ert-x)
 (require 'hui-select)
 (require 'hy-test-helpers "test/hy-test-helpers")
-
-(declare-function hy-test-helpers:should-last-message "hy-test-helpers")
 
 (ert-deftest hui-select--at-delimited-thing-p ()
   "At delimited thing p returns type of thing."
@@ -119,9 +118,9 @@
                      "Buffer\n\nParagraph\nline.  One word."))
 
     ;; error
-    (should-not (hui-select-thing))
-    (hy-test-helpers:should-last-message
-     "(hui-select-boundaries): ‘buffer’ is the largest selectable region")))
+    (ert-with-message-capture cap
+      (should-not (hui-select-thing))
+      (hy-test-helpers:should-last-message "(hui-select-boundaries): ‘buffer’ is the largest selectable region" cap))))
 
 (ert-deftest hui-select--thing-interactive-prints-type-of-match ()
   "`hui-select-thing' selects bigger sections of text when called repeatedly.
@@ -133,36 +132,42 @@ Verifies right type of match is printed when `hui-select-display-type' is set to
       (insert "Buffer\n\nParagraph\nline.  One word.")
       (forward-char -3)
 
-      (should (call-interactively 'hui-select-thing))
-      (hy-test-helpers:should-last-message "word")
+      (ert-with-message-capture cap
+        (should (call-interactively 'hui-select-thing))
+        (hy-test-helpers:should-last-message "word" cap))
       (should (string= (buffer-substring-no-properties (region-beginning) (region-end)) "word"))
 
-      (should (call-interactively 'hui-select-thing))
-      (hy-test-helpers:should-last-message "symbol")
+      (ert-with-message-capture cap
+        (should (call-interactively 'hui-select-thing))
+        (hy-test-helpers:should-last-message "symbol" cap))
       (should (string= (buffer-substring-no-properties (region-beginning) (region-end)) "word."))
 
-      (should (call-interactively 'hui-select-thing))
-      (hy-test-helpers:should-last-message "sentence")
+      (ert-with-message-capture cap
+        (should (call-interactively 'hui-select-thing))
+        (hy-test-helpers:should-last-message "sentence" cap))
       (should (string= (buffer-substring-no-properties (region-beginning) (region-end)) "One word."))
 
-      (should (call-interactively 'hui-select-thing))
-      (hy-test-helpers:should-last-message "line")
+      (ert-with-message-capture cap
+        (should (call-interactively 'hui-select-thing))
+        (hy-test-helpers:should-last-message "line" cap))
       (should (string= (buffer-substring-no-properties (region-beginning) (region-end))
                        "line.  One word."))
 
-      (should (call-interactively 'hui-select-thing))
-      (hy-test-helpers:should-last-message "paragraph")
+      (ert-with-message-capture cap
+        (should (call-interactively 'hui-select-thing))
+        (hy-test-helpers:should-last-message "paragraph" cap))
       (should (string= (buffer-substring-no-properties (region-beginning) (region-end))
                        "\nParagraph\nline.  One word."))
 
-      (should (call-interactively 'hui-select-thing))
-      (hy-test-helpers:should-last-message "Buffer")
+      (ert-with-message-capture cap
+        (should (call-interactively 'hui-select-thing))
+        (hy-test-helpers:should-last-message "buffer" cap))
       (should (string= (buffer-substring-no-properties (region-beginning) (region-end))
                        "Buffer\n\nParagraph\nline.  One word."))
 
-      (should-not (call-interactively 'hui-select-thing))
-      (hy-test-helpers:should-last-message
-       "(hui-select-boundaries): ‘buffer’ is the largest selectable region"))))
+      (ert-with-message-capture cap
+        (should-not (call-interactively 'hui-select-thing))
+        (hy-test-helpers:should-last-message "(hui-select-boundaries): ‘buffer’ is the largest selectable region" cap)))))
 
 (provide 'hui-select-tests)
 ;;; hui-select-tests.el ends here

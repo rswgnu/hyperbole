@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     20-Jan-24 at 15:43:57 by Mats Lidell
+;; Last-Mod:      1-Jun-25 at 10:52:33 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -23,7 +23,6 @@
 (require 'hy-test-helpers "test/hy-test-helpers")
 
 (declare-function hy-test-helpers:consume-input-events "hy-test-helpers")
-(declare-function hy-test-helpers:should-last-message "hy-test-helpers")
 
 (ert-deftest kbd-key-hy-about-test ()
   "Test if HY-ABOUT file is displayed properly from the Hyperbole menus."
