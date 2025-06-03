@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    04-Feb-22 at 23:00:00
-;; Last-Mod:     25-Apr-25 at 19:57:44 by Mats Lidell
+;; Last-Mod:      2-Jun-25 at 23:48:30 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -44,7 +44,7 @@
 
 (ert-deftest hargs-get-verify-extension-characters-+K ()
   "Verify hyperbole extension character +K is indentified."
-  (cl-letf (((symbol-function 'hargs:read) (lambda (prompt &optional a b c d) "xyz")))
+  (cl-letf (((symbol-function 'hargs:read) (lambda (_prompt &optional _a _b _c _d) "xyz")))
     (should (string= (hargs:get "+K: ") "xyz"))))
 
 (ert-deftest hargs-tests--sexpression-p ()

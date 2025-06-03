@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     27-May-25 at 23:47:02 by Mats Lidell
+;; Last-Mod:      2-Jun-25 at 23:27:51 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -382,7 +382,7 @@ String search expressions are converted to regular expressions.")
 
 ;;;###autoload
 (defun hyrolo-add (name &optional file)
-  "Add a new entry in personal rolo for NAME.
+  "Add a new entry for NAME in the first file from `hyrolo-file-list'.
 Last name first is best, e.g. \"Smith, John\".
 With prefix argument, prompts for optional FILE to add entry within.
 NAME may be of the form: parent/child to insert child below a parent
@@ -398,7 +398,8 @@ entry which begins with the parent string."
 				(or name email))))
        (list (if (and email name
 		      (string-match (concat "\\`" (regexp-quote entry)) name))
-		 (format hyrolo-email-format entry email) entry)
+		 (format hyrolo-email-format entry email)
+	       entry)
 	     current-prefix-arg))))
   (when (or (not (stringp name)) (string-equal name ""))
     (error "(hyrolo-add): Invalid name: `%s'" name))
@@ -593,11 +594,24 @@ within which to locate entry.  With no NAME arg, simply display
 FILE-OR-BUF or the first entry in `hyrolo-file-list' in an editable
 mode.  NAME may be of the form: parent/child to edit child below
 a parent entry which begins with the parent string."
-  (interactive "sEdit rolo entry named: \nP")
+  (interactive (list
+		(hsys-consult-grep-headlines-read-regexp
+		 #'hyrolo-consult-grep "Edit rolo entry named")
+		current-prefix-arg))
   (when (string-empty-p name)
     (setq name nil))
   (when (and name (not (stringp name)))
     (error "(hyrolo-edit): Invalid name: `%s'" name))
+
+  ;; With consult-grep, 'name' is the entire line matched prefixed
+  ;; by filename and line number, so remove these prefixes.
+  (when (and name
+	     (fboundp 'consult-grep)
+	     (string-match "\\([^ \t\n\r\"'`]*[^ \t\n\r:\"'`0-9]\\): ?\\([1-9][0-9]*\\)[ :]"
+			   name))
+    (setq file-or-buf (expand-file-name (match-string 1 name))
+	  name (substring name (match-end 0)))
+    (put-text-property 0 1 'hyrolo-line-entry 0 name))
 
   (let* ((found-point)
 	 (all-files-or-bufs (hyrolo-get-file-list))
@@ -610,6 +624,7 @@ a parent entry which begins with the parent string."
 			       (mapcar #'list all-files-or-bufs)))))
     (unless file-or-buf
       (setq file-or-buf (car file-or-buf-list)))
+
     (if (or (null name)
 	    (setq found-point (hyrolo-to name (list file-or-buf))))
 	(cond ((stringp file-or-buf)
@@ -900,8 +915,11 @@ With prefix argument, prompts for optional FILE to locate entry within.
 NAME may be of the form: parent/child to kill child below a parent entry
 which begins with the parent string.
 Return t if entry is killed, nil otherwise."
-  (interactive "sKill rolo entry named: \nP")
-  (if (or (not (stringp name)) (string-equal name "") (string-match "\\*" name))
+  (interactive (list
+		(hsys-consult-grep-headlines-read-regexp
+		 #'hyrolo-consult-grep "Kill rolo entry named")
+		current-prefix-arg))
+  (if (or (not (stringp name)) (string-empty-p name))
       (error "(hyrolo-kill): Invalid name: `%s'" name))
   (if (and (called-interactively-p 'interactive) current-prefix-arg)
       (setq file (completing-read "Entry's File: "
@@ -911,7 +929,12 @@ Return t if entry is killed, nil otherwise."
     (unless file
       (setq file (car file-list)))
     (save-excursion
-      (if (hyrolo-to name file-list)
+      (if (if (and (fboundp 'consult-grep)
+		   (string-match "\\([^ \t\n\r\"'`]*[^ \t\n\r:\"'`0-9]\\): ?\\([1-9][0-9]*\\)[ :]"
+				 name))
+	      (hyrolo-to (substring name (match-end 0))
+			 (list (setq file (match-string-no-properties 1 name))))
+	    (hyrolo-to name file-list))
 	  (progn
 	    (setq file (hypb:buffer-file-name))
 	    (if (file-writable-p file)
@@ -1020,7 +1043,7 @@ or NAME is invalid, return nil."
   (require 'markdown-mode)
 
   ;; Don't actually derive from `markdown-mode' to avoid its costly setup
-  ;; but set its parent mode property to org-mode so `derived-mode-p' checks
+  ;; but set its parent mode property to `markdown-mode' so `derived-mode-p' checks
   ;; will pass.
   (put 'hyrolo-markdown-mode 'derived-mode-parent 'markdown-mode)
 
@@ -1520,22 +1543,26 @@ hyrolo-file-list."
 ;;;###autoload
 (defun hyrolo-yank (name &optional regexp-flag)
   "Insert at point the first rolo entry with a headline containing NAME.
-If the `consult' package is loaded, interactively select and complete
+If the `consult' package is installed, interactively select and complete
 the entry to be inserted.
 
 With optional prefix arg, REGEXP-FLAG, treat NAME as a regular expression
 instead of a string."
   (interactive (list 
-		(if (featurep 'consult)
-		    (hsys-consult-selected-candidate 'hyrolo-consult-yank-grep t)
-		  (read-string "Yank rolo headline matching: "))
+		(hsys-consult-grep-headlines-read-regexp
+		 #'hyrolo-consult-grep "Yank rolo headline matching")
 		current-prefix-arg))
+  (when (string-empty-p name)
+    (setq name nil))
+  (when (or (null name) (not (stringp name)))
+    (error "(hyrolo-yank): Invalid name: `%s'" name))
+
   (let ((hyrolo-display-buffer (current-buffer))
 	(start (point))
 	found)
     (save-excursion
       (setq found
-	    (if (and (featurep 'consult)
+	    (if (and (fboundp 'consult-grep)
 		     (string-match "\\([^ \t\n\r\"'`]*[^ \t\n\r:\"'`0-9]\\): ?\\([1-9][0-9]*\\)[ :]"
 				   name))
 		(hyrolo-grep-file (match-string-no-properties 1 name)
@@ -1543,8 +1570,8 @@ instead of a string."
 				  -1 nil t)
 	      (hyrolo-grep (if regexp-flag name (regexp-quote name)) -1 nil nil t))))
     ;; Let user reformat the region just yanked.
-    (if (= found 1)
-	(funcall hyrolo-yank-reformat-function start (point)))
+    (when (= found 1)
+      (funcall hyrolo-yank-reformat-function start (point)))
     found))
 
 ;;; ************************************************************************
@@ -2028,8 +2055,10 @@ Return number of matching entries found."
 			 max-matches (- max-matches)))))
 	  (set-buffer actual-buf)
 
+	  ;; Allow for initial asterisks being regexp-quoted in
+	  ;; string-match below.
 	  (when (and headline-only
-		     (not (string-match (concat "\\`\\([*#]+[ \t]+\\|"
+		     (not (string-match (concat "\\`\\([\\*#]+[ \t]+\\|"
 						"\\\\\\*+[ \t]+\\|"
 						"#+[ \t]+\\|"
 						(regexp-quote "^") "\\|"
@@ -2679,7 +2708,8 @@ begins or nil if not found."
 	    (t (error "(hyrolo-to): Second argument must be a file or buffer, not: `%s'" file-or-buf)))
 
       (set-buffer (if (stringp file-or-buf)
-		      (or (get-file-buffer file-or-buf) (hyrolo-find-file-noselect file-or-buf))
+		      (or (get-file-buffer file-or-buf)
+			  (hyrolo-find-file-noselect file-or-buf))
 		    ;; must be a buffer
 		    file-or-buf))
       (let ((case-fold-search t) (real-name name) (parent "") (level)
@@ -2722,7 +2752,7 @@ begins or nil if not found."
 			 (setq found
 			       (when (or (looking-at (buffer-local-value
 						      'outline-regexp
-						      (get-buffer hyrolo-display-buffer)))
+						      (current-buffer)))
 					 ;; Jump to non-first line within an entry
 					 (progn (back-to-indentation)
 						(looking-at (regexp-quote name))))
@@ -2929,12 +2959,6 @@ HYROLO-BUF may be a file-name, `buffer-name', or buffer."
 				  (get-buffer hyrolo-buf))
 			     hyrolo-buf))
 	     (buffer-list))))
-
-(defun hyrolo-consult-yank-grep ()
-  "Support function for `hyrolo-yank'."
-  (interactive)
-  (let ((consult-preview-key nil))
-    (hyrolo-consult-grep nil 0 nil "Yank rolo headline matching")))
 
 (defun hyrolo-current-date ()
   "Return the current date (a string) in a form used for rolo entry insertion."
@@ -3357,7 +3381,7 @@ proper major mode."
 		    (narrow-to-region start end))
 		  (let ((font-lock-mode))
 		    ;; (message "%s" (hyrolo-cache-get-major-mode-from-pos
-		    ;;		   (funcall (if backward-flag '1- '1+) start)))
+		    ;;	 	      (funcall (if backward-flag '1- '1+) start)))
 		    (if (and backward-flag (looking-at hyrolo-hdr-regexp))
 			(hyrolo-cache-set-major-mode (max (1- start) 1))
 		      (hyrolo-cache-set-major-mode (min (1+ start) (point-max))))
@@ -3375,7 +3399,7 @@ proper major mode."
 		(when (and (fboundp 'orgtbl-mode) orgtbl-mode)
 		  ;; Disable as overrides single letter keys
 		  (orgtbl-mode 0))
-		;; Need to leave point on a visible character or since
+		;; !! TODO: Need to leave point on a visible character or since
 		;; hyrolo uses reveal-mode, redisplay will rexpand
 		;; hidden entries to make point visible.
 		;; (hyrolo-back-to-visible-point)
@@ -3472,6 +3496,8 @@ Push (point-max) of `hyrolo-display-buffer' onto
 `hyrolo--cache-major-mode-indexes'.  Ensure MATCHED-BUF's
 `major-mode' is stored in the hash table."
   (with-current-buffer hyrolo-display-buffer
+    (unless (hash-table-p hyrolo--cache-major-mode-to-index-hasht)
+      (hyrolo--cache-initialize))
     (let* ((matched-buf-file-name (buffer-local-value 'buffer-file-name matched-buf))
 	   (matched-buf-major-mode (or (hyrolo-major-mode-from-file-name matched-buf-file-name)
 				       (buffer-local-value 'major-mode matched-buf)))

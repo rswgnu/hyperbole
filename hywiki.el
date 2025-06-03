@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Acpr-24 at 22:41:13
-;; Last-Mod:     27-May-25 at 02:05:56 by Bob Weiner
+;; Last-Mod:     28-May-25 at 01:15:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -439,6 +439,7 @@ where PATH is the un-resolvable reference."
 	 :html-postable-format '(("en" "<p class=\"author\">Author: %a (%e)</p>
                                   <p class=\"last-mod\">Last Modified: %C</p>
                                   <p class=\"creator\">%c</p>"))
+	 :html-prefer-user-labels t
 	 :makeindex nil
 	 :publishing-directory hywiki-org-publishing-directory
 	 :publishing-function hywiki-org-publishing-function
@@ -3540,13 +3541,13 @@ This must be called within a `save-excursion' or it may move point."
   "Return a unique reference for DATUM, as a string.
 Like `org-export-get-reference' but uses modified heading strings as
 link ids rather than generated ids.  To form an id, spaces in headings
-are replaces with dashes and to make each id unique, heading parent
+are replaced with dashes and to make each id unique, heading parent
 ids are prepended separated by '--'.
 
 DATUM is either an element or an object.  INFO is the current
 export state, as a plist.
 
-References for the current document are stored in
+References for the current document are stored in the
 `:internal-references' property.  Its value is an alist with
 associations of the following types:
 

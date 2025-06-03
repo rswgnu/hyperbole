@@ -1,3 +1,39 @@
+2025-06-02  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-kill): Add consult completion support.
+            (hyrolo-to): Get 'outline-regexp' value from (current-buffer)
+    not (get-buffer hyrolo-display-buffer) to fix bug when display buffer
+    does not exist.
+
+* hsys-consult.el (hsys-consult-selected-candidate): Rewrite to fix byte
+    compilation errors.
+
+2025-06-01  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-grep-file): Fix to handle regexp-quoted asterisks, i.e.
+    "\\*".  This fixes a bug where 'hyrolo-yank' did not match to entries
+    starting with multiple asterisks.
+            (hyrolo-edit): Add consult completion support.
+
+* hsys-consult.el (hsys-consult-selected-candidate): Rewrite to allow non-command
+    functions that take arguments (so can send a prompt) and remove
+    'no-properties-flag'.  Use 'substring-no-properties' to handle that in a
+    separate call.
+                  (hsys-consult-grep-headlines-read-regexp): Add.
+  hyrolo.el (hyrolo-consult-yank-grep): Generalize and rename to
+    'hsys-consult-grep-headlines-with-prompt' in "hsys-consult.el".
+
+* hyrolo.el (hyrolo--cache-major-mode): Initialize hash table if not done
+    already.  Fixes bug when 'hyrolo-grep' is called prior to init.
+            (hyrolo-yank): Fix to get for (fboundp 'consult-grep) rather than
+    (featurep 'consult) so that the consult package can be autoloaded.  Also
+    add error handling if invalid 'name' value is given.
+            (hyrolo-consult-yank-grep): Add (require 'consult) before locally
+    disabling 'consult-preview-key' so do not get this error when consult
+    is loaded lower in the call stack:
+      (error "Defining as dynamic an already lexical var")
+      custom-declare-variable(consult-preview-key)
+
 2025-06-01  Mats Lidell  <matsl@gnu.org>
 
 * test/hy-test-helpers.el (hy-test-helpers:should-last-message): Change
@@ -20,6 +56,14 @@
     org link.
 
 2025-05-27  Bob Weiner  <rsw@gnu.org>
+
+* hsys-www.el (www-url): Fix bug where "www.google.com" would not actually
+    be sent to the browser for display even though recognized as a url.  Had
+    to add "https://" to the front of any such url.
+
+* hywiki.el (hywiki-org-make-publish-project-alist): Add
+    :html-prefer-user-labels t to make Org use normalized headlines as href
+    IDs.
 
 * hypb.el (hypb:in-string-p): Fix 'texinfo-mode' string not returning a list
     when 'range-flag' is given.
