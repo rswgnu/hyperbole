@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:      6-Apr-25 at 19:45:02 by Mats Lidell
+;; Last-Mod:      1-Jun-25 at 23:22:27 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -34,12 +34,9 @@
     (should (= (length possible-types) 1))
     (should (equal first-type type))))
 
-(defun hy-test-helpers:should-last-message (msg)
-  "Verify last message is MSG."
-  (with-current-buffer (messages-buffer)
-    (should (save-excursion
-              (goto-char (point-max))
-              (search-backward msg (- (point-max) 350) t)))))
+(defun hy-test-helpers:should-last-message (msg captured)
+  "Verify MSG is in CAPTURED text."
+  (should (string-search msg captured)))
 
 (defun hy-test-helpers:action-key-should-call-hpath:find (str)
   "Call action-key and check that hpath:find was called with STR."
