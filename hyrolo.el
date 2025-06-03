@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      1-Jun-25 at 23:31:09 by Bob Weiner
+;; Last-Mod:      2-Jun-25 at 23:27:51 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -915,8 +915,11 @@ With prefix argument, prompts for optional FILE to locate entry within.
 NAME may be of the form: parent/child to kill child below a parent entry
 which begins with the parent string.
 Return t if entry is killed, nil otherwise."
-  (interactive "sKill rolo entry named: \nP")
-  (if (or (not (stringp name)) (string-equal name "") (string-match "\\*" name))
+  (interactive (list
+		(hsys-consult-grep-headlines-read-regexp
+		 #'hyrolo-consult-grep "Kill rolo entry named")
+		current-prefix-arg))
+  (if (or (not (stringp name)) (string-empty-p name))
       (error "(hyrolo-kill): Invalid name: `%s'" name))
   (if (and (called-interactively-p 'interactive) current-prefix-arg)
       (setq file (completing-read "Entry's File: "
@@ -926,7 +929,12 @@ Return t if entry is killed, nil otherwise."
     (unless file
       (setq file (car file-list)))
     (save-excursion
-      (if (hyrolo-to name file-list)
+      (if (if (and (fboundp 'consult-grep)
+		   (string-match "\\([^ \t\n\r\"'`]*[^ \t\n\r:\"'`0-9]\\): ?\\([1-9][0-9]*\\)[ :]"
+				 name))
+	      (hyrolo-to (substring name (match-end 0))
+			 (list (setq file (match-string-no-properties 1 name))))
+	    (hyrolo-to name file-list))
 	  (progn
 	    (setq file (hypb:buffer-file-name))
 	    (if (file-writable-p file)
@@ -1035,7 +1043,7 @@ or NAME is invalid, return nil."
   (require 'markdown-mode)
 
   ;; Don't actually derive from `markdown-mode' to avoid its costly setup
-  ;; but set its parent mode property to org-mode so `derived-mode-p' checks
+  ;; but set its parent mode property to `markdown-mode' so `derived-mode-p' checks
   ;; will pass.
   (put 'hyrolo-markdown-mode 'derived-mode-parent 'markdown-mode)
 
@@ -2700,7 +2708,8 @@ begins or nil if not found."
 	    (t (error "(hyrolo-to): Second argument must be a file or buffer, not: `%s'" file-or-buf)))
 
       (set-buffer (if (stringp file-or-buf)
-		      (or (get-file-buffer file-or-buf) (hyrolo-find-file-noselect file-or-buf))
+		      (or (get-file-buffer file-or-buf)
+			  (hyrolo-find-file-noselect file-or-buf))
 		    ;; must be a buffer
 		    file-or-buf))
       (let ((case-fold-search t) (real-name name) (parent "") (level)
@@ -2743,7 +2752,7 @@ begins or nil if not found."
 			 (setq found
 			       (when (or (looking-at (buffer-local-value
 						      'outline-regexp
-						      (get-buffer hyrolo-display-buffer)))
+						      (current-buffer)))
 					 ;; Jump to non-first line within an entry
 					 (progn (back-to-indentation)
 						(looking-at (regexp-quote name))))
@@ -3372,7 +3381,7 @@ proper major mode."
 		    (narrow-to-region start end))
 		  (let ((font-lock-mode))
 		    ;; (message "%s" (hyrolo-cache-get-major-mode-from-pos
-		    ;;		   (funcall (if backward-flag '1- '1+) start)))
+		    ;;	 	      (funcall (if backward-flag '1- '1+) start)))
 		    (if (and backward-flag (looking-at hyrolo-hdr-regexp))
 			(hyrolo-cache-set-major-mode (max (1- start) 1))
 		      (hyrolo-cache-set-major-mode (min (1+ start) (point-max))))
@@ -3390,7 +3399,7 @@ proper major mode."
 		(when (and (fboundp 'orgtbl-mode) orgtbl-mode)
 		  ;; Disable as overrides single letter keys
 		  (orgtbl-mode 0))
-		;; Need to leave point on a visible character or since
+		;; !! TODO: Need to leave point on a visible character or since
 		;; hyrolo uses reveal-mode, redisplay will rexpand
 		;; hidden entries to make point visible.
 		;; (hyrolo-back-to-visible-point)
@@ -3486,9 +3495,9 @@ Push (point-max) of `hyrolo-display-buffer' onto
 `hyrolo--cache-loc-match-bounds'.  Push hash table's index key to
 `hyrolo--cache-major-mode-indexes'.  Ensure MATCHED-BUF's
 `major-mode' is stored in the hash table."
-  (unless (hash-table-p hyrolo--cache-major-mode-to-index-hasht)
-    (hyrolo--cache-initialize))
   (with-current-buffer hyrolo-display-buffer
+    (unless (hash-table-p hyrolo--cache-major-mode-to-index-hasht)
+      (hyrolo--cache-initialize))
     (let* ((matched-buf-file-name (buffer-local-value 'buffer-file-name matched-buf))
 	   (matched-buf-major-mode (or (hyrolo-major-mode-from-file-name matched-buf-file-name)
 				       (buffer-local-value 'major-mode matched-buf)))

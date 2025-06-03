@@ -1,5 +1,10 @@
 2025-06-02  Bob Weiner  <rsw@gnu.org>
 
+* hyrolo.el (hyrolo-kill): Add consult completion support.
+            (hyrolo-to): Get 'outline-regexp' value from (current-buffer)
+    not (get-buffer hyrolo-display-buffer) to fix bug when display buffer
+    does not exist.
+
 * hsys-consult.el (hsys-consult-selected-candidate): Rewrite to fix byte
     compilation errors.
 
