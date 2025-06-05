@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     27-May-25 at 02:14:49 by Bob Weiner
+;; Last-Mod:      5-Jun-25 at 00:24:12 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1305,11 +1305,23 @@ See gh#rswgnu/hyperbole/669."
         (hy-delete-file-and-buffer wiki-page)
         (hy-delete-dir-and-buffer hywiki-directory)))))
 
+(defun hywiki-tests--hywiki-face-region-at (&optional pos)
+  "Get the start and end of the hywiki--word-face overlay at POS or point.
+Return nil if at no hywiki--word-face overlay."
+  (let ((overlays (overlays-at (or pos (point))))
+        result)
+    (when overlays
+      (dolist (overlay overlays result)
+        (when (equal (overlay-get overlay 'face) 'hywiki--word-face)
+          (cl-assert (not result) "There can only be one overlay with `hywiki--word-face'")
+          (setq result (cons (overlay-start overlay) (overlay-end overlay))))))))
+
 (defun hywiki-tests--word-n-face-at ()
   "Non-nil if at a WikiWord and it has `hywiki--word-face'."
   (cl-destructuring-bind (word beg end) (hywiki-word-at :range)
     (when word
       (when (hy-test-word-face-at-region beg end)
+        (should (equal (hywiki-tests--hywiki-face-region-at beg) (cons beg end)))
         word))))
 
 (defvar hywiki-tests--with-face-test nil
@@ -1574,6 +1586,24 @@ Insert test in the middle of other text."
             (should-not (file-exists-p hywiki-page-with-section))
             (should (file-exists-p hywiki-page)))
         (hy-delete-files-and-buffers (list hywiki-page hywiki-page-with-section))
+        (hy-delete-dir-and-buffer hywiki-directory)))))
+
+(ert-deftest hywiki-tests--verify-removal-of-delimiter-updates-face ()
+  "Verify removing a delimiter the face is changed along with the WikiWord."
+  :expected-result :failed
+  (hywiki-tests--preserve-hywiki-mode
+    (let* ((hywiki-directory (make-temp-file "hywiki" t))
+           (wikiHi (cdr (hywiki-add-page "Hi")))
+           (hywiki-tests--with-face-test t))
+      (unwind-protect
+          (progn
+            (hywiki-mode 1)
+            (dolist (testcase
+                     '((("\"Hi#a b c\"") (p3 . "Hi#a b c") (p11) (-1) (p3 . "Hi#a") (p10) ("\"") (p3 . "Hi#a b c"))
+                       (("(Hi#s n)" . "Hi#s n") (-1) (p3 . "Hi#s") (p8) (")" . "Hi#s n"))))
+              (with-temp-buffer
+                (hywiki-tests--run-test-case testcase))))
+        (hy-delete-file-and-buffer wikiHi)
         (hy-delete-dir-and-buffer hywiki-directory)))))
 
 (provide 'hywiki-tests)
