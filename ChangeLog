@@ -1,3 +1,8 @@
+2025-06-06  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--wikiword-yanked-with-extra-words):
+    Failing test for yanked in WikiWord.
+
 2025-06-05  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--hywiki-face-region-at): Get overlay

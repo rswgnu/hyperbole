@@ -1606,6 +1606,25 @@ Insert test in the middle of other text."
         (hy-delete-file-and-buffer wikiHi)
         (hy-delete-dir-and-buffer hywiki-directory)))))
 
+(ert-deftest hywiki-tests--wikiword-yanked-with-extra-words ()
+  "Verify that a WikiWord that is yanked in highlights properly."
+  :expected-result :failed
+  (hywiki-tests--preserve-hywiki-mode
+    (let* ((hywiki-directory (make-temp-file "hywiki" t))
+           (wikiHi (cdr (hywiki-add-page "Hi")))
+           (hywiki-tests--with-face-test t))
+      (unwind-protect
+          (progn
+            (hywiki-mode 1)
+            (with-temp-buffer
+              (let ((kill-ring (list "Hi#a b c"))
+                    interprogram-paste-function)
+                (yank))
+              (goto-char 2)
+              (should (hywiki-tests--verify-hywiki-word "Hi#a"))))
+        (hy-delete-file-and-buffer wikiHi)
+        (hy-delete-dir-and-buffer hywiki-directory)))))
+
 (provide 'hywiki-tests)
 
 ;; This file can't be byte-compiled without the `el-mock' package
