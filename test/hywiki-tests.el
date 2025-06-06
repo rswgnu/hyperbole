@@ -1612,17 +1612,53 @@ Insert test in the middle of other text."
   (hywiki-tests--preserve-hywiki-mode
     (let* ((hywiki-directory (make-temp-file "hywiki" t))
            (wikiHi (cdr (hywiki-add-page "Hi")))
+           (wikiHo (cdr (hywiki-add-page "Ho")))
            (hywiki-tests--with-face-test t))
       (unwind-protect
           (progn
             (hywiki-mode 1)
+            ;; Non WikiWords in front of WikiWord.
+            (with-temp-buffer
+              (let ((kill-ring (list "a b Hi#c"))
+                    interprogram-paste-function)
+                (yank))
+              (goto-char 1)
+              (hywiki-tests--verify-hywiki-word nil)
+              (goto-char 6)
+              (hywiki-tests--verify-hywiki-word "Hi#c"))
+            ;; Non WikiWords after WikiWord.
             (with-temp-buffer
               (let ((kill-ring (list "Hi#a b c"))
                     interprogram-paste-function)
                 (yank))
               (goto-char 2)
-              (should (hywiki-tests--verify-hywiki-word "Hi#a"))))
-        (hy-delete-file-and-buffer wikiHi)
+              (hywiki-tests--verify-hywiki-word "Hi#a"))
+            ;; Multiple WikiWords with non WikiWords.
+            (with-temp-buffer
+              (let ((kill-ring (list "a Hi#b c Ho#d e"))
+                    interprogram-paste-function)
+                (yank))
+              (goto-char 4)
+              (hywiki-tests--verify-hywiki-word "Hi#b")
+              (goto-char 11)
+              (hywiki-tests--verify-hywiki-word "Ho#d"))
+            ;; Right part of WikiWord yanked in.
+            (with-temp-buffer
+              (insert "H")
+              (let ((kill-ring (list "i#s"))
+                    interprogram-paste-function)
+                (yank))
+              (goto-char 2)
+              (hywiki-tests--verify-hywiki-word "Hi#s"))
+            ;; Left part of WikiWord yanked in.
+            (with-temp-buffer
+              (insert "i#s")
+              (goto-char 1)
+              (let ((kill-ring (list "H"))
+                    interprogram-paste-function)
+                (yank))
+              (hywiki-tests--verify-hywiki-word "Hi#s")))
+        (hy-delete-files-and-buffers (list wikiHi wikiHo))
         (hy-delete-dir-and-buffer hywiki-directory)))))
 
 (provide 'hywiki-tests)
