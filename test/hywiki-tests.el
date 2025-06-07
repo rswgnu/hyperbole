@@ -805,6 +805,8 @@ First line
 body A
 ** Bsection subsection
 body B
+*** Csection-subsection
+body C
 ")
             (save-buffer))
           (with-current-buffer (find-file-noselect wikipage)
@@ -812,6 +814,7 @@ body B
 WikiWord
 WikiWord#Asection
 \"WikiWord#Bsection subsection\"
+WikiWord#Csection-subsection
 ")
             (save-buffer))
 
@@ -829,11 +832,13 @@ WikiWord#Asection
             (should (<= 1 (count-matches (regexp-quote "WikiWord") (point-min) (point-max))))
             (should (= 1 (count-matches (regexp-quote "WikiWord#Asection") (point-min) (point-max))))
             (should (= 1 (count-matches (regexp-quote "WikiWord#Bsection subsection") (point-min) (point-max))))
+            (should (= 1 (count-matches (regexp-quote "WikiWord#Csection-subsection") (point-min) (point-max))))
 
             ;; Then verify the href links are generated
             (should (= 1 (count-matches (regexp-quote "<a href=\"WikiWord.html\">WikiWord</a>") (point-min) (point-max))))
             (should (= 1 (count-matches (regexp-quote "<a href=\"WikiWord.html#Asection\">WikiWord#Asection</a>") (point-min) (point-max))))
-            (should (= 1 (count-matches (regexp-quote "<a href=\"WikiWord.html#Bsection-subsection\">WikiWord#Bsection subsection</a>") (point-min) (point-max))))))
+            (should (= 1 (count-matches (regexp-quote "<a href=\"WikiWord.html#Bsection-subsection\">WikiWord#Bsection subsection</a>") (point-min) (point-max))))
+            (should (= 1 (count-matches (regexp-quote "<a href=\"WikiWord.html#Csection-subsection\">WikiWord#Csection-subsection</a>") (point-min) (point-max))))))
       (hy-delete-files-and-buffers (list wikipage wikiword wikipage-html wikiword-html
                                          (expand-file-name "index.org" hywiki-directory)
                                          (expand-file-name "index.html" hywiki-org-publishing-directory)))
