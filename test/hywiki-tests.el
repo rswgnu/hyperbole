@@ -1661,6 +1661,26 @@ Insert test in the middle of other text."
         (hy-delete-files-and-buffers (list wikiHi wikiHo))
         (hy-delete-dir-and-buffer hywiki-directory)))))
 
+(ert-deftest hywiki-tests--create-wikiword-file-highlights-wikiword ()
+  "Verify that creating a WikiWord-file highlights the WikiWord in another file."
+  (hywiki-tests--preserve-hywiki-mode
+    (let* ((hywiki-directory (make-temp-file "hywiki" t))
+           (wikiHi (cdr (hywiki-add-page "Hi")))
+           (hywiki-tests--with-face-test t)
+           wikiHo)
+      (unwind-protect
+          (progn
+            (hywiki-mode 1)
+            ;; Non WikiWords in front of WikiWord.
+            (with-current-buffer (find-file wikiHi)
+              (insert "Ho")
+              (save-buffer)
+              (setq wikiHo (cdr (hywiki-add-page "Ho")))
+              (goto-char 2)
+              (hywiki-tests--verify-hywiki-word "Ho")))
+        (hy-delete-files-and-buffers (list wikiHi wikiHo))
+        (hy-delete-dir-and-buffer hywiki-directory)))))
+
 (provide 'hywiki-tests)
 
 ;; This file can't be byte-compiled without the `el-mock' package
