@@ -1,3 +1,9 @@
+2025-06-08  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--create-wikiword-file-highlights-wikiword):
+    Verify creating a file for WikiWord highlights the instances of
+    WikiWord that already are present in other files.
+
 2025-06-08  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-consult-fgrep): Add and use in 'hyrolo-grep-input' when
