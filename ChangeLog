@@ -1,3 +1,9 @@
+2025-06-24  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--create-wikiword-file-highlights-wikiword):
+    Verify creating a file for WikiWord highlights the instances of
+    WikiWord that already is present in other files.
+
 2025-06-22  Bob Weiner  <rsw@gnu.org>
 
 * hproperty.el (hproperty:but-get-first-in-region): Change from returning a list

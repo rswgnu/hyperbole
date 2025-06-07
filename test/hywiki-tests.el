@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     22-Jun-25 at 22:32:29 by Bob Weiner
+;; Last-Mod:     24-Jun-25 at 09:36:49 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1669,6 +1669,25 @@ Insert test in the middle of other text."
                     interprogram-paste-function)
                 (yank))
               (hywiki-tests--verify-hywiki-word "Hi#s")))
+        (hy-delete-files-and-buffers (list wikiHi wikiHo))
+        (hy-delete-dir-and-buffer hywiki-directory)))))
+
+(ert-deftest hywiki-tests--create-wikiword-file-highlights-wikiword ()
+  "Verify creating a WikiWord-file highlights the WikiWord in another file."
+  (hywiki-tests--preserve-hywiki-mode
+    (let* ((hywiki-directory (make-temp-file "hywiki" t))
+           (wikiHi (cdr (hywiki-add-page "Hi")))
+           (hywiki-tests--with-face-test t)
+           wikiHo)
+      (unwind-protect
+          (progn
+            (hywiki-mode 1)
+            (with-current-buffer (find-file wikiHi)
+              (insert "Ho")
+              (save-buffer)
+              (setq wikiHo (cdr (hywiki-add-page "Ho")))
+              (goto-char 2)
+              (hywiki-tests--verify-hywiki-word "Ho")))
         (hy-delete-files-and-buffers (list wikiHi wikiHo))
         (hy-delete-dir-and-buffer hywiki-directory)))))
 
