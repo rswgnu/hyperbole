@@ -2,7 +2,7 @@
 
 * test/hywiki-tests.el
     (hywiki-tests--published-html-links-to-word-and-section): Do no let test
-    change org-publish-project-alist.
+    change org-publish-project-alist and update test.
 
 2025-06-06  Mats Lidell  <matsl@gnu.org>
 
