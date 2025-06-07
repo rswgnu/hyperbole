@@ -1,3 +1,18 @@
+2025-06-06  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--wikiword-yanked-with-extra-words):
+    Failing test for yanked in WikiWord.
+
+2025-06-05  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--hywiki-face-region-at): Get overlay
+    at pos bounding box.
+    (hywiki-tests--word-n-face-at): Use
+    hywiki-tests--hywiki-face-region-at for verifying WikiWord and overlay
+    matches.
+    (hywiki-tests--verify-removal-of-delimiter-updates-face): Add failing
+    test where WikiWord and overlay does not match.
+
 2025-06-02  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-kill): Add consult completion support.
