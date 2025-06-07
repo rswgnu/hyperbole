@@ -259,8 +259,6 @@
 * hywiki.el   (hywiki-word-face-at-p):
   hibtypes.el (smerge): Use or instead of setq. Thanks Stefan Monnier for
 
-2025-04-27  Mats Lidell  <matsl@gnu.org>
-
 * man/hyperbole.texi (Implicit Button Types): Add anchor to all ibtypes.
 
 * hywiki.el (hywiki-word-face-at-p):

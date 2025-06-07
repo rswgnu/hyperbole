@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      2-Jun-25 at 23:27:51 by Bob Weiner
+;; Last-Mod:      7-Jun-25 at 11:41:41 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -541,7 +541,8 @@ Use ripgrep (rg) if found, otherwise, plain grep.  Initialize search with
 optional REGEXP and interactively prompt for changes.  Limit matches
 per file to the absolute value of MAX-MATCHES, if given and not 0.  If
 0, match to headlines only (lines that start with a '^[*#]+[ \t]+' regexp).
-With optional PROMPT string, use this as the first part of the grep prompt;
+Optional PATH-LIST defaults to `hyrolo-file-list' when not given.  With
+optional PROMPT string, use this as the first part of the grep prompt;
 omit any trailing colon and space in the prompt."
   (interactive "i\nP")
   (let* ((grep-includes (concat "--include *.kot --include *.kotl"
