@@ -1677,7 +1677,6 @@ Insert test in the middle of other text."
       (unwind-protect
           (progn
             (hywiki-mode 1)
-            ;; Non WikiWords in front of WikiWord.
             (with-current-buffer (find-file wikiHi)
               (insert "Ho")
               (save-buffer)
