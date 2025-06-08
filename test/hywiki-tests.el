@@ -784,6 +784,7 @@ body B
   "Verify published html links to WikiWord and section."
   :expected-result :failed
   (let* ((hywiki-directory (make-temp-file "hywiki_" t))
+         org-publish-project-alist
          (hywiki-org-publishing-directory (make-temp-file "public_html_" t))
          (wikipage (cdr (hywiki-add-page "WikiPage")))
          (wikipage-html (expand-file-name "WikiPage.html" hywiki-org-publishing-directory))
@@ -804,13 +805,16 @@ First line
 body A
 ** Bsection subsection
 body B
+*** Csection-subsection
+body C
 ")
             (save-buffer))
           (with-current-buffer (find-file-noselect wikipage)
             (insert "\
-* WikiWord
-* WikiWord#Asection
-* WikiWord#Bsection-subsection
+WikiWord
+WikiWord#Asection
+\"WikiWord#Bsection subsection\"
+WikiWord#Csection-subsection
 ")
             (save-buffer))
 
@@ -827,12 +831,14 @@ body B
             ;; (First check we even get the wikipage with sections)
             (should (<= 1 (count-matches (regexp-quote "WikiWord") (point-min) (point-max))))
             (should (= 1 (count-matches (regexp-quote "WikiWord#Asection") (point-min) (point-max))))
-            (should (= 1 (count-matches (regexp-quote "WikiWord#Bsection-subsection") (point-min) (point-max))))
+            (should (= 1 (count-matches (regexp-quote "WikiWord#Bsection subsection") (point-min) (point-max))))
+            (should (= 1 (count-matches (regexp-quote "WikiWord#Csection-subsection") (point-min) (point-max))))
 
             ;; Then verify the href links are generated
             (should (= 1 (count-matches (regexp-quote "<a href=\"WikiWord.html\">WikiWord</a>") (point-min) (point-max))))
-            (should (= 1 (count-matches (regexp-quote "<a href=\"WikiWord.html#Asection\">WikiWord#ASection</a>") (point-min) (point-max))))
-            (should (= 1 (count-matches (regexp-quote "<a href=\"WikiWord.html#Bsection-subsection\">WikiWord#Bsection-subsection</a>") (point-min) (point-max))))))
+            (should (= 1 (count-matches (regexp-quote "<a href=\"WikiWord.html#Asection\">WikiWord#Asection</a>") (point-min) (point-max))))
+            (should (= 1 (count-matches (regexp-quote "<a href=\"WikiWord.html#Bsection-subsection\">WikiWord#Bsection subsection</a>") (point-min) (point-max))))
+            (should (= 1 (count-matches (regexp-quote "<a href=\"WikiWord.html#Csection-subsection\">WikiWord#Csection-subsection</a>") (point-min) (point-max))))))
       (hy-delete-files-and-buffers (list wikipage wikiword wikipage-html wikiword-html
                                          (expand-file-name "index.org" hywiki-directory)
                                          (expand-file-name "index.html" hywiki-org-publishing-directory)))
