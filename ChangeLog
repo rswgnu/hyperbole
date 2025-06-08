@@ -1,3 +1,23 @@
+2025-06-08  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-consult-fgrep): Add and use in 'hyrolo-grep-input' when
+    'read-function' argument is 'read-string'.
+
+2025-06-07  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-org, hyrolo-org-roam, hyrolo-fgrep, hyrolo-grep, hyrolo-word):
+    Add consult completion support.
+            (hyrolo-grep-input): Add to support interactive grep search
+    input via consult when available.
+
+* hsys-consult.el (hsys-consult-selected-candidate): Rename to
+    'hsys-consult-get-exit-value'.  Add first arg 'exit-value' to capture
+    any desired value from when consult completion is active.
+    For example, with `exit-value' given as 'vertico--groups, this will
+    the list of files matched during a `consult-grep' call when
+    'vertico' completion is in use.  Use '(car vertico--input) to get
+    the input line sent to grep.
+
 2025-06-07  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el
@@ -279,8 +299,6 @@
 
 * hywiki.el   (hywiki-word-face-at-p):
   hibtypes.el (smerge): Use or instead of setq. Thanks Stefan Monnier for
-
-2025-04-27  Mats Lidell  <matsl@gnu.org>
 
 * man/hyperbole.texi (Implicit Button Types): Add anchor to all ibtypes.
 

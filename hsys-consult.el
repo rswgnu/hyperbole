@@ -2,7 +2,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     4-Jul-24 at 09:57:18
-;; Last-Mod:      2-Jun-25 at 22:18:49 by Bob Weiner
+;; Last-Mod:      7-Jun-25 at 16:50:47 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -63,9 +63,8 @@
 ;;; Public variables
 ;;; ************************************************************************
 
-;;; ************************************************************************
-;;; Private variables
-;;; ************************************************************************
+(defvar hsys-consult-exit-value nil
+  "Value from a user-defined exit-hook sent to `hsys-consult-get-exit-value'.")
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -139,15 +138,16 @@ prompt."
 
 (defun hsys-consult-grep-headlines-read-regexp (grep-function prompt
 						&optional regexp)
-  "With `consult', completing read a string with GREP-FUNCTION and PROMPT.
-Optional REGEXP is the initial pattern for the grep.
-Suppress preview and return the selected \"file:line:line-contents\".
+  "With `consult', use GREP-FUNCTION and PROMPT to completing read an
+optional REGEXP, the initial pattern for the grep.  Suppress preview
+and return the selected \"file:line:line-contents\".  GREP-FUNCTION
+ must take these arguments: regexp max-matches path-list prompt.
 
-GREP-FUNCTION must take these arguments: regexp max-matches path-list
-prompt."
+Without `consult', just read a REGEXP with PROMPT."
   (if (fboundp 'consult-grep)
       (substring-no-properties
-       (hsys-consult-selected-candidate
+       (hsys-consult-get-exit-value
+	nil
 	#'hsys-consult-grep-headlines-with-prompt
 	grep-function
 	prompt
@@ -241,17 +241,28 @@ that start with the '^[*#]+[ \t]*' regexp)."
      (org-roam-node-find nil nil (lambda (node) (zerop (org-roam-node-level node)))))))
 
 ;;;###autoload
-(defun hsys-consult-selected-candidate (consult-function &rest args)
-  "Return the input from calling CONSULT-FUNCTION, a symbol, with rest of ARGS."
-  (unless (fboundp consult-function)
-    (user-error "(hsys-consult-selected-candidate): First arg must be a bound function, not `%s'"
+(defun hsys-consult-get-exit-value (exit-value consult-function &rest args)
+  "With minibuffer EXIT-VALUE, call CONSULT-FUNCTION with rest of ARGS.
+If EXIT-VALUE is non-nil, i.e. an sexpression or function of no
+arguments, store and return its result value into `hsys-consult-exit-value',
+Otherwise, return the selection from CONSULT-FUNCTION."
+  (unless (functionp consult-function)
+    (user-error "(hsys-consult-get-exit-value): First arg must be a function, not `%s'"
 		consult-function))
   (save-excursion
     (save-window-excursion
-      (eval `(cl-flet ((mapcar (lambda (state-function)
-				 `(,state-function () cand))
-			       (apropos-internal "consult--.+-state" #'fboundp)))
-	       (apply ',consult-function ',args))))))
+      (if exit-value
+	  (let ((exit-hook `(lambda ()
+			      (setq hsys-consult-exit-value
+				    (if (functionp ',exit-value)
+				       (funcall ',exit-value)
+				      (eval ',exit-value))))))
+	    (unwind-protect
+		(progn (push exit-hook minibuffer-exit-hook)
+		       (apply consult-function args)
+		       hsys-consult-exit-value)
+	      (setf minibuffer-exit-hook (delq exit-hook minibuffer-exit-hook))))
+	(apply consult-function args)))))
 
 ;;; ************************************************************************
 ;;; Private functions
