@@ -11,7 +11,7 @@
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; Copyright (C) 2021-2024  Free Software Foundation, Inc.
+;; Copyright (C) 2021-2025  Free Software Foundation, Inc.
 ;; Licensed under the GNU General Public License, version 3.
 ;;
 ;; This file is not part of Emacs.  It requires Emacs 28 or above.
