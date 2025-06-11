@@ -2,7 +2,7 @@
 
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; Copyright (C) 1992-2024  Free Software Foundation, Inc.
+;; Copyright (C) 1992-2025  Free Software Foundation, Inc.
 
 ;; Author:       Robert Weiner <rsw@gnu.org>
 ;; Authors:      Robert Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>

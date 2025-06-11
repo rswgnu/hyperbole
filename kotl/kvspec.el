@@ -7,7 +7,7 @@
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; Copyright (C) 1995-2022  Free Software Foundation, Inc.
+;; Copyright (C) 1995-2023  Free Software Foundation, Inc.
 ;; See the "../HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.

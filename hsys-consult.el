@@ -2,11 +2,11 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     4-Jul-24 at 09:57:18
-;; Last-Mod:      7-Jun-25 at 16:50:47 by Bob Weiner
+;; Last-Mod:     10-Jun-25 at 17:44:05 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; Copyright (C) 2024  Free Software Foundation, Inc.
+;; Copyright (C) 2024-2025  Free Software Foundation, Inc.
 ;; Licensed under the GNU General Public License, version 3.
 ;;
 ;; This file is part of GNU Hyperbole.
