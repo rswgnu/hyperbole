@@ -1,4 +1,56 @@
+2025-06-15  Bob Weiner  <rsw@gnu.org>
+
+* hsys-consult.el (hsys-consult--grep-paths): Fix to ensure any env or lisp
+    variables in paths are replaced so grep does not ignore them.
+    (hsys-consult-flag): Add this customization, set to t by default, i.e.
+       use and install the 'custom' package when needed by Hyperbole.
+    (hsys-consult-get-exit-value, hsys-consult--org-roam-call-function,
+     hsys-consult-grep, hsys-consult-grep-headlines-read-regexp,
+     hsys-consult--grep-paths): Conditionalize these calls based on the value
+       of the above flag.
+
+* hpath.el (hpath:expand-list): Fix 'hpath:expand' call so it does not require
+    existing paths since its first arg may contain wildcards.  Simplify code
+    and expand all readable, non-symlink directories recursively.  If a string
+    is mistakenly sent instead of a list, make it a list.
+           (hpath:expand-with-variable): Fix so does not prepend
+    'hpath:auto-variable-alist' to paths with wildcards in them when
+    'find-file-wildcards' is non-nil.  This expands such paths in the
+    'default-directory' properly.
+
+* hyrolo.el (hyrolo-org, hyrolo-org-roam): Fix in interactive call to expand
+    filenames in 'org-directory' and 'org-roam-directory' respectively.
+            (hyrolo-file-list): Instead of leaving this nil by default, set
+    it to a list of the default .rolo file.
+            (hyrolo-mode-map): Since the *HyRolo* match buffer is read-only,
+    rebind RET to be the 'action-key', so a simple press edits the current
+    record in its source file.
+            (hyrolo-find-file): If reading the file triggers an error, simply
+    log it to the *Messages* buffer and ignore that file so does not get in
+    the way of searching others.
+            (hyrolo-to): Fix so when 'hyrolo-name-entry' has been set
+     if the first line of an entry contains slashes, these are treatee
+     as part of a literal string to find the source match, rather than
+     than as a parent/child delimiter.
+
+2025-06-12  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-tags-view): Fix error triggered by 'org-tags-view' call
+    when send non .org file in 'org-agenda-files'.  Fix by filtering out
+    non-org files which can't have tags in them anyway.
+            (hyrolo-refresh-file-list): Ensure 'hyrolo-file-list' is set
+    to default file if nil.
+
 2025-06-08  Bob Weiner  <rsw@gnu.org>
+
+* hsys-consult.el (hsys-consult-apropos): Add and autoload for interactive
+    selection of apropos symbols.
+
+* hui-mini.el (hui:menu-rolo): Remove "HelmFind" as is outdated; use "ConsultFind"
+    instead.
+
+* hpath.el (hpath:auto-completing-read-modes): Add 'consult-org-roam-mode',
+    'icomplete-mode', 'org-roam-mode', and 'vertico-mode'.
 
 * hyrolo.el (hyrolo-consult-fgrep): Add and use in 'hyrolo-grep-input' when
     'read-function' argument is 'read-string'.
@@ -2115,7 +2167,7 @@ value to be [[WikiWord]] not [[file:WikiWord.org][WikiWord]].
              hywiki-maybe-highlight-off-page-name,
              hywiki-maybe-highlight-on-page-name): Add for use in
    'post-self-insert-hook' idle HyWikiWord highlighter (setup from
-   'hywiki-buttonize-character-commands'.
+   'hywiki-buttonize-character-commands').
             (hywiki-maybe-dehighlight-between-page-names,
              hywiki-maybe-dehighlight-off-page-name,
              hywiki-maybe-dehighlight-on-page-name): Add for use in

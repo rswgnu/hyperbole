@@ -2,7 +2,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     4-Jul-24 at 09:57:18
-;; Last-Mod:     10-Jun-25 at 17:44:05 by Mats Lidell
+;; Last-Mod:     15-Jun-25 at 18:59:52 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -66,9 +66,38 @@
 (defvar hsys-consult-exit-value nil
   "Value from a user-defined exit-hook sent to `hsys-consult-get-exit-value'.")
 
+(defcustom hsys-consult-flag t
+  "Non-nil means use the consult package with vertico for filtering searches.
+When non-nil and interactively calling non-consult-specific
+Hyperbole search and yank commands, if consult is installed it
+will be used to filter to matching file lines.  For Hyperbole
+consult-specific commands, when this is non-nil and consult is
+not installed, automatically install it and then run the command.
+When nil, trigger an error that consult is not installed."
+  :type 'boolean
+  :group 'hyperbole-commands)
+
 ;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
+
+;;;###autoload
+(defun hsys-consult-apropos (&optional include-all-flag)
+  "Summarize all meaningful symbols matching interactively chosen terms.
+With optional INCLUDE-ALL-FLAG (prefix arg interactively) non-nil,
+include all bound symbols.
+
+Requires use of `vertico' for completions."
+  (interactive "P")
+  (apropos
+   (split-string
+    (hsys-consult-get-exit-value
+     '(car vertico--input)
+     #'consult--read
+     obarray
+     :prompt "Consult Apropos: ")
+    "[ \t]+" t)
+   include-all-flag))
 
 ;;;###autoload
 (defun hsys-consult-get-version ()
@@ -97,9 +126,12 @@ per file to the absolute value of MAX-MATCHES, if given and not 0.  If
 
 With optional PROMPT string, use this as the first part of the grep prompt;
 omit any trailing colon and space in the prompt."
+  (unless hsys-consult-flag
+    (error "`%s' command requires `hsys-consult-flag' set to t" this-command))
   (unless (package-installed-p 'consult)
     (package-install 'consult))
   (require 'consult)
+
   (let ((consult-version (hsys-consult-get-version)))
     ;; Multi-file support added after consult version "0.32"
     (when (not (and consult-version (string-greaterp consult-version "0.32")))
@@ -144,7 +176,7 @@ and return the selected \"file:line:line-contents\".  GREP-FUNCTION
  must take these arguments: regexp max-matches path-list prompt.
 
 Without `consult', just read a REGEXP with PROMPT."
-  (if (fboundp 'consult-grep)
+  (if (and hsys-consult-flag (fboundp 'consult-grep))
       (substring-no-properties
        (hsys-consult-get-exit-value
 	nil
@@ -163,7 +195,7 @@ The function determines the org files searched for matches and is
 given two arguments when called: a regexp of tags to match and a 0
 max-count which finds all matches within headlines only."
   (interactive)
-  (when (hsys-org-at-tags-p)
+  (when (and hsys-consult-flag (hsys-org-at-tags-p))
     (funcall org-consult-grep-function (hsys-consult--org-grep-tags-string) 0)))
 
 (defun hsys-consult-hyrolo-grep-tags ()
@@ -246,9 +278,12 @@ that start with the '^[*#]+[ \t]*' regexp)."
 If EXIT-VALUE is non-nil, i.e. an sexpression or function of no
 arguments, store and return its result value into `hsys-consult-exit-value',
 Otherwise, return the selection from CONSULT-FUNCTION."
+  (unless hsys-consult-flag
+    (error "`%s' command requires `hsys-consult-flag' set to t" this-command))
   (unless (functionp consult-function)
     (user-error "(hsys-consult-get-exit-value): First arg must be a function, not `%s'"
 		consult-function))
+
   (save-excursion
     (save-window-excursion
       (if exit-value
@@ -282,6 +317,8 @@ start of headline text only (lines that start with a '^[*#]+[
 
 With optional PROMPT string, use this as the first part of the
 grep prompt; omit any trailing colon and space in the prompt."
+  (unless hsys-consult-flag
+    (error "`%s' command requires `hsys-consult-flag' set to t" this-command))
   (unless (package-installed-p 'consult)
     (package-install 'consult))
   (require 'consult)
@@ -310,6 +347,11 @@ grep prompt; omit any trailing colon and space in the prompt."
 				    (concat consult-ripgrep-args
 					    (format " -m %d" (abs max-matches))))
 				consult-ripgrep-args)))
+
+    ;; Ensure any env or lisp variables in paths are replaced so
+    ;; grep does not ignore them.
+    (setq paths (mapcar #'hpath:expand paths))
+
     ;; Consult split style usually uses '#' as a separator char but
     ;; that interferes with matching to Markdown # chars at the start
     ;; of a line in the regexp, so disable the separator char as it is
@@ -346,6 +388,8 @@ tag around point."
 
 (defun hsys-consult--org-roam-call-function (func)
   "Install Org Roam if necessary and then call an Org Roam FUNC."
+  (unless hsys-consult-flag
+    (error "`%s' command requires `hsys-consult-flag' set to t" this-command))
   (unless (package-installed-p 'org-roam)
     (package-install 'org-roam))
   (require 'org-roam)
@@ -353,6 +397,7 @@ tag around point."
     (make-directory org-roam-directory))
   (unless org-roam-db-autosync-mode
     (org-roam-db-autosync-mode))
+
   (if (file-readable-p org-roam-directory)
       (funcall func)
     (error "`org-roam-directory', \"%s\", does not exist" org-roam-directory)))
