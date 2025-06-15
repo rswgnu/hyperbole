@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      8-Jun-25 at 01:26:42 by Bob Weiner
+;; Last-Mod:     15-Jun-25 at 18:17:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -196,7 +196,9 @@ executable must be found as well (for Oauth security)."
   :type 'boolean
   :group 'hyperbole-hyrolo)
 
-(defcustom hyrolo-file-list nil
+(defcustom hyrolo-file-list (list (if (file-readable-p "~/.rolo.org")
+				      "~/.rolo.org"
+				    "~/.rolo.otl"))
   "List of files containing hyrolo entries.
 The first file should be a user-specific hyrolo file, typically in the home
 directory and must have a suffix of either .org (Org mode) or .otl (Emacs
@@ -574,7 +576,8 @@ omit any trailing colon and space in the prompt."
 				" --include *.org --include *.otl --include *.outl"))
 	 (ripgrep-globs "--glob *.{kot,kotl,md,markdown,mkd,mdown,mkdn,mdwn,org,otl,outl}"))
     (hsys-consult-grep grep-includes ripgrep-globs
-		       regexp max-matches (or path-list hyrolo-file-list)
+		       regexp max-matches
+		       (or path-list hyrolo-file-list)
 		       (or prompt (if (eq max-matches 0)
 				      "Grep HyRolo headlines"
 				    "Grep HyRolo files")))))
@@ -755,7 +758,8 @@ on the logical sexpression matching."
 		      (hyrolo-grep-input #'read-string "Find rolo string")))
 		 (list (car input-and-matching-files)
 		       current-prefix-arg
-		       (cadr input-and-matching-files))))
+		       (mapcar #'expand-file-name
+			       (cadr input-and-matching-files)))))
   (setq string (string-trim string "\"" "\""))
   (let ((total-matches 0))
     (if (string-match-p "\(\\(r-\\)?\\(and\\|or\\|xor\\|not\\)\\>" string)
@@ -795,18 +799,21 @@ select it."
 				    (mapcar #'list all-files)))))
     (when (stringp file)
       (let (buf)
-	(prog1 (setq buf (apply (or find-function hyrolo-find-file-function) file args))
-	  (when buf
-	    (with-current-buffer buf
-	      (when (equal outline-regexp (default-value 'outline-regexp))
-		;; Prevent matching to *word* at the beginning of
-		;; lines and hanging hyrolo search functions.  Note this
-		;; change adds one to the default `outline-level' function,
-		;; so `hyrolo-outline-level' overrides that as well
-		;; to get the correct calculation.  -- rsw, 2023-11-17
-		(setq-local outline-regexp "\\([*\^L]+\\)\\([ \t\n\r]\\)"
-			    outline-level #'hyrolo-outline-level))
-	      (setq buffer-read-only nil))))))))
+	(condition-case-unless-debug err
+	    (prog1 (setq buf (apply (or find-function hyrolo-find-file-function) file args))
+	      (when buf
+		(with-current-buffer buf
+		  (when (equal outline-regexp (default-value 'outline-regexp))
+		    ;; Prevent matching to *word* at the beginning of
+		    ;; lines and hanging hyrolo search functions.  Note this
+		    ;; change adds one to the default `outline-level' function,
+		    ;; so `hyrolo-outline-level' overrides that as well
+		    ;; to get the correct calculation.  -- rsw, 2023-11-17
+		    (setq-local outline-regexp "\\([*\^L]+\\)\\([ \t\n\r]\\)"
+				outline-level #'hyrolo-outline-level))
+		  (setq buffer-read-only nil))))
+	  (error (progn (message "(hyrolo-find-file): Error reading \"%s\": %s" file err)
+			nil)))))))
 
 ;;;###autoload
 (defun hyrolo-find-file-noselect (&optional file)
@@ -866,7 +873,8 @@ variable `hyrolo-file-list'."
 					 "Find rolo regular expression")))
 		 (list (car input-and-matching-files)
 		       current-prefix-arg
-		       (cadr input-and-matching-files))))
+		       (mapcar #'expand-file-name
+			       (cadr input-and-matching-files)))))
   (unless (or (integerp max-matches) (memq max-matches '(nil t)))
     (setq max-matches (prefix-numeric-value max-matches)))
   (let ((files-or-bufs
@@ -1352,7 +1360,10 @@ Raise an error if a match is not found."
 
 (defun hyrolo-refresh-file-list ()
   "Refresh from disk the internal list of files given by `hyrolo-file-list'."
-  (setq hyrolo--expanded-file-list (hyrolo-expand-path-list hyrolo-file-list))
+  (if hyrolo-file-list
+      (setq hyrolo--expanded-file-list (hyrolo-expand-path-list hyrolo-file-list))
+    (setq hyrolo-file-list (hyrolo-expand-path-list nil)
+	  hyrolo--expanded-file-list hyrolo-file-list))
   (when (hyrolo-any-file-type-problem-p)
     (error "(HyRolo): Invalid files used in `hyrolo-file-list'; see the *HyRolo Errors* buffer")))
 
@@ -1373,9 +1384,10 @@ Raise an error if a match is not found."
 
 ;;;###autoload
 (defun hyrolo-set-file-list (symbol value)
-  (set-default symbol value)
   (setq hyrolo--expanded-file-list (hyrolo-expand-path-list value))
-  (unless (symbol-value symbol)
+  (if value
+      (set-default symbol value)
+    (setq value hyrolo--expanded-file-list)
     (set-default symbol hyrolo--expanded-file-list))
   (when (hyrolo-any-file-type-problem-p)
     (error "(HyRolo): Invalid files used in `hyrolo-file-list'; see the *HyRolo Errors* buffer"))
@@ -1480,7 +1492,9 @@ optional VIEW-BUFFER-NAME, use that rather than the default,
 \"*HyRolo Tags*\"."
   (interactive "P")
   (require 'org-agenda)
-  (let* ((org-agenda-files (hyrolo-get-file-list))
+  (let* ((org-agenda-files (seq-filter (lambda (f)
+					 (string-suffix-p ".org" f t))
+				       (hyrolo-get-file-list)))
 	 (org-agenda-buffer-name (or view-buffer-name "*HyRolo Tags*"))
 	 ;; `org-tags-view' is mis-written to require setting this next
 	 ;; tmp-name or it will not properly name the displayed buffer.
@@ -1571,7 +1585,8 @@ Return number of entries matched.  See also documentation for the variable
 		      (hyrolo-grep-input #'read-string "Find rolo whole word matches of")))
 		 (list (car input-and-matching-files)
 		       current-prefix-arg
-		       (cadr input-and-matching-files))))
+		       (mapcar #'expand-file-name
+			       (cadr input-and-matching-files)))))
   (let ((total-matches (hyrolo-grep (format "\\b%s\\b" (regexp-quote string))
 				    max-matches
 				    hyrolo-files-or-bufs count-only headline-only no-display)))
@@ -1937,7 +1952,8 @@ Interactively, MAX-MATCHES is the prefix argument."
 		       (list (expand-file-name "*.org" org-directory)))))
 		 (list (car input-and-matching-files)
 		       current-prefix-arg
-		       (cadr input-and-matching-files))))
+		       (mapcar (lambda (f) (expand-file-name f org-directory))
+			       (cadr input-and-matching-files)))))
   (require 'org)
   (unless (file-readable-p org-directory)
     (make-directory org-directory))
@@ -1959,7 +1975,8 @@ returned to the number given."
 		       (list (expand-file-name "*.org" org-roam-directory)))))
 		 (list (car input-and-matching-files)
 		       current-prefix-arg
-		       (cadr input-and-matching-files))))
+		       (mapcar (lambda (f) (expand-file-name f org-roam-directory))
+			       (cadr input-and-matching-files)))))
   (hsys-consult--org-roam-call-function
    (lambda ()
      (let ((hyrolo-file-list
@@ -2777,28 +2794,33 @@ begins or nil if not found."
 	    (when (search-forward name nil t)
 	      (move-to-column col-num)
 	      (setq found (point)))
-	  (while (string-match "\\`[^\]\[<>{}\"]*/" name)
-	    (setq end (1- (match-end 0))
-		  level nil
-		  parent (substring name 0 end)
-		  name (substring name (min (1+ end) (length name))))
-	    (cond ((progn
-		     (while (and (not level) (search-forward parent nil t))
-		       (save-excursion
-			 (forward-line 0)
-			 (when (looking-at (concat hyrolo-hdr-and-entry-regexp (regexp-quote parent)))
-			   (setq level (match-string-no-properties hyrolo-entry-group-number)))))
-		     level))
-		  ((equal name real-name)) ;; Try next file-or-buf.
-		  (t ;; Found parent but not child
-		   (setq buffer-read-only nil)
-		   (hyrolo-to-buffer (current-buffer))
-		   (error "(hyrolo-to): `%s' part of name not found in \"%s\""
-			  parent file-or-buf)))
-	    (when level
-	      (narrow-to-region (point)
-				(save-excursion
-				  (hyrolo-to-entry-end t) (point)))))
+	  ;; If this is the first line of an entry, then don't treat
+	  ;; '/' characters as parent/child delimiters but just as
+	  ;; part of the entry first line text.
+	  (unless (setq line-and-col (get-text-property 0 'hyrolo-name-entry name))
+	    ;; Otherwise, navigate through parent-child records.
+	    (while (string-match "\\`[^\]\[<>{}\"]*/" name)
+	      (setq end (1- (match-end 0))
+		    level nil
+		    parent (substring name 0 end)
+		    name (substring name (min (1+ end) (length name))))
+	      (cond ((progn
+		       (while (and (not level) (search-forward parent nil t))
+			 (save-excursion
+			   (forward-line 0)
+			   (when (looking-at (concat hyrolo-hdr-and-entry-regexp (regexp-quote parent)))
+			     (setq level (match-string-no-properties hyrolo-entry-group-number)))))
+		       level))
+		    ((equal name real-name)) ;; Try next file-or-buf.
+		    (t ;; Found parent but not child
+		     (setq buffer-read-only nil)
+		     (hyrolo-to-buffer (current-buffer))
+		     (error "(hyrolo-to): `%s' part of name not found in \"%s\""
+			    parent file-or-buf)))
+	      (when level
+		(narrow-to-region (point)
+				  (save-excursion
+				    (hyrolo-to-entry-end t) (point))))))
 	  (goto-char (point-min))
 	  (while (and
 		  ;; Search for just the leaf part of a name
@@ -2812,7 +2834,8 @@ begins or nil if not found."
 					 ;; Jump to non-first line within an entry
 					 (progn (back-to-indentation)
 						(looking-at (regexp-quote name))))
-				 (when (setq line-and-col (get-text-property 0 'hyrolo-name-entry name))
+				 (when (or line-and-col
+					   (setq line-and-col (get-text-property 0 'hyrolo-name-entry name)))
 				   ;; this is a whole line to find except for leading whitespace
 				   (setq line (car line-and-col)
 					 col-num (cdr line-and-col))
@@ -3632,6 +3655,7 @@ Push (point-max) of `hyrolo-display-buffer' onto
   (define-key hyrolo-mode-map "p"        'hyrolo-outline-previous-visible-heading)
   (define-key hyrolo-mode-map "q"        'hyrolo-quit)
   (define-key hyrolo-mode-map "r"        'hyrolo-grep-or-fgrep)
+  (define-key hyrolo-mode-map [return]   'action-key)
   (define-key hyrolo-mode-map "s"        'hyrolo-outline-show-subtree)
   (define-key hyrolo-mode-map "\M-s"     'hyrolo-isearch)
   (define-key hyrolo-mode-map "t"        'hyrolo-top-level)
@@ -3823,7 +3847,7 @@ that text."
 
 (defun hyrolo-show-post-command ()
   "Post command hook function to expand subtree if point is in invisible text.
-Used in *HyRolo* match buffer."
+Used in the *HyRolo* display match buffer."
   (when (outline-invisible-p)
     (hyrolo-outline-show-subtree)))
 

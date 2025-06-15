@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     27-May-25 at 00:41:20 by Bob Weiner
+;; Last-Mod:     15-Jun-25 at 12:03:03 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -39,7 +39,10 @@
 ;;; Public Variables
 ;;; ************************************************************************
 
-(defcustom hpath:auto-completing-read-modes '(helm-mode ivy-mode selectrum-mode)
+(defcustom hpath:auto-completing-read-modes '(consult-org-roam-mode helm-mode
+					      icomplete-mode ivy-mode
+					      org-roam-mode vertico-mode
+                                              selectrum-mode)
   "*List of boolean mode variables whose modes automatically list completions.
 These are modes where completions are listed without the need for
 pressing the ? key."
@@ -1276,19 +1279,22 @@ only if it exists, otherwise, return nil."
 
 (defun hpath:expand-list (paths &optional match-regexp filter)
   "Return expansions of PATHS, a list of dirs or wildcarded file patterns.
-PATHS expansion recursively walks directory trees to include
+PATHS expansion recursively walks readable directory trees to include
 files with names matching optional MATCH-REGEXP (otherwise, all
 files), filters out non-strings and any filenames not matching the
 optional predicate FILTER, expands file wildcards when
 `find-file-wildcards' is non-nil (the default), substitutes for
 multiple $var environment variables, and substitutes up to one
 ${variable} per path."
+  ;; Handle when caller sends a string, forgetting to make it a list.
+  (when (stringp paths)
+    (setq paths (list paths)))
   ;; Previously `filter' was a flag which when t, invoked
   ;; `file-exists-p'; maintain this backward compatibility.
   (when (eq filter t) (setq filter #'file-exists-p))
 
   (setq paths (mapcan (lambda (path-pat-or-list)
-			(setq path-pat-or-list (hpath:expand path-pat-or-list filter))
+			(setq path-pat-or-list (hpath:expand path-pat-or-list))
 			(when (setq path-pat-or-list
 				    (or (when (and path-pat-or-list find-file-wildcards)
 					  (file-expand-wildcards path-pat-or-list))
@@ -1296,13 +1302,14 @@ ${variable} per path."
 					    (when (and path-pat-or-list (funcall filter path-pat-or-list))
 					      (list path-pat-or-list))
 					  (list path-pat-or-list))))
-			  (if (= (length path-pat-or-list) 1)
-			      (setq path-pat-or-list (car path-pat-or-list))
-			    (setq paths (nconc (cdr path-pat-or-list) paths)
-				  path-pat-or-list (car path-pat-or-list)))
-			  (if (and path-pat-or-list (file-directory-p path-pat-or-list))
-			      (directory-files-recursively path-pat-or-list (or match-regexp ""))
-			    (list path-pat-or-list))))
+			  (when path-pat-or-list
+			    (mapcan (lambda (path)
+				      (if (and (file-directory-p path)
+					       (not (file-symlink-p path))
+					       (file-readable-p path))
+					  (directory-files-recursively path (or match-regexp ""))
+					(list path)))
+				    path-pat-or-list))))
 		      (seq-filter #'stringp paths)))
   (if filter
       (seq-filter filter paths)
@@ -1359,9 +1366,13 @@ If PATH is absolute, return it unchanged."
 	  regexp
 	  variable
 	  variable-name)
-      (if (file-exists-p path)
-	  ;; Path is either absolute or relative to current directory
-	  ;; so don't expand into hpath:auto-variable-alist paths.
+      (if (or (file-exists-p path)
+	      (and find-file-wildcards
+		   (not (file-name-quoted-p path))
+		   (string-match "[[*?]" path)))
+	  ;; Path is either absolute, contains wildcards or is
+	  ;; relative to the current directory, so don't expand
+	  ;; into `hpath:auto-variable-alist' paths.
 	  (setq path (expand-file-name path))
 	(unless (or (file-name-absolute-p path)
 		    (hpath:url-p path)

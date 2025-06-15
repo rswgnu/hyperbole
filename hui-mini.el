@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     22-Feb-25 at 22:15:38 by Bob Weiner
+;; Last-Mod:      8-Jun-25 at 12:38:22 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1084,8 +1084,8 @@ support underlined faces as well."
 	 '("Display"          hyrolo-display-matches        "Display last found rolo matches again.")
 	 '("Edit"             hyrolo-edit                   "Edit an existing rolo entry.")
 	 '("FileFind"         hyrolo-find-file              "Find an existing rolo file.")
-	 (when (fboundp 'helm-org-rifle-files) ;; allow for autoloading
-           '("HelmFind"         hyrolo-helm-org-rifle         "Interactively narrow HyRolo matches using Helm."))
+	 ;; (when (fboundp 'helm-org-rifle-files) ;; allow for autoloading
+         ;;  '("HelmFind"         hyrolo-helm-org-rifle         "Interactively narrow HyRolo matches using Helm."))
 	 '("Info"             (id-info "(hyperbole)HyRolo") "Display manual section on HyRolo.")
 	 '("Kill"             hyrolo-kill                   "Kill an existing rolo entry.")
 	 '("Mail"             hyrolo-mail-to                "Mail to address following point.")
@@ -1112,7 +1112,8 @@ support underlined faces as well."
 	("Calendar"                   calendar)
 	("Directories"                hui:menu-to-personal-section)
 	;; ("E")
-	("recent-Files"               recentf-open-files)
+	("org-roam-Find"              hyrolo-org-roam)
+	;; ("recent-Files"               recentf-open-files)
 	("Global-Buttons"             (find-file (expand-file-name hbmap:filename hbmap:dir-user)))
 	;; ("Helm"                       (menu . helm) "Display Hyperbole helm control menu")
 	;; ("I")
@@ -1120,8 +1121,8 @@ support underlined faces as well."
 	("Koutlines"                  hui:menu-to-personal-section)
 	;; ("L")
 	("buffer-Menu-Filter")
-	("Notes"                      hyrolo-org)
-	("Org-Search"                 helm-org-rifle-org-directory)
+	;; ("Notes"                      hynote-find)
+	("Org-Find"                   hyrolo-org)
 	("Projects"                   hui:menu-to-personal-section)
 	("Rolo"                       hyrolo-fgrep)
 	;; ("<Quit-Menu>")
@@ -1146,7 +1147,7 @@ support underlined faces as well."
 
 (defcustom hui:doc-a-z
       '(("a-Z>")
-	("Apropos-Symbol"             hypb:helm-apropos)
+	("Apropos-Symbol"             hsys-consult-apropos)
 	;; ("B")
 	;; ("C")
 	("Devdocs-Lookup"             hypb:devdocs-lookup)
@@ -1154,7 +1155,7 @@ support underlined faces as well."
 	;; ("F")
 	;; ("G")
 	;; ("H")
-	("Info-Search"                hypb:helm-info)
+	("Info-Search"                consult-info)
 	;; ("J")
 	;; ("K")
 	;; ("L")
