@@ -1,5 +1,8 @@
 2025-06-15  Bob Weiner  <rsw@gnu.org>
 
+* hyrolo.el (hyrolo-update-file-list): Add to update 'hyrolo-file-list'
+    and the cached, fully expanded 'hyrolo--expanded-file-list'.
+
 * hyrolo.el (hyrolo-helm-org-rifle, hyrolo-helm-org-rifle-directory,
              hyrolo-helm-org-rifle-directories): Remove all 'helm-org-rifle'
     support from HyRolo in favor of 'consult', the much more widely used
