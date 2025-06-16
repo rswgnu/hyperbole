@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
-;; Last-Mod:     19-Aug-24 at 23:29:52 by Bob Weiner
+;; Last-Mod:     15-Jun-25 at 22:37:19 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -47,9 +47,6 @@
 				       (require 'hyrolo)
 				       (hyrolo-find-file)))
 	  t]
-	 (when (fboundp 'helm-org-rifle-files) ;; allow for autoloading
-	   ;; Interactively narrow HyRolo matches using Helm.
-           ["Helm-Find"             (id-tool-invoke 'hyrolo-helm-org-rifle)  t])
 	 ["Insert-Entry-at-Point"   (id-tool-invoke 'hyrolo-yank)            t]
 	 ["Mail-to-Address"         (id-tool-invoke 'hyrolo-mail-to)         t]
 	 ["Search-for-Regexp"       (id-tool-invoke 'hyrolo-grep)            t]
