@@ -1,5 +1,10 @@
 2025-06-15  Bob Weiner  <rsw@gnu.org>
 
+* hyrolo.py (highlight_matches): Fix so does not change the case of
+    matches found.
+            (highlight_re_matches): Add for future use for regex
+    searching.
+
 * hyrolo.el (hyrolo-update-file-list): Add to update 'hyrolo-file-list'
     and the cached, fully expanded 'hyrolo--expanded-file-list'.
 

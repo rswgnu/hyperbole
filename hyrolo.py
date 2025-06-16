@@ -8,7 +8,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:     1-Apr-24 at 01:45:27
-# Last-Mod:      1-Sep-24 at 12:25:38 by Bob Weiner
+# Last-Mod:     16-Jun-25 at 00:03:41 by Bob Weiner
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
@@ -144,12 +144,26 @@ def find_matching_entries(match_string, file_paths):
 
 
 def highlight_matches(match_string, buffer):
-    "Split the last buffer into lines and print each line, inverting 'mymatch' colors."
+    "Split the last buffer into lines and print each line, inverting string 'match' colors."
     for b_line in buffer.splitlines():
-        if match_string.casefold() in b_line.casefold():
+        lower_b_line, lower_match_string = b_line.lower(), match_string.lower()
+        pos = lower_b_line.find(lower_match_string)
+        match = b_line[pos:pos + len(match_string)] if pos != -1 else None
+        if match:
             # Replace the search string with the inverted version
-            print(re.sub(re.escape(match_string), invert + match_string + reset, 
-                         b_line, flags=re.IGNORECASE))
+            print(re.sub(re.escape(match), invert + match + reset, b_line))
+        else:
+            print(b_line)
+
+# Regex search, not yet used; need a flag to switch to regex search
+def highlight_re_matches(match_re, buffer):
+    "Split the last buffer into lines and print each line, inverting regex 'match' colors."
+    for b_line in buffer.splitlines():
+        match_result = re.search(r'(?i)' + match_re, b_line)
+        match = match_result.group() if match_result else None
+        if match:
+            # Replace the search string with the inverted version
+            print(re.sub(re.escape(match), invert + match + reset, b_line))
         else:
             print(b_line)
 
