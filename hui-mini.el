@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:      8-Jun-25 at 12:38:22 by Bob Weiner
+;; Last-Mod:     15-Jun-25 at 22:37:06 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1084,8 +1084,6 @@ support underlined faces as well."
 	 '("Display"          hyrolo-display-matches        "Display last found rolo matches again.")
 	 '("Edit"             hyrolo-edit                   "Edit an existing rolo entry.")
 	 '("FileFind"         hyrolo-find-file              "Find an existing rolo file.")
-	 ;; (when (fboundp 'helm-org-rifle-files) ;; allow for autoloading
-         ;;  '("HelmFind"         hyrolo-helm-org-rifle         "Interactively narrow HyRolo matches using Helm."))
 	 '("Info"             (id-info "(hyperbole)HyRolo") "Display manual section on HyRolo.")
 	 '("Kill"             hyrolo-kill                   "Kill an existing rolo entry.")
 	 '("Mail"             hyrolo-mail-to                "Mail to address following point.")

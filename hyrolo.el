@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     15-Jun-25 at 18:17:10 by Bob Weiner
+;; Last-Mod:     15-Jun-25 at 22:36:53 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -68,9 +68,6 @@
 (declare-function google-contacts-make-buffer "ext:google-contacts")
 (declare-function google-contacts-margin-element "ext:google-contacts")
 (declare-function google-contacts-oauth-token "ext:google-contacts")
-(declare-function helm-org-rifle-files "ext:helm-org-rifle")
-(declare-function helm-org-rifle-org-directory "ext:helm-org-rifle")
-(declare-function helm-org-rifle-show-full-contents "ext:helm-org-rifle")
 (declare-function kotl-mode:to-valid-position "kotl/kotl-mode")
 (declare-function org-fold-initialize "org-fold")
 (declare-function org-fold-core-set-folding-spec-property "org-fold")
@@ -132,8 +129,6 @@
 (defvar google-contacts-expire-time)
 (defvar google-contacts-history)
 (defvar google-contacts-query-string)
-(defvar helm-org-rifle-show-full-contents)
-(defvar helm-org-rifle-show-level-stars)
 (defvar hproperty:but-emphasize-flag)
 (defvar org-fold-core-style)
 (defvar org-link--link-folding-spec)
@@ -1885,61 +1880,6 @@ otherwise just use the cdr of the item."
 ;;; ************************************************************************
 ;;; Org Package Integrations
 ;;; ************************************************************************
-
-;;;###autoload
-(defun hyrolo-helm-org-rifle (&optional context-only-flag)
-  "Search with helm and interactively show all matches from `hyrolo-file-list'.
-Prompt for the search pattern.
-Search readable .org, .otl and .outl files only.  With optional prefix
-arg CONTEXT-ONLY-FLAG, show one extra line only of context around
-a matching line, rather than entire entries."
-  (interactive "P")
-  (unless (package-installed-p 'helm-org-rifle)
-    (package-install 'helm-org-rifle))
-  (require 'helm-org-rifle)
-  (let ((files (seq-filter (lambda (f)
-			     (and (stringp f)
-				  (string-match "\\.\\(org\\|ou?tl\\)$" f)
-				  (file-readable-p f)))
-			   (hyrolo-get-file-list)))
-	;; Next 2 local settings used by helm-org-rifle-files call below
-	(helm-org-rifle-show-level-stars t)
-	(helm-org-rifle-show-full-contents (not context-only-flag)))
-    (save-excursion
-      (mapc (lambda (file)
-	      (set-buffer (hyrolo-find-file-noselect file))
-	      (hyrolo-org-mode))
-	    files))
-    (helm-org-rifle-files files)))
-
-;;;###autoload
-(defun hyrolo-helm-org-rifle-directory (&optional context-only-flag)
-  "Interactively search over `org-directory'.
-With optional prefix arg CONTEXT-ONLY-FLAG, show one extra line
-only of context around a matching line, rather than entire
-entries."
-  (interactive)
-  (unless (package-installed-p 'helm-org-rifle)
-    (package-install 'helm-org-rifle))
-  (require 'helm-org-rifle)
-  (require 'org)
-  (unless (file-readable-p org-directory)
-    (make-directory org-directory))
-  (if (file-readable-p org-directory)
-      (let ((helm-org-rifle-show-level-stars t)
-	    (helm-org-rifle-show-full-contents (not context-only-flag)))
-	(helm-org-rifle-org-directory))
-    (error "(hyrolo-helm-org-rifle-directory): `org-directory', \"%s\", does not exist" org-directory)))
-
-;;;###autoload
-(defun hyrolo-helm-org-rifle-directories (&optional context-only-flag &rest dirs)
-  "Interactively search over Emacs outline format files in rest of DIRS.
-Search readable .org, .otl and .outl files only.  With optional prefix
-arg CONTEXT-ONLY-FLAG, show one extra line only of context around
-a matching line, rather than entire entries."
-  (interactive "P")
-  (let ((hyrolo-file-list (hypb:filter-directories "\\.\\(org\\|ou?tl\\)$" dirs)))
-    (hyrolo-helm-org-rifle context-only-flag)))
 
 ;;;###autoload
 (defun hyrolo-org (string &optional max-matches org-files)

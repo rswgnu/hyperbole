@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     19-May-25 at 00:12:26 by Bob Weiner
+@c Last-Mod:     15-Jun-25 at 22:44:41 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,8 +30,8 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED May, 2025
-@set UPDATED-MONTH May 2025
+@set UPDATED June, 2025
+@set UPDATED-MONTH June 2025
 @set EDITION 9.0.2pre
 @set VERSION 9.0.2pre
 
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed May 19, 2025.
+Printed June 15, 2025.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -6672,7 +6672,6 @@ set of commands as the menubar Rolo menu but with more concise labels.
 @findex hyrolo-display-matches
 @findex hyrolo-edit
 @findex hyrolo-find-file
-@findex hyrolo-helm-org-rifle
 @findex hyrolo-kill
 @findex hyrolo-mail-to
 @findex hyrolo-sort
@@ -6696,7 +6695,6 @@ ConsultFind     hyrolo-consult-grep     Interactively narrow grep matches
 Display         hyrolo-display-matches  Displays last matches again
 Edit            hyrolo-edit             Edits an existing hyrolo entry
 File            hyrolo-find-file        Edits a @code{hyrolo-file-list} file
-HelmFind        hyrolo-helm-org-rifle   Interactively narrow entry matches
 Info            id-info                 Displays a hyrolo manual entry
 Kill            hyrolo-kill             Deletes a hyrolo entry
 Mail            hyrolo-mail             Mails to an address at point
@@ -8276,16 +8274,6 @@ The maximum length of a button label is limited by the variable
 @code{hbut:max-len}.  If 0, there is no limit and searches for button
 end delimiters can go as far as the end of the buffer.  Use the
 function, @code{(hbut:max-len)}, to read the proper value.
-
-@cindex helm package
-@cindex org-rifle package
-@findex hyrolo-helm-org-rifle
-@item Helm
-An Emacs extension package that provides asynchronous search and narrow
-wrappers around many Emacs commands.  Hyperbole optionally utilizes this
-together with the @file{org-rifle} package to interactively search the
-HyRolo.  Use @code{M-x hyrolo-helm-org-rifle} to search your HyRolo file
-list with these packages.
 
 @item History
 A Hyperbole menu command that moves back one step in Hyperbole
@@ -10941,6 +10929,8 @@ markup language), and not at the end of a line:
      Marks and kills the thing for yanking elsewhere.
 Note that the press must be on the first character of the delimiter of
 the thing.
+@end group
+@end format
 
 @node Smart Key - Hyperbole Buttons, Smart Key - View Mode, Smart Key - Dired Mode, Smart Keyboard Keys
 @subsection Smart Key - Hyperbole Buttons
@@ -11051,6 +11041,8 @@ When in an Emacs Regression Test (ERT) results buffer:
 @cindex kill and yank
 @cindex yanking
 @cindex pasting a region
+@format
+@group
 There are also drag actions that work on delimited things.  If no
 region is selected, when the Action Mouse Key is dragged from a thing
 delimiter to another location, it copies the thing and yanks it at the

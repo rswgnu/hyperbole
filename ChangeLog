@@ -1,5 +1,11 @@
 2025-06-15  Bob Weiner  <rsw@gnu.org>
 
+* hyrolo.el (hyrolo-helm-org-rifle, hyrolo-helm-org-rifle-directory,
+             hyrolo-helm-org-rifle-directories): Remove all 'helm-org-rifle'
+    support from HyRolo in favor of 'consult', the much more widely used
+    package today.  'Org-rifle' has not updated to the recent 'helm'
+    development and bugs are showing, so drop it entirely.
+
 * hsys-consult.el (hsys-consult--grep-paths): Fix to ensure any env or lisp
     variables in paths are replaced so grep does not ignore them.
     (hsys-consult-flag): Add this customization, set to t by default, i.e.
