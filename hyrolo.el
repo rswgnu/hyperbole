@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     15-Jun-25 at 22:36:53 by Bob Weiner
+;; Last-Mod:     15-Jun-25 at 23:20:28 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2866,6 +2866,12 @@ entire subtree.  Return INCLUDE-SUB-ENTRIES flag value."
       (when (called-interactively-p 'interactive)
 	(message "No previous file/buffer location") (beep)))))
 
+(defun hyrolo-update-file-list (&optional path-list)
+  "Update cached HyRolo file list.
+Optionally, also set `hyrolo-file-list' to PATH-LIST when non-nil."
+  (interactive)
+  (hyrolo-set-file-list 'hyrolo-file-list (or path-list hyrolo-file-list)))
+
 ;;; ************************************************************************
 ;;; Private functions
 ;;; ************************************************************************
@@ -3796,7 +3802,7 @@ Used in the *HyRolo* display match buffer."
 ;;; ************************************************************************
 
 (when (and hyrolo-file-list (null hyrolo--expanded-file-list))
-  (hyrolo-set-file-list 'hyrolo-file-list hyrolo-file-list))
+  (hyrolo-update-file-list))
 
 (provide 'hyrolo)
 
