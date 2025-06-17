@@ -1,3 +1,8 @@
+2025-06-16  Bob Weiner  <rsw@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-tests--forward-same-level-all-file-types-level1):
+    Add 2 entries per file instead of one to better test entry movement keys.
+
 2025-06-15  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.py (highlight_matches): Fix so does not change the case of

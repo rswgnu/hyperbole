@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:      1-Jun-25 at 10:16:31 by Mats Lidell
+;; Last-Mod:     16-Jun-25 at 22:03:21 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -936,11 +936,11 @@ optional DEPTH the number of sub cells are created to that depth."
   "Verify forward and backward to first level headers and section lines.
 All files types are present."
   (let* ((org-file1 (make-temp-file "hypb" nil ".org"
-                                    (hyrolo-tests--gen-outline ?* "heading-org" 1 "body-org" 1)))
+                                    (hyrolo-tests--gen-outline ?* "heading-org" 2 "body-org" 1)))
          (md-file1 (make-temp-file "hypb" nil ".md"
-                                   (hyrolo-tests--gen-outline ?# "heading-md" 1 "body-md" 1)))
+                                   (hyrolo-tests--gen-outline ?# "heading-md" 2 "body-md" 1)))
          (otl-file1 (make-temp-file "hypb" nil ".otl"
-                                    (hyrolo-tests--gen-outline ?* "heading-otl" 1 "body-otl" 1)))
+                                    (hyrolo-tests--gen-outline ?* "heading-otl" 2 "body-otl" 1)))
          (kotl-file1 (hyrolo-tests--gen-kotl-outline "heading-kotl" "body-kotl"))
          (hyrolo-file-list (list org-file1 md-file1 otl-file1 kotl-file1)))
     (unwind-protect
@@ -949,14 +949,17 @@ All files types are present."
           (should (string= hyrolo-display-buffer (buffer-name)))
 
           ;; Move forward
-          (dolist (v '("===" "^\\* heading-org 1$" "===" "^# heading-md 1$"
-                       "===" "^\\* heading-otl 1$" "==="))
-            (should (and (looking-at-p v) (hact 'kbd-key "f"))))
-          (should (looking-at-p "^ +1\\. heading-kotl$")) ; When on last match do not move further
+          (dolist (v '("^\\* heading-org 1$" "^\\* heading-org 2$"
+		       "===" "^# heading-md 1$" "^# heading-md 2$"
+                       "===" "^\\* heading-otl 1$" "^\\* heading-otl 2$"
+		       "===" "^ +1\\. heading-kotl$"))
+            (should (and (hact 'kbd-key "f") (looking-at-p v))))
 
           ;; Move backward
-          (dolist (v '("===" "^\\* heading-otl 1$" "===" "^# heading-md 1$"
-                       "===" "^\\* heading-org 1$" "==="))
+          (dolist (v '("===" "^\\* heading-otl 2$" "^\\* heading-otl 1$"
+		       "===" "^# heading-md 2$" "^# heading-md 1$"
+                       "===" "^\\* heading-org 2$" "^\\* heading-org 1$"
+		       "==="))
             (should (and (hact 'kbd-key "b") (looking-at-p v))))
           (should (= 1 (line-number-at-pos))))
       (kill-buffer hyrolo-display-buffer)
