@@ -2,7 +2,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     4-Jul-24 at 09:57:18
-;; Last-Mod:     15-Jun-25 at 18:59:52 by Bob Weiner
+;; Last-Mod:     18-Jun-25 at 00:27:08 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -44,7 +44,8 @@
 (declare-function hsys-org-at-tags-p "hsys-org")
 
 (declare-function consult--grep "ext:consult")
-(declare-function consult--grep-make-builder"ext:consult")
+(declare-function consult--grep-make-builder "ext:consult")
+(declare-function consult--read "ext:consult")
 (declare-function consult--ripgrep-make-builder "ext:consult")
 (declare-function consult-grep "ext:consult")
 (declare-function consult-ripgrep "ext:consult")
@@ -53,9 +54,10 @@
 (declare-function org-roam-node-level "ext:org-roam")
 
 ;; Forward declarations
-(defvar consult-grep-args)
-(defvar consult-ripgrep-args)
 (defvar consult-async-split-style)
+(defvar consult-grep-args)
+(defvar consult-preview-key)
+(defvar consult-ripgrep-args)
 (defvar org-roam-db-autosync-mode)
 (defvar org-roam-directory)
 
