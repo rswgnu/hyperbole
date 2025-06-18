@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     27-May-25 at 21:28:51 by Bob Weiner
+;; Last-Mod:     18-Jun-25 at 00:36:26 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1978,7 +1978,7 @@ The line number is relative to the accessible portion of the narrowed
 buffer.  The argument BUFFER is the same as in the function `goto-line'."
   (declare (interactive-only forward-line))
   (interactive (goto-line-read-args t))
-  (with-suppressed-warnings ((interactive-only goto-line))
+  (with-suppressed-warnings ((interactive-only kotl-mode:goto-line))
     (kotl-mode:goto-line line buffer t)))
 
 (defun kotl-mode:head-cell ()

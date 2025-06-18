@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     15-Jun-25 at 23:20:28 by Bob Weiner
+;; Last-Mod:     18-Jun-25 at 00:33:04 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -736,11 +736,11 @@ matches."
 Return count of matches.
 
 To a maximum of optional prefix arg MAX-MATCHES, in file(s) from optional
-HYROLO-FILES-OR-BUFS or `hyrolo-file-list'.  Default is to find all matching entries.
-Each entry is displayed with all of its sub-entries.  Optional COUNT-ONLY
-non-nil skips retrieval of matching entries.  Optional HEADLINE-ONLY searches
-only the first line of entries, not the full text.  Optional NO-DISPLAY non-nil
-retrieves entries but does not display them.
+HYROLO-FILES-OR-BUFS or `hyrolo-file-list'.  Default is to find all matching
+entries.  Each entry is displayed with all of its sub-entries.  Optional
+COUNT-ONLY non-nil skips retrieval of matching entries.  Optional HEADLINE-ONLY
+searches only the first line of entries, not the full text.  Optional
+NO-DISPLAY non-nil retrieves entries but does not display them.
 
 Nil value of MAX-MATCHES means find all entries that match, t value means find
 all matching entries but omit file headers, negative values mean find up to the
@@ -3013,7 +3013,7 @@ a default of MM/DD/YYYY."
 
 (defun hyrolo-grep-input (read-function prompt &optional path-list)
   "Use `consult-grep' if available or READ-FUNCTION with PROMPT.
-Grep over optional 'path-list' or `hyrolo-file-list', which may
+Grep over optional `path-list' or `hyrolo-file-list', which may
 contain wildcards.  Return the input read, to be fed to a HyRolo
 grep call."
   (if (and (fboundp 'consult-grep)
