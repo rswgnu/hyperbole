@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     20-Apr-25 at 15:15:12 by Bob Weiner
+;; Last-Mod:     21-Jun-25 at 13:26:46 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -19,6 +19,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
+(require 'cl-macs)  ;; For `cl-do*'
 (require 'hversion)
 (require 'hargs)
 ;; Avoid any potential library name conflict by giving the load directory.
@@ -49,15 +50,25 @@
 ;;; Public variables
 ;;; ************************************************************************
 
+(defcustom hui:ebut-prompt-for-action nil
+  "*Non-nil prompts for a button-specific action on explicit button creation."
+  :type 'boolean
+  :group 'hyperbole-buttons)
+
 (defcustom hui:hbut-delete-confirm-flag t
   "*Non-nil means prompt before interactively deleting explicit buttons."
   :type 'boolean
   :group 'hyperbole-buttons)
 
-(defcustom hui:ebut-prompt-for-action nil
-  "*Non-nil prompts for a button-specific action on explicit button creation."
-  :type 'boolean
-  :group 'hyperbole-buttons)
+(defcustom hui:selectable-thing-priority-list '(uuid email filename symbol word)
+   "List of priority ordered symbols recognized by `thing-at-point'.
+Either a 'url matches or the first match from this list is used when
+`hui:non-delimited-selectable-thing-and-bounds' is called during region
+copy and kills.  Set this list to nil to disable both delimited and
+non-delimited thing recognition in copy and kill commands when
+`hyperbole-mode' is enabled."
+  :type '(list symbol)
+  :group 'hyperbole)
 
 ;;; ************************************************************************
 ;;; Private variables
@@ -76,7 +87,7 @@ At other times, value must be nil.")
 
 ;; Derived from copy-to-register of "register.el"
 ;;;###autoload
-(defun hui-copy-to-register (register start end &optional delete-flag region-flag)
+(defun hui:copy-to-register (register start end &optional delete-flag region-flag)
   "Copy region or thing into REGISTER.  With prefix arg, delete as well.
 Called from program, takes five args: REGISTER, START, END, DELETE-FLAG,
 and REGION-FLAG.  START and END are buffer positions indicating what to copy.
@@ -109,10 +120,11 @@ point; see `hui:delimited-selectable-thing'."
                        ((and (called-interactively-p 'interactive)
 			     transient-mark-mode
 			     (not (use-region-p))
-			     (prog1 (setq thing-and-bounds (hui:delimited-selectable-thing-and-bounds)
-					  start (nth 1 thing-and-bounds)
-					  end   (nth 2 thing-and-bounds)
-					  thing (nth 0 thing-and-bounds))
+			     (prog1 (setq thing-and-bounds
+					  (hui:selectable-thing-and-bounds)
+					  thing (nth 1 thing-and-bounds)
+					  start (nth 2 thing-and-bounds)
+					  end   (nth 3 thing-and-bounds))
 			       (when (and delete-flag start end)
 				 (delete-region start end))))
 			thing)
@@ -126,16 +138,17 @@ point; see `hui:delimited-selectable-thing'."
       (setq deactivate-mark t)
       (cond (delete-flag)
 	    ((called-interactively-p 'interactive)
-	     (if thing
-		 (message "Saved selectable thing: %s" thing)
-	       (indicate-copied-region)))))))
+	     (cond (thing
+		    (message "Saved selectable thing: %s" thing))
+		   ((mark t)
+		    (indicate-copied-region))))))))
 
 ;; In "hyperbole.el", use this to override the {C-w} command from
 ;; either "completion.el" or "simple.el" when hyperbole-mode is active
 ;; to allow killing kcell references, active regions and delimited
 ;; areas (like sexpressions).
 ;;;###autoload
-(defun hui-kill-region (beg end &optional region interactive-flag)
+(defun hui:kill-region (beg end &optional region interactive-flag)
   "Kill (\"cut\") between point and mark.
 The text is deleted but saved in the kill ring.
 The command \\[yank] can retrieve it from there.
@@ -153,37 +166,34 @@ Patched to remove the most recent completion."
   ;; calling `kill-append'.
   (interactive (list (when mark-active (mark))
 		     (when mark-active (point))
-		     'region (prefix-numeric-value current-prefix-arg)))
-  (cond ((and transient-mark-mode
-              (or (use-region-p)
-	          (not interactive-flag)))
-	 (unless (and beg end)
-	   (setq beg (region-beginning)
-		 end (region-end))))
-	((and transient-mark-mode
-	      (let* ((major-mode 'fundamental-mode)
-		     ;; Setting the major mode prevents hui-select from
-		     ;; suppressing use of `hui-select-syntax-table'
-		     ;; if in one of `hui-select-ignore-quoted-sexp-modes'.
-		     (sel-func (hui-select-at-delimited-thing-p))
-		     beg-end)
-		(when sel-func
-		  (setq beg-end (funcall sel-func (point))
-			beg (car beg-end)
-			end (cdr beg-end)
-			region nil)
-		  t))))
-	(interactive-flag (setq beg (mark)
-				end (point))))
+		     'region t))
+  (when transient-mark-mode
+    (cond ((or (use-region-p)
+	       (not interactive-flag))
+	   (unless (and beg end)
+	     (setq beg (region-beginning)
+		   end (region-end))))
+	  ;; Setting the major mode prevents hui-select from
+	  ;; suppressing use of `hui-select-syntax-table'
+	  ;; if in one of `hui-select-ignore-quoted-sexp-modes'.
+	  ((let* ((major-mode 'fundamental-mode)
+		  thing-and-bounds)
+	     (when (setq thing-and-bounds (hui:selectable-thing-and-bounds))
+	       (setq beg (nth 2 thing-and-bounds)
+		     end (nth 3 thing-and-bounds)
+		     region nil)
+	       t)))))
 
   ;; If there is no mark, this call should trigger an error
-  (hui:kill-region beg end region))
+  (if (and (null beg) (null end) (eq (mark t) (point)))
+      (hui:kill-region-internal (mark t) (point) region)
+    (hui:kill-region-internal beg end region)))
 
 ;; In "hyperbole.el", use this to override the {M-w} command from
 ;; "simple.el" when hyperbole-mode is active to allow copying kcell
 ;; references, active regions and delimited areas (like sexpressions).
 ;;;###autoload
-(defun hui-kill-ring-save (beg end &optional region)
+(defun hui:kill-ring-save (beg end &optional region)
   "Save the active region as if killed, but don't kill it.
 In Transient Mark mode, deactivate the mark.
 If `interprogram-cut-function' is non-nil, also save the text for a window
@@ -225,22 +235,29 @@ visual feedback indicating the extent of the region being copied."
 		  end (point)))
 	  (hui:validate-region beg end region)
 	  (copy-region-as-kill beg end region))
-      (setq thing (hui:delimited-selectable-thing))
-      (if (stringp thing)
-	  (progn (kill-new thing)
-		 (setq deactivate-mark t))
-	(when (and (called-interactively-p 'interactive)
-		   (or (null beg) (null end)))
-	  (setq beg (mark)
-		end (point)))
-	(hui:validate-region beg end region)
-	(copy-region-as-kill beg end region)))
+      (if (derived-mode-p 'kotl-mode)
+	  (kotl-mode:copy-region-as-kill beg end)
+	;; Setting the major mode prevents hui-select from
+	;; suppressing use of `hui-select-syntax-table'
+	;; if in one of `hui-select-ignore-quoted-sexp-modes'.
+	(let ((major-mode 'fundamental-mode))
+	  (setq thing (nth 1 (hui:selectable-thing-and-bounds))))
+	(if (stringp thing)
+	    (progn (kill-new thing)
+		   (setq deactivate-mark t))
+	  (when (and (called-interactively-p 'interactive)
+		     (or (null beg) (null end)))
+	    (setq beg (mark)
+		  end (point)))
+	  (hui:validate-region beg end region)
+	  (copy-region-as-kill beg end region))))
     ;; This use of `called-interactively-p' is correct because the
     ;; code it controls just gives the user visual feedback.
     (when (called-interactively-p 'interactive)
-      (if thing
-	  (message "Saved selectable thing: %s" thing)
-	(indicate-copied-region)))))
+      (cond (thing
+	     (message "Saved selectable thing: %s" thing))
+	    ((mark t)
+	     (indicate-copied-region))))))
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -307,6 +324,7 @@ binding."
 
 (defun hui:delimited-selectable-thing ()
   "Return any delimited selectable thing at point as a string or nil if none.
+Return nil if `hui:selectable-thing-priority-list' is nil.
 
 With point:
   in a Koutline klink, copy the klink;
@@ -315,41 +333,115 @@ With point:
   on a Hyperbole button, copy the text of the button excluding delimiters;
   at the start of a paired delimiter,
     copy the text including the delimiters."
-  (cond ((klink:absolute (klink:at-p)))
-	((derived-mode-p 'kotl-mode)
-	 (kcell-view:absolute-reference))
-	((and (not (hyperb:stack-frame '(hui-kill-ring-save hbut:at-p ibut:at-p ebut:at-p)))
-	      (let* ((hbut (hbut:at-p))
-		     (start (when hbut (hattr:get hbut 'lbl-start)))
-		     (end (when hbut (hattr:get hbut 'lbl-end))))
-		(and start end
-		     (buffer-substring-no-properties start end)))))
-	((hui-select-at-delimited-thing-p)
-	 (hui-select-get-thing))))
+  (when hui:selectable-thing-priority-list
+    (cond ((klink:absolute (klink:at-p)))
+	  ((derived-mode-p 'kotl-mode)
+	   (kcell-view:absolute-reference))
+	  ((and (not (hyperb:stack-frame '(hui:kill-ring-save hbut:at-p ibut:at-p ebut:at-p)))
+		(let* ((hbut (hbut:at-p))
+		       (start (when hbut (hattr:get hbut 'lbl-start)))
+		       (end (when hbut (hattr:get hbut 'lbl-end))))
+		  (and start end
+		       (buffer-substring-no-properties start end)))))
+	  ((hui-select-at-delimited-thing-p)
+	   (hui-select-get-thing)))))
 
 (defun hui:delimited-selectable-thing-and-bounds ()
   "Return a list of any delimited selectable thing at point.
-The list is (<thing-string> <thing-start> <thing-end>)
-or nil if none.  Start and end may be nil if the thing
-was generated rather than extracted from a region."
-  (let (thing-and-bounds thing start end)
-    (cond ((setq thing-and-bounds (klink:at-p))
-	   (when thing-and-bounds
-	     (setcar thing-and-bounds (klink:absolute thing-and-bounds))
-	     thing-and-bounds))
-	  ((derived-mode-p 'kotl-mode)
-	   (list (kcell-view:absolute-reference)))
-	  ((and (not (hyperb:stack-frame '(hui-kill-ring-save hbut:at-p ibut:at-p ebut:at-p)))
-		(setq thing (hbut:at-p)
-		      start (when thing (hattr:get thing 'lbl-start))
-		      end (when thing (hattr:get thing 'lbl-end))))
-	   (and start end
-		(list (buffer-substring-no-properties start end) start end)))
-	  ((hui-select-at-delimited-thing-p)
-	   (when (setq thing-and-bounds (hui-select-get-region-boundaries))
-	     (list (buffer-substring-no-properties (car thing-and-bounds) (cdr thing-and-bounds))
-		   (car thing-and-bounds)
-		   (cdr thing-and-bounds)))))))
+The list returned is (<thing-type> <thing-string> <thing-start> <thing-end>)
+or nil if none or if `hui:selectable-thing-priority-list' is nil.
+Start and end may be nil if the thing was generated rather than
+extracted from a region."
+  (when (and hui:selectable-thing-priority-list
+	     (not (looking-at "[ \t\n\r\f]")))
+    (let (thing-and-bounds thing start end)
+      (cond ((setq thing-and-bounds (klink:at-p))
+	     (when thing-and-bounds
+	       (setcar thing-and-bounds (klink:absolute thing-and-bounds))
+	       (cons 'klink thing-and-bounds)))
+	    ((hui-select-at-delimited-thing-p)
+	     (when (setq thing-and-bounds (hui-select-get-region-boundaries))
+	       (list hui-select-previous
+		     (buffer-substring-no-properties
+		      (car thing-and-bounds) (cdr thing-and-bounds))
+		     (car thing-and-bounds)
+		     (cdr thing-and-bounds))))
+	    ((and (not (hyperb:stack-frame '(hui:kill-ring-save hbut:at-p ibut:at-p ebut:at-p)))
+		  (setq thing (hbut:at-p)
+			start (when thing (hattr:get thing 'lbl-start))
+			end (when thing (hattr:get thing 'lbl-end))))
+	     (and start end
+		  (list (hattr:get thing 'categ)
+			(buffer-substring-no-properties start end) start end)))))))
+
+(defun hui:non-delimited-selectable-thing-and-bounds ()
+  "Return a list of properties for any non-delimited thing at point.
+The list returned is (<thing-type> <thing-string> <thing-start> <thing-end>)
+or nil if none.
+
+The prioritized types of things tested is 'url plus the list of types
+in `hui:selectable-thing-priority-list' if that variable is non-nil."
+  (when (and hui:selectable-thing-priority-list
+	     (not (looking-at "[ \t\n\r\f]")))
+    (with-syntax-table
+	(if (memq major-mode hui-select-ignore-quoted-sexp-modes)
+	    (syntax-table)
+	  hui-select-syntax-table)
+      (let* ((types hui:selectable-thing-priority-list)
+	     thing-and-bounds type thing start-end start end)
+	;; Can't use thing-at-point here since it won't recognize URLs
+	;; without a protocol prefix, e.g. www.google.com.
+	(when types
+	  (setq thing-and-bounds (hpath:www-at-p t)))
+	(if thing-and-bounds
+	    (cons 'url thing-and-bounds)
+	  (while (and types (not thing))
+	    (setq type (car types)
+		  types (cdr types)
+		  thing (thing-at-point type t))
+	    (when thing
+	      (cond ((eq type 'filename)
+		     (unless (file-exists-p thing)
+		       (setq thing nil)))
+		    ((eq type 'email)
+		     (unless (string-match "@.+\\." thing)
+		       (setq thing nil)))))
+	    (when thing
+	      (setq start-end (bounds-of-thing-at-point type)
+		    start (car start-end)
+		    end   (cdr start-end))))
+	  (when thing (list type thing start end)))))))
+
+(defun hui:selectable-thing-and-bounds ()
+  "Return a list of any selectable thing at point.
+The list returned is (<thing-type> <thing-string> <thing-start> <thing-end>)
+or nil if none or if `hui:selectable-thing-priority-list' is nil.
+Start and end may be nil if the thing was generated rather than
+extracted from a region."
+  (let* (thing-and-bounds type thing start end)
+    (when (setq thing-and-bounds
+		(or (hui:delimited-selectable-thing-and-bounds)
+		    (hui:non-delimited-selectable-thing-and-bounds)))
+      (setq type (nth 0 thing-and-bounds)
+	    thing (nth 1 thing-and-bounds)
+	    start (nth 2 thing-and-bounds)
+	    end (nth 3 thing-and-bounds))
+      (unless
+	  ;; Already enclosed in delimiters
+	  (or (and (= (char-syntax (char-after start)) ?\()
+		   (= (char-syntax (char-before end)) ?\)))
+	      (and (= (char-syntax (char-after start)) ?\")
+		   (= (char-syntax (char-before end)) ?\")))
+	    ;; Surrounded by delimiters to add to the thing
+	(when (or (and (= (if (char-before start) (char-syntax (char-before start)) 0) ?\()
+		       (= (if (char-after end) (char-syntax (char-after end)) 0) ?\)))
+		  (and (= (if (char-before start) (char-syntax (char-before start)) 0) ?\")
+		       (= (if (char-after end) (char-syntax (char-after end)) 0) ?\")))
+	  ;; Include delimiters in return value
+	  (setq start (1- start)
+		end (1+ end)
+		thing (buffer-substring-no-properties start end)))))
+	(when thing (list type thing start end))))
 
 (defun hui:ebut-act (&optional but)
   "Activate optional explicit button symbol BUT in current buffer.
@@ -1881,7 +1973,7 @@ string arguments."
 	  (ibut:operate))
       (ibut:operate))))
 
-(defun hui:kill-region (beg end &optional region)
+(defun hui:kill-region-internal (beg end &optional region)
   "Invoke context-sensitive kill-region command over BEG and END.
 Third optional arg, REGION, when non-nil is sent to any call of
 `kill-region' and used to invoke the `region-extract-function'

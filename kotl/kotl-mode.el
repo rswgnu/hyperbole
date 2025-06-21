@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     18-Jun-25 at 00:36:26 by Mats Lidell
+;; Last-Mod:     20-Jun-25 at 20:08:20 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -740,17 +740,17 @@ With optional prefix argument TOP-P non-nil, refill all cells in the outline."
   (let ((kill-whole-line t))
     (kotl-mode:kill-line arg)))
 
-(defun kotl-mode:kill-region (start end &optional copy-p)
+(defun kotl-mode:kill-region (start end &optional copy-flag)
   "Kill region between START and END within a single kcell.
-With optional COPY-P equal to t, copy region to kill ring but does not
-kill it.  With COPY-P any other non-nil value, return region as a
+With optional COPY-FLAG equal to t, copy region to kill ring but does not
+kill it.  With COPY-FLAG any other non-nil value, return region as a
 string without affecting kill ring.
 
 If called interactively, `transient-mark-mode' is non-nil, and
 there is no active region, copy any delimited selectable thing at
 point; see `hui:delimited-selectable-thing'.
 
-If the buffer is read-only and COPY-P is nil, the region will not be deleted
+If the buffer is read-only and COPY-FLAG is nil, the region will not be deleted
 but it will be copied to the kill ring and then an error will be signaled.
 
 If a completion is active, this aborts the completion only."
@@ -758,13 +758,13 @@ If a completion is active, this aborts the completion only."
    (progn (barf-if-buffer-read-only)
 	  (list (when mark-active (region-beginning))
 		(when mark-active (region-end)))))
-  (let ((read-only (and (not copy-p) buffer-read-only))
-	(kill-commands '(kill-region kotl-mode:completion-kill-region
+  (let ((read-only (and (not copy-flag) buffer-read-only))
+	(kill-commands '(kill-region kill-ring-save kotl-mode:completion-kill-region
                          kotl-mode:kill-region kotl-mode:copy-region-as-kill))
 	thing-and-bounds
 	thing)
     (when read-only
-      (setq copy-p t))
+      (setq copy-flag t))
     (prog1 (cond
 	    ((eq last-command 'complete)
 	     (delete-region (point) cmpl-last-insert-location)
@@ -774,14 +774,14 @@ If a completion is active, this aborts the completion only."
 	    ((and (memq this-command kill-commands)
 		  transient-mark-mode
 		  (not (use-region-p))
-		  (setq thing-and-bounds (hui:delimited-selectable-thing-and-bounds)
-			start (nth 1 thing-and-bounds)
-			end   (nth 2 thing-and-bounds)
-			thing (nth 0 thing-and-bounds)))
-	     (if (and copy-p (not (eq copy-p t)))
+		  (setq thing-and-bounds (hui:selectable-thing-and-bounds)
+			thing (nth 1 thing-and-bounds)
+			start (nth 2 thing-and-bounds)
+			end   (nth 3 thing-and-bounds)))
+	     (if (and copy-flag (not (eq copy-flag t)))
 		 ;; Return thing as a string
 		 thing
-	       (kotl-mode:kill-or-copy-region start end copy-p thing)))
+	       (kotl-mode:kill-or-copy-region start end copy-flag thing)))
 	    ;; If no thing to process, copy region whether active or not
 	    ((and (number-or-marker-p start)
 		  (number-or-marker-p end)
@@ -789,14 +789,15 @@ If a completion is active, this aborts the completion only."
 		      (kcell-view:cell end)))
 	     (save-excursion
 	       (goto-char start)
-	       (kotl-mode:kill-or-copy-region start end copy-p)))
+	       (kotl-mode:kill-or-copy-region start end copy-flag)))
 	    (t (error "(kotl-mode:kill-region): Bad region or not within a single Koutline cell")))
-      (when (and copy-p (memq this-command kill-commands))
-	(if thing
-	    (message "Saved selectable thing: %s" thing)
-	  (indicate-copied-region))))))
+      (when (and copy-flag (memq this-command kill-commands))
+	(cond (thing
+	       (message "Saved selectable thing: %s" thing))
+	      ((mark t)
+	       (indicate-copied-region)))))))
 
-(defun kotl-mode:kill-or-copy-region (start end copy-p &optional kill-str)
+(defun kotl-mode:kill-or-copy-region (start end copy-flag &optional kill-str)
   (when (and start end)
     (let ((indent (kcell-view:indent))
 	  subst-str)
@@ -808,7 +809,7 @@ If a completion is active, this aborts the completion only."
 	    kill-str
 	    (replace-regexp-in-string
 	     subst-str "\\1" (buffer-substring start end)))
-      (unless copy-p
+      (unless copy-flag
 	;; If last char of region is a newline, then delete indent in
 	;; following line.
 	(delete-region
@@ -816,7 +817,7 @@ If a completion is active, this aborts the completion only."
 				'(?\n ?\r))
 			  indent
 			0))))))
-  (cond ((and copy-p (not (eq copy-p t)))
+  (cond ((and copy-flag (not (eq copy-flag t)))
 	 ;; Return killed region as a string.
 	 kill-str)
 	((not (and start end))
@@ -826,7 +827,7 @@ If a completion is active, this aborts the completion only."
 	     (kill-new kill-str))
 	   (setq this-command 'kill-region)
 	   (setq deactivate-mark t)
-	   (when (and (not copy-p) buffer-read-only)
+	   (when (and (not copy-flag) buffer-read-only)
 	     (barf-if-buffer-read-only))
 	   nil)))
 
@@ -1182,11 +1183,11 @@ Leave point at the start of the root cell of the new tree."
    kotl-kview))
 
 (defun kotl-mode:move-after (from-cell-ref to-cell-ref child-p
-			     &optional copy-p fill-p)
+			     &optional copy-flag fill-p)
   "Move tree rooted at FROM-CELL-REF to follow tree rooted at TO-CELL-REF.
 If prefix arg CHILD-P is non-nil, make FROM-CELL-REF the first child of
 TO-CELL-REF, otherwise make it the sibling following TO-CELL-REF.
-With optional COPY-P, copies tree rather than moving it.
+With optional COPY-FLAG, copies tree rather than moving it.
 
 Leave point at original location but return the tree's new start point."
   (interactive
@@ -1199,7 +1200,7 @@ Leave point at original location but return the tree's new start point."
 		(if current-prefix-arg "child" "sibling")))
 	  (list label label))
       (list current-prefix-arg))))
-  (if (and (not copy-p) (equal from-cell-ref to-cell-ref))
+  (if (and (not copy-flag) (equal from-cell-ref to-cell-ref))
       (error "(kotl-mode:move-after): Can't move tree after itself"))
   (let* ((lbl-sep-len (kview:label-separator-length kotl-kview))
 	 (move-to-point (set-marker
@@ -1219,7 +1220,7 @@ Leave point at original location but return the tree's new start point."
     ;;
     ;; We can't move a tree to a point within itself, so if that is the case
     ;; and this is not a copy operation, signal an error.
-    (when (and (not copy-p) (>= move-to-point start) (<= move-to-point end))
+    (when (and (not copy-flag) (>= move-to-point start) (<= move-to-point end))
       (error "(kotl-mode:move-after): Can't move tree <%s> to within itself"
 	     from-label))
     ;;
@@ -1248,7 +1249,7 @@ Leave point at original location but return the tree's new start point."
     ;;
     ;; Insert tree-to-move at new location
     ;;
-    (kview:move start end (point) from-indent to-indent copy-p
+    (kview:move start end (point) from-indent to-indent copy-flag
 		(or fill-p kotl-mode:refill-flag))
     ;;
     ;; Ensure that point is within editable region of cell with to-label.
@@ -1258,7 +1259,7 @@ Leave point at original location but return the tree's new start point."
     ;; Update current cell and new siblings' labels within view.
     (klabel-type:update-labels to-label)
     ;;
-    (unless copy-p
+    (unless copy-flag
       ;;
       ;; Move to sibling of tree-to-move within view and update labels within
       ;; view of tree-to-move's original siblings.
@@ -1279,11 +1280,11 @@ Leave point at original location but return the tree's new start point."
     new-tree-start))
 
 (defun kotl-mode:move-before (from-cell-ref to-cell-ref parent-p
-			      &optional copy-p fill-p)
+			      &optional copy-flag fill-p)
   "Move tree rooted at FROM-CELL-REF to precede tree rooted at TO-CELL-REF.
 If prefix arg PARENT-P is non-nil, make FROM-CELL-REF the first child of
 TO-CELL-REF's parent, otherwise make it the preceding sibling of TO-CELL-REF.
-With optional COPY-P, copies tree rather than moving it.
+With optional COPY-FLAG, copies tree rather than moving it.
 
 Leave point at original location but return the tree's new start point."
   (interactive
@@ -1296,7 +1297,7 @@ Leave point at original location but return the tree's new start point."
 		       "preceding sibling")))
 	  (list label label))
       (list current-prefix-arg))))
-  (when (and (not copy-p) (equal from-cell-ref to-cell-ref))
+  (when (and (not copy-flag) (equal from-cell-ref to-cell-ref))
     (error "(kotl-mode:move-before): Can't move tree before itself"))
   (let* ((lbl-sep-len (kview:label-separator-length kotl-kview))
 	 (move-to-point (set-marker
@@ -1315,7 +1316,7 @@ Leave point at original location but return the tree's new start point."
     ;;
     ;; We can't move a tree to a point within itself, so if that is the case
     ;; and this is not a copy operation, signal an error.
-    (when (and (not copy-p) (>= move-to-point start) (<= move-to-point end))
+    (when (and (not copy-flag) (>= move-to-point start) (<= move-to-point end))
       (error "(kotl-mode:move-before): Can't move tree <%s> to within itself"
 	     from-label))
     ;;
@@ -1342,7 +1343,7 @@ Leave point at original location but return the tree's new start point."
     ;;
     ;; Insert tree-to-move at new location
     ;;
-    (kview:move start end (point) from-indent to-indent copy-p
+    (kview:move start end (point) from-indent to-indent copy-flag
 		(or fill-p kotl-mode:refill-flag))
     ;;
     ;; Ensure that point is within editable region of root of tree just moved.
@@ -1352,7 +1353,7 @@ Leave point at original location but return the tree's new start point."
     ;; Update current cell and new siblings' labels within view.
     (klabel-type:update-labels to-label)
     ;;
-    (unless copy-p
+    (unless copy-flag
       ;;
       ;; Move to sibling of tree-to-move within view and update labels within
       ;; view of tree-to-move's original siblings.
