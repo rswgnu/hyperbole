@@ -1,3 +1,17 @@
+2025-06-21  Bob Weiner  <rsw@gnu.org>
+
+* kotl/klink.el (klink:create): Rewrite to set missing klink yank handler on
+    any newly created klink.
+                (klink:yank-handler): Fix by making first group optional rather
+    than what is in the group, so it matches to klinks like, <#1>.
+                (klink:set-yank-handler): Add full path 'file-name' property
+    for klink and retrieve it in klink:yank-handler if not a part of the klink
+    string text.  Prevent klink yank-handler text properties from being
+    sticky/inherited by neighboring text by adding to
+    'text-property-default-nonsticky'.
+                (klink:create-link): Add as an autoload to return a klink string.
+    Use in 'klink:create' which inserts the link into the current buffer.
+
 2025-06-20  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kotl-mode.el (kotl-mode:kill-region):

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 12:15:16
-;; Last-Mod:     18-Aug-24 at 09:42:48 by Mats Lidell
+;; Last-Mod:     21-Jun-25 at 13:15:56 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -136,7 +136,21 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
      (save-excursion
        (hargs:iform-read
 	'(interactive "*+LInsert link to <[file]#cell-id[|vspecs]>: ")))))
-  (barf-if-buffer-read-only)
+  (insert (klink:create-link reference)))
+
+;;;###autoload
+(defun klink:create-link (reference)
+  "Return a klink implicit link string to REFERENCE.
+REFERENCE should be a cell-ref or a string containing \"filename#cell-ref\".
+See documentation for `kcell:ref-to-id' for valid cell-ref formats."
+  (interactive
+   (progn
+     ;; This `default-directory' setting is referenced in "hargs.el" for argument getting.
+     (hattr:set 'hbut:current 'dir default-directory)
+     (save-excursion
+       (hargs:iform-read
+	'(interactive "*+LLink to <[file]#cell-id[|vspecs]>: ")))))
+
   ;; Reference generally is a string.  It may be a list as a string, e.g.
   ;; "(\"file\" \"cell\")", in which case, we remove the unneeded internal
   ;; double quotes and then parse it with pattern matching.
@@ -146,7 +160,7 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
   ;; This `default-directory' setting is referenced in "hargs.el" for
   ;; getting arguments.
   (hattr:set 'hbut:current 'dir default-directory)
-  (let (file-ref cell-ref)
+  (let (file-ref cell-ref klink)
     (setq reference (klink:parse reference)
 	  file-ref  (car reference)
 	  cell-ref  (nth 1 reference))
@@ -154,17 +168,18 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
     (when (and file-ref (equal (hypb:buffer-file-name)
 			       (expand-file-name file-ref default-directory)))
       (setq file-ref nil))
-    (cond (file-ref
-	   (setq file-ref (hpath:relative-to file-ref))
-	   ;; Remove "./" prefix, if any.
-	   (when (string-match "^\\./" file-ref)
-	     (setq file-ref (substring file-ref (match-end 0))))
-	   (insert "<" file-ref)
-	   (when cell-ref
-	     (insert "#" cell-ref))
-	   (insert ">"))
-	  (cell-ref (insert "<#" cell-ref ">"))
-	  (t  (error "(klink:create) Invalid reference, `%s'" reference)))))
+    (setq klink (cond (file-ref
+		       (setq file-ref (hpath:relative-to file-ref))
+		       ;; Remove "./" prefix, if any.
+		       (when (string-match "^\\./" file-ref)
+			 (setq file-ref (substring file-ref (match-end 0))))
+		       (concat "<" file-ref
+			       (when cell-ref
+				 (concat "#" cell-ref))
+			       ">"))
+		      (cell-ref (concat "<#" cell-ref ">"))
+		      (t  (error "(klink:create-link) Invalid reference, `%s'" reference))))
+    (klink:set-yank-handler klink)))
 
 ;;;###autoload
 (defun klink:at-p ()
@@ -234,12 +249,20 @@ link-end-position, (including delimiters)."
 		     (string-match "\\`[a-zA-Z!/]" referent))))
       label-and-pos)))
 
+;; Prevent klink yank-handler text properties from being
+;; sticky/inherited by neighboring text.
+(cl-pushnew '(file-name . t) text-property-default-nonsticky)
+(cl-pushnew '(yank-handler . t) text-property-default-nonsticky)
+(cl-pushnew '(yank-excluded-properties . t) text-property-default-nonsticky)
+
 (defun klink:set-yank-handler (klink)
   "Add yank-handler to KLINK and return the modified KLINK.
 Link is made relative when yanked into the same koutline or the
 same directory."
-  (add-text-properties 0 (length klink)
-		       (list 'yank-handler '(klink:yank-handler)
+  (add-text-properties
+   0 (length klink)
+		       (list 'file-name buffer-file-name
+			     'yank-handler '(klink:yank-handler)
 			     'yank-excluded-properties (cons 'yank-handler (get-text-property 0 'yank-excluded-properties klink)))
 		       klink)
   klink)
@@ -371,18 +394,23 @@ Assume point is in klink referent buffer, where the klink points."
 	      (klink:replace-label klink link-buf start new-label)))))
 
 (defun klink:yank-handler (klink)
-  (if (string-match "<\\([^,]+?\\)[#,][ \t]*\\(.+\\)" klink)
-      (let* ((file (match-string 1 klink))
+  (if (string-match "<\\([^,]+\\)?[#,][ \t]*\\(.+\\)" klink)
+      (let* ((file (or (match-string 1 klink)
+		       (get-text-property 0 'file-name klink)))
 	     (rest (match-string 2 klink))
-	     (dir (file-name-directory file)))
-	(cond ((equal file (hypb:buffer-file-name))
+	     (dir (file-name-directory file))
+	     (buf-file (hypb:buffer-file-name)))
+	(cond ((equal file buf-file)
 	       ;; Remove the klink filename since yanking into the
 	       ;; same file
 	       (insert (format "<#%s" rest)))
-	      ((and (hypb:buffer-file-name) (equal dir (file-name-directory (hypb:buffer-file-name))))
+	      ((and buf-file (equal dir (file-name-directory buf-file)))
 	       ;; Use filename without dir since yanking into same directory
 	       (insert (format "<%s#%s" (file-name-nondirectory file) rest)))
-	      (t (insert klink))))
+	      (t (if (or (not file)
+			 (and file (string-prefix-p file (substring klink 1))))
+		     (insert klink)
+		   (insert (format "<%s#%s" file rest))))))
     (insert klink)))
 				 
 (provide 'klink)
