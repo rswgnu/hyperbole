@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     10-May-25 at 00:19:45 by Mats Lidell
+;; Last-Mod:     20-Jun-25 at 15:22:16 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -627,6 +627,40 @@ Throw one of:
  - a displayable item at point or
  - the current buffer.
 With optional prefix arg THROW-REGION-FLAG, throw the current region
+even if not active.  After the throw, the RELEASE-WINDOW becomes the
+selected window."
+  (interactive (list (ace-window nil) current-prefix-arg))
+  (let ((depress-frame (selected-frame))
+	(display-delay (if (boundp 'temp-display-delay)
+			   temp-display-delay
+			 0.5)))
+    ;; Throw either the region or the item at point and keep selected-window
+    (let ((action-key-depress-window (selected-window))
+	  (action-key-release-window release-window)
+	  (action-key-depress-args))
+      (unless (hkey-insert-region action-key-depress-window release-window throw-region-flag display-delay)
+	(if (cadr (assq major-mode hmouse-drag-item-mode-forms))
+	    (hmouse-item-to-window)
+	  (set-window-buffer release-window (current-buffer))))
+      (unless (eq depress-frame (window-frame release-window))
+	;; Force redisplay or item buffer won't be displayed here.
+	(redisplay t)
+	;; Show the frame thrown to before it is covered when
+	;; input-focus is returned to the depress-frame.
+	(raise-frame (window-frame release-window))
+	(select-frame-set-input-focus (window-frame release-window))
+	;; Don't use sit-for here because it can be interrupted early.
+	(sleep-for display-delay))
+      (select-window release-window))))
+
+;;;###autoload
+(defun hkey-throw-and-stay (release-window &optional throw-region-flag)
+  "Throw a thing to display in RELEASE-WINDOW.
+Throw one of:
+ - the active (highlighted) region,
+ - a displayable item at point or
+ - the current buffer.
+With optional prefix arg THROW-REGION-FLAG, throw the current region
 even if not active.
 The selected window does not change."
   (interactive (list (ace-window nil) current-prefix-arg))
@@ -798,7 +832,7 @@ Leave the end window selected."
 Throw either a displayable item at start window's point or its current
 buffer to the end window.  The selected window does not change."
   (interactive)
-  (hmouse-choose-windows #'hkey-throw))
+  (hmouse-choose-windows #'hkey-throw-and-stay))
 
 (defun hmouse-choose-link-and-referent-windows ()
   "Select and return a list of (link-button-window referent-window)."

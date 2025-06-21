@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     15-Jun-25 at 22:44:41 by Bob Weiner
+@c Last-Mod:     20-Jun-25 at 00:10:17 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed June 15, 2025.
+Printed June 20, 2025.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -9439,12 +9439,12 @@ binding.  @xref{Smart Key Thing Selection}, for more information.
 
 @cindex key binding, M-w
 @vindex mark-even-if-inactive
-@findex hui-kill-ring-save
+@findex hui:kill-ring-save
 @kitem M-w
 @cindex copying things to kill ring
 Delimited Thing, Koutline Cell Reference or Region Copy: While Hyperbole is
 active, it sets @code{mark-even-if-inactive} to @code{nil} and overrides
-@bkbd{M-w} with its own command, @code{hui-kill-ring-save}, which copies the
+@bkbd{M-w} with its own command, @code{hui:kill-ring-save}, which copies the
 region only when it is active/highlighted.  When there is no active region,
 @bkbd{M-w} does one of the following:
 
@@ -9461,7 +9461,7 @@ region only when it is active/highlighted.  When there is no active region,
 Delimited Thing, Koutline Cell Reference or Region Save to Register: This
 does the same thing as @bkbd{M-w} except it copies to an Emacs register
 given by a letter or number rather than the kill ring.  While Hyperbole is active,
-it overrides @bkbd{C-x r s} with its own command, @code{hui-copy-to-register}.
+it overrides @bkbd{C-x r s} with its own command, @code{hui:copy-to-register}.
 which copies the region only when it is active/highlighted.
 @end table
 

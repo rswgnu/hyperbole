@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Sep-92
-;; Last-Mod:     11-Nov-24 at 00:20:41 by Bob Weiner
+;; Last-Mod:     19-Jun-25 at 11:44:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -387,18 +387,18 @@ part of InfoDock and not a part of Hyperbole)."
 
 (defun hmouse-dired-readin-hook ()
   "Remove local `hpath:display-where' setting whenever re-read a Dired directory.
-See `hmouse-dired-item-dragged' for use."
+See the `hmouse-dired-display-here-mode' function for use."
   (hmouse-dired-display-here-mode 0))
 
 (define-minor-mode hmouse-dired-display-here-mode
   "Display item here on key press after Dired item drag.
 Once a Dired buffer item has been dragged, make next Action Key
-press on an item display it in the same Dired window.
+press on an item display it in the current Dired window.
 
 By default an Action Key press on a Dired item displays it in another
 window.   But once a Dired item is dragged to another window, the next
-Action Key press should display it in the Dired window so that the
-behavior matches that of Buffer Menu and allows for setting what is
+Action Key press should display it in the current Dired window so that
+the behavior matches that of Buffer Menu and allows for setting what is
 displayed in all windows on screen, including the Dired window.
 
 If the directory is re-read into the Dired buffer with {g}, then Action

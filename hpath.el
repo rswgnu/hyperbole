@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     15-Jun-25 at 12:03:03 by Bob Weiner
+;; Last-Mod:     20-Jun-25 at 09:41:06 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2399,7 +2399,7 @@ off otherwise."
 	     #'hpath:disable-find-file-urls)))
 
 (defun hpath:url-at-p ()
-  "Return an url that point immediately precedes or nil.
+  "Return a url with an initial protocol that point immediately precedes or nil.
 Url is a world-wide-web universal resource locator.
 See the documentation for `hpath:url-regexp' for `match-string' groupings."
   (if (or (looking-at hpath:url-regexp) (looking-at hpath:url-regexp2)
@@ -2410,8 +2410,9 @@ See the documentation for `hpath:url-regexp' for `match-string' groupings."
 	(buffer-substring-no-properties (match-beginning hpath:url-grpn) (point)))))
 
 (defun hpath:url-p (obj)
-  "Return t if OBJ is an url, else nil.
+  "Return t if OBJ is a url, else nil.
 Url is a world-wide-web universal resource locator.
+The url may lack a leading protocol; it will be inferred.
 See the documentation for `hpath:url-regexp' for match groupings to
 use with `string-match'."
   (and (stringp obj)
@@ -2422,6 +2423,7 @@ use with `string-match'."
 
 (defun hpath:www-at-p (&optional include-start-and-end-p)
   "Return a world-wide-web link reference that point is within or nil.
+The url may lack a leading protocol; it will be inferred.
 With optional INCLUDE-START-AND-END-P non-nil, returns list of:
   (link-string begin-position end-position)."
   (save-excursion
@@ -2437,7 +2439,8 @@ With optional INCLUDE-START-AND-END-P non-nil, returns list of:
 		 (point))))))
 
 (defun hpath:www-p (path)
-  "Return PATH iff PATH is a world-wide-web link reference, else nil."
+  "Return PATH iff PATH is a world-wide-web link reference, else nil.
+The PATH may lack a leading protocol; it will be inferred."
   (and (stringp path) (hpath:url-p path) path))
 
 ;;; ************************************************************************

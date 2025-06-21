@@ -1,3 +1,57 @@
+2025-06-20  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode:kill-region):
+  hui.el (hui:copy-to-register, hui:kill-ring-save): Test that a mark is set
+    in the buffer before calling 'indicate-copied-region' or it will error.
+
+* kotl/kotl-mode.el (kotl-mode:kill-region): Add 'kill-ring-save' to
+    'kill-commands'.
+
+* test/hui-tests.el (hui--kill-highlighted-region): Update to only error when
+    on whitespace.
+
+* hypb.el (hypb:in-string-p): Fix bug where point was on the end delimiter and
+    the search forward for it skips over it because it requires a non-backslash
+    character ahead of it.  Update doc to note that this returns nil if point
+    is on the closing quote(s).
+
+* hmouse-drv.el (hkey-throw): Change so selects the window thrown to.  Use new
+    'hkey-throw-and-stay' for old behavior.
+
+* hui-select.el (hui-select-get-region-boundaries): Set syntax-table so <> and {}
+    work as balanced pairs.
+                (hui-select-string-p):  Rewrite to use string start and end values
+    returned by (hypb:in-string-p nil t) and to use 'hargs:delimited' to simplify
+    the implementation.
+  hui.el (hui:delimited-selectable-thing): Replace call of 'hui-select-get-thing'
+    with (hui-select-delimited-thing-call #'hui-select-thing) so does not select
+    multiple lines due to sexpressions when point is at the start of:
+      <ab@abc.com>
+      "www.google.com".
+
+* hpath.el (hpath:url-at-p, hpath:url-p, hpath:www-at-p, hpath:www-p): Clarify
+    in doc string whether leading protocol string is necessary for recognition.
+
+* hui.el (hui:kill-region): Rename to 'hui:kill-region-internal' for consistency.
+         (hui-copy-to-register): Rename to 'hui:copy-to-register'.
+         (hui-kill-region): Rename to 'hui:kill-region'.
+         (hui-kill-ring-save): Rename to 'hui:kill-ring-save'.
+         (hui:selectable-thing-priority-list): Add this defcustom; if nil, disables
+    both delimited and non-delimited regional thing selection in 'hyperbole-mode'
+    when no region is active.
+	 (hui:non-delimited-selectable-symbol-and-bounds): Add and select
+    a customizable set of non-delimitable symbols using {M-w} and {C-w}.
+         (hui:copy-to-register, hui:kill-region, hui:kill-ring-save): Call above
+    added function.
+         (hui:delimited-selectable-thing-and-bounds): Add <thing-type> to beginning
+    of list returned to match 'hui:non-delimited-selectable-symbol-and-bounds'.
+         (hui:selectable-thing-and-bounds): Add to call both delimited and non-delim
+    thing-and-bounds functions and to include any delimiters.
+
+2025-06-19  Bob Weiner  <rsw@gnu.org>
+
+* hui-window.el (hmouse-dired-readin-hook): Fix where to find associated doc.
+
 2025-06-16  Bob Weiner  <rsw@gnu.org>
 
 * test/hyrolo-tests.el (hyrolo-tests--forward-same-level-all-file-types-level1):

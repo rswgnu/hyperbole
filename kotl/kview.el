@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     29-Jan-25 at 19:07:24 by Mats Lidell
+;; Last-Mod:     20-Jun-25 at 00:40:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1169,10 +1169,10 @@ See also `kview:map-region', `kview:map-branch' and `kview:map-siblings'."
 	  (nreverse results)))))
 
 (defun kview:move (from-start from-end to-start from-indent to-indent
-	           &optional copy-p fill-p)
+	           &optional copy-flag fill-p)
   "Move tree between FROM-START and FROM-END to TO-START.
 Also change indentation from FROM-INDENT to TO-INDENT.
-Copy tree if optional COPY-P is non-nil.  Refill cells if optional
+Copy tree if optional COPY-FLAG is non-nil.  Refill cells if optional
 FILL-P is non-nil.  Leave point at TO-START."
   (let ((region (buffer-substring from-start from-end))
 	(new-start (set-marker (make-marker) to-start))
@@ -1181,7 +1181,7 @@ FILL-P is non-nil.  Leave point at TO-START."
 
     ;;
     ;; Move or copy tree region to new location.
-    (or copy-p (delete-region from-start from-end))
+    (or copy-flag (delete-region from-start from-end))
     (goto-char new-start)
     (insert region)
     (setq new-end (point))

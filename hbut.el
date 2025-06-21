@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     26-Apr-25 at 10:12:23 by Bob Weiner
+;; Last-Mod:     20-Jun-25 at 16:39:53 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1632,7 +1632,7 @@ Modify `hbut:syntax-table' and `help-mode-syntax-table' to include <> and {}.
 Modify `text-mode-syntax-table' and `fundamental-mode's syntax table
 to include {} only.  For use with implicit button activations."
   ;; Treat angle brackets and braces as opening and closing delimiters
-  ;; for ease  of matching.
+  ;; for ease of matching.
   (mapc (lambda (syntax-table)
 	  (modify-syntax-entry ?\< "(>" syntax-table)
 	  (modify-syntax-entry ?\> ")<" syntax-table)

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     14-Apr-25 at 15:53:22 by Mats Lidell
+;; Last-Mod:     21-Jun-25 at 13:29:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -541,9 +541,13 @@ Also, add language-specific syntax setups to aid in thing selection."
 
 (defun hui-select-get-region-boundaries ()
   "Return the (START . END) boundaries of region for `hui-select-thing'."
-  (or (hui-select-boundaries (point))
-      (when (eq hui-select-previous 'punctuation)
-	(hui-select-word (point)))))
+  (with-syntax-table
+      (if (memq major-mode hui-select-ignore-quoted-sexp-modes)
+	  (syntax-table)
+	hui-select-syntax-table)
+    (or (hui-select-boundaries (point))
+	(when (eq hui-select-previous 'punctuation)
+	  (hui-select-word (point))))))
 
 ;;;###autoload
 (defun hui-select-get-thing ()
@@ -1040,63 +1044,66 @@ Return the updated cons cell."
     hui-select-region))
 
 (defun hui-select-string-p (&optional start-delim end-delim)
-  "Return (start . end) of a string.
-Works when on a delim or on the first line with point in the
-string or directly before it.  Positions include delimiters.
-String is delimited by double quotes unless optional START-DELIM
-and END-DELIM (strings) are given.  Returns nil if not within a
-string."
+  "Return (start . end) positions of a string, including delimiters.
+This works when point is immediately before the opening or closing
+delimiter or within the text of the string.  The string is delimited
+by double quotes, unless optional START-DELIM and END-DELIM (strings)
+are given.  Return nil if not at a string."
   (unless start-delim (setq start-delim "\""))
   (unless end-delim (setq end-delim "\""))
+  (let (string-start-end)
   (with-syntax-table hbut:syntax-table
-    (or (and (equal start-delim "\"") (equal end-delim "\"")
-	     (ignore-errors
-	       (cond ((and (= (or (char-after) 0) ?\")
-			   (/= (or (char-before) 0) ?\\))
-		      (if (hypb:in-string-p)
-			  (hui-select-set-region (1+ (point))
-						 (scan-sexps (1+ (point)) -1))
-			(hui-select-set-region (point) (scan-sexps (point) 1))))
-		     ((and (= (or (char-before) 0) ?\")
-			   (/= (or (char-before (1- (point))) 0) ?\\))
-		      (if (hypb:in-string-p)
-			  (hui-select-set-region (1- (point)) (scan-sexps (1- (point)) 1))
-			(hui-select-set-region (point) (scan-sexps (point) -1)))))))
-	(let ((opoint (point))
-	      (count 0)
-	      bol start delim-regexp start-regexp end-regexp)
-	  ;; Special case for the empty string.
-	  (if (looking-at (concat (regexp-quote start-delim)
-				  (regexp-quote end-delim)))
-	      (hui-select-set-region (point) (match-end 0))
-	    (setq start-regexp (concat "\\(^\\|[^\\]\\)\\("
-				       (regexp-quote start-delim) "\\)")
-		  end-regexp   (concat "[^\\]\\(" (regexp-quote end-delim) "\\)")
-		  delim-regexp (concat start-regexp "\\|" end-regexp))
-	    (save-excursion
-	      (beginning-of-line)
-	      (setq bol (point))
-	      (while (re-search-forward delim-regexp opoint t)
-		(setq count (1+ count))
-		;; This is so we don't miss the closing delimiter of an empty
-		;; string.
-		(if (and (= (point) (1+ bol))
-			 (looking-at (regexp-quote end-delim)))
-		    (setq count (1+ count))
-		  (unless (bobp)
-		    (backward-char 1))))
-	      (goto-char opoint)
-	      ;; If found an even # of starting and ending delimiters before
-	      ;; opoint, then opoint is at the start of a string, where we want it.
-	      (if (zerop (mod count 2))
-		  (unless (bobp)
-		    (backward-char 1))
-		(re-search-backward start-regexp nil t))
-	      ;; Point is now before the start of the string.
-	      (when (re-search-forward start-regexp nil t)
-		(setq start (match-beginning 2))
-		(when (re-search-forward end-regexp nil t)
-		  (hui-select-set-region start (point))))))))))
+    (or
+     ;; On or before double quote delimiters
+     (and (equal start-delim "\"") (equal end-delim "\"")
+	  (cond ((and (= (or (char-after) 0) ?\")
+		      (/= (or (char-before) 0) ?\\))
+		 (if (setq string-start-end (hypb:in-string-p nil t))
+		     ;; Add double quote delimiters to the region returned
+		     (hui-select-set-region (1- (nth 1 string-start-end))
+					    (1+ (nth 2 string-start-end)))
+		   ;; May be on the closing double quote of a string in
+		   ;; which case this first scan-sexps will fail but
+		   ;; the second will succeed.
+		   (when (setq string-start-end
+			       (or (ignore-errors (hui-select-set-region (point) (scan-sexps (point) 1)))
+				   (ignore-errors (hui-select-set-region
+						   (scan-sexps (1+ (point)) -1)
+						   (1+ (point))))))
+		     (hui-select-set-region
+		      (min (car string-start-end) (cdr string-start-end))
+		      (max (car string-start-end) (cdr string-start-end))))))
+		((and (= (or (char-before) 0) ?\")
+		      (/= (or (char-before (1- (point))) 0) ?\\))
+		 (if (setq string-start-end (hypb:in-string-p nil t))
+		     ;; Add double quote delimiters to the region returned
+		     (hui-select-set-region (1- (nth 1 string-start-end))
+					    (1+ (nth 2 string-start-end)))
+		   ;; Either there are no matching string delimiters
+		   ;; (only an open delimiter) or (point) is immediately
+		   ;; after the end of the string in which case the
+		   ;; following scan-sexps will succeed.
+		   (when (setq string-start-end
+			       (ignore-errors (hui-select-set-region (point) (scan-sexps (point) -1))))
+		     (hui-select-set-region
+		      (min (car string-start-end) (cdr string-start-end))
+		      (max (car string-start-end) (cdr string-start-end))))))))
+
+     ;; Non-double quote delimiters
+     (let ((opoint (point))
+	   (count 0)
+	   bol start delim-regexp start-regexp end-regexp)
+       (save-excursion
+	 (when (looking-at (regexp-quote start-delim))
+	   (goto-char (match-end 0)))
+	 (when (setq string-start-end
+		     (hargs:delimited start-delim end-delim nil nil t))
+	   ;; Include delimiters
+	   (hui-select-set-region (- (nth 1 string-start-end)
+				     (length start-delim))
+				  (+ (nth 2 string-start-end)
+				     (length end-delim))))))))))
+
 ;;;
 ;;; Code selections
 ;;;
@@ -1445,7 +1452,7 @@ The region includes sexpressions before and after POS"
 		 (hui-select-set-region (point) end))))))
 
 (defun hui-select-string (pos)
-  "Return (start . end) of string at POS or nil.  Pos include delimiters.
+  "Return (start . end) of string including delimiters at POS, or nil.
 Delimiters may be single, double or open and close quotes."
   (setq hui-select-previous 'string)
   (save-excursion
