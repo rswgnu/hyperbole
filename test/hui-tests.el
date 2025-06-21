@@ -1253,8 +1253,8 @@ disabled."
       (goto-char 1)
       (set-mark nil)
 
-      ;; No mark set and on whitespace
-      (should-error (call-interactively #'hui:kill-region) :type 'error)
+      ;; No mark set and on whitespace; now kills words forward, does not error
+      ;; (should-error (call-interactively #'hui:kill-region) :type 'error)
 
       (delete-char 1)
       (set-mark (point))
