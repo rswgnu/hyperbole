@@ -1,5 +1,9 @@
 2025-06-21  Bob Weiner  <rsw@gnu.org>
 
+* hui.el (hui:selectable-thing-priority-list,
+          hui:non-delimited-selectable-thing-and-bounds): Make Hyperbole no region
+    kill and copy commands operate on one or more words forward when on whitespace.
+
 * hypb.el (hypb:in-string-p): Fix final and condition so does not fail when point
     is not 1 character after bol.
 

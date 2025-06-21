@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     21-Jun-25 at 13:26:46 by Bob Weiner
+;; Last-Mod:     21-Jun-25 at 15:26:17 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -60,7 +60,7 @@
   :type 'boolean
   :group 'hyperbole-buttons)
 
-(defcustom hui:selectable-thing-priority-list '(uuid email filename symbol word)
+(defcustom hui:selectable-thing-priority-list '(uuid email filename symbol word whitespace)
    "List of priority ordered symbols recognized by `thing-at-point'.
 Either a 'url matches or the first match from this list is used when
 `hui:non-delimited-selectable-thing-and-bounds' is called during region
@@ -381,8 +381,7 @@ or nil if none.
 
 The prioritized types of things tested is 'url plus the list of types
 in `hui:selectable-thing-priority-list' if that variable is non-nil."
-  (when (and hui:selectable-thing-priority-list
-	     (not (looking-at "[ \t\n\r\f]")))
+  (when hui:selectable-thing-priority-list
     (with-syntax-table
 	(if (memq major-mode hui-select-ignore-quoted-sexp-modes)
 	    (syntax-table)
@@ -395,7 +394,7 @@ in `hui:selectable-thing-priority-list' if that variable is non-nil."
 	  (setq thing-and-bounds (hpath:www-at-p t)))
 	(if thing-and-bounds
 	    (cons 'url thing-and-bounds)
-	  (while (and types (not thing))
+	  (while (and (not thing) types)
 	    (setq type (car types)
 		  types (cdr types)
 		  thing (thing-at-point type t))
@@ -405,11 +404,20 @@ in `hui:selectable-thing-priority-list' if that variable is non-nil."
 		       (setq thing nil)))
 		    ((eq type 'email)
 		     (unless (string-match "@.+\\." thing)
+		       (setq thing nil)))
+		    ((eq type 'whitespace)
+		     (if (looking-at "[ \t\n\r\f]")
+			 (setq start (point)
+			       end (save-excursion (forward-word
+						    (prefix-numeric-value
+						     current-prefix-arg))
+						   (point))
+			       thing (buffer-substring start end))
 		       (setq thing nil)))))
 	    (when thing
-	      (setq start-end (bounds-of-thing-at-point type)
-		    start (car start-end)
-		    end   (cdr start-end))))
+	      (setq start-end (or start-end (bounds-of-thing-at-point type))
+		    start (or start (car start-end))
+		    end   (or end (cdr start-end)))))
 	  (when thing (list type thing start end)))))))
 
 (defun hui:selectable-thing-and-bounds ()
