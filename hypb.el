@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     20-Jun-25 at 17:53:08 by Bob Weiner
+;; Last-Mod:     21-Jun-25 at 13:54:25 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -763,8 +763,9 @@ Quoting conventions recognized are:
 		     ;; Move back one char in case point is on a
 		     ;; closing delimiter char to ensure it is not
 		     ;; backslash quoted and so the right delimiter is matched.
-		     (unless (= (1- (point)) (line-beginning-position))
-		       (goto-char (1- (point))))
+		     (if (/= (1- (point)) (line-beginning-position))
+			 (goto-char (1- (point)))
+		       t)
 		     (re-search-forward close-regexp nil t)
 		     (if range-flag
 			 (progn

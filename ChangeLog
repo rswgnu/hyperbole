@@ -1,5 +1,8 @@
 2025-06-21  Bob Weiner  <rsw@gnu.org>
 
+* hypb.el (hypb:in-string-p): Fix final and condition so does not fail when point
+    is not 1 character after bol.
+
 * kotl/klink.el (klink:create): Rewrite to set missing klink yank handler on
     any newly created klink.
                 (klink:yank-handler): Fix by making first group optional rather
