@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     21-Jun-25 at 15:26:17 by Bob Weiner
+;; Last-Mod:     22-Jun-25 at 10:37:58 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -62,7 +62,7 @@
 
 (defcustom hui:selectable-thing-priority-list '(uuid email filename symbol word whitespace)
    "List of priority ordered symbols recognized by `thing-at-point'.
-Either a 'url matches or the first match from this list is used when
+Either a \\='url matches or the first match from this list is used when
 `hui:non-delimited-selectable-thing-and-bounds' is called during region
 copy and kills.  Set this list to nil to disable both delimited and
 non-delimited thing recognition in copy and kill commands when
@@ -379,7 +379,7 @@ extracted from a region."
 The list returned is (<thing-type> <thing-string> <thing-start> <thing-end>)
 or nil if none.
 
-The prioritized types of things tested is 'url plus the list of types
+The prioritized types of things tested is \\='url plus the list of types
 in `hui:selectable-thing-priority-list' if that variable is non-nil."
   (when hui:selectable-thing-priority-list
     (with-syntax-table
