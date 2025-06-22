@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     22-Jun-25 at 10:36:55 by Mats Lidell
+;; Last-Mod:     22-Jun-25 at 10:34:29 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1091,19 +1091,16 @@ are given.  Return nil if not at a string."
 		      (max (car string-start-end) (cdr string-start-end))))))))
 
      ;; Non-double quote delimiters
-     (let ((opoint (point))
-	   (count 0)
-	   bol start delim-regexp start-regexp end-regexp)
-       (save-excursion
-	 (when (looking-at (regexp-quote start-delim))
-	   (goto-char (match-end 0)))
-	 (when (setq string-start-end
-		     (hargs:delimited start-delim end-delim nil nil t))
-	   ;; Include delimiters
-	   (hui-select-set-region (- (nth 1 string-start-end)
-				     (length start-delim))
-				  (+ (nth 2 string-start-end)
-				     (length end-delim))))))))))
+     (save-excursion
+       (when (looking-at (regexp-quote start-delim))
+	 (goto-char (match-end 0)))
+       (when (setq string-start-end
+		   (hargs:delimited start-delim end-delim nil nil t))
+	 ;; Include delimiters
+	 (hui-select-set-region (- (nth 1 string-start-end)
+				   (length start-delim))
+				(+ (nth 2 string-start-end)
+				   (length end-delim)))))))))
 
 ;;;
 ;;; Code selections

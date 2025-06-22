@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 12:15:16
-;; Last-Mod:     21-Jun-25 at 13:15:56 by Bob Weiner
+;; Last-Mod:     22-Jun-25 at 10:24:52 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -63,9 +63,9 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(require 'subr-x) ;; For string-trim
-(require 'hmouse-tag) ;; For smart-c-include-regexp
-(require 'hbut) ;; For defib.
+(require 'subr-x)     ;; For `string-trim'
+(require 'hmouse-tag) ;; For `smart-c-include-regexp'
+(require 'hbut)       ;; For `defib'
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -249,22 +249,19 @@ link-end-position, (including delimiters)."
 		     (string-match "\\`[a-zA-Z!/]" referent))))
       label-and-pos)))
 
-;; Prevent klink yank-handler text properties from being
-;; sticky/inherited by neighboring text.
-(cl-pushnew '(file-name . t) text-property-default-nonsticky)
-(cl-pushnew '(yank-handler . t) text-property-default-nonsticky)
-(cl-pushnew '(yank-excluded-properties . t) text-property-default-nonsticky)
-
 (defun klink:set-yank-handler (klink)
   "Add yank-handler to KLINK and return the modified KLINK.
 Link is made relative when yanked into the same koutline or the
 same directory."
   (add-text-properties
    0 (length klink)
-		       (list 'file-name buffer-file-name
-			     'yank-handler '(klink:yank-handler)
-			     'yank-excluded-properties (cons 'yank-handler (get-text-property 0 'yank-excluded-properties klink)))
-		       klink)
+   (list 'file-name buffer-file-name
+	 'yank-handler '(klink:yank-handler)
+	 'yank-excluded-properties (cons 'yank-handler (get-text-property 0 'yank-excluded-properties klink))
+	 ;; Prevent klink text properties from being sticky/inherited by
+	 ;; neighboring text.
+	 'rear-nonsticky '(file-name yank-handler yank-excluded-properties))
+   klink)
   klink)
 
 ;;; ************************************************************************

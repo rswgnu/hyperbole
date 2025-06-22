@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     20-Jun-25 at 00:10:17 by Bob Weiner
+@c Last-Mod:     21-Jun-25 at 22:30:47 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed June 20, 2025.
+Printed June 21, 2025.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -6645,11 +6645,10 @@ The Rolo submenu of the Hyperbole menu offers a full set of commands
 for searching and maintaining a personal address book.  It looks like
 so.
 
-@float Image,image:Rolo Menu
-@caption{HyRolo Menu}
-@image{im/menu-rolo,,3.5in,HyRolo Menu}
-@end float
-@page
+@smallexample
+@noindent
+Rolo>  Add  ConsultFind  Display  Edit  FileFind  Info  Kill  Mail  Order  RegexFind  StringFind  TagFind  WordFind  Yank
+@end smallexample
 
 @cindex Rolo menu
 @cindex HyRolo menu
@@ -6681,33 +6680,33 @@ set of commands as the menubar Rolo menu but with more concise labels.
 @findex hyrolo-word
 @findex hyrolo-yank
 The minibuffer Rolo/ menu offers the following commands (ConsultFind
-and HelmFind appear only when the Consult and Helm packages are
-installed prior to loading Hyperbole.  They are especially noteworthy
-as they allow for fast line-level searching across many files with
-interactive search pattern narrowing):
+appears only when the Consult and Helm packages are installed prior to
+loading Hyperbole.  They are especially noteworthy as they allow for
+fast line-level searching across many files with interactive search
+pattern narrowing):
 
 @example
 @group
 Menu Item       Command                 Description
 =====================================================================
-Add             hyrolo-add              Adds a hyrolo entry
+Add             hyrolo-add              Add a hyrolo entry
 ConsultFind     hyrolo-consult-grep     Interactively narrow grep matches
-Display         hyrolo-display-matches  Displays last matches again
-Edit            hyrolo-edit             Edits an existing hyrolo entry
-File            hyrolo-find-file        Edits a @code{hyrolo-file-list} file
-Info            id-info                 Displays a hyrolo manual entry
-Kill            hyrolo-kill             Deletes a hyrolo entry
-Mail            hyrolo-mail             Mails to an address at point
-Order           hyrolo-sort             Sorts all hyrolo levels
-RegexFind       hyrolo-grep             Finds all entries containing
+Display         hyrolo-display-matches  Display last matches again
+Edit            hyrolo-edit             Edit an existing hyrolo entry
+FileFind        hyrolo-find-file        Edit a @code{hyrolo-file-list} file
+Info            id-info                 Display a hyrolo manual entry
+Kill            hyrolo-kill             Delete a hyrolo entry
+Mail            hyrolo-mail             Mail to an address at point
+Order           hyrolo-sort             Sort all hyrolo levels
+RegexFind       hyrolo-grep             Find all entries containing
                                           a regular expression
-StringFind      hyrolo-fgrep            Finds all entries containing
+StringFind      hyrolo-fgrep            Find all entries containing
                                           a string (or logical
                                           expression)
-TagFind         hyrolo-tags-view        Finds HyWiki Org tags
-WordFind        hyrolo-word             Finds all entries containing
+TagFind         hyrolo-tags-view        Find HyWiki Org tags
+WordFind        hyrolo-word             Find all entries containing
                                           a string of whole words
-Yank            hyrolo-yank             Inserts the first matching
+Yank            hyrolo-yank             Insert the first matching
                                           hyrolo entry at point
 =====================================================================
 @end group

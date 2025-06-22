@@ -1,4 +1,12 @@
+2025-06-22  Bob Weiner  <rsw@gnu.org>
+
+* hycontrol.el (hycontrol-frames-mode, hycontrol-windows-mode): Change from
+    obsolete 'define-global-minor-mode' to 'define-globalized-minor-mode'.
+
 2025-06-21  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-word-at): Remove HyWikiWord highlighting as proper highlighting
+    should be done elsewhere.
 
 * hui.el (hui:selectable-thing-priority-list,
           hui:non-delimited-selectable-thing-and-bounds): Make Hyperbole no region
