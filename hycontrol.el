@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:     22-Feb-25 at 09:41:32 by Bob Weiner
+;; Last-Mod:     22-Jun-25 at 10:48:50 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1055,7 +1055,7 @@ instead of quitting HyControl."
   :group 'hyperbole-screen)
 
 ;;;###autoload
-(define-global-minor-mode hycontrol-frames-mode hycontrol-local-frames-mode
+(define-globalized-minor-mode hycontrol-frames-mode hycontrol-local-frames-mode
   (lambda () (hycontrol-local-frames-mode 1))
   :group 'hyperbole-screen)
 
@@ -1076,7 +1076,7 @@ instead of quitting HyControl."
   :group 'hyperbole-screen)
 
 ;;;###autoload
-(define-global-minor-mode hycontrol-windows-mode hycontrol-local-windows-mode
+(define-globalized-minor-mode hycontrol-windows-mode hycontrol-local-windows-mode
   (lambda () (hycontrol-local-windows-mode 1))
   :group 'hyperbole-screen)
 

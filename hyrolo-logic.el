@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    13-Jun-89 at 22:57:33
-;; Last-Mod:     30-Mar-24 at 12:36:32 by Bob Weiner
+;; Last-Mod:     21-Jun-25 at 22:20:28 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -363,8 +363,10 @@ Return the number of evaluations of SEXP that match entries."
 ;; Do NOT call the following functions directly.
 ;; Send them as parts of an expression to `hyrolo-logic'.
 
+;; Work with string patterns
+
 (defun hyrolo-not (start end &rest pat-list)
-  "Logical <not> rolo entry filter applied between START and END positions.
+  "Logical string <not> rolo entry filter between START and END positions.
 PAT-LIST is a list of pattern elements.  Each element may be t, nil, or a
 string."
   (save-restriction
@@ -379,7 +381,7 @@ string."
       (not pat-list))))
 
 (defun hyrolo-or (start end &rest pat-list)
-  "Logical <or> rolo entry filter applied between START and END positions.
+  "Logical string <or> rolo entry filter between START and END positions.
 PAT-LIST is a list of pattern elements.  Each element may be t, nil, or a
 string."
   (if (memq t pat-list)
@@ -396,7 +398,7 @@ string."
 	(if pat-list t nil)))))
 
 (defun hyrolo-xor (start end &rest pat-list)
-  "Logical <xor> rolo entry filter applied between START and END positions.
+  "Logical string <xor> rolo entry filter between START and END positions.
 PAT-LIST is a list of pattern elements.  Each element may be t, nil, or a
 string."
   (save-restriction
@@ -415,7 +417,7 @@ string."
       (= matches 1))))
 
 (defun hyrolo-and (start end &rest pat-list)
-  "Logical <and> rolo entry filter applied between START and END positions.
+  "Logical string <and> rolo entry filter between START and END positions.
 PAT-LIST is a list of pattern elements.  Each element may be t, nil, or a
 string."
   (unless (memq nil pat-list)
@@ -433,7 +435,7 @@ string."
 ;; Work with regular expression patterns rather than strings
 
 (defun hyrolo-r-not (start end &rest pat-list)
-  "Logical <not> rolo entry filter applied between START and END positions.
+  "Logical regexp <not> rolo entry filter between START and END positions.
 PAT-LIST is a list of pattern elements.  Each element may be t, nil, or a
 regular expression."
   (save-restriction
@@ -448,7 +450,7 @@ regular expression."
       (not pat-list))))
 
 (defun hyrolo-r-or (start end &rest pat-list)
-  "Logical <or> rolo entry filter applied between START and END positions.
+  "Logical regexp <or> rolo entry filter between START and END positions.
 PAT-LIST is a list of pattern elements.  Each element may be t, nil, or a
 regular expression."
   (if (memq t pat-list)
@@ -465,7 +467,7 @@ regular expression."
 	(if pat-list t nil)))))
 
 (defun hyrolo-r-xor (start end &rest pat-list)
-  "Logical <xor> rolo entry filter applied between START and END positions.
+  "Logical regexp <xor> rolo entry filter between START and END positions.
 PAT-LIST is a list of pattern elements.  Each element may be t, nil, or a
 regular expression."
   (save-restriction
@@ -484,7 +486,7 @@ regular expression."
       (= matches 1))))
 
 (defun hyrolo-r-and (start end &rest pat-list)
-  "Logical <and> rolo entry filter applied between START and END positions.
+  "Logical regexp <and> rolo entry filter between START and END positions.
 PAT-LIST is a list of pattern elements.  Each element may be t, nil, or a
 regular expression."
   (unless (memq nil pat-list)
