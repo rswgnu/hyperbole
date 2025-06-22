@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     21-Jun-25 at 13:29:32 by Bob Weiner
+;; Last-Mod:     22-Jun-25 at 10:36:55 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -337,6 +337,7 @@ Used to include a final line when marking indented code.")
 (declare-function kview:valid-position-p "kotl/kview")
 (declare-function hkey-set-key "hyperbole")
 (declare-function hypb:cmd-key-vector "hypb")
+(declare-function hargs:delimited "hargs")
 
 ;;; ************************************************************************
 ;;; Private variables
