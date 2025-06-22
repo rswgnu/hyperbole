@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     20-Jun-25 at 19:37:43 by Bob Weiner
+;; Last-Mod:     23-Jun-25 at 00:16:35 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -401,8 +401,8 @@ Ensure modifying the button but keeping the label does not create a double label
 
 (ert-deftest hui--kill-ring-save--yank-in-same-kotl ()
   "Yank saved klink into same kotl file."
-  (skip-unless (not noninteractive))
-  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl"))
+        last-command)
     (unwind-protect
         (progn
           (find-file kotl-file)
@@ -422,9 +422,9 @@ Ensure modifying the button but keeping the label does not create a double label
 
 (ert-deftest hui--kill-ring-save--yank-in-other-kotl ()
   "Yank saved klink into other kotl file."
-  (skip-unless (not noninteractive))
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl"))
-        (other-file (make-temp-file "hypb" nil ".kotl")))
+        (other-file (make-temp-file "hypb" nil ".kotl"))
+        last-command)
     (unwind-protect
         (progn
           (find-file kotl-file)
@@ -445,9 +445,9 @@ Ensure modifying the button but keeping the label does not create a double label
 
 (ert-deftest hui--kill-ring-save--yank-in-other-file ()
   "Yank saved klink into other file."
-  (skip-unless (not noninteractive))
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl"))
-        (other-file (make-temp-file "hypb" nil ".txt")))
+        (other-file (make-temp-file "hypb" nil ".txt"))
+        last-command)
     (unwind-protect
         (progn
           (find-file kotl-file)
@@ -468,10 +468,10 @@ Ensure modifying the button but keeping the label does not create a double label
 
 (ert-deftest hui--kill-ring-save--yank-in-other-file-other-dir ()
   "Yank saved klink into other file in other dir."
-  (skip-unless (not noninteractive))
   (let* ((kotl-file (make-temp-file "hypb" nil ".kotl"))
          (other-dir (make-temp-file "hypb" t))
-         (other-file (expand-file-name "other-file" other-dir)))
+         (other-file (expand-file-name "other-file" other-dir))
+         last-command)
     (unwind-protect
         (progn
           (find-file kotl-file)
