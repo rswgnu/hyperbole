@@ -1,5 +1,37 @@
 2025-06-22  Bob Weiner  <rsw@gnu.org>
 
+* hproperty.el (hproperty:but-get-first-in-region): Change from returning a list
+    of a single button to just the first button when found.  Also fix to return
+    nil rather than the list of overlays when no matching overlay is found.
+               (hproperty:but-get): Remove 'car' from its call to the above function.
+	       (hproperty:but-add): Fix to move any existing hproperty button within
+    start and end rather than creating a new one every time.
+               (hproperty:but-add): Log to *Message* buffer and beep any time an
+    attempt is made to create a button with start and end the same value.  Somehow
+    this is happening in HyWiki when text is yanked back as part of the undo process.
+               (hproperty:but-flash): Use button face is set already.
+  hywiki.el (hywiki-highlight-on-yank): Stop adding an extra character to the
+    highlighted region after a yank as this may be causing creation of overlapping
+    highlighted regions.
+              (hproperty:but-set): Add to set button properties.
+	      (hproperty:but-add): Automatically add the 'evaporate t property so
+    if the overlay/button length is ever zero, it is automatically deleted.
+              (hywiki-highlight-word-get-range): Add and replace calls to
+    (hywiki-word-at :range) with this and make it highlight the HyWikiWord.
+              (hproperty:but-get-face): Add.
+              (hproperty:set-but-face): Rename to 'hproperty:but-set-face'.
+  test/hywiki-tests.el (hywiki-tests--action-key-moves-to-word-and-section):
+    Enhance to report the specific HyWikiWord test that fails if any error.
+
+* hywiki.el (hywiki-debuttonize-non-character-commands): Set
+    'hywiki--buffer-modified-tick'.
+            (hywiki-buttonize-non-character-commands): Optimize to do nothing if
+    (eq hywiki--buffer-modified-tick (buffer-modified-tick)) since the buffer
+    was not modified by the current command.
+            (hywiki--flag): Remove this since setting it in the
+    'post-self-insert-hook' had no effect on 'post-command-hook' since that runs
+    before the self-insert hook.
+
 * hycontrol.el (hycontrol-frames-mode, hycontrol-windows-mode): Change from
     obsolete 'define-global-minor-mode' to 'define-globalized-minor-mode'.
 
@@ -144,6 +176,10 @@
     to default file if nil.
 
 2025-06-08  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-buttonize-non-character-commands): Add set of
+    'hywiki--word-pre-command' in the post command since the command itself
+    may have moved point into a HyWikiWord reference.
 
 * hsys-consult.el (hsys-consult-apropos): Add and autoload for interactive
     selection of apropos symbols.

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:      5-Jun-25 at 00:24:12 by Mats Lidell
+;; Last-Mod:     22-Jun-25 at 22:32:29 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -767,16 +767,20 @@ body B
             ;; WikiWord page and verify they work.
             (with-temp-buffer
               (hywiki-mode 1)
-              (dolist (w words)
-                (let ((wiki-link (car w))
-                      (expected-str-at-pos (cdr w)))
-                  (erase-buffer)
-                  (insert wiki-link)
-                  (goto-char 4)
-                  (save-excursion
-                    (action-key)
-                    ;; (should (string-prefix-p "WikiWord.org" (buffer-name)))
-                    (should (looking-at-p expected-str-at-pos)))))))
+              (let (wiki-link
+		    expected-str-at-pos)
+		(condition-case err-msg
+		    (dolist (w words)
+                      (setq wiki-link (car w)
+			    expected-str-at-pos (cdr w))
+		      (erase-buffer)
+		      (insert wiki-link)
+		      (goto-char 4)
+		      (save-excursion
+			(action-key)
+			(should (looking-at-p expected-str-at-pos))))
+		  (error (error "'%s', '%s' - Error: %s"
+				wiki-link expected-str-at-pos err-msg))))))
         (hy-delete-file-and-buffer wikipage)
         (hy-delete-dir-and-buffer hywiki-directory)))))
 
@@ -1324,7 +1328,8 @@ Return nil if at no hywiki--word-face overlay."
 
 (defun hywiki-tests--word-n-face-at ()
   "Non-nil if at a WikiWord and it has `hywiki--word-face'."
-  (cl-destructuring-bind (word beg end) (hywiki-word-at :range)
+  (cl-destructuring-bind (word beg end)
+      (hywiki-highlight-word-get-range)
     (when word
       (when (hy-test-word-face-at-region beg end)
         (should (equal (hywiki-tests--hywiki-face-region-at beg) (cons beg end)))

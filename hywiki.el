@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:      7-Jun-25 at 11:44:55 by Bob Weiner
+;; Last-Mod:     22-Jun-25 at 22:36:22 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -189,6 +189,11 @@
 ;;; Private variables
 ;;; ************************************************************************
 
+(defvar-local hywiki--buffer-modified-tick nil
+  "Used to determine if a command modifies a buffer or not.
+The `pre-command-hook' saves this value for a buffer and `post-command-hook'
+checks it to determine if any buffer modification has occurred or not.")
+
 ;; Must be set after `hywiki-get-buttonize-characters' is defined
 (defconst hywiki--buttonize-characters nil
   "String of single character keys bound to `hywiki-buttonize-character-commands'.
@@ -238,7 +243,6 @@ Each element is of the form: (wikiword . (referent-type . referent-value)).")
 (defvar hywiki--buttonize-start (make-marker)) ;; This must always stay a marker
 (defvar hywiki--current-page nil)
 (defvar hywiki--end nil)
-(defvar hywiki--flag nil)
 (defvar hywiki--highlighting-done-flag t)
 (defvar hywiki--word-pre-command nil)
 (defvar hywiki--word-only nil)
@@ -554,13 +558,16 @@ Non-nil is the default."
   "Store any HyWikiWord before or after point for later comparison.
 Triggered by `pre-command-hook' for non-character -commands, including
 deletion commands and those in `hywiki-non-character-commands'."
-  (setq hywiki--word-pre-command nil)
+  (setq hywiki--buffer-modified-tick (buffer-modified-tick)
+	hywiki--word-pre-command nil)
   (set-marker hywiki--buttonize-start nil)
   (set-marker hywiki--buttonize-end nil)
 
   (unless (hywiki-non-hook-context-p)
     ;; Record the WikiWord from any WikiWord ref that point is on
-    (setq hywiki--word-pre-command (hywiki-get-singular-wikiword (hywiki-word-at)))
+    (setq hywiki--word-pre-command (hywiki-get-singular-wikiword
+				    (or (hywiki-word-highlighted-at-p)
+					(hywiki-word-at))))
     (when (or (memq this-command hywiki-non-character-commands)
 	      (and (symbolp this-command)
 		   (string-match-p "^\\(org-\\)?\\(delete-\\|kill-\\)\\|\\(-delete\\|-kill\\)\\(-\\|$\\)" (symbol-name this-command))))
@@ -573,29 +580,39 @@ deletion commands and those in `hywiki-non-character-commands'."
 	;; Use these to store any range of a delimited HyWikiWord#section
 	(set-marker hywiki--buttonize-start start)
 	(set-marker hywiki--buttonize-end end)
-	start)))
-  (setq hywiki--flag nil))
+	start))))
 
 (defun hywiki-buttonize-non-character-commands ()
   "Highlight any HyWikiWord before or after point as a Hyperbole button.
 Triggered by `post-command-hook' for non-character-commands, including
 deletion commands and those in `hywiki-non-character-commands'."
-  (unless (or hywiki--flag (hywiki-non-hook-context-p))
+  (unless (or (eq hywiki--buffer-modified-tick (buffer-modified-tick))
+	      (hywiki-non-hook-context-p))
     (when (or (memq this-command hywiki-non-character-commands)
 	      (and (symbolp this-command)
 		   (string-match-p "^\\(org-\\)?\\(delete-\\|kill-\\)\\|\\(-delete\\|-kill\\)\\(-\\|$\\)" (symbol-name this-command))))
       (setq hywiki--range nil)
 
-      ;; Dehighlight any previously highlighted WikiWord at point
-      ;; before we move to the start of any current WikiWord and
-      ;; rehighlight that.
-      (hywiki--maybe-dehighlight-at-point)
-
       (save-excursion
+	;; Record the WikiWord from any WikiWord ref that point is on
+	(unless hywiki--word-pre-command
+	  (setq hywiki--word-pre-command (hywiki-get-singular-wikiword
+					  (or (hywiki-word-highlighted-at-p)
+					      (hywiki-word-at)
+					      (progn (goto-char (max (point-min)
+								     (1- (point))))
+						     (or (hywiki-word-highlighted-at-p)
+							 (hywiki-word-at)))))))
+
+	;; Dehighlight any previously highlighted WikiWord at point
+	;; before we move to the start of any current WikiWord and
+	;; rehighlight that.
+	(hywiki--maybe-dehighlight-at-point)
+
 	(cond ((marker-position hywiki--buttonize-start)
 	       ;; Point was before or after a WikiWord delimiter
 	       (goto-char (1+ hywiki--buttonize-start)))
-	      ((setq hywiki--range (hywiki-word-at :range))
+	      ((setq hywiki--range (hywiki-highlight-word-get-range))
 	       (cl-destructuring-bind (_ start end)
 		   hywiki--range
 		 (if (and start end)
@@ -614,10 +631,7 @@ deletion commands and those in `hywiki-non-character-commands'."
   "Turn any HyWikiWords between point into highlighted Hyperbole buttons.
 Triggered by `post-self-insert-hook' after self-inserting one or more
 characters after `post-command-hook' has run."
-  ;; If `hywiki--flag' is set non-nil below, then
-  ;; `hywiki-buttonize-non-character-commands' on `post-command-hook'
-  ;; does nothing.
-  (unless (setq hywiki--flag (hywiki-non-hook-context-p))
+  (unless (hywiki-non-hook-context-p)
     (setq hywiki--range nil)
 
     ;; Dehighlight any previously highlighted WikiWord at point
@@ -631,7 +645,7 @@ characters after `post-command-hook' has run."
 	     (goto-char hywiki--buttonize-start)
 	     (skip-chars-backward "-" (line-beginning-position))
 	     (goto-char (1- (point))))
-	    ((not (equal (setq hywiki--range (hywiki-word-at :range))
+	    ((not (equal (setq hywiki--range (hywiki-highlight-word-get-range))
 			 '(nil nil nil)))
 	     (cl-destructuring-bind (_ start end)
 		 hywiki--range
@@ -703,6 +717,7 @@ the button."
 		     (setq result (cons k result)))))))))))
 
 (defun hywiki-non-hook-context-p ()
+  "Return non-nil when HyWiki command hooks should do nothing."
   (or (minibuffer-window-active-p (selected-window))
       (and (boundp 'edebug-active) edebug-active
 	   (active-minibuffer-window))
@@ -777,7 +792,7 @@ use.
 
 Existing HyWikiWords are handled by the implicit button type
 `hywiki-existing-word'."
-  (let* ((wikiword-start-end (hywiki-word-at t))
+  (let* ((wikiword-start-end (hywiki-highlight-word-get-range))
 	 (wikiword (nth 0 wikiword-start-end))
 	 (start    (nth 1 wikiword-start-end))
 	 (end      (nth 2 wikiword-start-end)))
@@ -1661,17 +1676,14 @@ After successfully finding any kind of referent, run
     referent))
 
 (defun hywiki-highlight-on-yank (_prop-value start end)
-  "Used in `yank-handled-properties' called with START and END pos of the text.
-Have to add one character to the length of the yanked text so that any
-needed word-separator after the last character is included to induce
-highlighting any last HyWikiWord."
+  "Used in `yank-handled-properties' called with START and END pos of the text."
   ;; When yank only part of a delimited pair, expand the range to
   ;; include the whole delimited pair before re-highlighting
   ;; HyWikiWords therein, so that the whole delimited expression is
   ;; included.
   (cl-destructuring-bind (start end)
       (hywiki--extend-yanked-region start end)
-    (hywiki-maybe-highlight-page-names start (min (1+ end) (point-max)))))
+    (hywiki-maybe-highlight-page-names start (min end (point-max)))))
 
 (defun hywiki-map-words (func)
   "Apply FUNC across highlighted HyWikiWords in the current buffer and return nil.
@@ -2055,7 +2067,7 @@ the current page unless they have sections attached."
 		  hywiki--end   nil)
 
 	    (if (and (cl-destructuring-bind (word start end)
-			 (hywiki-word-at :range)
+			 (hywiki-highlight-word-get-range)
 		       (setq hywiki--word-only word
 			     hywiki--start start
 			     hywiki--end end))
@@ -2108,7 +2120,7 @@ If in a programming mode, must be within a comment.  Use
 the current page unless they have sections attached."
   (cond ((hproperty:char-property-range (point) 'face hywiki-word-face))
 	((cl-destructuring-bind (word start end)
-	     (hywiki-word-at :range)
+	     (hywiki-highlight-word-get-range)
 	   (when (and start end)
 	     (save-excursion
 	       (goto-char start)
@@ -2853,7 +2865,7 @@ at point must return non-nil or this function will return nil."
     (when (stringp word)
       (setq word (hywiki-strip-org-link word)))
     (if (or (stringp word)
-	    (setq word (hywiki-word-at word)))
+	    (setq word (hywiki-highlight-word-get-range)))
 	(unless (hywiki-get-referent (if (stringp word) word (nth 0 word)))
 	  (setq word nil))
       (setq word nil))
@@ -2984,8 +2996,8 @@ HyWikiWord#section:Lnum:Cnum string but exclude any delimiters.
 This does not test whether a referent exists for the HyWiki word; call
 `hywiki-referent-exists-p' without an argument for that.
 
-A call to `hywiki-active-in-current-buffer-p' at point must return non-nil
-or this will return nil."
+A call to `hywiki-active-in-current-buffer-p' at point must return
+non-nil or this will return nil."
   (if (hywiki-active-in-current-buffer-p)
       (save-excursion
 	;; First look for an Org-type [[hy:WikiWord]] reference.
@@ -3161,17 +3173,38 @@ or this will return nil."
 		       t))
 		(if range-flag
 		    (progn
-		      ;; Ensure wikiword is highlighted before returning it
-		      (and wikiword start end
-			   (not (hproperty:but-get start 'face hywiki-word-face))
-			   (hywiki-referent-exists-p wikiword)
-			   (hproperty:but-add start end hywiki-word-face))
 		      (list wikiword start end))
 		  wikiword)
 	      (when range-flag
 		'(nil nil nil))))))
     (when range-flag
       '(nil nil nil))))
+
+(defun hywiki-highlight-word-get-range ()
+  "Return list of potential (HyWikiWord#section:Lnum:Cnum start end).
+Also highlight HyWikiWord as necessary.
+
+If the HyWikiWord is delimited, point must be within the delimiters.
+The delimiters are excluded from start and end.  If not at a
+HyWikiWord, return \\='(nil nil nil).
+
+This works regardless of whether the HyWikiWord has been highlighted
+or not.
+
+This does not test whether a referent exists for the HyWiki word; call
+`hywiki-referent-exists-p' without an argument for that.
+
+A call to `hywiki-active-in-current-buffer-p' at point must return
+non-nil or this will return nil."
+  (cl-destructuring-bind (wikiword start end)
+      (hywiki-word-at :range)
+    ;; Ensure wikiword in buffer is highlighted before
+    ;; returning its non-highlighted string version.
+    (when (and wikiword start end
+	       (not (hproperty:but-get start 'face hywiki-word-face))
+	       (hywiki-referent-exists-p wikiword))
+      (hproperty:but-add start end hywiki-word-face))
+    (list wikiword start end)))
 
 (defun hywiki-word-at-point ()
   "Return singular HyWikiWord at point with its suffix stripped or nil.
@@ -3492,7 +3525,8 @@ the HyWikiWord reference."
 			      (when (hywiki--buttonized-region-p)
 				(buffer-substring hywiki--buttonize-start
 						  hywiki--buttonize-end))
-			      (when (and (setq hywiki--range (hywiki-word-at :range))
+			      (when (and (setq hywiki--range
+					       (hywiki-highlight-word-get-range))
 					 (nth 1 hywiki--range))
 				(prog1 (nth 1 hywiki--range)
 				  (setq hywiki--range nil)))
