@@ -1,5 +1,8 @@
 2025-06-24  Mats Lidell  <matsl@gnu.org>
 
+* hui-mouse.el (smart-magit): Add jump to worktree file when action press on
+    `+' char in magit-status-mode or magit-revision-mode.
+
 * test/hui-tests.el (hui--kill-region-delimited-text-and-yank-back)
     (hui--select-boundaries): Add tests.
 

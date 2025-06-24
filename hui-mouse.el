@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     19-May-25 at 00:01:18 by Bob Weiner
+;; Last-Mod:     24-Jun-25 at 16:38:34 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -173,13 +173,14 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 (declare-function todotxt-edit-item "ext:todotxt")
 
 (declare-function magit-current-section "magit-selection")
-(declare-function magit-diff-visit-file "etx:magit-diff")
-(declare-function magit-diff-visit-file--internal "etx:magit-diff")
-(declare-function magit-file-at-point "etx:magit-git")
-(declare-function magit-section-cycle-diffs "etx:magit-diff")
-(declare-function magit-section-cycle-global "etx:magit-selection")
-(declare-function magit-section-hide "etx:magit-selection")
-(declare-function magit-section-show "etx:magit-selection")
+(declare-function magit-diff-visit-file "ext:magit-diff")
+(declare-function magit-diff-visit-file--internal "ext:magit-diff")
+(declare-function magit-diff-visit-worktree-file "ext:magit-diff")
+(declare-function magit-file-at-point "ext:magit-git")
+(declare-function magit-section-cycle-diffs "ext:magit-diff")
+(declare-function magit-section-cycle-global "ext:magit-selection")
+(declare-function magit-section-hide "ext:magit-selection")
+(declare-function magit-section-show "ext:magit-selection")
 (defvar magit-root-section)
 (defvar magit-display-buffer-function)
 
@@ -1567,8 +1568,10 @@ If key is pressed:
  (2) at the end of a line, scroll up a windowful;
  (3) in a `magit-status-mode' buffer on a merge conflict marker, keep
      either the upper, both or the lower version of the conflict.
- (4) on an initial read-only header line, cycle visibility of diff sections;
- (5) anywhere else, hide/show the thing at point (\"TAB\" key binding)
+ (4) on a line starting with a `+' char in `magit-status-mode' or
+     `magit-revision-mode' go to the worktree file.
+ (5) on an initial read-only header line, cycle visibility of diff sections;
+ (6) anywhere else, hide/show the thing at point (\"TAB\" key binding)
      unless that does nothing in the mode, then jump to the thing at
      point (\"RET\" key binding) but display based on the value of
      `hpath:display-where'."
@@ -1589,7 +1592,13 @@ If key is pressed:
                     ((looking-at (regexp-quote "++======="))
                      (setq op 'magit-smerge-keep-all)))))
            (call-interactively op))
-	  (t
+          ((and
+            (memq major-mode '(magit-status-mode magit-revision-mode))
+            (save-excursion
+              (beginning-of-line)
+              (looking-at-p "\\+")))
+           (call-interactively #'magit-diff-visit-worktree-file))
+	   (t
 	   (let ((magit-display-buffer-function #'hpath:display-buffer))
 	     (call-interactively #'smart-magit-tab))))))
 
