@@ -1,5 +1,8 @@
 2025-06-24  Mats Lidell  <matsl@gnu.org>
 
+* test/hui-tests.el (hui--kill-region-delimited-text-and-yank-back)
+    (hui--select-boundaries): Add tests.
+
 * test/hywiki-tests.el (hywiki-tests--create-wikiword-file-highlights-wikiword):
     Verify creating a file for WikiWord highlights the instances of
     WikiWord that already is present in other files.

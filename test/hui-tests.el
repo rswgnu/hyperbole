@@ -1,9 +1,9 @@
-;ui-tests.el --- tests for hui.el Hyperbole UI          -*- lexical-binding: t; -*-
+;; hui-tests.el --- tests for hui.el Hyperbole UI          -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     23-Jun-25 at 00:16:35 by Mats Lidell
+;; Last-Mod:     24-Jun-25 at 23:15:42 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1445,6 +1445,86 @@ line 1
       (call-interactively #'hui:kill-region)
       (should (string= "abcjkl" (buffer-string)))
       (should (string= "{def}{ghi}" (car kill-ring))))))
+
+(ert-deftest hui--select-boundaries ()
+  "Verify `hui-select-boundaries´."
+    (with-temp-buffer
+      (let ((hui-select-region (cons nil nil))
+            (hui-select-previous 'char)
+            (hui-select-old-region (cons nil nil)))
+        (text-mode)
+        (insert "hi\n")
+        (goto-char 1)
+        (should (equal '(1 . 3) (hui-select-boundaries (point))))))
+    (with-temp-buffer
+      (let ((hui-select-region (cons nil nil))
+            (hui-select-previous 'char)
+            (hui-select-old-region (cons nil nil)))
+        (text-mode)
+        (insert "hi")
+        (goto-char 1)
+        (should (equal '(1 . 1) (hui-select-boundaries (point))))))
+    (with-temp-buffer
+      (let ((hui-select-region (cons nil nil))
+            (hui-select-previous 'char)
+            (hui-select-old-region (cons nil nil)))
+        (text-mode)
+        (insert "<hi>\n")
+        (goto-char 2)
+        (should (equal '(2 . 4) (hui-select-boundaries (point))))))
+    (with-temp-buffer
+      (let ((hui-select-region (cons nil nil))
+            (hui-select-previous 'char)
+            (hui-select-old-region (cons nil nil)))
+        (text-mode)
+        (insert "<hi>\n")
+        (goto-char 1)
+        (should (equal '(1 . 5) (hui-select-boundaries (point))))))
+    (with-temp-buffer
+      (let ((hui-select-region (cons nil nil))
+            (hui-select-previous 'char)
+            (hui-select-old-region (cons nil nil)))
+        (text-mode)
+        (insert "<hi>")
+        (goto-char 1)
+        (should (equal '(1 . 1) (hui-select-boundaries (point)))))))
+
+(ert-deftest hui--kill-region-delimited-text-and-yank-back ()
+  "Verify multiple `hui:kill-region' followed by a `yank' restores contents."
+  :expected-result :failed
+  (with-temp-buffer
+    (let ((transient-mark-mode t)
+          (mark-even-if-inactive t)
+          last-command)
+      (insert "<hi>")
+      (goto-char 2)
+      (setq last-command #'ignore)
+      (call-interactively #'hui:kill-region)
+      (should (string= (buffer-string) "<>"))
+      (yank)
+      (should (string= (buffer-string) "<hi>"))))
+  (with-temp-buffer
+    (let ((transient-mark-mode t)
+          (mark-even-if-inactive t)
+          last-command)
+      (insert "<hi>\n")
+      (goto-char 1)
+      (setq last-command #'ignore)
+      (call-interactively #'hui:kill-region)
+      (should (string= (buffer-string) "\n"))
+      (yank)
+      (should (string= (buffer-string) "<hi>\n"))))
+  (with-temp-buffer
+    (let ((transient-mark-mode t)
+          (mark-even-if-inactive t)
+          last-command)
+      (insert "<hi>")
+      (goto-char 1)
+      (setq last-command #'ignore)
+      (call-interactively #'hui:kill-region)
+      (should (string= (buffer-string) ""))
+      (yank)
+      (should (string= (buffer-string) "<hi>")))))
 
 ;; This file can't be byte-compiled without the `el-mock' which
 ;; is not part of the actual dependencies, so:
