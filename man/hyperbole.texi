@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     21-Jun-25 at 22:30:47 by Bob Weiner
+@c Last-Mod:     26-Jun-25 at 18:26:06 by Mats Lidell
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed June 21, 2025.
+Printed June 26, 2025.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -213,7 +213,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.2pre
-May 19, 2025
+June 26, 2025 @c AUTO-REPLACE-ON-SAVE
+
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -10890,8 +10891,10 @@ If pressed within a Magit buffer and not on a button:
      (3) in a @code{magit-status-mode} buffer on a merge conflict
          marker, keep either the upper, both or the lower version of 
          the conflict. See also @ref{smerge}.
-     (4) on an initial read-only header line, cycle visibility of diff sections;
-     (5) anywhere else, hide/show the thing at point (@bkbd{@key{TAB}} key binding)
+     (4) on a line starting with a `+' char in `magit-status-mode' or
+         `magit-revision-mode' go to the worktree file.
+     (5) on an initial read-only header line, cycle visibility of diff sections;
+     (6) anywhere else, hide/show the thing at point (@bkbd{@key{TAB}} key binding)
          unless that does nothing in the mode, then jump to the thing at point
          (@bkbd{@key{RET}} key binding) but display based on the value of
          @code{hpath:display-where}.
