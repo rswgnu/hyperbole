@@ -1,3 +1,15 @@
+2025-06-26  Mats Lidell  <matsl@gnu.org>
+
+* man/.dir-locals.el: Use with-locale-environment to ensure English is
+    used for month names.
+* man/hyperbole.texi: Insert auto-replace-on-save marker comment for date
+    update on save. Needed for the date in info pages.
+
+* hui-mouse.el (smart-magit): Add jump to worktree file when action press on
+    `+' char in magit-status-mode or magit-revision-mode.
+* man/hyperbole.texi (Smart Key - Magit Mode): Update docs with jump to
+    worktree.
+
 2025-06-24  Mats Lidell  <matsl@gnu.org>
 
 * test/hui-tests.el (hui--kill-region-delimited-text-and-yank-back)
