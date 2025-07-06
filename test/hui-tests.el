@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     24-Jun-25 at 23:15:42 by Mats Lidell
+;; Last-Mod:      6-Jul-25 at 15:40:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -56,7 +56,7 @@
 		   (setenv "HOME" "/tmp")
 
 		   (set-buffer gbut-file-buffer)
-		   (ert-simulate-keys (kbd create-gbut)
+		   (hy-test-helpers:ert-simulate-keys (kbd create-gbut)
 		     (hact (lambda () (call-interactively 'hui:gbut-create))))
 
 		   ;; Create using program
@@ -66,7 +66,7 @@
 		   (should (eq (hattr:get (hbut:at-p) 'actype) 'actypes::link-to-file))
 
 		   (goto-char (point-max)) ;; Move past button so does not prompt with label
-		   (ert-simulate-keys (kbd edit-gbut)
+		   (hy-test-helpers:ert-simulate-keys (kbd edit-gbut)
 		     (hact (lambda () (call-interactively 'hui:gbut-edit))))
 
 		   ;; (set-buffer gbut-file-buffer)
@@ -149,7 +149,7 @@
   (with-temp-buffer
     (insert "\"/tmp\"\n")
     (goto-char 3)
-    (ert-simulate-keys "TMP\r"
+    (hy-test-helpers:ert-simulate-keys "TMP\r"
       (hui:ibut-label-create)
       (should (string= "<[TMP]> - \"/tmp\"\n" (buffer-string))))))
 
@@ -158,7 +158,7 @@
   (with-temp-buffer
     (insert "<[LBL]>: \"/tmp\"\n")
     (goto-char 14)
-    (ert-simulate-keys "TMP\r"
+    (hy-test-helpers:ert-simulate-keys "TMP\r"
       (condition-case err
           (hui:ibut-label-create)
         (error
@@ -183,7 +183,7 @@
   (let ((file (make-temp-file "hypb_" nil ".txt")))
     (unwind-protect
         (find-file file)
-        (ert-simulate-keys "label\rwww-url\rwww.hypb.org\r"
+        (hy-test-helpers:ert-simulate-keys "label\rwww-url\rwww.hypb.org\r"
           (hui:ebut-create)
           (hy-test-helpers-verify-hattr-at-p :actype 'actypes::www-url :args '("www.hypb.org") :loc file :lbl-key "label"))
       (hy-delete-file-and-buffer file))))
@@ -194,10 +194,10 @@ Ensure modifying the button but keeping the label does not create a double label
   (let ((file (make-temp-file "hypb_" nil ".txt")))
     (unwind-protect
         (find-file file)
-        (ert-simulate-keys "label\rwww-url\rwww.hypb.org\r"
+        (hy-test-helpers:ert-simulate-keys "label\rwww-url\rwww.hypb.org\r"
           (hui:ebut-create)
           (hy-test-helpers-verify-hattr-at-p :actype 'actypes::www-url :args '("www.hypb.org") :loc file :lbl-key "label"))
-        (ert-simulate-keys "\r\r\r\r"
+        (hy-test-helpers:ert-simulate-keys "\r\r\r\r"
           (hui:ebut-edit "label")
           (hy-test-helpers-verify-hattr-at-p :actype 'actypes::www-url :args '("www.hypb.org") :loc file :lbl-key "label")
           (should (string= "<(label)>" (buffer-string)))))
@@ -628,7 +628,7 @@ Ensure modifying the button but keeping the label does not create a double label
     (unwind-protect
         (progn
           (find-file file)
-	  (ert-simulate-keys "ibut\rlink-to-rfc\r123\r"
+	  (hy-test-helpers:ert-simulate-keys "ibut\rlink-to-rfc\r123\r"
 	    (hact (lambda () (call-interactively 'hui:ibut-create))))
           (should (string= "<[ibut]> - rfc123" (buffer-string))))
       (hy-delete-file-and-buffer file))))
@@ -642,7 +642,7 @@ Ensure modifying the button but keeping the label does not create a double label
           (insert "ibut")
           (set-mark (point-min))
           (goto-char (point-max))
-	  (ert-simulate-keys "\rlink-to-rfc\r123\r"
+	  (hy-test-helpers:ert-simulate-keys "\rlink-to-rfc\r123\r"
 	    (hact (lambda () (call-interactively 'hui:ibut-create))))
           (should (string= "<[ibut]> - rfc123" (buffer-string))))
       (hy-delete-file-and-buffer file))))
@@ -655,7 +655,7 @@ Ensure modifying the button but keeping the label does not create a double label
         (progn
           (find-file file)
           (insert "(sexp)")
-	  (ert-simulate-keys "ibut\rlink-to-rfc\r123\r"
+	  (hy-test-helpers:ert-simulate-keys "ibut\rlink-to-rfc\r123\r"
 	    (hact (lambda () (call-interactively 'hui:ibut-create))))
           (should (string= "(sexp); <[ibut]> - rfc123" (buffer-string))))
       (hy-delete-file-and-buffer file))))
@@ -668,7 +668,7 @@ Ensure modifying the button but keeping the label does not create a double label
           (find-file file)
           (insert "\"/tmp\"")
           (goto-char 3)
-	  (ert-simulate-keys "label\r"
+	  (hy-test-helpers:ert-simulate-keys "label\r"
 	    (hact (lambda () (call-interactively 'hui:ibut-label-create))))
           (should (string= "<[label]> - \"/tmp\"" (buffer-string))))
       (hy-delete-file-and-buffer file))))
@@ -682,7 +682,7 @@ With point on label suggest that ibut for rename."
           (find-file file)
           (insert "<[label]> - rfc123")
           (goto-char 3)
-	  (ert-simulate-keys (kbd "M-DEL renamed RET")
+	  (hy-test-helpers:ert-simulate-keys (kbd "M-DEL renamed RET")
 	    (hact (lambda () (call-interactively 'hui:ibut-rename))))
           (should (string= "<[renamed]> - rfc123" (buffer-string))))
       (hy-delete-file-and-buffer file))))
@@ -695,7 +695,7 @@ With point on label suggest that ibut for rename."
           (find-file file)
           (insert "<[label]> - rfc123")
           (goto-char (point-max))
-	  (ert-simulate-keys (kbd "label RET M-DEL renamed RET")
+	  (hy-test-helpers:ert-simulate-keys (kbd "label RET M-DEL renamed RET")
 	    (hact (lambda () (call-interactively 'hui:ibut-rename))))
           (should (string= "<[renamed]> - rfc123" (buffer-string))))
       (hy-delete-file-and-buffer file))))
@@ -708,7 +708,7 @@ With point on label suggest that ibut for rename."
           (find-file file)
           (insert "<[label]> - rfc123")
           (goto-char (point-max))
-          (ert-simulate-keys "\r"
+          (hy-test-helpers:ert-simulate-keys "\r"
 	    (should-error (hui:ibut-rename "notalabel") :type 'error)))
       (hy-delete-file-and-buffer file))))
 
@@ -828,7 +828,7 @@ With point on label suggest that ibut for rename."
           (goto-char (point-max))
           (split-window)
           (find-file filea)
-          (ert-simulate-keys "label\r"
+          (hy-test-helpers:ert-simulate-keys "label\r"
             (hui:ibut-link-directly (get-buffer-window) (get-buffer-window (get-file-buffer fileb)) 4))
           (should (string= (buffer-string) (concat "<[label]> - " "\""
 				       (file-name-nondirectory fileb)
@@ -917,7 +917,7 @@ With point on label suggest that ibut for rename."
           (goto-char (point-max))
           (split-window)
           (find-file filea)
-          (ert-simulate-keys "button\r"
+          (hy-test-helpers:ert-simulate-keys "button\r"
             (hui:ebut-link-directly (get-buffer-window)
                                     (get-buffer-window (get-file-buffer fileb)))
             (should (string= (buffer-string) "<(button)>"))
@@ -946,7 +946,7 @@ With point on label suggest that ibut for rename."
 	    (goto-char (1- (point))))
           (split-window)
           (find-file file)
-          (ert-simulate-keys "button\r"
+          (hy-test-helpers:ert-simulate-keys "button\r"
             (hui:ebut-link-directly (get-buffer-window) (get-buffer-window dir-buf))
 	    ;; Implicit link should be the `dir' dired directory,
 	    ;; possibly minus the final directory '/'.
@@ -979,7 +979,7 @@ With point on label suggest that ibut for rename."
         (mocklet ((gbut:file => global-but-file))
           (delete-other-windows)
           (find-file file)
-          (ert-simulate-keys "button\r"
+          (hy-test-helpers:ert-simulate-keys "button\r"
             (hui:gbut-link-directly t)
             (with-current-buffer (find-buffer-visiting global-but-file)
               (should (string= (buffer-string)
@@ -998,7 +998,7 @@ With point on label suggest that ibut for rename."
         (mocklet ((gbut:file => global-but-file))
           (delete-other-windows)
           (find-file file)
-          (ert-simulate-keys "button\r"
+          (hy-test-helpers:ert-simulate-keys "button\r"
             (hui:gbut-link-directly)
             (with-current-buffer (find-buffer-visiting global-but-file)
               (should (string= (buffer-string) "First\n<(button)>\n"))

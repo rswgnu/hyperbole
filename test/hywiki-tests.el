@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     24-Jun-25 at 09:36:49 by Mats Lidell
+;; Last-Mod:      6-Jul-25 at 15:39:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -902,9 +902,9 @@ Note special meaning of `hywiki-allow-plurals-flag'."
     (unwind-protect
         (progn
           (find-file file)
-          (ert-simulate-keys "\r"
+          (hy-test-helpers:ert-simulate-keys "\r"
             (should-error (hywiki-add-bookmark "")))
-          (ert-simulate-keys "WikiWord\r"
+          (hy-test-helpers:ert-simulate-keys "WikiWord\r"
             (hywiki-add-bookmark "WikiWord")
             (should (equal '(bookmark . "WikiWord")
 			   (hywiki-get-referent "WikiWord")))))
@@ -916,7 +916,7 @@ Note special meaning of `hywiki-allow-plurals-flag'."
   (let ((hywiki-directory (make-temp-file "hywiki" t))
 	(wikiword "WikiWord"))
     (unwind-protect
-	(ert-simulate-keys "hpath:find\r"
+	(hy-test-helpers:ert-simulate-keys "hpath:find\r"
 	  (hywiki-add-command wikiword)
 	  (should (equal '(command . hpath:find)
 			 (hywiki-get-referent wikiword))))
@@ -954,7 +954,7 @@ Note special meaning of `hywiki-allow-plurals-flag'."
   "Verify `hywiki-add-info-index'."
   (let ((hywiki-directory (make-temp-file "hywiki" t)))
     (unwind-protect
-        (ert-simulate-keys "files\r"
+        (hy-test-helpers:ert-simulate-keys "files\r"
           (info "emacs")
 	  (hywiki-add-info-index "WikiWord")
 	  (should (equal '(info-index . "(emacs)files") (hywiki-get-referent "WikiWord"))))
@@ -964,7 +964,7 @@ Note special meaning of `hywiki-allow-plurals-flag'."
   "Verify `hywiki-add-info-node'."
   (let ((hywiki-directory (make-temp-file "hywiki" t)))
     (unwind-protect
-	(ert-simulate-keys "(emacs)\r"
+	(hy-test-helpers:ert-simulate-keys "(emacs)\r"
 	  (hywiki-add-info-node "WikiWord")
 	  (should (equal '(info-node . "(emacs)") (hywiki-get-referent "WikiWord"))))
       (hy-delete-dir-and-buffer hywiki-directory))))
@@ -974,10 +974,10 @@ Note special meaning of `hywiki-allow-plurals-flag'."
   (let ((hywiki-directory (make-temp-file "hywiki" t)))
     (unwind-protect
 	(progn
-	  (ert-simulate-keys "ABC\r"
+	  (hy-test-helpers:ert-simulate-keys "ABC\r"
 	    (hywiki-add-key-series "WikiWord")
 	    (should (equal '(key-series . "{ABC}") (hywiki-get-referent "WikiWord"))))
-	  (ert-simulate-keys "{ABC}\r"
+	  (hy-test-helpers:ert-simulate-keys "{ABC}\r"
 	    (hywiki-add-key-series "WikiWord")
 	    (should (equal '(key-series . "{ABC}") (hywiki-get-referent "WikiWord")))))
       (hy-delete-dir-and-buffer hywiki-directory))))
@@ -1081,7 +1081,7 @@ up the test."
   "Verify saving and loading a referent keyseries works ."
   (hywiki-tests--referent-test
    (cons 'key-series "{ABC}")
-   (ert-simulate-keys "ABC\r"
+   (hy-test-helpers:ert-simulate-keys "ABC\r"
      (hywiki-add-key-series wiki-referent))))
 
 (ert-deftest hywiki-tests--save-referent-keyseries-use-menu ()
@@ -1114,7 +1114,7 @@ up the test."
   "Verify saving and loading a referent bookmark works."
   (hywiki-tests--referent-test
    (cons 'bookmark wiki-referent)
-   (ert-simulate-keys (concat wiki-referent "\r")
+   (hy-test-helpers:ert-simulate-keys (concat wiki-referent "\r")
      (hywiki-add-bookmark wiki-referent))))
 
 ;; Command
@@ -1127,7 +1127,7 @@ up the test."
   "Verify saving and loading a referent command works."
   (hywiki-tests--referent-test
     (cons 'command #'hywiki-tests--command)
-    (ert-simulate-keys "hywiki-tests--command\r"
+    (hy-test-helpers:ert-simulate-keys "hywiki-tests--command\r"
       (hywiki-add-command wiki-referent))))
 
 (ert-deftest hywiki-tests--save-referent-command-use-menu ()
@@ -1196,7 +1196,7 @@ up the test."
   (hywiki-tests--referent-test
    (cons 'info-index "(emacs)files")
    (save-excursion
-     (ert-simulate-keys "files\r"
+     (hy-test-helpers:ert-simulate-keys "files\r"
        (info "emacs")
        (hywiki-add-info-index wiki-referent)))))
 
@@ -1219,7 +1219,7 @@ up the test."
    (cons 'info-node "(emacs)")
    (save-excursion
      (unwind-protect
-         (ert-simulate-keys "(emacs)\r"
+         (hy-test-helpers:ert-simulate-keys "(emacs)\r"
            (hywiki-add-info-node wiki-referent))
        (kill-buffer "*info*")))))
 

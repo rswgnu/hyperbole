@@ -393,7 +393,7 @@ See `hpath:line-and-column-regexp'."
   (should-not (string-match hpath:line-and-column-regexp "/foo/bar.org:C1")))
 
 (ert-deftest hpath--hpath:delimited-possible-path ()
-  "Verify delimited path is found in an `ls -R' listings in `shell-mode'."
+  "Verify delimited paths are found in an `ls -R' listing in `shell-mode'."
   (let ((files
          '(("file1.ext file2.ext file3.ext"                   ; Space delimited
             ("file1" "file2" "file3"))

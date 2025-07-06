@@ -1,3 +1,50 @@
+2025-07-06  Bob Weiner  <rsw@gnu.org>
+
+* hargs.el (hargs:delimited): Fix bug with regexp delimiters where 'start-pos' was
+    used instead of 'start' and this stop point from moving in a loop when matched
+    to bol.  This was seen in a failure of this call in 'hpath:delimited-possible-path':
+	  (let* ((space-delimiter "[ \t]"))
+	    (setq triplet (hargs:delimited (format "^\\|\\(%s\\|[\]\[()<>\;&,@]\\)+"
+						   space-delimiter)
+					   "\\([\]\[()<>\;&,@]\\|:*\\s-\\)+\\|$"
+					   t t t)
+		  p (car triplet)))
+* hypb.el (hypb:in-string-p): Internally when computing the number of lines in
+    the string match, ignore any leading and trailing newlines.  This allows
+    for opening and closing quotes to be on separate lines, useful with
+    multi-line strings.
+  test/hypb-tests.el (hypb--in-string-p--max-lines): Update to allow for
+    quotes on separate lines from the string but don't count these lines when
+    applying 'max-lines'.
+
+* test/hy-test-helpers.el (hy-test-helpers:ert-simulate-keys): Add to
+    disable 'vertico-mode' which gets in the way of 'ert-simulate-keys' calls.
+
+* hargs.el (hargs:delimited): Use 'hypb:in-string-p' when delimiters indicate
+    a string match.  Rewrite to remove the limit that point must be on
+    the first line; can also be on the second line now and string delimiters
+    can be on lines by themselves..  Change so the 'exclude-regexp' arg is
+    compared against the match string without its delimiters, rather than with
+    them as before.  Update doc string.
+  test/hargs-tests.el (hargs-delimited-*): Add a bunch of tests for
+    `hargs:delimited'.
+
+2025-07-03  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-word-at): A HyWikiWord reference can contain one set of
+    '\n\r' in it, so fix to allow these characters.
+
+* hypb.el (hypb:in-string-p): Allow point to be on the last line of a string
+    when given 'max-lines' arg, i.e. support prior lines.  If 'max-lines' is
+    0, always return a nil-type result.
+  hywiki.el (hywiki-at-range-delimiter, hywiki-maybe-highlight-balanced-pairs,
+             hywiki-maybe-dehighlight-balanced-pairs): Update and document to
+    allow 2-line HyWikiWord references with point on the trailing delimiter,
+    i.e. allow a line before point and one after.
+            (hywiki-delimited-p): Narrow to just a few lines to constrain
+    search for delimiters.  The use case for this function does not require
+    looking back to the previous line.
+
 2025-06-26  Mats Lidell  <matsl@gnu.org>
 
 * man/.dir-locals.el: Use with-locale-environment to ensure English is

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     21-Jun-25 at 13:54:25 by Bob Weiner
+;; Last-Mod:      6-Jul-25 at 14:46:41 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -684,9 +684,9 @@ This will this install the Emacs helm package when needed."
   "Return non-nil iff point is within a string and not on the closing quote.
 
 With optional MAX-LINES, an integer, match only within that many
-lines from point.  With optional RANGE-FLAG, return list
-of (string-matched start-pos end-pos), where the positions
-exclude the delimiters.
+lines from point.  With optional RANGE-FLAG when there is a
+match, return list of (string-matched start-pos end-pos), where
+the positions exclude the delimiters.
 
 To prevent searching back to the buffer start and producing slow
 performance, this limits its count of quotes found prior to point
@@ -703,14 +703,21 @@ Quoting conventions recognized are:
   (save-excursion
     (save-restriction
       (when (integerp max-lines)
-	(narrow-to-region (line-beginning-position)
-			  (line-end-position max-lines)))
+	(if (zerop max-lines)
+	    (narrow-to-region (point) (point)) ;; Empty range
+	  ;; Allow for +/- (+ 1 max-lines) including current line so start
+	  ;; and end delimiters can be on separate lines.  Before returning,
+	  ;; this function checks that any matched string has <= max-lines.
+	  (narrow-to-region (line-beginning-position
+			     (when max-lines (1+ (- max-lines))))
+			    (line-end-position (1+ max-lines)))))
       ;; Don't use `syntax-ppss' here as it fails to ignore backquoted
       ;; double quote characters in strings and doesn't work in
       ;; `change-log-mode' due to its syntax-table.
       (let ((opoint (point))
 	    (start (point-min))
 	    (open-match-string "")
+	    str
 	    str-start
 	    str-end)
 	(cl-destructuring-bind (open-regexp close-regexp)
@@ -747,12 +754,8 @@ Quoting conventions recognized are:
 					    (regexp-quote texinfo-close-quote))
 				    start (point))))
 		       (search-forward texinfo-close-quote nil t)
-		       (if range-flag
-			   (progn
-			     (setq str-end (match-beginning 0))
-			     (list (buffer-substring-no-properties str-start str-end)
-				   str-start str-end))
-			 t))
+		       (setq str-end (match-beginning 0)
+			     str (buffer-substring-no-properties str-start str-end)))
 		(and (cl-oddp (- (count-matches (regexp-quote open-match-string)
 						start (point))
 				 ;; Subtract any backslash quoted delimiters
@@ -767,12 +770,25 @@ Quoting conventions recognized are:
 			 (goto-char (1- (point)))
 		       t)
 		     (re-search-forward close-regexp nil t)
-		     (if range-flag
-			 (progn
-			   (setq str-end (match-beginning 2))
-			   (list (buffer-substring-no-properties str-start str-end)
-				 str-start str-end))
-		       t))))))))))
+		     (setq str-end (match-beginning 2)
+			   str (buffer-substring-no-properties str-start str-end))))
+
+	      ;; Ignore if more than `max-lines' matched
+	      (when (and str
+			 (or (null max-lines)
+			     (and (integerp max-lines)
+				  ;; When computing the number of lines in
+				  ;; the string match, ignore any leading and
+				  ;; trailing newlines.  This allows for
+				  ;; opening and closing quotes to be on
+				  ;; separate lines, useful with multi-line
+				  ;; strings.
+				  (< (hypb:string-count-matches
+				      "\n" (string-trim str))
+				     max-lines))))
+		(if range-flag
+		    (list str str-start str-end)
+		  t)))))))))
 
 (defun hypb:indirect-function (obj)
   "Return the function at the end of OBJ's function chain.

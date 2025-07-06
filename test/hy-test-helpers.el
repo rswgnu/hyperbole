@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     24-Jun-25 at 10:21:13 by Mats Lidell
+;; Last-Mod:      6-Jul-25 at 15:40:23 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -34,6 +34,18 @@
 	 (first-type (caar possible-types)))
     (should (= (length possible-types) 1))
     (should (equal first-type type))))
+
+(defmacro hy-test-helpers:ert-simulate-keys (keys &rest body)
+  "Execute BODY with KEYS as pseudo-interactive input.
+Disable `vertico-mode' which can get in the way of standard key
+processing."
+  (declare (debug t) (indent 1))
+  `(if (bound-and-true-p vertico-mode)
+       (unwind-protect
+	   (progn (vertico-mode 0)
+		  (ert-simulate-keys ,keys ,@body))
+	 (vertico-mode 1))
+     (ert-simulate-keys ,keys ,@body)))
 
 (defun hy-test-helpers:should-last-message (msg captured)
   "Verify MSG is in CAPTURED text."

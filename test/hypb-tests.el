@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:     5-Apr-21 at 18:53:10
-;; Last-Mod:     27-May-25 at 22:01:13 by Bob Weiner
+;; Last-Mod:      6-Jul-25 at 14:49:57 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -115,14 +115,15 @@ See Emacs bug#74042 related to usage of texi2any."
     (goto-line 1) (move-to-column 1)
     ;; First line. Line starts with quote.
     (should-not (hypb:in-string-p 1))
-    (should-not (hypb:in-string-p 2))
+    (should (hypb:in-string-p 2))
     (should (hypb:in-string-p 3))
     (should (hypb:in-string-p 99))
 
     ;; Second line. No quote on the line.
     (goto-line 2)
-    (dotimes (l 5)
-      (should-not (hypb:in-string-p l)))))
+    (should-not (hypb:in-string-p 1))
+    (should (hypb:in-string-p 2))
+    (should (hypb:in-string-p 3))))
 
 ;; This file can't be byte-compiled without the `el-mock' package (because of
 ;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.

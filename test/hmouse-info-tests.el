@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    29-Dec-21 at 09:02:00
-;; Last-Mod:     25-Apr-25 at 19:56:35 by Mats Lidell
+;; Last-Mod:      6-Jul-25 at 13:02:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -24,7 +24,7 @@
 
 (ert-deftest hmouse-info-read-index-with-completion ()
   "Read a completion that completes."
-  (ert-simulate-keys "(emacs)regex\t\r"
+  (hy-test-helpers:ert-simulate-keys "(emacs)regex\t\r"
     (should (string= "(emacs)regexp" (Info-read-index-item-name "Prompt: ")))))
 
 (ert-deftest hmouse-info-build-completions-no-match ()
