@@ -45,6 +45,27 @@
     search for delimiters.  The use case for this function does not require
     looking back to the previous line.
 
+2025-06-26  Mats Lidell  <matsl@gnu.org>
+
+* man/.dir-locals.el: Use with-locale-environment to ensure English is
+    used for month names.
+* man/hyperbole.texi: Insert auto-replace-on-save marker comment for date
+    update on save. Needed for the date in info pages.
+
+* hui-mouse.el (smart-magit): Add jump to worktree file when action press on
+    `+' char in magit-status-mode or magit-revision-mode.
+* man/hyperbole.texi (Smart Key - Magit Mode): Update docs with jump to
+    worktree.
+
+2025-06-24  Mats Lidell  <matsl@gnu.org>
+
+* test/hui-tests.el (hui--kill-region-delimited-text-and-yank-back)
+    (hui--select-boundaries): Add tests.
+
+* test/hywiki-tests.el (hywiki-tests--create-wikiword-file-highlights-wikiword):
+    Verify creating a file for WikiWord highlights the instances of
+    WikiWord that already is present in other files.
+
 2025-06-22  Bob Weiner  <rsw@gnu.org>
 
 * hproperty.el (hproperty:but-get-first-in-region): Change from returning a list

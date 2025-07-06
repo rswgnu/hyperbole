@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:      6-Jul-25 at 13:06:39 by Bob Weiner
+;; Last-Mod:      6-Jul-25 at 15:40:23 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -20,6 +20,7 @@
 
 (require 'ert)
 (require 'hmouse-drv)                   ; For `action-key'
+(require 'hywiki)                       ; For `hywiki-word-face-at-p'
 (eval-when-compile (require 'cl-lib))
 
 (defun hy-test-helpers:consume-input-events ()
