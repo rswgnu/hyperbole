@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 22:52:00
-;; Last-Mod:     10-Jun-25 at 17:44:05 by Mats Lidell
+;; Last-Mod:      6-Jul-25 at 13:02:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -190,7 +190,7 @@
   (with-temp-buffer
     (insert "\"/tmp\"\n")
     (goto-char 3)
-    (ert-simulate-keys "TMP\r"
+    (hy-test-helpers:ert-simulate-keys "TMP\r"
       (let ((enable-recursive-minibuffers t))
 	(hui:ibut-label-create)
 	(should (string= "<[TMP]> - \"/tmp\"\n" (buffer-string)))))))
@@ -200,7 +200,7 @@
   (with-temp-buffer
     (insert "<[LBL]>: \"/tmp\"\n")
     (goto-char 14)
-    (ert-simulate-keys "TMP\r"
+    (hy-test-helpers:ert-simulate-keys "TMP\r"
       (condition-case err
           (hui:ibut-label-create)
         (error

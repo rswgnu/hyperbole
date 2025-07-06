@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:     11-Jun-25 at 00:20:07 by Mats Lidell
+;; Last-Mod:      6-Jul-25 at 15:28:05 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -121,20 +121,25 @@ Convert NUL characters to colons for use with grep lines."
 (defun hargs:delimited (start-delim end-delim
 			&optional start-regexp-flag end-regexp-flag
 			list-positions-flag exclude-regexp as-key)
-  "Return a delimited string that point is within the first line of, or nil.
-The string matched may be up to two lines long.  The delimiters
-are removed, the string is normalized and reduced to a single
-line.  START-DELIM and END-DELIM are strings that specify the
-argument delimiters.  With optional START-REGEXP-FLAG non-nil,
-START-DELIM is treated as a regular expression.  END-REGEXP-FLAG
-is similar.  With optional LIST-POSITIONS-FLAG, return list
-of (string-matched start-pos end-pos), where the positions
-exclude the delimiters.  Optional EXCLUDE-REGEXP is compared
-against the match string with its delimiters included; any string
-that matches this regexp is ignored.  With optional AS-KEY =
-\\='none, return t rather than the string result.  Any other
-non-nil value, means return the string normalized as a Hyperbole
-button key (no spaces)." 
+  "Return a delimited string that point is within two lines of, or nil.
+The string matched may be up to two lines long and must not
+contain any nested occurrences of START-DELIM and END-DELIM.  In
+the returned value, the delimiters are removed and the string is
+normalized by changing newlines followed by any additional
+whitespace to a single space, reducing the string to a single
+line.  Other occurrences of multiple spaces and tabs are left
+unchanged.
+
+START-DELIM and END-DELIM are strings that specify the argument
+delimiters.  With optional START-REGEXP-FLAG non-nil, START-DELIM
+is treated as a regular expression.  END-REGEXP-FLAG is similar.
+With optional LIST-POSITIONS-FLAG, return list of (string-matched
+start end), where the positions exclude the delimiters.  Optional
+EXCLUDE-REGEXP is compared against the match string without its
+delimiters; any string that matches this regexp is ignored.  With
+optional AS-KEY = \\='none, return t rather than the string
+result.  Any other non-nil value, means return the string
+normalized as a Hyperbole button key (no spaces)."
   (let* ((opoint (point))
 	 ;; This initial limit is the forward search limit for start delimiters
 	 (limit (if start-regexp-flag
@@ -148,71 +153,71 @@ button key (no spaces)."
 	 first
 	 start ;; excludes delimiter
 	 end   ;; excludes delimiter
-	 start-pos
 	 end-pos
-	 start-with-delim
-	 end-with-delim)
+	 string-start-end)
 
-    (if (string-equal start-delim end-delim)
-	(save-excursion
-	  (beginning-of-line)
-	  (while (and (setq end-pos (funcall start-search-func start-delim limit t))
-		      (setq start-with-delim (match-beginning 0))
+    (if (and (null start-regexp-flag) (null end-regexp-flag)
+	     (string-match "\\`['`\"]+\\'" start-delim)
+	     (string-match "\\`['`\"]+\\'" end-delim))
+	;; This is a string match
+	(setq string-start-end (hypb:in-string-p 2 :range)
+	      start (nth 1 string-start-end)
+	      end   (nth 2 string-start-end))
+      (save-excursion
+	(beginning-of-line 0) ;; start of previous line
+	(if (string-equal start-delim end-delim)
+	    (progn
+	      (while (and (setq end-pos (funcall start-search-func start-delim limit t))
+			  ;; Prevent infinite loop where regexp match does not
+			  ;; move end-pos forward, e.g. match to bol.
+			  (not (eq first end-pos))
+			  (setq start end-pos)
+			  (setq count (1+ count))
+			  (< (point) opoint)
+			  ;; This is not to find the real end delimiter but to find
+			  ;; end delimiters that precede the current argument and are
+			  ;; therefore false matches, hence the search is limited to
+			  ;; prior to the original point.
+			  (funcall end-search-func end-delim opoint t)
+			  (setq count (1+ count)))
+		(setq first (or first start)
+		      start nil))
+	      (when (and (not start) (> count 0) (zerop (% count 2)))
+		;; Since strings can span lines but this function matches only
+		;; strings that start on the current line, when start-delim and
+		;; end-delim are the same and there are an even number of
+		;; delimiters in the search range, causing the end-delim
+		;; search to match to what should probably be the start-delim,
+		;; assume point is within a string and not between two other strings.
+		;; -- RSW, 02-05-2019
+		(setq start (if (string-equal start-delim end-delim)
+				(point)
+			      first))))
+	  ;;
+	  ;; Start and end delims are different, so don't have to worry
+	  ;; about whether in or outside two of the same delimiters and
+	  ;; can match much more simply.
+	  ;; Use forward rather than reverse search here to perform greedy
+	  ;; searches when optional matches within a regexp.
+	  (while (and (<= (point) limit)
+		      (setq end-pos (funcall start-search-func start-delim limit t))
 		      ;; Prevent infinite loop where regexp match does not
 		      ;; move end-pos forward, e.g. match to bol.
-		      (not (eq first end-pos))
-		      (setq start end-pos)
-		      (setq count (1+ count))
-		      (< (point) opoint)
-		      ;; This is not to find the real end delimiter but to find
-		      ;; end delimiters that precede the current argument and are
-		      ;; therefore false matches, hence the search is limited to
-		      ;; prior to the original point.
-		      (funcall end-search-func end-delim opoint t)
-		      (setq count (1+ count)))
-	    (setq first (or first start)
-		  start nil))
-	  (when (and (not start) (> count 0) (zerop (% count 2)))
-	    ;; Since strings can span lines but this function matches only
-	    ;; strings that start on the current line, when start-delim and
-	    ;; end-delim are the same and there are an even number of
-	    ;; delimiters in the search range, causing the end-delim
-	    ;; search to match to what should probably be the start-delim,
-	    ;; assume point is within a string and not between two other strings.
-	    ;; -- RSW, 02-05-2019
-	    (setq start (if (string-equal start-delim end-delim)
-			    (point)
-			  first))))
-      ;;
-      ;; Start and end delims are different, so don't have to worry
-      ;; about whether in or outside two of the same delimiters and
-      ;; can match much more simply.
-      ;; Use forward rather than reverse search here to perform greedy
-      ;; searches when optional matches within a regexp.
-      (save-excursion
-	(beginning-of-line)
-	(while (and (<= (point) limit)
-		    (setq start-pos (point)
-			  end-pos (funcall start-search-func start-delim limit t))
-		    ;; Prevent infinite loop where regexp match does not
-		    ;; move end-pos forward, e.g. match to bol.
-		    (not (eq start end-pos)))
-	  (setq start-with-delim (match-beginning 0)
-		start (match-end 0))
-	  (when (eq start-pos end-pos)
-	    ;; start-delim contains a match for bol, so move point
-	    ;; forward a char to prevent loop exit even though start
-	    ;; delim matched.
-	    (goto-char (min (1+ (point)) (point-max)))))))
+		      (not (eq start end-pos)))
+	    (setq start (match-end 0))
+	    (when (eq start end-pos)
+	      ;; start-delim contains a match for bol, so move point
+	      ;; forward a char to prevent loop exit even though start
+	      ;; delim matched.
+	      (goto-char (min (1+ (point)) (point-max)))))))
 
-    (when start
-      (save-excursion
-	(forward-line 2)
-	(setq limit (point))
-	(goto-char opoint)
-	(and (funcall end-search-func end-delim limit t)
-	     (setq end (match-beginning 0)
-		   end-with-delim (match-end 0)))))
+      (when start
+	(save-excursion
+	  (forward-line 2)
+	  (setq limit (point))
+	  (goto-char opoint)
+	  (and (funcall end-search-func end-delim limit t)
+	       (setq end (match-beginning 0))))))
 
     (when (and start end)
       (save-excursion
@@ -234,12 +239,11 @@ button key (no spaces)."
 		 (if list-positions-flag
 		     (list t start end)
 		   t)
-	       (let ((result (hargs:buffer-substring start end))
-		     (string-with-delims (when (stringp exclude-regexp)
-					   (hargs:buffer-substring start-with-delim
-								   end-with-delim))))
-		 (unless (and string-with-delims
-			      (string-match exclude-regexp string-with-delims))
+	       (let ((result (hargs:buffer-substring start end)))
+		 (unless (or
+			  ;; Ignore if more than 2 lines matched
+			  (> (hypb:string-count-matches "\n" result) 1)
+			  (when exclude-regexp (string-match exclude-regexp result)))
 		   ;; Normalize the result
 		   (setq result
 			 (if as-key
