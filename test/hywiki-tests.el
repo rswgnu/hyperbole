@@ -1417,7 +1417,7 @@ named WikiReferent with a non-page referent type."
 
 ;; Command
 (defun hywiki-tests--command (wikiword)
-  "Test command."
+  "Verify WIKIWORD is WikiReferent."
   (interactive)
   (should (string= "WikiReferent" wikiword)))
 
@@ -2183,6 +2183,173 @@ face is verified during the change."
         (should (equal (get-text-property 1 'org-redo-cmd)
                        (list #'hywiki-tags-view t nil bn)))
         (should (= (line-number-at-pos) 3))))))
+
+;; Based on functions in simple-test.el add support for also marking
+;; highlighted words in buffers using the same idea with point-tag and
+;; mark-tag also for start and end of highlighted regions. Note that
+;; for setting the highlighted areas hywiki-mode is used. The tag
+;; notation is not used for that. It is only used for the
+;; verification.
+(defconst hywiki-test--point-tag "^")
+(defconst hywiki-test--start-tag "<")
+(defconst hywiki-test--end-tag ">")
+
+;; Main function - reads from current buffer and inserts tags
+(defun hywiki-test--insert-tags (positions)
+  "Insert tags at positions and mark point location in current buffer.
+POSITIONS is a list of cons cells (START . END) with 1-based positions."
+  (let* ((buffer-string (buffer-substring-no-properties (point-min) (point-max)))
+         (current-point (point))
+         ;; Convert 1-based positions to 0-based for string operations
+         ;; Note: Emacs ranges are (start . end) where end is exclusive
+         (zero-based-positions (mapcar (lambda (pos)
+                                        (cons (1- (car pos)) (1- (cdr pos))))
+                                      (or positions '())))
+         ;; Sort ranges in reverse order for right-to-left processing
+         (sorted-positions (sort zero-based-positions
+                                (lambda (a b) (> (car a) (car b)))))
+         (result buffer-string))
+    
+    ;; First, process all ranges from right to left
+    (dolist (pos sorted-positions)
+      (let* ((start (car pos))
+             (end (cdr pos))  ; end is exclusive in our 0-based system
+             (before (substring result 0 start))
+             (middle (substring result start end))  ; substring is exclusive too
+             (after (substring result end)))
+        
+        (setq result (concat before hywiki-test--start-tag middle hywiki-test--end-tag after))))
+    
+    ;; Then insert point tag (now we need to adjust for inserted tags)
+    (let* ((point-pos (1- current-point))
+           ;; Calculate how many characters we've added before point
+           (tags-before-point 0)
+           ;; Check if point is within any range
+           (point-in-range nil))
+      
+      ;; Count tag characters and check if point is within ranges
+      (dolist (pos zero-based-positions)
+        (let ((range-start (car pos))
+              (range-end (cdr pos)))
+          (cond
+           ;; Point is within this range (not at boundaries)
+           ((and (> point-pos range-start) (< point-pos range-end))
+            (setq point-in-range t)
+            ;; Add start-tag length (we're inside the range)
+            (setq tags-before-point (+ tags-before-point (length hywiki-test--start-tag))))
+           ;; Range is completely before point
+           ((<= range-end point-pos)
+            (setq tags-before-point (+ tags-before-point
+                                     (length hywiki-test--start-tag)
+                                     (length hywiki-test--end-tag)))))))
+      
+      ;; Insert point tag at adjusted position
+      (let* ((adjusted-point (+ point-pos tags-before-point))
+             (before (substring result 0 adjusted-point))
+             (after (substring result adjusted-point)))
+        (setq result (concat before hywiki-test--point-tag after))))
+    
+    result))
+
+(ert-deftest hywiki-test--insert-tags-test ()
+  "Verify `hywiki-test--insert-tags'."
+  (with-temp-buffer
+    (insert "Hello World\n")
+    (goto-char 6)
+    (should (string= (hywiki-test--insert-tags nil)
+                     "Hello^ World\n"))
+    (should (string= (hywiki-test--insert-tags '((1 . 6) (7 . 12)))
+                     "<Hello>^ <World>\n"))
+    (goto-char 5)
+    (should (string= (hywiki-test--insert-tags '((1 . 6) (7 . 12)))
+                     "<Hell^o> <World>\n"))))
+
+(defun hywiki-test--set-buffer-text-point-and-highlight (description)
+  "Set the current buffer's text, point and mark according to DESCRIPTION.
+
+Erase current buffer and insert DESCRIPTION.  Set point to the first
+occurrence of `hywiki-test--point-tag' in the buffer, removing it.  If
+there is no `hywiki-test--point-tag', set point to the beginning of the
+buffer.
+
+End the insertion of text by turning on hywiki-mode and perform a dummy
+command to get the pre- and post-hooks executed. This creates the
+highlighting overlays we want to test."
+  (erase-buffer)
+  (hywiki-mode 0) ; Deactivate hywiki-mode, disable highlighting
+  (insert description)
+  (goto-char (point-min))
+  (when (search-forward hywiki-test--point-tag nil t)
+    (delete-char (- (length hywiki-test--point-tag))))
+  (hywiki-mode 1) ; Activate hywiki-mode activates highlighting
+  (save-excursion ; Force pre- and post-hooks.
+    (end-of-buffer)
+    (hywiki-tests--command-execute #'self-insert-command 1 ? )
+    (hywiki-tests--command-execute #'delete-char -1)))
+
+(defun hywiki-test--get-buffer-text-point-and-highlight-as-tags ()
+  "An inverse of `hywiki-test--set-buffer-text-point-and-highlight'.
+Inserts tags for highlighted areas as well as point."
+  (hywiki-test--insert-tags (hywiki-get-reference-positions)))
+
+(defun hywiki-test--insert (string)
+  "Command to insert a STRING at point."
+  (interactive "s: ")
+  (dolist (c (string-to-list string))
+    (hywiki-tests--command-execute #'self-insert-command 1 c)))
+
+;;; Tests to be created ...
+
+;; text region inserted with no double-quoted string in it;
+;; text region inserted with an entire double-quoted string in it;
+;; text region inserted with the first part of a double-quoted string there is a string end (double quote);
+;; text region inserted with the last part of a double-quoted string and there is a string beginning (double quote);
+;; text region inserted with the first part of a double-quoted string but there is no string end (double quote);
+;; text region inserted with the last part of a double-quoted string but there is no string beginning (double quote);
+
+;; All of the same scenarios as the inserts above but with the text yanked rather than inserted.
+
+;; * Kill / Deletion
+;; text region deleted that contains the first part or the last part of a wikiword reference;
+;; text region deleted with the first part of a double-quoted string where there is a string end (double quote);
+;; text region deleted with the last part of a double-quoted string and there is a string beginning (double quote);
+;; text region deleted with the first part of a double-quoted string but there is no string end (double quote);
+;; text region deleted with the last part of a double-quoted string but there is no string beginning (double quote).
+
+(ert-deftest hywiki--verify-get-buffer-text-point-mark-highlight ()
+  (skip-unless (not noninteractive))    ; Only works in interactive mode for now
+  (hywiki-tests--preserve-hywiki-mode
+   (let* ((hywiki-directory (make-temp-file "hywiki" t))
+          (wikiHi (cdr (hywiki-add-page "Hi")))
+          (wikiHo (cdr (hywiki-add-page "Ho")))
+          (hywiki-tests--with-face-test t))
+     (unwind-protect
+         (with-temp-buffer
+           (ert-info ("1" :prefix "Verify point, no highlighting: ")
+             (hywiki-test--set-buffer-text-point-and-highlight "hej^hopp")
+             (should (string= "hej^hopp"
+                              (hywiki-test--get-buffer-text-point-and-highlight-as-tags))))
+           (ert-info ("2" :prefix "Verify point, no highlighting: ")
+             (hywiki-test--set-buffer-text-point-and-highlight "hej^hopp")
+             (forward-char 1)
+             (should (string= "hejh^opp"
+                              (hywiki-test--get-buffer-text-point-and-highlight-as-tags))))
+           (ert-info ("3" :prefix "Verify highlighting: ")
+             (hywiki-test--set-buffer-text-point-and-highlight "^Hi")
+             (should (string= "^<Hi>"
+                              (hywiki-test--get-buffer-text-point-and-highlight-as-tags))))
+           (ert-info ("4" :prefix "Verify highlighting: ")
+             (hywiki-test--set-buffer-text-point-and-highlight "Hi^Ho")
+             (hywiki-test--insert "\"text\"")
+             (should (string= "Hi\"text\"^<Ho>"
+                              (hywiki-test--get-buffer-text-point-and-highlight-as-tags))))
+           (ert-info ("5" :prefix "Verify highlighting: ")
+             (hywiki-test--set-buffer-text-point-and-highlight "Hi^Ho")
+             (hywiki-test--insert " \"text\"")
+             (should (string= "<Hi> \"text\"^<Ho>"
+                              (hywiki-test--get-buffer-text-point-and-highlight-as-tags)))))
+       (hy-delete-files-and-buffers (list wikiHi wikiHo))
+       (hy-delete-dir-and-buffer hywiki-directory)))))
 
 (provide 'hywiki-tests)
 
