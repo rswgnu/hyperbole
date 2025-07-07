@@ -1,4 +1,16 @@
+2025-07-07  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-map-words):  Optimize and improve doc string.
+	    (hywiki-get-references, hywiki-get-reference-positions)
+             hywiki--get-all-references): Add for returning all highlighted
+    HyWikiWord references or reference positions in the current buffer.
+
 2025-07-06  Bob Weiner  <rsw@gnu.org>
+
+* hproperty.el (hproperty:but-get-all-in-region): Reverse results so buttons come
+    back in buffer order.
+               (hproperty:but-get-all-positions): Add to return positions in region
+    matching 'property' with 'value'
 
 * hargs.el (hargs:delimited): Fix bug with regexp delimiters where 'start-pos' was
     used instead of 'start' and this stop point from moving in a loop when matched

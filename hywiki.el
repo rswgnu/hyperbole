@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:      4-Jul-25 at 19:46:06 by Bob Weiner
+;; Last-Mod:      7-Jul-25 at 01:01:30 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1511,25 +1511,26 @@ publish process."
 	org-link
 	wikiword-and-section
 	wikiword)
-    (hywiki-map-words (lambda (overlay)
-			(setq wikiword-and-section
-			      (buffer-substring-no-properties
-			       (overlay-start overlay)
-			       (overlay-end overlay)))
-			(goto-char (overlay-start overlay))
-			(delete-region (overlay-start overlay)
-				       (overlay-end overlay))
-			(delete-overlay overlay)
-			(if (setq org-link (hywiki-word-to-org-link wikiword-and-section nil))
-			    (insert org-link)
-			  (message
-			   "(hywiki-convert-words-to-org-links): \"%s\" in \"%s\" produced nil org link output"
-			   wikiword-and-section (buffer-name)))
-			(when make-index
-			  (when (string-match (concat hywiki-org-link-type ":")
-					      wikiword-and-section)
-			    (setq wikiword (substring wikiword-and-section (match-end 0))))
-			  (insert "\n#+INDEX: " wikiword "\n"))))))
+    (hywiki-map-words
+     (lambda (overlay)
+       (setq wikiword-and-section
+	     (buffer-substring-no-properties
+	      (overlay-start overlay)
+	      (overlay-end overlay)))
+       (goto-char (overlay-start overlay))
+       (delete-region (overlay-start overlay)
+		      (overlay-end overlay))
+       (delete-overlay overlay)
+       (if (setq org-link (hywiki-word-to-org-link wikiword-and-section nil))
+	   (insert org-link)
+	 (message
+	  "(hywiki-convert-words-to-org-links): \"%s\" in \"%s\" produced nil org link output"
+	  wikiword-and-section (buffer-name)))
+       (when make-index
+	 (when (string-match (concat hywiki-org-link-type ":")
+			     wikiword-and-section)
+	   (setq wikiword (substring wikiword-and-section (match-end 0))))
+	 (insert "\n#+INDEX: " wikiword "\n"))))))
 
 (defun hywiki-word-to-org-link (link &optional description)
   "From a HyWikiWord reference LINK with an optional DESCRIPTION to an Org link."
@@ -1688,15 +1689,14 @@ After successfully finding any kind of referent, run
 
 (defun hywiki-map-words (func)
   "Apply FUNC across highlighted HyWikiWords in the current buffer and return nil.
-FUNC takes 1 argument, the Emacs overlay spanning the start and end buffer
-positions of each HyWikiWord and its optional #section."
+This temporarily expands the buffer so all HyWikiWord references are processed.
+FUNC takes 1 argument, the Emacs overlay for each HyWikiWord reference, including
+its optional #section."
   (save-excursion
     (save-restriction
       (widen)
-      (mapc (lambda (overlay)
-	      (when (eq (overlay-get overlay 'face) hywiki-word-face)
-		(funcall func overlay)))
-	    (overlays-in (point-min) (point-max)))))
+      (mapc func (hproperty:but-get-all-in-region
+		  (point-min) (point-max) 'face hywiki-word-face))))
   nil)
 
 (defun hywiki-at-range-delimiter ()
@@ -2428,6 +2428,16 @@ value returns nil."
 		hywiki-file-suffix)
 	      section))))
 
+(defun hywiki-get-page-files ()
+  "Return the list of existing HyWiki page file names.
+These must end with `hywiki-file-suffix'."
+  (when (stringp hywiki-directory)
+    (make-directory hywiki-directory t)
+    (when (file-readable-p hywiki-directory)
+      (directory-files
+       hywiki-directory nil (concat "^" hywiki-word-regexp
+				    (regexp-quote hywiki-file-suffix) "$")))))
+
 (defun hywiki-get-referent (wikiword)
   "Return the referent of HyWiki WIKIWORD or nil if it does not exist.
 If it is a pathname, expand it relative to `hywiki-directory'."
@@ -2447,16 +2457,6 @@ If it is a pathname, expand it relative to `hywiki-directory'."
       ;; If a referent type that can include a # or :L line
       ;; number suffix, append it to the referent-value.
       (setq referent (hywiki--add-suffix-to-referent suffix referent)))))
-
-(defun hywiki-get-page-files ()
-  "Return the list of existing HyWiki page file names.
-These must end with `hywiki-file-suffix'."
-  (when (stringp hywiki-directory)
-    (make-directory hywiki-directory t)
-    (when (file-readable-p hywiki-directory)
-      (directory-files
-       hywiki-directory nil (concat "^" hywiki-word-regexp
-				    (regexp-quote hywiki-file-suffix) "$")))))
 
 (defun hywiki-get-referent-hasht ()
   "Return hash table of existing HyWiki referents.
@@ -2490,6 +2490,18 @@ regexps of wikiwords, if the hash table is out-of-date."
       ;; References to it may be highlighted in any frame, so need to
       ;; walk across all frames here, rehighlighting HyWikiWords.
       (hywiki-maybe-highlight-wikiwords-in-frame t t))))
+
+(defun hywiki-get-references (&optional start end)
+  "Return a list of all highlighted HyWikiWord references in the current buffer.
+Optional START and END arguments limit the search to references that at
+least partially overlap that region."
+  (hywiki--get-all-references #'hproperty:but-get-all-in-region start end))
+
+(defun hywiki-get-reference-positions (&optional start end)
+  "Return a list of all highlighted HyWikiWord reference (start . end) positions.
+Optional START and END arguments limit the search to references that at
+least partially overlap that region."
+  (hywiki--get-all-references #'hproperty:but-get-all-positions start end))
 
 (defun hywiki-get-wikiword-list ()
   "Return a list of the HyWiki page names."
@@ -3460,6 +3472,16 @@ or balanced pair delimiters."
 		   (goto-char (min (1+ opoint) end)))
 	  (error (goto-char (min (1+ opoint) end))))))
       result))
+
+(defun hywiki--get-all-references (function &optional start end)
+  "Apply FUNCTION to all highlighted HyWikiWord references in current buffer.
+FUNCTION must take four arguments: (buffer-start-pos buffer-end-pos
+'face hywiki-word-face).  Optional START and END are sent to the function as
+the first two arguments; otherwise, the entire buffer is scanned."
+  (funcall function
+	   (or start (point-min))
+	   (or end (point-max))
+	   'face hywiki-word-face))
 
 (defun hywiki--get-delimited-range-backward ()
   "Return a list of (start end) if not between/after end ]] or >>.
