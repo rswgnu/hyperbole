@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    13-Jul-25 at 19:50:37
-;; Last-Mod:     13-Jul-25 at 20:07:36 by Mats Lidell
+;; Last-Mod:     15-Jul-25 at 11:07:32 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -164,6 +164,7 @@ Each test is constructed as three phases:
    (let* ((hywiki-directory (make-temp-file "hywiki" t))
           (wikiHi (cdr (hywiki-add-page "Hi")))
           (wikiHo (cdr (hywiki-add-page "Ho")))
+          (wikiWord (cdr (hywiki-add-page "WikiWord")))
           (hywiki-tests--with-face-test t))
      (unwind-protect
          (with-temp-buffer
@@ -189,8 +190,84 @@ Each test is constructed as three phases:
              (hywiki-test--set-buffer-text-with-point-and-highlight "Hi^Ho")
              (hywiki-test--insert " \"text\"")
              (should (string= "<Hi> \"text\"^<Ho>"
+                              (hywiki-test--get-buffer-text-with-point-and-highlight))))
+
+           ;; PASS: Wiki<delete-region>Word -> highlight {WikiWord} after delete
+           (ert-info ("6" :prefix "Verify highlighting: ")
+             (hywiki-test--set-buffer-text-with-point-and-highlight "Wiki^delete-regionWord")
+             (hywiki-tests--command-execute #'delete-region (point)
+                                            (+ (point) (length "delete-region")))
+             (should (string= "<Wiki^Word>"
+                              (hywiki-test--get-buffer-text-with-point-and-highlight))))
+
+           ;; PASS: Wiki#sec<tion>Word -> no highlight after adding "tion"
+           (ert-info ("7" :prefix "Verify highlighting: ")
+             (hywiki-test--set-buffer-text-with-point-and-highlight "Wiki#sec^tionWord")
+             (hywiki-tests--command-execute #'delete-region (point)
+                                            (+ (point) (length "tion")))
+             (should (string= "Wiki#sec^Word"
+                              (hywiki-test--get-buffer-text-with-point-and-highlight))))
+
+           ;; PASS: Wiki<#section>Word -> highlight {WikiWord} after delete of "#section"
+           (ert-info ("8" :prefix "Verify highlighting: ")
+             (hywiki-test--set-buffer-text-with-point-and-highlight "Wiki^#sectionWord")
+             (hywiki-tests--command-execute #'delete-region (point)
+                                            (+ (point) (length "#section")))
+             (should (string= "<Wiki^Word>"
+                              (hywiki-test--get-buffer-text-with-point-and-highlight))))
+           
+           ;; PASS: WikiWord -> dehighlight "WikiWo<kill-word>rd"
+           (ert-info ("8" :prefix "Verify highlighting: ")
+             (hywiki-test--set-buffer-text-with-point-and-highlight "WikiWo^kill-wordrd")
+             (hywiki-tests--command-execute #'delete-region (point)
+                                            (+ (point) (length "kill-word")))
+             (should (string= "<WikiWo^rd>"
+                              (hywiki-test--get-buffer-text-with-point-and-highlight))))
+
+           ;; PASS: "WikiWord#section with spaces" -> shrink highlight
+           ;;        to {WikiWord#section} with this operation:
+           ;;        <delete-char>"WikiWord#section with spaces"
+           (ert-info ("9" :prefix "Verify highlighting: ")
+             (hywiki-test--set-buffer-text-with-point-and-highlight "^\"WikiWord#section with spaces\"")
+             (hywiki-tests--command-execute #'delete-char 1)
+             (should (string= "^<WikiWord#section> with spaces\""
+                              (hywiki-test--get-buffer-text-with-point-and-highlight))))
+
+           ;; PASS: "WikiWord#section"<delete-char-backwards> -> no
+           ;; highlight change "{WikiWord#section}
+           (ert-info ("10" :prefix "Verify highlighting: ")
+             (hywiki-test--set-buffer-text-with-point-and-highlight "\"WikiWord#section\"^")
+             (hywiki-tests--command-execute #'backward-delete-char-untabify 1)
+             (should (string= "\"<WikiWord#section>^"
+                              (hywiki-test--get-buffer-text-with-point-and-highlight))))
+
+           ;; FAIL: "WikiWord#section with
+           ;; spaces"<delete-char-backwards> -> shrink highlight to
+           ;; "{WikiWord#section} with spaces
+           (ert-info ("11" :prefix "Verify highlighting: ")
+             (hywiki-test--set-buffer-text-with-point-and-highlight "\"WikiWord#section with spaces\"^")
+             (hywiki-tests--command-execute #'backward-delete-char-untabify 1)
+             (should (string= "\"<WikiWord#section with spaces>^" ;;; <= FAIL: Not correct highlight
+                              (hywiki-test--get-buffer-text-with-point-and-highlight))))
+
+           ;; FAIL: WikiWord <kill-word> abc WikiWord -> improperly
+           ;; dehighlights *SECOND* WikiWord
+           (ert-info ("12" :prefix "Verify highlighting: ")
+             (hywiki-test--set-buffer-text-with-point-and-highlight "WikiWord ^<kill-word> abc WikiWord")
+             (hywiki-tests--command-execute #'delete-region (point)
+                                            (+ (point) (length "<kill-word> abc "))) ; Delete trailing space.
+             (should (string= "<WikiWord> ^WikiWord" ;;; <= FAIL: Not correct highlight
+                              (hywiki-test--get-buffer-text-with-point-and-highlight))))
+
+           ;; PASS: WikiWord <kill-word> abc WikiWord -> *BOTH
+           ;; WikiWord's are highlighted
+           (ert-info ("13" :prefix "Verify highlighting: ")
+             (hywiki-test--set-buffer-text-with-point-and-highlight "WikiWord ^<kill-word> abc WikiWord")
+             (hywiki-tests--command-execute #'delete-region (point)
+                                            (+ (point) (length "<kill-word> abc")))
+             (should (string= "<WikiWord> ^ <WikiWord>"
                               (hywiki-test--get-buffer-text-with-point-and-highlight)))))
-       (hy-delete-files-and-buffers (list wikiHi wikiHo))
+       (hy-delete-files-and-buffers (list wikiHi wikiHo wikiWord))
        (hy-delete-dir-and-buffer hywiki-directory)))))
 
 (provide 'hywiki-yki-tests)
