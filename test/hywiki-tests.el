@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:      6-Jul-25 at 15:39:40 by Bob Weiner
+;; Last-Mod:      7-Jul-25 at 00:12:06 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1119,7 +1119,7 @@ up the test."
 
 ;; Command
 (defun hywiki-tests--command (wikiword)
-  "Test command."
+  "Verify WIKIWORD is WikiReferent."
   (interactive)
   (should (string= "WikiReferent" wikiword)))
 
