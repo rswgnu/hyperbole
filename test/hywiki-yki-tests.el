@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    13-Jul-25 at 19:50:37
-;; Last-Mod:     15-Jul-25 at 11:07:32 by Mats Lidell
+;; Last-Mod:     15-Jul-25 at 22:55:07 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -269,6 +269,31 @@ Each test is constructed as three phases:
                               (hywiki-test--get-buffer-text-with-point-and-highlight)))))
        (hy-delete-files-and-buffers (list wikiHi wikiHo wikiWord))
        (hy-delete-dir-and-buffer hywiki-directory)))))
+
+(ert-deftest hywiki--verify-get-buffer-text-with-point-and-highlight-compact ()
+  "Example test with more compact notation using `cl-flet'.
+Can be expanded with alternatives for insert, delete and yank instead if
+exec which does not cover all cases."
+  (skip-unless (not noninteractive))    ; Only works in interactive mode for now
+  (hywiki-tests--preserve-hywiki-mode
+    (let* ((hywiki-directory (make-temp-file "hywiki" t))
+           (wikiHi (cdr (hywiki-add-page "Hi")))
+           (wikiHo (cdr (hywiki-add-page "Ho")))
+           (wikiWord (cdr (hywiki-add-page "WikiWord")))
+           (hywiki-tests--with-face-test t))
+      (cl-flet ((pre: (start)
+                  (hywiki-test--set-buffer-text-with-point-and-highlight start))
+                (exec: (cmd &rest args)
+                  (apply #'hywiki-tests--command-execute cmd args))
+                (post: (stop)
+                  (should (string= stop (hywiki-test--get-buffer-text-with-point-and-highlight)))))
+        (unwind-protect
+            (ert-info ("1" :prefix "Verify highlighting: ")
+              (pre: "WikiWord ^<kill-word> abc WikiWord")
+              (exec: #'delete-region (point) (+ (point) (length "<kill-word> abc")))
+              (post: "<WikiWord> ^ <WikiWord>"))
+          (hy-delete-files-and-buffers (list wikiHi wikiHo wikiWord))
+          (hy-delete-dir-and-buffer hywiki-directory))))))
 
 (provide 'hywiki-yki-tests)
 
