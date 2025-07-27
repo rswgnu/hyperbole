@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:      7-Jul-25 at 01:01:30 by Bob Weiner
+;; Last-Mod:      8-Jul-25 at 23:21:17 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1690,8 +1690,8 @@ After successfully finding any kind of referent, run
 (defun hywiki-map-words (func)
   "Apply FUNC across highlighted HyWikiWords in the current buffer and return nil.
 This temporarily expands the buffer so all HyWikiWord references are processed.
-FUNC takes 1 argument, the Emacs overlay for each HyWikiWord reference, including
-its optional #section."
+FUNC takes 1 argument, the Emacs overlay for each HyWikiWord reference,
+including its optional #section."
   (save-excursion
     (save-restriction
       (widen)
@@ -1704,8 +1704,8 @@ its optional #section."
 Include: (), {}, <>, [] and \"\" (double quotes).  Exclude Org links
 and radio targets.
 
-Range is limited to the previous, current and next lines, as HyWikiWord references
-are limited to two lines maximum.
+Range is limited to the previous, current and next lines, as HyWikiWord
+references are limited to two lines maximum.
 
 If no such range, return \\='(nil nil).
 This includes the delimiters: (), {}, <>, [] and \"\" (double quotes)."
@@ -1769,8 +1769,8 @@ This includes the delimiters: (), {}, <>, [] and \"\" (double quotes)."
 Include: (), {}, <>, [] and \"\" (double quotes).  Exclude Org links
 and radio targets.
 
-Range is limited to the previous, current and next lines, as HyWikiWord references
-are limited to two lines maximum.
+Range is limited to the previous, current and next lines, as HyWikiWord
+references are limited to two lines maximum.
 
 Ignore return value; it has no meaning."
   (save-excursion
@@ -3476,7 +3476,7 @@ or balanced pair delimiters."
 (defun hywiki--get-all-references (function &optional start end)
   "Apply FUNCTION to all highlighted HyWikiWord references in current buffer.
 FUNCTION must take four arguments: (buffer-start-pos buffer-end-pos
-'face hywiki-word-face).  Optional START and END are sent to the function as
+\\='face hywiki-word-face).  Optional START and END are sent to the function as
 the first two arguments; otherwise, the entire buffer is scanned."
   (funcall function
 	   (or start (point-min))
