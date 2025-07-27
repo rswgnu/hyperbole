@@ -1,3 +1,9 @@
+2025-07-27  Bob Weiner  <rsw@gnu.org>
+
+*  hpath.el (hpath:external-file-suffixes): Remove old Sun Raster image format
+     .rs suffix which is now used for Rust code files instead.  This fixes
+     issue gh#765 where Rust code would open externally from Emacs.
+
 2025-07-07  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-map-words):  Optimize and improve doc string.

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     20-Jun-25 at 09:41:06 by Bob Weiner
+;; Last-Mod:     27-Jul-25 at 11:07:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -371,7 +371,7 @@ possible suffixes."
   :type 'string
   :group 'hyperbole-commands)
 
-(defcustom hpath:external-file-suffixes "e?ps\\|dvi\\|pdf\\|ps\\.g?[zZ]\\|gif\\|tiff?\\|xpm\\|xbm\\|xwd\\|pm\\|pbm\\|jpe?g\\|ra?s\\|xcf"
+(defcustom hpath:external-file-suffixes "e?ps\\|dvi\\|pdf\\|ps\\.g?[zZ]\\|gif\\|tiff?\\|xpm\\|xbm\\|xwd\\|pm\\|pbm\\|jpe?g\\|xcf"
   "*Non-operating system dependent regexp of file suffixes to open outside Emacs.
 These are opened with the Action Key when not handled by
 `hpath:native-image-suffixes'.  Do not include an initial period
