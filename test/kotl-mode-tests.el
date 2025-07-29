@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:     20-May-25 at 00:38:20 by Mats Lidell
+;; Last-Mod:     29-Jul-25 at 15:45:03 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1121,7 +1121,54 @@ marked with :ignore t")
           (should (call-interactively #'kotl-mode:add-prior-cell)))
         (mocklet (((kotl-mode:up-level 1) => nil)
                   ((kotl-mode:add-below-parent 1 nil nil nil) => t))
-          (should (call-interactively #'kotl-mode:add-prior-cell)))))))
+                 (should (call-interactively #'kotl-mode:add-prior-cell)))))))
+
+(ert-deftest kotl-mode--add-cell ()
+  "Verify `kotl-mode:add-cell'."
+  (cl-flet ((init ()
+              (progn (erase-buffer)
+                     (kotl-mode)
+                     (insert "first")
+                     (kotl-mode:add-cell '(4) "child"))))
+    (with-temp-buffer
+      (ert-info ("After init point at beginning of child cell")
+        (init)
+        (should (looking-at-p "child"))
+        (should (= (kcell-view:level) 2)))
+      (ert-info ("when = 0, add as the parent’s first child cell")
+        (init)
+        (kotl-mode:add-cell 0 "first child cell")
+        (should (kotl-mode:first-cell-p)) ;; FAIL!? Goes to beginning of kotl, not first cell of parent!
+        ;; Expected:
+        ;;  (should (= (kcell-view:level) 2))
+        ;;  (should (looking-at-p "first child cell"))
+        ;;  (should (string= (kcell-view:label (point)) "1a")))
+        )
+      (ert-info ("when < 0, add that number of cells as preceding siblings" :prefix "1: ")
+        (init)
+        (kotl-mode:add-cell -1 "preceding sibling")
+        (should (= (kcell-view:level) 2))
+        (should (string= (kcell-view:label (point)) "1a")))
+      (ert-info ("when < 0, add that number of cells as preceding siblings" :prefix "2: ")
+        (init)
+        (kotl-mode:add-cell -2 "preceding siblings")
+        (should (= (kcell-view:level) 2))
+        (should (string= (kcell-view:label (point)) "1b")))
+      (ert-info ("when '(4) (universal arg, C-u), add as the first child of the current cell")
+        (init)
+        (kotl-mode:add-cell '(4) "first child")
+        (should (= (kcell-view:level) 3))
+        (should (string= (kcell-view:label (point)) "1a1")))
+      (ert-info ("when > 0 or nil (meaning 1), add that number of cells as following siblings" :prefix "1: ")
+        (init)
+        (kotl-mode:add-cell 1 "following sibling")
+        (should (equal (kcell-view:level) 2))
+        (should (string= (kcell-view:label (point)) "1b")))
+      (ert-info ("when > 0 or nil (meaning 1), add that number of cells as following siblings" :prefix "2: ")
+        (init)
+        (kotl-mode:add-cell 2 "following siblings")
+        (should (equal (kcell-view:level) 2))
+        (should (string= (kcell-view:label (point)) "1c"))))))
 
 (provide 'kotl-mode-tests)
 

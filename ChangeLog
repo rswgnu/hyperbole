@@ -1,3 +1,7 @@
+2025-07-29  Mats Lidell  <matsl@gnu.org>
+
+* test/kotl-mode-tests.el (kotl-mode--add-cell): Add test.
+
 2025-07-27  Bob Weiner  <rsw@gnu.org>
 
 *  hpath.el (hpath:external-file-suffixes): Remove old Sun Raster image format
