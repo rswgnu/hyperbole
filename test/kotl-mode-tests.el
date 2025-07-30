@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:     29-Jul-25 at 16:05:57 by Mats Lidell
+;; Last-Mod:     30-Jul-25 at 23:55:27 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1177,6 +1177,38 @@ marked with :ignore t")
         (kotl-mode:add-cell 2 "following siblings")
         (should (equal (kcell-view:level) 2))
         (should (string= (kcell-view:label (point)) "1c"))))))
+
+(ert-deftest kotl-mode--add-after-parent ()
+  "Verify `kotl-mode:add-after-parent'."
+  (cl-flet ((init ()
+              (progn (erase-buffer)
+                     (kotl-mode)
+                     (insert "first")
+                     (kotl-mode:add-cell '(4) "child"))))
+    (with-temp-buffer
+      (ert-info ("After init point at beginning of child cell")
+        (init)
+        (should (looking-at-p "child"))
+        (should (= (kcell-view:level) 2)))
+      (ert-info ("Error: Called with non positive argument")
+        (init)
+        (should-error (kotl-mode:add-after-parent 0)))
+      (ert-info ("If on the first level of the outline, insert cells at the start of the outline.")
+        (init)
+        (kotl-mode:beginning-of-buffer)
+        (kotl-mode:add-after-parent 1 "first child cell")
+        (should (string= "first child cell" (kcell-view:contents)))
+        (should (kotl-mode:first-cell-p)))
+      (ert-info ("Add succeeding sibling cells to the current cell’s parent" :prefix "1: ")
+        (init)
+        (kotl-mode:add-after-parent 1 "succeeding sibling")
+        (should (= (kcell-view:level) 1))
+        (should (string= (kcell-view:label (point)) "2")))
+      (ert-info ("Add succeeding sibling cells to the current cell’s parent" :prefix "2: ")
+        (init)
+        (kotl-mode:add-after-parent 2 "succeeding sibling")
+        (should (= (kcell-view:level) 1))
+        (should (string= (kcell-view:label (point)) "3"))))))
 
 (provide 'kotl-mode-tests)
 
