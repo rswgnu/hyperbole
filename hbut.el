@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      7-Dec-25 at 19:24:08 by Bob Weiner
+;; Last-Mod:     30-Dec-25 at 14:41:21 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -963,7 +963,7 @@ The ibut used defaults to \='hbut:current or the optional IBUT-SYMBOL."
 
 (defun hattr:is-p (attr value &optional hbut-symbol)
   "Return t if ATTR has VALUE for \='hbut:current or optional HBUT-SYMBOL."
-  (and (symbolp attr) attr 
+  (and (symbolp attr) attr
        (eq (hattr:get (or (and (symbolp hbut-symbol) hbut-symbol) 'hbut:current)
 		      attr)
 	   value)))
