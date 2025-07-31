@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 11:57:05
-;; Last-Mod:     25-Feb-24 at 18:03:16 by Mats Lidell
+;; Last-Mod:     31-Jul-25 at 20:37:32 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -200,7 +200,7 @@ on."
 				 (kcell-view:sibling-p)))))
 
     (when (eq import-from output-to)
-      (error "(kimport:aug-post-outline): Import and output buffers may not be the same."))
+      (error "(kimport:aug-post-outline): Import and output buffers may not be the same"))
 
     (set-buffer import-from)
     (outline-show-all)
@@ -274,7 +274,7 @@ placed.
 				 (kcell-view:sibling-p)))))
 
     (when (eq import-from output-to)
-      (error "(kimport:star-outline): Import and output buffers may not be the same."))
+      (error "(kimport:star-outline): Import and output buffers may not be the same"))
 
     (set-buffer import-from)
     (outline-show-all)
@@ -354,7 +354,7 @@ paragraphs as a sequence of same level cells.  The variable,
 				 (kcell-view:sibling-p)))))
 
     (when (eq import-from output-to)
-      (error "(kimport:text): Import and output buffers may not be the same."))
+      (error "(kimport:text): Import and output buffers may not be the same"))
 
     (set-buffer import-from)
     (let ((kotl-import (derived-mode-p 'kotl-mode))
@@ -604,7 +604,7 @@ will be added as children of the cell where this function leaves point
 		(goto-char (point-max)))
 	      (kotl-mode:to-valid-position))
 	  (error
-	   "(kimport:initialize): Second arg, %s, must be a koutline file."
+	   "(kimport:initialize): Second arg, %s, must be a koutline file"
 	   (buffer-name output-to)))
       (when erase-flag
 	(widen)

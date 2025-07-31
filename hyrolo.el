@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     22-Nov-25 at 07:54:28 by Bob Weiner
+;; Last-Mod:     30-Dec-25 at 14:42:32 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1590,7 +1590,7 @@ the entry to be inserted.
 
 With optional prefix arg, REGEXP-FLAG, treat NAME as a regular expression
 instead of a string."
-  (interactive (list 
+  (interactive (list
 		(hsys-consult-grep-headlines-read-regexp
 		 #'hyrolo-consult-grep "Yank rolo headline matching")
 		current-prefix-arg))

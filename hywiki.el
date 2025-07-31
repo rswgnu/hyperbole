@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     30-Nov-25 at 18:06:52 by Bob Weiner
+;; Last-Mod:     31-Jul-25 at 20:34:29 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -124,7 +124,7 @@
 ;;
 ;; hywiki-referent-prompt-flag      When nil                   When t
 ;;  -------------------------------------------------------------------------------------
-;;  Action Key              hywiki-word-create-and-display 
+;;  Action Key              hywiki-word-create-and-display
 ;;    or HyWiki/Create      Create Page and Display          Create Referent and Display
 ;;  Assist Key              hywiki-word-create-and-display
 ;;    or C-u HyWiki/Create  Create Referent and Display      Create Page and Display
@@ -357,8 +357,9 @@ nil means no full buffer highlighting has occurred.")
     open-line                         ;; C-o
     quoted-insert                     ;; C-q
     )
-  "Commands that insert characters but whose input events do not
-  arrive as characters or that quote another character for input.")
+  "List of non character commands.
+Commands that insert characters but whose input events do not arrive as
+characters or that quote another character for input.")
 
 ;; Define the keymap for hywiki-mode.
 (defvar hywiki-mode-map nil
@@ -2714,7 +2715,7 @@ If deleted, update HyWikiWord highlighting across all frames."
 	   ('prefix (company-grab-word))
 	   ('candidates
 	    (let ((prefix (company-grab-word)))
-	      (when prefix 
+	      (when prefix
 		(cl-loop for key being the hash-keys in (hywiki-get-wikiword-list)
 			 when (string-prefix-p prefix key)
 			 collect key))))
@@ -3027,7 +3028,7 @@ since a prior publish.
 Files are saved in:
     (hywiki-org-get-publish-property :publishing-directory)
 Customize this directory with:
-    {M-x customize-variable RET hywiki-org-publishing-directory RET}."
+    {\\`M-x' `customize-variable' RET hywiki-org-publishing-directory RET}."
   (interactive "P")
   ;; Export Org to html with useful link ids.
   ;; Instead of random ids like "orga1b2c3", use heading titles with
@@ -3497,7 +3498,7 @@ Search across `hywiki-directory'."
 (defun hywiki-word-is-p (word)
   "Return non-nil if WORD is a HyWikiWord and optional #section:Lnum:Cnum.
 WORD may not yet have a referent (non-existent).  Use `hywiki-get-referent'
-to determine whether a HyWikiWord referent exists. 
+to determine whether a HyWikiWord referent exists.
 
 Return nil if WORD is a prefixed, typed hy:HyWikiWord, since
 these are handled by the Org mode link handler."
@@ -3847,9 +3848,126 @@ This must be called within a `save-excursion' or it may move point."
      #'hywiki-maybe-highlight-page-names 1
      hywiki--buttonize-start hywiki--buttonize-end))
 
-  (when (= (char-syntax (or (char-before) 0)) ?\ )
-    (goto-char (1- (point))))
-  (hywiki-maybe-highlight-between-page-names))
+  (cond ((= (char-syntax (or (char-before) 0)) ?\ )
+	 (goto-char (1- (point)))
+	 (hywiki-maybe-highlight-between-page-names))
+	((= (char-syntax (or (char-after) 0)) ?\ )
+	 (hywiki-maybe-highlight-between-page-names))))
+
+;;; ************************************************************************
+;;; Private Org export override functions
+;;; ************************************************************************
+
+;; Thanks to alphapapa for the GPLed code upon which these hywiki--org
+;; functions are based.  These change the html ids that Org export
+;; generates to use the text of headings rather than randomly
+;; generated ids.
+
+(require 'cl-extra) ;; for `cl-some'
+(require 'ox)       ;; for `org-export-get-reference'
+(require 'url-util) ;; for `url-hexify-string'
+
+(defun hywiki--org-export-get-reference (datum info)
+  "Return a unique reference for DATUM, as a string.
+Like `org-export-get-reference' but uses modified heading strings as
+link ids rather than generated ids.  To form an id, spaces in headings
+are replaced with dashes and to make each id unique, heading parent
+ids are prepended separated by '--'.
+
+DATUM is either an element or an object.  INFO is the current
+export state, as a plist.
+
+References for the current document are stored in the
+`:internal-references' property.  Its value is an alist with
+associations of the following types:
+
+  (REFERENCE . DATUM) and (SEARCH-CELL . ID)
+
+REFERENCE is the reference string to be used for object or
+element DATUM.  SEARCH-CELL is a search cell, as returned by
+`org-export-search-cells'.  ID is a number or a string uniquely
+identifying DATUM within the document.
+
+This function also checks `:crossrefs' property for search cells
+matching DATUM before creating a new reference."
+  (let ((cache (plist-get info :internal-references)))
+    (or (car (rassq datum cache))
+        (let* ((crossrefs (plist-get info :crossrefs))
+               (cells (org-export-search-cells datum))
+               ;; Preserve any pre-existing association between
+               ;; a search cell and a reference, i.e., when some
+               ;; previously published document referenced a location
+               ;; within current file (see
+               ;; `org-publish-resolve-external-link').
+               ;;
+               ;; However, there is no guarantee that search cells are
+               ;; unique, e.g., there might be duplicate custom ID or
+               ;; two headings with the same title in the file.
+               ;;
+               ;; As a consequence, before reusing any reference to
+               ;; an element or object, we check that it doesn't refer
+               ;; to a previous element or object.
+               (new (or (when (org-element-property :raw-value datum)
+                          ;; Heading with a title
+                          (hywiki--org-export-new-title-reference datum cache))
+			(cl-some
+                         (lambda (cell)
+                           (let ((stored (cdr (assoc cell crossrefs))))
+                             (when stored
+                               (let ((old (org-export-format-reference stored)))
+                                 (and (not (assoc old cache)) stored)))))
+                         cells)
+			(org-export-format-reference
+                         (org-export-new-reference cache))))
+	       (reference-string new))
+          ;; Cache contains both data already associated to
+          ;; a reference and in-use internal references, so as to make
+          ;; unique references.
+          (dolist (cell cells) (push (cons cell new) cache))
+          ;; Retain a direct association between reference string and
+          ;; DATUM since (1) not every object or element can be given
+          ;; a search cell (2) it permits quick lookup.
+          (push (cons reference-string datum) cache)
+          (plist-put info :internal-references cache)
+          reference-string))))
+
+(defun hywiki--org-export-new-title-reference (datum cache)
+  "Return new heading title reference for DATUM that is unique in CACHE."
+  (let* ((title (org-element-property :raw-value datum))
+         (ref (hywiki--org-format-reference title))
+         (parent (org-element-property :parent datum))
+	 raw-parent)
+    (while (cl-some (lambda (elt) (equal ref (car elt)))
+                    cache)
+      ;; Title not unique: make it so.
+      (if parent
+          ;; Append ancestor title.
+          (setq raw-parent (org-element-property :raw-value parent)
+		title (if (and (stringp raw-parent) (not (string-empty-p raw-parent)))
+			  (concat raw-parent "--" title)
+			title)
+                ref (hywiki--org-format-reference title)
+                parent (org-element-property :parent parent))
+        ;; No more ancestors: add and increment a number.
+        (when (string-match "\\`\\([[:unibyte:]]\\)+?\\(--\\([0-9]+\\)\\)?\\'"
+			    ref)
+          (let ((num (match-string 3 ref)))
+            (setq parent (match-string 1 ref)
+		  parent (if (stringp parent) (concat parent "--") "")
+		  num (if num
+                          (string-to-number num)
+                        0)
+		  num (1+ num)
+		  ref (format "%s%s" parent num))))))
+    ref))
+
+(defun hywiki--org-format-reference (title)
+  "Format TITLE string as an html id."
+  (url-hexify-string
+   (replace-regexp-in-string "\\[\\[\\([a-z]+:\\)?\\|\\]\\[\\|\\]\\]" ""
+			     (subst-char-in-string
+			      ?\  ?-
+			      (substring-no-properties title)))))
 
 ;;; ************************************************************************
 ;;; Private initializations
