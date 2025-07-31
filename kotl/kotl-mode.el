@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     31-Dec-25 at 16:10:26 by Mats Lidell
+;; Last-Mod:      1-Jan-26 at 18:18:27 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2974,7 +2974,7 @@ Prefix ARG selects the cells whose attributes are removed or set:
   "Split the current cell into two cells and move to the new cell.
 The cell contents after point become part of the newly created cell.
 The default is to create the new cell as a sibling of the current cell.
-With optional universal ARG, {C-u}, the new cell is added as the child of
+With optional universal ARG, {\\`C-u'}, the new cell is added as the child of
 the current cell.  Non-read-only attributes from the current cell are
 replicated in the new cell."
   (interactive "*P")
@@ -3117,7 +3117,7 @@ to a specified buffer, otherwise, copy the active region.
 Use 0 to copy the whole outline buffer.  Prompt for whether or not
 to expand and include any hidden/invisible text within the copied text."
   (interactive)
-  (call-interactively 
+  (call-interactively
    (if (use-region-p)
        #'kotl-mode:copy-region-to-buffer
      #'kotl-mode:copy-tree-to-buffer)))
@@ -3409,7 +3409,7 @@ because, in this case the deletion might narrow the column."
    (lambda () (org-force-self-insert n))))
 
 (defun kotl-mode:org-self-insert-command (n)
-  "Like `self-insert-command’, use overwrite-mode for whitespace in tables.
+  "Like `self-insert-command’, use `overwrite-mode' for whitespace in tables.
 If the cursor is in a table looking at whitespace, the whitespace is
 overwritten, and the table is not marked as requiring realignment."
   (interactive "p")
@@ -3433,7 +3433,7 @@ conflicting binding to this key outside orgtbl-mode."
    (lambda () (orgtbl-create-or-convert-from-region arg))))
 
 (defun kotl-mode:orgtbl-self-insert-command (n)
-  "Like `self-insert-command', use overwrite-mode for whitespace in tables.
+  "Like `self-insert-command', use `overwrite-mode' for whitespace in tables.
 If the cursor is in a table looking at whitespace, the whitespace is
 overwritten, and the table is not marked as requiring realignment."
   (interactive "p")

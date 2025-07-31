@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     29-Aug-25 at 14:20:04 by Bob Weiner
+;; Last-Mod:     30-Dec-25 at 14:42:06 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -336,7 +336,7 @@ TYPE and TYPE-CATEGORY are both symbols.  TYPE-CATEGORY must be one of
 (defun action:param-count (action)
   "Return the number of args in ACTION's arg list.
 Keywords and special symbols like &optional and &key are excluded."
-  (length (seq-filter (lambda (sym) 
+  (length (seq-filter (lambda (sym)
 			(not (or (keywordp sym)
 				 (string-match "^&" (symbol-name sym)))))
 		      (action:params action))))

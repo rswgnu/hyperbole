@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-May-93
-;; Last-Mod:     25-Nov-23 at 16:33:20 by Mats Lidell
+;; Last-Mod:     31-Jul-25 at 20:35:20 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -122,7 +122,7 @@ returned.  If CELL-REF is invalid or does not exist, nil is returned.
 
 If optional KVIEWSPEC-FLAG is non-nil and CELL-REF includes a
 viewspec, return the the idstamp concatenated with the viewspec
-(begins with a | character) as a string.
+\(begins with a | character) as a string.
 
 CELL-REF may be a whole number:
 
