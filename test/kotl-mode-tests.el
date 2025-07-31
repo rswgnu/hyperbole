@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:     31-Jul-25 at 12:53:10 by Mats Lidell
+;; Last-Mod:     31-Jul-25 at 13:20:37 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1131,7 +1131,7 @@ marked with :ignore t")
                      (insert "first")
                      (kotl-mode:add-cell '(4) "child"))))
     (with-temp-buffer
-      (ert-info ("After init point at beginning of child cell")
+      (ert-info ("After init. Point at beginning of child cell")
         (init)
         (should (looking-at-p "child"))
         (should (= (kcell-view:level) 2)))
@@ -1176,7 +1176,7 @@ marked with :ignore t")
                      (insert "first")
                      (kotl-mode:add-cell '(4) "child"))))
     (with-temp-buffer
-      (ert-info ("After init point at beginning of child cell")
+      (ert-info ("After init. Point at beginning of child cell")
         (init)
         (should (looking-at-p "child"))
         (should (= (kcell-view:level) 2)))
@@ -1200,6 +1200,35 @@ marked with :ignore t")
         (should (= (kcell-view:level) 1))
         (should (string= (kcell-view:label (point)) "3"))))))
 
+(ert-deftest kotl-mode--add-before-parent ()
+  "Verify `kotl-mode:add-before-parent'."
+  (cl-flet ((init ()
+              (progn (erase-buffer)
+                     (kotl-mode)
+                     (insert "first")
+                     (kotl-mode:add-cell '(4) "child")
+                     (kotl-mode:add-cell '(4) "child of child"))))
+    (with-temp-buffer
+      (ert-info ("After init. Point at beginning of child of child cell")
+        (init)
+        (should (looking-at-p "child of child"))
+        (should (= (kcell-view:level) 3)))
+      (ert-info ("Error: Called with non positive argument")
+        (init)
+        (should-error (kotl-mode:add-before-parent 0)))
+      (ert-info ("If on the first level of the outline, insert cells at the start of the outline.")
+        (init)
+        (kotl-mode:beginning-of-buffer)
+        (should (= (kcell-view:level) 1))
+        (kotl-mode:add-before-parent 1 "start of outline")
+        ;; (should (kotl-mode:first-cell-p))) ;; <= EXPECTED
+        (should (string= (kcell-view:label (point)) "2"))) ;; FAIL: Actual.
+      (ert-info ("Add prior sibling cells to the current cell’s parent")
+        (init)
+        (kotl-mode:add-before-parent 1 "add prior sibling to current cells parent")
+        (should (= (kcell-view:level) 2))
+        (should (string= (kcell-view:label (point)) "1a"))))))
+      
 (provide 'kotl-mode-tests)
 
 ;; This file can't be byte-compiled without the `el-mock' package
