@@ -1,3 +1,7 @@
+2025-07-31  Mats Lidell  <matsl@gnu.org>
+
+* test/hsys-org-tests.el (hsys-org:org-link-at-p): Update test.
+
 2025-07-27  Bob Weiner  <rsw@gnu.org>
 
 *  hpath.el (hpath:external-file-suffixes): Remove old Sun Raster image format
