@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:     30-Jul-25 at 23:55:27 by Mats Lidell
+;; Last-Mod:     31-Jul-25 at 12:53:10 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1141,17 +1141,7 @@ marked with :ignore t")
       (ert-info ("when = 0, add as the parent’s first child cell")
         (init)
         (kotl-mode:add-cell 0 "first child cell")
-        (should (kotl-mode:first-cell-p)) ;; FAIL!? Goes to beginning of kotl, not first cell of parent!
-        ;; Expected:
-        ;;  (should (= (kcell-view:level) 2))
-        ;;  (should (looking-at-p "first child cell"))
-        ;;  (should (string= (kcell-view:label (point)) "1a")))
-        )
-      ;; FAIL for same reason as above. Adds as first cell even if at level 1.
-      ;; (ert-info ("when = 0, add as the parent’s first child cell" :prefix "Error case. No parent: ")
-      ;;   (init)
-      ;;   (kotl-mode:beginning-of-buffer)
-      ;;   (should-error (kotl-mode:add-cell 0 "first child cell")))
+        (should (kotl-mode:first-cell-p)))
       (ert-info ("when < 0, add that number of cells as preceding siblings" :prefix "1: ")
         (init)
         (kotl-mode:add-cell -1 "preceding sibling")
