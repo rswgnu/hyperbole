@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:      6-Jul-25 at 15:39:40 by Bob Weiner
+;; Last-Mod:      4-Aug-25 at 02:42:17 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -24,6 +24,110 @@
 (require 'hywiki)
 (require 'hsys-org)
 (require 'ox-publish)
+
+(defconst hywiki-test--edit-string-pairs
+   [
+    ("HyWikiW<kill-word 1>ord<yank 1> HyW<kill-word 1>ikiWord<yank 1><search-backward \" \">"
+     "{HyWikiWord} {HyWikiWord}")
+    ("HyWiki<delete-region>Word" "{HyWikiWord}")
+    ("HyWiki<insert \"Word\">" "{HyWikiWord}")
+    ("HyWikiW<kill-word 1>ord<yank 1>" "{HyWikiWord}")
+    ("Wiki<zap-to-char 1 ?n>#sectionWord" "{WikiWord}"
+     "zap-to-WikiWord" "Delete section chars to form  a WikiWord") ;; highlight
+    ("Wiki#sec<tion>Word" "Wiki#sec<tion>Word") ;; no change
+    ("<kill-word 1>WikiWord unhighlighted" " unhighlighted") ;; dehighlight
+    ("<HyWikiWord>" "<{HyWikiWord}>")
+    ("<delete-char 1>\"WikiWord#section with spaces\"" "{WikiWord#section} with spaces\"") ;; shrink highlight to {WikiWord#section}
+    ("\"WikiWord#section\"<backward-delete-char 1>" "\"{WikiWord#section}") ;; no highlight change 
+    ("\"WikiWord#section with spaces\"<backward-delete-char 1>" "\"{WikiWord#section} with spaces") ;; shrink highlight to "{WikiWord#section}
+    ]
+   "Vector of (pre-test-str-with-edit-cmds post-test-str-result [test-name-str] [doc-str]) elements.
+Last two elements are optional.")
+
+(ert-deftest hywiki-test--edit ()
+  (let ((edit-string-pairs hywiki-test--edit-string-pairs)
+	(test-num 0)
+	before
+	after
+	name
+	doc
+	markedup-before
+	markedup-after
+	sexp-start-end
+	sexp
+	start
+	end
+	hywiki-ref-positions)
+  (with-temp-buffer
+    (hywiki-tests--preserve-hywiki-mode
+      (org-mode)
+      (hywiki-mode 1)
+      (mapc
+       (lambda (before-after)
+	 (setq before (nth 0 before-after)
+	       after  (nth 1 before-after)
+	       name   (nth 2 before-after)
+	       doc    (nth 3 before-after))
+	 ;; Markup before string in temp buffer
+	 (erase-buffer)
+	 (insert before)
+	 (hywiki-test--interpolate-buffer)
+	 ;; Surround any HyWikiWord refs with braces to match after string.
+	 ;; Do it in reverse order so do not affect the already
+	 ;; computed buffer positions.
+	 (setq hywiki-ref-positions (nreverse (hywiki-get-reference-positions)))
+	 (dolist (start-end hywiki-ref-positions)
+	   (setq start (car start-end)
+		 end (cdr start-end))
+	   (goto-char end)
+	   (insert "}")
+	   (goto-char start)
+	   (insert "{"))
+	 ;; Store the buffer string for comparison
+	 (setq markedup-before (string-trim (buffer-string)))
+	 ;; Markup after string
+	 (erase-buffer)
+	 (insert after)
+	 (hywiki-test--interpolate-buffer)
+	 (setq markedup-after (string-trim (buffer-string)))
+	 ;; Compare markedup-before to markedup-after
+	 (if (or name doc)
+	     (should (equal (list :markedup markedup-before
+				  :test-num test-num :test-name name :doc doc
+				  :before before :after after)
+			     (list :markedup markedup-after
+				   :test-num test-num :test-name name :doc doc
+				   :before before :after after)))
+	   (should (equal (list :markedup markedup-before
+			      :test-num test-num
+			      :before before :after after)
+			(list :markedup markedup-after
+			      :test-num test-num
+			      :before before :after after))))
+	 (cl-incf test-num))
+       edit-string-pairs))
+    (goto-char (point-min)))))
+
+(defun hywiki-test--interpolate-buffer ()
+  "Replace action buttons and Hyperbole variable markup in buffer."
+  (let ((str (buffer-string)))
+    ;; Replace env and lisp variable references
+    (hpath:substitute-value str)
+    ;; Replace action buttons with resulting values
+    (goto-char (point-min))
+    (while (and (search-forward "<" nil t)
+		(/= (preceding-char) ?\\))
+      (when (and (hargs:delimited-p "<" ">")
+		 ;; This creates the 'hbut:current in-memory ibut
+		 (ibut:at-type-p 'action))
+	;; Force HyWikiWord highlighting
+	;; (setq last-command this-command)
+	;; (setq this-command sexp)
+	(hypb:eval-as-command
+	 'hbut:act 'hbut:current)))
+    ;; Highlight all HyWikiWord references in buffer
+    ;; (hywiki-highlight-page)
+    ))
 
 (defun hywiki-tests--command-execute (cmd &rest rest)
   "Run CMD, with optional REST params, between calls to pre and post hooks.
