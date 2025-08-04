@@ -1,3 +1,9 @@
+2025-07-31  Mats Lidell  <matsl@gnu.org>
+
+* test/kotl-mode-tests.el (kotl-mode--add-cell)
+    (kotl-mode--add-after-parent, kotl-mode--add-before-parent)
+    (kotl-mode--add-below-parent, kotl-mode--add-child): Add tests.
+
 2025-07-27  Bob Weiner  <rsw@gnu.org>
 
 *  hpath.el (hpath:external-file-suffixes): Remove old Sun Raster image format
