@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     19-Jun-25 at 10:24:53 by Bob Weiner
+;; Last-Mod:     27-Jul-25 at 16:39:01 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -433,7 +433,7 @@ performing ACTION."
 			   (subrp action)
 			   (and (stringp action) (not (integerp action))
 				(setq action (key-binding action))))
-		       (eval (cons action args))
+		       (apply action args)
 		     (eval action))
 		   t)
 	  (hhist:add hist-elt))))))

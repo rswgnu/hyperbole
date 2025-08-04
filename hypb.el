@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:      6-Jul-25 at 14:46:41 by Bob Weiner
+;; Last-Mod:     29-Jul-25 at 00:16:38 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -506,6 +506,33 @@ the `format' function."
     (put 'error 'error-message msg)
     (error msg)))
 
+(defun hypb:eval-as-command (sexp &rest rest)
+  "Apply SEXP to REST of arguments as a command.
+Run pre, post and post-self-insert-hook (on insert).
+This is for simulating the command loop."
+  (run-hooks 'pre-command-hook)
+  (let ((buf (current-buffer))
+	(cmd (cond ((symbolp sexp)
+		    sexp)
+		   ((listp sexp)
+		    (when (symbolp (car sexp))
+		      (car sexp))))))
+    (unwind-protect
+	(command-execute
+	 (lambda () (interactive)
+	   (if rest
+	       (apply sexp rest)
+	     (eval sexp t))))
+      ;; Ensure point remains in the same buffer before and after SEXP
+      ;; evaluation.  This prevents false switching to the *ert* test
+      ;; buffer when debugging.
+      (set-buffer buf)
+      (run-hooks 'post-command-hook)
+      ;; (when (string-match-p "^insert$\\|-insert-?" (symbol-name cmd))
+      (run-hooks 'post-self-insert-hook)
+	;; )
+	)))
+
 (defun hypb:eval-debug (sexp)
   "Eval SEXP and on error show a debug backtrace of the problem."
   (let ((debug-on-error t)
@@ -574,6 +601,14 @@ modified."
 		   nil t)
        nil t)
     arg))
+
+;;;###autoload
+(defun hypb:function-p (func)
+  "Return non-nil if FUNC is a valid function, subroutine, or closure."
+  (or (subrp func) (byte-code-function-p func)
+      (and (symbolp func) (fboundp func))
+      (and (listp func) (memq (car func) '(closure lambda)))
+      (and (fboundp 'closurep) (closurep func))))
 
 ;; Extracted from part of `choose-completion' in "simple.el"
 (defun hypb:get-completion (&optional event)
@@ -896,6 +931,10 @@ then `locate-post-command-hook'."
 ;;;###autoload
 (defun hypb:map-plist (func plist)
   "Apply FUNC of two args, key and value, to key-value pairs in PLIST."
+  (unless (hypb:function-p func)
+      (error "(hypb:map-plist): Invalid 'func' arg: %s" func))
+  (unless (hypb:plist-p plist)
+      (error "(hypb:map-plist): Invalid 'plist' arg: %s" plist))
   (cl-loop for (k v) on plist by #'cddr
 	   collect (funcall func k v) into result
 	   finally return result))
@@ -942,6 +981,11 @@ WINDOW pixelwise."
 	 (get-text-property 0 'hyperbole object))
 	((symbolp object)
 	 (get object 'hyperbole))))
+
+;;;###autoload
+(defun hypb:plist-p (plist)
+  "Return t if PLIST is a proper property list, else nil."
+  (cl-evenp (% (or (proper-list-p plist) 1) 2)))
 
 (defun hypb:readable-directories (&rest dirs)
   "Flatten rest of DIRS and return or error if any of DIRS are unreadable."

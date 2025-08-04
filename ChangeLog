@@ -1,8 +1,96 @@
+2025-08-03  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-test--edit-string-pairs,
+                        hywiki-test--edit, hywiki-test--interpolate-buffer): Add
+    simplified HyWiki string pair ert testing.
+
+* hywiki.el (hywiki-mode): Remove explicit call to 'hywiki-word-set-auto-highlighting'
+    because the set of 'hywiki-word-highlight-flag' automatically calls it.
+            (hywiki--maybe-rehighlight-at-point): Remove '(when hywiki--range'
+    around 'hywiki-maybe-highligh-on-page-name' to ensure proper rehighlighting
+    after ending delimiter is removed.
+            (hywiki-debuttonize-non-character-commands): In 'pre-command-hook', don't
+    nullify region markers if edebugging.
+            (hywiki-buttonize-non-character-commands): In 'post-command-hook', nullify
+    region markers after moving to the start of a HyWikiWord ref to prevent
+    rehighlighting entire region after a delimiter is removed.
+             (hywiki-get-delimited-region): Add and call from
+    'hywiki-at-range-delimiter'.  Fix to always return '(nil nil) if no delimited
+    region found and to order start and end properly.
+	     (hywiki-at-range-delimiter): Narrow only if no active region.  With an
+    active region, expand result range to include any pair delimiters outside the range
+    found at point as well as the active range.
+ 	     (hywiki--extend-yanked-region): Rename to 'hywiki--extend-region' and
+    fix start and end delimited pair extension logic.
+
+2025-07-29  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-maybe-dehighlight-between-page-names): Handle when
+    'hywiki--buttonize-range' is '(nil nil).
+            (hywiki--buts,hywiki--but-end, hywiki--but-start, hywiki--buttonize-end,
+             hywiki--buttonize-start, hywiki--buttonize-range, hywiki--end nil,
+             hywiki--range, hywiki--start): Make these buffer-local so stay set
+    between pre-command-hook and post-command-hook.
+
+2025-07-28  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (hbut:help): Add as an alias of 'hbut:report'.
+
 2025-07-27  Bob Weiner  <rsw@gnu.org>
 
-*  hpath.el (hpath:external-file-suffixes): Remove old Sun Raster image format
+* hypb.el (hypb:function-p): Add and autoload to determine if an obj is a function.
+	  (hypb:plist-p): Add and autoload to determine if an obj is a plist.
+          (hypb:map-plist): Trigger errors on invalid args.
+	  (hypb:eval-as-command): Add and replace eval calls in defact display
+    functions with this to invoke command hooks.
+
+* hpath.el (hpath:external-file-suffixes): Remove old Sun Raster image format
      .rs suffix which is now used for Rust code files instead.  This fixes
      issue gh#765 where Rust code would open externally from Emacs.
+
+2025-07-21  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki--buttonize-range): Add and use in pre- and post- hooks,
+    'hywiki-maybe-dehighlight-between-page-names' and
+    'hywiki--maybe-dehighlight-at-point'.
+            (hywiki-highlight-page): Add and autoload to force rehighlighting
+    of an entire HyWiki page.
+            (hywiki--extend-yanked-region): Extend past any HyWiki ref that
+    start or end is within.
+            (hywiki-buttonize-non-character-commands): Add support for insert
+    commands, eval-expression and eval-last-sexp (which may execute edit cmds).
+
+2025-07-20  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-debuttonize-non-character-commands,
+             hywiki-buttonize-non-character-commands): Remove use of
+    'hywiki-word-highlighted-at-p' since this may lead to improper results
+    if point is on an already highlighted WikiWord that is a substring of
+    a longer WikiWord created by deletion of characters during this command.
+            (hywiki--maybe-rehighlight-at-point): Always call
+    'hywiki-maybe-highlight-between-page-names' at the end as may need it
+    when in the middle of a HyWikiWord ref as well.
+            (hywiki-buttonize-non-character-commands): Activate this
+    post-command-hook when any of hkey-either, action-key, or assist-key
+    is the command.
+            (hywiki--maybe-dehighlight-at-point,
+             hywiki-maybe-dehighlight-between-page-names): Trigger when
+    hywiki--buttonize-start/end are markers set within the current buffer.
+
+* hbut.el (ibtype:ensure-current-hbut-is-set): Add and use in `defib' to allow
+    ibtype invocation without use of the Action Key.
+
+2025-07-13  Bob Weiner  <rsw@gnu.org>
+
+* hactypes.el (display-value-and-remove-region): Add.
+
+* hibtypes.el (action): With `delete-region' and `kill-region' actions, if no
+    args, either use any active region or when none, use the region of the
+    action button itself, removing it from the buffer.  The latter action is
+    typically used in internal HyWiki tests.
+    Also, if 'ert--running-tests' is non-nil, i.e. when running any ert test,
+    don't require spaces around the action button and delete the action button
+    after activation.
 
 2025-07-07  Bob Weiner  <rsw@gnu.org>
 

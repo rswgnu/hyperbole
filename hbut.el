@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     20-Jun-25 at 16:39:53 by Bob Weiner
+;; Last-Mod:     28-Jul-25 at 20:55:28 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1342,6 +1342,8 @@ is given."
 		(file-name-directory key-src))
 	    (buffer-local-value 'default-directory key-src))
 	key-src))))
+
+(defalias 'hbut:help #'hbut:report)
 
 (defun    hbut:is-p (object)
   "Return non-nil if OBJECT is a symbol representing a Hyperbole button."
@@ -3004,6 +3006,13 @@ Return the symbol for the button if found, else nil."
 ;;; ibtype class - Implicit button types
 ;;; ========================================================================
 
+(defun ibtype:ensure-current-hbut-is-set ()
+  "Ensure `hbut:current' is always set when an ibtype is run."
+  ;; If an ibtype is invoked directly rather than through the Action
+  ;; Key, ensure its code sets `hbut:current' before testing for any ibut.
+  (unless (hyperb:stack-frame '(hui:hbut-operate ibut:create))
+    (hbut:at-p)))
+
 (defmacro defib (type _params doc at-p &optional to-p style)
   "Create Hyperbole implicit button TYPE with PARAMS, described by DOC.
 TYPE is an unquoted symbol.  PARAMS are presently ignored.
@@ -3036,7 +3045,8 @@ type for ibtype is presently undefined."
                            def-body)))
   (when type
     (let* ((to-func (when to-p (action:create nil (list to-p))))
-	   (at-func (list at-p))
+	   (at-func `((progn (ibtype:ensure-current-hbut-is-set)
+			     ,at-p)))
 	   (at-func-symbols (flatten-tree at-func)))
       (progn (unless (or (member 'ibut:label-set at-func-symbols)
 			 (member 'hsys-org-set-ibut-label at-func-symbols))
