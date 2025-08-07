@@ -1,3 +1,8 @@
+2025-08-07  Mats Lidell  <matsl@gnu.org>
+
+* test/hactypes-tests.el (display-boolean-true-test)
+    (display-boolean-false-test): Include Expr in verification.
+
 2025-07-31  Mats Lidell  <matsl@gnu.org>
 
 * test/kotl-mode-tests.el (kotl-mode--add-cell)

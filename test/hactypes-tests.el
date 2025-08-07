@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:      1-Jun-25 at 23:31:35 by Mats Lidell
+;; Last-Mod:      5-Aug-25 at 18:13:04 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -27,12 +27,12 @@
 (ert-deftest display-boolean-true-test ()
   (ert-with-message-capture cap
     (should (actypes::display-boolean t))
-    (hy-test-helpers:should-last-message "Result = t; Boolean value = True" cap)))
+    (hy-test-helpers:should-last-message "Result = t; Boolean value = True; Expr = t\n" cap)))
 
 (ert-deftest display-boolean-false-test ()
   (ert-with-message-capture cap
     (should (actypes::display-boolean nil))
-    (hy-test-helpers:should-last-message "Result = nil; Boolean value = False" cap)))
+    (hy-test-helpers:should-last-message "Result = nil; Boolean value = False; Expr = nil\n" cap)))
 
 (ert-deftest hactypes-tests--link-to-Info-index-item ()
   "Verify `actypes::link-to-Info-index-item'."
