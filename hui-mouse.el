@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     24-Jun-25 at 16:38:34 by Mats Lidell
+;; Last-Mod:     10-Aug-25 at 13:26:31 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -115,7 +115,7 @@
 
 (defun action-key-error ()
   "If in Org mode and Hyperbole shares {M-RET}, run `org-meta-return'.
-In other context signal an error."
+In any other context, signal an error."
   (if (and (funcall hsys-org-mode-function)
 	   (hsys-org-meta-return-shared-p))
       (hact 'hsys-org-meta-return)
@@ -123,7 +123,7 @@ In other context signal an error."
 
 (defun assist-key-error ()
   "If in Org mode and Hyperbole shares {M-RET}, run `org-meta-return'.
-In other context, signal an error."
+In any other context, signal an error."
   (if (and (funcall hsys-org-mode-function)
 	   (hsys-org-meta-return-shared-p))
       (hact 'hsys-org-meta-return)

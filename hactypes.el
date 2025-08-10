@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     27-Jul-25 at 21:59:28 by Bob Weiner
+;; Last-Mod:     10-Aug-25 at 09:59:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -70,7 +70,7 @@ inserted, delete the completions window."
   "Evaluate BOOL-EXPR and display a message with the result value.
 Return any non-nil value or t."
   (interactive "xDisplay value of boolean expression: ")
-  (let ((result (hypb:eval-as-command bool-expr)))
+  (let ((result (hypb:eval bool-expr)))
     (message "Result = %S; Boolean value = %s; Expr = %S"
 	     result (if result "True" "False") bool-expr)
     (or result t)))
@@ -79,7 +79,7 @@ Return any non-nil value or t."
   "Evaluate LISP-EXPR and display a message with the result value.
 Return any non-nil value or t."
   (interactive "SDisplay value of Lisp expression: ")
-  (let ((result (hypb:eval-as-command lisp-expr)))
+  (let ((result (hypb:eval lisp-expr)))
     (message "%S" result)
     (or result t)))
 
@@ -89,7 +89,7 @@ Display a message with the result value of the evaluation.
 Return any non-nil value or t."
   (interactive "SDisplay value of Lisp expression: ")
   (delete-region start end)
-  (let ((result (hypb:eval-as-command lisp-expr)))
+  (let ((result (hypb:eval lisp-expr)))
     (message "%S" result)
     (or result t)))
 
@@ -103,7 +103,7 @@ Return any non-nil value or t."
 (defact eval-elisp (lisp-expr)
   "Evaluate a LISP-EXPR for its side-effects and return its value."
   (interactive "xEval Lisp expression: ")
-  (hypb:eval-as-command lisp-expr))
+  (hypb:eval lisp-expr))
 
 (defact exec-kbd-macro (kbd-macro &optional repeat-count)
   "Execute KBD-MACRO REPEAT-COUNT times.

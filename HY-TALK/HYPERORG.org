@@ -242,7 +242,7 @@ Angle brackets followed by an Elisp command name and arguments, create
 an Action Button that is executed with a press of the Action Key.
 Variable name values can also be displayed.
 
-    <hypb:rgrep "Action Buttons">         Recursively find Elisp or text matches
+    <hui-select-rgrep "Action Buttons">   Recursively find Elisp or text matches
 
     <fill-column>                         Display variable values in the minibuffer
 

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     28-Jul-25 at 01:54:31 by Bob Weiner
+;; Last-Mod:     10-Aug-25 at 13:20:09 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1662,12 +1662,12 @@ action type, function symbol to call or test to execute, i.e.
 		((and (null args) (symbolp actype) (boundp actype)
 		      (or var-flag (not (fboundp actype))))
 		 ;; Is a variable, display its value as the action
-		 (setq args `(',actype)
+		 (setq args `(,actype)
 		       actype #'display-variable))
 		((and (null args) (symbolp actype) (ert-test-boundp actype))
 		 ;; Is an ert-deftest, display the value from executing it
 		 (setq actype #'display-value
-		       args `('(hypb-ert-run-test ,lbl))))
+		       args `((hypb-ert-run-test ,lbl))))
 		(t
 		 ;; All other expressions, display the action result in the minibuffer
 		 (if (string-match "\\b\\(delete\\|kill\\)-region\\'"
@@ -1742,7 +1742,10 @@ If a boolean function or variable, display its value."
 ;;; ========================================================================
 
 (defib hywiki-existing-word ()
-  "On a HyWikiWord with an existing referent, display the referent."
+  "On a HyWikiWord with an existing referent, display the referent.
+
+See the implicit button type `hywiki-word' for creation of referents to
+not yet existing HyWikiWords."
   (cl-destructuring-bind (wikiword start end)
       (hywiki-referent-exists-p :range)
     (when wikiword

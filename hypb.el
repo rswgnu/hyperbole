@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     29-Jul-25 at 00:16:38 by Bob Weiner
+;; Last-Mod:     10-Aug-25 at 17:35:34 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -121,17 +121,6 @@ Also active in any Decendent modes of those listed.")
 (defconst hypb:mail-address-regexp
   "\\([_a-zA-Z0-9][-_a-zA-Z0-9.!@+%]*@[-_a-zA-Z0-9.!@+%]+\\.[a-zA-Z0-9][-_a-zA-Z0-9]+\\)\\($\\|[^a-zA-Z0-9@%]\\)"
   "Regexp with group 1 matching an Internet email address.")
-
-(defcustom hypb:rgrep-command
-  ;; Only the FreeBSD version of zgrep supports all of the grep
-  ;; options that Hyperbole needs: -r, --include, and --exclude
-  (format "%sgrep -insIHr" (if (and (executable-find "zgrep")
-                                    (string-match-p "bsd" (shell-command-to-string "zgrep --version | head -1")))
-                               "z" ""))
-  "*Grep command string and initial arguments to send to `hypb:rgrep' command.
-It must end with a space."
-  :type 'string
-  :group 'hyperbole-commands)
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -506,35 +495,25 @@ the `format' function."
     (put 'error 'error-message msg)
     (error msg)))
 
-(defun hypb:eval-as-command (sexp &rest rest)
-  "Apply SEXP to REST of arguments as a command.
-Run pre, post and post-self-insert-hook (on insert).
-This is for simulating the command loop."
-  (run-hooks 'pre-command-hook)
+(defun hypb:eval (sexp &rest rest)
+  "Apply SEXP to REST of arguments and maintain the current buffer."
   (let ((buf (current-buffer))
-	(cmd (cond ((symbolp sexp)
-		    sexp)
-		   ((listp sexp)
-		    (when (symbolp (car sexp))
-		      (car sexp))))))
+	(cmd (if (listp sexp)
+		 (cond ((eq 'quote (car sexp))
+			;; Unquote the expression so it is evaluated
+			(cadr sexp))
+		       (t sexp)))))
     (unwind-protect
-	(command-execute
-	 (lambda () (interactive)
-	   (if rest
-	       (apply sexp rest)
-	     (eval sexp t))))
+	(if rest
+	    (apply cmd rest)
+	  (eval cmd t))
       ;; Ensure point remains in the same buffer before and after SEXP
       ;; evaluation.  This prevents false switching to the *ert* test
       ;; buffer when debugging.
-      (set-buffer buf)
-      (run-hooks 'post-command-hook)
-      ;; (when (string-match-p "^insert$\\|-insert-?" (symbol-name cmd))
-      (run-hooks 'post-self-insert-hook)
-	;; )
-	)))
+      (set-buffer buf))))
 
 (defun hypb:eval-debug (sexp)
-  "Eval SEXP and on error show a debug backtrace of the problem."
+  "Eval SEXP and on error, show a debug backtrace of the problem."
   (let ((debug-on-error t)
 	(debug-on-quit t))
     (eval sexp)))
@@ -1061,42 +1040,7 @@ Removes any trailing newline at the end of the output."
     output))
 
 ;;;###autoload
-(defun hypb:rgrep (pattern &optional prefx-arg)
-  "Recursively grep with symbol at point or PATTERN.
-Grep over all non-backup and non-autosave files in the current
-directory tree.  If in an Emacs Lisp mode buffer and no optional
-PREFX-ARG is given, limit search to only .el and .el.gz files."
-  (interactive (list (if (and (not current-prefix-arg) (equal (buffer-name) "*Locate*"))
-			 (read-string "Grep files listed here for: ")
-		       (let ((default (symbol-at-point)))
-			 (when default (setq default (symbol-name default)))
-			 (read-string (format "Rgrep below current dir for%s: "
-					      (if default
-						  (format " (default %s)" default)
-						""))
-				      nil nil default)))
-		     current-prefix-arg))
-  (let* ((delim (cond ((not (string-match "\'" pattern)) ?\')
-			      ((not (string-match "\"" pattern)) ?\")
-			      ((not (string-match "=" pattern)) ?=)
-			      (t ?@)))
-	 (grep-cmd
-	  (if (and (not current-prefix-arg) (equal (buffer-name) "*Locate*"))
-	      (format "%s -e \%c%s\%c %s" hypb:rgrep-command delim pattern delim (hypb:locate-pathnames))
-	    (format "%s %s %s -e \%c%s\%c ."
-		    hypb:rgrep-command
-		    (when (and (memq major-mode '(emacs-lisp-mode lisp-interaction-mode))
-			       (not prefx-arg))
-		      (if (string-match "\\`rg " hypb:rgrep-command)
-			  "-g \"*.el\" -g \"*.el.gz\""
-			"--include=\"*.el\" --include=\"*.el.gz\""))
-		    (if (string-match "\\`rg " hypb:rgrep-command)
-			"-g \"!*~\" -g \"!#*\" -g \"!TAGS\""
-		      "--exclude=\".git\" --exclude=\"CVS\" --exclude=\"*~\" --exclude=\"#*\" --exclude=\"TAGS\"")
-		    delim pattern delim))))
-    (setq this-command `(grep ,grep-cmd))
-    (push this-command command-history)
-    (grep grep-cmd)))
+(defalias 'hypb:rgrep 'hui-select-rgrep)
 
 (defun hypb:save-lines (regexp)
   "Save only lines containing match for REGEXP.

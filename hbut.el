@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     28-Jul-25 at 20:55:28 by Bob Weiner
+;; Last-Mod:     10-Aug-25 at 11:35:24 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1907,13 +1907,14 @@ excluding delimiters, not just one."
 
 	  (setq lbl-start-end (if (and start-delim end-delim)
 				  (ibut:label-p nil start-delim end-delim t t)
-				(or (ibut:label-p nil "\"" "\"" t t)
-				    ;; <action> buttons can be longer
-				    ;; than two lines, so don't limit
-				    ;; the length.
-				    (ibut:label-p nil "<" ">" t)
-				    (ibut:label-p nil "{" "}" t t)
-				    (ibut:label-p nil "[" "]" t t))))
+				(or 
+				 ;; <action> buttons can be longer
+				 ;; than two lines, so don't limit
+				 ;; the length.
+				 (ibut:label-p nil "<" ">" t)
+				 (ibut:label-p nil "\"" "\"" t t)
+				 (ibut:label-p nil "{" "}" t t)
+				 (ibut:label-p nil "[" "]" t t))))
 	  (when lbl-start-end
 	    (setq lbl-key (nth 0 lbl-start-end)
 		  lbl-start (nth 1 lbl-start-end)

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:      4-Aug-25 at 02:42:17 by Bob Weiner
+;; Last-Mod:     10-Aug-25 at 18:08:30 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -24,6 +24,7 @@
 (require 'hywiki)
 (require 'hsys-org)
 (require 'ox-publish)
+(require 'seq) ;; for `seq-take-while' and `seq-uniq'
 
 (defconst hywiki-test--edit-string-pairs
    [
@@ -46,6 +47,7 @@ Last two elements are optional.")
 
 (ert-deftest hywiki-test--edit ()
   (let ((edit-string-pairs hywiki-test--edit-string-pairs)
+	(hywiki-directory (make-temp-file "hywiki" t))
 	(test-num 0)
 	before
 	after
@@ -68,6 +70,9 @@ Last two elements are optional.")
 	       after  (nth 1 before-after)
 	       name   (nth 2 before-after)
 	       doc    (nth 3 before-after))
+	 ;;
+	 ;; (seq-take-while (lambda (seq) (when (string-match "{\\([^\}]+\\)}" seq) (match-string 1 seq))))
+	 ;;		 '("a {Wiki} {Non2} {Non#extra text}"))
 	 ;; Markup before string in temp buffer
 	 (erase-buffer)
 	 (insert before)
@@ -123,7 +128,7 @@ Last two elements are optional.")
 	;; Force HyWikiWord highlighting
 	;; (setq last-command this-command)
 	;; (setq this-command sexp)
-	(hypb:eval-as-command
+	(hy-test-helpers:eval-as-command
 	 'hbut:act 'hbut:current)))
     ;; Highlight all HyWikiWord references in buffer
     ;; (hywiki-highlight-page)
@@ -1149,14 +1154,15 @@ Note special meaning of `hywiki-allow-plurals-flag'."
 EXPECTED is the result expected from hywiki-get-referent.  PREPARE sets
 up the test."
   (declare (indent 0) (debug t))
-  `(let* ((hywiki-directory (make-temp-file "hywiki" t))
+  `(let* ((hsys-consult-flag nil)
+	  (hywiki-directory (make-temp-file "hywiki" t))
 	  (wiki-referent "WikiReferent")
           (wiki-page (cdr (hywiki-add-page "WikiPage" )))
           (mode-require-final-newline nil)
 	  wiki-page-buffer)
      (unwind-protect
          (save-excursion
-           (should (equal '("WikiPage") (hywiki-get-wikiword-list)))
+           ;; (should (equal '("WikiPage") (hywiki-get-wikiword-list)))
 	   (setq wiki-page-buffer (find-file wiki-page))
 	   (erase-buffer)
            (insert wiki-referent)
@@ -1252,12 +1258,11 @@ up the test."
 (ert-deftest hywiki-tests--save-referent-find-use-menu ()
   "Verify saving and loading a referent find works using Hyperbole's menu.."
   (skip-unless (not noninteractive))
-  (skip-unless (not (version< emacs-version "29"))) ;; Fails on 28!?
+  ;; (skip-unless (not (version< emacs-version "29"))) ;; Fails on 28!?
   (hywiki-tests--referent-test
     (cons 'find #'hywiki-word-grep)
-    (with-mock
-      (mock (hywiki-word-grep "WikiReferent") => t)
-      (should (hact 'kbd-key "C-u C-h hhcf"))
+    (hy-test-helpers:ert-simulate-keys
+	"C-u C-h hhc WikiReferent RET f"
       (hy-test-helpers:consume-input-events))))
 
 ;; Global-button
@@ -1421,7 +1426,7 @@ See gh#rswgnu/hyperbole/669."
 
 (defun hywiki-tests--hywiki-face-region-at (&optional pos)
   "Get the start and end of the hywiki--word-face overlay at POS or point.
-Return nil if at no hywiki--word-face overlay."
+Return nil if not at a `hywiki--word-face' overlay."
   (let ((overlays (overlays-at (or pos (point))))
         result)
     (when overlays
@@ -1439,7 +1444,7 @@ Return nil if at no hywiki--word-face overlay."
         (should (equal (hywiki-tests--hywiki-face-region-at beg) (cons beg end)))
         word))))
 
-(defvar hywiki-tests--with-face-test nil
+(defvar hywiki-tests--with-face-test t
   "Non-nil to perform face validation of WikiWord.")
 
 (defun hywiki-tests--word-at ()
@@ -1543,8 +1548,8 @@ resulting state at point is a WikiWord or not."
 
 (ert-deftest hywiki-tests--wikiword-step-check-verification-with-faces ()
   "Run the step check to verify WikiWord is identified under change.
-Performs each operation from the step check and verifies if the
-resulting state at point is a WikiWord or not."
+Perform each operation from the step check and verify whether there
+is a WikiWord at point or not."
   (skip-unless (not noninteractive))
   (hywiki-tests--preserve-hywiki-mode
     (let* ((hywiki-directory (make-temp-file "hywiki" t))

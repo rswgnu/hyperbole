@@ -1,3 +1,43 @@
+2025-08-10  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--with-face-test): Make default value be
+    t so HyWikiWord face start and end are checked in more tests.
+
+* hypb.el (hypb:rgrep): Move and rename to `hui-select-rgrep'; leave an alias
+    for the old name.  Extend so if on a matching delimiter, uses the whole
+    delimited text as the default to grep for.
+          (hypb:rgrep-command): Rename to 'hui-select-rgrep-command'.
+	  (hypb:eval): Remove 'command-execute' call as it duplicates the normal
+    command flow.
+
+* hui-select.el (hui-select-get-thing): Rewrite to match choices in 'hui-select-thing'.
+
+* hywiki.el (hywiki-help): Add to display help either for a HyWikiWord at point
+    or HyWikiWords in general.  In HyWiki menus replace the Help 'hkey-help'
+    call with a call to this instead.
+
+* hibtypes.el (hywiki-existing-word): Add reference to `hywiki-word' ibtype.
+
+* test/hywiki-tests.el (hywiki-tests--referent-test): Disable 'hsys-consult-flag'
+    so 'consult' package does not interfere with testing.
+  hsys-consult.el (hsys-consult-active-p): Add and autoload this so can turn
+    on and off use of consult (and vertico) within Hyperbole, e.g. when running
+    ert tests where consults interactivity interferes with batch testing.
+
+* hbut.el (ibut:set-name-and-label-key-p): Move recognition of action button
+    angle brackets ahead of string matches so that in a Lisp buffer, the action
+    button label is properly recognized rather than improperly adding the
+    ")\n" characters at the front since double quotes tested before <>:
+
+    (insert "<string-empty-p \"False\">")
+<string-empty-p "False">
+
+* test/hy-test-helpers.el (hy-test-helpers:eval-as-command): Add and use only in
+    ert test cases to emulate the command loop hooks.
+
+* hypb.el (hypb:eval-as-command): Rename to just `hypb:eval' and remove calling
+    of command hooks.
+
 2025-08-03  Bob Weiner  <rsw@gnu.org>
 
 * test/hywiki-tests.el (hywiki-test--edit-string-pairs,

@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     26-Jun-25 at 18:26:06 by Mats Lidell
+@c Last-Mod:     10-Aug-25 at 18:35:50 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,8 +30,8 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED June, 2025
-@set UPDATED-MONTH June 2025
+@set UPDATED August, 2025
+@set UPDATED-MONTH August 2025
 @set EDITION 9.0.2pre
 @set VERSION 9.0.2pre
 
@@ -4365,7 +4365,7 @@ Below are each of the commands on the Find menu.
 @cindex menu item, OccurHere
 @cindex menu item, RemoveLines
 @cindex menu item, SaveLines
-@vindex hypb:rgrep-command
+@vindex hui-select-rgrep-command
 @vindex locate-command
 @itemize @bullet
 @item
@@ -4373,7 +4373,7 @@ GrepFiles -        Show numbered line matches for a regexp in all
                    non-backup, non-auto-save files below the current directory.
                    If in an Emacs Lisp mode buffer and no PREFIX-ARG
                    is given, limit search to only .el and .el.gz
-                   files.  Set @code{hypb:rgrep-command} to change the
+                   files.  Set @code{hui-select-rgrep-command} to change the
                    grep command or options.
 
 @item

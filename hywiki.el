@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:      4-Aug-25 at 02:44:33 by Bob Weiner
+;; Last-Mod:     10-Aug-25 at 17:31:00 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -886,6 +886,14 @@ After successfully finding a page and reading it into a buffer, run
       (hywiki-maybe-highlight-page-names)
       nil)))
 
+(defun hywiki-help ()
+  "Display help either for a HyWikiWord at point or HyWikiWords in general."
+  (interactive)
+  (if (hkey-actions)
+      (hkey-help)
+    (with-help-window "*Help: HyWikiWords*"
+      (princ (documentation (symtable:ibtype-p "hywiki-existing-word"))))))
+
 ;;; ************************************************************************
 ;;; Public referent menus and utility functions
 ;;; ************************************************************************
@@ -1364,9 +1372,10 @@ exists."
 				      "referent"
 				    "page"))))
 		     current-prefix-arg))
-  (hywiki-create-page-and-display wikiword (or (and hywiki-referent-prompt-flag
-						    (null arg))
-					       arg)))
+  (hywiki-create-page-and-display
+   wikiword (or (and hywiki-referent-prompt-flag
+		     (null arg))
+		arg)))
 
 (defun hywiki-create-referent-and-display (wikiword)
   "Display the HyWiki referent for WIKIWORD and return it.
@@ -1381,7 +1390,7 @@ exists."
   (hywiki-create-page-and-display wikiword t))
 
 (defun hywiki-create-page-and-display (wikiword &optional prompt-flag)
-  "Display the HyWiki referent for WIKIWORD and return it.
+  "Display the HyWiki referent for WIKIWORD if not in an ert test; return it.
 If there is no existing WIKIWORD referent, add a HyWiki page for
 it unless optional prefix arg, PROMPT-FLAG, is given, then prompt
 for and create another referent type.  See `hywiki-referent-menu'
@@ -1395,7 +1404,10 @@ Use `hywiki-get-referent' to determine whether a HyWiki page exists."
 	     (called-interactively-p 'interactive))
     (setq prompt-flag t))
   (let* ((normalized-word (hywiki-get-singular-wikiword wikiword))
-	 (referent (hywiki-find-referent wikiword prompt-flag)))
+	 (referent
+	  (if (bound-and-true-p ert--running-tests)
+	      (hywiki-get-referent wikiword)
+	    (hywiki-find-referent wikiword prompt-flag))))
     (cond (referent)
 	  ((and (null referent) (hywiki-word-is-p normalized-word))
 	   (when (hywiki-add-page normalized-word)
@@ -3364,7 +3376,7 @@ Default to any HyWikiWord at point."
 (defun hywiki-word-grep (wikiword)
   "Grep for occurrences of WIKIWORD with `consult-grep' or normal-grep'.
 Search across `hywiki-directory'."
-  (if (fboundp 'consult-grep) ;; allow for autoloading
+  (if (hsys-consult-active-p) ;; allow for autoloading
       (hywiki-word-consult-grep wikiword)
     (grep (string-join (list grep-command (format "'%s'" wikiword)
 			     (concat (file-name-as-directory hywiki-directory)
@@ -3401,7 +3413,7 @@ If point is on one, press RET immediately to use that one."
 		     nil t nil nil (hywiki-word-at-point))))
 
 (defun hywiki-word-read-new (&optional prompt)
-  "Prompt with completion for and return a new HyWikiWord.
+  "Prompt with completion for and return an existing or new HyWikiWord.
 If point is on one, press RET immediately to use that one."
   (let ((completion-ignore-case t))
     (completing-read (if (stringp prompt) prompt "HyWikiWord: ")
