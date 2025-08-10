@@ -38,6 +38,11 @@
 * hypb.el (hypb:eval-as-command): Rename to just `hypb:eval' and remove calling
     of command hooks.
 
+2025-08-07  Mats Lidell  <matsl@gnu.org>
+
+* test/hactypes-tests.el (display-boolean-true-test)
+    (display-boolean-false-test): Include Expr in verification.
+
 2025-08-03  Bob Weiner  <rsw@gnu.org>
 
 * test/hywiki-tests.el (hywiki-test--edit-string-pairs,
@@ -62,6 +67,14 @@
     found at point as well as the active range.
  	     (hywiki--extend-yanked-region): Rename to 'hywiki--extend-region' and
     fix start and end delimited pair extension logic.
+
+2025-07-31  Mats Lidell  <matsl@gnu.org>
+
+* test/kotl-mode-tests.el (kotl-mode--add-cell)
+    (kotl-mode--add-after-parent, kotl-mode--add-before-parent)
+    (kotl-mode--add-below-parent, kotl-mode--add-child): Add tests.
+
+* test/hsys-org-tests.el (hsys-org:org-link-at-p): Update test.
 
 2025-07-29  Bob Weiner  <rsw@gnu.org>
 
