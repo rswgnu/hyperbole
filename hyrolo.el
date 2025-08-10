@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     18-Jun-25 at 00:33:04 by Mats Lidell
+;; Last-Mod:     10-Aug-25 at 23:00:16 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -135,18 +135,6 @@
 (defvar org-roam-directory)
 (defvar plstore-cache-passphrase-for-symmetric-encryption)
 (defvar reveal-auto-hide)
-
-(defvar hyrolo--wconfig)
-(defvar hyrolo-entry-group-number)
-(defvar hyrolo-entry-trailing-space-group-number)
-(defvar hyrolo-hdr-format)
-(defvar hyrolo-hdr-regexp)
-(defvar hyrolo-hdr-prefix-regexp)
-(defvar hyrolo-match-regexp)
-(defvar hyrolo-mode-map)
-(defvar hyrolo-mode-prefix-map)
-(defvar hyrolo-mode-syntax-table)
-(defvar hyrolo-reveal-ignore-this-command)
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -352,7 +340,7 @@ Default value is to perform no reformatting.")
   "List of hyrolo files after directory and file wildcard expansions.
 HyRolo sets this internally; never set it outside of this library.")
 
-(defconst hyrolo-match-regexp nil
+(defvar hyrolo-match-regexp nil
   "Last regular expression used to search the hyrolo.
 Nil before a search is done, including after a logical search is done.
 String search expressions are converted to regular expressions.")
