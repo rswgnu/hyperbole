@@ -1,3 +1,21 @@
+2025-08-16  Mats Lidell  <matsl@gnu.org>
+
+* hyrolo.el (hyrolo--wconfig): Remove a set of defvar declarations
+    introduces for silencing byte compile warnings that are not needed any
+    more.
+
+* hui.el (hui:copy-to-register)
+  hui-select.el (hui-select-thing): Use an optional interactive-flag and
+    use it for calls to called-interactively-p. It captures if function is
+    called interactively and avoids brittleness of called-interactively-p.
+
+* hywiki.el (hywiki--buttonize-characters)
+    (hywiki--buttonize-character-regexp)
+    (hywiki--word-and-buttonize-character-regexp)
+  hyrolo.el (hyrolo-match-regexp)
+  hhist.el (*hhist*): Use defvar for const variables that are set later
+    than at their definition.
+
 2025-08-07  Mats Lidell  <matsl@gnu.org>
 
 * test/hactypes-tests.el (display-boolean-true-test)
