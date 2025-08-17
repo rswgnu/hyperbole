@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     10-Aug-25 at 11:35:24 by Bob Weiner
+;; Last-Mod:     17-Aug-25 at 00:25:01 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2027,18 +2027,17 @@ If a new button is created, store its attributes in the symbol,
 			 (setq ibtype-point (point-marker))
 			 (while (and (not is-type) types)
 			   (setq itype (car types))
-			   ;; Any implicit button type check should leave point
-			   ;; unchanged.  Trigger an error if not.
-			   (unless (equal (point-marker) ibtype-point)
-			     (hypb:error "(Hyperbole): ibtype %s improperly moved point from %s to %s"
-					 itype opoint (point)))
 			   (when (condition-case err
 				     (and itype (setq args (funcall itype)))
 				   (error (progn (message "%S: %S" itype err)
-						 (switch-to-buffer "*Messages*")
 						 ;; Show full stack trace
 						 (debug))))
 			     (setq is-type itype))
+			   ;; Any implicit button type check should leave point
+			   ;; unchanged.  Trigger an error if not.
+			   (unless (equal ibtype-point (point-marker))
+			     (hypb:error "(Hyperbole): ibtype %s improperly moved point from %s to %s"
+					 itype ibtype-point (point-marker)))
 			   (setq types (cdr types))))
 		(set-marker ibtype-point nil)
 		(goto-char opoint)))

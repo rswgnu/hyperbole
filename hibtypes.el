@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     10-Aug-25 at 13:20:09 by Bob Weiner
+;; Last-Mod:     17-Aug-25 at 00:28:01 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1601,7 +1601,7 @@ action type, function symbol to call or test to execute, i.e.
     ;;     at the end of the buffer
     ;;     or is followed by a space, punctuation or grouping character.
     (when (and lbl-key
-	       (or testing-flag
+	       (or testing-flag (hypb:in-string-p)
 		   (and (or (null (char-before start-pos))
 			    (memq (if (char-before start-pos)
 				      (char-syntax (char-before start-pos))

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     10-Aug-25 at 09:50:52 by Bob Weiner
+;; Last-Mod:     17-Aug-25 at 10:12:52 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -46,33 +46,6 @@ processing."
 		  (ert-simulate-keys ,keys ,@body))
 	 (vertico-mode 1))
      (ert-simulate-keys ,keys ,@body)))
-
-(defun hy-test-helpers:eval-as-command (sexp &rest rest)
-  "Apply SEXP to REST of arguments as a command.
-Run pre, post and post-self-insert-hook (on insert).
-This is for simulating the command loop."
-  (run-hooks 'pre-command-hook)
-  (let ((buf (current-buffer))
-	(cmd (cond ((symbolp sexp)
-		    sexp)
-		   ((listp sexp)
-		    (when (symbolp (car sexp))
-		      (car sexp))))))
-    (unwind-protect
-	(command-execute
-	 (lambda () (interactive)
-	   (if rest
-	       (apply sexp rest)
-	     (eval sexp t))))
-      ;; Ensure point remains in the same buffer before and after SEXP
-      ;; evaluation.  This prevents false switching to the *ert* test
-      ;; buffer when debugging.
-      (set-buffer buf)
-      (run-hooks 'post-command-hook)
-      ;; (when (string-match-p "^insert$\\|-insert-?" (symbol-name cmd))
-      (run-hooks 'post-self-insert-hook)
-	;; )
-	)))
 
 (defun hy-test-helpers:should-last-message (msg captured)
   "Verify MSG is in CAPTURED text."
@@ -121,7 +94,11 @@ Checks ACTYPE, ARGS, LOC, LBL-KEY and NAME."
   (let ((buf (find-buffer-visiting file)))
     (when buf
       (with-current-buffer buf
-        (set-buffer-modified-p nil)
+	(when (buffer-modified-p)
+	  (save-buffer)
+	  ;; If the save failed, ensure it shows non-modified before
+	  ;; trying to kill it.
+          (set-buffer-modified-p nil))
         (kill-buffer))))
   (delete-file file))
 

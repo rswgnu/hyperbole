@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Jun-16 at 14:24:53
-;; Last-Mod:      4-Jan-25 at 21:57:09 by Bob Weiner
+;; Last-Mod:     16-Aug-25 at 10:01:43 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -193,6 +193,7 @@ used as well in place of `bug'."
       (push (cons 'bugs (list (string-to-number id))) attr-pair-list))
     (debbugs-gnu-query:list attr-pair-list)))
 
+;;;###autoload
 (defun debbugs-gnu-query:list (query-attribute-list)
   "Show the results of a Gnu debbugs query with QUERY-ATTRIBUTE-LIST attributes.
 Each element of the list should be of the form (attribute . attribute-value).

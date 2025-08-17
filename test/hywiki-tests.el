@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     10-Aug-25 at 18:08:30 by Bob Weiner
+;; Last-Mod:     17-Aug-25 at 10:00:33 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -26,8 +26,13 @@
 (require 'ox-publish)
 (require 'seq) ;; for `seq-take-while' and `seq-uniq'
 
-(defconst hywiki-test--edit-string-pairs
+(defconst hywiki-tests--edit-string-pairs
    [
+    ("HiHo#s<insert-char ? >" "{HiHo#s} ")
+    ("Hi#a<insert-char ?b> cd" "{Hi#ab} cd")
+    ("Hi" "{Hi}")
+    ("HyWikiWord" "{HyWikiWord}")
+    ("HiHo#s " "{HiHo#s} ")
     ("HyWikiW<kill-word 1>ord<yank 1> HyW<kill-word 1>ikiWord<yank 1><search-backward \" \">"
      "{HyWikiWord} {HyWikiWord}")
     ("HyWiki<delete-region>Word" "{HyWikiWord}")
@@ -45,8 +50,8 @@
    "Vector of (pre-test-str-with-edit-cmds post-test-str-result [test-name-str] [doc-str]) elements.
 Last two elements are optional.")
 
-(ert-deftest hywiki-test--edit ()
-  (let ((edit-string-pairs hywiki-test--edit-string-pairs)
+(ert-deftest hywiki-tests--edit ()
+  (let ((edit-string-pairs hywiki-tests--edit-string-pairs)
 	(hywiki-directory (make-temp-file "hywiki" t))
 	(test-num 0)
 	before
@@ -60,60 +65,111 @@ Last two elements are optional.")
 	start
 	end
 	hywiki-ref-positions)
-  (with-temp-buffer
-    (hywiki-tests--preserve-hywiki-mode
-      (org-mode)
-      (hywiki-mode 1)
-      (mapc
-       (lambda (before-after)
-	 (setq before (nth 0 before-after)
-	       after  (nth 1 before-after)
-	       name   (nth 2 before-after)
-	       doc    (nth 3 before-after))
-	 ;;
-	 ;; (seq-take-while (lambda (seq) (when (string-match "{\\([^\}]+\\)}" seq) (match-string 1 seq))))
-	 ;;		 '("a {Wiki} {Non2} {Non#extra text}"))
-	 ;; Markup before string in temp buffer
-	 (erase-buffer)
-	 (insert before)
-	 (hywiki-test--interpolate-buffer)
-	 ;; Surround any HyWikiWord refs with braces to match after string.
-	 ;; Do it in reverse order so do not affect the already
-	 ;; computed buffer positions.
-	 (setq hywiki-ref-positions (nreverse (hywiki-get-reference-positions)))
-	 (dolist (start-end hywiki-ref-positions)
-	   (setq start (car start-end)
-		 end (cdr start-end))
-	   (goto-char end)
-	   (insert "}")
-	   (goto-char start)
-	   (insert "{"))
-	 ;; Store the buffer string for comparison
-	 (setq markedup-before (string-trim (buffer-string)))
-	 ;; Markup after string
-	 (erase-buffer)
-	 (insert after)
-	 (hywiki-test--interpolate-buffer)
-	 (setq markedup-after (string-trim (buffer-string)))
-	 ;; Compare markedup-before to markedup-after
-	 (if (or name doc)
-	     (should (equal (list :markedup markedup-before
-				  :test-num test-num :test-name name :doc doc
-				  :before before :after after)
-			     (list :markedup markedup-after
-				   :test-num test-num :test-name name :doc doc
-				   :before before :after after)))
-	   (should (equal (list :markedup markedup-before
-			      :test-num test-num
-			      :before before :after after)
-			(list :markedup markedup-after
-			      :test-num test-num
-			      :before before :after after))))
-	 (cl-incf test-num))
-       edit-string-pairs))
-    (goto-char (point-min)))))
+    (with-temp-buffer
+      (hywiki-tests--preserve-hywiki-mode
+	(org-mode)
+	(hywiki-mode 1)
+	(mapc
+	 (lambda (before-after)
+	   (condition-case err
+	       (progn
+		 (setq before (nth 0 before-after)
+		       after  (nth 1 before-after)
+		       name   (nth 2 before-after)
+		       doc    (nth 3 before-after))
+		 ;; Ensure all brace delimited HyWikiWords have their pages
+		 ;; created so their references will be highlighted.
+		 (mapc #'hywiki-add-page
+		       (delq nil
+			     (mapcar #'hywiki-get-singular-wikiword
+				     (seq-remove #'string-empty-p
+						 (mapcar #'string-trim
+							 (hywiki-tests--get-brace-strings after))))))
+		 (unwind-protect
+		     (progn
+		       (pop-to-buffer (current-buffer))
+		       (erase-buffer)
+		       (hywiki-tests--insert-by-char before)
+		       (hywiki-tests--interpolate-buffer)
+		       ;; Markup before string in temp buffer
+		       ;; Surround any HyWikiWord refs with braces to match after string.
+		       ;; Do it in reverse order so do not affect the already
+		       ;; computed buffer positions.
+		       (setq hywiki-ref-positions (nreverse (hywiki-get-reference-positions)))
+		       (dolist (start-end hywiki-ref-positions)
+			 (setq start (car start-end)
+			       end (cdr start-end))
+			 (goto-char end)
+			 (insert "}")
+			 (goto-char start)
+			 (insert "{"))
+		       ;; Store the buffer string for comparison
+		       (setq markedup-before (string-trim (buffer-string)))
+		       ;; Markup after string
+		       (erase-buffer)
+		       (insert after)
+		       (hywiki-tests--interpolate-buffer)
+		       (setq markedup-after (string-trim (buffer-string)))
+		       ;; Compare markedup-before to markedup-after
+		       (if (or name doc)
+			   (should (equal (list :markedup markedup-before
+						:test-num test-num :test-name name :doc doc
+						:before before :after after)
+					  (list :markedup markedup-after
+						:test-num test-num :test-name name :doc doc
+						:before before :after after)))
+			 (should (equal (list :markedup markedup-before
+					      :test-num test-num
+					      :before before :after after)
+					(list :markedup markedup-after
+					      :test-num test-num
+					      :before before :after after))))
+		       (cl-incf test-num))
+		   (goto-char (point-min))))
+	     (error (error "%s ---- %S" err (list :markedup markedup-before
+					      :test-num test-num
+					      :before before :after after)))))
+	 hywiki-tests--edit-string-pairs)))))
 
-(defun hywiki-test--interpolate-buffer ()
+(defun hywiki-tests--get-brace-strings (s)
+  "Return the substrings in S delimited by curly braces {…}, excluding braces.
+Assume no nesting of braces, nor any quoting of braces."
+  (let ((pos 0)
+        (result '()))
+    (while (string-match "{\\([^}]*\\)}" s pos)
+      (push (match-string 1 s) result)
+      (setq pos (match-end 0)))
+    (nreverse result)))
+
+(defun hywiki-tests--insert-by-char (str)
+  "Interactively insert the characters from STR."
+  (interactive "sInsert string: ")
+  (mapc (lambda (c)
+	  (setq unread-command-events (nconc unread-command-events
+					     (listify-key-sequence
+					      (char-to-string c)))))
+	str)
+  (hywiki-tests--execute-commands))
+
+(defun hywiki-tests--execute-commands ()
+  "Process all events from `unread-command-events'."
+  (interactive)
+  (while unread-command-events
+    (let ((event (pop unread-command-events)))
+      ;; Execute this event as if typed
+      (setq this-command (key-binding (vector event) t)
+	    last-command-event event)
+      ;; (message "Event = %s; last-command-event = %s; cmd = %s"
+      ;;          event last-command-event this-command)
+      (when this-command
+	(run-hooks 'pre-command-hook)
+	;; `command-execute' runs only `post-self-insert-hook' since
+	;; this is run during the command; pre- and post-command hooks
+	;; must be manually run.
+        (command-execute this-command)
+	(run-hooks 'post-command-hook)))))
+
+(defun hywiki-tests--interpolate-buffer ()
   "Replace action buttons and Hyperbole variable markup in buffer."
   (let ((str (buffer-string)))
     ;; Replace env and lisp variable references
@@ -128,22 +184,33 @@ Last two elements are optional.")
 	;; Force HyWikiWord highlighting
 	;; (setq last-command this-command)
 	;; (setq this-command sexp)
-	(hy-test-helpers:eval-as-command
-	 'hbut:act 'hbut:current)))
-    ;; Highlight all HyWikiWord references in buffer
-    ;; (hywiki-highlight-page)
-    ))
+	(hywiki-tests--command-execute
+	 'hbut:act 'hbut:current)))))
 
-(defun hywiki-tests--command-execute (cmd &rest rest)
-  "Run CMD, with optional REST params, between calls to pre and post hooks.
+(defun hywiki-tests--command-execute (sexp &rest rest)
+  "Apply SEXP to REST of arguments as a command.
+Run pre and post command hooks around the call.
 This is for simulating the command loop."
-  (setq last-command this-command)
-  (setq this-command cmd)
-  (run-hooks 'pre-command-hook)
-  (if rest
-      (apply cmd rest)
-    (command-execute cmd))
-  (run-hooks 'post-command-hook))
+  (let ((buf (current-buffer))
+	(cmd (cond ((symbolp sexp)
+		    sexp)
+		   ((listp sexp)
+		    (when (symbolp (car sexp))
+		      (car sexp))))))
+    (setq last-command this-command
+	  this-command cmd)
+    (run-hooks 'pre-command-hook)
+    (unwind-protect
+	(command-execute
+	 (lambda () (interactive)
+	   (if rest
+	       (apply sexp rest)
+	     (eval sexp t))))
+      ;; Ensure point remains in the same buffer before and after SEXP
+      ;; evaluation.  This prevents false switching to the *ert* test
+      ;; buffer when debugging.
+      (set-buffer buf)
+      (run-hooks 'post-command-hook))))
 
 (defmacro hywiki-tests--preserve-hywiki-mode (&rest body)
   "Restore hywiki-mode after running BODY."
@@ -1149,32 +1216,35 @@ Note special meaning of `hywiki-allow-plurals-flag'."
 			 (hywiki-get-referent wikiword))))
       (hy-delete-dir-and-buffer hywiki-directory))))
 
-(defmacro hywiki-tests--referent-test (expected &rest prepare)
-  "Referent test boilerplate code.
-EXPECTED is the result expected from hywiki-get-referent.  PREPARE sets
-up the test."
+(defmacro hywiki-tests--referent-test (expected-referent &rest prepare)
+  "Template macro for generated a non-page HyWikiWord referent.
+EXPECTED-REFERENT is the result expected from `hywiki-get-referent'.
+The template creates the HyWikiWord named WikiPage with a page referent.
+The rest of arguments, PREPARE, must create a HyWikiWord named WikiReferent
+with a non-page referent type."
   (declare (indent 0) (debug t))
   `(let* ((hsys-consult-flag nil)
 	  (hywiki-directory (make-temp-file "hywiki" t))
-	  (wiki-referent "WikiReferent")
-          (wiki-page (cdr (hywiki-add-page "WikiPage" )))
+	  (wiki-word-non-page "WikiReferent")
+	  (wiki-word-with-page "WikiPage")
+          (wiki-page (cdr (hywiki-add-page wiki-word-with-page)))
           (mode-require-final-newline nil)
 	  wiki-page-buffer)
      (unwind-protect
          (save-excursion
-           ;; (should (equal '("WikiPage") (hywiki-get-wikiword-list)))
+           (should (equal (list wiki-word-with-page) (hywiki-get-wikiword-list)))
 	   (setq wiki-page-buffer (find-file wiki-page))
 	   (erase-buffer)
-           (insert wiki-referent)
+           (insert wiki-word-non-page)
            (save-buffer)
            (goto-char 4)
 
            ,@prepare
 
-           (should (equal ,expected (hywiki-get-referent wiki-referent)))
-           (should (file-exists-p (hywiki-cache-default-file)))
 	   (set-buffer wiki-page-buffer)
-           (should (string= wiki-referent (buffer-substring-no-properties
+           (should (file-exists-p (hywiki-cache-default-file)))
+           (should (equal ,expected-referent (hywiki-get-referent wiki-word-non-page)))
+           (should (string= wiki-word-non-page (buffer-substring-no-properties
 					   (point-min) (point-max))))
 
            ;; Simulate reload from cache
@@ -1182,7 +1252,7 @@ up the test."
            (setq hywiki--referent-hasht nil)
            (hywiki-make-referent-hasht)
 
-           (should (equal ,expected (hywiki-get-referent wiki-referent))))
+           (should (equal ,expected-referent (hywiki-get-referent wiki-word-non-page))))
 
        (hy-delete-files-and-buffers (list wiki-page (hywiki-cache-default-file)))
        (hy-delete-dir-and-buffer hywiki-directory))))
@@ -1192,14 +1262,14 @@ up the test."
   (hywiki-tests--referent-test
    (cons 'key-series "{ABC}")
    (hy-test-helpers:ert-simulate-keys "ABC\r"
-     (hywiki-add-key-series wiki-referent))))
+     (hywiki-add-key-series wiki-word-non-page))))
 
 (ert-deftest hywiki-tests--save-referent-keyseries-use-menu ()
   "Verify saving and loading a referent keyseries works using Hyperbole's menu."
   ; The failure is intermittent. See expanded test case below.
   (skip-unless (not noninteractive))
   `(let* ((hywiki-directory (make-temp-file "hywiki" t))
-          (wiki-page (cdr (hywiki-add-page "WikiPage" )))
+          (wiki-page (cdr (hywiki-add-page "WikiPage")))
           (mode-require-final-newline nil)
 	  wiki-page-buffer)
      (unwind-protect
@@ -1223,9 +1293,9 @@ up the test."
 (ert-deftest hywiki-tests--save-referent-bookmark ()
   "Verify saving and loading a referent bookmark works."
   (hywiki-tests--referent-test
-   (cons 'bookmark wiki-referent)
-   (hy-test-helpers:ert-simulate-keys (concat wiki-referent "\r")
-     (hywiki-add-bookmark wiki-referent))))
+   (cons 'bookmark wiki-word-non-page)
+   (hy-test-helpers:ert-simulate-keys (concat wiki-word-non-page "\r")
+     (hywiki-add-bookmark wiki-word-non-page))))
 
 ;; Command
 (defun hywiki-tests--command (wikiword)
@@ -1238,14 +1308,14 @@ up the test."
   (hywiki-tests--referent-test
     (cons 'command #'hywiki-tests--command)
     (hy-test-helpers:ert-simulate-keys "hywiki-tests--command\r"
-      (hywiki-add-command wiki-referent))))
+      (hywiki-add-command wiki-word-non-page))))
 
 (ert-deftest hywiki-tests--save-referent-command-use-menu ()
   "Verify saving and loading a referent command works using Hyperbole's menu.."
   (skip-unless (not noninteractive))
   (hywiki-tests--referent-test
     (cons 'command #'hywiki-tests--command)
-    (should (hact 'kbd-key "C-u C-h hhcc hywiki-tests--command RET"))
+    (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET c hywiki-tests--command RET"))
     (hy-test-helpers:consume-input-events)))
 
 ;; Find
@@ -1253,7 +1323,7 @@ up the test."
   "Verify saving and loading a referent find works."
   (hywiki-tests--referent-test
     (cons 'find #'hywiki-word-grep)
-    (hywiki-add-find wiki-referent)))
+    (hywiki-add-find wiki-word-non-page)))
 
 (ert-deftest hywiki-tests--save-referent-find-use-menu ()
   "Verify saving and loading a referent find works using Hyperbole's menu.."
@@ -1262,7 +1332,7 @@ up the test."
   (hywiki-tests--referent-test
     (cons 'find #'hywiki-word-grep)
     (hy-test-helpers:ert-simulate-keys
-	"C-u C-h hhc WikiReferent RET f"
+	"C-u C-h hhc WikiReferent RET f hywikiword RET"
       (hy-test-helpers:consume-input-events))))
 
 ;; Global-button
@@ -1271,7 +1341,7 @@ up the test."
   (hywiki-tests--referent-test
    (cons 'global-button "gbtn")
    (mocklet ((hargs:read-match => "gbtn"))
-     (hywiki-add-global-button wiki-referent))))
+     (hywiki-add-global-button wiki-word-non-page))))
 
 (ert-deftest hywiki-tests--save-referent-global-button-use-menu ()
   "Verify saving and loading a referent global-button works using Hyperbole's menu."
@@ -1288,7 +1358,7 @@ up the test."
            (stub gbut:label-list => (list "global"))
            (mock (gbut:act "global") => t)
            (gbut:ebut-program "global" 'link-to-file test-file)
-           (should (hact 'kbd-key "C-u C-h hhcg global RET"))
+           (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET g global RET"))
            (hy-test-helpers:consume-input-events))
        (hy-delete-file-and-buffer test-file)))))
 
@@ -1297,7 +1367,7 @@ up the test."
   "Verify saving and loading a referent hyrolo works."
   (hywiki-tests--referent-test
    (cons 'hyrolo #'hyrolo-fgrep)
-   (hywiki-add-hyrolo wiki-referent)))
+   (hywiki-add-hyrolo wiki-word-non-page)))
 
 ;; Info index
 (ert-deftest hywiki-tests--save-referent-info-index ()
@@ -1307,7 +1377,7 @@ up the test."
    (save-excursion
      (hy-test-helpers:ert-simulate-keys "files\r"
        (info "emacs")
-       (hywiki-add-info-index wiki-referent)))))
+       (hywiki-add-info-index wiki-word-non-page)))))
 
 (ert-deftest hywiki-tests--save-referent-info-index-use-menu ()
   "Verify saving and loading a referent info index works using Hyperbole's menu."
@@ -1317,7 +1387,7 @@ up the test."
     (save-excursion
       (unwind-protect
           (progn
-            (should (hact 'kbd-key "C-u C-h hhci (emacs)files RET"))
+            (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET i (emacs)files RET"))
             (hy-test-helpers:consume-input-events))
         (kill-buffer "*info*")))))
 
@@ -1329,7 +1399,7 @@ up the test."
    (save-excursion
      (unwind-protect
          (hy-test-helpers:ert-simulate-keys "(emacs)\r"
-           (hywiki-add-info-node wiki-referent))
+           (hywiki-add-info-node wiki-word-non-page))
        (kill-buffer "*info*")))))
 
 (ert-deftest hywiki-tests--save-referent-info-node-use-menu ()
@@ -1340,8 +1410,7 @@ up the test."
    (save-excursion
      (unwind-protect
          (progn
-           ;; (should (hact 'kbd-key "C-u C-h hhc MyWiki RET n (emacs) RET"))
-           (should (hact 'kbd-key "C-u C-h hhcn (emacs) RET"))
+           (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET n (emacs) RET"))
            (hy-test-helpers:consume-input-events))
        (kill-buffer "*info*")))))
 
@@ -1350,7 +1419,7 @@ up the test."
   "Verify saving and loading a referent path link works."
   (hywiki-tests--referent-test
    (cons 'path-link "file:L1")
-   (hywiki-add-path-link wiki-referent "file" 1)))
+   (hywiki-add-path-link wiki-word-non-page "file" 1)))
 
 ;; Org id
 (ert-deftest hywiki-tests--save-referent-org-id ()
@@ -1365,7 +1434,7 @@ up the test."
             (mocklet (((hmouse-choose-link-and-referent-windows) => (list nil (get-buffer-window)))
                       ((org-id-get-create) => "generated-org-id"))
               (goto-char (point-max))
-	      (hywiki-add-org-id wiki-referent)))
+	      (hywiki-add-org-id wiki-word-non-page)))
 	(hy-delete-file-and-buffer filea))))))
 
 ;; FIXME: Add Org-id links tests.
@@ -1378,7 +1447,7 @@ up the test."
    (mocklet (((hypb:require-package 'org-roam) => t)
 	     ((org-roam-node-read) => "node")
 	     ((org-roam-node-title "node") => "node-title"))
-     (hywiki-add-org-roam-node wiki-referent))))
+     (hywiki-add-org-roam-node wiki-word-non-page))))
 
 (ert-deftest hywiki-tests--save-referent-org-roam-node-use-menu ()
   "Verify saving and loading a referent org roam node works using Hyperbole's menu."
@@ -1389,7 +1458,7 @@ up the test."
 	     ((org-roam-node-read) => "node")
 	     ((org-roam-node-title "node") => "node-title")
              (hywiki-display-org-roam-node => t))
-     (should (hact 'kbd-key "C-u C-h hhcr"))
+     (should (hact 'kbd-key "C-u C-h hhc WikiReferent r Org-Roam-ID RET"))
      (hy-test-helpers:consume-input-events))))
 
 (ert-deftest hywiki-tests--delete-parenthesised-char ()

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     10-Aug-25 at 17:35:34 by Bob Weiner
+;; Last-Mod:     16-Aug-25 at 23:58:24 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -498,19 +498,29 @@ the `format' function."
 (defun hypb:eval (sexp &rest rest)
   "Apply SEXP to REST of arguments and maintain the current buffer."
   (let ((buf (current-buffer))
-	(cmd (if (listp sexp)
-		 (cond ((eq 'quote (car sexp))
+	(cmd (cond ((symbolp sexp)
+		    sexp)
+		   ((listp sexp)
+		    (if (eq 'quote (car sexp))
 			;; Unquote the expression so it is evaluated
-			(cadr sexp))
-		       (t sexp)))))
+			(cadr sexp)
+		      sexp)))))
+    (setq last-command this-command
+	  this-command (if (and (listp cmd) (symbolp (car cmd)))
+			   (car cmd)
+			 cmd))
+    (run-hooks 'pre-command-hook)
     (unwind-protect
-	(if rest
-	    (apply cmd rest)
-	  (eval cmd t))
+	(command-execute
+	 (lambda () (interactive)
+	   (if rest
+	       (apply cmd rest)
+	     (eval cmd t))))
       ;; Ensure point remains in the same buffer before and after SEXP
       ;; evaluation.  This prevents false switching to the *ert* test
       ;; buffer when debugging.
-      (set-buffer buf))))
+      (set-buffer buf)
+      (run-hooks 'post-command-hook))))
 
 (defun hypb:eval-debug (sexp)
   "Eval SEXP and on error, show a debug backtrace of the problem."
@@ -743,11 +753,12 @@ Quoting conventions recognized are:
 		       ;; If this is the start of a string, it must be
 		       ;; at the start of line, preceded by whitespace
 		       ;; or preceded by another string end sequence.
-		       (save-match-data
-			 (or (string-empty-p (match-string 1))
-			     (string-search (match-string 1) " \t\n\r\f")
-			     (progn (goto-char (1+ (point)))
-				    (looking-back close-regexp nil)))))
+		       ;; (save-match-data
+		       ;; 	 (or (string-empty-p (match-string 1))
+		       ;; 	     (string-search (match-string 1) " \t\n\r\f")
+		       ;; 	     (progn (goto-char (1+ (point)))
+		       ;; 		    (looking-back close-regexp nil))))
+		       )
 	      (forward-line 0)
 	      (setq start (point))
 	      (goto-char opoint)

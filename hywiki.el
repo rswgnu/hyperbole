@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     10-Aug-25 at 17:31:00 by Bob Weiner
+;; Last-Mod:     16-Aug-25 at 23:54:09 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -522,10 +522,10 @@ It may be a section or a line number reference.  Group one is the type
 of reference and group two is the rest of the suffix reference.")
 
 (defface hywiki--word-face
-  '((((min-colors 88) (background dark)) (:foreground "orange"))
-    (((background dark)) (:background "orange" :foreground "black"))
-    (((min-colors 88)) (:foreground "orange"))
-    (t (:background "orange")))
+  '((((min-colors 88) (background dark)) (:foreground "orange" :underline t))
+    (((background dark)) (:background "orange" :foreground "black" :underline t))
+    (((min-colors 88)) (:foreground "orange" :underline t))
+    (t (:background "orange" :underline t)))
   "Face for HyWiki word highlighting."
   :group 'hyperbole-hywiki)
 
@@ -560,6 +560,8 @@ Non-nil is the default."
   "Store any HyWikiWord before or after point for later comparison.
 Triggered by `pre-command-hook' for non-character -commands, including
 deletion commands and those in `hywiki-non-character-commands'."
+  ;; (when ert--running-tests
+  ;;  (message "Running pre-command-hook..."))
   (setq hywiki--buffer-modified-tick (buffer-modified-tick)
 	hywiki--word-pre-command nil)
 
@@ -588,15 +590,71 @@ deletion commands and those in `hywiki-non-character-commands'."
 	(set-marker hywiki--buttonize-end end)
 	start))))
 
+(defun hywiki-buttonize-character-commands ()
+  "Turn any HyWikiWords around point into highlighted Hyperbole buttons.
+Triggered by `post-self-insert-hook' after self-inserting one or
+more characters while the command is still executing.  The
+`post-command-hook' runs later after the command has finished."
+  ;; (when ert--running-tests
+  ;;   (message "Running post-self-insert-hook..."))
+  (unless (hywiki-non-hook-context-p)
+    (setq hywiki--range nil)
+
+    ;; Dehighlight any previously highlighted WikiWord at point
+    ;; before we move to the start of any current WikiWord and
+    ;; rehighlight that.
+    (hywiki--maybe-dehighlight-at-point)
+
+    (save-excursion
+      (cond ((marker-position hywiki--buttonize-start)
+	     ;; Point was before or after a WikiWord delimiter
+	     (goto-char hywiki--buttonize-start)
+	     (skip-chars-backward "-" (line-beginning-position))
+	     (goto-char (1- (point))))
+	    ((not (equal (setq hywiki--range (hywiki-highlight-word-get-range))
+			 '(nil nil nil)))
+	     (cl-destructuring-bind (_ start end)
+		 hywiki--range
+	       (if (and start end)
+		   (progn
+		     ;; On a non-delimited HyWikiWord
+		     (set-marker hywiki--buttonize-start start)
+		     (set-marker hywiki--buttonize-end end)
+		     (goto-char start)
+		     (skip-chars-backward "-" (line-beginning-position))
+		     t)
+		 (setq hywiki--range nil))))
+	    ((not (member (setq hywiki--range (hywiki-at-range-delimiter))
+			 '(nil nil)))
+	     ;; At delimiters surrounding a WikiWord
+	     (let ((start (nth 0 hywiki--range))
+		   (end   (nth 1 hywiki--range)))
+	       (when (and start end)
+		 ;; Use these to store any range of a delimited HyWikiWord#section
+		 (set-marker hywiki--buttonize-start (1+ start))
+		 (set-marker hywiki--buttonize-end (1- end))))))
+
+      ;; This first rehighlighting is needed to ensure
+      ;; any wikiword before an inserted whitespace character is
+      ;; properly highlighted when separating two words or after a
+      ;; closing delimiter.
+      (save-excursion
+	(goto-char (max (1- (point)) (point-min)))
+	(hywiki--maybe-rehighlight-at-point))
+
+      (hywiki--maybe-rehighlight-at-point))))
+
 (defun hywiki-buttonize-non-character-commands ()
   "Highlight any HyWikiWord before or after point as a Hyperbole button.
 Triggered by `post-command-hook' for non-character-commands, including
 deletion commands and those in `hywiki-non-character-commands'."
+  ;; (when ert--running-tests
+  ;;   (message "Running post-command-hook..."))
   (unless (or (eq hywiki--buffer-modified-tick (buffer-modified-tick))
 	      (hywiki-non-hook-context-p))
     (setq hywiki--range nil)
     (cond ((and (symbolp this-command)
-		(string-match-p "^insert$\\|-insert-?\\|eval-last-sexp\\|eval-expression\\|read--expression-try-read"
+		(string-match-p "^insert\\(-\\|$\\)\\|-insert-?\\|eval-last-sexp\\|eval-expression\\|read--expression-try-read"
 				(symbol-name this-command)))
 	   (setq hywiki--end (point))
 	   (when (and hywiki--start (not (eq hywiki--start hywiki--end)))
@@ -652,57 +710,6 @@ deletion commands and those in `hywiki-non-character-commands'."
 		 (hywiki--maybe-rehighlight-at-point))
 
 	       (hywiki--maybe-rehighlight-at-point)))))))
-
-(defun hywiki-buttonize-character-commands ()
-  "Turn any HyWikiWords around point into highlighted Hyperbole buttons.
-Triggered by `post-self-insert-hook' after self-inserting one or more
-characters after `post-command-hook' has run."
-  (unless (hywiki-non-hook-context-p)
-    (setq hywiki--range nil)
-
-    ;; Dehighlight any previously highlighted WikiWord at point
-    ;; before we move to the start of any current WikiWord and
-    ;; rehighlight that.
-    (hywiki--maybe-dehighlight-at-point)
-
-    (save-excursion
-      (cond ((marker-position hywiki--buttonize-start)
-	     ;; Point was before or after a WikiWord delimiter
-	     (goto-char hywiki--buttonize-start)
-	     (skip-chars-backward "-" (line-beginning-position))
-	     (goto-char (1- (point))))
-	    ((not (equal (setq hywiki--range (hywiki-highlight-word-get-range))
-			 '(nil nil nil)))
-	     (cl-destructuring-bind (_ start end)
-		 hywiki--range
-	       (if (and start end)
-		   (progn
-		     ;; On a non-delimited HyWikiWord
-		     (set-marker hywiki--buttonize-start start)
-		     (set-marker hywiki--buttonize-end end)
-		     (goto-char start)
-		     (skip-chars-backward "-" (line-beginning-position))
-		     t)
-		 (setq hywiki--range nil))))
-	    ((not (member (setq hywiki--range (hywiki-at-range-delimiter))
-			 '(nil nil)))
-	     ;; At delimiters surrounding a WikiWord
-	     (let ((start (nth 0 hywiki--range))
-		   (end   (nth 1 hywiki--range)))
-	       (when (and start end)
-		 ;; Use these to store any range of a delimited HyWikiWord#section
-		 (set-marker hywiki--buttonize-start (1+ start))
-		 (set-marker hywiki--buttonize-end (1- end))))))
-
-      ;; This first rehighlighting is needed to ensure
-      ;; any wikiword before an inserted whitespace character is
-      ;; properly highlighted when separating two words or after a
-      ;; closing delimiter.
-      (save-excursion
-	(goto-char (max (1- (point)) (point-min)))
-	(hywiki--maybe-rehighlight-at-point))
-
-      (hywiki--maybe-rehighlight-at-point))))
 
 (defun hywiki-buttonize-word (func start end face)
   "Create a HyWikiWord button by calling FUNC with START and END positions.
@@ -2695,8 +2702,8 @@ save and potentially set `hywiki--directory-mod-time' and
   (when (or (not (stringp save-file)) (equal save-file ""))
     (setq save-file (hywiki-cache-default-file)))
   (setq save-file (expand-file-name save-file hywiki-directory))
-  (or (file-writable-p save-file)
-      (error "(hywiki-cache-save): Non-writable Environment file, \"%s\"" save-file))
+  (unless (file-writable-p save-file)
+    (error "(hywiki-cache-save): Non-writable Environment file, \"%s\"" save-file))
   (let ((buf (get-file-buffer save-file)))
     (when buf
       (if (buffer-modified-p buf)
@@ -2705,8 +2712,8 @@ save and potentially set `hywiki--directory-mod-time' and
 	(kill-buffer buf))))
   (let ((dir (or (file-name-directory save-file)
 		 default-directory)))
-    (or (file-writable-p dir)
-	(error "(hywiki-cache-save): Non-writable Environment directory, \"%s\"" dir)))
+    (unless (file-writable-p dir)
+      (error "(hywiki-cache-save): Non-writable Environment directory, \"%s\"" dir)))
   (save-window-excursion
     (let ((standard-output (hywiki-cache-edit save-file)))
       (with-current-buffer standard-output
@@ -3321,6 +3328,22 @@ non-nil or this will return nil."
       (hproperty:but-add start end hywiki-word-face))
     (list wikiword start end)))
 
+(defun hywiki-highlight-word-move-range ()
+  "Ensure wikiword highlighting range matches expected range.
+Return t if the highlighted range exists at point and gets moved."
+  (let* ((but (hproperty:but-get (point) 'face hywiki-word-face))
+	 (but-start (when but (hproperty:but-start but)))
+	 (but-end (when but (hproperty:but-end but))))
+    (when (and but-start but-end)
+      (save-excursion
+	(goto-char but-start)
+	(cl-destructuring-bind (wikiword start end)
+	    (hywiki-word-at :range)
+	  (when (and wikiword start end but-start but-end
+		     (or (/= start but-start) (/= end but-end)))
+	    (hproperty:but-move but start end)
+	    t))))))
+
 (defun hywiki-word-at-point ()
   "Return singular HyWikiWord at point with its suffix stripped or nil.
 Point should be on the HyWikiWord itself.  Suffix is anything after
@@ -3515,15 +3538,17 @@ Used to extend a region to fully include any strings or balanced pair delimiters
   (let ((maximum (max start end)))
     (setq start (min start end)
 	  end (max end maximum)))
-  (let ((result (list start end)))
+  (let ((result (list start end))
+	(in-string-flag (hypb:in-string-p)))
 
     ;; Skip past all double-quoted ranges and extend `start' and `end' as needed
     (save-excursion
       (goto-char start)
       (condition-case nil
 	  (while (and (<= (point) end)
-		      (skip-syntax-forward "^\"" end)
-		      (not (zerop (skip-syntax-forward "\"" end)))
+		      (skip-syntax-forward "^\"" (unless in-string-flag end))
+		      (not (zerop (skip-syntax-forward
+				   "\"" (unless in-string-flag end))))
 		      (= ?\" (char-syntax (preceding-char))))
 	    (when (or (= (1- (point)) (point-min))
 		      (/= ?\\ (char-before (1- (point)))))
@@ -3541,8 +3566,8 @@ Used to extend a region to fully include any strings or balanced pair delimiters
       (goto-char start)
       (condition-case nil
 	  (while (and (<= (point) end)
-		      (skip-syntax-forward "^\)" end)
-		      (not (zerop (skip-syntax-forward "\)" end)))
+		      (skip-syntax-forward "^\)")
+		      (not (zerop (skip-syntax-forward "\)")))
 		      (= ?\) (char-syntax (preceding-char))))
 	    (when (or (= (1- (point)) (point-min))
 		      (/= ?\\ (char-before (1- (point)))))
@@ -3557,8 +3582,8 @@ Used to extend a region to fully include any strings or balanced pair delimiters
       (goto-char end)
       (condition-case nil
 	  (while (and (>= (point) start)
-		      (skip-syntax-backward "^\(" start)
-		      (not (zerop (skip-syntax-backward "\(" start)))
+		      (skip-syntax-backward "^\(")
+		      (not (zerop (skip-syntax-backward "\(")))
 		      (= ?\( (char-syntax (following-char))))
 	    (when (not (eq ?\\ (char-before (max (point) (point-min)))))
 	      (save-excursion
@@ -3569,12 +3594,17 @@ Used to extend a region to fully include any strings or balanced pair delimiters
     ;; Skip past any current word at start and end to extend if needed
     (save-excursion
       (goto-char start)
+      (skip-chars-forward " \t\n\r")
       (skip-syntax-backward "w")
       (setq start (point))
       (goto-char end)
-      (skip-syntax-forward "w")
-      (setq end (point)
-	    result (list start end)))
+      (setq result (nth 2 (hywiki-delimited-p))
+	    end (or result end))
+      (unless result
+	(skip-chars-backward " \t\n\r")
+	(skip-syntax-forward "w")
+	(setq end (point)))
+      (setq result (list start end)))
     result))
 
 (defun hywiki--get-all-references (function &optional start end)

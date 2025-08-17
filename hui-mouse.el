@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     10-Aug-25 at 13:26:31 by Bob Weiner
+;; Last-Mod:     16-Aug-25 at 13:20:13 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -471,7 +471,7 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 		 (or (setq hkey-value (smart-lisp-at-load-expression-p))
 		     (smart-lisp-at-tag-p)))
 	       ;; Tightly limit Lisp matches in change-log-mode but
-	       ;; only call this if hkey-value is true since
+	       ;; call this only if hkey-value is true since
 	       ;; otherwise, already know there is no tag at point.
 	       (when hkey-value
 	         (smart-lisp-at-change-log-tag-p))))

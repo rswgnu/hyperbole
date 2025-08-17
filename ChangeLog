@@ -1,3 +1,36 @@
+2025-08-17  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--referent-test): Clarify behavior in doc
+    string and change wiki-referent to wiki-word-non-page.  Fix test cases
+    that create a non-page referent.
+
+* hbut.el (ibut:create): Fix error handling and don't switch to *Messages* buffer.
+
+2025-08-16  Bob Weiner  <rsw@gnu.org>
+
+* hypb.el (hypb:in-string-p): Remove check of chars prior to string open char.
+
+* hywiki.el (hywiki--word-face): Add underlining by default.  Helps to see if
+    spaces are highlighted or not.
+            (hywiki-highlight-word-move-range): Add for potential future use.
+            (hywiki--extend-region): Fix to not extend region to include trailing
+    whitespace unless delimited.
+
+* test/hywiki-tests.el (hywiki-tests--get-brace-strings,
+                        hywiki-tests--insert-by-char,
+                        hywiki-tests--execute-commands): Add.
+
+* hywiki.el (hywiki-buttonize-character-commands): Fix doc that this runs before
+    'post-command-hook'.
+
+* hmouse-tag.el (smart-tags-find-p): Rewrite to better match `smart-tags-display'
+    behavior which includes case-sensitive tag lookup and using xref hsys-xref
+    to detect more tag types.
+
+* test/hy-test-helpers.el (hy-delete-file-and-buffer): Previously just cleared
+    file modified flag without saving it.  Now additionally save the file
+    prior to trying to kill it.
+
 2025-08-10  Bob Weiner  <rsw@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--with-face-test): Make default value be
@@ -32,9 +65,6 @@
     (insert "<string-empty-p \"False\">")
 <string-empty-p "False">
 
-* test/hy-test-helpers.el (hy-test-helpers:eval-as-command): Add and use only in
-    ert test cases to emulate the command loop hooks.
-
 * hypb.el (hypb:eval-as-command): Rename to just `hypb:eval' and remove calling
     of command hooks.
 
@@ -45,8 +75,8 @@
 
 2025-08-03  Bob Weiner  <rsw@gnu.org>
 
-* test/hywiki-tests.el (hywiki-test--edit-string-pairs,
-                        hywiki-test--edit, hywiki-test--interpolate-buffer): Add
+* test/hywiki-tests.el (hywiki-tests--edit-string-pairs,
+                        hywiki-tests--edit, hywiki-tests--interpolate-buffer): Add
     simplified HyWiki string pair ert testing.
 
 * hywiki.el (hywiki-mode): Remove explicit call to 'hywiki-word-set-auto-highlighting'
@@ -1445,7 +1475,7 @@ value to be [[WikiWord]] not [[file:WikiWord.org][WikiWord]].
 * hyrolo.el (hyrolo-expand-path-list): Fix to include a default file name
     even when the file does not yet exist.
 
-* test/hyrolo-tests.el (hyrolo-test--expand-path-list): Expand matching
+* test/hyrolo-tests.el (hyrolo-tests--expand-path-list): Expand matching
     filename.
 
 * hyrolo.el (hyrolo-expand-path-list): Use default "~/.rolo.org" when it
@@ -1650,7 +1680,7 @@ value to be [[WikiWord]] not [[file:WikiWord.org][WikiWord]].
 
 2025-01-20  Mats Lidell  <matsl@gnu.org>
 
-* test/test-helpers-tests.el (test-helpers-test--make-random-wikiword):
+* test/test-helpers-tests.el (test-helpers-tests--make-random-wikiword):
     Add test.
 
 * test/MANIFEST: Test file for the test helpers.
@@ -3093,8 +3123,8 @@ value to be [[WikiWord]] not [[file:WikiWord.org][WikiWord]].
 
 2024-08-05  Mats Lidell  <matsl@gnu.org>
 
-* test/hyrolo-tests.el (hyrolo-test--expand-path-list)
-    (hyrolo-test--at-tags-p): Add tests.
+* test/hyrolo-tests.el (hyrolo-tests--expand-path-list)
+    (hyrolo-tests--at-tags-p): Add tests.
 
 2024-07-31  Bob Weiner  <rsw@gnu.org>
 
@@ -4018,7 +4048,7 @@ value to be [[WikiWord]] not [[file:WikiWord.org][WikiWord]].
 * .github/workflows/main.yml (jobs): Add Emacs 29.3 to versions used for
     the CI builds.
 
-* test/hyrolo-tests.el (hyrolo-test--grep-count): Verify hyrolo match count.
+* test/hyrolo-tests.el (hyrolo-tests--grep-count): Verify hyrolo match count.
 
 2024-03-31  Bob Weiner  <rsw@gnu.org>
 
@@ -4535,8 +4565,8 @@ V9.0.1 changes ^^^^:
 * Update copyright date of latest updated version to be 2024 for all files
     with copyright string that so far have been updated in git under 2024.
 
-* test/hsettings-test.el: New test file for hsettings.
-    (hsettings-test--hyperbole-web-search): Test hyperbole-web-search.
+* test/hsettings-tests.el: New test file for hsettings.
+    (hsettings-tests--hyperbole-web-search): Test hyperbole-web-search.
 
 * Makefile (package-lint): Add explicit loading of package-lint from Melpa
     for this target. Only needed there.
@@ -6180,7 +6210,7 @@ V9.0.1 changes ^^^^:
 
 2023-08-27  Bob Weiner  <rsw@gnu.org>
 
-* test/hui-register-tests.el (hui-register-test--register-val-insert-ibut): Fix this test.
+* test/hui-register-tests.el (hui-register-tests--register-val-insert-ibut): Fix this test.
 
 * hbut.el (ebut:to): Simplify so if 'lbl-key' is nil, look only for ebutton at point.
           (ibut:to): Simplify so if 'name-key' is nil, look only for ibutton at point.
@@ -6249,7 +6279,7 @@ V9.0.1 changes ^^^^:
 * test/hmouse-drv-tests.el (hbut-pathname-path-variable-with-three-colons-is-a-path-test):
   test/smart-org-tests.el (smart-org-mode-with-smart-keys-buttons-on-hypb-button-activates)
 	                   smart-org-mode-with-smart-keys-on-hypb-button-activates):
-  test/hui-register-tests.el (hui-register-test--register-val-insert-ebut):
+  test/hui-register-tests.el (hui-register-tests--register-val-insert-ebut):
   test/hypb-tests.el (hypb:installation-type-test): Make work under Windows where path root
     is "c:/".
 
@@ -8194,10 +8224,10 @@ name with 'name' and 'name-key'.
 * hui.el (hui-copy-to-register): Use hui-register-struct-at-point if on a
     button.
 
-* test/hui-register-tests.el (hui-register-test--create-register-content)
-    (hui-register-test--register-val-jump-to)
-    (hui-register-test--register-val-insert-ebut)
-    (hui-register-test--register-val-insert-ibut): Add test cases for
+* test/hui-register-tests.el (hui-register-tests--create-register-content)
+    (hui-register-tests--register-val-jump-to)
+    (hui-register-tests--register-val-insert-ebut)
+    (hui-register-tests--register-val-insert-ibut): Add test cases for
     hui-register.
 
 * Makefile (EL_COMPILE, ELC_COMPILE): Add hui-register.
