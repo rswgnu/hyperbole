@@ -1,5 +1,10 @@
 2025-08-17  Bob Weiner  <rsw@gnu.org>
 
+* hui.el (hui:delimited-selectable-thing-and-bounds): Fix so when {M-w} uses
+    'hui-select-get-region-boundaries' on a matching delimiter, it always
+    returns the same value rather than use the grow region feature.  This fixes
+    not all trailing parens being selected when at the start of a defun.
+
 * test/hywiki-tests.el (hywiki-tests--referent-test): Clarify behavior in doc
     string and change wiki-referent to wiki-word-non-page.  Fix test cases
     that create a non-page referent.

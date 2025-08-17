@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     22-Jun-25 at 10:37:58 by Mats Lidell
+;; Last-Mod:     17-Aug-25 at 13:03:30 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -360,7 +360,8 @@ extracted from a region."
 	       (setcar thing-and-bounds (klink:absolute thing-and-bounds))
 	       (cons 'klink thing-and-bounds)))
 	    ((hui-select-at-delimited-thing-p)
-	     (when (setq thing-and-bounds (hui-select-get-region-boundaries))
+	     (when (setq hui-select-previous 'char ;; Reset to first syntactical unit
+			 thing-and-bounds (hui-select-get-region-boundaries))
 	       (list hui-select-previous
 		     (buffer-substring-no-properties
 		      (car thing-and-bounds) (cdr thing-and-bounds))
