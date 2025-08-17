@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     17-Aug-25 at 10:00:33 by Bob Weiner
+;; Last-Mod:     17-Aug-25 at 12:28:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -255,7 +255,7 @@ This is for simulating the command loop."
   ;; considered an error case that is.)
   (let ((hywiki-directory (make-temp-file "hywiki" t)))
     (unwind-protect
-        (should-not (cdr (hywiki-add-page "notawikiword")))
+        (should-not (hywiki-add-page "notawikiword"))
       (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--action-key-on-hywikiword-displays-page ()
@@ -394,7 +394,7 @@ line 2
       (unwind-protect
           (with-current-buffer (find-file-noselect wiki-page)
             (hywiki-mode 0)
-            (insert "AnotherWikiWord")
+            (insert "PotentialWikiWord")
 	    (newline nil t)
             (goto-char 4)
             (should (hywiki-word-at)))
@@ -1219,9 +1219,10 @@ Note special meaning of `hywiki-allow-plurals-flag'."
 (defmacro hywiki-tests--referent-test (expected-referent &rest prepare)
   "Template macro for generated a non-page HyWikiWord referent.
 EXPECTED-REFERENT is the result expected from `hywiki-get-referent'.
-The template creates the HyWikiWord named WikiPage with a page referent.
-The rest of arguments, PREPARE, must create a HyWikiWord named WikiReferent
-with a non-page referent type."
+The template creates the HyWikiWord named WikiPage with a page
+referent and places the word 'WikiReferent' in that page.  Then the
+rest of arguments, PREPARE, are run and these must add the HyWikiWord
+named WikiReferent with a non-page referent type."
   (declare (indent 0) (debug t))
   `(let* ((hsys-consult-flag nil)
 	  (hywiki-directory (make-temp-file "hywiki" t))
@@ -1750,13 +1751,13 @@ Insert test in the middle of other text."
             (goto-char 2)
             (should (looking-at-p "DEMO\" "))
             (hywiki-mode 0)
-            (should (string= "ibtypes::pathname" (hattr:get (ibut:at-p) 'categ)))
+            (should (ibtype:test-p 'pathname))
             (hywiki-mode 1)
-            (should (string= "ibtypes::pathname" (hattr:get (ibut:at-p) 'categ)))
+            (should (ibtype:test-p 'pathname))
             (goto-char 9)
             ;; Verify that using the org extension selects the WikiWord.
             (should (looking-at-p "DEMO\\.org\""))
-            (should (string= "ibtypes::hywiki-existing-word" (hattr:get (ibut:at-p) 'categ))))
+            (should (ibtype:test-p 'hywiki-existing-word)))
         (hy-delete-file-and-buffer wiki-page)
         (hy-delete-dir-and-buffer hywiki-directory)))))
 

@@ -1,5 +1,13 @@
 2025-08-17  Bob Weiner  <rsw@gnu.org>
 
+* test/hywiki-tests.el (hywiki-tests--hywiki-create-page--adds-no-wiki-word-fails):
+    'hywikig-add-page' should return nil so no removed the unneeded 'cdr' call.
+                       (hywiki-tests--a-wikiword-in-hywiki-directory): Rename
+    AnotherWikiWord to PotentialWikiWord to clarify that it has not been created.
+                       (hywiki-tests--referent-test): Further doc clarification.
+		       (hywiki-tests--filename-same-as-wiki-word): Simplify
+    with calls to 'ib:test-p' predicate rather than doing string compares.
+
 * hui.el (hui:delimited-selectable-thing-and-bounds): Fix so when {M-w} uses
     'hui-select-get-region-boundaries' on a matching delimiter, it always
     returns the same value rather than use the grow region feature.  This fixes
