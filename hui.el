@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     22-Jun-25 at 10:37:58 by Mats Lidell
+;; Last-Mod:     13-Aug-25 at 23:59:06 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -87,7 +87,7 @@ At other times, value must be nil.")
 
 ;; Derived from copy-to-register of "register.el"
 ;;;###autoload
-(defun hui:copy-to-register (register start end &optional delete-flag region-flag)
+(defun hui:copy-to-register (register start end &optional delete-flag region-flag interactive-flag)
   "Copy region or thing into REGISTER.  With prefix arg, delete as well.
 Called from program, takes five args: REGISTER, START, END, DELETE-FLAG,
 and REGION-FLAG.  START and END are buffer positions indicating what to copy.
@@ -103,6 +103,7 @@ point; see `hui:delimited-selectable-thing'."
 		     (when mark-active (region-beginning))
 		     (when mark-active (region-end))
 		     current-prefix-arg
+		     t
 		     t))
   (let (thing-and-bounds
 	thing
@@ -112,12 +113,12 @@ point; see `hui:delimited-selectable-thing'."
 		 ;; enabled, and no region is active, copy thing at
 		 ;; point, current kcell ref when in kotl-mode or
 		 ;; button if on an ibut or ebut.
-		 (cond ((and (called-interactively-p 'interactive)
+		 (cond ((and interactive-flag
 			     transient-mark-mode
 			     (not (use-region-p))
                              (or (ebut:label-p) (ibut:label-p)))
                         (hui-register-struct-at-point))
-                       ((and (called-interactively-p 'interactive)
+                       ((and interactive-flag
 			     transient-mark-mode
 			     (not (use-region-p))
 			     (prog1 (setq thing-and-bounds
@@ -137,7 +138,7 @@ point; see `hui:delimited-selectable-thing'."
       (set-register register str)
       (setq deactivate-mark t)
       (cond (delete-flag)
-	    ((called-interactively-p 'interactive)
+	    (interactive-flag
 	     (cond (thing
 		    (message "Saved selectable thing: %s" thing))
 		   ((mark t)

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:      8-Jul-25 at 23:21:17 by Mats Lidell
+;; Last-Mod:     10-Aug-25 at 23:38:54 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -195,15 +195,15 @@ The `pre-command-hook' saves this value for a buffer and `post-command-hook'
 checks it to determine if any buffer modification has occurred or not.")
 
 ;; Must be set after `hywiki-get-buttonize-characters' is defined
-(defconst hywiki--buttonize-characters nil
+(defvar hywiki--buttonize-characters nil
   "String of single character keys bound to `hywiki-buttonize-character-commands'.
 Each such key self-inserts before highlighting any prior HyWiki word
 in `hywiki-mode'.")
 
-(defconst hywiki--buttonize-character-regexp nil
+(defvar hywiki--buttonize-character-regexp nil
   "Regexp matching a single separating character following a HyWiki word.")
 
-(defconst hywiki--word-and-buttonize-character-regexp nil
+(defvar hywiki--word-and-buttonize-character-regexp nil
   "Regexp matching HyWikiWord#section plus a valid word separating character.
 Group 1 is the entire HyWikiWord#section:Lnum:Cnum expression.")
 

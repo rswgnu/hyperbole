@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     22-Jun-25 at 10:34:29 by Bob Weiner
+;; Last-Mod:     10-Aug-25 at 21:26:00 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -565,7 +565,7 @@ Also, add language-specific syntax setups to aid in thing selection."
       (scan-sexps from count))))
 
 ;;;###autoload
-(defun hui-select-thing ()
+(defun hui-select-thing (&optional interactive-flag)
   "Select a region based on the syntax of the thing at point.
 If invoked repeatedly, this selects bigger and bigger things.
 If `hui-select-display-type' is non-nil and this is called
@@ -576,18 +576,19 @@ If the key that invokes this command in `hyperbole-minor-mode' is
 also bound in the current major mode map, then interactively
 invoke that command instead.  Typically prevents clashes over
 {\\`C-c' RET}, {\\`C-c´ \\`C-m'}."
-  (interactive
-   (cond ((and (fboundp 'use-region-p) (use-region-p))
-	  nil)
-	 ((and transient-mark-mode mark-active)
-	  nil)
-	 (t
-	  ;; Reset selection based on the syntax of character at point.
-	  (hui-select-reset)
-	  nil)))
+  (interactive "p")
+  (when interactive-flag
+    (cond ((and (fboundp 'use-region-p) (use-region-p))
+	   nil)
+	  ((and transient-mark-mode mark-active)
+	   nil)
+	  (t
+	   ;; Reset selection based on the syntax of character at point.
+	   (hui-select-reset)
+	   nil)))
   (let* ((key (hypb:cmd-key-vector #'hui-select-thing hyperbole-mode-map))
 	 (major-mode-binding (lookup-key (current-local-map) key))
-	 (this-key-flag (and (called-interactively-p 'any)
+	 (this-key-flag (and interactive-flag
 			     (equal (this-single-command-keys) key))))
     (cond ((and major-mode-binding (not (integerp major-mode-binding))
 		this-key-flag)
@@ -607,7 +608,7 @@ invoke that command instead.  Typically prevents clashes over
 		 (set-mark (cdr region))
 		 (when transient-mark-mode
 		   (activate-mark))
-		 (and (called-interactively-p 'interactive) hui-select-display-type
+		 (and interactive-flag hui-select-display-type
 		      (message "%s" hui-select-previous))
 		 (run-hooks 'hui-select-thing-hook)
 		 region))))))
