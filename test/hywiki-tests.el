@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     17-Aug-25 at 12:28:45 by Bob Weiner
+;; Last-Mod:     17-Aug-25 at 23:27:18 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1219,34 +1219,21 @@ Note special meaning of `hywiki-allow-plurals-flag'."
 (defmacro hywiki-tests--referent-test (expected-referent &rest prepare)
   "Template macro for generated a non-page HyWikiWord referent.
 EXPECTED-REFERENT is the result expected from `hywiki-get-referent'.
-The template creates the HyWikiWord named WikiPage with a page
-referent and places the word 'WikiReferent' in that page.  Then the
-rest of arguments, PREPARE, are run and these must add the HyWikiWord
+The template runs the PREPARE body, and that must add the HyWikiWord
 named WikiReferent with a non-page referent type."
   (declare (indent 0) (debug t))
   `(let* ((hsys-consult-flag nil)
 	  (hywiki-directory (make-temp-file "hywiki" t))
 	  (wiki-word-non-page "WikiReferent")
-	  (wiki-word-with-page "WikiPage")
-          (wiki-page (cdr (hywiki-add-page wiki-word-with-page)))
-          (mode-require-final-newline nil)
-	  wiki-page-buffer)
+          (mode-require-final-newline nil))
      (unwind-protect
          (save-excursion
-           (should (equal (list wiki-word-with-page) (hywiki-get-wikiword-list)))
-	   (setq wiki-page-buffer (find-file wiki-page))
-	   (erase-buffer)
-           (insert wiki-word-non-page)
-           (save-buffer)
-           (goto-char 4)
+           (should (equal '() (hywiki-get-wikiword-list)))
 
            ,@prepare
 
-	   (set-buffer wiki-page-buffer)
            (should (file-exists-p (hywiki-cache-default-file)))
            (should (equal ,expected-referent (hywiki-get-referent wiki-word-non-page)))
-           (should (string= wiki-word-non-page (buffer-substring-no-properties
-					   (point-min) (point-max))))
 
            ;; Simulate reload from cache
            (hywiki-cache-save)
@@ -1255,7 +1242,7 @@ named WikiReferent with a non-page referent type."
 
            (should (equal ,expected-referent (hywiki-get-referent wiki-word-non-page))))
 
-       (hy-delete-files-and-buffers (list wiki-page (hywiki-cache-default-file)))
+       (hy-delete-files-and-buffers (list (hywiki-cache-default-file)))
        (hy-delete-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--save-referent-keyseries ()
@@ -1459,7 +1446,7 @@ named WikiReferent with a non-page referent type."
 	     ((org-roam-node-read) => "node")
 	     ((org-roam-node-title "node") => "node-title")
              (hywiki-display-org-roam-node => t))
-     (should (hact 'kbd-key "C-u C-h hhc WikiReferent r Org-Roam-ID RET"))
+     (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET r RET"))
      (hy-test-helpers:consume-input-events))))
 
 (ert-deftest hywiki-tests--delete-parenthesised-char ()
