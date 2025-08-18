@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Apr-91 at 03:36:23
-;; Last-Mod:      3-Oct-23 at 17:05:19 by Mats Lidell
+;; Last-Mod:     10-Aug-25 at 19:57:04 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -26,7 +26,7 @@
 ;;; Private variables
 ;;; ************************************************************************
 
-(defconst *hhist* nil
+(defvar *hhist* nil
   "List of previously visited Hyperbole button source locations.
 Car of list is most recent.")
 
