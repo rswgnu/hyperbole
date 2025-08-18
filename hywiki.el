@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     16-Aug-25 at 23:54:09 by Bob Weiner
+;; Last-Mod:     17-Aug-25 at 22:55:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1411,10 +1411,7 @@ Use `hywiki-get-referent' to determine whether a HyWiki page exists."
 	     (called-interactively-p 'interactive))
     (setq prompt-flag t))
   (let* ((normalized-word (hywiki-get-singular-wikiword wikiword))
-	 (referent
-	  (if (bound-and-true-p ert--running-tests)
-	      (hywiki-get-referent wikiword)
-	    (hywiki-find-referent wikiword prompt-flag))))
+	 (referent (hywiki-find-referent wikiword prompt-flag)))
     (cond (referent)
 	  ((and (null referent) (hywiki-word-is-p normalized-word))
 	   (when (hywiki-add-page normalized-word)

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     17-Aug-25 at 23:27:18 by Mats Lidell
+;; Last-Mod:     17-Aug-25 at 23:35:38 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1268,6 +1268,7 @@ named WikiReferent with a non-page referent type."
            (save-buffer)
            (goto-char 4)
 	   (should (hact 'kbd-key "C-u C-h hhck {C-e SPC ABC} RET"))
+	   (hy-test-helpers:consume-input-events)
 	   (should (equal (cons 'key-series "C-e SPC {ABC}")
 			  (hywiki-get-referent "WikiWord")))
 	   (should (string-equal "Wiki{C-e ABC}Referent"
@@ -1319,9 +1320,8 @@ named WikiReferent with a non-page referent type."
   ;; (skip-unless (not (version< emacs-version "29"))) ;; Fails on 28!?
   (hywiki-tests--referent-test
     (cons 'find #'hywiki-word-grep)
-    (hy-test-helpers:ert-simulate-keys
-	"C-u C-h hhc WikiReferent RET f hywikiword RET"
-      (hy-test-helpers:consume-input-events))))
+    (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET f hywikiword RET"))
+    (hy-test-helpers:consume-input-events)))
 
 ;; Global-button
 (ert-deftest hywiki-tests--save-referent-global-button ()

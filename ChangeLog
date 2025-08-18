@@ -1,5 +1,8 @@
 2025-08-17  Bob Weiner  <rsw@gnu.org>
 
+* hywiki.el (hywiki-create-page-and-display): Remove non-prompted referent handling
+    when running an ERT test.
+
 * test/hywiki-tests.el (hywiki-tests--hywiki-create-page--adds-no-wiki-word-fails):
     'hywikig-add-page' should return nil so no removed the unneeded 'cdr' call.
                        (hywiki-tests--a-wikiword-in-hywiki-directory): Rename
