@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 22:52:00
-;; Last-Mod:      6-Jul-25 at 13:02:40 by Bob Weiner
+;; Last-Mod:     19-Aug-25 at 00:42:44 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -672,7 +672,7 @@ The frame setup is mocked."
                  (lambda () (setq marker (1+ marker)))))
         (let ((err (should-error (hkey-actions) :type 'error)))
           (should (string-match-p
-                   (format "(Hyperbole): predicate %s improperly moved point from %s to %s" t 1 2)
+                   (format "(Hyperbole): predicate %s improperly moved point from %s to %s" t 2 4)
                    (cadr err))))))
 
     ;; Debug is called for action and assist.

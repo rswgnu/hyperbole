@@ -1,3 +1,22 @@
+2025-08-19  Mats Lidell  <matsl@gnu.org>
+
+* test/hmouse-drv-tests.el (hmouse-drv--hkey-actions): Adopted test case
+    to change in error message.
+
+* test/hywiki-tests.el (hywiki-tests--save-referent-bookmark): Visit a
+    file so the bookmark reference can be defined. Needed after the
+    refactoring of the hiwiki-tests--referent-test macro where not needed
+    files were removed.
+    (hywiki-tests--save-referent-info-index-use-menu): Skip test for
+    now. The menu keys work when tested manually but fail to work in the ert
+    test for unknown reasons.
+    (hywiki-tests--wikiword-step-check-verification)
+    (hywiki-tests--wikiword-step-check-verification-with-faces)
+    (hywiki-tests--wikiword-step-check-verification-with-surrounding-text):
+    The default value of `hywiki-tests--with-face-test' has been changed to t
+    which broke the tests that are not doing face checks. The var is now set
+    locally to nil where needed and removed where it does not need to be set.
+
 2025-08-17  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-create-page-and-display): Remove non-prompted referent handling
