@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     17-Aug-25 at 22:55:10 by Bob Weiner
+;; Last-Mod:     20-Aug-25 at 00:27:54 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2566,7 +2566,7 @@ regexps of wikiwords, if the hash table is out-of-date."
 		      (setq wikiword-sublist
 			    (delq nil (nconc wikiword-sublist
 					     (mapcar #'hywiki-get-plural-wikiword wikiword-sublist))))
-		      (concat (regexp-opt wikiword-sublist 'words)
+		      (concat "\\b" (regexp-opt wikiword-sublist t) "\\b"
 			      "\\(" hywiki-word-section-regexp "??" hywiki-word-line-and-column-numbers-regexp "?" "\\)"
 			      hywiki--buttonize-character-regexp))
 		    (hypb:split-seq-into-sublists
@@ -3289,7 +3289,8 @@ non-nil or this will return nil."
 		     ;; If `wikiword' reference has a #section, ensure there are
 		     ;; no invalid chars.  One set of \n\r characters is allowed.
 		     (if (and (stringp wikiword) (string-match "#" wikiword))
-			 (string-match "#[^][#()<>{}\"\f]+\\'" wikiword)		       t))
+			 (string-match "#[^][#()<>{}\"\f]+\\'" wikiword)
+		       t))
 		(if range-flag
 		    (progn
 		      (list wikiword start end))
@@ -3374,8 +3375,8 @@ a HyWikiWord at point."
 	  (let ((range (hargs:delimited "[\[<\(\{]" "[\]\}\)\>]" t t t)))
 	    (and range
 		 ;; Ensure closing delimiter is a match for the opening one
-		 (= (matching-paren (char-before (nth 1 range)))
-		    (char-after (nth 2 range)))
+		 (eq (matching-paren (char-before (nth 1 range)))
+		     (char-after (nth 2 range)))
 		 range))))))
 
 (defun hywiki-word-face-at-p (&optional pos)
@@ -3688,12 +3689,15 @@ DIRECTION-NUMBER is 1 for forward scanning and -1 for backward scanning."
 	;; Point may be at end of sexp, so start and end may
 	;; need to be reversed.
 	(list (min sexp-start sexp-end) (max sexp-start sexp-end))
-      ;; Increment sexp-start so regexp matching excludes the
-      ;; delimiter and starts with the HyWikiWord.  But include any
-      ;; trailing delimiter or regexp matching will not work.
+      ;; When `start' is at a delimiter, increment `sexp-start' so
+      ;; regexp matching excludes the delimiter and starts with the
+      ;; HyWikiWord.  But include any trailing delimiter or regexp
+      ;; matching will not work.
       (save-restriction
-	(narrow-to-region (1+ start) end)
-	(prog1 (funcall func (1+ start) end)
+	(when (memq (char-after start) '(?( ?) ?< ?> ?{ ?} ?[ ?] ?\"))
+	  (setq start (1+ start)))
+	(narrow-to-region start end)
+	(prog1 (funcall func start end)
 	  (setq hywiki--highlighting-done-flag nil))))))
 
 (defun hywiki--maybe-dehighlight-at-point ()

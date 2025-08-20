@@ -1,3 +1,17 @@
+2025-08-20  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--edit-string-pairs): Add a few more
+    tests based on cases fixed with recent updates.
+
+2025-08-19  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-delimited-p): Fix bug where = was used on a call to
+    'matching-paren' which can return nil.  Change to eq instead.
+            (hywiki--maybe-de/highlight-sexp): Fix to add 1 to region start
+    only when verify that the char after start is an opening delimiter.  This
+    fixes the bug where a substring wikiword is highlighted, e.g. if 'AI' is
+    the wikiword, it is highlighted within 'FAI'.
+
 2025-08-19  Mats Lidell  <matsl@gnu.org>
 
 * test/hmouse-drv-tests.el (hmouse-drv--hkey-actions): Adopted test case

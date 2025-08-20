@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     19-Aug-25 at 00:15:34 by Mats Lidell
+;; Last-Mod:     20-Aug-25 at 00:01:57 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -29,6 +29,10 @@
 (defconst hywiki-tests--edit-string-pairs
    [
     ("HiHo#s<insert-char ? >" "{HiHo#s} ")
+    ("FAI AI" "FAI {AI}")
+    ("\"WikiWord#a b c\"<backward-delete-char 1>" "\"{WikiWord#a} b c")
+    ("(Non#s n)<backward-delete-char 1>" "({Non#s} n")
+    ("(MyWikiWord)WikiWord" "({MyWikiWord}){WikiWord}")
     ("Hi#a<insert-char ?b> cd" "{Hi#ab} cd")
     ("Hi" "{Hi}")
     ("HyWikiWord" "{HyWikiWord}")
