@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     20-Aug-25 at 00:27:54 by Bob Weiner
+;; Last-Mod:     20-Aug-25 at 23:22:46 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -3528,7 +3528,8 @@ invalid.  Appended only if the referent-type supports suffixes."
   "Extend range (START END) to include delimited regions; return the new range.
 Ensure START and END are in increasing order.
 
-Used to extend a region to fully include any strings or balanced pair delimiters."
+Used to extend a region to fully include any strings or balanced pair
+delimiters."
   (unless (integer-or-marker-p start)
     (error "`start' arg must be an integer or marker, not '%s'" start))
   (unless (integer-or-marker-p end)
@@ -3694,7 +3695,7 @@ DIRECTION-NUMBER is 1 for forward scanning and -1 for backward scanning."
       ;; HyWikiWord.  But include any trailing delimiter or regexp
       ;; matching will not work.
       (save-restriction
-	(when (memq (char-after start) '(?( ?) ?< ?> ?{ ?} ?[ ?] ?\"))
+	(when (memq (char-after start) '(?\( ?\) ?< ?> ?{ ?} ?\[ ?\] ?\"))
 	  (setq start (1+ start)))
 	(narrow-to-region start end)
 	(prog1 (funcall func start end)

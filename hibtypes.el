@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     17-Aug-25 at 00:28:01 by Bob Weiner
+;; Last-Mod:     20-Aug-25 at 23:46:20 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1569,6 +1569,7 @@ original DEMO file."
 (declare-function display-boolean  "ext:ignore")
 (declare-function display-variable "ext:ignore")
 (declare-function display-value    "ext:ignore")
+(declare-function display-value-and-remove-region "ext:ignore")
 
 (defib action ()
   "The Action Button type.
