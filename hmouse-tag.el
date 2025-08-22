@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     12-Apr-25 at 18:46:48 by Bob Weiner
+;; Last-Mod:     16-Aug-25 at 15:02:58 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1117,7 +1117,7 @@ When optional NO-FLASH, do not flash."
 
 (defun smart-ancestor-tag-files (&optional dirs name-of-tags-file)
   "Walk up DIRS trees looking for NAME-OF-TAGS-FILE.
-DIRS may be a list of directory or a single directory.
+DIRS may be a list of directories or a single directory.
 Return a tags table list in DIRS order, where for each directory,
 list the found tags tables from furthest to nearest."
   (or dirs (setq dirs default-directory))
@@ -1268,7 +1268,7 @@ known Emacs Lisp identifier."
 	       (let ((result (smart-lisp-bound-symbol-def tag-sym)))
 		 (when (cdr result)
 		   tag))))
-	    ;; This part only works properly for Emacs Lisp, so is conditionalized.
+	    ;; This part works properly for Emacs Lisp only, so is conditionalized.
 	    ((and tag (smart-tags-find-p tag) tag))))))
 
 (defun smart-lisp-bound-symbol-def (tag-sym)
@@ -1296,12 +1296,15 @@ variable or face."
 (defun smart-tags-find-p (tag)
   "Return non-nil if TAG is found within a tags table, else nil."
   (let* ((tags-table-list (smart-entire-tags-table-list))
+	 ;; Identifier searches should almost always be case-sensitive today
+	 (tags-case-fold-search nil)
 	 (func (smart-tags-noselect-function))
-	 (tags-file-name (if tags-table-list
-			     nil
-			   (and (boundp 'tags-file-name) tags-file-name)))
+	 (tags-file-name (unless tags-table-list
+			   (when (boundp 'tags-file-name) tags-file-name)))
 	 (tags-add-tables nil))
-    (ignore-errors (and func (funcall func tag) t))))
+    (ignore-errors
+      (cond ((and func tags-table-list (funcall func tag) t))
+	    ((with-no-warnings (and (hsys-xref-definition tag) t)))))))
 
 (defun smart-java-cross-reference ()
   "If within a Java @see comment, edit the def and return non-nil, else nil.

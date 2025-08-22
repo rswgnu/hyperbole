@@ -617,7 +617,7 @@ a parent entry which begins with the parent string."
   ;; With consult-grep, 'name' is the entire line matched prefixed
   ;; by filename and line number, so remove these prefixes.
   (when (and name
-	     (fboundp 'consult-grep)
+	     (hsys-consult-active-p)
 	     (string-match "\\([^ \t\n\r\"'`]*[^ \t\n\r:\"'`0-9]\\): ?\\([1-9][0-9]*\\)[ :]"
 			   name))
     (setq file-or-buf (expand-file-name (match-string 1 name))
@@ -955,7 +955,7 @@ Return t if entry is killed, nil otherwise."
     (unless file
       (setq file (car file-list)))
     (save-excursion
-      (if (if (and (fboundp 'consult-grep)
+      (if (if (and (hsys-consult-active-p)
 		   (string-match "\\([^ \t\n\r\"'`]*[^ \t\n\r:\"'`0-9]\\): ?\\([1-9][0-9]*\\)[ :]"
 				 name))
 	      (hyrolo-to (substring name (match-end 0))
@@ -1601,7 +1601,7 @@ instead of a string."
 	found)
     (save-excursion
       (setq found
-	    (if (and (fboundp 'consult-grep)
+	    (if (and (hsys-consult-active-p)
 		     (string-match "\\([^ \t\n\r\"'`]*[^ \t\n\r:\"'`0-9]\\): ?\\([1-9][0-9]*\\)[ :]"
 				   name))
 		(hyrolo-grep-file (match-string-no-properties 1 name)
@@ -3004,7 +3004,7 @@ a default of MM/DD/YYYY."
 Grep over optional `path-list' or `hyrolo-file-list', which may
 contain wildcards.  Return the input read, to be fed to a HyRolo
 grep call."
-  (if (and (fboundp 'consult-grep)
+  (if (and (hsys-consult-active-p)
 	   (bound-and-true-p vertico-mode))
       (hsys-consult-get-exit-value
        '(list (car vertico--input) vertico--groups)

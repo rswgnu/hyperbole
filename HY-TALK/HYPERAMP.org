@@ -49,12 +49,12 @@ questions after the talk.
       {C-h h h} will restore your windows after invoking the above key series.
 
 **    FYI, Hyperbole offers a simpler way to recursively grep your current directory
-      for just Elisp files.  Use 'hypb:rgrep' when in an Elisp buffer and it will
+      for just Elisp files.  Use 'hui-select-rgrep' when in an Elisp buffer and it will
       match to only Elisp files.
 
         {C-x 1 C-x 3 C-x o C-x C-f hibtypes.el RET C-x o C-n C-n}
 
-        {C-x o M-x hypb:rgrep RET gbut:label-list RET C-x o C-x 1 C-x 3 C-x b HYPERAMP RET}
+        {C-x o M-x hui-select-rgrep RET gbut:label-list RET C-x o C-x 1 C-x 3 C-x b HYPERAMP RET}
 
 *  9. Existing pathnames with Environment or Lisp variables are hyperbuttons too
 

@@ -1,9 +1,9 @@
-;;; hsettings-test.el --- one line summary                -*- lexical-binding: t; -*-
+;;; hsettings-tests.el --- one line summary                -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    20-Jan-24 at 12:28:01
-;; Last-Mod:     12-Mar-24 at 22:59:00 by Mats Lidell
+;; Last-Mod:     16-Aug-25 at 15:34:14 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -21,7 +21,7 @@
 (require 'el-mock)
 (require 'hsettings)
 
-(ert-deftest hsettings-test--hyperbole-web-search ()
+(ert-deftest hsettings-tests--hyperbole-web-search ()
   "Verify `hyperbole-web-search´."
   (mocklet (((browse-url "http://www.google.com/search?q=hyperbole") => "return"))
     (should (string= (hyperbole-web-search "google" "hyperbole" nil) "return")))
@@ -35,7 +35,7 @@
     (should (string= (hyperbole-web-search "Jump" "arg" nil) "return")))
   (should (equal (hyperbole-web-search "Jump" "arg" t) '(webjump))))
 
-(provide 'hsettings-test)
+(provide 'hsettings-tests)
 
 ;; This file can't be byte-compiled without the `el-mock' package
 ;; which is not a dependency of Hyperbole.
@@ -44,4 +44,4 @@
 ;; no-byte-compile: t
 ;; End:
 
-;;; hsettings-test.el ends here
+;;; hsettings-tests.el ends here

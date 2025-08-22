@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     11-Jun-25 at 00:20:06 by Mats Lidell
+;; Last-Mod:     10-Aug-25 at 09:59:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -67,33 +67,43 @@ inserted, delete the completions window."
     (hargs:completion)))
 
 (defact display-boolean (bool-expr)
-  "Display a message showing the result value of a BOOL-EXPR.
+  "Evaluate BOOL-EXPR and display a message with the result value.
 Return any non-nil value or t."
-  (interactive "xDisplay bool expr value: ")
-  (let ((result (eval bool-expr t)))
+  (interactive "xDisplay value of boolean expression: ")
+  (let ((result (hypb:eval bool-expr)))
     (message "Result = %S; Boolean value = %s; Expr = %S"
 	     result (if result "True" "False") bool-expr)
     (or result t)))
 
-(defact display-value (value)
-  "Display a message showing VALUE (a symbol) and its value.
+(defact display-value (lisp-expr)
+  "Evaluate LISP-EXPR and display a message with the result value.
 Return any non-nil value or t."
-  (interactive "SDisplay symbol's value: ")
-  (let ((result (eval value)))
+  (interactive "SDisplay value of Lisp expression: ")
+  (let ((result (hypb:eval lisp-expr)))
+    (message "%S" result)
+    (or result t)))
+
+(defact display-value-and-remove-region (lisp-expr start end)
+ "Evaluate LISP-EXPR and remove region from START to END.
+Display a message with the result value of the evaluation.
+Return any non-nil value or t."
+  (interactive "SDisplay value of Lisp expression: ")
+  (delete-region start end)
+  (let ((result (hypb:eval lisp-expr)))
     (message "%S" result)
     (or result t)))
 
 (defact display-variable (var)
-  "Display a message showing VAR (a symbol) and its value.
+  "Evaluate VAR (a symbol) and display a message with the result value.
 Return any non-nil value or t."
-  (interactive "vDisplay variable's value: ")
+  (interactive "vDisplay value of variable: ")
   (message "%s = %S" var (symbol-value var))
   (or (symbol-value var) t))
 
 (defact eval-elisp (lisp-expr)
-  "Evaluate a LISP-EXPR for its side-effects and return any non-nil value."
-  (interactive "xLisp to eval: ")
-  (eval lisp-expr t))
+  "Evaluate a LISP-EXPR for its side-effects and return its value."
+  (interactive "xEval Lisp expression: ")
+  (hypb:eval lisp-expr))
 
 (defact exec-kbd-macro (kbd-macro &optional repeat-count)
   "Execute KBD-MACRO REPEAT-COUNT times.

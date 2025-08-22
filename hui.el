@@ -361,7 +361,8 @@ extracted from a region."
 	       (setcar thing-and-bounds (klink:absolute thing-and-bounds))
 	       (cons 'klink thing-and-bounds)))
 	    ((hui-select-at-delimited-thing-p)
-	     (when (setq thing-and-bounds (hui-select-get-region-boundaries))
+	     (when (setq hui-select-previous 'char ;; Reset to first syntactical unit
+			 thing-and-bounds (hui-select-get-region-boundaries))
 	       (list hui-select-previous
 		     (buffer-substring-no-properties
 		      (car thing-and-bounds) (cdr thing-and-bounds))

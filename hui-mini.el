@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     15-Jun-25 at 22:37:06 by Bob Weiner
+;; Last-Mod:     10-Aug-25 at 14:52:15 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -895,7 +895,7 @@ command instead.  Typically prevents clashes over {\\`C-c' /}."
 	  ("OrderedButs" (hui:hbut-report 1)  "Summarize explicit buttons in lexicographically order.")))
        '(find .
          (("Find>")
-	  ("GrepFiles"           hypb:rgrep        "Show numbered line matches in all specified files.")
+	  ("GrepFiles"           hui-select-rgrep  "Show numbered line matches in all specified files.")
 	  ("LocateFiles"         hypb:locate       "Locate matching file names anywhere across a system.")
 	  ("MatchFileBuffers"    moccur            "Show numbered line matches for regexp in all file-based buffers.")
 	  ("OccurHere"           occur             "Show numbered line matches for regexp from this buffer.")
@@ -1045,8 +1045,8 @@ support underlined faces as well."
 	 (when (fboundp 'consult-grep) ;; allow for autoloading
 	   '("GrepConsult"    hywiki-consult-grep
 	     "Grep over HyWiki pages with interactive consult-grep."))
-	 '("Help"           hkey-help
-	   "Report on a HyWikiWord's attributes.")
+	 '("Help"           hywiki-help
+	   "Report on a HyWikiWord's attributes or HyWikiWords in general.")
 	 '("Info"           (id-info "(hyperbole)HyWiki")
 	   "Display Hyperbole manual section on HyWiki.")
 	 '("Link"           hywiki-add-path-link
