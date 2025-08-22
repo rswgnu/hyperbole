@@ -1,3 +1,11 @@
+2025-08-20  Mats Lidell  <matsl@gnu.org>
+
+* hywiki.el (hywiki--extend-region): Fill long docstring.
+    (hywiki--maybe-de/highlight-sexp): Escape character literals.
+
+* hibtypes.el (display-value-and-remove-region): Declare actype as
+    function to silence byte compiler.
+
 2025-08-20  Bob Weiner  <rsw@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--edit-string-pairs): Add a few more
