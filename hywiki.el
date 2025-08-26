@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     20-Aug-25 at 23:22:46 by Mats Lidell
+;; Last-Mod:     26-Aug-25 at 10:46:27 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2386,10 +2386,11 @@ value of `hywiki-word-highlight-flag' is changed."
 			 (and (derived-mode-p 'prog-mode)
 			      (not (apply #'derived-mode-p hywiki-highlight-all-in-prog-modes)))))
 		    (while (re-search-forward hywiki-words-regexp nil t)
-		      (when (if highlight-in-comments-and-strings-only
-				;; Non-nil if match is inside a comment or a string
-				(or (nth 4 (syntax-ppss)) (hypb:in-string-p))
-			      t)
+		      (when (save-match-data
+			      (if highlight-in-comments-and-strings-only
+				  ;; Non-nil if match is inside a comment or a string
+				  (or (nth 4 (syntax-ppss)) (hypb:in-string-p))
+				t))
 			(setq hywiki--start (match-beginning 1)
 			      hywiki--end   (match-end 1))
 			(save-excursion
@@ -2403,7 +2404,9 @@ value of `hywiki-word-highlight-flag' is changed."
 					 (skip-syntax-forward "^-\)$\>._\"\'"))
 				       (skip-chars-forward "-_*[:alnum:]")
 				       (unless (zerop (skip-chars-forward "#:"))
-					 (skip-chars-forward (if (and region-start region-end)
+					 (skip-chars-forward (if (save-restriction
+								   (widen)
+								   (hywiki-delimited-p))
 								 "-_*: \t[:alnum:]"
 							       "-_*:[:alnum:]")))
 				       (setq hywiki--end (point))
@@ -3695,7 +3698,7 @@ DIRECTION-NUMBER is 1 for forward scanning and -1 for backward scanning."
       ;; HyWikiWord.  But include any trailing delimiter or regexp
       ;; matching will not work.
       (save-restriction
-	(when (memq (char-after start) '(?\( ?\) ?< ?> ?{ ?} ?\[ ?\] ?\"))
+	(when (memq (char-after start) '(?< ?> ?{ ?} ?\( ?\) ?\[ ?\] ?\"))
 	  (setq start (1+ start)))
 	(narrow-to-region start end)
 	(prog1 (funcall func start end)

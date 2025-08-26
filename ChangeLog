@@ -1,3 +1,12 @@
+2025-08-25  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-maybe-highlight-page-names): Add missing 'save-match-data'
+    and replace check of (and region-start region-end) with 'hywiki-delimited-p'
+    within a widened region (since often narrowed without delimiters in region)
+    to fix yank calls skipping past spaces in HyWikiWord sections without
+    delimiters.  Also solves words after spaces not dehighlighting with point
+    after a trailing double quote and then:  {M-:(backward-delete-char 1)}
+
 2025-08-20  Mats Lidell  <matsl@gnu.org>
 
 * hywiki.el (hywiki--extend-region): Fill long docstring.
