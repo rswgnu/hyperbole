@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    22-Nov-91 at 01:37:57
-;; Last-Mod:     29-Aug-25 at 12:52:43 by Bob Weiner
+;; Last-Mod:     30-Aug-25 at 12:10:55 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -225,16 +225,25 @@ Restore \\`M-x' binding to ORIG-M-X-BINDING."
   (global-set-key [?\M-x] orig-M-x-binding))
 
 (defun kbd-key:key-series-to-events (key-series)
-  "Insert the KEY-SERIES as a series of keyboard events.
+  "Insert the normalized KEY-SERIES as a series of keyboard events.
 The events are inserted into Emacs `unread-command-events'
 stream.  Emacs then executes them when its command-loop regains
 control."
-  (setq unread-command-events (nconc unread-command-events
-				     ;; Cons t here to ensure events
-				     ;; are added to command-keys.
-				     (mapcar (lambda (e) (cons t e))
-					     (listify-key-sequence
-					      (kbd-key:kbd key-series))))))
+  (if (and (stringp key-series)
+	   (let ((hyperbole-key-desc (key-description (car (where-is-internal #'hyperbole)))))
+	     (string-match (format "%sC-h h\\|C-hh\\|h\\|M-x hyperbole RET"
+				   (if (equal hyperbole-key-desc "C-h h")
+				       ""
+				     ;; Add any custom binding for Hyperbole minibuffer menus
+				     (concat hyperbole-key-desc "\\|")))
+			   key-series)))
+      (setq unread-command-events (nconc unread-command-events
+					 ;; Cons t here to ensure events
+					 ;; are added to command-keys.
+					 (mapcar (lambda (e) (cons t e))
+						 (listify-key-sequence
+						  (kbd-key:kbd key-series)))))
+    (execute-kbd-macro (kbd-key:kbd key-series))))
 
 (defun kbd-key:doc (key-series &optional full)
   "Show first line of doc for binding of keyboard KEY-SERIES in minibuffer.

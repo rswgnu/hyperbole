@@ -1,3 +1,18 @@
+2025-08-30  Bob Weiner  <rsw@gnu.org>
+
+* hui-mini.el: Replace all (beep) calls with (beep t) so do not exit keyboard
+    macros when meant only as an interactive user alert.
+
+* hib-kbd.el (kbd-key:key-series-to-events): Rewrite to execute 'key-series'
+    as a keyboard macro immediately (to reduce race conditions) unless it
+    contains a Hyperbole minibuffer menu in which case continue to queue
+    in `unread-command-events' because the Hyperbole minibuffer menu does not
+    work within keyboard macros.
+
+* hywiki.el (hywiki-org-link-resolve): Rename to 'hywiki-reference-to-referent'.
+            (hywiki-reference-to-org-link): Simplify conversion when no
+    'description' is given to just [[hy:reference]].
+
 2025-08-29  Bob Weiner  <rsw@gnu.org>
 
 * hui-select.el (hui-select-set-region): Fix so selection of a whole
@@ -6,7 +21,6 @@
 
 * hywiki.el (hywiki-word-to-org-link): Rewrite to minimize text in the
     Org links created.  Use 'hy:' protocol prefix.
-           (hywiki-org-link-resolve): Rename to 'hywiki-reference-to-referent'.
            (hywiki-word-to-org-link): Rename to 'hywiki-reference-to-org-link'.
 	   (hywiki-convert-words-to-org-links): Rename to
     'hywiki-references-to-org-links'.

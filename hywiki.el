@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     29-Aug-25 at 19:39:57 by Bob Weiner
+;; Last-Mod:     30-Aug-25 at 10:04:23 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1577,41 +1577,40 @@ simplifies to:
 (defun hywiki-reference-to-org-link (reference &optional description)
   "Convert a HyWiki REFERENCE and an optional DESCRIPTION to an Org link."
   ;; \"[[file:<hywiki-directory>/WikiWord.org::Multi-Word Section][WikiWord#Multi-Word Section]]\".
-  (let ((referent (hywiki-parse-reference reference :full-data)))
+  (let ((referent (hywiki-reference-to-referent reference :full-data)))
     (when (stringp (car referent))
       (let* ((path-word-suffix referent)
              (path (file-relative-name (nth 0 path-word-suffix)))
-             (path-stem (when path
-			  (file-name-sans-extension path)))
-             (word (nth 1 path-word-suffix))
+             ;; (path-stem (when path
+	     ;; 		  (file-name-sans-extension path)))
              (suffix (nth 2 path-word-suffix))
-             (desc (cond (description)
-			 (suffix (when word
-				   (format "%s%s" word suffix)))
-			 (word)))
-	     suffix-no-hashmark)
+             (desc description)
+	     ;; suffix-no-hashmark
+	     )
 	(unless (and suffix (not (string-empty-p suffix)))
 	  (setq suffix nil))
-	(setq suffix-no-hashmark (when suffix (substring suffix 1)))
+	;; (setq suffix-no-hashmark (when suffix (substring suffix 1)))
 	;; (when (or (not buffer-file-name)
 	;; 	  (string-equal path (file-name-nondirectory buffer-file-name)))
 	;;   (setq path nil))
 	(cond (desc
 	       (if path
-		   (if suffix
-		       ;; "[[file:path-stem.org::suffix][desc]"
-		       (format "[[file:%s.org::%s][%s]]"
-			       path-stem suffix-no-hashmark desc)
-		     ;; "[[file:path-stem.org][desc]]")
-		     (format "[[file:%s.org][%s]]" path-stem desc))
+		   ;; "[[hy:reference]]"
+		   (format "[[%s:%s]]" hywiki-org-link-type reference)
+		   ;; (if suffix
+		   ;;     ;; "[[file:path-stem.org::suffix][desc]"
+		   ;;     (format "[[file:%s.org::%s][%s]]"
+		   ;; 	       path-stem suffix-no-hashmark desc)
+		   ;;   ;; "[[file:path-stem.org][desc]]")
+		   ;;   (format "[[file:%s.org][%s]]" path-stem desc))
 		 (if suffix
 		     ;; "[[suffix][desc]]"
 		     (format "[[%s][%s]]" suffix desc)
 		   ;; "[[desc]]"
 		   (format "[[%s]]" desc))))
 	      (path
-	       ;; "[[file:path-stem.org][word]]"
-	       (format "[[file:%s.org][%s]]" path-stem word)))))))
+	       ;; "[[hy:reference]]"
+	       (format "[[%s:%s]]" hywiki-org-link-type reference)))))))
 
 (defun hywiki-maybe-at-wikiword-beginning ()
   "Return non-nil if previous character is one preceding a HyWiki word.
@@ -2886,7 +2885,7 @@ backend."
 	  (_ path))
       link)))
 
-(defun hywiki-parse-reference (reference &optional full-data)
+(defun hywiki-reference-to-referent (reference &optional full-data)
   "Resolve HyWikiWord REFERENCE to its referent file or other type of referent.
 If the referent is not a file type, return (referent-type . referent-value).
 

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     29-Aug-25 at 03:49:50 by Bob Weiner
+;; Last-Mod:     30-Aug-25 at 11:02:42 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -100,7 +100,7 @@ documentation, not the full text."
 
   (interactive (list nil nil nil nil))
   (if (and hui:menu-p (> (minibuffer-depth) 0))
-      (progn (beep) nil)
+      (progn (beep t) nil)
     (unwind-protect
 	(progn
 	  (hyperbole-mode 1)
@@ -216,7 +216,7 @@ documentation, not the full text."
   "Invoke the Hyperbole minibuffer menu and return menu keys pressed.
 Return nil when already in a Hyperbole minibuffer menu."
   (if (and hui:menu-p (> (minibuffer-depth) 0))
-      (progn (beep) nil)
+      (progn (beep t) nil)
     (unwind-protect
 	(progn
 	  (hyperb:init-menubar)
@@ -461,7 +461,7 @@ documentation, not the full text."
 				  (hui:menu-read-from-minibuffer
 				   "" menu-line hui:menu-mode-map nil t))))
 		      keys))
-      (beep)
+      (beep t)
       (setq hargs:reading-type 'hmenu)
       (discard-input))
     ;; Here, the minibuffer has been exited, and `key' has been set to one of:
@@ -481,7 +481,7 @@ documentation, not the full text."
 	  ((eq key 0)
 	   nil)
 	  ((eq key abort-char)
-	   (beep)
+	   (beep t)
 	   (set--this-command-keys (hui:menu-this-command-keys hui:menu-abort))
 	   (setq this-command #'hui:menu-abort)
 	   nil)
