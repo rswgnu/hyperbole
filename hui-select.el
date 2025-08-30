@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     10-Aug-25 at 21:26:00 by Mats Lidell
+;; Last-Mod:     29-Aug-25 at 21:52:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -935,11 +935,12 @@ If an error occurs during syntax scanning, return nil."
 
 (defun hui-select-at-delimited-thing-p ()
   "Return non-nil if point is at a delimited thing, else nil.
+Ignore any match if on an Emacs button and instead return nil.
+
 A delimited thing is a markup pair, list, array/vector, set,
 comment or string.  The non-nil value returned is the function to
-call to select that syntactic unit.
-
-Ignore any match if on an Emacs button and instead return nil."
+call to select that syntactic unit, if any.  The global `hkey-value'
+is set to this value."
   (unless (button-at (point))
     (setq hkey-value (hui-select-delimited-thing-call #'hui-select-at-p))
     (cond ((eq hkey-value 'hui-select-punctuation)
@@ -1106,9 +1107,9 @@ Return the updated cons cell."
     (setcdr hui-select-old-region nil))
   (if (and (not (memq hui-select-previous '(buffer markup-pair)))
 	   (integerp beginning) (integerp end)
-	   (= beginning (point-min)) (= end (point-max)))
-      ;; If we selected the whole buffer and not matching a markup-pair,
-      ;; make sure that 'thing' type is 'buffer'.
+	   (= beginning 1) (= end (1+ (buffer-size))))
+      ;; If we selected the whole widened buffer and not matching a
+      ;; markup-pair, make sure that 'thing' type is 'buffer'.
       nil
     hui-select-region))
 

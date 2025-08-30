@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     10-Aug-25 at 14:52:15 by Bob Weiner
+;; Last-Mod:     29-Aug-25 at 03:49:50 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1038,10 +1038,12 @@ support underlined faces as well."
 	   "Create and display page for HyWikiWord at point or when none, emulate a press of a Smart Key.")
 	 '("Create"         hywiki-word-create-and-display
 	    "Create and display a new or existing HyWikiWord referent, prompting with any existing referent names.")
-	 '("EditPages"      hywiki-directory-edit
+	 '("DiredHyWiki"    hywiki-directory-edit
 	   "Display and edit HyWiki directory.")
+	 '("EditPage"       hywiki-find-page
+	   "Prompt with completion for and display a HyWikiWord page.")
 	 '("FindReferent"   hywiki-find-referent
-	   "Prompt with completion for and display a HyWikiWord referent.")
+	   "Prompt with completion for and display any kind of HyWikiWord referent.")
 	 (when (fboundp 'consult-grep) ;; allow for autoloading
 	   '("GrepConsult"    hywiki-consult-grep
 	     "Grep over HyWiki pages with interactive consult-grep."))

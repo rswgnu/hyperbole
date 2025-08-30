@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Aug-92
-;; Last-Mod:      6-Jul-25 at 23:45:41 by Bob Weiner
+;; Last-Mod:     28-Aug-25 at 14:58:04 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -370,6 +370,13 @@ See `hproperty:but-get'."
 	      ;; `val' may be a list of property values
 	      (and (listp val) (memq value val)))
       value)))
+
+(defun hproperty:char-property-face-p (pos face-list)
+  "At POS, skip HyWikiWord highlighting if find any face in FACE-LIST.
+Return non-nil in any such case, else nil."
+  (save-excursion
+    (goto-char pos)
+    (seq-intersection (face-at-point nil t) face-list #'eq)))
 
 (defun hproperty:char-property-start (pos property value)
   "From POS, return the start of text PROPERTY with VALUE overlapping POS.

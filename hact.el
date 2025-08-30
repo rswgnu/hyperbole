@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     27-Jul-25 at 16:39:01 by Bob Weiner
+;; Last-Mod:     29-Aug-25 at 14:20:04 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -330,7 +330,7 @@ TYPE and TYPE-CATEGORY are both symbols.  TYPE-CATEGORY must be one of
     (list 'function (cons 'lambda (cons param-list body)))))
 
 (defun action:kbd-macro (macro &optional repeat-count)
-  "Return Hyperbole action that execute a keyboard MACRO REPEAT-COUNT times."
+  "Return Hyperbole action that executes a keyboard MACRO REPEAT-COUNT times."
   (list 'execute-kbd-macro macro repeat-count))
 
 (defun action:param-count (action)
@@ -551,8 +551,7 @@ With optional FULL, returns full documentation string.
 Return nil when no documentation."
   (let* ((is-hbut (hbut:is-p but))
 	 (act (if is-hbut
-		  (and (hbut:is-p but) (or (hattr:get but 'action)
-					   (hattr:get but 'actype)))
+		  (or (hattr:get but 'action) (hattr:get but 'actype))
 		(let ((attrs (hattr:list but)))
 		  (or (plist-get attrs 'action)
 		      (when (plist-get attrs 'follow-link)

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     16-Aug-25 at 13:20:13 by Bob Weiner
+;; Last-Mod:     29-Aug-25 at 11:03:18 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -231,6 +231,10 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 ;;; Hyperbole context-sensitive keys dispatch table
 ;;; ************************************************************************
 
+(defvar hkey-at-hbut nil
+  "Non-nil communicates between Smart Key predicates that point is at a Hyperbole button.
+The button's attributes are stored in the symbol, `hbut:current'.")
+
 (defvar hkey-value nil
   "Communicates a value between a Smart Key predicate and its actions.")
 
@@ -338,8 +342,13 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
     ;; Select or select-and-kill a markup pair (e.g. hmtl tags), list,
     ;; array/vector, set, function, comment or string that begins or
     ;; ends at point.  For markup pairs, point must be at the first
-    ;; character of the opening or closing tag.
-    ((hui-select-at-delimited-thing-p)
+    ;; character of the opening or closing tag.  Ignore delimiters in
+    ;; the middle of a Hyperbole button.
+    ((and (if (setq hkey-at-hbut (hbut:at-p))
+	      (or (eq (point) (hattr:get 'hbut:current 'lbl-end))
+		  (eq (point) (hattr:get 'hbut:current 'name-end)))
+	    t)
+	  (hui-select-at-delimited-thing-p))
      . ((hui-select-thing) . (progn (hui-select-thing)
 				    (hmouse-kill-region))))
     ;;
@@ -347,13 +356,18 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
     ;; sexpression, mark it for editing or kill it (assist key).  This
     ;; only handles the special case where point is just after the
     ;; closing delimiter and not at an end-of-line, so this may be
-    ;; removed someday.
-    ((hui-select-at-delimited-sexp-p)
+    ;; removed someday.  Ignore delimiters in the middle of a
+    ;; Hyperbole button.
+    ((and (if hkey-at-hbut
+	      (or (eq (point) (hattr:get 'hbut:current 'lbl-end))
+		  (eq (point) (hattr:get 'hbut:current 'name-end)))
+	    t)
+	  (hui-select-at-delimited-sexp-p))
      . ((hui-select-mark-delimited-sexp)
 	. (progn (hui-select-mark-delimited-sexp) (hmouse-kill-region))))
     ;;
     ;; If on a Hyperbole button, perform action or give help.
-    ((hbut:at-p)
+    (hkey-at-hbut
      . ((hui:hbut-act 'hbut:current) . (hui:hbut-help 'hbut:current)))
     ;;
     ;; This potentially displays a Smart Menu.

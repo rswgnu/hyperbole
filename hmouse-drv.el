@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     17-Aug-25 at 00:03:53 by Bob Weiner
+;; Last-Mod:     27-Aug-25 at 10:40:25 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1123,7 +1123,8 @@ documentation is found."
 	      (hypb:error "(Hyperbole): `%s' predicate left point at %s and failed to restore it to %s" pred (point) pred-point)))
 	(set-marker pred-point nil))
       (if pred-value
-	(setq call (if assisting (cdr (cdr hkey-form))
+	(setq call (if assisting
+		       (cddr hkey-form)
 		     (cadr hkey-form))
 	      cmd-sym (if (eq (car call) #'funcall)
 			  (cadr call)
@@ -1171,8 +1172,7 @@ documentation is found."
 			       (if mouse-flag "Mouse " "")))
 
 		    ;; Print Hyperbole button attributes
-		    (when (or (memq cmd-sym '(hui:hbut-act hui:hbut-help))
-			      (hattr:get 'hbut:current 'actype))
+		    (when (memq cmd-sym '(hui:hbut-act hui:hbut-help))
 		      (let* ((actype (or (actype:elisp-symbol (hattr:get 'hbut:current 'actype))
 					 (hattr:get 'hbut:current 'actype)))
 			     ;; (lbl-key (hattr:get 'hbut:current 'lbl-key))

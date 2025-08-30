@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     26-Aug-25 at 10:46:27 by Bob Weiner
+;; Last-Mod:     29-Aug-25 at 19:39:57 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -149,7 +149,7 @@
 (require 'hui-mini)   ;; For `hui:menu-act'
 (require 'hypb)       ;; Requires `seq'
 (require 'outline)    ;; For `outline-mode-syntax-table'
-(require 'seq)        ;; For 'seq-contains-p' and 'seq-difference'
+(require 'seq)        ;; For `seq-contains-p', `seq-difference' and `seq-intersection'
 (require 'subr-x)     ;; For `string-remove-prefix'
 (require 'thingatpt)
 
@@ -290,6 +290,9 @@ highlighted nor treated as hyperlinks; they are handled normally by Org."
 Use nil for no HyWiki mode indicator."
   :type 'string
   :group 'hyperbole-hywiki)
+
+(defconst hywiki-ignore-face-list '(button hbut-face hbut-item-face ibut-face)
+  "Skip highlighting of HyWikiWords in regions which have any of these faces.")
 
 (defvar hywiki-allow-suffix-referent-types '(page path-link)
   "List of referent type symbols that support # and :L line number suffixes.")
@@ -1422,7 +1425,7 @@ Use `hywiki-get-referent' to determine whether a HyWiki page exists."
   "Display an optional WIKIWORD page and return the page file.
 Use `hywiki-display-page-function' to display the page.
 
-If FILE is provided, it includes any #section from the WIKIWORD.
+If FILE-NAME is provided, it includes any #section from the WIKIWORD.
 
 If WIKIWORD is omitted or nil and `hywiki-display-page-function'
 is an interactive function, it is called interactively and prompts for
@@ -1529,21 +1532,19 @@ omit any trailing colon and space in the prompt."
 				      "Grep HyWiki dir headlines"
 				    "Grep HyWiki dir")))))
 
-(defun hywiki-convert-words-to-org-links ()
+(defun hywiki-references-to-org-links ()
   "Convert all highlighted HyWiki words in current buffer to Org links.
-Use when publishing a HyWiki file to another format, e.g. html.
+Org publishing is then used to convert HyWiki files to other formats such
+as html.
 
-For example, the link:
+For example, the reference:
   \"WikiWord#Multi-Word Section\"
 is converted to:
   \"[[hy:WikiWord#Multi-Word Section]]\".
 
 If the reference is within the WikiWord page to which it refers, it
 simplifies to:
-  \"[[Multi-Word Section]]\".
-
-The finalized Org link is then exported to html format by the Org
-publish process."
+  \"[[Multi-Word Section]]\"."
   (barf-if-buffer-read-only)
   ;; Need to be explicit about the region here so does not use markers
   ;; from a region pointing to another buffer
@@ -1562,10 +1563,10 @@ publish process."
        (delete-region (overlay-start overlay)
 		      (overlay-end overlay))
        (delete-overlay overlay)
-       (if (setq org-link (hywiki-word-to-org-link wikiword-and-section nil))
+       (if (setq org-link (hywiki-reference-to-org-link wikiword-and-section nil))
 	   (insert org-link)
 	 (message
-	  "(hywiki-convert-words-to-org-links): \"%s\" in \"%s\" produced nil org link output"
+	  "(hywiki-references-to-org-links): \"%s\" in \"%s\" produced nil org link output"
 	  wikiword-and-section (buffer-name)))
        (when make-index
 	 (when (string-match (concat hywiki-org-link-type ":")
@@ -1573,12 +1574,12 @@ publish process."
 	   (setq wikiword (substring wikiword-and-section (match-end 0))))
 	 (insert "\n#+INDEX: " wikiword "\n"))))))
 
-(defun hywiki-word-to-org-link (link &optional description)
-  "From a HyWikiWord reference LINK with an optional DESCRIPTION to an Org link."
-;; \"[[file:<hywiki-directory>/WikiWord.org::Multi-Word Section][WikiWord#Multi-Word Section]]\".
-  (let ((resolved-link (hywiki-org-link-resolve link :full-data)))
-    (when (stringp (car resolved-link))
-      (let* ((path-word-suffix resolved-link)
+(defun hywiki-reference-to-org-link (reference &optional description)
+  "Convert a HyWiki REFERENCE and an optional DESCRIPTION to an Org link."
+  ;; \"[[file:<hywiki-directory>/WikiWord.org::Multi-Word Section][WikiWord#Multi-Word Section]]\".
+  (let ((referent (hywiki-parse-reference reference :full-data)))
+    (when (stringp (car referent))
+      (let* ((path-word-suffix referent)
              (path (file-relative-name (nth 0 path-word-suffix)))
              (path-stem (when path
 			  (file-name-sans-extension path)))
@@ -1592,9 +1593,9 @@ publish process."
 	(unless (and suffix (not (string-empty-p suffix)))
 	  (setq suffix nil))
 	(setq suffix-no-hashmark (when suffix (substring suffix 1)))
-	(when (or (not buffer-file-name)
-		  (string-equal path (file-name-nondirectory buffer-file-name)))
-	  (setq path nil))
+	;; (when (or (not buffer-file-name)
+	;; 	  (string-equal path (file-name-nondirectory buffer-file-name)))
+	;;   (setq path nil))
 	(cond (desc
 	       (if path
 		   (if suffix
@@ -1685,6 +1686,27 @@ Use `time-since' to see the time in seconds since this modification time."
   (hywiki-directory-set-mod-time)
   (hywiki-directory-set-checksum))
 
+
+;;;###autoload
+(defun hywiki-find-page (&optional wikiword)
+  "Display optional HyWiki WIKIWORD page or if nil, use current buffer.
+If called interactively, use the WIKIWORD at point or if none, prompt for
+an existing or new one.
+
+Return the absolute path to the file of the page if successfully found
+or nil otherwise.
+
+By default, create any non-existent page.  When not in batch
+mode, if this is the first HyWiki page in `hywiki-directory',
+prompt to create if non-existent.  After successfully finding a
+page and reading it into a buffer, run
+`hywiki-display-page-hook'.
+
+After successfully finding a page, run `hywiki-find-page-hook'."
+  (interactive (list (hywiki-page-read-new "Add/Edit HyWikiWord Page: ")))
+  (let ((page-file (hywiki-display-page wikiword)))
+    (run-hooks 'hywiki-find-page-hook)
+    page-file))
 
 ;;;###autoload
 (defun hywiki-find-referent (&optional wikiword prompt-flag)
@@ -2412,8 +2434,9 @@ value of `hywiki-word-highlight-flag' is changed."
 				       (setq hywiki--end (point))
 				       ;; Don't highlight current-page matches unless they
 				       ;; include a #section.
-				       (unless (string-equal hywiki--current-page
-							     (buffer-substring-no-properties hywiki--start hywiki--end))
+				       (unless (or (hproperty:char-property-face-p hywiki--start hywiki-ignore-face-list)
+						   (string-equal hywiki--current-page
+								 (buffer-substring-no-properties hywiki--start hywiki--end)))
 					 (hproperty:but-add hywiki--start hywiki--end hywiki-word-face))))))))))
 
 		;; Disable dehighlighting of HyWikiWords between [] and <>.
@@ -2526,6 +2549,13 @@ These must end with `hywiki-file-suffix'."
        hywiki-directory nil (concat "^" hywiki-word-regexp
 				    (regexp-quote hywiki-file-suffix) "$")))))
 
+(defun hywiki-get-page-list ()
+  "Return the list of HyWikiWords with existing pages."
+  (delq nil (hash-map (lambda (referent-type)
+			(when (eq (caar referent-type) 'page)
+			  (cdr referent-type)))
+		      (hywiki-get-referent-hasht))))
+
 (defun hywiki-get-referent (wikiword)
   "Return the referent of HyWiki WIKIWORD or nil if it does not exist.
 If it is a pathname, expand it relative to `hywiki-directory'."
@@ -2592,7 +2622,7 @@ least partially overlap that region."
   (hywiki--get-all-references #'hproperty:but-get-all-positions start end))
 
 (defun hywiki-get-wikiword-list ()
-  "Return a list of the HyWiki page names."
+  "Return the list of existing HyWikiWords."
   (hash-map #'cdr (hywiki-get-referent-hasht)))
 
 (defun hywiki-get-plural-wikiword (wikiword)
@@ -2798,7 +2828,7 @@ This is done automatically by loading HyWiki."
   (when (and (derived-mode-p 'org-mode)
              (not (string= (hywiki--sitemap-file) (buffer-file-name)))
 	     (hyperb:stack-frame '(org-export-copy-buffer)))
-    (hywiki-convert-words-to-org-links)
+    (hywiki-references-to-org-links)
     (hywiki-org-maybe-add-title)))
 
 (defun hywiki-org-get-publish-project ()
@@ -2828,7 +2858,7 @@ If not found, set it up and return the new project properties."
   "Export a HyWikiWord Org-format `hy:' link to various formats.
 The LINK, DESCRIPTION, and FORMAT are provided by the export
 backend."
-  (let* ((path-word-suffix (hywiki-org-link-resolve link :full-data))
+  (let* ((path-word-suffix (hywiki-reference-to-referent link :full-data))
          (path (when path-word-suffix
 		 (file-relative-name (nth 0 path-word-suffix))))
          (path-stem (when path
@@ -2856,30 +2886,32 @@ backend."
 	  (_ path))
       link)))
 
-(defun hywiki-org-link-resolve (link &optional full-data)
-  "Resolve HyWikiWord LINK to its referent file or other type of referent.
+(defun hywiki-parse-reference (reference &optional full-data)
+  "Resolve HyWikiWord REFERENCE to its referent file or other type of referent.
 If the referent is not a file type, return (referent-type . referent-value).
 
 Otherwise:
-Link may end with optional suffix of the form: (#|::)section:Lnum:Cnum.
+Reference may end with optional suffix of the form: (#|::)section:Lnum:Cnum.
 With optional FULL-DATA non-nil, return a list in the form of (pathname
-word suffix); otherwise, with a section, return pathname::section, with
-just line and optionally column numbers, return pathname:Lnum:Cnum and
-without any suffix, return just the pathname."
-  (when (stringp link)
-    (when (string-match (concat "\\`" hywiki-org-link-type ":") link)
-      ;; Remove hy: link prefix
-      (setq link (substring link (match-end 0))))
-    (let* ((suffix-type (and (string-match hywiki-word-suffix-regexp link)
-			     (match-string 1 link)))
-	   (suffix (and suffix-type (match-string 2 link)))
+hywikiword suffix); otherwise:
+  - with a section, return pathname::section;
+  - with just line and optionally column numbers, return pathname:Lnum:Cnum
+  - and without any suffix, return just the pathname."
+  (when (stringp reference)
+    (when (string-match (concat "\\`" hywiki-org-link-type ":") reference)
+      ;; Remove hy: reference prefix
+      (setq reference (substring reference (match-end 0))))
+    (let* ((suffix-type (and (string-match hywiki-word-suffix-regexp reference)
+			     (match-string 1 reference)))
+	   (suffix (and suffix-type (match-string 2 reference)))
            (word (if (and suffix (not (string-empty-p suffix)))
-                     (substring link 0 (match-beginning 0))
-		   link))
+                     (substring reference 0 (match-beginning 0))
+		   reference))
            (referent (and word (hywiki-get-referent word)))
 	   (referent-type (car referent))
            (pathname (when (memq referent-type '(page path-link))
-		       (cdr referent))))
+		       (expand-file-name (or (cdr referent) "")
+					 hywiki-directory))))
       (if (stringp pathname)
 	  (cond
 	   (full-data
@@ -3326,7 +3358,8 @@ non-nil or this will return nil."
     (when (and wikiword start end
 	       (not (hproperty:but-get start 'face hywiki-word-face))
 	       (hywiki-referent-exists-p wikiword))
-      (hproperty:but-add start end hywiki-word-face))
+      (unless (hproperty:char-property-face-p start hywiki-ignore-face-list)
+	(hproperty:but-add start end hywiki-word-face)))
     (list wikiword start end)))
 
 (defun hywiki-highlight-word-move-range ()
@@ -3442,6 +3475,14 @@ If point is on one, press RET immediately to use that one."
   (let ((completion-ignore-case t))
     (completing-read (if (stringp prompt) prompt "HyWikiWord: ")
 		     (hywiki-get-referent-hasht)
+		     nil nil nil nil (hywiki-word-at-point))))
+
+(defun hywiki-page-read-new (&optional prompt)
+  "Prompt with completion for and return an existing/new HyWikiWord with a page.
+If point is on one, press RET immediately to use that one."
+  (let ((completion-ignore-case t))
+    (completing-read (if (stringp prompt) prompt "HyWikiWord page: ")
+		     (hywiki-get-page-list)
 		     nil nil nil nil (hywiki-word-at-point))))
 
 (defun hywiki-word-highlight-flag-changed (symbol set-to-value operation _where)

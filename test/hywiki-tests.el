@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     20-Aug-25 at 00:01:57 by Bob Weiner
+;; Last-Mod:     29-Aug-25 at 19:42:51 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -169,7 +169,7 @@ Assume no nesting of braces, nor any quoting of braces."
 	(run-hooks 'pre-command-hook)
 	;; `command-execute' runs only `post-self-insert-hook' since
 	;; this is run during the command; pre- and post-command hooks
-	;; must be manually run.
+	;; therefore are run manually.
         (command-execute this-command)
 	(run-hooks 'post-command-hook)))))
 
@@ -805,8 +805,8 @@ Both mod-time and checksum must be changed for a test to return true."
         (hy-delete-files-and-buffers (list wikipage))
         (hy-delete-dir-and-buffer hywiki-directory)))))
 
-(ert-deftest hywiki-tests--convert-words-to-org-link ()
-  "Verify `hywiki-convert-words-to-org-links' converts WikiWords to org links."
+(ert-deftest hywiki-tests--references-to-org-link ()
+  "Verify `hywiki-references-to-org-links' converts WikiWords to org links."
   (skip-unless (not noninteractive))
   (hywiki-tests--preserve-hywiki-mode
     (let* ((hywiki-directory (make-temp-file "hywiki" t))
@@ -815,18 +815,19 @@ Both mod-time and checksum must be changed for a test to return true."
           (progn
             (hywiki-mode 1)
             (with-temp-buffer
-              (insert "WikiWord")
+	      (setq default-directory hywiki-directory)
+              (insert "WikiWord#section:L2:C4")
               (hywiki-tests--command-execute #'self-insert-command 1 ? )
               (goto-char 4)
-              (hywiki-convert-words-to-org-links)
-              (should (string= "[[WikiWord]] "
+              (hywiki-references-to-org-links)
+              (should (string= "[[hy:WikiWord#section:L2:C4]] "
                                (buffer-substring-no-properties (point-min) (point-max)))))
             (with-temp-buffer
               (insert "WikiWor")
 	      (hywiki-tests--command-execute #'self-insert-command 1 ?d)
               (goto-char 4)
-              (hywiki-convert-words-to-org-links)
-              (should (string= "[[WikiWord]]"
+              (hywiki-references-to-org-links)
+              (should (string= "[[hy:WikiWord]]"
                                (buffer-substring-no-properties (point-min) (point-max))))))
         (hy-delete-file-and-buffer wikipage)
         (hy-delete-dir-and-buffer hywiki-directory)))))
@@ -867,20 +868,20 @@ Both mod-time and checksum must be changed for a test to return true."
     (mocklet (((hywiki-org-set-publish-project) => '("project")))
       (should (equal '("project") (hywiki-org-get-publish-project))))))
 
-(ert-deftest hywiki-tests--org-link-resolve ()
-  "Verify `hywiki-org-link-resolve' resolves a link to page."
-  (should-not (hywiki-org-link-resolve 88)) ; Number
-  (should-not (hywiki-org-link-resolve '("string"))) ; List
+(ert-deftest hywiki-tests--reference-to-referent ()
+  "Verify `hywiki-reference-to-referent' resolves a reference to a referent."
+  (should-not (hywiki-reference-to-referent 88)) ; Number
+  (should-not (hywiki-reference-to-referent '("string"))) ; List
   (let* ((hywiki-directory (make-temp-file "hywiki" t))
          (wikipage (cdr (hywiki-add-page "WikiWord")))
 	 (filename (when wikipage (file-name-nondirectory wikipage))))
     (unwind-protect
         (progn
-          (should-not (hywiki-org-link-resolve "NoWikiWord"))
-          (should (when filename (string= filename (hywiki-org-link-resolve "WikiWord"))))
-          (should (when filename (string= filename (hywiki-org-link-resolve "hy:WikiWord"))))
-          (should (when filename (string= (concat filename "::section")
-					  (hywiki-org-link-resolve "WikiWord#section")))))
+          (should-not (hywiki-reference-to-referent "NoWikiWord"))
+          (should (when wikipage (string= wikipage (hywiki-reference-to-referent "WikiWord"))))
+          (should (when wikipage (string= wikipage (hywiki-reference-to-referent "hy:WikiWord"))))
+          (should (when wikipage (string= (concat wikipage "::section")
+					  (hywiki-reference-to-referent "WikiWord#section")))))
       (hy-delete-file-and-buffer wikipage)
       (hy-delete-dir-and-buffer hywiki-directory))))
 
@@ -892,6 +893,7 @@ Both mod-time and checksum must be changed for a test to return true."
 	 (filename-stem (when filename (file-name-sans-extension filename))))
     (unwind-protect
         (progn
+	  (find-file wikipage)
           (should (string-match-p
                    (format "\\[hy\\] <doc:.*%s>" filename)
                    (hywiki-org-link-export "WikiWord" "doc" 'ascii)))
@@ -1324,12 +1326,12 @@ named WikiReferent with a non-page referent type."
     (hywiki-add-find wiki-word-non-page)))
 
 (ert-deftest hywiki-tests--save-referent-find-use-menu ()
-  "Verify saving and loading a referent find works using Hyperbole's menu.."
+  "Verify saving and loading a referent find works using Hyperbole's menu."
   (skip-unless (not noninteractive))
   ;; (skip-unless (not (version< emacs-version "29"))) ;; Fails on 28!?
   (hywiki-tests--referent-test
     (cons 'find #'hywiki-word-grep)
-    (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET f hywikiword RET"))
+    (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET f RET"))
     (hy-test-helpers:consume-input-events)))
 
 ;; Global-button

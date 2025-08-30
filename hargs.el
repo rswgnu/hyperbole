@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:      6-Jul-25 at 15:28:05 by Bob Weiner
+;; Last-Mod:     27-Aug-25 at 23:10:25 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -90,7 +90,7 @@
   "Minibuffer content the last time a completions buffer was generated, or nil.")
 
 ;;; ************************************************************************
-;;; Private functions
+;;; Public functions
 ;;; ************************************************************************
 
 (defalias 'hargs:find-tag-default #'find-tag--default)
@@ -151,8 +151,8 @@ normalized as a Hyperbole button key (no spaces)."
 	 (end-search-func   (if end-regexp-flag   're-search-forward 'search-forward))
 	 (count 0)
 	 first
-	 start ;; excludes delimiter
-	 end   ;; excludes delimiter
+	 start			  ;; excludes delimiter
+	 end			  ;; excludes delimiter
 	 end-pos
 	 string-start-end)
 
@@ -167,7 +167,7 @@ normalized as a Hyperbole button key (no spaces)."
 	(beginning-of-line 0) ;; start of previous line
 	(if (string-equal start-delim end-delim)
 	    (progn
-	      (while (and (setq end-pos (funcall start-search-func start-delim limit t))
+	      (while (and (setq end-pos (hargs:search start-search-func start-delim limit t))
 			  ;; Prevent infinite loop where regexp match does not
 			  ;; move end-pos forward, e.g. match to bol.
 			  (not (eq first end-pos))
@@ -178,7 +178,7 @@ normalized as a Hyperbole button key (no spaces)."
 			  ;; end delimiters that precede the current argument and are
 			  ;; therefore false matches, hence the search is limited to
 			  ;; prior to the original point.
-			  (funcall end-search-func end-delim opoint t)
+			  (hargs:search end-search-func end-delim opoint t)
 			  (setq count (1+ count)))
 		(setq first (or first start)
 		      start nil))
@@ -200,7 +200,7 @@ normalized as a Hyperbole button key (no spaces)."
 	  ;; Use forward rather than reverse search here to perform greedy
 	  ;; searches when optional matches within a regexp.
 	  (while (and (<= (point) limit)
-		      (setq end-pos (funcall start-search-func start-delim limit t))
+		      (setq end-pos (hargs:search start-search-func start-delim limit t))
 		      ;; Prevent infinite loop where regexp match does not
 		      ;; move end-pos forward, e.g. match to bol.
 		      (not (eq start end-pos)))
@@ -216,7 +216,7 @@ normalized as a Hyperbole button key (no spaces)."
 	  (forward-line 2)
 	  (setq limit (point))
 	  (goto-char opoint)
-	  (and (funcall end-search-func end-delim limit t)
+	  (and (hargs:search end-search-func end-delim limit t)
 	       (setq end (match-beginning 0))))))
 
     (when (and start end)
@@ -501,6 +501,23 @@ Optional DEFAULT-PROMPT is used to describe default value."
 	      default)
     prompt))
 
+(defun hargs:search (func delim &optional bound noerror count)
+  "Call search FUNC for the next non-backslash-quoted instance of DELIM.
+See `search-forward' doc string for use of the optional BOUND NOERROR and
+COUNT args."
+ (let (result)
+   (while (and (setq result (funcall func delim bound noerror count))
+	       (save-excursion
+		 ;; string is embedded within a doc string, except when
+		 ;; the string starts with 2 backslashes or an MSWindows
+		 ;; disk drive prefix, in which case the backslash is
+		 ;; considered part of a pathname.
+		 (save-match-data
+		   (goto-char (match-beginning 0))
+		   ;; Ignore any backslash quoted match to `delim'
+		   (= (or (preceding-char) 0) ?\\)))))
+   result))
+
 (defun hargs:select-event-window ()
   "Select window, if any, that mouse was over during last event."
   (let ((window (posn-window (event-start last-command-event))))
@@ -555,7 +572,7 @@ that point is within is returned or nil if none."
 	      (t (save-excursion (up-list 1) (hargs:sexpression-p t))))))))
 
 ;;; ************************************************************************
-;;; Public functions
+;;; More Public functions
 ;;; ************************************************************************
 
 (defun hargs:actype-get (actype &optional editing-flag)

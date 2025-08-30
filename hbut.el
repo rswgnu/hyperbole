@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     17-Aug-25 at 00:25:01 by Bob Weiner
+;; Last-Mod:     29-Aug-25 at 10:36:35 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1346,9 +1346,10 @@ is given."
 (defalias 'hbut:help #'hbut:report)
 
 (defun    hbut:is-p (object)
-  "Return non-nil if OBJECT is a symbol representing a Hyperbole button."
- (when (symbolp object)
-   (hattr:get object 'categ)))
+  "Return the symbol if OBJECT is a symbol representing a Hyperbole button."
+ (and (symbolp object)
+      (hattr:get object 'categ)
+      object))
 
 (defun    hbut:key (hbut)
   "Return the key for Hyperbole button symbol HBUT."

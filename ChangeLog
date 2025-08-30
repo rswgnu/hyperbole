@@ -1,3 +1,95 @@
+2025-08-29  Bob Weiner  <rsw@gnu.org>
+
+* hui-select.el (hui-select-set-region): Fix so selection of a whole
+    narrowed buffer performs the selection and is not treated as a whole
+    buffer selection.
+
+* hywiki.el (hywiki-word-to-org-link): Rewrite to minimize text in the
+    Org links created.  Use 'hy:' protocol prefix.
+           (hywiki-org-link-resolve): Rename to 'hywiki-reference-to-referent'.
+           (hywiki-word-to-org-link): Rename to 'hywiki-reference-to-org-link'.
+	   (hywiki-convert-words-to-org-links): Rename to
+    'hywiki-references-to-org-links'.
+  test/hywiki-tests.el (hywiki-tests--convert-words-to-org-link): Rename to
+    'hywiki-tests--references-to-org-link'.  Fix to prefix Org HyWikiWord
+    Org link referents with 'hy:' protocol.
+                        (hywiki-tests--org-link-resolve): Rename to
+    'hywiki-tests--reference-to-referent'.
+
+* hsys-org.el (hsys-org-link-at-p): Fix checks to ensure point is within
+    any Org link when trigger.  Was missing check that point is after start
+    of match, replace with call to 'hargs:delimited-p' to simplify the code.
+              (hsys-org-link-label-start-end): Add to fix Org link label
+    extraction.  Call from 'hsys-org-link-at-p' when in 'org-mode' and use
+    custom code to get proper label when not.
+
+* test/hywiki-tests.el (hywiki-tests--org-link-resolve): Fix to use full path
+    of wikipage.
+                       (hywiki-tests--org-link-export): Add (find-file wikipage)
+    call to fix that relative directory setting in `hywiki-org-link-export' is
+    set properly.
+
+* hib-kbd.el (kbd-key:act): Normalize 'key-series' prior to processing if not
+    already done.  Fixes bugs where SPC characters can be removed improperly
+    if called with a non-normalized 'key-series'.
+
+* hui-select.el (hui-select-at-delimited-thing-p): Update doc string to say
+    that global 'hkey-value' is set to the function that selects the syntactic
+    thing at point.
+  hbut.el (hbut:is-p): Change to return the hbut symbol passed in, if any.
+  hact.el (actype:doc): Remove unneeded duplicate 'hbut:is-p' call.
+  hui-mouse.el (hkey-at-hbut): Add this boolean to communicate between Smart
+    Key predicates that point is at a Hyperbole button.
+
+* hywiki.el (hywiki-get-page-list): Add to return a list of HyWikiWords with
+    existing pages.  Use  'hywiki-get-wikiword-list' to include existing WikiWords
+    with referents of all types, not just pages.
+            (hywiki-page-read-new): Add.
+            (hywiki-find-page): Add to mirror 'hywiki-find-referent'.
+  hui-mini.el (hui:menu-hywiki): Change 'EditPages' to 'EditPage' and from command
+    'hywiki-edirectory-edit' to 'hywiki-find-page'.  Add new entry 'DiredHyWiki'
+    with 'hywiki-edirectory-edit' command.
+* hui-menu.el (hui-menu-hywiki): Rename 'Edit-HyWiki-Pages' to 'Dired-HyWiki-Pages'.
+    Add new entry 'Find-HyWiki-Page' with command 'hywiki-find-page'.
+
+* hasht.el (hash-map): Fix that always returned nil when using a lambda function.
+    Second argument to 'push' call was wrong.  It was 'key' and should be 'result'.
+
+2025-08-28  Bob Weiner  <rsw@gnu.org>
+
+* hproperty.el (hproperty:char-property-face-p): Add.
+* hywiki.el (hywiki-ignore-face-list): Add constant.
+            (hywiki-maybe-highlight-page-names,
+             hywiki-highlight-word-get-range): Call above function and skip
+    HyWikiWord highlighting if any face in 'hywiki-ignore-face-list' is found.
+
+* hui-mouse.el (hkey-alist): Make 'hui-select-thing' and
+    'hui-select-at-delimited-sexp-p' ignore delimiters in the middle of an hbut,
+    e.g. when on closing paren of "(hyperbole)HyWiki", so that button activation
+    is always consistent.
+
+2025-08-27  Bob Weiner  <rsw@gnu.org>
+
+* hargs.el (hargs:search): Add to skip over backquoted search matches.
+           (hargs:delimited): Replace search calls with calls to `hargs:search'.
+    This improves HyWikiWord highlighting when quoted delimiters are used.
+
+* hmouse-drv.el (hkey-help): Print hbut attributes only when 'hkey-alist'
+    'hbut:at-p' clause triggers, not anytime an hbut actype attribute exists.
+    Otherwise, can have hui-select-thing trigger via an Action Key press
+    but also display the hbut attributes that the delimited thing is within.
+    Then user can't tell what action will trigger at point.
+
+* hywiki.el (hywiki-word-to-org-link): Remove set of 'path' to nil when no
+    buffer-file-name or when it matches buffer-file-name without a dir.  This
+    ensures a valid link is always returned from a valid input.
+
+2025-08-26  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-org-link-resolve): Fix so pathname is expanded relative
+    to 'hywiki-directory' since don't know the 'default-directory' of the
+    caller.
+
 2025-08-25  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-maybe-highlight-page-names): Add missing 'save-match-data'

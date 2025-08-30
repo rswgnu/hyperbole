@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    22-Nov-91 at 01:37:57
-;; Last-Mod:     25-Feb-25 at 02:14:39 by Bob Weiner
+;; Last-Mod:     29-Aug-25 at 12:52:43 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -171,6 +171,12 @@ Any key sequence within the series must be a string of one of the following:
 Return t if KEY-SERIES appears valid, else nil."
   (interactive "sKey series to execute (no {}): ")
   (setq current-prefix-arg nil) ;; Execution of the key-series may set it.
+
+  ;; Normalize `key-series' prior to processing if not already done
+  (unless (hypb:object-p key-series)
+    (when (stringp key-series)
+      (setq key-series (kbd-key:normalize key-series))))
+
   (let ((binding (kbd-key:binding key-series)))
     (cond ((null binding)
 	   (if (kbd-key:special-sequence-p key-series)
@@ -199,9 +205,9 @@ Return t if KEY-SERIES is a valid key series that is executed, else nil."
   (if (memq (key-binding [?\M-x]) '(execute-extended-command counsel-M-x))
       (kbd-key:key-series-to-events key-series)
     ;; Disable helm while processing M-x commands; helm
-    ;; gobbles final RET key.  Counsel works without modification.
+    ;; gobbles final RET key.  Counsel and Vertico work without modification.
     (let ((orig-binding (global-key-binding [?\M-x]))
-	  (helm-flag (when (boundp 'helm-mode) helm-mode))
+	  (helm-flag (bound-and-true-p helm-mode))
 	  (minibuffer-completion-confirm))
       (unwind-protect
 	  (progn
@@ -220,8 +226,9 @@ Restore \\`M-x' binding to ORIG-M-X-BINDING."
 
 (defun kbd-key:key-series-to-events (key-series)
   "Insert the KEY-SERIES as a series of keyboard events.
-The events are inserted into Emacs unread input stream.  Emacs
-then executes them when its command-loop regains control."
+The events are inserted into Emacs `unread-command-events'
+stream.  Emacs then executes them when its command-loop regains
+control."
   (setq unread-command-events (nconc unread-command-events
 				     ;; Cons t here to ensure events
 				     ;; are added to command-keys.
