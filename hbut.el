@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     29-Aug-25 at 10:36:35 by Bob Weiner
+;; Last-Mod:     31-Aug-25 at 16:22:09 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1522,8 +1522,9 @@ whitespace sequences with `_'."
   (when label
     (setq label (hbut:fill-prefix-remove label)
 	  ;; Remove leading and trailing space.
-	  label (replace-regexp-in-string "\\`[ \t\n\r]+\\|[ \t\n\r]+\\'"
-					   "" label nil t)
+	  label (replace-regexp-in-string
+		 "\\`[ \t\n\r]+\\|\\([\\?][ \t\n\r]+\\'\\)\\|[ \t\n\r]+\\'"
+		 "\\1" label)
 	  label (replace-regexp-in-string "_" "__" label nil t))
     (replace-regexp-in-string "[ \t\n\r]+" "_" label nil t)))
 

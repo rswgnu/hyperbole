@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     31-Aug-25 at 01:11:32 by Bob Weiner
+;; Last-Mod:     31-Aug-25 at 13:41:47 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -376,11 +376,7 @@ If on the menu name prefix or the last item, move to the first item."
 	  (select-window owind)))))
 
 (defun hui:menu-item-key (item)
-  "Return ordered list of keys that activate Hypb minibuffer MENU-ALIST items.
-For each item, the key is either the first capital letter in ITEM
-or if there are none, then its first character."
-  ;; Return either the first capital letter in item or if
-  ;; none, then its first character.
+  "Return the first capital letter in ITEM or if none, its first character."
   (or (catch 'capital
 	(progn (mapc (lambda (c) (and (<= ?A c) (>= ?Z c)
 				      (throw 'capital c)))
@@ -391,11 +387,11 @@ or if there are none, then its first character."
       (aref item 0)))
 
 (defun hui:menu-item-keys (menu-alist)
-  "Return ordered list of keys that activate Hypb minibuffer MENU-A[LIST items.
+  "Return ordered list of keys that activate Hypb minibuffer MENU-ALIST items.
 For each item, the key is either the first capital letter in item
 or if there are none, then its first character."
   (mapcar (lambda (item) (hui:menu-item-key item))
-	  (mapcar 'car (cdr menu-alist))))
+	  (mapcar #'car (cdr menu-alist))))
 
 (defun hui:menu-item-toggle-highlight (&optional arg)
   "Toggle highlighting Hyperbole minibuffer menu item keys.

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     31-Aug-25 at 01:46:37 by Bob Weiner
+;; Last-Mod:     31-Aug-25 at 17:36:24 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2081,9 +2081,10 @@ If in a programming mode, must be within a comment.  Use
 		 (or (nth 4 (syntax-ppss)) (hypb:in-string-p))
 	       t)
 	     (or on-page-name
-		 (string-match (regexp-quote
-				(char-to-string (char-syntax last-command-event)))
-			  " _()<>$.\"'"))
+		 (and (characterp last-command-event)
+		      (string-match (regexp-quote
+				     (char-to-string (char-syntax last-command-event)))
+				    " _()<>$.\"'")))
              (not executing-kbd-macro)
              (not noninteractive))
     (setq hywiki--highlighting-done-flag nil)
@@ -2507,9 +2508,10 @@ If this is a HyWiki page and `hywiki-word-highlight-flag' is non-nil
 \(the default), also enable auto-highlighting of HyWiki words as they
 are typed in the buffer."
   (or hywiki-page-flag
-      (when (string-prefix-p (expand-file-name hywiki-directory)
-			     (or default-directory ""))
-	(setq hywiki-page-flag t))))
+      (and buffer-file-name
+	   (string-prefix-p (expand-file-name hywiki-directory)
+			    (or default-directory ""))
+	   (setq hywiki-page-flag t))))
 
 (defun hywiki-get-buffer-page-name ()
   "Extract the page name from the buffer file name or else buffer name."
@@ -2667,7 +2669,7 @@ with any suffix removed."
 (defun hywiki-kill-buffer-hook ()
   "Delete file attached to HyWiki buffer if the file is zero-sized.
 If deleted, update HyWikiWord highlighting across all frames."
-  (when (hywiki-in-page-p)
+  (when (and buffer-file-name (hywiki-in-page-p))
     (when (hypb:empty-file-p)
       (delete-file (hypb:buffer-file-name)))
     (when (hywiki-directory-modified-p)

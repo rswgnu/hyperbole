@@ -1,3 +1,23 @@
+2025-08-31  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (action): Remove any requirements on chars before or after action
+    type delimiters, so can abut action buttons to other text.
+
+* hywiki.el (hywiki-kill-buffer-hook, hywiki-in-page-p): Exit if no 'buffer-file-name'.
+
+* test/hywiki-tests.el (hywiki-tests--referent-test): Stop checking existence
+    of cache file since there may be a race condition that makes it not exist yet.
+
+* hywiki.el (hywiki-maybe-dehighlight-page-name): Handle when 'last-command-event'
+    is not a character, e.g. 'return.
+
+* hibtypes.el (action): Allow for double-quotes before or after action button
+    delimiters.
+
+* hbut.el (hbut:label-to-key): Fix to keep any whitespace at the end of a label if
+    follows a ? or a backslash character as these are significant if the label is
+    later read back in as code, e.g. for an action button like: <insert-char ? >.
+
 2025-08-30  Bob Weiner  <rsw@gnu.org>
 
 * hui-mini.el: Replace all (beep) calls with (beep t) so do not exit keyboard

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     20-Aug-25 at 23:46:20 by Mats Lidell
+;; Last-Mod:     31-Aug-25 at 18:33:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1593,33 +1593,14 @@ action type, function symbol to call or test to execute, i.e.
 
     ;; Continue only if there if there is a button label and one of:
     ;;  1. `ert--running-tests' is non-nil
-    ;;  2. `start-delim' is either:
-    ;;     at the beginning of the buffer
-    ;;     or preceded by a space character or a grouping character
-    ;;   and that character after start-delim is:
-    ;;     not a whitespace character
-    ;;   and end-delim is either:
-    ;;     at the end of the buffer
-    ;;     or is followed by a space, punctuation or grouping character.
+    ;;  2.  in a string
+    ;;  3. character after start-delim is not a whitespace character
     (when (and lbl-key
 	       (or testing-flag (hypb:in-string-p)
-		   (and (or (null (char-before start-pos))
-			    (memq (if (char-before start-pos)
-				      (char-syntax (char-before start-pos))
-				    0)
-				  '(?\  ?\> ?\( ?\))))
-			(not (memq (if (char-after (1+ start-pos))
+		   (not (memq (if (char-after (1+ start-pos))
 				       (char-syntax (char-after (1+ start-pos)))
 				     0)
-				   '(?\  ?\>)))
-			(or (null (char-after end-pos))
-			    (memq (if (char-after end-pos)
-				      (char-syntax (char-after end-pos))
-				    0)
-				  '(?\  ?\> ?. ?\( ?\)))
-			    ;; Some of these characters may have symbol-constituent syntax
-			    ;; rather than punctuation, so check them individually.
-			    (memq (char-after end-pos) '(?. ?, ?\; ?: ?! ?\' ?\"))))))
+				   '(?\  ?\>)))))
       (setq lbl (ibut:key-to-label lbl-key))
       ;; Handle $ preceding var name in cases where same name is
       ;; bound as a function symbol
