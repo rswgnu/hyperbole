@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     29-Aug-25 at 18:38:32 by Bob Weiner
+;; Last-Mod:     30-Aug-25 at 23:19:35 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -535,7 +535,7 @@ a non-Org buffer type."
 	    (let* ((start (nth 1 label-start-end))
 		   (end (nth 2 label-start-end))
 		   (label (buffer-substring-no-properties start end)))
-	      (when (string-match "][" label)
+	      (when (string-match "\\]\\[" label)
 		(setq start (match-end 0)))
 	      (cons start end))))))))
 

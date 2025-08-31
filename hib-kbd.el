@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    22-Nov-91 at 01:37:57
-;; Last-Mod:     30-Aug-25 at 12:10:55 by Bob Weiner
+;; Last-Mod:     30-Aug-25 at 12:18:02 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -226,9 +226,10 @@ Restore \\`M-x' binding to ORIG-M-X-BINDING."
 
 (defun kbd-key:key-series-to-events (key-series)
   "Insert the normalized KEY-SERIES as a series of keyboard events.
-The events are inserted into Emacs `unread-command-events'
-stream.  Emacs then executes them when its command-loop regains
-control."
+Execute events as a keyboard macro unless they contain Hyperbole
+minibuffer menu events.  In that case, the events are inserted into
+Emacs `unread-command-events' stream.  Emacs then executes them
+when its command-loop regains control."
   (if (and (stringp key-series)
 	   (let ((hyperbole-key-desc (key-description (car (where-is-internal #'hyperbole)))))
 	     (string-match (format "%sC-h h\\|C-hh\\|h\\|M-x hyperbole RET"

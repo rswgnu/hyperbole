@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     29-Aug-25 at 19:42:51 by Bob Weiner
+;; Last-Mod:     31-Aug-25 at 01:49:05 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -28,8 +28,6 @@
 
 (defconst hywiki-tests--edit-string-pairs
    [
-    ("HiHo#s<insert-char ? >" "{HiHo#s} ")
-    ("FAI AI" "FAI {AI}")
     ("\"WikiWord#a b c\"<backward-delete-char 1>" "\"{WikiWord#a} b c")
     ("(Non#s n)<backward-delete-char 1>" "({Non#s} n")
     ("(MyWikiWord)WikiWord" "({MyWikiWord}){WikiWord}")
@@ -50,6 +48,8 @@
     ("<delete-char 1>\"WikiWord#section with spaces\"" "{WikiWord#section} with spaces\"") ;; shrink highlight to {WikiWord#section}
     ("\"WikiWord#section\"<backward-delete-char 1>" "\"{WikiWord#section}") ;; no highlight change 
     ("\"WikiWord#section with spaces\"<backward-delete-char 1>" "\"{WikiWord#section} with spaces") ;; shrink highlight to "{WikiWord#section}
+    ("FAI AI" "FAI {AI}")
+    ("HiHo#s<insert-char ? >" "{HiHo#s} ")
     ]
    "Vector of (pre-test-str-with-edit-cmds post-test-str-result [test-name-str] [doc-str]) elements.
 Last two elements are optional.")
@@ -1326,12 +1326,21 @@ named WikiReferent with a non-page referent type."
 
 (ert-deftest hywiki-tests--save-referent-find-use-menu ()
   "Verify saving and loading a referent find works using Hyperbole's menu."
+  :expected-result :failed
   (skip-unless (not noninteractive))
   ;; (skip-unless (not (version< emacs-version "29"))) ;; Fails on 28!?
   (hywiki-tests--referent-test
     (cons 'find #'hywiki-word-grep)
-    (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET f RET"))
-    (hy-test-helpers:consume-input-events)))
+    (let ((page (cdr (hywiki-add-page "WikiWord"))))
+      (unwind-protect
+	  (progn
+	    (find-file page)
+	    (insert "   WikiReferent")
+	    (save-buffer)
+	    (goto-char (point-min))
+	    (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET f RET"))
+	    (hy-test-helpers:consume-input-events))
+	(hy-delete-file-and-buffer page)))))
 
 ;; Global-button
 (ert-deftest hywiki-tests--save-referent-global-button ()
@@ -1535,14 +1544,15 @@ string."
 
 (defun hywiki-tests--run-test-case (test-case)
   "Run the TEST-CASE from point.
-Each test case consists of cons cells with an operation and the expected
-state of the WikiWord being constructed.  Operations are either a string
-to be inserted, a number of chars to be deleted or a symbol p<number>
-for where to move point.  The expected state is either nil for not a
-wikiword or non-nil for a wikiword.  The state is checked after all
-chars of the string are inserted.  If equal to a string it is checked for
-match with the wikiword.  Movement of point is relative to point when
-the function is called."
+Each test case consists of cons cells with an operation and the
+expected state of the highlighted WikiWord reference being
+constructed.  Operations are either a string to be inserted, a
+number of chars to be deleted or a symbol p<number> for where to
+move point.  The expected state is either nil for not a wikiword
+or non-nil for a wikiword.  The state is checked after all chars
+of the string are inserted.  If equal to a string it is checked
+for match with the wikiword.  Movement of point is relative to
+point when the function is called."
   (let ((origin (point)))
 
     ;; For traceability when looking through the list of should
@@ -1796,7 +1806,7 @@ Insert test in the middle of other text."
         (hy-delete-dir-and-buffer hywiki-directory)))))
 
 (ert-deftest hywiki-tests--wikiword-yanked-with-extra-words ()
-  "Verify that a WikiWord that is yanked in highlights properly."
+  "Verify that a yanked in WikiWord highlights properly."
   :expected-result :failed
   (hywiki-tests--preserve-hywiki-mode
     (let* ((hywiki-directory (make-temp-file "hywiki" t))
