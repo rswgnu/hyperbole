@@ -1,6 +1,7 @@
 2025-08-31  Bob Weiner  <rsw@gnu.org>
 
-* test/demo-tests.el (fast-demo-key-series-help-buffer): Check actual key binding.
+* test/demo-tests.el (fast-demo-key-series-help-buffer): Check actual key binding
+    and enable 'hyperbole-mode'.
 
 * test/kotl-orgtbl-tests.el (kotl-orgtbl-shift-tab-demotes-tree-outside-table): Fix
     to not use <S-iso-lefttab> key binding but call function directly.

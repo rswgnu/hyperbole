@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     31-Aug-25 at 20:37:14 by Bob Weiner
+;; Last-Mod:     31-Aug-25 at 20:43:39 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -486,6 +486,7 @@
 ;; Fast demo key series
 (ert-deftest fast-demo-key-series-help-buffer ()
   "Action key on C-hA brings up help buffer for action key."
+  (hyperbole-mode 1)
   (should hyperbole-mode)
   (should (eq (lookup-key hyperbole-mode-map "\C-hA")
 	      #'hkey-help))
