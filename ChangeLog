@@ -1,5 +1,10 @@
 2025-08-31  Bob Weiner  <rsw@gnu.org>
 
+* test/kotl-orgtbl-tests.el (kotl-orgtbl-shift-tab-demotes-tree-outside-table): Fix
+    to not use <S-iso-lefttab> key binding but call function directly.
+
+* hib-kbd.el (kbd-key:named-key-list): Add backtab, iso-lefttab and iso-righttab.
+
 * hibtypes.el (action): Remove any requirements on chars before or after action
     type delimiters, so can abut action buttons to other text.
 

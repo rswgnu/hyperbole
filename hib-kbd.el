@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    22-Nov-91 at 01:37:57
-;; Last-Mod:     30-Aug-25 at 12:18:02 by Bob Weiner
+;; Last-Mod:     31-Aug-25 at 20:05:59 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -50,10 +50,10 @@
 ;;; ************************************************************************
 
 (defvar kbd-key:named-key-list
-  '("add" "backspace" "begin" "bs" "clear" "decimal" "delete" "del"
-    "divide" "down" "end" "enter" "esc" "home" "left" "insert"
-    "multiply" "newline" "next" "prior" "return" "ret" "right" "rtn"
-    "subtract" "tab" "up")
+  '("add" "backspace" "backtab" "begin" "bs" "clear" "decimal" "delete" "del"
+    "divide" "down" "end" "enter" "esc" "home" "iso-lefttab" "iso-righttab"
+    "left" "insert" "multiply" "newline" "next" "prior" "return" "ret" "right"
+    "rtn" "subtract" "tab" "up")
   "List of dedicated keyboard key names which may be used with modifier keys.
 Function keys are handled elsewhere.")
 
