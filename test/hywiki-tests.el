@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     31-Aug-25 at 19:20:25 by Bob Weiner
+;; Last-Mod:     31-Aug-25 at 20:51:25 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -36,7 +36,7 @@
     ;; These tests pass
     ("Hi" "{Hi}")
     ("HyWikiWord" "{HyWikiWord}")
-    ("HyWikiW<kill-word 1>ord<yank 1> HyW<kill-word 1>ikiWord<yank 1><search-backward \" \">"
+    ("HyWikiW<kill-word 1>ord<yank 1> HyW<kill-word 1>ikiWord<yank 1>"
      "{HyWikiWord} {HyWikiWord}")
     ("HyWiki<delete-region>Word" "{HyWikiWord}")
     ("HyWiki<insert \"Word\">" "{HyWikiWord}")
