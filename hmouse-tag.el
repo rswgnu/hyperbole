@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     16-Aug-25 at 15:02:58 by Bob Weiner
+;; Last-Mod:      7-Sep-25 at 12:37:56 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1037,16 +1037,16 @@ see the documentation for `smart-python-oo-browser' for the behavior."
     (cond ((condition-case err
 	       (progn (smart-python-tag identifier next)
 		      t)
-	     (t (setq err-msg (cdr err))
+	     (t (setq err-msg (concat "(smart-python): " (error-message-string err)))
 		nil)))
 	  ((smart-python-jedi-to-definition-p))
 	  ((fboundp 'python-to-definition)
 	   ;; Only fboundp if the OO-Browser has been loaded.
 	   (smart-python-oo-browser))
 	  (t
-	   (error (progn (message (or err-msg
-				      (format "`%s' definition not found in identifier lookup/tag tables" identifier)))
-			 (beep)))))))
+	   (error (progn (beep t)
+			 (message "%s" (or err-msg
+					   (format "(smart-python): `%s' definition not found in identifier lookup/tag tables" identifier)))))))))
 
 ;;;###autoload
 (defun smart-python-tag (&optional identifier next)

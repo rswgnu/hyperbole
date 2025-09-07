@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     29-Aug-25 at 11:03:18 by Bob Weiner
+;; Last-Mod:      7-Sep-25 at 10:13:14 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -232,7 +232,7 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 ;;; ************************************************************************
 
 (defvar hkey-at-hbut nil
-  "Non-nil communicates between Smart Key predicates that point is at a Hyperbole button.
+  "Non-nil communicates between Smart Key predicates that point is at an hbut.
 The button's attributes are stored in the symbol, `hbut:current'.")
 
 (defvar hkey-value nil

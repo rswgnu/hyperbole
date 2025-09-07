@@ -1,3 +1,24 @@
+2025-09-07  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki--extend-region): Fix to extend region to include a whole wikiword
+    reference when not delimited and called from a yank command.
+* test/hywiki-tests.el (hywiki-tests--wikiword-yanked-with-extra-words): Above fix
+    keeps this test from failing.  Enable it now that it works.
+
+* test/hywiki-tests.el (hywiki-tests--referent-test): Disable 'vertico-mode' which
+    can cause tests to fail.
+
+* hproperty.el (hproperty:but-get-all-in-region): Remove 'nreverse' call so buttons
+    are returned in first to last order as desired.
+
+* hibtypes.el (action): Fix 'actype-sym' handling when a regular Emacs function.
+
+* hmouse-tag.el (smart-python): Fix to call 'error-message-string' to extract
+    the error from the err 'condition-case' variable.
+
+* test/hywiki-tests.el (hywiki-tests--save-referent-find-use-menu): Rewrite to
+    work and disable `vertico-mode' within the test to prevent failure.
+
 2025-08-31  Bob Weiner  <rsw@gnu.org>
 
 * test/demo-tests.el (fast-demo-key-series-help-buffer): Check actual key binding

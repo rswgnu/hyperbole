@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     31-Aug-25 at 17:36:24 by Bob Weiner
+;; Last-Mod:      7-Sep-25 at 15:21:53 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -3634,6 +3634,16 @@ delimiters."
 		(setq end (max end (goto-char (scan-sexps (point) 1)))
 		      result (list start end)))))
 	(error nil)))
+
+    ;; Extend any highlighting as `hywiki-word-at' dictates
+    (save-excursion
+      (cl-destructuring-bind (_ ref-start ref-end)
+	  (hywiki-word-at :range)
+	(when (and ref-start ref-end)
+	  (when (< ref-start start)
+	    (setq start ref-start))
+	  (when (> ref-end end)
+	    (setq end ref-end)))))
 
     ;; Skip past any current word at start and end to extend if needed
     (save-excursion

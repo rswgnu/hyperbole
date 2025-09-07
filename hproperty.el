@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Aug-92
-;; Last-Mod:     28-Aug-25 at 14:58:04 by Bob Weiner
+;; Last-Mod:      7-Sep-25 at 14:28:56 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -292,14 +292,13 @@ matching button."
 		    (list hproperty:but-face
 			  hproperty:ibut-face
 			  hproperty:flash-face))))
-    (nreverse
-     (delq nil
-	   (mapcar (lambda (overlay)
-		     (and (bufferp (overlay-buffer overlay))
-			  (memq (overlay-get overlay (or property 'face))
-				val-list)
-			  overlay))
-		   (overlays-in start end))))))
+    (delq nil
+	  (mapcar (lambda (overlay)
+		    (and (bufferp (overlay-buffer overlay))
+			 (memq (overlay-get overlay (or property 'face))
+			       val-list)
+			 overlay))
+		  (overlays-in start end)))))
 
 (defun hproperty:but-get-all-positions (start end &optional property value)
   "Return a list of all button start and end positions between START and END.

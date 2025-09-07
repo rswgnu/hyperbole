@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     31-Aug-25 at 18:33:10 by Bob Weiner
+;; Last-Mod:      7-Sep-25 at 14:05:21 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1588,7 +1588,7 @@ action type, function symbol to call or test to execute, i.e.
 	(name (hattr:get 'hbut:current 'name))
 	(start-pos (hattr:get 'hbut:current 'lbl-start))
 	(end-pos  (hattr:get 'hbut:current 'lbl-end))
-	(testing-flag (bound-and-true-p ert--running-tests))
+	(testing-flag (when (bound-and-true-p ert--running-tests) t))
         actype actype-sym action args lbl var-flag)
 
     ;; Continue only if there if there is a button label and one of:
@@ -1608,17 +1608,13 @@ action type, function symbol to call or test to execute, i.e.
         (setq var-flag t
 	      lbl (substring lbl 1)))
       (setq actype (if (string-match-p " " lbl) (car (split-string lbl)) lbl)
-            actype-sym (intern-soft (concat "actypes::" actype))
+            actype-sym (actype:elisp-symbol actype)
 	    ;; Must ignore that (boundp nil) would be t here.
-            actype (or (and actype-sym
-			    (or (fboundp actype-sym) (boundp actype-sym)
-				(special-form-p actype-sym))
-			    actype-sym)
-		       (and (setq actype-sym (intern-soft actype))
-			    (or (fboundp actype-sym) (boundp actype-sym)
-				(special-form-p actype-sym)
-				(ert-test-boundp actype-sym))
-			    actype-sym)))
+            actype (and actype-sym
+			(or (fboundp actype-sym) (boundp actype-sym)
+			    (special-form-p actype-sym)
+			    (ert-test-boundp actype-sym))
+			actype-sym))
       (when actype
 	;; For <hynote> buttons, need to double quote each argument so
 	;; 'read' does not change the idstamp 02 to 2.
@@ -1632,9 +1628,8 @@ action type, function symbol to call or test to execute, i.e.
 	;; Ensure action uses an fboundp symbol if executing a
 	;; Hyperbole actype.
 	(when (and (car action) (symbolp (car action)))
-	  (setcar action
-		  (or (intern-soft (concat "actypes::" (symbol-name (car action))))
-		      (car action))))
+	  (setcar action (or (symtable:hyperbole-actype-p (car action))
+			     (car action))))
 	(unless assist-flag
           (cond ((and (symbolp actype) (fboundp actype)
 		      (string-match "-p\\'" (symbol-name actype)))

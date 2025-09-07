@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     31-Aug-25 at 20:51:25 by Bob Weiner
+;; Last-Mod:      7-Sep-25 at 14:58:48 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -34,10 +34,10 @@
     ;; ("\"WikiWord#section with spaces\"<backward-delete-char 1>" "\"{WikiWord#section} with spaces") ;; shrink highlight to "{WikiWord#section}
 
     ;; These tests pass
-    ("Hi" "{Hi}")
-    ("HyWikiWord" "{HyWikiWord}")
     ("HyWikiW<kill-word 1>ord<yank 1> HyW<kill-word 1>ikiWord<yank 1>"
      "{HyWikiWord} {HyWikiWord}")
+    ("Hi" "{Hi}")
+    ("HyWikiWord" "{HyWikiWord}")
     ("HyWiki<delete-region>Word" "{HyWikiWord}")
     ("HyWiki<insert \"Word\">" "{HyWikiWord}")
     ("HyWikiW<kill-word 1>ord<yank 1>" "{HyWikiWord}")
@@ -103,7 +103,7 @@ Last two elements are optional.")
 		       ;; Surround any HyWikiWord refs with braces to match after string.
 		       ;; Do it in reverse order so do not affect the already
 		       ;; computed buffer positions.
-		       (setq hywiki-ref-positions (nreverse (hywiki-get-reference-positions)))
+		       (setq hywiki-ref-positions (hywiki-get-reference-positions))
 		       (dolist (start-end hywiki-ref-positions)
 			 (setq start (car start-end)
 			       end (cdr start-end))
@@ -196,7 +196,7 @@ Assume no nesting of braces, nor any quoting of braces."
 	 'hbut:act 'hbut:current)))))
 
 (defun hywiki-tests--command-execute (sexp &rest rest)
-  "Apply SEXP to REST of arguments as a command.
+  "Apply SEXP to REST of arguments as a command and return the result.
 Run pre and post command hooks around the call.
 This is for simulating the command loop."
   (let ((buf (current-buffer))
@@ -1319,8 +1319,9 @@ named WikiReferent with a non-page referent type."
   (skip-unless (not noninteractive))
   (hywiki-tests--referent-test
     (cons 'command #'hywiki-tests--command)
-    (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET c hywiki-tests--command RET"))
-    (hy-test-helpers:consume-input-events)))
+    (let ((vertico-mode 0))
+      (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET c hywiki-tests--command RET"))
+      (hy-test-helpers:consume-input-events))))
 
 ;; Find
 (ert-deftest hywiki-tests--save-referent-find ()
@@ -1331,21 +1332,22 @@ named WikiReferent with a non-page referent type."
 
 (ert-deftest hywiki-tests--save-referent-find-use-menu ()
   "Verify saving and loading a referent find works using Hyperbole's menu."
-  :expected-result :failed
   (skip-unless (not noninteractive))
-  ;; (skip-unless (not (version< emacs-version "29"))) ;; Fails on 28!?
   (hywiki-tests--referent-test
-    (cons 'find #'hywiki-word-grep)
-    (let ((page (cdr (hywiki-add-page "WikiWord"))))
+    (progn
+      (sit-for 0.2)
+      (cons 'find #'hywiki-word-grep))
+    (let ((page (cdr (hywiki-add-page "WikiWord")))
+	  (vertico-mode 0))
       (unwind-protect
-	  (progn
-	    (find-file page)
-	    (insert "   WikiReferent")
-	    (save-buffer)
-	    (goto-char (point-min))
-	    (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET f RET"))
-	    (hy-test-helpers:consume-input-events))
-	(hy-delete-file-and-buffer page)))))
+          (progn
+            (find-file page)
+            (insert "\nWikiReferent\n")
+            (save-buffer)
+            (goto-char (point-min))
+            (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET f RET"))
+            (hy-test-helpers:consume-input-events))
+        (hy-delete-file-and-buffer page)))))
 
 ;; Global-button
 (ert-deftest hywiki-tests--save-referent-global-button ()
@@ -1812,7 +1814,6 @@ Insert test in the middle of other text."
 
 (ert-deftest hywiki-tests--wikiword-yanked-with-extra-words ()
   "Verify that a yanked in WikiWord highlights properly."
-  :expected-result :failed
   (hywiki-tests--preserve-hywiki-mode
     (let* ((hywiki-directory (make-temp-file "hywiki" t))
            (wikiHi (cdr (hywiki-add-page "Hi")))
@@ -1821,6 +1822,22 @@ Insert test in the middle of other text."
       (unwind-protect
           (progn
             (hywiki-mode 1)
+            ;; Left part of WikiWord yanked in.
+            (with-temp-buffer
+              (insert "i#s")
+              (goto-char 1)
+              (let ((kill-ring (list "H"))
+                    interprogram-paste-function)
+                (yank))
+              (hywiki-tests--verify-hywiki-word "Hi#s"))
+            ;; Right part of WikiWord yanked in.
+            (with-temp-buffer
+              (insert "H")
+              (let ((kill-ring (list "i#s"))
+                    interprogram-paste-function)
+                (yank))
+              (goto-char 2)
+              (hywiki-tests--verify-hywiki-word "Hi#s"))
             ;; Non WikiWords in front of WikiWord.
             (with-temp-buffer
               (let ((kill-ring (list "a b Hi#c"))
@@ -1845,23 +1862,7 @@ Insert test in the middle of other text."
               (goto-char 4)
               (hywiki-tests--verify-hywiki-word "Hi#b")
               (goto-char 11)
-              (hywiki-tests--verify-hywiki-word "Ho#d"))
-            ;; Right part of WikiWord yanked in.
-            (with-temp-buffer
-              (insert "H")
-              (let ((kill-ring (list "i#s"))
-                    interprogram-paste-function)
-                (yank))
-              (goto-char 2)
-              (hywiki-tests--verify-hywiki-word "Hi#s"))
-            ;; Left part of WikiWord yanked in.
-            (with-temp-buffer
-              (insert "i#s")
-              (goto-char 1)
-              (let ((kill-ring (list "H"))
-                    interprogram-paste-function)
-                (yank))
-              (hywiki-tests--verify-hywiki-word "Hi#s")))
+              (hywiki-tests--verify-hywiki-word "Ho#d")))
         (hy-delete-files-and-buffers (list wikiHi wikiHo))
         (hy-delete-dir-and-buffer hywiki-directory)))))
 
