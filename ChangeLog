@@ -1,5 +1,8 @@
 2025-09-07  Bob Weiner  <rsw@gnu.org>
 
+* hibtypes.el (action): Fix setting of 'actype-sym' when a variable by adding
+    a call to 'intern-soft'.
+
 * hproperty.el (hproperty:but-get-all-in-region): Note in doc string that no ordering
     is specified; may differ between Emacs versions.
   test/hywiki-tests.el (hywiki-tests--edit): Handle different ordering of wikiword

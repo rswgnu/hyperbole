@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      7-Sep-25 at 14:05:21 by Bob Weiner
+;; Last-Mod:      7-Sep-25 at 17:27:58 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1608,7 +1608,7 @@ action type, function symbol to call or test to execute, i.e.
         (setq var-flag t
 	      lbl (substring lbl 1)))
       (setq actype (if (string-match-p " " lbl) (car (split-string lbl)) lbl)
-            actype-sym (actype:elisp-symbol actype)
+            actype-sym (or (actype:elisp-symbol actype) (intern-soft actype))
 	    ;; Must ignore that (boundp nil) would be t here.
             actype (and actype-sym
 			(or (fboundp actype-sym) (boundp actype-sym)
