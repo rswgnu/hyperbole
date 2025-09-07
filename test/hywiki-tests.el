@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:      7-Sep-25 at 18:44:01 by Bob Weiner
+;; Last-Mod:      7-Sep-25 at 18:51:42 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -975,7 +975,7 @@ body B
   "Verify published html links to WikiWord and section."
   ;; org-publish does not work properly to support HyWiki export prior
   ;; to version 9.7, so this will be skipped for Emacs 28 and 29.
-  (skip-unless (string-greaterp org-version "9.6"))
+  (skip-unless (string-greaterp org-version "9.6.999"))
   (let* ((hywiki-directory (make-temp-file "hywiki_" t))
 	 org-publish-project-alist
 	 (hywiki-org-publishing-directory (make-temp-file "public_html_" t))
