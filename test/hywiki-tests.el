@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:      7-Sep-25 at 16:55:19 by Bob Weiner
+;; Last-Mod:      7-Sep-25 at 18:44:01 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -973,23 +973,26 @@ body B
 
 (ert-deftest hywiki-tests--published-html-links-to-word-and-section ()
   "Verify published html links to WikiWord and section."
+  ;; org-publish does not work properly to support HyWiki export prior
+  ;; to version 9.7, so this will be skipped for Emacs 28 and 29.
+  (skip-unless (string-greaterp org-version "9.6"))
   (let* ((hywiki-directory (make-temp-file "hywiki_" t))
-         org-publish-project-alist
-         (hywiki-org-publishing-directory (make-temp-file "public_html_" t))
-         (wikipage (cdr (hywiki-add-page "WikiPage")))
-         (wikipage-html (expand-file-name "WikiPage.html" hywiki-org-publishing-directory))
-         (wikiword (cdr (hywiki-add-page "WikiWord")))
-         (wikiword-html (expand-file-name "WikiWord.html" hywiki-org-publishing-directory)))
+	 org-publish-project-alist
+	 (hywiki-org-publishing-directory (make-temp-file "public_html_" t))
+	 (wikipage (cdr (hywiki-add-page "WikiPage")))
+	 (wikipage-html (expand-file-name "WikiPage.html" hywiki-org-publishing-directory))
+	 (wikiword (cdr (hywiki-add-page "WikiWord")))
+	 (wikiword-html (expand-file-name "WikiWord.html" hywiki-org-publishing-directory)))
     (unwind-protect
-        (progn
-          (hywiki-org-set-publish-project)
-          (should (file-exists-p hywiki-directory))
-          (should (file-exists-p wikipage))
-          (should (file-exists-p wikiword))
+	(progn
+	  (hywiki-org-set-publish-project)
+	  (should (file-exists-p hywiki-directory))
+	  (should (file-exists-p wikipage))
+	  (should (file-exists-p wikiword))
 
-          ;; Setup wiki pages for WikiWord and WikiPage.
-          (with-current-buffer (find-file-noselect wikiword)
-            (insert "\
+	  ;; Setup wiki pages for WikiWord and WikiPage.
+	  (with-current-buffer (find-file-noselect wikiword)
+	    (insert "\
 First line
 * Asection
 body A
@@ -998,40 +1001,41 @@ body B
 *** Csection-subsection
 body C
 ")
-            (save-buffer))
-          (with-current-buffer (find-file-noselect wikipage)
-            (insert "\
+	    (save-buffer))
+	  (with-current-buffer (find-file-noselect wikipage)
+	    (insert "\
 WikiWord
 WikiWord#Asection
 \"WikiWord#Bsection subsection\"
 WikiWord#Csection-subsection
 ")
-            (save-buffer))
+	    (save-buffer))
 
-          ;; Export the wiki
-          (hywiki-publish-to-html t)
+	  ;; Export the wiki
+	  (hywiki-publish-to-html t)
 
-          ;; Verify files and folder are generated
-          (should (file-exists-p hywiki-org-publishing-directory))
-          (should (file-exists-p wikipage-html))
-          (should (file-exists-p wikiword-html))
+	  ;; Verify files and folder are generated
+	  (should (file-exists-p hywiki-org-publishing-directory))
+	  (should (file-exists-p wikipage-html))
+	  (should (file-exists-p wikiword-html))
 
-          ;; Verify links are generated
-          (with-current-buffer (find-file-noselect wikipage-html)
-            ;; (First check we even get the wikipage with sections)
-            (should (<= 1 (count-matches (regexp-quote "WikiWord") (point-min) (point-max))))
-            (should (= 1 (count-matches (regexp-quote "WikiWord#Asection") (point-min) (point-max))))
-            (should (= 1 (count-matches (regexp-quote "WikiWord#Bsection subsection") (point-min) (point-max))))
-            (should (= 1 (count-matches (regexp-quote "WikiWord#Csection-subsection") (point-min) (point-max))))
+	  ;; Verify links are generated
+	  (with-current-buffer (find-file-noselect wikipage-html)
+	    ;; (First check we even get the wikipage with sections)
+	    (should (<= 1 (count-matches (regexp-quote "WikiWord") (point-min) (point-max))))
+	    (should (= 1 (count-matches (regexp-quote "WikiWord#Asection") (point-min) (point-max))))
+	    (should (= 1 (count-matches (regexp-quote "WikiWord#Bsection subsection") (point-min) (point-max))))
+	    (should (= 1 (count-matches (regexp-quote "WikiWord#Csection-subsection") (point-min) (point-max))))
 
-            ;; Then verify the href links are generated
-            (should (= 1 (count-matches (regexp-quote "<a href=\"WikiWord.html\">WikiWord</a>") (point-min) (point-max))))
-            (should (= 1 (count-matches (regexp-quote "<a href=\"WikiWord.html#Asection\">WikiWord#Asection</a>") (point-min) (point-max))))
-            (should (= 1 (count-matches (regexp-quote "<a href=\"WikiWord.html#Bsection-subsection\">WikiWord#Bsection subsection</a>") (point-min) (point-max))))
-            (should (= 1 (count-matches (regexp-quote "<a href=\"WikiWord.html#Csection-subsection\">WikiWord#Csection-subsection</a>") (point-min) (point-max))))))
+	    ;; (print (buffer-substring-no-properties (point-min) (point-max)))
+	    ;; Then verify the href links are generated
+	    (should (= 1 (count-matches (regexp-quote "<a href=\"WikiWord.html\">WikiWord</a>") (point-min) (point-max))))
+	    (should (= 1 (count-matches (regexp-quote "<a href=\"WikiWord.html#Asection\">WikiWord#Asection</a>") (point-min) (point-max))))
+	    (should (= 1 (count-matches (regexp-quote "<a href=\"WikiWord.html#Bsection-subsection\">WikiWord#Bsection subsection</a>") (point-min) (point-max))))
+	    (should (= 1 (count-matches (regexp-quote "<a href=\"WikiWord.html#Csection-subsection\">WikiWord#Csection-subsection</a>") (point-min) (point-max))))))
       (hy-delete-files-and-buffers (list wikipage wikiword wikipage-html wikiword-html
-                                         (expand-file-name "index.org" hywiki-directory)
-                                         (expand-file-name "index.html" hywiki-org-publishing-directory)))
+					 (expand-file-name "index.org" hywiki-directory)
+					 (expand-file-name "index.html" hywiki-org-publishing-directory)))
       (hy-delete-dir-and-buffer hywiki-org-publishing-directory)
       (hy-delete-dir-and-buffer hywiki-directory))))
 

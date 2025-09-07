@@ -1,5 +1,9 @@
 2025-09-07  Bob Weiner  <rsw@gnu.org>
 
+* test/hywiki-tests.el (hywiki-tests--published-html-links-to-word-and-section):
+    Skip if Org version is less than 9.7 since org-publish does not work for
+    HyWiki prior to that.  Will be skipped for Emacs 28 and 29.
+
 * hibtypes.el (action): Fix setting of 'actype-sym' when a variable by adding
     a call to 'intern-soft'.
 
