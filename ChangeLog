@@ -1,5 +1,10 @@
 2025-09-07  Bob Weiner  <rsw@gnu.org>
 
+* hproperty.el (hproperty:but-get-all-in-region): Note in doc string that no ordering
+    is specified; may differ between Emacs versions.
+  test/hywiki-tests.el (hywiki-tests--edit): Handle different ordering of wikiword
+    overlays across major Emacs versions.
+
 * hywiki.el (hywiki--extend-region): Fix to extend region to include a whole wikiword
     reference when not delimited and called from a yank command.
 * test/hywiki-tests.el (hywiki-tests--wikiword-yanked-with-extra-words): Above fix

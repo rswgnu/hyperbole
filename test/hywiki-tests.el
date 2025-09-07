@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:      7-Sep-25 at 14:58:48 by Bob Weiner
+;; Last-Mod:      7-Sep-25 at 16:55:19 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -101,9 +101,11 @@ Last two elements are optional.")
 		       (hywiki-tests--interpolate-buffer)
 		       ;; Markup before string in temp buffer
 		       ;; Surround any HyWikiWord refs with braces to match after string.
-		       ;; Do it in reverse order so do not affect the already
-		       ;; computed buffer positions.
-		       (setq hywiki-ref-positions (hywiki-get-reference-positions))
+		       (setq hywiki-ref-positions
+			     (if (version< emacs-version "29")
+				 (hywiki-get-reference-positions)
+			       ;; Button/overlay ordering is reversed after Emacs 28
+			       (nreverse (hywiki-get-reference-positions))))
 		       (dolist (start-end hywiki-ref-positions)
 			 (setq start (car start-end)
 			       end (cdr start-end))

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Aug-92
-;; Last-Mod:      7-Sep-25 at 14:28:56 by Bob Weiner
+;; Last-Mod:      7-Sep-25 at 16:03:02 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -283,7 +283,8 @@ with that PROPERTY and VALUE."
 (defun hproperty:but-get-all-in-region (start end &optional property value)
   "Return a list of all buttons in the current buffer between START and END.
 If optional PROPERTY and non-nil VALUE are given, return only matching
-buttons.
+buttons.  No ordering is specified; the caller must sort the buttons
+if an order is needed.
 
 Use `hproperty:but-get-first-in-region' instead if you want only the first
 matching button."
