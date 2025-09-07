@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:      6-Jul-25 at 15:40:32 by Bob Weiner
+;; Last-Mod:     31-Aug-25 at 01:00:23 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1490,7 +1490,7 @@ line 1
         (should (equal '(1 . 1) (hui-select-boundaries (point)))))))
 
 (ert-deftest hui--kill-region-delimited-text-and-yank-back ()
-  "Verify multiple `hui:kill-region' followed by a `yank' restores contents."
+  "Verify multiple `hui:kill-region' calls followed by a `yank' works properly."
   :expected-result :failed
   (with-temp-buffer
     (let ((transient-mark-mode t)

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:     2-Nov-21 at 17:04:30
-;; Last-Mod:     27-Dec-23 at 16:54:00 by Mats Lidell
+;; Last-Mod:     31-Aug-25 at 20:04:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -79,8 +79,8 @@
           (kotl-mode:add-child)
           (should (string= (kcell-view:label (point)) "1a"))
 
-          (should (hact 'kbd-key "<S-iso-lefttab>"))
-          (hy-test-helpers:consume-input-events)
+	  (kotl-mode:promote-tree 1)
+          (should (string= (kcell-view:label (point)) "2"))
 
           (should (equal (kcell-view:level) 1))
           (should (string= (kcell-view:label (point)) "2")))

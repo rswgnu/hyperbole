@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     26-Jun-25 at 18:26:06 by Mats Lidell
+@c Last-Mod:     29-Aug-25 at 03:42:13 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,8 +30,8 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED June, 2025
-@set UPDATED-MONTH June 2025
+@set UPDATED August, 2025
+@set UPDATED-MONTH August 2025
 @set EDITION 9.0.2pre
 @set VERSION 9.0.2pre
 
@@ -4365,7 +4365,7 @@ Below are each of the commands on the Find menu.
 @cindex menu item, OccurHere
 @cindex menu item, RemoveLines
 @cindex menu item, SaveLines
-@vindex hypb:rgrep-command
+@vindex hui-select-rgrep-command
 @vindex locate-command
 @itemize @bullet
 @item
@@ -4373,7 +4373,7 @@ GrepFiles -        Show numbered line matches for a regexp in all
                    non-backup, non-auto-save files below the current directory.
                    If in an Emacs Lisp mode buffer and no PREFIX-ARG
                    is given, limit search to only .el and .el.gz
-                   files.  Set @code{hypb:rgrep-command} to change the
+                   files.  Set @code{hui-select-rgrep-command} to change the
                    grep command or options.
 
 @item
@@ -4691,7 +4691,7 @@ It looks like this:
 
 @smallexample
 @noindent
-HyWiki>  Act Create EditPages FindPage GrepConsult Help Info Link ModeToggle Org-M-RET/ Publish TagFind WikiWordConsult
+HyWiki>  Act Create DiredHyWiki EditPage FindReferent GrepConsult Help Info Link ModeToggle Org-M-RET/ Publish TagFind WikiWordConsult
 @end smallexample
 
 @noindent
@@ -4723,17 +4723,20 @@ aid in new naming.
 @cindex HyWiki dired
 @cindex HyWiki treemacs
 @cindex HyWiki edit pages
-@item EditPages
+@item DiredHyWiki
 Display and edit HyWiki pages in current @code{hywiki-directory}.  Use
 @code{dired} unless @code{action-key-modeline-buffer-id-function} is
 set to @code{smart-treemacs-modeline}, then use the @code{treemacs}
 package.
 
-
 @cindex HyWiki find/edit a page
-@item FindPage
+@item EditPage
 Prompt with completion for and find a HyWiki page, typically editable.
 If the page is already in a buffer, point is left unchanged.
+
+@cindex HyWiki find/edit a referent
+@item FindReferent
+Prompt with completion for and find any kind of HyWiki referent.
 
 @cindex HyWiki interactive grep
 @findex hywiki-consult-grep

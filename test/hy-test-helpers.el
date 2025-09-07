@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:      6-Jul-25 at 15:40:23 by Bob Weiner
+;; Last-Mod:     17-Aug-25 at 10:12:52 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -94,7 +94,11 @@ Checks ACTYPE, ARGS, LOC, LBL-KEY and NAME."
   (let ((buf (find-buffer-visiting file)))
     (when buf
       (with-current-buffer buf
-        (set-buffer-modified-p nil)
+	(when (buffer-modified-p)
+	  (save-buffer)
+	  ;; If the save failed, ensure it shows non-modified before
+	  ;; trying to kill it.
+          (set-buffer-modified-p nil))
         (kill-buffer))))
   (delete-file file))
 

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     15-Jun-25 at 22:37:06 by Bob Weiner
+;; Last-Mod:     31-Aug-25 at 13:41:47 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -100,7 +100,7 @@ documentation, not the full text."
 
   (interactive (list nil nil nil nil))
   (if (and hui:menu-p (> (minibuffer-depth) 0))
-      (progn (beep) nil)
+      (progn (beep t) nil)
     (unwind-protect
 	(progn
 	  (hyperbole-mode 1)
@@ -216,7 +216,7 @@ documentation, not the full text."
   "Invoke the Hyperbole minibuffer menu and return menu keys pressed.
 Return nil when already in a Hyperbole minibuffer menu."
   (if (and hui:menu-p (> (minibuffer-depth) 0))
-      (progn (beep) nil)
+      (progn (beep t) nil)
     (unwind-protect
 	(progn
 	  (hyperb:init-menubar)
@@ -376,11 +376,7 @@ If on the menu name prefix or the last item, move to the first item."
 	  (select-window owind)))))
 
 (defun hui:menu-item-key (item)
-  "Return ordered list of keys that activate Hypb minibuffer MENU-ALIST items.
-For each item, the key is either the first capital letter in ITEM
-or if there are none, then its first character."
-  ;; Return either the first capital letter in item or if
-  ;; none, then its first character.
+  "Return the first capital letter in ITEM or if none, its first character."
   (or (catch 'capital
 	(progn (mapc (lambda (c) (and (<= ?A c) (>= ?Z c)
 				      (throw 'capital c)))
@@ -391,11 +387,11 @@ or if there are none, then its first character."
       (aref item 0)))
 
 (defun hui:menu-item-keys (menu-alist)
-  "Return ordered list of keys that activate Hypb minibuffer MENU-A[LIST items.
+  "Return ordered list of keys that activate Hypb minibuffer MENU-ALIST items.
 For each item, the key is either the first capital letter in item
 or if there are none, then its first character."
   (mapcar (lambda (item) (hui:menu-item-key item))
-	  (mapcar 'car (cdr menu-alist))))
+	  (mapcar #'car (cdr menu-alist))))
 
 (defun hui:menu-item-toggle-highlight (&optional arg)
   "Toggle highlighting Hyperbole minibuffer menu item keys.
@@ -461,7 +457,7 @@ documentation, not the full text."
 				  (hui:menu-read-from-minibuffer
 				   "" menu-line hui:menu-mode-map nil t))))
 		      keys))
-      (beep)
+      (beep t)
       (setq hargs:reading-type 'hmenu)
       (discard-input))
     ;; Here, the minibuffer has been exited, and `key' has been set to one of:
@@ -481,7 +477,7 @@ documentation, not the full text."
 	  ((eq key 0)
 	   nil)
 	  ((eq key abort-char)
-	   (beep)
+	   (beep t)
 	   (set--this-command-keys (hui:menu-this-command-keys hui:menu-abort))
 	   (setq this-command #'hui:menu-abort)
 	   nil)
@@ -895,7 +891,7 @@ command instead.  Typically prevents clashes over {\\`C-c' /}."
 	  ("OrderedButs" (hui:hbut-report 1)  "Summarize explicit buttons in lexicographically order.")))
        '(find .
          (("Find>")
-	  ("GrepFiles"           hypb:rgrep        "Show numbered line matches in all specified files.")
+	  ("GrepFiles"           hui-select-rgrep  "Show numbered line matches in all specified files.")
 	  ("LocateFiles"         hypb:locate       "Locate matching file names anywhere across a system.")
 	  ("MatchFileBuffers"    moccur            "Show numbered line matches for regexp in all file-based buffers.")
 	  ("OccurHere"           occur             "Show numbered line matches for regexp from this buffer.")
@@ -1038,15 +1034,17 @@ support underlined faces as well."
 	   "Create and display page for HyWikiWord at point or when none, emulate a press of a Smart Key.")
 	 '("Create"         hywiki-word-create-and-display
 	    "Create and display a new or existing HyWikiWord referent, prompting with any existing referent names.")
-	 '("EditPages"      hywiki-directory-edit
+	 '("DiredHyWiki"    hywiki-directory-edit
 	   "Display and edit HyWiki directory.")
+	 '("EditPage"       hywiki-find-page
+	   "Prompt with completion for and display a HyWikiWord page.")
 	 '("FindReferent"   hywiki-find-referent
-	   "Prompt with completion for and display a HyWikiWord referent.")
+	   "Prompt with completion for and display any kind of HyWikiWord referent.")
 	 (when (fboundp 'consult-grep) ;; allow for autoloading
 	   '("GrepConsult"    hywiki-consult-grep
 	     "Grep over HyWiki pages with interactive consult-grep."))
-	 '("Help"           hkey-help
-	   "Report on a HyWikiWord's attributes.")
+	 '("Help"           hywiki-help
+	   "Report on a HyWikiWord's attributes or HyWikiWords in general.")
 	 '("Info"           (id-info "(hyperbole)HyWiki")
 	   "Display Hyperbole manual section on HyWiki.")
 	 '("Link"           hywiki-add-path-link

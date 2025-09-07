@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     20-Jun-25 at 16:39:53 by Bob Weiner
+;; Last-Mod:     31-Aug-25 at 16:22:09 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1343,10 +1343,13 @@ is given."
 	    (buffer-local-value 'default-directory key-src))
 	key-src))))
 
+(defalias 'hbut:help #'hbut:report)
+
 (defun    hbut:is-p (object)
-  "Return non-nil if OBJECT is a symbol representing a Hyperbole button."
- (when (symbolp object)
-   (hattr:get object 'categ)))
+  "Return the symbol if OBJECT is a symbol representing a Hyperbole button."
+ (and (symbolp object)
+      (hattr:get object 'categ)
+      object))
 
 (defun    hbut:key (hbut)
   "Return the key for Hyperbole button symbol HBUT."
@@ -1519,8 +1522,9 @@ whitespace sequences with `_'."
   (when label
     (setq label (hbut:fill-prefix-remove label)
 	  ;; Remove leading and trailing space.
-	  label (replace-regexp-in-string "\\`[ \t\n\r]+\\|[ \t\n\r]+\\'"
-					   "" label nil t)
+	  label (replace-regexp-in-string
+		 "\\`[ \t\n\r]+\\|\\([\\?][ \t\n\r]+\\'\\)\\|[ \t\n\r]+\\'"
+		 "\\1" label)
 	  label (replace-regexp-in-string "_" "__" label nil t))
     (replace-regexp-in-string "[ \t\n\r]+" "_" label nil t)))
 
@@ -1905,13 +1909,14 @@ excluding delimiters, not just one."
 
 	  (setq lbl-start-end (if (and start-delim end-delim)
 				  (ibut:label-p nil start-delim end-delim t t)
-				(or (ibut:label-p nil "\"" "\"" t t)
-				    ;; <action> buttons can be longer
-				    ;; than two lines, so don't limit
-				    ;; the length.
-				    (ibut:label-p nil "<" ">" t)
-				    (ibut:label-p nil "{" "}" t t)
-				    (ibut:label-p nil "[" "]" t t))))
+				(or 
+				 ;; <action> buttons can be longer
+				 ;; than two lines, so don't limit
+				 ;; the length.
+				 (ibut:label-p nil "<" ">" t)
+				 (ibut:label-p nil "\"" "\"" t t)
+				 (ibut:label-p nil "{" "}" t t)
+				 (ibut:label-p nil "[" "]" t t))))
 	  (when lbl-start-end
 	    (setq lbl-key (nth 0 lbl-start-end)
 		  lbl-start (nth 1 lbl-start-end)
@@ -2024,18 +2029,17 @@ If a new button is created, store its attributes in the symbol,
 			 (setq ibtype-point (point-marker))
 			 (while (and (not is-type) types)
 			   (setq itype (car types))
-			   ;; Any implicit button type check should leave point
-			   ;; unchanged.  Trigger an error if not.
-			   (unless (equal (point-marker) ibtype-point)
-			     (hypb:error "(Hyperbole): ibtype %s improperly moved point from %s to %s"
-					 itype opoint (point)))
 			   (when (condition-case err
 				     (and itype (setq args (funcall itype)))
 				   (error (progn (message "%S: %S" itype err)
-						 (switch-to-buffer "*Messages*")
 						 ;; Show full stack trace
 						 (debug))))
 			     (setq is-type itype))
+			   ;; Any implicit button type check should leave point
+			   ;; unchanged.  Trigger an error if not.
+			   (unless (equal ibtype-point (point-marker))
+			     (hypb:error "(Hyperbole): ibtype %s improperly moved point from %s to %s"
+					 itype ibtype-point (point-marker)))
 			   (setq types (cdr types))))
 		(set-marker ibtype-point nil)
 		(goto-char opoint)))
@@ -3004,6 +3008,13 @@ Return the symbol for the button if found, else nil."
 ;;; ibtype class - Implicit button types
 ;;; ========================================================================
 
+(defun ibtype:ensure-current-hbut-is-set ()
+  "Ensure `hbut:current' is always set when an ibtype is run."
+  ;; If an ibtype is invoked directly rather than through the Action
+  ;; Key, ensure its code sets `hbut:current' before testing for any ibut.
+  (unless (hyperb:stack-frame '(hui:hbut-operate ibut:create))
+    (hbut:at-p)))
+
 (defmacro defib (type _params doc at-p &optional to-p style)
   "Create Hyperbole implicit button TYPE with PARAMS, described by DOC.
 TYPE is an unquoted symbol.  PARAMS are presently ignored.
@@ -3036,7 +3047,8 @@ type for ibtype is presently undefined."
                            def-body)))
   (when type
     (let* ((to-func (when to-p (action:create nil (list to-p))))
-	   (at-func (list at-p))
+	   (at-func `((progn (ibtype:ensure-current-hbut-is-set)
+			     ,at-p)))
 	   (at-func-symbols (flatten-tree at-func)))
       (progn (unless (or (member 'ibut:label-set at-func-symbols)
 			 (member 'hsys-org-set-ibut-label at-func-symbols))

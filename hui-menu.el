@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
-;; Last-Mod:     18-Jan-25 at 16:41:44 by Bob Weiner
+;; Last-Mod:     29-Aug-25 at 03:45:17 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -308,11 +308,12 @@ Return t if cutoff, else nil."
 	 "----"
 	 ["Activate-HyWiki-Word" hywiki-word-activate t]
 	 ["Create-HyWiki-Word"   hywiki-word-create-and-display t]
-	 ["Edit-HyWiki-Pages"    hywiki-directory-edit t]
+	 ["Dired-HyWiki-Pages"   hywiki-directory-edit t]
+	 ["Find-HyWiki-Page"     hywiki-find-page t]
 	 ["Find-HyWiki-Referent" hywiki-find-referent t]
 	 (when (fboundp 'consult-grep) ;; allow for autoloading
 	   ["Grep-Consult-Pages" hywiki-consult-grep t])
-	 ["Help"                 hkey-help t]
+	 ["Help"                 hywiki-help t]
 	 ["HyWiki-Mode-Toggle"   hywiki-mode t]
 	 ["HyWiki-Tag-Find"      hywiki-tags-view t]
 	 ["Insert-HyWiki-Link"   hywiki-insert-link t]
@@ -446,7 +447,7 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		    ["Manual"   (id-info-item "menu, Find") t]
 		    "----"
 		    ;; Show numbered line matches in all specified files.
-		    ["Grep-Files"           hypb:rgrep t]
+		    ["Grep-Files"           hui-select-rgrep t]
 		    ;; Show numbered line matches for regexp in all file-based buffers.
 		    ["Locate-Files"         locate t]
 		    ;; Show numbered line matches for regexp in all file-based buffers.

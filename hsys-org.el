@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     31-May-25 at 15:35:55 by Mats Lidell
+;; Last-Mod:     30-Aug-25 at 23:19:35 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -31,6 +31,7 @@
 ;;; ************************************************************************
 
 (eval-when-compile (require 'hmouse-drv))
+(require 'hargs) ;; for `hargs:delimited-p'
 (require 'hproperty) ;; requires 'hbut
 (require 'hsys-consult)
 (require 'hypb)
@@ -505,49 +506,55 @@ Match to all todos if `keyword' is nil or the empty string."
 
 (defun hsys-org-link-at-p ()
   "Return (start . end) iff point is on an Org mode link, else nil.
-Start and end are the buffer positions of the label that point is on
-delimited by square brackets.
+Start and end are the buffer positions of the label of the link.  This
+is either the optional description or if none, then the referent, i.e.
+either [[referent][description]] or [[referent]].
 
 Ignore [[hy:HyWiki]] buttons and return nil (handle these as
 implicit buttons).  Assume caller has already checked that the
 current buffer is in `org-mode' or is looking for an Org link in
 a non-Org buffer type."
   (unless (or (smart-eolp) (smart-eobp))
-    (if (derived-mode-p 'org-mode)
-	(let* ((org-plist (hsys-org-thing-at-p))
-	       (type (plist-get org-plist :type))
-	       label-start-end)
-	  (when (eq type 'link)
+    (let (label-start-end)
+      (if (derived-mode-p 'org-mode)
+	  ;; Must be in `org-mode' to use `org-element-property'
+	  (when (org-element-property :raw-link (org-element-context))
+	    ;; At an Org link
 	    (save-match-data
 	      ;; If this Org link matches a potential HyWiki word, ignore it.
-	      (when (not (and (fboundp 'hywiki-word-at) (hywiki-word-at)))
-		(if (setq label-start-end (ibut:label-p t "[" "]" t))
-		    (cons (nth 1 label-start-end) (nth 2 label-start-end))
-		  t)))))
-      ;; non-Org mode (can't call org-element (which
-      ;; hsys-org-thing-at-p calls) outside of Org mode
-      (when (bound-and-true-p org-link-bracket-re)
-        (let ((pos (point)))
-          (when (save-excursion
-		  (or
-		   ;; Check if point is inside a link
-		   (and (re-search-backward org-link-bracket-re
-					    (line-beginning-position) t)
-			(> pos (point))
-			(< pos (match-end 0)))
-		   ;; If not found before, check if we're in the middle of a link
-		   (and (forward-line 0)
-			(re-search-forward org-link-bracket-re
-					   (line-end-position 2) t)
-			(> (point) pos)
-			(< pos (match-end 0)))))
-	    (save-match-data
-	      ;; If this Org link matches a potential HyWiki word, ignore it.
-	      (when (not (and (fboundp 'hywiki-word-at) (hywiki-word-at)))
-                (let ((label-start-end (ibut:label-p t "[" "]" t)))
-		  (if label-start-end
-		      (cons (nth 1 label-start-end) (nth 2 label-start-end))
-		    t))))))))))
+	      (when (and (not (and (fboundp 'hywiki-word-at) (hywiki-word-at)))
+			 (setq label-start-end (hsys-org-link-label-start-end)))
+		(cons (nth 1 label-start-end) (nth 2 label-start-end)))))
+	;; non-Org mode (can't call org-element (which
+	;; hsys-org-thing-at-p calls) outside of Org mode.
+	;; Check if point is inside a link
+	(save-match-data
+	  ;; If any Org link matches a potential HyWiki word, ignore it.
+	  (when (and (not (and (fboundp 'hywiki-word-at) (hywiki-word-at)))
+		     (setq label-start-end (hargs:delimited "[[" "]]" nil nil t)))
+	    (let* ((start (nth 1 label-start-end))
+		   (end (nth 2 label-start-end))
+		   (label (buffer-substring-no-properties start end)))
+	      (when (string-match "\\]\\[" label)
+		(setq start (match-end 0)))
+	      (cons start end))))))))
+
+(defun hsys-org-link-label-start-end ()
+  "With point on an Org link, return the list of (<label> <start> <end>), else nil.
+<label> is either the optional link description or the link
+referent.  <start> and <end> are buffer positions where <label>
+starts and ends, excludes delimiters."
+  (let ((thing (org-element-context)))
+    (when thing
+      (let ((ol-desc-start (org-element-property :contents-begin thing))
+	    (ol-desc-end (org-element-property :contents-end thing)))
+	(if (and ol-desc-start ol-desc-end)
+	    (list (buffer-substring-no-properties ol-desc-start ol-desc-end)
+		  ol-desc-start ol-desc-end)
+	  (let ((ol-referent (org-element-property :raw-link thing))
+		(ol-referent-start (+ (org-element-property :begin thing) 2))
+		(ol-referent-end (- (org-element-property :end thing) 2)))
+	    (list ol-referent ol-referent-start ol-referent-end)))))))
 
 ;; Assume caller has already checked that the current buffer is in org-mode.
 (defun hsys-org-heading-at-p (&optional _)

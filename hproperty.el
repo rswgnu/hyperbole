@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Aug-92
-;; Last-Mod:      6-Jul-25 at 23:45:41 by Bob Weiner
+;; Last-Mod:      7-Sep-25 at 16:03:02 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -283,7 +283,8 @@ with that PROPERTY and VALUE."
 (defun hproperty:but-get-all-in-region (start end &optional property value)
   "Return a list of all buttons in the current buffer between START and END.
 If optional PROPERTY and non-nil VALUE are given, return only matching
-buttons.
+buttons.  No ordering is specified; the caller must sort the buttons
+if an order is needed.
 
 Use `hproperty:but-get-first-in-region' instead if you want only the first
 matching button."
@@ -292,14 +293,13 @@ matching button."
 		    (list hproperty:but-face
 			  hproperty:ibut-face
 			  hproperty:flash-face))))
-    (nreverse
-     (delq nil
-	   (mapcar (lambda (overlay)
-		     (and (bufferp (overlay-buffer overlay))
-			  (memq (overlay-get overlay (or property 'face))
-				val-list)
-			  overlay))
-		   (overlays-in start end))))))
+    (delq nil
+	  (mapcar (lambda (overlay)
+		    (and (bufferp (overlay-buffer overlay))
+			 (memq (overlay-get overlay (or property 'face))
+			       val-list)
+			 overlay))
+		  (overlays-in start end)))))
 
 (defun hproperty:but-get-all-positions (start end &optional property value)
   "Return a list of all button start and end positions between START and END.
@@ -370,6 +370,13 @@ See `hproperty:but-get'."
 	      ;; `val' may be a list of property values
 	      (and (listp val) (memq value val)))
       value)))
+
+(defun hproperty:char-property-face-p (pos face-list)
+  "At POS, skip HyWikiWord highlighting if find any face in FACE-LIST.
+Return non-nil in any such case, else nil."
+  (save-excursion
+    (goto-char pos)
+    (seq-intersection (face-at-point nil t) face-list #'eq)))
 
 (defun hproperty:char-property-start (pos property value)
   "From POS, return the start of text PROPERTY with VALUE overlapping POS.

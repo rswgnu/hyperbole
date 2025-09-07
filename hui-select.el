@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     10-Aug-25 at 21:26:00 by Mats Lidell
+;; Last-Mod:     29-Aug-25 at 21:52:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -118,6 +118,17 @@
 ;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************
+
+(defcustom hui-select-rgrep-command
+  ;; Only the FreeBSD version of zgrep supports all of the grep
+  ;; options that Hyperbole needs: -r, --include, and --exclude
+  (format "%sgrep -insIHr" (if (and (executable-find "zgrep")
+                                    (string-match-p "bsd" (shell-command-to-string "zgrep --version | head -1")))
+                               "z" ""))
+  "*Grep command string and initial arguments sent to `hui-select-rgrep' command.
+It must end with a space."
+  :type 'string
+  :group 'hyperbole-commands)
 
 (defcustom hui-select-brace-modes
   '(c++-mode c++-ts-mode c-mode c-ts-mode java-mode java-ts-mode objc-mode
@@ -424,6 +435,50 @@ region (start . end) defining the boundaries of the thing at that position."
 ;;
 
 ;;;###autoload
+(defun hui-select-rgrep (pattern &optional prefx-arg)
+  "Recursively grep with symbol at point or PATTERN.
+Grep over all non-backup and non-autosave files in the current
+directory tree.  If in an Emacs Lisp mode buffer and no optional
+PREFX-ARG is given, limit search to only .el and .el.gz files."
+  (interactive (list (if (and (not current-prefix-arg) (equal (buffer-name) "*Locate*"))
+			 (read-string "Grep files listed here for: ")
+		       (let* ((delim-func (hui-select-at-delimited-thing-p))
+			      (region (when delim-func (funcall delim-func (point))))
+			      (default (if region
+					   (buffer-substring-no-properties
+					    (car region) (cdr region))
+					 (symbol-at-point))))
+			 (when (and default (symbolp default))
+			   (setq default (symbol-name default)))
+			 (read-string (format "Rgrep below current dir for%s: "
+					      (if default
+						  (format " (default %s)" default)
+						""))
+				      nil nil default)))
+		     current-prefix-arg))
+  (let* ((delim (cond ((not (string-match "\'" pattern)) ?\')
+			      ((not (string-match "\"" pattern)) ?\")
+			      ((not (string-match "=" pattern)) ?=)
+			      (t ?@)))
+	 (grep-cmd
+	  (if (and (not current-prefix-arg) (equal (buffer-name) "*Locate*"))
+	      (format "%s -e \%c%s\%c %s" hui-select-rgrep-command delim pattern delim (hypb:locate-pathnames))
+	    (format "%s %s %s -e \%c%s\%c ."
+		    hui-select-rgrep-command
+		    (when (and (memq major-mode '(emacs-lisp-mode lisp-interaction-mode))
+			       (not prefx-arg))
+		      (if (string-match "\\`rg " hui-select-rgrep-command)
+			  "-g \"*.el\" -g \"*.el.gz\""
+			"--include=\"*.el\" --include=\"*.el.gz\""))
+		    (if (string-match "\\`rg " hui-select-rgrep-command)
+			"-g \"!*~\" -g \"!#*\" -g \"!TAGS\""
+		      "--exclude=\".git\" --exclude=\"CVS\" --exclude=\"*~\" --exclude=\"#*\" --exclude=\"TAGS\"")
+		    delim pattern delim))))
+    (setq this-command `(grep ,grep-cmd))
+    (push this-command command-history)
+    (grep grep-cmd)))
+
+;;;###autoload
 (defun hui-select-at-p (&optional pos)
   "Non-nil means character matches a syntax entry in `hui-select-syntax-alist'.
 The character is after optional POS or point.  The non-nil value
@@ -554,8 +609,20 @@ Also, add language-specific syntax setups to aid in thing selection."
 (defun hui-select-get-thing ()
   "Return the thing at point that `hui-select-thing' would select."
   (let ((region-bounds (hui-select-get-region-boundaries)))
-    (when region-bounds
-      (buffer-substring-no-properties (car region-bounds) (cdr region-bounds)))))
+    (if (not region-bounds)
+	(when (eq hui-select-previous 'punctuation)
+	  (setq region-bounds
+		(or (hui-select-brace-def-or-declaration (point))
+		    (hui-select-indent-def (point))
+		    (progn (setq hui-select-previous 'word)
+			   (save-excursion
+			     (goto-char (point))
+			     (forward-word 1)
+			     (let ((end (point)))
+			       (forward-word -1)
+			       (cons (point) end)))))))
+      (when region-bounds
+	(buffer-substring-no-properties (car region-bounds) (cdr region-bounds))))))
 
 (defun hui-select-scan-sexps (from count)
   "Scan FROM point across COUNT sexpressions."
@@ -868,11 +935,12 @@ If an error occurs during syntax scanning, return nil."
 
 (defun hui-select-at-delimited-thing-p ()
   "Return non-nil if point is at a delimited thing, else nil.
+Ignore any match if on an Emacs button and instead return nil.
+
 A delimited thing is a markup pair, list, array/vector, set,
 comment or string.  The non-nil value returned is the function to
-call to select that syntactic unit.
-
-Ignore any match if on an Emacs button and instead return nil."
+call to select that syntactic unit, if any.  The global `hkey-value'
+is set to this value."
   (unless (button-at (point))
     (setq hkey-value (hui-select-delimited-thing-call #'hui-select-at-p))
     (cond ((eq hkey-value 'hui-select-punctuation)
@@ -1039,9 +1107,9 @@ Return the updated cons cell."
     (setcdr hui-select-old-region nil))
   (if (and (not (memq hui-select-previous '(buffer markup-pair)))
 	   (integerp beginning) (integerp end)
-	   (= beginning (point-min)) (= end (point-max)))
-      ;; If we selected the whole buffer and not matching a markup-pair,
-      ;; make sure that 'thing' type is 'buffer'.
+	   (= beginning 1) (= end (1+ (buffer-size))))
+      ;; If we selected the whole widened buffer and not matching a
+      ;; markup-pair, make sure that 'thing' type is 'buffer'.
       nil
     hui-select-region))
 

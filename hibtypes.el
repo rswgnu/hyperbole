@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     10-Jun-25 at 17:44:04 by Mats Lidell
+;; Last-Mod:      7-Sep-25 at 17:27:58 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1569,14 +1569,14 @@ original DEMO file."
 (declare-function display-boolean  "ext:ignore")
 (declare-function display-variable "ext:ignore")
 (declare-function display-value    "ext:ignore")
+(declare-function display-value-and-remove-region "ext:ignore")
 
 (defib action ()
   "The Action Button type.
 At point, activate any of: an Elisp variable, a Hyperbole
 action-type, an Elisp function call or an Ert test name
-surrounded by <> rather than ().
-
-If an Elisp variable, display a message showing its value.
+surrounded by <> rather than ().  Evaluate the expression
+and display the result in the minibuffer.
 
 There may not be any <> characters within the expression.  The
 first identifier in the expression must be an Elisp variable,
@@ -1588,33 +1588,19 @@ action type, function symbol to call or test to execute, i.e.
 	(name (hattr:get 'hbut:current 'name))
 	(start-pos (hattr:get 'hbut:current 'lbl-start))
 	(end-pos  (hattr:get 'hbut:current 'lbl-end))
+	(testing-flag (when (bound-and-true-p ert--running-tests) t))
         actype actype-sym action args lbl var-flag)
 
-    ;; Continue only if start-delim is either:
-    ;;     at the beginning of the buffer
-    ;;     or preceded by a space character or a grouping character
-    ;;   and that character after start-delim is:
-    ;;     not a whitespace character
-    ;;   and end-delim is either:
-    ;;     at the end of the buffer
-    ;;     or is followed by a space, punctuation or grouping character.
-    (when (and lbl-key (or (null (char-before start-pos))
-                           (memq (if (char-before start-pos)
-				     (char-syntax (char-before start-pos))
-				   0)
-				 '(?\  ?\> ?\( ?\))))
-	       (not (memq (if (char-after (1+ start-pos))
-			      (char-syntax (char-after (1+ start-pos)))
-			    0)
-			  '(?\  ?\>)))
-	       (or (null (char-after end-pos))
-                   (memq (if (char-after end-pos)
-			     (char-syntax (char-after end-pos))
-			   0)
-			 '(?\  ?\> ?. ?\( ?\)))
-                   ;; Some of these characters may have symbol-constituent syntax
-                   ;; rather than punctuation, so check them individually.
-                   (memq (char-after end-pos) '(?. ?, ?\; ?: ?! ?\' ?\"))))
+    ;; Continue only if there if there is a button label and one of:
+    ;;  1. `ert--running-tests' is non-nil
+    ;;  2.  in a string
+    ;;  3. character after start-delim is not a whitespace character
+    (when (and lbl-key
+	       (or testing-flag (hypb:in-string-p)
+		   (not (memq (if (char-after (1+ start-pos))
+				       (char-syntax (char-after (1+ start-pos)))
+				     0)
+				   '(?\  ?\>)))))
       (setq lbl (ibut:key-to-label lbl-key))
       ;; Handle $ preceding var name in cases where same name is
       ;; bound as a function symbol
@@ -1622,17 +1608,13 @@ action type, function symbol to call or test to execute, i.e.
         (setq var-flag t
 	      lbl (substring lbl 1)))
       (setq actype (if (string-match-p " " lbl) (car (split-string lbl)) lbl)
-            actype-sym (intern-soft (concat "actypes::" actype))
+            actype-sym (or (actype:elisp-symbol actype) (intern-soft actype))
 	    ;; Must ignore that (boundp nil) would be t here.
-            actype (or (and actype-sym
-			    (or (fboundp actype-sym) (boundp actype-sym)
-				(special-form-p actype-sym))
-			    actype-sym)
-		       (and (setq actype-sym (intern-soft actype))
-			    (or (fboundp actype-sym) (boundp actype-sym)
-				(special-form-p actype-sym)
-				(ert-test-boundp actype-sym))
-			    actype-sym)))
+            actype (and actype-sym
+			(or (fboundp actype-sym) (boundp actype-sym)
+			    (special-form-p actype-sym)
+			    (ert-test-boundp actype-sym))
+			actype-sym))
       (when actype
 	;; For <hynote> buttons, need to double quote each argument so
 	;; 'read' does not change the idstamp 02 to 2.
@@ -1646,9 +1628,8 @@ action type, function symbol to call or test to execute, i.e.
 	;; Ensure action uses an fboundp symbol if executing a
 	;; Hyperbole actype.
 	(when (and (car action) (symbolp (car action)))
-	  (setcar action
-		  (or (intern-soft (concat "actypes::" (symbol-name (car action))))
-		      (car action))))
+	  (setcar action (or (symtable:hyperbole-actype-p (car action))
+			     (car action))))
 	(unless assist-flag
           (cond ((and (symbolp actype) (fboundp actype)
 		      (string-match "-p\\'" (symbol-name actype)))
@@ -1658,16 +1639,40 @@ action type, function symbol to call or test to execute, i.e.
 		((and (null args) (symbolp actype) (boundp actype)
 		      (or var-flag (not (fboundp actype))))
 		 ;; Is a variable, display its value as the action
-		 (setq args `(',actype)
+		 (setq args `(,actype)
 		       actype #'display-variable))
 		((and (null args) (symbolp actype) (ert-test-boundp actype))
 		 ;; Is an ert-deftest, display the value from executing it
 		 (setq actype #'display-value
-		       args `('(hypb-ert-run-test ,lbl))))
+		       args `((hypb-ert-run-test ,lbl))))
 		(t
 		 ;; All other expressions, display the action result in the minibuffer
-		 (setq actype #'display-value
-		       args `(',action)))))
+		 (if (string-match "\\b\\(delete\\|kill\\)-region\\'"
+				   (symbol-name actype-sym))
+		     ;; With `delete-region' and `kill-region'
+		     ;; actions, if no args, either use any active
+		     ;; region or when none, use the region of the
+		     ;; action button itself, removing it from the
+		     ;; buffer.  The latter action is largely used
+		     ;; only in internal HyWiki tests.
+		     (progn (setq actype #'display-value)
+ 			    (if (= 1 (length action)) ;; No args
+				(if (use-region-p)
+				    ;; Apply function to the active region
+				    (setq args `((,actype-sym (region-beginning) (region-end))))
+				  ;; Apply function to region of the action button itself,
+				  ;; including delimiters
+				  (setq args `((,actype-sym ,start-pos
+							    ,end-pos))))
+			      (setq args `(',action))))
+		   (if (or testing-flag (hypb:in-string-p))
+		       ;; Delete action button after activation when
+		       ;; running an ert test or in a string (so can
+		       ;; test this behavior interactively)
+		       (setq actype #'display-value-and-remove-region
+			     args `(,action ,start-pos ,end-pos))
+		     (setq actype #'display-value
+			   args `(,action)))))))
 
 	;; Create implicit button object and store in symbol hbut:current.
 	(ibut:label-set lbl)
@@ -1681,8 +1686,8 @@ action type, function symbol to call or test to execute, i.e.
                    #'actype:identity
                  #'actype:eval)))
           (if (eq hrule:action #'actype:identity)
-	      `(hact ,actype ,@args)
-            `(hact ,actype ,@(mapcar #'eval args))))))))
+	      `(hact ',actype ,@args)
+            `(hact ',actype ,@(mapcar #'eval args))))))))
 
 (defun action:help (hbut)
   "Display documentation for action button at point.
@@ -1714,7 +1719,10 @@ If a boolean function or variable, display its value."
 ;;; ========================================================================
 
 (defib hywiki-existing-word ()
-  "On a HyWikiWord with an existing referent, display the referent."
+  "On a HyWikiWord with an existing referent, display the referent.
+
+See the implicit button type `hywiki-word' for creation of referents to
+not yet existing HyWikiWords."
   (cl-destructuring-bind (wikiword start end)
       (hywiki-referent-exists-p :range)
     (when wikiword

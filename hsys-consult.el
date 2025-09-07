@@ -2,7 +2,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     4-Jul-24 at 09:57:18
-;; Last-Mod:     18-Jun-25 at 00:27:08 by Mats Lidell
+;; Last-Mod:     10-Aug-25 at 12:43:19 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -82,6 +82,11 @@ When nil, trigger an error that consult is not installed."
 ;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
+
+;;;###autoload
+(defun hsys-consult-active-p ()
+  "Return non-nil if `hsys-consult-flag' is true and `consult-grep' is fboundp."
+  (and hsys-consult-flag (fboundp 'consult-grep)))
 
 ;;;###autoload
 (defun hsys-consult-apropos (&optional include-all-flag)
@@ -178,7 +183,7 @@ and return the selected \"file:line:line-contents\".  GREP-FUNCTION
  must take these arguments: regexp max-matches path-list prompt.
 
 Without `consult', just read a REGEXP with PROMPT."
-  (if (and hsys-consult-flag (fboundp 'consult-grep))
+  (if (hsys-consult-active-p)
       (substring-no-properties
        (hsys-consult-get-exit-value
 	nil

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    16-Mar-90 at 03:38:48
-;; Last-Mod:     26-Jan-25 at 18:30:30 by Bob Weiner
+;; Last-Mod:     29-Aug-25 at 02:16:00 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -197,8 +197,7 @@ in reverse order of occurrence (they are prepended to the list).  See
     hash-table))
 
 (defun hash-map (func hash-table)
-  "Return list result of calling FUNC over each (<value> . <key>) in HASH-TABLE.
-<key> is a symbol.
+  "Return the list from calling FUNC on (<value> . <string-key>) in HASH-TABLE.
 
 If FUNC is in \\='(cdr key second symbol-name), then return all <key>s
 as strings.  If FUNC is in \\='(car value first symbol-value), then
@@ -213,10 +212,9 @@ return all <value>s."
 	     (maphash
 	      (lambda (key value)
 		(push (funcall func (cons value (symbol-name key)))
-		      key)
-		result)
+		      result))
 	      hash-table)
-	     result))))
+	     (nreverse result)))))
 
 (defun hash-merge (&rest hash-tables)
   "Merge any number of HASH-TABLES.  Return resultant hash table.

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    22-Nov-91 at 01:37:57
-;; Last-Mod:     25-Feb-25 at 02:14:39 by Bob Weiner
+;; Last-Mod:     31-Aug-25 at 20:05:59 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -50,10 +50,10 @@
 ;;; ************************************************************************
 
 (defvar kbd-key:named-key-list
-  '("add" "backspace" "begin" "bs" "clear" "decimal" "delete" "del"
-    "divide" "down" "end" "enter" "esc" "home" "left" "insert"
-    "multiply" "newline" "next" "prior" "return" "ret" "right" "rtn"
-    "subtract" "tab" "up")
+  '("add" "backspace" "backtab" "begin" "bs" "clear" "decimal" "delete" "del"
+    "divide" "down" "end" "enter" "esc" "home" "iso-lefttab" "iso-righttab"
+    "left" "insert" "multiply" "newline" "next" "prior" "return" "ret" "right"
+    "rtn" "subtract" "tab" "up")
   "List of dedicated keyboard key names which may be used with modifier keys.
 Function keys are handled elsewhere.")
 
@@ -171,6 +171,12 @@ Any key sequence within the series must be a string of one of the following:
 Return t if KEY-SERIES appears valid, else nil."
   (interactive "sKey series to execute (no {}): ")
   (setq current-prefix-arg nil) ;; Execution of the key-series may set it.
+
+  ;; Normalize `key-series' prior to processing if not already done
+  (unless (hypb:object-p key-series)
+    (when (stringp key-series)
+      (setq key-series (kbd-key:normalize key-series))))
+
   (let ((binding (kbd-key:binding key-series)))
     (cond ((null binding)
 	   (if (kbd-key:special-sequence-p key-series)
@@ -199,9 +205,9 @@ Return t if KEY-SERIES is a valid key series that is executed, else nil."
   (if (memq (key-binding [?\M-x]) '(execute-extended-command counsel-M-x))
       (kbd-key:key-series-to-events key-series)
     ;; Disable helm while processing M-x commands; helm
-    ;; gobbles final RET key.  Counsel works without modification.
+    ;; gobbles final RET key.  Counsel and Vertico work without modification.
     (let ((orig-binding (global-key-binding [?\M-x]))
-	  (helm-flag (when (boundp 'helm-mode) helm-mode))
+	  (helm-flag (bound-and-true-p helm-mode))
 	  (minibuffer-completion-confirm))
       (unwind-protect
 	  (progn
@@ -219,15 +225,26 @@ Restore \\`M-x' binding to ORIG-M-X-BINDING."
   (global-set-key [?\M-x] orig-M-x-binding))
 
 (defun kbd-key:key-series-to-events (key-series)
-  "Insert the KEY-SERIES as a series of keyboard events.
-The events are inserted into Emacs unread input stream.  Emacs
-then executes them when its command-loop regains control."
-  (setq unread-command-events (nconc unread-command-events
-				     ;; Cons t here to ensure events
-				     ;; are added to command-keys.
-				     (mapcar (lambda (e) (cons t e))
-					     (listify-key-sequence
-					      (kbd-key:kbd key-series))))))
+  "Insert the normalized KEY-SERIES as a series of keyboard events.
+Execute events as a keyboard macro unless they contain Hyperbole
+minibuffer menu events.  In that case, the events are inserted into
+Emacs `unread-command-events' stream.  Emacs then executes them
+when its command-loop regains control."
+  (if (and (stringp key-series)
+	   (let ((hyperbole-key-desc (key-description (car (where-is-internal #'hyperbole)))))
+	     (string-match (format "%sC-h h\\|C-hh\\|h\\|M-x hyperbole RET"
+				   (if (equal hyperbole-key-desc "C-h h")
+				       ""
+				     ;; Add any custom binding for Hyperbole minibuffer menus
+				     (concat hyperbole-key-desc "\\|")))
+			   key-series)))
+      (setq unread-command-events (nconc unread-command-events
+					 ;; Cons t here to ensure events
+					 ;; are added to command-keys.
+					 (mapcar (lambda (e) (cons t e))
+						 (listify-key-sequence
+						  (kbd-key:kbd key-series)))))
+    (execute-kbd-macro (kbd-key:kbd key-series))))
 
 (defun kbd-key:doc (key-series &optional full)
   "Show first line of doc for binding of keyboard KEY-SERIES in minibuffer.

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:      6-Jul-25 at 14:46:41 by Bob Weiner
+;; Last-Mod:     16-Aug-25 at 23:58:24 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -121,17 +121,6 @@ Also active in any Decendent modes of those listed.")
 (defconst hypb:mail-address-regexp
   "\\([_a-zA-Z0-9][-_a-zA-Z0-9.!@+%]*@[-_a-zA-Z0-9.!@+%]+\\.[a-zA-Z0-9][-_a-zA-Z0-9]+\\)\\($\\|[^a-zA-Z0-9@%]\\)"
   "Regexp with group 1 matching an Internet email address.")
-
-(defcustom hypb:rgrep-command
-  ;; Only the FreeBSD version of zgrep supports all of the grep
-  ;; options that Hyperbole needs: -r, --include, and --exclude
-  (format "%sgrep -insIHr" (if (and (executable-find "zgrep")
-                                    (string-match-p "bsd" (shell-command-to-string "zgrep --version | head -1")))
-                               "z" ""))
-  "*Grep command string and initial arguments to send to `hypb:rgrep' command.
-It must end with a space."
-  :type 'string
-  :group 'hyperbole-commands)
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -506,8 +495,35 @@ the `format' function."
     (put 'error 'error-message msg)
     (error msg)))
 
+(defun hypb:eval (sexp &rest rest)
+  "Apply SEXP to REST of arguments and maintain the current buffer."
+  (let ((buf (current-buffer))
+	(cmd (cond ((symbolp sexp)
+		    sexp)
+		   ((listp sexp)
+		    (if (eq 'quote (car sexp))
+			;; Unquote the expression so it is evaluated
+			(cadr sexp)
+		      sexp)))))
+    (setq last-command this-command
+	  this-command (if (and (listp cmd) (symbolp (car cmd)))
+			   (car cmd)
+			 cmd))
+    (run-hooks 'pre-command-hook)
+    (unwind-protect
+	(command-execute
+	 (lambda () (interactive)
+	   (if rest
+	       (apply cmd rest)
+	     (eval cmd t))))
+      ;; Ensure point remains in the same buffer before and after SEXP
+      ;; evaluation.  This prevents false switching to the *ert* test
+      ;; buffer when debugging.
+      (set-buffer buf)
+      (run-hooks 'post-command-hook))))
+
 (defun hypb:eval-debug (sexp)
-  "Eval SEXP and on error show a debug backtrace of the problem."
+  "Eval SEXP and on error, show a debug backtrace of the problem."
   (let ((debug-on-error t)
 	(debug-on-quit t))
     (eval sexp)))
@@ -574,6 +590,14 @@ modified."
 		   nil t)
        nil t)
     arg))
+
+;;;###autoload
+(defun hypb:function-p (func)
+  "Return non-nil if FUNC is a valid function, subroutine, or closure."
+  (or (subrp func) (byte-code-function-p func)
+      (and (symbolp func) (fboundp func))
+      (and (listp func) (memq (car func) '(closure lambda)))
+      (and (fboundp 'closurep) (closurep func))))
 
 ;; Extracted from part of `choose-completion' in "simple.el"
 (defun hypb:get-completion (&optional event)
@@ -729,11 +753,12 @@ Quoting conventions recognized are:
 		       ;; If this is the start of a string, it must be
 		       ;; at the start of line, preceded by whitespace
 		       ;; or preceded by another string end sequence.
-		       (save-match-data
-			 (or (string-empty-p (match-string 1))
-			     (string-search (match-string 1) " \t\n\r\f")
-			     (progn (goto-char (1+ (point)))
-				    (looking-back close-regexp nil)))))
+		       ;; (save-match-data
+		       ;; 	 (or (string-empty-p (match-string 1))
+		       ;; 	     (string-search (match-string 1) " \t\n\r\f")
+		       ;; 	     (progn (goto-char (1+ (point)))
+		       ;; 		    (looking-back close-regexp nil))))
+		       )
 	      (forward-line 0)
 	      (setq start (point))
 	      (goto-char opoint)
@@ -896,6 +921,10 @@ then `locate-post-command-hook'."
 ;;;###autoload
 (defun hypb:map-plist (func plist)
   "Apply FUNC of two args, key and value, to key-value pairs in PLIST."
+  (unless (hypb:function-p func)
+      (error "(hypb:map-plist): Invalid 'func' arg: %s" func))
+  (unless (hypb:plist-p plist)
+      (error "(hypb:map-plist): Invalid 'plist' arg: %s" plist))
   (cl-loop for (k v) on plist by #'cddr
 	   collect (funcall func k v) into result
 	   finally return result))
@@ -942,6 +971,11 @@ WINDOW pixelwise."
 	 (get-text-property 0 'hyperbole object))
 	((symbolp object)
 	 (get object 'hyperbole))))
+
+;;;###autoload
+(defun hypb:plist-p (plist)
+  "Return t if PLIST is a proper property list, else nil."
+  (cl-evenp (% (or (proper-list-p plist) 1) 2)))
 
 (defun hypb:readable-directories (&rest dirs)
   "Flatten rest of DIRS and return or error if any of DIRS are unreadable."
@@ -1017,42 +1051,7 @@ Removes any trailing newline at the end of the output."
     output))
 
 ;;;###autoload
-(defun hypb:rgrep (pattern &optional prefx-arg)
-  "Recursively grep with symbol at point or PATTERN.
-Grep over all non-backup and non-autosave files in the current
-directory tree.  If in an Emacs Lisp mode buffer and no optional
-PREFX-ARG is given, limit search to only .el and .el.gz files."
-  (interactive (list (if (and (not current-prefix-arg) (equal (buffer-name) "*Locate*"))
-			 (read-string "Grep files listed here for: ")
-		       (let ((default (symbol-at-point)))
-			 (when default (setq default (symbol-name default)))
-			 (read-string (format "Rgrep below current dir for%s: "
-					      (if default
-						  (format " (default %s)" default)
-						""))
-				      nil nil default)))
-		     current-prefix-arg))
-  (let* ((delim (cond ((not (string-match "\'" pattern)) ?\')
-			      ((not (string-match "\"" pattern)) ?\")
-			      ((not (string-match "=" pattern)) ?=)
-			      (t ?@)))
-	 (grep-cmd
-	  (if (and (not current-prefix-arg) (equal (buffer-name) "*Locate*"))
-	      (format "%s -e \%c%s\%c %s" hypb:rgrep-command delim pattern delim (hypb:locate-pathnames))
-	    (format "%s %s %s -e \%c%s\%c ."
-		    hypb:rgrep-command
-		    (when (and (memq major-mode '(emacs-lisp-mode lisp-interaction-mode))
-			       (not prefx-arg))
-		      (if (string-match "\\`rg " hypb:rgrep-command)
-			  "-g \"*.el\" -g \"*.el.gz\""
-			"--include=\"*.el\" --include=\"*.el.gz\""))
-		    (if (string-match "\\`rg " hypb:rgrep-command)
-			"-g \"!*~\" -g \"!#*\" -g \"!TAGS\""
-		      "--exclude=\".git\" --exclude=\"CVS\" --exclude=\"*~\" --exclude=\"#*\" --exclude=\"TAGS\"")
-		    delim pattern delim))))
-    (setq this-command `(grep ,grep-cmd))
-    (push this-command command-history)
-    (grep grep-cmd)))
+(defalias 'hypb:rgrep 'hui-select-rgrep)
 
 (defun hypb:save-lines (regexp)
   "Save only lines containing match for REGEXP.

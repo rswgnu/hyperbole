@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     24-Jun-25 at 16:38:34 by Mats Lidell
+;; Last-Mod:      7-Sep-25 at 10:13:14 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -115,7 +115,7 @@
 
 (defun action-key-error ()
   "If in Org mode and Hyperbole shares {M-RET}, run `org-meta-return'.
-In other context signal an error."
+In any other context, signal an error."
   (if (and (funcall hsys-org-mode-function)
 	   (hsys-org-meta-return-shared-p))
       (hact 'hsys-org-meta-return)
@@ -123,7 +123,7 @@ In other context signal an error."
 
 (defun assist-key-error ()
   "If in Org mode and Hyperbole shares {M-RET}, run `org-meta-return'.
-In other context, signal an error."
+In any other context, signal an error."
   (if (and (funcall hsys-org-mode-function)
 	   (hsys-org-meta-return-shared-p))
       (hact 'hsys-org-meta-return)
@@ -230,6 +230,10 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 ;;; ************************************************************************
 ;;; Hyperbole context-sensitive keys dispatch table
 ;;; ************************************************************************
+
+(defvar hkey-at-hbut nil
+  "Non-nil communicates between Smart Key predicates that point is at an hbut.
+The button's attributes are stored in the symbol, `hbut:current'.")
 
 (defvar hkey-value nil
   "Communicates a value between a Smart Key predicate and its actions.")
@@ -338,8 +342,13 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
     ;; Select or select-and-kill a markup pair (e.g. hmtl tags), list,
     ;; array/vector, set, function, comment or string that begins or
     ;; ends at point.  For markup pairs, point must be at the first
-    ;; character of the opening or closing tag.
-    ((hui-select-at-delimited-thing-p)
+    ;; character of the opening or closing tag.  Ignore delimiters in
+    ;; the middle of a Hyperbole button.
+    ((and (if (setq hkey-at-hbut (hbut:at-p))
+	      (or (eq (point) (hattr:get 'hbut:current 'lbl-end))
+		  (eq (point) (hattr:get 'hbut:current 'name-end)))
+	    t)
+	  (hui-select-at-delimited-thing-p))
      . ((hui-select-thing) . (progn (hui-select-thing)
 				    (hmouse-kill-region))))
     ;;
@@ -347,13 +356,18 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
     ;; sexpression, mark it for editing or kill it (assist key).  This
     ;; only handles the special case where point is just after the
     ;; closing delimiter and not at an end-of-line, so this may be
-    ;; removed someday.
-    ((hui-select-at-delimited-sexp-p)
+    ;; removed someday.  Ignore delimiters in the middle of a
+    ;; Hyperbole button.
+    ((and (if hkey-at-hbut
+	      (or (eq (point) (hattr:get 'hbut:current 'lbl-end))
+		  (eq (point) (hattr:get 'hbut:current 'name-end)))
+	    t)
+	  (hui-select-at-delimited-sexp-p))
      . ((hui-select-mark-delimited-sexp)
 	. (progn (hui-select-mark-delimited-sexp) (hmouse-kill-region))))
     ;;
     ;; If on a Hyperbole button, perform action or give help.
-    ((hbut:at-p)
+    (hkey-at-hbut
      . ((hui:hbut-act 'hbut:current) . (hui:hbut-help 'hbut:current)))
     ;;
     ;; This potentially displays a Smart Menu.
@@ -471,7 +485,7 @@ Its default value is `smart-scroll-down'.  To disable it, set it to
 		 (or (setq hkey-value (smart-lisp-at-load-expression-p))
 		     (smart-lisp-at-tag-p)))
 	       ;; Tightly limit Lisp matches in change-log-mode but
-	       ;; only call this if hkey-value is true since
+	       ;; call this only if hkey-value is true since
 	       ;; otherwise, already know there is no tag at point.
 	       (when hkey-value
 	         (smart-lisp-at-change-log-tag-p))))

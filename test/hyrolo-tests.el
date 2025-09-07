@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     16-Jun-25 at 22:03:21 by Bob Weiner
+;; Last-Mod:     16-Aug-25 at 15:30:03 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1653,7 +1653,7 @@ body
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))
 
-(ert-deftest hyrolo-test--grep-count ()
+(ert-deftest hyrolo-tests--grep-count ()
   "Verify number of matched entries are correct."
   (unwind-protect
       (with-temp-buffer
@@ -1678,7 +1678,7 @@ match
          (kill-buffer hyrolo-display-buffer)
          (ert-fail "Buffer %s should not have been created" hyrolo-display-buffer))))
 
-(ert-deftest hyrolo-test--expand-path-list ()
+(ert-deftest hyrolo-tests--expand-path-list ()
   "Verify `hyrolo-expand-path-list'."
   (should (equal (hyrolo-expand-path-list nil)
 		 (list (expand-file-name "~/.rolo.otl"))))
@@ -1697,7 +1697,7 @@ match
                => (list "/file1")))
       (should (equal (hyrolo-expand-path-list '("/file1")) '("/file1"))))))
 
-(ert-deftest hyrolo-test--at-tags-p ()
+(ert-deftest hyrolo-tests--at-tags-p ()
   "Verify `hyrolo-at-tags-p´."
   (let ((orig-buffer-name (symbol-function 'buffer-name)))
     (cl-letf (((symbol-function 'buffer-name)

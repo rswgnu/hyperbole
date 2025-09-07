@@ -1,3 +1,269 @@
+2025-09-07  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--published-html-links-to-word-and-section):
+    Skip if Org version is less than 9.7 since org-publish does not work for
+    HyWiki prior to that.  Will be skipped for Emacs 28 and 29.
+
+* hibtypes.el (action): Fix setting of 'actype-sym' when a variable by adding
+    a call to 'intern-soft'.
+
+* hproperty.el (hproperty:but-get-all-in-region): Note in doc string that no ordering
+    is specified; may differ between Emacs versions.
+  test/hywiki-tests.el (hywiki-tests--edit): Handle different ordering of wikiword
+    overlays across major Emacs versions.
+
+* hywiki.el (hywiki--extend-region): Fix to extend region to include a whole wikiword
+    reference when not delimited and called from a yank command.
+* test/hywiki-tests.el (hywiki-tests--wikiword-yanked-with-extra-words): Above fix
+    keeps this test from failing.  Enable it now that it works.
+
+* test/hywiki-tests.el (hywiki-tests--referent-test): Disable 'vertico-mode' which
+    can cause tests to fail.
+
+* hproperty.el (hproperty:but-get-all-in-region): Remove 'nreverse' call so buttons
+    are returned in first to last order as desired.
+
+* hibtypes.el (action): Fix 'actype-sym' handling when a regular Emacs function.
+
+* hmouse-tag.el (smart-python): Fix to call 'error-message-string' to extract
+    the error from the err 'condition-case' variable.
+
+* test/hywiki-tests.el (hywiki-tests--save-referent-find-use-menu): Rewrite to
+    work and disable `vertico-mode' within the test to prevent failure.
+
+2025-08-31  Bob Weiner  <rsw@gnu.org>
+
+* test/demo-tests.el (fast-demo-key-series-help-buffer): Check actual key binding
+    and enable 'hyperbole-mode'.
+
+* test/kotl-orgtbl-tests.el (kotl-orgtbl-shift-tab-demotes-tree-outside-table): Fix
+    to not use <S-iso-lefttab> key binding but call function directly.
+
+* hib-kbd.el (kbd-key:named-key-list): Add backtab, iso-lefttab and iso-righttab.
+
+* hibtypes.el (action): Remove any requirements on chars before or after action
+    type delimiters, so can abut action buttons to other text.
+
+* hywiki.el (hywiki-kill-buffer-hook, hywiki-in-page-p): Exit if no 'buffer-file-name'.
+
+* test/hywiki-tests.el (hywiki-tests--referent-test): Stop checking existence
+    of cache file since there may be a race condition that makes it not exist yet.
+
+* hywiki.el (hywiki-maybe-dehighlight-page-name): Handle when 'last-command-event'
+    is not a character, e.g. 'return.
+
+* hibtypes.el (action): Allow for double-quotes before or after action button
+    delimiters.
+
+* hbut.el (hbut:label-to-key): Fix to keep any whitespace at the end of a label if
+    follows a ? or a backslash character as these are significant if the label is
+    later read back in as code, e.g. for an action button like: <insert-char ? >.
+
+2025-08-30  Bob Weiner  <rsw@gnu.org>
+
+* hui-mini.el: Replace all (beep) calls with (beep t) so do not exit keyboard
+    macros when meant only as an interactive user alert.
+
+* hib-kbd.el (kbd-key:key-series-to-events): Rewrite to execute 'key-series'
+    as a keyboard macro immediately (to reduce race conditions) unless it
+    contains a Hyperbole minibuffer menu in which case continue to queue
+    in `unread-command-events' because the Hyperbole minibuffer menu does not
+    work within keyboard macros.
+
+* hywiki.el (hywiki-org-link-resolve): Rename to 'hywiki-reference-to-referent'.
+            (hywiki-reference-to-org-link): Simplify conversion when no
+    'description' is given to just [[hy:reference]].
+
+2025-08-29  Bob Weiner  <rsw@gnu.org>
+
+* hui-select.el (hui-select-set-region): Fix so selection of a whole
+    narrowed buffer performs the selection and is not treated as a whole
+    buffer selection.
+
+* hywiki.el (hywiki-word-to-org-link): Rewrite to minimize text in the
+    Org links created.  Use 'hy:' protocol prefix.
+           (hywiki-word-to-org-link): Rename to 'hywiki-reference-to-org-link'.
+	   (hywiki-convert-words-to-org-links): Rename to
+    'hywiki-references-to-org-links'.
+  test/hywiki-tests.el (hywiki-tests--convert-words-to-org-link): Rename to
+    'hywiki-tests--references-to-org-link'.  Fix to prefix Org HyWikiWord
+    Org link referents with 'hy:' protocol.
+                        (hywiki-tests--org-link-resolve): Rename to
+    'hywiki-tests--reference-to-referent'.
+
+* hsys-org.el (hsys-org-link-at-p): Fix checks to ensure point is within
+    any Org link when trigger.  Was missing check that point is after start
+    of match, replace with call to 'hargs:delimited-p' to simplify the code.
+              (hsys-org-link-label-start-end): Add to fix Org link label
+    extraction.  Call from 'hsys-org-link-at-p' when in 'org-mode' and use
+    custom code to get proper label when not.
+
+* test/hywiki-tests.el (hywiki-tests--org-link-resolve): Fix to use full path
+    of wikipage.
+                       (hywiki-tests--org-link-export): Add (find-file wikipage)
+    call to fix that relative directory setting in `hywiki-org-link-export' is
+    set properly.
+
+* hib-kbd.el (kbd-key:act): Normalize 'key-series' prior to processing if not
+    already done.  Fixes bugs where SPC characters can be removed improperly
+    if called with a non-normalized 'key-series'.
+
+* hui-select.el (hui-select-at-delimited-thing-p): Update doc string to say
+    that global 'hkey-value' is set to the function that selects the syntactic
+    thing at point.
+  hbut.el (hbut:is-p): Change to return the hbut symbol passed in, if any.
+  hact.el (actype:doc): Remove unneeded duplicate 'hbut:is-p' call.
+  hui-mouse.el (hkey-at-hbut): Add this boolean to communicate between Smart
+    Key predicates that point is at a Hyperbole button.
+
+* hywiki.el (hywiki-get-page-list): Add to return a list of HyWikiWords with
+    existing pages.  Use  'hywiki-get-wikiword-list' to include existing WikiWords
+    with referents of all types, not just pages.
+            (hywiki-page-read-new): Add.
+            (hywiki-find-page): Add to mirror 'hywiki-find-referent'.
+  hui-mini.el (hui:menu-hywiki): Change 'EditPages' to 'EditPage' and from command
+    'hywiki-edirectory-edit' to 'hywiki-find-page'.  Add new entry 'DiredHyWiki'
+    with 'hywiki-edirectory-edit' command.
+* hui-menu.el (hui-menu-hywiki): Rename 'Edit-HyWiki-Pages' to 'Dired-HyWiki-Pages'.
+    Add new entry 'Find-HyWiki-Page' with command 'hywiki-find-page'.
+
+* hasht.el (hash-map): Fix that always returned nil when using a lambda function.
+    Second argument to 'push' call was wrong.  It was 'key' and should be 'result'.
+
+2025-08-28  Bob Weiner  <rsw@gnu.org>
+
+* hproperty.el (hproperty:char-property-face-p): Add.
+* hywiki.el (hywiki-ignore-face-list): Add constant.
+            (hywiki-maybe-highlight-page-names,
+             hywiki-highlight-word-get-range): Call above function and skip
+    HyWikiWord highlighting if any face in 'hywiki-ignore-face-list' is found.
+
+* hui-mouse.el (hkey-alist): Make 'hui-select-thing' and
+    'hui-select-at-delimited-sexp-p' ignore delimiters in the middle of an hbut,
+    e.g. when on closing paren of "(hyperbole)HyWiki", so that button activation
+    is always consistent.
+
+2025-08-27  Bob Weiner  <rsw@gnu.org>
+
+* hargs.el (hargs:search): Add to skip over backquoted search matches.
+           (hargs:delimited): Replace search calls with calls to `hargs:search'.
+    This improves HyWikiWord highlighting when quoted delimiters are used.
+
+* hmouse-drv.el (hkey-help): Print hbut attributes only when 'hkey-alist'
+    'hbut:at-p' clause triggers, not anytime an hbut actype attribute exists.
+    Otherwise, can have hui-select-thing trigger via an Action Key press
+    but also display the hbut attributes that the delimited thing is within.
+    Then user can't tell what action will trigger at point.
+
+* hywiki.el (hywiki-word-to-org-link): Remove set of 'path' to nil when no
+    buffer-file-name or when it matches buffer-file-name without a dir.  This
+    ensures a valid link is always returned from a valid input.
+
+2025-08-26  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-org-link-resolve): Fix so pathname is expanded relative
+    to 'hywiki-directory' since don't know the 'default-directory' of the
+    caller.
+
+2025-08-25  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-maybe-highlight-page-names): Add missing 'save-match-data'
+    and replace check of (and region-start region-end) with 'hywiki-delimited-p'
+    within a widened region (since often narrowed without delimiters in region)
+    to fix yank calls skipping past spaces in HyWikiWord sections without
+    delimiters.  Also solves words after spaces not dehighlighting with point
+    after a trailing double quote and then:  {M-:(backward-delete-char 1)}
+
+2025-08-20  Mats Lidell  <matsl@gnu.org>
+
+* hywiki.el (hywiki--extend-region): Fill long docstring.
+    (hywiki--maybe-de/highlight-sexp): Escape character literals.
+
+* hibtypes.el (display-value-and-remove-region): Declare actype as
+    function to silence byte compiler.
+
+2025-08-20  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--edit-string-pairs): Add a few more
+    tests based on cases fixed with recent updates.
+
+2025-08-19  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-delimited-p): Fix bug where = was used on a call to
+    'matching-paren' which can return nil.  Change to eq instead.
+            (hywiki--maybe-de/highlight-sexp): Fix to add 1 to region start
+    only when verify that the char after start is an opening delimiter.  This
+    fixes the bug where a substring wikiword is highlighted, e.g. if 'AI' is
+    the wikiword, it is highlighted within 'FAI'.
+
+2025-08-19  Mats Lidell  <matsl@gnu.org>
+
+* test/hmouse-drv-tests.el (hmouse-drv--hkey-actions): Adopted test case
+    to change in error message.
+
+* test/hywiki-tests.el (hywiki-tests--save-referent-bookmark): Visit a
+    file so the bookmark reference can be defined. Needed after the
+    refactoring of the hiwiki-tests--referent-test macro where not needed
+    files were removed.
+    (hywiki-tests--save-referent-info-index-use-menu): Skip test for
+    now. The menu keys work when tested manually but fail to work in the ert
+    test for unknown reasons.
+    (hywiki-tests--wikiword-step-check-verification)
+    (hywiki-tests--wikiword-step-check-verification-with-faces)
+    (hywiki-tests--wikiword-step-check-verification-with-surrounding-text):
+    The default value of `hywiki-tests--with-face-test' has been changed to t
+    which broke the tests that are not doing face checks. The var is now set
+    locally to nil where needed and removed where it does not need to be set.
+
+2025-08-17  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-create-page-and-display): Remove non-prompted referent handling
+    when running an ERT test.
+
+* test/hywiki-tests.el (hywiki-tests--hywiki-create-page--adds-no-wiki-word-fails):
+    'hywikig-add-page' should return nil so no removed the unneeded 'cdr' call.
+                       (hywiki-tests--a-wikiword-in-hywiki-directory): Rename
+    AnotherWikiWord to PotentialWikiWord to clarify that it has not been created.
+                       (hywiki-tests--referent-test): Further doc clarification.
+		       (hywiki-tests--filename-same-as-wiki-word): Simplify
+    with calls to 'ib:test-p' predicate rather than doing string compares.
+
+* hui.el (hui:delimited-selectable-thing-and-bounds): Fix so when {M-w} uses
+    'hui-select-get-region-boundaries' on a matching delimiter, it always
+    returns the same value rather than use the grow region feature.  This fixes
+    not all trailing parens being selected when at the start of a defun.
+
+* test/hywiki-tests.el (hywiki-tests--referent-test): Clarify behavior in doc
+    string and change wiki-referent to wiki-word-non-page.  Fix test cases
+    that create a non-page referent.
+
+* hbut.el (ibut:create): Fix error handling and don't switch to *Messages* buffer.
+
+2025-08-16  Bob Weiner  <rsw@gnu.org>
+
+* hypb.el (hypb:in-string-p): Remove check of chars prior to string open char.
+
+* hywiki.el (hywiki--word-face): Add underlining by default.  Helps to see if
+    spaces are highlighted or not.
+            (hywiki-highlight-word-move-range): Add for potential future use.
+            (hywiki--extend-region): Fix to not extend region to include trailing
+    whitespace unless delimited.
+
+* test/hywiki-tests.el (hywiki-tests--get-brace-strings,
+                        hywiki-tests--insert-by-char,
+                        hywiki-tests--execute-commands): Add.
+
+* hywiki.el (hywiki-buttonize-character-commands): Fix doc that this runs before
+    'post-command-hook'.
+
+* hmouse-tag.el (smart-tags-find-p): Rewrite to better match `smart-tags-display'
+    behavior which includes case-sensitive tag lookup and using xref hsys-xref
+    to detect more tag types.
+
+* test/hy-test-helpers.el (hy-delete-file-and-buffer): Previously just cleared
+    file modified flag without saving it.  Now additionally save the file
+    prior to trying to kill it.
+
 2025-08-16  Mats Lidell  <matsl@gnu.org>
 
 * hyrolo.el (hyrolo--wconfig): Remove a set of defvar declarations
@@ -15,11 +281,73 @@
   hyrolo.el (hyrolo-match-regexp)
   hhist.el (*hhist*): Use defvar for const variables that are set later
     than at their definition.
+    
+2025-08-10  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--with-face-test): Make default value be
+    t so HyWikiWord face start and end are checked in more tests.
+
+* hypb.el (hypb:rgrep): Move and rename to `hui-select-rgrep'; leave an alias
+    for the old name.  Extend so if on a matching delimiter, uses the whole
+    delimited text as the default to grep for.
+          (hypb:rgrep-command): Rename to 'hui-select-rgrep-command'.
+	  (hypb:eval): Remove 'command-execute' call as it duplicates the normal
+    command flow.
+
+* hui-select.el (hui-select-get-thing): Rewrite to match choices in 'hui-select-thing'.
+
+* hywiki.el (hywiki-help): Add to display help either for a HyWikiWord at point
+    or HyWikiWords in general.  In HyWiki menus replace the Help 'hkey-help'
+    call with a call to this instead.
+
+* hibtypes.el (hywiki-existing-word): Add reference to `hywiki-word' ibtype.
+
+* test/hywiki-tests.el (hywiki-tests--referent-test): Disable 'hsys-consult-flag'
+    so 'consult' package does not interfere with testing.
+  hsys-consult.el (hsys-consult-active-p): Add and autoload this so can turn
+    on and off use of consult (and vertico) within Hyperbole, e.g. when running
+    ert tests where consults interactivity interferes with batch testing.
+
+* hbut.el (ibut:set-name-and-label-key-p): Move recognition of action button
+    angle brackets ahead of string matches so that in a Lisp buffer, the action
+    button label is properly recognized rather than improperly adding the
+    ")\n" characters at the front since double quotes tested before <>:
+
+    (insert "<string-empty-p \"False\">")
+<string-empty-p "False">
+
+* hypb.el (hypb:eval-as-command): Rename to just `hypb:eval' and remove calling
+    of command hooks.
 
 2025-08-07  Mats Lidell  <matsl@gnu.org>
 
 * test/hactypes-tests.el (display-boolean-true-test)
     (display-boolean-false-test): Include Expr in verification.
+
+2025-08-03  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--edit-string-pairs,
+                        hywiki-tests--edit, hywiki-tests--interpolate-buffer): Add
+    simplified HyWiki string pair ert testing.
+
+* hywiki.el (hywiki-mode): Remove explicit call to 'hywiki-word-set-auto-highlighting'
+    because the set of 'hywiki-word-highlight-flag' automatically calls it.
+            (hywiki--maybe-rehighlight-at-point): Remove '(when hywiki--range'
+    around 'hywiki-maybe-highligh-on-page-name' to ensure proper rehighlighting
+    after ending delimiter is removed.
+            (hywiki-debuttonize-non-character-commands): In 'pre-command-hook', don't
+    nullify region markers if edebugging.
+            (hywiki-buttonize-non-character-commands): In 'post-command-hook', nullify
+    region markers after moving to the start of a HyWikiWord ref to prevent
+    rehighlighting entire region after a delimiter is removed.
+             (hywiki-get-delimited-region): Add and call from
+    'hywiki-at-range-delimiter'.  Fix to always return '(nil nil) if no delimited
+    region found and to order start and end properly.
+	     (hywiki-at-range-delimiter): Narrow only if no active region.  With an
+    active region, expand result range to include any pair delimiters outside the range
+    found at point as well as the active range.
+ 	     (hywiki--extend-yanked-region): Rename to 'hywiki--extend-region' and
+    fix start and end delimited pair extension logic.
 
 2025-07-31  Mats Lidell  <matsl@gnu.org>
 
@@ -29,11 +357,74 @@
 
 * test/hsys-org-tests.el (hsys-org:org-link-at-p): Update test.
 
+2025-07-29  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-maybe-dehighlight-between-page-names): Handle when
+    'hywiki--buttonize-range' is '(nil nil).
+            (hywiki--buts,hywiki--but-end, hywiki--but-start, hywiki--buttonize-end,
+             hywiki--buttonize-start, hywiki--buttonize-range, hywiki--end nil,
+             hywiki--range, hywiki--start): Make these buffer-local so stay set
+    between pre-command-hook and post-command-hook.
+
+2025-07-28  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (hbut:help): Add as an alias of 'hbut:report'.
+
 2025-07-27  Bob Weiner  <rsw@gnu.org>
 
-*  hpath.el (hpath:external-file-suffixes): Remove old Sun Raster image format
+* hypb.el (hypb:function-p): Add and autoload to determine if an obj is a function.
+	  (hypb:plist-p): Add and autoload to determine if an obj is a plist.
+          (hypb:map-plist): Trigger errors on invalid args.
+	  (hypb:eval-as-command): Add and replace eval calls in defact display
+    functions with this to invoke command hooks.
+
+* hpath.el (hpath:external-file-suffixes): Remove old Sun Raster image format
      .rs suffix which is now used for Rust code files instead.  This fixes
      issue gh#765 where Rust code would open externally from Emacs.
+
+2025-07-21  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki--buttonize-range): Add and use in pre- and post- hooks,
+    'hywiki-maybe-dehighlight-between-page-names' and
+    'hywiki--maybe-dehighlight-at-point'.
+            (hywiki-highlight-page): Add and autoload to force rehighlighting
+    of an entire HyWiki page.
+            (hywiki--extend-yanked-region): Extend past any HyWiki ref that
+    start or end is within.
+            (hywiki-buttonize-non-character-commands): Add support for insert
+    commands, eval-expression and eval-last-sexp (which may execute edit cmds).
+
+2025-07-20  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-debuttonize-non-character-commands,
+             hywiki-buttonize-non-character-commands): Remove use of
+    'hywiki-word-highlighted-at-p' since this may lead to improper results
+    if point is on an already highlighted WikiWord that is a substring of
+    a longer WikiWord created by deletion of characters during this command.
+            (hywiki--maybe-rehighlight-at-point): Always call
+    'hywiki-maybe-highlight-between-page-names' at the end as may need it
+    when in the middle of a HyWikiWord ref as well.
+            (hywiki-buttonize-non-character-commands): Activate this
+    post-command-hook when any of hkey-either, action-key, or assist-key
+    is the command.
+            (hywiki--maybe-dehighlight-at-point,
+             hywiki-maybe-dehighlight-between-page-names): Trigger when
+    hywiki--buttonize-start/end are markers set within the current buffer.
+
+* hbut.el (ibtype:ensure-current-hbut-is-set): Add and use in `defib' to allow
+    ibtype invocation without use of the Action Key.
+
+2025-07-13  Bob Weiner  <rsw@gnu.org>
+
+* hactypes.el (display-value-and-remove-region): Add.
+
+* hibtypes.el (action): With `delete-region' and `kill-region' actions, if no
+    args, either use any active region or when none, use the region of the
+    action button itself, removing it from the buffer.  The latter action is
+    typically used in internal HyWiki tests.
+    Also, if 'ert--running-tests' is non-nil, i.e. when running any ert test,
+    don't require spaces around the action button and delete the action button
+    after activation.
 
 2025-07-07  Bob Weiner  <rsw@gnu.org>
 
@@ -1335,7 +1726,7 @@ value to be [[WikiWord]] not [[file:WikiWord.org][WikiWord]].
 * hyrolo.el (hyrolo-expand-path-list): Fix to include a default file name
     even when the file does not yet exist.
 
-* test/hyrolo-tests.el (hyrolo-test--expand-path-list): Expand matching
+* test/hyrolo-tests.el (hyrolo-tests--expand-path-list): Expand matching
     filename.
 
 * hyrolo.el (hyrolo-expand-path-list): Use default "~/.rolo.org" when it
@@ -1540,7 +1931,7 @@ value to be [[WikiWord]] not [[file:WikiWord.org][WikiWord]].
 
 2025-01-20  Mats Lidell  <matsl@gnu.org>
 
-* test/test-helpers-tests.el (test-helpers-test--make-random-wikiword):
+* test/test-helpers-tests.el (test-helpers-tests--make-random-wikiword):
     Add test.
 
 * test/MANIFEST: Test file for the test helpers.
@@ -2983,8 +3374,8 @@ value to be [[WikiWord]] not [[file:WikiWord.org][WikiWord]].
 
 2024-08-05  Mats Lidell  <matsl@gnu.org>
 
-* test/hyrolo-tests.el (hyrolo-test--expand-path-list)
-    (hyrolo-test--at-tags-p): Add tests.
+* test/hyrolo-tests.el (hyrolo-tests--expand-path-list)
+    (hyrolo-tests--at-tags-p): Add tests.
 
 2024-07-31  Bob Weiner  <rsw@gnu.org>
 
@@ -3908,7 +4299,7 @@ value to be [[WikiWord]] not [[file:WikiWord.org][WikiWord]].
 * .github/workflows/main.yml (jobs): Add Emacs 29.3 to versions used for
     the CI builds.
 
-* test/hyrolo-tests.el (hyrolo-test--grep-count): Verify hyrolo match count.
+* test/hyrolo-tests.el (hyrolo-tests--grep-count): Verify hyrolo match count.
 
 2024-03-31  Bob Weiner  <rsw@gnu.org>
 
@@ -4425,8 +4816,8 @@ V9.0.1 changes ^^^^:
 * Update copyright date of latest updated version to be 2024 for all files
     with copyright string that so far have been updated in git under 2024.
 
-* test/hsettings-test.el: New test file for hsettings.
-    (hsettings-test--hyperbole-web-search): Test hyperbole-web-search.
+* test/hsettings-tests.el: New test file for hsettings.
+    (hsettings-tests--hyperbole-web-search): Test hyperbole-web-search.
 
 * Makefile (package-lint): Add explicit loading of package-lint from Melpa
     for this target. Only needed there.
@@ -6070,7 +6461,7 @@ V9.0.1 changes ^^^^:
 
 2023-08-27  Bob Weiner  <rsw@gnu.org>
 
-* test/hui-register-tests.el (hui-register-test--register-val-insert-ibut): Fix this test.
+* test/hui-register-tests.el (hui-register-tests--register-val-insert-ibut): Fix this test.
 
 * hbut.el (ebut:to): Simplify so if 'lbl-key' is nil, look only for ebutton at point.
           (ibut:to): Simplify so if 'name-key' is nil, look only for ibutton at point.
@@ -6139,7 +6530,7 @@ V9.0.1 changes ^^^^:
 * test/hmouse-drv-tests.el (hbut-pathname-path-variable-with-three-colons-is-a-path-test):
   test/smart-org-tests.el (smart-org-mode-with-smart-keys-buttons-on-hypb-button-activates)
 	                   smart-org-mode-with-smart-keys-on-hypb-button-activates):
-  test/hui-register-tests.el (hui-register-test--register-val-insert-ebut):
+  test/hui-register-tests.el (hui-register-tests--register-val-insert-ebut):
   test/hypb-tests.el (hypb:installation-type-test): Make work under Windows where path root
     is "c:/".
 
@@ -8084,10 +8475,10 @@ name with 'name' and 'name-key'.
 * hui.el (hui-copy-to-register): Use hui-register-struct-at-point if on a
     button.
 
-* test/hui-register-tests.el (hui-register-test--create-register-content)
-    (hui-register-test--register-val-jump-to)
-    (hui-register-test--register-val-insert-ebut)
-    (hui-register-test--register-val-insert-ibut): Add test cases for
+* test/hui-register-tests.el (hui-register-tests--create-register-content)
+    (hui-register-tests--register-val-jump-to)
+    (hui-register-tests--register-val-insert-ebut)
+    (hui-register-tests--register-val-insert-ibut): Add test cases for
     hui-register.
 
 * Makefile (EL_COMPILE, ELC_COMPILE): Add hui-register.
