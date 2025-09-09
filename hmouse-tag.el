@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:      7-Sep-25 at 12:37:56 by Bob Weiner
+;; Last-Mod:      8-Sep-25 at 22:11:30 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1295,16 +1295,17 @@ variable or face."
 
 (defun smart-tags-find-p (tag)
   "Return non-nil if TAG is found within a tags table, else nil."
-  (let* ((tags-table-list (smart-entire-tags-table-list))
-	 ;; Identifier searches should almost always be case-sensitive today
-	 (tags-case-fold-search nil)
-	 (func (smart-tags-noselect-function))
-	 (tags-file-name (unless tags-table-list
-			   (when (boundp 'tags-file-name) tags-file-name)))
-	 (tags-add-tables nil))
-    (ignore-errors
-      (cond ((and func tags-table-list (funcall func tag) t))
-	    ((with-no-warnings (and (hsys-xref-definition tag) t)))))))
+  (or (ignore-errors
+	(with-no-warnings (and (hsys-xref-definition tag) t)))
+      (let* ((tags-table-list (smart-entire-tags-table-list))
+	     ;; Identifier searches should almost always be case-sensitive today
+	     (tags-case-fold-search nil)
+	     (func (smart-tags-noselect-function))
+	     (tags-file-name (unless tags-table-list
+			       (when (boundp 'tags-file-name) tags-file-name)))
+	     (tags-add-tables nil))
+	(ignore-errors
+	  (and func tags-table-list (funcall func tag) t)))))
 
 (defun smart-java-cross-reference ()
   "If within a Java @see comment, edit the def and return non-nil, else nil.
@@ -1535,11 +1536,10 @@ backend is used."
 		  ;; many callers of this function.
 		  ;; Find exact identifier matches only.
 		  (with-no-warnings (xref-find-definitions tag)))))
-	  ((or tags-table-list tags-file-name)
-	   ;; Signals an error if tag is not found which is caught by
-	   ;; many callers of this function.
-	   ;; Find exact identifier matches only.
-	   (with-no-warnings (xref-find-definitions tag)))
+	  ;; Signals an error if tag is not found which is caught by
+	  ;; many callers of this function.
+	  ;; Find exact identifier matches only.
+	  ((with-no-warnings (xref-find-definitions tag)))
 	  (t
 	   (error "No existing tag tables in which to find `%s'" tag)))))
 

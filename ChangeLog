@@ -1,3 +1,13 @@
+2025-09-08  Bob Weiner  <rsw@gnu.org>
+
+* hsys-xref.el (hsys-xref-identifier-at-point): Clarify doc string.
+
+* hmouse-tag.el (smart-tags-display): Remove (or tags-table-list tags-file-name)
+    check since xref is now used and many of its backends don't require a TAGS
+    file.  Fixes issue gh#rswgnu/hyperbole/776.
+                (smart-tags-find-p): Rewrite to optimize and try xref before
+    tags lookup.
+
 2025-09-07  Bob Weiner  <rsw@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--published-html-links-to-word-and-section):
