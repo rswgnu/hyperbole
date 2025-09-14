@@ -4,6 +4,13 @@
     out Java handler at line 295 since it is failing.  Also, update to new
     prog-mode clause location and predicate.
 
+* hib-debbugs.el (eval-after-load "debbugs-gnu"): Fix Emacs bug#72811 that Mats
+    filed.  An infinite recursion in "debbugs-gnu" when 'debbugs-gnu-mode' is
+    invoked that occurred only in Emacs versions prior to 29 due to a
+    'debbugs-gnu-rescan' being called on 'tabulated-list-revert-hook'.  This
+    fixes Hyperbole's support for jumping to Emacs bug discussions via a link
+    like bug#72811.
+
 2025-09-09  Bob Weiner  <rsw@gnu.org>
 
 * hui-mouse.el (hkey-alist): Move 'smart-prog-tag' to before specific languages
