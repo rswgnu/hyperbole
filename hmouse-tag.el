@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:      8-Sep-25 at 22:11:30 by Bob Weiner
+;; Last-Mod:     14-Sep-25 at 10:50:21 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -217,7 +217,7 @@ If:
 	      (smart-tags-display tag next)
 	      ;; (message "Found definition for `%s'" tag)
 	      t)
-	  (error (message "`%s' definition not found in identifier lookup/tag tables" tag)
+	  (error (message "(smart-asm): `%s' definition not found in identifier lookup/tag tables" tag)
 		 (beep))))))
 
 ;;;###autoload
@@ -277,7 +277,7 @@ Optional second arg NEXT means jump to next matching C++ tag."
       (error
        (if (or (not smart-c-use-lib-man)
 	       (not (file-readable-p "~/.CLIBS-LIST")))
-	   (progn (message "`%s' definition not found in identifier lookup/tag tables" tag)
+	   (progn (message "(smart-c++-tag): `%s' definition not found in identifier lookup/tag tables" tag)
 		  (beep)
 		  nil)
 	 (message "Checking if `%s' is a C++ library function..." tag)
@@ -285,7 +285,7 @@ Optional second arg NEXT means jump to next matching C++ tag."
 	     (progn (message "Displaying C++ library man page for `%s'" tag)
 		    (manual-entry tag)
 		    t)
-	   (message "`%s' definition not found in identifier lookup/tag tables or C++ libraries" tag)
+	   (message "(smart-c++-tag): `%s' definition not found in identifier lookup/tag tables or C++ libraries" tag)
 	   (beep)
 	   nil))))))
 
@@ -358,13 +358,13 @@ If:
 	  (error
 	   (if (or (not smart-c-use-lib-man)
 		   (not (file-readable-p "~/.CLIBS-LIST")))
-	       (progn (message "`%s' definition not found in identifier lookup/tag tables" tag)
+	       (progn (message "(smart-c): `%s' definition not found in identifier lookup/tag tables" tag)
 		      (beep))
 	     (message "Checking if `%s' is a C library function..." tag)
 	     (if (smart-library-symbol tag)
 		 (progn (message "Displaying C library man page for `%s'" tag)
 			(manual-entry tag))
-	       (message "`%s' definition not found in identifier lookup/tag tables or C libraries" tag)
+	       (message "(smart-c): `%s' definition not found in identifier lookup/tag tables or C libraries" tag)
 	       (beep))))))))
 
 (defconst smart-c-keywords
@@ -447,7 +447,7 @@ in the current directory or any of its ancestor directories."
 	  ;; (message "Found definition for `%s'" tag)
 	  t)
       (error
-       (message "`%s' definition not found in identifier lookup/tag tables" tag)
+       (message "(smart-fortran): `%s' definition not found in identifier lookup/tag tables" tag)
        (beep)))))
 
 (defconst smart-fortran-keywords
@@ -520,7 +520,7 @@ Optional second arg NEXT means jump to next matching Java tag."
 	  (smart-tags-display tag next)
 	  ;; (message "Found definition for `%s'" tag)
 	  t)
-      (error (progn (message "`%s' definition not found in identifier lookup/tag tables" tag)
+      (error (progn (message "(smart-java-tag): `%s' definition not found in identifier lookup/tag tables" tag)
 		    (beep))))))
 
 ;;; The following should be called only if the OO-Browser is available.
@@ -591,7 +591,7 @@ in the current directory or any of its ancestor directories."
 	  ;; (message "Found definition for `%s'" tag)
 	  t)
       (error
-       (message "`%s' definition not found in identifier lookup/tag tables" tag)
+       (message "(smart-javascript): `%s' definition not found in identifier lookup/tag tables" tag)
        (beep)))))
 
 (defconst smart-javascript-keywords
@@ -904,7 +904,7 @@ Otherwise:
       (error
        (if (or (not smart-c-use-lib-man)
 	       (not (file-readable-p "~/.CLIBS-LIST")))
-	   (progn (message "`%s' definition not found in identifier lookup/tag tables" tag)
+	   (progn (message "(smart-objc-tag): `%s' definition not found in identifier lookup/tag tables" tag)
 		  (beep))
 	 (message
 	  "Checking if `%s' is an Objective-C library function..." tag)
@@ -913,7 +913,7 @@ Otherwise:
 	       (message
 		"Displaying Objective-C library man page for `%s'" tag)
 	       (manual-entry tag))
-	   (message "`%s' definition not found in identifier lookup/tag tables or Objective-C libraries"
+	   (message "(smart-objc-tag): `%s' definition not found in identifier lookup/tag tables or Objective-C libraries"
 		    tag)
 	   (beep)))))))
 
@@ -1295,17 +1295,17 @@ variable or face."
 
 (defun smart-tags-find-p (tag)
   "Return non-nil if TAG is found within a tags table, else nil."
-  (or (ignore-errors
-	(with-no-warnings (and (hsys-xref-definition tag) t)))
       (let* ((tags-table-list (smart-entire-tags-table-list))
 	     ;; Identifier searches should almost always be case-sensitive today
 	     (tags-case-fold-search nil)
 	     (func (smart-tags-noselect-function))
-	     (tags-file-name (unless tags-table-list
-			       (when (boundp 'tags-file-name) tags-file-name)))
+	     (tags-file-name (or (bound-and-true-p tags-file-name)
+				 (car tags-table-list)))
 	     (tags-add-tables nil))
-	(ignore-errors
-	  (and func tags-table-list (funcall func tag) t)))))
+	(or (ignore-errors
+	      (with-no-warnings (and (hsys-xref-definition tag) t)))
+	    (ignore-errors
+	      (and func tags-table-list (funcall func tag) t)))))
 
 (defun smart-java-cross-reference ()
   "If within a Java @see comment, edit the def and return non-nil, else nil.

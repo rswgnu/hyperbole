@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:      8-Sep-25 at 22:03:10 by Bob Weiner
+;; Last-Mod:     14-Sep-25 at 10:19:47 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -52,7 +52,7 @@
 (defun hsys-xref-identifier-at-point ()
   "Return the identifier at point if not a pathname; otherwise, return nil.
 Identifier is a string."
-  (unless (hpath:at-p nil t)
+  (unless (hpath:at-p)
     (xref-backend-identifier-at-point (xref-find-backend))))
 
 (defun hsys-xref-item-buffer (item)

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:      7-Sep-25 at 10:13:14 by Bob Weiner
+;; Last-Mod:      9-Sep-25 at 01:30:54 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -455,6 +455,13 @@ The button's attributes are stored in the symbol, `hbut:current'.")
     ((eq major-mode 'pages-directory-mode)
      . ((pages-directory-goto) . (pages-directory-goto)))
     ;;
+    ;; For most programming languages use xref which supports various
+    ;; Language Servers
+    ((and (setq hkey-value (smart-prog-at-tag-p))
+	  (smart-tags-find-p hkey-value))
+     . ((ignore-errors (smart-prog-tag hkey-value)) .
+	(ignore-errors (smart-prog-tag hkey-value))))
+    ;;
     ;; Python files - ensure this comes before Imenu for more advanced
     ;; definition lookups
     ((and (or (and (derived-mode-p 'python-mode 'python-ts-mode) (hypb:buffer-file-name))
@@ -592,8 +599,7 @@ The button's attributes are stored in the symbol, `hbut:current'.")
     ;;
     ;; Any other programming modes not specially supported
     ;; Use xref which supports various Language Servers
-    ((setq hkey-value (smart-prog-at-tag-p))
-     . ((smart-prog-tag hkey-value) . (smart-prog-tag hkey-value))))
+    )
   "Alist of predicates and form-conses for the Action and Assist Keyboard Keys.
 Each element is: (PREDICATE-FORM . (ACTION-KEY-FORM . ASSIST-KEY-FORM)).
 When the Action or Assist Key is pressed, the first or second form,
