@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:     5-Apr-21 at 18:53:10
-;; Last-Mod:     14-Sep-25 at 11:48:28 by Mats Lidell
+;; Last-Mod:     14-Sep-25 at 15:53:43 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -106,7 +106,7 @@ See Emacs bug#74042 related to usage of texi2any."
               (should (and beg end (= (- end beg) 3))))))))))
 
 (ert-deftest hypb--in-string-p--max-lines ()
-  "Verify max lines handing by `hypb:in-string-p'."
+  "Verify max lines handling by `hypb:in-string-p'."
   (let* ((str "1\n\\\"2\n")
          (range (list str 2 8)))
     (with-temp-buffer
