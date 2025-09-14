@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:     5-Apr-21 at 18:53:10
-;; Last-Mod:      6-Jul-25 at 14:49:57 by Bob Weiner
+;; Last-Mod:     14-Sep-25 at 15:53:43 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -106,24 +106,50 @@ See Emacs bug#74042 related to usage of texi2any."
               (should (and beg end (= (- end beg) 3))))))))))
 
 (ert-deftest hypb--in-string-p--max-lines ()
-  "Verify max lines handing by `hypb:in-string-p'."
-  (with-temp-buffer
-    (insert "\
-\"1
-2
-\"")
-    (goto-line 1) (move-to-column 1)
-    ;; First line. Line starts with quote.
-    (should-not (hypb:in-string-p 1))
-    (should (hypb:in-string-p 2))
-    (should (hypb:in-string-p 3))
-    (should (hypb:in-string-p 99))
+  "Verify max lines handling by `hypb:in-string-p'."
+  (let* ((str "1\n\\\"2\n")
+         (range (list str 2 8)))
+    (with-temp-buffer
+      (insert (format "\"%s\"" str))
+      (goto-line 1) (move-to-column 1)
+      ;; First line. Line starts with quote.
+      (should-not (hypb:in-string-p 1))
+      (should (hypb:in-string-p 2))
+      (should (hypb:in-string-p 3))
+      (should (hypb:in-string-p 99))
 
-    ;; Second line. No quote on the line.
-    (goto-line 2)
-    (should-not (hypb:in-string-p 1))
-    (should (hypb:in-string-p 2))
-    (should (hypb:in-string-p 3))))
+      ;; With range-flag
+      (should (equal range (hypb:in-string-p 2 t)))
+      (should (equal range (hypb:in-string-p 3 t)))
+      (should (equal range (hypb:in-string-p 99 t)))
+
+      ;; Zero max-lines
+      (should-not (hypb:in-string-p 0))
+
+      ;; Second line. No quote on the line.
+      (goto-line 2)
+      (should-not (hypb:in-string-p 1))
+      (should (hypb:in-string-p 2))
+      (should (hypb:in-string-p 3))
+
+      ;; With range-flag
+      (should (equal range (hypb:in-string-p 2 t)))
+      (should (equal range (hypb:in-string-p 3 t))))))
+
+(ert-deftest hypb--string-count-matches ()
+  "Verify `hypb--string-count-matches'."
+  (should (= 2 (hypb:string-count-matches "a" "abcabd")))
+  (should (= 1 (hypb:string-count-matches "a" "abcabd" 0 2)))
+  (should (= 0 (hypb:string-count-matches "a" "abcabd" 1 3)))
+  (should (= 1 (hypb:string-count-matches "a" "abcabd" 1 4)))
+  ;; Overlap
+  (should (= 1 (hypb:string-count-matches "aba" "ababa")))
+  (should (= 2 (hypb:string-count-matches "aba" "abababa")))
+  ;; Errors
+  (should-error (hypb:string-count-matches "a" "abc" -1 1))
+  (should-error (hypb:string-count-matches "a" "a" 1 3))
+  (should-error (hypb:string-count-matches "a" "a" 0 -1))
+  (should-error (hypb:string-count-matches "a" "ab" 0 3)))
 
 ;; This file can't be byte-compiled without the `el-mock' package (because of
 ;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.

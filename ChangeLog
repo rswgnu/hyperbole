@@ -1,3 +1,8 @@
+2025-09-14  Mats Lidell  <matsl@gnu.org>
+
+* test/hypb-tests.el (hypb--in-string-p--max-lines): Update test.
+    (hypb--string-count-matches): Add test.
+
 2025-09-08  Bob Weiner  <rsw@gnu.org>
 
 * hsys-xref.el (hsys-xref-identifier-at-point): Clarify doc string.
