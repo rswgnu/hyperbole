@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     19-Aug-25 at 10:08:26 by Mats Lidell
+# Last-Mod:     14-Sep-25 at 23:28:46 by Mats Lidell
 #
 # Copyright (C) 1994-2025  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -223,7 +223,7 @@ EL_COMPILE = hact.el hactypes.el hargs.el hbdata.el hbmap.el hbut.el \
 	     hui-treemacs.el hui-window.el hui.el hvar.el hversion.el hynote.el hypb.el hyperbole.el \
 	     hyrolo-demo.el hyrolo-logic.el hyrolo-menu.el hyrolo.el hywconfig.el hywiki.el \
              hasht.el set.el hypb-ert.el hui-dired-sidebar.el hypb-maintenance.el \
-             hui-register.el
+             hui-register.el hycontrol-zmfrm.el
 
 EL_SRC = $(EL_COMPILE)
 
