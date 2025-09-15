@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     31-Aug-25 at 01:00:23 by Bob Weiner
+;; Last-Mod:     14-Sep-25 at 19:26:09 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -491,6 +491,30 @@ Ensure modifying the button but keeping the label does not create a double label
       (hy-delete-file-and-buffer kotl-file)
       (hy-delete-file-and-buffer other-file)
       (delete-directory other-dir))))
+
+(ert-deftest hui--kill-ring-save--defun ()
+  "Verify `hui:kill-ring-save' grabbs defun.
+Verify same region is grabbed both when calling twice and at both ends
+of the defun."
+  (skip-unless (not noninteractive))
+  (let ((last-command #'ignore)
+        (defun "(defun fun () \"Fun.\" t)")
+        kill-ring)
+    (with-temp-buffer
+      (emacs-lisp-mode)
+      (insert defun "\n")
+      (goto-char 0)
+      (call-interactively #'hui:kill-ring-save)
+      (should (string= (car kill-ring) defun))
+      ;; Call a second time
+      (call-interactively #'hui:kill-ring-save)
+      (should (string= (car kill-ring) defun))
+      (should (string= (cadr kill-ring) defun))
+      ;; Call at end of defun
+      (goto-char (length defun))
+      (call-interactively #'hui:kill-ring-save)
+      (should (string= (car kill-ring) defun))
+      (should (= 3 (length kill-ring))))))
 
 (ert-deftest hui--copy-to-register--yank-in-same-kotl ()
   "Yank klink in register into same kotl file."

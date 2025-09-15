@@ -36,6 +36,8 @@
 
 2025-09-14  Mats Lidell  <matsl@gnu.org>
 
+* test/hui-tests.el (hui--kill-ring-save--defun): Add test.
+
 * test/hypb-tests.el (hypb--in-string-p--max-lines): Update test.
     (hypb--string-count-matches): Add test.
 `
