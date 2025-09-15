@@ -604,9 +604,8 @@ Regression: Looked up path name '-narrow'."
           (goto-char (point-min))
           (goto-char (1- (re-search-forward "-")))
           (should (string= (smart-lisp-at-tag-p) symbol-name))
-          (with-mock
-            (mock (smart-lisp-find-tag nil nil) => t)
-            (action-key)))
+          (action-key)
+	  (should (looking-at "(defun hmail:msg-narrow (")))
       (hy-delete-file-and-buffer el-file))))
 
 (ert-deftest hmouse-drv--hmouse-choose-link-and-referent-windows--two-windows-same-frame ()

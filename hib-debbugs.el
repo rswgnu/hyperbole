@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Jun-16 at 14:24:53
-;; Last-Mod:     16-Aug-25 at 10:01:43 by Bob Weiner
+;; Last-Mod:     14-Sep-25 at 12:33:09 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -93,7 +93,15 @@
   '(progn
      (defvar debbugs-gnu-all-packages)
      (push "hyperbole"  debbugs-gnu-all-packages)
-     (push "oo-browser" debbugs-gnu-all-packages)))
+     (push "oo-browser" debbugs-gnu-all-packages)
+     ;;
+     ;; debbugs-gnu has a bug that causes an infinite recursion in
+     ;; Emacs 27 and 28 but not versions after, so fix it here by
+     ;; removing the offending hook
+     (when (string-lessp emacs-version "29")
+       (add-hook 'after-change-major-mode-hook
+		 (lambda ()
+		   (remove-hook 'tabulated-list-revert-hook #'debbugs-gnu-rescan t))))))
 
 ;;; ************************************************************************
 ;;; Public implicit button types

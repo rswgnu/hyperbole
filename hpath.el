@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     27-Jul-25 at 11:07:45 by Bob Weiner
+;; Last-Mod:     14-Sep-25 at 14:43:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1602,9 +1602,8 @@ but locational suffixes within the file are utilized."
 			    ;; certain cases, e.g. with mount point or os path
 			    ;; alterations.
 			    (when (or (null (hypb:buffer-file-name))
-				      (and (hypb:buffer-file-name)
-				       (equal (file-name-nondirectory path)
-					      (file-name-nondirectory (hypb:buffer-file-name)))))
+				      (equal (file-name-nondirectory path)
+					     (file-name-nondirectory (hypb:buffer-file-name))))
 			      (cond ((and anchor kotl-flag)
 				     (klink:act path-with-anchor anchor-start-pos))
 				    ((or hash anchor)
