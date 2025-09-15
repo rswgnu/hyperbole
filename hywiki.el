@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:      7-Sep-25 at 15:21:53 by Bob Weiner
+;; Last-Mod:     14-Sep-25 at 14:21:06 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -856,12 +856,11 @@ Function used to display is \"hywiki-display-<referent-type>\"."
 	   (error "(hywiki-display-referent-type): Referent type must be a symbol, not %s" referent-type)))))
 
 (defun hywiki-display-referent (&optional wikiword prompt-flag)
-  "Display HyWiki WIKIWORD or a regular file with WIKIWORD nil.
+  "Display HyWiki WIKIWORD referent or a regular file with WIKIWORD nil.
 Return the WIKIWORD's referent if successfully found or nil otherwise.
 The referent is a cons of (<referent-type> . <referent-value>).
 For further details, see documentation for `hywiki-find-referent'.
-After successfully finding a page and reading it into a buffer, run
-`hywiki-display-referent-hook'."
+After successfully finding a referent, run `hywiki-display-referent-hook'."
   (let ((in-page-flag (null wikiword))
 	(in-hywiki-directory-flag (hywiki-in-page-p)))
     (if (or (stringp wikiword) in-hywiki-directory-flag)
@@ -1416,7 +1415,7 @@ Use `hywiki-get-referent' to determine whether a HyWiki page exists."
   (let* ((normalized-word (hywiki-get-singular-wikiword wikiword))
 	 (referent (hywiki-find-referent wikiword prompt-flag)))
     (cond (referent)
-	  ((and (null referent) (hywiki-word-is-p normalized-word))
+	  ((hywiki-word-is-p normalized-word)
 	   (when (hywiki-add-page normalized-word)
 	     (hywiki-display-page normalized-word)))
 	  (t (user-error "(hywiki-create-page-and-display): Invalid HyWikiWord: '%s'; must be capitalized, all alpha" wikiword)))))
@@ -1486,6 +1485,7 @@ calling this function."
 (defun hywiki-display-sexpression (_wikiword sexpression)
   (eval sexpression))
 
+;; Presently used only in tests; maybe move it to the test/ dir
 (defun hywiki-add-to-referent (wikiword text position)
   "Display WIKIWORD referent and insert TEXT at POSITION.
 Create page if it does not exist.  If WIKIWORD is invalid, return
