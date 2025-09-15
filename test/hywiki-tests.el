@@ -1478,8 +1478,8 @@ named WikiReferent with a non-page referent type."
    (mocklet (((hypb:require-package 'org-roam) => t)
 	     ((org-roam-node-read) => "node")
 	     ((org-roam-node-title "node") => "node-title")
-             (hywiki-display-org-roam-node => t))
-     (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET r RET"))
+             ((hywiki-display-org-roam-node "WikiReferent" "node-title") => t))
+     (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET r"))
      (hy-test-helpers:consume-input-events))))
 
 (ert-deftest hywiki-tests--delete-parenthesised-char ()

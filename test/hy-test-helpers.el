@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     17-Aug-25 at 10:12:52 by Bob Weiner
+;; Last-Mod:     15-Sep-25 at 17:39:59 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -25,7 +25,7 @@
 
 (defun hy-test-helpers:consume-input-events ()
   "Use `recursive-edit' to consume the events kbd-key generates."
-  (run-with-timer 0.1 nil (lambda () (exit-recursive-edit)))
+  (run-with-timer 0.1 nil (lambda () (if (> (recursion-depth) 0) (exit-recursive-edit))))
   (recursive-edit))
 
 (defun hy-test-helpers:ensure-link-possible-type (type)

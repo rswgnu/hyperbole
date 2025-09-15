@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Jun-16 at 14:24:53
-;; Last-Mod:     14-Sep-25 at 12:33:09 by Bob Weiner
+;; Last-Mod:     15-Sep-25 at 18:51:51 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -80,6 +80,7 @@
 (declare-function debbugs-get-status "ext:debbugs-gnu")
 (declare-function debbugs-gnu-bugs "ext:debbugs-gnu")
 (declare-function debbugs-gnu-current-id "ext:debbugs-gnu")
+(declare-function debbugs-gnu-rescan "ext:debbugs-gnu")
 (declare-function debbugs-gnu-select-report "ext:debbugs-gnu")
 (declare-function debbugs-gnu-show-reports "ext:debbugs-gnu")
 (defvar debbugs-gnu-current-query)
