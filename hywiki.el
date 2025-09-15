@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     14-Sep-25 at 14:21:06 by Bob Weiner
+;; Last-Mod:     14-Sep-25 at 20:58:17 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1363,7 +1363,7 @@ referent."
       (hywiki-create-referent wikiword t)
     (hywiki-create-page wikiword t)))
 
-(defun hywiki-word-create-and-display (wikiword &optional arg)
+(defun hywiki-word-create-and-display (wikiword &optional prompt-flag)
   "Display the HyWiki referent for WIKIWORD and return it.
 If there is no existing WIKIWORD referent, add one.
 With either `hywiki-referent-prompt-flag' set or optional prefix ARG,
@@ -1381,33 +1381,25 @@ exists."
 				      "referent"
 				    "page"))))
 		     current-prefix-arg))
-  (hywiki-create-page-and-display
+  (hywiki-create-referent-and-display
    wikiword (or (and hywiki-referent-prompt-flag
-		     (null arg))
-		arg)))
+		     (null prompt-flag))
+		prompt-flag)))
 
-(defun hywiki-create-referent-and-display (wikiword)
-  "Display the HyWiki referent for WIKIWORD and return it.
-If there is no existing WIKIWORD referent, prompt for and choose
-a referent type; see `hywiki-referent-menu' for valid referent
-types.
+(defun hywiki-create-referent-and-display (wikiword &optional prompt-flag)
+  "Display the HyWiki referent for WIKIWORD if not in an ert test; return it.
+
+If there is no existing WIKIWORD referent and PROMPT-FLAG is non-nil,
+prompt for and choose a referent type; see `hywiki-referent-menu' for
+valid referent types.  Otherwise, if there is no existing HyWiki page
+for WIKIWORD, add a page for it.
 
 Use `hywiki-get-referent' to determine whether a HyWikiWord referent
-exists."
+or page exists."
   (interactive (list (or (hywiki-word-at)
-			 (hywiki-word-read-new "Add/Edit and display HyWiki referent: "))))
-  (hywiki-create-page-and-display wikiword t))
-
-(defun hywiki-create-page-and-display (wikiword &optional prompt-flag)
-  "Display the HyWiki referent for WIKIWORD if not in an ert test; return it.
-If there is no existing WIKIWORD referent, add a HyWiki page for
-it unless optional prefix arg, PROMPT-FLAG, is given, then prompt
-for and create another referent type.  See `hywiki-referent-menu'
-for valid referent types.
-
-Use `hywiki-get-referent' to determine whether a HyWiki page exists."
-  (interactive (list (or (hywiki-word-at)
-			 (hywiki-word-read-new "Add/Edit and display HyWiki page: "))
+			 (hywiki-word-read-new
+			  (format "Add/Edit and display HyWiki %s: "
+				  (if current-prefix-arg "referent" "page"))))
 		     current-prefix-arg))
   (when (and (not prompt-flag) hywiki-referent-prompt-flag
 	     (called-interactively-p 'interactive))
@@ -1418,7 +1410,7 @@ Use `hywiki-get-referent' to determine whether a HyWiki page exists."
 	  ((hywiki-word-is-p normalized-word)
 	   (when (hywiki-add-page normalized-word)
 	     (hywiki-display-page normalized-word)))
-	  (t (user-error "(hywiki-create-page-and-display): Invalid HyWikiWord: '%s'; must be capitalized, all alpha" wikiword)))))
+	  (t (user-error "(hywiki-create-referent-and-display): Invalid HyWikiWord: '%s'; must be capitalized, all alpha" wikiword)))))
 
 (defun hywiki-display-page (&optional wikiword file-name)
   "Display an optional WIKIWORD page and return the page file.

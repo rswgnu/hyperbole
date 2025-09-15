@@ -1,14 +1,18 @@
 2025-09-14  Bob Weiner  <rsw@gnu.org>
 
+* hywiki.el (hywiki-create-page-and-display): Replace with updated
+    'hywiki-create-referent-and-display'.
+           (hywiki-word-create-and-display): Replace call to
+    'hywiki-create-page-and-display' with 'hywiki-create-referent-and-display'.
+* hywiki.el (hywiki-create-referent-and-display): Remove null check of
+    'referent' value already done in previous cond clause.
+
 * hpath.el (hpath:find): Remove unneeded second check that
     (hypb:buffer-file-name) returns non-nil.
 
 * test/hui-mouse-tests.el (hui-mouse-tests--hkey-alist): Temporarily comment
     out Java handler at line 295 since it is failing.  Also, update to new
     prog-mode clause location and predicate.
-
-* hywiki.el (hywiki-create-page-and-display): Remove null check of 'referent'
-    value already done in previous cond clause.
 
 * hib-debbugs.el (eval-after-load "debbugs-gnu"): Fix Emacs bug#72811 that Mats
     filed.  An infinite recursion in "debbugs-gnu" when 'debbugs-gnu-mode' is
