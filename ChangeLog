@@ -1,3 +1,18 @@
+2025-09-15  Mats Lidell  <matsl@gnu.org>
+
+* hycontrol.el (hycontrol-frames-mode-map, hycontrol-frame-zoom): Use hycontrol-zmfrm.
+
+* Makefile (EL_COMPILE):
+  MANIFEST: Add hycontrol-zmfrm.el
+
+* hycontrol-zmfrm.el (hycontrol-frame-zoom-font-difference)
+    (hycontrol-enlarge-font-tries, hyconytrol-frcmds-enlarged-font-name)
+    (hycontrol-enlarge-font, hycontrol-zoom-frm-unzoom)
+    (hycontrol-zoom-frm-in, hycontrol-zoom-frm-out)
+    (hycontrol-zoom-all-frames-in, hycontrol-zoom-all-frames-out)
+    (hycontrol-zoom-all-frames-unzoom): All frame zoom support based on
+    zoom-frm.el.
+
 2025-09-14  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-create-page-and-display): Replace with updated
