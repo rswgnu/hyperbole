@@ -47,6 +47,7 @@ hui-treemacs.el      - GNU Hyperbole Smart Key support for the Treemacs file man
 hui-window.el        - Smart Mouse Key window and modeline depress/release actions
 hui.el               - GNU Hyperbole button and hyperlink user interface
 hycontrol.el         - Interactive sizing, moving, replicating and deleting of windows and frames
+hycontrol-zmfrm.el   - Global zoom support for Emacs 28
 hyrolo-menu.el       - Pulldown and popup menus of HyRolo commands
 
 * --- APPLICATION PROGRAMMING INTERFACE ---

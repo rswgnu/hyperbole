@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:     22-Jun-25 at 10:48:50 by Bob Weiner
+;; Last-Mod:     15-Sep-25 at 00:31:29 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -109,15 +109,6 @@
 ;;   new offset values.  `hycontrol-get-screen-offsets' returns the
 ;;   list of offsets in clockwise order starting from the top edge.
 ;;
-;;   ----
-;;
-;;   Please note that the frame zoom in/out commands on Z and z will
-;;   not work unless you have the separately available "zoom-frm.el"
-;;   library (which itself requires another library).  If not available,
-;;   this command will just beep at you.  The window-based zoom commands
-;;   utilize a built-in Emacs library, so they will always work under
-;;   any window system.  These commands enlarge and shrink the default
-;;   text face.
 
 ;;; Code:
 ;;; ************************************************************************
@@ -133,12 +124,8 @@
   ;; Get from: https://github.com/emacsmirror/framemove/blob/master/framemove.el
   (require 'framemove nil t)
   (require 'windmove))
-;; Frame face enlarging/shrinking (zooming) requires this separately available library.
-;; Everything else works fine without it, so don't make it a required dependency.
-;; It also requires the separate library, 'frame-cmds', so ignore any
-;; errors if that library is not found as well.
-(ignore-errors
-  (require 'zoom-frm nil t))
+
+(require 'hycontrol-zmfrm)
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -335,8 +322,8 @@ for it to be omitted by `list-buffers'."
     (define-key map "t"     'hycontrol-enable-windows-mode)
     (define-key map "u"     'unbury-buffer)
     (define-key map "w"     (lambda () (interactive) (hycontrol-set-frame-width nil (+ (frame-width) hycontrol-arg))))
-    (define-key map "Z"     (lambda () (interactive) (if (> hycontrol-arg 9) (setq hycontrol-arg 1)) (hycontrol-frame-zoom 'zoom-frm-in hycontrol-arg hycontrol-debug)))
-    (define-key map "z"     (lambda () (interactive) (if (> hycontrol-arg 9) (setq hycontrol-arg 1)) (hycontrol-frame-zoom 'zoom-frm-out hycontrol-arg hycontrol-debug)))
+    (define-key map "Z"     (lambda () (interactive) (if (> hycontrol-arg 9) (setq hycontrol-arg 1)) (hycontrol-frame-zoom hycontrol-arg)))
+    (define-key map "z"     (lambda () (interactive) (if (> hycontrol-arg 9) (setq hycontrol-arg 1)) (hycontrol-frame-zoom (- hycontrol-arg))))
     (define-key map "\["    'hycontrol-make-frame)
     (define-key map "\]"    'hycontrol-make-frame)
     (define-key map "\("    'hycontrol-save-frame-configuration)
@@ -796,15 +783,15 @@ Screen bottom edge is adjusted based on `hycontrol-screen-bottom-offset'."
       hycontrol-screen-offset-sensitivity))
 
 ;; Frame Zoom Support
-(defun hycontrol-frame-zoom (zoom-func arg max-msgs)
-  "Zoom default frame face using ZOOM-FUNC and amount ARG (must be 1-9).
-MAX-MSGS is a number used only if ZOOM-FUNC is undefined and an
-error message is logged."
-  (if (fboundp zoom-func)
-      (let ((frame-zoom-font-difference arg))
-	(funcall zoom-func))
-    (hycontrol-user-error max-msgs "(HyControl): Zooming requires separate \"zoom-frm.el\" Emacs Lisp library installation")))
-
+(defun hycontrol-frame-zoom (increment)
+  "Change the font size of all faces by INCREMENT.
+Use `global-text-scale-adjust' if it exists.  If not fall back to
+implementation in hycontrol-zmfrm.el."
+  (if (fboundp #'global-text-scale-adjust)
+      (global-text-scale-adjust increment)
+    (if (< 0 increment)
+        (hycontrol-zoom-all-frames-in)
+      (hycontrol-zoom-all-frames-out))))
 
 (defun hycontrol-make-frame ()
   "Create a new frame with the same size and selected buffer as the selected frame.
