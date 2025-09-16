@@ -1,5 +1,18 @@
 2025-09-15  Mats Lidell  <matsl@gnu.org>
 
+* hib-debbugs.el (debbugs-gnu-rescan): Declare to silence byte compile
+    warnings.
+
+* test/hywiki-tests.el
+    (hywiki-tests--save-referent-org-roam-node-use-menu): Remove extra RET
+    not needed due to mocking of org read functions.
+
+* test/hy-test-helpers.el (hy-test-helpers:consume-input-events): Only
+    exit an ongoing recursive-edit.
+
+* test/hsys-org-tests.el (hsys-org--org-outside-org-mode-tmp-buffer): Mock
+    org-open-at-point-global to avoid opening the link target.
+
 * hycontrol.el (hycontrol-frames-mode-map, hycontrol-frame-zoom): Use hycontrol-zmfrm.
 
 * Makefile (EL_COMPILE):

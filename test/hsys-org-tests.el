@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    23-Apr-21 at 20:55:00
-;; Last-Mod:     31-Jul-25 at 17:32:10 by Mats Lidell
+;; Last-Mod:     15-Sep-25 at 20:07:53 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -158,7 +158,8 @@ This is independent of the setting of `hsys-org-enable-smart-keys'."
             (insert "[[file:/tmp/abc][file]]\n")
             (goto-char 6)
             (should (equal hsys-org-enable-smart-keys v)) ; Traceability
-            (should (action-key))
+            (mocklet (((org-open-at-point-global) => t))
+              (should (action-key)))
 	    (should (hattr:ibtype-is-p 'org-link-outside-org-mode)))))))
 
 (ert-deftest hsys-org--org-outside-org-mode-tmp-file ()
