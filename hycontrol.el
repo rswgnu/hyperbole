@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:     15-Sep-25 at 00:31:29 by Mats Lidell
+;; Last-Mod:     18-Sep-25 at 21:26:05 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -324,6 +324,7 @@ for it to be omitted by `list-buffers'."
     (define-key map "w"     (lambda () (interactive) (hycontrol-set-frame-width nil (+ (frame-width) hycontrol-arg))))
     (define-key map "Z"     (lambda () (interactive) (if (> hycontrol-arg 9) (setq hycontrol-arg 1)) (hycontrol-frame-zoom hycontrol-arg)))
     (define-key map "z"     (lambda () (interactive) (if (> hycontrol-arg 9) (setq hycontrol-arg 1)) (hycontrol-frame-zoom (- hycontrol-arg))))
+    (define-key map "X"     (lambda () (interactive) (hycontrol-frame-zoom-reset)))
     (define-key map "\["    'hycontrol-make-frame)
     (define-key map "\]"    'hycontrol-make-frame)
     (define-key map "\("    'hycontrol-save-frame-configuration)
@@ -433,6 +434,7 @@ for it to be omitted by `list-buffers'."
     (define-key map "z"     (lambda () (interactive) (if (fboundp 'text-scale-decrease)
 							 ;; Emacs autoloaded function
 							 (text-scale-decrease (if (< hycontrol-arg 10) hycontrol-arg (setq hycontrol-arg 1))))))
+    (define-key map "X"     (lambda () (interactive) (text-scale-increase 0)))
 
     ;; Don't call these interactively because a prefix arg of 1 tries
     ;; to make one window 1 line tall.
@@ -480,7 +482,7 @@ for it to be omitted by `list-buffers'."
 	 ;; d/^/D=delete/iconify frame/others - iconify left out due to some bug on macOS (see comment near ^ below)
 	 "a/A=cycle adjust width/height, d/D=delete frame/others, o/O=other win/frame, I/J/K/M=to frame, [/]=create frame, (/)=save/restore fconfig\n"
 	 "@=grid of wins, f/F=clone/move win to new frame, -/+=minimize/maximize frame, ==frames same size, u/b/~=un/bury/swap bufs\n"
-	 "Frame to edges: c=cycle, i/j/k/m=expand/contract, p/num-keypad=move; z/Z=zoom out/in, t=to WINDOWS mode, Q=quit")
+	 "Frame to edges: c=cycle, i/j/k/m=expand/contract, p/num-keypad=move; z/Z/X=zoom out/in/reset, t=to WINDOWS mode, Q=quit")
  "HyControl frames-mode minibuffer prompt string to pass to format.
 Format it with 2 arguments: `prefix-arg' and a plural string indicating if
 `prefix-arg' is not equal to 1.")
@@ -490,7 +492,7 @@ Format it with 2 arguments: `prefix-arg' and a plural string indicating if
    "WINDOWS: (h=heighten, s=shorten, w=widen, n=narrow, arrow=move frame) by %d unit%s, .=clear units\n"
    "a/A=cycle adjust frame width/height, d/D=delete win/others, o/O=other win/frame, I/J/K/M=to window, [/]=split win atop/sideways, (/)=save/restore wconfig\n"
    "@=grid of wins, f/F=clone/move win to new frame, -/+=minimize/maximize win, ==wins same size, u/b/~=un/bury/swap bufs\n"
-   "Frame to edges: c=cycle, i/j/k/m=expand/contract, p/num-keypad=move; z/Z=zoom out/in, t=to FRAMES mode, Q=quit")
+   "Frame to edges: c=cycle, i/j/k/m=expand/contract, p/num-keypad=move; z/Z/X=zoom out/in/reset, t=to FRAMES mode, Q=quit")
   "HyControl windows-mode minibuffer prompt string to pass to format.
 Format it with 2 arguments: `prefix-arg' and a plural string indicating if
 `prefix-arg' is not equal to 1.")
@@ -790,6 +792,10 @@ implementation in hycontrol-zmfrm.el."
   (if (< 0 increment)
       (hycontrol-zoom-all-frames-in)
     (hycontrol-zoom-all-frames-out)))
+
+(defun hycontrol-frame-zoom-reset ()
+  "Reset zoom level back to default."
+  (hycontrol-zoom-all-frames-unzoom))
 
 (defun hycontrol-make-frame ()
   "Create a new frame with the same size and selected buffer as the selected frame.
