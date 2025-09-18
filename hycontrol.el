@@ -787,11 +787,9 @@ Screen bottom edge is adjusted based on `hycontrol-screen-bottom-offset'."
   "Change the font size of all faces by INCREMENT.
 Use `global-text-scale-adjust' if it exists.  If not fall back to
 implementation in hycontrol-zmfrm.el."
-  (if (fboundp #'global-text-scale-adjust)
-      (global-text-scale-adjust increment)
-    (if (< 0 increment)
-        (hycontrol-zoom-all-frames-in)
-      (hycontrol-zoom-all-frames-out))))
+  (if (< 0 increment)
+      (hycontrol-zoom-all-frames-in)
+    (hycontrol-zoom-all-frames-out)))
 
 (defun hycontrol-make-frame ()
   "Create a new frame with the same size and selected buffer as the selected frame.
