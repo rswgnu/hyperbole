@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:     18-Sep-25 at 21:26:05 by Mats Lidell
+;; Last-Mod:     19-Sep-25 at 09:38:49 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -322,9 +322,9 @@ for it to be omitted by `list-buffers'."
     (define-key map "t"     'hycontrol-enable-windows-mode)
     (define-key map "u"     'unbury-buffer)
     (define-key map "w"     (lambda () (interactive) (hycontrol-set-frame-width nil (+ (frame-width) hycontrol-arg))))
+    (define-key map "X"     (lambda () (interactive) (hycontrol-frame-zoom-reset)))
     (define-key map "Z"     (lambda () (interactive) (if (> hycontrol-arg 9) (setq hycontrol-arg 1)) (hycontrol-frame-zoom hycontrol-arg)))
     (define-key map "z"     (lambda () (interactive) (if (> hycontrol-arg 9) (setq hycontrol-arg 1)) (hycontrol-frame-zoom (- hycontrol-arg))))
-    (define-key map "X"     (lambda () (interactive) (hycontrol-frame-zoom-reset)))
     (define-key map "\["    'hycontrol-make-frame)
     (define-key map "\]"    'hycontrol-make-frame)
     (define-key map "\("    'hycontrol-save-frame-configuration)
@@ -428,13 +428,13 @@ for it to be omitted by `list-buffers'."
     (define-key map "t"     'hycontrol-enable-frames-mode)
     (define-key map "u"     'unbury-buffer)
     (define-key map "w"     (lambda () (interactive) (enlarge-window-horizontally hycontrol-arg)))
+    (define-key map "X"     (lambda () (interactive) (text-scale-increase 0)))
     (define-key map "Z"     (lambda () (interactive) (if (fboundp 'text-scale-increase)
 							 ;; Emacs autoloaded function
 							 (text-scale-increase (if (< hycontrol-arg 10) hycontrol-arg (setq hycontrol-arg 1))))))
     (define-key map "z"     (lambda () (interactive) (if (fboundp 'text-scale-decrease)
 							 ;; Emacs autoloaded function
 							 (text-scale-decrease (if (< hycontrol-arg 10) hycontrol-arg (setq hycontrol-arg 1))))))
-    (define-key map "X"     (lambda () (interactive) (text-scale-increase 0)))
 
     ;; Don't call these interactively because a prefix arg of 1 tries
     ;; to make one window 1 line tall.
