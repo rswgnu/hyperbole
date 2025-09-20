@@ -1,3 +1,8 @@
+2025-09-20  Mats Lidell  <matsl@gnu.org>
+
+* test/demo-tests.el (fast-demo-outline-section-anchor-and-relative-line-number):
+    Run test using different default major-mode's.
+
 2025-09-15  Mats Lidell  <matsl@gnu.org>
 
 * hib-debbugs.el (debbugs-gnu-rescan): Declare to silence byte compile
