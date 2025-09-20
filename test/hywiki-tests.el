@@ -1264,9 +1264,9 @@ named WikiReferent with a non-page referent type."
 (ert-deftest hywiki-tests--save-referent-keyseries ()
   "Verify saving and loading a referent keyseries works ."
   (hywiki-tests--referent-test
-   (cons 'key-series "{ABC}")
-   (hy-test-helpers:ert-simulate-keys "ABC\r"
-     (hywiki-add-key-series wiki-word-non-page))))
+    (cons 'key-series "{ABC}")
+    (hy-test-helpers:ert-simulate-keys "ABC\r"
+      (hywiki-add-key-series wiki-word-non-page))))
 
 (ert-deftest hywiki-tests--save-referent-keyseries-use-menu ()
   "Verify saving and loading a referent keyseries works using Hyperbole's menu."
@@ -1324,7 +1324,9 @@ named WikiReferent with a non-page referent type."
   "Verify saving and loading a referent command works using Hyperbole's menu.."
   (skip-unless (not noninteractive))
   (hywiki-tests--referent-test
-    (cons 'command #'hywiki-tests--command)
+    (progn
+      (sit-for 0.2)
+      (cons 'command #'hywiki-tests--command))
     (let ((vertico-mode 0))
       (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET c hywiki-tests--command RET"))
       (hy-test-helpers:consume-input-events))))
@@ -1359,45 +1361,46 @@ named WikiReferent with a non-page referent type."
 (ert-deftest hywiki-tests--save-referent-global-button ()
   "Verify saving and loading a referent global-button works."
   (hywiki-tests--referent-test
-   (cons 'global-button "gbtn")
-   (mocklet ((hargs:read-match => "gbtn"))
-     (hywiki-add-global-button wiki-word-non-page))))
+    (cons 'global-button "gbtn")
+    (mocklet ((hargs:read-match => "gbtn"))
+      (hywiki-add-global-button wiki-word-non-page))))
 
 (ert-deftest hywiki-tests--save-referent-global-button-use-menu ()
   "Verify saving and loading a referent global-button works using Hyperbole's menu."
   (skip-unless (not noninteractive))
   (hywiki-tests--referent-test
-   (cons 'global-button "global")
-
-   (defvar test-buffer)
-   (let* ((test-file (make-temp-file "gbut" nil ".txt"))
-          (test-buffer (find-file-noselect test-file)))
-     (unwind-protect
-         (with-mock
-           (mock (hpath:find-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => test-buffer)
-           (stub gbut:label-list => (list "global"))
-           (mock (gbut:act "global") => t)
-           (gbut:ebut-program "global" 'link-to-file test-file)
-           (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET g global RET"))
-           (hy-test-helpers:consume-input-events))
-       (hy-delete-file-and-buffer test-file)))))
+    (progn
+      (sit-for 0.2)
+      (cons 'global-button "global"))
+    (defvar test-buffer)
+    (let* ((test-file (make-temp-file "gbut" nil ".txt"))
+           (test-buffer (find-file-noselect test-file)))
+      (unwind-protect
+          (with-mock
+            (mock (hpath:find-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => test-buffer)
+            (stub gbut:label-list => (list "global"))
+            (mock (gbut:act "global") => t)
+            (gbut:ebut-program "global" 'link-to-file test-file)
+            (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET g global RET"))
+            (hy-test-helpers:consume-input-events))
+        (hy-delete-file-and-buffer test-file)))))
 
 ;; HyRolo
 (ert-deftest hywiki-tests--save-referent-hyrolo ()
   "Verify saving and loading a referent hyrolo works."
   (hywiki-tests--referent-test
-   (cons 'hyrolo #'hyrolo-fgrep)
-   (hywiki-add-hyrolo wiki-word-non-page)))
+    (cons 'hyrolo #'hyrolo-fgrep)
+    (hywiki-add-hyrolo wiki-word-non-page)))
 
 ;; Info index
 (ert-deftest hywiki-tests--save-referent-info-index ()
   "Verify saving and loading a referent info index works."
   (hywiki-tests--referent-test
-   (cons 'info-index "(emacs)files")
-   (save-excursion
-     (hy-test-helpers:ert-simulate-keys "files\r"
-       (info "emacs")
-       (hywiki-add-info-index wiki-word-non-page)))))
+    (cons 'info-index "(emacs)files")
+    (save-excursion
+      (hy-test-helpers:ert-simulate-keys "files\r"
+        (info "emacs")
+        (hywiki-add-info-index wiki-word-non-page)))))
 
 (ert-deftest hywiki-tests--save-referent-info-index-use-menu ()
   "Verify saving and loading a referent info index works using Hyperbole's menu."
@@ -1416,47 +1419,49 @@ named WikiReferent with a non-page referent type."
 (ert-deftest hywiki-tests--save-referent-info-node ()
   "Verify saving and loading a referent info node works."
   (hywiki-tests--referent-test
-   (cons 'info-node "(emacs)")
-   (save-excursion
-     (unwind-protect
-         (hy-test-helpers:ert-simulate-keys "(emacs)\r"
-           (hywiki-add-info-node wiki-word-non-page))
-       (kill-buffer "*info*")))))
+    (cons 'info-node "(emacs)")
+    (save-excursion
+      (unwind-protect
+          (hy-test-helpers:ert-simulate-keys "(emacs)\r"
+            (hywiki-add-info-node wiki-word-non-page))
+        (kill-buffer "*info*")))))
 
 (ert-deftest hywiki-tests--save-referent-info-node-use-menu ()
   "Verify saving and loading a referent info node works using Hyperbole's menu."
   (skip-unless (not noninteractive))
   (hywiki-tests--referent-test
-   (cons 'info-node "(emacs)")
-   (save-excursion
-     (unwind-protect
-         (progn
-           (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET n (emacs) RET"))
-           (hy-test-helpers:consume-input-events))
-       (kill-buffer "*info*")))))
+    (progn
+      (sit-for 0.2)
+      (cons 'info-node "(emacs)"))
+    (save-excursion
+      (unwind-protect
+          (progn
+            (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET n (emacs) RET"))
+            (hy-test-helpers:consume-input-events))
+        (kill-buffer "*info*")))))
 
 ;; Path link
 (ert-deftest hywiki-tests--save-referent-path-link ()
   "Verify saving and loading a referent path link works."
   (hywiki-tests--referent-test
-   (cons 'path-link "file:L1")
-   (hywiki-add-path-link wiki-word-non-page "file" 1)))
+    (cons 'path-link "file:L1")
+    (hywiki-add-path-link wiki-word-non-page "file" 1)))
 
 ;; Org id
 (ert-deftest hywiki-tests--save-referent-org-id ()
   "Verify saving and loading a referent org id works."
   (hywiki-tests--referent-test
-   (cons 'org-id "ID: generated-org-id")
-   (save-excursion
-     (let ((filea (make-temp-file "hypb" nil ".org")))
-      (unwind-protect
-          (with-current-buffer (find-file filea)
-            (insert "* header\n")
-            (mocklet (((hmouse-choose-link-and-referent-windows) => (list nil (get-buffer-window)))
-                      ((org-id-get-create) => "generated-org-id"))
-              (goto-char (point-max))
-	      (hywiki-add-org-id wiki-word-non-page)))
-	(hy-delete-file-and-buffer filea))))))
+    (cons 'org-id "ID: generated-org-id")
+    (save-excursion
+      (let ((filea (make-temp-file "hypb" nil ".org")))
+        (unwind-protect
+            (with-current-buffer (find-file filea)
+              (insert "* header\n")
+              (mocklet (((hmouse-choose-link-and-referent-windows) => (list nil (get-buffer-window)))
+                        ((org-id-get-create) => "generated-org-id"))
+                (goto-char (point-max))
+	        (hywiki-add-org-id wiki-word-non-page)))
+	  (hy-delete-file-and-buffer filea))))))
 
 ;; FIXME: Add Org-id links tests.
 
@@ -1464,23 +1469,25 @@ named WikiReferent with a non-page referent type."
 (ert-deftest hywiki-tests--save-referent-org-roam-node ()
   "Verify saving and loading a referent org roam node works."
   (hywiki-tests--referent-test
-   (cons 'org-roam-node "node-title")
-   (mocklet (((hypb:require-package 'org-roam) => t)
-	     ((org-roam-node-read) => "node")
-	     ((org-roam-node-title "node") => "node-title"))
-     (hywiki-add-org-roam-node wiki-word-non-page))))
+    (cons 'org-roam-node "node-title")
+    (mocklet (((hypb:require-package 'org-roam) => t)
+	      ((org-roam-node-read) => "node")
+	      ((org-roam-node-title "node") => "node-title"))
+      (hywiki-add-org-roam-node wiki-word-non-page))))
 
 (ert-deftest hywiki-tests--save-referent-org-roam-node-use-menu ()
   "Verify saving and loading a referent org roam node works using Hyperbole's menu."
   (skip-unless (not noninteractive))
   (hywiki-tests--referent-test
-   (cons 'org-roam-node "node-title")
-   (mocklet (((hypb:require-package 'org-roam) => t)
-	     ((org-roam-node-read) => "node")
-	     ((org-roam-node-title "node") => "node-title")
-             ((hywiki-display-org-roam-node "WikiReferent" "node-title") => t))
-     (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET r"))
-     (hy-test-helpers:consume-input-events))))
+    (progn
+      (sit-for 0.2)
+      (cons 'org-roam-node "node-title"))
+    (mocklet (((hypb:require-package 'org-roam) => t)
+	      ((org-roam-node-read) => "node")
+	      ((org-roam-node-title "node") => "node-title")
+              ((hywiki-display-org-roam-node "WikiReferent" "node-title") => t))
+      (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET r"))
+      (hy-test-helpers:consume-input-events))))
 
 (ert-deftest hywiki-tests--delete-parenthesised-char ()
   "Verify removing a char between parentheses only removes the char.
