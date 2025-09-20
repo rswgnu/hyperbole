@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    15-Mar-25 at 22:39:37
-;; Last-Mod:     14-Sep-25 at 11:44:12 by Bob Weiner
+;; Last-Mod:     20-Sep-25 at 01:16:24 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -187,8 +187,7 @@
   (let ((major-mode 'ert-results-mode))
     (mocklet (((ert-results-filter-status-p) => t))
       (cl-letf (((symbol-function 'featurep)
-                 (lambda (symbol)
-                   (if (equal symbol 'ert-results) t nil))))
+                 (lambda (symbol &optional _) (equal symbol 'ert-results))))
         (should (equal (hkey-actions)
                        (cons '(smart-ert-results hkey-value)
                              '(smart-ert-results-assist hkey-value)))))))
@@ -219,10 +218,10 @@
                                  (hmouse-kill-region))))))
 
   ;; Restore window config and hide help buffer when click at buffer end.
-  (mocklet (((point-max) => (point))
-            ((buffer-name) => "*Help*"))
-    (should (equal (hkey-actions)
-                   (cons '(hkey-help-hide) '(hkey-help-hide)))))
+  (mocklet (((point-max) => (point)))
+    (cl-letf (((symbol-function 'buffer-name) (lambda (&optional _) "*Help*")))
+      (should (equal (hkey-actions)
+                     (cons '(hkey-help-hide) '(hkey-help-hide))))))
 
   ;; Any other programming mode
   (mocklet (((smart-prog-at-tag-p) => t)
@@ -246,10 +245,10 @@
       (should (equal (hkey-actions)
                      (cons '(smart-python hkey-value) '(smart-python hkey-value 'next-tag))))))
   (let ((major-mode 'java-mode))
-    (mocklet (((buffer-name) => "Python")
-              ((smart-python-at-tag-p) => t))
-      (should (equal (hkey-actions)
-                     (cons '(smart-python hkey-value) '(smart-python hkey-value 'next-tag))))))
+    (cl-letf (((symbol-function 'buffer-name) (lambda (&optional _) "Python")))
+      (mocklet (((smart-python-at-tag-p) => t))
+        (should (equal (hkey-actions)
+                       (cons '(smart-python hkey-value) '(smart-python hkey-value 'next-tag)))))))
 
   ;; c-mode
   (let ((major-mode 'c-mode))
@@ -292,22 +291,24 @@
   ;;   (should (equal (hkey-actions)
   ;;                  (cons '(smart-prog-tag hkey-value) '(smart-prog-tag hkey-value)))))
 
-  ;; !!FIXME: This Java clause fails when uncommented - rsw
   ;; Java
-  ;; (let ((major-mode 'java-mode))
-  ;;   (mocklet (((hypb:buffer-file-name) => "buffer-file-name"))
-  ;;     (mocklet (((smart-java-at-tag-p) => t))
-  ;;       (should (equal (hkey-actions)
-  ;;                      (cons '(smart-java) '(smart-java nil 'next-tag)))))
-  ;;     (mocklet (((smart-java-at-tag-p) => nil))
-  ;;       (mocklet (((looking-at "@see[ \t]+") => t))
-  ;;         (should (equal (hkey-actions)
-  ;;                        (cons '(smart-java) '(smart-java nil 'next-tag)))))
-  ;;       ;; Second case with looking back for java doc can't be mocked
-  ;;       ;; with el-mock due to mocks not supporting multiple return
-  ;;       ;; values. (Possible improvement to el-mock!?) Pausing that
-  ;;       ;; case for now.
-  ;;       )))
+  (let ((major-mode 'java-mode))
+    (mocklet (((hypb:buffer-file-name) => "buffer-file-name"))
+      (mocklet (((smart-java-at-tag-p) => t))
+        (should (equal (hkey-actions)
+                       (cons '(smart-java) '(smart-java nil 'next-tag)))))
+      (mocklet (((smart-java-at-tag-p) => nil))
+        (cl-letf (((symbol-function 'looking-at)
+                   (lambda (str &optional _) (string= str "@see[ \t]+"))))
+          (should (equal (hkey-actions)
+                         (cons '(smart-java) '(smart-java nil 'next-tag)))))
+        (let ((looking-at-value nil))
+          (cl-letf (((symbol-function 'looking-at) (lambda (str &optional _) looking-at-value))
+                    ((symbol-function 're-search-backward)
+                     (lambda (str &optional _ _ _) (if (string= str "[@\n\r\f]") (setq looking-at-value t)))))
+            (should (equal (hkey-actions)
+                           (cons '(smart-java) '(smart-java nil 'next-tag))))))
+        )))
 
   ;; html-mode javascript-mode js-mode js-ts-mode js2-mode js3-mode web-mode
   (let ((major-mode 'html-mode))

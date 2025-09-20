@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:     8-Jan-25 at 22:52:00
-;; Last-Mod:      4-Mar-25 at 17:06:26 by Mats Lidell
+;; Last-Mod:     19-Sep-25 at 16:43:05 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -24,10 +24,10 @@
 
 (ert-deftest hycontrol-tests--framemove-direction-error-message ()
   "Verify `hycontrol-framemove-direction' shows message when `framemove' is not available."
-  (mocklet (((featurep 'framemove) => nil)
-            ((hycontrol-quit) => t))
-    (let ((err (should-error (hycontrol-framemove-direction 'up) :type 'error)))
-      (should (string-match "Requires manual installation" (cadr err))))))
+  (cl-letf (((symbol-function 'featurep) (lambda (feature &optional _) nil)))
+    (mocklet (((hycontrol-quit) => t))
+      (let ((err (should-error (hycontrol-framemove-direction 'up) :type 'error)))
+        (should (string-match "Requires manual installation" (cadr err)))))))
 
 (provide 'hycontrol-tests)
 
