@@ -1,5 +1,8 @@
 2025-09-20  Mats Lidell  <matsl@gnu.org>
 
+* test/hy-test-helpers.el (hy-test-helpers:consume-input-events): Wait
+    longer before terminating consumption of input events.
+
 * test/hui-mouse-tests.el (hui-mouse-tests--hkey-alist):
   test/hycontrol-tests.el (hycontrol-tests--framemove-direction-error-message):
     Use cl-letf to mock functions that requires mocks that can act on
