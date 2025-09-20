@@ -1,3 +1,17 @@
+2025-09-20  Mats Lidell  <matsl@gnu.org>
+
+* test/hui-mouse-tests.el (hui-mouse-tests--hkey-alist):
+  test/hycontrol-tests.el (hycontrol-tests--framemove-direction-error-message):
+    Use cl-letf to mock functions that requires mocks that can act on
+    multiple calls with with different parameters or different responses
+    or both.
+
+* test/hywiki-tests.el (hywiki-tests--save-referent-command-use-menu)
+    (hywiki-tests--save-referent-global-button-use-menu)
+    (hywiki-tests--save-referent-info-node-use-menu)
+    (hywiki-tests--save-referent-org-roam-node-use-menu): Add a delay before
+    verifying referent.
+
 2025-09-15  Mats Lidell  <matsl@gnu.org>
 
 * hib-debbugs.el (debbugs-gnu-rescan): Declare to silence byte compile
