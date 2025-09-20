@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     31-Aug-25 at 20:43:39 by Bob Weiner
+;; Last-Mod:     28-Sep-25 at 22:41:32 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -29,6 +29,7 @@
 (require 'hyrolo)
 (require 'eww)
 (require 'compile)
+(require 'cl-lib)
 (require 'hy-test-dependencies) ;; can install el-mock
 (require 'hy-test-helpers "test/hy-test-helpers")
 
@@ -428,16 +429,19 @@
 ;; Implicit Buttons
 (ert-deftest fast-demo-outline-section-anchor-and-relative-line-number ()
   "Verify star outline section links with line and column works."
-  (dolist (link '("\"HY-NEWS#ORG MODE:3:6\"" "\"HY-NEWS#ORG MODE:L3:C6\""))
-    (unwind-protect
-        (let ((default-directory hyperb:dir))
-          (with-temp-buffer
-            (insert link)
-            (goto-char 3)
-            (action-key)
-            (should (string= (buffer-name (current-buffer)) "HY-NEWS"))
-            (should (looking-at-p "M-RET: Reworked"))))
-      (hy-test-helpers:kill-buffer "HY-NEWS"))))
+  (dolist (m '(fundamental-mode text-mode))
+    (ert-info ((format "With major-mode %s" m))
+      (cl-letf (((default-value 'major-mode) m))
+        (dolist (link '("\"HY-NEWS#ORG MODE:3:6\"" "\"HY-NEWS#ORG MODE:L3:C6\""))
+          (unwind-protect
+              (let ((default-directory hyperb:dir))
+                (with-temp-buffer
+                  (insert link)
+                  (goto-char 3)
+                  (action-key)
+                  (should (string= (buffer-name (current-buffer)) "HY-NEWS"))
+                  (should (looking-at-p "M-RET: Reworked"))))
+            (hy-test-helpers:kill-buffer "HY-NEWS")))))))
 
 (ert-deftest fast-demo-markdown-anchor-with-spaces ()
   "Verify anchor with spaces works."
