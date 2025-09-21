@@ -1,3 +1,8 @@
+2025-09-28  Mats Lidell  <matsl@gnu.org>
+
+* hactypes.el (combine-buttons): Add actypes:combine-buttons that runs
+    specified buttons in sequence.
+
 2025-09-27  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:to-markup-anchor): Move 'fundamental-mode' support near
