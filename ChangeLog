@@ -1,3 +1,8 @@
+2025-09-21  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:to-markup-anchor): Support 'fundamental-mode' and derived
+    shell modes.
+
 2025-09-20  Mats Lidell  <matsl@gnu.org>
 
 * test/hy-test-helpers.el (hy-test-helpers:consume-input-events): Wait
