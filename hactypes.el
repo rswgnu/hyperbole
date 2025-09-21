@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     10-Aug-25 at 09:59:32 by Bob Weiner
+;; Last-Mod:     21-Sep-25 at 23:47:17 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -791,6 +791,12 @@ SECTION is a string and can be just the leading part of a section heading."
 		(looking-at "[ \t]*[-=][-=]")))
     (forward-line 1)
     (recenter 0)))
+
+(defact combine-buttons (buts)
+  "Combine multiple buttons into one."
+  (interactive (list (completing-read-multiple "Button: " (gbut:label-list) nil t)))
+  (dolist (b buts)
+    (gbut:act b)))
 
 (provide 'hactypes)
 
