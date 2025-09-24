@@ -1,3 +1,9 @@
+2025-09-24  Mats Lidell  <matsl@gnu.org>
+
+* hpath.el (hpath:to-markup-anchor): Match all-caps filenames including
+    dash and underline characters. Check for markdown before checking if
+    buffer is derived by text-mode since that masks markdown.
+
 2025-09-21  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:to-markup-anchor): Support 'fundamental-mode' and derived
