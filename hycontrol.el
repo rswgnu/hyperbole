@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:     19-Sep-25 at 09:38:49 by Mats Lidell
+;; Last-Mod:     25-Sep-25 at 22:37:47 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -785,17 +785,77 @@ Screen bottom edge is adjusted based on `hycontrol-screen-bottom-offset'."
       hycontrol-screen-offset-sensitivity))
 
 ;; Frame Zoom Support
+(require 'face-remap)
+
+(unless (fboundp 'global-text-scale-adjust)
+  (defvar global-text-scale-adjust--default-height)
+  (defvar global-text-scale-adjust--default-height)
+  (defvar global-text-scale-adjust--increment-factor)
+  (defvar global-text-scale-adjust-limits)
+  (defvar global-text-scale-adjust-resizes-frames)
+  (defvar global-text-scale-adjust--increment-factor))
+
+(defun hycontrol-global-text-scale-adjust (increment)
+  "Change (a.k.a. \"adjust\") the font size of all faces by INCREMENT.
+
+Interactively, INCREMENT is the prefix numeric argument, and defaults
+to 1.  Positive values of INCREMENT increase the font size, negative
+values decrease it.  A value of 0 reset the font size.
+
+Buffer-local face adjustments have higher priority than global
+face adjustments.
+
+The variable `global-text-scale-adjust-resizes-frames' controls
+whether the frames are resized to keep the same number of lines
+and characters per line when the font size is adjusted.
+
+See also the related command `text-scale-adjust'.  Unlike that
+command, which scales the font size with a factor,
+`global-text-scale-adjust' scales the font size with an
+increment.
+
+This is a modification of `global-text-scale-adjust'.  The key handling
+and definition of a transient keymap is removed so it can be called from
+the hycontrol menu."
+  (interactive "p")
+  (when (display-graphic-p)
+    (unless global-text-scale-adjust--default-height
+      (setq global-text-scale-adjust--default-height
+            (face-attribute 'default :height)))
+    (let* ((cur (face-attribute 'default :height))
+           (inc
+            (if (zerop increment)
+                (- global-text-scale-adjust--default-height cur)
+              (* increment global-text-scale-adjust--increment-factor)))
+           (new (+ cur inc)))
+      (when (< (car global-text-scale-adjust-limits)
+               new
+               (cdr global-text-scale-adjust-limits))
+        (let ((frame-inhibit-implied-resize
+               (not global-text-scale-adjust-resizes-frames)))
+          (set-face-attribute 'default nil :height new)
+          (redisplay 'force)
+          (when (and (not (zerop increment))
+                     (= cur (face-attribute 'default :height)))
+            (setq global-text-scale-adjust--increment-factor
+                  (1+ global-text-scale-adjust--increment-factor))
+            (hycontrol-global-text-scale-adjust increment)))))))
+
 (defun hycontrol-frame-zoom (increment)
   "Change the font size of all faces by INCREMENT.
 Use `global-text-scale-adjust' if it exists.  If not fall back to
 implementation in hycontrol-zmfrm.el."
-  (if (< 0 increment)
-      (hycontrol-zoom-all-frames-in)
-    (hycontrol-zoom-all-frames-out)))
+  (if (fboundp 'global-text-scale-adjust)
+      (hycontrol-global-text-scale-adjust increment)
+    (if (< 0 increment)
+        (hycontrol-zoom-all-frames-in)
+      (hycontrol-zoom-all-frames-out))))
 
 (defun hycontrol-frame-zoom-reset ()
   "Reset zoom level back to default."
-  (hycontrol-zoom-all-frames-unzoom))
+  (if (fboundp 'global-text-scale-adjust)
+      (hycontrol-global-text-scale-adjust 0)
+    (hycontrol-zoom-all-frames-unzoom)))
 
 (defun hycontrol-make-frame ()
   "Create a new frame with the same size and selected buffer as the selected frame.

@@ -1,5 +1,10 @@
 2025-09-25  Mats Lidell  <matsl@gnu.org>
 
+* hycontrol.el (hycontrol-global-text-scale-adjust): Modification of
+    global-text-scale-adjust for use with hycontrol menu.
+    (hycontrol-frame-zoom, hycontrol-frame-zoom-reset): Use
+    hycontrol-global-text-scale-adjust when Emacs has global-text-scale-adjust.
+
 * hycontrol-zmfrm.el (fontset): Require fontset for defining xldf-regexp-* vars.
     (fontset-info, query-fontset, x-list-fonts): Declare functions.
 
