@@ -1,3 +1,8 @@
+2025-09-25  Mats Lidell  <matsl@gnu.org>
+
+* hycontrol-zmfrm.el (fontset): Require fontset for defining xldf-regexp-* vars.
+    (fontset-info, query-fontset, x-list-fonts): Declare functions.
+
 2025-09-20  Mats Lidell  <matsl@gnu.org>
 
 * test/hy-test-helpers.el (hy-test-helpers:consume-input-events): Wait

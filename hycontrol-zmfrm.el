@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    14-Sep-25 at 23:03:15
-;; Last-Mod:     15-Sep-25 at 13:56:35 by Mats Lidell
+;; Last-Mod:     25-Sep-25 at 20:45:39 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -30,6 +30,21 @@
 
 ;;; Code:
 
+(require 'fontset)
+
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function fontset-info "fontset.c" (fontset &optional frame))
+(declare-function query-fontset "fontset.c" (pattern &optional regexpp))
+(declare-function x-list-fonts "xfaces.c"
+                  (pattern &optional face frame maximum width))
+
+;;; ************************************************************************
+;;; Public variables
+;;; ************************************************************************
+
 (defcustom hycontrol-frame-zoom-font-difference 1
   "*Number of points to change the frame font size when zooming.
 This applies to commands `zoom-in/out', `zoom-in', `zoom-out',
@@ -45,6 +60,10 @@ point."
 The font-size portion of a font name is incremented or decremented at
 most this many times, before giving up and raising an error."
   :type 'integer :group 'hyperbole-screen)
+
+;;; ************************************************************************
+;;; Public functions
+;;; ************************************************************************
 
 (defun hyconytrol-frcmds-enlarged-font-name (fontname frame increment)
   "FONTNAME, after enlarging font size of FRAME by INCREMENT.
