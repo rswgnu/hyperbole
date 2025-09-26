@@ -1,3 +1,8 @@
+2025-09-26  Mats Lidell  <matsl@gnu.org>
+
+* test/demo-tests.el (fast-demo-outline-section-anchor-and-relative-line-number):
+    Run test using different default major-mode's.
+
 2025-09-25  Mats Lidell  <matsl@gnu.org>
 
 * hycontrol.el (hycontrol-global-text-scale-adjust): Modification of
