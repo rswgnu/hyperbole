@@ -1,3 +1,8 @@
+2025-09-26  Mats Lidell  <matsl@gnu.org>
+
+* hactypes.el (combine-buttons): Add actypes:combine-buttons that runs
+    specified buttons in sequence.
+
 2025-09-25  Mats Lidell  <matsl@gnu.org>
 
 * hycontrol.el (hycontrol-global-text-scale-adjust): Modification of

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     10-Aug-25 at 09:59:32 by Bob Weiner
+;; Last-Mod:     22-Sep-25 at 23:59:47 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -791,6 +791,21 @@ SECTION is a string and can be just the leading part of a section heading."
 		(looking-at "[ \t]*[-=][-=]")))
     (forward-line 1)
     (recenter 0)))
+
+(defact combine-buttons (buts)
+  "Combine multiple buttons given by their labels into one button.
+Prefer buffer local buttons over global buttons."
+  (interactive
+   (list (completing-read-multiple "Button labels: "
+                                   (append (ebut:list)
+                                           (ibut:list)
+                                           (gbut:label-list))
+                                   nil t)))
+  (dolist (b buts)
+    (let ((but (hbut:get (hbut:label-to-key b))))
+      (if but
+          (hbut:act but)
+        (gbut:act b)))))
 
 (provide 'hactypes)
 
