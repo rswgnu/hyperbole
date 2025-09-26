@@ -1,3 +1,8 @@
+2025-09-26  Mats Lidell  <matsl@gnu.org>
+
+* hsys-activities.el (activity, hsys-activities-read): Add
+    actypes:activity for the external package activities.
+
 2025-09-25  Mats Lidell  <matsl@gnu.org>
 
 * hycontrol.el (hycontrol-global-text-scale-adjust): Modification of
