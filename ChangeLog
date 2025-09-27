@@ -1,3 +1,8 @@
+2025-09-27  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:to-markup-anchor): Move 'fundamental-mode' support near
+    the end of the cond clause..
+
 2025-09-21  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:to-markup-anchor): Support 'fundamental-mode' and derived

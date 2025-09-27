@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     21-Sep-25 at 09:14:07 by Bob Weiner
+;; Last-Mod:     21-Sep-25 at 09:59:47 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1681,15 +1681,15 @@ of the buffer."
 								 (and (hypb:buffer-file-name)
 								      (string-match-p "\\`[A-Z][A-Z0-9]+\\'" (hypb:buffer-file-name))))
 							     hpath:outline-section-pattern)
-							    ((or prog-mode (null (hypb:buffer-file-name))
-								 (apply #'derived-mode-p '(fundamental-mode text-mode)))
-							     "%s")
 							    ((or (and (hypb:buffer-file-name)
 								      (string-match-p hpath:markdown-suffix-regexp (hypb:buffer-file-name)))
 								 (apply #'derived-mode-p hpath:shell-modes))
 							     hpath:markdown-section-pattern)
 							    ((derived-mode-p 'texinfo-mode)
 							     hpath:texinfo-section-pattern)
+							    ((or prog-mode (null (hypb:buffer-file-name))
+								 (apply #'derived-mode-p '(fundamental-mode text-mode)))
+							     "%s")
 							    (t hpath:outline-section-pattern))
 						      (regexp-quote anchor-name)))
 				    (referent-leading-spaces-regexp
