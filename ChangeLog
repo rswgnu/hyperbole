@@ -1,7 +1,13 @@
 2025-09-27  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:to-markup-anchor): Move 'fundamental-mode' support near
-    the end of the cond clause..
+    the end of the cond clause.
+
+2025-09-24  Mats Lidell  <matsl@gnu.org>
+
+* hpath.el (hpath:to-markup-anchor): Match all-caps filenames including
+    dash and underline characters. Check for markdown before checking if
+    buffer is derived by text-mode since that masks markdown.
 
 2025-09-21  Bob Weiner  <rsw@gnu.org>
 

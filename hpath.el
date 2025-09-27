@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     21-Sep-25 at 09:59:47 by Bob Weiner
+;; Last-Mod:     27-Sep-25 at 18:52:18 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1677,9 +1677,11 @@ of the buffer."
 				    (anchor-name (hpath:dashes-to-spaces-markup-anchor anchor))
 				    (referent-regexp (format
 						      (cond ((or (derived-mode-p 'outline-mode) ;; Includes Org mode
-								 ;; Treat all caps filenames without suffix like outlines, e.g. README, INSTALL.
+								 ;; Treat all caps filenames without suffix like outlines,
+                                                                 ;; e.g. README, INSTALL, HY-NEWS, ...
 								 (and (hypb:buffer-file-name)
-								      (string-match-p "\\`[A-Z][A-Z0-9]+\\'" (hypb:buffer-file-name))))
+								      (string-match-p "\\`[A-Z0-9][A-Z0-9_-]*\\'"
+                                                                                      (file-name-nondirectory (hypb:buffer-file-name)))))
 							     hpath:outline-section-pattern)
 							    ((or (and (hypb:buffer-file-name)
 								      (string-match-p hpath:markdown-suffix-regexp (hypb:buffer-file-name)))
