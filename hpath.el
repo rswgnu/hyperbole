@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     14-Sep-25 at 14:43:40 by Bob Weiner
+;; Last-Mod:     27-Sep-25 at 18:52:18 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1672,25 +1672,25 @@ of the buffer."
 			    (t
 			     (let* ((opoint (point))
 				    (prog-mode (derived-mode-p 'prog-mode))
-				    ;; Markdown or outline link ids are case
-				    ;; insensitive.
+				    ;; Markdown or outline link ids are case insensitive.
 				    (case-fold-search (not prog-mode))
 				    (anchor-name (hpath:dashes-to-spaces-markup-anchor anchor))
 				    (referent-regexp (format
 						      (cond ((or (derived-mode-p 'outline-mode) ;; Includes Org mode
-								 ;; Treat all caps filenames without suffix like outlines, e.g. README, INSTALL.
+								 ;; Treat all caps filenames without suffix like outlines,
+                                                                 ;; e.g. README, INSTALL, HY-NEWS, ...
 								 (and (hypb:buffer-file-name)
-								      (string-match-p "\\`[A-Z][A-Z0-9]+\\'" (hypb:buffer-file-name))))
+								      (string-match-p "\\`[A-Z0-9][A-Z0-9_-]*\\'"
+                                                                                      (file-name-nondirectory (hypb:buffer-file-name)))))
 							     hpath:outline-section-pattern)
-							    ((or prog-mode (null (hypb:buffer-file-name)))
-							     "%s")
 							    ((or (and (hypb:buffer-file-name)
 								      (string-match-p hpath:markdown-suffix-regexp (hypb:buffer-file-name)))
-								 (memq major-mode hpath:shell-modes))
+								 (apply #'derived-mode-p hpath:shell-modes))
 							     hpath:markdown-section-pattern)
 							    ((derived-mode-p 'texinfo-mode)
 							     hpath:texinfo-section-pattern)
-							    ((derived-mode-p 'text-mode)
+							    ((or prog-mode (null (hypb:buffer-file-name))
+								 (apply #'derived-mode-p '(fundamental-mode text-mode)))
 							     "%s")
 							    (t hpath:outline-section-pattern))
 						      (regexp-quote anchor-name)))

@@ -1,3 +1,8 @@
+2025-09-27  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:to-markup-anchor): Move 'fundamental-mode' support near
+    the end of the cond clause.
+
 2025-09-25  Mats Lidell  <matsl@gnu.org>
 
 * hycontrol.el (hycontrol-global-text-scale-adjust): Modification of
@@ -7,6 +12,17 @@
 
 * hycontrol-zmfrm.el (fontset): Require fontset for defining xldf-regexp-* vars.
     (fontset-info, query-fontset, x-list-fonts): Declare functions.
+
+2025-09-24  Mats Lidell  <matsl@gnu.org>
+
+* hpath.el (hpath:to-markup-anchor): Match all-caps filenames including
+    dash and underline characters. Check for markdown before checking if
+    buffer is derived by text-mode since that masks markdown.
+
+2025-09-21  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:to-markup-anchor): Support 'fundamental-mode' and derived
+    shell modes.
 
 2025-09-20  Mats Lidell  <matsl@gnu.org>
 
