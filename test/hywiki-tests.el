@@ -1704,11 +1704,39 @@ Insert test in the middle of other text."
                  (p1 . t) (p4) (-1 . "Hiho")))))
         (hy-delete-dir-and-buffer hywiki-directory)))))
 
+(ert-deftest hywiki-tests--wikiword-step-check-edit-wikiword-in-emacs-lisp-mode ()
+  "Run the step check to verify WikiWord is identified under change in a docstring.
+A WikiWord is completed, then last char is deleted and reinserted.  The
+face is verified during the change."
+  (hywiki-tests--preserve-hywiki-mode
+    (let* ((hywiki-directory (make-temp-file "hywiki" t))
+           (wiki-page (cdr (hywiki-add-page "WikiWord"))))
+      (unwind-protect
+          (progn
+            (hywiki-mode 1)
+            (with-temp-buffer
+              (emacs-lisp-mode)
+              (insert "\
+(defun func ()
+  \"WikiWor
+t)
+")
+              ;; Set point after WikiWor
+              (goto-char 1)
+              (should (search-forward "WikiWor"))
+
+              ;; Complete WikiWord and verify highlighting
+              (hywiki-tests--run-test-case
+               '(("d\"" . "WikiWord") (p2 . t) (-1) ("d" . "WikiWord")))))
+        (hy-delete-file-and-buffer wiki-page)
+        (hy-delete-dir-and-buffer hywiki-directory)))))
+
 (ert-deftest hywiki-tests--wikiword-identified-in-emacs-lisp-mode ()
   "Verify WikiWord is identified when surrounded by delimiters in `emacs-lisp-mode'."
   (hywiki-tests--preserve-hywiki-mode
-    (let ((hsys-org-enable-smart-keys t)
-          (hywiki-directory (make-temp-file "hywiki" t)))
+    (let* ((hsys-org-enable-smart-keys t)
+           (hywiki-directory (make-temp-file "hywiki" t))
+           (wiki-page (cdr (hywiki-add-page "WikiWord"))))
       (unwind-protect
           (progn
             (hywiki-mode 1)
@@ -1723,14 +1751,14 @@ Insert test in the middle of other text."
                 (insert (format ";; %s" v))
                 (hywiki-tests--command-execute #'newline 1 'interactive)
                 (goto-char 9)
-                (should (string= "WikiWord" (hywiki-word-at))))
+                (should (string= "WikiWord" (hywiki-tests--word-at))))
 
               (with-temp-buffer
                 (emacs-lisp-mode)
                 (insert (format  "(setq var \"%s\")" v))
                 (hywiki-tests--command-execute #'newline 1 'interactive)
                 (goto-char 16)
-                (should (string= "WikiWord" (hywiki-word-at)))))
+                (should (string= "WikiWord" (hywiki-tests--word-at)))))
 
             ;; Does not match as a WikiWord
             (dolist (v '("WikiWord#"))
@@ -1739,14 +1767,15 @@ Insert test in the middle of other text."
                 (insert (format ";; %s" v))
                 (hywiki-tests--command-execute #'newline 1 'interactive)
                 (goto-char 9)
-                (should-not (hywiki-word-at)))
+                (should-not (hywiki-tests--word-at)))
 
               (with-temp-buffer
                 (emacs-lisp-mode)
                 (insert (format  "(setq var \"%s\")" v))
                 (hywiki-tests--command-execute #'newline 1 'interactive)
                 (goto-char 16)
-                (should-not (hywiki-word-at)))))
+                (should-not (hywiki-tests--word-at)))))
+        (hy-delete-file-and-buffer wiki-page)
         (hy-delete-dir-and-buffer hywiki-directory)))))
 
 (ert-deftest hywiki-tests--wikiword-identified-in-strings-in-emacs-lisp-mode ()
