@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    21-Sep-25 at 20:41:48
-;; Last-Mod:     21-Sep-25 at 22:15:36 by Mats Lidell
+;; Last-Mod:     28-Sep-25 at 23:56:48 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -16,9 +16,9 @@
 ;;
 ;; Stores the name of the activity rather than the activity itself.
 ;;
-;; This actype resumes the activity.  For reseting the default state
-;; for the activity use activites-resume with a prefix argument.  With
-;; the default key binding for activities this is: {C-u C-x C-a g}
+;; This actype resumes the activity.  For resetting the default state
+;; of the activity, use `activites-resume' with a prefix argument.
+;; With the default key binding for activities this is: {C-u C-x C-a g}.
 
 ;;; Code:
 
