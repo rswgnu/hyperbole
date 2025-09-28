@@ -1,7 +1,8 @@
 2025-09-28  Mats Lidell  <matsl@gnu.org>
 
-* hactypes.el (combine-buttons): Add actypes:combine-buttons that runs
+* hactypes.el (button-series): Add actypes:button-series that runs
     specified buttons in sequence.
+    (hactypes:buffer-button-list): Return buttons available in current buffer.
 
 2025-09-27  Bob Weiner  <rsw@gnu.org>
 
