@@ -118,6 +118,12 @@
 
 2025-10-05  Mats Lidell  <matsl@gnu.org>
 
+* test/hywiki-tests.el
+    (hywiki-tests--wikiword-step-check-edit-wikiword-in-emacs-lisp-mode):
+    Add test.
+    (hywiki-tests--wikiword-identified-in-emacs-lisp-mode): Update test to
+    verify WikiWord face.
+
 * test/demo-tests.el (fast-demo-outline-section-anchor-and-relative-line-number):
     Run test using different default major-mode's.
 
