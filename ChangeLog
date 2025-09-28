@@ -1,3 +1,8 @@
+2025-09-28  Mats Lidell  <matsl@gnu.org>
+
+* hsys-activities.el (activity, hsys-activities-read): Add
+    actypes:activity for the external package activities.
+
 2025-09-27  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:to-markup-anchor): Move 'fundamental-mode' support near
