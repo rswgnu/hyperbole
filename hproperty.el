@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Aug-92
-;; Last-Mod:      7-Sep-25 at 16:03:02 by Bob Weiner
+;; Last-Mod:     29-Sep-25 at 21:10:16 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -19,18 +19,16 @@
 
 ;;; Code:
 
-;; (when noninteractive
-;;   ;; Don't load this library
-;;   (with-current-buffer " *load*"
-;;     (goto-char (point-max))))
+(eval-when-compile
+  (require 'subr-x))                    ; For when-let* in Emacs 28.2
 
 ;;; ************************************************************************
-;;; Other required Elisp libraries
+;;; Public declarations
 ;;; ************************************************************************
 
-(require 'hload-path)
-(require 'custom) ;; For defface.
-(require 'hbut)
+(declare-function hattr:get "hbut")
+(declare-function ibut:map "hbut")
+(declare-function ebut:map "hbut")
 
 ;; Comment out next line out because this triggers loads of kview
 ;; which loads klink which contains a defib whose priority should be set
