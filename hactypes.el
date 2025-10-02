@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     10-Aug-25 at 09:59:32 by Bob Weiner
+;; Last-Mod:     28-Sep-25 at 23:27:18 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -791,6 +791,25 @@ SECTION is a string and can be just the leading part of a section heading."
 		(looking-at "[ \t]*[-=][-=]")))
     (forward-line 1)
     (recenter 0)))
+
+(defun hactypes:buffer-button-list ()
+  "Return buttons available in current buffer."
+  (append
+   (unless (string= (buffer-file-name) (gbut:file))
+     (append (ebut:list) (ibut:list)))
+   (gbut:label-list)))
+
+(defact button-series (buts)
+  "Combine multiple buttons given by their labels into one series of buttons.
+Local buttons are preferred over global buttons."
+  (interactive
+   (list (completing-read-multiple "Button labels: " (hactypes:buffer-button-list)
+                                   nil t)))
+  (dolist (b buts)
+    (let ((but (hbut:get (hbut:label-to-key b))))
+      (if but
+          (hbut:act but)
+        (gbut:act b)))))
 
 (provide 'hactypes)
 
