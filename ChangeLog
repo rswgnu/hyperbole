@@ -1,3 +1,8 @@
+2025-10-02  Mats Lidell  <matsl@gnu.org>
+
+* test/demo-tests.el (fast-demo-outline-section-anchor-and-relative-line-number):
+    Run test using different default major-mode's.
+
 2025-09-28  Mats Lidell  <matsl@gnu.org>
 
 * hactypes.el (button-series): Add actypes:button-series that runs
