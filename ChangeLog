@@ -5,6 +5,9 @@
 
 2025-10-04  Mats Lidell  <matsl@gnu.org>
 
+* hyrolo.el (custom):
+  hyperbole.el (custom): Drop require of custom due to preload.
+
 * hproperty.el: Use declare-function for hattr:get, ibut:map and ebut:map
     so require of hbut can be removed to cut dependency cycle.
     (hload-path, custom): Drop not required dependencies.
