@@ -1,3 +1,8 @@
+2025-10-04  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (run-bash): Run bash in docker container for use with the
+    docker target.
+
 2025-10-03  Mats Lidell  <matsl@gnu.org>
 
 * test/kotl-mode-tests.el (kotl-mode--add-cell): Add test for nil
