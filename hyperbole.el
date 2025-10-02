@@ -9,7 +9,7 @@
 ;; Maintainer:   Robert Weiner <rsw@gnu.org>
 ;; Maintainers:  Robert Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:      06-Oct-92 at 11:52:51
-;; Last-Mod:     20-Jun-25 at 00:21:49 by Bob Weiner
+;; Last-Mod:      2-Oct-25 at 14:28:52 by Mats Lidell
 ;; Released:     10-Mar-24
 ;; Version:      9.0.2pre
 ;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -82,9 +82,6 @@
 
 (defconst hyperbole-loading t
   "Temporary constant available for testing while Hyperbole is loading.")
-
-;; Ensure defgroup and defcustom are defined for use throughout Hyperbole.
-(require 'custom)
 
 (defgroup hyperbole nil
   "Hyperbole customizations category."
