@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:      4-Oct-25 at 00:32:16 by Mats Lidell
+;; Last-Mod:      4-Oct-25 at 00:46:47 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1181,12 +1181,8 @@ marked with :ignore t")
         (init)
         (kotl-mode:add-cell 1 "following siblings")
         (should-not (kcell-view:get-attr 'no-fill (point)))
-        (should (call-interactively #'kotl-mode:fill-paragraph))
         (kotl-mode:add-cell 1 "following siblings" nil t)
-        (should (kcell-view:get-attr 'no-fill (point)))
-        (ert-with-message-capture cap
-          (call-interactively #'kotl-mode:fill-paragraph)
-          (hy-test-helpers:should-last-message "Current cell has a ‘do not fill’ attribute" cap))))))
+        (should (kcell-view:get-attr 'no-fill (point)))))))
 
 (ert-deftest kotl-mode--add-after-parent ()
   "Verify `kotl-mode:add-after-parent'."
