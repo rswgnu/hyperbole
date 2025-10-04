@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     10-Aug-25 at 23:00:16 by Mats Lidell
+;; Last-Mod:      2-Oct-25 at 14:26:58 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -32,7 +32,6 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(require 'custom)   ;; For `defface'
 (require 'hversion)
 (require 'hmail)
 (require 'hsys-consult)
