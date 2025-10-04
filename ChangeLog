@@ -1,3 +1,8 @@
+2025-10-03  Mats Lidell  <matsl@gnu.org>
+
+* test/kotl-mode-tests.el (kotl-mode--add-cell): Add test for nil
+    relative-level, adding plist and no-fill parameter.
+
 2025-09-28  Mats Lidell  <matsl@gnu.org>
 
 * hactypes.el (button-series): Add actypes:button-series that runs

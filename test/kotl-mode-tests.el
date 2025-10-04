@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:     31-Jul-25 at 13:57:56 by Mats Lidell
+;; Last-Mod:      4-Oct-25 at 00:46:47 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1162,11 +1162,27 @@ marked with :ignore t")
         (kotl-mode:add-cell 1 "following sibling")
         (should (equal (kcell-view:level) 2))
         (should (string= (kcell-view:label (point)) "1b")))
+      (ert-info ("when > 0 or nil (meaning 1), add that number of cells as following siblings" :prefix "1: ")
+        (init)
+        (kotl-mode:add-cell nil "following sibling")
+        (should (equal (kcell-view:level) 2))
+        (should (string= (kcell-view:label (point)) "1b")))
       (ert-info ("when > 0 or nil (meaning 1), add that number of cells as following siblings" :prefix "2: ")
         (init)
         (kotl-mode:add-cell 2 "following siblings")
         (should (equal (kcell-view:level) 2))
-        (should (string= (kcell-view:label (point)) "1c"))))))
+        (should (string= (kcell-view:label (point)) "1c")))
+      (ert-info ("Add plist")
+        (init)
+        (kotl-mode:add-cell 1 "following siblings" '(:key1 "value1" :key2 "value2"))
+        (should (equal (kcell-view:get-attr :key1 (point)) "value1"))
+        (should (equal (kcell-view:get-attr :key2 (point)) "value2")))
+      (ert-info ("No-fill attribute")
+        (init)
+        (kotl-mode:add-cell 1 "following siblings")
+        (should-not (kcell-view:get-attr 'no-fill (point)))
+        (kotl-mode:add-cell 1 "following siblings" nil t)
+        (should (kcell-view:get-attr 'no-fill (point)))))))
 
 (ert-deftest kotl-mode--add-after-parent ()
   "Verify `kotl-mode:add-after-parent'."
