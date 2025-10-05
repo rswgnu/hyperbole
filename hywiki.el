@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     14-Sep-25 at 20:58:17 by Bob Weiner
+;; Last-Mod:      6-Oct-25 at 00:16:42 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1232,7 +1232,7 @@ calling this function."
 	(user-error "(hywiki-add-org-id): Referent buffer <%s> must be in org-mode, not %s"
 		    (buffer-name)
 		    major-mode))
-      (let ((org-id (hyperb:with-suppressed-warnings ((callargs org-id-get))
+      (let ((org-id (with-suppressed-warnings ((callargs org-id-get))
                       (if (>= (action:param-count #'org-id-get) 4)
 			(org-id-get nil nil nil t)
 		      (org-id-get)))))
