@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     27-Aug-25 at 10:40:25 by Bob Weiner
+;; Last-Mod:     28-Sep-25 at 12:22:16 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1136,7 +1136,7 @@ documentation is found."
 	  (setq cmd-sym (if (memq (caadr call) '(function quote))
 			    (cadadr call)
 			  (caadr call)))))
-    (setq calls (if (and (consp call) (eq (car call) 'or))
+    (setq calls (if (and (consp call) (memq (car call) '(or ignore-errors)))
 		    (mapcar #'identity (cdr call))
 		  (list cmd-sym)))
 

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     14-Sep-25 at 10:19:47 by Bob Weiner
+;; Last-Mod:      5-Oct-25 at 13:57:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -34,7 +34,10 @@
 ;;; ************************************************************************
 
 (defun hsys-xref-definitions (identifier)
-  "Return a list of all definitions of string IDENTIFIER."
+  "Return a list of all definitions of string IDENTIFIER.
+If in an Emacs Lisp mode and there is more than one definition, filter out
+feature' items which can shadow more important items when named the same,
+e.g. `eww'."
   (let* ((elisp-flag (smart-emacs-lisp-mode-p t))
 	 (xref-backend (or (and elisp-flag
 				(fboundp 'ert-test-boundp)
@@ -43,6 +46,15 @@
 				'etags)
 			   (xref-find-backend)))
 	 (xref-items (xref-backend-definitions xref-backend identifier)))
+    (when (and elisp-flag (> (length xref-items) 1))
+      (setq xref-items (or (delq nil (mapcar (lambda (item)
+					       ;; Filter out `feature' entries
+					       ;; since these can shadow defuns if
+					       ;; the same name, e.g. `eww'.
+					       (when (not (string-match "(feature "
+									(xref-item-summary item)))
+						 item))))
+			   xref-items)))
     xref-items))
 
 (defun hsys-xref-definition (identifier)
