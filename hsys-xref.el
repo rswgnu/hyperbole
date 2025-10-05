@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:      5-Oct-25 at 13:57:40 by Bob Weiner
+;; Last-Mod:      5-Oct-25 at 18:36:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -53,7 +53,8 @@ e.g. `eww'."
 					       ;; the same name, e.g. `eww'.
 					       (when (not (string-match "(feature "
 									(xref-item-summary item)))
-						 item))))
+						 item))
+					     xref-items))
 			   xref-items)))
     xref-items))
 
