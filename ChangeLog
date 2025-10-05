@@ -10,7 +10,7 @@
 
 * hproperty.el: Use declare-function for hattr:get, ibut:map and ebut:map
     so require of hbut can be removed to cut dependency cycle.
-    (hload-path, custom): Drop not required dependencies.
+    (custom): Drop not required dependencies.
 
 * Makefile (run-bash): Run bash in docker container for use with the
     docker target.

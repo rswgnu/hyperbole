@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Aug-92
-;; Last-Mod:     29-Sep-25 at 21:10:16 by Mats Lidell
+;; Last-Mod:      5-Oct-25 at 16:41:34 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -21,6 +21,7 @@
 
 (eval-when-compile
   (require 'subr-x))                    ; For when-let* in Emacs 28.2
+(require 'hload-path)
 
 ;;; ************************************************************************
 ;;; Public declarations
