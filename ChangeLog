@@ -1,3 +1,19 @@
+2025-10-05  Bob Weiner  <rsw@gnu.org>
+
+* hsys-www.el (eww-browse-url): Stop overloading this 'eww' function and replace
+    it with 'www-eww-browse-url' which is used only when a url is activated
+    via the Action Key (in the defact 'www-url'.
+              (defact www-url): Utilize 'www-eww-browse-url'.
+
+* hsys-xref.el (hsys-xref-definitions): In Elisp modes, filter out "(feature "
+    entries if more than one def entry since these can shadow defuns if the same
+    name, e.g. `eww'.
+
+* hmouse-tag.el (smart-tags-mode-list): Add this customizable list of major modes
+    to determine where smart tag finding works.  By default, includes text and
+    programming modes.
+                (smart-prog-at-tag-p): Use above list.
+
 2025-10-05  Mats Lidell  <matsl@gnu.org>
 
 * test/demo-tests.el (fast-demo-outline-section-anchor-and-relative-line-number):
@@ -25,6 +41,14 @@
 * hactypes.el (button-series): Add actypes:button-series that runs
     specified buttons in sequence.
     (hactypes:buffer-button-list): Return buttons available in current buffer.
+
+2025-09-28  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-tag.el (smart-prog-at-tag-p): Fix flashing of entire identifier rather
+    than from current point forward by using 'bounds-of-thing-at-point'.
+
+* hmouse-drv.el (hkey-help): If the conditional action call is to 'ignore-errors',
+    change it to the call within the 'ignore-errors' so output is useful.
 
 2025-09-27  Bob Weiner  <rsw@gnu.org>
 

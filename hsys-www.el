@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Apr-94 at 17:17:39 by Bob Weiner
-;; Last-Mod:     28-May-25 at 01:21:16 by Bob Weiner
+;; Last-Mod:      5-Oct-25 at 13:51:02 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -33,7 +33,8 @@
 (require 'hload-path)
 ;;; This does not require any particular web browser.
 (require 'browse-url)
-(require 'eww) ;; Must load to override it's function `eww-browse-url' below.
+(eval-when-compile
+  (require 'eww)) ;; Must load to use its functions in `www-eww-browse-url' below.
 (require 'hbut)
 
 ;;; ************************************************************************
@@ -119,7 +120,12 @@ is used.  Valid values of this variable include `browse-url-default-browser' and
   (if (or (functionp browse-url-browser-function)
 	  ;; May be a predicate alist of functions from which to select
 	  (consp browse-url-browser-function))
-      (let (browse-function-name
+      (let ((browse-url-browser-function
+	     (if (eq browse-url-browser-function #'eww-browse-url)
+		 ;; Hyperbole-specific version
+		 #'www-eww-browse-url
+	       browse-url-browser-function))
+	    browse-function-name
 	    browser)
 	(if (symbolp browse-url-browser-function)
 	    (setq browse-function-name (symbol-name browse-url-browser-function)
@@ -192,8 +198,8 @@ after that the first element is extracted as the PATH."
       (apply #'find-file-noselect path args))))
 
 ;;;###autoload
-(defun eww-browse-url (url &optional new-window)
-  "Ask the eww browser to load URL.
+(defun www-eww-browse-url (url &optional new-window)
+  "Ask the eww browser to load URL only when `hyperbole-mode' is active.
 
 Interactively, if the variable `browse-url-new-window-flag' is non-nil,
 loads the document in a new buffer tab on the window tab-line.  A non-nil
@@ -206,9 +212,11 @@ in the tab-bar on an existing frame.  See more options in
 
 Non-interactively, this uses the optional second argument NEW-WINDOW
 instead of `browse-url-new-window-flag'."
-  (when (or (eq eww-browse-url-new-window-is-tab t)
-            (and (eq eww-browse-url-new-window-is-tab 'tab-bar)
-                 tab-bar-mode))
+  (require 'eww)
+  (when (and new-window
+	     (or (eq eww-browse-url-new-window-is-tab t)
+		 (and (eq eww-browse-url-new-window-is-tab 'tab-bar)
+                      tab-bar-mode)))
     (let ((tab-bar-new-tab-choice t))
       (tab-new)))
   (let ((hpath:display-where-alist
@@ -218,8 +226,8 @@ instead of `browse-url-new-window-flag'."
       (format "*eww-%s*" (url-host (url-generic-parse-url
                                     (eww--dwim-expand-url url)))))))
   (eww-mode)
-  (eww url))
-
+  (let ((url-allow-non-local-files t))
+    (eww url)))
 
 (provide 'hsys-www)
 

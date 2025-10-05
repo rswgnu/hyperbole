@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     14-Sep-25 at 10:50:21 by Bob Weiner
+;; Last-Mod:      5-Oct-25 at 11:21:21 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -188,6 +188,11 @@ Keyword matched is grouping 1.  Referent is grouping 2.")
 (defcustom smart-emacs-tags-file nil
   "*Full path name of etags file for GNU Emacs source."
   :type '(file :must-match t)
+  :group 'hyperbole-commands)
+
+(defcustom smart-tags-mode-list '(fundamental-mode prog-mode text-mode)
+  "*Major modes where programming symbols are recognized by the Smart Keys."
+  :type '(repeat symbol)
   :group 'hyperbole-commands)
 
 ;;; ************************************************************************
@@ -966,13 +971,14 @@ When optional NO-FLASH, do not flash."
   "Return programming language tag name that point is within, else nil.
 When optional NO-FLASH, do not flash.
 Uses `xref' for identifier recognition."
-  (when (derived-mode-p 'prog-mode)
+  (when (apply #'derived-mode-p smart-tags-mode-list)
     (let ((identifier (hsys-xref-identifier-at-point)))
       (when identifier
 	(setq identifier (substring-no-properties identifier))
-	(if no-flash
-	    identifier
-	  (smart-flash-tag identifier (point) (match-end 0)))
+	(unless no-flash
+	  (let ((start-end (bounds-of-thing-at-point 'symbol)))
+	    (when start-end
+	      (smart-flash-tag identifier (car start-end) (cdr start-end)))))
 	identifier))))
 
 ;;;###autoload
@@ -1294,18 +1300,18 @@ variable or face."
 		       (find-definition-noselect tag-sym 'defface)))))
 
 (defun smart-tags-find-p (tag)
-  "Return non-nil if TAG is found within a tags table, else nil."
-      (let* ((tags-table-list (smart-entire-tags-table-list))
-	     ;; Identifier searches should almost always be case-sensitive today
-	     (tags-case-fold-search nil)
-	     (func (smart-tags-noselect-function))
-	     (tags-file-name (or (bound-and-true-p tags-file-name)
-				 (car tags-table-list)))
-	     (tags-add-tables nil))
-	(or (ignore-errors
-	      (with-no-warnings (and (hsys-xref-definition tag) t)))
-	    (ignore-errors
-	      (and func tags-table-list (funcall func tag) t)))))
+  "Return non-nil if TAG is found by xref, else nil."
+  (let* ((tags-table-list (smart-entire-tags-table-list))
+	 ;; Identifier searches should almost always be case-sensitive today
+	 (tags-case-fold-search nil)
+	 (func (smart-tags-noselect-function))
+	 (tags-file-name (or (bound-and-true-p tags-file-name)
+			     (car tags-table-list)))
+	 (tags-add-tables nil))
+    (or (ignore-errors
+	  (with-no-warnings (and (hsys-xref-definition tag) t)))
+	(ignore-errors
+	  (and func tags-table-list (funcall func tag) t)))))
 
 (defun smart-java-cross-reference ()
   "If within a Java @see comment, edit the def and return non-nil, else nil.
