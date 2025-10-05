@@ -1,3 +1,8 @@
+2025-10-05  Mats Lidell  <matsl@gnu.org>
+
+* test/demo-tests.el (fast-demo-outline-section-anchor-and-relative-line-number):
+    Run test using different default major-mode's.
+
 2025-10-04  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (run-bash): Run bash in docker container for use with the
