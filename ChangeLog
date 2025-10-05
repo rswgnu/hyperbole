@@ -14,6 +14,34 @@
     programming modes.
                 (smart-prog-at-tag-p): Use above list.
 
+2025-10-05  Mats Lidell  <matsl@gnu.org>
+
+* test/demo-tests.el (fast-demo-outline-section-anchor-and-relative-line-number):
+    Run test using different default major-mode's.
+
+2025-10-04  Mats Lidell  <matsl@gnu.org>
+
+* hyrolo.el (custom):
+  hyperbole.el (custom): Drop require of custom due to preload.
+
+* hproperty.el: Use declare-function for hattr:get, ibut:map and ebut:map
+    so require of hbut can be removed to cut dependency cycle.
+    (custom): Drop not required dependencies.
+
+* Makefile (run-bash): Run bash in docker container for use with the
+    docker target.
+
+2025-10-03  Mats Lidell  <matsl@gnu.org>
+
+* test/kotl-mode-tests.el (kotl-mode--add-cell): Add test for nil
+    relative-level, adding plist and no-fill parameter.
+
+2025-09-28  Mats Lidell  <matsl@gnu.org>
+
+* hactypes.el (button-series): Add actypes:button-series that runs
+    specified buttons in sequence.
+    (hactypes:buffer-button-list): Return buttons available in current buffer.
+
 2025-09-28  Bob Weiner  <rsw@gnu.org>
 
 * hmouse-tag.el (smart-prog-at-tag-p): Fix flashing of entire identifier rather

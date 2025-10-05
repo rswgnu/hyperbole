@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Oct-91 at 14:00:24
-;; Last-Mod:     29-May-24 at 01:08:47 by Bob Weiner
+;; Last-Mod:     29-Sep-25 at 20:23:23 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -112,15 +112,7 @@ existed before the change was made."
 					  buf))
 			  (buffer-list)))))
 
-;;; ************************************************************************
-;;; Private variables
-;;; ************************************************************************
-
-(defvar var::append-list nil
-  "List of (var-symbol . appended-list) elements saved from this Emacs session.")
-
 (provide 'hvar)
-
 
 ;; `hsettings' and `hvar' have a cyclic dependency; require this after providing 'hvar
 ;; to avoid an infinite loop.
