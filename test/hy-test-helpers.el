@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     20-Sep-25 at 11:26:21 by Mats Lidell
+;; Last-Mod:      5-Oct-25 at 23:56:44 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -41,10 +41,11 @@ Disable `vertico-mode' which can get in the way of standard key
 processing."
   (declare (debug t) (indent 1))
   `(if (bound-and-true-p vertico-mode)
-       (unwind-protect
-	   (progn (vertico-mode 0)
-		  (ert-simulate-keys ,keys ,@body))
-	 (vertico-mode 1))
+       (with-no-warnings
+         (unwind-protect
+	     (progn (vertico-mode 0)
+		    (ert-simulate-keys ,keys ,@body))
+	   (vertico-mode 1)))
      (ert-simulate-keys ,keys ,@body)))
 
 (defun hy-test-helpers:should-last-message (msg captured)

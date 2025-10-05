@@ -1,3 +1,13 @@
+2025-10-06  Mats Lidell  <matsl@gnu.org>
+
+* test/hy-test-helpers.el (hy-test-helpers:ert-simulate-keys): Silence
+    warnings for not defined vertico-mode.
+
+* test/hmouse-info-tests.el (hmouse-info-build-completions-no-match): Fix
+    unwind-protect with no unwind form.
+    (hy-test-helpers): Require helper functions.
+    (Info-complete-menu-buffer): Define var.
+
 2025-10-05  Bob Weiner  <rsw@gnu.org>
 
 * hsys-www.el (eww-browse-url): Stop overloading this 'eww' function and replace
