@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    29-Dec-21 at 09:02:00
-;; Last-Mod:      6-Jul-25 at 13:02:40 by Bob Weiner
+;; Last-Mod:      5-Oct-25 at 23:02:48 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -21,6 +21,9 @@
 (require 'ert)
 (require 'ert-x)
 (require 'hmouse-info)
+(require 'hy-test-helpers)
+
+(defvar Info-complete-menu-buffer)
 
 (ert-deftest hmouse-info-read-index-with-completion ()
   "Read a completion that completes."
@@ -33,8 +36,8 @@
       (progn
         (info "(emacs)")
         (setq Info-complete-menu-buffer (clone-buffer))
-        (should (eq '() (Info-build-menu-item-completions "nothinglikethis" nil t)))
-    (kill-buffer "*info*"))))
+        (should (eq '() (Info-build-menu-item-completions "nothinglikethis" nil t))))
+    (kill-buffer "*info*")))
 
 (ert-deftest hmouse-info-build-completions-multiple-matches ()
   "Build completions."
