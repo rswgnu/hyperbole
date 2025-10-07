@@ -1,3 +1,11 @@
+2025-10-08  Mats Lidell  <matsl@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode):
+  hywiki.el (hywiki-add-org-id): Use with-suppressed-warnings.
+
+* hload-path.el (hyperb:with-suppressed-warnings): Remove Emacs 26
+    compatibilty macro. Not needed.
+
 2025-10-06  Mats Lidell  <matsl@gnu.org>
 
 * test/hy-test-helpers.el (hy-test-helpers:ert-simulate-keys): Silence

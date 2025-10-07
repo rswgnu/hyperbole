@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     20-Jun-25 at 20:08:20 by Bob Weiner
+;; Last-Mod:      6-Oct-25 at 00:16:41 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -240,7 +240,7 @@ It provides the following keys:
     ;; We have been converting a buffer from a foreign format to a koutline.
     ;; Now that it is converted, ensure that `kotl-previous-mode' is set to
     ;; koutline.
-    (hyperb:with-suppressed-warnings ((free-vars kotl-previous-mode))
+    (with-suppressed-warnings ((free-vars kotl-previous-mode))
       (setq kotl-previous-mode 'kotl-mode))
     (run-mode-hooks 'kotl-mode-hook)
     (unless (string-prefix-p hyrolo-display-buffer (buffer-name))

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    29-Jun-16 at 14:39:33
-;; Last-Mod:     29-Jan-25 at 19:07:46 by Mats Lidell
+;; Last-Mod:      6-Oct-25 at 00:16:34 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -87,40 +87,6 @@ directory separator character.")
 ;;; Autoloads
 ;;; ************************************************************************
 
-(defmacro hyperb:with-suppressed-warnings (warnings &rest body)
-  "Like `progn', but prevents compiler WARNINGS in BODY.
-
-Defined here for elpa build compatibility which uses Emacs 26 and
-does not include `with-suppressed-warnings'.
-
-WARNINGS is an associative list where the first element of each
-item is a warning type, and the rest of the elements in each item
-are symbols they apply to.  For instance, if you want to suppress
-byte compilation warnings about the two obsolete functions `foo'
-and `bar', as well as the function `zot' being called with the
-wrong number of parameters, say
-
-\(with-suppressed-warnings ((obsolete foo bar)
-                           (callargs zot))
-  (foo (bar))
-  (zot 1 2))
-
-The warnings that can be suppressed are a subset of the warnings
-in `byte-compile-warning-types'; see the variable
-`byte-compile-warnings' for a fuller explanation of the warning
-types.  The types that can be suppressed with this macro are
-`free-vars', `callargs', `redefine', `obsolete',
-`interactive-only', `lexical', `mapcar', `constants' and
-`suspicious'.
-
-For the `mapcar' case, only the `mapcar' function can be used in
-the symbol list.  For `suspicious', only `set-buffer' can be used."
-
-  (declare (debug (sexp &optional body)) (indent 1))
-  (if (fboundp 'with-suppressed-warnings)
-      `(with-suppressed-warnings ,warnings ,@body)
-    `(with-no-warnings ,@body)))
-
 ;; New autoload generation function defined only as of Emacs 28
 (defalias 'hload-path--make-directory-autoloads
   (cond ((fboundp 'loaddefs-generate)
@@ -143,7 +109,7 @@ The function does NOT recursively descend into subdirectories of the
 directory or directories specified."
   ;; Don't use a 'let' on this next line or it will fail.
   (setq generated-autoload-file output-file)
-  (hyperb:with-suppressed-warnings ((obsolete update-directory-autoloads))
+  (with-suppressed-warnings ((obsolete update-directory-autoloads))
     (update-directory-autoloads dir)))
 
 ;; Menu items could call this function before Info is loaded.
