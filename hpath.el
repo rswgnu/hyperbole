@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     27-Sep-25 at 18:52:18 by Bob Weiner
+;; Last-Mod:     12-Oct-25 at 12:22:05 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -958,7 +958,9 @@ quote, whitespace, or Texinfo file references.  If optional TYPE
 is the symbol \\='file or \\='directory, then only that path type
 is accepted as a match.  Only locally reachable paths are checked
 for existence.  With optional NON-EXIST, nonexistent local paths
-are allowed.  Absolute pathnames must begin with a `/' or `~'."
+are allowed.  Nonexistent local paths may not contain whitespace
+unless they are delimited.  Absolute pathnames must begin with a `/'
+or `~'."
   (let ((path (hpath:delimited-possible-path non-exist))
 	subpath)
     (when path
@@ -1145,11 +1147,13 @@ end-pos) or nil."
 			(hargs:delimited "\\\"" "\\\"" nil nil include-positions "[`'’]")
 			;; Filenames in TexInfo docs
 			(hargs:delimited "@file{" "}" nil nil include-positions)
-			;; Double quoted filenames
-			(hargs:delimited "\"" "\"" nil nil include-positions "[`'’]")
-			;; Filenames in Info docs, Python files or 'ls' listing files in
-			;; single quotes
-			(hargs:delimited "[`'‘]" "[`'’]" t t include-positions "\"")))
+			(and (hypb:in-string-p)
+			     (or
+			      ;; Double quoted filenames
+			      (hargs:delimited "\"" "\"" nil nil include-positions "[`'’]")
+			      ;; Filenames in Info docs, Python files or 'ls' listing files in
+			      ;; single quotes
+			      (hargs:delimited "[`'‘]" "[`'’]" t t include-positions "\"")))))
 	   (p (if (listp triplet) (car triplet) triplet)))
       (if non-exist
 	  ;; This may be a triplet of (path start-pos end-pos) or just path
