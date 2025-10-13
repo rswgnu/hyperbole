@@ -1,3 +1,12 @@
+2025-10-13  Mats Lidell  <matsl@gnu.org>
+
+* hycontrol.el (hycontrol-frame-zoom, hycontrol-frame-zoom-reset): For
+    Emacs-28 use zoom-frm.el if it is available. Tell user it is required.
+
+* hycontrol-zmfrm.el:
+  Makefile (EL_COMPILE):
+  MANIFEST: Remove hycontrol-zmfrm.el
+
 2025-10-08  Mats Lidell  <matsl@gnu.org>
 
 * kotl/kotl-mode.el (kotl-mode):
