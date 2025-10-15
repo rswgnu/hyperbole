@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:      5-Oct-25 at 14:03:21 by Bob Weiner
+;; Last-Mod:     16-Oct-25 at 21:14:50 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1897,6 +1897,111 @@ Insert test in the middle of other text."
               (hywiki-tests--verify-hywiki-word "Ho")))
         (hy-delete-files-and-buffers (list wikiHi wikiHo))
         (hy-delete-dir-and-buffer hywiki-directory)))))
+
+(ert-deftest hywiki-tests--consult-grep ()
+  "Verify `hywiki-consult-grep' calls `hsys-consult-grep'."
+  (let ((hywiki-directory (make-temp-file "hywiki" t))
+        (hsys-consult-flag nil))
+    (unwind-protect
+        (progn
+          ;; No path list
+          (mocklet (((hsys-consult-grep "--include *.org" "--glob *.org" "regexp" 0 (list hywiki-directory) "prompt") => "match"))
+            (should (string= (hywiki-consult-grep "regexp" 0 nil "prompt") "match")))
+          ;; Path list
+          (mocklet (((hsys-consult-grep "--include *.org" "--glob *.org" "regexp" 0 '("path") "prompt") => "match"))
+            (should (string= (hywiki-consult-grep "regexp" 0 '("path") "prompt") "match")))
+          ;; No Prompt, max-matches = 0
+          (mocklet (((hsys-consult-grep "--include *.org" "--glob *.org" "regexp" 0 '("path") "Grep HyWiki dir headlines") => "match"))
+            (should (string= (hywiki-consult-grep "regexp" 0 '("path")) "match")))
+          ;; No Prompt, max-matches != 0
+          (mocklet (((hsys-consult-grep "--include *.org" "--glob *.org" "regexp" 1 '("path") "Grep HyWiki dir") => "match"))
+            (should (string= (hywiki-consult-grep "regexp" 1 '("path")) "match"))))
+      (hy-delete-dir-and-buffer hywiki-directory))))
+
+(ert-deftest hywiki-tests--hkey-help ()
+  "Verify `hkey-help'."
+  (mocklet (((hkey-actions) => t)
+            ((hkey-help) => "hkey-help"))
+    (should (string= (hywiki-help) "hkey-help")))
+  (let ((help-bn "*Help: HyWikiWords*"))
+    (unwind-protect
+        (progn
+          (when (get-buffer help-bn)
+            (kill-buffer help-bn))
+          (mocklet (((hkey-actions) => nil)
+                    (hkey-help not-called)
+                    ((documentation 'ibtypes::hywiki-existing-word) => "Doc string"))
+            (hywiki-help)
+            (should (get-buffer help-bn))
+            (with-current-buffer help-bn
+              (should (string= (buffer-string) "Doc string\n")))))
+      (kill-buffer help-bn))))
+
+(ert-deftest hywiki-tests--add-path-link-v2 ()
+  "Verify path links."
+  (hywiki-tests--preserve-hywiki-mode
+    (let* ((hywiki-directory (make-temp-file "hywiki" t))
+           (wikiHi (cdr (hywiki-add-page "Hi")))
+           (wikiHo (cdr (hywiki-add-page "Ho"))))
+      (unwind-protect
+          (progn
+            (hywiki-mode 1)
+            (with-current-buffer (find-file wikiHo)
+              (insert "123"))
+            (with-current-buffer (find-file wikiHi)
+              (hywiki-add-path-link "HoRef" wikiHo 3)
+              (should (string= (concat (file-name-nondirectory wikiHo) ":L1:C2")
+			       (cdr (hywiki-get-referent "HoRef"))))))
+        (hy-delete-files-and-buffers (list wikiHi wikiHo))
+        (hy-delete-dir-and-buffer hywiki-directory)))))
+
+(ert-deftest hywiki-tests--interactive-hywiki-mode-toogles ()
+  "Verify `hywiki-mode' called interactively toggles mode."
+  (hywiki-tests--preserve-hywiki-mode
+    (with-temp-buffer
+      (hywiki-mode 1)
+      (should hywiki-mode)
+      ;; Toggle
+      (call-interactively #'hywiki-mode)
+      (should-not hywiki-mode)
+      (call-interactively #'hywiki-mode)
+      (should hywiki-mode))))
+
+(ert-deftest hywiki-tests--directory-dired-edit ()
+  "Verify Dired is activated."
+  (hywiki-tests--preserve-hywiki-mode
+    (let* ((hywiki-directory (make-temp-file "hywiki" t))
+           (wikiHi (cdr (hywiki-add-page "Hi")))
+           (action-key-modeline-buffer-id-function nil)) ; Avoid treemacs.
+      (unwind-protect
+          (progn
+            (hywiki-directory-edit)
+            (should (equal 'dired-mode major-mode))
+            (should (string= default-directory (file-name-as-directory hywiki-directory))))
+        (hy-delete-files-and-buffers (list wikiHi))
+        (hy-delete-dir-and-buffer hywiki-directory)))))
+
+(ert-deftest hywiki-tests--tags-view ()
+  "Verify `hywiki-tag-view' calls `org-tags-view' and setups `org-redo-cmd'."
+  (with-temp-buffer
+    (insert "1\n2\n3\n4\n5\n")
+    (goto-char 1)
+    (let ((bn (buffer-name)))
+      (mocklet (((org-tags-view nil "match") => t))
+        (hywiki-tags-view nil "match" bn)
+        (should (equal (get-text-property 1 'org-redo-cmd)
+                       (list #'hywiki-tags-view nil nil bn)))
+        (should (= (line-number-at-pos) 3)))))
+  ;; todo-only
+  (with-temp-buffer
+    (insert "1\n2\n3\n4\n5\n")
+    (goto-char 1)
+    (let ((bn (buffer-name)))
+      (mocklet (((org-tags-view t "match") => t))
+        (hywiki-tags-view t "match" bn)
+        (should (equal (get-text-property 1 'org-redo-cmd)
+                       (list #'hywiki-tags-view t nil bn)))
+        (should (= (line-number-at-pos) 3))))))
 
 (provide 'hywiki-tests)
 
