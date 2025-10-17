@@ -3,7 +3,7 @@
 * test/hywiki-tests.el (hywiki-tests--consult-grep)
     (hywiki-tests--hkey-help, hywiki-tests--add-path-link-v2)
     (hywiki-tests--tags-view, hywiki-tests--directory-dired-edit)
-    (hywiki-tests--interactive-hywiki-mode-toogles): Add hywiki tests.
+    (hywiki-tests--interactive-hywiki-mode-toggles): Add hywiki tests.
 
 2025-10-13  Mats Lidell  <matsl@gnu.org>
 

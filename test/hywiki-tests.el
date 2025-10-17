@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     16-Oct-25 at 21:14:50 by Mats Lidell
+;; Last-Mod:     17-Oct-25 at 10:00:37 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1955,7 +1955,7 @@ Insert test in the middle of other text."
         (hy-delete-files-and-buffers (list wikiHi wikiHo))
         (hy-delete-dir-and-buffer hywiki-directory)))))
 
-(ert-deftest hywiki-tests--interactive-hywiki-mode-toogles ()
+(ert-deftest hywiki-tests--interactive-hywiki-mode-toggles ()
   "Verify `hywiki-mode' called interactively toggles mode."
   (hywiki-tests--preserve-hywiki-mode
     (with-temp-buffer
@@ -1982,7 +1982,7 @@ Insert test in the middle of other text."
         (hy-delete-dir-and-buffer hywiki-directory)))))
 
 (ert-deftest hywiki-tests--tags-view ()
-  "Verify `hywiki-tag-view' calls `org-tags-view' and setups `org-redo-cmd'."
+  "Verify `hywiki-tag-view' calls `org-tags-view' and sets up `org-redo-cmd'."
   (with-temp-buffer
     (insert "1\n2\n3\n4\n5\n")
     (goto-char 1)
