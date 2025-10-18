@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     18-Oct-25 at 10:03:45 by Mats Lidell
+;; Last-Mod:     18-Oct-25 at 10:15:13 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1942,7 +1942,7 @@ Insert test in the middle of other text."
           ;; No Prompt, max-matches != 0
           (mocklet (((hsys-consult-grep "--include *.org" "--glob *.org" "regexp" 1 '("path") "Grep HyWiki dir") => "match"))
             (should (string= (hywiki-consult-grep "regexp" 1 '("path")) "match"))))
-      (hy-delete-dir-and-buffer hywiki-directory))))
+      (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--hkey-help ()
   "Verify `hkey-help'."
@@ -1979,7 +1979,7 @@ Insert test in the middle of other text."
               (should (string= (concat (file-name-nondirectory wikiHo) ":L1:C2")
 			       (cdr (hywiki-get-referent "HoRef"))))))
         (hy-delete-files-and-buffers (list wikiHi wikiHo))
-        (hy-delete-dir-and-buffer hywiki-directory)))))
+        (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory)))))
 
 (ert-deftest hywiki-tests--interactive-hywiki-mode-toggles ()
   "Verify `hywiki-mode' called interactively toggles mode."
@@ -2005,7 +2005,7 @@ Insert test in the middle of other text."
             (should (equal 'dired-mode major-mode))
             (should (string= default-directory (file-name-as-directory hywiki-directory))))
         (hy-delete-files-and-buffers (list wikiHi))
-        (hy-delete-dir-and-buffer hywiki-directory)))))
+        (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory)))))
 
 (ert-deftest hywiki-tests--tags-view ()
   "Verify `hywiki-tag-view' calls `org-tags-view' and sets up `org-redo-cmd'."
