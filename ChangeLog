@@ -16,6 +16,53 @@
            (hpath:delimited-possible-path): Check for delimited strings only if
     (hypb:in-string-p) returns non-nil.
 
+2025-10-18  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--edit): Added cleanup of
+    hywiki-directory after test.
+    (hywiki-tests--only-file-in-dir-p)
+    (hywiki-tests--delete-hywiki-cache)
+    (hywiki-tests--delete-hywiki-dir-and-buffer): Add safer delete of
+    hywiki-directory so removal of a live hywiki-directory is less
+    likely. The dir must be empty and cache is only removed if it is the
+    last file remaining in the dir. Moved these into hywiki-tests since
+    they are only used with managing hywiki-directory in test cleanup and
+    use it through out the hywiki-directory tests.
+
+2025-10-16  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--consult-grep)
+    (hywiki-tests--hkey-help, hywiki-tests--add-path-link-v2)
+    (hywiki-tests--tags-view, hywiki-tests--directory-dired-edit)
+    (hywiki-tests--interactive-hywiki-mode-toggles): Add hywiki tests.
+
+2025-10-13  Mats Lidell  <matsl@gnu.org>
+
+* hycontrol.el (hycontrol-frame-zoom, hycontrol-frame-zoom-reset): For
+    Emacs-28 use zoom-frm.el if it is available. Tell user it is required.
+
+* hycontrol-zmfrm.el:
+  Makefile (EL_COMPILE):
+  MANIFEST: Remove hycontrol-zmfrm.el
+
+2025-10-08  Mats Lidell  <matsl@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode):
+  hywiki.el (hywiki-add-org-id): Use with-suppressed-warnings.
+
+* hload-path.el (hyperb:with-suppressed-warnings): Remove Emacs 26
+    compatibilty macro. Not needed.
+
+2025-10-06  Mats Lidell  <matsl@gnu.org>
+
+* test/hy-test-helpers.el (hy-test-helpers:ert-simulate-keys): Silence
+    warnings for not defined vertico-mode.
+
+* test/hmouse-info-tests.el (hmouse-info-build-completions-no-match): Fix
+    unwind-protect with no unwind form.
+    (hy-test-helpers): Require helper functions.
+    (Info-complete-menu-buffer): Define var.
+
 2025-10-05  Bob Weiner  <rsw@gnu.org>
 
 * hsys-www.el (eww-browse-url): Stop overloading this 'eww' function and replace

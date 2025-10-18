@@ -1,13 +1,9 @@
 ;;; kcell-tests.el --- Test for kcells in Koutliner        -*- lexical-binding: t; -*-
-;; usage:        GNU Emacs Lisp Library
-;; keywords:     test
 ;;
-;; author:       Mats Lidell
-;; org:          Free Software Foundation, Inc.
-;; e-mail:       matsl@gnu.org
+;; Author:       Mats Lidell
 ;;
-;; orig-date:    16-Feb-22 at 23:28:49
-;; last-mod:     16-Mar-25 at 10:15:23 by Bob Weiner
+;; Orig-Date:    16-Feb-22 at 23:28:49
+;; Last-Mod:     16-Mar-25 at 10:15:23 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;

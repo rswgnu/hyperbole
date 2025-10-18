@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     20-Sep-25 at 11:26:21 by Mats Lidell
+;; Last-Mod:     18-Oct-25 at 00:31:06 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -41,10 +41,11 @@ Disable `vertico-mode' which can get in the way of standard key
 processing."
   (declare (debug t) (indent 1))
   `(if (bound-and-true-p vertico-mode)
-       (unwind-protect
-	   (progn (vertico-mode 0)
-		  (ert-simulate-keys ,keys ,@body))
-	 (vertico-mode 1))
+       (with-no-warnings
+         (unwind-protect
+	     (progn (vertico-mode 0)
+		    (ert-simulate-keys ,keys ,@body))
+	   (vertico-mode 1)))
      (ert-simulate-keys ,keys ,@body)))
 
 (defun hy-test-helpers:should-last-message (msg captured)
@@ -109,16 +110,9 @@ Checks ACTYPE, ARGS, LOC, LBL-KEY and NAME."
 
 (defun hy-delete-dir-and-buffer (dir)
   "Delete DIR and buffer visiting directory."
-  (let ((buf (find-buffer-visiting dir))
-	(hywiki-cache (when (featurep 'hywiki)
-			(expand-file-name hywiki-cache-default-file
-					  dir))))
+  (let ((buf (find-buffer-visiting dir)))
     (when buf
       (kill-buffer buf))
-    (when (and hywiki-cache
-	       (file-readable-p hywiki-cache)
-	       (file-writable-p hywiki-cache))
-      (delete-file hywiki-cache))
     (delete-directory dir)))
 
 (defun hy-make-random-wikiword (&optional length word-length)
