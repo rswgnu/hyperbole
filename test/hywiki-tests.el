@@ -1956,7 +1956,7 @@ Insert test in the middle of other text."
             (kill-buffer help-bn))
           (mocklet (((hkey-actions) => nil)
                     (hkey-help not-called)
-                    ((documentation 'ibtypes::hywiki-existing-word) => "Doc string"))
+                    ((documentation 'ibtypes::hywiki-existing-word nil) => "Doc string"))
             (hywiki-help)
             (should (get-buffer help-bn))
             (with-current-buffer help-bn

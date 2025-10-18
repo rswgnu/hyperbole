@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     16-Aug-25 at 23:58:24 by Bob Weiner
+;; Last-Mod:     18-Oct-25 at 12:22:12 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -71,15 +71,12 @@ This should end with a space.")
 (defcustom hypb:in-string-modes-regexps
   '(let ((open-regexp "\\(^\\|[^\\]\\)\\(%s\\)")
 	 (close-regexp "\\(^\\|[^\\]\\)\\(%s\\)"))
-     (cond ((derived-mode-p 'python-mode)
-	    (list (format open-regexp "\"\\|'''\\|\"\"\"\\|'")
-		  (format close-regexp "\"\\|'''\\|\"\"\"\\|'")))
-	   ((derived-mode-p 'texinfo-mode)
+     (cond ((derived-mode-p 'texinfo-mode)
 	    (list (format open-regexp "``\\|\"")
 		  (format close-regexp "''\\|\"")))
 	   (t
-	    (list (format open-regexp "\"")
-		  (format close-regexp "\"")))))
+	    (list (format open-regexp "'''\\|\"\"\"\\|\"\\|'")
+		  (format close-regexp "'''\\|\"\"\"\\|\"\\|'")))))
   "Return a list of open/close string delimiter regexps for `hypb:in-string-p'.
 Or clauses in regexps must be arranged from longest match to shortest match."
   :type 'sexp

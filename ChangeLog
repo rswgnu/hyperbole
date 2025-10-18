@@ -1,5 +1,10 @@
 2025-10-18  Bob Weiner  <rsw@gnu.org>
 
+* hypb.el (hypb:in-string-modes-regexps): Change to support Python delimiters in
+    all modes, e.g. Org mode with code embedding so do not miss strings.
+  test/hywiki-tests.el (hywiki-tests--hkey-help): Fix by adding second arg nil to
+    'documentation' mock and update to customization above.
+
 * hyrolo.el (hyrolo-grep-file): Fix bug#79643.  Add a mark at the end point of
     all record insertions so can be referenced in 'hyrolo-yank' when calls
     'hyrolo-yank-reformat-function'.  This also allows the user to mark the region
