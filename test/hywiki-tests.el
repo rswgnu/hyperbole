@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     18-Oct-25 at 10:15:13 by Mats Lidell
+;; Last-Mod:     18-Oct-25 at 13:31:29 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1956,7 +1956,7 @@ Insert test in the middle of other text."
             (kill-buffer help-bn))
           (mocklet (((hkey-actions) => nil)
                     (hkey-help not-called)
-                    ((documentation 'ibtypes::hywiki-existing-word nil) => "Doc string"))
+                    ((documentation 'ibtypes::hywiki-existing-word) => "Doc string"))
             (hywiki-help)
             (should (get-buffer help-bn))
             (with-current-buffer help-bn
