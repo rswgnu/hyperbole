@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 23:26:00
-;; Last-Mod:     25-Apr-25 at 21:51:39 by Mats Lidell
+;; Last-Mod:     18-Oct-25 at 12:43:56 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -420,7 +420,7 @@ See `hpath:line-and-column-regexp'."
            ("\tfile1.ext file2.ext file3.ext"                 ; Leading tab
             ("file1" "file2" "file3"))
 
-           ;; Failing cases
+           ;; !! TODO - Failing cases
            ;; ("'file1\".ext' 'file2\".ext' 'file3\".ext'"    ; Single quoted with double quote
            ;;  ("file1\"" "file2\"" "file3\""))
            ;; ("\"file1'.ext\" \"file2'.ext\" \"file3'.ext\"" ; Double quoted with single quote

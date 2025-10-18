@@ -1,3 +1,24 @@
+2025-10-18  Bob Weiner  <rsw@gnu.org>
+
+* hypb.el (hypb:in-string-modes-regexps): Change to support Python delimiters in
+    all modes, e.g. Org mode with code embedding so do not miss strings.
+
+* hyrolo.el (hyrolo-grep-file): Fix bug#79643.  Add a mark at the end point of
+    all record insertions so can be referenced in 'hyrolo-yank' when calls
+    'hyrolo-yank-reformat-function'.  This also allows the user to mark the region
+    yanked with {C-x C-x}.
+
+2025-10-12  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-ignore-face-list): Ignore org-links.
+            (hywiki-maybe-highlight-word): Add and centralize HyWiki referent
+    highlighting within this function.
+
+* hpath.el (hpath:at-p): Update doc to reflect that if NON-EXIST is given, a
+    filename can have whitespace only if it is delimited.
+           (hpath:delimited-possible-path): Check for delimited strings only if
+    (hypb:in-string-p) returns non-nil.
+
 2025-10-18  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--edit): Added cleanup of

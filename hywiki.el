@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:      6-Oct-25 at 00:16:42 by Mats Lidell
+;; Last-Mod:     18-Oct-25 at 11:56:19 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -291,7 +291,8 @@ Use nil for no HyWiki mode indicator."
   :type 'string
   :group 'hyperbole-hywiki)
 
-(defconst hywiki-ignore-face-list '(button hbut-face hbut-item-face ibut-face)
+(defconst hywiki-ignore-face-list '(button hbut-face hbut-item-face
+                                    ibut-face org-link)
   "Skip highlighting of HyWikiWords in regions which have any of these faces.")
 
 (defvar hywiki-allow-suffix-referent-types '(page path-link)
@@ -2426,10 +2427,9 @@ value of `hywiki-word-highlight-flag' is changed."
 				       (setq hywiki--end (point))
 				       ;; Don't highlight current-page matches unless they
 				       ;; include a #section.
-				       (unless (or (hproperty:char-property-face-p hywiki--start hywiki-ignore-face-list)
-						   (string-equal hywiki--current-page
-								 (buffer-substring-no-properties hywiki--start hywiki--end)))
-					 (hproperty:but-add hywiki--start hywiki--end hywiki-word-face))))))))))
+				       (unless (string-equal hywiki--current-page
+							     (buffer-substring-no-properties hywiki--start hywiki--end))
+					 (hywiki-maybe-highlight-word hywiki--start hywiki--end))))))))))
 
 		;; Disable dehighlighting of HyWikiWords between [] and <>.
 		;;
@@ -3328,6 +3328,14 @@ non-nil or this will return nil."
     (when range-flag
       '(nil nil nil))))
 
+(defun hywiki-maybe-highlight-word (start end)
+  "Conditionally highlight HyWiki referent between START and END.
+Do not highlight if any face from `hywiki-ignore-face-list' appears
+within the given region, e.g. ignore HyWikiWords used in Org links or
+Hyperbole button names."
+  (unless (hproperty:char-property-face-p start hywiki-ignore-face-list)
+    (hproperty:but-add start end hywiki-word-face)))
+
 (defun hywiki-highlight-word-get-range ()
   "Return list of potential (HyWikiWord#section:Lnum:Cnum start end).
 Also highlight HyWikiWord as necessary.
@@ -3351,8 +3359,7 @@ non-nil or this will return nil."
     (when (and wikiword start end
 	       (not (hproperty:but-get start 'face hywiki-word-face))
 	       (hywiki-referent-exists-p wikiword))
-      (unless (hproperty:char-property-face-p start hywiki-ignore-face-list)
-	(hproperty:but-add start end hywiki-word-face)))
+      (hywiki-maybe-highlight-word start end))
     (list wikiword start end)))
 
 (defun hywiki-highlight-word-move-range ()
