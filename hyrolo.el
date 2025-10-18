@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      2-Oct-25 at 14:26:58 by Mats Lidell
+;; Last-Mod:     18-Oct-25 at 11:31:47 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1609,7 +1609,7 @@ instead of a string."
 	      (hyrolo-grep (if regexp-flag name (regexp-quote name)) -1 nil nil t))))
     ;; Let user reformat the region just yanked.
     (when (= found 1)
-      (funcall hyrolo-yank-reformat-function start (point)))
+      (funcall hyrolo-yank-reformat-function start (mark)))
     found))
 
 ;;; ************************************************************************
@@ -2011,7 +2011,7 @@ Return non-nil if point moves, else return nil."
   (apply #'hyrolo-search-directories #'hyrolo-grep file-regexp dirs))
 
 (defun hyrolo-grep-file (hyrolo-file-or-buf pattern &optional max-matches count-only headline-only)
-  "Retrieve entries in HYROLO-FILE-OR-BUF matching REGEXP.
+  "Retrieve entries in HYROLO-FILE-OR-BUF matching PATTERN.
 PATTERN is searched for using the function given by
 `hyrolo-next-match-function', so it can be a text property for
 example, rather than just a regexp matching buffer text.
@@ -2130,6 +2130,7 @@ Return number of matching entries found."
 		  num-found))
 	  (when (and (> num-found 0) (not count-only))
 	    (with-current-buffer hyrolo-display-buffer
+	      (push-mark nil t)
 	      ;; Require a final blank line in `hyrolo-display-buffer'
 	      ;; so that `outline-hide-sublevels' won't hide it and
 	      ;; combine with any next file header.

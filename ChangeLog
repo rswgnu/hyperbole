@@ -1,3 +1,10 @@
+2025-10-18  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-grep-file): Fix bug#79643.  Add a mark at the end point of
+    all record insertions so can be referenced in 'hyrolo-yank' when calls
+    'hyrolo-yank-reformat-function'.  This also allows the user to mark the region
+    yanked with {C-x C-x}.
+
 2025-10-12  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-ignore-face-list): Ignore org-links.
