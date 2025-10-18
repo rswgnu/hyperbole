@@ -1,3 +1,16 @@
+2025-10-18  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--edit): Added cleanup of
+    hywiki-directory after test.
+    (hywiki-tests--only-file-in-dir-p)
+    (hywiki-tests--delete-hywiki-cache)
+    (hywiki-tests--delete-hywiki-dir-and-buffer): Add safer delete of
+    hywiki-directory so removal of a live hywiki-directory is less
+    likely. The dir must be empty and cache is only removed if it is the
+    last file remaining in the dir. Moved these into hywiki-tests since
+    they are only used with managing hywiki-directory in test cleanup and
+    use it through out the hywiki-directory tests.
+
 2025-10-16  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--consult-grep)
