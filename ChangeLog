@@ -1,5 +1,9 @@
 2025-10-12  Bob Weiner  <rsw@gnu.org>
 
+* hywiki.el (hywiki-ignore-face-list): Ignore org-links.
+            (hywiki-maybe-highlight-word): Add and centralize HyWiki referent
+    highlighting within this function.
+
 * hpath.el (hpath:at-p): Update doc to reflect that if NON-EXIST is given, a
     filename can have whitespace only if it is delimited.
            (hpath:delimited-possible-path): Check for delimited strings only if
