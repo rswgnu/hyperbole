@@ -1,3 +1,12 @@
+2025-10-26  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-publish-to-html): Rewrite to use standard Org html ids, not
+    HyWiki-specific ones.
+
+* hpath.el (hpath:call): Fix conditional at end to handle empty string for 'expanded-path'.
+    This fixes handling of "#anchor" only references.
+           (hpath:find): Handle encoded file:// URLs.
+
 2025-10-18  Bob Weiner  <rsw@gnu.org>
 
 * hypb.el (hypb:in-string-modes-regexps): Change to support Python delimiters in
