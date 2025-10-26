@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     18-Oct-25 at 11:56:19 by Bob Weiner
+;; Last-Mod:     26-Oct-25 at 11:48:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2985,9 +2985,10 @@ Customize this directory with:
   ;; spaces replaced with dashes, made unique when necessary.
   (unwind-protect
       (progn
-	(advice-add #'org-export-get-reference :override #'hywiki--org-export-get-reference)
+	;; (advice-add #'org-export-get-reference :override #'hywiki--org-export-get-reference)
 	(org-publish-project "hywiki" all-pages-flag))
-    (advice-remove #'org-export-get-reference #'hywiki--org-export-get-reference)))
+    ;; (advice-remove #'org-export-get-reference #'hywiki--org-export-get-reference)
+    nil))
 
 (defun hywiki-referent-exists-p (&optional word start end)
   "Return the HyWikiWord at point or optional HyWiki WORD, if has a referent.

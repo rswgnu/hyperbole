@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     12-Oct-25 at 12:22:05 by Bob Weiner
+;; Last-Mod:     26-Oct-25 at 13:15:29 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1100,7 +1100,9 @@ Make any existing path within a file buffer absolute before returning."
 			   (string-match-p "\\`([^\):]+)" expanded-path)))) ;; Info node
 	  (when (or non-exist (file-exists-p expanded-path)
 		    (string-match-p ".+\\.info\\([.#]\\|\\'\\)" expanded-path))
-	    (concat prefix mode-prefix expanded-path suffix)))))))
+	    (if (string-empty-p expanded-path)
+		(concat prefix expanded-path suffix)
+	      (concat prefix mode-prefix expanded-path suffix))))))))
 
 (defun hpath:is-path-variable-p (path-var)
   "Return a colon or semicolon-delimited set in PATH-VAR or nil if not a match."
@@ -1503,9 +1505,13 @@ but locational suffixes within the file are utilized."
 				(if (stringp loc)
 				    (file-name-directory loc)
 				  default-directory)))
+    ;; Parse Hyperbole action prefix char
     (when (string-match hpath:prefix-regexp pathname)
       (setq modifier (aref pathname 0)
 	    pathname (substring pathname (match-end 0))))
+    ;; Remove http file:// url prefix and decode the url
+    (when (string-match "\\`file://" pathname)
+      (setq pathname (hypb:decode-url (substring pathname (match-end 0)))))
     (setq path pathname) ;; default
     (cond ((string-match hpath:instance-line-column-regexp path)
 	   (setq instance-num (string-to-number (match-string 1 path))
@@ -1539,7 +1545,11 @@ but locational suffixes within the file are utilized."
       (if modifier
 	  (setq path (hpath:resolve path))
 	(setq path (hpath:expand path)
-	      pathname (hpath:absolute-to path default-directory))))
+	      pathname (hpath:absolute-to path default-directory))
+	;; Remove http file:// url prefix that`hpath:absolute-to' may have
+	;; added and decode the url
+	(when (string-match "\\`file://" pathname)
+	  (setq pathname (hypb:decode-url (substring pathname (match-end 0)))))))
     (let ((remote-pathname (hpath:remote-p path)))
       (or modifier remote-pathname
 	  (file-exists-p pathname)
