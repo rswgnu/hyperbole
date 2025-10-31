@@ -1,3 +1,10 @@
+2025-10-31  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--publish-special-cases): Add test
+    that triggers problems in publishing. Test is constructed to work by
+    verifying what is produced. Comments point to what is the expected
+    result.
+
 2025-10-29  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--org-link-export): Add environment

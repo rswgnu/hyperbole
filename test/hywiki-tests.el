@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     30-Oct-25 at 00:00:24 by Mats Lidell
+;; Last-Mod:     31-Oct-25 at 22:37:45 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1082,6 +1082,65 @@ WikiWord#Csection-subsection
                           (format "<a href=\"WikiWord.html#%s\">WikiWord#Bsection subsection</a>" idB) (point-min) (point-max))))
 	    (should (= 1 (count-matches
                           (format "<a href=\"WikiWord.html#%s\">WikiWord#Csection-subsection</a>" idC) (point-min) (point-max)))))))
+      (hy-delete-files-and-buffers (list wikipage wikiword wikipage-html wikiword-html
+					 (expand-file-name "index.org" hywiki-directory)
+					 (expand-file-name "index.html" hywiki-org-publishing-directory)))
+      (hy-delete-dir-and-buffer hywiki-org-publishing-directory)
+      (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory))))
+
+(ert-deftest hywiki-tests--publish-special-cases ()
+  "Verify different special cases."
+  ;; org-publish does not work properly to support HyWiki export prior
+  ;; to version 9.7, so this will be skipped for Emacs 28 and 29.
+  (skip-unless (string-greaterp org-version "9.6.999"))
+  (let* ((hywiki-directory (make-temp-file "hywiki_" t))
+	 org-publish-project-alist
+	 (hywiki-org-publishing-directory (make-temp-file "public_html_" t))
+	 (wikipage (cdr (hywiki-add-page "WikiPage")))
+	 (wikipage-html (expand-file-name "WikiPage.html" hywiki-org-publishing-directory))
+	 (wikiword (cdr (hywiki-add-page "WikiWord")))
+	 (wikiword-html (expand-file-name "WikiWord.html" hywiki-org-publishing-directory))
+         (href "<a href=\"WikiWord.html\">WikiWord</a>"))
+    (unwind-protect
+	(progn
+	  (hywiki-org-set-publish-project)
+
+          (with-current-buffer (find-file-noselect wikiword)
+            (erase-buffer)
+            (insert "Text\n")
+	    (save-buffer))
+
+          (should (file-exists-p hywiki-directory))
+	  (should (file-exists-p wikipage))
+	  (should (file-exists-p wikiword))
+
+          (dolist (v `(("WikiWord WikiWord" . ,(format "%s %s" href href))
+                       ("\"WikiWord WikiWord\"" . ,(format "\"%s%s\"" href href))
+                       ;;                                       ^ Missing a space!?
+                       ("WikiWord Text WikiWord" . ,(format "%s Text %s" href href))
+                       ("\"WikiWord Text WikiWord\"" . ,(format "\"%s%s\"" href href))
+                       ;;                                            ^ Missing " Text "
+                       ("WikiWord WikiWord WikiWord" . ,(format "%s %s %s" href href href))
+                       ;; (cons "\"WikiWord WikiWord WikiWord\"" (format "\"%s %s %s\"" href href href))
+                       ;; ^ Crashes due to (wrong-type-argument integer-or-marker-p nil) caused by buffer-substring-no-properties(nil nil)
+                       ))
+            (let ((input (car v))
+                  (regex-output (cdr v)))
+	      ;; Setup WikiPage.
+	      (with-current-buffer (find-file-noselect wikipage)
+                (erase-buffer)
+                (insert input)
+	        (save-buffer))
+
+	      ;; Export the wiki
+	      (hywiki-publish-to-html t)
+
+	      ;; Verify Export
+              (ert-info ((format "Publish '%s' => Expect '%s'" input regex-output))
+	        (with-current-buffer (find-file-noselect wikipage-html t)
+                  (revert-buffer t t)
+                  (should (= 1 (count-matches regex-output (point-min) (point-max)))))))))
+      ;; Unwind
       (hy-delete-files-and-buffers (list wikipage wikiword wikipage-html wikiword-html
 					 (expand-file-name "index.org" hywiki-directory)
 					 (expand-file-name "index.html" hywiki-org-publishing-directory)))
