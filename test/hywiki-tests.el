@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:      2-Nov-25 at 18:39:57 by Mats Lidell
+;; Last-Mod:      2-Nov-25 at 18:54:18 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1836,7 +1836,7 @@ face is verified during the change."
               (hywiki-tests--run-test-case
                '(("d\"" . "WikiWord") (p2 . t) (-1) ("d" . "WikiWord")))))
         (hy-delete-file-and-buffer wiki-page)
-        (hy-delete-dir-and-buffer hywiki-directory)))))
+        (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory)))))
 
 (ert-deftest hywiki-tests--wikiword-identified-in-emacs-lisp-mode ()
   "Verify WikiWord is identified when surrounded by delimiters in `emacs-lisp-mode'."
@@ -1883,7 +1883,7 @@ face is verified during the change."
                 (goto-char 16)
                 (should-not (hywiki-tests--word-at)))))
         (hy-delete-file-and-buffer wiki-page)
-        (hy-delete-dir-and-buffer hywiki-directory)))))
+        (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory)))))
 
 (ert-deftest hywiki-tests--wikiword-identified-in-strings-in-emacs-lisp-mode ()
   "Verify WikiWord is identified when in strings in `emacs-lisp-mode'."
