@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     29-Oct-25 at 23:22:22 by Mats Lidell
+;; Last-Mod:      2-Nov-25 at 17:09:25 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2846,7 +2846,7 @@ If not found, set it up and return the new project properties."
    (hywiki-word-read)))
 
 (defun hywiki--org-link-html-format (path-stem suffix desc info)
-  "Format a HTML link using org ids."
+  "Format an html link using Org ids."
   (let* ((heading (and suffix (not (string-empty-p suffix)) (substring suffix 1)))
          (link-obj (org-element-create
                     'link
