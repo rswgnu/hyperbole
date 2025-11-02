@@ -1,3 +1,11 @@
+2025-11-02  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el
+    (hywiki-tests--wikiword-step-check-edit-wikiword-in-emacs-lisp-mode):
+    Add test.
+    (hywiki-tests--wikiword-identified-in-emacs-lisp-mode): Update test to
+    verify WikiWord face.
+
 2025-10-31  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--publish-special-cases): Add test
