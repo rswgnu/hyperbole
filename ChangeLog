@@ -1,3 +1,36 @@
+2025-11-02  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el
+    (hywiki-tests--wikiword-step-check-edit-wikiword-in-emacs-lisp-mode):
+    Add test.
+    (hywiki-tests--wikiword-identified-in-emacs-lisp-mode): Update test to
+    verify WikiWord face.
+
+2025-10-31  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--publish-special-cases): Add test
+    that triggers problems in publishing. Test is constructed to work by
+    verifying what is produced. Comments point to what is the expected
+    result.
+
+2025-10-29  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--org-link-export): Add environment
+    and mock call to hywiki--org-link-html-format.
+    (hywiki-tests--search-section): Helper for finding id strings in
+    generated html.
+    (hywiki-tests--published-html-links-to-word-and-section): Use
+    hywiki-tests--search-section.
+
+* hywiki.el (hywiki-org-link-export): Add info parameter for getting the environment.
+   (hywiki-org-link-export): Use hywiki--org-link-html-format.
+   (hywiki-publish-to-html): Simplify function since advice has been removed.
+   (hywiki--org-link-html-format): Add method for link formating in html.
+
+   (hywiki--org-format-reference):
+   (hywiki--org-export-new-title-reference):
+   (hywiki--org-export-get-reference): Not used, removed.
+
 2025-10-26  Bob Weiner  <rsw@gnu.org>
 
 * hycontrol.el (hycontrol-frame-zoom): Fix to check for an autoloaded function, 'zoom-frm-in'.
