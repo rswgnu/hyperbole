@@ -33,6 +33,9 @@
 
 2025-10-26  Bob Weiner  <rsw@gnu.org>
 
+* hycontrol.el (hycontrol-frame-zoom): Fix to check for an autoloaded function, 'zoom-frm-in'.
+(hycontrol-frame-zoom-reset): Add (require 'zoom-frm).
+
 * hywiki.el (hywiki-publish-to-html): Rewrite to use standard Org html ids, not
     HyWiki-specific ones.
 
