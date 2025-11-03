@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:     13-Oct-25 at 23:47:09 by Mats Lidell
+;; Last-Mod:     26-Oct-25 at 16:04:51 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -845,24 +845,26 @@ the hycontrol menu."
 
 (defun hycontrol-frame-zoom (increment)
   "Change the font size of all faces by INCREMENT.
-Use `global-text-scale-adjust' if it exists.  If on an older Emacs that
-does not have it see if zoom-frm.el is available and use that."
+Use `global-text-scale-adjust' if it exists.  If on an older Emacs without
+that function, use \"zoom-frm.el\" if available."
   (if (fboundp 'global-text-scale-adjust)
       (hycontrol-global-text-scale-adjust increment)
-    (if (not (and (fboundp 'zoom-all-frames-in) (fboundp 'zoom-all-frames-out)))
-        (hycontrol-user-error hycontrol-debug "(HyControl): Zooming requires separate \"zoom-frm.el\" Emacs Lisp library installation")
-      (if (< 0 increment)
-          (zoom-all-frames-in)
-        (zoom-all-frames-out)))))
+    (unless (fboundp 'zoom-frm-in)
+      (hycontrol-user-error hycontrol-debug "(HyControl): Zooming requires separate \"zoom-frm.el\" Emacs Lisp library installation"))
+    (require 'zoom-frm)
+    (if (< 0 increment)
+        (zoom-all-frames-in)
+      (zoom-all-frames-out))))
 
 (defun hycontrol-frame-zoom-reset ()
   "Reset zoom level back to default."
   (if (fboundp 'global-text-scale-adjust)
       (hycontrol-global-text-scale-adjust 0)
-    (if (not (fboundp 'zoom-frm-unzoom))
-        (hycontrol-user-error hycontrol-debug "(HyControl): Zooming requires separate \"zoom-frm.el\" Emacs Lisp library installation")
-      (dolist (fr (visible-frame-list))
-        (zoom-frm-unzoom fr)))))
+    (unless (fboundp 'zoom-frm-in)
+      (hycontrol-user-error hycontrol-debug "(HyControl): Zooming requires separate \"zoom-frm.el\" Emacs Lisp library installation"))
+    (require 'zoom-frm)
+    (dolist (fr (visible-frame-list))
+      (zoom-frm-unzoom fr))))
 
 (defun hycontrol-make-frame ()
   "Create a new frame with the same size and selected buffer as the selected frame.
