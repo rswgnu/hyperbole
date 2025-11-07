@@ -1629,6 +1629,20 @@ See gh#rswgnu/hyperbole/669."
         (hy-delete-file-and-buffer wiki-page)
         (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory)))))
 
+(defun hywiki-tests--hywiki-face-regions ()
+  "Return (start . end) for all hywiki--word-face overlays in buffer.
+The result is returned as a lexicographical sorted list to make
+comparison with expected overlays stable."
+  (let (overlay-list)
+    (dolist (overlay (overlays-in (point-min) (point-max)))
+      (when (equal (overlay-get overlay 'face) 'hywiki--word-face)
+        (push (cons (overlay-start overlay) (overlay-end overlay)) overlay-list)))
+    (sort overlay-list
+          (lambda (x y)
+            (or (< (car x) (car y))
+                (and (= (car x) (car y))
+                     (< (cdr x) (cdr y))))))))
+
 (defun hywiki-tests--hywiki-face-region-at (&optional pos)
   "Get the start and end of the hywiki--word-face overlay at POS or point.
 Return nil if not at a `hywiki--word-face' overlay."
@@ -2032,6 +2046,37 @@ face is verified during the change."
               (goto-char 2)
               (hywiki-tests--verify-hywiki-word "Ho")))
         (hy-delete-files-and-buffers (list wikiHi wikiHo))
+        (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory)))))
+
+(ert-deftest hywiki-tests--maybe-highlight-page-names ()
+  "Verify `hywiki-maybe-highlight-page-names'."
+  (hywiki-tests--preserve-hywiki-mode
+    (let* ((hywiki-directory (make-temp-file "hywiki_" t))
+	   (wikiword (cdr (hywiki-add-page "WiWo"))))
+      (unwind-protect
+	  (progn
+            (hywiki-mode 1)
+            (dolist (v `(("WiWo" . ((1 . 5)))
+                         ("WiWo text" . ((1 . 5)))
+                         ("WiWo WiWo" . ((1 . 5) (6 . 10)))
+                         ("WiWo text WiWo" . ((1 . 5) (11 . 15)))
+                         ("\"WiWo\"" . ((2 . 6)))
+                         ("\"WiWo text\"" . ((2 . 6)))
+                         ;; FIXME: Failing tests below.
+                         ;; ("\"WiWo WiWo\"" . ((2 . 6) (7 . 11)))
+                         ;; ("\"WiWo text WiWo\"" . ((2 . 6) (12 . 16)))
+                         ;; ("\"WiWo WiWo WiWo\"" . ((2 . 6) (7 . 11) (12 . 16)))
+                         ))
+              (let ((input (car v))
+                    (overlay-regions (cdr v)))
+	        (with-temp-buffer
+                  (insert input)
+	          (hywiki-maybe-highlight-page-names (point-min) (point-max))
+	          ;; Verify Overlays
+                  (ert-info ((format "Text '%s' => Expected overlays '%s'" input overlay-regions))
+                    (should (equal (hywiki-tests--hywiki-face-regions) overlay-regions)))))))
+        ;; Unwind
+        (hy-delete-file-and-buffer wikiword)
         (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory)))))
 
 (ert-deftest hywiki-tests--consult-grep ()
