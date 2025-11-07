@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Apr-94 at 17:17:39 by Bob Weiner
-;; Last-Mod:      5-Oct-25 at 13:51:02 by Bob Weiner
+;; Last-Mod:      7-Nov-25 at 19:23:34 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -42,6 +42,8 @@
 ;;; ************************************************************************
 
 (defvar hpath:display-where-alist)      ; "hpath.el"
+
+(declare-function eww--dwim-expand-url "eww" (url))
 
 (declare-function hpath:remote-available-p "hpath")
 (declare-function hpath:remote-p "hpath")
@@ -226,6 +228,7 @@ instead of `browse-url-new-window-flag'."
       (format "*eww-%s*" (url-host (url-generic-parse-url
                                     (eww--dwim-expand-url url)))))))
   (eww-mode)
+  (defvar url-allow-non-local-files)    ; Defined from Emacs 29.
   (let ((url-allow-non-local-files t))
     (eww url)))
 
