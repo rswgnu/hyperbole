@@ -1,3 +1,9 @@
+2025-11-09  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (action): Remove deletion of region on Action Key press when
+    point is in a string.  Make Action Button behavior consistent independent
+    of point.
+
 2025-11-02  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el
