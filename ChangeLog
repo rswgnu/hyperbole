@@ -1,3 +1,9 @@
+2025-11-07  Mats Lidell  <matsl@gnu.org>
+
+* hsys-www.el (eww--dwim-expand-url): Declare function to silence warning.
+    (www-eww-browse-url): Defvar url-allow-non-local-files to silence
+    warning in Emacs 28 where it is not defined. Introduced with Emacs 29.
+
 2025-11-06  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--hywiki-face-regions): Helper for
