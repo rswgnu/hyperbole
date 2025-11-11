@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    13-Jul-25 at 19:50:37
-;; Last-Mod:     15-Jul-25 at 22:55:07 by Mats Lidell
+;; Last-Mod:     11-Nov-25 at 17:21:42 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -235,13 +235,12 @@ Each test is constructed as three phases:
                (exec: #'backward-delete-char-untabify 1)
                (post: "\"<WikiWord#section>^"))
 
-             ;; FAIL: "WikiWord#section with
-             ;; spaces"<delete-char-backwards> -> shrink highlight to
-             ;; "{WikiWord#section} with spaces
+             ;; PASS: "WikiWord#section with spaces"<delete-char-backwards>
+             ;; -> shrink highlight to "{WikiWord#section} with spaces
              (ert-info ("11" :prefix "Verify highlighting: ")
                (pre: "\"WikiWord#section with spaces\"^")
                (exec: #'backward-delete-char-untabify 1)
-               (post: "\"<WikiWord#section with spaces>^")) ;;; <= FAIL: Not correct highlight
+               (post: "\"<WikiWord#section> with spaces^"))
 
              ;; PASS: WikiWord abc WikiWord
              (ert-info ("12" :prefix "Verify highlighting: ")
@@ -253,13 +252,13 @@ Each test is constructed as three phases:
              (ert-info ("13" :prefix "Verify highlighting: ")
                (pre: "WikiWord ^abc WikiWord")
                (del:           "abc")
-               (post: "<WikiWord> ^ <WikiWord>"))  ;;; <= FAIL: Not correct highlight
+               (post: "<WikiWord> ^ <WikiWord>"))
 
-             ;; FAIL: WikiWord <abc> abc WikiWord -> does not highlight *SECOND* WikiWord
+             ;; PASS: WikiWord abc abc WikiWord
              (ert-info ("14" :prefix "Verify highlighting: ")
-               (pre: "WikiWord ^<abc> abc WikiWord")
-               (del:           "<abc> abc ")
-               (post: "<WikiWord> ^WikiWord")) ;;; <= FAIL: Not correct highlight
+               (pre: "WikiWord ^abc abc WikiWord")
+               (del:           "abc abc ")
+               (post: "<WikiWord> ^<WikiWord>"))
 
              ;; PASS: WikiWord <abc> abc WikiWord
              (ert-info ("15" :prefix "Verify highlighting: ")
@@ -268,7 +267,7 @@ Each test is constructed as three phases:
                (post: "<WikiWord> ^ <WikiWord>")))
 
          (hy-delete-files-and-buffers (list wikiHi wikiHo wikiWord))
-         (hy-delete-dir-and-buffer hywiki-directory))))))
+         (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory))))))
 
 (provide 'hywiki-yki-tests)
 
