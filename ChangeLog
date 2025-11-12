@@ -1,3 +1,10 @@
+2025-11-12  Mats Lidell  <matsl@gnu.org>
+
+* test/MANIFEST: Add hywiki-yki-tests.el plus older tests missing from
+    MANIFEST: hproperty-test.el, hypb-ert-tests.el and hywiki-tests.el.
+
+* test/hywiki-yki-tests.el: Add hywiki yank, kill and insert tests.
+
 2025-11-11  Mats Lidell  <matsl@gnu.org>
 
 * test/hpath-tests.el (hpath:path-at-point-finds-path-when-unbalanced-quote-on-same-line):
