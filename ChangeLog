@@ -1,3 +1,9 @@
+2025-11-11  Mats Lidell  <matsl@gnu.org>
+
+* test/hpath-tests.el (hpath:path-at-point-finds-path-when-unbalanced-quote-on-same-line):
+    Verify that unbalanced quotes on same line as quoted path does not
+    interfere with finding the path.
+
 2025-11-07  Mats Lidell  <matsl@gnu.org>
 
 * hsys-www.el (eww--dwim-expand-url): Declare function to silence warning.
