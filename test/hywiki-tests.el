@@ -1417,7 +1417,7 @@ named WikiReferent with a non-page referent type."
 
 ;; Command
 (defun hywiki-tests--command (wikiword)
-  "Test command."
+  "Verify WIKIWORD is WikiReferent."
   (interactive)
   (should (string= "WikiReferent" wikiword)))
 
