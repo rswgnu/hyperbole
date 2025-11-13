@@ -1,3 +1,8 @@
+2025-11-13  Mats Lidell  <matsl@gnu.org>
+
+* test/hmouse-drv-tests.el (hbut-pathname-html-anchor-test): Test anchor
+    links in HTML.
+
 2025-11-12  Mats Lidell  <matsl@gnu.org>
 
 * test/MANIFEST: Add hywiki-yki-tests.el plus older tests missing from

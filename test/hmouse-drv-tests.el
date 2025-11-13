@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 22:52:00
-;; Last-Mod:     19-Aug-25 at 00:42:44 by Mats Lidell
+;; Last-Mod:     11-Nov-25 at 23:56:01 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -341,6 +341,30 @@
 	  (should (hattr:ibtype-is-p 'pathname))
           (should (string= file (hypb:buffer-file-name)))
           (should (looking-at "\* Anchor")))
+      (hy-delete-file-and-buffer file))))
+
+(ert-deftest hbut-pathname-html-anchor-test ()
+  "Pathname with HTML anchor."
+  (let ((file (make-temp-file "hypb" nil ".html" "\
+<a href=\"#idstr1\">link</a>
+<h2 id=\"idstr1\"> header</h2>
+<h2 id=\"idstr2\"> header</h2>
+")))
+    (unwind-protect
+        (progn
+          ;; Link to same file
+          (with-current-buffer (find-file file)
+            (goto-char 12)
+            (action-key)
+            (should (hattr:ibtype-is-p 'pathname))
+            (should (looking-at "id=\"idstr1\"")))
+          ;; Link from temp buff to file
+          (with-temp-buffer
+            (insert (format "<a href=\"%s#idstr2\">link</a>\n" file))
+            (goto-char 12)
+            (action-key)
+            (should (hattr:ibtype-is-p 'pathname))
+            (should (looking-at "id=\"idstr2\""))))
       (hy-delete-file-and-buffer file))))
 
 (ert-deftest hbut-pathname-anchor-trailing-text ()
