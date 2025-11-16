@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      7-Sep-25 at 17:27:58 by Bob Weiner
+;; Last-Mod:      9-Nov-25 at 13:52:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1593,10 +1593,9 @@ action type, function symbol to call or test to execute, i.e.
 
     ;; Continue only if there if there is a button label and one of:
     ;;  1. `ert--running-tests' is non-nil
-    ;;  2.  in a string
-    ;;  3. character after start-delim is not a whitespace character
+    ;;  2. character after start-delim is not a whitespace character
     (when (and lbl-key
-	       (or testing-flag (hypb:in-string-p)
+	       (or testing-flag
 		   (not (memq (if (char-after (1+ start-pos))
 				       (char-syntax (char-after (1+ start-pos)))
 				     0)
@@ -1665,10 +1664,10 @@ action type, function symbol to call or test to execute, i.e.
 				  (setq args `((,actype-sym ,start-pos
 							    ,end-pos))))
 			      (setq args `(',action))))
-		   (if (or testing-flag (hypb:in-string-p))
+		   (if testing-flag
 		       ;; Delete action button after activation when
 		       ;; running an ert test or in a string (so can
-		       ;; test this behavior interactively)
+		       ;; test this behavior interactively),
 		       (setq actype #'display-value-and-remove-region
 			     args `(,action ,start-pos ,end-pos))
 		     (setq actype #'display-value

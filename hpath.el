@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     26-Oct-25 at 13:15:29 by Bob Weiner
+;; Last-Mod:     16-Nov-25 at 10:49:44 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -962,14 +962,20 @@ are allowed.  Nonexistent local paths may not contain whitespace
 unless they are delimited.  Absolute pathnames must begin with a `/'
 or `~'."
   (let ((path (hpath:delimited-possible-path non-exist))
+	prefix
 	subpath)
     (when path
       (setq path (string-trim path)))
-    (when (and path (not non-exist) (string-match hpath:prefix-regexp path)
+    (when (and path (not non-exist)
+	       (string-match hpath:prefix-regexp path)
+	       (setq prefix (substring path 0 1)
+		     path (substring path 1))
 	       (not (string-equal (match-string 0 path) path)))
       (setq non-exist t))
-    (if (and path (not (string-empty-p path)) (file-readable-p path))
-	path
+    (if (and path (not (string-empty-p path))
+	     (or (and non-exist prefix)
+		 (file-readable-p path)))
+	(concat prefix path)
       (unless (and path (or (string-empty-p path)
 			    (string-match "::" path)))
 	(cond ((and path

@@ -1,3 +1,13 @@
+2025-11-16  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--hkey-help): Rename to
+    'hywiki-tests--hywiki-help' and stop mocking call to 'documentation'.
+
+* hpath.el (hpath:at-p): Solve problem with hpath:prefix-regexp paths where path
+    was expanded without stripping the prefix char.  This also led to failures if
+    a space was on a line before the double quoted path with prefix char, e.g.
+    SPC "!/bin/ls" or SPC "!ls".
+
 2025-11-12  Mats Lidell  <matsl@gnu.org>
 
 * test/MANIFEST: Add hywiki-yki-tests.el plus older tests missing from
@@ -10,6 +20,12 @@
 * test/hpath-tests.el (hpath:path-at-point-finds-path-when-unbalanced-quote-on-same-line):
     Verify that unbalanced quotes on same line as quoted path does not
     interfere with finding the path.
+
+2025-11-09  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (action): Remove deletion of region on Action Key press when
+    point is in a string.  Make Action Button behavior consistent independent
+    of point.
 
 2025-11-07  Mats Lidell  <matsl@gnu.org>
 

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:      2-Nov-25 at 18:54:18 by Mats Lidell
+;; Last-Mod:     16-Nov-25 at 11:09:20 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2099,8 +2099,8 @@ face is verified during the change."
             (should (string= (hywiki-consult-grep "regexp" 1 '("path")) "match"))))
       (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory))))
 
-(ert-deftest hywiki-tests--hkey-help ()
-  "Verify `hkey-help'."
+(ert-deftest hywiki-tests--hywiki-help ()
+  "Verify `hywiki-help'."
   (mocklet (((hkey-actions) => t)
             ((hkey-help) => "hkey-help"))
     (should (string= (hywiki-help) "hkey-help")))
@@ -2110,12 +2110,11 @@ face is verified during the change."
           (when (get-buffer help-bn)
             (kill-buffer help-bn))
           (mocklet (((hkey-actions) => nil)
-                    (hkey-help not-called)
-                    ((documentation 'ibtypes::hywiki-existing-word) => "Doc string"))
+                    (hkey-help not-called))
             (hywiki-help)
             (should (get-buffer help-bn))
             (with-current-buffer help-bn
-              (should (string= (buffer-string) "Doc string\n")))))
+              (should (string-prefix-p "On a HyWikiWord" (buffer-string))))))
       (kill-buffer help-bn))))
 
 (ert-deftest hywiki-tests--add-path-link-v2 ()

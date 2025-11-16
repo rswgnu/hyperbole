@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    13-Jul-25 at 19:50:37
-;; Last-Mod:     11-Nov-25 at 17:21:42 by Mats Lidell
+;; Last-Mod:     16-Nov-25 at 11:16:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -57,7 +57,7 @@ inserted.  Finally a `hywiki-test--point-char' is inserted where point is."
          (sorted-positions (sort zero-based-positions
                                 (lambda (a b) (> (car a) (car b)))))
          (result buffer-string))
-    
+
     ;; First, process all ranges from right to left
     (dolist (pos sorted-positions)
       (let* ((start (car pos))
@@ -65,9 +65,9 @@ inserted.  Finally a `hywiki-test--point-char' is inserted where point is."
              (before (substring result 0 start))
              (middle (substring result start end))
              (after (substring result end)))
-        
+
         (setq result (concat before hywiki-test--highlight-start-char middle hywiki-test--highlight-end-char after))))
-    
+
     ;; Then insert point char adjusting for inserted chars.
     (let* ((point-pos (1- current-point))
            (tags-before-point 0))
@@ -83,13 +83,13 @@ inserted.  Finally a `hywiki-test--point-char' is inserted where point is."
             (setq tags-before-point (+ tags-before-point
                                      (length hywiki-test--highlight-start-char)
                                      (length hywiki-test--highlight-end-char)))))))
-      
+
       ;; Insert point char at adjusted position
       (let* ((adjusted-point (+ point-pos tags-before-point))
              (before (substring result 0 adjusted-point))
              (after (substring result adjusted-point)))
         (setq result (concat before hywiki-test--point-char after))))
-    
+
     result))
 
 (ert-deftest hywiki-test--insert--test ()

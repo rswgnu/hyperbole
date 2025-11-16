@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     18-Oct-25 at 11:31:47 by Bob Weiner
+;; Last-Mod:      9-Nov-25 at 13:31:08 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2216,7 +2216,6 @@ Return number of groupings matched."
 This mode does not add any outline-related font-locking.
 
 See the command `outline-mode' for more information on this mode."
-  ;; nil " Outl" nil ;; FIXME: From when is this obsolete?
   :init-value nil
   :lighter " Outl"
   :keymap nil
