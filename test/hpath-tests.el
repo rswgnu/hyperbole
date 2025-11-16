@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 23:26:00
-;; Last-Mod:     11-Nov-25 at 16:27:32 by Mats Lidell
+;; Last-Mod:     16-Nov-25 at 23:23:37 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -403,7 +403,7 @@ See `hpath:line-and-column-regexp'."
   (should-not (string-match hpath:line-and-column-regexp "/foo/bar.org:LL1"))
   (should-not (string-match hpath:line-and-column-regexp "/foo/bar.org:C1")))
 
-(ert-deftest hpath--hpath:delimited-possible-path ()
+(ert-deftest hpath--hpath:delimited-possible-path-in-ls-R ()
   "Verify delimited paths are found in an `ls -R' listing in `shell-mode'."
   (let ((files
          '(("file1.ext file2.ext file3.ext"                   ; Space delimited
@@ -452,6 +452,32 @@ dir/subdir:
             (mocklet (((file-exists-p "dir/subdir") => t))
               (should (string= (expand-file-name (concat filename ".ext") "dir/subdir")
                                (hpath:delimited-possible-path))))))))))
+
+(ert-deftest hpath--hpath:delimited-possible-path ()
+  "Verify hpath:delimited-possible-path."
+  ;;              text   result mode
+  (let ((paths '(("/tmp" "/tmp" text-mode)
+                 ("/does-not-exist" "/does-not-exist" text-mode)
+                 ("file://file " "file" text-mode)
+                 ("&quot;'file'&quote" "file" text-mode)
+                 ("\\\"'file'\\\"" "file" text-mode)
+                 ("@file{file}" "file" text-mode)
+                 ("\"file\"" "file" text-mode)
+                 ("\"'file'\"" "file" text-mode)
+                 ("\"`file'\"" "file" text-mode)
+                 ("'file'" "file" python-mode)
+                 ("'''file'''" "file" python-mode)
+                 ("``file''" "file" texinfo-mode))))
+    (dolist (path paths)
+      (let ((text (nth 0 path))
+            (result (nth 1 path))
+            (mode (nth 2 path)))
+        (ert-info ((format "Find path %s in mode: %s" text mode))
+          (with-temp-buffer
+            (funcall mode)
+            (insert (format "%s\n" text))
+            (goto-char (/ (length text) 2))
+            (should (string= result (hpath:delimited-possible-path)))))))))
 
 (ert-deftest hpath--to-markup-anchor ()
   "Verify `hpath:to-markup-anchor'."
