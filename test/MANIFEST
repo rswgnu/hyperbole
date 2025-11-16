@@ -10,6 +10,7 @@ hibtypes-tests.el       - unit test for hib-kbd
 hmouse-drv-tests.el     - hmouse-drv unit tests
 hmouse-info-tests.el    - hmouse-info unit tests
 hpath-tests.el          - unit tests for hpath
+hproperty-tests.el      - hproperty tests
 hsettings-tests.el      - unit tests for hsettings
 hsys-org-tests.el       - hsys-org tests
 hui-mini-tests.el       - hui-mini tests
@@ -21,10 +22,13 @@ hy-test-coverage.el     - provide test coverage information
 hy-test-dependencies.el - Hyperbole test dependencies
 hy-test-helpers.el      - unit test helpers
 hycontrol-tests.el      - hycontrol unit tests
+hypb-ert-tests.el       - hypb-ert tests
 hypb-tests.el           - tests for hypb.el utility functions
 hyperbole-tests.el      - tests for hyperbole.el
 hyrolo-tests.el         - unit tests for hyrolo.el
 hywconfig-tests.el      - tests for hyperbole window configuration management
+hywiki-tests.el         - hywiki tests
+hywiki-yki-tests.el     - hywiki yank, kill and insert tests
 kcell-tests.el          - test for kcells in Koutlines
 kexport-tests.el        - test exporting Koutlines to file types
 kimport-tests.el        - test importing file types to Koutlines

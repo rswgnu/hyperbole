@@ -8,11 +8,37 @@
     a space was on a line before the double quoted path with prefix char, e.g.
     SPC "!/bin/ls" or SPC "!ls".
 
+2025-11-12  Mats Lidell  <matsl@gnu.org>
+
+* test/MANIFEST: Add hywiki-yki-tests.el plus older tests missing from
+    MANIFEST: hproperty-test.el, hypb-ert-tests.el and hywiki-tests.el.
+
+* test/hywiki-yki-tests.el: Add hywiki yank, kill and insert tests.
+
+2025-11-11  Mats Lidell  <matsl@gnu.org>
+
+* test/hpath-tests.el (hpath:path-at-point-finds-path-when-unbalanced-quote-on-same-line):
+    Verify that unbalanced quotes on same line as quoted path does not
+    interfere with finding the path.
+
 2025-11-09  Bob Weiner  <rsw@gnu.org>
 
 * hibtypes.el (action): Remove deletion of region on Action Key press when
     point is in a string.  Make Action Button behavior consistent independent
     of point.
+
+2025-11-07  Mats Lidell  <matsl@gnu.org>
+
+* hsys-www.el (eww--dwim-expand-url): Declare function to silence warning.
+    (www-eww-browse-url): Defvar url-allow-non-local-files to silence
+    warning in Emacs 28 where it is not defined. Introduced with Emacs 29.
+
+2025-11-06  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--hywiki-face-regions): Helper for
+    verifying generated overlays.
+    (hywiki-tests--maybe-highlight-page-names): Verify
+    overlays created by hywiki-maybe-highlight-page-names.
 
 2025-11-02  Mats Lidell  <matsl@gnu.org>
 
