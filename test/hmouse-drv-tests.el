@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 22:52:00
-;; Last-Mod:     16-Nov-25 at 13:45:33 by Mats Lidell
+;; Last-Mod:     16-Nov-25 at 20:52:05 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -345,9 +345,12 @@
 
 (ert-deftest hbut-pathname-html-anchor-test ()
   "Pathname with HTML anchor."
+  :expected-result :failed
   (let ((file (make-temp-file "hypb" nil ".html" "\
 <a href=\"#idstr1\">link</a>
+<h2 id=\"idstr11\"> header</h2>
 <h2 id=\"idstr1\"> header</h2>
+<h2 id=\"idstr22\"> header</h2>
 <h2 id=\"idstr2\"> header</h2>
 ")))
     (unwind-protect
@@ -574,7 +577,6 @@
 ;; exec-shell-cmd
 (ert-deftest hbut-find-exec-shell-cmd-test ()
   "Path prefix ! will run pathname as a non windowed program."
-  :expected-result :failed
   (with-temp-buffer
     (insert "\"!/bin/ls\"")
     (goto-char 2)
@@ -598,7 +600,6 @@
 ;; exec-window-cmd
 (ert-deftest hbut-find-exec-window-cmd-test ()
   "Path prefix & will run pathname as a windowed program."
-  :expected-result :failed
   (with-temp-buffer
     (insert "\"&/bin/ls\"")
     (goto-char 2)
