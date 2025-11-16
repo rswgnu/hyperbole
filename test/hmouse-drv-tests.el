@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 22:52:00
-;; Last-Mod:     11-Nov-25 at 23:56:01 by Mats Lidell
+;; Last-Mod:     16-Nov-25 at 13:45:33 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -574,9 +574,20 @@
 ;; exec-shell-cmd
 (ert-deftest hbut-find-exec-shell-cmd-test ()
   "Path prefix ! will run pathname as a non windowed program."
+  :expected-result :failed
   (with-temp-buffer
     (insert "\"!/bin/ls\"")
     (goto-char 2)
+    (let ((was-called nil))
+      (cl-letf (((symbol-function 'actypes::exec-shell-cmd)
+                 (lambda (filename)
+                   (setq was-called (should (string= "/bin/ls" filename))))))
+        (action-key)
+        (should was-called))))
+  ;; !!FIXME: (Regression) Initial whitespace on line cause problems
+  (with-temp-buffer
+    (insert " \"!/bin/ls\"")
+    (goto-char 3)
     (let ((was-called nil))
       (cl-letf (((symbol-function 'actypes::exec-shell-cmd)
                  (lambda (filename)
@@ -587,9 +598,20 @@
 ;; exec-window-cmd
 (ert-deftest hbut-find-exec-window-cmd-test ()
   "Path prefix & will run pathname as a windowed program."
+  :expected-result :failed
   (with-temp-buffer
     (insert "\"&/bin/ls\"")
     (goto-char 2)
+    (let ((was-called nil))
+      (cl-letf (((symbol-function 'actypes::exec-window-cmd)
+                 (lambda (filename)
+                   (setq was-called (should (string= "/bin/ls" filename))))))
+        (action-key)
+        (should was-called))))
+  ;; !!FIXME: (Regression) Initial whitespace on line cause problems
+  (with-temp-buffer
+    (insert " \"&/bin/ls\"")
+    (goto-char 3)
     (let ((was-called nil))
       (cl-letf (((symbol-function 'actypes::exec-window-cmd)
                  (lambda (filename)
