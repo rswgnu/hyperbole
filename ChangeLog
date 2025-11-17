@@ -1,5 +1,8 @@
 2025-11-17  Mats Lidell  <matsl@gnu.org>
 
+* test/hywiki-tests.el (hywiki-tests--maybe-highlight-page-names): Add
+    test cases that fail and mark test as expected-result failed.
+
 * test/hpath-tests.el
     (hpath:path-at-point-with-unbalanced-quote-on-same-line):
     Rename test. Track current behavior.
