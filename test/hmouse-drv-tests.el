@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 22:52:00
-;; Last-Mod:     16-Nov-25 at 20:52:05 by Mats Lidell
+;; Last-Mod:     17-Nov-25 at 16:53:05 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -586,7 +586,7 @@
                    (setq was-called (should (string= "/bin/ls" filename))))))
         (action-key)
         (should was-called))))
-  ;; !!FIXME: (Regression) Initial whitespace on line cause problems
+  ;; Whitespace before quote
   (with-temp-buffer
     (insert " \"!/bin/ls\"")
     (goto-char 3)
@@ -609,7 +609,7 @@
                    (setq was-called (should (string= "/bin/ls" filename))))))
         (action-key)
         (should was-called))))
-  ;; !!FIXME: (Regression) Initial whitespace on line cause problems
+  ;; Whitespace before quote
   (with-temp-buffer
     (insert " \"&/bin/ls\"")
     (goto-char 3)
