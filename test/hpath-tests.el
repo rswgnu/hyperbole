@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 23:26:00
-;; Last-Mod:     16-Nov-25 at 23:23:37 by Mats Lidell
+;; Last-Mod:     17-Nov-25 at 16:40:58 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -126,16 +126,19 @@
     (goto-char 7)
     (should (not (hpath:at-p)))))
 
-(ert-deftest hpath:path-at-point-finds-path-when-unbalanced-quote-on-same-line ()
-  "Find path at point finds a path even with unbalanced quotes on same line."
-  :expected-result :failed
-  (dolist (v '(("  \"/tmp\"  ")       ; Reference case: no quotes
-               ("  \"/tmp\" \"")      ; Quote after: Works
-               ("\" \"/tmp\"  ")))    ; Quote before: FAILS
-    (with-temp-buffer
-      (insert (format "%s\n" v))
-      (goto-char 6)
-      (should (string= (hpath:at-p nil t) "/tmp")))))
+(ert-deftest hpath:path-at-point-with-unbalanced-quote-on-same-line ()
+  "Verify `hpath:at-p' behavior when there is an unbalanced quotes on same line."
+  (dolist (v '(("  \"/tmp\"  "  . t)
+               ("  \"/tmp\" \"" . t)
+               ("\" \"/tmp\"  " . nil)))
+    (let ((text (car v))
+          (find (cdr v)))
+      (with-temp-buffer
+        (insert (format "%s\n" v))
+        (goto-char 6)
+        (if find
+            (should (string= (hpath:at-p nil t) "/tmp"))
+          (should-not (hpath:at-p nil t)))))))
 
 (ert-deftest hpath:find-exec-shell-cmd-test ()
   "Path prefix ! will run pathname as a non windowed program."
