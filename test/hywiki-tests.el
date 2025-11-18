@@ -2049,7 +2049,11 @@ face is verified during the change."
         (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory)))))
 
 (ert-deftest hywiki-tests--maybe-highlight-page-names ()
-  "Verify `hywiki-maybe-highlight-page-names'."
+  "Verify `hywiki-maybe-highlight-page-names'.
+Start and stop point of all highlighted regions in the buffer, as
+computed by `hywiki-tests--hywiki-face-regions', are compared to the
+expected result."
+  :expected-result :failed
   (hywiki-tests--preserve-hywiki-mode
     (let* ((hywiki-directory (make-temp-file "hywiki_" t))
 	   (wikiword (cdr (hywiki-add-page "WiWo"))))
@@ -2062,11 +2066,10 @@ face is verified during the change."
                          ("WiWo text WiWo" . ((1 . 5) (11 . 15)))
                          ("\"WiWo\"" . ((2 . 6)))
                          ("\"WiWo text\"" . ((2 . 6)))
-                         ;; FIXME: Failing tests below.
-                         ;; ("\"WiWo WiWo\"" . ((2 . 6) (7 . 11)))
-                         ;; ("\"WiWo text WiWo\"" . ((2 . 6) (12 . 16)))
-                         ;; ("\"WiWo WiWo WiWo\"" . ((2 . 6) (7 . 11) (12 . 16)))
-                         ))
+                         ;; Failing tests below.
+                         ("\"WiWo WiWo\"" . ((2 . 6) (7 . 11)))
+                         ("\"WiWo text WiWo\"" . ((2 . 6) (12 . 16)))
+                         ("\"WiWo WiWo WiWo\"" . ((2 . 6) (7 . 11) (12 . 16)))))
               (let ((input (car v))
                     (overlay-regions (cdr v)))
 	        (with-temp-buffer
