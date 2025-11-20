@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 22:52:00
-;; Last-Mod:     19-Aug-25 at 00:42:44 by Mats Lidell
+;; Last-Mod:     17-Nov-25 at 16:53:05 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -343,6 +343,33 @@
           (should (looking-at "\* Anchor")))
       (hy-delete-file-and-buffer file))))
 
+(ert-deftest hbut-pathname-html-anchor-test ()
+  "Pathname with HTML anchor."
+  :expected-result :failed
+  (let ((file (make-temp-file "hypb" nil ".html" "\
+<a href=\"#idstr1\">link</a>
+<h2 id=\"idstr11\"> header</h2>
+<h2 id=\"idstr1\"> header</h2>
+<h2 id=\"idstr22\"> header</h2>
+<h2 id=\"idstr2\"> header</h2>
+")))
+    (unwind-protect
+        (progn
+          ;; Link to same file
+          (with-current-buffer (find-file file)
+            (goto-char 12)
+            (action-key)
+            (should (hattr:ibtype-is-p 'pathname))
+            (should (looking-at "id=\"idstr1\"")))
+          ;; Link from temp buff to file
+          (with-temp-buffer
+            (insert (format "<a href=\"%s#idstr2\">link</a>\n" file))
+            (goto-char 12)
+            (action-key)
+            (should (hattr:ibtype-is-p 'pathname))
+            (should (looking-at "id=\"idstr2\""))))
+      (hy-delete-file-and-buffer file))))
+
 (ert-deftest hbut-pathname-anchor-trailing-text ()
   "Pathname with anchor and trailing parenthesised text."
   (let ((file (make-temp-file "hypb" nil nil
@@ -558,6 +585,16 @@
                  (lambda (filename)
                    (setq was-called (should (string= "/bin/ls" filename))))))
         (action-key)
+        (should was-called))))
+  ;; Whitespace before quote
+  (with-temp-buffer
+    (insert " \"!/bin/ls\"")
+    (goto-char 3)
+    (let ((was-called nil))
+      (cl-letf (((symbol-function 'actypes::exec-shell-cmd)
+                 (lambda (filename)
+                   (setq was-called (should (string= "/bin/ls" filename))))))
+        (action-key)
         (should was-called)))))
 
 ;; exec-window-cmd
@@ -566,6 +603,16 @@
   (with-temp-buffer
     (insert "\"&/bin/ls\"")
     (goto-char 2)
+    (let ((was-called nil))
+      (cl-letf (((symbol-function 'actypes::exec-window-cmd)
+                 (lambda (filename)
+                   (setq was-called (should (string= "/bin/ls" filename))))))
+        (action-key)
+        (should was-called))))
+  ;; Whitespace before quote
+  (with-temp-buffer
+    (insert " \"&/bin/ls\"")
+    (goto-char 3)
     (let ((was-called nil))
       (cl-letf (((symbol-function 'actypes::exec-window-cmd)
                  (lambda (filename)

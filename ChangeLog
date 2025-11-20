@@ -1,3 +1,10 @@
+2025-11-18  Mats Lidell  <matsl@gnu.org>
+
+* test/hmouse-drv-tests.el (hbut-find-exec-shell-cmd-test)
+    (hbut-find-exec-window-cmd-test): Pathname with initial whitespace on
+    line.
+    (hbut-pathname-html-anchor-test): Test anchor links in HTML.
+
 2025-11-17  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--maybe-highlight-page-names): Add
