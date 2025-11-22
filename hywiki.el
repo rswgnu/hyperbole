@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:      2-Nov-25 at 17:09:25 by Mats Lidell
+;; Last-Mod:     22-Nov-25 at 13:09:38 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -53,7 +53,7 @@
 ;;  prefix, e.g. [[MyWikiWord]]; existing HyWiki page names then will
 ;;  override Org's standard handling of such links.  To prevent Org
 ;;  mode's binding of {M-RET} from splitting lines and creating new
-;;  headlines when on a HyWiki word whose page has not yet been
+;;  headlines when on a HyWikiWord whose page has not yet been
 ;;  created, set `hsys-org-enable-smart-keys' to `t' so that
 ;;  Hyperbole's Action Key does the right thing in this context.
 ;;
@@ -195,13 +195,10 @@ The `pre-command-hook' saves this value for a buffer and `post-command-hook'
 checks it to determine if any buffer modification has occurred or not.")
 
 ;; Must be set after `hywiki-get-buttonize-characters' is defined
-(defvar hywiki--buttonize-characters nil
-  "String of single character keys bound to `hywiki-buttonize-character-commands'.
-Each such key self-inserts before highlighting any prior HyWiki word
-in `hywiki-mode'.")
-
 (defvar hywiki--buttonize-character-regexp nil
-  "Regexp matching a single separating character following a HyWiki word.")
+  "Regexp matching a single separating character following a HyWikiWord.
+Each such key self-inserts before highlighting any prior HyWikiWord
+in `hywiki-mode'.")
 
 (defvar hywiki--word-and-buttonize-character-regexp nil
   "Regexp matching HyWikiWord#section plus a valid word separating character.
@@ -276,7 +273,7 @@ highlighted nor treated as hyperlinks; they are handled normally by Org."
   :group 'hyperbole-hywiki)
 
 (defcustom hywiki-exclude-major-modes nil
-  "List of major modes to exclude from HyWiki word highlighting and recognition."
+  "List of major modes to exclude from HyWikiWord highlighting and recognition."
   :type '(list symbol)
   :group 'hyperbole-hywiki)
 
@@ -372,7 +369,7 @@ Presently, there are no key bindings; this is for future use.")
 
 (defvar hywiki-org-link-type-required t
   "When t, [[hy:HyWiki Org links]] must start with `hywiki-org-link-type':.
-Otherwise, this prefix is not needed and HyWiki word Org links
+Otherwise, this prefix is not needed and HyWikiWord Org links
 override standard Org link lookups.  See \"(org)Internal Links\".")
 
 (defcustom hywiki-org-publishing-broken-links 'mark
@@ -477,12 +474,12 @@ Nil by default."
 
 (defconst hywiki-word-regexp
   "\\<\\([[:upper:]][[:alpha:]]+\\)\\>"
-  "Regexp that matches a HyWiki word only.
+  "Regexp that matches a HyWikiWord only.
 Do not use a start or end line/string anchor in this regexp.")
 
 (defconst hywiki-word-section-regexp
   "\\(#[^][# \t\n\r\f]+\\)"
-  "Regexp that matches a non-delimited HyWiki word #section extension.
+  "Regexp that matches a non-delimited HyWikiWord #section extension.
 After the first # character, this may contain any non-square-bracket,
 non-# and non-whitespace characters.")
 
@@ -494,11 +491,11 @@ Group 4 is the optional 0-based column number.")
 (defconst hywiki-word-with-optional-suffix-regexp
   (concat hywiki-word-regexp hywiki-word-section-regexp "??"
 	  hywiki-word-line-and-column-numbers-regexp "?")
-  "Regexp for a HyWiki word with an optional #section, :Lline-num, :Ccol-num.
+  "Regexp for a HyWikiWord with an optional #section, :Lline-num, :Ccol-num.
 Section may not contain whitespace or square brackets.  Use '-' to
 substitute for spaces in the section/headline name.
 
-Group 1 is the HyWiki word.
+Group 1 is the HyWikiWord.
 Group 2 is any optional #section with the # included.
 Group 4 is any optional 1-based line number to jump to for any
 file-based referents (relative to any section given).
@@ -508,12 +505,12 @@ file-based referents.")
 (defconst hywiki-word-with-optional-suffix-exact-regexp
   (concat "\\`" hywiki-word-regexp "\\(#[^][#\n\r\f]+\\)??"
 	  hywiki-word-line-and-column-numbers-regexp "?\\'")
-  "Exact match regexp for a HyWiki word with an optional #section.
+  "Exact match regexp for a HyWikiWord with an optional #section.
 The section may contain spaces or tabs but not square brackets;
 it is preferable, however, to substitute '-' for whitespace in
 the section/headline name to simplify recognition.
 
-Group 1 is the HyWiki word.
+Group 1 is the HyWikiWord.
 Group 2 is any optional #section with the # included.
 Group 4 is any optional 1-based line number to jump to for any
 file-based referents (relative to any section given).
@@ -530,11 +527,11 @@ of reference and group two is the rest of the suffix reference.")
     (((background dark)) (:background "orange" :foreground "black" :underline t))
     (((min-colors 88)) (:foreground "orange" :underline t))
     (t (:background "orange" :underline t)))
-  "Face for HyWiki word highlighting."
+  "Face for HyWikiWord highlighting."
   :group 'hyperbole-hywiki)
 
 (defcustom hywiki-word-face 'hywiki--word-face
-  "Hyperbole face for HyWiki word highlighting."
+  "Hyperbole face for HyWikiWord highlighting."
   :initialize #'custom-initialize-default
   :type 'face
   :group 'hyperbole-hywiki)
@@ -560,10 +557,11 @@ Non-nil is the default."
 ;;; hywiki minor mode and text edit command hooks
 ;;; ************************************************************************
 
-(defun hywiki-debuttonize-non-character-commands ()
-  "Store any HyWikiWord before or after point for later comparison.
-Triggered by `pre-command-hook' for non-character -commands, including
-deletion commands and those in `hywiki-non-character-commands'."
+(defun hywiki-word-store-around-point ()
+  "Store any HyWikiWord before or after point for post-command comparison.
+HyWikiWords are stored only outside of `hywiki-non-hook-context-p' contexts.
+This is triggered by `pre-command-hook' for non-character commands,
+including deletion commands and those in `hywiki-non-character-commands'."
   ;; (when ert--running-tests
   ;;  (message "Running pre-command-hook..."))
   (setq hywiki--buffer-modified-tick (buffer-modified-tick)
@@ -594,7 +592,7 @@ deletion commands and those in `hywiki-non-character-commands'."
 	(set-marker hywiki--buttonize-end end)
 	start))))
 
-(defun hywiki-buttonize-character-commands ()
+(defun hywiki-word-highlight-post-self-insert ()
   "Turn any HyWikiWords around point into highlighted Hyperbole buttons.
 Triggered by `post-self-insert-hook' after self-inserting one or
 more characters while the command is still executing.  The
@@ -648,7 +646,7 @@ more characters while the command is still executing.  The
 
       (hywiki--maybe-rehighlight-at-point))))
 
-(defun hywiki-buttonize-non-character-commands ()
+(defun hywiki-word-highlight-post-command ()
   "Highlight any HyWikiWord before or after point as a Hyperbole button.
 Triggered by `post-command-hook' for non-character-commands, including
 deletion commands and those in `hywiki-non-character-commands'."
@@ -714,14 +712,6 @@ deletion commands and those in `hywiki-non-character-commands'."
 		 (hywiki--maybe-rehighlight-at-point))
 
 	       (hywiki--maybe-rehighlight-at-point)))))))
-
-(defun hywiki-buttonize-word (func start end face)
-  "Create a HyWikiWord button by calling FUNC with START and END positions.
-Function may apply FACE to highlight the button or may transform it
-into an Org link, etc.  Function operates on the current buffer and
-takes 3 arguments: `range-start', `range-end' and `face' to apply to
-the button."
- (funcall func start end face))
 
 (defun hywiki-get-buttonize-characters ()
   "Return a string of Org self-insert keys that have punctuation/symbol syntax."
@@ -1007,7 +997,7 @@ with the referent."
 ;;; ************************************************************************
 
 (defun hywiki-active-in-current-buffer-p ()
-  "Return non-nil if HyWiki word links are active in the current buffer.
+  "Return non-nil if HyWikiWord links are active in the current buffer.
 Exclude the minibuffer if selected and return nil."
   (and hywiki-word-highlight-flag
        (not (minibuffer-window-active-p (selected-window)))
@@ -1526,7 +1516,7 @@ omit any trailing colon and space in the prompt."
 				    "Grep HyWiki dir")))))
 
 (defun hywiki-references-to-org-links ()
-  "Convert all highlighted HyWiki words in current buffer to Org links.
+  "Convert all highlighted HyWikiWords in current buffer to Org links.
 Org publishing is then used to convert HyWiki files to other formats such
 as html.
 
@@ -1606,8 +1596,8 @@ simplifies to:
 	       (format "[[%s:%s]]" hywiki-org-link-type reference)))))))
 
 (defun hywiki-maybe-at-wikiword-beginning ()
-  "Return non-nil if previous character is one preceding a HyWiki word.
-Do not test whether or not a page exists for the HyWiki word.
+  "Return non-nil if previous character is one preceding a HyWikiWord.
+Do not test whether or not a page exists for the HyWikiWord.
 Use `hywiki-get-referent' to determine whether a HyWiki page exists."
   ;; Ignore wikiwords preceded by any non-whitespace character, except
   ;; any of these: [({<"'`'
@@ -2363,7 +2353,7 @@ disabled.  Highlight/dehighlight HyWiki page buffers whenever the
 value of `hywiki-word-highlight-flag' is changed."
   (interactive (when (use-region-p) (list (region-beginning) (region-end))))
   ;; Avoid doing many lets for efficiency.
-  ;; Highlight HyWiki words throughout buffers where `hywiki-mode' is enabled
+  ;; Highlight HyWikiWords throughout buffers where `hywiki-mode' is enabled
   ;; or HyWiki pages below `hywiki-directory' whenever displayed in a window.
   (if (hywiki-active-in-current-buffer-p)
       (unless (and (or (and (null region-start) (null region-end))
@@ -2497,7 +2487,7 @@ the current page unless they have sections attached."
 (defun hywiki-in-page-p ()
   "Return non-nil if the current buffer is a HyWiki page.
 If this is a HyWiki page and `hywiki-word-highlight-flag' is non-nil
-\(the default), also enable auto-highlighting of HyWiki words as they
+\(the default), also enable auto-highlighting of HyWikiWords as they
 are typed in the buffer."
   (or hywiki-page-flag
       (and buffer-file-name
@@ -2584,7 +2574,7 @@ regexps of wikiwords, if the hash table is out-of-date."
 	(hywiki-make-referent-hasht))
     (unless hywiki--any-wikiword-regexp-list
       ;; Compute these expensive regexps (matching 50
-      ;; hywiki words at a time) only if the set of
+      ;; HyWikiWords at a time) only if the set of
       ;; HyWikiWords changed in `hywiki-directory'.
       (setq hywiki--any-wikiword-regexp-list
 	    (mapcar (lambda (wikiword-sublist)
@@ -2931,7 +2921,7 @@ hywikiword suffix); otherwise:
 	referent))))
 
 (defun hywiki-org-link-store ()
-  "Store a link to a HyWiki word at point, if any."
+  "Store a link to a HyWikiWord at point, if any."
   (when (hywiki-word-at)
     (let* ((page-name (hywiki-word-at))
 	   (link (concat
@@ -3003,12 +2993,12 @@ Customize this directory with:
   "Return the HyWikiWord at point or optional HyWiki WORD, if has a referent.
 If no such referent exists, return nil.
 
-Word may be of form:
+The HyWikiWord may be of the form:
  1. HyWikiWord#section with an optional #section.
  2. If WORD is the symbol, :range, and there is a HyWikiWord at point
-    with an existing referent, return the tuple of values: (word
-    word-start word-end) instead of the word; otherwise, return the tuple
-    \='(nil nil nil).
+    with an existing referent, return the tuple of values: \='(<word>
+    <word-start> <word-end>) instead of the word; otherwise, return the
+    tuple \='(nil nil nil).
 
 When using the word at point, a call to `hywiki-active-in-current-buffer-p'
 at point must return non-nil or this function will return nil."
@@ -3118,7 +3108,7 @@ With optional RANGE-FLAG, return a list of (HyWikiWord start-position
 end-position); the positions include the entire
 HyWikiWord#section:Lnum:Cnum string but exclude any delimiters.
 
-This does not test whether a referent exists for the HyWiki word; call
+This does not test whether a referent exists for the HyWikiWord; call
 `hywiki-referent-exists-p' without an argument for that.
 
 A call to `hywiki-active-in-current-buffer-p' at point must return non-nil
@@ -3144,7 +3134,7 @@ With optional RANGE-FLAG, return a list of (HyWikiWord start-position
 end-position); the positions include the entire
 HyWikiWord#section:Lnum:Cnum string but exclude any delimiters.
 
-This does not test whether a referent exists for the HyWiki word; call
+This does not test whether a referent exists for the HyWikiWord; call
 `hywiki-referent-exists-p' without an argument for that.
 
 A call to `hywiki-active-in-current-buffer-p' at point must return
@@ -3154,40 +3144,49 @@ non-nil or this will return nil."
 	;; First look for an Org-type [[hy:WikiWord]] reference.
 	;; Don't use `cl-destructuring-bind' here since the `hargs:delimited' call
 	;; can return nil rather than the 3 arg list that would be required
-	(let* ((wikiword-start-end
-		(let ((start-regexp (concat "\\[\\[\\(" hywiki-org-link-type ":\\)?")))
-		  (save-excursion
-		    (skip-chars-backward (concat hywiki-org-link-type ":["))
-		    (when (looking-at start-regexp)
-		      (goto-char (match-end 0)))
+	(let* ((start-regexp (concat "\\[\\[\\(" hywiki-org-link-type ":\\)?"))
+	       (opoint (point))
+	       (hywiki-org-link-type-flag)
+	       (wikiword-start-end
+		(save-excursion
+		  (skip-chars-backward (concat hywiki-org-link-type ":["))
+		  (when (looking-at start-regexp)
+		    (setq hywiki-org-link-type-flag (match-string 1))
+		    (goto-char opoint)
+		    ;; This next line drops any `hywiki-org-link-type': from the
+		    ;; start of the WikiWord since it is part of the delimiter used.
 		    (hargs:delimited (concat "\\[\\[\\(" hywiki-org-link-type ":\\)?")
 				     "\\(\\]\\[\\|\\]\\]\\)" t t t))))
 	       (wikiword (nth 0 wikiword-start-end))
 	       (start    (nth 1 wikiword-start-end))
 	       (end      (nth 2 wikiword-start-end)))
+
 	  (with-syntax-table hywiki--org-mode-syntax-table
 	    (if (and (cond (wikiword
-			    ;; Handle an Org link [[HyWikiWord]] [[hy:HyWikiWord]]
-			    ;; or [[HyWikiWord#section][Description Text]].
-			    ;; Get the HyWikiWord link reference, ignoring any
-			    ;; description given in the link.
-			    ;;
-			    ;; Don't use next line so don't have to load all of Org
-			    ;; mode just to check for HyWikiWords; however,
-			    ;; ignoring this disables support for Org mode aliases.
-			    ;; (setq wikiword (org-link-expand-abbrev (org-link-unescape (string-trim wikiword))))
-			    (setq wikiword (hywiki-strip-org-link wikiword))
-			    (when (and wikiword end)
-			      ;; Update start and end to newly stripped
-			      ;; string positions
-			      (save-excursion
-				(save-restriction
-				  (narrow-to-region start end)
-				  (goto-char (point-min))
-				  (when (search-forward wikiword nil t)
-				    (setq start (match-beginning 0)
-					  end   (match-end 0))))))
-			    (hywiki-word-is-p wikiword))
+			    ;; Enforce `hywiki-org-link-type-required' setting
+			    (unless (and hywiki-org-link-type-required
+					 (not hywiki-org-link-type-flag))
+			      ;; Handle an Org link [[HyWikiWord]] [[hy:HyWikiWord]]
+			      ;; or [[HyWikiWord#section][Description Text]].
+			      ;; Get the HyWikiWord link reference, ignoring any
+			      ;; description given in the link.
+			      ;;
+			      ;; Don't use next line so don't have to load all of Org
+			      ;; mode just to check for HyWikiWords; however,
+			      ;; ignoring this disables support for Org mode aliases.
+			      ;; (setq wikiword (org-link-expand-abbrev (org-link-unescape (string-trim wikiword))))
+			      (setq wikiword (hywiki-strip-org-link wikiword))
+			      (when (and wikiword end)
+				;; Update start and end to newly stripped
+				;; string positions
+				(save-excursion
+				  (save-restriction
+				    (narrow-to-region start end)
+				    (goto-char (point-min))
+				    (when (search-forward wikiword nil t)
+				      (setq start (match-beginning 0)
+					    end   (match-end 0))))))
+			      (hywiki-word-is-p wikiword)))
 
 			   ;; Handle a delimited HyWikiWord reference with
 			   ;; multiple, possibly whitespace-separated words in
@@ -3357,7 +3356,7 @@ at a HyWikiWord, return \\='(nil nil nil).
 This works regardless of whether the HyWikiWord has been highlighted
 or not.
 
-This does not test whether a referent exists for the HyWiki word; call
+This does not test whether a referent exists for the HyWikiWord; call
 `hywiki-referent-exists-p' without an argument for that.
 
 A call to `hywiki-active-in-current-buffer-p' at point must return
@@ -3393,7 +3392,7 @@ Return t if the highlighted range exists at point and gets moved."
 Point should be on the HyWikiWord itself.  Suffix is anything after
 the # symbol.
 
-This does not test whether a referent exists for the HyWiki word; call
+This does not test whether a referent exists for the HyWikiWord; call
 `hywiki-referent-exists-p' without an argument for that.
 
 A call to `hywiki-active-in-current-buffer-p' at point must return non-nil
@@ -3516,9 +3515,9 @@ auto-highlighting."
       ;; enable
       (progn
 	(when hywiki-word-highlight-flag
-	  (add-hook 'pre-command-hook      'hywiki-debuttonize-non-character-commands 95)
-          (add-hook 'post-command-hook     'hywiki-buttonize-non-character-commands 95)
-	  (add-hook 'post-self-insert-hook 'hywiki-buttonize-character-commands)
+	  (add-hook 'pre-command-hook      'hywiki-word-store-around-point 95)
+          (add-hook 'post-command-hook     'hywiki-word-highlight-post-command 95)
+	  (add-hook 'post-self-insert-hook 'hywiki-word-highlight-post-self-insert)
 	  (add-hook 'window-buffer-change-functions
 		    'hywiki-maybe-highlight-wikiwords-in-frame)
 	  (add-to-list 'yank-handled-properties
@@ -3529,10 +3528,10 @@ auto-highlighting."
 	      (message "HyWikiWord page auto-highlighting enabled")
 	    (message "`hywiki-word-highlight-flag' must first be set to t to enable auto-highlighting"))))
     ;; disable
-    (remove-hook 'pre-command-hook      'hywiki-debuttonize-non-character-commands)
-    (remove-hook 'post-command-hook     'hywiki-buttonize-non-character-commands)
-    (remove-hook 'post-self-insert-hook 'hywiki-buttonize-character-commands)
-    (hywiki-mode 0) ;; also dehighlights HyWiki words outside of HyWiki pages
+    (remove-hook 'pre-command-hook      'hywiki-word-store-around-point)
+    (remove-hook 'post-command-hook     'hywiki-word-highlight-post-command)
+    (remove-hook 'post-self-insert-hook 'hywiki-word-highlight-post-self-insert)
+    (hywiki-mode 0) ;; also dehighlights HyWikiWords outside of HyWiki pages
     (remove-hook 'window-buffer-change-functions
 		 'hywiki-maybe-highlight-wikiwords-in-frame)
     (hywiki-maybe-highlight-wikiwords-in-frame t)
@@ -3812,12 +3811,11 @@ This must be called within a `save-excursion' or it may move point."
 ;;; ************************************************************************
 
 ;; Must be set after `hywiki-get-buttonize-characters' is defined
-(unless hywiki--buttonize-characters
-  (setq hywiki--buttonize-characters
-	(concat "[]()<>{}\"' \t\r\n" (hywiki-get-buttonize-characters))
-	hywiki--buttonize-character-regexp
+(unless hywiki--buttonize-character-regexp
+  (setq hywiki--buttonize-character-regexp
 	(concat "\\([]["
-		(regexp-quote (substring hywiki--buttonize-characters 2))
+		(regexp-quote (concat "()<>{}\"' \t\r\n"
+				      (hywiki-get-buttonize-characters)))
 		"]\\|$\\)")
 	hywiki--word-and-buttonize-character-regexp
 	(concat "\\(" hywiki-word-with-optional-suffix-regexp "\\)"

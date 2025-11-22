@@ -1,3 +1,30 @@
+2025-11-22  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--assist-key-on-hywikiword-displays-help):
+    Fix so always works regardless of where Hyperbole Help window is displayed
+    or whether it is the selected window.
+                       (hywiki-tests--wikiword-identified-with-delimiters): Set
+    'hywiki-org-link-type-required' to nil so WikiWords are recognized in Org
+    links without the hy: prefix.
+
+* hywiki.el (hywiki-word-at): Fix to respect the 'hywiki-org-link-type-required'
+    setting and ignore HyWikiWord Org links without a 'hy:' prefix when that
+    variable is non-nil.
+  test/hsys-org-tests.el (hsys-org:org-link-at-p): Avoid failure by forcing
+    the setting of 'hywiki-org-link-type-required' to t.
+
+* hywiki.el (hywiki-debuttonize-non-character-commands): Elaborate contexts
+    where this hook function fires.  Rename to 'hywiki-word-store-around-point'.
+            (hywiki-buttonize-non-character-commands): Rename to
+    'hywiki-word-highlight-post-command'.
+            (hywiki-buttonize-character-commands): Rename to
+    'hywiki-word-highlight-post-self-insert'.
+            (hywiki--buttonize-characters): Remove, not used.
+
+* hyrolo.el (hyrolo-logical-regexp): Add so regexp can be reused and anchor
+    to start of the search string.  Use in 'hyrolo-fgrep' and
+    'hyrolo-fgrep-logical'.
+
 2025-11-18  Mats Lidell  <matsl@gnu.org>
 
 * test/hmouse-drv-tests.el (hbut-find-exec-shell-cmd-test)
@@ -1746,7 +1773,7 @@
 2025-03-23  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--run-test-case): Run DSL for testing
-    Hywiki words.
+    HywikiWords.
     (hywiki-tests--lorem-ipsum): Surrounding test text.
     (hywiki-tests--verify-hywiki-word): DSL verification helper.
     (hywiki-tests--wikiword-step-check-verification)
@@ -2619,7 +2646,7 @@ value to be [[WikiWord]] not [[file:WikiWord.org][WikiWord]].
 
 * test/hywiki-tests.el (hywiki-tests--a-wikiword-in-hywiki-directory)
     (hywiki-tests--wikiword-identified-with-delimiters): Add tests for
-    hywiki words with delimiters.
+    HyWikiWords with delimiters.
 
 2024-12-23  Bob Weiner  <rsw@gnu.org>
 
@@ -3823,8 +3850,6 @@ value to be [[WikiWord]] not [[file:WikiWord.org][WikiWord]].
 * hywiki.el (hywiki--range): Add to hold (start . end) range values.
             (hywiki-word-at): If word is already highlighted with
     'hywiki-word-face', use that as a shortcut to get the word.
-            (hywiki-buttonize-word): Add.
-	    (hywiki-maybe-highlight-page-name): Rewrite to use above function.
 
 2024-07-12  Mats Lidell  <matsl@gnu.org>
 
@@ -4252,7 +4277,7 @@ value to be [[WikiWord]] not [[file:WikiWord.org][WikiWord]].
             (hywiki-mode): Change all defcustom groups in this library to
     'hyperbole-wiki.
 	    (hywiki-excluded-major-modes): Add to exclude major modes and their
-    descendents from highlighting and activation of HyWiki words.  Default is nil.
+    descendents from highlighting and activation of HyWikiWords.  Default is nil.
             (hywiki-active-in-current-buffer-p): Add and use in 'hywiki' ibtype.
 	    (hywiki-in-page-p): Add and use where buffer's file is tested against
     'hywiki-directory'.
@@ -4320,7 +4345,7 @@ value to be [[WikiWord]] not [[file:WikiWord.org][WikiWord]].
     call of 'hywiki-buttonize'.
             (hywiki-remap-buttonize-characters, hywiki-initialize-mode-map):
     Remove these and move keymap init into 'hywiki-mode' definition.
-            (hywiki-buttonize): Rewrite to highlight hywiki word to the left of
+            (hywiki-buttonize): Rewrite to highlight HyWikiWord to the left of
     point iff last inserted char is in the set of 'hywiki--buttonize-characters'.
     Rename to 'hywiki-buttonize-character-commands'.
            (hywiki-buttonize-non-character-commands): Add.
@@ -4377,7 +4402,7 @@ value to be [[WikiWord]] not [[file:WikiWord.org][WikiWord]].
             (hywiki-remap-org-insertion-punctuation-keys): Rename to
     'hywiki-remap-buttonize-characters'.
             (hywiki--buttonize-characters): Add as a computed string of single
-    characters that each trigger prior hywiki word highlighting when it is enabled.
+    characters that each trigger prior HyWikiWord highlighting when it is enabled.
             (hywiki-highlight-page-name, hywiki-highlight-page-names): Don't skip
      back over symbol chars.
             (hywiki-find-page): Use this function as the 'find-file-hook' instead
@@ -4469,7 +4494,7 @@ value to be [[WikiWord]] not [[file:WikiWord.org][WikiWord]].
              (hywiki-get-page-files): Add missing '+' for multiple chars in file suffix.
              (hywiki-at-wikiword, hywiki-highlight-page-names): Allow for numerics
     in #section references.
-             (hywiki--word-face): Change foreground of HyWiki word to 'orange'
+             (hywiki--word-face): Change foreground of HyWikiWord to 'orange'
     when on a dark background.
 
 2024-04-22  Bob Weiner  <rsw@gnu.org>
@@ -4477,7 +4502,7 @@ value to be [[WikiWord]] not [[file:WikiWord.org][WikiWord]].
 * hywiki.el: Add new auto-wikiword note-taking system with `hywiki' ibtype.
   hasht.el: Temporarily add this for hywiki hash table support.
   hibtypes.el (load "hywiki"): Add at lowest ibtype priority.
-  hsys-org.el (hsys-org-link-at-p): Support HyWiki word handling.
+  hsys-org.el (hsys-org-link-at-p): Support HyWikiWord handling.
   Makefile (EL_COMPILE):
   MANIFEST: Add hywiki.el and hasht.el.
 

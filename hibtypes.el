@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      9-Nov-25 at 13:52:10 by Bob Weiner
+;; Last-Mod:     22-Nov-25 at 12:40:34 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -108,6 +108,7 @@
 ;;; Creates and displays personal wiki pages and sections with auto-wikiword links
 ;;; ========================================================================
 
+;; Defines `hywiki-word' ibtype
 (load "hywiki" nil t)
 
 ;;; ========================================================================
