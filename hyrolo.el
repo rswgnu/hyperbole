@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      9-Nov-25 at 13:31:08 by Bob Weiner
+;; Last-Mod:     22-Nov-25 at 07:54:28 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -138,6 +138,10 @@
 ;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************
+
+(defvar hyrolo-logical-regexp
+  "\\`(\\(r-\\)?\\(and\\|or\\|xor\\|not\\)\\>"
+  "Regexp matching the beginning of a HyRolo logical search string.")
 
 (defvar hyrolo-boolean-only-flag nil
   "Set to prevent HyRolo from displaying an error buffer when running tests.
@@ -744,7 +748,7 @@ on the logical sexpression matching."
 			       (cadr input-and-matching-files)))))
   (setq string (string-trim string "\"" "\""))
   (let ((total-matches 0))
-    (if (string-match-p "\(\\(r-\\)?\\(and\\|or\\|xor\\|not\\)\\>" string)
+    (if (string-match-p hyrolo-logical-regexp string)
 	(progn
 	  ;; Search string contains embedded logic operators.
 	  ;; First try to match logical sexpression within a single

@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     29-Aug-25 at 03:42:13 by Bob Weiner
+@c Last-Mod:     22-Nov-25 at 10:36:49 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -2527,7 +2527,7 @@ minibuffer or the other window.
 @cindex hywiki existing word
 @anchor{hywiki-existing-word}
 @item hywiki-existing-word
-When on a HyWiki word with an existing page, display its page and
+When on a HyWikiWord with an existing page, display its page and
 optional section.
 
 @findex ibtypes action
@@ -3104,7 +3104,7 @@ source reference line again.
 @cindex hywiki word
 @anchor{hywiki-word}
 @item hywiki-word
-When on a HyWiki word, display its page and optional section.  If the
+When on a HyWikiWord, display its page and optional section.  If the
 associated HyWiki page does not exist, create it automatically.
 
 @findex ibtypes hynote-file

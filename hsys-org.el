@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     30-Aug-25 at 23:19:35 by Bob Weiner
+;; Last-Mod:     22-Nov-25 at 12:07:13 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -510,10 +510,12 @@ Start and end are the buffer positions of the label of the link.  This
 is either the optional description or if none, then the referent, i.e.
 either [[referent][description]] or [[referent]].
 
-Ignore [[hy:HyWiki]] buttons and return nil (handle these as
-implicit buttons).  Assume caller has already checked that the
-current buffer is in `org-mode' or is looking for an Org link in
-a non-Org buffer type."
+If point is on a HyWikiWord within an Org link and HyWikiWords are
+recognized in the current buffer, ignore the Org link and return nil
+(handle these elsewhere as implicit buttons).
+
+Assume caller has already checked that the current buffer is in
+`org-mode' or is looking for an Org link in a non-Org buffer type."
   (unless (or (smart-eolp) (smart-eobp))
     (let (label-start-end)
       (if (derived-mode-p 'org-mode)
@@ -521,15 +523,15 @@ a non-Org buffer type."
 	  (when (org-element-property :raw-link (org-element-context))
 	    ;; At an Org link
 	    (save-match-data
-	      ;; If this Org link matches a potential HyWiki word, ignore it.
+	      ;; If this Org link matches a potential HyWikiWord, ignore it.
 	      (when (and (not (and (fboundp 'hywiki-word-at) (hywiki-word-at)))
 			 (setq label-start-end (hsys-org-link-label-start-end)))
 		(cons (nth 1 label-start-end) (nth 2 label-start-end)))))
-	;; non-Org mode (can't call org-element (which
+	;; Non-Org mode (can't call org-element (which
 	;; hsys-org-thing-at-p calls) outside of Org mode.
-	;; Check if point is inside a link
+	;; Check if point is inside a link.
 	(save-match-data
-	  ;; If any Org link matches a potential HyWiki word, ignore it.
+	  ;; If any Org link matches a potential HyWikiWord, ignore it.
 	  (when (and (not (and (fboundp 'hywiki-word-at) (hywiki-word-at)))
 		     (setq label-start-end (hargs:delimited "[[" "]]" nil nil t)))
 	    (let* ((start (nth 1 label-start-end))

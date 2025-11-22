@@ -44,7 +44,7 @@ buffer by surrounding them with double square brackets and the
 prefix, e.g. [[MyWikiWord]]; existing HyWiki page names then will
 override Org's standard handling of such links.  To prevent Org
 mode's binding of {M-RET} from splitting lines and creating new
-headlines when on a HyWiki word whose page has not yet been
+headlines when on a HyWikiWord whose page has not yet been
 created, set `hsys-org-enable-smart-keys' to `t' so that
 Hyperbole's Action Key does the right thing in this context.
 

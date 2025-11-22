@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    13-Jun-89 at 22:57:33
-;; Last-Mod:     21-Jun-25 at 22:20:28 by Bob Weiner
+;; Last-Mod:     22-Nov-25 at 07:56:55 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -75,8 +75,8 @@
 ;;; ************************************************************************
 
 ;;;###autoload
-(defun hyrolo-fgrep-logical (expr &optional count-only include-sub-entries no-sub-entries-out
-				  koutline-flag)
+(defun hyrolo-fgrep-logical (expr &optional count-only include-sub-entries
+                             no-sub-entries-out koutline-flag)
   "Display rolo entries matching EXPR.
 EXPR is a string that may contain sexpression logical prefix operators.
 If optional COUNT-ONLY is non-nil, don't display entries, return
@@ -111,16 +111,16 @@ Double quotes may be used to group multiple words as a single argument."
 			      (read expr) count-only include-sub-entries
 			      no-sub-entries-out t))
 	   (setq total-matches (eval (read expr))))
-	  ((string-match-p "\(\\(r-\\)?\\(and\\|or\\|xor\\|not\\)\\>" expr)
-	   (setq expr (replace-regexp-in-string "\(or " "\(| " expr nil t))
-	   (setq expr (replace-regexp-in-string "\(xor " "\(@ " expr nil t))
-	   (setq expr (replace-regexp-in-string "\(not " "\(! " expr nil t))
-	   (setq expr (replace-regexp-in-string "\(and " "\(& " expr nil t))
+	  ((string-match-p hyrolo-logical-regexp expr)
+	   (setq expr (replace-regexp-in-string "(or " "(| " expr nil t))
+	   (setq expr (replace-regexp-in-string "(xor " "(@ " expr nil t))
+	   (setq expr (replace-regexp-in-string "(not " "(! " expr nil t))
+	   (setq expr (replace-regexp-in-string "(and " "(& " expr nil t))
 
-	   (setq expr (replace-regexp-in-string "\(r-or " "\(r-| " expr nil t))
-	   (setq expr (replace-regexp-in-string "\(r-xor " "\(r-@ " expr nil t))
-	   (setq expr (replace-regexp-in-string "\(r-not " "\(r-! " expr nil t))
-	   (setq expr (replace-regexp-in-string "\(r-and " "\(r-& " expr nil t))
+	   (setq expr (replace-regexp-in-string "(r-or " "(r-| " expr nil t))
+	   (setq expr (replace-regexp-in-string "(r-xor " "(r-@ " expr nil t))
+	   (setq expr (replace-regexp-in-string "(r-not " "(r-! " expr nil t))
+	   (setq expr (replace-regexp-in-string "(r-and " "(r-& " expr nil t))
 
 	   (setq expr (replace-regexp-in-string
 		       "\"\\([^\"]*\\)\"" "{\\1}" expr nil nil))
@@ -134,15 +134,15 @@ Double quotes may be used to group multiple words as a single argument."
 	       (setq saved-expr expr)))
 	   (setq expr (replace-regexp-in-string
 		       "{\\([^{}]+\\)}" "\"\\1\"" expr nil nil))
-	   (setq expr (replace-regexp-in-string "\(| " "\(hyrolo-or start end  " expr nil t))
-	   (setq expr (replace-regexp-in-string "\(@ " "\(hyrolo-xor start end " expr nil t))
-	   (setq expr (replace-regexp-in-string "\(! " "\(hyrolo-not start end " expr nil t))
-	   (setq expr (replace-regexp-in-string "\(& " "\(hyrolo-and start end " expr nil t))
+	   (setq expr (replace-regexp-in-string "(| " "(hyrolo-or start end  " expr nil t))
+	   (setq expr (replace-regexp-in-string "(@ " "(hyrolo-xor start end " expr nil t))
+	   (setq expr (replace-regexp-in-string "(! " "(hyrolo-not start end " expr nil t))
+	   (setq expr (replace-regexp-in-string "(& " "(hyrolo-and start end " expr nil t))
 
-	   (setq expr (replace-regexp-in-string "\(r-| " "\(hyrolo-r-or start end  " expr nil t))
-	   (setq expr (replace-regexp-in-string "\(r-@ " "\(hyrolo-r-xor start end " expr nil t))
-	   (setq expr (replace-regexp-in-string "\(r-! " "\(hyrolo-r-not start end " expr nil t))
-	   (setq expr (replace-regexp-in-string "\(r-& " "\(hyrolo-r-and start end " expr nil t))
+	   (setq expr (replace-regexp-in-string "(r-| " "(hyrolo-r-or start end  " expr nil t))
+	   (setq expr (replace-regexp-in-string "(r-@ " "(hyrolo-r-xor start end " expr nil t))
+	   (setq expr (replace-regexp-in-string "(r-! " "(hyrolo-r-not start end " expr nil t))
+	   (setq expr (replace-regexp-in-string "(r-& " "(hyrolo-r-and start end " expr nil t))
 
 	   (setq expr (format "(hyrolo-logic (quote %S) nil %s %s %s %s)"
 			      (read expr) count-only include-sub-entries

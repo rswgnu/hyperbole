@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     16-Nov-25 at 11:09:20 by Bob Weiner
+;; Last-Mod:     22-Nov-25 at 13:35:42 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -323,8 +323,10 @@ This is for simulating the command loop."
             (should (string= "WikiWord" (hywiki-word-at)))
             (delete-other-windows)
             (assist-key)
-            (other-window 1)
-            (should (string-prefix-p "*Help: Hyperbole " (buffer-name))))
+            (should (get-window-with-predicate
+		     (lambda (win) (string-prefix-p "*Help: Hyperbole "
+						    (buffer-name
+						     (window-buffer win)))))))
         (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory)))))
 
 (ert-deftest hywiki-tests--action-key-on-wikiword-displays-page ()
@@ -441,6 +443,7 @@ line 2
   "Verify WikiWord is identified when surrounded by delimiters."
   (hywiki-tests--preserve-hywiki-mode
     (let ((hsys-org-enable-smart-keys t)
+	  (hywiki-org-link-type-required nil)
           (hywiki-directory (make-temp-file "hywiki" t)))
       (unwind-protect
           (progn
@@ -496,8 +499,8 @@ line 2
               (font-lock-ensure)
               (should (hsys-org-face-at-p 'org-link))
               (if (string= "WikiWord" (hywiki-word-at))
-		  (should-not v)
-		(should t)))))
+		  (should v)
+		(should-not v)))))
       (hywiki-mode 0)
       (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory)))))
 
@@ -1958,7 +1961,7 @@ face is verified during the change."
         (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory)))))
 
 (ert-deftest hywiki-tests--verify-removal-of-delimiter-updates-face ()
-  "Verify removing a delimiter the face is changed along with the WikiWord."
+  "Verify WikiWord highlight face change when adding/removing a delimiter."
   :expected-result :failed
   (hywiki-tests--preserve-hywiki-mode
     (let* ((hywiki-directory (make-temp-file "hywiki" t))

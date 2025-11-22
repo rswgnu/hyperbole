@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    23-Apr-21 at 20:55:00
-;; Last-Mod:     15-Sep-25 at 20:07:53 by Mats Lidell
+;; Last-Mod:     22-Nov-25 at 12:07:27 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -66,28 +66,29 @@
 (ert-deftest hsys-org:org-link-at-p ()
   "Should be t if point is within an org-link."
   (with-temp-buffer
-    ;; Org-mode
-    (org-mode)
-    (insert "[[Link]]\n\n")
-    (ert-info ("Within an org link")
+    (let ((hywiki-org-link-type-required t))
+      ;; Org-mode
+      (org-mode)
+      (insert "[[Link]]\n\n")
+      (ert-info ("Within an org link")
+	(goto-char 3)
+	(should (hsys-org-link-at-p)))
+      (ert-info ("At end of line")
+	(end-of-line)
+	(should-not (hsys-org-link-at-p)))
+      (ert-info ("At end of buffer")
+	(end-of-buffer)
+	(should-not (hsys-org-link-at-p)))
+      ;; Out side of org-mode
+      (erase-buffer)
+      (fundamental-mode)
+      (insert "[[hy:HyWiki]]\n\n")
       (goto-char 3)
-      (should (hsys-org-link-at-p)))
-    (ert-info ("At end of line")
-      (end-of-line)
-      (should-not (hsys-org-link-at-p)))
-    (ert-info ("At end of buffer")
-      (end-of-buffer)
-      (should-not (hsys-org-link-at-p)))
-    ;; Out side of org-mode
-    (erase-buffer)
-    (fundamental-mode)
-    (insert "[[hy:HyWiki]]\n\n")
-    (goto-char 3)
-    (ert-info ("Accept link if unknown HyWiki button")
-      (should (hsys-org-link-at-p)))
-    (ert-info ("Ignore link if known HyWiki button")
-      (mocklet (((hywiki-word-at) => t))
-        (should-not (hsys-org-link-at-p))))))
+      (ert-info ("Accept link if unknown HyWiki button")
+	(should (hsys-org-link-at-p)))
+      (ert-info ("Ignore link if known HyWiki button")
+	(mocklet (((hywiki-word-at) => t))
+          (should-not (hsys-org-link-at-p)))))))
 
 (ert-deftest hsys-org:org-target-at-p ()
   "Should be non nil if point is within an org-radio-target."
