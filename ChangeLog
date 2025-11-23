@@ -1,3 +1,16 @@
+2025-11-23  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:shorten): Ignore optional RELATIVE-TO if editing a message,
+    i.e. (hmail:editor-p) => t.
+           (hpath:html-anchor-id-pattern): Fix so only exact matches are found
+    by requiring the trailing quote.
+  test/hmouse-drv-tests.el (hbut-pathname-html-anchor-test): Enable as now passes.
+
+* hui.el (hui:link-possible-types): Don't create an ilink to a potential but
+    not yet created HyWikiWord.  This prevents such links all over the place,
+    e.g. in Koutlines when on any capitalized word, where a klink should be
+    returned instead.
+
 2025-11-22  Bob Weiner  <rsw@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--assist-key-on-hywikiword-displays-help):

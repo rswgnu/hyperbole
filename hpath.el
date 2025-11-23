@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     16-Nov-25 at 10:49:44 by Bob Weiner
+;; Last-Mod:     23-Nov-25 at 12:54:16 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -682,7 +682,7 @@ use with `string-match'.")
 ;;; Private variables
 ;;; ************************************************************************
 
-(defconst hpath:html-anchor-id-pattern "\\(id\\|name\\)=['\"]%s['\"]?"
+(defconst hpath:html-anchor-id-pattern "\\(id\\|name\\)=['\"]%s['\"]"
   "Regexp matching an html anchor id definition.
 Contains a %s for replacement of a specific anchor id.")
 
@@ -2081,29 +2081,31 @@ prior to calling this function."
       var-group)))
 
 (defun hpath:shorten (path &optional relative-to)
-  "Shorten and return a PATH optionally RELATIVE-TO other path.
-If RELATIVE-TO is omitted or nil, set it to `default-directory'.
-Replace Emacs Lisp variables and environment variables (format of
-${var}) with their values in PATH.  The first matching value for
-variables like `${PATH}' is used.  Then abbreviate any remaining
-path."
+  "Expand and then shorten and return a PATH optionally RELATIVE-TO other path.
+Ignore optional RELATIVE-TO if editing a message,
+i.e. (hmail:editor-p) => t.  If RELATIVE-TO is omitted or nil,
+set it to `default-directory'.  Replace Emacs Lisp variables and
+environment variables (format of ${var}) with their values in
+PATH.  The first matching value for variables like `${PATH}' is
+used.  Then abbreviate any remaining path."
   (setq path (expand-file-name (hpath:substitute-value path)))
   (when (file-directory-p path)
     ;; Force path to have a final directory separator so comparisons
     ;; to `default-directory' work
     (setq path (file-name-as-directory path)))
-  (unless relative-to
-    (setq relative-to default-directory))
-  (when (stringp relative-to)
-    (setq relative-to (expand-file-name
-		       (hpath:substitute-value relative-to))
-	  path
-	  (cond ((string-equal path relative-to)
-		 "")
-		((string-equal (file-name-directory path) relative-to)
-		 (file-name-nondirectory path))
-		(t (hpath:relative-to path relative-to)))))
-  (hpath:abbreviate-file-name (hpath:substitute-var path)))
+  (unless (hmail:editor-p)
+    (unless relative-to
+      (setq relative-to default-directory))
+    (when (stringp relative-to)
+      (setq relative-to (expand-file-name
+			 (hpath:substitute-value relative-to))
+	    path
+	    (cond ((string-equal path relative-to)
+		   "")
+		  ((string-equal (file-name-directory path) relative-to)
+		   (file-name-nondirectory path))
+		  (t (hpath:relative-to path relative-to))))))
+    (hpath:abbreviate-file-name (hpath:substitute-var path)))
 
 (defun hpath:substitute-value (path)
   "Substitute values for Emacs Lisp variables and environment variables in PATH.

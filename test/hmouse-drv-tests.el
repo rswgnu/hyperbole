@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 22:52:00
-;; Last-Mod:     17-Nov-25 at 16:53:05 by Mats Lidell
+;; Last-Mod:     23-Nov-25 at 12:59:17 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -345,7 +345,6 @@
 
 (ert-deftest hbut-pathname-html-anchor-test ()
   "Pathname with HTML anchor."
-  :expected-result :failed
   (let ((file (make-temp-file "hypb" nil ".html" "\
 <a href=\"#idstr1\">link</a>
 <h2 id=\"idstr11\"> header</h2>
