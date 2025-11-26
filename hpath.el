@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     23-Nov-25 at 13:16:50 by Bob Weiner
+;; Last-Mod:     26-Nov-25 at 22:41:44 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -207,17 +207,16 @@ converted path with the value of `hpath:mswindows-mount-prefix'."
   (when (and (stringp path) (not (equal path "\\\\")))
     (setq path (hpath:mswindows-to-posix-separators path))
     (when (string-match hpath:mswindows-drive-regexp path)
-      (when (string-match hpath:mswindows-drive-regexp path)
-	(let* ((drive-prefix (downcase (match-string 2 path)))
-	       (rest-of-path (substring path (match-end 0)))
-	       (absolute-p (and (not (string-empty-p rest-of-path))
-				(= (aref rest-of-path 0) ?/))))
-	  ;; Convert MSWindows disk drive paths to POSIX-style with a mount prefix.
-	  (setq path (concat hpath:mswindows-mount-prefix drive-prefix
-			     (cond (hyperb:microsoft-os-p ":")
-				   (absolute-p "")
-				   (t "/"))
-			     rest-of-path))))))
+      (let* ((drive-prefix (downcase (match-string 2 path)))
+	     (rest-of-path (substring path (match-end 0)))
+	     (absolute-p (and (not (string-empty-p rest-of-path))
+			      (= (aref rest-of-path 0) ?/))))
+	;; Convert MSWindows disk drive paths to POSIX-style with a mount prefix.
+	(setq path (concat hpath:mswindows-mount-prefix drive-prefix
+			   (cond (hyperb:microsoft-os-p ":")
+				 (absolute-p "")
+				 (t "/"))
+			   rest-of-path)))))
   path)
 
 (defun hpath:mswindows-to-posix-separators (path)
@@ -242,23 +241,18 @@ If path begins with an optional mount prefix,
 letter, remove the mount prefix."
   (interactive "sPOSIX path to convert to MSWindows: ")
   (when (stringp path)
-    (setq path (hpath:posix-to-mswindows-separators path))
-    ;; Remove any POSIX mount prefix preceding an MSWindows path.
-    (if (eq 0 (string-match hpath:mswindows-mount-prefix path))
-	(setq path (substring path (match-end 0))))
     (when (string-match hpath:mswindows-drive-regexp path)
-      (when (string-match hpath:mswindows-drive-regexp path)
-	(let* ((drive-prefix (downcase (match-string 2 path)))
-	       (rest-of-path (substring path (match-end 0)))
-	       (absolute-p (= (aref path (1- (match-end 0))) ?\\)))
-	  ;; Convert formerly Posix-style Windows disk drive paths to MSWindows-style.
-	  (setq path (concat drive-prefix ":"
-			     (if (or (not absolute-p)
-				     (string-match "\\`[~/]" rest-of-path))
-				 ""
-			       "\\")
-			     rest-of-path))))))
-  path)
+      (let* ((drive-prefix (downcase (match-string 2 path)))
+             (absolute-p (= (aref path (1- (match-end 0))) ?/))
+             (rest-of-path (substring path (match-end 0))))
+	;; Convert formerly Posix-style Windows disk drive paths to MSWindows-style.
+	(setq path (concat drive-prefix ":"
+			   (if (or (not absolute-p)
+				   (string-match "\\`[~/]" rest-of-path))
+			       ""
+			     "/")
+			   rest-of-path))))
+    (hpath:posix-to-mswindows-separators path)))
 
 (defun hpath:posix-to-mswindows-separators (path)
   "Replace forward slashes with backslashes and abbreviate the PATH if possible.
@@ -1409,20 +1403,22 @@ If PATH is absolute, return it unchanged."
 (defun hpath:file-line-and-column (path-line-and-col)
   "Return list of parts from PATH-LINE-AND-COL string of format path:line:col.
 Parse out the parts and return a list, else nil."
-  (when (and (stringp path-line-and-col)
-	     (string-match hpath:section-line-and-column-regexp path-line-and-col))
-    ;; Ensure any variables and heading suffixes following [#,] are removed before returning file.
-    (let ((file (save-match-data (hpath:expand (match-string-no-properties 1 path-line-and-col))))
-	  (line-num (string-to-number (match-string-no-properties 3 path-line-and-col)))
-	  (col-num (when (match-end 4)
-		     (string-to-number (match-string-no-properties 5 path-line-and-col)))))
-      (when (and (save-match-data (setq file (hpath:is-p file)))
-		 file)
-	(if line-num
-	    (if col-num
-		(list file line-num col-num)
-	      (list file line-num))
-	  (list file))))))
+  (when (stringp path-line-and-col)
+    (cond ((string-match hpath:section-line-and-column-regexp path-line-and-col)
+           ;; Ensure any variables and heading suffixes following [#,] are removed before returning file.
+           (let ((file (save-match-data (hpath:expand (match-string-no-properties 1 path-line-and-col))))
+	         (line-num (string-to-number (match-string-no-properties 3 path-line-and-col)))
+	         (col-num (when (match-end 4)
+		            (string-to-number (match-string-no-properties 5 path-line-and-col)))))
+             (when (and (save-match-data (setq file (hpath:is-p file)))
+		        file)
+	       (if line-num
+	           (if col-num
+		       (list file line-num col-num)
+	             (list file line-num))))))
+          (t (let ((file (hpath:is-p (hpath:expand path-line-and-col))))
+               (when file
+                 (list file)))))))
 
 (defun hpath:file-position-to-line-and-column (path position)
   "Return \"path:L<line-num>:C<col-num>\" given PATH and character POSITION.
