@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     23-Nov-25 at 12:54:16 by Bob Weiner
+;; Last-Mod:     23-Nov-25 at 13:16:50 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2093,7 +2093,8 @@ used.  Then abbreviate any remaining path."
     ;; Force path to have a final directory separator so comparisons
     ;; to `default-directory' work
     (setq path (file-name-as-directory path)))
-  (unless (hmail:editor-p)
+  (if (hmail:editor-p)
+      (hpath:substitute-var path)
     (unless relative-to
       (setq relative-to default-directory))
     (when (stringp relative-to)
@@ -2104,8 +2105,8 @@ used.  Then abbreviate any remaining path."
 		   "")
 		  ((string-equal (file-name-directory path) relative-to)
 		   (file-name-nondirectory path))
-		  (t (hpath:relative-to path relative-to))))))
-    (hpath:abbreviate-file-name (hpath:substitute-var path)))
+		  (t (hpath:relative-to path relative-to)))))
+    (hpath:abbreviate-file-name (hpath:substitute-var path))))
 
 (defun hpath:substitute-value (path)
   "Substitute values for Emacs Lisp variables and environment variables in PATH.
