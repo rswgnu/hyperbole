@@ -1,3 +1,16 @@
+2025-11-30  Mats Lidell  <matsl@gnu.org>
+
+* test/hpath-tests.el (hpath--posix-path-p)
+    (hpath--posix-to-mswindows-separators)
+    (hpath--mswindows-to-posix-separators, hpath--posix-to-mswindows)
+    (hpath--mswindows-to-posix, hpath--substitute-posix-or-mswindows)
+    (hpath--substitute-posix-or-mswindows-at-point)
+    (hpath--at-p-prefix-paths, hpath--absolute-to, hpath--remote-p)
+    (hpath--call, hpath--is-path-variable-p, hpath--display-buffer)
+    (hpath--relative-arguments, hpath--relative-to)
+    (hpath--file-line-and-column, hpath--file-position-to-line-and-column)
+    (hpath:trim, hpath--exists-p): Add tests.
+
 2025-11-30  Bob Weiner  <rsw@gnu.org>
 
 * hui-menu.el (hui-menu-options): Fix display of 'Org-M-RET' submenu options
