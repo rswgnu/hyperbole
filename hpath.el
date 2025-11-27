@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     27-Nov-25 at 21:31:34 by Mats Lidell
+;; Last-Mod:     27-Nov-25 at 21:46:58 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -131,22 +131,22 @@ The format is ${variable}.  Match grouping 1 is the name of the variable.")
 ;;; ************************************************************************
 ;;; Public Declarations
 ;;; ************************************************************************
-(declare-function br-quit "ext:br")
-(declare-function br-in-browser "ext:br")
-(declare-function br-to-view-window "ext:br")
 
-(declare-function mm-mailcap-command "mm-decode")
-(declare-function hypb:decode-url "hypb")
-(declare-function hattr:get "hbut")
-(declare-function kbd-key:key-series-to-events "hib-kbd")
-(declare-function hbut:label-to-key "hbut")
-(declare-function hbut:key-to-label "hbut")
-(declare-function hargs:delimited "hargs")
-(declare-function hypb:object-p "hypb")
 (declare-function Info-find-node "info")
-
+(declare-function br-in-browser "ext:br")
+(declare-function br-quit "ext:br")
+(declare-function br-to-view-window "ext:br")
+(declare-function hargs:delimited "hargs")
+(declare-function hattr:get "hbut")
+(declare-function hbut:key-to-label "hbut")
+(declare-function hbut:label-to-key "hbut")
+(declare-function hmail:editor-p "hmail")
+(declare-function hypb:decode-url "hypb")
+(declare-function hypb:object-p "hypb")
+(declare-function kbd-key:key-series-to-events "hib-kbd")
 (declare-function kcell-view:indent "kcell-view")
 (declare-function klink:act "klink")
+(declare-function mm-mailcap-command "mm-decode")
 
 ;;; ************************************************************************
 ;;; MS WINDOWS PATH CONVERSIONS
