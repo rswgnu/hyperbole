@@ -1,4 +1,6 @@
-2025-11-26  Mats Lidell  <matsl@gnu.org>
+2025-11-27  Mats Lidell  <matsl@gnu.org>
+
+* hpath.el (hpath:find-file-mailcap): Remove unused function.
 
 * test/hpath-tests.el (hpath--posix-path-p)
     (hpath--posix-to-mswindows-separators)

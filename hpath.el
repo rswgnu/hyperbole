@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     26-Nov-25 at 22:41:44 by Mats Lidell
+;; Last-Mod:     27-Nov-25 at 21:31:34 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2554,23 +2554,6 @@ from path or t."
 	(if suffix-flag
 	    (or suffix t)
 	  return-path))))
-
-;; Next function from: 2006-11-02  Mats Lidell
-(defun hpath:find-file-mailcap (file-name)
-  "Find command to view FILE-NAME according to the mailcap file."
-  (when (featurep 'mailcap)
-    (mailcap-parse-mailcaps)
-    (let (mime-type method)
-      (when (and (string-match "\\.[^\\.]+$" file-name)
-		 (setq mime-type
-		       (mailcap-extension-to-mime
-			(match-string-no-properties 0 file-name)))
-		 (stringp
-		  (setq method
-			(cdr (assoc 'viewer
-				    (car (mailcap-mime-info mime-type
-							    'all)))))))
-	(mm-mailcap-command method file-name nil)))))
 
 (defun hpath:find-program (filename)
   "Return one or a list of shell or Lisp commands to execute to display FILENAME.
