@@ -1,5 +1,8 @@
 # GNU Hyperbole 9.0.2pre - The Everyday Hypertextual Information Manager
 
+[ If you are looking for the documentation for the stable release look
+[here](stable/hyperbole.html).]
+
 [We work on Hyperbole as a gift to the Emacs community and request you
  send us a thank you or a testimonial describing your usage if you like
  Hyperbole to [rsw@gnu.org](mailto:rsw@gnu.org)].
@@ -466,7 +469,7 @@ Typical Hyperbole applications include:
 
 See the [HY-ABOUT](HY-ABOUT) file for a description and overview of Hyperbole.
 
-See the [HY-NEWS](HY-NEWS) file for a summary of new features in this release.
+See the [HY-NEWS](HY-NEWS.html) file for a summary of new features in this release.
 
 See the [INSTALL](INSTALL) file for installation and invocation instructions.
 
