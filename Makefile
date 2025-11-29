@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     29-Nov-25 at 12:51:17 by Mats Lidell
+# Last-Mod:     29-Nov-25 at 19:19:51 by Mats Lidell
 #
 # Copyright (C) 1994-2025  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -441,7 +441,7 @@ website-local: README.md.html
 
 # Push to public Hyperbole website
 website: website-local
-	$(call confirm,Deployes to website!,DEPLOY)
+	$(call confirm,Deploys to website!,DEPLOY)
 	cd $(HYPB_WEB_REPO_LOCATION) && $(CVS) commit -m "Hyperbole release $(HYPB_VERSION)"
 	@echo "Website for Hyperbole $(HYPB_VERSION) is updated."
 
