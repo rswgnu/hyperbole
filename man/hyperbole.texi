@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     22-Nov-25 at 10:36:49 by Bob Weiner
+@c Last-Mod:     29-Nov-25 at 12:24:05 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,8 +30,8 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED August, 2025
-@set UPDATED-MONTH August 2025
+@set UPDATED November 29, 2025
+@set UPDATED-MONTH November 2025
 @set EDITION 9.0.2pre
 @set VERSION 9.0.2pre
 
@@ -4505,6 +4505,12 @@ directory for export to the web.
 * Publish HyWiki::
 * HyWiki Menu::
 @end menu
+
+@float Image,image:HyWiki Page
+@caption{HyWiki Page}
+@image{im/hywiki-page,,3.5in,HyWiki Page}
+@end float
+@sp 1
 
 @node HyWikiWords, Publish HyWiki, HyWiki, HyWiki
 @section HyWikiWords
