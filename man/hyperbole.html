@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <!-- This manual is for GNU Hyperbole
-(Edition 9.0.2pre, Published June, 2025).
+(Edition 9.0.2pre, Published November 29, 2025).
 
 Copyright © 1989-2025  Free Software Foundation, Inc.
 
@@ -386,7 +386,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed June 15, 2025.
+Printed June 26, 2025.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -2944,7 +2944,7 @@ minibuffer or the other window.
 <a class="index-entry-id" id="index-hywiki-existing-word"></a>
 <a class="anchor" id="hywiki_002dexisting_002dword"></a></dd>
 <dt><code class="code">hywiki-existing-word</code></dt>
-<dd><p>When on a HyWiki word with an existing page, display its page and
+<dd><p>When on a HyWikiWord with an existing page, display its page and
 optional section.
 </p>
 <a class="index-entry-id" id="index-ibtypes-action"></a>
@@ -3515,7 +3515,7 @@ source reference line again.
 <a class="index-entry-id" id="index-hywiki-word"></a>
 <a class="anchor" id="hywiki_002dword"></a></dd>
 <dt><code class="code">hywiki-word</code></dt>
-<dd><p>When on a HyWiki word, display its page and optional section.  If the
+<dd><p>When on a HyWikiWord, display its page and optional section.  If the
 associated HyWiki page does not exist, create it automatically.
 </p>
 <a class="index-entry-id" id="index-ibtypes-hynote_002dfile"></a>
@@ -4877,14 +4877,14 @@ access to popular web search engines.
 <a class="index-entry-id" id="index-menu-item_002c-OccurHere"></a>
 <a class="index-entry-id" id="index-menu-item_002c-RemoveLines"></a>
 <a class="index-entry-id" id="index-menu-item_002c-SaveLines"></a>
-<a class="index-entry-id" id="index-hypb_003argrep_002dcommand"></a>
+<a class="index-entry-id" id="index-hui_002dselect_002drgrep_002dcommand"></a>
 <a class="index-entry-id" id="index-locate_002dcommand"></a>
 <ul class="itemize mark-bullet">
 <li>GrepFiles -        Show numbered line matches for a regexp in all
                    non-backup, non-auto-save files below the current directory.
                    If in an Emacs Lisp mode buffer and no PREFIX-ARG
                    is given, limit search to only .el and .el.gz
-                   files.  Set <code class="code">hypb:rgrep-command</code> to change the
+                   files.  Set <code class="code">hui-select-rgrep-command</code> to change the
                    grep command or options.
 
 </li><li>LocateFiles -      Prompt for a pattern and display a list of all 
@@ -5011,6 +5011,10 @@ highlighting of HyWikiWords in Org files within
 h p}</kbd> you can publish any updated part of your HyWiki to an HTML
 directory for export to the web.
 </p>
+
+<div class="float" id="image_003aHyWiki-Page">
+<img class="image" src="im/hywiki-page.png" alt="HyWiki Page">
+<div class="caption"><p><strong class="strong">Image 6.1: </strong>HyWiki Page</p></div></div><br>
 
 <ul class="mini-toc">
 <li><a href="#HyWikiWords" accesskey="1">HyWikiWords</a></li>
@@ -5218,7 +5222,7 @@ Previous: <a href="#Publish-HyWiki" accesskey="p" rel="prev">Publish HyWiki</a>,
 It looks like this:
 </p>
 <div class="example smallexample">
-<pre class="example-preformatted">HyWiki&gt;  Act Create EditPages FindPage GrepConsult Help Info Link ModeToggle Org-M-RET/ Publish TagFind WikiWordConsult
+<pre class="example-preformatted">HyWiki&gt;  Act Create DiredHyWiki EditPage FindReferent GrepConsult Help Info Link ModeToggle Org-M-RET/ Publish TagFind WikiWordConsult
 </pre></div>
 
 <p>The GrepConsult and WikiWordConsult items appear only when the Consult
@@ -5247,17 +5251,20 @@ aid in new naming.
 <a class="index-entry-id" id="index-HyWiki-dired"></a>
 <a class="index-entry-id" id="index-HyWiki-treemacs"></a>
 <a class="index-entry-id" id="index-HyWiki-edit-pages"></a>
-<a id="index-hywiki_002ddirectory-1"></a><span>EditPages<a class="copiable-link" href="#index-hywiki_002ddirectory-1"> &para;</a></span></dt>
+<a id="index-hywiki_002ddirectory-1"></a><span>DiredHyWiki<a class="copiable-link" href="#index-hywiki_002ddirectory-1"> &para;</a></span></dt>
 <dd><p>Display and edit HyWiki pages in current <code class="code">hywiki-directory</code>.  Use
 <code class="code">dired</code> unless <code class="code">action-key-modeline-buffer-id-function</code> is
 set to <code class="code">smart-treemacs-modeline</code>, then use the <code class="code">treemacs</code>
 package.
 </p>
-
 </dd>
-<dt><a id="index-HyWiki-find_002fedit-a-page"></a><span>FindPage<a class="copiable-link" href="#index-HyWiki-find_002fedit-a-page"> &para;</a></span></dt>
+<dt><a id="index-HyWiki-find_002fedit-a-page"></a><span>EditPage<a class="copiable-link" href="#index-HyWiki-find_002fedit-a-page"> &para;</a></span></dt>
 <dd><p>Prompt with completion for and find a HyWiki page, typically editable.
 If the page is already in a buffer, point is left unchanged.
+</p>
+</dd>
+<dt><a id="index-HyWiki-find_002fedit-a-referent"></a><span>FindReferent<a class="copiable-link" href="#index-HyWiki-find_002fedit-a-referent"> &para;</a></span></dt>
+<dd><p>Prompt with completion for and find any kind of HyWiki referent.
 </p>
 </dd>
 <dt><a class="index-entry-id" id="index-hywiki_002dconsult_002dgrep"></a>
@@ -7396,9 +7403,10 @@ Next: <a href="#HyRolo-Searching" accesskey="n" rel="next">HyRolo Searching</a>,
 for searching and maintaining a personal address book.  It looks like
 so.
 </p>
-<div class="float" id="image_003aRolo-Menu">
-<img class="image" src="im/menu-rolo.png" alt="HyRolo Menu">
-<div class="caption"><p><strong class="strong">Image 10.1: </strong>HyRolo Menu</p></div></div>
+<div class="example smallexample">
+<pre class="example-preformatted">Rolo&gt;  Add  ConsultFind  Display  Edit  FileFind  Info  Kill  Mail  Order  RegexFind  StringFind  TagFind  WordFind  Yank
+</pre></div>
+
 <a class="index-entry-id" id="index-Rolo-menu"></a>
 <a class="index-entry-id" id="index-HyRolo-menu"></a>
 <a class="index-entry-id" id="index-menu_002c-HyRolo"></a>
@@ -7429,32 +7437,32 @@ set of commands as the menubar Rolo menu but with more concise labels.
 <a class="index-entry-id" id="index-hyrolo_002dword"></a>
 <a class="index-entry-id" id="index-hyrolo_002dyank"></a>
 <p>The minibuffer Rolo/ menu offers the following commands (ConsultFind
-and HelmFind appear only when the Consult and Helm packages are
-installed prior to loading Hyperbole.  They are especially noteworthy
-as they allow for fast line-level searching across many files with
-interactive search pattern narrowing):
+appears only when the Consult and Helm packages are installed prior to
+loading Hyperbole.  They are especially noteworthy as they allow for
+fast line-level searching across many files with interactive search
+pattern narrowing):
 </p>
 <div class="example">
 <div class="group"><pre class="example-preformatted">Menu Item       Command                 Description
 =====================================================================
-Add             hyrolo-add              Adds a hyrolo entry
+Add             hyrolo-add              Add a hyrolo entry
 ConsultFind     hyrolo-consult-grep     Interactively narrow grep matches
-Display         hyrolo-display-matches  Displays last matches again
-Edit            hyrolo-edit             Edits an existing hyrolo entry
-File            hyrolo-find-file        Edits a <code class="code">hyrolo-file-list</code> file
-Info            id-info                 Displays a hyrolo manual entry
-Kill            hyrolo-kill             Deletes a hyrolo entry
-Mail            hyrolo-mail             Mails to an address at point
-Order           hyrolo-sort             Sorts all hyrolo levels
-RegexFind       hyrolo-grep             Finds all entries containing
+Display         hyrolo-display-matches  Display last matches again
+Edit            hyrolo-edit             Edit an existing hyrolo entry
+FileFind        hyrolo-find-file        Edit a <code class="code">hyrolo-file-list</code> file
+Info            id-info                 Display a hyrolo manual entry
+Kill            hyrolo-kill             Delete a hyrolo entry
+Mail            hyrolo-mail             Mail to an address at point
+Order           hyrolo-sort             Sort all hyrolo levels
+RegexFind       hyrolo-grep             Find all entries containing
                                           a regular expression
-StringFind      hyrolo-fgrep            Finds all entries containing
+StringFind      hyrolo-fgrep            Find all entries containing
                                           a string (or logical
                                           expression)
-TagFind         hyrolo-tags-view        Finds HyWiki Org tags
-WordFind        hyrolo-word             Finds all entries containing
+TagFind         hyrolo-tags-view        Find HyWiki Org tags
+WordFind        hyrolo-word             Find all entries containing
                                           a string of whole words
-Yank            hyrolo-yank             Inserts the first matching
+Yank            hyrolo-yank             Insert the first matching
                                           hyrolo entry at point
 =====================================================================
 </pre></div></div>
@@ -10493,12 +10501,12 @@ binding.  See <a class="xref" href="#Smart-Key-Thing-Selection">Smart Key Thing 
 </dd>
 <dt><a class="index-entry-id" id="index-key-binding_002c-M_002dw"></a>
 <a class="index-entry-id" id="index-mark_002deven_002dif_002dinactive"></a>
-<a class="index-entry-id" id="index-hui_002dkill_002dring_002dsave"></a>
+<a class="index-entry-id" id="index-hui_003akill_002dring_002dsave"></a>
 <a class="index-entry-id" id="index-M_002dw-1"></a>
 <a id="index-copying-things-to-kill-ring"></a><span><kbd class="kbd">{M-w}</kbd><a class="copiable-link" href="#index-copying-things-to-kill-ring"> &para;</a></span></dt>
 <dd><p>Delimited Thing, Koutline Cell Reference or Region Copy: While Hyperbole is
 active, it sets <code class="code">mark-even-if-inactive</code> to <code class="code">nil</code> and overrides
-<kbd class="kbd">{M-w}</kbd> with its own command, <code class="code">hui-kill-ring-save</code>, which copies the
+<kbd class="kbd">{M-w}</kbd> with its own command, <code class="code">hui:kill-ring-save</code>, which copies the
 region only when it is active/highlighted.  When there is no active region,
 <kbd class="kbd">{M-w}</kbd> does one of the following:
 </p>
@@ -10516,7 +10524,7 @@ region only when it is active/highlighted.  When there is no active region,
 <dd><p>Delimited Thing, Koutline Cell Reference or Region Save to Register: This
 does the same thing as <kbd class="kbd">{M-w}</kbd> except it copies to an Emacs register
 given by a letter or number rather than the kill ring.  While Hyperbole is active,
-it overrides <kbd class="kbd">{C-x r s}</kbd> with its own command, <code class="code">hui-copy-to-register</code>.
+it overrides <kbd class="kbd">{C-x r s}</kbd> with its own command, <code class="code">hui:copy-to-register</code>.
 which copies the region only when it is active/highlighted.
 </p></dd>
 </dl>
@@ -12030,8 +12038,10 @@ Next: <a href="#Smart-Key-_002d-The-OO_002dBrowser" accesskey="n" rel="next">Sma
      (3) in a <code class="code">magit-status-mode</code> buffer on a merge conflict
          marker, keep either the upper, both or the lower version of 
          the conflict. See also <a class="ref" href="#smerge">smerge</a>.
-     (4) on an initial read-only header line, cycle visibility of diff sections;
-     (5) anywhere else, hide/show the thing at point (<kbd class="kbd">{<kbd class="key">TAB</kbd>}</kbd> key binding)
+     (4) on a line starting with a &lsquo;+&rsquo; char in &lsquo;magit-status-mode&rsquo; or
+         &lsquo;magit-revision-mode&rsquo; go to the worktree file.
+     (5) on an initial read-only header line, cycle visibility of diff sections;
+     (6) anywhere else, hide/show the thing at point (<kbd class="kbd">{<kbd class="key">TAB</kbd>}</kbd> key binding)
          unless that does nothing in the mode, then jump to the thing at point
          (<kbd class="kbd">{<kbd class="key">RET</kbd>}</kbd> key binding) but display based on the value of
          <code class="code">hpath:display-where</code>.
@@ -14734,9 +14744,9 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hsys_002dorg_002droam_002dconsult_002dgrep"><code>hsys-org-roam-consult-grep</code></a></td><td class="printindex-index-section"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-htype_002dcreate_002dhook">htype-create-hook</a></td><td class="printindex-index-section"><a href="#Hook-Variables">Hook Variables</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-htype_002ddelete_002dhook">htype-delete-hook</a></td><td class="printindex-index-section"><a href="#Hook-Variables">Hook Variables</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-hui_002dkill_002dring_002dsave"><code>hui-kill-ring-save</code></a></td><td class="printindex-index-section"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hui_002dmenu_002dscreen_002dcommands"><code>hui-menu-screen-commands</code></a></td><td class="printindex-index-section"><a href="#Smart-Mouse-Key-Modeline-Clicks">Smart Mouse Key Modeline Clicks</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hui_002dselect_002dgoto_002dmatching_002dtag"><code>hui-select-goto-matching-tag</code></a></td><td class="printindex-index-section"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-hui_002dselect_002drgrep_002dcommand">hui-select-rgrep-command</a></td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hui_002dselect_002dthing"><code>hui-select-thing</code></a></td><td class="printindex-index-section"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hui_002dselect_002dthing_002dwith_002dmouse"><code>hui-select-thing-with-mouse</code></a></td><td class="printindex-index-section"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hui_003aebut_002dlink_002ddirectly"><code>hui:ebut-link-directly</code></a></td><td class="printindex-index-section"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
@@ -14745,6 +14755,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hui_003ahbut_002ddelete_002dconfirm_002dflag">hui:hbut-delete-confirm-flag</a></td><td class="printindex-index-section"><a href="#Deletion">Deletion</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hui_003ahtype_002dhelp-_0027ibtypes"><code>hui:htype-help 'ibtypes</code></a></td><td class="printindex-index-section"><a href="#Programmatic-Implicit-Button-Types">Programmatic Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hui_003aibut_002dlink_002ddirectly"><code>hui:ibut-link-directly</code></a></td><td class="printindex-index-section"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-hui_003akill_002dring_002dsave"><code>hui:kill-ring-save</code></a></td><td class="printindex-index-section"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hycontrol_002ddisplay_002dbuffer_002dpredicate_002dlist">hycontrol-display-buffer-predicate-list</a></td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hycontrol_002denable_002d_002dwindows_002dmode"><code>hycontrol-enable--windows-mode</code></a></td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hycontrol_002denable_002dframes_002dmode"><code>hycontrol-enable-frames-mode</code></a></td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
@@ -14764,7 +14775,6 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hynote_002ddirectory_002dlist">hynote-directory-list</a></td><td class="printindex-index-section"><a href="#HyNote">HyNote</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hypb_003afgrep_002dgit_002dlog"><code>hypb:fgrep-git-log</code></a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hypb_003agrep_002dgit_002dlog"><code>hypb:grep-git-log</code></a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-hypb_003argrep_002dcommand">hypb:rgrep-command</a></td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hyperb_003adir">hyperb:dir</a></td><td class="printindex-index-section"><a href="#Documentation">Documentation</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hyperbole"><code>hyperbole</code></a></td><td class="printindex-index-section"><a href="#Invocation">Invocation</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hyperbole-1"><code>hyperbole</code></a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Default-Context">Smart Key - Default Context</a></td></tr>
@@ -15773,6 +15783,7 @@ Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki-existing-word">hywiki existing word</a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-export-to-HTML">HyWiki export to HTML</a></td><td class="printindex-index-section"><a href="#Publish-HyWiki">Publish HyWiki</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-find_002fedit-a-page">HyWiki find/edit a page</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-find_002fedit-a-referent">HyWiki find/edit a referent</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-interactive-grep">HyWiki interactive grep</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-manual">HyWiki manual</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-menu">HyWiki menu</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>

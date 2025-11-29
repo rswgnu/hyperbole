@@ -1,3 +1,8 @@
+2025-11-29  Bob Weiner  <rsw@gnu.org>
+
+* man/im/hywiki-page.png: Add.
+  man/hyperbole.texi (HyWiki): Add image "im/hywiki-page.png".
+
 2025-11-23  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:shorten): Ignore optional RELATIVE-TO if editing a message,
