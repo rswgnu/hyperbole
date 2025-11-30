@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     22-Nov-25 at 13:09:38 by Bob Weiner
+;; Last-Mod:     30-Nov-25 at 18:06:52 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -75,7 +75,7 @@
 ;;  `post-command-hook' settings.  If an error occurs running one of
 ;;  these, the associated hook is removed.  To restore the auto-highlight
 ;;  hooks either use {M-x hywiki-word-set-auto-highlighting RET} or
-;;  {C-u C-h h h h m} to toggle `hywiki-mode'; this also enables
+;;  {C-u C-h h h m} to toggle `hywiki-mode'; this also enables
 ;;  auto-highlighting if `hywiki-word-highlight-flag' is non-nil.
 
 ;;  The custom setting, `hywiki-exclude-major-modes' (default = nil), is
@@ -260,8 +260,9 @@ A nil value disables HyWikiWord hyperlink buttons in both HyWiki
 pages and all other buffers (since it also disables `hywiki-mode').
 
 Outside of HyWiki pages, the global minor mode `hywiki-mode' must be
-manually enabled for auto-HyWikiWord highlighting; programmatically,
-use `(hywiki-mode 1) to enable it.
+manually enabled for auto-HyWikiWord highlighting. Interactively, {C-h
+h h m a} does this; programmatically, use `(hywiki-mode :all)' to
+enable it.
 
 Use `hywiki-active-in-current-buffer-p' to determine if HyWikiWord
 hyperlinks are currently active in a buffer or not.
@@ -757,28 +758,28 @@ deletion commands and those in `hywiki-non-character-commands'."
 (define-minor-mode hywiki-mode
   "Toggle HyWiki global minor mode with \\[hywiki-mode].
 
-HyWiki automatically highlights and turns instances of known
-HyWikiWords into implicit buttons if they are within buffers with
-files attached from `hywiki-directory'.  Such buttons either link
-to HyWiki pages or activate typed referents such as bookmarks.
+HyWiki minor mode automatically highlights and turns HyWikiWord
+references into implicit buttons that either link to HyWiki pages
+or activate typed referents such as bookmarks.
 
-HyWiki Minor Mode enables the same behavior in most other text and
-programming buffers except those with a major mode in
-`hywiki-exclude-major-modes'.
+HyWiki minor mode has three states as tracked by the following values
+of the `hywiki-mode' variable:
+  - :pages - highlight HyWikiWords in HyWiki pages only (Org files in
+    `hywiki-directory')
+  - :all   - highlight hyWikiWords in all editable buffers except those with
+    a major mode in `hywiki-exclude-major-modes'.
+  - nil    - no highlighting, the mode is disabled.
 
 HyWikiWord references may also include optional suffixes:
 
-   - a #section reference that links to a HyWiki page Org headline or
-     other outline file.  Spaces in the headline must be converted
-     to dash characters for proper recognition;
+  - a #section reference that links to a HyWiki page Org headline or
+    other outline file.  Spaces in the headline must be converted
+    to dash characters for proper recognition;
 
-   - optionally followed by :L<line-number>:C<column-number>
-     where the column part is also optional.  If a section is
-     given, the line number is relative to the section and the
-     section headline is line 1.
-
-When hywiki-mode is enabled, the `hywiki-mode' variable is
-non-nil.
+  - optionally followed by :L<line-number>:C<column-number>
+    where the column part is also optional.  If a section is
+    given, the line number is relative to the section and the
+    section headline is line 1.
 
 See the Info documentation at \"(hyperbole)HyWiki\".
 
@@ -787,23 +788,37 @@ See the Info documentation at \"(hyperbole)HyWiki\".
   :lighter hywiki-mode-lighter
   :keymap hywiki-mode-map
   :group 'hyperbole-hywiki
-  (if hywiki-mode
-      ;; Enable mode.
-      (progn
-	;; Need hyperbole-mode
-	(require 'hyperbole)
-	(unless hyperbole-mode
-	  (hyperbole-mode 1))
-	(unless hywiki-mode-map
-          (setq hywiki-mode-map (make-sparse-keymap)))
-	;; Next line triggers a call to `hywiki-word-set-auto-highlighting'.
-	(set-variable 'hywiki-word-highlight-flag t))
-    ;; Disable mode.
-    ;; Dehighlight HyWikiWords in this buffer when 'hywiki-mode' is
-    ;; disabled and this is not a HyWiki page buffer. If this is a
-    ;; HyWiki page buffer, then dehighlight when
-    ;; `hywiki-word-highlight-flag' is nil.
-    (hywiki-maybe-highlight-wikiwords-in-frame t)))
+  (progn
+    (when (memq arg '(toggle :toggle))
+      ;; Toggle across all editable buffers
+      (setq arg (if hywiki-mode 1 0)))
+    (cond
+     ((or (and (integerp arg) (= arg 1))
+	  (memq arg '(:all t)))
+      ;; Enable across all editable buffers
+      ;; Need hyperbole-mode
+      (require 'hyperbole)
+      (unless hyperbole-mode
+	(hyperbole-mode 1))
+      (unless hywiki-mode-map
+        (setq hywiki-mode-map (make-sparse-keymap)))
+      ;; Next line triggers a call to `hywiki-word-set-auto-highlighting'.
+      (set-variable 'hywiki-word-highlight-flag t)
+      (setq hywiki-mode :all))
+     ((or (and (integerp arg) (<= arg 0))
+	  (null arg))
+      ;; Disable across all editable buffers.
+      ;; Dehighlight HyWikiWords in this buffer when 'hywiki-mode' is
+      ;; disabled and this is not a HyWiki page buffer. If this is a
+      ;; HyWiki page buffer, then dehighlight when
+      ;; `hywiki-word-highlight-flag' is nil.
+      (hywiki-maybe-highlight-wikiwords-in-frame t)
+      (setq hywiki-mode nil))
+     (t ;; (> arg 1)
+      ;; Enable in HyWiki page buffers only
+      ;; Next line triggers a call to `hywiki-word-set-auto-highlighting'.
+      (set-variable 'hywiki-word-highlight-flag t)
+      (setq hywiki-mode :pages)))))
 
 ;;; ************************************************************************
 ;;; Public Implicit Button and Action Types

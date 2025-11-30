@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     31-Aug-25 at 13:41:47 by Bob Weiner
+;; Last-Mod:     30-Nov-25 at 17:51:11 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -406,20 +406,33 @@ With optional ARG, enable iff ARG is positive."
     (message "Menu key highlighting is on")))
 
 (defun hui:menu-read-from-minibuffer (prompt &optional initial-contents keymap read
-				      hist default-value inherit-input-method)
+					     hist default-value inherit-input-method)
   "Hyperbole minibuffer menu replacement for `read-from-minibuffer'.
 Allows custom handling of menu lines before selecting an item."
   (when (and (stringp initial-contents)
+	     (string-prefix-p "HyWiki Mode" initial-contents))
+    (let* ((hywiki-mode-options (cddr (assq 'cust-hywiki-mode hui:menus)))
+	   (hywiki-mode-option-lookups (mapcar (lambda (option)
+					 (cons (car (last (nth 1 option)))
+					       (car option)))
+				       hywiki-mode-options))
+	   (hywiki-mode-current-name (cdr (assq hywiki-mode hywiki-mode-option-lookups))))
+      (when (and (stringp hywiki-mode-current-name) (stringp initial-contents))
+	(setq initial-contents (replace-regexp-in-string (regexp-quote hywiki-mode-current-name)
+					                 (concat "==" hywiki-mode-current-name "==")
+					                 initial-contents)))))
+
+  (when (and (stringp initial-contents)
 	     (string-prefix-p "Org M-RET" initial-contents))
     (let* ((org-m-ret-options (cddr (assq 'cust-org hui:menus)))
-	   (option-lookups (mapcar (lambda (option)
-				     (cons (car (last (nth 1 option)))
-					   (car option)))
-				   org-m-ret-options))
-	   (current-name (cdr (assq hsys-org-enable-smart-keys option-lookups))))
-      (when (and (stringp current-name) (stringp initial-contents))
-	(setq initial-contents (replace-regexp-in-string (regexp-quote current-name)
-					                 (concat "==" current-name "==")
+	   (org-option-lookups (mapcar (lambda (option)
+					 (cons (car (last (nth 1 option)))
+					       (car option)))
+				       org-m-ret-options))
+	   (org-current-name (cdr (assq hsys-org-enable-smart-keys org-option-lookups))))
+      (when (and (stringp org-current-name) (stringp initial-contents))
+	(setq initial-contents (replace-regexp-in-string (regexp-quote org-current-name)
+					                 (concat "==" org-current-name "==")
 					                 initial-contents)))))
   (setq initial-contents (hui:menu-maybe-highlight-item-keys initial-contents))
   (read-from-minibuffer prompt initial-contents keymap read
@@ -803,6 +816,14 @@ command instead.  Typically prevents clashes over {\\`C-c' /}."
          (("Smart Key press at eol scrolls>")
 	  ("Proportionally" (setq smart-scroll-proportional t))
 	  ("Windowful"      (setq smart-scroll-proportional nil))))
+       '(cust-hywiki-mode .
+	 (("HyWiki Mode>")	  
+	  ("All-Editable-Buffers" (hywiki-mode :all)
+	   "HyWikiWords are highlighted and active in buffers outside of the HyWiki page directory.")
+	  ("HyWiki-Pages-Only"    (hywiki-mode :pages)
+	   "HyWikiWords are highlighted and active only in within the HyWiki page directory.")
+	  ("Nowhere"              (hywiki-mode nil)
+	   "HyWikiWords are disabled everywhere.")))
        '(cust-keys .
          (("Change Keys>")
 	  ("ActionKey"     (hui:bind-key #'hkey-either))                        ;; {M-RET}
@@ -1049,8 +1070,8 @@ support underlined faces as well."
 	   "Display Hyperbole manual section on HyWiki.")
 	 '("Link"           hywiki-add-path-link
 	   "Prompt for and add a HyWikiWord that links to a path and possible position.")
-         '("ModeToggle"     hywiki-mode
-	   "Toggle whether HyWikiWords are highlighted and active in buffers outside of the HyWiki page directory.")
+         '("ModeSet/"       (menu . cust-hywiki-mode)
+	   "Set hywiki-mode state to determine where HyWikiWord references are recognized.")
 	 '("Org-M-RET/"     (menu . cust-org)
 	   "Set how much of Hyperbole Smart Key behavior is enabled in Org mode.")
          '("Publish"        hywiki-publish-to-html

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
-;; Last-Mod:     29-Aug-25 at 03:45:17 by Bob Weiner
+;; Last-Mod:     30-Nov-25 at 17:56:58 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -270,7 +270,7 @@ Return t if cutoff, else nil."
 	  '("----")
 	  (hui-menu-browser "Display-Web-Searches-in" hyperbole-web-search-browser-function)
 	  '("----")
-	  hui-menu-org-meta-return-options
+	  (list hui-menu-org-meta-return-options)
 	  '("----")
 	  '(("Smart-Key-Press-at-Eol"
 	     "----"
@@ -314,7 +314,16 @@ Return t if cutoff, else nil."
 	 (when (fboundp 'consult-grep) ;; allow for autoloading
 	   ["Grep-Consult-Pages" hywiki-consult-grep t])
 	 ["Help"                 hywiki-help t]
-	 ["HyWiki-Mode-Toggle"   hywiki-mode t]
+	 '("HyWiki-Mode"
+	    ["HyWiki-Pages-Only"    (hywiki-mode :pages)
+	     :style radio :selected (when (boundp 'hywiki-mode)
+				      (eq hywiki-mode :pages))]
+	    ["All-Editable-Buffers" (hywiki-mode :all)
+	     :style radio :selected (when (boundp 'hywiki-mode)
+				      (eq hywiki-mode :all))]
+	    ["Nowhere"              (hywiki-mode nil)
+	     :style radio :selected (when (boundp 'hywiki-mode)
+				      (null hywiki-mode))])
 	 ["HyWiki-Tag-Find"      hywiki-tags-view t]
 	 ["Insert-HyWiki-Link"   hywiki-insert-link t]
 	 hui-menu-org-meta-return-options
