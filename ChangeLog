@@ -1,3 +1,9 @@
+2025-11-30  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.py: Add support for "~/.rolo.org" HyRolo file.  Report an error
+    but continue if any given file in the list does not exist.  Make Python script
+    executable.
+
 2025-11-29  Bob Weiner  <rsw@gnu.org>
 
 * man/im/hywiki-page.png: Add.
