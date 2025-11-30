@@ -8,7 +8,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:     1-Apr-24 at 01:45:27
-# Last-Mod:     12-Oct-25 at 11:03:34 by Bob Weiner
+# Last-Mod:     30-Nov-25 at 12:44:05 by Bob Weiner
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
@@ -33,6 +33,7 @@
 import argparse
 import os
 import re
+import sys
 
 # String to match at bol for file header start and end
 file_header_delimiter = '==='
@@ -54,7 +55,16 @@ def find_matching_entries(match_string, file_paths):
     quoted_match_string = re.escape(match_string)
 
     # Remove any null items from file_paths and expand them
-    file_paths = [os.path.abspath(os.path.expanduser(os.path.expandvars(p))) for p in file_paths if p]
+    abs_file_paths = [os.path.abspath(os.path.expanduser(os.path.expandvars(p))) for p in file_paths if p]
+    file_paths = []
+
+    # Print error msgs for files that do not exist or add them to the file_paths list
+    for file_path in abs_file_paths:
+        if os.path.exists(file_path):
+            file_paths.append(file_path)
+        else:
+            print("ERROR: No such file or directory: \"%s\"" % file_path, file=sys.stderr)
+
     org_buffer_property_regex ='#\\+[^: \t\n]+:'
 
     for file_path in file_paths:
@@ -179,6 +189,8 @@ def main():
         pass
     elif os.getenv("HYROLO"):
         args.files = [os.getenv("HYROLO")]
+    elif os.path.exists(os.path.abspath(os.path.expanduser("~/.rolo.org"))):
+        args.files = ["~/.rolo.org"]
     else:
         args.files = ["~/.rolo.otl"]
     find_matching_entries(args.match_string, args.files)
