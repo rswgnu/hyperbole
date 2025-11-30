@@ -4,6 +4,15 @@
     but continue if any given file in the list does not exist.  Make Python script
     executable.
 
+2025-11-29  Mats Lidell  <matsl@gnu.org>
+
+* README.md: Add link to stable documentation. Use html version of HY-NEWS.
+
+* Makefile: Support pushing the development version to www.gnu.org in
+    preparation for reorganization of the documentation.
+    (website): Prompt for confirmation on dangerous operations.
+    (website-devel): Remove not needed target.
+
 2025-11-29  Bob Weiner  <rsw@gnu.org>
 
 * man/im/hywiki-page.png: Add.

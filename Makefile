@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     13-Oct-25 at 22:23:24 by Mats Lidell
+# Last-Mod:     29-Nov-25 at 19:19:51 by Mats Lidell
 #
 # Copyright (C) 1994-2025  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -178,7 +178,6 @@ ELISP_TO_COMPILE = $(pkg_parent)/elc-${USER}
 
 # Path to dir where the web repository is located i.e. hypb:web-repo-location
 HYPB_WEB_REPO_LOCATION = ../hyweb/hyperbole/
-HYPB_WEB_REPO_LOCATION_DEVEL = $(HYPB_WEB_REPO_LOCATION)devel/
 
 # CI/CD Emacs versions for local docker based tests
 DOCKER_VERSIONS=28.2 29.4 30.2 master
@@ -428,21 +427,22 @@ README.md.html: README.md README.toc.md
 	  && pandoc --from=gfm-tex_math_dollars --to=html+gfm_auto_identifiers -o README.md.html README.toc.md
 
 # website maintenance: "https://www.gnu.org/software/hyperbole/"
+define confirm
+	@echo "═══════════════════════════════════════"
+	@echo "  WARNING: $(1)"
+	@echo "═══════════════════════════════════════"
+	@read -r -p "Are you sure? Write '$(2)' to continue: " answer; \
+	[[ "$$answer" == "$(2)" ]] || { echo "Aborted."; exit 1; }
+endef
+
 # Locally update Hyperbole website
 website-local: README.md.html
 	$(EMACS_BATCH) --debug -l hypb-maintenance --eval '(let ((hypb:web-repo-location "$(HYPB_WEB_REPO_LOCATION)")) (hypb:web-repo-update))'
 
 # Push to public Hyperbole website
 website: website-local
+	$(call confirm,Deploys to website!,DEPLOY)
 	cd $(HYPB_WEB_REPO_LOCATION) && $(CVS) commit -m "Hyperbole release $(HYPB_VERSION)"
-	@echo "Website for Hyperbole $(HYPB_VERSION) is updated."
-
-# Locally update development website
-website-local-devel: README.md.html
-	$(EMACS_BATCH) --debug -l hypb-maintenance --eval '(let ((hypb:web-repo-location "$(HYPB_WEB_REPO_LOCATION_DEVEL)")) (hypb:web-repo-update))'
-
-website-devel: website-local-devel
-	cd $(HYPB_WEB_REPO_LOCATION_DEVEL) && $(CVS) commit -m "Hyperbole development update $(HYPB_VERSION)"
 	@echo "Website for Hyperbole $(HYPB_VERSION) is updated."
 
 # Generate a Hyperbole package suitable for distribution via the Emacs package manager.
