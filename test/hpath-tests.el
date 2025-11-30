@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 23:26:00
-;; Last-Mod:      2-Dec-25 at 12:45:48 by Mats Lidell
+;; Last-Mod:      2-Dec-25 at 12:46:06 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -93,7 +93,6 @@
 
 (ert-deftest hpath--posix-to-mswindows ()
   "Verify `hpath:posix-to-mswindows'."
-  :expected-result :failed
   (dolist (v '(("/dir/subdir/file" . "\\dir\\subdir\\file")
                ("/mnt/a/dir/subdir/file" . "a:\\dir\\subdir\\file")))
     (let ((posix (car v))
@@ -689,7 +688,6 @@ dir/subdir:
 
 (ert-deftest hpath--file-line-and-column ()
   "Verify `hpath:file-line-and-column'."
-  :expected-result :failed
   (should-not (hpath:file-line-and-column 'not-a-string))
   (should-not (hpath:file-line-and-column "does-not-exist"))
   (should (equal (hpath:file-line-and-column "/tmp") '("/tmp")))
