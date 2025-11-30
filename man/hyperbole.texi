@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     29-Nov-25 at 12:24:05 by Bob Weiner
+@c Last-Mod:     30-Nov-25 at 18:03:22 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,7 +30,7 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED November 29, 2025
+@set UPDATED November 30, 2025
 @set UPDATED-MONTH November 2025
 @set EDITION 9.0.2pre
 @set VERSION 9.0.2pre
@@ -4168,13 +4168,13 @@ menubar.  Here is the Hyperbole Menubar Menu and its Find submenu.
 
 @float Image,image:Hyperbole Menu
 @caption{Hyperbole Menubar Menu}
-@image{im/menu-hyperbole,,5in,Hyperbole Menu}
+@image{im/menu-hyperbole,5in,,Hyperbole Menu}
 @end float
 @page
 
 @float Image,image:Find Menu
 @caption{Find Menubar Menu}
-@image{im/menu-find,,5in,Find Menu}
+@image{im/menu-find,5in,,Find Menu}
 @end float
 @sp 1
 
@@ -4500,17 +4500,18 @@ highlighting of HyWikiWords in Org files within
 h p} you can publish any updated part of your HyWiki to an HTML
 directory for export to the web.
 
+@float Image,image:HyWiki Page
+@caption{HyWiki Page}
+@image{im/hywiki-page,3.5in,,HyWiki Page}
+@end float
+@sp 1
+
 @menu
 * HyWikiWords::
 * Publish HyWiki::
 * HyWiki Menu::
 @end menu
 
-@float Image,image:HyWiki Page
-@caption{HyWiki Page}
-@image{im/hywiki-page,,3.5in,HyWiki Page}
-@end float
-@sp 1
 
 @node HyWikiWords, Publish HyWiki, HyWiki, HyWiki
 @section HyWikiWords
@@ -4573,17 +4574,6 @@ links are highlighted regardless of whether associated sections exist
 or not.  When activating a link with a section reference, you will get
 an error if the section does not exist.
 
-@cindex HyWikiWord, outside the wiki
-@cindex hywiki-mode
-@cindex toggle hywiki-mode
-@findex hywiki-mode
-@kindex C-h h h t
-HyWikiWords can also be highlighted and treated as hyperlinks in
-non-special text and programming buffers outside of the
-@code{hywiki-directory} when the global minor mode, @code{hywiki-mode}
-is enabled.  Toggle it via @bkbd{C-h h h t} or @bkbd{M-x hywiki-mode
-@key{RET}}.
-
 @vindex hywiki-org-link-type-required
 @vindex hsys-org-enable-smart-keys
 @cindex override Org M-RET
@@ -4601,15 +4591,36 @@ whose page has not yet been created, set
 Action Key does the right thing in this context.
 
 @cindex HyWikiWord contexts
+@cindex HyWikiWord, outside the wiki
+@cindex hywiki-mode
+@findex hywiki-mode
+@kindex C-h h h m
 Once Hyperbole has been loaded and activated, HyWikiWords (with or
-without delimiters) are automatically highlighted and active in
-the following contexts:
+without delimiters) are automatically highlighted and active based
+on the setting of @code{hywiki-mode}.  Set it with @bkbd{C-h h h m}
+ModeToggle into one of these three states:
 
-@itemize @bullet
-@item HyWiki page buffers;
-@item non-special text buffers, after `hywiki-mode' is enabled;
-@item comments of programming buffers, after `hywiki-mode' is enabled.
-@end itemize
+@table @kbd
+@item All-Editable-Buffers
+This is the default setting.  Highlight HyWikiWord references within
+HyWiki page buffers only.  The @code{hywiki-mode} variable is set to
+@samp{:pages}.
+
+@vindex hywiki-exclude-major-modes
+@item HyWiki-Pages-Only
+Highlight HyWikiWord references within all editable buffers except
+those with major modes in @code{hywiki-exclude-major-modes}.  The
+@code{hywiki-mode} variable is set to @samp{:all}.
+
+@item Nowhere
+Disable highlighting HyWikiWord references everywhere.  The
+@code{hywiki-mode} variable is set to @samp{nil}.
+@end table
+
+@cindex toggle hywiki-mode
+@noindent
+@{M-x hywiki-mode @key{RET}@} will also toggle between disabling
+HyWikiWords everywhere and enabling them in all editable buffers.
 
 @cindex HyWikiWord highlighting
 As HyWikiWords are typed, highlighting occurs after a trailing
@@ -5439,7 +5450,7 @@ read the following sections explaining commands.
 
 @float Image,image:Koutline Menu
 @caption{Koutline Menu}
-@image{im/menu-koutline,,6in,Koutline Menu}
+@image{im/menu-koutline,6in,,Koutline Menu}
 @end float
 @sp 1
 
@@ -8869,7 +8880,7 @@ below the Hyperbole menubar menu, as seen here.
 
 @float Image,image:Customize Menu
 @caption{Hyperbole Customize Menu}
-@image{im/menu-customization,,3.5in,Hyperbole Customize Menu}
+@image{im/menu-customization,3.5in,,Hyperbole Customize Menu}
 @end float
 @sp 1
 

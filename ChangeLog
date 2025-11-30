@@ -1,5 +1,16 @@
 2025-11-30  Bob Weiner  <rsw@gnu.org>
 
+* hui-menu.el (hui-menu-options): Fix display of 'Org-M-RET' submenu options
+    by adding an extra 'list' call.
+
+* hywiki.el (hywiki-mode): Redo 'hywiki-mode' global minor mode to support WikiWords
+    in all editable buffers or just in HyWiki pages.  Update doc string accordingly.
+  man/hyperbole.texi (HyWikiWords): Update 'hywiki-mode' doc.
+  hui-menu.el (hui-menu-hywiki):
+  hui-mini.el (hui:menu-hywiki): Add submenu to set 1 of 3 'hywiki-mode' states.
+              (hui:menu-read-from-minibuffer): Highlight selected item from above
+    state menu.
+
 * hyrolo.py: Add support for "~/.rolo.org" HyRolo file.  Report an error
     but continue if any given file in the list does not exist.  Make Python script
     executable.
