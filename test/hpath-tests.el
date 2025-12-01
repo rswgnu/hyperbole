@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 23:26:00
-;; Last-Mod:     30-Nov-25 at 19:39:24 by Mats Lidell
+;; Last-Mod:      1-Dec-25 at 19:37:41 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -75,27 +75,27 @@
 
 (ert-deftest hpath--posix-path-p ()
   "Verify `hpath:posix-path-p'."
-  (should (hpath:posix-path-p "/posix/path"))
+  (should (hpath:posix-path-p "/dir/file"))
   (should-not (hpath:posix-path-p nil))
   (should-not (hpath:posix-path-p "filename")))
 
 (ert-deftest hpath--posix-to-mswindows-separators ()
   "Verify `hpath:posix-to-mswindows-separators'."
-  (should (string= (hpath:posix-to-mswindows-separators "/posix/file/path")
-                   "\\posix\\file\\path")))
+  (should (string= (hpath:posix-to-mswindows-separators "/dir/subdir/file")
+                   "\\dir\\subdir\\file")))
 
 (ert-deftest hpath--mswindows-to-posix-separators ()
   "Verify `hpath:posix-to-mswindows-separators'."
-  (should (string= (hpath:mswindows-to-posix-separators "\\posix\\file\\path")
-                   "/posix/file/path"))
-  (should (string= (hpath:mswindows-to-posix-separators "\\\\server\\posix\\file\\path")
-                   "//server/posix/file/path"))) ;; /mnt/server/... ?
+  (should (string= (hpath:mswindows-to-posix-separators "\\dir\\subdir\\file")
+                   "/dir/subdir/file"))
+  (should (string= (hpath:mswindows-to-posix-separators "\\\\server\\dir\\subdir\\file")
+                   "//server/dir/subdir/file")))
 
 (ert-deftest hpath--posix-to-mswindows ()
   "Verify `hpath:posix-to-mswindows'."
   :expected-result :failed
-  (dolist (v '(("/posix/file/path" . "\\posix\\file\\path")
-               ("/mnt/a/posix/file/path" . "a:\\posix\\file\\path")))
+  (dolist (v '(("/dir/subdir/file" . "\\dir\\subdir\\file")
+               ("/mnt/a/dir/subdir/file" . "a:\\dir\\subdir\\file")))
     (let ((posix (car v))
           (msw (cdr v)))
       (ert-info ((format "Posix: %s to Mswindows: %s" posix msw))
@@ -103,36 +103,36 @@
 
 (ert-deftest hpath--mswindows-to-posix ()
   "Verify `hpath:mswindows-to-posix'."
-  (should (string= (hpath:mswindows-to-posix "\\posix\\file\\path")
-                   "/posix/file/path"))
-  (should (string= (hpath:mswindows-to-posix "A:\\posix\\file\\path")
-                   "/mnt/a/posix/file/path"))
+  (should (string= (hpath:mswindows-to-posix "\\dir\\subdir\\file")
+                   "/dir/subdir/file"))
+  (should (string= (hpath:mswindows-to-posix "A:\\dir\\subdir\\file")
+                   "/mnt/a/dir/subdir/file"))
   (let ((hyperb:microsoft-os-p t))
-    (should (string= (hpath:mswindows-to-posix "A:\\posix\\file\\path")
-                     "/mnt/a:/posix/file/path"))))
+    (should (string= (hpath:mswindows-to-posix "A:\\dir\\subdir\\file")
+                     "/mnt/a:/dir/subdir/file"))))
 
 (ert-deftest hpath--substitute-posix-or-mswindows ()
   "Verify `hpath:substitute-posix-or-mswindows'."
   (should-not (hpath:substitute-posix-or-mswindows 'not-a-string))
-  (should (string= (hpath:substitute-posix-or-mswindows "/posix/file/path")
-                   "\\posix\\file\\path"))
-  (should (string= (hpath:substitute-posix-or-mswindows "\\posix\\file\\path")
-                   "/posix/file/path")))
+  (should (string= (hpath:substitute-posix-or-mswindows "/dir/subdir/file")
+                   "\\dir\\subdir\\file"))
+  (should (string= (hpath:substitute-posix-or-mswindows "\\dir\\subdir\\file")
+                   "/dir/subdir/file")))
 
 (ert-deftest hpath--substitute-posix-or-mswindows-at-point ()
   "Verify `hpath:substitute-posix-or-mswindows-at-point'."
   ;; Quotes required around path. Point needs to be within the quotes.
   (with-temp-buffer
-    (insert "\"/posix/file/path\"")
+    (insert "\"/dir/subdir/file\"")
     (goto-char 2)
     (hpath:substitute-posix-or-mswindows-at-point)
     (should (string= (buffer-substring-no-properties (point-min) (point-max))
-                     "\"\\posix\\file\\path\""))
+                     "\"\\dir\\subdir\\file\""))
     ;; Back to Posix path again.
     (goto-char 2)
     (hpath:substitute-posix-or-mswindows-at-point)
     (should (string= (buffer-substring-no-properties (point-min) (point-max))
-                     "\"/posix/file/path\""))))
+                     "\"/dir/subdir/file\""))))
 
 (defun hpath--should-exist-p (path)
   (let ((default-directory hyperb:dir)
