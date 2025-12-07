@@ -1,3 +1,13 @@
+2025-12-06  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:absolute-to): Rewrite to fix when given multiple 'default-dirs'
+    to test until find the first one that expands to an existing file before
+    dropping out of the loop.
+           (hpath:call): Fix so when 'path' exists (may have already been expanded),
+    it is used rather than the 'expanded-path' variable.
+  test/hpath-tests.el (hpath--absolute-to): Enable this test; fixed by above changes.
+           (hpath:call): Fix one case where 'mode-prefix' was not prepended.
+
 2025-11-30  Mats Lidell  <matsl@gnu.org>
 
 * hpath.el (hpath:find-file-mailcap): Remove unused.

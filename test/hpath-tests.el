@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 23:26:00
-;; Last-Mod:      2-Dec-25 at 12:46:06 by Mats Lidell
+;; Last-Mod:      6-Dec-25 at 22:34:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -337,7 +337,6 @@
 
 (ert-deftest hpath--absolute-to ()
   "Verify `hpath:absolute-to'."
-  :expected-result :failed
   ;; Not valid path return unchanged
   (should-not (hpath:absolute-to nil))
   (should (= (hpath:absolute-to 1) 1))
