@@ -1,5 +1,8 @@
 2025-11-30  Mats Lidell  <matsl@gnu.org>
 
+* hpath.el (hpath:find-file-mailcap): Remove unused.
+    (hmail:editor-p): Declare function.
+
 * test/hpath-tests.el (hpath--posix-path-p)
     (hpath--posix-to-mswindows-separators)
     (hpath--mswindows-to-posix-separators, hpath--posix-to-mswindows)
