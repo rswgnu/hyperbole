@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     30-Nov-25 at 19:58:24 by Mats Lidell
+;; Last-Mod:      6-Dec-25 at 22:57:33 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -762,30 +762,29 @@ used."
      (lambda (path non-exist)
        (when (stringp path)
 	 (setq path (hpath:trim path)))
-       (cond ((not (and (stringp path)
-			(not (hypb:object-p path))
-			(setq path (hpath:expand path))
-			(not (get-buffer path))
-			(not (file-name-absolute-p path))
-			(hpath:is-p path nil non-exist)))
-              path)
-             ((not (cond ((null default-dirs)
-			  (setq default-dirs (cons default-directory nil)))
-			 ((stringp default-dirs)
-			  (setq default-dirs (cons default-dirs nil)))
-			 ((listp default-dirs))
-			 (t nil)))
-              path)
-             (t
-              (let ((rtn) dir)
-		(while (and default-dirs (null rtn))
-		  (setq dir (expand-file-name
-                             (file-name-as-directory (car default-dirs)))
-			rtn (expand-file-name path dir)
-			default-dirs (cdr default-dirs))
-		  (unless (file-exists-p rtn)
-		    (setq rtn nil)))
-		(or rtn path)))))
+       (let ((dirs default-dirs)
+	     dir
+	     expanded-path)
+	 (setq expanded-path
+	       (cond ((or (stringp dirs) (null dirs))
+		      (expand-file-name path dirs))
+		     ((listp dirs)
+		      (while (and dirs (null expanded-path))
+			(setq dir (expand-file-name
+				   (file-name-as-directory (car dirs)))
+			      expanded-path (expand-file-name path dir)
+			      dirs (cdr dirs))
+			(unless (file-exists-p expanded-path)
+			  (setq expanded-path nil)))
+		      (or expanded-path path))
+		     (t (error "(hpath:absolute-to): `default-dirs' must be a string or list, not `%s'" default-dirs))))
+	 (if (and (stringp expanded-path)
+		  (not (hypb:object-p expanded-path))
+		  (not (get-buffer expanded-path))
+		  (file-name-absolute-p expanded-path)
+		  (hpath:is-p expanded-path nil non-exist))
+	     expanded-path
+	   path)))
      path 'allow-spaces)))
 
 (defun hpath:tramp-file-name-regexp ()
@@ -1053,7 +1052,7 @@ Make any existing path within a file buffer absolute before returning."
       ;; Never expand paths with a prefix character, e.g. program
       ;; names which need to use exec-directory expansion.
       (setq expanded-path (if prefix (hpath:resolve path) (hpath:expand path))
-	    path (funcall func expanded-path non-exist)))
+	    path (funcall func path non-exist)))
     ;;
     ;; If path is just a local reference that begins with #,
     ;; in a file buffer, prepend the file name to it.  If an HTML
@@ -1063,18 +1062,19 @@ Make any existing path within a file buffer absolute before returning."
 			 "")))
       (if (and path
 	       (not (string-empty-p path))
-	       ;; If just a numeric suffix like ":40" by itself, ignore
-	       ;; it, but if a markdown type suffix alone, like
-	       ;; "#section", use it.
-	       (and suffix (not (string-empty-p suffix))
-		    (= ?# (aref suffix 0))))
+	       (or (file-exists-p path)
+		   ;; If just a numeric suffix like ":40" by itself, ignore
+		   ;; it, but if a markdown type suffix alone, like
+		   ;; "#section", use it.
+		   (and suffix (not (string-empty-p suffix))
+			(= ?# (aref suffix 0)))))
 	  (progn
 	    (setq path (concat prefix path suffix))
 	    (cond ((and (hypb:buffer-file-name)
-			;; ignore HTML color strings
-			(not (string-match "\\`#[0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f]\\'" path))
 			;; match to in-file #anchor references
-			(string-match "\\`#[^+\'\"<>#]+\\'" path))
+			(string-match "\\`#[^+\'\"<>#]+\\'" path)
+			;; ignore HTML color strings
+			(not (string-match "\\`#[0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f]\\'" path)))
 		   (setq path (concat mode-prefix (hypb:buffer-file-name) path)))
 		  ((string-match "\\`\\([^#]+\\)\\(#[^#+]*.*\\)\\'" path)
 		   ;; file and #anchor reference
@@ -1089,7 +1089,7 @@ Make any existing path within a file buffer absolute before returning."
 		     (setq path (concat mode-prefix path suffix))))
 		  (t
 		   (when (or non-exist (file-exists-p path))
-		     path))))
+		     (setq path (concat mode-prefix path))))))
 
 	(when (or (and (stringp suffix) (not (string-empty-p suffix))
 		       (= ?# (aref suffix 0)))
