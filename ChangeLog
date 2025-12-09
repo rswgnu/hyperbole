@@ -1,7 +1,7 @@
-2025-12-07  Mats Lidell  <matsl@gnu.org>
+2025-12-09  Mats Lidell  <matsl@gnu.org>
 
-* hsys-activities.el (hsys-activities-resume, hsys-activities-revert): Add
-    action button suppot for extarnal package activities.
+* hsys-activities.el (hsys-activities): Add action button support for
+    external package activities.
 
 2025-12-06  Bob Weiner  <rsw@gnu.org>
 

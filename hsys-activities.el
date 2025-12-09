@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:     7-Dec-25 at 22:48:29
-;; Last-Mod:      7-Dec-25 at 23:14:18 by Mats Lidell
+;; Last-Mod:      9-Dec-25 at 23:14:32 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -14,12 +14,13 @@
 
 ;;; Commentary:
 ;;
-;;  Activate an activity:
-;;    <hsys-activities-resume "Activity">
-;;  Activate an activity to its default configuration:
-;;    <hsys-activities-resume "Activity" t>
-;;  Revert current activity to its default configuration:
-;;    <hsys-activities-resume "Activity">
+;; Use as action button <hsys-activity "Activity">
+;;
+;; Create "Activity" if it does not exist.  If "Activity" is not
+;; active, switch to its latest state.  If "Activity" is active,
+;; revert it to its default state.  If "Activity" is active and the
+;; action button is called with a prefix argument a new default state
+;; is set.
 
 ;;; Code:
 
@@ -33,32 +34,41 @@
 ;;; Public declarations
 ;;; ************************************************************************
 
+(defvar activities-name-prefix)
+
 (declare-function activities-named "ext:activities")
 (declare-function activities-resume "ext:activities")
 (declare-function activities-current "ext:activities")
 (declare-function activities-revert "ext:activities")
 (declare-function activities-name-for "ext:activities")
+(declare-function activities-define "ext:activities")
 
 ;;; ************************************************************************
 ;;; Public functions
 ;;; ************************************************************************
 
-(defun hsys-activities-resume (name &optional reset)
-  "Resume an activity given by NAME.
-If non-nil RESET activity's back to default configuration."
+(defun hsys-activities (name)
+  "Create, resume and revert activity NAME in one function.
+- Create activity with NAME if it does not exist.
+- If activity NAME is not active, switch to its latest state.
+- If activity NAME is active and current, revert to its default state.
+- If activity NAME is active and hsys-activity is called with a prefix
+  then set the default state."
   (hypb:require-package 'activities)
   (let ((activity (activities-named name)))
-    (unless activity
-      (user-error "No activity: %s" name))
-    (activities-resume activity :resetp reset)
-    (message "Activity: %s." name)))
-
-(defun hsys-activities-revert ()
-  "Revert current activity to its default configuration."
-  (hypb:require-package 'activities)
-  (let ((activity (activities-current)))
-    (activities-revert activity)
-    (message "Reverted: '%s'." (activities-name-for activity))))
+    (cond ((not activity)
+           (activities-define name)
+           (message "Activity %s defined." name))
+          ((string= (concat activities-name-prefix name) (activities-name-for (activities-current)))
+           (if current-prefix-arg
+               (progn
+                 (activities-define name :forcep t)
+                 (message "Activity %s set to new default." name))
+             (activities-revert activity)
+             (message "Activity %s reverted." name)))
+          (t
+           (activities-resume activity)
+           (message "Activity %s resumed." name)))))
 
 (provide 'hsys-activities)
 ;;; hsys-activities.el ends here
