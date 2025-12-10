@@ -1,9 +1,9 @@
-;;; hsys-activities.el --- action button support for activities -*- lexical-binding: t; -*-
+;;; hsys-misc.el --- miscellaneous support for external systems -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:     7-Dec-25 at 22:48:29
-;; Last-Mod:     10-Dec-25 at 21:16:41 by Mats Lidell
+;; Last-Mod:     10-Dec-25 at 21:26:21 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -76,5 +76,5 @@
            (activities-resume activity)
            (message "Activity %s resumed." name)))))
 
-(provide 'hsys-activities)
-;;; hsys-activities.el ends here
+(provide 'hsys-misc)
+;;; hsys-misc.el ends here
