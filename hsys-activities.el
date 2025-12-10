@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:     7-Dec-25 at 22:48:29
-;; Last-Mod:      9-Dec-25 at 23:14:32 by Mats Lidell
+;; Last-Mod:     10-Dec-25 at 21:16:41 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -36,12 +36,13 @@
 
 (defvar activities-name-prefix)
 
-(declare-function activities-named "ext:activities")
-(declare-function activities-resume "ext:activities")
 (declare-function activities-current "ext:activities")
-(declare-function activities-revert "ext:activities")
-(declare-function activities-name-for "ext:activities")
 (declare-function activities-define "ext:activities")
+(declare-function activities-name-for "ext:activities")
+(declare-function activities-named "ext:activities")
+(declare-function activities-names "ext:activities")
+(declare-function activities-resume "ext:activities")
+(declare-function activities-revert "ext:activities")
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -52,14 +53,19 @@
 - Create activity with NAME if it does not exist.
 - If activity NAME is not active, switch to its latest state.
 - If activity NAME is active and current, revert to its default state.
-- If activity NAME is active and hsys-activity is called with a prefix
-  then set the default state."
+- If activity NAME is active and hsys-activity is called with
+  `current-prefix-arg' set then set the default state."
+  (interactive (list (completing-read "Activity: " (activities-names) nil nil)))
   (hypb:require-package 'activities)
   (let ((activity (activities-named name)))
     (cond ((not activity)
            (activities-define name)
            (message "Activity %s defined." name))
-          ((string= (concat activities-name-prefix name) (activities-name-for (activities-current)))
+          ((let ((current-activity (activities-current)))
+             (and current-activity
+                  (string=
+                   (activities-name-for activity)
+                   (activities-name-for current-activity))))
            (if current-prefix-arg
                (progn
                  (activities-define name :forcep t)
