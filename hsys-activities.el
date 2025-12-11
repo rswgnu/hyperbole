@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:     7-Dec-25 at 22:48:29
-;; Last-Mod:     10-Dec-25 at 21:16:41 by Mats Lidell
+;; Last-Mod:     11-Dec-25 at 22:26:21 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -48,6 +48,7 @@
 ;;; Public functions
 ;;; ************************************************************************
 
+;;;###autoload
 (defun hsys-activities (name)
   "Create, resume and revert activity NAME in one function.
 - Create activity with NAME if it does not exist.
