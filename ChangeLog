@@ -1,7 +1,6 @@
 2025-12-10  Mats Lidell  <matsl@gnu.org>
 
-* Makefile (EL_COMPILE):
-  MANIFEST: Add hsys-misc.el.
+* MANIFEST: Add hsys-misc.el.
 
 * hsys-misc.el (hsys-activities): Add action button support for external
     package activities.
