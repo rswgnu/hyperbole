@@ -106,6 +106,7 @@ topwin.py            - Python script to find the topmost macOS app window at a s
 .hypb & _hypb        - Button data files used by the GNU Hyperbole DEMO file
 
 * --- EXTERNAL SYSTEM ENCAPSULATIONS ---
+hsys-activities.el   - GNU Hyperbole support functions for Activities
 hsys-consult.el      - Hyperbole interactive consult-grep convenience functions
 hsys-ert.el          - Hyperbole support for jumping to ert 'should' source lines
 hsys-flymake.el      - Add missing source buffer keymap to flymake linter
