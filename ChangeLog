@@ -1,3 +1,11 @@
+2025-12-11  Mats Lidell  <matsl@gnu.org>
+
+* MANIFEST:
+  Makefile (EL_COMPILE): Add hsys-activities.el.
+
+* hsys-activities.el (hsys-activities): Add action button support for
+    external package activities.
+
 2025-12-06  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:absolute-to): Rewrite to fix when given multiple 'default-dirs'
