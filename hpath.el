@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:      6-Dec-25 at 22:57:33 by Bob Weiner
+;; Last-Mod:      7-Dec-25 at 21:12:14 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2078,6 +2078,8 @@ prior to calling this function."
 
 (defun hpath:shorten (path &optional relative-to)
   "Expand and then shorten and return a PATH optionally RELATIVE-TO other path.
+Don't shorten if acting on a global button.
+
 Ignore optional RELATIVE-TO if editing a message,
 i.e. (hmail:editor-p) => t.  If RELATIVE-TO is omitted or nil,
 set it to `default-directory'.  Replace Emacs Lisp variables and
@@ -2097,7 +2099,9 @@ used.  Then abbreviate any remaining path."
       (setq relative-to (expand-file-name
 			 (hpath:substitute-value relative-to))
 	    path
-	    (cond ((string-equal path relative-to)
+	    (cond ((hyperb:stack-frame '(gbut:act))
+		   path)
+		  ((string-equal path relative-to)
 		   "")
 		  ((string-equal (file-name-directory path) relative-to)
 		   (file-name-nondirectory path))

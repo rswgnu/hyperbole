@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:      5-Oct-25 at 11:21:21 by Bob Weiner
+;; Last-Mod:      7-Dec-25 at 20:25:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -983,9 +983,13 @@ Uses `xref' for identifier recognition."
 
 ;;;###autoload
 (defun smart-prog-tag (&optional identifier next)
-  "Jump to definition of optional programming IDENTIFIER or the one at point.
-Optional second arg NEXT means jump to next matching tag."
-  (smart-tags-display (or identifier (hsys-xref-identifier-at-point)) next)
+  "Jump to definition of optional IDENTIFIER string or the one at point.
+Optional second arg NEXT is used by the Assist Key.  If IDENTIFIER is
+an Elisp symbol, it displays the IDENTIFIER'S documention; otherwise, it jumps
+to next matching tag definition."
+  (if (and next (smart-emacs-lisp-mode-p))
+      (describe-symbol (intern identifier))
+    (smart-tags-display (or identifier (hsys-xref-identifier-at-point)) next))
   t)
 
 (defun smart-jedi-find-file (file line column other-window)
