@@ -3,6 +3,14 @@
 * MANIFEST: Add "HY-TALK/HYPERBOLEQA.kotl" from EmacsConf2025 talk.
   HY-TALK/HYPERBOLEQA.kotl - Add.
 
+2025-12-11  Mats Lidell  <matsl@gnu.org>
+
+* MANIFEST:
+  Makefile (EL_COMPILE): Add hsys-activities.el.
+
+* hsys-activities.el (hsys-activities): Add action button support for
+    external package activities.
+
 2025-12-07  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:shorten): Expand and abbreviate but don't shorten paths if
