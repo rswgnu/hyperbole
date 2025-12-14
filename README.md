@@ -236,6 +236,8 @@ window control menu if it was not already bound prior to Hyperbole's
 initialization.  A long video demonstrating many of HyControl's
 features is available at https://youtu.be/M3-aMh1ccJk.
 
+## Hyperbole Manual
+
 The above are the best interactive ways to learn about Hyperbole.
 Hyperbole also includes the Hyperbole Manual, a full reference manual,
 not a simple introduction.  It is included in the "man/" subdirectory

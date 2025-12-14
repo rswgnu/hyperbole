@@ -1,0 +1,146 @@
+;; -*- Mode: kotl -*-
+"Kotl-4.0" ;; file-format
+
+   1. Hyperbole hyperlinks all your information everywhere in Emacs with minimal effort and markup.
+
+     1a. To install:
+           (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+              or
+           (add-to-list 'package-archives '("elpa-devel" . "https://elpa.gnu.org/devel/"))
+         
+           (package-install 'hyperbole)
+           (hyperbole-mode 1)
+
+         Then {M-RET}, the Action Key, will provide context-sensitive actions everywhere.
+
+     1b. Implicit Buttons - typed text patterns Hyperbole recognizes as buttons
+
+       1b1. Any Lisp sexpression with outer parens replaced by angle brackets:
+            <occur "buttons">
+            <buffer-menu-other-window t>
+            
+            Works for Lisp variables as well:
+            <hyperb:dir>
+
+       1b2. Series of keystrokes surrounded by braces:
+            {C-c g 4}
+
+       1b3. Pathnames with environment or Lisp variables, sections and relative line numbers.
+            "${hyperb:dir}/README.md#Hyperbole Manual:L8"
+
+       1b4. Display the discussion on an Emacs bug:
+            bug#24568
+
+       1b5. Use {C-h A} to see what {M-RET} will do anywhere,
+            including the specific type of button that it will activate.
+
+     1c. Explicit Buttons - buttons you add to a text, code or message buffers:
+         <(Hyperbole Todos)>
+         
+         Can toggle Org todo states and have multiple sets of states, all with the {M-RET} key.
+
+     1d. Global Buttons - named buttons in Hyperbole home page available anywhere by name:
+         {C-h h g a hyperbole-invocation-doc RET}
+
+   2. HyRolo for fast lookup and insertion of records:
+      <setq hyrolo-file-list '("~/.rolo.otl" "~/Dropbox/emacs/ramin-org-notes/")>
+      <global-set-key "\C-x4r" 'hyrolo-fgrep>
+      
+      Interactive Record Lookup:    {C-h h r s} Mandelbrot RET
+      Interactive Record Insertion: {C-h h r y} Mandelbrot RET
+
+   3. HyWiki for no markup links to sections of documents
+
+     3a. HyWiki words are automatically highlighted as you type them
+         in HyWiki pages or with <hywiki-mode 1> enabled, everywhere.
+
+     3b. Link to HyWiki sections with # anchors:
+         EmacsMe#My-Section or "EmacsMe#My Section"
+
+   4. The <(Koutliner)> produces autonumbered outlines with automatic
+      permanent hyperlink anchors (called idstamps) per cell/node.  We are
+      using it here.  <[Koutliner Tutorial]>  {C-h h k e}
+
+   5. Highlight, Wipe, Copy and Yank Structured Regions
+
+     5a. Double-quoted Paths: "Any quoted string."  "Recognizes start and end"
+
+     5b. Matching Delimiters: [This is just text.]
+
+     5c. Parenthesized Lisp Sexpressions: (+ (- 8 2) 7)
+
+   6. <(HyControl)> provides fast control of windows and frame adjustments
+
+   7. Extensive Documentation
+
+     7a. Videos - "../README.md:L25"
+
+     7b. Interactive Demos/Tutorials - {C-h h d d}  {C-h h k e}
+
+     7c. Reference Manual - {C-h h d i}
+         https://rswgnu.github.io/hyperbole
+
+     7d. <[Architectural Reference]>  https://deepwiki.com/rswgnu/hyperbole
+
+
+"ben" ;; kvspec:current
+32 ;; id-counter
+alpha ;; label-type
+4 ;; label-min-width
+". " ;; label-separator
+3 ;; level-indent
+
+;; depth-first kcell attributes
+[[0
+  (creator "rsw@gnu.org" create-time "20251207:14:28:32" id-counter 32)]
+ [1
+  (creator "rsw@gnu.org" create-time "20251207:14:28:32")]
+ [31
+  (creator "rsw@gnu.org" create-time "20251207:18:04:23")]
+ [5
+  (creator "rsw@gnu.org" create-time "20251207:14:32:31")]
+ [18
+  (creator "rsw@gnu.org" create-time "20251207:14:43:02")]
+ [19
+  (creator "rsw@gnu.org" create-time "20251207:14:43:54")]
+ [20
+  (creator "rsw@gnu.org" create-time "20251207:14:46:58")]
+ [21
+  (creator "rsw@gnu.org" create-time "20251207:14:59:06")]
+ [32
+  (creator "rsw@gnu.org" create-time "20251207:18:09:17")]
+ [6
+  (creator "rsw@gnu.org" create-time "20251207:14:32:35")]
+ [7
+  (creator "rsw@gnu.org" create-time "20251207:14:32:46")]
+ [2
+  (creator "rsw@gnu.org" create-time "20251207:14:31:22")]
+ [3
+  (creator "rsw@gnu.org" create-time "20251207:14:31:52")]
+ [16
+  (creator "rsw@gnu.org" create-time "20251207:14:40:26")]
+ [28
+  (creator "rsw@gnu.org" create-time "20251207:15:59:42")]
+ [29
+  (creator "rsw@gnu.org" create-time "20251207:16:02:57")]
+ [23
+  (creator "rsw@gnu.org" create-time "20251207:15:30:12")]
+ [25
+  (creator "rsw@gnu.org" create-time "20251207:15:30:59")]
+ [27
+  (creator "rsw@gnu.org" create-time "20251207:15:31:30")]
+ [26
+  (creator "rsw@gnu.org" create-time "20251207:15:31:04")]
+ [22
+  (creator "rsw@gnu.org" create-time "20251207:15:30:04")]
+ [8
+  (creator "rsw@gnu.org" create-time "20251207:14:33:09")]
+ [10
+  (creator "rsw@gnu.org" create-time "20251207:14:33:30")]
+ [12
+  (creator "rsw@gnu.org" create-time "20251207:14:33:42")]
+ [11
+  (creator "rsw@gnu.org" create-time "20251207:14:33:33")]
+ [13
+  (creator "rsw@gnu.org" create-time "20251207:14:33:53")]
+ nil nil nil nil nil nil nil]

@@ -1,3 +1,8 @@
+2025-12-13  Bob Weiner  <rsw@gnu.org>
+
+* MANIFEST: Add "HY-TALK/HYPERBOLEQA.kotl" from EmacsConf2025 talk.
+  HY-TALK/HYPERBOLEQA.kotl - Add.
+
 2025-12-06  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:absolute-to): Rewrite to fix when given multiple 'default-dirs'
