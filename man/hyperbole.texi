@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:      1-Dec-25 at 10:00:11 by Mats Lidell
+@c Last-Mod:      7-Dec-25 at 20:30:10 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,7 +30,7 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED December 1, 2025
+@set UPDATED December 7, 2025
 @set UPDATED-MONTH December 2025
 @set EDITION 9.0.2pre
 @set VERSION 9.0.2pre
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed December 1, 2025.
+Printed December 7, 2025.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -213,7 +213,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.2pre
-December 1, 2025 @c AUTO-REPLACE-ON-SAVE
+December 7, 2025 @c AUTO-REPLACE-ON-SAVE
 
 
   Published by the Free Software Foundation, Inc.
@@ -11447,9 +11447,11 @@ identifier:
      Emacs Lisp require, load, or autoload clause and the (find-library)
      function is defined, jumps to the library source, if possible.
   ASSIST KEY
-     Jumps to the next tag matching an identifier at point or if
-     the identifier is an Emacs Lisp symbol, then this displays the
-     documentation for the symbol.
+     Jumps to the next tag matching an identifier at point unless
+     the identifier is an Emacs Lisp symbol, then:
+       1. if it contains an in-memory Hyperbole button, display the buttons
+          attributes in a help buffer.
+       2. otherwise, display the identifier's documentation in a help buffer.
 @end group
 @end format
 

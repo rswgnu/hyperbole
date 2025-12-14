@@ -1,4 +1,9 @@
 
+"HYPERBOLEQA.kotl"
+("HyControl" nil nil link-to-Info-node ("(hyperbole)HyControl") "rsw@gnu.org" "20251207:16:24:20" nil nil)
+("Koutliner" nil nil link-to-Info-node ("(hyperbole)Koutliner") "rsw@gnu.org" "20251207:16:04:04" "rsw" "20251207:16:04:47")
+("Hyperbole_Todos" nil nil kbd-key ("C-x 4 t") "rsw@gnu.org" "20251207:15:33:06" nil nil)
+
 "HYPERAMP.org"
 ("ERT_test" nil nil link-to-file ("../test/hbut-tests.el#hypb:program-create-ebut-in-buffer") "rsw@gnu.org" "20231203:01:48:10" nil nil)
 

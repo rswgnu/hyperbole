@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     31-Aug-25 at 16:22:09 by Bob Weiner
+;; Last-Mod:      7-Dec-25 at 19:24:08 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1721,13 +1721,13 @@ Return number of buttons reported on or nil if none."
 			lbl
 		      (concat ebut:label-start lbl ebut:label-end)))
 	     (terpri)
+	     (hattr:report attribs)
+	     (terpri)
 	     (let ((doc (actype:doc but (= 1 (length lbl-lst)))))
 	       (when doc
 		 (princ "  ")
 		 (princ doc)
-		 (terpri)))
-	     (hattr:report attribs)
-	     (terpri)))
+		 (terpri)))))
 	 lbl-lst))
       (length lbl-lst))))
 

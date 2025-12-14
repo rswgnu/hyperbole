@@ -27,6 +27,7 @@ man/hyperbole.texi   - The GNU Hyperbole Manual  (GNU Texinfo source form)
 man/hkey-help.txt    - Summarizes Smart Key behaviors in different contexts
 HY-TALK/HY-TALK.org  - EmacsNYC 2020 Talk: Make Your Text Come Alive slides
 HY-TALK/HYPERAMP.org - EmacsConf 2023 Talk: Top 10 Ways Hyperbole Amps Up Emacs slides
+HY-TALK/HYPERBOLEQA.kotl - EmacsConf 2025 Talk: Questions and answers to help you fly with Hyperbole
 HY-TALK/HYPERORG.org - EmacsConf 2022 Talk: Powerful Productivity with Hyperbole and Org Mode slides
 
 * --- USER INTERFACE ---

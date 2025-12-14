@@ -1,3 +1,8 @@
+2025-12-13  Bob Weiner  <rsw@gnu.org>
+
+* MANIFEST: Add "HY-TALK/HYPERBOLEQA.kotl" from EmacsConf2025 talk.
+  HY-TALK/HYPERBOLEQA.kotl - Add.
+
 2025-12-11  Mats Lidell  <matsl@gnu.org>
 
 * MANIFEST:
@@ -5,6 +10,20 @@
 
 * hsys-activities.el (hsys-activities): Add action button support for
     external package activities.
+
+2025-12-07  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:shorten): Expand and abbreviate but don't shorten paths if
+    within a global button activation.  Otherwise, relative paths may be computed
+    wrong.  Still this problem shown with (gbut:act "td") is not yet resolved.
+
+* hmouse-tag.el (smart-prog-tag):
+  hui-mouse.el (hkey-alist): Change Assist Key behavior when on a programming
+    symbol/tag.  If the symbol is a variable holding an in-memory Hyperbole button,
+    then display a help buffer with the button's attributes.  Otherwise, if an Elisp
+    symbol, then display a help buffer with symbol documentation, if any, to match
+    the Hyperbole manual documentation.  For any other language symbol, display its
+    definiton, just as the Action Key does.
 
 2025-12-06  Bob Weiner  <rsw@gnu.org>
 

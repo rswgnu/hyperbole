@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:      9-Sep-25 at 01:30:54 by Bob Weiner
+;; Last-Mod:      7-Dec-25 at 20:15:46 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -455,6 +455,15 @@ The button's attributes are stored in the symbol, `hbut:current'.")
     ((eq major-mode 'pages-directory-mode)
      . ((pages-directory-goto) . (pages-directory-goto)))
     ;;
+    ;; If a variable holding an in-memory Hyperbole button object, e.g. hbut:current:
+    ;; Action Key - Jump to variable definition
+    ;; Assist Key - Display button attributes of any Hyperbole button symbol at point
+    ((and (setq hkey-value (smart-prog-at-tag-p))
+	  (hbut:is-p (intern-soft hkey-value)))
+     . ((ignore-errors (smart-prog-tag hkey-value)) .
+	(hbut:report (intern-soft hkey-value))))
+    ;;
+    ;; Handle programming language tag definition finding via xref.
     ;; For most programming languages use xref which supports various
     ;; Language Servers
     ((and (setq hkey-value (smart-prog-at-tag-p))
