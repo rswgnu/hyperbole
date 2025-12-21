@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Oct-91 at 14:00:24
-;; Last-Mod:     29-Sep-25 at 20:23:23 by Mats Lidell
+;; Last-Mod:     21-Dec-25 at 16:34:52 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -19,7 +19,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(require 'set)
+(require 'hyperbole-set)
 
 ;;; ************************************************************************
 ;;; Forward declarations
@@ -117,5 +117,9 @@ existed before the change was made."
 ;; `hsettings' and `hvar' have a cyclic dependency; require this after providing 'hvar
 ;; to avoid an infinite loop.
 (require 'hsettings)
+
+;; Local Variables:
+;; read-symbol-shorthands: (("set:" . "hyperbole-set-"))
+;; End:
 
 ;;; hvar.el ends here

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     22-Nov-25 at 07:54:28 by Bob Weiner
+;; Last-Mod:     21-Dec-25 at 16:29:26 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -42,8 +42,7 @@
 (require 'outline)
 (require 'package)
 (require 'reveal)
-;; Avoid any potential library name conflict by giving the load directory.
-(require 'set (expand-file-name "set" hyperb:dir))
+(require 'hyperbole-set)
 (require 'sort)
 (require 'xml)
 (declare-function kotl-mode:to-valid-position "kotl/kotl-mode")

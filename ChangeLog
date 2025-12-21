@@ -1,3 +1,27 @@
+2025-12-21  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el:
+  test/hypb-tests.el:
+  kotl/kotl-mode.el:
+  hyrolo.el:
+  hyperbole.el:
+  hycontrol.el:
+  hvar.el:
+  hui.el:
+  hui-mini.el:
+  hsys-org.el:
+  hibtypes.el:
+  hbut.el:
+  hargs.el:
+  hact.el: Use shorthand for set:
+
+* test/hyperbole-set-tests.el: Rename set-test.el.
+
+* Makefile (EL_COMPILE): Rename set.el to hyperbole-set.el
+
+* hyperbole-set.el: Rename set.el.
+    Use shorthand set: for hyperbole-set- for proper prefixing.
+
 2025-12-13  Bob Weiner  <rsw@gnu.org>
 
 * MANIFEST: Add "HY-TALK/HYPERBOLEQA.kotl" from EmacsConf2025 talk.

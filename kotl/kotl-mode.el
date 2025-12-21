@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:      6-Oct-25 at 00:16:41 by Mats Lidell
+;; Last-Mod:     21-Dec-25 at 16:36:33 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -4012,5 +4012,9 @@ See `delete-selection-helper'."
 	(delete-selection-helper deletion-type)))))
 
 (provide 'kotl-mode)
+
+;; Local Variables:
+;; read-symbol-shorthands: (("set:" . "hyperbole-set-"))
+;; End:
 
 ;;; kotl-mode.el ends here

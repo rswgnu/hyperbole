@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     22-Nov-25 at 12:40:34 by Bob Weiner
+;; Last-Mod:     21-Dec-25 at 16:50:23 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -78,7 +78,7 @@
 (declare-function markdown-reference-goto-link "ext:markdown")
 (declare-function markdown-wiki-link-p "ext:markdown")
 (declare-function org-roam-id-find "ext:org-roam")
-(declare-function set:member "set")
+(declare-function set:member "hyperbole-set")
 (declare-function symset:add "hact")
 (declare-function symtable:add "hact")
 
@@ -1774,5 +1774,9 @@ version of the conflict."
 
 (run-hooks 'hibtypes-end-load-hook)
 (provide 'hibtypes)
+
+;; Local Variables:
+;; read-symbol-shorthands: (("set:" . "hyperbole-set-"))
+;; End:
 
 ;;; hibtypes.el ends here

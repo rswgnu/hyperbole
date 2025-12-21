@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     29-Aug-25 at 14:20:04 by Bob Weiner
+;; Last-Mod:     21-Dec-25 at 16:31:58 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -19,7 +19,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(hhist set)))
+(eval-and-compile (mapc #'require '(hhist hyperbole-set)))
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -595,5 +595,9 @@ calling form."
   (action:param-list (actype:action actype)))
 
 (provide 'hact)
+
+;; Local Variables:
+;; read-symbol-shorthands: (("set:" . "hyperbole-set-"))
+;; End:
 
 ;;; hact.el ends here

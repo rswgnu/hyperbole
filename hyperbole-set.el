@@ -1,9 +1,9 @@
-;;; set.el --- General mathematical operators for unordered sets  -*- lexical-binding: t; -*-
+;;; hyperbole-set.el --- General mathematical operators for unordered sets  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Sep-91 at 19:24:19
-;; Last-Mod:     18-Feb-24 at 12:51:49 by Mats Lidell
+;; Last-Mod:     21-Dec-25 at 16:25:30 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -220,6 +220,10 @@ Uses `set:equal-op' for comparison."
 ;; Private variables
 ;; ************************************************************************
 
-(provide 'set)
+(provide 'hyperbole-set)
 
-;;; set.el ends here
+;; Local Variables:
+;; read-symbol-shorthands: (("set:" . "hyperbole-set-"))
+;; End:
+
+;;; hyperbole-set.el ends here

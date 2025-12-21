@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     23-Nov-25 at 12:44:22 by Bob Weiner
+;; Last-Mod:     21-Dec-25 at 17:06:17 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -22,8 +22,7 @@
 (require 'cl-macs)  ;; For `cl-do*'
 (require 'hversion)
 (require 'hargs)
-;; Avoid any potential library name conflict by giving the load directory.
-(require 'set (expand-file-name "set" hyperb:dir))
+(require 'hyperbole-set)
 (require 'hmail)
 (require 'hbut)
 (eval-when-compile (require 'hactypes))
