@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     22-Nov-25 at 12:07:13 by Bob Weiner
+;; Last-Mod:     21-Dec-25 at 16:39:18 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -41,8 +41,7 @@
 (require 'org-macs)
 (require 'package)
 (require 'warnings)
-;; Avoid any potential library name conflict by giving the load directory.
-(require 'set (expand-file-name "set" hyperb:dir))
+(require 'hyperbole-set)
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -780,5 +779,9 @@ This must be called before Org mode is loaded."
   (custom-set-variables '(org-fold-core-style 'overlays)))
 
 (provide 'hsys-org)
+
+;; Local Variables:
+;; read-symbol-shorthands: (("set:" . "hyperbole-set-"))
+;; End:
 
 ;;; hsys-org.el ends here

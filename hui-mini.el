@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     30-Nov-25 at 17:51:11 by Bob Weiner
+;; Last-Mod:     21-Dec-25 at 16:40:53 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1209,5 +1209,9 @@ support underlined faces as well."
 (hyperbole-minibuffer-menu)
 
 (provide 'hui-mini)
+
+;; Local Variables:
+;; read-symbol-shorthands: (("set:" . "hyperbole-set-"))
+;; End:
 
 ;;; hui-mini.el ends here

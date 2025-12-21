@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:     26-Oct-25 at 16:04:51 by Bob Weiner
+;; Last-Mod:     21-Dec-25 at 16:33:46 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -118,8 +118,7 @@
 (require 'cl-lib)
 (require 'hhist)     ; To store frame-config when hycontrol-windows-grid is used
 (require 'hypb)
-;; Avoid any potential library name conflict by giving the load directory.
-(require 'set (expand-file-name "set" hyperb:dir))
+(require 'hyperbole-set)
 (eval-and-compile
   ;; Get from: https://github.com/emacsmirror/framemove/blob/master/framemove.el
   (require 'framemove nil t)
@@ -2170,5 +2169,9 @@ documentation for more information."
 	     (hycontrol-help-key-description))))
 
 (provide 'hycontrol)
+
+;; Local Variables:
+;; read-symbol-shorthands: (("set:" . "hyperbole-set-"))
+;; End:
 
 ;;; hycontrol.el ends here

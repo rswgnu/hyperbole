@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:     5-Apr-21 at 18:53:10
-;; Last-Mod:     14-Sep-25 at 15:53:43 by Mats Lidell
+;; Last-Mod:     21-Dec-25 at 16:45:43 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -155,6 +155,7 @@ See Emacs bug#74042 related to usage of texi2any."
 ;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.
 ;;  Local Variables:
 ;;  no-byte-compile: t
+;;  read-symbol-shorthands: (("set:" . "hyperbole-set-"))
 ;;  End:
 
 (provide 'hypb-tests)

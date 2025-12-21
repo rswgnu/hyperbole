@@ -1,9 +1,9 @@
-;;; set-tests.el --- Hyperbole mathematical set library tests          -*- lexical-binding: t; -*-
+;;; hyperbole-set-tests.el --- Hyperbole mathematical set library tests          -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:     5-Feb-23 at 09:12:52
-;; Last-Mod:     29-May-24 at 00:56:52 by Bob Weiner
+;; Last-Mod:     21-Dec-25 at 17:10:33 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -17,7 +17,7 @@
 ;;; Code:
 
 ;; Avoid any potential library name conflict by giving the load directory.
-(require 'set (expand-file-name "set" hyperb:dir))
+(require 'hyperbole-set)
 
 (ert-deftest set-tests--function-tests-equal ()
   "Test Hyperbole set library functions."
@@ -145,6 +145,10 @@
     (should (= (set:size (set:create 'a 'b)) 1))
     (should (= (set:size (set:union (set:create 'a) (set:create 'b))) 1))
     (should (set:equal (set:union (set:create 'a) (set:create 'b)) (set:create 'a)))))
+
+;; Local Variables:
+;; read-symbol-shorthands: (("set:" . "hyperbole-set-"))
+;; End:
 
 (provide 'set-tests)
 ;;; set-tests.el ends here

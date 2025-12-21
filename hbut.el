@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      7-Dec-25 at 19:24:08 by Bob Weiner
+;; Last-Mod:     21-Dec-25 at 16:40:32 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -3277,4 +3277,9 @@ Return TYPE's symbol if it existed, else nil."
     (and elisp-sym (funcall elisp-sym) t)))
 
 (provide 'hbut)
+
+;; Local Variables:
+;; read-symbol-shorthands: (("set:" . "hyperbole-set-"))
+;; End:
+
 ;;; hbut.el ends here

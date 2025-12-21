@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     22-Nov-25 at 13:35:42 by Bob Weiner
+;; Last-Mod:     21-Dec-25 at 16:46:43 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2196,6 +2196,7 @@ expected result."
 ;;
 ;; Local Variables:
 ;; no-byte-compile: t
+;; read-symbol-shorthands: (("set:" . "hyperbole-set-"))
 ;; End:
 
 ;;; hywiki-tests.el ends here
