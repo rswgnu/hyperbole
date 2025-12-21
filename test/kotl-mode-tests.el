@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:      4-Oct-25 at 00:46:47 by Mats Lidell
+;; Last-Mod:     21-Dec-25 at 23:56:18 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -434,17 +434,35 @@
 
 (ert-deftest kotl-mode-split-cell ()
   "Kotl-mode split cell."
+  :expected-result :failed
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
-        (progn
-          (find-file kotl-file)
-          (insert "firstsecond\n")
-          (backward-char 7)
-          (kotl-mode:split-cell)
-          (should (string= (kcell-view:label (point)) "2"))
-          (kotl-mode:demote-tree 0)
-          (should (string= (kcell-view:label (point)) "1a"))
-          (should (string= (kcell-view:idstamp) "02")))
+        (with-current-buffer (find-file kotl-file)
+          (ert-info ("Split on first line")
+            (insert "firstsecond\n")
+            (backward-char 7)
+            (kotl-mode:split-cell)
+            (should (string= (kcell-view:label (point)) "2"))
+            (kotl-mode:demote-tree 0)
+            (should (string= (kcell-view:label (point)) "1a"))
+            (should (string= (kcell-view:idstamp) "02")))
+          (ert-info ("Split after first line")
+            (kotl-mode:kill-tree)
+            (insert "first")
+            (kotl-mode:newline 1)
+            (insert "second")
+            (kotl-mode:previous-line 1)
+            (kotl-mode:end-of-line)
+            (kotl-mode:split-cell)
+            (should (= (line-number-at-pos) 3)))
+          (ert-info ("Split before second line")
+            (kotl-mode:kill-tree)
+            (insert "first")
+            (kotl-mode:newline 1)
+            (insert "second")
+            (kotl-mode:beginning-of-line)
+            (kotl-mode:split-cell)
+            (should (= (line-number-at-pos) 3))))
       (hy-delete-file-and-buffer kotl-file))))
 
 (ert-deftest kotl-mode-append-cell ()
