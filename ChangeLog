@@ -1,3 +1,13 @@
+2025-12-24  Mats Lidell  <matsl@gnu.org>
+
+* hywiki.el (hywiki-reference-to-org-link): Refactor to handle pathname
+    and referent in separate functions.
+    (hywiki--pathname-reference-to-org-link): Original function for
+    pathname links.
+    (hywiki--referent-reference-to-org-link): Creates an info message link
+    that export of the referent type is not supported.
+    (hypb-msg): org-link-type for message links.
+
 2025-12-13  Bob Weiner  <rsw@gnu.org>
 
 * MANIFEST: Add "HY-TALK/HYPERBOLEQA.kotl" from EmacsConf2025 talk.

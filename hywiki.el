@@ -1572,43 +1572,54 @@ simplifies to:
 	   (setq wikiword (substring wikiword-and-section (match-end 0))))
 	 (insert "\n#+INDEX: " wikiword "\n"))))))
 
+(defun hywiki--pathname-reference-to-org-link (pathname referent description)
+  "Convert a HyWiki PATHNAME REFERENT and DESCRIPTION to an Org link."
+  (let* ((path-word-suffix referent)
+         (path (file-relative-name (nth 0 path-word-suffix)))
+         ;; (path-stem (when path
+	 ;; 		  (file-name-sans-extension path)))
+         (suffix (nth 2 path-word-suffix))
+         (desc description)
+	 ;; suffix-no-hashmark
+	 )
+    (unless (and suffix (not (string-empty-p suffix)))
+      (setq suffix nil))
+    ;; (setq suffix-no-hashmark (when suffix (substring suffix 1)))
+    ;; (when (or (not buffer-file-name)
+    ;; 	  (string-equal path (file-name-nondirectory buffer-file-name)))
+    ;;   (setq path nil))
+    (cond (desc
+	   (if path
+	       ;; "[[hy:pathname]]"
+	       (format "[[%s:%s]]" hywiki-org-link-type pathname)
+	     ;; (if suffix
+	     ;;     ;; "[[file:path-stem.org::suffix][desc]"
+	     ;;     (format "[[file:%s.org::%s][%s]]"
+	     ;; 	       path-stem suffix-no-hashmark desc)
+	     ;;   ;; "[[file:path-stem.org][desc]]")
+	     ;;   (format "[[file:%s.org][%s]]" path-stem desc))
+	     (if suffix
+		 ;; "[[suffix][desc]]"
+		 (format "[[%s][%s]]" suffix desc)
+	       ;; "[[desc]]"
+	       (format "[[%s]]" desc))))
+	  (path
+	   ;; "[[hy:pathname]]"
+	   (format "[[%s:%s]]" hywiki-org-link-type pathname)))))
+
+(defun hywiki--referent-reference-to-org-link (reference referent _description)
+  "Convert a HyWiki REFERENT REFERENCE and DESCRIPTION to an Org link."
+  (format "[[hypb-msg:%s][%s]]" (format "Export of link type %s is not supported" (car referent)) reference))
+
 (defun hywiki-reference-to-org-link (reference &optional description)
   "Convert a HyWiki REFERENCE and an optional DESCRIPTION to an Org link."
   ;; \"[[file:<hywiki-directory>/WikiWord.org::Multi-Word Section][WikiWord#Multi-Word Section]]\".
   (let ((referent (hywiki-reference-to-referent reference :full-data)))
-    (when (stringp (car referent))
-      (let* ((path-word-suffix referent)
-             (path (file-relative-name (nth 0 path-word-suffix)))
-             ;; (path-stem (when path
-	     ;; 		  (file-name-sans-extension path)))
-             (suffix (nth 2 path-word-suffix))
-             (desc description)
-	     ;; suffix-no-hashmark
-	     )
-	(unless (and suffix (not (string-empty-p suffix)))
-	  (setq suffix nil))
-	;; (setq suffix-no-hashmark (when suffix (substring suffix 1)))
-	;; (when (or (not buffer-file-name)
-	;; 	  (string-equal path (file-name-nondirectory buffer-file-name)))
-	;;   (setq path nil))
-	(cond (desc
-	       (if path
-		   ;; "[[hy:reference]]"
-		   (format "[[%s:%s]]" hywiki-org-link-type reference)
-		   ;; (if suffix
-		   ;;     ;; "[[file:path-stem.org::suffix][desc]"
-		   ;;     (format "[[file:%s.org::%s][%s]]"
-		   ;; 	       path-stem suffix-no-hashmark desc)
-		   ;;   ;; "[[file:path-stem.org][desc]]")
-		   ;;   (format "[[file:%s.org][%s]]" path-stem desc))
-		 (if suffix
-		     ;; "[[suffix][desc]]"
-		     (format "[[%s][%s]]" suffix desc)
-		   ;; "[[desc]]"
-		   (format "[[%s]]" desc))))
-	      (path
-	       ;; "[[hy:reference]]"
-	       (format "[[%s:%s]]" hywiki-org-link-type reference)))))))
+    (when referent
+      (cond ((stringp (car referent))
+             (hywiki--pathname-reference-to-org-link reference referent description))
+            (t
+             (hywiki--referent-reference-to-org-link reference referent description))))))
 
 (defun hywiki-maybe-at-wikiword-beginning ()
   "Return non-nil if previous character is one preceding a HyWikiWord.
@@ -2970,13 +2981,21 @@ variables."
     (setf (alist-get "hywiki" org-publish-project-alist nil 'remove #'equal) nil)
     (add-to-list 'org-publish-project-alist hywiki-org-publish-project-alist t)))
 
-(eval-after-load "org"
-  '(org-link-set-parameters hywiki-org-link-type
-                            :complete #'hywiki-org-link-complete
-			    :export #'hywiki-org-link-export
-			    :follow #'hywiki-find-referent
-			    :htmlize-link #'hywiki-section-to-headline-reference
-			    :store #'hywiki-org-link-store))
+(with-eval-after-load 'org
+  (org-link-set-parameters hywiki-org-link-type
+                           :complete #'hywiki-org-link-complete
+			   :export #'hywiki-org-link-export
+			   :follow #'hywiki-find-referent
+			   :htmlize-link #'hywiki-section-to-headline-reference
+			   :store #'hywiki-org-link-store)
+  (org-link-set-parameters "hypb-msg"
+                           :follow (lambda (path) (message "Message: %s" path))
+                           :export (lambda (path desc backend)
+                                     (when (eq backend 'html)
+                                       (format "<a href=\"#\" title=\"%s\" onclick=\"alert('%s'); return false;\">%s</a>"
+                                               path
+                                               (replace-regexp-in-string "'" "\\\\'" path)
+                                               (or desc path))))))
 
 (defun hywiki-word-strip-suffix (page-name)
   "Return PAGE-NAME with any optional #section:Lnum:Cnum stripped off.
