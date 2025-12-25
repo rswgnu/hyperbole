@@ -1,3 +1,14 @@
+2025-12-25  Mats Lidell  <matsl@gnu.org>
+
+* hywiki.el (hywiki--preparation-function, hywiki--completion-function)
+    (hywiki-org-make-publish-project-alist): Use prepare and complete
+    project attributes to control use of hywiki-org-export-function with
+    org-export-before-parsing-functions. (Used before as advice on
+    org-element--generate-copy-script now removed since it affected other
+    export project.)
+    (hywiki-org-export-function): Remove old stack guard since function is
+    now called in another context.
+
 2025-12-24  Mats Lidell  <matsl@gnu.org>
 
 * hywiki.el (hywiki-reference-to-org-link): Refactor to handle pathname

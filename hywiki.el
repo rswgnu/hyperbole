@@ -424,6 +424,16 @@ where PATH is the un-resolvable reference."
   :type 'string
   :group 'hyperbole-hywiki)
 
+(defun hywiki--preparation-function (_project-plist)
+  "Setup export hook functions."
+  (message "Hywiki export is in preparation.")
+  (add-hook 'org-export-before-parsing-functions #'hywiki-org-export-function))
+
+(defun hywiki--completion-function (_project-plist)
+  "Remove export hook function."
+  (remove-hook 'org-export-before-parsing-functions #'hywiki-org-export-function)
+  (message "Hywiki export is completed."))
+
 (defvar hywiki-org-publish-project-alist nil
   "HyWiki-specific export properties added to `org-publish-project-alist'.")
 
@@ -432,6 +442,8 @@ where PATH is the un-resolvable reference."
 	hywiki-org-publish-project-alist
 	(list
 	 "hywiki"
+         :preparation-function 'hywiki--preparation-function
+         :completion-function 'hywiki--completion-function
 	 :auto-sitemap t
 	 :base-directory (expand-file-name hywiki-directory)
 	 :html-head (format
@@ -2831,12 +2843,11 @@ save and potentially set `hywiki--directory-mod-time' and
    (org-publish-property :base-directory (hywiki-org-get-publish-project))))
 
 (defun hywiki-org-export-function (&rest _)
-  "Add to `write-contents-functions' to convert HyWikiWord links to Org links.
-This is done automatically by loading HyWiki."
+  "Convert HyWikiWord links to Org links and add title if missing.
+Do not convert the index file."
   (require 'org-element)
   (when (and (derived-mode-p 'org-mode)
-             (not (string= (hywiki--sitemap-file) (buffer-file-name)))
-	     (hyperb:stack-frame '(org-export-copy-buffer)))
+             (not (string= (hywiki--sitemap-file) (buffer-file-name))))
     (hywiki-references-to-org-links)
     (hywiki-org-maybe-add-title)))
 
@@ -3860,9 +3871,6 @@ This must be called within a `save-excursion' or it may move point."
 ;;; ************************************************************************
 
 (add-hook 'kill-buffer-hook 'hywiki-kill-buffer-hook)
-
-(eval-after-load "org-element"
-  '(advice-add 'org-element--generate-copy-script :before #'hywiki-org-export-function))
 
 ;; Use for its side effects, setting variables
 (eval-after-load "ox-publish" '(hywiki-org-get-publish-project))
