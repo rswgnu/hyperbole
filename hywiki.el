@@ -255,12 +255,12 @@ Each element is of the form: (wikiword . (referent-type . referent-value)).")
 ;;; ************************************************************************
 
 (defcustom hywiki-word-highlight-flag t
-  "The default, non-nil value treats HyWikiWords in HyWiki pages as hyperlinks.
+  "Non-nil means HyWikiWords in HyWiki pages are treated as hyperlinks.
 A nil value disables HyWikiWord hyperlink buttons in both HyWiki
 pages and all other buffers (since it also disables `hywiki-mode').
 
 Outside of HyWiki pages, the global minor mode `hywiki-mode' must be
-manually enabled for auto-HyWikiWord highlighting. Interactively, {C-h
+manually enabled for auto-HyWikiWord highlighting.  Interactively, {C-h
 h h m a} does this; programmatically, use `(hywiki-mode :all)' to
 enable it.
 
@@ -480,7 +480,7 @@ For reference, this is set when `window-buffer-change-functions' calls
 `hywiki-maybe-highlight-page-names' which calls `hywiki-in-page-p'.")
 
 (defcustom hywiki-referent-prompt-flag nil
-  "When t, the Action Key and HyWiki/Create always prompt for referent type.
+  "Non-nil means the Action Key and HyWiki/Create always prompt for referent type.
 Nil by default."
   :type 'boolean
   :initialize #'custom-initialize-default

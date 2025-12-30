@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     22-Nov-25 at 12:07:13 by Bob Weiner
+;; Last-Mod:     31-Dec-25 at 00:03:26 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -512,7 +512,7 @@ either [[referent][description]] or [[referent]].
 
 If point is on a HyWikiWord within an Org link and HyWikiWords are
 recognized in the current buffer, ignore the Org link and return nil
-(handle these elsewhere as implicit buttons).
+\(handle these elsewhere as implicit buttons).
 
 Assume caller has already checked that the current buffer is in
 `org-mode' or is looking for an Org link in a non-Org buffer type."
