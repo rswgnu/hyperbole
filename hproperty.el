@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Aug-92
-;; Last-Mod:      5-Oct-25 at 16:41:34 by Mats Lidell
+;; Last-Mod:     31-Dec-25 at 16:02:19 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -41,24 +41,24 @@
 ;;; ************************************************************************
 
 (defcustom hproperty:but-highlight-flag t
-  "*Non-nil means highlight named Hyperbole buttons with `hproperty:but-face'."
+  "Non-nil means highlight named Hyperbole buttons with `hproperty:but-face'."
   :type 'boolean
   :group 'hyperbole-buttons)
 
 (defcustom hproperty:but-emphasize-flag nil
-  "*Non-nil means emphasize selectability of Hyperbole button labels.
+  "Non-nil means emphasize selectability of Hyperbole button labels.
 This is shown when hovering over the button with the mouse."
   :type 'boolean
   :group 'hyperbole-buttons)
 
 (defcustom hproperty:but-flash-time 1000
-  "*Emacs button flash delay."
+  "Emacs button flash delay."
   :type '(integer :match (lambda (_widget value) (and (integerp value) (> value 0))))
   :group 'hyperbole-buttons)
 (make-obsolete-variable 'hproperty:but-flash-time "Use `hproperty:but-flash-time-seconds' instead" "8.0")
 
 (defcustom hproperty:but-flash-time-seconds 0.05
-  "*Emacs button flash delay."
+  "Emacs button flash delay."
   :type 'float
   :group 'hyperbole-buttons)
 

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Mar-89
-;; Last-Mod:     20-Jan-24 at 20:20:58 by Mats Lidell
+;; Last-Mod:     31-Dec-25 at 16:02:19 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -59,7 +59,7 @@
 
 (define-obsolete-variable-alias 'wconfig-ring-max 'hywconfig-ring-max "06.00")
 (defcustom hywconfig-ring-max 10
-  "*Max length of Hyperbole window config ring before oldest elements are deleted."
+  "Max length of Hyperbole window config ring before oldest elements are deleted."
   :type `(integer
           :match ,(lambda (_widget value) (and (integerp value) (> value 0))))
   :group 'hyperbole-screen)

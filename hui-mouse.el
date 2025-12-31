@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:      7-Dec-25 at 20:15:46 by Bob Weiner
+;; Last-Mod:     31-Dec-25 at 16:02:19 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -130,34 +130,34 @@ In any other context, signal an error."
     (hypb:error "(Hyperbole Assist Key): No action defined for this context; try another location")))
 
 (defcustom action-key-default-function #'action-key-error
-  "*Function run by the Action Key in an unspecified context.
+  "Function run by the Action Key in an unspecified context.
 Set it to `hyperbole' if you want it to display the Hyperbole minibuffer menu."
   :type 'function
   :group 'hyperbole-keys)
 
 (defcustom assist-key-default-function #'assist-key-error
-  "*Function run by the Assist Key in an unspecified context.
+  "Function run by the Assist Key in an unspecified context.
 Set it to `hkey-summarize' if you want it to display a summary of
 Smart Key behavior."
   :type 'function
   :group 'hyperbole-keys)
 
 (defcustom action-key-modeline-buffer-id-function #'dired-jump
-  "*Function to call for Action Key clicks on the buf id portion of a modeline.
+  "Function to call for Action Key clicks on the buf id portion of a modeline.
 Its default value is `dired-jump'; set it to `smart-treemacs-modeline'
 to use the Treemacs file manager package instead."
   :type 'function
   :group 'hyperbole-keys)
 
 (defcustom action-key-eol-function #'smart-scroll-up
-  "*Function run by the Action Key at the end of a line.
+  "Function run by the Action Key at the end of a line.
 Its default value is `smart-scroll-up'.  To disable it, set it to
 #\\='ignore."
   :type 'function
   :group 'hyperbole-keys)
 
 (defcustom assist-key-eol-function #'smart-scroll-down
-  "*Function run by the Assist Key at the end of a line.
+  "Function run by the Assist Key at the end of a line.
 Its default value is `smart-scroll-down'.  To disable it, set it to
 #\\='ignore."
   :type 'function

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-98
-;; Last-Mod:      5-Nov-23 at 11:45:00 by Bob Weiner
+;; Last-Mod:     31-Dec-25 at 16:10:47 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -45,13 +45,13 @@
 
 (defcustom kexport:html-description
   "Created by Hyperbole's outliner.\nSee &quot;(hyperbole)Koutliner&quot; for more information."
-  "*String to insert as the HTML-exported document's description, or nil for none."
+  "String to insert as the HTML-exported document's description, or nil for none."
   :type '(choice (const nil)
 		 (string))
   :group 'hyperbole-koutliner)
 
 (defcustom kexport:html-keywords nil
-  "*String of comma separated keywords to include with an HTML-exported document.
+  "String of comma separated keywords to include with an HTML-exported document.
 If nil, use no keywords."
   :type '(choice (const nil)
 		 (string))

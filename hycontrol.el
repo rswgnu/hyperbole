@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Jun-16 at 15:35:36
-;; Last-Mod:     26-Oct-25 at 16:04:51 by Bob Weiner
+;; Last-Mod:     31-Dec-25 at 16:02:19 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -164,22 +164,22 @@ evaluated with the buffer argument as the current buffer, e.g. (eq
 major-mode \\='c-mode).")
 
 (defcustom hycontrol-help-flag t
-  "*Non-nil means show key binding help in the minibuffer when in a HyControl mode."
+  "Non-nil means show key binding help in the minibuffer when in a HyControl mode."
   :type 'boolean
   :group 'hyperbole-screen)
 
 (defcustom hycontrol-invert-mode-line-flag t
-  "*Non-nil means invert mode-line to emphasize the special key bindings in effect."
+  "Non-nil means invert mode-line to emphasize the special key bindings in effect."
   :type 'boolean
   :group 'hyperbole-screen)
 
 (defcustom hycontrol-keep-window-flag nil
-  "*Non-nil means leave original window when tear off window to another frame."
+  "Non-nil means leave original window when tear off window to another frame."
   :type 'boolean
   :group 'hyperbole-screen)
 
 (defcustom hycontrol-maximum-units 1000
-  "*Maximum units setting allowed for hycontrol commands.
+  "Maximum units setting allowed for hycontrol commands.
 The unit counter resets to the last digit entered whenever this
 value is exceeded."
   :type '(integer :match (lambda (_widget value)
@@ -188,7 +188,7 @@ value is exceeded."
   :group 'hyperbole-screen)
 
 (defcustom hycontrol-frame-offset '(13 . 23)
-  "*Increase in offset for new hycontrol frames relative to the selected frame.
+  "Increase in offset for new hycontrol frames relative to the selected frame.
 Its value is an (x-offset . y-offset) pair in pixels."
   :type '(cons integer integer)
   :group 'hyperbole-screen)
@@ -211,25 +211,25 @@ Lisp boolean form to evaluate.
 The final predicate should always be t, for default values, typically of zero.")
 
 (defcustom hycontrol-screen-top-offset    0
-  "*Pixel offset from top used when placing a frame at a top corner."
+  "Pixel offset from top used when placing a frame at a top corner."
   :type '(integer :match (lambda (_widget value)
 			   (and (integerp value) (>= value 0)
 				(< value (display-pixel-height)))))
   :group 'hyperbole-screen)
 (defcustom hycontrol-screen-right-offset  0
-  "*Pixel offset from right used when placing a frame at a right corner."
+  "Pixel offset from right used when placing a frame at a right corner."
   :type '(integer :match (lambda (_widget value)
 			   (and (integerp value) (>= value 0)
 				(< value (display-pixel-width)))))
   :group 'hyperbole-screen)
 (defcustom hycontrol-screen-bottom-offset 0
-  "*Pixel offset from bottom used when placing a frame at a bottom corner."
+  "Pixel offset from bottom used when placing a frame at a bottom corner."
   :type '(integer :match (lambda (_widget value)
 			   (and (integerp value) (>= value 0)
 				(< value (display-pixel-height)))))
   :group 'hyperbole-screen)
 (defcustom hycontrol-screen-left-offset   0
-  "*Pixel offset from left used when placing a frame at a left corner."
+  "Pixel offset from left used when placing a frame at a left corner."
   :type '(integer :match (lambda (_widget value)
 			   (and (integerp value) (>= value 0)
 				(< value (display-pixel-width)))))
