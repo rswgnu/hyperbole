@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:      7-Dec-25 at 21:12:14 by Bob Weiner
+;; Last-Mod:     31-Dec-25 at 16:08:46 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -43,7 +43,7 @@
 					      icomplete-mode ivy-mode
 					      org-roam-mode vertico-mode
                                               selectrum-mode)
-  "*List of boolean mode variables whose modes automatically list completions.
+  "List of boolean mode variables whose modes automatically list completions.
 These are modes where completions are listed without the need for
 pressing the ? key."
   :type '(repeat variable)
@@ -355,7 +355,7 @@ Call this function manually if mount points change after Hyperbole is loaded."
 ;;; ************************************************************************
 
 (defcustom hpath:external-open-office-suffixes "doc[mx]?\\|od[st]\\|ppsx?\\|ppt[mx]?\\|v[dst][s]?[tx]\\|vsd[x]?\\|xls[mx]?"
-  "*Regexp of Open Office document suffix alternatives.
+  "Regexp of Open Office document suffix alternatives.
 These are to be display externally with the Action Key
 Do not include an initial period or enclosing grouping parentheses;
 these will be added automatically.
@@ -366,7 +366,7 @@ possible suffixes."
   :group 'hyperbole-commands)
 
 (defcustom hpath:external-file-suffixes "e?ps\\|dvi\\|pdf\\|ps\\.g?[zZ]\\|gif\\|tiff?\\|xpm\\|xbm\\|xwd\\|pm\\|pbm\\|jpe?g\\|xcf"
-  "*Non-operating system dependent regexp of file suffixes to open outside Emacs.
+  "Non-operating system dependent regexp of file suffixes to open outside Emacs.
 These are opened with the Action Key when not handled by
 `hpath:native-image-suffixes'.  Do not include an initial period
 or enclosing grouping parentheses; these will be added
@@ -378,7 +378,7 @@ automatically."
 								  hpath:external-open-office-suffixes
 								  hpath:external-file-suffixes)
 							  "open"))
-  "*An alist of (FILENAME-REGEXP . DISPLAY-PROGRAM-STRING-OR-LIST) for the macOS.
+  "An alist of (FILENAME-REGEXP . DISPLAY-PROGRAM-STRING-OR-LIST) for the macOS.
 See the function `hpath:get-external-display-alist' for detailed
 format documentation."
   :type '(alist :key-type regexp :value-type string)
@@ -388,7 +388,7 @@ format documentation."
 							      "openoffice.exe")
 							(cons (format "\\.\\(%s\\|vba\\)$" hpath:external-file-suffixes)
 							      "/c/Windows/System32/cmd.exe //c start \"${@//&/^&}\""))
-  "*An alist of (FILENAME-REGEXP . DISPLAY-PROGRAM-STRING-OR-LIST) for MS Windows.
+  "An alist of (FILENAME-REGEXP . DISPLAY-PROGRAM-STRING-OR-LIST) for MS Windows.
 See the function `hpath:get-external-display-alist' for detailed
 format documentation."
   :type '(alist :key-type regexp :value-type string)
@@ -408,7 +408,7 @@ format documentation."
 							      hpath:external-open-office-suffixes
 							      hpath:external-file-suffixes)
 						      "setsid -w xdg-open"))
-  "*An alist of (FILENAME-REGEXP . DISPLAY-PROGRAM-STRING-OR-LIST) for X.
+  "An alist of (FILENAME-REGEXP . DISPLAY-PROGRAM-STRING-OR-LIST) for X.
 See the function `hpath:get-external-display-alist' for detailed
 format documentation."
   :type '(alist :key-type regexp :value-type string)
@@ -456,7 +456,7 @@ format documentation."
 		  (error "Invalid file"))))))
 
     '("\\.rdb\\'" . rdb:initialize)))
-  "*Alist for calling special functions to display file types in Emacs.
+  "Alist for calling special functions to display file types in Emacs.
 The alist consists of (FILENAME-REGEXP . EDIT-FUNCTION) elements.
 See also the function (hpath:get-external-display-alist) for
 external display program settings."
@@ -558,7 +558,7 @@ Used only if the function `image-mode' is defined."
 ;;
 (defcustom hpath:variables
   '(hyperb:dir hywiki-directory load-path exec-path Info-directory-list sm-directory)
-  "*List of Emacs Lisp variable symbols to substitute within matching link paths.
+  "List of Emacs Lisp variable symbols to substitute within matching link paths.
 Each variable value, if bound, must be either a pathname or a list of pathnames.
 When embedded within a path, the format is ${variable}."
   :type '(repeat variable)
@@ -572,7 +572,7 @@ When embedded within a path, the format is ${variable}."
   "*Url pattern for (hpath:rfc rfc-num) to get the RFC document for `rfc-num'.")
 
 (defcustom hpath:suffixes '(".gz" ".Z")
-  "*List of filename suffixes to add or remove within hpath calls.
+  "List of filename suffixes to add or remove within hpath calls.
 Used by `hpath:exists-p' and `hpath:substitute-dir'."
   :type '(repeat string)
   :group 'hyperbole-commands)

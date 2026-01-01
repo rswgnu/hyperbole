@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Apr-91 at 00:48:49
-;; Last-Mod:     29-Jun-24 at 18:57:18 by Bob Weiner
+;; Last-Mod:     31-Dec-25 at 16:06:23 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -101,12 +101,12 @@ The Smart Menu system must have already been loaded.  If a Smart
 Menu is already displayed, perform another Action or Assist Key function.")
 
 (defcustom hmouse-middle-flag (and (boundp 'infodock-version) infodock-version t)
-  "*Non-nil means additionally bind the middle mouse button as an Action Key."
+  "Non-nil means additionally bind the middle mouse button as an Action Key."
   :type 'boolean
   :group 'hyperbole-keys)
 
 (defcustom smart-scroll-proportional t
-  "*Non-nil means Smart Key scroll behavior is relative to current line.
+  "Non-nil means Smart Key scroll behavior is relative to current line.
 Smart Keys will scroll relative to current line when pressed at
 the end of a line.  Action Key moves current line to top of the
 window.  Assist Key moves current line to bottom of the window.
@@ -233,7 +233,7 @@ disable/inhibit support."
 	       (if inhibit-hyperbole-messaging "disabled" "enabled"))))
 
 (defcustom inhibit-hyperbole-messaging t
-  "*Determine whether Hyperbole supports explicit buttons in mail and news buffers.
+  "Determine whether Hyperbole supports explicit buttons in mail and news buffers.
 The default of t means disable such support (work remains to
 modernize these features).  When t, Hyperbole will not alter
 messaging mode hooks nor overload functions from these packages,
@@ -251,7 +251,7 @@ Hyperbole, and then restart Emacs."
   :group 'hyperbole-buttons)
 
 (defcustom hyperbole-web-search-browser-function browse-url-browser-function
-  "*Function of one url argument called by any Hyperbole Find/Web search."
+  "Function of one url argument called by any Hyperbole Find/Web search."
   :type 'function
   :group 'hyperbole-commands)
 
@@ -275,7 +275,7 @@ Hyperbole, and then restart Emacs."
     ("Wikipedia" . "https://en.wikipedia.org/wiki/%s")
     ("X" . "https://x.com/search?q=%s")
     ("Youtube" . "https://www.youtube.com/results?search_query=%s"))
-  "*Alist of (web-service-name . emacs-cmd-or-url-with-%s-parameter) elements.
+  "Alist of (web-service-name . emacs-cmd-or-url-with-%s-parameter) elements.
 The first capitalized character of each web-service-name must be unique.
 This custom option is used in the Hyperbole Find/Web menu where
 the %s in the url-with-%s-parameter is replaced with an interactively

@@ -969,7 +969,7 @@ After successfully finding a referent, run `hywiki-display-referent-hook'."
 	   "Add a HyWikiWord that displays an Org Roam node given its title.")
 	 '("Sexp"         (hywiki-add-sexpression hkey-value)
 	   "Add a HyWikiWord that evaluates an Elisp sexpression.")))
-  "*Menu of HyWikiWord custom referent types of the form:
+  "Menu of HyWikiWord custom referent types of the form:
 \(LABEL-STRING ACTION-SEXP DOC-STR)."
   :set  (lambda (var value) (set-default var value))
   :type '(cons (list string) (repeat (list string sexp string)))

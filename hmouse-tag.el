@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:      7-Dec-25 at 20:25:10 by Bob Weiner
+;; Last-Mod:     31-Dec-25 at 16:02:19 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -111,7 +111,7 @@ should insert the implicit link type definition name.")
 (define-obsolete-variable-alias 'smart-asm-include-dirs
   'smart-asm-include-path "06.00")
 (defcustom smart-asm-include-path nil
-  "*Ordered list of directories to search for assembly language include files.
+  "Ordered list of directories to search for assembly language include files.
 Each directory must end with a directory separator."
   :type '(repeat directory)
   :group 'hyperbole-commands)
@@ -130,7 +130,7 @@ Examples include:
 (define-obsolete-variable-alias 'smart-c-cpp-include-dirs
   'smart-c-cpp-include-path "06.00")
 (defcustom smart-c-cpp-include-path '("/usr/include/")
-  "*Ordered list of include directories by default searched by C/C++ preprocessor.
+  "Ordered list of include directories by default searched by C/C++ preprocessor.
 Each directory must end with a directory separator.  See also
 `smart-c-include-path'."
   :type '(repeat directory)
@@ -139,7 +139,7 @@ Each directory must end with a directory separator.  See also
 (define-obsolete-variable-alias 'smart-c-include-dirs
   'smart-c-include-path "06.00")
 (defcustom smart-c-include-path nil
-  "*Ordered list of directories to search for C/C++ include files.
+  "Ordered list of directories to search for C/C++ include files.
 Each directory must end with a directory separator.  Directories normally
 searched by the C/C++ pre-processor should be set instead in
 `smart-c-cpp-include-path'."
@@ -173,7 +173,7 @@ File name is grouping 3.")
 (defcustom smart-java-package-path
   (and (fboundp 'getenv) (getenv "JAVA_HOME")
        (list (expand-file-name "src/" (file-name-as-directory (getenv "JAVA_HOME")))))
-  "*Ordered list of directories to search for imported Java packages.
+  "Ordered list of directories to search for imported Java packages.
 Each directory must end with a directory separator."
   :type '(repeat directory)
   :group 'hyperbole-commands)
@@ -186,12 +186,12 @@ Each directory must end with a directory separator."
 Keyword matched is grouping 1.  Referent is grouping 2.")
 
 (defcustom smart-emacs-tags-file nil
-  "*Full path name of etags file for GNU Emacs source."
+  "Full path name of etags file for GNU Emacs source."
   :type '(file :must-match t)
   :group 'hyperbole-commands)
 
 (defcustom smart-tags-mode-list '(fundamental-mode prog-mode text-mode)
-  "*Major modes where programming symbols are recognized by the Smart Keys."
+  "Major modes where programming symbols are recognized by the Smart Keys."
   :type '(repeat symbol)
   :group 'hyperbole-commands)
 

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     30-Nov-25 at 17:51:11 by Bob Weiner
+;; Last-Mod:     31-Dec-25 at 16:08:46 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1039,7 +1039,7 @@ command instead.  Typically prevents clashes over {\\`C-c' /}."
 ;;; ************************************************************************
 
 (defcustom hui:menu-highlight-flag t
-  "*If non-nil, highlight the first capitalized character of each menu item.
+  "If non-nil, highlight the first capitalized character of each menu item.
 Highlight with `read-multiple-choice-face'.  The display must
 support underlined faces as well."
   :type 'boolean
@@ -1081,7 +1081,7 @@ support underlined faces as well."
 	 (when (fboundp 'consult-grep) ;; allow for autoloading
 	   '("WikiWordConsult" hywiki-word-consult-grep
 	     "Use `hywiki-consult-grep' to show occurrences of a prompted for HyWikiWord."))))
-  "*Hyperbole minibuffer HyWiki menu items of the form:
+  "Hyperbole minibuffer HyWiki menu items of the form:
 \(LABEL-STRING ACTION-SEXP DOC-STR)."
   :set  (lambda (var value)
 	  (if (fboundp #'hyperbole-minibuffer-menu)
@@ -1112,7 +1112,7 @@ support underlined faces as well."
 	 '("TagFind"          hyrolo-tags-view              "Find HyRolo Org tags.")
 	 '("WordFind"         hyrolo-word                   "Find entries containing words.")
 	 '("Yank"             hyrolo-yank                   "Find an entry containing a string and insert it at point.")))
-  "*Hyperbole minibuffer Rolo menu items of the form:
+  "Hyperbole minibuffer Rolo menu items of the form:
 \(LABEL-STRING ACTION-SEXP DOC-STR)."
   :set  (lambda (var value)
 	  (if (fboundp #'hyperbole-minibuffer-menu)

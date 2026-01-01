@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Sep-92
-;; Last-Mod:     19-Jun-25 at 11:44:26 by Bob Weiner
+;; Last-Mod:     31-Dec-25 at 16:02:19 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -71,13 +71,13 @@
 ;;; ************************************************************************
 
 (defcustom action-key-minibuffer-function #'hyperbole
-  "*Function run by the Action Key after a click in an inactive minibuffer.
+  "Function run by the Action Key after a click in an inactive minibuffer.
 Its default value is `hyperbole', which displays the Hyperbole minibuffer menu."
   :type 'function
   :group 'hyperbole-keys)
 
 (defcustom assist-key-minibuffer-function #'hui-menu-screen-commands
-  "*Function run by the Assist Key after a click in an inactive minibuffer.
+  "Function run by the Assist Key after a click in an inactive minibuffer.
 Its default value is `hui-menu-screen-commands', which displays a popup menu
 of screen control commands."
   :type 'function
@@ -95,25 +95,25 @@ of screen control commands."
   :group 'hyperbole-keys)
 
 (defcustom action-key-modeline-left-edge-function #'action-key-modeline-click-left-edge
-  "*Function run on an Action Mouse Key click at a modeline left edge.
+  "Function run on an Action Mouse Key click at a modeline left edge.
 To disable it, set it to #\\='ignore."
   :type 'function
   :group 'hyperbole-keys)
 
 (defcustom assist-key-modeline-left-edge-function #'assist-key-modeline-click-left-edge
-  "*Function run on an Assist Mouse Key click at a modeline left edge.
+  "Function run on an Assist Mouse Key click at a modeline left edge.
 To disable it, set it to #\\='ignore."
   :type 'function
   :group 'hyperbole-keys)
 
 (defcustom action-key-modeline-right-edge-function #'action-key-modeline-click-right-edge
-  "*Function run on an Action Mouse Key click at a modeline right edge.
+  "Function run on an Action Mouse Key click at a modeline right edge.
 To disable it, set it to #\\='ignore."
   :type 'function
   :group 'hyperbole-keys)
 
 (defcustom assist-key-modeline-right-edge-function #'assist-key-modeline-click-right-edge
-  "*Function run on an Assist Mouse Key click at a modeline right edge.
+  "Function run on an Assist Mouse Key click at a modeline right edge.
 To disable it, set it to #\\='ignore."
   :type 'function
   :group 'hyperbole-keys)

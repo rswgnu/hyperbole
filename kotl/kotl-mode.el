@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:      6-Oct-25 at 00:16:41 by Mats Lidell
+;; Last-Mod:     31-Dec-25 at 16:10:26 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -39,7 +39,7 @@
 ;;; ************************************************************************
 
 (defcustom kotl-mode:indent-tabs-mode t
-  "*Non-nil means {\\[kotl-mode:tab-command]} may insert literal tab characters.
+  "Non-nil means {\\[kotl-mode:tab-command]} may insert literal tab characters.
 Tab characters are inserted rather than space characters when
 `kotl-mode:tab-flag' is non-nil.  Default value is t.  The value
 of this variable is local to each Koutline buffer."
@@ -47,7 +47,7 @@ of this variable is local to each Koutline buffer."
   :group 'hyperbole-koutliner)
 
 (defcustom kotl-mode:refill-flag nil
-  "*Non-nil means automatically refill cells during operations.
+  "Non-nil means automatically refill cells during operations.
 Operations are move, copy, promotion and demotion.  Default value
 is nil.  Cells with a `no-fill' attribute are never refilled
 during such operations, regardless of the value of this flag."
@@ -55,7 +55,7 @@ during such operations, regardless of the value of this flag."
   :group 'hyperbole-koutliner)
 
 (defcustom kotl-mode:shrink-region-flag nil
-  "*Non-nil means Koutliner commands automatically shrink the region.
+  "Non-nil means Koutliner commands automatically shrink the region.
 The region is shrinked within the visible bounds of a single cell
 before editing it.  The region then falls within the first
 visible cell that was part of the region or that followed it.
@@ -64,7 +64,7 @@ Default value is nil."
   :group 'hyperbole-koutliner)
 
 (defcustom kotl-mode:tab-flag nil
-  "*Non-nil means {\\[kotl-mode:tab-command]} inserts a literal tab character and {\\[kotl-mode:untab-command]} deletes backward.
+  "Non-nil means {\\[kotl-mode:tab-command]} inserts a literal tab character and {\\[kotl-mode:untab-command]} deletes backward.
 Nil means {\\[kotl-mode:tab-command]} demotes the current tree and
 {\\[kotl-mode:untab-command]} promotes the tree.  The default is nil."
   :type 'boolean
