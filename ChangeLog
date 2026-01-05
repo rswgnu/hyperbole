@@ -1,3 +1,14 @@
+2026-01-05  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el
+    (hywiki-tests--action-key-moves-to-word-and-section): Adopt to changed
+    linked behavior.
+
+* hywiki.el (hywiki-section-to-headline-reference): Remove unused.
+
+* hpath.el (hpath:dashes-to-spaces-markup-anchor): Do not convert in
+    hywiki pages.
+
 2025-12-31  Mats Lidell  <matsl@gnu.org>
 
 * Remove starting asterix from defcustom variable docstrings.
