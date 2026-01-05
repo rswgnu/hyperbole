@@ -3,11 +3,11 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     30-Nov-25 at 18:06:52 by Bob Weiner
+;; Last-Mod:      5-Jan-26 at 20:09:54 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; Copyright (C) 2024-2025  Free Software Foundation, Inc.
+;; Copyright (C) 2024-2026  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -2997,7 +2997,6 @@ variables."
                            :complete #'hywiki-org-link-complete
 			   :export #'hywiki-org-link-export
 			   :follow #'hywiki-find-referent
-			   :htmlize-link #'hywiki-section-to-headline-reference
 			   :store #'hywiki-org-link-store)
   (org-link-set-parameters "hypb-msg"
                            :follow (lambda (path) (message "Message: %s" path))
@@ -3064,17 +3063,6 @@ at point must return non-nil or this function will return nil."
     (if (eq save-input-word :range)
 	(list word start end)
       word)))
-
-(defun hywiki-section-to-headline-reference ()
-  "Replace file#section dashes with spaces to match to an Org headline.
-Does replacement only when not in a programming mode and section
-contains no spaces."
- (let ((link (get-text-property (point) 'org-link)))
-   (if (and link (string-match "#" link))
-       (let* ((file (substring link 0 (match-beginning 0)))
-              (section (substring link (match-beginning 0))))
-	 (concat file (hpath:dashes-to-spaces-markup-anchor section)))
-     link)))
 
 (defun hywiki-strip-org-link (link-str)
   "Return the hy:HyWikiWord#section part of an Org link string.

@@ -3,11 +3,11 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     31-Dec-25 at 16:08:46 by Mats Lidell
+;; Last-Mod:      5-Jan-26 at 22:36:32 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; Copyright (C) 1991-2025  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2026  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -147,6 +147,8 @@ The format is ${variable}.  Match grouping 1 is the name of the variable.")
 (declare-function kcell-view:indent "kcell-view")
 (declare-function klink:act "klink")
 (declare-function mm-mailcap-command "mm-decode")
+
+(declare-function hywiki-in-page-p "hywiki")
 
 ;;; ************************************************************************
 ;;; MS WINDOWS PATH CONVERSIONS
@@ -1654,7 +1656,8 @@ but locational suffixes within the file are utilized."
 (defun hpath:dashes-to-spaces-markup-anchor (anchor)
   "Replace dashes with spaces in ANCHOR if not a prog mode and no existing spaces."
   (if (or (derived-mode-p 'prog-mode)
-	  (string-match-p "-.* \\| .*-" anchor))
+	  (string-match-p "-.* \\| .*-" anchor)
+          (hywiki-in-page-p))
       anchor
     ;; In Markdown or outline modes '-' characters in `anchor' are
     ;; converted to spaces at the point of definition unless anchor

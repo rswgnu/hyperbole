@@ -3,11 +3,11 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     22-Nov-25 at 13:35:42 by Bob Weiner
+;; Last-Mod:      5-Jan-26 at 21:38:04 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; Copyright (C) 2024-2025  Free Software Foundation, Inc.
+;; Copyright (C) 2024-2026  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -964,10 +964,10 @@ Both mod-time and checksum must be changed for a test to return true."
                     ("WikiWord#Asection:L1" . "* Asection")
                     ("WikiWord#Asection:L2" . "body A")
                     ("WikiWord#Asection:L2:C2" . "dy A")
-                    ("WikiWord#Bsection-subsection" . "** Bsection subsection")
+                    ("WikiWord#Bsection-subsection" . "** Bsection-subsection")
                     ("WikiWord#Bsection-subsection:L2" . "body B")
                     ("WikiWord#Bsection-subsection:L2:C2" . "dy B")
-                    ("(WikiWord#Bsection subsection)" . "** Bsection subsection")
+                    ("(WikiWord#Csection subsection)" . "*** Csection subsection")
                     ("(WikiWord#Asection)" . "* Asection")
                     )))
       (unwind-protect
@@ -978,8 +978,10 @@ Both mod-time and checksum must be changed for a test to return true."
 First line
 * Asection
 body A
-** Bsection subsection
+** Bsection-subsection
 body B
+*** Csection subsection
+body C
 ")
               (save-buffer))
             ;; Create temp buffers with WikiWord links to the target
