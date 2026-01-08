@@ -884,10 +884,8 @@ Function used to display is \"hywiki-display-<referent-type>\"."
       (hattr:set 'hbut:current 'referent-value referent-value))
     (cond ((fboundp display-function)
 	   (funcall display-function wikiword referent-value))
-	  ((symbolp referent-type)
-	   (error "(hywiki-display-referent-type): No hywiki-display function for referent type '%s'" referent-type))
 	  (t
-	   (error "(hywiki-display-referent-type): Referent type must be a symbol, not %s" referent-type)))))
+	   (error "(hywiki-display-referent-type): No hywiki-display function for referent type '%s'" referent-type)))))
 
 (defun hywiki-display-referent (&optional wikiword prompt-flag)
   "Display HyWiki WIKIWORD referent or a regular file with WIKIWORD nil.
@@ -1318,11 +1316,11 @@ with the page."
   (unless (stringp wikiword)
     (setq wikiword (hywiki-word-read-new "Create/Edit HyWikiWord: ")))
   (setq hkey-value wikiword)
-  (let ((page-file (hywiki-add-page wikiword t)))
+  (let ((page-file (cdr (hywiki-add-page wikiword t))))
     (if (or message-flag (called-interactively-p 'interactive))
-	(when page-file
-	  (message "HyWikiWord '%s' page: \"%s\"" wikiword page-file))
-      (user-error "(hywiki-create-page): Invalid HyWikiWord: '%s'; must be capitalized, all alpha" wikiword))
+	(if page-file
+	    (message "HyWikiWord '%s' page: \"%s\"" wikiword page-file)
+          (user-error "(hywiki-create-page): Invalid HyWikiWord: '%s'; must be capitalized, all alpha" wikiword)))
     page-file))
 
 (defun hywiki-add-page (page-name &optional force-flag)
@@ -1400,8 +1398,7 @@ referent."
 				      "referent"
 				    "page"))))
 		     current-prefix-arg))
-  (if (or (and hywiki-referent-prompt-flag (null arg))
-	  arg)
+  (if (or arg hywiki-referent-prompt-flag)
       (hywiki-create-referent wikiword t)
     (hywiki-create-page wikiword t)))
 

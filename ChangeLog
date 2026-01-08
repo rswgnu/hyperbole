@@ -1,3 +1,20 @@
+2026-02-08  Mats Lidell  <matsl@gnu.org>
+
+* hywiki.el (hywiki-word-create): Eliminate redundant term.
+    (hywiki-create-page): Let page-file be the name of the
+    file. User-error when page-file is not created.
+    (hywiki-display-referent-type): Remove unreachable error check.
+
+* test/hywiki-tests.el (hywiki-tests--find-page)
+    (hywiki-tests--get-page/wikiword-list, hywiki-tests--org-link-store)
+    (hywiki-tests--create-referent, hywiki-tests--get-buttonize-characters)
+    (hywiki-tests--non-hook-context-p, hywiki-tests--word-create)
+    (hywiki-tests--create-page): New tests.
+    (hywiki-tests--add-referent): Extend test for more coverage.
+    (hywiki-tests--display-referent-type): Error test case.
+    (hywiki-tests--add-global-button): Enable local vars. Avoid prompting
+    user during test.
+
 2026-02-07  Bob Weiner  <rsw@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--verify-removal-of-delimiter-updates-face):
