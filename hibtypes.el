@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     22-Nov-25 at 12:40:34 by Bob Weiner
+;; Last-Mod:      5-Jan-26 at 23:42:19 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -108,8 +108,28 @@
 ;;; Creates and displays personal wiki pages and sections with auto-wikiword links
 ;;; ========================================================================
 
-;; Defines `hywiki-word' ibtype
-(load "hywiki" nil t)
+(defib hywiki-word ()
+  "When on a non-existing HyWikiWord, create it and display its referent.
+A call to (hywiki-active-in-current-buffer-p) must return non-nil
+for this to activate.
+
+If the associated HyWiki referent is a page, create it automatically
+unless it is the first HyWiki page to be created, in which case,
+prompt the user whether to create it, to prevent any unexpected HyWiki
+use.
+
+Existing HyWikiWords are handled by the implicit button type
+`hywiki-existing-word'."
+  (when (hywiki-active-in-current-buffer-p)
+    (let* ((wikiword-start-end (hywiki-highlight-word-get-range))
+	   (wikiword (nth 0 wikiword-start-end))
+	   (start    (nth 1 wikiword-start-end))
+	   (end      (nth 2 wikiword-start-end)))
+      (when wikiword
+	(unless (or (ibtypes::pathname-line-and-column)
+		    (ibtypes::pathname))
+	  (ibut:label-set wikiword start end)
+	  (hact 'hywiki-word-create-and-display wikiword))))))
 
 ;;; ========================================================================
 ;;; Jumps to source line from Python traceback lines
@@ -1713,25 +1733,28 @@ If a boolean function or variable, display its value."
 	(error "(action:help): No action button labeled: %s" label)))))
 
 ;;; ========================================================================
-;;; Activates HyWikiWords with existing HyWiki pages.
+;;; Activates HyWikiWords with existing referents.
 ;;; Non-existing HyWikiWords are handled by the (load "hywiki") at a low
 ;;; priority earlier in this file which defines the `hywiki-word' ibtype.
 ;;; ========================================================================
 
 (defib hywiki-existing-word ()
   "On a HyWikiWord with an existing referent, display the referent.
+A call to (hywiki-active-in-current-buffer-p) must return non-nil
+for this to activate.
 
 See the implicit button type `hywiki-word' for creation of referents to
 not yet existing HyWikiWords."
-  (cl-destructuring-bind (wikiword start end)
-      (hywiki-referent-exists-p :range)
-    (when wikiword
-      (unless (or (ibtypes::pathname-line-and-column)
-		  (ibtypes::pathname))
-	(if (and start end)
-	    (ibut:label-set wikiword start end)
-	  (ibut:label-set wikiword))
-	(hact 'hywiki-find-referent wikiword)))))
+  (when (hywiki-active-in-current-buffer-p)
+    (cl-destructuring-bind (wikiword start end)
+	(hywiki-referent-exists-p :range)
+      (when wikiword
+	(unless (or (ibtypes::pathname-line-and-column)
+		    (ibtypes::pathname))
+	  (if (and start end)
+	      (ibut:label-set wikiword start end)
+	    (ibut:label-set wikiword))
+	  (hact 'hywiki-find-referent wikiword))))))
 
 ;;; ========================================================================
 ;;; Inserts completion into minibuffer or other window.

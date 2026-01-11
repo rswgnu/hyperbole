@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     22-Nov-25 at 13:35:42 by Bob Weiner
+;; Last-Mod:      2-Jan-26 at 20:13:25 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -615,11 +615,11 @@ HyWikiWord reference."
   "Verify `hywiki-active-in-current-buffer-p'."
   (let* ((hywiki-directory (make-temp-file "hywiki" t))
          (wiki-page (cdr (hywiki-add-page "WikiWord")))
-         (hywiki-word-highlight-flag t))
+         (hywiki-mode t))
     (unwind-protect
         (with-current-buffer (find-file-noselect wiki-page)
           (should (hywiki-active-in-current-buffer-p))
-          (let ((hywiki-word-highlight-flag nil))
+          (let ((hywiki-mode nil))
             (should-not (hywiki-active-in-current-buffer-p)))
           (let ((hywiki-exclude-major-modes (list 'org-mode)))
             (should-not (hywiki-active-in-current-buffer-p)))
@@ -2052,7 +2052,7 @@ face is verified during the change."
         (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory)))))
 
 (ert-deftest hywiki-tests--maybe-highlight-page-names ()
-  "Verify `hywiki-maybe-highlight-page-names'.
+  "Verify `hywiki-maybe-highlight-references'.
 Start and stop point of all highlighted regions in the buffer, as
 computed by `hywiki-tests--hywiki-face-regions', are compared to the
 expected result."
@@ -2077,7 +2077,7 @@ expected result."
                     (overlay-regions (cdr v)))
 	        (with-temp-buffer
                   (insert input)
-	          (hywiki-maybe-highlight-page-names (point-min) (point-max))
+	          (hywiki-maybe-highlight-references (point-min) (point-max))
 	          ;; Verify Overlays
                   (ert-info ((format "Text '%s' => Expected overlays '%s'" input overlay-regions))
                     (should (equal (hywiki-tests--hywiki-face-regions) overlay-regions)))))))
