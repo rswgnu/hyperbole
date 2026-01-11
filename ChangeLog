@@ -1,7 +1,7 @@
 2026-01-07  Mats Lidell  <matsl@gnu.org>
 
 * hywiki.el (hywiki-mode): Remove arg value :toggle, not an alternative to
-    'toogle.
+    'toggle.
 
 * test/hywiki-tests.el (hywiki-test--hywiki-mode): Add test for hywiki-mode.
 
