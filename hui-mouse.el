@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     31-Dec-25 at 16:02:19 by Mats Lidell
+;; Last-Mod:      1-Jan-26 at 18:18:24 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1866,7 +1866,7 @@ When the Action Key is pressed and `hsys-org-enable-smart-keys' is t:
   3. On an Org agenda view item, jump to the item for editing.
 
 When the Action Key is pressed and `hsys-org-enable-smart-keys' is
-either `t' or `:buttons':
+either t or `:buttons':
 
   4. Within a radio or internal target or a link to it, jump between
      the target and the first link to it, allowing two-way navigation.

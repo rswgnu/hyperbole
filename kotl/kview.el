@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     31-Dec-25 at 16:10:26 by Mats Lidell
+;; Last-Mod:      1-Jan-26 at 18:18:36 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -385,7 +385,7 @@ Return t unless no such cell."
     found))
 
 (defun kcell-view:get-attr (attribute &optional pos)
-  "Return ATTRIBUTE's value for current cell or cell at optional POS
+  "Return ATTRIBUTE's value for current cell or cell at optional POS.
 Use 0 for POS to retrieve top cell's attributes."
   (if (eq pos 0)
       (if (eq attribute 'idstamp)

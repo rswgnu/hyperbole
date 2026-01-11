@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     31-Dec-25 at 16:08:46 by Mats Lidell
+;; Last-Mod:      1-Jan-26 at 18:18:17 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -817,7 +817,7 @@ command instead.  Typically prevents clashes over {\\`C-c' /}."
 	  ("Proportionally" (setq smart-scroll-proportional t))
 	  ("Windowful"      (setq smart-scroll-proportional nil))))
        '(cust-hywiki-mode .
-	 (("HyWiki Mode>")	  
+	 (("HyWiki Mode>")
 	  ("All-Editable-Buffers" (hywiki-mode :all)
 	   "HyWikiWords are highlighted and active in buffers outside of the HyWiki page directory.")
 	  ("HyWiki-Pages-Only"    (hywiki-mode :pages)
@@ -1039,7 +1039,7 @@ command instead.  Typically prevents clashes over {\\`C-c' /}."
 ;;; ************************************************************************
 
 (defcustom hui:menu-highlight-flag t
-  "If non-nil, highlight the first capitalized character of each menu item.
+  "Non-nil means highlight the first capitalized character of each menu item.
 Highlight with `read-multiple-choice-face'.  The display must
 support underlined faces as well."
   :type 'boolean

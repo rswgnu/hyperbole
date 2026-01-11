@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Jan-94
-;; Last-Mod:     20-Jan-24 at 15:42:54 by Mats Lidell
+;; Last-Mod:     31-Jul-25 at 20:36:46 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -54,9 +54,7 @@
     ;; This keeps normal paragraphs from interacting unpleasantly with
     ;; the types given above.
     ("[^ \t/#%?!~*+-]" . kfill:normal))
-"Value is an alist of the form
-
-   ((REGXP . FUNCTION) ...)
+  "Value is an alist of the form ((REGEXP . FUNCTION) ...).
 
 When `fill-paragraph' is called, the REGEXP of each alist element is compared
 with the beginning of the current line.  If a match is found the corresponding

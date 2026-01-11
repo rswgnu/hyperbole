@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     31-Dec-25 at 16:08:46 by Mats Lidell
+;; Last-Mod:      1-Jan-26 at 18:17:35 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1835,7 +1835,7 @@ the end following a # or , character are temporarily stripped, and path
 variables are expanded with `hpath:substitute-value'.  This normalized path
 form is what is returned for PATH."
   (when (and (stringp path)
-	     (or 
+	     (or
 	      ;; Due to the colons, "hui.el#save-excursion:I2:L2:C30",
 	      ;; will improperly match to a PATH variable. Ensure it doesn't.
 	      (string-match hpath:instance-line-column-regexp path)
