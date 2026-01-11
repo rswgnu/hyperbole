@@ -1,3 +1,10 @@
+2026-01-07  Mats Lidell  <matsl@gnu.org>
+
+* hywiki.el (hywiki-mode): Remove arg value :toggle, not an alternative to
+    'toggle.
+
+* test/hywiki-tests.el (hywiki-test--hywiki-mode): Add test for hywiki-mode.
+
 2025-12-31  Mats Lidell  <matsl@gnu.org>
 
 * Remove starting asterix from defcustom variable docstrings.

@@ -3,11 +3,11 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     30-Nov-25 at 18:06:52 by Bob Weiner
+;; Last-Mod:      7-Jan-26 at 15:26:05 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; Copyright (C) 2024-2025  Free Software Foundation, Inc.
+;; Copyright (C) 2024-2026  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -801,9 +801,9 @@ See the Info documentation at \"(hyperbole)HyWiki\".
   :keymap hywiki-mode-map
   :group 'hyperbole-hywiki
   (progn
-    (when (memq arg '(toggle :toggle))
+    (when (eq arg 'toggle)
       ;; Toggle across all editable buffers
-      (setq arg (if hywiki-mode 1 0)))
+      (setq arg hywiki-mode))
     (cond
      ((or (and (integerp arg) (= arg 1))
 	  (memq arg '(:all t)))
