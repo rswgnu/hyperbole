@@ -1,3 +1,13 @@
+2026-01-12  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el: (hywiki-word-highlight-in-buffers, hywiki-word-highlight-in-frame):
+    Add to support window-change-based HyWikiWord highlighting.
+
+2026-01-11  Bob Weiner  <rsw@gnu.org>
+
+* test/hsys-org-tests.el (hsys-org:org-link-at-p): Fix 4th test
+    by ensuring hywiki-mode is off.
+
 2026-01-06  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-get-buffers-in-windows): Add and call in
@@ -52,7 +62,8 @@
             (hywiki-active-in-current-buffer-p):
             (hywiki-word-set-auto-highlighting): Replace 'hywiki-word-highlight-flag'
     with 'hywiki-mode'.
-  test/hywiki-tests.el (hywiki-tests--active-in-current-buffer-p):
+  test/hywiki-tests.el (hywiki-tests--active-in-current-buffer-p): Change let of
+    'hywiki-mode' to function call to set the minor mode.
 
 * hibtypes.el (hywiki-existing-word):
   hywiki.el (hywiki-word): Skip if not 'hywiki-active-in-current-buffer-p'.

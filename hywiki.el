@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     11-Jan-26 at 05:58:25 by Bob Weiner
+;; Last-Mod:     13-Jan-26 at 01:04:15 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -734,6 +734,8 @@ deletion commands and those in `hywiki-non-character-commands'."
 	   ;; Not inside a comment or a string
 	   (not (or (nth 4 (syntax-ppss)) (hypb:in-string-p))))))
 
+(defvar hywiki-prior-mode nil)
+
 ;;;###autoload
 (define-minor-mode hywiki-mode
   "Toggle HyWiki global minor mode with \\[hywiki-mode].
@@ -797,7 +799,7 @@ See the Info documentation at \"(hyperbole)HyWiki\".
       ;; Need hyperbole-mode
       (unless hyperbole-mode
 	(hyperbole-mode 1))
-      (hywiki-word-set-auto-highlighting hywiki-mode arg)
+      (hywiki-word-set-auto-highlighting hywiki-prior-mode arg)
       (setq hywiki-mode arg))
      ((or (and (integerp arg) (<= arg 0))
 	  (null arg))
@@ -806,7 +808,7 @@ See the Info documentation at \"(hyperbole)HyWiki\".
       ;; Dehighlight HyWikiWords in this buffer when 'hywiki-mode' is
       ;; disabled and this is not a HyWiki page buffer. If this is a
       ;; HyWiki page buffer, then dehighlight when `hywiki-mode' is nil.
-      (hywiki-maybe-highlight-wikiwords-in-frame t)
+      (hywiki-word-set-auto-highlighting hywiki-prior-mode arg)
       (setq hywiki-mode arg))
      (t ;; (> arg 1)
       ;; Enable in HyWiki page buffers only
@@ -814,8 +816,14 @@ See the Info documentation at \"(hyperbole)HyWiki\".
       ;; Need hyperbole-mode
       (unless hyperbole-mode
 	(hyperbole-mode 1))
-      (hywiki-word-set-auto-highlighting hywiki-mode arg)
+      (hywiki-word-set-auto-highlighting hywiki-prior-mode arg)
       (setq hywiki-mode arg)))))
+
+(defun hywiki-mode-around-advice (hywiki-mode-fn &optional arg)
+  (setq hywiki-prior-mode hywiki-mode)
+  (funcall hywiki-mode-fn arg))
+
+(advice-add 'hywiki-mode :around #'hywiki-mode-around-advice)
 
 ;;; ************************************************************************
 ;;; Public Implicit Button and Action Types
@@ -2335,18 +2343,19 @@ since Org mode highlights those."
   (hywiki--maybe-de/highlight-org-element-forward #'hywiki-maybe-highlight-sexp))
 
 (defun hywiki-maybe-highlight-references (&optional region-start region-end skip-lookups-update-flag)
-  "Highlight each non-Org link HyWiki page#section in a buffer/region.
+  "Highlight each non-Org link HyWiki page#section in the current buffer/region.
 With optional REGION-START and REGION-END positions or markers (active
 region interactively), limit highlight adjustment to the region.  With
 optional SKIP-LOOKUPS-UPDATE-FLAG non-nil, HyWiki lookup tables
 should have already been updated and this is skipped.
 
-Use `hywiki-word-face' to highlight.  Do not highlight references to
-the current page unless they have sections attached.
+Use `hywiki-word-face' to highlight.  Do not highlight references
+to the current page unless they have sections attached.
 
-Dehighlight buffers other than HyWiki pages when `hywiki-mode' is
-disabled.  Highlight/dehighlight HyWiki page buffers whenever
-`hywiki-mode' is enabled/disabled."
+HyWiki mode must be active in the current buffer for highlighting
+to occur; otherwise, highlighting is removed and disabled in the
+current buffer.  Highlight/dehighlight HyWiki page buffers
+whenever `hywiki-mode' is enabled/disabled."
   (interactive (when (use-region-p) (list (region-beginning) (region-end))))
   ;; Avoid doing many lets for efficiency.
   ;; Highlight HyWikiWords throughout buffers where `hywiki-mode' is enabled
@@ -2499,15 +2508,17 @@ the current page unless they have sections attached."
   (file-name-sans-extension (file-name-nondirectory
 			     (or (hypb:buffer-file-name) (buffer-name)))))
 
-(defun hywiki-get-buffers-in-windows ()
-  "Return the set of buffers attached to windows where `hywiki-mode' is active."
+(defun hywiki-get-buffers-in-windows (&rest frames)
+  "Return the set of buffers in all windows where `hywiki-mode' is active.
+This applies to all windows in all live frames or can be filtered to optional
+rest of arguments FRAMES."
   (apply #'set:create
 	 (apply #'nconc (mapcar (lambda (frame) (mapcar #'window-buffer
 							(window-list frame)))
-				(frame-list)))))
+				(or frames (frame-list))))))
 
-(defun hywiki-get-buffers (hywiki-buffer-mode)
-  "Return the list of window buffers active for HYWIKI-BUFFER-MODE.
+(defun hywiki-get-buffers (hywiki-mode-status)
+  "Return the list of window buffers active for HYWIKI-BUFFER-STATUS.
 See the function documentation for `hywiki-mode' for valid input
 values (the states of `hywiki-mode')."
   (when hywiki-mode
@@ -2516,7 +2527,7 @@ values (the states of `hywiki-mode')."
 			  (and (not (and (boundp 'edebug-active) edebug-active (active-minibuffer-window)))
 			       (not (apply #'derived-mode-p hywiki-exclude-major-modes))
 			       (not (string-prefix-p " " (buffer-name buf)))
-			       (or (and (eq hywiki-buffer-mode :pages) (hywiki-in-page-p))
+			       (or (and (eq hywiki-mode-status :pages) (hywiki-in-page-p))
 				   (derived-mode-p 'kotl-mode)
 				   (not (eq (get major-mode 'mode-class) 'special)))
 			       buf)))
@@ -3148,6 +3159,8 @@ or this will return nil."
 
 (defun hywiki-word-at (&optional range-flag)
   "Return potential HyWikiWord and optional #section:Lnum:Cnum at point or nil.
+`hywiki-mode' must be enabled or this will return nil.
+
 If the HyWikiWord is delimited, point must be within the delimiters.
 This works regardless of whether the HyWikiWord has been highlighted
 or not.
@@ -3541,62 +3554,52 @@ auto-highlighting."
 	 (error "(hywiki-word-set-auto-highlighting): Inputs must be nil, :pages or :all, not '%s' and '%s'"
 		hywiki-from-mode hywiki-to-mode))))
 
-(defun hywiki-word-set-auto-highlighting-buffers (hywiki-from-mode hywiki-to-mode)
-  "Set HyWikiWord auto-highlighting based on HYWIKI-FROM-MODE HYWIKI-TO-MODE.
-Highlight only those buffers attached to windows.
+(defun hywiki-word-highlight-in-frame (frame)
+  "Auto-highlight HyWikiWords in `hywiki-mode' buffers displayed FRAME."
+  (hywiki-word-highlight-in-buffers (hywiki-get-buffers-in-windows frame)))
 
-Auto-highlighting uses pre- and post-command hooks.  If an error
-occurs with one of these hooks, the problematic hook is removed.
-Invoke this command with a prefix argument to restore the
-auto-highlighting."
-  (cond ((eq hywiki-from-mode hywiki-to-mode)
-	 nil)
-	((null hywiki-from-mode)
-	 (hywiki-word-highlight-buffers (hywiki-get-buffers hywiki-to-mode)))
-	((and (eq hywiki-from-mode :all)   (eq hywiki-to-mode :pages))
-	 (hywiki-word-dehighlight-buffers (set:difference (hywiki-get-buffers hywiki-from-mode)
-							  (hywiki-get-buffers hywiki-to-mode))))
-	((and (eq hywiki-from-mode :pages) (eq hywiki-to-mode :all))
-	 (hywiki-word-highlight-buffers (set:difference (hywiki-get-buffers hywiki-from-mode)
-							(hywiki-get-buffers hywiki-to-mode))))
-	((or (and (eq hywiki-from-mode :all)   (eq hywiki-to-mode nil))
-	     (and (eq hywiki-from-mode :pages) (eq hywiki-to-mode nil)))
-	 (hywiki-word-dehighlight-buffers (hywiki-get-buffers hywiki-from-mode)))
-	(t
-	 (error "(hywiki-word-set-auto-highlighting): Inputs must be nil, :pages or :all, not '%s' and '%s'"
-		hywiki-from-mode hywiki-to-mode))))
-
-(defun hywiki-word-highlight-buffers (buffers)
+(defun hywiki-word-highlight-in-buffers (buffers)
   "Auto-highlight HyWikiWords in BUFFERS."
-  (interactive)
   (dolist (buf buffers)
     (with-current-buffer buf
       (add-hook 'pre-command-hook      'hywiki-word-store-around-point 95 :local)
       (add-hook 'post-command-hook     'hywiki-word-highlight-post-command 95 :local)
-      (add-hook 'post-self-insert-hook 'hywiki-word-highlight-post-self-insert :local)))
-  (add-hook 'window-buffer-change-functions
-	    'hywiki-maybe-highlight-wikiwords-in-frame)
+      (add-hook 'post-self-insert-hook 'hywiki-word-highlight-post-self-insert 95 :local)
+      ;; Display buffer before `normal-mode' triggers possibly
+      ;; long-running font-locking
+      (sit-for 0)
+      (hywiki-maybe-highlight-references nil nil t)))
+  ;; Rebuild lookup tables if any HyWiki page name has changed
+  (hywiki-get-referent-hasht)
+  (hywiki-maybe-directory-updated))
+
+(defun hywiki-word-highlight-buffers (buffers)
+  "Setup to auto-highlight HyWikiWords in BUFFERS."
+  (interactive)
+  (add-hook 'window-buffer-change-functions 'hywiki-word-highlight-in-frame)
   (add-to-list 'yank-handled-properties
 	       '(hywiki-word-face . hywiki-highlight-on-yank))
-  (hywiki-maybe-highlight-wikiwords-in-frame t)
+  (hywiki-word-highlight-in-buffers buffers)
   (when (called-interactively-p 'interactive)
     (message "HyWikiWord auto-highlighting enabled")))
 
 (defun hywiki-word-dehighlight-buffers (buffers)
   "Disable auto-highlighting of HyWikiWords in BUFFERS."
   (interactive)
+  (remove-hook 'window-buffer-change-functions 'hywiki-word-highlight-in-frame)
+  (setq yank-handled-properties
+	(delete '(hywiki-word-face . hywiki-highlight-on-yank)
+		yank-handled-properties))
   (dolist (buf buffers)
     (with-current-buffer buf
       (remove-hook 'pre-command-hook      'hywiki-word-store-around-point :local)
       (remove-hook 'post-command-hook     'hywiki-word-highlight-post-command :local)
-      (remove-hook 'post-self-insert-hook 'hywiki-word-highlight-post-self-insert :local)))
-  (hywiki-mode 0) ;; also dehighlights HyWikiWords outside of HyWiki pages
-  (remove-hook 'window-buffer-change-functions
-	       'hywiki-maybe-highlight-wikiwords-in-frame)
-  (hywiki-maybe-highlight-wikiwords-in-frame t)
-  (setq yank-handled-properties
-	(delete '(hywiki-word-face . hywiki-highlight-on-yank)
-		yank-handled-properties))
+      (remove-hook 'post-self-insert-hook 'hywiki-word-highlight-post-self-insert :local)
+      ;; Display buffer before `normal-mode' triggers possibly
+      ;; long-running font-locking
+      (sit-for 0)
+      (hywiki-maybe-dehighlight-references)))
+  (hywiki-maybe-directory-updated)
   (when (called-interactively-p 'interactive)
     (message "HyWikiWord auto-highlighting disabled")))
 

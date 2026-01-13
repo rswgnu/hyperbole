@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:      2-Jan-26 at 20:13:25 by Bob Weiner
+;; Last-Mod:     11-Jan-26 at 10:42:51 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -77,7 +77,7 @@ Last two elements are optional.")
         (with-temp-buffer
           (hywiki-tests--preserve-hywiki-mode
 	    (org-mode)
-	    (hywiki-mode 1)
+	    (hywiki-mode :all)
 	    (mapc
 	     (lambda (before-after)
 	       (condition-case err
@@ -259,10 +259,10 @@ This is for simulating the command loop."
 (ert-deftest hywiki-tests--verify-preserve-hywiki-mode ()
   "Verify `hywiki-tests--preserve-hywiki-mode' restores `hywiki-mode'."
   (hywiki-tests--preserve-hywiki-mode
-    (hywiki-mode 1)
+    (hywiki-mode :all)
     (hywiki-tests--preserve-hywiki-mode
       (should hywiki-mode)
-      (hywiki-mode 0)
+      (hywiki-mode nil)
       (should-not hywiki-mode))
     (should hywiki-mode)))
 
@@ -302,7 +302,7 @@ This is for simulating the command loop."
           (wikifile "WikiWord.org"))
       (unwind-protect
           (with-temp-buffer
-	    (hywiki-mode 1)
+	    (hywiki-mode :all)
             (insert "[[hy:WikiWord]]")
             (goto-char 4)
             (action-key)
@@ -317,7 +317,7 @@ This is for simulating the command loop."
           (hywiki-directory (make-temp-file "hywiki" t)))
       (unwind-protect
           (with-temp-buffer
-	    (hywiki-mode 1)
+	    (hywiki-mode :all)
             (insert "[[hy:WikiWord]]")
             (goto-char 6)
             (should (string= "WikiWord" (hywiki-word-at)))
@@ -341,7 +341,7 @@ This is for simulating the command loop."
                 (should (file-exists-p hywiki-page-file))
               (should-not (file-exists-p hywiki-page-file)))
             (with-temp-buffer
-	      (hywiki-mode 1)
+	      (hywiki-mode :all)
               (insert "WikiWord\n")
               (goto-char 4)
               (action-key)
@@ -368,7 +368,7 @@ This is for simulating the command loop."
             (dolist (v sections)
               (insert (format "%s\nbody\n" v)))
             (save-buffer)
-	    (hywiki-mode 1)
+	    (hywiki-mode :all)
             (dolist (v sections)
               (with-temp-buffer
                 (insert "WikiWord#" (cadr (split-string v " ")))
@@ -393,7 +393,7 @@ line 1
 line 2
 ")
             (save-buffer)
-	    (hywiki-mode 1)
+	    (hywiki-mode :all)
             (dolist (l '(1 2))
               (dolist (c '("" ":C0" ":C5"))
                 (with-temp-buffer
@@ -414,11 +414,11 @@ line 2
           (hywiki-directory (make-temp-file "hywiki" t)))
       (unwind-protect
           (with-temp-buffer
-            (hywiki-mode 0)
+            (hywiki-mode nil)
             (insert "WikiWord")
             (goto-char 4)
             (should-not (hywiki-word-at))
-            (hywiki-mode 1)
+            (hywiki-mode :all)
             (should (string= "WikiWord" (hywiki-word-at))))
         (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory)))))
 
@@ -431,7 +431,7 @@ line 2
 	   (wiki-page (cdr referent)))
       (unwind-protect
           (with-current-buffer (find-file-noselect wiki-page)
-            (hywiki-mode 0)
+            (hywiki-mode :pages)
             (insert "PotentialWikiWord")
 	    (newline nil t)
             (goto-char 4)
@@ -447,7 +447,7 @@ line 2
           (hywiki-directory (make-temp-file "hywiki" t)))
       (unwind-protect
           (progn
-            (hywiki-mode 1)
+            (hywiki-mode :all)
 
           ;; Matches a WikiWord
           (dolist (v '("WikiWord" "[WikiWord]" "[[WikiWord]]" "{WikiWord}" "(WikiWord)"
@@ -501,7 +501,7 @@ line 2
               (if (string= "WikiWord" (hywiki-word-at))
 		  (should v)
 		(should-not v)))))
-      (hywiki-mode 0)
+      (hywiki-mode nil)
       (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory)))))
 
 (ert-deftest hywiki-tests--at-wikiword-finds-word-and-section ()
@@ -516,7 +516,7 @@ line 2
                    )))
       (unwind-protect
           (with-temp-buffer
-            (hywiki-mode 1)
+            (hywiki-mode :all)
             (dolist (w words)
               (let ((in (if (stringp w) w (car w)))
                     (expect (if (stringp w) w (cdr w))))
@@ -532,7 +532,7 @@ line 2
     (let ((hywiki-directory (make-temp-file "hywiki" t)))
       (unwind-protect
           (progn
-            (hywiki-mode 1)
+            (hywiki-mode :all)
             (with-temp-buffer
               (insert "WikiWord#section rest is ignored")
               (goto-char 4)
@@ -559,7 +559,7 @@ HyWikiWord reference."
     (let ((hywiki-directory (make-temp-file "hywiki" t)))
       (unwind-protect
           (progn
-            (hywiki-mode 1)
+            (hywiki-mode :all)
             (with-temp-buffer           ; Delimited string allow space
               (insert "\"WikiWord#section rest\"")
               (goto-char 4)
@@ -615,17 +615,17 @@ HyWikiWord reference."
   "Verify `hywiki-active-in-current-buffer-p'."
   (let* ((hywiki-directory (make-temp-file "hywiki" t))
          (wiki-page (cdr (hywiki-add-page "WikiWord")))
-         (hywiki-mode t))
+         (hywiki-mode :all))
     (unwind-protect
         (with-current-buffer (find-file-noselect wiki-page)
           (should (hywiki-active-in-current-buffer-p))
-          (let ((hywiki-mode nil))
-            (should-not (hywiki-active-in-current-buffer-p)))
+          (hywiki-mode nil)
+          (should-not (hywiki-active-in-current-buffer-p))
           (let ((hywiki-exclude-major-modes (list 'org-mode)))
             (should-not (hywiki-active-in-current-buffer-p)))
-	  (let (hywiki-mode)
-            (mocklet ((hywiki-in-page-p => nil))
-              (should-not (hywiki-active-in-current-buffer-p))))
+	  (hywiki-mode nil)
+          (mocklet ((hywiki-in-page-p => nil))
+            (should-not (hywiki-active-in-current-buffer-p)))
           (dired-mode)
           (should-not (hywiki-active-in-current-buffer-p)))
       (hy-delete-file-and-buffer wiki-page)
@@ -758,7 +758,7 @@ Both mod-time and checksum must be changed for a test to return true."
            (wikipage (cdr (hywiki-add-page "WikiWord"))))
       (unwind-protect
           (progn
-            (hywiki-mode 1)
+            (hywiki-mode :all)
             (with-temp-buffer
               (insert "WikiWor")
 	      (hywiki-tests--command-execute #'self-insert-command 1 ?d)
@@ -781,7 +781,7 @@ Both mod-time and checksum must be changed for a test to return true."
       (unwind-protect
           (progn
             (with-temp-buffer
-              (hywiki-mode 0)
+              (hywiki-mode nil)
               (insert "WikiWor")
 	      (hywiki-tests--command-execute #'self-insert-command 1 ?d)
               (goto-char 4)
@@ -796,7 +796,7 @@ Both mod-time and checksum must be changed for a test to return true."
            (wikipage (cdr (hywiki-add-page "WikiWord"))))
       (unwind-protect
           (with-temp-buffer
-            (hywiki-mode 1)
+            (hywiki-mode :all)
             (insert "Wikiord ")
             (goto-char 5)
             (should (looking-at-p "ord "))
@@ -822,7 +822,7 @@ Both mod-time and checksum must be changed for a test to return true."
       (unwind-protect
           (progn
             (with-temp-buffer
-              (hywiki-mode 1)
+              (hywiki-mode :all)
               (insert "WikiWord")
               (hywiki-tests--command-execute #'self-insert-command 1 ? )
               (goto-char 1)
@@ -848,7 +848,7 @@ Both mod-time and checksum must be changed for a test to return true."
            (wikipage (cdr (hywiki-add-page "WikiWord"))))
       (unwind-protect
           (progn
-            (hywiki-mode 1)
+            (hywiki-mode :all)
             (with-temp-buffer
 	      (setq default-directory hywiki-directory)
               (insert "WikiWord#section:L2:C4")
@@ -985,7 +985,7 @@ body B
             ;; Create temp buffers with WikiWord links to the target
             ;; WikiWord page and verify they work.
             (with-temp-buffer
-              (hywiki-mode 1)
+              (hywiki-mode :all)
               (let (wiki-link
 		    expected-str-at-pos)
 		(condition-case err-msg
@@ -1616,7 +1616,7 @@ See gh#rswgnu/hyperbole/669."
     (let* ((hywiki-directory (make-temp-file "hywiki" t))
            (wiki-page (cdr (hywiki-add-page "WikiWord"))))
       (with-temp-buffer
-        (hywiki-mode 0)
+        (hywiki-mode nil)
         (insert "WikiWor")
         (hywiki-tests--command-execute #'self-insert-command 1 ?d)
         (goto-char 4)
@@ -1624,7 +1624,7 @@ See gh#rswgnu/hyperbole/669."
       (unwind-protect
           (progn
             (with-temp-buffer
-              (hywiki-mode 1)
+              (hywiki-mode :all)
               (insert "WikiWor")
 	      (hywiki-tests--command-execute #'self-insert-command 1 ?d)
               (goto-char 4)
@@ -1764,7 +1764,7 @@ resulting state at point is a WikiWord or not."
            (hywiki-tests--with-face-test nil))
       (unwind-protect
           (progn
-            (hywiki-mode 1)
+            (hywiki-mode :all)
             (dolist (testcase hywiki-tests--wikiword-step-check)
               (with-temp-buffer
                 (hywiki-tests--run-test-case testcase))))
@@ -1784,7 +1784,7 @@ is a WikiWord at point or not."
            (wiki-page-list (list wikiHiHo wikiHiho wikiHi wikiHo)))
       (unwind-protect
           (progn
-            (hywiki-mode 1)
+            (hywiki-mode :all)
             (dolist (testcase hywiki-tests--wikiword-step-check)
               (with-temp-buffer
                 (hywiki-tests--run-test-case testcase))))
@@ -1804,7 +1804,7 @@ Insert test in the middle of other text."
            (hywiki-tests--with-face-test nil))
       (unwind-protect
           (progn
-            (hywiki-mode 1)
+            (hywiki-mode :all)
             (with-temp-buffer
               (insert hywiki-tests--lorem-ipsum)
               (goto-char (/ (point-max) 2))
@@ -1838,7 +1838,7 @@ face is verified during the change."
            (wiki-page (cdr (hywiki-add-page "WikiWord"))))
       (unwind-protect
           (progn
-            (hywiki-mode 1)
+            (hywiki-mode :all)
             (with-temp-buffer
               (emacs-lisp-mode)
               (insert "\
@@ -1863,7 +1863,7 @@ face is verified during the change."
            (wiki-page (cdr (hywiki-add-page "WikiWord"))))
       (unwind-protect
           (progn
-            (hywiki-mode 1)
+            (hywiki-mode :all)
 
             ;; Matches a WikiWord
             (dolist (v '("WikiWord" "[WikiWord]" "[[WikiWord]]" "{WikiWord}" "(WikiWord)"
@@ -1907,7 +1907,7 @@ face is verified during the change."
   (hywiki-tests--preserve-hywiki-mode
     (unwind-protect
         (let ((words '("Foo" "Bar" "Baz" "Qux")))
-          (hywiki-mode 1)
+          (hywiki-mode :all)
           (with-temp-buffer
             (emacs-lisp-mode)
             (insert
@@ -1932,9 +1932,9 @@ face is verified during the change."
             (insert "\"DEMO\" \"DEMO.org\"\n")
             (goto-char 2)
             (should (looking-at-p "DEMO\" "))
-            (hywiki-mode 0)
+            (hywiki-mode nil)
             (should (ibtype:test-p 'pathname))
-            (hywiki-mode 1)
+            (hywiki-mode :all)
             (should (ibtype:test-p 'pathname))
             (goto-char 9)
             ;; Verify that using the org extension selects the WikiWord.
@@ -1951,7 +1951,7 @@ face is verified during the change."
            (hywiki-page-with-section (expand-file-name "WikiWord.org#section" hywiki-directory)))
       (unwind-protect
           (with-temp-buffer
-            (hywiki-mode 1)
+            (hywiki-mode :all)
             (insert "WikiWord#section")
             (goto-char 4)
             (action-key)
@@ -1969,7 +1969,7 @@ face is verified during the change."
            (hywiki-tests--with-face-test t))
       (unwind-protect
           (progn
-            (hywiki-mode 1)
+            (hywiki-mode :all)
             (dolist (testcase
                      '((("\"Hi#a b c\"") (p3 . "Hi#a b c") (p11) (-1) (p3 . "Hi#a") (p10) ("\"") (p3 . "Hi#a b c"))
                        (("(Hi#s n)" . "Hi#s n") (-1) (p3 . "Hi#s") (p8) (")" . "Hi#s n"))))
@@ -1987,7 +1987,7 @@ face is verified during the change."
            (hywiki-tests--with-face-test t))
       (unwind-protect
           (progn
-            (hywiki-mode 1)
+            (hywiki-mode :all)
             ;; Left part of WikiWord yanked in.
             (with-temp-buffer
               (insert "i#s")
@@ -2041,7 +2041,7 @@ face is verified during the change."
            wikiHo)
       (unwind-protect
           (progn
-            (hywiki-mode 1)
+            (hywiki-mode :all)
             (with-current-buffer (find-file wikiHi)
               (insert "Ho")
               (save-buffer)
@@ -2062,7 +2062,7 @@ expected result."
 	   (wikiword (cdr (hywiki-add-page "WiWo"))))
       (unwind-protect
 	  (progn
-            (hywiki-mode 1)
+            (hywiki-mode :all)
             (dolist (v `(("WiWo" . ((1 . 5)))
                          ("WiWo text" . ((1 . 5)))
                          ("WiWo WiWo" . ((1 . 5) (6 . 10)))
@@ -2131,7 +2131,7 @@ expected result."
            (wikiHo (cdr (hywiki-add-page "Ho"))))
       (unwind-protect
           (progn
-            (hywiki-mode 1)
+            (hywiki-mode :all)
             (with-current-buffer (find-file wikiHo)
               (insert "123"))
             (with-current-buffer (find-file wikiHi)
@@ -2145,7 +2145,7 @@ expected result."
   "Verify `hywiki-mode' called interactively toggles mode."
   (hywiki-tests--preserve-hywiki-mode
     (with-temp-buffer
-      (hywiki-mode 1)
+      (hywiki-mode :all)
       (should hywiki-mode)
       ;; Toggle
       (call-interactively #'hywiki-mode)

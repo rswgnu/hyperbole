@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    13-Jul-25 at 19:50:37
-;; Last-Mod:     16-Nov-25 at 11:16:45 by Bob Weiner
+;; Last-Mod:     11-Jan-26 at 10:35:55 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -177,13 +177,14 @@ Each test is constructed as three phases:
                   (should (string= stop (hywiki-test--get-buffer-text-with-point-and-highlight)))))
        (unwind-protect
            (progn
+	     (hywiki-mode :all)
              (ert-info ("1" :prefix "Verify point, no highlighting:")
-               (pre: "hej^hopp")
-               (post: "hej^hopp"))
+               (pre: "non^wikiword")
+               (post: "non^wikiword"))
              (ert-info ("2" :prefix "Verify point, no highlighting: ")
-               (pre: "hej^hopp")
+               (pre: "non^wikiword")
                (forward-char 1)
-               (post: "hejh^opp"))
+               (pre: "nonw^ikiword"))
              (ert-info ("3" :prefix "Verify highlighting: ")
                (pre: "^Hi")
                (post: "^<Hi>"))
