@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:     7-Dec-25 at 22:48:29
-;; Last-Mod:      2-Jan-26 at 21:31:06 by Bob Weiner
+;; Last-Mod:     14-Jan-26 at 16:48:20 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -67,7 +67,7 @@
   (let ((activity (activities-named name)))
     (cond ((not activity)
            (activities-define name)
-           (message "Activity %s defined" name))
+           (message "Activity %s defined." name))
           ((let ((current-activity (activities-current)))
              (and current-activity
                   (string-equal
@@ -76,12 +76,12 @@
            (if current-prefix-arg
                (progn
                  (activities-define name :forcep t)
-                 (message "Activity %s set to new default" name))
+                 (message "Activity %s set to new default." name))
              (activities-revert activity)
-             (message "Activity %s reverted" name)))
+             (message "Activity %s reverted." name)))
           (t
            (activities-resume activity)
-           (message "Activity %s resumed" name)))))
+           (message "Activity %s resumed." name)))))
 
 (defun hsys-activities-before-resume (activity)
   (if (and activities-tabs-mode

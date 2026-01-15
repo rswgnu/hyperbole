@@ -109,7 +109,7 @@ inserted.  Finally a `hywiki-test--point-char' is inserted where point is."
   "Command to insert a STRING at point."
   (interactive "s: ")
   (dolist (c (string-to-list string))
-    (hywiki-tests--command-execute #'self-insert-command 1 c)))
+    (hywiki-tests--command-execute #'hywiki-tests--self-insert-command c)))
 
 (defun hywiki-test--insert-with-point (string)
   "Insert STRING and return new POINT pos given by `hywiki-test--point-char'.
@@ -119,7 +119,7 @@ The point char is not inserted."
     (dolist (c (string-to-list string) pos)
       (if (equal (char-to-string c) hywiki-test--point-char)
           (setq pos (point))
-        (hywiki-tests--command-execute #'self-insert-command 1 c)))))
+        (hywiki-tests--command-execute #'hywiki-tests--self-insert-command c)))))
 
 (defun hywiki-test--set-buffer-text-with-point-and-highlight (description)
   "Set the current buffer's text, point and mark according to DESCRIPTION.
@@ -184,7 +184,7 @@ Each test is constructed as three phases:
              (ert-info ("2" :prefix "Verify point, no highlighting: ")
                (pre: "non^wikiword")
                (forward-char 1)
-               (pre: "nonw^ikiword"))
+               (post: "nonw^ikiword"))
              (ert-info ("3" :prefix "Verify highlighting: ")
                (pre: "^Hi")
                (post: "^<Hi>"))
