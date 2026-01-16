@@ -166,6 +166,7 @@ Each test is constructed as three phases:
           (wikiHi (cdr (hywiki-add-page "Hi")))
           (wikiHo (cdr (hywiki-add-page "Ho")))
           (wikiWord (cdr (hywiki-add-page "WikiWord")))
+          (file (make-temp-file "File"))
           (hywiki-tests--with-face-test t))
      (cl-flet* ((pre: (start)
                   (hywiki-test--set-buffer-text-with-point-and-highlight start))
@@ -178,6 +179,7 @@ Each test is constructed as three phases:
        (unwind-protect
            (progn
 	     (hywiki-mode :all)
+             (find-file file)
              (ert-info ("1" :prefix "Verify point, no highlighting:")
                (pre: "non^wikiword")
                (post: "non^wikiword"))
@@ -267,7 +269,7 @@ Each test is constructed as three phases:
                (del:           "<abc> abc")
                (post: "<WikiWord> ^ <WikiWord>")))
 
-         (hy-delete-files-and-buffers (list wikiHi wikiHo wikiWord))
+         (hy-delete-files-and-buffers (list wikiHi wikiHo wikiWord file))
          (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory))))))
 
 (provide 'hywiki-yki-tests)

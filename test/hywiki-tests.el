@@ -179,7 +179,10 @@ Assume no nesting of braces, nor any quoting of braces."
 
 (defun hywiki-tests--delete-hywiki-cache (dir)
   "Delete the hywiki cache if it is the only file in DIR."
-  (let ((hywiki-cache (expand-file-name hywiki-cache-default-file dir)))
+  (let* ((hywiki-cache (expand-file-name hywiki-cache-default-file dir))
+         (hywiki-cache-buffer (get-file-buffer hywiki-cache)))
+    (when hywiki-cache-buffer
+      (kill-buffer hywiki-cache-buffer))
     (when (and hywiki-cache
 	       (file-readable-p hywiki-cache)
 	       (file-writable-p hywiki-cache)
@@ -202,12 +205,15 @@ Assume no nesting of braces, nor any quoting of braces."
       ;; (message "Event = %s; last-command-event = %s; cmd = %s"
       ;;          event last-command-event this-command)
       (when this-command
-	(run-hooks 'pre-command-hook)
+	;; (run-hooks 'pre-command-hook)
+        (funcall #'hywiki-word-store-around-point)
 	;; `command-execute' runs only `post-self-insert-hook' since
 	;; this is run during the command; pre- and post-command hooks
 	;; therefore are run manually.
         (command-execute this-command)
-	(run-hooks 'post-command-hook)))))
+	;; (run-hooks 'post-command-hook)
+        (funcall #'hywiki-word-highlight-post-command)
+        ))))
 
 (defun hywiki-tests--interpolate-buffer ()
   "Replace action buttons and Hyperbole variable markup in buffer."
@@ -237,7 +243,8 @@ This is for simulating the command loop."
 		      (car sexp))))))
     (setq last-command this-command
 	  this-command cmd)
-    (run-hooks 'pre-command-hook)
+    ;; (run-hooks 'pre-command-hook)
+    (funcall #'hywiki-word-store-around-point)
     (unwind-protect
 	(command-execute
 	 (lambda () (interactive)
@@ -248,7 +255,9 @@ This is for simulating the command loop."
       ;; evaluation.  This prevents false switching to the *ert* test
       ;; buffer when debugging.
       (set-buffer buf)
-      (run-hooks 'post-command-hook))))
+      ;;(run-hooks 'post-command-hook)
+      (funcall #'hywiki-word-highlight-post-command)
+      )))
 
 (defmacro hywiki-tests--preserve-hywiki-mode (&rest body)
   "Restore hywiki-mode after running BODY.
@@ -551,10 +560,8 @@ line 2
               (let ((in (if (stringp w) w (car w)))
                     (expect (if (stringp w) w (cdr w))))
                 (erase-buffer)
-                (run-hooks 'pre-command-hook)
-                (insert (concat in "\n"))
-                (run-hooks 'post-self-insert-hook)
-                (run-hooks 'post-command-hook)
+                (dolist (ch (string-to-list in))
+                   (hywiki-tests--command-execute #'hywiki-tests--self-insert-command ch))
                 (goto-char 4)
                 (should (string= expect (hywiki-tests--word-n-face-at))))))
         (hy-delete-files-and-buffers (list file wikiWord))
@@ -1763,7 +1770,9 @@ string."
 (defun hywiki-tests--self-insert-command (ch)
   "Insert a char and run post-self-insert-hook."
  (self-insert-command 1 ch)
- (run-hooks 'post-self-insert-hook))
+ ;; (run-hooks 'post-self-insert-hook)
+ (funcall #'hywiki-word-highlight-post-self-insert)
+ )
 
 (defun hywiki-tests--run-test-case (test-case)
   "Run the TEST-CASE from point.
@@ -1862,8 +1871,8 @@ is a WikiWord at point or not."
            (hywiki-tests--with-face-test t)
            (wiki-page-list (list wikiHiHo wikiHiho wikiHi wikiHo)))
       (unwind-protect
-          (should (= 4 (length (hywiki-get-page-list))))
           (progn
+            (should (= 4 (length (hywiki-get-page-list))))
             (find-file file)
             (dolist (testcase hywiki-tests--wikiword-step-check)
               (erase-buffer)

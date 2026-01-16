@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     18-Oct-25 at 00:31:06 by Mats Lidell
+;; Last-Mod:     15-Jan-26 at 23:01:51 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -112,7 +112,7 @@ Checks ACTYPE, ARGS, LOC, LBL-KEY and NAME."
   "Delete DIR and buffer visiting directory."
   (let ((buf (find-buffer-visiting dir)))
     (when buf
-      (kill-buffer buf))
+      (should (kill-buffer buf)))
     (delete-directory dir)))
 
 (defun hy-make-random-wikiword (&optional length word-length)
