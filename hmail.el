@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     9-Oct-91 at 18:38:05
-;; Last-Mod:      5-Jan-25 at 12:01:15 by Bob Weiner
+;; Last-Mod:     31-Dec-25 at 16:02:19 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -56,7 +56,7 @@
  "Major mode for reading USENET news with Hyperbole buttons.")
 
 (defcustom hmail:init-function nil
-  "*Function (a symbol) to initialize Hyperbole support for a mail reader/composer.
+  "Function (a symbol) to initialize Hyperbole support for a mail reader/composer.
 Valid values are: nil, Mh-init or Rmail-init."
   :type '(choice (const nil)
 		 (const Mh-init)

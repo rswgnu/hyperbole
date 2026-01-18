@@ -7,7 +7,7 @@
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; Copyright (C) 2024-2025  Free Software Foundation, Inc.
+;; Copyright (C) 2024-2026  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -2140,6 +2140,24 @@ expected result."
 			       (cdr (hywiki-get-referent "HoRef"))))))
         (hy-delete-files-and-buffers (list wikiHi wikiHo))
         (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory)))))
+
+(ert-deftest hywiki-test--hywiki-mode ()
+  "Verify activating local and global `hywiki-mode'."
+  (hywiki-tests--preserve-hywiki-mode
+    (with-temp-buffer
+      (should (eq nil (hywiki-mode 0)))
+      (should (eq nil (hywiki-mode -1)))
+      (should (eq nil (hywiki-mode nil)))
+      (should (eq :pages (hywiki-mode 2)))
+      (should (eq :all (hywiki-mode 1)))
+      (should (eq :all (hywiki-mode t)))
+      (should (eq :all (hywiki-mode :all)))
+
+      ;; Toggle
+      (should (eq nil (call-interactively #'hywiki-mode)))
+      (should (eq :all (call-interactively #'hywiki-mode)))
+      (should (eq nil (hywiki-mode 'toggle)))
+      (should (eq :all (hywiki-mode 'toggle))))))
 
 (ert-deftest hywiki-tests--interactive-hywiki-mode-toggles ()
   "Verify `hywiki-mode' called interactively toggles mode."

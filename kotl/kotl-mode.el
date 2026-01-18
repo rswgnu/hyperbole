@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:      6-Oct-25 at 00:16:41 by Mats Lidell
+;; Last-Mod:      1-Jan-26 at 18:18:27 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -39,7 +39,7 @@
 ;;; ************************************************************************
 
 (defcustom kotl-mode:indent-tabs-mode t
-  "*Non-nil means {\\[kotl-mode:tab-command]} may insert literal tab characters.
+  "Non-nil means {\\[kotl-mode:tab-command]} may insert literal tab characters.
 Tab characters are inserted rather than space characters when
 `kotl-mode:tab-flag' is non-nil.  Default value is t.  The value
 of this variable is local to each Koutline buffer."
@@ -47,7 +47,7 @@ of this variable is local to each Koutline buffer."
   :group 'hyperbole-koutliner)
 
 (defcustom kotl-mode:refill-flag nil
-  "*Non-nil means automatically refill cells during operations.
+  "Non-nil means automatically refill cells during operations.
 Operations are move, copy, promotion and demotion.  Default value
 is nil.  Cells with a `no-fill' attribute are never refilled
 during such operations, regardless of the value of this flag."
@@ -55,7 +55,7 @@ during such operations, regardless of the value of this flag."
   :group 'hyperbole-koutliner)
 
 (defcustom kotl-mode:shrink-region-flag nil
-  "*Non-nil means Koutliner commands automatically shrink the region.
+  "Non-nil means Koutliner commands automatically shrink the region.
 The region is shrinked within the visible bounds of a single cell
 before editing it.  The region then falls within the first
 visible cell that was part of the region or that followed it.
@@ -64,7 +64,7 @@ Default value is nil."
   :group 'hyperbole-koutliner)
 
 (defcustom kotl-mode:tab-flag nil
-  "*Non-nil means {\\[kotl-mode:tab-command]} inserts a literal tab character and {\\[kotl-mode:untab-command]} deletes backward.
+  "Non-nil means {\\[kotl-mode:tab-command]} inserts a literal tab character and {\\[kotl-mode:untab-command]} deletes backward.
 Nil means {\\[kotl-mode:tab-command]} demotes the current tree and
 {\\[kotl-mode:untab-command]} promotes the tree.  The default is nil."
   :type 'boolean
@@ -2974,7 +2974,7 @@ Prefix ARG selects the cells whose attributes are removed or set:
   "Split the current cell into two cells and move to the new cell.
 The cell contents after point become part of the newly created cell.
 The default is to create the new cell as a sibling of the current cell.
-With optional universal ARG, {C-u}, the new cell is added as the child of
+With optional universal ARG, {\\`C-u'}, the new cell is added as the child of
 the current cell.  Non-read-only attributes from the current cell are
 replicated in the new cell."
   (interactive "*P")
@@ -3117,7 +3117,7 @@ to a specified buffer, otherwise, copy the active region.
 Use 0 to copy the whole outline buffer.  Prompt for whether or not
 to expand and include any hidden/invisible text within the copied text."
   (interactive)
-  (call-interactively 
+  (call-interactively
    (if (use-region-p)
        #'kotl-mode:copy-region-to-buffer
      #'kotl-mode:copy-tree-to-buffer)))
@@ -3409,7 +3409,7 @@ because, in this case the deletion might narrow the column."
    (lambda () (org-force-self-insert n))))
 
 (defun kotl-mode:org-self-insert-command (n)
-  "Like `self-insert-command’, use overwrite-mode for whitespace in tables.
+  "Like `self-insert-command’, use `overwrite-mode' for whitespace in tables.
 If the cursor is in a table looking at whitespace, the whitespace is
 overwritten, and the table is not marked as requiring realignment."
   (interactive "p")
@@ -3433,7 +3433,7 @@ conflicting binding to this key outside orgtbl-mode."
    (lambda () (orgtbl-create-or-convert-from-region arg))))
 
 (defun kotl-mode:orgtbl-self-insert-command (n)
-  "Like `self-insert-command', use overwrite-mode for whitespace in tables.
+  "Like `self-insert-command', use `overwrite-mode' for whitespace in tables.
 If the cursor is in a table looking at whitespace, the whitespace is
 overwritten, and the table is not marked as requiring realignment."
   (interactive "p")

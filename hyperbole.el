@@ -9,7 +9,7 @@
 ;; Maintainer:   Robert Weiner <rsw@gnu.org>
 ;; Maintainers:  Robert Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:      06-Oct-92 at 11:52:51
-;; Last-Mod:      6-Jan-26 at 00:54:01 by Bob Weiner
+;; Last-Mod:     18-Jan-26 at 08:29:42 by Bob Weiner
 ;; Released:     10-Mar-24
 ;; Version:      9.0.2pre
 ;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -187,7 +187,7 @@ Info documentation at \"(hyperbole)Top\".
 ;;; ************************************************************************
 
 (defcustom hkey-init t
-  "*A non-nil value (default) at system load time binds Hyperbole keys.
+  "A non-nil value (default) at system load time binds Hyperbole keys.
 Keys bound are the Action and Assist Keyboard Keys, as well as
 other keys.  {\\[hkey-either]} invokes the Action Key and
 {\\`C-u' \\[hkey-either]} invokes the Assist Key.  Additionally,

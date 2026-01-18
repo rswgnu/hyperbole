@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     23-Nov-25 at 12:44:22 by Bob Weiner
+;; Last-Mod:     31-Dec-25 at 16:02:19 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -51,12 +51,12 @@
 ;;; ************************************************************************
 
 (defcustom hui:ebut-prompt-for-action nil
-  "*Non-nil prompts for a button-specific action on explicit button creation."
+  "Non-nil prompts for a button-specific action on explicit button creation."
   :type 'boolean
   :group 'hyperbole-buttons)
 
 (defcustom hui:hbut-delete-confirm-flag t
-  "*Non-nil means prompt before interactively deleting explicit buttons."
+  "Non-nil means prompt before interactively deleting explicit buttons."
   :type 'boolean
   :group 'hyperbole-buttons)
 

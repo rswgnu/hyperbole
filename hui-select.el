@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     29-Aug-25 at 21:52:32 by Bob Weiner
+;; Last-Mod:     31-Dec-25 at 16:07:18 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -125,7 +125,7 @@
   (format "%sgrep -insIHr" (if (and (executable-find "zgrep")
                                     (string-match-p "bsd" (shell-command-to-string "zgrep --version | head -1")))
                                "z" ""))
-  "*Grep command string and initial arguments sent to `hui-select-rgrep' command.
+  "Grep command string and initial arguments sent to `hui-select-rgrep' command.
 It must end with a space."
   :type 'string
   :group 'hyperbole-commands)
@@ -133,19 +133,19 @@ It must end with a space."
 (defcustom hui-select-brace-modes
   '(c++-mode c++-ts-mode c-mode c-ts-mode java-mode java-ts-mode objc-mode
              perl-mode tcl-mode)
-  "*List of language major modes which define things with brace delimiters."
+  "List of language major modes which define things with brace delimiters."
   :type '(repeat (function :tag "Mode"))
   :group 'hyperbole-commands)
 
 (defcustom hui-select-markup-modes
   '(html-mode mhtml-mode nxml-mode sgml-mode web-mode)
-  "*List of markup language modes that use SGML-style <tag> </tag> pairs."
+  "List of markup language modes that use SGML-style <tag> </tag> pairs."
   :type '(repeat (function :tag "Mode"))
   :group 'hyperbole-commands)
 
 (defcustom hui-select-text-modes
   '(fundamental-mode kotl-mode indented-text-mode Info-mode outline-mode text-mode)
-  "*List of textual modes where paragraphs may be outdented or indented."
+  "List of textual modes where paragraphs may be outdented or indented."
   :type '(repeat (function :tag "Mode"))
   :group 'hyperbole-commands)
 
@@ -153,14 +153,14 @@ It must end with a space."
   (append '(altmath-mode asm-mode csh-mode eiffel-mode ksh-mode math-mode miranda-mode
                          pascal-mode python-mode python-ts-mode sather-mode)
 	  hui-select-text-modes)
-  "*List of modes that use indentation mostly to define syntactic structure.
+  "List of modes that use indentation mostly to define syntactic structure.
 Use for language major modes."
   :type '(repeat (function :tag "Mode"))
   :group 'hyperbole-commands)
 
 (defcustom hui-select-ignore-quoted-sexp-modes
   '(debugger-mode emacs-lisp-mode lisp-mode lisp-interaction-mode slime-mode cider-mode)
-  "*List of modes in which to ignore quoted sexpressions for syntactic matches.
+  "List of modes in which to ignore quoted sexpressions for syntactic matches.
 Use for language major modes."
   :type '(repeat (function :tag "Mode"))
   :group 'hyperbole-commands)
@@ -202,17 +202,17 @@ Used to avoid early dropoff when marking indented code.")
 Used to include a final line when marking indented code.")
 
 (defcustom hui-select-char-p nil
-  "*If t, return single character boundaries when all else fails."
+  "If t, return single character boundaries when all else fails."
   :type 'boolean
   :group 'hyperbole-commands)
 
 (defcustom hui-select-display-type t
-  "*If t, display the thing selected with each mouse click."
+  "If t, display the thing selected with each mouse click."
   :type 'boolean
   :group 'hyperbole-commands)
 
 (defcustom hui-select-whitespace t
-  "*If t, groups of whitespace are considered as things."
+  "If t, groups of whitespace are considered as things."
   :type 'boolean
   :group 'hyperbole-commands)
 
@@ -419,7 +419,7 @@ The function `hui-select-set-region' updates and returns it.")
     (?   . hui-select-whitespace)
     (?\< . hui-select-comment)
     (?\. . hui-select-punctuation))
-  "*Unordered list of pairs of the form (<syntax-char> <function>).
+  "Unordered list of pairs of the form (<syntax-char> <function>).
 Used by the function `hui-select-syntactical-region'.
 Each <function> takes a single position argument and returns a
 region (start . end) defining the boundaries of the thing at that position."

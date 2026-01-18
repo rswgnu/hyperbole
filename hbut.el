@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      7-Dec-25 at 19:24:08 by Bob Weiner
+;; Last-Mod:     30-Dec-25 at 23:55:08 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -963,7 +963,7 @@ The ibut used defaults to \='hbut:current or the optional IBUT-SYMBOL."
 
 (defun hattr:is-p (attr value &optional hbut-symbol)
   "Return t if ATTR has VALUE for \='hbut:current or optional HBUT-SYMBOL."
-  (and (symbolp attr) attr 
+  (and (symbolp attr) attr
        (eq (hattr:get (or (and (symbolp hbut-symbol) hbut-symbol) 'hbut:current)
 		      attr)
 	   value)))
@@ -1553,7 +1553,7 @@ positions at which the button delimiter begins and ends."
 (defun    hbut:map (but-func &optional regexp-match include-delims)
   "Apply BUT-FUNC to a set of hbuttons in the visible part of the current buffer.
 Finds both ebuts and named ibuts that match any optional REGEXP-MATCH
-(may be a partial match but must include delimiters).
+\(may be a partial match but must include delimiters).
 
 Any regexp given must have grouping 1 match the label.
 
@@ -1909,7 +1909,7 @@ excluding delimiters, not just one."
 
 	  (setq lbl-start-end (if (and start-delim end-delim)
 				  (ibut:label-p nil start-delim end-delim t t)
-				(or 
+				(or
 				 ;; <action> buttons can be longer
 				 ;; than two lines, so don't limit
 				 ;; the length.

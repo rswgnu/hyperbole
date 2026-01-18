@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Jun-24 at 12:50:37
-;; Last-Mod:      2-Jan-26 at 20:13:25 by Bob Weiner
+;; Last-Mod:     18-Jan-26 at 08:29:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -165,3 +165,4 @@ relative to `hynote-directory-list'."
 ;;; ************************************************************************
 
 (provide 'hynote)
+;;; hynote.el ends here

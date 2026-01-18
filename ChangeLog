@@ -8,6 +8,13 @@
 * test/hsys-org-tests.el (hsys-org:org-link-at-p): Fix 4th test
     by ensuring hywiki-mode is off.
 
+2026-01-07  Mats Lidell  <matsl@gnu.org>
+
+* hywiki.el (hywiki-mode): Remove arg value :toggle, not an alternative to
+    'toggle.
+
+* test/hywiki-tests.el (hywiki-test--hywiki-mode): Add test for hywiki-mode.
+
 2026-01-06  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-get-buffers-in-windows): Add and call in
@@ -45,6 +52,10 @@
             (hywiki-maybe-dehighlight-page-name): Rename to
     'hywiki-maybe-dehighlight-reference'.
 
+2025-12-31  Mats Lidell  <matsl@gnu.org>
+
+* Remove starting asterix from defcustom variable docstrings.
+
 2025-12-30  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-get-buffers): Add to return active hywiki-mode buffers.
@@ -67,6 +78,27 @@
 
 * hibtypes.el (hywiki-existing-word):
   hywiki.el (hywiki-word): Skip if not 'hywiki-active-in-current-buffer-p'.
+
+2025-12-25  Mats Lidell  <matsl@gnu.org>
+
+* hywiki.el (hywiki--preparation-function, hywiki--completion-function)
+    (hywiki-org-make-publish-project-alist): Use prepare and complete
+    project attributes to control use of hywiki-org-export-function with
+    org-export-before-parsing-functions. (Used before as advice on
+    org-element--generate-copy-script now removed since it affected other
+    export project.)
+    (hywiki-org-export-function): Remove old stack guard since function is
+    now called in another context.
+
+2025-12-24  Mats Lidell  <matsl@gnu.org>
+
+* hywiki.el (hywiki-reference-to-org-link): Refactor to handle pathname
+    and referent in separate functions.
+    (hywiki--pathname-reference-to-org-link): Original function for
+    pathname links.
+    (hywiki--referent-reference-to-org-link): Creates an info message link
+    that export of the referent type is not supported.
+    (hypb-msg): org-link-type for message links.
 
 2025-12-13  Bob Weiner  <rsw@gnu.org>
 

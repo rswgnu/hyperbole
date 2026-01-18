@@ -3,11 +3,11 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     13-Jan-26 at 01:04:15 by Bob Weiner
+;; Last-Mod:     18-Jan-26 at 08:31:39 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; Copyright (C) 2024-2025  Free Software Foundation, Inc.
+;; Copyright (C) 2024-2026  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -123,7 +123,7 @@
 ;;
 ;; hywiki-referent-prompt-flag      When nil                   When t
 ;;  -------------------------------------------------------------------------------------
-;;  Action Key              hywiki-word-create-and-display 
+;;  Action Key              hywiki-word-create-and-display
 ;;    or HyWiki/Create      Create Page and Display          Create Referent and Display
 ;;  Assist Key              hywiki-word-create-and-display
 ;;    or C-u HyWiki/Create  Create Referent and Display      Create Page and Display
@@ -337,8 +337,9 @@ nil means no full buffer highlighting has occurred.")
     open-line                         ;; C-o
     quoted-insert                     ;; C-q
     )
-  "Commands that insert characters but whose input events do not
-  arrive as characters or that quote another character for input.")
+  "List of non character commands.
+Commands that insert characters but whose input events do not
+arrive as characters or that quote another character for input.")
 
 ;; Define the keymap for hywiki-mode.
 (defvar hywiki-mode-map nil
@@ -404,6 +405,16 @@ where PATH is the un-resolvable reference."
   :type 'string
   :group 'hyperbole-hywiki)
 
+(defun hywiki--preparation-function (_project-plist)
+  "Setup export hook functions."
+  (message "Hywiki export is in preparation.")
+  (add-hook 'org-export-before-parsing-functions #'hywiki-org-export-function))
+
+(defun hywiki--completion-function (_project-plist)
+  "Remove export hook function."
+  (remove-hook 'org-export-before-parsing-functions #'hywiki-org-export-function)
+  (message "Hywiki export is completed."))
+
 (defvar hywiki-org-publish-project-alist nil
   "HyWiki-specific export properties added to `org-publish-project-alist'.")
 
@@ -412,6 +423,8 @@ where PATH is the un-resolvable reference."
 	hywiki-org-publish-project-alist
 	(list
 	 "hywiki"
+         :preparation-function 'hywiki--preparation-function
+         :completion-function 'hywiki--completion-function
 	 :auto-sitemap t
 	 :base-directory (expand-file-name hywiki-directory)
 	 :html-head (format
@@ -447,7 +460,7 @@ For reference, this is set when `window-buffer-change-functions' calls
 `hywiki-maybe-highlight-references' which calls `hywiki-in-page-p'.")
 
 (defcustom hywiki-referent-prompt-flag nil
-  "When t, the Action Key and HyWiki/Create always prompt for referent type.
+  "Non-nil means the Action Key and HyWiki/Create always prompt for referent type.
 Nil by default."
   :type 'boolean
   :initialize #'custom-initialize-default
@@ -788,9 +801,9 @@ See the Info documentation at \"(hyperbole)HyWiki\".
       (setq hywiki-mode :pages)))
 
     ;; Normalize `arg' and set mode
-    (when (memq arg '(toggle :toggle))
+    (when (eq arg 'toggle)
       ;; Toggle across all editable buffers
-      (setq arg (if hywiki-mode 1 0)))
+      (setq arg hywiki-mode))
     (cond
      ((or (and (integerp arg) (= arg 1))
 	  (memq arg '(:all t)))
@@ -943,7 +956,7 @@ After successfully finding a referent, run `hywiki-display-referent-hook'."
 	   "Add a HyWikiWord that displays an Org Roam node given its title.")
 	 '("Sexp"         (hywiki-add-sexpression hkey-value)
 	   "Add a HyWikiWord that evaluates an Elisp sexpression.")))
-  "*Menu of HyWikiWord custom referent types of the form:
+  "Menu of HyWikiWord custom referent types of the form:
 \(LABEL-STRING ACTION-SEXP DOC-STR)."
   :set  (lambda (var value) (set-default var value))
   :type '(cons (list string) (repeat (list string sexp string)))
@@ -1558,43 +1571,54 @@ simplifies to:
 	   (setq wikiword (substring wikiword-and-section (match-end 0))))
 	 (insert "\n#+INDEX: " wikiword "\n"))))))
 
+(defun hywiki--pathname-reference-to-org-link (pathname referent description)
+  "Convert a HyWiki PATHNAME REFERENT and DESCRIPTION to an Org link."
+  (let* ((path-word-suffix referent)
+         (path (file-relative-name (nth 0 path-word-suffix)))
+         ;; (path-stem (when path
+	 ;; 		  (file-name-sans-extension path)))
+         (suffix (nth 2 path-word-suffix))
+         (desc description)
+	 ;; suffix-no-hashmark
+	 )
+    (unless (and suffix (not (string-empty-p suffix)))
+      (setq suffix nil))
+    ;; (setq suffix-no-hashmark (when suffix (substring suffix 1)))
+    ;; (when (or (not buffer-file-name)
+    ;; 	  (string-equal path (file-name-nondirectory buffer-file-name)))
+    ;;   (setq path nil))
+    (cond (desc
+	   (if path
+	       ;; "[[hy:pathname]]"
+	       (format "[[%s:%s]]" hywiki-org-link-type pathname)
+	     ;; (if suffix
+	     ;;     ;; "[[file:path-stem.org::suffix][desc]"
+	     ;;     (format "[[file:%s.org::%s][%s]]"
+	     ;; 	       path-stem suffix-no-hashmark desc)
+	     ;;   ;; "[[file:path-stem.org][desc]]")
+	     ;;   (format "[[file:%s.org][%s]]" path-stem desc))
+	     (if suffix
+		 ;; "[[suffix][desc]]"
+		 (format "[[%s][%s]]" suffix desc)
+	       ;; "[[desc]]"
+	       (format "[[%s]]" desc))))
+	  (path
+	   ;; "[[hy:pathname]]"
+	   (format "[[%s:%s]]" hywiki-org-link-type pathname)))))
+
+(defun hywiki--referent-reference-to-org-link (reference referent _description)
+  "Convert a HyWiki REFERENT REFERENCE and DESCRIPTION to an Org link."
+  (format "[[hypb-msg:%s][%s]]" (format "Export of link type %s is not supported" (car referent)) reference))
+
 (defun hywiki-reference-to-org-link (reference &optional description)
   "Convert a HyWiki REFERENCE and an optional DESCRIPTION to an Org link."
   ;; \"[[file:<hywiki-directory>/WikiWord.org::Multi-Word Section][WikiWord#Multi-Word Section]]\".
   (let ((referent (hywiki-reference-to-referent reference :full-data)))
-    (when (stringp (car referent))
-      (let* ((path-word-suffix referent)
-             (path (file-relative-name (nth 0 path-word-suffix)))
-             ;; (path-stem (when path
-	     ;; 		  (file-name-sans-extension path)))
-             (suffix (nth 2 path-word-suffix))
-             (desc description)
-	     ;; suffix-no-hashmark
-	     )
-	(unless (and suffix (not (string-empty-p suffix)))
-	  (setq suffix nil))
-	;; (setq suffix-no-hashmark (when suffix (substring suffix 1)))
-	;; (when (or (not buffer-file-name)
-	;; 	  (string-equal path (file-name-nondirectory buffer-file-name)))
-	;;   (setq path nil))
-	(cond (desc
-	       (if path
-		   ;; "[[hy:reference]]"
-		   (format "[[%s:%s]]" hywiki-org-link-type reference)
-		   ;; (if suffix
-		   ;;     ;; "[[file:path-stem.org::suffix][desc]"
-		   ;;     (format "[[file:%s.org::%s][%s]]"
-		   ;; 	       path-stem suffix-no-hashmark desc)
-		   ;;   ;; "[[file:path-stem.org][desc]]")
-		   ;;   (format "[[file:%s.org][%s]]" path-stem desc))
-		 (if suffix
-		     ;; "[[suffix][desc]]"
-		     (format "[[%s][%s]]" suffix desc)
-		   ;; "[[desc]]"
-		   (format "[[%s]]" desc))))
-	      (path
-	       ;; "[[hy:reference]]"
-	       (format "[[%s:%s]]" hywiki-org-link-type reference)))))))
+    (when referent
+      (cond ((stringp (car referent))
+             (hywiki--pathname-reference-to-org-link reference referent description))
+            (t
+             (hywiki--referent-reference-to-org-link reference referent description))))))
 
 (defun hywiki-maybe-at-wikiword-beginning ()
   "Return non-nil if previous character is one preceding a HyWikiWord.
@@ -2709,7 +2733,7 @@ If deleted, update HyWikiWord highlighting across all frames."
 	   ('prefix (company-grab-word))
 	   ('candidates
 	    (let ((prefix (company-grab-word)))
-	      (when prefix 
+	      (when prefix
 		(cl-loop for key being the hash-keys in (hywiki-get-wikiword-list)
 			 when (string-prefix-p prefix key)
 			 collect key))))
@@ -2838,12 +2862,11 @@ save and potentially set `hywiki--directory-mod-time' and
    (org-publish-property :base-directory (hywiki-org-get-publish-project))))
 
 (defun hywiki-org-export-function (&rest _)
-  "Add to `write-contents-functions' to convert HyWikiWord links to Org links.
-This is done automatically by loading HyWiki."
+  "Convert HyWikiWord links to Org links and add title if missing.
+Do not convert the index file."
   (require 'org-element)
   (when (and (derived-mode-p 'org-mode)
-             (not (string= (hywiki--sitemap-file) (buffer-file-name)))
-	     (hyperb:stack-frame '(org-export-copy-buffer)))
+             (not (string= (hywiki--sitemap-file) (buffer-file-name))))
     (hywiki-references-to-org-links)
     (hywiki-org-maybe-add-title)))
 
@@ -2988,13 +3011,21 @@ variables."
     (setf (alist-get "hywiki" org-publish-project-alist nil 'remove #'equal) nil)
     (add-to-list 'org-publish-project-alist hywiki-org-publish-project-alist t)))
 
-(eval-after-load "org"
-  '(org-link-set-parameters hywiki-org-link-type
-                            :complete #'hywiki-org-link-complete
-			    :export #'hywiki-org-link-export
-			    :follow #'hywiki-find-referent
-			    :htmlize-link #'hywiki-section-to-headline-reference
-			    :store #'hywiki-org-link-store))
+(with-eval-after-load 'org
+  (org-link-set-parameters hywiki-org-link-type
+                           :complete #'hywiki-org-link-complete
+			   :export #'hywiki-org-link-export
+			   :follow #'hywiki-find-referent
+			   :htmlize-link #'hywiki-section-to-headline-reference
+			   :store #'hywiki-org-link-store)
+  (org-link-set-parameters "hypb-msg"
+                           :follow (lambda (path) (message "Message: %s" path))
+                           :export (lambda (path desc backend)
+                                     (when (eq backend 'html)
+                                       (format "<a href=\"#\" title=\"%s\" onclick=\"alert('%s'); return false;\">%s</a>"
+                                               path
+                                               (replace-regexp-in-string "'" "\\\\'" path)
+                                               (or desc path))))))
 
 (defun hywiki-word-strip-suffix (page-name)
   "Return PAGE-NAME with any optional #section:Lnum:Cnum stripped off.
@@ -3015,7 +3046,7 @@ since a prior publish.
 Files are saved in:
     (hywiki-org-get-publish-property :publishing-directory)
 Customize this directory with:
-    {M-x customize-variable RET hywiki-org-publishing-directory RET}."
+    {\\`M-x' `customize-variable' RET hywiki-org-publishing-directory RET}."
   (interactive "P")
   ;; Export Org to html with useful link ids.
   ;; Instead of random ids like "orga1b2c3", use heading titles with
@@ -3487,7 +3518,7 @@ Search across `hywiki-directory'."
 (defun hywiki-word-is-p (word)
   "Return non-nil if WORD is a HyWikiWord and optional #section:Lnum:Cnum.
 WORD may not yet have a referent (non-existent).  Use `hywiki-get-referent'
-to determine whether a HyWikiWord referent exists. 
+to determine whether a HyWikiWord referent exists.
 
 Return nil if WORD is a prefixed, typed hy:HyWikiWord, since
 these are handled by the Org mode link handler."
@@ -3888,9 +3919,6 @@ This must be called within a `save-excursion' or it may move point."
 ;;; ************************************************************************
 
 (add-hook 'kill-buffer-hook 'hywiki-kill-buffer-hook)
-
-(eval-after-load "org-element"
-  '(advice-add 'org-element--generate-copy-script :before #'hywiki-org-export-function))
 
 ;; Use for its side effects, setting variables
 (eval-after-load "ox-publish" '(hywiki-org-get-publish-project))

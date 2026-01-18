@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     20-Jun-25 at 00:40:40 by Bob Weiner
+;; Last-Mod:      1-Jan-26 at 18:18:36 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -66,7 +66,7 @@
 (defvar-local kotl-kview nil "Buffer local kview object.")
 
 (defcustom kview:default-blank-lines t
-  "*Default setting of whether to show blank lines between koutline cells.
+  "Default setting of whether to show blank lines between koutline cells.
 A value of t means show them, nil means don't show them.  Default
 value is t."
   :type 'boolean
@@ -79,14 +79,14 @@ value is t."
   "Default number of lines per cell to show.  0, the default, means all lines.")
 
 (defcustom kview:default-label-min-width 4
-  "*Minimum width to which to pad labels in a kotl view.
+  "Minimum width to which to pad labels in a kotl view.
 Labels are padded with spaces on the left.  Default value is 4."
   :type '(integer :match (lambda (_widget value)
 			   (and (integerp value) (> value 1) (<= value 99))))
   :group 'hyperbole-koutliner)
 
 (defcustom kview:default-label-separator ". "
-  "*Default string to insert between label and contents of a kcell.
+  "Default string to insert between label and contents of a kcell.
 Default value is \". \"."
   :type 'string
   :group 'hyperbole-koutliner)
@@ -97,7 +97,7 @@ Default value is \". \"."
   "Koutline view `outline-regexp' value that handles all label formats.")
 
 (defcustom kview:default-label-type 'alpha
-  "*Default label-type to use for new koutlines.  Default value is \\='alpha.
+  "Default label-type to use for new koutlines.  Default value is \\='alpha.
 It must be one of the following symbols:
   alpha           for `1b3' full alphanumeric labels
   id              for `027' permanent idstamp labels
@@ -111,7 +111,7 @@ It must be one of the following symbols:
 ;;  star            for multi-star labeling, e.g. `***'.
 
 (defcustom kview:default-level-indent 3
-  "*Default number of spaces to indent each succeeding level in koutlines.
+  "Default number of spaces to indent each succeeding level in koutlines.
 Default value is 3."
   :type '(integer :match (lambda (_widget value)
 			   (and (integerp value) (> value 0) (<= value 60))))
@@ -385,7 +385,7 @@ Return t unless no such cell."
     found))
 
 (defun kcell-view:get-attr (attribute &optional pos)
-  "Return ATTRIBUTE's value for current cell or cell at optional POS
+  "Return ATTRIBUTE's value for current cell or cell at optional POS.
 Use 0 for POS to retrieve top cell's attributes."
   (if (eq pos 0)
       (if (eq attribute 'idstamp)

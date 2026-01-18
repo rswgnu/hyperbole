@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10/31/93
-;; Last-Mod:     19-Oct-24 at 10:30:56 by Bob Weiner
+;; Last-Mod:     31-Jul-25 at 20:35:42 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -69,7 +69,7 @@ Return the new kview."
 ;;;###autoload
 (defun kfile:is-p ()
   "Iff current buffer contains a koutline, return file format version string.
-If not a koutline, return nil. This works both for unformatted
+If not a koutline, return nil.  This works both for unformatted
 and formatted koutlines."
   (let (ver-string)
     (save-excursion
