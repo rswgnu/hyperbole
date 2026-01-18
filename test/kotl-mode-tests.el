@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:     18-Jan-26 at 00:28:15 by Mats Lidell
+;; Last-Mod:     19-Jan-26 at 00:40:39 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1356,6 +1356,13 @@ marked with :ignore t")
         (init)
         (call-interactively #'kotl-mode:delete-char)
         (should (looking-at-p "123")))
+      (ert-info ("Delete two char forward - interactive")
+        (init)
+        (let ((current-prefix-arg 2)
+              kill-ring)
+          (call-interactively #'kotl-mode:delete-char)
+          (should (looking-at-p "23"))
+          (should (string= (car kill-ring) "01"))))
       (ert-info ("Delete many chars forward")
         (init)
         (kotl-mode:delete-char 2)
@@ -1426,6 +1433,19 @@ marked with :ignore t")
           (kotl-mode:beginning-of-line)
           (should (looking-at-p "01"))
           (should-not kill-ring)))
+      (ert-info ("Transient mark mode, delete multiple chars ignores region, interactive")
+        (let ((delete-active-region t)
+              kill-ring)
+          (init)
+          (set-mark (point))
+          (kotl-mode:forward-char 2)
+          (transient-mark-mode)
+          (let ((current-prefix-arg 2)
+                kill-ring)
+            (call-interactively #'kotl-mode:delete-char)
+            (kotl-mode:beginning-of-line)
+            (should (looking-at-p "01"))
+            (should (string= (car kill-ring) "23")))))
       (ert-info ("No transient mark mode, plain delete")
         (let ((delete-active-region t)
               kill-ring)
@@ -1456,7 +1476,9 @@ marked with :ignore t")
             (kotl-mode:end-of-buffer)
             (transient-mark-mode)
             (let ((err (should-error (funcall func 1) :type 'error)))
-              (should (string-match "(kotl-mode:kill-region): Bad region or not within a single Koutline cell" (cadr err))))))))))
+              (should (string-match
+                       "(kotl-mode:kill-region): Bad region or not within a single Koutline cell"
+                       (cadr err))))))))))
 
 (provide 'kotl-mode-tests)
 
