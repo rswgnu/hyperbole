@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     18-Jan-26 at 08:31:39 by Bob Weiner
+;; Last-Mod:     18-Jan-26 at 17:34:29 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -553,6 +553,7 @@ Non-nil is the default."
 
 (defun hywiki-word-store-around-point ()
   "Store any HyWikiWord before or after point for post-command comparison.
+Markers are stored into `hywiki--buttonize-start' and `hywiki--buttonize-end'.
 HyWikiWords are stored only outside of `hywiki-non-hook-context-p' contexts.
 This is triggered by `pre-command-hook' for non-character commands,
 including deletion commands and those in `hywiki-non-character-commands'."
@@ -1747,6 +1748,30 @@ After successfully finding any kind of referent, run
     (run-hooks 'hywiki-find-referent-hook)
     referent))
 
+(defun hywiki-highlighted-word-at (&optional range-flag)
+  "Return highlighted HyWikiWord and optional #section:Lnum:Cnum at point or nil.
+If the HyWikiWord is delimited, point must be within the delimiters.
+
+With optional RANGE-FLAG, return a list of (HyWikiWord start-position
+end-position); the positions include the entire
+HyWikiWord#section:Lnum:Cnum string but exclude any delimiters.
+
+This does not test whether a referent exists for the HyWikiWord; call
+`hywiki-referent-exists-p' without an argument for that.
+
+A call to `hywiki-active-in-current-buffer-p' at point must return non-nil
+or this will return nil."
+  (when (and (hywiki-active-in-current-buffer-p)
+	     (setq hywiki--range
+		   (hproperty:char-property-range (point) 'face hywiki-word-face)))
+    (let ((wikiword (buffer-substring-no-properties (car hywiki--range) (cdr hywiki--range))))
+      (if (string-match hywiki-word-with-optional-suffix-exact-regexp wikiword)
+	  (if range-flag
+	      (list wikiword (car hywiki--range) (cdr hywiki--range))
+	    wikiword)
+	(when range-flag
+	  '(nil nil nil))))))
+
 (defun hywiki-highlight-on-yank (_prop-value start end)
   "Used in `yank-handled-properties' called with START and END pos of the text."
   ;; When yank only part of a delimited pair, expand the range to
@@ -2649,13 +2674,19 @@ regexps of wikiwords, if the hash table is out-of-date."
       ;; walk across all frames here, rehighlighting HyWikiWords.
       (hywiki-maybe-highlight-wikiwords-in-frame t t))))
 
+(defun hywiki-get-reference-range (reference)
+  "Return a (start . end) cons cell from a highlighted HyWikiWord REFERENCE."
+  (when (hproperty:but-is-p reference)
+    (cons (hproperty:but-start reference)
+	  (hproperty:but-end reference))))
+
 (defun hywiki-get-references (&optional start end)
   "Return a list of all highlighted HyWikiWord references in the current buffer.
 Optional START and END arguments limit the search to references that at
 least partially overlap that region."
   (hywiki--get-all-references #'hproperty:but-get-all-in-region start end))
 
-(defun hywiki-get-reference-positions (&optional start end)
+ (defun hywiki-get-reference-positions (&optional start end)
   "Return a list of all highlighted HyWikiWord reference (start . end) positions.
 Optional START and END arguments limit the search to references that at
 least partially overlap that region."
@@ -3164,30 +3195,6 @@ Action Key press; with a prefix ARG, emulate an Assist Key press."
 	(hywiki-find-referent word)
       (hkey-either arg))))
 
-(defun hywiki-word-highlighted-at-p (&optional range-flag)
-  "Return highlighted HyWikiWord and optional #section:Lnum:Cnum at point or nil.
-If the HyWikiWord is delimited, point must be within the delimiters.
-
-With optional RANGE-FLAG, return a list of (HyWikiWord start-position
-end-position); the positions include the entire
-HyWikiWord#section:Lnum:Cnum string but exclude any delimiters.
-
-This does not test whether a referent exists for the HyWikiWord; call
-`hywiki-referent-exists-p' without an argument for that.
-
-A call to `hywiki-active-in-current-buffer-p' at point must return non-nil
-or this will return nil."
-  (when (hywiki-active-in-current-buffer-p)
-    (if (setq hywiki--range
-	      (hproperty:char-property-range (point) 'face hywiki-word-face))
-	(let ((wikiword (buffer-substring-no-properties (car hywiki--range) (cdr hywiki--range))))
-	  (if (string-match hywiki-word-with-optional-suffix-exact-regexp wikiword)
-	      (if range-flag
-		  (list wikiword (car hywiki--range) (cdr hywiki--range))
-		wikiword)
-	    (when range-flag
-	      '(nil nil nil)))))))
-
 (defun hywiki-word-at (&optional range-flag)
   "Return potential HyWikiWord and optional #section:Lnum:Cnum at point or nil.
 `hywiki-mode' must be enabled or this will return nil.
@@ -3412,7 +3419,7 @@ Hyperbole button names."
     (hproperty:but-add start end hywiki-word-face)))
 
 (defun hywiki-highlight-word-get-range ()
-  "Return list of potential (HyWikiWord#section:Lnum:Cnum start end).
+  "Return list of (HyWikiWord#section:Lnum:Cnum start end) around point.
 Also highlight HyWikiWord as necessary.
 
 If the HyWikiWord reference is delimited, point must be within the
@@ -3420,7 +3427,8 @@ delimiters.  The delimiters are excluded from start and end.  If not
 at a HyWikiWord, return \\='(nil nil nil).
 
 This works regardless of whether the HyWikiWord has been highlighted
-or not.
+or not.  Call `hywiki-highlighted-word-at' to test for a highlighted
+HyWikiWord at point.
 
 This does not test whether a referent exists for the HyWikiWord; call
 `hywiki-referent-exists-p' without an argument for that.
@@ -3491,7 +3499,8 @@ a HyWikiWord at point."
 		 range))))))
 
 (defun hywiki-word-face-at-p (&optional pos)
-  "Non-nil if but at point or optional POS has `hywiki-word-face' property."
+  "Non-nil if point or optional POS has the `hywiki-word-face' property.
+Return any HyWikiWord reference found."
   ;; Sometimes this can return a left over button/overlay that points
   ;; to no buffer.  Ignore this case.
   (hproperty:but-get (or pos (point)) 'face hywiki-word-face))
@@ -3767,10 +3776,14 @@ delimiters."
 FUNCTION must take four arguments: (buffer-start-pos buffer-end-pos
 \\='face hywiki-word-face).  Optional START and END are sent to the function as
 the first two arguments; otherwise, the entire buffer is scanned."
-  (funcall function
-	   (or start (point-min))
-	   (or end (point-max))
-	   'face hywiki-word-face))
+  (let ((refs (funcall function
+		       (or start (point-min))
+		       (or end (point-max))
+		       'face hywiki-word-face)))
+    (if (version< emacs-version "29")
+	refs
+      ;; Button/overlay ordering is reversed after Emacs 28
+      (nreverse refs))))
 
 (defun hywiki--get-delimited-range-backward ()
   "Return a list of (start end) if not between/after end ]] or >>.

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    13-Jul-25 at 19:50:37
-;; Last-Mod:     11-Jan-26 at 10:35:55 by Bob Weiner
+;; Last-Mod:     18-Jan-26 at 08:45:21 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -132,8 +132,8 @@ buffer.
 End the insertion of text by turning on hywiki-mode and perform a dummy
 command to get the pre- and post-hooks executed.  This creates the
 highlighting overlays we want to test."
+  (hywiki-mode :all)
   (erase-buffer)
-  (hywiki-mode 1)
   (goto-char (hywiki-test--insert-with-point description)))
 
 (defun hywiki-test--get-buffer-text-with-point-and-highlight ()

@@ -1,3 +1,30 @@
+2026-01-18  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki--get-all-references): Handle ref ordering diffs between
+    Emacs prior to 29 and after so callers do not have to handle.
+
+* test/hywiki-tests.el (hywiki-tests--hywiki-face-region-at): Remove, unused.
+
+* hywiki.el (hywiki-highlight-word-get-range): Rename to 'hywiki-word-range-at'.
+            (hywiki-get-reference-range): Add and use in tests.
+            (hywiki-word-highlighted-at): Rename to 'hywiki-highlighted-word-at'.
+
+* test/hywiki-tests.el (hywiki-tests--word-n-face-at): Remove and replace
+    with calls to 'hywiki-highlighted-word-at'.
+
+* hproperty.el (hproperty:char-property-face-p): Fix doc to not refer to HyWiki.
+               (hproperty:but-is-p): Add.
+
+* test/hywiki-tests.el (hywiki-tests--preserve-hywiki-mode): Fix to use the
+    actual prior value of 'hywiki-mode' since there are now 3 valid states.
+    Also setup more of the test scenarios and rewrite tests to not duplicate
+    this behavior.
+    (hywiki-tests--face-property-for-wikiword-with-wikipage): Fix this test.
+
+* test/hywiki-yki-tests.el (hywiki-test--set-buffer-text-with-point-and-highlight):
+    For clarity change 'hywiki-mode' arg from 1 to :all and move before
+    'erase-buffer' call.
+
 2026-01-12  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el: (hywiki-word-highlight-in-buffers, hywiki-word-highlight-in-frame):

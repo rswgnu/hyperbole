@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     11-Jan-26 at 10:42:51 by Bob Weiner
+;; Last-Mod:     18-Jan-26 at 18:22:23 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -62,8 +62,7 @@
 Last two elements are optional.")
 
 (ert-deftest hywiki-tests--edit ()
-  (let ((hywiki-directory (make-temp-file "hywiki" t))
-	(test-num 0)
+  (let ((test-num 0)
 	before
 	after
 	name
@@ -73,11 +72,10 @@ Last two elements are optional.")
 	start
 	end
 	hywiki-ref-positions)
-    (unwind-protect
-        (with-temp-buffer
-          (hywiki-tests--preserve-hywiki-mode
+    (hywiki-tests--preserve-hywiki-mode
+      (unwind-protect
+	  (progn
 	    (org-mode)
-	    (hywiki-mode :all)
 	    (mapc
 	     (lambda (before-after)
 	       (condition-case err
@@ -90,23 +88,19 @@ Last two elements are optional.")
 		     ;; created so their references will be highlighted.
 		     (mapc #'hywiki-add-page
 		           (delq nil
-			         (mapcar #'hywiki-get-singular-wikiword
-				         (seq-remove #'string-empty-p
+				 (mapcar #'hywiki-get-singular-wikiword
+					 (seq-remove #'string-empty-p
 						     (mapcar #'string-trim
 							     (hywiki-tests--get-brace-strings after))))))
 		     (unwind-protect
-		         (progn
+			 (progn
 		           (pop-to-buffer (current-buffer))
 		           (erase-buffer)
 		           (hywiki-tests--insert-by-char before)
 		           (hywiki-tests--interpolate-buffer)
 		           ;; Markup before string in temp buffer
 		           ;; Surround any HyWikiWord refs with braces to match after string.
-		           (setq hywiki-ref-positions
-			         (if (version< emacs-version "29")
-				     (hywiki-get-reference-positions)
-			           ;; Button/overlay ordering is reversed after Emacs 28
-			           (nreverse (hywiki-get-reference-positions))))
+		           (setq hywiki-ref-positions (hywiki-get-reference-positions))
 		           (dolist (start-end hywiki-ref-positions)
 			     (setq start (car start-end)
 			           end (cdr start-end))
@@ -139,13 +133,12 @@ Last two elements are optional.")
 					          :before before :after after))))
 		           (cl-incf test-num))
 		       (goto-char (point-min))))
-	         (error (error "%s ---- %S" err (list :markedup markedup-before
+		 (error (error "%s ---- %S" err (list :markedup markedup-before
 					              :test-num test-num
 					              :before before :after after)))))
-	     hywiki-tests--edit-string-pairs)))
-      (dolist (f '("AI.org" "Hi.org" "HiHo.org" "HyWikiWord.org" "MyWikiWord.org" "Non.org" "WikiWord.org"))
-        (hy-delete-file-and-buffer (expand-file-name f hywiki-directory)))
-      (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory))))
+	     hywiki-tests--edit-string-pairs))
+	(dolist (f '("AI.org" "Hi.org" "HiHo.org" "HyWikiWord.org" "MyWikiWord.org" "Non.org"))
+          (hy-delete-file-and-buffer (expand-file-name f hywiki-directory)))))))
 
 (defun hywiki-tests--get-brace-strings (s)
   "Return the substrings in S delimited by curly braces {…}, excluding braces.
@@ -220,11 +213,12 @@ Assume no nesting of braces, nor any quoting of braces."
 		 ;; This creates the 'hbut:current in-memory ibut
 		 (ibut:at-type-p 'action))
 	;; Force HyWikiWord highlighting
-	(hywiki-tests--command-execute
-	 'hbut:act 'hbut:current)))))
+	(hywiki-tests--command-execute 'hbut:act 'hbut:current)
+	;; (hywiki-word-highlight-post-command)
+	))))
 
 (defun hywiki-tests--command-execute (sexp &rest rest)
-  "Apply SEXP to REST of arguments as a command and return the result.
+  "Apply SEXP to REST of arguments as a HyWiki command and return the result.
 Run pre and post command hooks around the call.
 This is for simulating the command loop."
   (let ((buf (current-buffer))
@@ -251,20 +245,29 @@ This is for simulating the command loop."
 (defmacro hywiki-tests--preserve-hywiki-mode (&rest body)
   "Restore hywiki-mode after running BODY."
   (declare (indent 0) (debug t))
-  `(let ((current-hywiki-mode hywiki-mode))
+  `(let* ((prior-hywiki-mode hywiki-mode)
+	  (hywiki-directory (make-temp-file "hywiki" t))
+          (wiki-page (cdr (hywiki-add-page "WikiWord"))))
      (unwind-protect
-	 (progn ,@body)
-       (hywiki-mode (if current-hywiki-mode 1 0)))))
+         (save-window-excursion
+           (with-temp-buffer
+	     (set-window-buffer (selected-window) (current-buffer))
+             (hywiki-mode :all)
+	     (sit-for 0.01)
+	     ,@body))
+       (hywiki-mode prior-hywiki-mode)
+       (hy-delete-file-and-buffer wiki-page)
+       (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--verify-preserve-hywiki-mode ()
   "Verify `hywiki-tests--preserve-hywiki-mode' restores `hywiki-mode'."
   (hywiki-tests--preserve-hywiki-mode
     (hywiki-mode :all)
     (hywiki-tests--preserve-hywiki-mode
-      (should hywiki-mode)
+      (should (eq hywiki-mode :all))
       (hywiki-mode nil)
       (should-not hywiki-mode))
-    (should hywiki-mode)))
+    (should (eq hywiki-mode :all))))
 
 (ert-deftest hywiki-tests--hywiki-create-page--adds-file-in-wiki-folder ()
   "Verify add page creates file in wiki folder and sets hash table."
@@ -753,24 +756,17 @@ Both mod-time and checksum must be changed for a test to return true."
   "Verify WikiWord for a wiki page gets face property hywiki-word-face."
   (skip-unless (not noninteractive))
   (hywiki-tests--preserve-hywiki-mode
-    (let* ((hsys-org-enable-smart-keys t)
-           (hywiki-directory (make-temp-file "hywiki" t))
-           (wikipage (cdr (hywiki-add-page "WikiWord"))))
-      (unwind-protect
-          (progn
-            (hywiki-mode :all)
-            (with-temp-buffer
-              (insert "WikiWor")
-	      (hywiki-tests--command-execute #'self-insert-command 1 ?d)
-              (goto-char 4)
-              (should (hywiki-word-face-at-p)))
-            (with-temp-buffer
-              (insert "WikiWord")
-	      (hywiki-tests--command-execute #'newline 1 'interactive)
-              (goto-char 4)
-              (should (hywiki-word-face-at-p))))
-        (hy-delete-file-and-buffer wikipage)
-        (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory)))))
+    (let* ((hsys-org-enable-smart-keys t))
+      (insert "WikiWor")
+      (hywiki-tests--command-execute #'self-insert-command 1 ?d)
+      (goto-char 4)
+      (should (hywiki-word-face-at-p))
+
+      (erase-buffer)
+      (insert "WikiWord")
+      (hywiki-tests--command-execute #'newline 1 'interactive)
+      (goto-char 4)
+      (should (hywiki-word-face-at-p)))))
 
 (ert-deftest hywiki-tests--no-face-property-for-no-wikipage ()
   "Verify WikiWord for no wiki page does not get face property hywiki-word-face."
@@ -792,53 +788,38 @@ Both mod-time and checksum must be changed for a test to return true."
   "Verify face property changes when WikiWord is edited."
   (skip-unless (not noninteractive))
   (hywiki-tests--preserve-hywiki-mode
-    (let* ((hywiki-directory (make-temp-file "hywiki" t))
-           (wikipage (cdr (hywiki-add-page "WikiWord"))))
-      (unwind-protect
-          (with-temp-buffer
-            (hywiki-mode :all)
-            (insert "Wikiord ")
-            (goto-char 5)
-            (should (looking-at-p "ord "))
-            (should-not (hywiki-word-face-at-p))
+    (insert "Wikiord ")
+    (goto-char 5)
+    (should (looking-at-p "ord "))
+    (should-not (hywiki-word-face-at-p))
 
-            (hywiki-tests--command-execute #'self-insert-command 1 ?W)
-            (goto-char 5)
-            (should (looking-at-p "Word "))
-            (should (hywiki-word-face-at-p))
+    (hywiki-tests--command-execute #'self-insert-command 1 ?W)
+    (goto-char 5)
+    (should (looking-at-p "Word "))
+    (should (hywiki-word-face-at-p))
 
-            (hywiki-tests--command-execute #'delete-char 1)
-            (should (looking-at-p "ord "))
-            (should-not (hywiki-word-face-at-p)))
-        (hy-delete-files-and-buffers (list wikipage))
-        (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory)))))
+    (hywiki-tests--command-execute #'delete-char 1)
+    (should (looking-at-p "ord "))
+    (should-not (hywiki-word-face-at-p))))
 
 (ert-deftest hywiki-tests--verify-face-property-when-editing-wikiword-first-char ()
   "Verify face property changes when WikiWord is edited in the first char position."
   (skip-unless (not noninteractive))
   (hywiki-tests--preserve-hywiki-mode
-    (let* ((hywiki-directory (make-temp-file "hywiki" t))
-           (wikipage (cdr (hywiki-add-page "WikiWord"))))
-      (unwind-protect
-          (progn
-            (with-temp-buffer
-              (hywiki-mode :all)
-              (insert "WikiWord")
-              (hywiki-tests--command-execute #'self-insert-command 1 ? )
-              (goto-char 1)
-              (should (looking-at-p "WikiWord"))
-              (should (hywiki-word-face-at-p))
+    (insert "WikiWord")
+    (hywiki-tests--command-execute #'self-insert-command 1 ? )
+    (goto-char 1)
+    (should (looking-at-p "WikiWord"))
+    (should (hywiki-word-face-at-p))
 
-	      (hywiki-tests--command-execute #'delete-char 1)
-              (should (looking-at-p "ikiWord"))
-              (should-not (hywiki-word-face-at-p))
+    (hywiki-tests--command-execute #'delete-char 1)
+    (should (looking-at-p "ikiWord"))
+    (should-not (hywiki-word-face-at-p))
 
-              (hywiki-tests--command-execute #'self-insert-command 1 ?W)
-              (goto-char 1)
-              (should (looking-at-p "WikiWord"))
-              (should (hywiki-word-face-at-p))))
-        (hy-delete-files-and-buffers (list wikipage))
-        (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory)))))
+    (hywiki-tests--command-execute #'self-insert-command 1 ?W)
+    (goto-char 1)
+    (should (looking-at-p "WikiWord"))
+    (should (hywiki-word-face-at-p))))
 
 (ert-deftest hywiki-tests--references-to-org-link ()
   "Verify `hywiki-references-to-org-links' converts WikiWords to org links."
@@ -1019,22 +1000,22 @@ would return org7c18f23."
   ;; org-publish does not work properly to support HyWiki export prior
   ;; to version 9.7, so this will be skipped for Emacs 28 and 29.
   (skip-unless (string-greaterp org-version "9.6.999"))
-  (let* ((hywiki-directory (make-temp-file "hywiki_" t))
-	 org-publish-project-alist
-	 (hywiki-org-publishing-directory (make-temp-file "public_html_" t))
-	 (wikipage (cdr (hywiki-add-page "WikiPage")))
-	 (wikipage-html (expand-file-name "WikiPage.html" hywiki-org-publishing-directory))
-	 (wikiword (cdr (hywiki-add-page "WikiWord")))
-	 (wikiword-html (expand-file-name "WikiWord.html" hywiki-org-publishing-directory)))
-    (unwind-protect
-	(progn
-	  (hywiki-org-set-publish-project)
-	  (should (file-exists-p hywiki-directory))
-	  (should (file-exists-p wikipage))
-	  (should (file-exists-p wikiword))
+  (hywiki-tests--preserve-hywiki-mode
+    (let* (org-publish-project-alist
+	   (hywiki-org-publishing-directory (make-temp-file "public_html_" t))
+	   (wikipage (cdr (hywiki-add-page "WikiPage")))
+	   (wikipage-html (expand-file-name "WikiPage.html" hywiki-org-publishing-directory))
+	   (wikiword (cdr (hywiki-add-page "WikiWord")))
+	   (wikiword-html (expand-file-name "WikiWord.html" hywiki-org-publishing-directory)))
+      (unwind-protect
+	  (progn
+	    (hywiki-org-set-publish-project)
+	    (should (file-exists-p hywiki-directory))
+	    (should (file-exists-p wikipage))
+	    (should (file-exists-p wikiword))
 
-	  ;; Setup wiki pages for WikiWord and WikiPage.
-	  (with-current-buffer (find-file-noselect wikiword)
+	    ;; Setup wiki pages for WikiWord and WikiPage.
+	    (find-file wikiword)
 	    (insert "\
 First line
 * Asection
@@ -1044,111 +1025,109 @@ body B
 *** Csection-subsection
 body C
 ")
-	    (save-buffer))
-	  (with-current-buffer (find-file-noselect wikipage)
+	    (save-buffer)
+	    (find-file wikipage)
 	    (insert "\
 WikiWord
 WikiWord#Asection
 \"WikiWord#Bsection subsection\"
 WikiWord#Csection-subsection
 ")
-	    (save-buffer))
+	    (save-buffer)
 
-	  ;; Export the wiki
-	  (hywiki-publish-to-html t)
+	    ;; Export the wiki
+	    (hywiki-publish-to-html t)
 
-	  ;; Verify files and folder are generated
-	  (should (file-exists-p hywiki-org-publishing-directory))
-	  (should (file-exists-p wikipage-html))
-	  (should (file-exists-p wikiword-html))
+	    ;; Verify files and folder are generated
+	    (should (file-exists-p hywiki-org-publishing-directory))
+	    (should (file-exists-p wikipage-html))
+	    (should (file-exists-p wikiword-html))
 
-          (let (idA idB idC)
-            ;; Verify anchors are generated and fetch their ids
-            (with-current-buffer (find-file-noselect wikiword-html)
-              (setq idA (should (hywiki-tests--search-section "Asection")))
-              (setq idB (should (hywiki-tests--search-section "Bsection subsection")))
-              (setq idC (should (hywiki-tests--search-section "Csection-subsection"))))
+            (let (idA idB idC)
+              ;; Verify anchors are generated and fetch their ids
+              (with-current-buffer (find-file-noselect wikiword-html)
+		(setq idA (should (hywiki-tests--search-section "Asection")))
+		(setq idB (should (hywiki-tests--search-section "Bsection subsection")))
+		(setq idC (should (hywiki-tests--search-section "Csection-subsection"))))
 
-	  ;; Verify links are generated
-	  (with-current-buffer (find-file-noselect wikipage-html)
-	    ;; (First check we even get the wikipage with sections)
-	    (should (<= 1 (count-matches (regexp-quote "WikiWord") (point-min) (point-max))))
-	    (should (= 1 (count-matches (regexp-quote "WikiWord#Asection") (point-min) (point-max))))
-	    (should (= 1 (count-matches (regexp-quote "WikiWord#Bsection subsection") (point-min) (point-max))))
-	    (should (= 1 (count-matches (regexp-quote "WikiWord#Csection-subsection") (point-min) (point-max))))
+	      ;; Verify links are generated
+	      (find-file wikipage-html)
+	      ;; (First check we even get the wikipage with sections)
+	      (should (<= 1 (count-matches (regexp-quote "WikiWord") (point-min) (point-max))))
+	      (should (= 1 (count-matches (regexp-quote "WikiWord#Asection") (point-min) (point-max))))
+	      (should (= 1 (count-matches (regexp-quote "WikiWord#Bsection subsection") (point-min) (point-max))))
+	      (should (= 1 (count-matches (regexp-quote "WikiWord#Csection-subsection") (point-min) (point-max))))
 
-	    ;; Then verify the href links are generated
-	    (should (= 1 (count-matches (regexp-quote "<a href=\"WikiWord.html\">WikiWord</a>") (point-min) (point-max))))
-	    (should (= 1 (count-matches
-                          (format "<a href=\"WikiWord.html#%s\">WikiWord#Asection</a>" idA) (point-min) (point-max))))
-	    (should (= 1 (count-matches
-                          (format "<a href=\"WikiWord.html#%s\">WikiWord#Bsection subsection</a>" idB) (point-min) (point-max))))
-	    (should (= 1 (count-matches
-                          (format "<a href=\"WikiWord.html#%s\">WikiWord#Csection-subsection</a>" idC) (point-min) (point-max)))))))
-      (hy-delete-files-and-buffers (list wikipage wikiword wikipage-html wikiword-html
-					 (expand-file-name "index.org" hywiki-directory)
-					 (expand-file-name "index.html" hywiki-org-publishing-directory)))
-      (hy-delete-dir-and-buffer hywiki-org-publishing-directory)
-      (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory))))
+	      ;; Then verify the href links are generated
+	      (should (= 1 (count-matches (regexp-quote "<a href=\"WikiWord.html\">WikiWord</a>") (point-min) (point-max))))
+	      (should (= 1 (count-matches
+                            (format "<a href=\"WikiWord.html#%s\">WikiWord#Asection</a>" idA) (point-min) (point-max))))
+	      (should (= 1 (count-matches
+                            (format "<a href=\"WikiWord.html#%s\">WikiWord#Bsection subsection</a>" idB) (point-min) (point-max))))
+	      (should (= 1 (count-matches
+                            (format "<a href=\"WikiWord.html#%s\">WikiWord#Csection-subsection</a>" idC) (point-min) (point-max))))))
+	(hy-delete-files-and-buffers (list wikipage wikiword wikipage-html wikiword-html
+					   (expand-file-name "index.org" hywiki-directory)
+					   (expand-file-name "index.html" hywiki-org-publishing-directory)))
+	(hy-delete-dir-and-buffer hywiki-org-publishing-directory)))))
 
 (ert-deftest hywiki-tests--publish-special-cases ()
   "Verify different special cases."
   ;; org-publish does not work properly to support HyWiki export prior
   ;; to version 9.7, so this will be skipped for Emacs 28 and 29.
   (skip-unless (string-greaterp org-version "9.6.999"))
-  (let* ((hywiki-directory (make-temp-file "hywiki_" t))
-	 org-publish-project-alist
-	 (hywiki-org-publishing-directory (make-temp-file "public_html_" t))
-	 (wikipage (cdr (hywiki-add-page "WikiPage")))
-	 (wikipage-html (expand-file-name "WikiPage.html" hywiki-org-publishing-directory))
-	 (wikiword (cdr (hywiki-add-page "WikiWord")))
-	 (wikiword-html (expand-file-name "WikiWord.html" hywiki-org-publishing-directory))
-         (href "<a href=\"WikiWord.html\">WikiWord</a>"))
-    (unwind-protect
-	(progn
-	  (hywiki-org-set-publish-project)
+  (hywiki-tests--preserve-hywiki-mode
+    (let* (org-publish-project-alist
+	   (hywiki-org-publishing-directory (make-temp-file "public_html_" t))
+	   (wikipage (cdr (hywiki-add-page "WikiPage")))
+	   (wikipage-html (expand-file-name "WikiPage.html" hywiki-org-publishing-directory))
+	   (wikiword (cdr (hywiki-add-page "WikiWord")))
+	   (wikiword-html (expand-file-name "WikiWord.html" hywiki-org-publishing-directory))
+           (href "<a href=\"WikiWord.html\">WikiWord</a>"))
+      (unwind-protect
+	  (progn
+	    (hywiki-org-set-publish-project)
 
-          (with-current-buffer (find-file-noselect wikiword)
+            (find-file wikiword)
             (erase-buffer)
             (insert "Text\n")
-	    (save-buffer))
+	    (save-buffer)
 
-          (should (file-exists-p hywiki-directory))
-	  (should (file-exists-p wikipage))
-	  (should (file-exists-p wikiword))
+            (should (file-exists-p hywiki-directory))
+	    (should (file-exists-p wikipage))
+	    (should (file-exists-p wikiword))
 
-          (dolist (v `(("WikiWord WikiWord" . ,(format "%s %s" href href))
-                       ("\"WikiWord WikiWord\"" . ,(format "\"%s%s\"" href href))
-                       ;;                                       ^ Missing a space!?
-                       ("WikiWord Text WikiWord" . ,(format "%s Text %s" href href))
-                       ("\"WikiWord Text WikiWord\"" . ,(format "\"%s%s\"" href href))
-                       ;;                                            ^ Missing " Text "
-                       ("WikiWord WikiWord WikiWord" . ,(format "%s %s %s" href href href))
-                       ;; (cons "\"WikiWord WikiWord WikiWord\"" (format "\"%s %s %s\"" href href href))
-                       ;; ^ Crashes due to (wrong-type-argument integer-or-marker-p nil) caused by buffer-substring-no-properties(nil nil)
-                       ))
-            (let ((input (car v))
-                  (regex-output (cdr v)))
-	      ;; Setup WikiPage.
-	      (with-current-buffer (find-file-noselect wikipage)
+            (dolist (v `(("WikiWord WikiWord" . ,(format "%s %s" href href))
+			 ("\"WikiWord WikiWord\"" . ,(format "\"%s%s\"" href href))
+			 ;;                                       ^ Missing a space!?
+			 ("WikiWord Text WikiWord" . ,(format "%s Text %s" href href))
+			 ("\"WikiWord Text WikiWord\"" . ,(format "\"%s%s\"" href href))
+			 ;;                                            ^ Missing " Text "
+			 ("WikiWord WikiWord WikiWord" . ,(format "%s %s %s" href href href))
+			 ;; (cons "\"WikiWord WikiWord WikiWord\"" (format "\"%s %s %s\"" href href href))
+			 ;; ^ Crashes due to (wrong-type-argument integer-or-marker-p nil) caused by buffer-substring-no-properties(nil nil)
+			 ))
+              (let ((input (car v))
+                    (regex-output (cdr v)))
+		;; Setup WikiPage.
+		(find-file wikipage)
                 (erase-buffer)
                 (insert input)
-	        (save-buffer))
+	        (save-buffer)
 
-	      ;; Export the wiki
-	      (hywiki-publish-to-html t)
+		;; Export the wiki
+		(hywiki-publish-to-html t)
 
-	      ;; Verify Export
-              (ert-info ((format "Publish '%s' => Expect '%s'" input regex-output))
-	        (with-current-buffer (find-file-noselect wikipage-html t)
+		;; Verify Export
+		(ert-info ((format "Publish '%s' => Expect '%s'" input regex-output))
+	          (find-file wikipage-html t)
                   (revert-buffer t t)
-                  (should (= 1 (count-matches regex-output (point-min) (point-max)))))))))
-      ;; Unwind
-      (hy-delete-files-and-buffers (list wikipage wikiword wikipage-html wikiword-html
-					 (expand-file-name "index.org" hywiki-directory)
-					 (expand-file-name "index.html" hywiki-org-publishing-directory)))
-      (hy-delete-dir-and-buffer hywiki-org-publishing-directory)
-      (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory))))
+                  (should (= 1 (count-matches regex-output (point-min) (point-max))))))))
+	;; Unwind
+	(hy-delete-files-and-buffers (list wikipage wikiword wikipage-html wikiword-html
+					   (expand-file-name "index.org" hywiki-directory)
+					   (expand-file-name "index.html" hywiki-org-publishing-directory)))
+	(hy-delete-dir-and-buffer hywiki-org-publishing-directory)))))
 
 (ert-deftest hywiki-tests--get-singular-wikiword ()
   "Verify plural WikiWord is converted to singular.
@@ -1342,7 +1321,7 @@ Note special meaning of `hywiki-allow-plurals-flag'."
       (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory))))
 
 (defmacro hywiki-tests--referent-test (expected-referent &rest prepare)
-  "Template macro for generated a non-page HyWikiWord referent.
+  "Template macro for generating a non-page HyWikiWord referent.
 EXPECTED-REFERENT is the result expected from `hywiki-get-referent'.
 The template runs the PREPARE body, and that must add the HyWikiWord
 named WikiReferent with a non-page referent type."
@@ -1613,24 +1592,18 @@ See gh#rswgnu/hyperbole/669."
   "Verify `hywiki-word-face-at-p'."
   (skip-unless (not noninteractive))
   (hywiki-tests--preserve-hywiki-mode
-    (let* ((hywiki-directory (make-temp-file "hywiki" t))
-           (wiki-page (cdr (hywiki-add-page "WikiWord"))))
-      (with-temp-buffer
-        (hywiki-mode nil)
-        (insert "WikiWor")
-        (hywiki-tests--command-execute #'self-insert-command 1 ?d)
-        (goto-char 4)
-        (should-not (hywiki-word-face-at-p)))
-      (unwind-protect
-          (progn
-            (with-temp-buffer
-              (hywiki-mode :all)
-              (insert "WikiWor")
-	      (hywiki-tests--command-execute #'self-insert-command 1 ?d)
-              (goto-char 4)
-              (should (hywiki-word-face-at-p))))
-        (hy-delete-file-and-buffer wiki-page)
-        (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory)))))
+   (hywiki-mode nil)
+   (insert "WikiWor")
+   (hywiki-tests--command-execute #'self-insert-command 1 ?d)
+   (goto-char 4)
+   (should-not (hywiki-word-face-at-p))
+
+   (erase-buffer)
+   (hywiki-mode :all)
+   (insert "WikiWor")
+   (hywiki-tests--command-execute #'self-insert-command 1 ?d)
+   (goto-char 4)
+   (should (hywiki-word-face-at-p))))
 
 (defun hywiki-tests--hywiki-face-regions ()
   "Return (start . end) for all hywiki--word-face overlays in buffer.
@@ -1646,38 +1619,18 @@ comparison with expected overlays stable."
                 (and (= (car x) (car y))
                      (< (cdr x) (cdr y))))))))
 
-(defun hywiki-tests--hywiki-face-region-at (&optional pos)
-  "Get the start and end of the hywiki--word-face overlay at POS or point.
-Return nil if not at a `hywiki--word-face' overlay."
-  (let ((overlays (overlays-at (or pos (point))))
-        result)
-    (when overlays
-      (dolist (overlay overlays result)
-        (when (equal (overlay-get overlay 'face) 'hywiki--word-face)
-          (cl-assert (not result) "There can only be one overlay with `hywiki--word-face'")
-          (setq result (cons (overlay-start overlay) (overlay-end overlay))))))))
-
-(defun hywiki-tests--word-n-face-at ()
-  "Non-nil if at a WikiWord and it has `hywiki--word-face'."
-  (cl-destructuring-bind (word beg end)
-      (hywiki-highlight-word-get-range)
-    (when word
-      (when (hy-test-word-face-at-region beg end)
-        (should (equal (hywiki-tests--hywiki-face-region-at beg) (cons beg end)))
-        word))))
-
 (defvar hywiki-tests--with-face-test t
   "Non-nil to perform face validation of WikiWord.")
 
 (defun hywiki-tests--word-at ()
   "Choose what test to perform based on value of `hywiki-tests--with-face-test'."
   (if hywiki-tests--with-face-test
-      (hywiki-tests--word-n-face-at)
+      (hywiki-highlighted-word-at)
     (hywiki-word-at)))
 
 (defun hywiki-tests--verify-hywiki-word (expected)
   "Verify that `hywiki-word-at' returns t if a wikiword is EXPECTED.
-If EXPECTED is a string also verify that the wikiword matches the
+If EXPECTED is a string, also verify that the wikiword matches the
 string."
   (if (not expected)
       (should-not (hywiki-tests--word-at))
@@ -1776,20 +1729,16 @@ Perform each operation from the step check and verify whether there
 is a WikiWord at point or not."
   (skip-unless (not noninteractive))
   (hywiki-tests--preserve-hywiki-mode
-    (let* ((hywiki-directory (make-temp-file "hywiki" t))
-           (wikiHiHo (cdr (hywiki-add-page "HiHo")))
+    (let* ((wikiHiHo (cdr (hywiki-add-page "HiHo")))
            (wikiHiho (cdr (hywiki-add-page "Hiho")))
            (wikiHi (cdr (hywiki-add-page "Hi")))
            (wikiHo (cdr (hywiki-add-page "Ho")))
            (wiki-page-list (list wikiHiHo wikiHiho wikiHi wikiHo)))
       (unwind-protect
-          (progn
-            (hywiki-mode :all)
-            (dolist (testcase hywiki-tests--wikiword-step-check)
-              (with-temp-buffer
-                (hywiki-tests--run-test-case testcase))))
-        (hy-delete-files-and-buffers wiki-page-list)
-        (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory)))))
+          (dolist (testcase hywiki-tests--wikiword-step-check)
+	    (erase-buffer)
+            (hywiki-tests--run-test-case testcase))
+        (hy-delete-files-and-buffers wiki-page-list)))))
 
 (defconst hywiki-tests--lorem-ipsum "\
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
@@ -1834,26 +1783,18 @@ Insert test in the middle of other text."
 A WikiWord is completed, then last char is deleted and reinserted.  The
 face is verified during the change."
   (hywiki-tests--preserve-hywiki-mode
-    (let* ((hywiki-directory (make-temp-file "hywiki" t))
-           (wiki-page (cdr (hywiki-add-page "WikiWord"))))
-      (unwind-protect
-          (progn
-            (hywiki-mode :all)
-            (with-temp-buffer
-              (emacs-lisp-mode)
-              (insert "\
+    (emacs-lisp-mode)
+    (insert "\
 (defun func ()
   \"WikiWor)
 ")
-              ;; Set point after WikiWor
-              (goto-char 1)
-              (should (search-forward "WikiWor"))
+    ;; Set point after WikiWor
+    (goto-char 1)
+    (should (search-forward "WikiWor"))
 
-              ;; Complete WikiWord and verify highlighting
-              (hywiki-tests--run-test-case
-               '(("d\"" . "WikiWord") (p2 . t) (-1) ("d" . "WikiWord")))))
-        (hy-delete-file-and-buffer wiki-page)
-        (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory)))))
+    ;; Complete WikiWord and verify highlighting
+    (hywiki-tests--run-test-case
+     '(("d" . "WikiWord") ("\"" . "WikiWord") (p2 . t) (-1) ("d" . "WikiWord")))))
 
 (ert-deftest hywiki-tests--wikiword-identified-in-emacs-lisp-mode ()
   "Verify WikiWord is identified when surrounded by delimiters in `emacs-lisp-mode'."

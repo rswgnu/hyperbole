@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Aug-92
-;; Last-Mod:     31-Dec-25 at 16:02:19 by Mats Lidell
+;; Last-Mod:     18-Jan-26 at 12:04:29 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -14,7 +14,7 @@
 
 ;;; Commentary:
 ;;
-;;   Can't use read-only buttons here because then outline-mode
+;;   Can't use read-only buttons here because then `outline-mode'
 ;;   becomes unusable.
 
 ;;; Code:
@@ -28,12 +28,13 @@
 ;;; ************************************************************************
 
 (declare-function hattr:get "hbut")
+(declare-function hbut:is-p "hbut")
 (declare-function ibut:map "hbut")
 (declare-function ebut:map "hbut")
 
-;; Comment out next line out because this triggers loads of kview
-;; which loads klink which contains a defib whose priority should be set
-;; by loading klink from hibtypes.el instead.
+;; Comment out next line out because this loads kview which loads
+;; klink which contains a defib whose priority should be set by
+;; loading klink from hibtypes.el instead.
 ;; (eval-when-compile (require 'hyrolo))
 
 ;;; ************************************************************************
@@ -324,6 +325,7 @@ Return nil if none."
 	  (overlays-in start end))
     nil))
 
+(defalias 'hproperty:but-is-p 'hbut:is-p)
 (defun hproperty:but-move (hproperty-but start end &optional buffer)
   "Set the endpoints of HPROPERTY-BUT to START and END in optional BUFFER.
 If BUFFER is nil and HPROPERTY-BUT has no buffer, put it in the current buffer;
@@ -371,8 +373,7 @@ See `hproperty:but-get'."
       value)))
 
 (defun hproperty:char-property-face-p (pos face-list)
-  "At POS, skip HyWikiWord highlighting if find any face in FACE-LIST.
-Return non-nil in any such case, else nil."
+  "At POS, return non-nil if find any face in FACE-LIST, else nil."
   (save-excursion
     (goto-char pos)
     (seq-intersection (face-at-point nil t) face-list #'eq)))
