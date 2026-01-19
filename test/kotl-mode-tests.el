@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:     19-Jan-26 at 00:40:39 by Mats Lidell
+;; Last-Mod:     20-Jan-26 at 00:21:25 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1379,12 +1379,21 @@ marked with :ignore t")
         (kotl-mode:delete-backward-char 1)
         (kotl-mode:beginning-of-line)
         (should (looking-at-p "012")))
-      (ert-info ("Delete many chars backward")
+      (ert-info ("Delete two chars backward")
         (init)
         (kotl-mode:end-of-line)
         (kotl-mode:delete-char -2)
         (kotl-mode:beginning-of-line)
         (should (looking-at-p "01")))
+      (ert-info ("Delete two char backward - interactive")
+        (init)
+        (let ((current-prefix-arg 2)
+              kill-ring)
+          (kotl-mode:end-of-line)
+          (call-interactively #'kotl-mode:delete-backward-char)
+          (kotl-mode:beginning-of-line)
+          (should (looking-at-p "01"))
+          (should (string= (car kill-ring) "23"))))
       ;; Error cases
       (ert-info ("Delete at cell end")
         (init)
