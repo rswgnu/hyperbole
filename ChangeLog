@@ -1,3 +1,8 @@
+2026-01-19  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--execute-commands): Manually run
+    'post-self-insert-hook' when appropriate.
+
 2026-01-18  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki--get-all-references): Handle ref ordering diffs between

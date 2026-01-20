@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     18-Jan-26 at 17:34:29 by Bob Weiner
+;; Last-Mod:     19-Jan-26 at 22:15:11 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2686,7 +2686,7 @@ Optional START and END arguments limit the search to references that at
 least partially overlap that region."
   (hywiki--get-all-references #'hproperty:but-get-all-in-region start end))
 
- (defun hywiki-get-reference-positions (&optional start end)
+(defun hywiki-get-reference-positions (&optional start end)
   "Return a list of all highlighted HyWikiWord reference (start . end) positions.
 Optional START and END arguments limit the search to references that at
 least partially overlap that region."
@@ -3603,8 +3603,8 @@ auto-highlighting."
   (dolist (buf buffers)
     (with-current-buffer buf
       (add-hook 'pre-command-hook      'hywiki-word-store-around-point 95 :local)
-      (add-hook 'post-command-hook     'hywiki-word-highlight-post-command 95 :local)
       (add-hook 'post-self-insert-hook 'hywiki-word-highlight-post-self-insert 95 :local)
+      (add-hook 'post-command-hook     'hywiki-word-highlight-post-command 95 :local)
       ;; Display buffer before `normal-mode' triggers possibly
       ;; long-running font-locking
       (sit-for 0)
@@ -3633,8 +3633,8 @@ auto-highlighting."
   (dolist (buf buffers)
     (with-current-buffer buf
       (remove-hook 'pre-command-hook      'hywiki-word-store-around-point :local)
-      (remove-hook 'post-command-hook     'hywiki-word-highlight-post-command :local)
       (remove-hook 'post-self-insert-hook 'hywiki-word-highlight-post-self-insert :local)
+      (remove-hook 'post-command-hook     'hywiki-word-highlight-post-command :local)
       ;; Display buffer before `normal-mode' triggers possibly
       ;; long-running font-locking
       (sit-for 0)

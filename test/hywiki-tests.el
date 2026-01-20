@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     18-Jan-26 at 18:22:23 by Bob Weiner
+;; Last-Mod:     19-Jan-26 at 23:11:08 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -34,9 +34,9 @@
     ;; ("\"WikiWord#section with spaces\"<backward-delete-char 1>" "\"{WikiWord#section} with spaces") ;; shrink highlight to "{WikiWord#section}
 
     ;; These tests pass
+    ("Hi" "{Hi}")
     ("HyWikiW<kill-word 1>ord<yank 1> HyW<kill-word 1>ikiWord<yank 1>"
      "{HyWikiWord} {HyWikiWord}")
-    ("Hi" "{Hi}")
     ("HyWikiWord" "{HyWikiWord}")
     ("HyWiki<delete-region>Word" "{HyWikiWord}")
     ("HyWiki<insert \"Word\">" "{HyWikiWord}")
@@ -186,7 +186,8 @@ Assume no nesting of braces, nor any quoting of braces."
   "Process all events from `unread-command-events'."
   (interactive)
   (while unread-command-events
-    (let ((event (pop unread-command-events)))
+    (let ((event (pop unread-command-events))
+	  (noninteractive nil))
       ;; Execute this event as if typed
       (setq this-command (key-binding (vector event) t)
 	    last-command-event event)
@@ -194,10 +195,12 @@ Assume no nesting of braces, nor any quoting of braces."
       ;;          event last-command-event this-command)
       (when this-command
 	(run-hooks 'pre-command-hook)
-	;; `command-execute' runs only `post-self-insert-hook' since
-	;; this is run during the command; pre- and post-command hooks
-	;; therefore are run manually.
-        (command-execute this-command)
+	(command-execute this-command)
+	(when (and (symbolp this-command)
+		   (string-suffix-p "self-insert-command" (symbol-name this-command)))
+	    ;; Force execution of `post-self-insert-hook' since is not
+	    ;; run automatically when not in top-level command processing
+	  (run-hooks 'post-self-insert-hook))
 	(run-hooks 'post-command-hook)))))
 
 (defun hywiki-tests--interpolate-buffer ()
@@ -984,14 +987,13 @@ body B
         (hy-delete-file-and-buffer wikipage)
         (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory)))))
 
-
 (defun hywiki-tests--search-section (section)
   "Find SECTION in current buffer and return the id string.
 Search for elements of type <h?>...</h?> for the id string.  Example:
 <h4 id=\"org7c18f23\"><span class=\"section-number-4\">1.1.1.</span> section</h4>
 would return org7c18f23."
   (save-excursion
-    (beginning-of-buffer)
+    (goto-char (point-min))
     (when (re-search-forward (format "<h. id=\"\\(.*?\\)\">.*</span> %s</h.>" section) nil t)
       (match-string-no-properties 1))))
 
@@ -1857,7 +1859,8 @@ face is verified during the change."
   \"%s.\"
   nil)
 " (mapconcat 'identity words " ")))
-            (goto-line 2)
+	    (goto-char (point-min))
+	    (forward-line 1)
             (dolist (v words)
               (should (search-forward v))
               (should (string= v (hywiki-word-at)))))))))
