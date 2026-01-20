@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:      1-Jan-26 at 18:18:27 by Mats Lidell
+;; Last-Mod:     19-Jan-26 at 22:34:04 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -446,14 +446,17 @@ With optional prefix arg DELETE-FLAG, delete region."
 Return number of characters deleted.
 Optional KILL-FLAG non-nil means save in kill ring instead of deleting.
 Do not delete across cell boundaries."
-  (interactive "*P")
-  (when (called-interactively-p 'interactive)
-    (when current-prefix-arg
-      (setq kill-flag t
-	    arg (prefix-numeric-value current-prefix-arg))))
-  (unless arg
-    (setq arg 1))
-  (kotl-mode:delete-char (- arg) kill-flag))
+  (interactive "*p\nP")
+  (cond ((and (use-region-p)
+	      delete-active-region
+	      (= arg 1))
+         ;; If a region is active, kill or delete it.
+	 (if (or kill-flag
+                 (eq delete-active-region 'kill))
+	     (kotl-mode:kill-region (region-beginning) (region-end))
+	   (kotl-mode:delete-region (region-beginning) (region-end))))
+        (t
+         (kotl-mode:delete-char (- arg) kill-flag))))
 
 (defun kotl-mode:delete-blank-lines ()
   "On blank line in a cell, delete all surrounding blank lines, leaving just one.
@@ -478,69 +481,95 @@ whitespace at the end of the cell."
       (delete-region (max start (point)) end)))
   (kotl-mode:to-valid-position))
 
+(defvar kotl-mode:delete-char-acc nil
+  "Accumulate deleted chars to populate `kill-ring'.")
+
+(defun kotl-mode:delete-char-acc (arg kill-flag)
+  "Delete one character and accumulate in the kill ring.
+Deletes (forward if ARG > 0, backward if ARG < 0).
+First call creates a new kill ring entry, subsequent calls appends.
+With KILL-FLAG nil just call `delete-char'."
+  (if (not kill-flag)
+      (delete-char arg)
+    (let ((char (char-to-string (if (< arg 0)
+                                    (char-before)
+                                  (char-after)))))
+      (delete-char arg)
+      (if kotl-mode:delete-char-acc
+          (kill-append char (< arg 0))
+        (kill-new char)
+        (setq kotl-mode:delete-char-acc t)))))
+
 (defun kotl-mode:delete-char (arg &optional kill-flag)
   "Delete up to prefix ARG characters following point.
 Return number of characters deleted.
 Optional KILL-FLAG non-nil means save in kill ring instead of deleting.
 Do not delete across cell boundaries."
-  (interactive "*P")
-  (when (called-interactively-p 'interactive)
-    (when current-prefix-arg
-      (setq kill-flag t
-	    arg (prefix-numeric-value current-prefix-arg))))
-  (unless arg
-    (setq arg 1))
-
-  (if (not (and (boundp 'kotl-kview) (kview:is-p kotl-kview)))
-      ;; Support use within Org tables outside of the Koutliner
-      (delete-char arg kill-flag)
-    (let ((del-count 0)
-	  (indent (kcell-view:indent))
-	  count start end)
-      (cond ((> arg 0)
-	     (if (kotl-mode:eocp)
-		 (error "(kotl-mode:delete-char): End of cell")
-	       (setq end (kcell-view:end)
-		     arg (min arg (- end (point))))
-	       (while (and (> arg 0) (not (kotl-mode:eocp)))
-		 (if (kotl-mode:eolp)
-		     (if (not (eq ?\  (char-syntax (following-char))))
-			 (setq arg 0
-			       del-count (1- del-count))
-		       (delete-char 1 kill-flag)
-		       ;; There may be non-whitespace characters in the
-		       ;; indent area.  Don't delete them.
-		       (setq count indent)
-		       (while (and (> count 0)
-				   (eq ?\ (char-syntax (following-char))))
-			 (delete-char 1)
-			 (setq count (1- count))))
-		   (delete-char 1 kill-flag))
-		 (setq arg (1- arg)
-		       del-count (1+ del-count)))))
-	    ((< arg 0)
-	     (if (kotl-mode:bocp)
-		 (error "(kotl-mode:delete-char): Beginning of cell")
-	       (setq start (kcell-view:start)
-		     arg (max arg (- start (point))))
-	       (while (and (< arg 0) (not (kotl-mode:bocp)))
-		 (if (kotl-mode:bolp)
-		     (if (not (eq ?\  (char-syntax (preceding-char))))
-			 (setq arg 0
-			       del-count (1- del-count))
-		       ;; There may be non-whitespace characters in the
-		       ;; indent area.  Don't delete them.
-		       (setq count indent)
-		       (while (and (> count 0)
-				   (eq ?\ (char-syntax (preceding-char))))
-			 (delete-char -1)
-			 (setq count (1- count)))
-		       (if (zerop count)
-			   (delete-char -1 kill-flag)))
-		   (delete-char -1 kill-flag))
-		 (setq arg (1+ arg)
-		       del-count (1+ del-count))))))
-      del-count)))
+  (interactive "*p\nP")
+  (unless (integerp arg)
+    (signal 'wrong-type-argument (list 'integerp arg)))
+  (cond ((and (use-region-p)
+	      delete-active-region
+	      (= arg 1))
+	 ;; If a region is active, kill or delete it.
+	 (if (or kill-flag
+                 (eq delete-active-region 'kill))
+	     (kotl-mode:kill-region (region-beginning) (region-end))
+	   (kotl-mode:delete-region (region-beginning) (region-end))))
+        (t
+         (if (not (and (boundp 'kotl-kview) (kview:is-p kotl-kview)))
+             ;; Support use within Org tables outside of the Koutliner
+             (delete-char arg kill-flag)
+           (let ((del-count 0)
+	         (indent (kcell-view:indent))
+	         count start end
+                 kotl-mode:delete-char-acc)
+             (cl-flet ((delete-char (arg &optional kill-flag)
+                         (kotl-mode:delete-char-acc arg kill-flag)))
+               (cond ((> arg 0)
+	              (if (kotl-mode:eocp)
+		          (error "(kotl-mode:delete-char): End of cell")
+	                (setq end (kcell-view:end)
+		              arg (min arg (- end (point))))
+	                (while (and (> arg 0) (not (kotl-mode:eocp)))
+		          (if (kotl-mode:eolp)
+		              (if (not (eq ?\  (char-syntax (following-char))))
+			          (setq arg 0
+			                del-count (1- del-count))
+		                (delete-char 1 kill-flag)
+		                ;; There may be non-whitespace characters in the
+		                ;; indent area.  Don't delete them.
+		                (setq count indent)
+		                (while (and (> count 0)
+				            (eq ?\ (char-syntax (following-char))))
+			          (delete-char 1)
+			          (setq count (1- count))))
+		            (delete-char 1 kill-flag))
+		          (setq arg (1- arg)
+		                del-count (1+ del-count)))))
+	             ((< arg 0)
+	              (if (kotl-mode:bocp)
+		          (error "(kotl-mode:delete-char): Beginning of cell")
+	                (setq start (kcell-view:start)
+		              arg (max arg (- start (point))))
+	                (while (and (< arg 0) (not (kotl-mode:bocp)))
+		          (if (kotl-mode:bolp)
+		              (if (not (eq ?\  (char-syntax (preceding-char))))
+			          (setq arg 0
+			                del-count (1- del-count))
+		                ;; There may be non-whitespace characters in the
+		                ;; indent area.  Don't delete them.
+		                (setq count indent)
+		                (while (and (> count 0)
+				            (eq ?\ (char-syntax (preceding-char))))
+			          (delete-char -1)
+			          (setq count (1- count)))
+		                (if (zerop count)
+			            (delete-char -1 kill-flag)))
+		            (delete-char -1 kill-flag))
+		          (setq arg (1+ arg)
+		                del-count (1+ del-count)))))))
+             del-count)))))
 
 (defun kotl-mode:delete-horizontal-space ()
   "Delete all spaces and tabs around point."
@@ -796,6 +825,13 @@ If a completion is active, this aborts the completion only."
 	       (message "Saved selectable thing: %s" thing))
 	      ((mark t)
 	       (indicate-copied-region)))))))
+
+(defun kotl-mode:delete-region (start end)
+  "Delete region between START and END within a single kcell.
+Delegates to `kotl-mode:kill-region' but does not store killed text in
+`kill-ring'."
+  (let (kill-ring kill-ring-yank-pointer)
+    (kotl-mode:kill-region start end)))
 
 (defun kotl-mode:kill-or-copy-region (start end copy-flag &optional kill-str)
   (when (and start end)

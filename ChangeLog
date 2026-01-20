@@ -1,3 +1,16 @@
+2026-01-19  Mats Lidell  <matsl@gnu.org>
+
+* test/kotl-mode-tests.el (kotl-mode--delete-region)
+    (kotl-mode--delete-char): Add tests.
+
+* kotl/kotl-mode.el (kotl-mode:delete-char-acc): Accumulate deleted chars
+    to setup kill-ring.
+  (kotl-mode:delete-char, kotl-mode:delete-backward-char): Fix
+    inconsistencies with delete-char - Support transient mark mode. Use
+    kotl-mode:delete-char-acc for saving multiple chars to kill-ring when
+    called with kill-flag. (The latter is implicit when used interactively
+    with a prefix arg.)
+
 2026-01-07  Mats Lidell  <matsl@gnu.org>
 
 * hywiki.el (hywiki-mode): Remove arg value :toggle, not an alternative to
