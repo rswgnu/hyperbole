@@ -8,7 +8,7 @@
   (kotl-mode:delete-char, kotl-mode:delete-backward-char): Fix
     inconsistencies with delete-char - Support transient mark mode. Use
     kotl-mode:delete-char-acc for saving multiple chars to kill-ring when
-    called with kill-flag. (The later is implicit when used interactively
+    called with kill-flag. (The latter is implicit when used interactively
     with a prefix arg.)
 
 2026-01-07  Mats Lidell  <matsl@gnu.org>
