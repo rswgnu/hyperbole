@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     19-Jan-26 at 22:15:11 by Bob Weiner
+;; Last-Mod:     25-Jan-26 at 12:40:15 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -741,8 +741,8 @@ deletion commands and those in `hywiki-non-character-commands'."
 (defun hywiki-non-hook-context-p ()
   "Return non-nil when HyWiki command hooks should do nothing."
   (or (minibuffer-window-active-p (selected-window))
-      (and (bound-and-true-p edebug-active)
-	   (active-minibuffer-window))
+      ;; (and (bound-and-true-p edebug-active)
+      ;;   (active-minibuffer-window))
       (and (derived-mode-p 'prog-mode)
 	   (not (apply #'derived-mode-p hywiki-highlight-all-in-prog-modes))
 	   ;; Not inside a comment or a string
@@ -1014,12 +1014,17 @@ with the referent."
 (defun hywiki-active-in-current-buffer-p ()
   "Return non-nil if HyWikiWord links are active in the current buffer.
 Exclude the minibuffer if selected and return nil."
-  (and hywiki-mode
-       (not (minibuffer-window-active-p (selected-window)))
-       (not (and (boundp 'edebug-active) edebug-active (active-minibuffer-window)))
+  (if (eq hywiki-mode :pages)
+      (hywiki-in-page-p)
+    (and hywiki-mode (hywiki-potential-buffer-p))))
+
+(defun hywiki-potential-buffer-p ()
+  "Return non-nil if the current buffer can support HyWikiWords.
+This does not mean `hywiki-mode' is presently active in that buffer."
+  (and (not (minibufferp))
+       ;; (not (and (boundp 'edebug-active) edebug-active))
        (not (apply #'derived-mode-p hywiki-exclude-major-modes))
-       (or (and (eq hywiki-mode :pages) (hywiki-in-page-p))
-	   (derived-mode-p 'kotl-mode)
+       (or (derived-mode-p 'kotl-mode)
 	   (not (eq (get major-mode 'mode-class) 'special)))))
 
 (defun hywiki-add-activity (wikiword)
@@ -1295,6 +1300,8 @@ with the page."
 (defun hywiki-add-page (page-name &optional force-flag)
   "Add a new or return any existing HyWiki page path for PAGE-NAME.
 Returned format is: \\='(page . \"<page-file-path>\") or nil when none.
+PAGE-NAME must be the HyWikiWord that can link to the page (no file-name
+prefix or suffix).
 
 With optional FORCE-FLAG prefix arg non-nil, force an update to
 the page's modification time.  If PAGE-NAME is invalid, trigger a
@@ -2545,11 +2552,13 @@ the current page unless they have sections attached."
   (hywiki-maybe-directory-updated))
 
 (defun hywiki-in-page-p ()
-  "Return non-nil if the current buffer is a HyWiki page."
+  "Return non-nil if the current buffer is a HyWiki page.
+Note that HyWiki references can occur in non-HyWiki page buffers."
   (or hywiki-page-flag
       (and buffer-file-name
+	   (string-suffix-p hywiki-file-suffix buffer-file-name)
 	   (string-prefix-p (expand-file-name hywiki-directory)
-			    (or default-directory ""))
+			    buffer-file-name)
 	   (setq hywiki-page-flag t))))
 
 (defun hywiki-get-buffer-page-name ()
@@ -2567,18 +2576,18 @@ rest of arguments FRAMES."
 				(or frames (frame-list))))))
 
 (defun hywiki-get-buffers (hywiki-mode-status)
-  "Return the list of window buffers active for HYWIKI-BUFFER-STATUS.
+  "Return the list of HyWiki buffers displayed in any non-minibuffer window.
+A HyWiki buffer is one where HyWikiWord references are highlighted
+when 'hywiki-mode' is enabled.
+
 See the function documentation for `hywiki-mode' for valid input
 values (the states of `hywiki-mode')."
   (when hywiki-mode
     (delq nil (mapcar (lambda (buf)
 			(with-current-buffer buf
-			  (and (not (and (boundp 'edebug-active) edebug-active (active-minibuffer-window)))
-			       (not (apply #'derived-mode-p hywiki-exclude-major-modes))
-			       (not (string-prefix-p " " (buffer-name buf)))
-			       (or (and (eq hywiki-mode-status :pages) (hywiki-in-page-p))
-				   (derived-mode-p 'kotl-mode)
-				   (not (eq (get major-mode 'mode-class) 'special)))
+			  (and (if (eq hywiki-mode-status :pages)
+				   (hywiki-in-page-p)
+				 (hywiki-potential-buffer-p))
 			       buf)))
 		      (hywiki-get-buffers-in-windows)))))
 
@@ -3574,22 +3583,22 @@ If point is on one, press RET immediately to use that one."
 Highlight only those buffers attached to windows.
 
 Auto-highlighting uses pre- and post-command hooks.  If an error
-occurs with one of these hooks, the problematic hook is removed.
-Invoke this command with a prefix argument to restore the
-auto-highlighting."
-  (cond ((eq hywiki-from-mode hywiki-to-mode)
-	 nil)
+occurs with one of these hooks, the problematic hook is removed."
+  (cond ((null hywiki-to-mode)
+	 ;; Ensure hooks are removed from all hywiki buffers any time
+	 ;; mode is disabled
+	 (let ((hywiki-mode :all))
+	   (hywiki-word-dehighlight-buffers (hywiki-get-buffers hywiki-mode))))
 	((null hywiki-from-mode)
 	 (hywiki-word-highlight-buffers (hywiki-get-buffers hywiki-to-mode)))
-	((and (eq hywiki-from-mode :all)   (eq hywiki-to-mode :pages))
-	 (hywiki-word-dehighlight-buffers (set:difference (hywiki-get-buffers hywiki-from-mode)
-							  (hywiki-get-buffers hywiki-to-mode))))
+	((and (eq hywiki-from-mode :all) (eq hywiki-to-mode :pages))
+	 (hywiki-word-dehighlight-buffers
+	  (set:difference (hywiki-get-buffers hywiki-from-mode)
+			  (hywiki-get-buffers hywiki-to-mode))))
 	((and (eq hywiki-from-mode :pages) (eq hywiki-to-mode :all))
-	 (hywiki-word-highlight-buffers (set:difference (hywiki-get-buffers hywiki-from-mode)
-							(hywiki-get-buffers hywiki-to-mode))))
-	((or (and (eq hywiki-from-mode :all)   (eq hywiki-to-mode nil))
-	     (and (eq hywiki-from-mode :pages) (eq hywiki-to-mode nil)))
-	 (hywiki-word-dehighlight-buffers (hywiki-get-buffers hywiki-from-mode)))
+	 (hywiki-word-highlight-buffers
+	  (set:difference (hywiki-get-buffers hywiki-from-mode)
+			  (hywiki-get-buffers hywiki-to-mode))))
 	(t 
 	 (error "(hywiki-word-set-auto-highlighting): Inputs must be nil, :pages or :all, not '%s' and '%s'"
 		hywiki-from-mode hywiki-to-mode))))

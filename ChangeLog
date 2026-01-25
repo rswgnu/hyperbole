@@ -1,3 +1,43 @@
+2026-01-25  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-potential-buffer-p, hywiki-non-hook-context-p): Comment
+    out 'edebug-active' checks, so can examine same behavior when edebugging.
+            (hywiki-word-set-auto-highlighting): Fix to ensure all hywiki
+    hooks are removed any time 'hywiki-mode' is disabled.
+
+* test/hywiki-tests.el (hywiki-tests--interpolate-buffer): Fix to highlight
+    any HyWiki word at point and create its page by activating it.  This is
+    separate from processing action buttons.
+
+2026-01-24  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--wikiword-identified-in-emacs-lisp-mode,
+    hywiki-tests--wikiword-identified-in-strings-in-emacs-lisp-mode,
+    hywiki-tests--wikiword-identified-in-emacs-lisp-mode,
+    hywiki-tests--filename-same-as-wiki-word,
+    hywiki-tests--verify-removal-of-delimiter-updates-face,
+    hywiki-tests--wikiword-yanked-with-extra-words,
+    hywiki-test--hywiki-mode,
+    hywiki-tests--interactive-hywiki-mode-toggles):
+    Remove unneeded calls due to 'hywiki-tests--preserve-hywiki-mode' macro.
+    (hywiki-tests--verify-removal-of-delimiter-updates-face,
+    (hywiki-tests--maybe-highlight-page-names): Remove expected fail so can
+    debug.
+    (hywiki-tests--nonexistent-wikiword-with-section-should-create-wikiword):
+    Rewrite.
+
+* hywiki.el (hywiki-active-in-current-buffer-p, hywiki-get-buffers): Fix
+    minibuffer predicate used to reflect current buffer even if window
+    not selected.  Add and use 'hywiki-potential-buffer-p' to share common
+    predicates.
+            (hywiki-get-buffers): Stop filtering out hidden buffers that start
+    with a space since they may be in a text mode and may be shown in a window.
+    Also fix usage of 'hywiki-mode-status' argument so is part of the filtering.
+            (hywiki-in-page-p): Ensure 'buffer-file-name' ends with
+    'hywiki-file-suffix'.
+            (hywiki-active-in-current-buffer-p): Fix filtering when 'hywiki-mode'
+    is :pages.
+
 2026-01-19  Bob Weiner  <rsw@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--execute-commands): Manually run
