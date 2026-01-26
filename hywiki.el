@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     25-Jan-26 at 12:40:15 by Bob Weiner
+;; Last-Mod:     25-Jan-26 at 16:29:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -3589,7 +3589,9 @@ occurs with one of these hooks, the problematic hook is removed."
 	 ;; mode is disabled
 	 (let ((hywiki-mode :all))
 	   (hywiki-word-dehighlight-buffers (hywiki-get-buffers hywiki-mode))))
-	((null hywiki-from-mode)
+	((or (null hywiki-from-mode)
+	     (and (eq hywiki-from-mode :pages) (eq hywiki-to-mode :pages))
+	     (and (eq hywiki-from-mode :all)   (eq hywiki-to-mode :all)))
 	 (hywiki-word-highlight-buffers (hywiki-get-buffers hywiki-to-mode)))
 	((and (eq hywiki-from-mode :all) (eq hywiki-to-mode :pages))
 	 (hywiki-word-dehighlight-buffers

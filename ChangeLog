@@ -1,5 +1,8 @@
 2026-01-25  Bob Weiner  <rsw@gnu.org>
 
+* test/hywiki-tests.el (hywiki-tests--filename-same-as-wiki-word): Rewrote
+    to correct the tests therein.
+
 * hywiki.el (hywiki-potential-buffer-p, hywiki-non-hook-context-p): Comment
     out 'edebug-active' checks, so can examine same behavior when edebugging.
             (hywiki-word-set-auto-highlighting): Fix to ensure all hywiki

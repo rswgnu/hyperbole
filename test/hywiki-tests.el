@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     25-Jan-26 at 11:21:07 by Bob Weiner
+;; Last-Mod:     25-Jan-26 at 19:23:58 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -139,7 +139,7 @@ Last two elements are optional.")
 	     hywiki-tests--edit-string-pairs))
 	(let ((default-directory hywiki-directory))
           (hy-delete-files-and-buffers
-	   '("AI.org" "Hi.org" "HiHo.org" "HyWiki" "HyWikiW" "HyWikiWord.org" "MyWikiWord.org" "Non.org" "Wiki")))))))
+          '("AI.org" "Hi.org" "HiHo.org" "HyWiki.org" "HyWikiW.org" "HyWikiWord.org" "MyWikiWord.org" "Non.org" "Wiki.org")))))))
 
 (defun hywiki-tests--get-brace-strings (s)
   "Return the substrings in S delimited by curly braces {…}, excluding braces.
@@ -1845,18 +1845,18 @@ face is verified during the change."
 (ert-deftest hywiki-tests--filename-same-as-wiki-word ()
   "Regular files should not be WikiWords even when hywiki-mode is active."
   (hywiki-tests--preserve-hywiki-mode
-    (let ((default-directory hyperb:dir))
+    (let ((default-directory hywiki-directory))
       (insert "\"WikiWord\" \"WikiWord.org\"\n")
       (goto-char 2)
       (should (looking-at-p "WikiWord\" "))
       (hywiki-mode nil)
-      (should (ibtype:test-p 'pathname))
+      (should-not (ibtype:test-p 'hywiki-existing-word))
       (hywiki-mode :all)
-      (should (ibtype:test-p 'pathname))
-      (goto-char 9)
+      (should (ibtype:test-p 'hywiki-existing-word))
+      (goto-char 13)
       ;; Verify that using the org extension selects the WikiWord.
       (should (looking-at-p "WikiWord\\.org\""))
-      (should (ibtype:test-p 'hywiki-existing-word)))))
+      (should (ibtype:test-p 'pathname)))))
 
 (ert-deftest hywiki-tests--nonexistent-wikiword-with-section-should-create-wikiword ()
   "Verify action-key on a new WikiWord#section creates proper page filename."
@@ -1992,22 +1992,20 @@ expected result."
 
 (ert-deftest hywiki-tests--consult-grep ()
   "Verify `hywiki-consult-grep' calls `hsys-consult-grep'."
-  (let ((hsys-consult-flag nil))
-    (unwind-protect
-        (progn
-          ;; No path list
-          (mocklet (((hsys-consult-grep "--include *.org" "--glob *.org" "regexp" 0 (list hywiki-directory) "prompt") => "match"))
-            (should (string= (hywiki-consult-grep "regexp" 0 nil "prompt") "match")))
-          ;; Path list
-          (mocklet (((hsys-consult-grep "--include *.org" "--glob *.org" "regexp" 0 '("path") "prompt") => "match"))
-            (should (string= (hywiki-consult-grep "regexp" 0 '("path") "prompt") "match")))
-          ;; No Prompt, max-matches = 0
-          (mocklet (((hsys-consult-grep "--include *.org" "--glob *.org" "regexp" 0 '("path") "Grep HyWiki dir headlines") => "match"))
-            (should (string= (hywiki-consult-grep "regexp" 0 '("path")) "match")))
-          ;; No Prompt, max-matches != 0
-          (mocklet (((hsys-consult-grep "--include *.org" "--glob *.org" "regexp" 1 '("path") "Grep HyWiki dir") => "match"))
-            (should (string= (hywiki-consult-grep "regexp" 1 '("path")) "match"))))
-      (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory))))
+  (hywiki-tests--preserve-hywiki-mode
+    (let ((hsys-consult-flag nil))
+      ;; No path list
+      (mocklet (((hsys-consult-grep "--include *.org" "--glob *.org" "regexp" 0 (list hywiki-directory) "prompt") => "match"))
+        (should (string= (hywiki-consult-grep "regexp" 0 nil "prompt") "match")))
+      ;; Path list
+      (mocklet (((hsys-consult-grep "--include *.org" "--glob *.org" "regexp" 0 '("path") "prompt") => "match"))
+        (should (string= (hywiki-consult-grep "regexp" 0 '("path") "prompt") "match")))
+      ;; No Prompt, max-matches = 0
+      (mocklet (((hsys-consult-grep "--include *.org" "--glob *.org" "regexp" 0 '("path") "Grep HyWiki dir headlines") => "match"))
+        (should (string= (hywiki-consult-grep "regexp" 0 '("path")) "match")))
+      ;; No Prompt, max-matches != 0
+      (mocklet (((hsys-consult-grep "--include *.org" "--glob *.org" "regexp" 1 '("path") "Grep HyWiki dir") => "match"))
+        (should (string= (hywiki-consult-grep "regexp" 1 '("path")) "match"))))))
 
 (ert-deftest hywiki-tests--hywiki-help ()
   "Verify `hywiki-help'."
