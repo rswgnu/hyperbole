@@ -1761,7 +1761,7 @@ After successfully finding any kind of referent, run
 ;;   masks the hywiki-word-face prop.
 ;; - Compatibility with hywiki-word-at that finds a wikiword when
 ;;   point is to the right of the Wiki Word.
-(defun my-overlay-bounds-at (pos prop value compat)
+(defun my-overlay-bounds-at (pos prop value)
   "Return (start . end) for PROP with VALUE at POS.
 Signals an error if there are more than one PROP with VALUE."
   (let* ((result (delq nil
@@ -1770,13 +1770,7 @@ Signals an error if there are more than one PROP with VALUE."
                                    (cons (overlay-start ov) (overlay-end ov))))
                                (overlays-at pos)))))
     (cl-assert (<= (length result) 1) t "There can only be one overlay with property %s with value %s" prop value)
-    (if (or result (not compat))
-        (car result)
-      ;; hywiki-word-at compatibility check for one pos to the right
-      ;; and left of a WikiWord. Nore: Not fully compatible since
-      ;; hywiki-word-at is even more forgiving.
-      (or (my-overlay-bounds-at (1- (point)) prop value nil)
-          (my-overlay-bounds-at (1+ (point)) prop value nil)))))
+    (car result)))
 
 (defun hywiki-highlighted-word-at (&optional range-flag)
   "Return highlighted HyWikiWord and optional #section:Lnum:Cnum at point or nil.
@@ -1793,7 +1787,7 @@ A call to `hywiki-active-in-current-buffer-p' at point must return non-nil
 or this will return nil."
   (when (and (hywiki-active-in-current-buffer-p)
 	     (setq hywiki--range
-                   (my-overlay-bounds-at (point) 'face hywiki-word-face t)))
+                   (my-overlay-bounds-at (point) 'face hywiki-word-face)))
     (let ((wikiword (buffer-substring-no-properties (car hywiki--range) (cdr hywiki--range))))
       (if (string-match hywiki-word-with-optional-suffix-exact-regexp wikiword)
 	  (if range-flag
