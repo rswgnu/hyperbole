@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     25-Jan-26 at 16:29:26 by Bob Weiner
+;; Last-Mod:     28-Jan-26 at 16:01:25 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1755,6 +1755,29 @@ After successfully finding any kind of referent, run
     (run-hooks 'hywiki-find-referent-hook)
     referent))
 
+;; FIXME: Alternative implementation to hproperty:char-property-range
+;; Fixes two things:
+;; - Looks at all overlays so not other packages prioritized props
+;;   masks the hywiki-word-face prop.
+;; - Compatibility with hywiki-word-at that finds a wikiword when
+;;   point is to the right of the Wiki Word.
+(defun my-overlay-bounds-at (pos prop value compat)
+  "Return (start . end) for PROP with VALUE at POS.
+Signals an error if there are more than one PROP with VALUE."
+  (let* ((result (delq nil
+                       (mapcar (lambda (ov)
+                                 (when (equal (overlay-get ov prop) value)
+                                   (cons (overlay-start ov) (overlay-end ov))))
+                               (overlays-at pos)))))
+    (cl-assert (<= (length result) 1) t "There can only be one overlay with property %s with value %s" prop value)
+    (if (or result (not compat))
+        (car result)
+      ;; hywiki-word-at compatibility check for one pos to the right
+      ;; and left of a WikiWord. Nore: Not fully compatible since
+      ;; hywiki-word-at is even more forgiving.
+      (or (my-overlay-bounds-at (1- (point)) prop value nil)
+          (my-overlay-bounds-at (1+ (point)) prop value nil)))))
+
 (defun hywiki-highlighted-word-at (&optional range-flag)
   "Return highlighted HyWikiWord and optional #section:Lnum:Cnum at point or nil.
 If the HyWikiWord is delimited, point must be within the delimiters.
@@ -1770,7 +1793,7 @@ A call to `hywiki-active-in-current-buffer-p' at point must return non-nil
 or this will return nil."
   (when (and (hywiki-active-in-current-buffer-p)
 	     (setq hywiki--range
-		   (hproperty:char-property-range (point) 'face hywiki-word-face)))
+                   (my-overlay-bounds-at (point) 'face hywiki-word-face t)))
     (let ((wikiword (buffer-substring-no-properties (car hywiki--range) (cdr hywiki--range))))
       (if (string-match hywiki-word-with-optional-suffix-exact-regexp wikiword)
 	  (if range-flag

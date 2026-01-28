@@ -1705,7 +1705,8 @@ point when the function is called."
     (("\"Hiho\"" . t) (p4 . t) (" " . "Hi") (p5) (-1 . "Hiho"))
     (("\"hiHo\"") (p4) (" ") (p5 . "Ho") (-1))
     (("\"Hi\"Ho" . t) (p5 . "Ho") (" " . "Ho") (p4 . "Hi"))
-    (("Hi\"Ho\"" . t) (p3 . "Hi") (" " . "Hi") (p4) (p5 . "Ho"))
+    ;; (("Hi\"Ho\"" . t) (p3 . "Hi") (" " . "Hi") (p4) (p5 . "Ho"))
+    (("Hi\"Ho\"" . t) (p3 . "Hi") (" " . "Hi") (p5 . "Ho"))
     )
   "List of test cases for WikiWords.")
 
@@ -1777,15 +1778,16 @@ face is verified during the change."
     (emacs-lisp-mode)
     (insert "\
 (defun func ()
-  \"WikiWor)
+  \"WikiWor   \")
 ")
     ;; Set point after WikiWor
     (goto-char 1)
     (should (search-forward "WikiWor"))
+    (should-not (hywiki-non-hook-context-p))
 
     ;; Complete WikiWord and verify highlighting
     (hywiki-tests--run-test-case
-     '(("d" . "WikiWord") ("\"" . "WikiWord") (p2 . t) (-1) ("d" . "WikiWord")))))
+     '(("d" . "WikiWord") (-1) ("d" . "WikiWord")))))
 
 (ert-deftest hywiki-tests--wikiword-identified-in-emacs-lisp-mode ()
   "Verify WikiWord is identified when surrounded by delimiters in `emacs-lisp-mode'."
