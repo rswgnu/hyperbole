@@ -1,3 +1,15 @@
+2026-01-28  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--publish-special-cases): revert
+    without query.
+    (hywiki-tests--run-test-case): Do not erase buffer by default since it
+    is used for cases where buffer is prepared before function is
+    called. Add ert-info for better feedback which test case failed.
+    (hywiki-tests--wikiword-step-check-verification): Erase-buffer between
+    test cases.
+    (hywiki-tests--filename-same-as-wiki-word-old): Use old verion of test
+    case as well as new version.
+
 2026-01-25  Bob Weiner  <rsw@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--filename-same-as-wiki-word): Rewrote

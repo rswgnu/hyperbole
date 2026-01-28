@@ -1112,7 +1112,8 @@ WikiWord#Csection-subsection
 			 ;; ^ Crashes due to (wrong-type-argument integer-or-marker-p nil) caused by buffer-substring-no-properties(nil nil)
 			 ))
               (let ((input (car v))
-                    (regex-output (cdr v)))
+                    (regex-output (cdr v))
+                    (revert-without-query '(".*")))
 		;; Setup WikiPage.
 		(find-file wikipage)
                 (erase-buffer)
@@ -1655,37 +1656,32 @@ or non-nil for a wikiword.  The state is checked after all chars
 of the string are inserted.  If equal to a string it is checked
 for match with the wikiword.  Movement of point is relative to
 point when the function is called."
-  (erase-buffer)
   (let ((origin (point)))
-
-    ;; For traceability when looking through the list of should
-    ;; clauses in a failing test.
-    (should (listp test-case))
-
-    (dolist (steps test-case)
-      (let ((step (car steps))
-            (vfy (cdr steps)))
-        (cond ((stringp step)
-               (dolist (ch (string-to-list step))
-                 (hywiki-tests--command-execute #'self-insert-command 1 ch))
-               (save-excursion
-                 (goto-char (1- (point)))
-                 (hywiki-tests--verify-hywiki-word vfy)))
-              ((integerp step)
-               (let ((forward (> step 0)))
-                 (dotimes (_ (abs step))
-                   (if forward
-                       (hywiki-tests--command-execute #'delete-forward-char 1)
-                     (hywiki-tests--command-execute #'backward-delete-char 1)))
-                 (hywiki-tests--verify-hywiki-word vfy)))
-              ((and (symbolp step) (string-prefix-p "p" (symbol-name step)))
-               (let* ((pos (string-to-number (substring (symbol-name step) 1)))
-                      (newpos (+ origin (1- pos))))
-                 (when (or (> 0 newpos) (< (point-max) newpos))
-                   (ert-fail (format "New point: '%s' is outside of buffer" newpos)))
-                 (goto-char newpos))
-               (hywiki-tests--verify-hywiki-word vfy))
-              (t (ert-fail (format "Unknown step: '%s' in WikiWord verification" step))))))))
+    (ert-info ((format "Test case => '%s'" test-case))
+      (dolist (steps test-case)
+        (let ((step (car steps))
+              (vfy (cdr steps)))
+          (cond ((stringp step)
+                 (dolist (ch (string-to-list step))
+                   (hywiki-tests--command-execute #'self-insert-command 1 ch))
+                 (save-excursion
+                   (goto-char (1- (point)))
+                   (hywiki-tests--verify-hywiki-word vfy)))
+                ((integerp step)
+                 (let ((forward (> step 0)))
+                   (dotimes (_ (abs step))
+                     (if forward
+                         (hywiki-tests--command-execute #'delete-forward-char 1)
+                       (hywiki-tests--command-execute #'backward-delete-char 1)))
+                   (hywiki-tests--verify-hywiki-word vfy)))
+                ((and (symbolp step) (string-prefix-p "p" (symbol-name step)))
+                 (let* ((pos (string-to-number (substring (symbol-name step) 1)))
+                        (newpos (+ origin (1- pos))))
+                   (when (or (> 0 newpos) (< (point-max) newpos))
+                     (ert-fail (format "New point: '%s' is outside of buffer" newpos)))
+                   (goto-char newpos))
+                 (hywiki-tests--verify-hywiki-word vfy))
+                (t (ert-fail (format "Unknown step: '%s' in WikiWord verification" step)))))))))
 
 (defconst hywiki-tests--wikiword-step-check
   '(
@@ -1720,6 +1716,7 @@ resulting state at point is a WikiWord or not."
   (hywiki-tests--preserve-hywiki-mode
     (let ((hywiki-tests--with-face-test nil))
       (dolist (testcase hywiki-tests--wikiword-step-check)
+	(erase-buffer)
         (hywiki-tests--run-test-case testcase)))))
 
 (ert-deftest hywiki-tests--wikiword-step-check-verification-with-faces ()
@@ -1857,6 +1854,26 @@ face is verified during the change."
       ;; Verify that using the org extension selects the WikiWord.
       (should (looking-at-p "WikiWord\\.org\""))
       (should (ibtype:test-p 'pathname)))))
+
+(ert-deftest hywiki-tests--filename-same-as-wiki-word-old ()
+  "Regular files should not be WikiWords even when hywiki-mode is active."
+  (hywiki-tests--preserve-hywiki-mode
+   (let* ((wiki-page (cdr (hywiki-add-page "DEMO")))
+          (default-directory hyperb:dir))
+     (unwind-protect
+         (progn
+           (insert "\"DEMO\" \"DEMO.org\"\n")
+           (goto-char 2)
+           (should (looking-at-p "DEMO\" "))
+           (hywiki-mode nil)
+           (should (ibtype:test-p 'pathname))
+           (hywiki-mode :all)
+           (should (ibtype:test-p 'pathname))
+           (goto-char 9)
+           ;; Verify that using the org extension selects the WikiWord.
+           (should (looking-at-p "DEMO\\.org\""))
+           (should (ibtype:test-p 'hywiki-existing-word)))
+       (hy-delete-file-and-buffer wiki-page)))))
 
 (ert-deftest hywiki-tests--nonexistent-wikiword-with-section-should-create-wikiword ()
   "Verify action-key on a new WikiWord#section creates proper page filename."
