@@ -2063,6 +2063,20 @@ expected result."
 		       (list #'hywiki-tags-view t nil bn)))
         (should (= (line-number-at-pos) 3))))))
 
+(ert-deftest hywiki-tests--verify-hook-functions ()
+  "Verify that the hook functions are set and teared down."
+  (hywiki-tests--preserve-hywiki-mode
+    (should (equal hywiki-mode :all))
+    (should (memq 'hywiki-word-store-around-point pre-command-hook))
+    (should (memq 'hywiki-word-highlight-post-self-insert post-self-insert-hook))
+    (should (memq 'hywiki-word-highlight-post-command post-command-hook))
+    (should (memq 'hywiki-word-highlight-in-frame window-buffer-change-functions))
+    (hywiki-mode nil)
+    (should-not (memq 'hywiki-word-store-around-point pre-command-hook))
+    (should-not (memq 'hywiki-word-highlight-post-self-insert post-self-insert-hook))
+    (should-not (memq 'hywiki-word-highlight-post-command post-command-hook))
+    (should-not (memq 'hywiki-word-highlight-in-frame window-buffer-change-functions))))
+
 (provide 'hywiki-tests)
 
 ;; This file can't be byte-compiled without the `el-mock' package
