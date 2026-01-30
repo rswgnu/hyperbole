@@ -278,18 +278,18 @@ This is for simulating the command loop."
 
 (ert-deftest hywiki-tests--hywiki-create-page--adds-file-in-wiki-folder ()
   "Verify add page creates file in wiki folder and sets hash table."
-  (let* ((hsys-org-enable-smart-keys t)
-	 (hywiki-page-file (expand-file-name "WikiPage.org" hywiki-directory)))
-    (unwind-protect
-	(progn
-          (should (string= hywiki-page-file
-                           (cdr (hywiki-add-page "WikiPage"))))
-          ;; Verify hash table is updated
-          (with-mock
-            (not-called hywiki-create-page)
-            (should (string= (file-name-nondirectory hywiki-page-file)
-			     (cdr (hywiki-get-referent "WikiPage"))))))
-      (hy-delete-file-and-buffer hywiki-page-file))))
+  (hywiki-tests--preserve-hywiki-mode
+    (let* ((hywiki-page-file (expand-file-name "WikiPage.org" hywiki-directory)))
+      (unwind-protect
+	  (progn
+            (should (string= hywiki-page-file
+                             (cdr (hywiki-add-page "WikiPage"))))
+            ;; Verify hash table is updated
+            (with-mock
+              (not-called hywiki-create-page)
+              (should (string= (file-name-nondirectory hywiki-page-file)
+			       (cdr (hywiki-get-referent "WikiPage"))))))
+        (hy-delete-file-and-buffer hywiki-page-file)))))
 
 (ert-deftest hywiki-tests--hywiki-create-page--adds-no-wiki-word-fails ()
   "Verify add page requires a WikiWord."
@@ -366,7 +366,6 @@ This is for simulating the command loop."
           (action-key)
           (should (string= wiki-page (buffer-file-name)))
 	  (should (looking-at-p (regexp-quote v))))))))
-   
 
 (ert-deftest hywiki-tests--action-key-on-wikiword-and-line-column-displays-page ()
   "Verify `action-key' on a WikiWord with line and column specifications goes to expected point."

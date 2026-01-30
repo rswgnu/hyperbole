@@ -2,6 +2,8 @@
 
 * test/hywiki-tests.el (hywiki-tests--verify-hook-functions): Add hook
     verification.
+    (hywiki-tests--hywiki-create-page--adds-file-in-wiki-folder): Protect
+    test with hywiki-tests--preserve-hywiki-mode.
 
 2026-01-28  Mats Lidell  <matsl@gnu.org>
 
