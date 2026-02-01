@@ -1,3 +1,8 @@
+2026-02-01  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--save-referent-find-use-menu): Use
+    hywiki-tests--preserve-hywiki-mode macro and refactor test to utilize that.
+
 2026-01-31  Bob Weiner  <rsw@gnu.org>
 
 * hproperty.el (hproperty:char-property-face-p): Rename to

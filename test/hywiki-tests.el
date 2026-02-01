@@ -1448,21 +1448,18 @@ named WikiReferent with a non-page referent type."
 (ert-deftest hywiki-tests--save-referent-find-use-menu ()
   "Verify saving and loading a referent find works using Hyperbole's menu."
   (skip-unless (not noninteractive))
-  (hywiki-tests--referent-test
-    (progn
-      (sit-for 0.2)
-      (cons 'find #'hywiki-word-grep))
-    (let ((page (cdr (hywiki-add-page "WikiWord")))
-	  (vertico-mode 0))
-      (unwind-protect
-          (progn
-            (find-file page)
-            (hywiki-tests--insert "\nWikiReferent\n")
-            (save-buffer)
-            (goto-char (point-min))
-            (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET f RET"))
-            (hy-test-helpers:consume-input-events))
-        (hy-delete-file-and-buffer page)))))
+  (hywiki-tests--preserve-hywiki-mode
+    (hywiki-tests--referent-test
+      (progn
+        (sit-for 0.2)
+        (cons 'find #'hywiki-word-grep))
+      (let ((vertico-mode 0))
+        (find-file wiki-page)
+        (hywiki-tests--insert "\nWikiReferent\n")
+        (save-buffer)
+        (goto-char (point-min))
+        (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET f RET"))
+        (hy-test-helpers:consume-input-events)))))
 
 ;; Global-button
 (ert-deftest hywiki-tests--save-referent-global-button ()
