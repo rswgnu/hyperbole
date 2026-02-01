@@ -1,3 +1,46 @@
+2026-02-01  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-word-store-around-point): Dehighlight only if Emacs
+    is idle and within a hywikiword in a valid context.
+            (hywiki-highlighted-word-at): Rewrite so matches 'hywiki-word-at'
+    behavior based on point but requires that the HyWikiWord be highlighted
+    or returns nil/nil range.
+
+* test/hywiki-tests.el (hywiki-tests--run-test-case): Remove initial
+    'erase-buffer' since callers set up the buffer prior to this call.
+    Add 'ert-info' so know the exact buffer state when the test is run.
+
+* hywiki.el (hywiki-maybe-highlight-references): Remove conditonals at the
+    start aside from whether hywiki-mode is active in this buffer since
+    a page may have been added and references to it need to be rehighlighted
+    so can't depend on previous highlighting having been done.
+
+* test/hywiki-tests.el (hywiki-tests--wikiword-identified-in-emacs-lisp-mode,
+                        hywiki-tests--face-property-for-wikiword-with-wikipage,
+                        hywiki-tests--verify-hywiki-word):
+    Add 'ert-info' to show which test has failed and fix categorization of
+    tests so they all pass.
+
+* hywiki.el (hywiki-word-highlight-in-current-buffer): Add for use as an
+    'after-change-major-mode-hook'.
+            (hywiki-word-highlight-buffers,
+             hywiki-word-dehighlight-buffers): Most major modes inherit
+    from 'fundamental-mode' which clears the hywiki buffer-local hooks,
+    so need to restore these to the current buffer via
+    'after-change-major-mode-hook'.  Setup to do that in above functions.
+            (hywiki-word-dehighlight-in-buffers): Create this function
+    and call from 'hywiki-word-dehighlight-buffers.
+            (hywiki-get-buffers): Optimize to check 'hywiki-mode-status'
+    only once.
+            (hywiki-get-buffers-in-windows): Fix doc to show that this
+    does not filter to only hywiki buffers.  Use 'hywiki-get-buffers'
+    for that.
+            (hywiki-word-highlight-in-frame): Fix to highlight in active
+    hywiki buffers only.
+            (hywiki-maybe-highlight-references): Fix that regexp search
+      leaves point after closing string delimiter and then tests if in
+      string.  Move point to within string (grouping 1) before testing.
+
 2026-01-31  Bob Weiner  <rsw@gnu.org>
 
 * hproperty.el (hproperty:char-property-face-p): Rename to

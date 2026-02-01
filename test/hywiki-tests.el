@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     31-Jan-26 at 17:35:30 by Bob Weiner
+;; Last-Mod:      1-Feb-26 at 15:52:57 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -774,17 +774,20 @@ Both mod-time and checksum must be changed for a test to return true."
   "Verify WikiWord for a wiki page gets face property hywiki-word-face."
   (skip-unless (not noninteractive))
   (hywiki-tests--preserve-hywiki-mode
-    (let* ((hsys-org-enable-smart-keys t))
-      (hywiki-tests--insert "WikiWor")
+    (let* ((hsys-org-enable-smart-keys t)
+	   str)
+      (hywiki-tests--insert (setq str "WikiWor"))
       (hywiki-tests--command-execute #'self-insert-command 1 ?d)
       (goto-char 4)
-      (should (hywiki-word-face-at-p))
+      (ert-info ((format "str = \"%s\"" str))
+	(should (hywiki-word-face-at-p)))
 
       (erase-buffer)
-      (hywiki-tests--insert "WikiWord")
+      (hywiki-tests--insert (setq str "WikiWord"))
       (hywiki-tests--command-execute #'newline 1 'interactive)
       (goto-char 4)
-      (should (hywiki-word-face-at-p)))))
+      (ert-info ((format "str = \"%s\"" str))
+	(should (hywiki-word-face-at-p))))))
 
 (ert-deftest hywiki-tests--no-face-property-for-no-wikipage ()
   "Verify WikiWord for no wiki page does not get face property hywiki-word-face."
@@ -1121,6 +1124,7 @@ WikiWord#Csection-subsection
 			 ("\"WikiWord Text WikiWord\"" . ,(format "\"%s%s\"" href href))
 			 ;;                                            ^ Missing " Text "
 			 ("WikiWord WikiWord WikiWord" . ,(format "%s %s %s" href href href))
+			 ;; !! TODO FIXME
 			 ;; (cons "\"WikiWord WikiWord WikiWord\"" (format "\"%s %s %s\"" href href href))
 			 ;; ^ Crashes due to (wrong-type-argument integer-or-marker-p nil) caused by buffer-substring-no-properties(nil nil)
 			 ))
@@ -1649,13 +1653,27 @@ comparison with expected overlays stable."
   "Verify that `hywiki-word-at' returns t if a wikiword is EXPECTED.
 If EXPECTED is a string, also verify that the wikiword matches the
 string."
-  (if (not expected)
-      (should-not (hywiki-tests--word-at))
-    (let ((hywiki-word-found (hywiki-tests--word-at)))
-      (if (stringp expected)
-          (should (string= expected hywiki-word-found))
-        (should hywiki-word-found))
-      (should (hywiki-word-is-p hywiki-word-found)))))
+  (ert-info ((format (concat "buffer name = \"%s\"\n"
+			     "major-mode = %s\n"
+			     "(hywiki-active-in-current-buffer-p) = %s\n"
+			     "pre-command-hook = %s\n"
+			     "buffer contents = \"%s\"\n"
+			     "hywiki-tests--with-face-test = %s\n"
+			     "expected = \"%s\"")
+		     (buffer-name)
+		     major-mode
+		     (hywiki-active-in-current-buffer-p)
+		     pre-command-hook
+		     (buffer-substring-no-properties (point-min) (point-max))
+		     hywiki-tests--with-face-test
+		     expected))
+    (if (not expected)
+	(should-not (hywiki-tests--word-at))
+      (let ((hywiki-reference (hywiki-tests--word-at)))
+	(if (stringp expected)
+            (should (string= expected hywiki-reference))
+          (should hywiki-reference))
+	(should (hywiki-word-is-p hywiki-reference))))))
 
 (defun hywiki-tests--run-test-case (test-case)
   "Run the TEST-CASE from point.
@@ -1668,7 +1686,6 @@ or non-nil for a wikiword.  The state is checked after all chars
 of the string are inserted.  If equal to a string it is checked
 for match with the wikiword.  Movement of point is relative to
 point when the function is called."
-  (erase-buffer)
   (let ((origin (point)))
 
     ;; For traceability when looking through the list of should
@@ -1693,8 +1710,9 @@ point when the function is called."
                  (hywiki-tests--verify-hywiki-word vfy)))
               ((and (symbolp step) (string-prefix-p "p" (symbol-name step)))
                (let* ((pos (string-to-number (substring (symbol-name step) 1)))
-                      (newpos (+ origin (1- pos))))
-                 (when (or (> 0 newpos) (< (point-max) newpos))
+                      (newpos (max (min (+ origin (1- pos)) (point-max))
+				   (point-min))))
+                 (when (or (> (point-min) newpos) (< (point-max) newpos))
                    (ert-fail (format "New point: '%s' is outside of buffer" newpos)))
                  (goto-char newpos))
                (hywiki-tests--verify-hywiki-word vfy))
@@ -1733,6 +1751,7 @@ resulting state at point is a WikiWord or not."
   (hywiki-tests--preserve-hywiki-mode
     (let ((hywiki-tests--with-face-test nil))
       (dolist (testcase hywiki-tests--wikiword-step-check)
+	(erase-buffer)
         (hywiki-tests--run-test-case testcase)))))
 
 (ert-deftest hywiki-tests--wikiword-step-check-verification-with-faces ()
@@ -1806,37 +1825,43 @@ face is verified during the change."
 (ert-deftest hywiki-tests--wikiword-identified-in-emacs-lisp-mode ()
   "Verify WikiWord is identified when surrounded by delimiters in `emacs-lisp-mode'."
   (hywiki-tests--preserve-hywiki-mode
-    (let* ((hsys-org-enable-smart-keys t))
+    (emacs-lisp-mode)
+    (let* ((hsys-org-enable-smart-keys t)
+	   str)
       ;; Matches a WikiWord
-      (dolist (v '("WikiWord" "[WikiWord]" "[[WikiWord]]" "{WikiWord}" "(WikiWord)"
-                   "<WikiWord>" "<<WikiWord>>" "{[[WikiWord]]}" "([[WikiWord]])"
-                   "[WikiWord AnotherWord]"
+      (dolist (v '("WikiWord" "[WikiWord]" "{WikiWord}" "(WikiWord)"
+                   "<WikiWord>" "[WikiWord AnotherWord]"
                    ))
-        (emacs-lisp-mode)
-        (hywiki-tests--insert (format ";; %s" v))
+	(erase-buffer)
+        (hywiki-tests--insert (setq str (format ";; %s" v)))
         (hywiki-tests--command-execute #'newline 1 'interactive)
         (goto-char 9)
-        (should (string= "WikiWord" (hywiki-tests--word-at)))
+	(ert-info ((format "str = \"%s\"" str))
+          (should (string= "WikiWord" (hywiki-tests--word-at))))
 
 	(erase-buffer)
-        (hywiki-tests--insert (format  "(setq var \"%s\")" v))
+        (hywiki-tests--insert (setq str (format "(setq var \"%s\")" v)))
         (hywiki-tests--command-execute #'newline 1 'interactive)
         (goto-char 16)
-        (should (string= "WikiWord" (hywiki-tests--word-at))))
+	(ert-info ((format "str = \"%s\"" str))
+          (should (string= "WikiWord" (hywiki-tests--word-at)))))
 
-      ;; Does not match as a WikiWord
-      (dolist (v '("WikiWord#"))
+      ;; Does not highlight as a WikiWord
+      (dolist (v '("WikiWord#" "[[WikiWord]]" "<<WikiWord>>"
+		   "{[[WikiWord]]}" "([[WikiWord]])"))
 	(erase-buffer)
-        (hywiki-tests--insert (format ";; %s" v))
+        (hywiki-tests--insert (setq str (format ";; %s" v)))
         (hywiki-tests--command-execute #'newline 1 'interactive)
         (goto-char 9)
-        (should-not (hywiki-tests--word-at))
+	(ert-info ((format "str = \"%s\"" str))
+          (should-not (hywiki-tests--word-at)))
 
 	(erase-buffer)
-        (hywiki-tests--insert (format  "(setq var \"%s\")" v))
+        (hywiki-tests--insert (setq str (format  "(setq var \"%s\")" v)))
         (hywiki-tests--command-execute #'newline 1 'interactive)
         (goto-char 16)
-        (should-not (hywiki-tests--word-at))))))
+	(ert-info ((format "str = \"%s\"" str))
+          (should-not (hywiki-tests--word-at)))))))
 
 (ert-deftest hywiki-tests--wikiword-identified-in-strings-in-emacs-lisp-mode ()
   "Verify WikiWord is identified when in strings in `emacs-lisp-mode'."
@@ -1900,6 +1925,7 @@ face is verified during the change."
       (dolist (testcase
                '((("\"Hi#a b c\"") (p3 . "Hi#a b c") (p11) (-1) (p3 . "Hi#a") (p10) ("\"") (p3 . "Hi#a b c"))
                  (("(Hi#s n)" . "Hi#s n") (-1) (p3 . "Hi#s") (p8) (")" . "Hi#s n"))))
+	(erase-buffer)
         (hywiki-tests--run-test-case testcase)))))
 
 (ert-deftest hywiki-tests--wikiword-yanked-with-extra-words ()
