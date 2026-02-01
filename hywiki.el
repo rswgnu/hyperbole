@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     25-Jan-26 at 16:29:26 by Bob Weiner
+;; Last-Mod:     31-Jan-26 at 22:45:09 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -337,7 +337,7 @@ nil means no full buffer highlighting has occurred.")
     open-line                         ;; C-o
     quoted-insert                     ;; C-q
     )
-  "List of non character commands.
+  "List of non-character commands.
 Commands that insert characters but whose input events do not
 arrive as characters or that quote another character for input.")
 
@@ -567,25 +567,42 @@ including deletion commands and those in `hywiki-non-character-commands'."
     (set-marker hywiki--buttonize-end nil)
     (setq hywiki--buttonize-range nil))
 
-  (unless (hywiki-non-hook-context-p)
-    ;; Record the WikiWord from any WikiWord ref that point is on
-    (setq hywiki--word-pre-command (hywiki-get-singular-wikiword
-				    (hywiki-word-at)))
-    (when (or (memq this-command hywiki-non-character-commands)
-	      (and (symbolp this-command)
-		   (string-match-p "^\\(org-\\)?\\(delete-\\|kill-\\)\\|\\(-delete\\|-kill\\)\\(-\\|$\\)" (symbol-name this-command))))
-      ;; Test if at delimiters surrounding a single WikiWord reference
-      ;; and if so, record those for use by post hooks.
-      (cl-destructuring-bind (start end)
-	  ;; Get delimited region only if before or after delimiters,
-	  ;; else return (nil nil).
-	  (setq hywiki--buttonize-range
-		(hywiki-at-range-delimiter)) ;; includes delimiters
-	(setq hywiki--start (point))
+  (when (hywiki-non-hook-context-p)
+    ;; Dehighlight any previously highlighted WikiWord at point if
+    ;; outside of a valid context.
+    (save-restriction
+      (narrow-to-region (line-beginning-position) (line-end-position))
+      (hywiki-maybe-dehighlight-reference)))
+
+  (if (and (symbolp this-command)
+	   (string-match-p "^-?insert\\(-\\|$\\)\\|eval-last-sexp\\|eval-expression\\|read--expression-try-read" (symbol-name this-command)))
+      ;; prior to an insertion command
+      (progn
+	(setq hywiki--start (point)
+	      hywiki--end nil)
 	;; Use these to store any range of a delimited HyWikiWord#section
-	(set-marker hywiki--buttonize-start start)
-	(set-marker hywiki--buttonize-end end)
-	start))))
+	(set-marker hywiki--buttonize-start nil)
+	(set-marker hywiki--buttonize-end nil)
+	hywiki--start)
+    (unless (hywiki-non-hook-context-p)
+      ;; Record the WikiWord from any WikiWord ref that point is on
+      (setq hywiki--word-pre-command (hywiki-get-singular-wikiword
+				      (hywiki-word-at)))
+      (when (or (memq this-command hywiki-non-character-commands)
+		(and (symbolp this-command)
+		     (string-match-p "^\\(org-\\)?\\(delete-\\|kill-\\)\\|\\(-delete\\|-kill\\)\\(-\\|$\\)" (symbol-name this-command))))
+	;; Test if at delimiters surrounding a single WikiWord reference
+	;; and if so, record those for use by post hooks.
+	(cl-destructuring-bind (start end)
+	    ;; Get delimited region only if before or after delimiters,
+	    ;; else return (nil nil).
+	    (setq hywiki--buttonize-range
+		  (hywiki-at-range-delimiter)) ;; includes delimiters
+	  (setq hywiki--start (point))
+	  ;; Use these to store any range of a delimited HyWikiWord#section
+	  (set-marker hywiki--buttonize-start start)
+	  (set-marker hywiki--buttonize-end end)
+	  start)))))
 
 (defun hywiki-word-highlight-post-self-insert ()
   "Turn any HyWikiWords around point into highlighted Hyperbole buttons.
@@ -600,37 +617,38 @@ more characters while the command is still executing.  The
     ;; Dehighlight any previously highlighted WikiWord at point
     ;; before we move to the start of any current WikiWord and
     ;; rehighlight that.
-    (hywiki--maybe-dehighlight-at-point)
+    (hywiki--maybe-dehighlight-at-point))
 
-    (save-excursion
-      (cond ((marker-position hywiki--buttonize-start)
-	     ;; Point was before or after a WikiWord delimiter
-	     (goto-char hywiki--buttonize-start)
-	     (skip-chars-backward "-" (line-beginning-position))
-	     (goto-char (1- (point))))
-	    ((not (equal (setq hywiki--range (hywiki-highlight-word-get-range))
-			 '(nil nil nil)))
-	     (cl-destructuring-bind (_ start end)
-		 hywiki--range
-	       (if (and start end)
-		   (progn
-		     ;; On a non-delimited HyWikiWord
-		     (set-marker hywiki--buttonize-start start)
-		     (set-marker hywiki--buttonize-end end)
-		     (goto-char start)
-		     (skip-chars-backward "-" (line-beginning-position))
-		     t)
-		 (setq hywiki--range nil))))
-	    ((not (member (setq hywiki--range (hywiki-at-range-delimiter))
-			 '(nil nil)))
-	     ;; At delimiters surrounding a WikiWord
-	     (let ((start (nth 0 hywiki--range))
-		   (end   (nth 1 hywiki--range)))
-	       (when (and start end)
-		 ;; Use these to store any range of a delimited HyWikiWord#section
-		 (set-marker hywiki--buttonize-start (1+ start))
-		 (set-marker hywiki--buttonize-end (1- end))))))
+  (save-excursion
+    (cond ((marker-position hywiki--buttonize-start)
+	   ;; Point was before or after a WikiWord delimiter
+	   (goto-char hywiki--buttonize-start)
+	   (skip-chars-backward "-" (line-beginning-position))
+	   (goto-char (1- (point))))
+	  ((not (equal (setq hywiki--range (hywiki-highlight-word-get-range))
+		       '(nil nil nil)))
+	   (cl-destructuring-bind (_ start end)
+	       hywiki--range
+	     (if (and start end)
+		 (progn
+		   ;; On a non-delimited HyWikiWord
+		   (set-marker hywiki--buttonize-start start)
+		   (set-marker hywiki--buttonize-end end)
+		   (goto-char start)
+		   (skip-chars-backward "-" (line-beginning-position))
+		   t)
+	       (setq hywiki--range nil))))
+	  ((not (member (setq hywiki--range (hywiki-at-range-delimiter))
+			'(nil nil)))
+	   ;; At delimiters surrounding a WikiWord
+	   (let ((start (nth 0 hywiki--range))
+		 (end   (nth 1 hywiki--range)))
+	     (when (and start end)
+	       ;; Use these to store any range of a delimited HyWikiWord#section
+	       (set-marker hywiki--buttonize-start (1+ start))
+	       (set-marker hywiki--buttonize-end (1- end))))))
 
+    (unless (hywiki-non-hook-context-p)
       ;; This first rehighlighting is needed to ensure
       ;; any wikiword before an inserted whitespace character is
       ;; properly highlighted when separating two words or after a
@@ -647,11 +665,10 @@ Triggered by `post-command-hook' for non-character-commands, including
 deletion commands and those in `hywiki-non-character-commands'."
   ;; (when ert--running-tests
   ;;   (message "Running post-command-hook..."))
-  (unless (or (eq hywiki--buffer-modified-tick (buffer-modified-tick))
-	      (hywiki-non-hook-context-p))
+  (unless (eq hywiki--buffer-modified-tick (buffer-modified-tick))
     (setq hywiki--range nil)
     (cond ((and (symbolp this-command)
-		(string-match-p "^insert\\(-\\|$\\)\\|-insert-?\\|eval-last-sexp\\|eval-expression\\|read--expression-try-read"
+		(string-match-p "^-?insert\\(-\\|$\\)\\|eval-last-sexp\\|eval-expression\\|read--expression-try-read"
 				(symbol-name this-command)))
 	   (setq hywiki--end (point))
 	   (when (and hywiki--start (not (eq hywiki--start hywiki--end)))
@@ -662,30 +679,37 @@ deletion commands and those in `hywiki-non-character-commands'."
 		  (max hywiki--start hywiki--end))
 	       (hywiki-maybe-dehighlight-references start end)
 	       (hywiki-maybe-highlight-references start end))))
-
 	  ((when (or (memq this-command hywiki-non-character-commands)
 		     (and (symbolp this-command)
 			  (string-match-p "^\\(org-\\)?\\(delete-\\|kill-\\)\\|\\(-delete\\|-kill\\|eval-last-sexp\\|eval-expression\\)\\(-\\|$\\)\\|^\\(hkey-either\\|action-key\\|assist-key\\)" (symbol-name this-command))))
 	     (save-excursion
-	       ;; Record the WikiWord from any WikiWord ref that point is on
-	       (unless hywiki--word-pre-command
-		 (setq hywiki--word-pre-command (hywiki-get-singular-wikiword
-						 (or (hywiki-word-at)
-						     (progn (goto-char (max (point-min)
-									    (1- (point))))
-							    (hywiki-word-at))))))
-
 	       ;; Dehighlight any previously highlighted WikiWord at point
 	       ;; before we move to the start of any current WikiWord and
 	       ;; rehighlight that.
-	       (hywiki--maybe-dehighlight-at-point)
+	       ;; Dehighlight if point is on or between a HyWikiWord
+	       (save-restriction
+		 (narrow-to-region (line-beginning-position) (line-end-position))
+		 (hywiki-maybe-dehighlight-between-references))
+
+	       ;; Record the WikiWord from any WikiWord ref that point is on
+	       (unless hywiki--word-pre-command
+		 (setq hywiki--word-pre-command (hywiki-get-singular-wikiword
+						 (or (unless (hywiki-non-hook-context-p)
+						       (hywiki-word-at))
+						     (progn (goto-char (max (point-min)
+									    (1- (point))))
+							    (unless (hywiki-non-hook-context-p)
+							      (hywiki-word-at)))))))
 
 	       (cond ((marker-position hywiki--buttonize-start)
 		      ;; Point was before or after a WikiWord delimiter
 		      (goto-char (1+ hywiki--buttonize-start))
-		      (set-marker hywiki--buttonize-start nil)
-		      (set-marker hywiki--buttonize-end nil))
-		     ((setq hywiki--range (hywiki-highlight-word-get-range))
+		      (unless (hywiki-non-hook-context-p)
+			(set-marker hywiki--buttonize-start nil)
+			(set-marker hywiki--buttonize-end nil)))
+		     ((not (equal (setq hywiki--range
+					(hywiki-highlight-word-get-range))
+				  '(nil nil nil)))
 		      (cl-destructuring-bind (_ start end)
 			  hywiki--range
 			(if (and start end)
@@ -698,15 +722,16 @@ deletion commands and those in `hywiki-non-character-commands'."
 			      t)
 			  (setq hywiki--range nil)))))
 
-	       ;; This first rehighlighting is needed to ensure
-	       ;; any wikiword before an inserted whitespace character is
-	       ;; properly highlighted when separating two words or after a
-	       ;; closing delimiter.
-	       (save-excursion
-		 (goto-char (max (1- (point)) (point-min)))
-		 (hywiki--maybe-rehighlight-at-point))
+	       (unless (hywiki-non-hook-context-p)
+		 ;; This first rehighlighting is needed to ensure
+		 ;; any wikiword before an inserted whitespace character is
+		 ;; properly highlighted when separating two words or after a
+		 ;; closing delimiter.
+		 (save-excursion
+		   (goto-char (max (1- (point)) (point-min)))
+		   (hywiki--maybe-rehighlight-at-point))
 
-	       (hywiki--maybe-rehighlight-at-point)))))))
+		 (hywiki--maybe-rehighlight-at-point))))))))
 
 (defun hywiki-get-buttonize-characters ()
   "Return a string of Org self-insert keys that have punctuation/symbol syntax."
@@ -739,7 +764,10 @@ deletion commands and those in `hywiki-non-character-commands'."
 		     (setq result (cons k result)))))))))))
 
 (defun hywiki-non-hook-context-p ()
-  "Return non-nil when HyWiki command hooks should do nothing."
+  "Return non-nil when HyWiki command hooks should do nothing.
+When used within a `post-command-hook', point must be moved back to
+its location prior to the associated command run before this is called
+since the command may have moved it off a HyWikiWord."
   (or (minibuffer-window-active-p (selected-window))
       ;; (and (bound-and-true-p edebug-active)
       ;;   (active-minibuffer-window))
@@ -1770,7 +1798,7 @@ A call to `hywiki-active-in-current-buffer-p' at point must return non-nil
 or this will return nil."
   (when (and (hywiki-active-in-current-buffer-p)
 	     (setq hywiki--range
-		   (hproperty:char-property-range (point) 'face hywiki-word-face)))
+		   (hproperty:overlay-range (point) 'face hywiki-word-face)))
     (let ((wikiword (buffer-substring-no-properties (car hywiki--range) (cdr hywiki--range))))
       (if (string-match hywiki-word-with-optional-suffix-exact-regexp wikiword)
 	  (if range-flag
@@ -1976,7 +2004,7 @@ Ignore return value; it has no meaning."
   "Dehighlight any non-Org link HyWiki page#section between point.
 If in a programming mode, must be within a comment or string.  Use
 `hywiki-word-face' to dehighlight."
-  (cond ((hproperty:char-property-range (point) 'face hywiki-word-face)
+  (cond ((hproperty:overlay-range (point) 'face hywiki-word-face)
 	 (hproperty:but-clear-all-in-list
 	  (hproperty:but-get-all-in-region (point) (1+ (point))
 					   'face hywiki-word-face)))
@@ -1993,7 +2021,7 @@ If in a programming mode, must be within a comment or string.  Use
 	   (when (and start end)
 	     (save-excursion
 	       (goto-char (1+ start))
-	       (and (hproperty:char-property-range (point) 'face hywiki-word-face)
+	       (and (hproperty:overlay-range (point) 'face hywiki-word-face)
 		    (equal (hywiki-referent-exists-p :range)
 			   '(nil nil nil))
 		    ;; non-existing wikiword
@@ -2044,17 +2072,11 @@ section name.  Otherwise, if `pre-command-hook' has set
 `hywiki--buttonize-start' `hywiki--buttonize-end' global variables,
 use these as the region in which to dehighlight.
 
-If in a programming mode, must be within a comment.  Use
-`hywiki-word-face' to dehighlight."
+Use `hywiki-word-face' to dehighlight."
   (interactive)
   (setq hywiki--start nil
 	hywiki--end   nil)
   (when (and (hywiki-active-in-current-buffer-p)
-	     (if (and (derived-mode-p 'prog-mode)
-		      (not (apply #'derived-mode-p hywiki-highlight-all-in-prog-modes)))
-		 ;; Non-nil if match is inside a comment or a string
-		 (or (nth 4 (syntax-ppss)) (hypb:in-string-p))
-	       t)
 	     (or on-reference
 		 (and (characterp last-command-event)
 		      (string-match (regexp-quote
@@ -2230,7 +2252,7 @@ Return t if no errors and a pair was found, else nil."
 If in a programming mode, must be within a comment.  Use
 `hywiki-word-face' to highlight.  Do not highlight references to
 the current page unless they have sections attached."
-  (cond ((hproperty:char-property-range (point) 'face hywiki-word-face))
+  (cond ((hproperty:overlay-range (point) 'face hywiki-word-face))
 	((cl-destructuring-bind (word start end)
 	     (hywiki-highlight-word-get-range)
 	   (when (and start end)
@@ -3424,7 +3446,7 @@ non-nil or this will return nil."
 Do not highlight if any face from `hywiki-ignore-face-list' appears
 within the given region, e.g. ignore HyWikiWords used in Org links or
 Hyperbole button names."
-  (unless (hproperty:char-property-face-p start hywiki-ignore-face-list)
+  (unless (hproperty:but-face-p start hywiki-ignore-face-list)
     (hproperty:but-add start end hywiki-word-face)))
 
 (defun hywiki-highlight-word-get-range ()
@@ -3445,7 +3467,9 @@ This does not test whether a referent exists for the HyWikiWord; call
 A call to `hywiki-active-in-current-buffer-p' at point must return
 non-nil or this will return \\='(nil nil nil)."
   (cl-destructuring-bind (wikiword start end)
-      (hywiki-word-at :range)
+      (if (hywiki-non-hook-context-p)
+	  '(nil nil nil)
+	(hywiki-word-at :range))
     ;; Ensure wikiword in buffer is highlighted before
     ;; returning its non-highlighted string version.
     (when (and wikiword start end
@@ -3613,9 +3637,9 @@ occurs with one of these hooks, the problematic hook is removed."
   "Auto-highlight HyWikiWords in BUFFERS."
   (dolist (buf buffers)
     (with-current-buffer buf
-      (add-hook 'pre-command-hook      'hywiki-word-store-around-point 95 :local)
-      (add-hook 'post-self-insert-hook 'hywiki-word-highlight-post-self-insert 95 :local)
-      (add-hook 'post-command-hook     'hywiki-word-highlight-post-command 95 :local)
+      (add-hook 'pre-command-hook      'hywiki-word-store-around-point -60 :local)
+      (add-hook 'post-self-insert-hook 'hywiki-word-highlight-post-self-insert -60 :local)
+      (add-hook 'post-command-hook     'hywiki-word-highlight-post-command -60 :local)
       ;; Display buffer before `normal-mode' triggers possibly
       ;; long-running font-locking
       (sit-for 0)

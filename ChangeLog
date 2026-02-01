@@ -1,3 +1,37 @@
+2026-01-31  Bob Weiner  <rsw@gnu.org>
+
+* hproperty.el (hproperty:char-property-face-p): Rename to
+    'hproperty:but-face-p' since does not utilize char-properties.
+  hywiki.el (hywiki-maybe-highlight-region-reference): Use new
+    function name above.
+
+* hywiki.el: Replace all uses of 'hproperty:char-property-range' with
+    'hproperty:overlay-range' to avoid interaction with other code
+    that uses text properties.
+
+* test/hywiki-tests.el (hywiki-tests--command-execute): Force run of
+    'post-self-insert-hook' when executing a 'self-insert-command'.
+
+* hywiki.el (hywiki-highlight-word-get-range): Fix to highlight only
+    if within a buffer context where HyWiki words are valid.
+            (hywiki-word-store-around-point): For insert commands,
+    capture the 'hywiki--start' position before the insert.  Also,
+    dehighlight a wikiword at point if outside a valid context.
+            (hywiki-maybe-dehighlight-reference,
+             hywiki-word-highlight-post-command): Make dehighlight
+    in non-highlight contexts since an edit may have just made
+    the context invalid.
+            (hywiki-non-hook-context-p): Update doc on use with
+    'post-command-hook' calls.
+            (hywiki-word-highlight-post-self-insert,
+	     hywiki-word-highlight-post-command): Rewrite so non-hook
+    context tests are all applied at the proper point.
+
+2026-01-29  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-word-highlight-in-buffers): Change hook depth setting
+    from 95 to -60 to run these hooks nearly first.
+
 2026-01-25  Bob Weiner  <rsw@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--filename-same-as-wiki-word): Rewrote
