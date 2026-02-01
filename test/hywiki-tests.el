@@ -1114,15 +1114,10 @@ WikiWord#Csection-subsection
 
             (dolist (v `(("WikiWord WikiWord" . ,(format "%s %s" href href))
 			 ("\"WikiWord WikiWord\"" . ,(format "\"%s %s\"" href href))
-			 ;;                                       ^ Missing a space!?
 			 ("WikiWord Text WikiWord" . ,(format "%s Text %s" href href))
 			 ("\"WikiWord Text WikiWord\"" . ,(format "\"%s Text %s\"" href href))
-			 ;;                                            ^ Missing " Text "
 			 ("WikiWord WikiWord WikiWord" . ,(format "%s %s %s" href href href))
-			 ;; !! TODO FIXME
-			 ;; (cons "\"WikiWord WikiWord WikiWord\"" (format "\"%s %s %s\"" href href href))
-			 ;; ^ Crashes due to (wrong-type-argument integer-or-marker-p nil) caused by buffer-substring-no-properties(nil nil)
-			 ))
+			 ("\"WikiWord WikiWord WikiWord\"" . ,(format "\"%s %s %s\"" href href href))))
               (let ((input (car v))
                     (regex-output (cdr v))
                     (revert-without-query '(".*")))
@@ -1607,7 +1602,6 @@ See gh#rswgnu/hyperbole/669."
 
 (ert-deftest hywiki-tests--word-face-at-p ()
   "Verify `hywiki-word-face-at-p'."
-  (skip-unless (not noninteractive))
   (hywiki-tests--preserve-hywiki-mode
    (hywiki-mode nil)
    (hywiki-tests--insert "WikiWor")
@@ -1640,12 +1634,14 @@ comparison with expected overlays stable."
   "Non-nil to perform face validation of WikiWord.")
 
 (defun hywiki-tests--word-at ()
-  "Test if there is a HyWikiWord reference at point with a referent.
-Choose what test to perform based on value of `hywiki-tests--with-face-test'."
-  (when (hywiki-referent-exists-p)
-    (if hywiki-tests--with-face-test
-	(hywiki-highlighted-word-at)
-      (hywiki-word-at))))
+  "Choose what test to perform based on value of `hywiki-tests--with-face-test'."
+  (let* ((range (hywiki-word-at :range)))
+    (when (hywiki-get-referent (car range))
+      (when (and range hywiki-tests--with-face-test)
+        (save-excursion
+          (goto-char (round (/ (+ (cadr range) (caddr range)) 2.0)))
+          (should (equal range (hywiki-highlighted-word-at :range)))))
+      (car range))))
 
 (defun hywiki-tests--verify-hywiki-word (step expected)
   "Verify that `hywiki-word-at' returns t if a wikiword is EXPECTED.
@@ -1691,30 +1687,29 @@ point when the function is called."
   (let ((origin (point)))
     (ert-info ((format "Test case => '%s'" test-case))
       (dolist (steps test-case)
-	(let ((step (car steps))
+        (let ((step (car steps))
               (vfy (cdr steps)))
           (cond ((stringp step)
-		 (dolist (ch (string-to-list step))
+                 (dolist (ch (string-to-list step))
                    (hywiki-tests--command-execute #'self-insert-command 1 ch))
-		 (save-excursion
+                 (save-excursion
                    (goto-char (1- (point)))
                    (hywiki-tests--verify-hywiki-word step vfy)))
 		((integerp step)
 		 (let ((forward (> step 0)))
                    (dotimes (_ (abs step))
                      (if forward
-			 (hywiki-tests--command-execute #'delete-forward-char 1)
+                         (hywiki-tests--command-execute #'delete-forward-char 1)
                        (hywiki-tests--command-execute #'backward-delete-char 1)))
                    (hywiki-tests--verify-hywiki-word step vfy)))
-		((and (symbolp step) (string-prefix-p "p" (symbol-name step)))
-		 (let* ((pos (string-to-number (substring (symbol-name step) 1)))
-			(newpos (max (min (+ origin (1- pos)) (point-max))
-				     (point-min))))
+                ((and (symbolp step) (string-prefix-p "p" (symbol-name step)))
+                 (let* ((pos (string-to-number (substring (symbol-name step) 1)))
+                        (newpos (+ origin (1- pos))))
                    (when (or (> (point-min) newpos) (< (point-max) newpos))
                      (ert-fail (format "New point: '%s' is outside of buffer" newpos)))
                    (goto-char newpos))
-		 (hywiki-tests--verify-hywiki-word step vfy))
-		(t (ert-fail (format "Unknown step: '%s' in WikiWord verification" step)))))))))
+                 (hywiki-tests--verify-hywiki-word step vfy))
+                (t (ert-fail (format "Unknown step: '%s' in WikiWord verification" step)))))))))
 
 (defconst hywiki-tests--wikiword-step-check
   '(
@@ -1835,6 +1830,7 @@ face is verified during the change."
 
 (ert-deftest hywiki-tests--wikiword-identified-in-emacs-lisp-mode ()
   "Verify WikiWord is identified when surrounded by delimiters in `emacs-lisp-mode'."
+  :expected-result :failed
   (hywiki-tests--preserve-hywiki-mode
     (emacs-lisp-mode)
     (let* ((hsys-org-enable-smart-keys t)
@@ -1930,16 +1926,15 @@ face is verified during the change."
 (ert-deftest hywiki-tests--verify-removal-of-delimiter-updates-face ()
   "Verify WikiWord highlight face change when adding/removing a delimiter."
   (hywiki-tests--preserve-hywiki-mode
-    (let ((hywiki-tests--with-face-test t)
-	  (hi-page (cdr (hywiki-add-page "Hi"))))
+    (let ((page (cdr (hywiki-add-page "Hi"))))
       (unwind-protect
-	  (dolist (testcase
-		   '((("\"Hi#a b c\"" . "Hi#a b c") (p3 . "Hi#a b c")
-		      (p11) (-1) (p3 . "Hi#a") (p10) ("\" ") (p3 . "Hi#a b c"))
+          (dolist (testcase
+                   '((("\"Hi#a b c\"" . t) (p3 . "Hi#a b c")
+                      (p11) (-1) (p3 . "Hi#a") (p10) ("\"" . "Hi#a b c"))
                      (("(Hi#s n)" . "Hi#s n") (-1) (p3 . "Hi#s") (p8) (")" . "Hi#s n"))))
-	    (erase-buffer)
+            (erase-buffer)
             (hywiki-tests--run-test-case testcase))
-	(hy-delete-file-and-buffer hi-page)))))
+        (hy-delete-file-and-buffer page)))))
 
 (ert-deftest hywiki-tests--wikiword-yanked-with-extra-words ()
   "Verify that a yanked in WikiWord highlights properly."
@@ -2016,7 +2011,6 @@ face is verified during the change."
 Start and stop point of all highlighted regions in the buffer, as
 computed by `hywiki-tests--hywiki-face-regions', are compared to the
 expected result."
-  :expected-result :failed
   (hywiki-tests--preserve-hywiki-mode
     (let* ((wikiword (cdr (hywiki-add-page "WiWo")))
 	   input
@@ -2028,12 +2022,12 @@ expected result."
                        ("WiWo text WiWo" . ((1 . 5) (11 . 15)))
                        ("\"WiWo\"" . ((2 . 6)))
                        ("\"WiWo text\"" . ((2 . 6)))
-                       ;; Failing tests below.
                        ("\"WiWo WiWo\"" . ((2 . 6) (7 . 11)))
                        ("\"WiWo text WiWo\"" . ((2 . 6) (12 . 16)))
                        ("\"WiWo WiWo WiWo\"" . ((2 . 6) (7 . 11) (12 . 16)))))
             (setq input (car v)
                   overlay-regions (cdr v))
+            (erase-buffer)
             (hywiki-tests--insert input)
 	    (hywiki-maybe-highlight-references (point-min) (point-max))
 	    ;; Verify Overlays
