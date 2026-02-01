@@ -1,5 +1,22 @@
 2026-02-01  Mats Lidell  <matsl@gnu.org>
 
+* test/hywiki-tests.el (hywiki-tests--word-at): Require wikiword to
+    exist. Use the wikiword range for verifying the highlighting. Avoids
+    differences in how wikiwords are found and lets hywiki-word-at decide.
+    (hywiki-tests--run-test-case): Do not erase-buffer. Some test cases
+    depend on preparing the buffer before this is called. Use ert-info for
+    better feedback when failing.
+    (hywiki-tests--wikiword-step-check-verification)
+    (hywiki-tests--wikiword-step-check-verification-with-surrounding-text):
+    Create wikipages, required by hywkii-tests--word-at.
+    (hywiki-tests--wikiword-step-check-verification-with-faces)
+    (hywiki-tests--face-property-for-wikiword-with-wikipage)
+    (hywiki-tests--no-face-property-for-no-wikipage)
+    (hywiki-tests--verify-face-property-when-editing-wikiword)
+    (hywiki-tests--verify-face-property-when-editing-wikiword-first-char)
+    (hywiki-tests--references-to-org-link, hywiki-tests--word-face-at-p): : Drop
+    interactive requirement.
+
 * test/hywiki-tests.el (hywiki-tests--publish-special-cases): Avoid revert query.
                        (hywiki-tests--save-referent-find-use-menu): Use
     hywiki-tests--preserve-hywiki-mode macro and refactor test to utilize that.
@@ -58,20 +75,6 @@
             (hywiki-maybe-highlight-references): Fix that regexp search
       leaves point after closing string delimiter and then tests if in
       string.  Move point to within string (grouping 1) before testing.
-
-2026-02-01  Mats Lidell  <matsl@gnu.org>
-
-  (hywiki-tests--wikiword-step-check-verification)
-    (hywiki-tests--wikiword-step-check-verification-with-surrounding-text):
-    Create wikipages, required by hywkii-tests--word-at.
-
-  (hywiki-tests--wikiword-step-check-verification-with-faces)
-    (hywiki-tests--face-property-for-wikiword-with-wikipage)
-    (hywiki-tests--no-face-property-for-no-wikipage)
-    (hywiki-tests--verify-face-property-when-editing-wikiword)
-    (hywiki-tests--verify-face-property-when-editing-wikiword-first-char)
-    (hywiki-tests--references-to-org-link, hywiki-tests--word-face-at-p):
-    Drop interactive requirement.
 
 2026-01-31  Bob Weiner  <rsw@gnu.org>
 

@@ -1607,7 +1607,6 @@ See gh#rswgnu/hyperbole/669."
 
 (ert-deftest hywiki-tests--word-face-at-p ()
   "Verify `hywiki-word-face-at-p'."
-  (skip-unless (not noninteractive))
   (hywiki-tests--preserve-hywiki-mode
    (hywiki-mode nil)
    (hywiki-tests--insert "WikiWor")
@@ -1640,12 +1639,14 @@ comparison with expected overlays stable."
   "Non-nil to perform face validation of WikiWord.")
 
 (defun hywiki-tests--word-at ()
-  "Test if there is a HyWikiWord reference at point with a referent.
-Choose what test to perform based on value of `hywiki-tests--with-face-test'."
-  (when (hywiki-referent-exists-p)
-    (if hywiki-tests--with-face-test
-	(hywiki-highlighted-word-at)
-      (hywiki-word-at))))
+  "Choose what test to perform based on value of `hywiki-tests--with-face-test'."
+  (let* ((range (hywiki-word-at :range)))
+    (when (hywiki-get-referent (car range))
+      (if (and range hywiki-tests--with-face-test)
+          (save-excursion
+            (goto-char (cadr range))
+            (hywiki-highlighted-word-at))
+        (car range)))))
 
 (defun hywiki-tests--verify-hywiki-word (expected)
   "Verify that `hywiki-word-at' returns t if a wikiword is EXPECTED.
@@ -1687,30 +1688,29 @@ point when the function is called."
   (let ((origin (point)))
     (ert-info ((format "Test case => '%s'" test-case))
       (dolist (steps test-case)
-	(let ((step (car steps))
+        (let ((step (car steps))
               (vfy (cdr steps)))
           (cond ((stringp step)
-		 (dolist (ch (string-to-list step))
+                 (dolist (ch (string-to-list step))
                    (hywiki-tests--command-execute #'self-insert-command 1 ch))
-		 (save-excursion
+                 (save-excursion
                    (goto-char (1- (point)))
                    (hywiki-tests--verify-hywiki-word vfy)))
-		((integerp step)
-		 (let ((forward (> step 0)))
+                ((integerp step)
+                 (let ((forward (> step 0)))
                    (dotimes (_ (abs step))
                      (if forward
-			 (hywiki-tests--command-execute #'delete-forward-char 1)
+                         (hywiki-tests--command-execute #'delete-forward-char 1)
                        (hywiki-tests--command-execute #'backward-delete-char 1)))
                    (hywiki-tests--verify-hywiki-word vfy)))
-		((and (symbolp step) (string-prefix-p "p" (symbol-name step)))
-		 (let* ((pos (string-to-number (substring (symbol-name step) 1)))
-			(newpos (max (min (+ origin (1- pos)) (point-max))
-				     (point-min))))
+                ((and (symbolp step) (string-prefix-p "p" (symbol-name step)))
+                 (let* ((pos (string-to-number (substring (symbol-name step) 1)))
+                        (newpos (+ origin (1- pos))))
                    (when (or (> (point-min) newpos) (< (point-max) newpos))
                      (ert-fail (format "New point: '%s' is outside of buffer" newpos)))
                    (goto-char newpos))
-		 (hywiki-tests--verify-hywiki-word vfy))
-		(t (ert-fail (format "Unknown step: '%s' in WikiWord verification" step)))))))))
+                 (hywiki-tests--verify-hywiki-word vfy))
+                (t (ert-fail (format "Unknown step: '%s' in WikiWord verification" step)))))))))
 
 (defconst hywiki-tests--wikiword-step-check
   '(
