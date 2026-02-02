@@ -1,3 +1,11 @@
+2026-02-02  Mats Lidell  <matsl@gnu.org>
+
+* hibtypes.el (hywiki-active-in-current-buffer-p)
+    (hywiki-highlight-word-get-range): Declare public.
+
+* hsys-activities.el (activities-tabs-before-resume)
+    (activities-tabs-mode, activities-tabs-before-resume): Declare public.
+
 2026-02-01  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--publish-special-cases): Avoid revert query.

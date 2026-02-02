@@ -31,17 +31,13 @@
 (hypb:require-package 'activities)
 (require 'hypb)
 
-(add-hook 'activities-tabs-mode-hook
-	  (lambda ()
-	    (when activities-tabs-mode
-	      (advice-remove #'activities-resume #'activities-tabs-before-resume)
-	      (advice-add #'hsys-activities-before-resume :before #'activities-tabs-before-resume))))
-
 ;;; ************************************************************************
 ;;; Public declarations
 ;;; ************************************************************************
 
 (defvar activities-name-prefix)
+(defvar activities-tabs-before-resume)
+(defvar activities-tabs-mode)
 
 (declare-function activities-current "ext:activities")
 (declare-function activities-define "ext:activities")
@@ -50,6 +46,13 @@
 (declare-function activities-names "ext:activities")
 (declare-function activities-resume "ext:activities")
 (declare-function activities-revert "ext:activities")
+(declare-function activities-tabs-before-resume "ext:activities")
+
+(add-hook 'activities-tabs-mode-hook
+	  (lambda ()
+	    (when activities-tabs-mode
+	      (advice-remove #'activities-resume #'activities-tabs-before-resume)
+	      (advice-add #'hsys-activities-before-resume :before #'activities-tabs-before-resume))))
 
 ;;; ************************************************************************
 ;;; Public functions
