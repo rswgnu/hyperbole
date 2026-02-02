@@ -50,13 +50,11 @@ Hyperbole's Action Key does the right thing in this context.
 
 * HyWiki Settings
 
-The custom setting, 'hywiki-word-highlight-flag' (default = 't'),
-means HyWikiWords will be auto-highlighted within HyWiki pages.
-Outside of such pages, 'hywiki-mode' must also be enabled for such
-auto-highlighting.
-
-The custom setting, 'hywiki-exclude-major-modes' (default = 'nil'), is
-a list of major modes to exclude from HyWikiWord auto-highlighting and
+By default, HyWikiWords are auto-highlighted within HyWiki pages.
+Outside of such pages, 'hywiki-mode' must be set to `:all' to enable
+auto-highlighting in programming and text buffers.  The custom
+setting, 'hywiki-exclude-major-modes' (default = 'nil'), is a list of
+major modes to exclude from HyWikiWord auto-highlighting and
 recognition.
 
 Within programming modes, HyWikiWords are highlighted and hyperlinked

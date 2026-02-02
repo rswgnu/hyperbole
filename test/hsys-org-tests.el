@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    23-Apr-21 at 20:55:00
-;; Last-Mod:     22-Nov-25 at 12:07:27 by Bob Weiner
+;; Last-Mod:     11-Jan-26 at 09:55:03 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -82,6 +82,7 @@
       ;; Out side of org-mode
       (erase-buffer)
       (fundamental-mode)
+      (hywiki-mode nil)
       (insert "[[hy:HyWiki]]\n\n")
       (goto-char 3)
       (ert-info ("Accept link if unknown HyWiki button")

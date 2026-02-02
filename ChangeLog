@@ -1,3 +1,160 @@
+2026-02-01  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--publish-special-cases): Avoid revert query.
+                       (hywiki-tests--save-referent-find-use-menu): Use
+    hywiki-tests--preserve-hywiki-mode macro and refactor test to utilize that.
+
+2026-02-01  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--word-at): Return HyWikiWord reference
+    at point only if it has a referent.
+                       (hywiki-tests--publish-special-cases): Fix matching
+    issues and remove 'ert-info' output of html file as can fail in CI/CD.
+                       (hywiki-tests--wikiword-step-check-edit-wikiword-in-emacs-lisp-mode):
+    Fix missing double quote causing failure.
+
+* hywiki.el (hywiki-word-store-around-point): Dehighlight only if Emacs
+    is idle and within a hywikiword in a valid context.
+            (hywiki-highlighted-word-at): Rewrite so matches 'hywiki-word-at'
+    behavior based on point but requires that the HyWikiWord be highlighted
+    or returns nil/nil range.
+            (hywiki-word-get-range): Add and use in
+    'hywiki-highlight-word-get-range'.
+            (hywiki-referent-exists-p)
+             hywiki--maybe-dehighlight-at-point): Get the range but don't
+    highlight the reference.
+
+* test/hywiki-tests.el (hywiki-tests--run-test-case): Remove initial
+    'erase-buffer' since callers set up the buffer prior to this call.
+    Add 'ert-info' so know the exact buffer state when the test is run.
+
+* hywiki.el (hywiki-maybe-highlight-references): Remove conditonals at the
+    start aside from whether hywiki-mode is active in this buffer since
+    a page may have been added and references to it need to be rehighlighted
+    so can't depend on previous highlighting having been done.
+
+* test/hywiki-tests.el (hywiki-tests--wikiword-identified-in-emacs-lisp-mode,
+                        hywiki-tests--face-property-for-wikiword-with-wikipage,
+                        hywiki-tests--verify-hywiki-word):
+    Add 'ert-info' to show which test has failed and fix categorization of
+    tests so they all pass.
+
+* hywiki.el (hywiki-word-highlight-in-current-buffer): Add for use as an
+    'after-change-major-mode-hook'.
+            (hywiki-word-highlight-buffers,
+             hywiki-word-dehighlight-buffers): Most major modes inherit
+    from 'fundamental-mode' which clears the hywiki buffer-local hooks,
+    so need to restore these to the current buffer via
+    'after-change-major-mode-hook'.  Setup to do that in above functions.
+            (hywiki-word-dehighlight-in-buffers): Create this function
+    and call from 'hywiki-word-dehighlight-buffers.
+            (hywiki-get-buffers): Optimize to check 'hywiki-mode-status'
+    only once.
+            (hywiki-get-buffers-in-windows): Fix doc to show that this
+    does not filter to only hywiki buffers.  Use 'hywiki-get-buffers'
+    for that.
+            (hywiki-word-highlight-in-frame): Fix to highlight in active
+    hywiki buffers only.
+            (hywiki-maybe-highlight-references): Fix that regexp search
+      leaves point after closing string delimiter and then tests if in
+      string.  Move point to within string (grouping 1) before testing.
+
+2026-02-01  Mats Lidell  <matsl@gnu.org>
+
+  (hywiki-tests--wikiword-step-check-verification)
+    (hywiki-tests--wikiword-step-check-verification-with-surrounding-text):
+    Create wikipages, required by hywkii-tests--word-at.
+
+  (hywiki-tests--wikiword-step-check-verification-with-faces)
+    (hywiki-tests--face-property-for-wikiword-with-wikipage)
+    (hywiki-tests--no-face-property-for-no-wikipage)
+    (hywiki-tests--verify-face-property-when-editing-wikiword)
+    (hywiki-tests--verify-face-property-when-editing-wikiword-first-char)
+    (hywiki-tests--references-to-org-link, hywiki-tests--word-face-at-p):
+    Drop interactive requirement.
+
+2026-01-31  Bob Weiner  <rsw@gnu.org>
+
+* hproperty.el (hproperty:char-property-face-p): Rename to
+    'hproperty:but-face-p' since does not utilize char-properties.
+  hywiki.el (hywiki-maybe-highlight-region-reference): Use new
+    function name above.
+
+* hywiki.el: Replace all uses of 'hproperty:char-property-range' with
+    'hproperty:overlay-range' to avoid interaction with other code
+    that uses text properties.
+
+* test/hywiki-tests.el (hywiki-tests--command-execute): Force run of
+    'post-self-insert-hook' when executing a 'self-insert-command'.
+
+* hywiki.el (hywiki-highlight-word-get-range): Fix to highlight only
+    if within a buffer context where HyWiki words are valid.
+            (hywiki-word-store-around-point): For insert commands,
+    capture the 'hywiki--start' position before the insert.  Also,
+    dehighlight a wikiword at point if outside a valid context.
+            (hywiki-maybe-dehighlight-reference,
+             hywiki-word-highlight-post-command): Make dehighlight
+    in non-highlight contexts since an edit may have just made
+    the context invalid.
+            (hywiki-non-hook-context-p): Update doc on use with
+    'post-command-hook' calls.
+            (hywiki-word-highlight-post-self-insert,
+	     hywiki-word-highlight-post-command): Rewrite so non-hook
+    context tests are all applied at the proper point.
+
+2026-01-29  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-word-highlight-in-buffers): Change hook depth setting
+    from 95 to -60 to run these hooks nearly first.
+
+2026-01-25  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--filename-same-as-wiki-word): Rewrote
+    to correct the tests therein.
+
+* hywiki.el (hywiki-potential-buffer-p, hywiki-non-hook-context-p): Comment
+    out 'edebug-active' checks, so can examine same behavior when edebugging.
+            (hywiki-word-set-auto-highlighting): Fix to ensure all hywiki
+    hooks are removed any time 'hywiki-mode' is disabled.
+
+* test/hywiki-tests.el (hywiki-tests--interpolate-buffer): Fix to highlight
+    any HyWiki word at point and create its page by activating it.  This is
+    separate from processing action buttons.
+
+2026-01-24  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--wikiword-identified-in-emacs-lisp-mode,
+    hywiki-tests--wikiword-identified-in-strings-in-emacs-lisp-mode,
+    hywiki-tests--wikiword-identified-in-emacs-lisp-mode,
+    hywiki-tests--filename-same-as-wiki-word,
+    hywiki-tests--verify-removal-of-delimiter-updates-face,
+    hywiki-tests--wikiword-yanked-with-extra-words,
+    hywiki-test--hywiki-mode,
+    hywiki-tests--interactive-hywiki-mode-toggles):
+    Remove unneeded calls due to 'hywiki-tests--preserve-hywiki-mode' macro.
+    (hywiki-tests--verify-removal-of-delimiter-updates-face,
+    (hywiki-tests--maybe-highlight-page-names): Remove expected fail so can
+    debug.
+    (hywiki-tests--nonexistent-wikiword-with-section-should-create-wikiword):
+    Rewrite.
+
+* hywiki.el (hywiki-active-in-current-buffer-p, hywiki-get-buffers): Fix
+    minibuffer predicate used to reflect current buffer even if window
+    not selected.  Add and use 'hywiki-potential-buffer-p' to share common
+    predicates.
+            (hywiki-get-buffers): Stop filtering out hidden buffers that start
+    with a space since they may be in a text mode and may be shown in a window.
+    Also fix usage of 'hywiki-mode-status' argument so is part of the filtering.
+            (hywiki-in-page-p): Ensure 'buffer-file-name' ends with
+    'hywiki-file-suffix'.
+            (hywiki-active-in-current-buffer-p): Fix filtering when 'hywiki-mode'
+    is :pages.
+
+2026-01-19  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--execute-commands): Manually run
+    'post-self-insert-hook' when appropriate.
+
 2026-01-19  Mats Lidell  <matsl@gnu.org>
 
 * test/kotl-mode-tests.el (kotl-mode--delete-region)
@@ -11,6 +168,43 @@
     called with kill-flag. (The latter is implicit when used interactively
     with a prefix arg.)
 
+2026-01-18  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki--get-all-references): Handle ref ordering diffs between
+    Emacs prior to 29 and after so callers do not have to handle.
+
+* test/hywiki-tests.el (hywiki-tests--hywiki-face-region-at): Remove, unused.
+
+* hywiki.el (hywiki-highlight-word-get-range): Rename to 'hywiki-word-range-at'.
+            (hywiki-get-reference-range): Add and use in tests.
+            (hywiki-word-highlighted-at): Rename to 'hywiki-highlighted-word-at'.
+
+* test/hywiki-tests.el (hywiki-tests--word-n-face-at): Remove and replace
+    with calls to 'hywiki-highlighted-word-at'.
+
+* hproperty.el (hproperty:char-property-face-p): Fix doc to not refer to HyWiki.
+               (hproperty:but-is-p): Add.
+
+* test/hywiki-tests.el (hywiki-tests--preserve-hywiki-mode): Fix to use the
+    actual prior value of 'hywiki-mode' since there are now 3 valid states.
+    Also setup more of the test scenarios and rewrite tests to not duplicate
+    this behavior.
+    (hywiki-tests--face-property-for-wikiword-with-wikipage): Fix this test.
+
+* test/hywiki-yki-tests.el (hywiki-test--set-buffer-text-with-point-and-highlight):
+    For clarity change 'hywiki-mode' arg from 1 to :all and move before
+    'erase-buffer' call.
+
+2026-01-12  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el: (hywiki-word-highlight-in-buffers, hywiki-word-highlight-in-frame):
+    Add to support window-change-based HyWikiWord highlighting.
+
+2026-01-11  Bob Weiner  <rsw@gnu.org>
+
+* test/hsys-org-tests.el (hsys-org:org-link-at-p): Fix 4th test
+    by ensuring hywiki-mode is off.
+
 2026-01-07  Mats Lidell  <matsl@gnu.org>
 
 * hywiki.el (hywiki-mode): Remove arg value :toggle, not an alternative to
@@ -18,9 +212,69 @@
 
 * test/hywiki-tests.el (hywiki-test--hywiki-mode): Add test for hywiki-mode.
 
+2026-01-06  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-get-buffers-in-windows): Add and call in
+   'hywiki-get-buffers'.
+
+2026-01-05  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (hywiki-word): Move from "hywiki.el" to here.
+
+* hyperbole.el: Add (require 'hywiki).
+                (hyperb:init): (hywiki-mode :pages) at the end.
+
+2026-01-02  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-maybe-highlight-page-names): Rename to
+    'hywiki-maybe-highlight-references'.
+            (hywiki-maybe-highlight-page-name): Rename to
+    'hywiki-maybe-highlight-reference'.
+            (hywiki-maybe-highlight-between-page-names): Rename to
+    'hywiki-maybe-highlight-between-references'.
+            (hywiki-maybe-highlight-off-page-name): Rename to
+    'hywiki-maybe-highlight-off-reference'.
+            (hywiki-maybe-highlight-on-page-name): Rename to
+    'hywiki-maybe-highlight-on-reference'.
+            (hywiki-maybe-highlight-word): Rename to
+    'hywiki-maybe-highlight-region-reference'.
+            (hywiki-maybe-dehighlight-page-names): Rename to
+    'hywiki-maybe-dehighlight-references'.
+            (hywiki-maybe-dehighlight-between-page-names): Rename to
+    'hywiki-maybe-dehighlight-between-references'.
+            (hywiki-maybe-dehighlight-off-page-name): Rename to
+    'hywiki-maybe-dehighlight-off-reference'.
+            (hywiki-maybe-dehighlight-on-page-name): Rename to
+    'hywiki-maybe-dehighlight-on-reference'.
+            (hywiki-maybe-dehighlight-page-name): Rename to
+    'hywiki-maybe-dehighlight-reference'.
+
 2025-12-31  Mats Lidell  <matsl@gnu.org>
 
 * Remove starting asterix from defcustom variable docstrings.
+
+2025-12-30  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-get-buffers): Add to return active hywiki-mode buffers.
+            (hywiki-word-set-auto-highlighting): Rewrite to account for 'hywiki-mode'
+    setting before and after this call.  Apply highlighting hooks locally
+    to each buffer.  Remove interactive use.
+            (hywiki-word-highlight-buffers, hywiki-word-dehighlight-buffers): Add and use in above function.
+
+2025-12-27  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-word-highlight-flag, hywiki-word-highlight-flag-changed): Remove.
+            (hywiki-mode, hywiki-in-page-p): Remove 'hywiki-word-highlight-flag' and
+    update to support` all 'hywiki-mode' values.
+            (hywiki-maybe-dehighlight-sexp):
+            (hywiki-active-in-current-buffer-p):
+            (hywiki-word-set-auto-highlighting): Replace 'hywiki-word-highlight-flag'
+    with 'hywiki-mode'.
+  test/hywiki-tests.el (hywiki-tests--active-in-current-buffer-p): Change let of
+    'hywiki-mode' to function call to set the minor mode.
+
+* hibtypes.el (hywiki-existing-word):
+  hywiki.el (hywiki-word): Skip if not 'hywiki-active-in-current-buffer-p'.
 
 2025-12-25  Mats Lidell  <matsl@gnu.org>
 
