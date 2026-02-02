@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:      1-Feb-26 at 22:54:37 by Bob Weiner
+;; Last-Mod:      2-Feb-26 at 00:18:03 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1823,7 +1823,7 @@ face is verified during the change."
     (emacs-lisp-mode)
     (hywiki-tests--insert "\
 (defun func ()
-  \"WikiWor)
+  \"WikiWor\"
 ")
     ;; Set point after WikiWor
     (goto-char 1)

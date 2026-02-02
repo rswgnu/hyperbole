@@ -4,6 +4,8 @@
     at point only if it has a referent.
                        (hywiki-tests--publish-special-cases): Fix matching
     issues.
+                       (hywiki-tests--wikiword-step-check-edit-wikiword-in-emacs-lisp-mode):
+    Fix missing double quote causing failure.
 
 * hywiki.el (hywiki-word-store-around-point): Dehighlight only if Emacs
     is idle and within a hywikiword in a valid context.
