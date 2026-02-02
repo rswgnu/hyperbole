@@ -1,21 +1,22 @@
-2026-02-01  Mats Lidell  <matsl@gnu.org>
+2026-02-02  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--word-at): Require wikiword to
     exist. Use the wikiword range for verifying the highlighting. Avoids
     differences in how wikiwords are found and lets hywiki-word-at decide.
-    (hywiki-tests--run-test-case): Do not erase-buffer. Some test cases
-    depend on preparing the buffer before this is called. Use ert-info for
-    better feedback when failing.
-    (hywiki-tests--wikiword-step-check-verification)
-    (hywiki-tests--wikiword-step-check-verification-with-surrounding-text):
-    Create wikipages, required by hywkii-tests--word-at.
-    (hywiki-tests--wikiword-step-check-verification-with-faces)
-    (hywiki-tests--face-property-for-wikiword-with-wikipage)
-    (hywiki-tests--no-face-property-for-no-wikipage)
-    (hywiki-tests--verify-face-property-when-editing-wikiword)
-    (hywiki-tests--verify-face-property-when-editing-wikiword-first-char)
-    (hywiki-tests--references-to-org-link, hywiki-tests--word-face-at-p): : Drop
-    interactive requirement.
+    (hywiki-tests--word-face-at-p): Drop interactive requirement.
+    (hywiki-tests--run-test-case): Don't adjust newpos to buffer
+    limits. It is set by the test specification.
+    (hywiki-tests--maybe-highlight-page-names): Erase buffer between tests
+    and enable test as expected success.
+    (hywiki-tests--verify-removal-of-delimiter-updates-face): Adjust test
+    case and remove expected failed.
+    (hywiki-tests--publish-special-cases): Remove error comments and
+    enable old failing test.
+    (hywiki-tests--wikiword-identified-in-emacs-lisp-mode): Mark as
+    expected failed. There are problems with how the WikiWords are
+    identified that causes the test to fail.
+
+2026-02-01  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--publish-special-cases): Avoid revert query.
                        (hywiki-tests--save-referent-find-use-menu): Use
