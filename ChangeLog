@@ -1,9 +1,11 @@
+2026-02-02  Bob Weiner  <rsw@gnu.org>
+
 2026-02-01  Bob Weiner  <rsw@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--word-at): Return HyWikiWord reference
     at point only if it has a referent.
                        (hywiki-tests--publish-special-cases): Fix matching
-    issues.
+    issues and remove 'ert-info' output of html file as can fail in CI/CD.
                        (hywiki-tests--wikiword-step-check-edit-wikiword-in-emacs-lisp-mode):
     Fix missing double quote causing failure.
 

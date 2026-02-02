@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:      2-Feb-26 at 00:18:03 by Bob Weiner
+;; Last-Mod:      2-Feb-26 at 00:32:30 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1135,11 +1135,9 @@ WikiWord#Csection-subsection
 		(hywiki-publish-to-html t)
 
 		;; Verify Export
-		(ert-info ((format (concat "Publish '%s' => Expect '%s'\n"
-					   "Actual '%s'")
+		(ert-info ((format "Publish '%s' => Expect '%s'"
 				   input
-				   regex-output
-				   (org-file-contents wikipage-html)))
+				   regex-output))
 	          (find-file wikipage-html t)
                   (revert-buffer t t)
                   (should (= 1 (count-matches (regexp-quote regex-output)
