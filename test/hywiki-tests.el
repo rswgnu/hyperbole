@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:      1-Feb-26 at 19:39:45 by Bob Weiner
+;; Last-Mod:      1-Feb-26 at 22:54:37 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1113,10 +1113,10 @@ WikiWord#Csection-subsection
 	    (should (file-exists-p wikiword))
 
             (dolist (v `(("WikiWord WikiWord" . ,(format "%s %s" href href))
-			 ("\"WikiWord WikiWord\"" . ,(format "\"%s%s\"" href href))
+			 ("\"WikiWord WikiWord\"" . ,(format "\"%s %s\"" href href))
 			 ;;                                       ^ Missing a space!?
 			 ("WikiWord Text WikiWord" . ,(format "%s Text %s" href href))
-			 ("\"WikiWord Text WikiWord\"" . ,(format "\"%s%s\"" href href))
+			 ("\"WikiWord Text WikiWord\"" . ,(format "\"%s Text %s\"" href href))
 			 ;;                                            ^ Missing " Text "
 			 ("WikiWord WikiWord WikiWord" . ,(format "%s %s %s" href href href))
 			 ;; !! TODO FIXME
@@ -1135,10 +1135,15 @@ WikiWord#Csection-subsection
 		(hywiki-publish-to-html t)
 
 		;; Verify Export
-		(ert-info ((format "Publish '%s' => Expect '%s'" input regex-output))
+		(ert-info ((format (concat "Publish '%s' => Expect '%s'\n"
+					   "Actual '%s'")
+				   input
+				   regex-output
+				   (org-file-contents wikipage-html)))
 	          (find-file wikipage-html t)
                   (revert-buffer t t)
-                  (should (= 1 (count-matches regex-output (point-min) (point-max))))))))
+                  (should (= 1 (count-matches (regexp-quote regex-output)
+					      (point-min) (point-max))))))))
 	;; Unwind
 	(hy-delete-files-and-buffers (list wikipage wikiword wikipage-html wikiword-html
 					   (expand-file-name "index.org" hywiki-directory)

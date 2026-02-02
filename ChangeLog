@@ -2,6 +2,8 @@
 
 * test/hywiki-tests.el (hywiki-tests--word-at): Return HyWikiWord reference
     at point only if it has a referent.
+                       (hywiki-tests--publish-special-cases): Fix matching
+    issues.
 
 * hywiki.el (hywiki-word-store-around-point): Dehighlight only if Emacs
     is idle and within a hywikiword in a valid context.
