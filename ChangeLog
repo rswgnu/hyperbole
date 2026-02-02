@@ -1,6 +1,7 @@
 2026-02-01  Mats Lidell  <matsl@gnu.org>
 
-* test/hywiki-tests.el (hywiki-tests--save-referent-find-use-menu): Use
+* test/hywiki-tests.el (hywiki-tests--publish-special-cases): Avoid revert query.
+                       (hywiki-tests--save-referent-find-use-menu): Use
     hywiki-tests--preserve-hywiki-mode macro and refactor test to utilize that.
 
 2026-02-01  Bob Weiner  <rsw@gnu.org>

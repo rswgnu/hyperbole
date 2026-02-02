@@ -1124,7 +1124,8 @@ WikiWord#Csection-subsection
 			 ;; ^ Crashes due to (wrong-type-argument integer-or-marker-p nil) caused by buffer-substring-no-properties(nil nil)
 			 ))
               (let ((input (car v))
-                    (regex-output (cdr v)))
+                    (regex-output (cdr v))
+                    (revert-without-query '(".*")))
 		;; Setup WikiPage.
 		(find-file wikipage)
                 (erase-buffer)
