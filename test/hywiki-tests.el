@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:      1-Feb-26 at 15:52:57 by Bob Weiner
+;; Last-Mod:      1-Feb-26 at 19:39:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -772,7 +772,6 @@ Both mod-time and checksum must be changed for a test to return true."
 
 (ert-deftest hywiki-tests--face-property-for-wikiword-with-wikipage ()
   "Verify WikiWord for a wiki page gets face property hywiki-word-face."
-  (skip-unless (not noninteractive))
   (hywiki-tests--preserve-hywiki-mode
     (let* ((hsys-org-enable-smart-keys t)
 	   str)
@@ -791,7 +790,6 @@ Both mod-time and checksum must be changed for a test to return true."
 
 (ert-deftest hywiki-tests--no-face-property-for-no-wikipage ()
   "Verify WikiWord for no wiki page does not get face property hywiki-word-face."
-  (skip-unless (not noninteractive))
   (hywiki-tests--preserve-hywiki-mode
     (let* ((hsys-org-enable-smart-keys t)
            (hywiki-directory (make-temp-file "hywiki" t)))
@@ -807,7 +805,6 @@ Both mod-time and checksum must be changed for a test to return true."
 
 (ert-deftest hywiki-tests--verify-face-property-when-editing-wikiword ()
   "Verify face property changes when WikiWord is edited."
-  (skip-unless (not noninteractive))
   (hywiki-tests--preserve-hywiki-mode
     (hywiki-tests--insert "Wikiord ")
     (goto-char 5)
@@ -825,7 +822,6 @@ Both mod-time and checksum must be changed for a test to return true."
 
 (ert-deftest hywiki-tests--verify-face-property-when-editing-wikiword-first-char ()
   "Verify face property changes when WikiWord is edited in the first char position."
-  (skip-unless (not noninteractive))
   (hywiki-tests--preserve-hywiki-mode
     (hywiki-tests--insert "WikiWord")
     (hywiki-tests--command-execute #'self-insert-command 1 ? )
@@ -844,7 +840,6 @@ Both mod-time and checksum must be changed for a test to return true."
 
 (ert-deftest hywiki-tests--references-to-org-link ()
   "Verify `hywiki-references-to-org-links' converts WikiWords to org links."
-  (skip-unless (not noninteractive))
   (hywiki-tests--preserve-hywiki-mode
     (let* ((hywiki-directory (make-temp-file "hywiki" t))
            (wikipage (cdr (hywiki-add-page "WikiWord"))))
@@ -1644,10 +1639,12 @@ comparison with expected overlays stable."
   "Non-nil to perform face validation of WikiWord.")
 
 (defun hywiki-tests--word-at ()
-  "Choose what test to perform based on value of `hywiki-tests--with-face-test'."
-  (if hywiki-tests--with-face-test
-      (hywiki-highlighted-word-at)
-    (hywiki-word-at)))
+  "Test if there is a HyWikiWord reference at point with a referent.
+Choose what test to perform based on value of `hywiki-tests--with-face-test'."
+  (when (hywiki-referent-exists-p)
+    (if hywiki-tests--with-face-test
+	(hywiki-highlighted-word-at)
+      (hywiki-word-at))))
 
 (defun hywiki-tests--verify-hywiki-word (expected)
   "Verify that `hywiki-word-at' returns t if a wikiword is EXPECTED.
@@ -1687,36 +1684,32 @@ of the string are inserted.  If equal to a string it is checked
 for match with the wikiword.  Movement of point is relative to
 point when the function is called."
   (let ((origin (point)))
-
-    ;; For traceability when looking through the list of should
-    ;; clauses in a failing test.
-    (should (listp test-case))
-
-    (dolist (steps test-case)
-      (let ((step (car steps))
-            (vfy (cdr steps)))
-        (cond ((stringp step)
-               (dolist (ch (string-to-list step))
-                 (hywiki-tests--command-execute #'self-insert-command 1 ch))
-               (save-excursion
-                 (goto-char (1- (point)))
-                 (hywiki-tests--verify-hywiki-word vfy)))
-              ((integerp step)
-               (let ((forward (> step 0)))
-                 (dotimes (_ (abs step))
-                   (if forward
-                       (hywiki-tests--command-execute #'delete-forward-char 1)
-                     (hywiki-tests--command-execute #'backward-delete-char 1)))
-                 (hywiki-tests--verify-hywiki-word vfy)))
-              ((and (symbolp step) (string-prefix-p "p" (symbol-name step)))
-               (let* ((pos (string-to-number (substring (symbol-name step) 1)))
-                      (newpos (max (min (+ origin (1- pos)) (point-max))
-				   (point-min))))
-                 (when (or (> (point-min) newpos) (< (point-max) newpos))
-                   (ert-fail (format "New point: '%s' is outside of buffer" newpos)))
-                 (goto-char newpos))
-               (hywiki-tests--verify-hywiki-word vfy))
-              (t (ert-fail (format "Unknown step: '%s' in WikiWord verification" step))))))))
+    (ert-info ((format "Test case => '%s'" test-case))
+      (dolist (steps test-case)
+	(let ((step (car steps))
+              (vfy (cdr steps)))
+          (cond ((stringp step)
+		 (dolist (ch (string-to-list step))
+                   (hywiki-tests--command-execute #'self-insert-command 1 ch))
+		 (save-excursion
+                   (goto-char (1- (point)))
+                   (hywiki-tests--verify-hywiki-word vfy)))
+		((integerp step)
+		 (let ((forward (> step 0)))
+                   (dotimes (_ (abs step))
+                     (if forward
+			 (hywiki-tests--command-execute #'delete-forward-char 1)
+                       (hywiki-tests--command-execute #'backward-delete-char 1)))
+                   (hywiki-tests--verify-hywiki-word vfy)))
+		((and (symbolp step) (string-prefix-p "p" (symbol-name step)))
+		 (let* ((pos (string-to-number (substring (symbol-name step) 1)))
+			(newpos (max (min (+ origin (1- pos)) (point-max))
+				     (point-min))))
+                   (when (or (> (point-min) newpos) (< (point-max) newpos))
+                     (ert-fail (format "New point: '%s' is outside of buffer" newpos)))
+                   (goto-char newpos))
+		 (hywiki-tests--verify-hywiki-word vfy))
+		(t (ert-fail (format "Unknown step: '%s' in WikiWord verification" step)))))))))
 
 (defconst hywiki-tests--wikiword-step-check
   '(
@@ -1749,16 +1742,22 @@ point when the function is called."
 Performs each operation from the step check and verifies if the
 resulting state at point is a WikiWord or not."
   (hywiki-tests--preserve-hywiki-mode
-    (let ((hywiki-tests--with-face-test nil))
-      (dolist (testcase hywiki-tests--wikiword-step-check)
-	(erase-buffer)
-        (hywiki-tests--run-test-case testcase)))))
+    (let* ((wikiHiHo (cdr (hywiki-add-page "HiHo")))
+           (wikiHiho (cdr (hywiki-add-page "Hiho")))
+           (wikiHi (cdr (hywiki-add-page "Hi")))
+           (wikiHo (cdr (hywiki-add-page "Ho")))
+           (wiki-page-list (list wikiHiHo wikiHiho wikiHi wikiHo))
+           (hywiki-tests--with-face-test nil))
+      (unwind-protect
+          (dolist (testcase hywiki-tests--wikiword-step-check)
+	    (erase-buffer)
+            (hywiki-tests--run-test-case testcase))
+        (hy-delete-files-and-buffers wiki-page-list)))))
 
 (ert-deftest hywiki-tests--wikiword-step-check-verification-with-faces ()
   "Run the step check to verify WikiWord is identified under change.
 Perform each operation from the step check and verify whether there
 is a WikiWord at point or not."
-  (skip-unless (not noninteractive))
   (hywiki-tests--preserve-hywiki-mode
     (let* ((wikiHiHo (cdr (hywiki-add-page "HiHo")))
            (wikiHiho (cdr (hywiki-add-page "Hiho")))
@@ -1780,29 +1779,36 @@ aliquet diam euismod turpis ultricies, et porta sem blandit. Sed vitae."
   "Run the step check to verify WikiWord is identified under change.
 Insert test in the middle of other text."
   (hywiki-tests--preserve-hywiki-mode
-    (let ((hywiki-tests--with-face-test nil))
-      (hywiki-tests--insert hywiki-tests--lorem-ipsum)
-      (goto-char (/ (point-max) 2))
-      (let ((pos (point)))
-        (hywiki-tests--insert " HiHo ")
-        (goto-char (1+ pos))
-        (should (looking-at-p "HiHo ")))
-      (hywiki-tests--run-test-case
-       '((p3 . t)
-         (" " . "Hi")
-         (p1 . t) (p4 . t) (-1 . t)))
+    (let* ((wikiHiHo (cdr (hywiki-add-page "HiHo")))
+           (wikiHiho (cdr (hywiki-add-page "Hiho")))
+           (wikiHi (cdr (hywiki-add-page "Hi")))
+           (wikiHo (cdr (hywiki-add-page "Ho")))
+           (wiki-page-list (list wikiHiHo wikiHiho wikiHi wikiHo)))
+      (unwind-protect
+          (progn
+            (insert hywiki-tests--lorem-ipsum)
+            (goto-char (/ (point-max) 2))
+            (let ((pos (point)))
+              (hywiki-tests--insert " HiHo ")
+              (goto-char (1+ pos))
+              (should (looking-at-p "HiHo ")))
+            (hywiki-tests--run-test-case
+             '((p3 . t)
+               (" " . "Hi")
+               (p1 . t) (p4 . t) (-1 . t)))
 
-      (erase-buffer)
-      (hywiki-tests--insert hywiki-tests--lorem-ipsum)
-      (goto-char (/ (point-max) 2))
-      (let ((pos (point)))
-        (hywiki-tests--insert " Hiho ")
-        (goto-char (1+ pos))
-        (should (looking-at-p "Hiho ")))
-      (hywiki-tests--run-test-case
-       '((p3 . t)
-         (" " . "Hi")
-         (p1 . t) (p4) (-1 . "Hiho"))))))
+            (erase-buffer)
+            (insert hywiki-tests--lorem-ipsum)
+            (goto-char (/ (point-max) 2))
+            (let ((pos (point)))
+              (hywiki-tests--insert " Hiho ")
+              (goto-char (1+ pos))
+              (should (looking-at-p "Hiho ")))
+            (hywiki-tests--run-test-case
+             '((p3 . t)
+               (" " . "Hi")
+               (p1 . t) (p4) (-1 . "Hiho"))))
+        (hy-delete-files-and-buffers wiki-page-list)))))
 
 (ert-deftest hywiki-tests--wikiword-step-check-edit-wikiword-in-emacs-lisp-mode ()
   "Run the step check to verify WikiWord is identified under change in a docstring.

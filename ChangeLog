@@ -1,10 +1,18 @@
 2026-02-01  Bob Weiner  <rsw@gnu.org>
 
+* test/hywiki-tests.el (hywiki-tests--word-at): Return HyWikiWord reference
+    at point only if it has a referent.
+
 * hywiki.el (hywiki-word-store-around-point): Dehighlight only if Emacs
     is idle and within a hywikiword in a valid context.
             (hywiki-highlighted-word-at): Rewrite so matches 'hywiki-word-at'
     behavior based on point but requires that the HyWikiWord be highlighted
     or returns nil/nil range.
+            (hywiki-word-get-range): Add and use in
+    'hywiki-highlight-word-get-range'.
+            (hywiki-referent-exists-p)
+             hywiki--maybe-dehighlight-at-point): Get the range but don't
+    highlight the reference.
 
 * test/hywiki-tests.el (hywiki-tests--run-test-case): Remove initial
     'erase-buffer' since callers set up the buffer prior to this call.
@@ -40,6 +48,20 @@
             (hywiki-maybe-highlight-references): Fix that regexp search
       leaves point after closing string delimiter and then tests if in
       string.  Move point to within string (grouping 1) before testing.
+
+2026-02-01  Mats Lidell  <matsl@gnu.org>
+
+  (hywiki-tests--wikiword-step-check-verification)
+    (hywiki-tests--wikiword-step-check-verification-with-surrounding-text):
+    Create wikipages, required by hywkii-tests--word-at.
+
+  (hywiki-tests--wikiword-step-check-verification-with-faces)
+    (hywiki-tests--face-property-for-wikiword-with-wikipage)
+    (hywiki-tests--no-face-property-for-no-wikipage)
+    (hywiki-tests--verify-face-property-when-editing-wikiword)
+    (hywiki-tests--verify-face-property-when-editing-wikiword-first-char)
+    (hywiki-tests--references-to-org-link, hywiki-tests--word-face-at-p):
+    Drop interactive requirement.
 
 2026-01-31  Bob Weiner  <rsw@gnu.org>
 

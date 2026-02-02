@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:      1-Feb-26 at 15:33:59 by Bob Weiner
+;; Last-Mod:      1-Feb-26 at 19:16:29 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -3135,7 +3135,7 @@ at point must return non-nil or this function will return nil."
     (when (stringp word)
       (setq word (hywiki-strip-org-link word)))
     (if (or (stringp word)
-	    (setq word (hywiki-highlight-word-get-range)))
+	    (setq word (hywiki-word-get-range)))
 	(unless (hywiki-get-referent (if (stringp word) word (nth 0 word)))
 	  (setq word nil))
       (setq word nil))
@@ -3242,7 +3242,9 @@ end-position); the positions include the entire
 HyWikiWord#section:Lnum:Cnum string but exclude any delimiters.
 
 This does not test whether a referent exists for the HyWikiWord; call
-`hywiki-referent-exists-p' without an argument for that.
+`hywiki-referent-exists-p' without an argument for that.  Nor does it
+test whether the HyWikiWord reference is within a valid context; call
+`hywiki-non-hook-context-p' for that.
 
 A call to `hywiki-active-in-current-buffer-p' at point must return
 non-nil or this will return nil."
@@ -3452,9 +3454,10 @@ Hyperbole button names."
   (unless (hproperty:but-face-p start hywiki-ignore-face-list)
     (hproperty:but-add start end hywiki-word-face)))
 
-(defun hywiki-highlight-word-get-range ()
+(defun hywiki-word-get-range ()
   "Return list of (HyWikiWord#section:Lnum:Cnum start end) around point.
-Also highlight HyWikiWord as necessary.
+Calls to `hywiki-active-in-current-buffer-p' and `hywiki-non-hook-context-p'
+must return non-nil or this will return \\='(nil nil nil).
 
 If the HyWikiWord reference is delimited, point must be within the
 delimiters.  The delimiters are excluded from start and end.  If not
@@ -3465,14 +3468,30 @@ or not.  Call `hywiki-highlighted-word-at' to test for a highlighted
 HyWikiWord at point.
 
 This does not test whether a referent exists for the HyWikiWord; call
-`hywiki-referent-exists-p' without an argument for that.
+`hywiki-referent-exists-p' without an argument for that."
+  (if (hywiki-non-hook-context-p)
+      '(nil nil nil)
+    (hywiki-word-at :range)))
+
+(defun hywiki-highlight-word-get-range ()
+  "Return list of (HyWikiWord#section:Lnum:Cnum start end) around point.
+Also highlight HyWikiWord as necessary.
 
 A call to `hywiki-active-in-current-buffer-p' at point must return
-non-nil or this will return \\='(nil nil nil)."
+non-nil or this will return \\='(nil nil nil).
+
+If the HyWikiWord reference is delimited, point must be within the
+delimiters.  The delimiters are excluded from start and end.  If not
+at a HyWikiWord, return \\='(nil nil nil).
+
+This works regardless of whether the HyWikiWord has been highlighted
+or not.  Call `hywiki-highlighted-word-at' to test for a highlighted
+HyWikiWord at point.
+
+This does not test whether a referent exists for the HyWikiWord; call
+`hywiki-referent-exists-p' without an argument for that."
   (cl-destructuring-bind (wikiword start end)
-      (if (hywiki-non-hook-context-p)
-	  '(nil nil nil)
-	(hywiki-word-at :range))
+      (hywiki-word-get-range)
     ;; Ensure wikiword in buffer is highlighted before
     ;; returning its non-highlighted string version.
     (when (and wikiword start end
@@ -3937,7 +3956,7 @@ the HyWikiWord reference."
 				    (buffer-substring hywiki--buttonize-start
 						      hywiki--buttonize-end))
 				  (when (and (setq hywiki--range
-						   (hywiki-highlight-word-get-range))
+						   (hywiki-word-get-range))
 					     (nth 1 hywiki--range))
 				    (prog1 (nth 1 hywiki--range)
 				      (setq hywiki--range nil)))
