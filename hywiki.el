@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     31-Jan-26 at 22:45:09 by Bob Weiner
+;; Last-Mod:      1-Feb-26 at 19:16:29 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -567,9 +567,9 @@ including deletion commands and those in `hywiki-non-character-commands'."
     (set-marker hywiki--buttonize-end nil)
     (setq hywiki--buttonize-range nil))
 
-  (when (hywiki-non-hook-context-p)
+  (when (and (current-idle-time) (hywiki-non-hook-context-p) (hywiki-word-at))
     ;; Dehighlight any previously highlighted WikiWord at point if
-    ;; outside of a valid context.
+    ;; it is outside of a valid context.
     (save-restriction
       (narrow-to-region (line-beginning-position) (line-end-position))
       (hywiki-maybe-dehighlight-reference)))
@@ -1373,7 +1373,8 @@ Use `hywiki-get-referent' to determine whether a HyWiki page exists."
 	      (message "HyWikiWord page exists: \"%s\"" page-file)))
 	  (unless (or (hyperb:stack-frame '(hywiki-maybe-highlight-wikiwords-in-frame))
 		      (and (not force-flag) page-file-readable page-in-hasht))
-	    (hywiki-cache-save))
+	    (hywiki-cache-save)
+	    (hywiki-maybe-highlight-wikiwords-in-frame t))
 	  (run-hooks 'hywiki-add-page-hook)
 	  (when page-file (cons 'page page-file))))
     (when (called-interactively-p 'interactive)
@@ -1797,12 +1798,14 @@ This does not test whether a referent exists for the HyWikiWord; call
 A call to `hywiki-active-in-current-buffer-p' at point must return non-nil
 or this will return nil."
   (when (and (hywiki-active-in-current-buffer-p)
-	     (setq hywiki--range
-		   (hproperty:overlay-range (point) 'face hywiki-word-face)))
-    (let ((wikiword (buffer-substring-no-properties (car hywiki--range) (cdr hywiki--range))))
-      (if (string-match hywiki-word-with-optional-suffix-exact-regexp wikiword)
+	     (setq hywiki--range (hywiki-word-at :range))
+	     (car hywiki--range))
+    (cl-destructuring-bind (wikiword start end)
+	hywiki--range
+      (if (and (hproperty:but-get start 'face hywiki-word-face)
+	       (string-match hywiki-word-with-optional-suffix-exact-regexp wikiword))
 	  (if range-flag
-	      (list wikiword (car hywiki--range) (cdr hywiki--range))
+	      (list wikiword start end)
 	    wikiword)
 	(when range-flag
 	  '(nil nil nil))))))
@@ -2439,12 +2442,7 @@ whenever `hywiki-mode' is enabled/disabled."
   ;; Highlight HyWikiWords throughout buffers where `hywiki-mode' is enabled
   ;; or HyWiki pages below `hywiki-directory' whenever displayed in a window.
   (if (hywiki-active-in-current-buffer-p)
-      (unless (and (or (and (null region-start) (null region-end))
-		       (and (markerp region-start) (markerp region-end)
-			    (not (and (marker-position region-start)
-				      (marker-position region-end)))))
-		   (eq hywiki-buffer-highlighted-state 'h)
-		   (not (hywiki-directory-modified-p)))
+      (progn
 	(unless skip-lookups-update-flag
 	  ;; Rebuild lookup tables if any HyWiki page name has changed
 	  (hywiki-get-referent-hasht))
@@ -2459,7 +2457,7 @@ whenever `hywiki-mode' is enabled/disabled."
 		(cond ((and (markerp region-start) (markerp region-end))
 		       (when (and (marker-position region-start)
 				  (marker-position region-end))
-			   (narrow-to-region region-start region-end)))
+			 (narrow-to-region region-start region-end)))
 		      ((and region-start region-end)
 		       (narrow-to-region region-start region-end)))
 		;; Enable dehighlighting in HyWiki pages only when
@@ -2468,21 +2466,23 @@ whenever `hywiki-mode' is enabled/disabled."
 		(unless (and region-start region-end)
 		  (let ((hywiki-mode))
 		    (hywiki-maybe-dehighlight-references)))
-		(dolist (hywiki-words-regexp hywiki--any-wikiword-regexp-list)
-		  (goto-char (point-min))
-		  (let ((highlight-in-comments-and-strings-only
-			 (and (derived-mode-p 'prog-mode)
-			      (not (apply #'derived-mode-p hywiki-highlight-all-in-prog-modes)))))
+		(let ((highlight-in-comments-and-strings-only
+		       (and (derived-mode-p 'prog-mode)
+			    (not (apply #'derived-mode-p hywiki-highlight-all-in-prog-modes))))
+		      hywiki--start
+		      hywiki--end)
+		  (dolist (hywiki-words-regexp hywiki--any-wikiword-regexp-list)
+		    (goto-char (point-min))
 		    (while (re-search-forward hywiki-words-regexp nil t)
-		      (when (save-match-data
-			      (if highlight-in-comments-and-strings-only
-				  ;; Non-nil if match is inside a comment or a string
-				  (or (nth 4 (syntax-ppss)) (hypb:in-string-p))
-				t))
-			(setq hywiki--start (match-beginning 1)
-			      hywiki--end   (match-end 1))
-			(save-excursion
-			  (goto-char hywiki--start)
+		      (setq hywiki--start (match-beginning 1)
+			    hywiki--end   (match-end 1))
+		      (save-excursion
+			(goto-char hywiki--start)
+			(when (save-match-data
+				(if highlight-in-comments-and-strings-only
+				    ;; Non-nil if match is inside a comment or a string
+				    (or (nth 4 (syntax-ppss)) (hypb:in-string-p))
+				  t))
 			  ;; Otherwise, highlight any HyWikiWord found, including
 			  ;; any #section:Lnum:Cnum.
 			  (when (hywiki-maybe-at-wikiword-beginning)
@@ -2556,13 +2556,15 @@ DIRECTION-NUMBER is 1 for forward scanning and -1 for backward scanning."
    #'hywiki-maybe-highlight-references direction-number))
 
 (defun hywiki-maybe-highlight-wikiwords-in-frame (frame &optional skip-lookups-update-flag)
-  "Highlight all non-Org link HyWiki page names displayed in FRAME.
+  "Highlight all non-Org link HyWiki references displayed in FRAME.
+Do not highlight references to the current page unless they have
+sections attached.
+
 If FRAME is t, then highlight in all windows across all frames, even
 invisible ones.  With optional SKIP-LOOKUPS-UPDATE-FLAG non-nil, HyWiki
 lookup tables should have already been updated and this is skipped.
 
-Use `hywiki-word-face' to highlight.  Do not highlight references to
-the current page unless they have sections attached."
+Use `hywiki-word-face' to highlight."
   (walk-windows
    (lambda (window)
      (with-selected-window window
@@ -2588,30 +2590,31 @@ Note that HyWiki references can occur in non-HyWiki page buffers."
   (file-name-sans-extension (file-name-nondirectory
 			     (or (hypb:buffer-file-name) (buffer-name)))))
 
-(defun hywiki-get-buffers-in-windows (&rest frames)
-  "Return the set of buffers in all windows where `hywiki-mode' is active.
-This applies to all windows in all live frames or can be filtered to optional
-rest of arguments FRAMES."
-  (apply #'set:create
-	 (apply #'nconc (mapcar (lambda (frame) (mapcar #'window-buffer
-							(window-list frame)))
-				(or frames (frame-list))))))
-
 (defun hywiki-get-buffers (hywiki-mode-status)
-  "Return the list of HyWiki buffers displayed in any non-minibuffer window.
-A HyWiki buffer is one where HyWikiWord references are highlighted
-when 'hywiki-mode' is enabled.
+  "Return the set of HYWIKI-MODE-STATUS buffers in any non-minibuffer window.
+This goes across all live frames.
 
-See the function documentation for `hywiki-mode' for valid input
+See the function documentation for `hywiki-mode' for valid HYWIKI-MODE-STATUS
 values (the states of `hywiki-mode')."
-  (when hywiki-mode
-    (delq nil (mapcar (lambda (buf)
-			(with-current-buffer buf
-			  (and (if (eq hywiki-mode-status :pages)
-				   (hywiki-in-page-p)
-				 (hywiki-potential-buffer-p))
-			       buf)))
-		      (hywiki-get-buffers-in-windows)))))
+  (when hywiki-mode-status
+    (let ((hywiki-buf-predicate
+	   (if (eq hywiki-mode-status :pages)
+	       #'hywiki-in-page-p
+	     #'hywiki-potential-buffer-p)))
+      (delq nil (mapcar (lambda (buf)
+			  (with-current-buffer buf
+			    (when (funcall hywiki-buf-predicate)
+			      buf)))
+			(hywiki-get-buffers-in-windows))))))
+
+(defun hywiki-get-buffers-in-windows (&rest frames)
+  "Return the set of HyWiki buffers in all windows across all live frames.
+Or include only those in optional rest of arguments FRAMES."
+  (apply #'set:create
+	 (apply #'nconc (mapcar (lambda (frame)
+				  (mapcar #'window-buffer
+					  (window-list frame)))
+				(or frames (frame-list))))))
 
 (defun hywiki-get-page-file (file-stem-name)
   "Return possibly non-existent path in `hywiki-directory' from FILE-STEM-NAME.
@@ -3132,7 +3135,7 @@ at point must return non-nil or this function will return nil."
     (when (stringp word)
       (setq word (hywiki-strip-org-link word)))
     (if (or (stringp word)
-	    (setq word (hywiki-highlight-word-get-range)))
+	    (setq word (hywiki-word-get-range)))
 	(unless (hywiki-get-referent (if (stringp word) word (nth 0 word)))
 	  (setq word nil))
       (setq word nil))
@@ -3239,7 +3242,9 @@ end-position); the positions include the entire
 HyWikiWord#section:Lnum:Cnum string but exclude any delimiters.
 
 This does not test whether a referent exists for the HyWikiWord; call
-`hywiki-referent-exists-p' without an argument for that.
+`hywiki-referent-exists-p' without an argument for that.  Nor does it
+test whether the HyWikiWord reference is within a valid context; call
+`hywiki-non-hook-context-p' for that.
 
 A call to `hywiki-active-in-current-buffer-p' at point must return
 non-nil or this will return nil."
@@ -3449,9 +3454,10 @@ Hyperbole button names."
   (unless (hproperty:but-face-p start hywiki-ignore-face-list)
     (hproperty:but-add start end hywiki-word-face)))
 
-(defun hywiki-highlight-word-get-range ()
+(defun hywiki-word-get-range ()
   "Return list of (HyWikiWord#section:Lnum:Cnum start end) around point.
-Also highlight HyWikiWord as necessary.
+Calls to `hywiki-active-in-current-buffer-p' and `hywiki-non-hook-context-p'
+must return non-nil or this will return \\='(nil nil nil).
 
 If the HyWikiWord reference is delimited, point must be within the
 delimiters.  The delimiters are excluded from start and end.  If not
@@ -3462,14 +3468,30 @@ or not.  Call `hywiki-highlighted-word-at' to test for a highlighted
 HyWikiWord at point.
 
 This does not test whether a referent exists for the HyWikiWord; call
-`hywiki-referent-exists-p' without an argument for that.
+`hywiki-referent-exists-p' without an argument for that."
+  (if (hywiki-non-hook-context-p)
+      '(nil nil nil)
+    (hywiki-word-at :range)))
+
+(defun hywiki-highlight-word-get-range ()
+  "Return list of (HyWikiWord#section:Lnum:Cnum start end) around point.
+Also highlight HyWikiWord as necessary.
 
 A call to `hywiki-active-in-current-buffer-p' at point must return
-non-nil or this will return \\='(nil nil nil)."
+non-nil or this will return \\='(nil nil nil).
+
+If the HyWikiWord reference is delimited, point must be within the
+delimiters.  The delimiters are excluded from start and end.  If not
+at a HyWikiWord, return \\='(nil nil nil).
+
+This works regardless of whether the HyWikiWord has been highlighted
+or not.  Call `hywiki-highlighted-word-at' to test for a highlighted
+HyWikiWord at point.
+
+This does not test whether a referent exists for the HyWikiWord; call
+`hywiki-referent-exists-p' without an argument for that."
   (cl-destructuring-bind (wikiword start end)
-      (if (hywiki-non-hook-context-p)
-	  '(nil nil nil)
-	(hywiki-word-at :range))
+      (hywiki-word-get-range)
     ;; Ensure wikiword in buffer is highlighted before
     ;; returning its non-highlighted string version.
     (when (and wikiword start end
@@ -3630,8 +3652,17 @@ occurs with one of these hooks, the problematic hook is removed."
 		hywiki-from-mode hywiki-to-mode))))
 
 (defun hywiki-word-highlight-in-frame (frame)
-  "Auto-highlight HyWikiWords in `hywiki-mode' buffers displayed FRAME."
-  (hywiki-word-highlight-in-buffers (hywiki-get-buffers-in-windows frame)))
+  "Auto-highlight HyWikiWords in `hywiki-mode' buffers displayed in FRAME."
+  (when hywiki-mode
+    (let ((hywiki-buf-predicate
+	   (if (eq hywiki-mode :pages)
+	       #'hywiki-in-page-p
+	     #'hywiki-potential-buffer-p)))
+      (hywiki-word-highlight-in-buffers
+       (seq-filter hywiki-buf-predicate (hywiki-get-buffers-in-windows frame))))))
+
+(defun hywiki-word-highlight-in-current-buffer ()
+  (hywiki-word-highlight-in-buffers (list (current-buffer))))
 
 (defun hywiki-word-highlight-in-buffers (buffers)
   "Auto-highlight HyWikiWords in BUFFERS."
@@ -3649,8 +3680,9 @@ occurs with one of these hooks, the problematic hook is removed."
   (hywiki-maybe-directory-updated))
 
 (defun hywiki-word-highlight-buffers (buffers)
-  "Setup to auto-highlight HyWikiWords in BUFFERS."
+  "Setup HyWikiWord auto-highlighting and highlight in BUFFERS."
   (interactive)
+  (add-hook 'after-change-major-mode-hook 'hywiki-word-highlight-in-current-buffer)
   (add-hook 'window-buffer-change-functions 'hywiki-word-highlight-in-frame)
   (add-to-list 'yank-handled-properties
 	       '(hywiki-word-face . hywiki-highlight-on-yank))
@@ -3658,13 +3690,9 @@ occurs with one of these hooks, the problematic hook is removed."
   (when (called-interactively-p 'interactive)
     (message "HyWikiWord auto-highlighting enabled")))
 
-(defun hywiki-word-dehighlight-buffers (buffers)
-  "Disable auto-highlighting of HyWikiWords in BUFFERS."
+(defun hywiki-word-dehighlight-in-buffers (buffers)
+  "Dehighlight HyWikiWords in BUFFERS."
   (interactive)
-  (remove-hook 'window-buffer-change-functions 'hywiki-word-highlight-in-frame)
-  (setq yank-handled-properties
-	(delete '(hywiki-word-face . hywiki-highlight-on-yank)
-		yank-handled-properties))
   (dolist (buf buffers)
     (with-current-buffer buf
       (remove-hook 'pre-command-hook      'hywiki-word-store-around-point :local)
@@ -3674,7 +3702,17 @@ occurs with one of these hooks, the problematic hook is removed."
       ;; long-running font-locking
       (sit-for 0)
       (hywiki-maybe-dehighlight-references)))
-  (hywiki-maybe-directory-updated)
+  (hywiki-maybe-directory-updated))
+
+(defun hywiki-word-dehighlight-buffers (buffers)
+  "Disable HyWikiWord auto-highlighting and dehighlight in BUFFERS."
+  (interactive)
+  (remove-hook 'after-change-major-mode-hook 'hywiki-word-highlight-in-current-buffer)
+  (remove-hook 'window-buffer-change-functions 'hywiki-word-highlight-in-frame)
+  (setq yank-handled-properties
+	(delete '(hywiki-word-face . hywiki-highlight-on-yank)
+		yank-handled-properties))
+  (hywiki-word-dehighlight-in-buffers buffers)
   (when (called-interactively-p 'interactive)
     (message "HyWikiWord auto-highlighting disabled")))
 
@@ -3918,7 +3956,7 @@ the HyWikiWord reference."
 				    (buffer-substring hywiki--buttonize-start
 						      hywiki--buttonize-end))
 				  (when (and (setq hywiki--range
-						   (hywiki-highlight-word-get-range))
+						   (hywiki-word-get-range))
 					     (nth 1 hywiki--range))
 				    (prog1 (nth 1 hywiki--range)
 				      (setq hywiki--range nil)))
