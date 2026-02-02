@@ -1,4 +1,7 @@
-2026-02-02  Bob Weiner  <rsw@gnu.org>
+2026-02-01  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--save-referent-find-use-menu): Use
+    hywiki-tests--preserve-hywiki-mode macro and refactor test to utilize that.
 
 2026-02-01  Bob Weiner  <rsw@gnu.org>
 
