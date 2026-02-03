@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      5-Jan-26 at 23:42:19 by Bob Weiner
+;; Last-Mod:      2-Feb-26 at 18:22:19 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -65,8 +65,8 @@
 (declare-function htype:def-symbol "hact")
 (declare-function hui:help-ebut-highlight "hui")
 (declare-function hyperb:stack-frame "hversion")
-(declare-function hywiki-active-in-current-buffer-p "hywiki")
 (declare-function hyrolo-get-file-list "hyrolo")
+(declare-function hywiki-active-in-current-buffer-p "hywiki")
 (declare-function hywiki-get-singular-wikiword "hywiki")
 (declare-function hywiki-highlight-word-get-range "hywiki")
 (declare-function hywiki-referent-exists-p "hywiki")
