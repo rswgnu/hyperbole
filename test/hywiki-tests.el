@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:      2-Feb-26 at 00:32:30 by Bob Weiner
+;; Last-Mod:      2-Feb-26 at 23:37:48 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -28,12 +28,12 @@
 
 (defconst hywiki-tests--edit-string-pairs
    [
-    ;; !! TODO: These tests fail
-    ;; ("Hi#a<insert-char ?b> cd" "{Hi#ab} cd")
+    ;; !! TODO: This test fails
     ;; ("\"WikiWord#section with spaces\"<backward-delete-char 1>" "\"{WikiWord#section} with spaces") ;; shrink highlight to "{WikiWord#section}
-    ;; ("\"WikiWord#a b c<backward-delete-char 2>" "\"{WikiWord#a} b")
 
     ;; These tests pass
+    ("Hi#a<insert-char ?b> cd" "{Hi#ab} cd")
+    ("\"WikiWord#a b c<backward-delete-char 2>" "\"{WikiWord#a} b")
     ("Hi" "{Hi}")
     ("HyWikiW<kill-word 1>ord<yank 1> HyW<kill-word 1>ikiWord<yank 1>"
      "{HyWikiWord} {HyWikiWord}")

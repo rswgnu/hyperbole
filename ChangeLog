@@ -1,3 +1,18 @@
+2026-02-02  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--edit-string-pairs): Enable two more tests
+    that now pass.
+
+* hywiki.el (hywiki-word-at): Near the end, change the string-match to not
+    have to match the entire string since it may contain disallowed characters.
+    Cut the reference string off at the first invalid character.
+    This fixes a problem that prevented highlighting a reference when a trailing
+    double quote was deleted.
+            (hywiki-delimited-p): Remove doc constraint that only delimiters around
+    a single HyWikiWord reference are allowed; also trim any trailing whitespace.
+            (hywiki-delimited-p): Fix to handle matching quotes when checking
+    matching delimiters.
+
 2026-02-02  Mats Lidell  <matsl@gnu.org>
 
 * hibtypes.el (hywiki-active-in-current-buffer-p)

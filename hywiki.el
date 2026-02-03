@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:      1-Feb-26 at 19:16:29 by Bob Weiner
+;; Last-Mod:      2-Feb-26 at 23:16:23 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -3432,14 +3432,19 @@ non-nil or this will return nil."
 					       end   (match-end 0)
 					       ;; No following char
 					       wikiword (string-trim (match-string-no-properties 0)))))))))
-		     ;; If `wikiword' reference has a #section, ensure there are
-		     ;; no invalid chars.  One set of \n\r characters is allowed.
+		     ;; If `wikiword' reference has a #section, ensure
+		     ;; it stops when there are any disallowed characters
+		     ;; and reset the value of 'end' to match any reduction.
+		     ;; One set of \n\r characters is allowed but no
+		     ;; whitespace at the end of the reference.
 		     (if (and (stringp wikiword) (string-match "#" wikiword))
-			 (string-match "#[^][#()<>{}\"\f]+\\'" wikiword)
+			 (when (string-match "#[^][#()<>{}\"\f]*[^][#()<>{}\"\f\t\n\r ]" wikiword)
+			   (setq end (- end (- (length wikiword)
+					       (match-end 0)))
+				 wikiword (substring wikiword 0 (match-end 0))))
 		       t))
 		(if range-flag
-		    (progn
-		      (list wikiword start end))
+		    (list wikiword start end)
 		  wikiword)
 	      (when range-flag
 		'(nil nil nil))))))
@@ -3533,9 +3538,6 @@ or this will return nil."
 Any non-nil value returned is a list of (hywikiword-ref start-pos end-pos).
 The delimited range must be two lines or less with point on the first line.
 
-Matching delimiters around anything other than a single HyWikiWord reference
-are ignored.
-
 Use `hywiki-word-at', which calls this, to determine whether there is
 a HyWikiWord at point."
   (save-excursion
@@ -3545,13 +3547,27 @@ a HyWikiWord at point."
       ;; Limit balanced pair checks to current through next lines for speed.
       ;; Point must be either on the opening line.
       (narrow-to-region (line-beginning-position) (line-end-position 2))
-      (or (hypb:in-string-p nil t)
-	  (let ((range (hargs:delimited "[\[<\(\{]" "[\]\}\)\>]" t t t)))
-	    (and range
-		 ;; Ensure closing delimiter is a match for the opening one
-		 (eq (matching-paren (char-before (nth 1 range)))
+      (let* ((range (or (hypb:in-string-p nil t)
+			(hargs:delimited "[\[<\(\{]" "[\]\}\)\>]" t t t)))
+	     (wikiword (car range))
+	     range-trimmed
+	     wikiword-trimmed)
+	(if (and wikiword (string-match "[ \t\n\r\f]+\\'" wikiword))
+	    ;; Strip any trailing whitespace
+	    (setq wikiword-trimmed (substring wikiword 0 (match-beginning 0))
+		  range-trimmed (list wikiword-trimmed (nth 1 range)
+				      (- (nth 2 range) (length (match-string
+								0 wikiword)))))
+	  (setq range-trimmed range))
+	(and range-trimmed
+	     ;; Ensure closing delimiter is a match for the opening one
+	     (or (eq (matching-paren (char-before (nth 1 range)))
 		     (char-after (nth 2 range)))
-		 range))))))
+		 ;; May be string quotes where matching-paren returns nil.
+		 (and (eq (char-before (nth 1 range))
+			  (char-after (nth 2 range)))
+		      (eq (char-syntax (char-before (nth 1 range))) ?\")))
+	     range-trimmed)))))
 
 (defun hywiki-word-face-at-p (&optional pos)
   "Non-nil if point or optional POS has the `hywiki-word-face' property.
