@@ -1,3 +1,7 @@
+2026-02-03  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (%.elc): Use batch-byte+native-compile.
+
 2026-02-02  Bob Weiner  <rsw@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--edit-string-pairs): Enable two more tests

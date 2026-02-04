@@ -350,7 +350,7 @@ ifeq ($(HYPB_NATIVE_COMP),yes)
 	$(HYPB_ELC_ELN)$(EMACS) --batch --quick \
 	--eval "(progn (add-to-list 'load-path \"$(curr_dir)\") (add-to-list 'load-path \"$(curr_dir)/kotl\"))" \
 	-l bytecomp ${HYPB_BIN_WARN} \
-	-f batch-native-compile $<
+	-f batch-byte+native-compile $<
 else
 %.elc: %.el
 	$(HYPB_ELC)$(EMACS) --batch --quick \
