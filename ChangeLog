@@ -1,3 +1,9 @@
+2026-02-04  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-get-buffers): Use 'seq-filter'.
+            (hywiki-word-highlight-in-frame): Fix 'seq-filter' pred to take
+    a buf argument.
+
 2026-02-02  Bob Weiner  <rsw@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--edit-string-pairs): Enable two more tests
