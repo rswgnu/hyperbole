@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:      2-Feb-26 at 23:37:48 by Bob Weiner
+;; Last-Mod:      7-Feb-26 at 09:57:35 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1647,7 +1647,7 @@ Choose what test to perform based on value of `hywiki-tests--with-face-test'."
 	(hywiki-highlighted-word-at)
       (hywiki-word-at))))
 
-(defun hywiki-tests--verify-hywiki-word (expected)
+(defun hywiki-tests--verify-hywiki-word (step expected)
   "Verify that `hywiki-word-at' returns t if a wikiword is EXPECTED.
 If EXPECTED is a string, also verify that the wikiword matches the
 string."
@@ -1655,15 +1655,19 @@ string."
 			     "major-mode = %s\n"
 			     "(hywiki-active-in-current-buffer-p) = %s\n"
 			     "pre-command-hook = %s\n"
-			     "buffer contents = \"%s\"\n"
+			     "buffer contents = %S\n"
+			     "point = %d\n"
 			     "hywiki-tests--with-face-test = %s\n"
-			     "expected = \"%s\"")
+			     "Test step = %S\n"
+			     "expected = %S")
 		     (buffer-name)
 		     major-mode
 		     (hywiki-active-in-current-buffer-p)
 		     pre-command-hook
 		     (buffer-substring-no-properties (point-min) (point-max))
+		     (point)
 		     hywiki-tests--with-face-test
+		     step
 		     expected))
     (if (not expected)
 	(should-not (hywiki-tests--word-at))
@@ -1681,7 +1685,7 @@ constructed.  Operations are either a string to be inserted, a
 number of chars to be deleted or a symbol p<number> for where to
 move point.  The expected state is either nil for not a wikiword
 or non-nil for a wikiword.  The state is checked after all chars
-of the string are inserted.  If equal to a string it is checked
+of the string are inserted.  If equal to a string, it is checked
 for match with the wikiword.  Movement of point is relative to
 point when the function is called."
   (let ((origin (point)))
@@ -1694,14 +1698,14 @@ point when the function is called."
                    (hywiki-tests--command-execute #'self-insert-command 1 ch))
 		 (save-excursion
                    (goto-char (1- (point)))
-                   (hywiki-tests--verify-hywiki-word vfy)))
+                   (hywiki-tests--verify-hywiki-word step vfy)))
 		((integerp step)
 		 (let ((forward (> step 0)))
                    (dotimes (_ (abs step))
                      (if forward
 			 (hywiki-tests--command-execute #'delete-forward-char 1)
                        (hywiki-tests--command-execute #'backward-delete-char 1)))
-                   (hywiki-tests--verify-hywiki-word vfy)))
+                   (hywiki-tests--verify-hywiki-word step vfy)))
 		((and (symbolp step) (string-prefix-p "p" (symbol-name step)))
 		 (let* ((pos (string-to-number (substring (symbol-name step) 1)))
 			(newpos (max (min (+ origin (1- pos)) (point-max))
@@ -1709,7 +1713,7 @@ point when the function is called."
                    (when (or (> (point-min) newpos) (< (point-max) newpos))
                      (ert-fail (format "New point: '%s' is outside of buffer" newpos)))
                    (goto-char newpos))
-		 (hywiki-tests--verify-hywiki-word vfy))
+		 (hywiki-tests--verify-hywiki-word step vfy))
 		(t (ert-fail (format "Unknown step: '%s' in WikiWord verification" step)))))))))
 
 (defconst hywiki-tests--wikiword-step-check
@@ -1925,15 +1929,17 @@ face is verified during the change."
 
 (ert-deftest hywiki-tests--verify-removal-of-delimiter-updates-face ()
   "Verify WikiWord highlight face change when adding/removing a delimiter."
-  :expected-result :failed
   (hywiki-tests--preserve-hywiki-mode
-    (let ((hywiki-tests--with-face-test t))
-      (setq wiki-page (cdr (hywiki-add-page "Hi")))
-      (dolist (testcase
-               '((("\"Hi#a b c\"") (p3 . "Hi#a b c") (p11) (-1) (p3 . "Hi#a") (p10) ("\"") (p3 . "Hi#a b c"))
-                 (("(Hi#s n)" . "Hi#s n") (-1) (p3 . "Hi#s") (p8) (")" . "Hi#s n"))))
-	(erase-buffer)
-        (hywiki-tests--run-test-case testcase)))))
+    (let ((hywiki-tests--with-face-test t)
+	  (hi-page (cdr (hywiki-add-page "Hi"))))
+      (unwind-protect
+	  (dolist (testcase
+		   '((("\"Hi#a b c\"" . "Hi#a b c") (p3 . "Hi#a b c")
+		      (p11) (-1) (p3 . "Hi#a") (p10) ("\" ") (p3 . "Hi#a b c"))
+                     (("(Hi#s n)" . "Hi#s n") (-1) (p3 . "Hi#s") (p8) (")" . "Hi#s n"))))
+	    (erase-buffer)
+            (hywiki-tests--run-test-case testcase))
+	(hy-delete-file-and-buffer hi-page)))))
 
 (ert-deftest hywiki-tests--wikiword-yanked-with-extra-words ()
   "Verify that a yanked in WikiWord highlights properly."
@@ -1949,7 +1955,7 @@ face is verified during the change."
             (let ((kill-ring (list "H"))
                   interprogram-paste-function)
               (yank))
-            (hywiki-tests--verify-hywiki-word "Hi#s")
+            (hywiki-tests--verify-hywiki-word "Hi#s^" "Hi#s")
 
             ;; Right part of WikiWord yanked in.
 	    (erase-buffer)
@@ -1958,7 +1964,7 @@ face is verified during the change."
                   interprogram-paste-function)
               (yank))
             (goto-char 2)
-            (hywiki-tests--verify-hywiki-word "Hi#s")
+            (hywiki-tests--verify-hywiki-word "H^i#s" "Hi#s")
 
             ;; Non WikiWords in front of WikiWord.
 	    (erase-buffer)
@@ -1966,9 +1972,9 @@ face is verified during the change."
                   interprogram-paste-function)
               (yank))
             (goto-char 1)
-            (hywiki-tests--verify-hywiki-word nil)
+            (hywiki-tests--verify-hywiki-word "^a b Hi#c" nil)
             (goto-char 6)
-            (hywiki-tests--verify-hywiki-word "Hi#c")
+            (hywiki-tests--verify-hywiki-word "a b H^i#c" "Hi#c")
 
             ;; Non WikiWords after WikiWord.
 	    (erase-buffer)
@@ -1976,7 +1982,7 @@ face is verified during the change."
                   interprogram-paste-function)
               (yank))
             (goto-char 2)
-            (hywiki-tests--verify-hywiki-word "Hi#a")
+            (hywiki-tests--verify-hywiki-word "H^i#a b c" "Hi#a")
 
             ;; Multiple WikiWords with non WikiWords.
 	    (erase-buffer)
@@ -1984,9 +1990,9 @@ face is verified during the change."
                   interprogram-paste-function)
               (yank))
             (goto-char 4)
-            (hywiki-tests--verify-hywiki-word "Hi#b")
+            (hywiki-tests--verify-hywiki-word "a H^i#b c Ho#d e" "Hi#b")
             (goto-char 11)
-            (hywiki-tests--verify-hywiki-word "Ho#d"))
+            (hywiki-tests--verify-hywiki-word "a Hi#b c H^o#d e" "Ho#d"))
         (hy-delete-files-and-buffers (list wikiHi wikiHo))))))
 
 (ert-deftest hywiki-tests--create-wikiword-file-highlights-wikiword ()
@@ -2002,7 +2008,7 @@ face is verified during the change."
               (save-buffer)
               (setq wikiHo (cdr (hywiki-add-page "Ho")))
               (goto-char 2)
-              (hywiki-tests--verify-hywiki-word "Ho")))
+              (hywiki-tests--verify-hywiki-word "Ho" "Ho")))
         (hy-delete-files-and-buffers (list wikiHi wikiHo))))))
 
 (ert-deftest hywiki-tests--maybe-highlight-page-names ()

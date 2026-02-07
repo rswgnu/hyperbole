@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:      2-Feb-26 at 23:16:23 by Bob Weiner
+;; Last-Mod:      4-Feb-26 at 20:32:05 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2601,11 +2601,11 @@ values (the states of `hywiki-mode')."
 	   (if (eq hywiki-mode-status :pages)
 	       #'hywiki-in-page-p
 	     #'hywiki-potential-buffer-p)))
-      (delq nil (mapcar (lambda (buf)
-			  (with-current-buffer buf
-			    (when (funcall hywiki-buf-predicate)
-			      buf)))
-			(hywiki-get-buffers-in-windows))))))
+      (seq-filter (lambda (buf)
+		    (with-current-buffer buf
+		      (when (funcall hywiki-buf-predicate)
+			buf)))
+		  (hywiki-get-buffers-in-windows)))))
 
 (defun hywiki-get-buffers-in-windows (&rest frames)
   "Return the set of HyWiki buffers in all windows across all live frames.
@@ -3675,7 +3675,10 @@ occurs with one of these hooks, the problematic hook is removed."
 	       #'hywiki-in-page-p
 	     #'hywiki-potential-buffer-p)))
       (hywiki-word-highlight-in-buffers
-       (seq-filter hywiki-buf-predicate (hywiki-get-buffers-in-windows frame))))))
+       (seq-filter (lambda (buf)
+		     (with-current-buffer buf
+		       (funcall hywiki-buf-predicate)))
+		   (hywiki-get-buffers-in-windows frame))))))
 
 (defun hywiki-word-highlight-in-current-buffer ()
   (hywiki-word-highlight-in-buffers (list (current-buffer))))

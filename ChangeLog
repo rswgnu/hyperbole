@@ -1,3 +1,19 @@
+2026-02-07  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--verify-removal-of-delimiter-updates-face):
+    Fix temp dir not being deleted due to scoping issue.
+                       (hywiki-tests--verify-hywiki-word): Pass in test step
+    that is running for debugging.
+                       (hywiki-tests--verify-removal-of-delimiter-updates-face):
+    Change insertion of double-quote to double-quote plus space to ensure result
+    at point is nil and fix test step.
+
+2026-02-04  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-get-buffers): Use 'seq-filter'.
+            (hywiki-word-highlight-in-frame): Fix 'seq-filter' pred to take
+    a buf argument.
+
 2026-02-03  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (%.elc): Use batch-byte+native-compile.
