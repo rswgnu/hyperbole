@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:      2-Feb-26 at 23:37:48 by Bob Weiner
+;; Last-Mod:      4-Feb-26 at 22:14:12 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1656,6 +1656,7 @@ string."
 			     "(hywiki-active-in-current-buffer-p) = %s\n"
 			     "pre-command-hook = %s\n"
 			     "buffer contents = \"%s\"\n"
+			     "point = %d\n"
 			     "hywiki-tests--with-face-test = %s\n"
 			     "expected = \"%s\"")
 		     (buffer-name)
@@ -1663,6 +1664,7 @@ string."
 		     (hywiki-active-in-current-buffer-p)
 		     pre-command-hook
 		     (buffer-substring-no-properties (point-min) (point-max))
+		     (point)
 		     hywiki-tests--with-face-test
 		     expected))
     (if (not expected)
@@ -1681,7 +1683,7 @@ constructed.  Operations are either a string to be inserted, a
 number of chars to be deleted or a symbol p<number> for where to
 move point.  The expected state is either nil for not a wikiword
 or non-nil for a wikiword.  The state is checked after all chars
-of the string are inserted.  If equal to a string it is checked
+of the string are inserted.  If equal to a string, it is checked
 for match with the wikiword.  Movement of point is relative to
 point when the function is called."
   (let ((origin (point)))
@@ -1925,15 +1927,17 @@ face is verified during the change."
 
 (ert-deftest hywiki-tests--verify-removal-of-delimiter-updates-face ()
   "Verify WikiWord highlight face change when adding/removing a delimiter."
-  :expected-result :failed
   (hywiki-tests--preserve-hywiki-mode
-    (let ((hywiki-tests--with-face-test t))
-      (setq wiki-page (cdr (hywiki-add-page "Hi")))
-      (dolist (testcase
-               '((("\"Hi#a b c\"") (p3 . "Hi#a b c") (p11) (-1) (p3 . "Hi#a") (p10) ("\"") (p3 . "Hi#a b c"))
-                 (("(Hi#s n)" . "Hi#s n") (-1) (p3 . "Hi#s") (p8) (")" . "Hi#s n"))))
-	(erase-buffer)
-        (hywiki-tests--run-test-case testcase)))))
+    (let ((hywiki-tests--with-face-test t)
+	  (hi-page (cdr (hywiki-add-page "Hi"))))
+      (unwind-protect
+	  (dolist (testcase
+		   '((("\"Hi#a b c\"" . "Hi#a b c") (p3 . "Hi#a b c") (p11) (-1) (p3 . "Hi#a") (p10) ("\"") (p3 . "Hi#a b c"))
+                     (("(Hi#s n)" . "Hi#s n") (-1) (p3 . "Hi#s") (p8) (")" . "Hi#s n"))))
+	    (erase-buffer)
+            (hywiki-tests--run-test-case testcase))
+	(hy-delete-file-and-buffer hi-page)))))
+
 
 (ert-deftest hywiki-tests--wikiword-yanked-with-extra-words ()
   "Verify that a yanked in WikiWord highlights properly."
