@@ -874,18 +874,21 @@ See the Info documentation at \"(hyperbole)HyWiki\".
 (defun hywiki-display-referent-type (wikiword referent)
   "Display WIKIWORD REFERENT, a cons of (<referent-type> . <referent-value>).
 Function used to display is \"hywiki-display-<referent-type>\"."
-  (let* ((referent-type   (car referent)) ;; a symbol
-	 (referent-value  (cdr referent))
-	 (display-function (intern-soft (concat "hywiki-display-"
-						(symbol-name referent-type)))))
-    (when (equal (hywiki-get-singular-wikiword wikiword) (hywiki-word-at-point))
-      ;; Set referent attributes of current implicit button
-      (hattr:set 'hbut:current 'referent-type referent-type)
-      (hattr:set 'hbut:current 'referent-value referent-value))
-    (cond ((fboundp display-function)
-	   (funcall display-function wikiword referent-value))
-	  (t
-	   (error "(hywiki-display-referent-type): No hywiki-display function for referent type '%s'" referent-type)))))
+  (let ((referent-type (and (consp referent) (car referent))))
+    (unless (and referent-type (symbolp referent-type))
+      (error "(hywiki-display-referent-type): Referent type must be a symbol, not: referent-type = %S; referent = %S"
+             referent referent-type))
+    (let* ((referent-value (cdr referent))
+           (display-function (intern-soft (concat "hywiki-display-"
+					          (symbol-name referent-type)))))
+      (when (equal (hywiki-get-singular-wikiword wikiword) (hywiki-word-at-point))
+        ;; Set referent attributes of current implicit button
+        (hattr:set 'hbut:current 'referent-type referent-type)
+        (hattr:set 'hbut:current 'referent-value referent-value))
+      (cond ((fboundp display-function)
+	     (funcall display-function wikiword referent-value))
+	    (t
+	     (error "(hywiki-display-referent-type): No hywiki-display function for referent type '%s'" referent-type))))))
 
 (defun hywiki-display-referent (&optional wikiword prompt-flag)
   "Display HyWiki WIKIWORD referent or a regular file with WIKIWORD nil.
