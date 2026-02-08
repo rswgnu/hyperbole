@@ -2203,7 +2203,7 @@ expected result."
         (progn
           (hywiki-add-find "WikiPage")
           (should (equal '("WikiWord") (hywiki-get-page-list)))
-          (should (equal '("WikiPage" "WikiWord") (hywiki-get-wikiword-list))))
+          (should (set:equal '("WikiPage" "WikiWord") (hywiki-get-wikiword-list))))
       (hy-delete-files-and-buffers (list wiki-page))
       (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory))))
 
