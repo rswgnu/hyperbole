@@ -1637,7 +1637,7 @@ comparison with expected overlays stable."
   "Choose what test to perform based on value of `hywiki-tests--with-face-test'."
   (let* ((range (hywiki-word-at :range)))
     (when (hywiki-get-referent (car range))
-      (when (and range hywiki-tests--with-face-test)
+      (when hywiki-tests--with-face-test
         (save-excursion
           (goto-char (round (/ (+ (cadr range) (caddr range)) 2.0)))
           (should (equal range (hywiki-highlighted-word-at :range)))))
