@@ -2243,16 +2243,16 @@ expected result."
   (with-temp-buffer
     (insert "\"string\"")
     (goto-char 3)
-    (ert-info ("Non prog mode")
+    (ert-info ("Fundamental-mode")
       (fundamental-mode)
       (should-not (hywiki-non-hook-context-p)))
-    (ert-info ("prog-mode and point in a string")
+    (ert-info ("Prog-mode and point in a string")
       (python-mode)
       (should-not (hywiki-non-hook-context-p)))
-    (ert-info ("highligh all in prog mode match current mode")
+    (ert-info ("Highlight all in prog-mode, match current mode")
       (let ((hywiki-highlight-all-in-prog-modes '(python-mode)))
         (should-not (hywiki-non-hook-context-p))))
-    (ert-info ("prog-mode outside string")
+    (ert-info ("Prog-mode outside string")
       (goto-char 1)
       (should (hywiki-non-hook-context-p)))))
 
@@ -2260,15 +2260,11 @@ expected result."
   "Verify `hywiki-create-page'."
   (mocklet (((hywiki-add-page "WikiWord" t) => '(page . "WikiWord.org")))
     (should (string= "WikiWord.org" (hywiki-create-page "WikiWord")))
-    (ert-with-message-capture cap
-      (should (string= "WikiWord.org" (hywiki-create-page "WikiWord" t)))
-      (string-match-p "HyWikiWord .WikiWord. page: \"WikiWord.org\"" cap))
+    (should (string= "WikiWord.org" (hywiki-create-page "WikiWord" t)))
     (mocklet (((hywiki-word-read-new "Create/Edit HyWikiWord: ") => "WikiWord"))
       (should (string= "WikiWord.org" (hywiki-create-page nil)))
       (unless noninteractive ;FIXME: Disabled in batch - called-interactively-p issue?
-        (ert-with-message-capture cap
-          (should (string= "WikiWord.org" (call-interactively #'hywiki-create-page)))
-          (string-match-p "HyWikiWord .WikiWord. page: \"WikiWord.org\"" cap)))))
+        (should (string= "WikiWord.org" (call-interactively #'hywiki-create-page)))))))
 
   ;; Error case - WikiWord is not created
   (mocklet (((hywiki-add-page "wikiword" t) => nil))
