@@ -2264,7 +2264,7 @@ expected result."
     (mocklet (((hywiki-word-read-new "Create/Edit HyWikiWord: ") => "WikiWord"))
       (should (string= "WikiWord.org" (hywiki-create-page nil)))
       (unless noninteractive ;FIXME: Disabled in batch - called-interactively-p issue?
-        (should (string= "WikiWord.org" (call-interactively #'hywiki-create-page)))))))
+        (should (string= "WikiWord.org" (call-interactively #'hywiki-create-page))))))
 
   ;; Error case - WikiWord is not created
   (mocklet (((hywiki-add-page "wikiword" t) => nil))
