@@ -1178,7 +1178,12 @@ Note special meaning of `hywiki-allow-plurals-flag'."
         (progn
           (should-not (hywiki-add-referent "notawikiword" referent))
           (should (hywiki-add-referent "WikiWord" referent))
-          (should (equal referent (hywiki-get-referent "WikiWord"))))
+          (should (equal referent (hywiki-get-referent "WikiWord")))
+          (should (hywiki-add-referent "WikiPage#section" referent))
+          (should (equal referent (hywiki-get-referent "WikiPage")))
+          (mocklet ((hash-add => nil))
+            (let ((err (should-error (hywiki-add-referent "WikiPage" referent) :type 'error)))
+              (should (string-match-p "Failed: (hash-add (page . /tmp/a.org) WikiPage" (cadr err))))))
       (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory))))
 
 (ert-deftest hywiki-tests--add-activity ()
@@ -1235,7 +1240,8 @@ Note special meaning of `hywiki-allow-plurals-flag'."
 
 (ert-deftest hywiki-tests--add-global-button ()
   "Verify `hywiki-add-global-button'."
-  (let ((hywiki-directory (make-temp-file "hywiki" t)))
+  (let ((hywiki-directory (make-temp-file "hywiki" t))
+        (enable-local-variables :all))
     (unwind-protect
 	(mocklet ((hargs:read-match => "gbtn"))
 	  (should (equal '(global-button . "gbtn") (hywiki-add-global-button "WikiWord"))))
@@ -2154,6 +2160,131 @@ expected result."
         (should (equal (get-text-property 1 'org-redo-cmd)
 		       (list #'hywiki-tags-view t nil bn)))
         (should (= (line-number-at-pos) 3))))))
+
+(ert-deftest hywiki-tests--display-referent-type ()
+  "Verify error case for `hywiki-display-referent-type'."
+  (with-temp-buffer
+    (let ((err (should-error (hywiki-display-referent-type "WikiWord" (cons 'unknown-type 'value)) :type 'error)))
+      (should (string-match-p "No hywiki-display function for referent type .unknown-type." (cadr err))))))
+
+(ert-deftest hywiki-tests--create-referent ()
+  "Verify `hywiki-create-referent'."
+  (let* ((hywiki-directory (make-temp-file "hywiki" t)))
+    (unwind-protect
+	(progn
+          (mocklet ((hui:menu-act => '(referent)))
+            (should (equal '(referent) (hywiki-create-referent "WikiWord")))
+            (ert-with-message-capture cap
+              (should (hywiki-create-referent "WikiWord" t))
+              (string-match-p "HyWikiWord .WikiWord. referent: (referent)" cap))
+            (mocklet ((hywiki-word-read-new => "WikiWord"))
+              (should (equal '(referent) (hywiki-create-referent nil)))))
+          (mocklet ((hui:menu-act => nil))
+            (let ((err (should-error (hywiki-create-referent "WikiWord") :type 'user-error)))
+              (should (string-match-p "Invalid HyWikiWord: .WikiWord.; must be capitalized, all alpha" (cadr err))))))
+      (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory))))
+
+(ert-deftest hywiki-tests--find-page ()
+  "Verify `hywiki-find-page' runs hook and calls `hywiki-display-page'."
+  (let* (run-hook (hook (lambda () (setq run-hook t))))
+    (unwind-protect
+        (mocklet (((hywiki-display-page "WikiWord") => "WikiWord"))
+          (with-temp-buffer
+            (add-hook 'hywiki-find-page-hook hook)
+            (should (string= "WikiWord" (hywiki-find-page "WikiWord"))))
+          (should run-hook))
+      (remove-hook 'hywiki-find-page-hook hook))))
+
+(ert-deftest hywiki-tests--get-page/wikiword-list ()
+  "Verify `hywiki-get-page-list' and `hywiki-get-wikiword-list'."
+  (let* ((hywiki-directory (make-temp-file "hywiki" t))
+         (wiki-page (cdr (hywiki-add-page "WikiWord"))))
+    (unwind-protect
+        (progn
+          (hywiki-add-find "WikiPage")
+          (should (equal '("WikiWord") (hywiki-get-page-list)))
+          (should (set:equal '("WikiPage" "WikiWord") (hywiki-get-wikiword-list))))
+      (hy-delete-files-and-buffers (list wiki-page))
+      (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory))))
+
+(ert-deftest hywiki-tests--org-link-store ()
+  "Verify storing org links with `hywiki-org-link-store'."
+  (hywiki-tests--preserve-hywiki-mode
+    (insert "WikiWord\n")
+    (goto-char 3)
+    (let ((hywiki-org-link-type-required t))
+      (mocklet (((org-link-store-props
+                  :type hywiki-org-link-type
+                  :link (concat hywiki-org-link-type ":WikiWord")
+                  :description "WikiWord")))
+        (hywiki-org-link-store)))
+    (let (hywiki-org-link-type-required)
+      (mocklet (((org-link-store-props
+                  :type hywiki-org-link-type
+                  :link "WikiWord"
+                  :description "WikiWord")))
+        (hywiki-org-link-store)))))
+
+(ert-deftest hywiki-tests--get-buttonize-characters ()
+  "Verify `hywiki-get-buttonize-characters'."
+  (should (string= "!&+,./;=?@\\^`|~" (hywiki-get-buttonize-characters))))
+
+(ert-deftest hywiki-tests--non-hook-context-p ()
+  "Verify `hywiki-non-hook-context-p'."
+  (ert-info ("General case")
+    (should-not (hywiki-non-hook-context-p)))
+  (ert-info ("Minibuffer active and selected")
+    (mocklet ((minibuffer-window-active-p => t))
+      (should (hywiki-non-hook-context-p))))
+  ;; (ert-info ("Minibuffer active and debugging")
+  ;;   (let ((edebug-active t))
+  ;;     (mocklet ((active-minibuffer-window => t))
+  ;;       (should (hywiki-non-hook-context-p)))))
+  (with-temp-buffer
+    (insert "\"string\"")
+    (goto-char 3)
+    (ert-info ("Fundamental-mode")
+      (fundamental-mode)
+      (should-not (hywiki-non-hook-context-p)))
+    (ert-info ("Prog-mode and point in a string")
+      (python-mode)
+      (should-not (hywiki-non-hook-context-p)))
+    (ert-info ("Highlight all in prog-mode, match current mode")
+      (let ((hywiki-highlight-all-in-prog-modes '(python-mode)))
+        (should-not (hywiki-non-hook-context-p))))
+    (ert-info ("Prog-mode outside string")
+      (goto-char 1)
+      (should (hywiki-non-hook-context-p)))))
+
+(ert-deftest hywiki-tests--create-page ()
+  "Verify `hywiki-create-page'."
+  (mocklet (((hywiki-add-page "WikiWord" t) => '(page . "WikiWord.org")))
+    (should (string= "WikiWord.org" (hywiki-create-page "WikiWord")))
+    (should (string= "WikiWord.org" (hywiki-create-page "WikiWord" t)))
+    (mocklet (((hywiki-word-read-new "Create/Edit HyWikiWord: ") => "WikiWord"))
+      (should (string= "WikiWord.org" (hywiki-create-page nil)))
+      (unless noninteractive ;FIXME: Disabled in batch - called-interactively-p issue?
+        (should (string= "WikiWord.org" (call-interactively #'hywiki-create-page))))))
+
+  ;; Error case - WikiWord is not created
+  (mocklet (((hywiki-add-page "wikiword" t) => nil))
+    (should-not (hywiki-create-page "wikiword"))
+    (let ((err (should-error (hywiki-create-page "wikiword" t) :type 'error)))
+      (should (string-match-p "(hywiki-create-page): Invalid HyWikiWord: .wikiword.; must be capitalized, all alpha" (cadr err))))))
+
+(ert-deftest hywiki-tests--word-create ()
+  "Verify `hywiki-word-create'."
+  (mocklet (((hywiki-create-referent "WikiWord" t) => 'referent)
+            (hywiki-create-page not-called))
+    (let ((hywiki-referent-prompt-flag t))
+      (should (equal 'referent (hywiki-word-create "WikiWord")))
+      (should (equal 'referent (hywiki-word-create "WikiWord" t))))
+    (let (hywiki-referent-prompt-flag)
+      (should (equal 'referent (hywiki-word-create "WikiWord" t)))))
+  (mocklet ((hywiki-create-referent not-called)
+            ((hywiki-create-page "WikiWord" t) => 'page))
+    (let (hywiki-referent-prompt-flag)
+      (should (equal 'page (hywiki-word-create "WikiWord"))))))
 
 (provide 'hywiki-tests)
 
