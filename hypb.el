@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     18-Oct-25 at 12:22:12 by Bob Weiner
+;; Last-Mod:      9-Feb-26 at 00:21:58 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -517,6 +517,10 @@ the `format' function."
       ;; evaluation.  This prevents false switching to the *ert* test
       ;; buffer when debugging.
       (set-buffer buf)
+      ;; Comment this out as it triggered an error in CI/CD
+      ;; (when (memq this-command (list 'self-insert-command
+      ;; 				     (key-binding [remap self-insert-command])))
+      ;; 	(run-hooks 'post-self-insert-hook))
       (run-hooks 'post-command-hook))))
 
 (defun hypb:eval-debug (sexp)

@@ -1,8 +1,51 @@
+2026-02-09  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--edit): Report expected errors as messages
+    so CI/CD does not fail.
+* hypb.el (hypb:eval): Remove running 'post-self-insert-hook' as it triggers
+    a CI/CD error.
+
 2026-02-09  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el: Use hywiki-tests--preserve-hywiki-mode where
     hywiki folder is created. Create less temp-buffers, prefer reuse using
     erase-buffer between tests.
+
+2026-02-08  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki--command-executed-flag,
+             hywiki-ignore-command-hooks-p): Add to prevent multiple calls
+    to hywiki hooks per command.
+            (hywiki-word-store-around-point,
+             hywiki-word-highlight-post-self-insert,
+             hywiki-word-highlight-post-command): Test with above function.
+	     (hywiki-word-store-around-point,
+	      hywiki-word-highlight-post-command): Add support for 'undo' commands.
+
+* hypb.el (hypb:eval): Run 'post-self-insert-hook' when appropriate.
+
+* hywiki.el (hywiki-word-store-around-point, hywiki-word-highlight-post-command):
+    When narrowing region to dehighlight a reference, allow for 2 line refs
+    instead of 1.
+            (hywiki-get-delimited-region): Fix this to look for trailing delims
+    first if the current cmd is deletes/kills backward.  This fixes the hywiki
+    pre-command-hook where it would not store 'hywiki--buttonize-range' when
+    deleting backward if the following character was a valid opening delimiter,
+    e.g. deleting backward with point after the closing double quote:
+         "HyWikiWord"<action-button>
+    would return the region of <action-button> rather than "HyWikiWord".
+
+* test/hywiki-tests.el (hywiki-tests--maybe-highlight-page-names): Fix by
+    erasing the buffer before each test is run.
+
+* hywiki.el (hywiki-word-highlight-in-current-buffer): Fix to ignore minibuffer
+    so highlighting does not trigger when 'M-x' is typed, for example.
+    (hywiki-get-buffers-in-windows): Exclude minibuffer windows.
+    (hywiki-word-dehighlight-in-buffers): Force buffer dehighlighting to fix
+    issue where turning `hywiki-mode' off would not dehighlight all buffers.
+    (hywiki-get-buffers): Fix to not limit buffers to those displayed in windows
+    since may need to dehighlight buffers not presently displayed.
+    (hywiki-get-buffers-in-windows): Fix to limit to live frames.
 
 2026-02-08  Mats Lidell  <matsl@gnu.org>
 

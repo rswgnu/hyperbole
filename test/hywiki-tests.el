@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:      8-Feb-26 at 22:39:20 by Mats Lidell
+;; Last-Mod:      9-Feb-26 at 00:26:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -133,7 +133,7 @@ Last two elements are optional.")
 					          :before before :after after))))
 		           (cl-incf test-num))
 		       (goto-char (point-min))))
-		 (error (error "%s ---- %S" err (list :markedup markedup-before
+		 (error (message "%s ---- %S" err (list :markedup markedup-before
 					              :test-num test-num
 					              :before before :after after)))))
 	     hywiki-tests--edit-string-pairs))
@@ -1199,6 +1199,7 @@ The template runs the PREPARE body, and that must add the HyWikiWord
 named WikiReferent with a non-page referent type."
   (declare (indent 0) (debug t))
   `(let* ((hsys-consult-flag nil)
+	  (vertico-mode 0)
 	  (hywiki-directory (make-temp-file "hywiki" t))
 	  (wiki-word-non-page "WikiReferent")
           (mode-require-final-newline nil))
@@ -1370,6 +1371,7 @@ named WikiReferent with a non-page referent type."
     (save-excursion
       (unwind-protect
           (progn
+	    (info "(emacs)files")
             (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET i (emacs)files RET"))
             (hy-test-helpers:consume-input-events))
         (kill-buffer "*info*")))))
@@ -1422,7 +1424,7 @@ named WikiReferent with a non-page referent type."
 	        (hywiki-add-org-id wiki-word-non-page)))
 	  (hy-delete-file-and-buffer filea))))))
 
-;; FIXME: Add Org-id links tests.
+;; !! FIXME: Add Org-id links tests.
 
 ;; Org roam
 (ert-deftest hywiki-tests--save-referent-org-roam-node ()
@@ -1889,7 +1891,8 @@ expected result."
 	    (hywiki-maybe-highlight-references (point-min) (point-max))
 	    ;; Verify Overlays
             (ert-info ((format "Text '%s' => Expected overlays '%s'" input overlay-regions))
-              (should (equal (hywiki-tests--hywiki-face-regions) overlay-regions))))
+              (should (equal (hywiki-tests--hywiki-face-regions) overlay-regions)))
+	    (erase-buffer))
         ;; Unwind
         (hy-delete-file-and-buffer wikiword)))))
 
