@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:      7-Feb-26 at 09:57:35 by Bob Weiner
+;; Last-Mod:      8-Feb-26 at 23:57:29 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1353,6 +1353,7 @@ The template runs the PREPARE body, and that must add the HyWikiWord
 named WikiReferent with a non-page referent type."
   (declare (indent 0) (debug t))
   `(let* ((hsys-consult-flag nil)
+	  (vertico-mode 0)
 	  (hywiki-directory (make-temp-file "hywiki" t))
 	  (wiki-word-non-page "WikiReferent")
           (mode-require-final-newline nil))
@@ -1517,13 +1518,14 @@ named WikiReferent with a non-page referent type."
 
 (ert-deftest hywiki-tests--save-referent-info-index-use-menu ()
   "Verify saving and loading a referent info index works using Hyperbole's menu."
-  (skip-unless (not noninteractive))
-  (ert-skip "The menu key sequence works when used manually but fails here for unknown reasons. Skip this for now.")
+  ;; (skip-unless (not noninteractive))
+  ;; (ert-skip "The menu key sequence works when used manually but fails here for unknown reasons. Skip this for now.")
   (hywiki-tests--referent-test
     (cons 'info-index "(emacs)files")
     (save-excursion
       (unwind-protect
           (progn
+	    (info "(emacs)files")
             (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET i (emacs)files RET"))
             (hy-test-helpers:consume-input-events))
         (kill-buffer "*info*")))))
@@ -2022,7 +2024,6 @@ face is verified during the change."
 Start and stop point of all highlighted regions in the buffer, as
 computed by `hywiki-tests--hywiki-face-regions', are compared to the
 expected result."
-  :expected-result :failed
   (hywiki-tests--preserve-hywiki-mode
     (let* ((wikiword (cdr (hywiki-add-page "WiWo")))
 	   input
@@ -2044,7 +2045,8 @@ expected result."
 	    (hywiki-maybe-highlight-references (point-min) (point-max))
 	    ;; Verify Overlays
             (ert-info ((format "Text '%s' => Expected overlays '%s'" input overlay-regions))
-              (should (equal (hywiki-tests--hywiki-face-regions) overlay-regions))))
+              (should (equal (hywiki-tests--hywiki-face-regions) overlay-regions)))
+	    (erase-buffer))
         ;; Unwind
         (hy-delete-file-and-buffer wikiword)))))
 
