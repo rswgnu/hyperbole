@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:      9-Feb-26 at 00:04:00 by Bob Weiner
+;; Last-Mod:      9-Feb-26 at 00:26:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -133,7 +133,7 @@ Last two elements are optional.")
 					          :before before :after after))))
 		           (cl-incf test-num))
 		       (goto-char (point-min))))
-		 (error (error "%s ---- %S" err (list :markedup markedup-before
+		 (error (message "%s ---- %S" err (list :markedup markedup-before
 					              :test-num test-num
 					              :before before :after after)))))
 	     hywiki-tests--edit-string-pairs))

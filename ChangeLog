@@ -1,3 +1,10 @@
+2026-02-09  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--edit): Report expected errors as messages
+    so CI/CD does not fail.
+* hypb.el (hypb:eval): Remove running 'post-self-insert-hook' as it triggers
+    a CI/CD error.
+
 2026-02-09  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el: Use hywiki-tests--preserve-hywiki-mode where
