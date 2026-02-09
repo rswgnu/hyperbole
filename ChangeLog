@@ -1,9 +1,12 @@
 2026-02-09  Mats Lidell  <matsl@gnu.org>
 
-* test/hywiki-tests.el (hywiki-tests--run-test-case): Use pos as given
-    by the step definition. If an illegal position results the test
-    specification is wrong and need to be changed. Give an error
-    message that explains the problem.
+* test/hywiki-tests.el (hywiki-tests--word-at): Extend verification to
+    verify that the range of the WikiWord and the range of the
+    highlighted text is equal iff a highlighted WikiWord exists.
+    (hywiki-tests--run-test-case): Use pos as given by the step
+    definition. If an illegal position results the test specification is
+    wrong and need to be changed. Give an error message that explains the
+    problem.
 
 2026-02-09  Bob Weiner  <rsw@gnu.org>
 
