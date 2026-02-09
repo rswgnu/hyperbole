@@ -1,3 +1,10 @@
+2026-02-09  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--run-test-case): Use pos as given
+    by the step definition. If an illegal position results the test
+    specification is wrong and need to be changed. Give an error
+    message that explains the problem.
+
 2026-02-09  Bob Weiner  <rsw@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--edit): Report expected errors as messages
