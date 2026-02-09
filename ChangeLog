@@ -1,3 +1,9 @@
+2026-02-09  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el: Use hywiki-tests--preserve-hywiki-mode where
+    hywiki folder is created. Create less temp-buffers, prefer reuse using
+    erase-buffer between tests.
+
 2026-02-08  Mats Lidell  <matsl@gnu.org>
 
 * hywiki.el (hywiki-word-create): Eliminate redundant term.
