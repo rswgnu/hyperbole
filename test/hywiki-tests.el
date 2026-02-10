@@ -1495,7 +1495,7 @@ comparison with expected overlays stable."
 (defun hywiki-tests--word-at ()
   "Return potential HyWikiWord and optional #section:Lnum:Cnum at point or nil.
 When `hywiki-tests--with-face-test' is non-nil the HyWikiWord must be
-highlighted to be returned.  When it is highlighted the range of the
+highlighted to be returned.  When it is highlighted, the range of the
 highlighting and the range of the HyWikiWord is, as a side effect,
 checked for consistency."
   (let* ((range (hywiki-referent-exists-p :range))
