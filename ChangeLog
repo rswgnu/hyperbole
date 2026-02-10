@@ -1,7 +1,10 @@
-2026-02-09  Mats Lidell  <matsl@gnu.org>
+2026-02-10  Mats Lidell  <matsl@gnu.org>
 
-* .dir_locals.el: Project editing settings
-* MANIFEST: Add .dir_locals.el
+* .dir_locals.el: Project editing settings.
+  Makefile (HYPERBOLE_FILES):
+  MANIFEST: Add .dir_locals.el
+
+2026-02-09  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--word-at): Extend verification to
     verify that the range of the WikiWord and the range of the
