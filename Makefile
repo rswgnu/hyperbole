@@ -3,9 +3,9 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     11-Dec-25 at 09:51:43 by Mats Lidell
+# Last-Mod:     10-Feb-26 at 17:05:17 by Mats Lidell
 #
-# Copyright (C) 1994-2025  Free Software Foundation, Inc.
+# Copyright (C) 1994-2026  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
 #
 # This file is part of GNU Hyperbole.
@@ -241,6 +241,7 @@ HYPERBOLE_FILES = dir info html $(EL_SRC) $(EL_KOTL) \
         HY-CONCEPTS.kotl HY-NEWS HY-WHY.kotl $(wildcard hywiki/*.org) \
         INSTALL DEMO DEMO-ROLO.otl FAST-DEMO MANIFEST README.md TAGS _hypb \
         .hypb hyrolo.py smart-clib-sym topwin.py hyperbole-banner.png \
+	.dir-locals.el \
 	$(man_dir)/hkey-help.txt $(man_dir)/hyperbole.texi $(man_dir)/hyperbole.css \
         $(man_dir)/texinfo-7.css
 
