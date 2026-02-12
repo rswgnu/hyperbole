@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:      8-Feb-26 at 18:11:52 by Bob Weiner
+;; Last-Mod:     12-Feb-26 at 00:30:44 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1441,6 +1441,40 @@ exists."
 		     (null prompt-flag))
 		prompt-flag)))
 
+(defun hywiki-completion-at-point ()
+  "Complete HyWiki references.
+Ensures that selecting a completion replaces only the text after the '#'."
+  (let ((ref-start-end (and (hywiki-active-in-current-buffer-p)
+			    (not (hywiki-non-hook-context-p))
+			    (hywiki-word-at t t))))
+    (when ref-start-end
+      (let* ((case-fold-search nil)
+             (opoint (point))
+	     (ref (nth 0 ref-start-end))
+	     (start (nth 1 ref-start-end))
+	     (end (nth 2 ref-start-end))
+             ;; Extract the WikiWord before the '#'
+             (word (hywiki-word-from-reference ref)))
+	(save-excursion
+	  ;; 1. Look for the '#' delimiter on the current line
+	  (if (re-search-backward "#" start t)
+              (let ((hash-pos (point))
+                    (page (expand-file-name (concat word ".org") hywiki-directory)))
+		;; 2. Validate the WikiWord and page existence
+		(when (and (not (string-empty-p word))
+			   (file-readable-p page))
+		  (let ((headings (hywiki-get-page-headings page)))
+                    ;; 3. Return completion data
+                    (list (1+ hash-pos) ;; START: Right after '#'
+			  opoint        ;; END: Current cursor
+			  headings      ;; CANDIDATES
+			  :exclusive 'no))))
+
+            ;; CASE 2: Standard WikiWord completion (no '#' found)
+            (list start end
+		  (hywiki-get-page-list)
+		  :exclusive 'no)))))))
+
 (defun hywiki-create-referent-and-display (wikiword &optional prompt-flag)
   "Display the HyWiki referent for WIKIWORD if not in an ert test; return it.
 
@@ -2675,6 +2709,19 @@ These must end with `hywiki-file-suffix'."
        hywiki-directory nil (concat "^" hywiki-word-regexp
 				    (regexp-quote hywiki-file-suffix) "$")))))
 
+(defun hywiki-get-page-headings (page)
+  "Return a list of all headings found in FILE.
+Strip any leading '*' and space characters from the headings."
+  (when (and (stringp page) (file-readable-p page))
+    (let ((grep-command (format "grep -E '^\\*+ ' %s" (shell-quote-argument page))))
+      (with-temp-buffer
+        (shell-command grep-command (current-buffer))
+        (goto-char (point-min))
+        (let (headings)
+          (while (re-search-forward "^\\*+ +\\(.*\\)$" nil t)
+            (push (match-string-no-properties 1) headings))
+          (nreverse headings))))))
+
 (defun hywiki-get-page-list ()
   "Return the list of HyWikiWords with existing pages."
   (delq nil (hash-map (lambda (referent-type)
@@ -3256,7 +3303,7 @@ Action Key press; with a prefix ARG, emulate an Assist Key press."
 	(hywiki-find-referent word)
       (hkey-either arg))))
 
-(defun hywiki-word-at (&optional range-flag)
+(defun hywiki-word-at (&optional range-flag hash-sign-only-flag)
   "Return potential HyWikiWord and optional #section:Lnum:Cnum at point or nil.
 `hywiki-mode' must be enabled or this will return nil.
 
@@ -3451,10 +3498,12 @@ non-nil or this will return nil."
 					 (setq start (match-beginning 1)
 					       end (match-end 1)
 					       wikiword (string-trim (match-string-no-properties 1))))
-					((and (looking-at hywiki-word-with-optional-suffix-regexp)
-					      ;; Can't be followed by a # character
-					      (/= (or (char-after (match-end 0)) 0)
-						  ?#))
+					((or (and (looking-at hywiki-word-with-optional-suffix-regexp)
+						  ;; Can't be followed by a # character
+						  (/= (or (char-after (match-end 0)) 0)
+						      ?#))
+					     (and hash-sign-only-flag
+						  (looking-at (concat hywiki-word-regexp "#"))))
 					 (setq start (match-beginning 0)
 					       end   (match-end 0)
 					       ;; No following char
@@ -3465,10 +3514,15 @@ non-nil or this will return nil."
 		     ;; One set of \n\r characters is allowed but no
 		     ;; whitespace at the end of the reference.
 		     (if (and (stringp wikiword) (string-match "#" wikiword))
-			 (when (string-match "#[^][#()<>{}\"\f]*[^][#()<>{}\"\f\t\n\r ]" wikiword)
-			   (setq end (- end (- (length wikiword)
-					       (match-end 0)))
-				 wikiword (substring wikiword 0 (match-end 0))))
+			 (let ((section-regexp "#[^][#()<>{}\"\f]*[^][#()<>{}\"\f\t\n\r ]"))
+			   (when (string-match
+				  (if hash-sign-only-flag
+				      (concat "#\\'\\|" section-regexp)
+				    section-regexp)
+				  wikiword)
+			     (setq end (- end (- (length wikiword)
+						 (match-end 0)))
+				   wikiword (substring wikiword 0 (match-end 0)))))
 		       t))
 		(if range-flag
 		    (list wikiword start end)
@@ -3612,6 +3666,12 @@ Default to any HyWikiWord at point."
       (hywiki-consult-grep (concat "\\b" (regexp-quote word) "\\b"))
     (user-error "(hywiki-word-consult-grep): Invalid HyWikiWord: '%s'; must be capitalized, all alpha" word)))
 
+(defun hywiki-word-from-reference (ref)
+  "Return the HyWikiWord part of a reference (part before the #)."
+  (when (and (stringp ref)
+	     (string-match hywiki-word-with-optional-suffix-exact-regexp ref))
+    (match-string 1 ref)))
+
 (defun hywiki-word-grep (wikiword)
   "Grep for occurrences of WIKIWORD with `consult-grep' or normal-grep'.
 Search across `hywiki-directory'."
@@ -3730,9 +3790,17 @@ occurs with one of these hooks, the problematic hook is removed."
   (hywiki-get-referent-hasht)
   (hywiki-maybe-directory-updated))
 
+(defun hywiki-word-add-completion-at-point ()
+  "Add HyWikiWord in-buffer completion to `completion-at-point-functions'.
+Completion requires typing at least the two first characters of the
+completion or no completion xandidates are returned."
+  (add-hook 'completion-at-point-functions
+            #'hywiki-completion-at-point nil t))
+
 (defun hywiki-word-highlight-buffers (buffers)
   "Setup HyWikiWord auto-highlighting and highlight in BUFFERS."
   (interactive)
+  (add-hook 'after-change-major-mode-hook 'hywiki-word-add-completion-at-point)
   (add-hook 'after-change-major-mode-hook 'hywiki-word-highlight-in-current-buffer)
   (add-hook 'window-buffer-change-functions 'hywiki-word-highlight-in-frame)
   (add-to-list 'yank-handled-properties
@@ -3761,6 +3829,7 @@ occurs with one of these hooks, the problematic hook is removed."
   "Disable HyWikiWord auto-highlighting and dehighlight in BUFFERS."
   (interactive)
   (remove-hook 'after-change-major-mode-hook 'hywiki-word-highlight-in-current-buffer)
+  (remove-hook 'after-change-major-mode-hook 'hywiki-word-add-completion-at-point)
   (remove-hook 'window-buffer-change-functions 'hywiki-word-highlight-in-frame)
   (setq yank-handled-properties
 	(delete '(hywiki-word-face . hywiki-highlight-on-yank)

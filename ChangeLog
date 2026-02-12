@@ -1,3 +1,21 @@
+2026-02-12  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-word-add-completion-at-point): Add in-buffer
+    HyWikiWord reference completion (Complete HyWiki words and sections.
+    Completion requires typing at least two of the first characters of
+    the completion.)
+            (hywiki-word-highlight-buffers,
+             hywiki-word-dehighlight-buffers): Use above func.
+
+2026-02-11  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-word-at): Add optional 2nd arg, 'pound-sign-only-flag'
+    to allow matching to a WikiWord# without any heading name for use when
+    completing on headings.
+            (hywiki-completion-at-point,
+             hywiki-get-page-headings,
+             hywiki-word-from-reference): Add and use in completions.
+
 2026-02-10  Mats Lidell  <matsl@gnu.org>
 
 * .dir_locals.el: Project editing settings.
