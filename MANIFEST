@@ -105,6 +105,7 @@ hyperbole-banner.png - Graphic of GNU Hyperbole for display with About Hyperbole
 smart-clib-sym       - Test whether symbol appears within a set of C libraries
 topwin.py            - Python script to find the topmost macOS app window at a screen position
 .hypb & _hypb        - Button data files used by the GNU Hyperbole DEMO file
+.dir_locals.el       - Project editing settings
 
 * --- EXTERNAL SYSTEM ENCAPSULATIONS ---
 hsys-activities.el   - GNU Hyperbole support functions for Activities

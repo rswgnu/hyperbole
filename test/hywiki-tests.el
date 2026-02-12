@@ -1493,12 +1493,23 @@ comparison with expected overlays stable."
   "Non-nil to perform face validation of WikiWord.")
 
 (defun hywiki-tests--word-at ()
-  "Test if there is a HyWikiWord reference at point with a referent.
-Choose what test to perform based on value of `hywiki-tests--with-face-test'."
-  (when (hywiki-referent-exists-p)
-    (if hywiki-tests--with-face-test
-	(hywiki-highlighted-word-at)
-      (hywiki-word-at))))
+  "Return potential HyWikiWord and optional #section:Lnum:Cnum at point or nil.
+When `hywiki-tests--with-face-test' is non-nil the HyWikiWord must be
+highlighted to be returned.  When it is highlighted, the range of the
+highlighting and the range of the HyWikiWord is, as a side effect,
+checked for consistency."
+  (let* ((range (hywiki-referent-exists-p :range))
+         (wikiword (car range)))
+    (when wikiword
+      (if (not hywiki-tests--with-face-test)
+          wikiword
+        (save-excursion
+          (goto-char (round (/ (+ (cadr range) (caddr range)) 2.0)))
+          (let* ((highlighted-range (hywiki-highlighted-word-at :range))
+                 (highlighted-wikiword (car highlighted-range)))
+            (when highlighted-wikiword
+              (should (equal range highlighted-range)))
+            highlighted-wikiword))))))
 
 (defun hywiki-tests--verify-hywiki-word (step expected)
   "Verify that `hywiki-word-at' returns t if a wikiword is EXPECTED.
@@ -1560,11 +1571,10 @@ point when the function is called."
                        (hywiki-tests--command-execute #'backward-delete-char 1)))
                    (hywiki-tests--verify-hywiki-word step vfy)))
 		((and (symbolp step) (string-prefix-p "p" (symbol-name step)))
-		 (let* ((pos (string-to-number (substring (symbol-name step) 1)))
-			(newpos (max (min (+ origin (1- pos)) (point-max))
-				     (point-min))))
+                 (let* ((pos (string-to-number (substring (symbol-name step) 1)))
+                        (newpos (+ origin (1- pos))))
                    (when (or (> (point-min) newpos) (< (point-max) newpos))
-                     (ert-fail (format "New point: '%s' is outside of buffer" newpos)))
+                     (ert-fail (format "Error in test specification. Step '%s' moves point to pos '%s' outside of buffer" step newpos)))
                    (goto-char newpos))
 		 (hywiki-tests--verify-hywiki-word step vfy))
 		(t (ert-fail (format "Unknown step: '%s' in WikiWord verification" step)))))))))
