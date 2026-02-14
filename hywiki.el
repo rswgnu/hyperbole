@@ -3035,7 +3035,8 @@ If not found, set it up and return the new project properties."
 
 (defun hywiki--org-link-html-format (path-stem suffix desc info)
   "Format an html link using Org ids."
-  (let* ((heading (and suffix (not (string-empty-p suffix)) (substring suffix 1)))
+  (let* ((raw-heading (and suffix (not (string-empty-p suffix)) (substring suffix 1)))
+         (heading (and raw-heading (hpath:dashes-to-spaces-markup-anchor raw-heading)))
          (link-obj (org-element-create
                     'link
                     (list
