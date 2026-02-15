@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     14-Feb-26 at 22:49:32 by Bob Weiner
+;; Last-Mod:     14-Feb-26 at 23:07:37 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -183,6 +183,8 @@
 ;;; ************************************************************************
 ;;; Private variables
 ;;; ************************************************************************
+
+(defvar hywiki--prior-mode nil)
 
 (defvar-local hywiki--buffer-modified-tick nil
   "Used to determine if a command modifies a buffer or not.
@@ -784,7 +786,11 @@ since the command may have moved it off a HyWikiWord."
 	   ;; Not inside a comment or a string
 	   (not (or (nth 4 (syntax-ppss)) (hypb:in-string-p))))))
 
-(defvar hywiki-prior-mode nil)
+(defvar hywiki-mode nil
+  "Non-nil when the global hywiki minor mode is enabled.
+Don't set this directly, instead call the function `hywiki-mode'
+with the value you want as its argument.  See the docstring for
+that function for valid values.")
 
 ;;;###autoload
 (define-minor-mode hywiki-mode
@@ -852,7 +858,7 @@ See the Info documentation at \"(hyperbole)HyWiki\".
       ;; Need hyperbole-mode
       (unless hyperbole-mode
 	(hyperbole-mode 1))
-      (hywiki-word-set-auto-highlighting hywiki-prior-mode arg)
+      (hywiki-word-set-auto-highlighting hywiki--prior-mode arg)
       (setq hywiki-mode arg))
      ((or (and (integerp arg) (<= arg 0))
 	  (null arg))
@@ -861,7 +867,7 @@ See the Info documentation at \"(hyperbole)HyWiki\".
       ;; Dehighlight HyWikiWords in this buffer when 'hywiki-mode' is
       ;; disabled and this is not a HyWiki page buffer. If this is a
       ;; HyWiki page buffer, then dehighlight when `hywiki-mode' is nil.
-      (hywiki-word-set-auto-highlighting hywiki-prior-mode arg)
+      (hywiki-word-set-auto-highlighting hywiki--prior-mode arg)
       (setq hywiki-mode arg))
      (t ;; (> arg 1)
       ;; Enable in HyWiki page buffers only
@@ -869,11 +875,11 @@ See the Info documentation at \"(hyperbole)HyWiki\".
       ;; Need hyperbole-mode
       (unless hyperbole-mode
 	(hyperbole-mode 1))
-      (hywiki-word-set-auto-highlighting hywiki-prior-mode arg)
+      (hywiki-word-set-auto-highlighting hywiki--prior-mode arg)
       (setq hywiki-mode arg)))))
 
 (defun hywiki-mode-around-advice (hywiki-mode-fn &optional arg)
-  (setq hywiki-prior-mode hywiki-mode)
+  (setq hywiki--prior-mode hywiki-mode)
   (funcall hywiki-mode-fn arg))
 
 (advice-add 'hywiki-mode :around #'hywiki-mode-around-advice)

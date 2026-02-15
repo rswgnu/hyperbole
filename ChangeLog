@@ -1,5 +1,10 @@
 2026-02-14  Bob Weiner  <rsw@gnu.org>
 
+* hywiki.el (hywiki--prior-mode): Rename to 'hywiki--prior-mode' since only
+    used internally.
+            (hywiki-mode): Define and document as a variable now that its
+    minor-mode does not define it but just references it with :variable.
+
 * hsys-org.el (hsys-org-fix-version): Use 'find-library--from-load-history' on
     "org-loaddefs" to get actual dir defs were loaded from, not using current
     'load-path'.
