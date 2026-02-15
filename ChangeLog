@@ -1,5 +1,12 @@
 2026-02-14  Bob Weiner  <rsw@gnu.org>
 
+* hsys-org.el (hsys-org-fix-version): Ensure 'org-install-dir' is a dir and
+    not the file found from 'find-library--from-load-history' call.
+
+* test/hy-test-dependencies.el (hsys-org-log-and-fix-version): Ignore any version
+    fixing errors due to publishing incompatibilities between versions.  Not
+    relevant to run tests.
+
 * hywiki.el (hywiki--prior-mode): Rename to 'hywiki--prior-mode' since only
     used internally.
             (hywiki-mode): Define and document as a variable now that its

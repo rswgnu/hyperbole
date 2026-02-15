@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:16:00
-;; Last-Mod:     25-Apr-25 at 19:28:36 by Mats Lidell
+;; Last-Mod:     14-Feb-26 at 23:46:04 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -41,8 +41,9 @@
 ;; Needed when `hypb:display-file-with-logo' uses `org-mode'
 (setq hsys-org-enable-smart-keys t)
 
-;; Log and fix any mixed version Org installation
-(hsys-org-log-and-fix-version)
+;; Log and fix any mixed version Org installation.
+;; Ignore publishing-related errors that don't affect the tests.
+(ignore-errors (hsys-org-log-and-fix-version))
 
 (provide 'hy-test-dependencies)
 ;;; hy-test-dependencies.el ends here

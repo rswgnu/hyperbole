@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     31-Dec-25 at 00:03:26 by Mats Lidell
+;; Last-Mod:     14-Feb-26 at 23:40:17 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -267,6 +267,8 @@ Return t if Org is reloaded, else nil."
         ;; Use the loadhist to get the path Org defs were loaded from
 	(org-install-dir
 	 (ignore-errors (find-library--from-load-history "org-loaddefs"))))
+    (when org-install-dir
+      (setq org-install-dir (file-name-directory org-install-dir)))
     (cond ((and org-dir org-install-dir (string-equal org-dir org-install-dir)
 		;; Still may have a situation where the Org version matches the
 		;; builtin Org but the directories are for a newer Org
