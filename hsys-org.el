@@ -33,7 +33,7 @@
 (eval-when-compile (require 'hmouse-drv))
 (require 'hargs) ;; for `hargs:delimited-p'
 (require 'hproperty) ;; requires 'hbut
-(require 'hsys-consult)
+(require 'hsys-consult) ;; requires 'find-func
 (require 'hypb)
 (require 'org)
 (require 'org-element)
@@ -264,8 +264,9 @@ Return t if Org is reloaded, else nil."
   (setq org--inhibit-version-check nil
 	org-list-allow-alphabetical nil)
   (let ((org-dir (ignore-errors (org-find-library-dir "org")))
+        ;; Use the loadhist to get the path Org defs were loaded from
 	(org-install-dir
-	 (ignore-errors (org-find-library-dir "org-loaddefs"))))
+	 (ignore-errors (find-library--from-load-history "org-loaddefs"))))
     (cond ((and org-dir org-install-dir (string-equal org-dir org-install-dir)
 		;; Still may have a situation where the Org version matches the
 		;; builtin Org but the directories are for a newer Org
@@ -300,8 +301,7 @@ Return t if Org is reloaded, else nil."
 	       (package-initialize))
 	     ;; Ensure Org folding is configured for `reveal-mode' compatibility
 	     (hsys-org--set-fold-style)
-	     (let ((pkg-desc (car (cdr (assq 'org package-archive-contents)))))
-	       (package-activate pkg-desc t))
+	     (package-activate 'org t)
 
 	     ;; Load org libraries with right path but save "org" for last
 	     (mapc #'load (remove "org" org-libraries-to-reload))

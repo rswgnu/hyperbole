@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     12-Feb-26 at 00:30:44 by Bob Weiner
+;; Last-Mod:     14-Feb-26 at 22:49:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -151,10 +151,6 @@
 (require 'seq)        ;; For `seq-contains-p', `seq-difference' and `seq-intersection'
 (require 'subr-x)     ;; For `string-remove-prefix'
 (require 'thingatpt)
-
-(eval-and-compile
-  '(when (require 'company nil t)
-     (add-to-list 'company-backends 'hywiki-company-hasht-backend)))
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -407,12 +403,12 @@ where PATH is the un-resolvable reference."
   :type 'string
   :group 'hyperbole-hywiki)
 
-(defun hywiki--preparation-function (_project-plist)
+(defun hywiki--export-preparation-function (_project-plist)
   "Setup export hook functions."
   (message "Hywiki export is in preparation.")
   (add-hook 'org-export-before-parsing-functions #'hywiki-org-export-function))
 
-(defun hywiki--completion-function (_project-plist)
+(defun hywiki--export-completion-function (_project-plist)
   "Remove export hook function."
   (remove-hook 'org-export-before-parsing-functions #'hywiki-org-export-function)
   (message "Hywiki export is completed."))
@@ -425,8 +421,8 @@ where PATH is the un-resolvable reference."
 	hywiki-org-publish-project-alist
 	(list
 	 "hywiki"
-         :preparation-function 'hywiki--preparation-function
-         :completion-function 'hywiki--completion-function
+         :preparation-function 'hywiki--export-preparation-function
+         :completion-function 'hywiki--export-completion-function
 	 :auto-sitemap t
 	 :base-directory (expand-file-name hywiki-directory)
 	 :html-head (format
@@ -824,6 +820,9 @@ See the Info documentation at \"(hyperbole)HyWiki\".
   :lighter hywiki-mode-lighter
   :keymap hywiki-mode-map
   :group 'hyperbole-hywiki
+  ;; Prevent definition of a custom-variable since it makes no sense to
+  ;; customize this variable.
+  :variable hywiki-mode
   (progn
     (unless hywiki-mode-map
       (setq hywiki-mode-map (make-sparse-keymap)))
@@ -1463,17 +1462,30 @@ Ensures that selecting a completion replaces only the text after the '#'."
 		;; 2. Validate the WikiWord and page existence
 		(when (and (not (string-empty-p word))
 			   (file-readable-p page))
-		  (let ((headings (hywiki-get-page-headings page)))
-                    ;; 3. Return completion data
-                    (list (1+ hash-pos) ;; START: Right after '#'
-			  opoint        ;; END: Current cursor
-			  headings      ;; CANDIDATES
-			  :exclusive 'no))))
+                  (let* ((headings (hywiki-get-page-headings page))
+                         ;; Build the table with metadata manually
+                         (table (lambda (str pred action)
+                                  (if (eq action 'metadata)
+                                      '(metadata (category . hywiki-heading))
+                                    (complete-with-action action headings str pred)))))
+                    (list (1+ hash-pos)
+                          opoint
+                          table
+                          :exclusive 'no))))
 
             ;; CASE 2: Standard WikiWord completion (no '#' found)
-            (list start end
-		  (hywiki-get-page-list)
-		  :exclusive 'no)))))))
+            (let ((wikiword-list (hywiki-get-wikiword-list)))
+	      ;; 2. Validate the WikiWord and page existence
+	      (when (and start end wikiword-list (not (string-empty-p word)))
+                (let ((table
+                       ;; Build the table with metadata manually
+                       (lambda (str pred action)
+                         (if (eq action 'metadata)
+                             '(metadata (category . hywiki-page))
+                           (complete-with-action action wikiword-list str pred)))))
+                  (list start end
+                        table
+		        :exclusive 'no))))))))))
 
 (defun hywiki-create-referent-and-display (wikiword &optional prompt-flag)
   "Display the HyWiki referent for WIKIWORD if not in an ert test; return it.
@@ -2626,11 +2638,13 @@ lookup tables should have already been updated and this is skipped.
 Use `hywiki-word-face' to highlight."
   (walk-windows
    (lambda (window)
-     (with-selected-window window
-       ;; Display buffer before `normal-mode' triggers possibly
-       ;; long-running font-locking
-       (sit-for 0)
-       (hywiki-maybe-highlight-references nil nil skip-lookups-update-flag)))
+     ;; Skip child/popup/posframe windows; use only top-level frame windows
+     (unless (frame-parent (window-frame window))
+       (with-selected-window window
+         ;; Display buffer before `normal-mode' triggers possibly
+         ;; long-running font-locking
+         (sit-for 0)
+         (hywiki-maybe-highlight-references nil nil skip-lookups-update-flag))))
    nil frame)
   (hywiki-maybe-directory-updated))
 
@@ -2860,23 +2874,6 @@ If deleted, update HyWikiWord highlighting across all frames."
   "Clear all elements from the HyWiki referent hash table and return it."
   (setq hywiki--referent-hasht nil
 	hywiki--any-wikiword-regexp-list nil))
-
-(eval-and-compile
-  '(when (featurep 'company)
-     (defun hywiki-company-hasht-backend (command &optional _arg &rest ignored)
-       "A `company-mode` backend that completes from the keys of a hash table."
-       (interactive (list 'interactive))
-       (when (hywiki-word-at)
-	 (pcase command
-	   ('interactive (company-begin-backend 'company-hash-table-backend))
-	   ('prefix (company-grab-word))
-	   ('candidates
-	    (let ((prefix (company-grab-word)))
-	      (when prefix
-		(cl-loop for key being the hash-keys in (hywiki-get-wikiword-list)
-			 when (string-prefix-p prefix key)
-			 collect key))))
-	   ('sorted t))))))
 
 (defvar hywiki-cache-default-file ".hywiki.eld"
   "Standard file name for storing cached data for a HyWiki.")
@@ -3667,7 +3664,11 @@ Default to any HyWikiWord at point."
     (user-error "(hywiki-word-consult-grep): Invalid HyWikiWord: '%s'; must be capitalized, all alpha" word)))
 
 (defun hywiki-word-from-reference (ref)
-  "Return the HyWikiWord part of a reference (part before the #)."
+  "Return the HyWikiWord part of a reference (part before the #).
+This does not test whether a referent exists for the HyWikiWord; call
+‘hywiki-referent-exists-p’ without an argument for that.  Nor does it
+test whether the HyWikiWord reference is within an invalid context;
+call ‘hywiki-non-hook-context-p’ for that."
   (when (and (stringp ref)
 	     (string-match hywiki-word-with-optional-suffix-exact-regexp ref))
     (match-string 1 ref)))

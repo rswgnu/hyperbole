@@ -22,6 +22,7 @@
 (eval-when-compile
   (require 'subr-x))                    ; For when-let* in Emacs 28.2
 (require 'hload-path)
+(require 'hbut)
 
 ;;; ************************************************************************
 ;;; Public declarations

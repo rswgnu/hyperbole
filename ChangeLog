@@ -1,3 +1,21 @@
+2026-02-14  Bob Weiner  <rsw@gnu.org>
+
+* hsys-org.el (hsys-org-fix-version): Use 'find-library--from-load-history' on
+    "org-loaddefs" to get actual dir defs were loaded from, not using current
+    'load-path'.
+
+* hywiki.el (hywiki-maybe-highlight-wikiwords-in-frame): Ignore any child/popup
+    windows such as those used by the posframe package.  Vertico and Corfu may
+    also use these.
+            (hywiki-completion-at-point): Fix to use completion tables for use
+    with the Corfu in-buffer completion package.
+            (hywiki-completion-at-point): Fix to return all existing HyWikiWords,
+    not just those with pages but of any referent type.
+            (hywiki-company-hasht-backend): Remove in favor of above generic function.
+	    (hywiki-mode): Prevent def of a customizable variable for this mode.
+    Use the 'hwyiki-mode' function to affect the state of the variable of the same name.
+            (hywiki-word-from-reference): Improve doc string.
+
 2026-02-12  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-word-add-completion-at-point): Add in-buffer
@@ -9,7 +27,7 @@
 
 2026-02-11  Bob Weiner  <rsw@gnu.org>
 
-* hywiki.el (hywiki-word-at): Add optional 2nd arg, 'pound-sign-only-flag'
+* hywiki.el (hywiki-word-at): Add optional 2nd arg, 'hash-sign-only-flag'
     to allow matching to a WikiWord# without any heading name for use when
     completing on headings.
             (hywiki-completion-at-point,
