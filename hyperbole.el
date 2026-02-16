@@ -9,7 +9,7 @@
 ;; Maintainer:   Robert Weiner <rsw@gnu.org>
 ;; Maintainers:  Robert Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:      06-Oct-92 at 11:52:51
-;; Last-Mod:     18-Jan-26 at 08:29:42 by Bob Weiner
+;; Last-Mod:     15-Feb-26 at 20:18:18 by Bob Weiner
 ;; Released:     10-Mar-24
 ;; Version:      9.0.2pre
 ;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -510,8 +510,9 @@ frame, those functions by default still return the prior frame."
   (when (fboundp #'vertico-mouse-mode)
     (add-hook 'vertico-mode-hook (lambda () (vertico-mouse-mode 1))))
   ;;
-  ;; Set HyWiki page auto-HyWikiWord highlighting and `yank-handled-properties'
-  (hywiki-mode :pages)
+  ;; Initialize HyWiki page auto-HyWikiWord highlighting and `yank-handled-properties'
+  ;; based on the `hywiki-default-mode'.
+  (hywiki-mode hywiki-default-mode)
   ;;
   ;; Hyperbole initialization is complete.
   (message "Initializing Hyperbole...done"))
