@@ -74,7 +74,6 @@
 
 ;; Smart scrolling
 (ert-deftest demo-smart-scrolling-proportional-test ()
-  (skip-unless (not noninteractive))
   (unwind-protect
       (let ((enable-local-variables nil))
         (hypb:display-file-with-logo "DEMO")
@@ -148,12 +147,10 @@
 
 ;; HyRolo
 (ert-deftest demo-hyrolo-test ()
-  (skip-unless (not noninteractive))
   (unwind-protect
       (with-temp-buffer
         (load (expand-file-name "hyrolo-demo.el" hyperb:dir))
         (should (hact 'kbd-key "C-x 4 r work RET"))
-        (hy-test-helpers:consume-input-events)
         (should (string= (buffer-name) hyrolo-display-buffer))
         (should (search-forward "Dunn, John")))
     (hyrolo-demo-quit)))
@@ -414,7 +411,6 @@
     (hy-test-helpers:kill-buffer "DEMO")))
 
 (ert-deftest demo-factorial-ebutton-test ()
-  (skip-unless (not noninteractive))
   (unwind-protect
       (let ((enable-local-variables nil))
         (hypb:display-file-with-logo "DEMO")
@@ -508,37 +504,31 @@
 
 (ert-deftest fast-demo-key-series-dired-other-window ()
   "Action key on `dired-other-window' brings up Dired in the other window."
-  (skip-unless (not noninteractive))
   (with-temp-buffer
     (insert "{M-x dired-other-window RET ${hyperb:dir}/*.el RET}")
     (goto-char 5)
     (action-key)
-    (hy-test-helpers:consume-input-events)
     (should (equal 'dired-mode major-mode))
     (should (equal hyperb:dir (expand-file-name default-directory)))))
 
 (ert-deftest fast-demo-key-series-window-grid-22 ()
   "Action key on window grid key series creates a grid."
-  (skip-unless (not noninteractive))
   (with-temp-buffer
     (insert "{C-c @ 22 RET}")
     (goto-char 3)
     (action-key)
-    (hy-test-helpers:consume-input-events)
     (should (= 4 (length (window-list))))))
 
 (ert-deftest fast-demo-key-series-kotl-files ()
   "Action key brings up kotl files in a grid.
 Note: Depends on key series in FAST-DEMO and how many files in
 hyberbole folder that starts with kotl."
-  (skip-unless (not noninteractive))
   (unwind-protect
       (let ((enable-local-variables nil))
         (hypb:display-file-with-logo "FAST-DEMO")
 	(goto-char (point-min))
         (search-forward "{C--1 C-c @")
         (action-key)
-        (hy-test-helpers:consume-input-events)
         (should (= 4 (length (window-list)))))
     (hy-test-helpers:kill-buffer "FAST-DEMO")))
 
@@ -546,28 +536,23 @@ hyberbole folder that starts with kotl."
   "Action key brings up `emacs-lisp-mode' files in a grid.
 Note: Relies on that empty windows are created when there are not
 enough files with matching mode loaded."
-  (skip-unless (not noninteractive))
   (with-temp-buffer
     (insert "{C-u 0 C-c @ emacs-lisp-mode RET 33 RET}")
     (goto-char 3)
     (action-key)
-    (hy-test-helpers:consume-input-events)
     (should (= 9 (length (window-list))))))
 
 (ert-deftest fast-demo-key-series-hyperbole-dir ()
   "Action key on hyperb:dir brings up hyperbole folder."
-  (skip-unless (not noninteractive))
   (with-temp-buffer
     (insert "{C-x 4 d ${hyperb:dir} RET}")
     (goto-char 5)
     (action-key)
-    (hy-test-helpers:consume-input-events)
     (should (equal 'dired-mode major-mode))
     (should (equal hyperb:dir (expand-file-name default-directory)))))
 
 (ert-deftest fast-demo-key-series-keep-lines-ext ()
   "Action key opens Ibuffer and keep lines with extension."
-  (skip-unless (not noninteractive))
   (let ((buff "*Ibuffer*")
         (old (global-key-binding (kbd "C-x C-b")))
         (tmp (make-temp-file "hypb" nil ".hypb-test")))
@@ -578,7 +563,6 @@ enough files with matching mode loaded."
           (insert "{C-x C-b C-x C-q M-x keep-lines RET .hypb-test$ RET C-x C-q}")
           (goto-char 5)
           (action-key)
-          (hy-test-helpers:consume-input-events)
           (with-current-buffer buff
             (should (looking-at-p (concat ".*" tmp)))))
       (hy-test-helpers:kill-buffer buff)
@@ -588,7 +572,6 @@ enough files with matching mode loaded."
 
 (ert-deftest fast-demo-key-series-keep-lines-slash ()
   "Action key opens Ibuffer and keep lines that contains a slash."
-  (skip-unless (not noninteractive))
   (let ((buff "*Ibuffer*")
         (old (global-key-binding (kbd "C-x C-b")))
         (dir (dired hyperb:dir)))
@@ -598,7 +581,6 @@ enough files with matching mode loaded."
           (insert "{C-x C-b C-x C-q M-x keep-lines RET [\\/]$ RET C-x C-q}")
           (goto-char 5)
           (action-key)
-          (hy-test-helpers:consume-input-events)
           (with-current-buffer buff
             (should (looking-at-p (concat ".*[\\/]")))))
       (hy-test-helpers:kill-buffer buff)
@@ -617,7 +599,6 @@ enough files with matching mode loaded."
           (insert "{C-x C-b / RET dired-mode RET}")
           (goto-char 5)
           (action-key)
-          (hy-test-helpers:consume-input-events)
           (with-current-buffer buff
             (should (looking-at-p (concat ".*Dired by name")))))
       (hy-test-helpers:kill-buffer buff)
@@ -637,7 +618,6 @@ enough files with matching mode loaded."
           (insert "{ M-x shell RET M-> (cd ${hyperb:dir} && echo && echo \"PWD=$(pwd)\") RET }")
           (goto-char 5)
           (action-key)
-          (hy-test-helpers:consume-input-events)
           (with-current-buffer shell-buffer-name
             (goto-char (point-max))
             (accept-process-output (get-buffer-process shell-buffer-name) 1)
@@ -650,7 +630,6 @@ enough files with matching mode loaded."
 
 (ert-deftest fast-demo-key-series-shell-grep ()
   "Action key executes grep shell command."
-  (skip-unless (not noninteractive))
   (let* ((shell-file-name (executable-find "sh"))
          (shell-buffer-name "*shell*")
 	 (existing-shell-flag (get-buffer-process shell-buffer-name)))
@@ -659,7 +638,6 @@ enough files with matching mode loaded."
           (insert "{M-x shell RET M-> (export HYPERBOLE_DIR=${hyperb:dir} && cd $HYPERBOLE_DIR && grep -n gbut:label-list *.el) RET}")
           (goto-char 5)
           (action-key)
-          (hy-test-helpers:consume-input-events)
           (with-current-buffer shell-buffer-name
             (with-timeout (5 (ert-fail "Test timed out"))
               (while (not (string-match-p "\n.*\\.el:[0-9]+:.*defun.*gbut:label-list ()" (buffer-substring-no-properties (point-min) (point-max))))
@@ -707,7 +685,6 @@ enough files with matching mode loaded."
           (goto-char 5)
           (view-mode)
           (action-key)
-          (hy-test-helpers:consume-input-events)
           (with-current-buffer shell-buffer-name
             (goto-char (point-max))
             (accept-process-output (get-buffer-process shell-buffer-name) 1)
@@ -720,7 +697,6 @@ enough files with matching mode loaded."
 
 (ert-deftest fast-demo-key-series-shell-grep-view-mode ()
   "Action key executes grep shell command from buffer in `view-mode`."
-  (skip-unless (not noninteractive))
   (let* ((shell-file-name (executable-find "sh"))
          (shell-buffer-name "*shell*")
 	 (existing-shell-flag (get-buffer-process shell-buffer-name)))
@@ -730,7 +706,6 @@ enough files with matching mode loaded."
           (goto-char 5)
           (view-mode)
           (action-key)
-          (hy-test-helpers:consume-input-events)
           (with-current-buffer shell-buffer-name
             (with-timeout (5 (ert-fail "Test timed out"))
               (while (not (string-match-p "\n.*\\.el:[0-9]+:.*defun.*gbut:label-list ()"
