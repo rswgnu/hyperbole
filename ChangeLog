@@ -1,3 +1,12 @@
+2026-02-15  Mats Lidell  <matsl@gnu.org>
+
+* hywiki.el (hywiki--org-link-html-format): Use
+    `hpath:dashes-to-spaces-markup-anchor' to make header match target.
+* test/hywiki-tests.el (hywiki-tests--action-key-moves-to-word-and-section-using-dash-to-space-conversion):
+    Add test for headers with dashes.
+    (hywiki-tests--published-html-links-to-word-and-section): Update test to
+    the dash to space conversion in headers.
+
 2026-02-15  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-word-highlight-in-current-buffer): Fix bug that added
