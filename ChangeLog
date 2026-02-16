@@ -1,3 +1,14 @@
+2026-02-15  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-word-highlight-in-current-buffer): Fix bug that added
+    highlighting hooks to buffers where HyWikiWords are not highlighted.
+    Previously, this function filtered out only minibuffers.  Now it filters
+    out buffers where hywiki-mode is not active.
+            (hywiki-mode-normalize): Add to normalize 'hywiki-mode' args and
+    handle mode toggling.
+            (hywiki-default-mode): Add this customization which determines
+    the state HyWiki is initialized to when Hyperbole is activated.
+
 2026-02-14  Bob Weiner  <rsw@gnu.org>
 
 * hsys-org.el (hsys-org-fix-version): Ensure 'org-install-dir' is a dir and

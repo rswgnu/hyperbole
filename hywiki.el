@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     14-Feb-26 at 23:07:37 by Bob Weiner
+;; Last-Mod:     15-Feb-26 at 20:39:33 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -786,11 +786,71 @@ since the command may have moved it off a HyWikiWord."
 	   ;; Not inside a comment or a string
 	   (not (or (nth 4 (syntax-ppss)) (hypb:in-string-p))))))
 
+(defcustom hywiki-default-mode :pages
+  "Customizable initial mode setting for HyWiki minor mode.
+HyWiki mode has three states, any one of which can be set as the default:
+  - :pages - highlight HyWikiWords in HyWiki pages only (Org files in
+             `hywiki-directory')
+  - :all   - highlight HyWikiWords in all editable buffers except those
+             with a major mode in `hywiki-exclude-major-modes'.
+  - nil    - no highlighting, the mode is disabled."
+  :type 'string
+  :group 'hyperbole-hywiki)
+
 (defvar hywiki-mode nil
   "Non-nil when the global hywiki minor mode is enabled.
 Don't set this directly, instead call the function `hywiki-mode'
-with the value you want as its argument.  See the docstring for
-that function for valid values.")
+with the value you want as its argument.  See the documentation for the
+customization, `hywiki-default-mode', for valid values.")
+
+(defun hywiki-mode-normalize (to-mode)
+  "Normalize `hywiki-mode' and TO-MODE values for `hywiki-mode' function.
+See the documentation for the customization, `hywiki-default-mode', for
+valid values."
+  ;; Normalize `hywiki-default-mode' setting
+  (cond
+   ((or (and (integerp hywiki-default-mode) (= hywiki-default-mode 1))
+	(memq hywiki-default-mode '(:all all t)))
+    (setq hywiki-default-mode :all))
+   ((or (null hywiki-default-mode)
+        (and (integerp hywiki-default-mode) (<= hywiki-default-mode 0)))
+    (setq hywiki-default-mode nil))
+   (t ;; (> hywiki-default-mode 1)
+    (setq hywiki-default-mode :pages)))
+
+  ;; Normalize `hywiki-mode' setting
+  (cond
+   ((or (and (integerp hywiki-mode) (= hywiki-mode 1))
+	(memq hywiki-mode '(:all all t)))
+    ;; Enable across all editable buffers
+    (setq hywiki-mode :all))
+   ((or (null hywiki-mode)
+        (and (integerp hywiki-mode) (<= hywiki-mode 0)))
+    ;; Disable mode flag
+    (setq hywiki-mode nil))
+   (t ;; (> hywiki-mode 1)
+    ;; Enable in HyWiki page buffers only
+    (setq hywiki-mode :pages)))
+
+  ;; Normalize `to-mode' and set mode
+  (when (eq to-mode 'toggle)
+    ;; Toggle across all editable buffers
+    (setq to-mode (if hywiki-mode
+                      nil
+                    (or hywiki--prior-mode hywiki-default-mode :pages))))
+
+  (cond
+   ((or (and (integerp to-mode) (= to-mode 1))
+	(memq to-mode '(:all all t)))
+    ;; Enable across all editable buffers
+    (setq to-mode :all))
+   ((or (null to-mode)
+        (and (integerp to-mode) (<= to-mode 0)))
+    ;; Disable across all editable buffers
+    (setq to-mode nil))
+   (t ;; (> to-mode 1)
+    ;; Enable in HyWiki page buffers only
+    (setq to-mode :pages))))
 
 ;;;###autoload
 (define-minor-mode hywiki-mode
@@ -800,13 +860,9 @@ HyWiki minor mode automatically highlights and turns HyWikiWord
 references into implicit buttons that either link to HyWiki pages
 or activate typed referents such as bookmarks.
 
-HyWiki minor mode has three states as tracked by the following values
-of the `hywiki-mode' variable:
-  - :pages - highlight HyWikiWords in HyWiki pages only (Org files in
-             `hywiki-directory')
-  - :all   - highlight HyWikiWords in all editable buffers except those
-             with a major mode in `hywiki-exclude-major-modes'.
-  - nil    - no highlighting, the mode is disabled.
+HyWiki minor mode has three states as tracked by the `hywiki-mode'
+variable.  See the documentation for the customization, `hywiki-default-mode',
+for valid values.
 
 HyWikiWord references may also include optional suffixes:
 
@@ -830,59 +886,38 @@ See the Info documentation at \"(hyperbole)HyWiki\".
   ;; customize this variable.
   :variable hywiki-mode
   (progn
-    (unless hywiki-mode-map
-      (setq hywiki-mode-map (make-sparse-keymap)))
-    ;; Normalize `hywiki-mode' setting
-    (cond
-     ((or (and (integerp hywiki-mode) (= hywiki-mode 1))
-	  (memq hywiki-mode '(:all t)))
-      ;; Enable across all editable buffers
-      (setq hywiki-mode :all))
-     ((or (and (integerp hywiki-mode) (<= hywiki-mode 0))
-	  (null hywiki-mode))
-      ;; Disable mode flag
-      (setq hywiki-mode nil))
-     (t ;; (> hywiki-mode 1)
-      ;; Enable in HyWiki page buffers only
-      (setq hywiki-mode :pages)))
+    ;; Set mode and highlighting
+    (pcase arg
+     (:all (progn
+             ;; Enable across all editable buffers
+             ;; Need hyperbole-mode
+             (unless hyperbole-mode
+	       (hyperbole-mode 1))
+             (hywiki-word-set-auto-highlighting hywiki--prior-mode arg)
+             (setq hywiki-mode arg)))
+     ('nil (progn
+            ;; Disable across all editable buffers.
+            ;; Dehighlight HyWikiWords in this buffer when 'hywiki-mode' is
+            ;; disabled and this is not a HyWiki page buffer. If this is a
+            ;; HyWiki page buffer, then dehighlight when `hywiki-mode' is nil.
+            (hywiki-word-set-auto-highlighting hywiki--prior-mode arg)
+            (setq hywiki-mode arg)))
+     (:pages (progn
+               ;; Enable in HyWiki page buffers only
+               ;; Need hyperbole-mode
+               (unless hyperbole-mode
+	         (hyperbole-mode 1))
+               (hywiki-word-set-auto-highlighting hywiki--prior-mode arg)
+               (setq hywiki-mode arg))))))
 
-    ;; Normalize `arg' and set mode
-    (when (eq arg 'toggle)
-      ;; Toggle across all editable buffers
-      (setq arg hywiki-mode))
-    (cond
-     ((or (and (integerp arg) (= arg 1))
-	  (memq arg '(:all t)))
-      ;; Enable across all editable buffers
-      (setq arg :all)
-      ;; Need hyperbole-mode
-      (unless hyperbole-mode
-	(hyperbole-mode 1))
-      (hywiki-word-set-auto-highlighting hywiki--prior-mode arg)
-      (setq hywiki-mode arg))
-     ((or (and (integerp arg) (<= arg 0))
-	  (null arg))
-      ;; Disable across all editable buffers.
-      (setq arg nil)
-      ;; Dehighlight HyWikiWords in this buffer when 'hywiki-mode' is
-      ;; disabled and this is not a HyWiki page buffer. If this is a
-      ;; HyWiki page buffer, then dehighlight when `hywiki-mode' is nil.
-      (hywiki-word-set-auto-highlighting hywiki--prior-mode arg)
-      (setq hywiki-mode arg))
-     (t ;; (> arg 1)
-      ;; Enable in HyWiki page buffers only
-      (setq arg :pages)
-      ;; Need hyperbole-mode
-      (unless hyperbole-mode
-	(hyperbole-mode 1))
-      (hywiki-word-set-auto-highlighting hywiki--prior-mode arg)
-      (setq hywiki-mode arg)))))
+(defun hywiki-mode-around-advice (hywiki-mode-fn &optional to-mode)
+  (setq to-mode (hywiki-mode-normalize to-mode))
+  (unless (eq hywiki-mode to-mode)
+    (setq hywiki--prior-mode hywiki-mode))
+  (funcall hywiki-mode-fn to-mode))
 
-(defun hywiki-mode-around-advice (hywiki-mode-fn &optional arg)
-  (setq hywiki--prior-mode hywiki-mode)
-  (funcall hywiki-mode-fn arg))
-
-(advice-add 'hywiki-mode :around #'hywiki-mode-around-advice)
+(unless (advice-member-p #'hywiki-mode-around-advice #'hywiki-mode)
+  (advice-add 'hywiki-mode :around #'hywiki-mode-around-advice))
 
 ;;; ************************************************************************
 ;;; Public Implicit Button and Action Types
@@ -1066,8 +1101,10 @@ Exclude the minibuffer if selected and return nil."
 
 (defun hywiki-potential-buffer-p ()
   "Return non-nil if the current buffer can support HyWikiWords.
-This does not mean `hywiki-mode' is presently active in that buffer.
-Always exclude minibuffers."
+Always exclude minibuffers.
+This does not mean `hywiki-mode' is presently active in that buffer;
+use 'hywiki-active-in-current-buffer-p' for that."
+
   (and (not (minibufferp))
        ;; (not (and (boundp 'edebug-active) edebug-active))
        (not (apply #'derived-mode-p hywiki-exclude-major-modes))
@@ -3779,8 +3816,10 @@ occurs with one of these hooks, the problematic hook is removed."
 		   (hywiki-get-buffers-in-windows frame))))))
 
 (defun hywiki-word-highlight-in-current-buffer ()
-  (unless (minibufferp)
-    (hywiki-word-highlight-in-buffers (list (current-buffer)))))
+  "Auto-highlight HyWikiWords in the current buffer."
+  (and (not (minibufferp))
+       (hywiki-active-in-current-buffer-p)
+       (hywiki-word-highlight-in-buffers (list (current-buffer)))))
 
 (defun hywiki-word-highlight-in-buffers (buffers)
   "Auto-highlight HyWikiWords in BUFFERS."
