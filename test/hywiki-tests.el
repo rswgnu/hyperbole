@@ -1828,8 +1828,7 @@ face is verified during the change."
 (ert-deftest hywiki-tests--verify-removal-of-delimiter-updates-face ()
   "Verify WikiWord highlight face change when adding/removing a delimiter."
   (hywiki-tests--preserve-hywiki-mode
-    (let ((hywiki-tests--with-face-test t)
-	  (hi-page (cdr (hywiki-add-page "Hi"))))
+    (let ((hi-page (cdr (hywiki-add-page "Hi"))))
       (unwind-protect
 	  (dolist (testcase
 		   '((("\"Hi#a b c\"" . "Hi#a b c") (p3 . "Hi#a b c")
@@ -1843,8 +1842,7 @@ face is verified during the change."
   "Verify that a yanked in WikiWord highlights properly."
   (hywiki-tests--preserve-hywiki-mode
     (let* ((wikiHi (cdr (hywiki-add-page "Hi")))
-           (wikiHo (cdr (hywiki-add-page "Ho")))
-           (hywiki-tests--with-face-test t))
+           (wikiHo (cdr (hywiki-add-page "Ho"))))
       (unwind-protect
           (progn
             ;; Left part of WikiWord yanked in.
@@ -1897,7 +1895,6 @@ face is verified during the change."
   "Verify creating a WikiWord-file highlights the WikiWord in another file."
   (hywiki-tests--preserve-hywiki-mode
     (let* ((wikiHi (cdr (hywiki-add-page "Hi")))
-           (hywiki-tests--with-face-test t)
            wikiHo)
       (unwind-protect
           (progn

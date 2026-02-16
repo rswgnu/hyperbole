@@ -160,13 +160,9 @@ Each test is constructed as three phases:
   `buffer-string' as a string is constructed where chars are used for
   point, and start and stop of the highlighting with angle brackets.
   That is then compared to the expected string."
-  (skip-unless (not noninteractive))    ; Only works in interactive mode for now
   (hywiki-tests--preserve-hywiki-mode
-   (let* ((hywiki-directory (make-temp-file "hywiki" t))
-          (wikiHi (cdr (hywiki-add-page "Hi")))
-          (wikiHo (cdr (hywiki-add-page "Ho")))
-          (wikiWord (cdr (hywiki-add-page "WikiWord")))
-          (hywiki-tests--with-face-test t))
+   (let* ((wikiHi (cdr (hywiki-add-page "Hi")))
+          (wikiHo (cdr (hywiki-add-page "Ho"))))
      (cl-flet* ((pre: (start)
                   (hywiki-test--set-buffer-text-with-point-and-highlight start))
                 (exec: (cmd &rest args)
@@ -267,8 +263,7 @@ Each test is constructed as three phases:
                (del:           "<abc> abc")
                (post: "<WikiWord> ^ <WikiWord>")))
 
-         (hy-delete-files-and-buffers (list wikiHi wikiHo wikiWord))
-         (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory))))))
+         (hy-delete-files-and-buffers (list wikiHi wikiHo)))))))
 
 (provide 'hywiki-yki-tests)
 

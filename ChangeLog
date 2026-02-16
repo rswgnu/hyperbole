@@ -1,3 +1,13 @@
+2026-02-17  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--verify-removal-of-delimiter-updates-face):
+    (hywiki-tests--wikiword-yanked-with-extra-words):
+    (hywiki-tests--create-wikiword-file-highlights-wikiword): Use
+    hywiki-tests--with-face-test default value.
+* test/hywiki-yki-tests.el (hywiki--verify-get-buffer-text-with-point-and-highlight-compact):
+    Use hywiki-tests--with-face-test default value. Let
+    hywiki-tests--preserve-hywiki-mode handle wikiword file and hywiki-directory.
+
 2026-02-16  Mats Lidell  <matsl@gnu.org>
 
 * test/demo-tests.el:
