@@ -71,7 +71,6 @@
 
 (ert-deftest kotl-mode-indent-cell-changes-level ()
   "Loading kotl-mode example file works."
-  (skip-unless (not noninteractive))
   (setup-kotl-mode-example-test
    (kotl-mode:example temporary-file-directory t)
    (kotl-mode:beginning-of-buffer)
@@ -95,7 +94,6 @@
 
 (ert-deftest kotl-mode-set-view-with-kbd ()
   "When the view mode is changed the label is changed too."
-  (skip-unless (not noninteractive))
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
         (progn
@@ -525,7 +523,6 @@
 
 (ert-deftest kotl-mode-backward-cell-from-invalid-pos-leave-point-in-valid-pos ()
   "From invalid pos backward cell leaves point in valid pos on error."
-  (skip-unless (not noninteractive))
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
         (progn
@@ -831,7 +828,6 @@ In non interactive mode there shall be no beep (nor message)"
 
 (ert-deftest kotl-mode-move-up-to-first-line ()
   "Move up to first line shall succeed with no beep nor message."
-  (skip-unless (not noninteractive))
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
         (progn
@@ -877,7 +873,6 @@ In non-interactive mode there shall be no beep nor message."
 
 (ert-deftest kotl-mode-move-down-to-last-line-shall-not-beep ()
   "Moving down to last line shall not beep."
-  (skip-unless (not noninteractive))
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
         (progn

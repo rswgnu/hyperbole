@@ -518,7 +518,6 @@ of the defun."
 
 (ert-deftest hui--copy-to-register--yank-in-same-kotl ()
   "Yank klink in register into same kotl file."
-  (skip-unless (not noninteractive))
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
         (progn
@@ -541,7 +540,6 @@ of the defun."
 
 (ert-deftest hui--copy-to-register--yank-in-other-kotl ()
   "Yank klink in register into other kotl file."
-  (skip-unless (not noninteractive))
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl"))
         (other-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -567,7 +565,6 @@ of the defun."
 
 (ert-deftest hui--copy-to-register--yank-in-other-file ()
   "Yank klink in regiuster into other file."
-  (skip-unless (not noninteractive))
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl"))
         (other-file (make-temp-file "hypb" nil ".txt")))
     (unwind-protect
@@ -592,7 +589,6 @@ of the defun."
 
 (ert-deftest hui--copy-to-register--yank-in-other-file-other-dir ()
   "Yank klink in register into other file in other dir."
-  (skip-unless (not noninteractive))
   (let* ((kotl-file (make-temp-file "hypb" nil ".kotl"))
          (other-dir (make-temp-file "hypb" t))
          (other-file (expand-file-name "other-file" other-dir)))

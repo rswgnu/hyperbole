@@ -1,3 +1,18 @@
+2026-02-16  Mats Lidell  <matsl@gnu.org>
+
+* test/demo-tests.el:
+* test/hmouse-drv-tests.el:
+* test/hui-select-tests.el:
+* test/hui-tests.el:
+* test/hyrolo-tests.el:
+* test/kotl-mode-tests.el: Activate skipped test that can run in batch mode.
+  * In addition to activating the tests some use of
+    hy-test-helpers:consume-input-events has been removed where it is not
+    needed.
+  * A few tests were blocked by checking quoted strings where the quotes
+    differ between batch and interactive. They have been modified to not verify
+    the part of the message that contains the quotes.
+
 2026-02-15  Mats Lidell  <matsl@gnu.org>
 
 * hywiki.el (hywiki--org-link-html-format): Use
