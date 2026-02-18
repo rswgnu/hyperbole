@@ -41,6 +41,7 @@
 (require 'org-macs)
 (require 'package)
 (require 'warnings)
+(require 'find-func)
 ;; Avoid any potential library name conflict by giving the load directory.
 (require 'set (expand-file-name "set" hyperb:dir))
 
