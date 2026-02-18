@@ -1,3 +1,13 @@
+2026-02-18  Mats Lidell  <matsl@gnu.org>
+
+* hsys-org.el: require 'find-func for find-library--from-load-history.
+
+* hui-mini.el (hywiki-mode):
+* hyrolo.el (hywiki-mode): Defvar.
+
+* hywiki.el (hywiki-potential-buffer-p, hywiki-word-from-reference): Fix
+    quotes.
+
 2026-02-17  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--verify-removal-of-delimiter-updates-face):

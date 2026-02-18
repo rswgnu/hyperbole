@@ -89,14 +89,15 @@
 (declare-function org-outline-level "org")
 
 (defvar consult-preview-key)            ; "ext:consult.el"
+(defvar google-contacts-buffer-name)    ; "ext:google-contacts.el"
+(defvar hbut:source-prefix)             ; "hbut.el"
+(defvar hywiki-mode)                    ; "hywiki.el"
+(defvar org-agenda-buffer-tmp-name)     ; "org-agenda.el"
 (defvar org-directory)                  ; "org.el"
 (defvar org-mode-map)                   ; "org-keys.el"
 (defvar org-mode-syntax-table)          ; "org.el"
 (defvar org-outline-regexp)             ; "org.el"
 (defvar org-outline-regexp-bol)         ; "org.el"
-(defvar org-agenda-buffer-tmp-name)     ; "org-agenda.el"
-(defvar google-contacts-buffer-name)    ; "ext:google-contacts.el"
-(defvar hbut:source-prefix)             ; "hbut.el"
 
 ;; markdown-mode.el
 (defvar markdown-regex-header)

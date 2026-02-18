@@ -1103,7 +1103,7 @@ Exclude the minibuffer if selected and return nil."
   "Return non-nil if the current buffer can support HyWikiWords.
 Always exclude minibuffers.
 This does not mean `hywiki-mode' is presently active in that buffer;
-use 'hywiki-active-in-current-buffer-p' for that."
+use `hywiki-active-in-current-buffer-p' for that."
 
   (and (not (minibufferp))
        ;; (not (and (boundp 'edebug-active) edebug-active))
@@ -3710,9 +3710,9 @@ Default to any HyWikiWord at point."
 (defun hywiki-word-from-reference (ref)
   "Return the HyWikiWord part of a reference (part before the #).
 This does not test whether a referent exists for the HyWikiWord; call
-‘hywiki-referent-exists-p’ without an argument for that.  Nor does it
+`hywiki-referent-exists-p' without an argument for that.  Nor does it
 test whether the HyWikiWord reference is within an invalid context;
-call ‘hywiki-non-hook-context-p’ for that."
+call `hywiki-non-hook-context-p' for that."
   (when (and (stringp ref)
 	     (string-match hywiki-word-with-optional-suffix-exact-regexp ref))
     (match-string 1 ref)))

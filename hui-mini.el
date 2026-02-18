@@ -38,6 +38,7 @@
 (defvar hyrolo-add-hook)                ; "hyrolo.el"
 (defvar hyrolo-edit-hook)               ; "hyrolo.el"
 (defvar hyrolo-file-list)               ; "hyrolo.el"
+(defvar hywiki-mode)                    ; "hywiki.el"
 (defvar org-mode-map)                   ; "org.el"
 
 (declare-function hpath:find "hpath")
