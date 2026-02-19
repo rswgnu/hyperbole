@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     31-Dec-25 at 16:02:19 by Mats Lidell
+;; Last-Mod:     19-Feb-26 at 00:29:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -27,6 +27,7 @@
 (require 'hmail)
 (require 'hbut)
 (eval-when-compile (require 'hactypes))
+(eval-when-compile (require 'hywiki)) ;; Because 'hyperbole' requires this too
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -2010,6 +2011,7 @@ possible types.
 
 Referent Context         Possible Link Type Returned
 ----------------------------------------------------
+HyWikiWord Reference     link-to-wikiword
 Org Roam or Org Id       link-to-org-id
 Global Button            link-to-gbut
 Explicit Button          link-to-ebut
@@ -2034,7 +2036,9 @@ Buffer without File      link-to-buffer-tmp"
 	hbut-sym
 	lbl-key)
     (prog1 (delq nil
-		 (list (cond ((and (featurep 'org-id)
+		 (list (cond ((let ((ref (hywiki-referent-exists-p)))
+				(list 'link-to-wikiword ref)))
+                             ((and (featurep 'org-id)
 				   (cond ((save-excursion
 					    (beginning-of-line)
 					    (when (looking-at "[ \t]*:\\(CUSTOM_\\)?ID:[ \t]+\\([^ \t\r\n\f]+\\)")

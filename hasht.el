@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    16-Mar-90 at 03:38:48
-;; Last-Mod:     30-Dec-25 at 14:42:14 by Mats Lidell
+;; Last-Mod:     17-Feb-26 at 22:42:00 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -159,16 +159,20 @@ merge all the values for a given <key> instead."
 		  key value sym)
 	     (if reverse
 		 (mapc (lambda (cns)
-			 (when (consp cns)
-			   (setq key (car cns) value (cdr cns)))
-			 (when (setq sym (intern key))
-			   (puthash sym value hash-table)))
+			 (if (consp cns)
+			     (setq key (car cns) value (cdr cns))
+		           (setq key nil value nil))
+			 (if (and (stringp key) (setq sym (intern key)))
+			     (puthash sym value hash-table)
+                           (error "(hash-make): 'key' must be a string, not %S" key)))
 		       initializer)
 	       (mapc (lambda (cns)
-		       (when (consp cns)
-			 (setq key (cdr cns) value (car cns)))
-		       (when (setq sym (intern key))
-			 (puthash sym value hash-table)))
+		       (if (consp cns)
+			   (setq key (cdr cns) value (car cns))
+                         (setq key nil value nil))
+		       (if (and (stringp key) (setq sym (intern key)))
+			   (puthash sym value hash-table)
+                         (error "(hash-make): 'key' must be a string, not %S" key)))
 		     initializer))
 	     hash-table))))
 

@@ -2,7 +2,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     4-Jul-24 at 09:57:18
-;; Last-Mod:     30-Dec-25 at 14:42:23 by Mats Lidell
+;; Last-Mod:     19-Feb-26 at 00:52:16 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -43,8 +43,10 @@
 (declare-function hsys-org-directory-at-tags-p "hsys-org")
 (declare-function hsys-org-at-tags-p "hsys-org")
 
+(declare-function consult--async-command "ext:consult")
 (declare-function consult--grep "ext:consult")
 (declare-function consult--grep-make-builder "ext:consult")
+(declare-function consult--lookup-member "ext:consult")
 (declare-function consult--read "ext:consult")
 (declare-function consult--ripgrep-make-builder "ext:consult")
 (declare-function consult-grep "ext:consult")

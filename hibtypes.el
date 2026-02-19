@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      2-Feb-26 at 18:22:19 by Bob Weiner
+;; Last-Mod:     16-Feb-26 at 18:46:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -527,15 +527,17 @@ Return t if jump and nil otherwise."
   "If on an inline link, jump to its referent if it is absolute and return non-nil.
 Absolute means not relative within the file.  Otherwise, if an
 internal link, move back to OPOINT and return nil."
-  ;; Caller already checked not on a URL (handled elsewhere).
   (let ((path (markdown-link-url)))
     (goto-char opoint)
     (when (markdown-link-p)
       (ibut:label-set (match-string-no-properties 0) (match-beginning 0) (match-end 0))
-      (if path
-	  (hact 'link-to-file path)
-        (hpath:display-buffer (current-buffer))
-        (hact 'markdown-follow-link-at-point)))))
+      (cond ((hpath:url-p path)
+	     (hact 'www-url path))
+            (path
+	     (hact 'link-to-file path))
+            (t
+             (hpath:display-buffer (current-buffer))
+             (hact 'markdown-follow-link-at-point))))))
 
 (defib markdown-internal-link ()
   "Display any in-file Markdown link referent at point.

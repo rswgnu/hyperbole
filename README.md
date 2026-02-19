@@ -55,6 +55,30 @@ otherwise, skip to the next section.
 
    - [Linking personal info with implicit buttons](https://youtu.be/TQ_fG7b1iHI)
 
+## Articles
+
+   - [HyWiki: My Favorite Part of Hyperbole](https://kirankp.com/blog/gnu-hyperbole/)
+
+   - [Hyperbole VisionQuest Part 1](https://github.com/termitereform/JunkPile/blob/master/HyperboleNotes.org)
+
+   - [Hyperbole VisionQuest Part 2](https://github.com/termitereform/JunkPile/blob/master/HyperboleNotes2.org)
+
+   - [A Taste of Hyperbole](https://www.reddit.com/r/emacs/comments/1kty4mb/a_taste_of_hyperbole_automatically_linking_to_org/)
+
+   - [My Understanding of GNU Hyperbole](https://www.reddit.com/r/emacs/comments/nirwpk/my_understanding_of_gnu_hyperbole/)
+
+   - [What does GNU Hyperbole do?](https://tilde.town/~ramin_hal9001/articles/intro-to-hyperbole.html)
+
+   - [John Wiegley - The Philosophy Behind Hyperbole](https://mail.gnu.org/archive/html/hyperbole-users/2019-01/msg00037.html)
+
+   - [Daily ways GNU Hyperbole helps me stay in flow and reduces cognitive load](https://www.reddit.com/r/emacs/comments/jk3cn0/daily_ways_gnu_hyperbole_helps_me_stay_in_flow/)
+
+   - [Doing a Research Project and using GNU Hyperbole's Integrated Features](https://www.reddit.com/r/emacs/comments/1g2184d/doing_a_research_project_and_using_gnu_hyperboles/)
+
+   - [AI-generated Hyperbole Architectural Documentation](https://deepwiki.com/rswgnu/hyperbole)
+
+   - [Hypermedia and Hyperbole](https://www.mgmarlow.com/words/2023-10-26-hyperbole/)
+
 ## Summary
 
 `GNU Hyperbole` (pronounced Ga-new Hi-per-bo-lee), or just `Hyperbole`, is

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     30-Dec-25 at 23:55:08 by Mats Lidell
+;; Last-Mod:     18-Feb-26 at 23:49:33 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2722,6 +2722,11 @@ Summary of operations based on inputs (name arg from \\='hbut:current attrs):
 	   (insert "<" arg1 ">"))))
       ('actypes::link-to-org-id (insert (format "\"id:%s\"" arg1)))
       ('actypes::link-to-rfc (insert (format "rfc%d" arg1)))
+      ('actypes::link-to-wikiword (insert (if (and (stringp arg1)
+                                                   (string-match-p "\\s-" arg1))
+                                              ;; Double-quote when has a space
+                                              (format "\"%s\"" arg1)
+                                            arg1)))
       ('man (insert arg1))
       ('actypes::man-show (insert arg1))
       ('actypes::link-to-file-line (insert (format "\"%s:%d\""

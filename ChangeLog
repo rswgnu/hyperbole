@@ -1,3 +1,35 @@
+2026-02-18  Bob Weiner  <rsw@gnu.org>
+
+* hui.el (require 'hywiki):
+         (hui:link-possible-types): Add 'link-to-wikiword' clause.
+* hbut.el (ibut:insert-text): Add 'actypes::link-to-wikiword' clause.
+* man/hyperbole.texi (By Dragging): Add HyWikiWord Reference to referent
+    context table.
+
+* hywiki.el (hywiki-consult-file-and-line): Add.
+	    (hywiki-format-reference): Add and use with above function.
+            (hywiki-insert-reference): Add.
+	    (hywiki-word-is-p): Use 'string-match-p' instead of 'string-match'.
+	    (link-to-wikiword): Add this actype.
+            (hywiki-insert-link): Update to search for section links to insert
+    when 'consult' is available.
+            (require 'hui): Change to an 'eval-when-compile' so does not
+    trigger recursive requirements during normal loading.
+  hui-mini.el (hui:menu-hywiki): Unify with "hui-menu.el".  Replace use of
+    'hywiki-add-path-link' with 'hywiki-insert-link'.
+
+2026-02-17  Bob Weiner  <rsw@gnu.org>
+
+* hasht.el (hash-make): Fix to trigger an error if key is not given as a string.
+
+2026-02-16  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (markdown-follow-inline-link-p): Fix to handle URL arguments sent
+    when point is on the link title and not an included URL (so check if on
+    a URL fails).
+
+* README.md: Add Hyperbole Articles section.
+
 2026-02-15  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-word-highlight-in-current-buffer): Fix bug that added
