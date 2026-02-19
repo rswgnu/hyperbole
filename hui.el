@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     19-Feb-26 at 00:29:40 by Bob Weiner
+;; Last-Mod:     19-Feb-26 at 01:08:15 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -27,7 +27,6 @@
 (require 'hmail)
 (require 'hbut)
 (eval-when-compile (require 'hactypes))
-(eval-when-compile (require 'hywiki)) ;; Because 'hyperbole' requires this too
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -38,8 +37,10 @@
 (defvar completion-to-accept)           ; "completion.el"
 (defvar hyperbole-mode-map)             ; "hyperbole.el"
 
+(declare-function actypes::link-to-wikiword "hywiki")
 (declare-function bookmark-bmenu-bookmark "bookmark")
 (declare-function hui:menu-choose "hui-mini")
+(declare-function hywiki-referent-exists-p "hywiki")
 (declare-function kcell-view:absolute-reference "kotl/kview")
 (declare-function kcell-view:idstamp "kotl/kview")
 (declare-function klink:absolute "kotl/klink")

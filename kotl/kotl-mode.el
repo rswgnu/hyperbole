@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     19-Jan-26 at 22:34:04 by Mats Lidell
+;; Last-Mod:     19-Feb-26 at 01:12:25 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2491,8 +2491,10 @@ Optional prefix arg RELATIVE-LEVEL means one of the following:
 
  1. when = 0, add as the parent's first child cell (first cell in list);
  2. when < 0, add that number of cells as preceding siblings;
- 3. when \\='(4) (universal arg, \\`C-u'), add as the first child of the current cell;
- 4. when > 0 or nil (meaning 1), add that number of cells as following siblings."
+ 3. when \\='(4) (universal arg, \\`C-u'), add as the first child of the
+    current cell;
+ 4. when > 0 or nil (meaning 1), add that number of cells as following
+    siblings."
   (interactive "*P")
   (unless (or (integerp relative-level) (listp relative-level) )
     (error "(kotl-mode:add-cell): `relative-level' must be an integer or a list of integers, not '%s'" relative-level))

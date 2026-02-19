@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     19-Feb-26 at 00:57:14 by Bob Weiner
+;; Last-Mod:     19-Feb-26 at 01:08:50 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -144,7 +144,7 @@
 (require 'hpath)
 (require 'hproperty)
 (require 'hsys-consult)
-(eval-when-compile (require 'hui)) ;; For `hui:actype'
+(require 'hui)        ;; For `hui:actype'
 (require 'hui-mini)   ;; For `hui:menu-act'
 (require 'hypb)       ;; Requires `seq'
 (require 'outline)    ;; For `outline-mode-syntax-table'
