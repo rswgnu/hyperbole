@@ -1103,7 +1103,7 @@ Exclude the minibuffer if selected and return nil."
   "Return non-nil if the current buffer can support HyWikiWords.
 Always exclude minibuffers.
 This does not mean `hywiki-mode' is presently active in that buffer;
-use 'hywiki-active-in-current-buffer-p' for that."
+use `hywiki-active-in-current-buffer-p' for that."
 
   (and (not (minibufferp))
        ;; (not (and (boundp 'edebug-active) edebug-active))
@@ -3151,7 +3151,8 @@ If not found, set it up and return the new project properties."
 
 (defun hywiki--org-link-html-format (path-stem suffix desc info)
   "Format an html link using Org ids."
-  (let* ((heading (and suffix (not (string-empty-p suffix)) (substring suffix 1)))
+  (let* ((raw-heading (and suffix (not (string-empty-p suffix)) (substring suffix 1)))
+         (heading (and raw-heading (hpath:dashes-to-spaces-markup-anchor raw-heading)))
          (link-obj (org-element-create
                     'link
                     (list
@@ -3789,9 +3790,9 @@ Default to any HyWikiWord at point."
 (defun hywiki-word-from-reference (ref)
   "Return the HyWikiWord part of a reference (part before the #).
 This does not test whether a referent exists for the HyWikiWord; call
-‘hywiki-referent-exists-p’ without an argument for that.  Nor does it
+`hywiki-referent-exists-p' without an argument for that.  Nor does it
 test whether the HyWikiWord reference is within an invalid context;
-call ‘hywiki-non-hook-context-p’ for that."
+call `hywiki-non-hook-context-p' for that."
   (when (and (stringp ref)
 	     (string-match hywiki-word-with-optional-suffix-exact-regexp ref))
     (match-string 1 ref)))

@@ -30,6 +30,50 @@
 
 * README.md: Add Hyperbole Articles section.
 
+2026-02-18  Mats Lidell  <matsl@gnu.org>
+
+* hsys-org.el: require 'find-func for find-library--from-load-history.
+
+* hui-mini.el (hywiki-mode):
+* hyrolo.el (hywiki-mode): Defvar.
+
+* hywiki.el (hywiki-potential-buffer-p, hywiki-word-from-reference): Fix
+    quotes.
+
+2026-02-17  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--verify-removal-of-delimiter-updates-face):
+    (hywiki-tests--wikiword-yanked-with-extra-words):
+    (hywiki-tests--create-wikiword-file-highlights-wikiword): Use
+    hywiki-tests--with-face-test default value.
+* test/hywiki-yki-tests.el (hywiki--verify-get-buffer-text-with-point-and-highlight-compact):
+    Use hywiki-tests--with-face-test default value. Let
+    hywiki-tests--preserve-hywiki-mode handle wikiword file and hywiki-directory.
+
+2026-02-16  Mats Lidell  <matsl@gnu.org>
+
+* test/demo-tests.el:
+* test/hmouse-drv-tests.el:
+* test/hui-select-tests.el:
+* test/hui-tests.el:
+* test/hyrolo-tests.el:
+* test/kotl-mode-tests.el: Activate skipped test that can run in batch mode.
+  * In addition to activating the tests some use of
+    hy-test-helpers:consume-input-events has been removed where it is not
+    needed.
+  * A few tests were blocked by checking quoted strings where the quotes
+    differ between batch and interactive. They have been modified to not verify
+    the part of the message that contains the quotes.
+
+2026-02-15  Mats Lidell  <matsl@gnu.org>
+
+* hywiki.el (hywiki--org-link-html-format): Use
+    `hpath:dashes-to-spaces-markup-anchor' to make header match target.
+* test/hywiki-tests.el (hywiki-tests--action-key-moves-to-word-and-section-using-dash-to-space-conversion):
+    Add test for headers with dashes.
+    (hywiki-tests--published-html-links-to-word-and-section): Update test to
+    the dash to space conversion in headers.
+
 2026-02-15  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-word-highlight-in-current-buffer): Fix bug that added

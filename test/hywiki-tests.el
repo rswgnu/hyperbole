@@ -877,7 +877,7 @@ body B
 	  (condition-case err-msg
 	      (dolist (w words)
                 (setq wiki-link (car w)
-		      expected-str-at-pos (cdr w))
+		      expected-str-at-pos (regexp-quote (cdr w)))
 		(erase-buffer)
 		(hywiki-tests--insert wiki-link)
 		(goto-char 4)
@@ -886,6 +886,41 @@ body B
 		  (should (looking-at-p expected-str-at-pos))))
 	    (error (error "'%s', '%s' - Error: %s"
 			  wiki-link expected-str-at-pos err-msg))))))))
+
+(ert-deftest hywiki-tests--action-key-moves-to-word-and-section-using-dash-to-space-conversion ()
+  "Verify action key on a WikiWord with section, line and column works.
+Verify dash in the header matches a target with dash replaced by space."
+  (hywiki-tests--preserve-hywiki-mode
+    (let ((words '(("WikiWord#first" . "* first")
+                   ("WikiWord#header-one" . "* header one")
+                   ("WikiWord#first one" . "* first")
+                   ("(WikiWord#header one)" . "* header one")
+                   ("WikiWord#header--two" . "* header  two")
+                   ("(WikiWord#header--three)" . "* header  three")
+                   ("WikiWord#header---four" . "* header   four"))))
+      ;; Setup target WikiWord
+      (with-current-buffer (find-file-noselect wiki-page)
+        (hywiki-tests--insert "\
+* first
+* header one
+* header  two
+* header  three
+* header   four
+")
+        (save-buffer))
+      ;; Create temp buffers with WikiWord links to the target
+      ;; WikiWord page and verify they work.
+      (with-temp-buffer
+	(dolist (w words)
+          (let ((wiki-link (car w))
+		(expected-str-at-pos (regexp-quote (cdr w))))
+            (ert-info ((format "Link: %s Header: %s" wiki-link expected-str-at-pos))
+	      (erase-buffer)
+	      (hywiki-tests--insert wiki-link)
+	      (goto-char 4)
+	      (save-excursion
+		(action-key)
+		(should (looking-at-p expected-str-at-pos))))))))))
 
 (defun hywiki-tests--search-section (section)
   "Find SECTION in current buffer and return the id string.
@@ -924,7 +959,7 @@ First line
 body A
 ** Bsection subsection
 body B
-*** Csection-subsection
+*** Csection subsection
 body C
 ")
 	    (save-buffer)
@@ -950,7 +985,7 @@ WikiWord#Csection-subsection
               (with-current-buffer (find-file-noselect wikiword-html)
 		(setq idA (should (hywiki-tests--search-section "Asection")))
 		(setq idB (should (hywiki-tests--search-section "Bsection subsection")))
-		(setq idC (should (hywiki-tests--search-section "Csection-subsection"))))
+		(setq idC (should (hywiki-tests--search-section "Csection subsection"))))
 
 	      ;; Verify links are generated
 	      (find-file wikipage-html)
@@ -1793,8 +1828,7 @@ face is verified during the change."
 (ert-deftest hywiki-tests--verify-removal-of-delimiter-updates-face ()
   "Verify WikiWord highlight face change when adding/removing a delimiter."
   (hywiki-tests--preserve-hywiki-mode
-    (let ((hywiki-tests--with-face-test t)
-	  (hi-page (cdr (hywiki-add-page "Hi"))))
+    (let ((hi-page (cdr (hywiki-add-page "Hi"))))
       (unwind-protect
 	  (dolist (testcase
 		   '((("\"Hi#a b c\"" . "Hi#a b c") (p3 . "Hi#a b c")
@@ -1808,8 +1842,7 @@ face is verified during the change."
   "Verify that a yanked in WikiWord highlights properly."
   (hywiki-tests--preserve-hywiki-mode
     (let* ((wikiHi (cdr (hywiki-add-page "Hi")))
-           (wikiHo (cdr (hywiki-add-page "Ho")))
-           (hywiki-tests--with-face-test t))
+           (wikiHo (cdr (hywiki-add-page "Ho"))))
       (unwind-protect
           (progn
             ;; Left part of WikiWord yanked in.
@@ -1862,7 +1895,6 @@ face is verified during the change."
   "Verify creating a WikiWord-file highlights the WikiWord in another file."
   (hywiki-tests--preserve-hywiki-mode
     (let* ((wikiHi (cdr (hywiki-add-page "Hi")))
-           (hywiki-tests--with-face-test t)
            wikiHo)
       (unwind-protect
           (progn

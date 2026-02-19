@@ -47,12 +47,10 @@
 
 (ert-deftest hyrolo-demo-search-work ()
   "Use demo example and search for work should match work."
-  (skip-unless (not noninteractive))
   (unwind-protect
       (progn
         (load "../hyrolo-demo")
         (should (hact 'kbd-key "C-x 4r work RET"))
-        (hy-test-helpers:consume-input-events)
         (should (string= (buffer-name) hyrolo-display-buffer))
         (should (looking-at "======"))
         (forward-line 5)
@@ -61,24 +59,20 @@
 
 (ert-deftest hyrolo-demo-tab-jump-to-first-match ()
   "{TAB} shall jump to first match."
-  (skip-unless (not noninteractive))
   (unwind-protect
       (progn
         (load "../hyrolo-demo")
         (should (hact 'kbd-key "C-x 4r work RET TAB"))
-        (hy-test-helpers:consume-input-events)
         (should (string= (buffer-name) hyrolo-display-buffer))
         (should (looking-at "Work")))
     (hyrolo-demo-quit)))
 
 (ert-deftest hyrolo-demo-toggle-visibility ()
   "Keys {h} and {a} shall toggle visibility."
-  (skip-unless (not noninteractive))
   (unwind-protect
       (progn
         (load "../hyrolo-demo")
         (should (hact 'kbd-key "C-x 4r work RET TAB"))
-        (hy-test-helpers:consume-input-events)
         (should (string= (buffer-name) hyrolo-display-buffer))
         (should (looking-at "Work"))
 
@@ -99,17 +93,14 @@
 
 (ert-deftest hyrolo-demo-show-overview ()
   "Key {o} shall show overview."
-  (skip-unless (not noninteractive))
   (unwind-protect
       (progn
         (load "../hyrolo-demo")
         (should (hact 'kbd-key "C-x 4r work RET TAB"))
-        (hy-test-helpers:consume-input-events)
         (should (string= (buffer-name) hyrolo-display-buffer))
         (should (looking-at "work"))
 
         (should (hact 'kbd-key "o"))
-        (hy-test-helpers:consume-input-events)
 	(forward-line 1)
         (end-of-line)
         (should (get-char-property (point) 'invisible))
@@ -122,12 +113,10 @@
 
 (ert-deftest hyrolo-demo-move-to-beginning-and-end-of-file ()
   "*HyRolo* keys {<} and {>} move to begin and end of file, respectively."
-  (skip-unless (not noninteractive))
   (unwind-protect
       (progn
         (load "../hyrolo-demo")
         (should (hact 'kbd-key "C-x 4r work RET TAB"))
-        (hy-test-helpers:consume-input-events)
         (should (string= (buffer-name) hyrolo-display-buffer))
         (should (looking-at "work"))
 
@@ -140,32 +129,26 @@
 
 (ert-deftest hyrolo-demo-move-to-beginning-and-end-of-entry ()
   "*HyRolo* keys {,} and {.} move to begin and end of an entry, respectively."
-  (skip-unless (not noninteractive))
   (unwind-protect
       (progn
         (load "../hyrolo-demo")
         (should (hact 'kbd-key "C-x 4r work RET TAB"))
-        (hy-test-helpers:consume-input-events)
         (should (string= (buffer-name) hyrolo-display-buffer))
 
         (should (hact 'kbd-key "\C-u,n"))
-        (hy-test-helpers:consume-input-events)
 	(should (looking-at "\\*\\*\\s-+Hansen"))
 
         (should (hact 'kbd-key "."))
-        (hy-test-helpers:consume-input-events)
 	(should (looking-at "\\s-?\\*\\*\\*\\s-+Dunn")))
     (hyrolo-demo-quit)))
 
 (ert-deftest hyrolo-demo-move-between-entries-on-same-level ()
   "Key {n} shall move to the next cell, {f} the next same level cell,
 and {b} the previous same level cell."
-  (skip-unless (not noninteractive))
   (unwind-protect
       (progn
         (load "../hyrolo-demo")
         (should (hact 'kbd-key "C-x 4r com RET TAB"))
-        (hy-test-helpers:consume-input-events)
         (should (string= (buffer-name) hyrolo-display-buffer))
         (should (hact 'kbd-key "<"))
         (should (equal (point) (point-min)))
@@ -182,12 +165,10 @@ and {b} the previous same level cell."
 
 (ert-deftest hyrolo-demo-no-following-same-level-heading ()
   "Error when trying to move to non existing next level heading."
-  (skip-unless (not noninteractive))
   (unwind-protect
       (progn
         (load "../hyrolo-demo")
         (should (hact 'kbd-key "C-x 4r com RET TAB"))
-        (hy-test-helpers:consume-input-events)
 
         (should (string= (buffer-name) hyrolo-display-buffer))
         (should (hact 'kbd-key "<"))
@@ -1349,8 +1330,6 @@ body
                    (hyrolo-tests--outline-as-string)))
 
           (should (hact 'kbd-key "TAB"))
-	  (hy-test-helpers:consume-input-events)
-	  (hy-test-helpers:consume-input-events)
           (should (string=
                    (concat (hyrolo-tests--hyrolo-section-header org-file1)
                            "* h-org 1\nbody\n** h-org 1.1\nbody\n** h-org 1.2\nbody\n*** h-org 1.2.1\nbody\n* h-org 2...\n")
@@ -1385,7 +1364,6 @@ body
           ;;          (hyrolo-tests--outline-as-string)))
 
           (should (hact 'kbd-key "f TAB"))
-          (hy-test-helpers:consume-input-events)
           (should (string=
                    (concat (hyrolo-tests--hyrolo-section-header org-file1)
                            "* h-org 1\nbody\n** h-org 1.1\nbody\n** h-org 1.2\nbody\n*** h-org 1.2.1\nbody\n* h-org 2\nbody\n** h-org 2.1\nbody\n")

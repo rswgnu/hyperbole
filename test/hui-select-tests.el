@@ -81,7 +81,6 @@
 
 (ert-deftest hui-select--thing ()
   "`hui-select-thing' selects bigger sections of text when called repeatedly."
-  (skip-unless (not noninteractive))
   (hui-select-reset)
   (with-temp-buffer
     (insert "Buffer\n\nParagraph\nline.  One word.")
@@ -120,12 +119,11 @@
     ;; error
     (ert-with-message-capture cap
       (should-not (hui-select-thing))
-      (hy-test-helpers:should-last-message "(hui-select-boundaries): ‘buffer’ is the largest selectable region" cap))))
+      (hy-test-helpers:should-last-message "the largest selectable region" cap))))
 
 (ert-deftest hui-select--thing-interactive-prints-type-of-match ()
   "`hui-select-thing' selects bigger sections of text when called repeatedly.
 Verifies right type of match is printed when `hui-select-display-type' is set to t."
-  (skip-unless (not noninteractive))
   (let ((hui-select-display-type t))
     (hui-select-reset)
     (with-temp-buffer
@@ -167,7 +165,7 @@ Verifies right type of match is printed when `hui-select-display-type' is set to
 
       (ert-with-message-capture cap
         (should-not (call-interactively 'hui-select-thing))
-        (hy-test-helpers:should-last-message "(hui-select-boundaries): ‘buffer’ is the largest selectable region" cap)))))
+        (hy-test-helpers:should-last-message "the largest selectable region" cap)))))
 
 (provide 'hui-select-tests)
 ;;; hui-select-tests.el ends here

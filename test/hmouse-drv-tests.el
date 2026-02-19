@@ -63,7 +63,6 @@
     (ibtype:delete 'ibtypes::defal-url)))
 
 (ert-deftest hbut-defal-key-sequence ()
-  (skip-unless (not noninteractive))
   (defal defal-key "{C-h v \\1 RET}")
   (unwind-protect
       (with-temp-buffer
@@ -137,7 +136,6 @@
     (ibtype:delete 'ibtypes::defil-url)))
 
 (ert-deftest hbut-defil-key-sequence ()
-  (skip-unless (not noninteractive))
   (defil defil-key "<<<" ">>>" ".*" "{C-h v \\& RET}")
   (unwind-protect
       (with-temp-buffer
