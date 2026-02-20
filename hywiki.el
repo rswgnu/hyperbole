@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     19-Feb-26 at 19:29:13 by Bob Weiner
+;; Last-Mod:     19-Feb-26 at 22:59:49 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1648,16 +1648,13 @@ nil, else return \\='(page . \"<page-file-path>\")."
        (or (hywiki-in-page-p) (string-prefix-p "*HyWiki Tags*" (buffer-name)))))
 
 (defun hywiki-consult-page-and-line ()
-  "Return a list of the file and line selected by consult or nil.
-Use `hywiki-insert-reference' with the result of this function to insert a
-double-quoted HyWikiWord reference at point."
+  "Return a list of the file and line selected by consult or nil."
   (interactive)
   (let* ((dir (expand-file-name hywiki-directory))
-         (manual-builder
+         (builder
           (lambda (input)
-            (let* (;; Define the regex inside the builder so it's always in scope
-                   (headline-pattern (concat "^\\* .*" input))
-                   ;; Ensure all arguments are evaluated as strings
+            (let* (;; Define the regexp inside the builder so it is always in scope
+                   (headline-regexp (concat "^\\* .*" input))
                    (args (list "rg"
                                "--null"
                                "--line-buffered"
@@ -1666,11 +1663,11 @@ double-quoted HyWikiWord reference at point."
                                "--line-number"
                                "--smart-case"
                                "-g" "*.org"
-                               "-e" headline-pattern
+                               "-e" headline-regexp
                                dir)))
               (cons args dir))))
          (selected (consult--read
-                    (consult--async-command manual-builder)
+                    (consult--async-command builder)
                     :prompt "HyWiki Headline: "
                     :require-match t
                     :lookup #'consult--lookup-member
@@ -2087,10 +2084,12 @@ This includes the delimiters: (), {}, <>, [] and \"\" (double quotes)."
     (hywiki-page-read "Link to HyWiki page: ")))
 
 ;;;###autoload
-(defun hywiki-insert-link ()
-  "Insert at point a link to a HyWiki page#section."
-  (interactive "*")
-  (let ((ref (hywiki-read-page-reference)))
+(defun hywiki-insert-link (&optional arg)
+  "Insert at point a HyWiki page#section reference read from the minibuffer.
+With optional prefix ARG non-nil, insert a HyWikiWord instead.
+Add double quotes if the section contains any whitespace after trimming."
+  (interactive "*P")
+  (let ((ref (if arg (hywiki-word-read) (hywiki-read-page-reference))))
     (when ref
       (insert ref)
       (skip-chars-backward "\"")
@@ -2120,19 +2119,6 @@ therein is invalid, trigger an error."
 		"%s#%s")
 	      page
 	      line))))
-
-(defun hywiki-insert-reference (page-and-line)
-  "Insert a HyWiki page#section reference from PAGE-AND-LINE.
-Add double quotes if the section contains any whitespace after trimming.
-
-Return t if PAGE-AND-LINE is a valid list, else nil.  If the page name
-therein is invalid, trigger an error."
-  (let ((ref (hywiki-format-reference page-and-line)))
-    (when ref
-      (insert ref)
-      (skip-chars-backward "\"")
-      (goto-char (1- (point)))
-      t)))
 
 (defun hywiki-maybe-dehighlight-balanced-pairs ()
   "Before or after a balanced delimiter, dehighlight HyWikiWords within.
