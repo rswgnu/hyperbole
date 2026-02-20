@@ -1,5 +1,10 @@
 2026-02-19  Bob Weiner  <rsw@gnu.org>
 
+* hywiki.el (hywiki-insert-link): Add optional prefix arg to link to a
+    an existing wikiword only.
+            (hywiki-insert-reference): Remove and merge capability into
+    above function when called with a prefix arg.
+
 * hui.el (hui:link-possible-types): Fix to include link-to-wikiword only if
     an existing referent is found.
 
