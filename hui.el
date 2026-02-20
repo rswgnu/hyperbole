@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     31-Dec-25 at 16:02:19 by Mats Lidell
+;; Last-Mod:     19-Feb-26 at 21:32:21 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -37,8 +37,10 @@
 (defvar completion-to-accept)           ; "completion.el"
 (defvar hyperbole-mode-map)             ; "hyperbole.el"
 
+(declare-function actypes::link-to-wikiword "hywiki")
 (declare-function bookmark-bmenu-bookmark "bookmark")
 (declare-function hui:menu-choose "hui-mini")
+(declare-function hywiki-referent-exists-p "hywiki")
 (declare-function kcell-view:absolute-reference "kotl/kview")
 (declare-function kcell-view:idstamp "kotl/kview")
 (declare-function klink:absolute "kotl/klink")
@@ -2010,6 +2012,7 @@ possible types.
 
 Referent Context         Possible Link Type Returned
 ----------------------------------------------------
+HyWikiWord Reference     link-to-wikiword
 Org Roam or Org Id       link-to-org-id
 Global Button            link-to-gbut
 Explicit Button          link-to-ebut
@@ -2034,7 +2037,9 @@ Buffer without File      link-to-buffer-tmp"
 	hbut-sym
 	lbl-key)
     (prog1 (delq nil
-		 (list (cond ((and (featurep 'org-id)
+		 (list (cond ((let ((ref (hywiki-referent-exists-p)))
+				(and ref (list 'link-to-wikiword ref))))
+                             ((and (featurep 'org-id)
 				   (cond ((save-excursion
 					    (beginning-of-line)
 					    (when (looking-at "[ \t]*:\\(CUSTOM_\\)?ID:[ \t]+\\([^ \t\r\n\f]+\\)")

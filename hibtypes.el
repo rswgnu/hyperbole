@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      2-Feb-26 at 18:22:19 by Bob Weiner
+;; Last-Mod:     19-Feb-26 at 21:16:16 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -527,15 +527,17 @@ Return t if jump and nil otherwise."
   "If on an inline link, jump to its referent if it is absolute and return non-nil.
 Absolute means not relative within the file.  Otherwise, if an
 internal link, move back to OPOINT and return nil."
-  ;; Caller already checked not on a URL (handled elsewhere).
   (let ((path (markdown-link-url)))
     (goto-char opoint)
     (when (markdown-link-p)
       (ibut:label-set (match-string-no-properties 0) (match-beginning 0) (match-end 0))
-      (if path
-	  (hact 'link-to-file path)
-        (hpath:display-buffer (current-buffer))
-        (hact 'markdown-follow-link-at-point)))))
+      (cond ((hpath:url-p path)
+	     (hact 'www-url path))
+            (path
+	     (hact 'link-to-file path))
+            (t
+             (hpath:display-buffer (current-buffer))
+             (hact 'markdown-follow-link-at-point))))))
 
 (defib markdown-internal-link ()
   "Display any in-file Markdown link referent at point.
@@ -1606,110 +1608,112 @@ first identifier in the expression must be an Elisp variable,
 action type, function symbol to call or test to execute, i.e.
 '<'actype-or-elisp-symbol arg1 ... argN '>'.  For example,
 <mail nil \"user@somewhere.org\">."
-  (let ((hbut:max-len 0)
-	(lbl-key (hattr:get 'hbut:current 'lbl-key))
-	(name (hattr:get 'hbut:current 'name))
+  (let ((lbl-key (hattr:get 'hbut:current 'lbl-key))
 	(start-pos (hattr:get 'hbut:current 'lbl-start))
-	(end-pos  (hattr:get 'hbut:current 'lbl-end))
-	(testing-flag (when (bound-and-true-p ert--running-tests) t))
-        actype actype-sym action args lbl var-flag)
-
-    ;; Continue only if there if there is a button label and one of:
-    ;;  1. `ert--running-tests' is non-nil
-    ;;  2. character after start-delim is not a whitespace character
+	(end-pos  (hattr:get 'hbut:current 'lbl-end)))
     (when (and lbl-key
-	       (or testing-flag
-		   (not (memq (if (char-after (1+ start-pos))
-				       (char-syntax (char-after (1+ start-pos)))
-				     0)
-				   '(?\  ?\>)))))
-      (setq lbl (ibut:key-to-label lbl-key))
-      ;; Handle $ preceding var name in cases where same name is
-      ;; bound as a function symbol
-      (when (string-match "\\`\\$" lbl)
-        (setq var-flag t
-	      lbl (substring lbl 1)))
-      (setq actype (if (string-match-p " " lbl) (car (split-string lbl)) lbl)
-            actype-sym (or (actype:elisp-symbol actype) (intern-soft actype))
-	    ;; Must ignore that (boundp nil) would be t here.
-            actype (and actype-sym
-			(or (fboundp actype-sym) (boundp actype-sym)
-			    (special-form-p actype-sym)
-			    (ert-test-boundp actype-sym))
-			actype-sym))
-      (when actype
-	;; For <hynote> buttons, need to double quote each argument so
-	;; 'read' does not change the idstamp 02 to 2.
-	(when (and (memq actype '(hy hynote))
-		   (string-match-p " " lbl))
-	  (setq lbl (replace-regexp-in-string "\"\\(.*\\)\\'" "\\1\""
-					      (combine-and-quote-strings
-					       (split-string lbl) "\" \""))))
-        (setq action (read (concat "(" lbl ")"))
-	      args (cdr action))
-	;; Ensure action uses an fboundp symbol if executing a
-	;; Hyperbole actype.
-	(when (and (car action) (symbolp (car action)))
-	  (setcar action (or (symtable:hyperbole-actype-p (car action))
-			     (car action))))
-	(unless assist-flag
-          (cond ((and (symbolp actype) (fboundp actype)
-		      (string-match "-p\\'" (symbol-name actype)))
-		 ;; Is a function with a boolean result
-		 (setq actype #'display-boolean
-		       args `(',action)))
-		((and (null args) (symbolp actype) (boundp actype)
-		      (or var-flag (not (fboundp actype))))
-		 ;; Is a variable, display its value as the action
-		 (setq args `(,actype)
-		       actype #'display-variable))
-		((and (null args) (symbolp actype) (ert-test-boundp actype))
-		 ;; Is an ert-deftest, display the value from executing it
-		 (setq actype #'display-value
-		       args `((hypb-ert-run-test ,lbl))))
-		(t
-		 ;; All other expressions, display the action result in the minibuffer
-		 (if (string-match "\\b\\(delete\\|kill\\)-region\\'"
-				   (symbol-name actype-sym))
-		     ;; With `delete-region' and `kill-region'
-		     ;; actions, if no args, either use any active
-		     ;; region or when none, use the region of the
-		     ;; action button itself, removing it from the
-		     ;; buffer.  The latter action is largely used
-		     ;; only in internal HyWiki tests.
-		     (progn (setq actype #'display-value)
- 			    (if (= 1 (length action)) ;; No args
-				(if (use-region-p)
-				    ;; Apply function to the active region
-				    (setq args `((,actype-sym (region-beginning) (region-end))))
-				  ;; Apply function to region of the action button itself,
-				  ;; including delimiters
-				  (setq args `((,actype-sym ,start-pos
-							    ,end-pos))))
-			      (setq args `(',action))))
-		   (if testing-flag
-		       ;; Delete action button after activation when
-		       ;; running an ert test or in a string (so can
-		       ;; test this behavior interactively),
-		       (setq actype #'display-value-and-remove-region
-			     args `(,action ,start-pos ,end-pos))
+               (eq (char-after start-pos) ?\<)
+               (eq (char-before end-pos) ?\>))
+      (let ((hbut:max-len 0)
+	    (name (hattr:get 'hbut:current 'name))
+	    (testing-flag (when (bound-and-true-p ert--running-tests) t))
+            actype actype-sym action args lbl var-flag)
+
+        ;; Continue only if there if there is one of:
+        ;;  1. `ert--running-tests' is non-nil
+        ;;  2. character after start-delim is not a whitespace character
+        (when (and (or testing-flag
+		       (not (memq (if (char-after (1+ start-pos))
+				      (char-syntax (char-after (1+ start-pos)))
+				    0)
+				  '(?\  ?\>)))))
+          (setq lbl (ibut:key-to-label lbl-key))
+          ;; Handle $ preceding var name in cases where same name is
+          ;; bound as a function symbol
+          (when (string-match "\\`\\$" lbl)
+            (setq var-flag t
+	          lbl (substring lbl 1)))
+          (setq actype (if (string-match-p " " lbl) (car (split-string lbl)) lbl)
+                actype-sym (or (actype:elisp-symbol actype) (intern-soft actype))
+	        ;; Must ignore that (boundp nil) would be t here.
+                actype (and actype-sym
+			    (or (fboundp actype-sym) (boundp actype-sym)
+			        (special-form-p actype-sym)
+			        (ert-test-boundp actype-sym))
+			    actype-sym))
+          (when actype
+	    ;; For <hynote> buttons, need to double quote each argument so
+	    ;; 'read' does not change the idstamp 02 to 2.
+	    (when (and (memq actype '(hy hynote))
+		       (string-match-p " " lbl))
+	      (setq lbl (replace-regexp-in-string "\"\\(.*\\)\\'" "\\1\""
+					          (combine-and-quote-strings
+					           (split-string lbl) "\" \""))))
+            (setq action (read (concat "(" lbl ")"))
+	          args (cdr action))
+	    ;; Ensure action uses an fboundp symbol if executing a
+	    ;; Hyperbole actype.
+	    (when (and (car action) (symbolp (car action)))
+	      (setcar action (or (symtable:hyperbole-actype-p (car action))
+			         (car action))))
+	    (unless assist-flag
+              (cond ((and (symbolp actype) (fboundp actype)
+		          (string-match "-p\\'" (symbol-name actype)))
+		     ;; Is a function with a boolean result
+		     (setq actype #'display-boolean
+		           args `(',action)))
+		    ((and (null args) (symbolp actype) (boundp actype)
+		          (or var-flag (not (fboundp actype))))
+		     ;; Is a variable, display its value as the action
+		     (setq args `(,actype)
+		           actype #'display-variable))
+		    ((and (null args) (symbolp actype) (ert-test-boundp actype))
+		     ;; Is an ert-deftest, display the value from executing it
 		     (setq actype #'display-value
-			   args `(,action)))))))
+		           args `((hypb-ert-run-test ,lbl))))
+		    (t
+		     ;; All other expressions, display the action result in the minibuffer
+		     (if (string-match "\\b\\(delete\\|kill\\)-region\\'"
+				       (symbol-name actype-sym))
+		         ;; With `delete-region' and `kill-region'
+		         ;; actions, if no args, either use any active
+		         ;; region or when none, use the region of the
+		         ;; action button itself, removing it from the
+		         ;; buffer.  The latter action is largely used
+		         ;; only in internal HyWiki tests.
+		         (progn (setq actype #'display-value)
+ 			        (if (= 1 (length action)) ;; No args
+				    (if (use-region-p)
+				        ;; Apply function to the active region
+				        (setq args `((,actype-sym (region-beginning) (region-end))))
+				      ;; Apply function to region of the action button itself,
+				      ;; including delimiters
+				      (setq args `((,actype-sym ,start-pos
+							        ,end-pos))))
+			          (setq args `(',action))))
+		       (if testing-flag
+		           ;; Delete action button after activation when
+		           ;; running an ert test or in a string (so can
+		           ;; test this behavior interactively),
+		           (setq actype #'display-value-and-remove-region
+			         args `(,action ,start-pos ,end-pos))
+		         (setq actype #'display-value
+			       args `(,action)))))))
 
-	;; Create implicit button object and store in symbol hbut:current.
-	(ibut:label-set lbl)
-	(ibut:create :name name :lbl-key lbl-key :lbl-start start-pos
-		     :lbl-end end-pos :categ 'ibtypes::action :actype actype
-		     :args args)
+	    ;; Create implicit button object and store in symbol hbut:current.
+	    (ibut:label-set lbl)
+	    (ibut:create :name name :lbl-key lbl-key :lbl-start start-pos
+		         :lbl-end end-pos :categ 'ibtypes::action :actype actype
+		         :args args)
 
-        ;; Necessary so can return a null value, which actype:act cannot.
-        (let ((hrule:action
-	       (if (eq hrule:action #'actype:identity)
-                   #'actype:identity
-                 #'actype:eval)))
-          (if (eq hrule:action #'actype:identity)
-	      `(hact ',actype ,@args)
-            `(hact ',actype ,@(mapcar #'eval args))))))))
+            ;; Necessary so can return a null value, which actype:act cannot.
+            (let ((hrule:action
+	           (if (eq hrule:action #'actype:identity)
+                       #'actype:identity
+                     #'actype:eval)))
+              (if (eq hrule:action #'actype:identity)
+	          `(hact ',actype ,@args)
+                `(hact ',actype ,@(mapcar #'eval args))))))))))
 
 (defun action:help (hbut)
   "Display documentation for action button at point.

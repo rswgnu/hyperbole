@@ -7,11 +7,10 @@
  send us a thank you or a testimonial describing your usage if you like
  Hyperbole to [rsw@gnu.org](mailto:rsw@gnu.org)].
 
-
-
 - [GNU Hyperbole 9.0.2pre - The Everyday Hypertextual Information Manager](#gnu-hyperbole-902pre---the-everyday-hypertextual-information-manager)
   - [Reference Manual](#reference-manual)
   - [Videos](#videos)
+  - [Articles](#articles)
   - [Summary](#summary)
   - [Installation](#installation)
   - [Invocation](#invocation)
@@ -25,8 +24,6 @@
   - [Programmer Quick Reference](#programmer-quick-reference)
   - [User Quotes](#user-quotes)
   - [Why was Hyperbole developed?](#why-was-hyperbole-developed)
-
-
 
 ![Hyperbole screenshot of the Koutliner, DEMO file and HyRolo](man/im/hyperbole-cv.png)
 
@@ -73,6 +70,30 @@ otherwise, skip to the next section.
    - [Find/Web Search](https://youtu.be/8lMlJed0-OM)
 
    - [Linking personal info with implicit buttons](https://youtu.be/TQ_fG7b1iHI)
+
+## Articles
+
+   - [HyWiki: My Favorite Part of Hyperbole](https://kirankp.com/blog/gnu-hyperbole/)
+
+   - [Hyperbole VisionQuest Part 1](https://github.com/termitereform/JunkPile/blob/master/HyperboleNotes.org)
+
+   - [Hyperbole VisionQuest Part 2](https://github.com/termitereform/JunkPile/blob/master/HyperboleNotes2.org)
+
+   - [A Taste of Hyperbole](https://www.reddit.com/r/emacs/comments/1kty4mb/a_taste_of_hyperbole_automatically_linking_to_org/)
+
+   - [My Understanding of GNU Hyperbole](https://www.reddit.com/r/emacs/comments/nirwpk/my_understanding_of_gnu_hyperbole/)
+
+   - [What does GNU Hyperbole do?](https://tilde.town/~ramin_hal9001/articles/intro-to-hyperbole.html)
+
+   - [John Wiegley - The Philosophy Behind Hyperbole](https://mail.gnu.org/archive/html/hyperbole-users/2019-01/msg00037.html)
+
+   - [Daily ways GNU Hyperbole helps me stay in flow and reduces cognitive load](https://www.reddit.com/r/emacs/comments/jk3cn0/daily_ways_gnu_hyperbole_helps_me_stay_in_flow/)
+
+   - [Doing a Research Project and using GNU Hyperbole's Integrated Features](https://www.reddit.com/r/emacs/comments/1g2184d/doing_a_research_project_and_using_gnu_hyperboles/)
+
+   - [AI-generated Hyperbole Architectural Documentation](https://deepwiki.com/rswgnu/hyperbole)
+
+   - [Hypermedia and Hyperbole](https://www.mgmarlow.com/words/2023-10-26-hyperbole/)
 
 ## Summary
 
@@ -254,6 +275,8 @@ them.  Hyperbole also binds {C-c \} for quick access to HyControl's
 window control menu if it was not already bound prior to Hyperbole's
 initialization.  A long video demonstrating many of HyControl's
 features is available at https://youtu.be/M3-aMh1ccJk.
+
+## Hyperbole Manual
 
 The above are the best interactive ways to learn about Hyperbole.
 Hyperbole also includes the Hyperbole Manual, a full reference manual,

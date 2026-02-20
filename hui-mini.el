@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:      1-Jan-26 at 18:18:17 by Mats Lidell
+;; Last-Mod:     19-Feb-26 at 00:16:53 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1069,8 +1069,8 @@ support underlined faces as well."
 	   "Report on a HyWikiWord's attributes or HyWikiWords in general.")
 	 '("Info"           (id-info "(hyperbole)HyWiki")
 	   "Display Hyperbole manual section on HyWiki.")
-	 '("Link"           hywiki-add-path-link
-	   "Prompt for and add a HyWikiWord that links to a path and possible position.")
+	 '("Link"           hywiki-insert-link
+	   "Prompt for and insert at point a HyWikiWord#section reference.")
          '("ModeSet/"       (menu . cust-hywiki-mode)
 	   "Set hywiki-mode state to determine where HyWikiWord references are recognized.")
 	 '("Org-M-RET/"     (menu . cust-org)

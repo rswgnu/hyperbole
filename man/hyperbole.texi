@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:      7-Feb-26 at 10:10:33 by Bob Weiner
+@c Last-Mod:     18-Feb-26 at 23:43:55 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,7 +30,7 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED February 7, 2026
+@set UPDATED February 18, 2026
 @set UPDATED-MONTH February 2026
 @set EDITION 9.0.2pre
 @set VERSION 9.0.2pre
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed February 7, 2026.
+Printed February 18, 2026.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -213,7 +213,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.2pre
-February 7, 2026 @c AUTO-REPLACE-ON-SAVE
+February 18, 2026 @c AUTO-REPLACE-ON-SAVE
 
 
   Published by the Free Software Foundation, Inc.
@@ -3887,6 +3887,7 @@ upon the referent context in which the Action Key is released.
 @example
 Referent Context         Link Type
 ----------------------------------------------------
+HyWikiWord Reference     link-to-wikiword
 Org Roam or Org Id       link-to-org-id
 Global Button            link-to-gbut
 Explicit Button          link-to-ebut

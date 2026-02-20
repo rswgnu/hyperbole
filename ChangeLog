@@ -1,3 +1,54 @@
+2026-02-19  Bob Weiner  <rsw@gnu.org>
+
+* hui.el (hui:link-possible-types): Fix to include link-to-wikiword only if
+    an existing referent is found.
+
+* hibtypes.el (action): Fix to check for angle bracket delimiters.
+
+* hywiki.el (hywiki-read-page-reference): Add and use in 'interactive' calls of
+    several functions.
+            (hywiki-word-is-p): Revert to using all 'string-match' calls
+    to prevent any regressions.
+            (hywiki-page-read): Add to read only existing HyWiki page names.
+    Not all existing WikiWords have page names, as there are other referent types.
+            (hywiki-consult-file-and-line): Rename to `hywiki-consult-page-and-line'.
+	    (hywiki-page-exists-p): Add.
+	    (hywiki-format-reference): Fix to accept only existing page references.
+	    (hywiki-read-reference): Delete, use 'hywiki-word-read' instead.
+	    (hywiki-add-page): Fix a number of issues where non-page WikiWords were
+    allowed.
+            (hywiki-page-read-new): Prevent selection of non-page HyWikiWords.
+
+* hui.el (require 'hywiki):
+         (hui:link-possible-types): Add 'link-to-wikiword' clause.
+* hbut.el (ibut:insert-text): Add 'actypes::link-to-wikiword' clause.
+* man/hyperbole.texi (By Dragging): Add HyWikiWord Reference to referent
+    context table.
+
+* hywiki.el (hywiki-consult-file-and-line): Add.
+	    (hywiki-format-reference): Add and use with above function.
+            (hywiki-insert-reference): Add.
+	    (hywiki-word-is-p): Use 'string-match-p' instead of 'string-match'.
+	    (link-to-wikiword): Add this actype.
+            (hywiki-insert-link): Update to search for section links to insert
+    when 'consult' is available.
+            (require 'hui): Change to an 'eval-when-compile' so does not
+    trigger recursive requirements during normal loading.
+  hui-mini.el (hui:menu-hywiki): Unify with "hui-menu.el".  Replace use of
+    'hywiki-add-path-link' with 'hywiki-insert-link'.
+
+2026-02-17  Bob Weiner  <rsw@gnu.org>
+
+* hasht.el (hash-make): Fix to trigger an error if key is not given as a string.
+
+2026-02-16  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (markdown-follow-inline-link-p): Fix to handle URL arguments sent
+    when point is on the link title and not an included URL (so check if on
+    a URL fails).
+
+* README.md: Add Hyperbole Articles section.
+
 2026-02-18  Mats Lidell  <matsl@gnu.org>
 
 * hsys-org.el: require 'find-func for find-library--from-load-history.
