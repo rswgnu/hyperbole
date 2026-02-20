@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     19-Feb-26 at 01:08:50 by Bob Weiner
+;; Last-Mod:     19-Feb-26 at 19:29:13 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -945,9 +945,10 @@ Function used to display is \"hywiki-display-<referent-type>\"."
 (defun hywiki-display-referent (&optional wikiword prompt-flag)
   "Display HyWiki WIKIWORD referent or a regular file with WIKIWORD nil.
 Return the WIKIWORD's referent if successfully found or nil otherwise.
-The referent is a cons of (<referent-type> . <referent-value>).
+
 For further details, see documentation for `hywiki-find-referent'.
 After successfully finding a referent, run `hywiki-display-referent-hook'."
+  (interactive (list (hywiki-read-page-reference)))
   (let ((in-page-flag (null wikiword))
 	(in-hywiki-directory-flag (hywiki-in-page-p)))
     (if (or (stringp wikiword) in-hywiki-directory-flag)
@@ -1399,16 +1400,15 @@ After successfully adding a page, run `hywiki-add-page-hook'.
 
 Use `hywiki-get-referent' to determine whether a HyWiki page exists."
   (interactive (list (or (hywiki-word-at)
-			 (hywiki-word-read-new "Add/Edit HyWiki page: "))
+			 (hywiki-page-read-new "Add/Edit HyWiki page: "))
 		     current-prefix-arg))
   (if (hywiki-word-is-p page-name)
       (when (or noninteractive
 		(not (hash-empty-p (hywiki-get-referent-hasht)))
 		(hyperb:stack-frame '(ert-run-test))
 		(y-or-n-p (concat "Create new HyWiki page `" page-name "'? ")))
-	(when (match-string-no-properties 2 page-name)
-	  ;; Remove any #section suffix in PAGE-NAME.
-	  (setq page-name (match-string-no-properties 1 page-name)))
+	;; Remove any #section suffix in PAGE-NAME.
+	(setq page-name (hywiki-get-singular-wikiword page-name))
 
 	(let* ((page-file (hywiki-get-page-file page-name))
 	       (page-file-readable (file-readable-p page-file))
@@ -1647,7 +1647,7 @@ nil, else return \\='(page . \"<page-file-path>\")."
   (and (or at-tag-flag (hsys-org-at-tags-p))
        (or (hywiki-in-page-p) (string-prefix-p "*HyWiki Tags*" (buffer-name)))))
 
-(defun hywiki-consult-file-and-line ()
+(defun hywiki-consult-page-and-line ()
   "Return a list of the file and line selected by consult or nil.
 Use `hywiki-insert-reference' with the result of this function to insert a
 double-quoted HyWikiWord reference at point."
@@ -2077,15 +2077,20 @@ This includes the delimiters: (), {}, <>, [] and \"\" (double quotes)."
 	    result
 	  (list nil nil))))))
 
+(defun hywiki-read-page-reference ()
+  "With consult package loaded, read a \"file^@line\" string, else a page name."
+  (interactive)
+  (if (featurep 'consult)
+      (hywiki-format-reference (hywiki-consult-page-and-line))
+    ;; Without consult, can only complete to a HyWiki page
+    ;; without a section
+    (hywiki-page-read "Link to HyWiki page: ")))
+
 ;;;###autoload
 (defun hywiki-insert-link ()
-  "Insert at point a link to a HyWiki page."
+  "Insert at point a link to a HyWiki page#section."
   (interactive "*")
-  (let ((ref (if (featurep 'consult)
-	         (hywiki-format-reference (hywiki-consult-file-and-line))
-	       ;; Without consult, can only complete to a WikiWord
-	       ;; without a section
-               (hywiki-word-read "Link to HyWiki page: "))))
+  (let ((ref (hywiki-read-page-reference)))
     (when ref
       (insert ref)
       (skip-chars-backward "\"")
@@ -2094,7 +2099,8 @@ This includes the delimiters: (), {}, <>, [] and \"\" (double quotes)."
 
 ;;;###autoload
 (defun hywiki-format-reference (page-and-line)
-  "Return a HyWikiWord#section reference, PAGE-AND-LINE, from `consult-grep'.
+  "Return a HyWikiWord#section reference from PAGE-AND-LINE.
+Call `hywiki-consult-page-and-line' to generate PAGE-AND-LINE.
 Add double quotes if the section contains any whitespace after trimming.
 
 Return t if PAGE-AND-LINE is a valid list, else nil.  If the page name
@@ -2103,7 +2109,8 @@ therein is invalid, trigger an error."
     (cl-destructuring-bind (page line)
 	page-and-line
       (setq page (file-name-base page))
-      (when (not (string-match-p hywiki-word-regexp page))
+      (unless (and (string-match-p hywiki-word-regexp page)
+                   (hywiki-page-exists-p page))
 	(error "(hywiki-format-reference): Invalid HyWiki page name - \"%s\""
 	       page))
       ;; Drop '* ' prefix
@@ -2115,7 +2122,7 @@ therein is invalid, trigger an error."
 	      line))))
 
 (defun hywiki-insert-reference (page-and-line)
-  "Insert a HyWikiWord#section reference, PAGE-AND-LINE, from `consult-grep'.
+  "Insert a HyWiki page#section reference from PAGE-AND-LINE.
 Add double quotes if the section contains any whitespace after trimming.
 
 Return t if PAGE-AND-LINE is a valid list, else nil.  If the page name
@@ -3816,7 +3823,7 @@ Return nil if WORD is a prefixed, typed hy:HyWikiWord, since
 these are handled by the Org mode link handler."
   (and (stringp word) (not (string-empty-p word))
        (let (case-fold-search)
-	 (and (or (string-match-p hywiki-word-with-optional-suffix-exact-regexp word)
+	 (and (or (string-match hywiki-word-with-optional-suffix-exact-regexp word)
 		  ;; For now this next version allows spaces and tabs in
 		  ;; the suffix part
 		  (eq 0 (string-match
@@ -3824,7 +3831,7 @@ these are handled by the Org mode link handler."
 			 word)))
 	      ;; If has a #section, ensure there are no invalid chars
 	      (if (string-match-p "#" word)
-		  (string-match-p "#[^][#()<>{}\"\n\r\f]+\\'" word)
+		  (string-match "#[^][#()<>{}\"\n\r\f]+\\'" word)
 		t)))))
 
 (defun hywiki-word-read (&optional prompt)
@@ -3843,13 +3850,35 @@ If point is on one, press RET immediately to use that one."
 		     (hywiki-get-referent-hasht)
 		     nil nil nil nil (hywiki-word-at-point))))
 
-(defun hywiki-page-read-new (&optional prompt)
-  "Prompt with completion for and return an existing/new HyWikiWord with a page.
+(defun hywiki-page-exists-p (word)
+  "Return HyWiki WORD iff it is an existing page reference."
+  (when (eq (car (hywiki-get-referent word)) 'page)
+    word))
+
+(defun hywiki-page-read (&optional prompt)
+  "Prompt with completion for and return an existing HyWiki page name.
 If point is on one, press RET immediately to use that one."
-  (let ((completion-ignore-case t))
-    (completing-read (if (stringp prompt) prompt "HyWikiWord page: ")
+  (let* ((completion-ignore-case t)
+         (wikiword (hywiki-word-at-point))
+         (page (hywiki-page-exists-p wikiword)))
+    (completing-read (if (stringp prompt) prompt "HyWiki page: ")
 		     (hywiki-get-page-list)
-		     nil nil nil nil (hywiki-word-at-point))))
+		     nil t nil nil (when page wikiword))))
+
+(defun hywiki-page-read-new (&optional prompt)
+  "Prompt with completion for and return an existing/new HyWiki page name.
+If point is on one, press RET immediately to use that one."
+  (let ((completion-ignore-case t)
+        page)
+    (while (null page)
+      (setq page (completing-read
+                  (if (stringp prompt) prompt "HyWiki page: ")
+		  (hywiki-get-page-list)
+		  nil nil nil nil (hywiki-word-at-point)))
+      ;; Prevent selection of non-page HyWikiWords
+      (unless (memq (car (hywiki-get-referent page)) '(page nil))
+        (setq page nil)))
+    page))
 
 (defun hywiki-word-set-auto-highlighting (hywiki-from-mode hywiki-to-mode)
   "Set HyWikiWord auto-highlighting based on HYWIKI-FROM-MODE HYWIKI-TO-MODE.
@@ -3966,12 +3995,7 @@ completion or no completion xandidates are returned."
 
 (defact link-to-wikiword (reference)
   "Display the HyWikiword referent matching WikiWord#section REFERENCE."
-  (interactive (list
-		(if (featurep 'consult)
-		    (hywiki-format-reference (hywiki-consult-file-and-line))
-		  ;; Without consult, can only complete to a WikiWord
-		  ;; without a section
-                  (hywiki-word-read "Link to HyWiki page: "))))
+  (interactive (list (hywiki-word-read "Link to HyWiki word: ")))
   (hywiki-find-referent reference))
 
 ;;; ************************************************************************
