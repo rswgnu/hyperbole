@@ -1,5 +1,10 @@
 2026-02-19  Bob Weiner  <rsw@gnu.org>
 
+* hui.el (hui:link-possible-types): Fix to include link-to-wikiword only if
+    an existing referent is found.
+
+* hibtypes.el (action): Fix to check for angle bracket delimiters.
+
 * hywiki.el (hywiki-read-page-reference): Add and use in 'interactive' calls of
     several functions.
             (hywiki-word-is-p): Revert to using all 'string-match' calls

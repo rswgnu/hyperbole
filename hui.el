@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     19-Feb-26 at 01:08:15 by Bob Weiner
+;; Last-Mod:     19-Feb-26 at 21:32:21 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2038,7 +2038,7 @@ Buffer without File      link-to-buffer-tmp"
 	lbl-key)
     (prog1 (delq nil
 		 (list (cond ((let ((ref (hywiki-referent-exists-p)))
-				(list 'link-to-wikiword ref)))
+				(and ref (list 'link-to-wikiword ref))))
                              ((and (featurep 'org-id)
 				   (cond ((save-excursion
 					    (beginning-of-line)
