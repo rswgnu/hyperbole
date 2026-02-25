@@ -1,3 +1,11 @@
+2026-02-25  Mats Lidell  <matsl@gnu.org>
+
+* .github/workflows/docs.yml: New workflow
+
+* Makefile (TEXICMD): Fail build on errors
+    (doc-clean): Use make foreach for removing doc build artifacts. (Avoid
+    bash brace expansion.) Remove README.md.html and README.toc.md.
+
 2026-02-19  Bob Weiner  <rsw@gnu.org>
 
 * hui.el (hui:link-possible-types): Fix to include link-to-wikiword only if

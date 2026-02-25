@@ -1,5 +1,4 @@
 # GNU Hyperbole 9.0.2pre - The Everyday Hypertextual Information Manager
-<!-- A CHANGE TO TRIGGER A BUILD -->
 
 [ If you are looking for the documentation for the stable release look
 [here](stable/hyperbole.html).]
