@@ -1,3 +1,10 @@
+2026-03-03  Mats Lidell  <matsl@gnu.org>
+
+* hload-path.el (hload-path--make-directory-autoloads): Use Emacs provided
+    byte compilation functions.
+  (hload-path--internal-make-directory-autoloads): Removed, not required from
+    Emacs 28.
+
 2026-03-02  Mats Lidell  <matsl@gnu.org>
 
 * hywiki.el (consult--async-command):
