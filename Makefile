@@ -651,7 +651,8 @@ recompile-docker-elpa:
 
 docker: docker-update
 	docker run --mount type=volume,src=elpa-local,dst=/root/.emacs.d/elpa \
-	-v $$(pwd):/hypb -v /tmp:/hypb-tmp -it --rm silex/emacs:${DOCKER_VERSION} bash -c "cp -a /hypb /hyperbole && make -C hyperbole recompile-docker-elpa ${DOCKER_TARGETS}"
+	-v $$(pwd):/hypb -v /tmp:/hypb-tmp -it --rm silex/emacs:${DOCKER_VERSION} \
+	bash -c "cp -a /hypb /hyperbole && find /hyperbole -name '*.elc' -delete && make -C hyperbole recompile-docker-elpa ${DOCKER_TARGETS}"
 
 docker-run: docker-update
 	docker run --mount type=volume,src=elpa-local,dst=/root/.emacs.d/elpa \
