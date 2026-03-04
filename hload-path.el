@@ -87,30 +87,13 @@ directory separator character.")
 ;;; Autoloads
 ;;; ************************************************************************
 
-;; New autoload generation function defined only as of Emacs 28
 (defalias 'hload-path--make-directory-autoloads
   (cond ((fboundp 'loaddefs-generate)
          #'loaddefs-generate)
-        ((fboundp #'make-directory-autoloads)
-         #'make-directory-autoloads)
         (t
-         #'hload-path--internal-make-directory-autoloads)))
-
-(defun hload-path--internal-make-directory-autoloads (dir output-file)
-  "Update autoload definitions for Lisp files in the directories DIRS.
-DIR can be either a single directory or a list of
-directories.  (The latter usage is discouraged.)
-
-The autoloads will be written to OUTPUT-FILE.  If any Lisp file
-binds `generated-autoload-file' as a file-local variable, write
-its autoloads into the specified file instead.
-
-The function does NOT recursively descend into subdirectories of the
-directory or directories specified."
-  ;; Don't use a 'let' on this next line or it will fail.
-  (setq generated-autoload-file output-file)
-  (with-suppressed-warnings ((obsolete update-directory-autoloads))
-    (update-directory-autoloads dir)))
+         #'make-directory-autoloads))
+  "Use `loaddefs-generate' if available or fallback to `make-directory-autoloads'.
+`make-directory-autoloads' is defined since Emacs 28.")
 
 ;; Menu items could call this function before Info is loaded.
 (autoload 'Info-goto-node   "info" "Jump to specific Info node."  t)
