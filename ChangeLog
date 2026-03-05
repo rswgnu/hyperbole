@@ -1,5 +1,16 @@
 2026-03-04  Mats Lidell  <matsl@gnu.org>
 
+* Makefile (.PHONY): Set the .PHONY declarations at each phony target.
+    (HYPB_BYTE_COMP_INFO, HYPB_BYTE_COMP_FUNC): Use macros so %.elc rule
+    can de defined once.
+    (new-bin): Remove not needed dependency on autoloads.
+    (eln): Remove not needed dependency on src and echo.
+    (kotl/kotl-autoloads.el, hyperbole-autoloads.el): Use
+    hload-path--make-directory-autoloads in both rules and make them
+    consistent. Touch target after rebuild to ensure new timestamp.
+    (bin): Run remove-elc before src target.
+    (TOUCH): Add touch(1) for setting new timestamp.
+
 * test/hargs-tests.el (hargs-get-verify-extension-characters): Make test run
     in batch.
 

@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     10-Feb-26 at 17:05:17 by Mats Lidell
+# Last-Mod:      7-Feb-26 at 16:17:01 by Mats Lidell
 #
 # Copyright (C) 1994-2026  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -168,6 +168,7 @@ RM = \rm -f
 TAR = \tar
 ZIP = \zip -qry
 CVS = \cvs
+TOUCH = \touch
 
 # Directory in which to create new package distributions of Hyperbole.
 pkg_parent = /tmp
@@ -252,6 +253,7 @@ EL_TAGS = $(EL_SRC) $(EL_KOTL) $(TEST_ERT_FILES)
 .SUFFIXES:            # Delete the default suffixes
 .SUFFIXES: .el .elc   # Define the list of file suffixes to match to rules
 
+.PHONY: help
 help:
 	@echo "Use the Emacs Package Manager to build and install the latest release of GNU Hyperbole."
 	@echo "For help with Emacs packages, see the GNU Emacs Info Manual section, \"(emacs)Packages\"."
@@ -298,25 +300,31 @@ help:
 	@echo "    man/hyperbole.texi    - source form"
 	@echo ""
 
+.PHONY: all
 all: help
 
+.PHONY: echo
 echo:
 	@echo "Emacs: $(shell which ${EMACS})"
 	@echo "Version: $(shell ${EMACS} --version)"
 	@echo "TERM: $(TERM)"
 	@echo "DISPLAY: $(DISPLAY)"
 
+.PHONY: emacs-environment
 emacs-environment:
 	@$(EMACS_PLAIN_BATCH) $(VERSIONFLAGS)
 
+.PHONY: install
 install: elc install-info install-html $(data_dir)/hkey-help.txt
 
+.PHONY: install-info
 install-info: $(info_dir)/hyperbole.info
 $(info_dir)/hyperbole.info: $(man_dir)/hyperbole.info
 	$(MKDIR) $(info_dir)/im; \
 	  cd $(man_dir); $(INSTALL) hyperbole.info* $(info_dir); \
 	  $(INSTALL) im/*.{png,eps} $(info_dir)/im
 
+.PHONY: install-html
 install-html: $(html_dir)/hyperbole.html
 $(html_dir)/hyperbole.html: $(man_dir)/hyperbole.html $(man_dir)/hyperbole.css $(man_dir)/texinfo-7.css
 	$(MKDIR) $(html_dir)/im; \
@@ -326,8 +334,8 @@ $(html_dir)/hyperbole.html: $(man_dir)/hyperbole.html $(man_dir)/hyperbole.css $
 $(data_dir)/hkey-help.txt: $(man_dir)/hkey-help.txt
 	$(INSTALL) hkey-help.txt $(data_dir)
 
-.PHONY: src new-bin remove-elc bin eln
 # Setup to run Hyperbole from .el source files
+.PHONY: src
 src: autoloads tags
 
 # Byte compile files but apply a filter for either including or
@@ -347,39 +355,45 @@ endif
 
 curr_dir = $(shell pwd)
 ifeq ($(HYPB_NATIVE_COMP),yes)
-%.elc: %.el
-	$(HYPB_ELC_ELN)$(EMACS) --batch --quick \
-	--eval "(progn (add-to-list 'load-path \"$(curr_dir)\") (add-to-list 'load-path \"$(curr_dir)/kotl\"))" \
-	-l bytecomp ${HYPB_BIN_WARN} \
-	-f batch-byte+native-compile $<
+HYPB_BYTE_COMP_INFO = $(HYPB_ELC_ELN)
+HYPB_BYTE_COMP_FUNC = batch-byte+native-compile
 else
+HYPB_BYTE_COMP_INFO = $(HYPB_ELC)
+HYPB_BYTE_COMP_FUNC = batch-byte-compile
+endif
 %.elc: %.el
-	$(HYPB_ELC)$(EMACS) --batch --quick \
+	$(HYPB_BYTE_COMP_INFO)$(EMACS) --batch --quick \
 	--eval "(progn (add-to-list 'load-path \"$(curr_dir)\") (add-to-list 'load-path \"$(curr_dir)/kotl\"))" \
 	-l bytecomp ${HYPB_BIN_WARN} \
-	-f batch-byte-compile $<
-endif
+	-f $(HYPB_BYTE_COMP_FUNC) $<
 
-new-bin: autoloads $(ELC_KOTL) $(ELC_COMPILE)
+.PHONY: new-bin
+new-bin: $(ELC_KOTL) $(ELC_COMPILE)
 
+.PHONY: remove-elc
 remove-elc:
 	$(HYPB_at)$(RM) *.elc kotl/*.elc
 
 # Remove and then rebuild all byte-compiled .elc files, even those .elc files
 # which do not yet exist, plus build TAGS file.
-bin: src remove-elc new-bin
+.PHONY: bin
+bin: remove-elc src new-bin
 
 # Native compilation (Requires Emacs built with native compilation support.)
-eln: echo src
+.PHONY: eln
+eln:
 	HYPB_NATIVE_COMP=yes make new-bin
 
+.PHONY: tags
 tags: TAGS
 TAGS: $(EL_TAGS)
 	$(HYPB_GEN)$(ETAGS) --regex='{lisp}/(ert-deftest[ \t]+\([^ \t\n\r\f()]+\)/' $(EL_TAGS)
 
+.PHONY: clean
 clean:
 	$(HYPB_at)$(RM) hyperbole-autoloads.el kotl/kotl-autoloads.el $(ELC_COMPILE) $(ELC_KOTL) TAGS test/*.elc
 
+.PHONY: version
 version:
 	@echo ""
 	@fgrep -L $(HYPB_VERSION) Makefile HY-ABOUT HY-ANNOUNCE HY-NEWS README.md hversion.el hyperbole.el man/hyperbole.texi > WRONG-VERSIONS
@@ -392,6 +406,7 @@ version:
 	@echo ""
 
 # Build the README.md.html and Info, HTML and Postscript versions of the user manual
+.PHONY: doc
 doc: version README.md.html manual
 
 # Convenience targets for regenerating the docs
@@ -404,18 +419,22 @@ doc-clean:
 doc-regenerate: doc-clean doc
 
 # Build the Info, HTML and Postscript versions of the user manual
+.PHONY: manual
 manual: info html pdf
 
 TEXINFO_SRC = $(man_dir)/hyperbole.texi $(man_dir)/hkey-help.txt $(man_dir)/im/*.png
 
+.PHONY: info
 info: $(man_dir)/hyperbole.info
 $(man_dir)/hyperbole.info: $(TEXINFO_SRC)
 	cd $(man_dir) && $(TEXI2INFO) hyperbole.texi && (sed -e 's/texi2any/makeinfo/' hyperbole.info > h.info && mv h.info hyperbole.info)
 
+.PHONY: pdf
 pdf: $(man_dir)/hyperbole.pdf
 $(man_dir)/hyperbole.pdf: $(TEXINFO_SRC)
 	cd $(man_dir) && $(TEXI2PDF) hyperbole.texi
 
+.PHONY: html
 html: $(man_dir)/hyperbole.html pdf
 $(man_dir)/hyperbole.html: $(TEXINFO_SRC) $(man_dir)/hyperbole.css $(man_dir)/texinfo-7.css
 	cd ${man_dir} && $(TEXI2HTML) hyperbole.texi
@@ -442,34 +461,41 @@ define confirm
 endef
 
 # Locally update Hyperbole website
+.PHONY: website-local
 website-local: README.md.html
 	$(EMACS_BATCH) --debug -l hypb-maintenance --eval '(let ((hypb:web-repo-location "$(HYPB_WEB_REPO_LOCATION)")) (hypb:web-repo-update))'
 
 # Push to public Hyperbole website
+.PHONY: website
 website: website-local
 	$(call confirm,Deploys to website!,DEPLOY)
 	cd $(HYPB_WEB_REPO_LOCATION) && $(CVS) commit -m "Hyperbole release $(HYPB_VERSION)"
 	@echo "Website for Hyperbole $(HYPB_VERSION) is updated."
 
 # Generate a Hyperbole package suitable for distribution via the Emacs package manager.
+.PHONY: pkg package
 pkg: package
 package: tags doc $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.sig
 
 # Generate and distribute a Hyperbole release to ftp.gnu.org.
 # One step in this is to generate an autoloads file for the Koutliner, kotl/kotl-autoloads.el.
+.PHONY: release
 release: git-pull git-verify-no-update package $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz ftp website git-tag-release
 	@echo "Hyperbole $(HYPB_VERSION) is released."
 
 # Ensure local hyperbole directory is synchronized with master before building a release.
+.PHONY: git-pull
 git-pull:
 	@echo "If this step fails check your work directory for not committed changes"
 	git checkout master && git pull
 	git diff-index --quiet master
 
+.PHONY: git-verify-no-update
 git-verify-no-update:
 	@echo "If this step fails check your work directory for updated docs and push these to savannah"
 	git diff-index --quiet master
 
+.PHONY: git-tag-release
 git-tag-release:
 	git tag -a hyperbole-$(HYPB_VERSION) -m "Hyperbole release $(HYPB_VERSION)"
 	git push origin hyperbole-$(HYPB_VERSION)
@@ -477,18 +503,22 @@ git-tag-release:
 
 # Send compressed tarball for uploading to GNU ftp site; this must be done from the directory
 # containing the tarball to upload.
+.PHONY: ftp
 ftp: package $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz
 	cd $(pkg_parent) && $(GNUFTP) hyperbole-$(HYPB_VERSION).tar.gz
 	@echo "Hyperbole $(HYPB_VERSION) uploaded to ftp.gnu.org."
 
 # Autoloads
+.PHONY: autoloads
 autoloads: kotl/kotl-autoloads.el hyperbole-autoloads.el
 
 hyperbole-autoloads.el: $(EL_COMPILE)
-	$(HYPB_GEN)$(EMACS_BATCH) --debug --eval "(progn (setq generated-autoload-file (expand-file-name \"hyperbole-autoloads.el\") backup-inhibited t) (let (find-file-hooks) (hload-path--make-directory-autoloads \".\" generated-autoload-file)))"
+	$(HYPB_GEN)$(EMACS_BATCH) --debug --eval "(let ((autoload-file (expand-file-name \"hyperbole-autoloads.el\")) (backup-inhibited t) (find-file-hooks)) (hload-path--make-directory-autoloads \".\" autoload-file)))"
+	$(HYPB_at)$(TOUCH) $@
 
 kotl/kotl-autoloads.el: $(EL_KOTL)
-	$(HYPB_GEN)$(EMACS_PLAIN_BATCH) --debug --eval "(let ((autoload-file (expand-file-name \"kotl/kotl-autoloads.el\")) (backup-inhibited t) (find-file-hooks)) (if (functionp (quote make-directory-autoloads)) (make-directory-autoloads \"kotl/\" autoload-file) (progn (setq generated-autoload-file autoload-file) (update-directory-autoloads \"kotl/\"))))"
+	$(HYPB_GEN)$(EMACS_BATCH) --debug --eval "(let ((autoload-file (expand-file-name \"kotl/kotl-autoloads.el\")) (backup-inhibited t) (find-file-hooks)) (hload-path--make-directory-autoloads \"kotl/\" autoload-file))"
+	$(HYPB_at)$(TOUCH) $@
 
 # Used for ftp.gnu.org tarball distributions.
 $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz:
@@ -507,6 +537,7 @@ $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar: version $(HYPERBOLE_FILES)
 	cd $(pkg_hyperbole) && make autoloads && chmod 755 topwin.py && \
 	COPYFILE_DISABLE=1 $(TAR) -C $(pkg_parent) -clf $(pkg_hyperbole).tar hyperbole-$(HYPB_VERSION)
 
+.PHONY: pkgclean packageclean
 pkgclean: packageclean
 packageclean:
 	if [ -d $(pkg_hyperbole) ]; then \
@@ -524,8 +555,7 @@ packageclean:
 	    *.ps *\# *- *.orig *.rej .nfs* CVS .cvsignore; fi
 
 # ERT test
-.PHONY: tests test test-ert all-tests test-all batch-tests
-,PHONY: docker-all-tests docker-batch-tests
+.PHONY: tests test batch-tests
 batch-tests: test
 tests: test
 test: test-ert
@@ -556,6 +586,7 @@ HYPB_ERT_BATCH_BT = (ert-batch-backtrace-line-length 256) (backtrace-line-length
 endif
 
 # Run non-interactive tests in batch mode
+.PHONY: test-ert
 test-ert:
 	@echo "# Tests: $(TEST_ERT_FILES)"
 	$(EMACS_BATCH) --eval "(load-file \"test/hy-test-dependencies.el\")" \
@@ -565,6 +596,7 @@ test-ert:
 	           $(LOAD_TEST_ERT_FILES) $(HYPB_ERT_FAILURE) $(HYPB_ERT_BATCH))"
 
 # Run all tests by starting an Emacs that runs the tests interactively in windowed mode.
+.PHONY: all-tests test-all
 all-tests: test-all
 test-all:
 	@echo "# Tests: $(TEST_ERT_FILES)"
@@ -581,6 +613,7 @@ else
 	$(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ($(LET_VARIABLES)) $(LOAD_TEST_ERT_FILES) $(HYPB_ERT_FAILURE) $(HYPB_ERT_INTERACTIVE))"
 endif
 
+.PHONY: test-all-output
 test-all-output:
 	@output=$(shell mktemp); \
 	$(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ($(LET_VARIABLES) (ert-quiet t)) $(LOAD_TEST_ERT_FILES) (ert-run-tests-batch t) (with-current-buffer \"*Messages*\" (append-to-file (point-min) (point-max) \"$$output\")) (kill-emacs))"; \
@@ -588,9 +621,11 @@ test-all-output:
 	rm $$output
 
 # Target to be used in docker
+.PHONY: internal-docker-all-tests-ert-output
 internal-docker-all-tests-ert-output:
 	@$(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ($(LET_VARIABLES) (ert-quiet t)) $(LOAD_TEST_ERT_FILES) (ert t) (with-current-buffer \"*ert*\" (write-region (point-min) (point-max) \"/hypb-tmp/ERT-OUTPUT-ERT\")) (kill-emacs))"
 
+.PHONY: docker-all-tests
 docker-all-tests:
 	@total_summary=$(shell mktemp); \
 	for i in $(DOCKER_VERSIONS); do printf "=== Emacs $$i ===\n" | tee -a $$total_summary; \
@@ -600,6 +635,7 @@ docker-all-tests:
 	printf "\n\n=== Summary ===\n"; cat $$total_summary; \
 	rm $$total_summary
 
+.PHONY: docker-batch-tests
 docker-batch-tests:
 	@total_summary=$(shell mktemp); build_summary=$(shell mktemp); \
 	for i in $(DOCKER_VERSIONS); do printf "=== Emacs $$i ===\n" | tee -a $$total_summary; \
@@ -623,6 +659,7 @@ install-local:
 	(cd ./install-test/ && \
 	./local-install-test.sh $(subst install-,,$@) $(shell pwd) $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null))
 
+.PHONY: lint
 lint:
 	$(EMACS_BATCH) \
 	--eval "(setq package-lint-main-file \"hyperbole.el\")" \
@@ -646,33 +683,40 @@ else
 DOCKER_VERSION = master-ci
 endif
 
+.PHONY: recompile-docker-elpa
 recompile-docker-elpa:
 	$(EMACS_BATCH) --eval "(byte-recompile-directory \"/root/.emacs.d/elpa\" 0 'force)"
 
+.PHONY: docker
 docker: docker-update
 	docker run --mount type=volume,src=elpa-local,dst=/root/.emacs.d/elpa \
 	-v $$(pwd):/hypb -v /tmp:/hypb-tmp -it --rm silex/emacs:${DOCKER_VERSION} \
 	bash -c "cp -a /hypb /hyperbole && find /hyperbole -name '*.elc' -delete && make -C hyperbole recompile-docker-elpa ${DOCKER_TARGETS}"
 
+.PHONY: docker-run
 docker-run: docker-update
 	docker run --mount type=volume,src=elpa-local,dst=/root/.emacs.d/elpa \
 	-v $$(pwd):/hypb -v /tmp:/hypb-tmp -it --rm silex/emacs:${DOCKER_VERSION}
 
 # Update the docker image for the specified version of Emacs
+.PHONY: docker-update
 docker-update:
 	docker pull silex/emacs:${DOCKER_VERSION}
 
 # Target for running emacs in the container with hyperbole loaded.
 # Example: make docker version=29.4 targets="clean bin run-emacs"
+.PHONY: run-emacs
 run-emacs:
 	emacs --eval "(progn (add-to-list 'load-path \"/hyperbole\") (require 'hyperbole) (hyperbole-mode 1))"
 
 # Similar target for starting bash in the container. Useful for
 # manually doing things before starting Emacs but having Hyperbole
 # available in /hyperbole through the docker target.
+.PHONY: run-bash
 run-bash:
 	bash
 
+.PHONY: docker-clean
 docker-clean:
 	docker rm elpa-local
 
@@ -689,6 +733,7 @@ COVERAGE_TESTSPEC = ${testspec}
 else
 COVERAGE_TESTSPEC = t
 endif
+.PHONY: coverage
 coverage:
 	$(EMACS) --quick $(PRELOADS) \
 	--eval "(load-file \"test/hy-test-dependencies.el\")" \
