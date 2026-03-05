@@ -880,9 +880,9 @@ by `hycontrol-frame-offset' (x . y) pixels."
 	(y (cdr (frame-position))))
     (pcase arrow
       ('up    (set-frame-position nil x (max 0 (- y pixels))))
-      ('down  (set-frame-position nil x (+ y pixels)))
+      ('down  (set-frame-position nil x (max 0 (+ y pixels))))
       ('left  (set-frame-position nil (max 0 (- x pixels)) y))
-      ('right (set-frame-position nil (+ x pixels) y)))))
+      ('right (set-frame-position nil (max 0 (+ x pixels)) y)))))
 
 (defun hycontrol-numeric-keypad (e _arg)
   "Move frame to screen location based on the last pressed numeric keypad key E."
