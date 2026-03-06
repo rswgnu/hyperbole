@@ -1,7 +1,7 @@
 2026-03-05  Mats Lidell  <matsl@gnu.org>
 
 * hycontrol.el (hycontrol-move-frame): Ensure move past left and upper
-    boarder is not possible.
+    border is not possible.
 * test/hycontrol-tests.el (hycontrol-tests--move-frame): Test case.
 
 2026-03-04  Mats Lidell  <matsl@gnu.org>
