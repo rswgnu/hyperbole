@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:      7-Mar-26 at 15:09:37 by Bob Weiner
+;; Last-Mod:      7-Mar-26 at 18:39:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -361,8 +361,6 @@ Used to include a final line when marking indented code.")
     (modify-syntax-entry ?\} "){" st)
     (modify-syntax-entry ?< "(>" st)
     (modify-syntax-entry ?> ")<" st)
-    ;; For Python and other modes, make apostrophe usable as a string delimiter
-    (modify-syntax-entry ?' "\"" st)
     ;; Next entry, e.g. for markdown mode, so does not register as a
     ;; quote starting an sexp, as it does in emacs-lisp-mode
     (modify-syntax-entry ?# "." st)
@@ -831,7 +829,6 @@ following point or if the closing tag does not have a `>' terminator character."
   (let ((bounds (hui-select-boundaries (point))))
     (when bounds
       (kill-region (car bounds) (cdr bounds)))))
-
 
 ;;
 ;; Functions

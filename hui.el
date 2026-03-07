@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     19-Feb-26 at 21:32:21 by Bob Weiner
+;; Last-Mod:      7-Mar-26 at 18:19:41 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -152,7 +152,7 @@ point; see `hui:delimited-selectable-thing'."
 ;; areas (like sexpressions).
 ;;;###autoload
 (defun hui:kill-region (beg end &optional region interactive-flag)
-  "Kill (\"cut\") between point and mark.
+  "Kill (\"cut\") between highlighted point and mark else thing at point.
 The text is deleted but saved in the kill ring.
 The command \\[yank] can retrieve it from there.
 \(If you want to kill and then yank immediately, use \\[copy-region-as-kill].)
@@ -197,7 +197,7 @@ Patched to remove the most recent completion."
 ;; references, active regions and delimited areas (like sexpressions).
 ;;;###autoload
 (defun hui:kill-ring-save (beg end &optional region)
-  "Save the active region as if killed, but don't kill it.
+  "Save the active region or thing at point as if killed, but don't kill it.
 In Transient Mark mode, deactivate the mark.
 If `interprogram-cut-function' is non-nil, also save the text for a window
 system cut and paste.
@@ -1959,7 +1959,7 @@ which to create button.  BUT-DIR is the directory of BUT-LOC.
 TYPE-AND-ARGS is the action type for the button followed by any
 arguments it requires.  Any text properties are removed from
 string arguments."
-  
+
   (hattr:set 'hbut:current 'categ 'implicit)
   (hattr:set 'hbut:current 'loc but-loc)
   (hattr:set 'hbut:current 'dir but-dir)

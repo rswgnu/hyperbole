@@ -1,8 +1,16 @@
 2026-03-07  Bob Weiner  <rsw@gnu.org>
 
-* hui-select.el (hui-select-syntax-table): Make apostrophe act as a string
-    delimiter, e.g. when in Python mode.
-                (hui-select-string-p): Change from 'or' to 'if' to ensure
+* test/hywiki-tests.el (hywiki-tests--edit):
+  test/hpath-tests.el (ert): Add (require 'cl-lib) for 'cl-incf'.
+
+* test/demo-tests.el (fast-demo-key-series-shell-cd-hyperb-dir,
+                     (fast-demo-key-series-shell-cd-hyperb-dir-view-mode):
+    Add 0.3 second delay to allow shell to start up.
+
+* test/hpath-tests.el (hpath--hpath:delimited-possible-path): Extend tests
+    to verify at the start and end of strings as well, to catch edge cases.
+
+* hui-select.el (hui-select-string-p): Change from 'or' to 'if' to ensure
     else clause is not hit when delims are double quotes.
                 (hui-select-string): Support Python triple quotes.
 

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:      7-Mar-26 at 14:38:52 by Bob Weiner
+;; Last-Mod:      7-Mar-26 at 16:40:23 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -784,10 +784,7 @@ Quoting conventions recognized are:
                                           (goto-char (1- (point)))
 			                (progn (setq str-start (match-end 0))
                                                nil))))
-                        (while (and (setq possible-delim (re-search-backward open-regexp nil t))
-                                    (when (= (or (char-before) 0) ?\\)
-                                      (goto-char (1- (point))))))
-		        (when possible-delim
+		        (when (setq possible-delim (re-search-backward open-regexp nil t))
                           (setq open-match-string (match-string 2))
 			  (setq str-start (match-end 2))))
 
@@ -837,9 +834,6 @@ Quoting conventions recognized are:
 		               ;; Move back one char in case point is on a
 		               ;; closing delimiter char to ensure it is not
 		               ;; backslash quoted and so the right delimiter is matched.
-		               (if (/= (1- (point)) (line-beginning-position))
-			           (goto-char (1- (point)))
-		                 t)
                                ;; Find the matching closing delimiter
                                (progn (while (and (setq possible-delim (search-forward open-match-string nil t))
                                                   (= (or (char-before (match-beginning 0)) 0) ?\\)))
