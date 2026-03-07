@@ -29,6 +29,16 @@
       (let ((err (should-error (hycontrol-framemove-direction 'up) :type 'error)))
         (should (string-match "Requires manual installation" (cadr err)))))))
 
+(ert-deftest hycontrol-tests--move-frame ()
+  "Verify move frame at left and upper border stays at the border."
+  (with-mock
+    (mock (frame-position) => '(0 . 0))
+    (mock (set-frame-position nil 0 0) => t)
+    (hycontrol-move-frame 'up 10)
+    (hycontrol-move-frame 'down -10)
+    (hycontrol-move-frame 'left 10)
+    (hycontrol-move-frame 'right -10)))
+
 (provide 'hycontrol-tests)
 
 ;; This file can't be byte-compiled without the `el-mock' package

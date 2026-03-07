@@ -24,28 +24,24 @@
 (require 'hy-test-helpers "test/hy-test-helpers")
 
 (ert-deftest hargs-get-verify-extension-characters ()
-  "Verify hyperbole extension characters are indentified."
-  (skip-unless (not noninteractive))
+  "Verify hyperbole extension character are identified."
+  (hy-test-helpers:ert-simulate-keys "xyz\r"
+    (should (string= (hargs:get "+L: ") "xyz")))
+  (hy-test-helpers:ert-simulate-keys "xyz\r"
+    (should (string= (hargs:get "+V: ") "xyz")))
+  (hy-test-helpers:ert-simulate-keys "xyz\r"
+    (should (string= (hargs:get "+K: ") "xyz")))
+  (should-error (hargs:get "+A: ") :type 'error)
+  (let ((Info-current-file-completions '(("xyz"))))
+    (hy-test-helpers:ert-simulate-keys "xyz\r"
+      (should (string= (hargs:get "+I: ") "xyz"))))
+  (hy-test-helpers:ert-simulate-keys "(emacs)info\r"
+    (should (string= (hargs:get "+X: ") "(emacs)info")))
   (let ((file (make-temp-file "hypb")))
     (unwind-protect
-        (progn
-          (hy-test-helpers:ert-simulate-keys "xyz\r"
-            (should (string= (hargs:get "+I: ") "xyz")))
-          (hy-test-helpers:ert-simulate-keys "xyz\r"
-            (should (string= (hargs:get "+L: ") "xyz")))
-          (hy-test-helpers:ert-simulate-keys (concat "(\"xyz\" \"" file "\")\r")
-            (should (equal (hargs:get "+M: ") (list "xyz" file))))
-          (hy-test-helpers:ert-simulate-keys "xyz\r"
-            (should (string= (hargs:get "+V: ") "xyz")))
-          (hy-test-helpers:ert-simulate-keys "xyz\r"
-            (should (string= (hargs:get "+X: ") "(dir)xyz")))
-          (should-error (hargs:get "+A: ") :type 'error))
+        (hy-test-helpers:ert-simulate-keys (concat "(\"xyz\" \"" file "\")\r")
+          (should (equal (hargs:get "+M: ") (list "xyz" file))))
       (hy-delete-file-and-buffer file))))
-
-(ert-deftest hargs-get-verify-extension-characters-+K ()
-  "Verify hyperbole extension character +K is indentified."
-  (cl-letf (((symbol-function 'hargs:read) (lambda (_prompt &optional _a _b _c _d) "xyz")))
-    (should (string= (hargs:get "+K: ") "xyz"))))
 
 (ert-deftest hargs-tests--sexpression-p ()
   "Verify behavior of `hargs:sexpression-p'."

@@ -1,3 +1,40 @@
+2026-03-05  Mats Lidell  <matsl@gnu.org>
+
+* hycontrol.el (hycontrol-move-frame): Ensure move past left and upper
+    border is not possible.
+* test/hycontrol-tests.el (hycontrol-tests--move-frame): Test case.
+
+2026-03-04  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (.PHONY): Set the .PHONY declarations at each phony target.
+    (HYPB_BYTE_COMP_INFO, HYPB_BYTE_COMP_FUNC): Use macros so %.elc rule
+    can de defined once.
+    (new-bin): Remove not needed dependency on autoloads.
+    (eln): Remove not needed dependency on src and echo.
+    (kotl/kotl-autoloads.el, hyperbole-autoloads.el): Use
+    hload-path--make-directory-autoloads in both rules and make them
+    consistent. Touch target after rebuild to ensure new timestamp.
+    (bin): Run remove-elc before src target.
+    (TOUCH): Add touch(1) for setting new timestamp.
+
+* test/hargs-tests.el (hargs-get-verify-extension-characters): Make test run
+    in batch.
+
+* Makefile (docker): Remove all elc files in the docker container.
+
+2026-03-03  Mats Lidell  <matsl@gnu.org>
+
+* hload-path.el (hload-path--make-directory-autoloads): Use Emacs provided
+    byte compilation functions.
+  (hload-path--internal-make-directory-autoloads): Removed, not required from
+    Emacs 28.
+
+2026-03-02  Mats Lidell  <matsl@gnu.org>
+
+* hywiki.el (consult--async-command):
+  (consult--lookup-member):
+  (consult--read): Declare functions.
+
 2026-03-02  Bob Weiner  <rsw@gnu.org>
 
 * hsys-org.el (hsys-org-format-heading): Remove any Org '#+TITLE:'.
