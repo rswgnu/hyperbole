@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     31-Dec-25 at 16:07:18 by Mats Lidell
+;; Last-Mod:      7-Mar-26 at 00:35:55 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -20,11 +20,11 @@
 ;;   double-clicking on various kinds of characters in different buffer major
 ;;   modes.  You'll quickly get the hang of it.  (It also provides a command
 ;;   to jump between beginning and end tags within HTML, SGML and XML buffers.)
-;;   
+;;
 ;;   A great deal of smarts are built-in so that it does the right thing
 ;;   almost all of the time; many other attempts at similar behavior such as
 ;;   thing.el fail to deal with many file format complexities.
-;;   
+;;
 ;;   Double clicks of the Selection Key (left mouse key) at the same point
 ;;   will select bigger and bigger regions with each successive use.  The
 ;;   first double click selects a region based upon the character at the
@@ -456,10 +456,10 @@ PREFX-ARG is given, limit search to only .el and .el.gz files."
 						""))
 				      nil nil default)))
 		     current-prefix-arg))
-  (let* ((delim (cond ((not (string-match "\'" pattern)) ?\')
-			      ((not (string-match "\"" pattern)) ?\")
-			      ((not (string-match "=" pattern)) ?=)
-			      (t ?@)))
+  (let* ((delim (cond ((not (string-match-p "\'" pattern)) ?\')
+		      ((not (string-match-p "\"" pattern)) ?\")
+		      ((not (string-match-p "=" pattern)) ?=)
+		      (t ?@)))
 	 (grep-cmd
 	  (if (and (not current-prefix-arg) (equal (buffer-name) "*Locate*"))
 	      (format "%s -e \%c%s\%c %s" hui-select-rgrep-command delim pattern delim (hypb:locate-pathnames))
@@ -467,12 +467,17 @@ PREFX-ARG is given, limit search to only .el and .el.gz files."
 		    hui-select-rgrep-command
 		    (when (and (memq major-mode '(emacs-lisp-mode lisp-interaction-mode))
 			       (not prefx-arg))
-		      (if (string-match "\\`rg " hui-select-rgrep-command)
-			  "-g \"*.el\" -g \"*.el.gz\""
+		      (if (string-match-p "\\`rg " hui-select-rgrep-command)
+			  "-g '*.el' -g '*.el.gz'"
 			"--include=\"*.el\" --include=\"*.el.gz\""))
-		    (if (string-match "\\`rg " hui-select-rgrep-command)
-			"-g \"!*~\" -g \"!#*\" -g \"!TAGS\""
-		      "--exclude=\".git\" --exclude=\"CVS\" --exclude=\"*~\" --exclude=\"#*\" --exclude=\"TAGS\"")
+		    (cond ((string-match-p "\\`rg " hui-select-rgrep-command)
+                           ;; Note: rg ignores the dir, .git, automatically
+                           "-g '!*/CVS/*' -g '!*~' -g '!#*' -g '!*/TAGS'")
+                          ((string-match-p "--exclude-dir" (shell-command-to-string
+                                                 "grep --help | fgrep -- exclude-dir"))
+		           "--exclude-dir=\".git\" --exclude-dir=\"CVS/*\" --exclude=\"*~\" --exclude=\"#*\" --exclude=\"TAGS\"")
+                          (t
+		           "--exclude=\"*~\" --exclude=\"#*\" --exclude=\"TAGS\""))
 		    delim pattern delim))))
     (setq this-command `(grep ,grep-cmd))
     (push this-command command-history)

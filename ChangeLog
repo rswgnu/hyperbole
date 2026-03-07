@@ -1,3 +1,11 @@
+2026-03-06  Bob Weiner  <rsw@gnu.org>
+
+* hypb.el (hypb:in-string-p): Fix so search for closing quote matches only
+    to the type of quote given by 'open-match-string' match.
+
+* hui-select.el (hui-select-rgrep): Fix to use --exclude-dir when possible
+    since --exclude does not match dir names.
+
 2026-03-05  Mats Lidell  <matsl@gnu.org>
 
 * hycontrol.el (hycontrol-move-frame): Ensure move past left and upper

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:      9-Feb-26 at 00:21:58 by Bob Weiner
+;; Last-Mod:      7-Mar-26 at 00:17:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -742,6 +742,7 @@ Quoting conventions recognized are:
       (let ((opoint (point))
 	    (start (point-min))
 	    (open-match-string "")
+	    (close-match-string "")
 	    str
 	    str-start
 	    str-end)
@@ -797,7 +798,10 @@ Quoting conventions recognized are:
 		       t)
 		     (re-search-forward close-regexp nil t)
 		     (setq str-end (match-beginning 2)
-			   str (buffer-substring-no-properties str-start str-end))))
+	                   close-match-string (match-string 2))
+                     ;; `close-match-string' must be the same as `open-match-string'
+                     (equal open-match-string close-match-string)
+		     (setq str (buffer-substring-no-properties str-start str-end))))
 
 	      ;; Ignore if more than `max-lines' matched
 	      (when (and str
