@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     22-Feb-26 at 23:14:50 by Bob Weiner
+;; Last-Mod:      2-Mar-26 at 20:51:31 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -317,7 +317,7 @@ Return t if Org is reloaded, else nil."
 ;;; Derived from `org-get-heading' in "org.el"
 ;;;###autoload
 (defun hsys-org-format-heading (heading &optional no-tags no-todo no-priority no-comment)
-  "Return HEADING, without the leading asterisks.
+  "Return HEADING, without the leading asterisks or a #+TITLE: without that prefix.
 When NO-TAGS is non-nil, don't include tags.
 When NO-TODO is non-nil, don't include TODO keywords.
 When NO-PRIORITY is non-nil, don't include priority cookie.
@@ -325,7 +325,7 @@ When NO-COMMENT is non-nil, don't include COMMENT string."
   (when (stringp heading)
     (let ((case-fold-search nil)
           (org-complex-heading-regexp
-           "^\\(\\*+\\)\\(?: +\\(DONE\\|TODO\\)\\)?\\(?: +\\(\\[#.\\]\\)\\)?\\(?: +\\(.*?\\)\\)??\\(?:[ 	]+\\(:[[:alnum:]_@#%:]+:\\)\\)?[ 	]*$"))
+           "^\\(\\*+\\|#\\+TITLE:\\)\\(?: +\\(DONE\\|TODO\\)\\)?\\(?: +\\(\\[#.\\]\\)\\)?\\(?: +\\(.*?\\)\\)??\\(?:[ 	]+\\(:[[:alnum:]_@#%:]+:\\)\\)?[ 	]*$"))
       (when (string-match org-complex-heading-regexp heading)
         ;; When using `org-fold-core--optimise-for-huge-buffers',
         ;; returned text will be invisible.  Clear it up.
