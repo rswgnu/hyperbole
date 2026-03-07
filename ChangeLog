@@ -1,3 +1,22 @@
+2026-03-07  Bob Weiner  <rsw@gnu.org>
+
+* hui-select.el (hui-select-syntax-table): Make apostrophe act as a string
+    delimiter, e.g. when in Python mode.
+                (hui-select-string-p): Change from 'or' to 'if' to ensure
+    else clause is not hit when delims are double quotes.
+                (hui-select-string): Support Python triple quotes.
+
+* hypb.el (hypb:in-string-modes-regexps): Change format to a list of lists
+    of (open-regexp close-regexp) since 're-search-backward' is not greedy,
+    have to search for longer regexp matches before search for shorter ones
+    or may find one of the shorter ones that is a part of a longer one, e.g.
+    in Python where a single or a triple double quote is allowed.
+          (hypb:in-string-p): Fix to skip past backslash quoted matches
+    when searching for open and close delimiters.
+          (hypb:in-string-modes-regexps): Rename to 'hypb:in-string-mode-regexps'
+    and update doc string as the format has changed, this will help avoid
+    improper customized usage.
+
 2026-03-06  Bob Weiner  <rsw@gnu.org>
 
 * hypb.el (hypb:in-string-p): Fix so search for closing quote matches only

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:      7-Mar-26 at 00:35:55 by Bob Weiner
+;; Last-Mod:      7-Mar-26 at 15:09:37 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -361,6 +361,8 @@ Used to include a final line when marking indented code.")
     (modify-syntax-entry ?\} "){" st)
     (modify-syntax-entry ?< "(>" st)
     (modify-syntax-entry ?> ")<" st)
+    ;; For Python and other modes, make apostrophe usable as a string delimiter
+    (modify-syntax-entry ?' "\"" st)
     ;; Next entry, e.g. for markdown mode, so does not register as a
     ;; quote starting an sexp, as it does in emacs-lisp-mode
     (modify-syntax-entry ?# "." st)
@@ -881,12 +883,12 @@ The character at POS is selected if no other thing is matched."
 			     (car region) (cdr region)))))
 	   hui-select-bigger-alist)
 	  (if result
-	      ;; Returns hui-select-region
+	      ;; Return `hui-select-region'
 	      (progn (setq hui-select-previous (car result))
 		     (hui-select-set-region (nth 1 result) (nth 2 result)))
 	    ;;
 	    ;; Restore prior selection type since we failed to find a
-	    ;; new one.
+	    ;; new one
 	    (setq hui-select-previous prior-type)
 	    (beep)
 	    (message
@@ -1128,53 +1130,52 @@ are given.  Return nil if not at a string."
   (unless end-delim (setq end-delim "\""))
   (let (string-start-end)
   (with-syntax-table hbut:syntax-table
-    (or
-     ;; On or before double quote delimiters
-     (and (equal start-delim "\"") (equal end-delim "\"")
-	  (cond ((and (= (or (char-after) 0) ?\")
-		      (/= (or (char-before) 0) ?\\))
-		 (if (setq string-start-end (hypb:in-string-p nil t))
-		     ;; Add double quote delimiters to the region returned
-		     (hui-select-set-region (1- (nth 1 string-start-end))
-					    (1+ (nth 2 string-start-end)))
-		   ;; May be on the closing double quote of a string in
-		   ;; which case this first scan-sexps will fail but
-		   ;; the second will succeed.
-		   (when (setq string-start-end
-			       (or (ignore-errors (hui-select-set-region (point) (scan-sexps (point) 1)))
-				   (ignore-errors (hui-select-set-region
-						   (scan-sexps (1+ (point)) -1)
-						   (1+ (point))))))
-		     (hui-select-set-region
-		      (min (car string-start-end) (cdr string-start-end))
-		      (max (car string-start-end) (cdr string-start-end))))))
-		((and (= (or (char-before) 0) ?\")
-		      (/= (or (char-before (1- (point))) 0) ?\\))
-		 (if (setq string-start-end (hypb:in-string-p nil t))
-		     ;; Add double quote delimiters to the region returned
-		     (hui-select-set-region (1- (nth 1 string-start-end))
-					    (1+ (nth 2 string-start-end)))
-		   ;; Either there are no matching string delimiters
-		   ;; (only an open delimiter) or (point) is immediately
-		   ;; after the end of the string in which case the
-		   ;; following scan-sexps will succeed.
-		   (when (setq string-start-end
-			       (ignore-errors (hui-select-set-region (point) (scan-sexps (point) -1))))
-		     (hui-select-set-region
-		      (min (car string-start-end) (cdr string-start-end))
-		      (max (car string-start-end) (cdr string-start-end))))))))
+    ;; On or before double quote delimiters
+    (if (and (equal start-delim "\"") (equal end-delim "\""))
+        (cond ((and (= (or (char-after) 0) ?\")
+		    (/= (or (char-before) 0) ?\\))
+	       (if (setq string-start-end (hypb:in-string-p nil t))
+		   ;; Add double quote delimiters to the region returned
+		   (hui-select-set-region (1- (nth 1 string-start-end))
+					  (1+ (nth 2 string-start-end)))
+		 ;; May be on the closing double quote of a string in
+		 ;; which case this first scan-sexps will fail but
+		 ;; the second will succeed.
+		 (when (setq string-start-end
+			     (or (ignore-errors (hui-select-set-region (point) (scan-sexps (point) 1)))
+				 (ignore-errors (hui-select-set-region
+						 (scan-sexps (1+ (point)) -1)
+						 (1+ (point))))))
+		   (hui-select-set-region
+		    (min (car string-start-end) (cdr string-start-end))
+		    (max (car string-start-end) (cdr string-start-end))))))
+	      ((and (= (or (char-before) 0) ?\")
+		    (/= (or (char-before (1- (point))) 0) ?\\))
+	       (if (setq string-start-end (hypb:in-string-p nil t))
+		   ;; Add double quote delimiters to the region returned
+		   (hui-select-set-region (1- (nth 1 string-start-end))
+					  (1+ (nth 2 string-start-end)))
+		 ;; Either there are no matching string delimiters
+		 ;; (only an open delimiter) or (point) is immediately
+		 ;; after the end of the string in which case the
+		 ;; following scan-sexps will succeed.
+		 (when (setq string-start-end
+			     (ignore-errors (hui-select-set-region (point) (scan-sexps (point) -1))))
+		   (hui-select-set-region
+		    (min (car string-start-end) (cdr string-start-end))
+		    (max (car string-start-end) (cdr string-start-end)))))))
 
-     ;; Non-double quote delimiters
-     (save-excursion
-       (when (looking-at (regexp-quote start-delim))
-	 (goto-char (match-end 0)))
-       (when (setq string-start-end
-		   (hargs:delimited start-delim end-delim nil nil t))
-	 ;; Include delimiters
-	 (hui-select-set-region (- (nth 1 string-start-end)
-				   (length start-delim))
-				(+ (nth 2 string-start-end)
-				   (length end-delim)))))))))
+      ;; Non-double quote delimiters
+      (save-excursion
+        (when (looking-at (regexp-quote start-delim))
+	  (goto-char (match-end 0)))
+        (when (setq string-start-end
+		    (hargs:delimited start-delim end-delim nil nil t))
+	  ;; Include delimiters
+	  (hui-select-set-region (- (nth 1 string-start-end)
+				    (length start-delim))
+				 (+ (nth 2 string-start-end)
+				    (length end-delim)))))))))
 
 ;;;
 ;;; Code selections
@@ -1541,8 +1542,16 @@ Delimiters may be single, double or open and close quotes."
 		(progn (if (search-forward "<" nil 'end)
 			   (1- (point))
 			 (point)))))
-      (or (hui-select-string-p) (hui-select-string-p "'" "'")
-	  (hui-select-string-p "`" "'")))))
+      (or
+       ;; double quotes
+       (hui-select-string-p)
+       ;; triple quotes
+       (hui-select-string-p "'''" "'''")
+       (hui-select-string-p "\"\"\"" "\"\"\"")
+       ;; single quotes
+       (hui-select-string-p "'" "'")
+       ;; single smart quotes
+       (hui-select-string-p "`" "'")))))
 
 (defun hui-select-sentence (pos)
   "Return (start . end) of the sentence at POS."
