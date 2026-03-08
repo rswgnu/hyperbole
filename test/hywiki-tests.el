@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:      7-Mar-26 at 17:48:36 by Bob Weiner
+;; Last-Mod:      7-Mar-26 at 22:20:09 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2243,6 +2243,38 @@ expected result."
       (insert "Wiki")
       (should (equal (list 1 5 '(("WikiWord") ("WikiWord#Header") ("WikiWord#SubHeader") ("WikiWord#SubSubHeader")))
                      (hywiki-tests--remove-keyword-args (hywiki-completion-at-point)))))))
+
+(ert-deftest hywiki-tests--verify-hook-functions ()
+  "Verify that the hook functions are set and teared down."
+  (cl-flet* ((hooks-exists: (info)
+               (ert-info ((format "Hywiki-mode %s - %s" hywiki-mode info))
+                 (should (memq 'hywiki-word-store-around-point pre-command-hook))
+                 (should (memq 'hywiki-word-highlight-post-self-insert post-self-insert-hook))
+                 (should (memq 'hywiki-word-highlight-post-command post-command-hook))))
+             (hooks-removed: (info)
+               (ert-info ((format "Hywiki-mode %s - %s" hywiki-mode info))
+                 (should-not (memq 'hywiki-word-store-around-point pre-command-hook))
+                 (should-not (memq 'hywiki-word-highlight-post-self-insert post-self-insert-hook))
+                 (should-not (memq 'hywiki-word-highlight-post-command post-command-hook)))))
+    (hywiki-tests--preserve-hywiki-mode
+      ;; :all
+      (hooks-exists: "In temp buffer")
+      (hywiki-mode :pages)
+      (hywiki-mode nil)
+      (hywiki-mode :pages)
+      (save-excursion
+        (with-current-buffer (find-file-noselect wiki-page)
+          (hooks-exists: "In wiki-page")))
+      (hywiki-mode :pages)
+      (hooks-removed: "In temp buffer")
+      (save-excursion
+        (with-current-buffer (find-file-noselect wiki-page)
+          (hooks-exists: "In wiki-page")))
+      (hywiki-mode nil)
+      (hooks-removed: "In temp buffer")
+      (save-excursion
+        (with-current-buffer (find-file-noselect wiki-page)
+          (hooks-removed: "In wiki-page"))))))
 
 (provide 'hywiki-tests)
 

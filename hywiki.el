@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:      7-Mar-26 at 21:37:01 by Bob Weiner
+;; Last-Mod:      7-Mar-26 at 22:10:28 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -3936,6 +3936,7 @@ Highlight only those buffers attached to windows.
 Auto-highlighting uses pre- and post-command hooks.  If an error
 occurs with one of these hooks, the problematic hook is removed."
   (cond ((null hywiki-to-mode)
+         (hywiki-mode-disable)
 	 ;; Ensure hooks are removed from all hywiki buffers any time
 	 ;; mode is disabled
 	 (let ((hywiki-mode hywiki-to-mode))
@@ -4079,15 +4080,18 @@ completion to work properly."
       (hywiki-maybe-dehighlight-references)))
   (hywiki-maybe-directory-updated))
 
-(defun hywiki-word-dehighlight-buffers (buffers)
-  "Disable HyWikiWord auto-highlighting and dehighlight in BUFFERS."
-  (interactive)
+(defun hywiki-mode-disable ()
+  "Remove global `hywiki-mode' hooks when the mode is entirely disabled."
   (remove-hook 'after-change-major-mode-hook 'hywiki-word-add-completion-at-point)
   (remove-hook 'after-change-major-mode-hook 'hywiki-word-highlight-in-current-buffer)
   (remove-hook 'window-buffer-change-functions 'hywiki-word-highlight-in-frame)
   (setq yank-handled-properties
 	(delete '(hywiki-word-face . hywiki-highlight-on-yank)
-		yank-handled-properties))
+		yank-handled-properties)))
+
+(defun hywiki-word-dehighlight-buffers (buffers)
+  "Disable HyWikiWord auto-highlighting and dehighlight in BUFFERS."
+  (interactive)
   (hywiki-word-dehighlight-in-buffers buffers)
   (when (called-interactively-p 'interactive)
     (message "HyWikiWord auto-highlighting disabled")))
