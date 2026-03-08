@@ -1,5 +1,12 @@
 2026-03-07  Bob Weiner  <rsw@gnu.org>
 
+* hywiki.el (hywiki-mode-disable): Move global hook disables to this new
+    function from 'hywiki-word-dehighlight-buffers'.  Call only when
+    'hywiki-mode' is set to nil.  This fixes an issue where new HyWiki pages
+    would not get WikiWord highlighting when in :pages mode.
+  test/hywiki-tests.el (hywiki-tests--verify-hook-functions): Add this test
+    from Mats to verify the above.
+
 * hsys-org.el (hsys-org-format-heading): Emacs 28.2 includes Org 9.5.5 which
     lacks the 'org-fold-core-remove-optimisation' function, so add a separate
     version of this function for backward compatibility.
