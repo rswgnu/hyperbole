@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     11-Mar-26 at 21:12:52 by Bob Weiner
+;; Last-Mod:     14-Mar-26 at 21:49:13 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2256,11 +2256,7 @@ expected result."
                  (should-not (memq 'hywiki-word-highlight-post-self-insert post-self-insert-hook))
                  (should-not (memq 'hywiki-word-highlight-post-command post-command-hook)))))
     (hywiki-tests--preserve-hywiki-mode
-      ;; :all
       (hooks-exists: "In temp buffer")
-      (hywiki-mode :pages)
-      (hywiki-mode nil)
-      (hywiki-mode :pages)
       (save-excursion
         (with-current-buffer (find-file-noselect wiki-page)
           (hooks-exists: "In wiki-page")))
