@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:      1-Mar-26 at 16:35:00 by Bob Weiner
+;; Last-Mod:      7-Mar-26 at 21:37:01 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -4007,9 +4007,8 @@ occurs with one of these hooks, the problematic hook is removed."
     (when point-at-end
       (cond ((and end-delim (not (eq (char-after (point)) end-delim)))
              (insert end-delim)
-             (goto-char (- (point) 2)))
-            (end-delim
              (goto-char (1- (point))))
+            (end-delim)
             (hywiki--start-pos
              ;; No opening or closing delim yet.
              ;; If HyWiki ref has whitespace in it, need to add double
@@ -4019,8 +4018,7 @@ occurs with one of these hooks, the problematic hook is removed."
                (save-excursion
                  (insert ?\")
                  (goto-char hywiki--start-pos)
-                 (insert ?\"))
-               (goto-char (1- (point))))))))
+                 (insert ?\")))))))
   (hywiki-maybe-highlight-reference))
 
 (defun hywiki-word-add-completion-at-point ()
@@ -4036,15 +4034,21 @@ completion to work properly."
                    #'hywiki-completion-exit-function)
          (add-hook 'company-completion-cancelled-hook
                    #'hywiki-completion-exit-function))
-        ;; Default completion
-        (t (advice-add 'completion--insert :after #'hywiki-completion-exit-function))))
+        ;; Default Emacs completion
+        (t (advice-add 'completion--insert :after #'hywiki-completion-exit-function)
+           ;; Next setting is necessary to cycle through completions with
+           ;; spaces in them within the buffer since Emacs does not by
+           ;; default show completions with spaces in the *Completions* buffer.
+           (setq completion-cycle-threshold t))))
 
 (defun hywiki-word-remove-completion-at-point ()
   "Remove HyWiki refs in-buffer completion from `completion-at-point-functions'."
   (remove-hook 'completion-at-point-functions #'hywiki-completion-at-point t)
   (remove-hook 'company-completion-finished-hook  #'hywiki-completion-exit-function)
   (remove-hook 'company-completion-cancelled-hook #'hywiki-completion-exit-function)
-  (advice-remove 'completion--insert #'hywiki-completion-exit-function))
+  (advice-remove 'completion--insert #'hywiki-completion-exit-function)
+  ;; Restore user's customized setting of this option.
+  (custom-reevaluate-setting 'completion-cycle-threshold))
 
 (defun hywiki-word-highlight-buffers (buffers)
   "Setup HyWikiWord auto-highlighting and highlight in BUFFERS."
