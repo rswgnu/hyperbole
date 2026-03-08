@@ -1,5 +1,17 @@
 2026-03-07  Bob Weiner  <rsw@gnu.org>
 
+* hsys-org.el (hsys-org-format-heading): Emacs 28.2 includes Org 9.5.5 which
+    lacks the 'org-fold-core-remove-optimisation' function, so add a separate
+    version of this function for backward compatibility.
+
+* hywiki.el (hywiki-completion-exit-function): Leave point on the closing delimiter
+    or after the HyWiki reference so can cycle completions in-buffer, notably
+    when using Emacs default completion.
+            (hywiki-word-add-completion-at-point): With default Emacs completion,
+       add: (setq completion-cycle-threshold t)
+    (hywiki-word-remove-completion-at-point): Restore customized setting of
+       'completion-cycle-threshold'.
+
 * test/hywiki-tests.el (hywiki-tests--edit):
   test/hpath-tests.el (ert): Add (require 'cl-lib) for 'cl-incf'.
 
