@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     31-Dec-25 at 16:07:18 by Mats Lidell
+;; Last-Mod:      7-Mar-26 at 18:39:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -20,11 +20,11 @@
 ;;   double-clicking on various kinds of characters in different buffer major
 ;;   modes.  You'll quickly get the hang of it.  (It also provides a command
 ;;   to jump between beginning and end tags within HTML, SGML and XML buffers.)
-;;   
+;;
 ;;   A great deal of smarts are built-in so that it does the right thing
 ;;   almost all of the time; many other attempts at similar behavior such as
 ;;   thing.el fail to deal with many file format complexities.
-;;   
+;;
 ;;   Double clicks of the Selection Key (left mouse key) at the same point
 ;;   will select bigger and bigger regions with each successive use.  The
 ;;   first double click selects a region based upon the character at the
@@ -456,10 +456,10 @@ PREFX-ARG is given, limit search to only .el and .el.gz files."
 						""))
 				      nil nil default)))
 		     current-prefix-arg))
-  (let* ((delim (cond ((not (string-match "\'" pattern)) ?\')
-			      ((not (string-match "\"" pattern)) ?\")
-			      ((not (string-match "=" pattern)) ?=)
-			      (t ?@)))
+  (let* ((delim (cond ((not (string-match-p "\'" pattern)) ?\')
+		      ((not (string-match-p "\"" pattern)) ?\")
+		      ((not (string-match-p "=" pattern)) ?=)
+		      (t ?@)))
 	 (grep-cmd
 	  (if (and (not current-prefix-arg) (equal (buffer-name) "*Locate*"))
 	      (format "%s -e \%c%s\%c %s" hui-select-rgrep-command delim pattern delim (hypb:locate-pathnames))
@@ -467,12 +467,17 @@ PREFX-ARG is given, limit search to only .el and .el.gz files."
 		    hui-select-rgrep-command
 		    (when (and (memq major-mode '(emacs-lisp-mode lisp-interaction-mode))
 			       (not prefx-arg))
-		      (if (string-match "\\`rg " hui-select-rgrep-command)
-			  "-g \"*.el\" -g \"*.el.gz\""
+		      (if (string-match-p "\\`rg " hui-select-rgrep-command)
+			  "-g '*.el' -g '*.el.gz'"
 			"--include=\"*.el\" --include=\"*.el.gz\""))
-		    (if (string-match "\\`rg " hui-select-rgrep-command)
-			"-g \"!*~\" -g \"!#*\" -g \"!TAGS\""
-		      "--exclude=\".git\" --exclude=\"CVS\" --exclude=\"*~\" --exclude=\"#*\" --exclude=\"TAGS\"")
+		    (cond ((string-match-p "\\`rg " hui-select-rgrep-command)
+                           ;; Note: rg ignores the dir, .git, automatically
+                           "-g '!*/CVS/*' -g '!*~' -g '!#*' -g '!*/TAGS'")
+                          ((string-match-p "--exclude-dir" (shell-command-to-string
+                                                 "grep --help | fgrep -- exclude-dir"))
+		           "--exclude-dir=\".git\" --exclude-dir=\"CVS/*\" --exclude=\"*~\" --exclude=\"#*\" --exclude=\"TAGS\"")
+                          (t
+		           "--exclude=\"*~\" --exclude=\"#*\" --exclude=\"TAGS\""))
 		    delim pattern delim))))
     (setq this-command `(grep ,grep-cmd))
     (push this-command command-history)
@@ -825,7 +830,6 @@ following point or if the closing tag does not have a `>' terminator character."
     (when bounds
       (kill-region (car bounds) (cdr bounds)))))
 
-
 ;;
 ;; Functions
 ;;
@@ -876,12 +880,12 @@ The character at POS is selected if no other thing is matched."
 			     (car region) (cdr region)))))
 	   hui-select-bigger-alist)
 	  (if result
-	      ;; Returns hui-select-region
+	      ;; Return `hui-select-region'
 	      (progn (setq hui-select-previous (car result))
 		     (hui-select-set-region (nth 1 result) (nth 2 result)))
 	    ;;
 	    ;; Restore prior selection type since we failed to find a
-	    ;; new one.
+	    ;; new one
 	    (setq hui-select-previous prior-type)
 	    (beep)
 	    (message
@@ -1123,53 +1127,52 @@ are given.  Return nil if not at a string."
   (unless end-delim (setq end-delim "\""))
   (let (string-start-end)
   (with-syntax-table hbut:syntax-table
-    (or
-     ;; On or before double quote delimiters
-     (and (equal start-delim "\"") (equal end-delim "\"")
-	  (cond ((and (= (or (char-after) 0) ?\")
-		      (/= (or (char-before) 0) ?\\))
-		 (if (setq string-start-end (hypb:in-string-p nil t))
-		     ;; Add double quote delimiters to the region returned
-		     (hui-select-set-region (1- (nth 1 string-start-end))
-					    (1+ (nth 2 string-start-end)))
-		   ;; May be on the closing double quote of a string in
-		   ;; which case this first scan-sexps will fail but
-		   ;; the second will succeed.
-		   (when (setq string-start-end
-			       (or (ignore-errors (hui-select-set-region (point) (scan-sexps (point) 1)))
-				   (ignore-errors (hui-select-set-region
-						   (scan-sexps (1+ (point)) -1)
-						   (1+ (point))))))
-		     (hui-select-set-region
-		      (min (car string-start-end) (cdr string-start-end))
-		      (max (car string-start-end) (cdr string-start-end))))))
-		((and (= (or (char-before) 0) ?\")
-		      (/= (or (char-before (1- (point))) 0) ?\\))
-		 (if (setq string-start-end (hypb:in-string-p nil t))
-		     ;; Add double quote delimiters to the region returned
-		     (hui-select-set-region (1- (nth 1 string-start-end))
-					    (1+ (nth 2 string-start-end)))
-		   ;; Either there are no matching string delimiters
-		   ;; (only an open delimiter) or (point) is immediately
-		   ;; after the end of the string in which case the
-		   ;; following scan-sexps will succeed.
-		   (when (setq string-start-end
-			       (ignore-errors (hui-select-set-region (point) (scan-sexps (point) -1))))
-		     (hui-select-set-region
-		      (min (car string-start-end) (cdr string-start-end))
-		      (max (car string-start-end) (cdr string-start-end))))))))
+    ;; On or before double quote delimiters
+    (if (and (equal start-delim "\"") (equal end-delim "\""))
+        (cond ((and (= (or (char-after) 0) ?\")
+		    (/= (or (char-before) 0) ?\\))
+	       (if (setq string-start-end (hypb:in-string-p nil t))
+		   ;; Add double quote delimiters to the region returned
+		   (hui-select-set-region (1- (nth 1 string-start-end))
+					  (1+ (nth 2 string-start-end)))
+		 ;; May be on the closing double quote of a string in
+		 ;; which case this first scan-sexps will fail but
+		 ;; the second will succeed.
+		 (when (setq string-start-end
+			     (or (ignore-errors (hui-select-set-region (point) (scan-sexps (point) 1)))
+				 (ignore-errors (hui-select-set-region
+						 (scan-sexps (1+ (point)) -1)
+						 (1+ (point))))))
+		   (hui-select-set-region
+		    (min (car string-start-end) (cdr string-start-end))
+		    (max (car string-start-end) (cdr string-start-end))))))
+	      ((and (= (or (char-before) 0) ?\")
+		    (/= (or (char-before (1- (point))) 0) ?\\))
+	       (if (setq string-start-end (hypb:in-string-p nil t))
+		   ;; Add double quote delimiters to the region returned
+		   (hui-select-set-region (1- (nth 1 string-start-end))
+					  (1+ (nth 2 string-start-end)))
+		 ;; Either there are no matching string delimiters
+		 ;; (only an open delimiter) or (point) is immediately
+		 ;; after the end of the string in which case the
+		 ;; following scan-sexps will succeed.
+		 (when (setq string-start-end
+			     (ignore-errors (hui-select-set-region (point) (scan-sexps (point) -1))))
+		   (hui-select-set-region
+		    (min (car string-start-end) (cdr string-start-end))
+		    (max (car string-start-end) (cdr string-start-end)))))))
 
-     ;; Non-double quote delimiters
-     (save-excursion
-       (when (looking-at (regexp-quote start-delim))
-	 (goto-char (match-end 0)))
-       (when (setq string-start-end
-		   (hargs:delimited start-delim end-delim nil nil t))
-	 ;; Include delimiters
-	 (hui-select-set-region (- (nth 1 string-start-end)
-				   (length start-delim))
-				(+ (nth 2 string-start-end)
-				   (length end-delim)))))))))
+      ;; Non-double quote delimiters
+      (save-excursion
+        (when (looking-at (regexp-quote start-delim))
+	  (goto-char (match-end 0)))
+        (when (setq string-start-end
+		    (hargs:delimited start-delim end-delim nil nil t))
+	  ;; Include delimiters
+	  (hui-select-set-region (- (nth 1 string-start-end)
+				    (length start-delim))
+				 (+ (nth 2 string-start-end)
+				    (length end-delim)))))))))
 
 ;;;
 ;;; Code selections
@@ -1536,8 +1539,16 @@ Delimiters may be single, double or open and close quotes."
 		(progn (if (search-forward "<" nil 'end)
 			   (1- (point))
 			 (point)))))
-      (or (hui-select-string-p) (hui-select-string-p "'" "'")
-	  (hui-select-string-p "`" "'")))))
+      (or
+       ;; double quotes
+       (hui-select-string-p)
+       ;; triple quotes
+       (hui-select-string-p "'''" "'''")
+       (hui-select-string-p "\"\"\"" "\"\"\"")
+       ;; single quotes
+       (hui-select-string-p "'" "'")
+       ;; single smart quotes
+       (hui-select-string-p "`" "'")))))
 
 (defun hui-select-sentence (pos)
   "Return (start . end) of the sentence at POS."

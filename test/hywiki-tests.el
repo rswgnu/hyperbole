@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:      1-Mar-26 at 11:20:52 by Bob Weiner
+;; Last-Mod:      7-Mar-26 at 17:48:36 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -17,6 +17,7 @@
 
 ;;; Code:
 
+(require 'cl-lib) ;; for cl-incf
 (require 'ert)
 (require 'el-mock)
 (require 'ert-x)

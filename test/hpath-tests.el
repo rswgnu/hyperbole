@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 23:26:00
-;; Last-Mod:      6-Dec-25 at 22:34:32 by Bob Weiner
+;; Last-Mod:      7-Mar-26 at 18:40:46 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -18,6 +18,7 @@
 
 ;;; Code:
 
+(require 'cl-lib) ;; for cl-incf
 (require 'ert)
 (require 'hpath)
 (require 'el-mock)
@@ -573,28 +574,52 @@ dir/subdir:
 (ert-deftest hpath--hpath:delimited-possible-path ()
   "Verify hpath:delimited-possible-path."
   ;;              text   result mode
-  (let ((paths '(("/tmp" "/tmp" text-mode)
-                 ("/does-not-exist" "/does-not-exist" text-mode)
-                 ("file://file " "file" text-mode)
-                 ("&quot;'file'&quote" "file" text-mode)
-                 ("\\\"'file'\\\"" "file" text-mode)
-                 ("@file{file}" "file" text-mode)
+  (let ((paths '(("&quot;file&quot;" "file" text-mode)
+                 ("/file" "/file" text-mode)
                  ("\"file\"" "file" text-mode)
-                 ("\"'file'\"" "file" text-mode)
                  ("\"`file'\"" "file" text-mode)
+                 ("\\\"'file'\\\"" "file" text-mode)
+                 ("/file-does-not-exist" "/file-does-not-exist" text-mode)
+                 ("file://file " "file" text-mode)
+                 ("@file{file}" "file" text-mode)
                  ("'file'" "file" python-mode)
                  ("'''file'''" "file" python-mode)
-                 ("``file''" "file" texinfo-mode))))
-    (dolist (path paths)
-      (let ((text (nth 0 path))
-            (result (nth 1 path))
-            (mode (nth 2 path)))
-        (ert-info ((format "Find path %s in mode: %s" text mode))
-          (with-temp-buffer
-            (funcall mode)
-            (insert (format "%s\n" text))
-            (goto-char (/ (length text) 2))
-            (should (string= result (hpath:delimited-possible-path)))))))))
+                 ("``file''" "file" texinfo-mode)))
+        (test-num 0)
+        start
+        mid
+        end
+        text
+        result
+        mode)
+    (with-temp-buffer
+      (with-syntax-table hbut:syntax-table
+        (dolist (path paths)
+          (erase-buffer)
+          (setq text (nth 0 path)
+                result (nth 1 path)
+                mode (nth 2 path))
+          (funcall mode)
+          (insert (format "%s\n" text))
+          (setq mid (/ (length text) 2))
+          (goto-char mid)
+          (skip-syntax-backward "w_")
+          (skip-chars-forward "'`\"")
+          (setq start (point))
+          (if (search-forward "file" nil t)
+              (progn (skip-syntax-forward "w_")
+                     (when (looking-at ";")
+                       (skip-chars-backward "&quot;"))
+                     (skip-chars-backward "'`\"")
+                     (setq end (1- (point))))
+            (setq end nil))
+          (dolist (pos (list start mid end))
+            (when pos
+              (goto-char pos)
+              (ert-info ((format "Test #%d: At pos %d, find path \"%s\" in mode: %s"
+                                 test-num pos text mode))
+                (should (string= result (hpath:delimited-possible-path))))))
+          (cl-incf test-num))))))
 
 (ert-deftest hpath--display-buffer ()
   "Verify `hpath:display-buffer'."

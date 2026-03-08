@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     28-Feb-26 at 18:02:56 by Bob Weiner
+;; Last-Mod:      7-Mar-26 at 17:41:33 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -621,6 +621,7 @@ enough files with matching mode loaded."
           (action-key)
           (with-current-buffer shell-buffer-name
             (goto-char (point-max))
+            (sit-for 0.3)
             (accept-process-output (get-buffer-process shell-buffer-name) 1)
             (search-backward prompt nil t)
             (setq success (should (looking-at-p (concat prompt (directory-file-name hyperb:dir)))))))
@@ -688,6 +689,7 @@ enough files with matching mode loaded."
           (action-key)
           (with-current-buffer shell-buffer-name
             (goto-char (point-max))
+            (sit-for 0.3)
             (accept-process-output (get-buffer-process shell-buffer-name) 1)
             (search-backward prompt nil t)
             (setq success (should (looking-at-p (concat prompt (directory-file-name hyperb:dir)))))))
