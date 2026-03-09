@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:      8-Mar-26 at 23:10:11 by Bob Weiner
+;; Last-Mod:      8-Mar-26 at 23:29:50 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -805,8 +805,8 @@ changes."
 	              cmd (cdr key-cmd))
                 (when (eq cmd 'self-insert-command)
 	          (cond ((and (characterp key)
-		              (memq (char-syntax key) '(?. ?_)))
-	                 ;; char with punctuation/symbol syntax
+		              (= (char-syntax key) ?.))
+	                 ;; char with punctuation syntax
 	                 (setq result (cons key result)))
 	                ((and (consp key)
 		              (characterp (car key))
