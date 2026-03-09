@@ -2117,7 +2117,7 @@ expected result."
 
 (ert-deftest hywiki-tests--get-buttonize-characters ()
   "Verify `hywiki-get-buttonize-characters'."
-  (should (string= "!&+,./;=?@\\^`|~" (hywiki-get-buttonize-characters))))
+  (should (string= "!&'+,./;=?@\\^`|~" (hywiki-get-buttonize-characters))))
 
 (ert-deftest hywiki-tests--non-hook-context-p ()
   "Verify `hywiki-non-hook-context-p'."
