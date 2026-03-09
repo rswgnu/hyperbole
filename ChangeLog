@@ -1,5 +1,13 @@
 2026-03-08  Bob Weiner  <rsw@gnu.org>
 
+* hywiki.el (hywiki-get-buttonize-characters): Optimize this costly function
+    with a cache.
+    (hywiki--buttonize-characters-cache): Cache to use.
+    (hywiki--clear-buttonize-characters-cache): Clear the cache.
+    (global-map, hywiki--org-mode-syntax-table): Add variable watchers on these
+       and clear the cache when these change.
+    (hywiki-consult-page-and-headline): Add '--search-zip' to decompress .gz and
+      .zip files for searching.
 * hsys-org.el (org-version): Fix to test if version< "9.6" not "6".
   hywiki.el (hywiki-maybe-highlight-region): Add for rehighlighting in a region
     after edits are made to a buffer.
