@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:      8-Mar-26 at 20:19:37 by Bob Weiner
+;; Last-Mod:      8-Mar-26 at 23:10:11 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -201,6 +201,9 @@ checks it to determine if any buffer modification has occurred or not.")
 Each such key self-inserts before highlighting any prior HyWikiWord
 in `hywiki-mode'.")
 
+(defvar hywiki--buttonize-characters-cache nil
+  "Single string cache of Org-mode syntax table punctuation/symbol characters.")
+
 (defconst hywiki--close-open-hasht (hash-make '(("\"" . ?\")
 					       ("'" . ?\')
 					       ("}"  . ?{)
@@ -278,6 +281,11 @@ Group 1 is the entire HyWikiWord#section:Lnum:Cnum expression.")
 ;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************
+
+
+;; Clear the cache if any changes to the `global-map' keymap
+(add-variable-watcher 'global-map
+                      #'hywiki--clear-buttonize-characters-cache)
 
 (defcustom hywiki-exclude-major-modes nil
   "List of major modes to exclude from HyWikiWord highlighting and recognition."
@@ -379,6 +387,10 @@ Presently, there are no key bindings; this is for future use.")
   "When t, [[hy:HyWiki Org links]] must start with `hywiki-org-link-type':.
 Otherwise, this prefix is not needed and HyWikiWord Org links
 override standard Org link lookups.  See \"(org)Internal Links\".")
+
+;; Clear the cache if any changes to the `hywiki--org-mode-syntax-table'
+(add-variable-watcher 'hywiki--org-mode-syntax-table
+                      #'hywiki--clear-buttonize-characters-cache)
 
 (defcustom hywiki-org-publishing-broken-links 'mark
   "HyWiki Org publish option that determines how invalid links are handled.
@@ -770,34 +782,40 @@ deletion commands and those in `hywiki-non-character-commands'."
     (setq hywiki--command-executed-flag nil)))
 
 (defun hywiki-get-buttonize-characters ()
-  "Return a string of Org self-insert keys that have punctuation/symbol syntax."
-  (let (key
-	cmd
-	key-cmds
-	result)
-    ;; Org and other text mode self-insert-command bindings are just
-    ;; remaps inherited from global-map.  Create key-cmds list of
-    ;; parsable (key . cmd) combinations where key may be a
-    ;; (start-key . end-key) range of keys.
-    (map-keymap (lambda (key cmd) (setq key-cmds (cons (cons key cmd) key-cmds))) (current-global-map))
-    (dolist (key-cmd key-cmds (concat (seq-difference (nreverse result)
-						      "-_*#:" #'=)))
-      (setq key (car key-cmd)
-	    cmd (cdr key-cmd))
-      (when (eq cmd 'self-insert-command)
-	(cond ((and (characterp key)
-		    (eq (char-syntax key) ?.))
-	       ;; char with punctuation/symbol syntax
-	       (setq result (cons key result)))
-	      ((and (consp key)
-		    (characterp (car key))
-		    (characterp (cdr key))
-		    (<= (cdr key) 256))
-	       ;; ASCII char range, some of which has punctuation/symbol syntax
-	       (with-syntax-table hywiki--org-mode-syntax-table
-		 (dolist (k (number-sequence (car key) (cdr key)))
-		   (when (memq (char-syntax k) '(?. ?_))
-		     (setq result (cons k result)))))))))))
+  "Return a string of Org self-insert keys that have punctuation/symbol syntax.
+These trigger HyWiki reference highlighting.  Cache the string and
+automatically invalidate it when `global-map' or `outline-mode-syntax-table'
+changes."
+  (if (stringp hywiki--buttonize-characters-cache)
+      hywiki--buttonize-characters-cache
+    (let (key
+	  cmd
+	  key-cmds
+	  result)
+      ;; Org and other text mode self-insert-command bindings are just
+      ;; remaps inherited from global-map.  Create key-cmds list of
+      ;; parsable (key . cmd) combinations where key may be a
+      ;; (start-key . end-key) range of keys.
+      (map-keymap (lambda (key cmd) (setq key-cmds (cons (cons key cmd) key-cmds))) (current-global-map))
+      (with-syntax-table hywiki--org-mode-syntax-table
+        (setq hywiki--buttonize-characters-cache
+              (dolist (key-cmd key-cmds (apply #'string (seq-difference (nreverse result)
+						                        "-_*#:" #'=)))
+                (setq key (car key-cmd)
+	              cmd (cdr key-cmd))
+                (when (eq cmd 'self-insert-command)
+	          (cond ((and (characterp key)
+		              (memq (char-syntax key) '(?. ?_)))
+	                 ;; char with punctuation/symbol syntax
+	                 (setq result (cons key result)))
+	                ((and (consp key)
+		              (characterp (car key))
+		              (characterp (cdr key))
+		              (<= (cdr key) 256))
+	                 ;; ASCII char range, some of which has punctuation/symbol syntax
+		         (dolist (k (number-sequence (car key) (cdr key)))
+		           (when (memq (char-syntax k) '(?. ?_))
+		             (setq result (cons k result)))))))))))))
 
 (defun hywiki-non-hook-context-p ()
   "Return non-nil when HyWiki command hooks should do nothing.
@@ -1692,6 +1710,7 @@ nil, else return \\='(page . \"<page-file-path>\")."
                                "--with-filename"
                                "--line-number"
                                "--smart-case"
+                               "--search-zip"
                                "-g" "*.org"
                                "-e" headline-regexp
                                dir)))
@@ -4117,13 +4136,6 @@ completion to work properly."
 ;;; Private functions
 ;;; ************************************************************************
 
-(defun hywiki--buttonized-region-p ()
-  "Return non-nil when hywiki--buttonize-start/end are in the current buffer."
-  (and (marker-position hywiki--buttonize-start)
-       (eq (marker-buffer hywiki--buttonize-start) (current-buffer))
-       (marker-position hywiki--buttonize-end)
-       (eq (marker-buffer hywiki--buttonize-end) (current-buffer))))
-
 (defun hywiki--add-suffix-to-referent (suffix referent)
   "Add SUFFIX to REFERENT's value and return REFERENT.
 SUFFIX includes its type prefix, e.g. #.  Return nil if any input is
@@ -4148,6 +4160,17 @@ invalid.  Appended only if the referent-type supports suffixes."
 			(concat referent-value suffix)))
 		(cons referent-type referent-value))
 	    referent))))))
+
+(defun hywiki--buttonized-region-p ()
+  "Return non-nil when hywiki--buttonize-start/end are in the current buffer."
+  (and (marker-position hywiki--buttonize-start)
+       (eq (marker-buffer hywiki--buttonize-start) (current-buffer))
+       (marker-position hywiki--buttonize-end)
+       (eq (marker-buffer hywiki--buttonize-end) (current-buffer))))
+
+(defun hywiki--clear-buttonize-characters-cache (&rest _)
+  "Invalidate the cached Org-mode syntax string."
+  (setq hywiki--buttonize-characters-cache nil))
 
 (defun hywiki--extend-region (start end)
   "Extend range (START END) to include delimited regions; return the new range.
