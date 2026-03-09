@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-23 at 11:20:15 by Bob Weiner
-;; Last-Mod:      5-Jan-25 at 12:06:23 by Bob Weiner
+;; Last-Mod:      7-Mar-26 at 22:38:37 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -26,8 +26,8 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
+(require 'package) ;; Always keep this first
 (require 'hypb)
-(require 'package)
 
 ;;; ************************************************************************
 ;;; Public declarations

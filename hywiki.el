@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:      7-Mar-26 at 22:10:28 by Bob Weiner
+;; Last-Mod:      8-Mar-26 at 20:19:37 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2546,6 +2546,18 @@ the current page unless they have sections attached."
    (and (/= (point) (point-max))
 	(/= (if (char-after) (char-syntax (char-after)) 0) ? ))))
 
+(defun hywiki-maybe-highlight-org-element-backward ()
+  "Highlight HyWikiWords with point at a single closing square/angle bracket.
+Dehighlight HyWikiWords when on a double closing square/angle bracket,
+since Org mode highlights those."
+  (hywiki--maybe-de/highlight-org-element-backward #'hywiki-maybe-highlight-sexp))
+
+(defun hywiki-maybe-highlight-org-element-forward ()
+  "Highlight HyWikiWords with point at a single opening square/angle bracket.
+Dehighlight HyWikiWords when on a double opening square/angle bracket,
+since Org mode highlights those."
+  (hywiki--maybe-de/highlight-org-element-forward #'hywiki-maybe-highlight-sexp))
+
 ;;;###autoload
 (defun hywiki-maybe-highlight-reference (&optional on-reference)
   "Highlight any non-Org link HyWikiWord#section at or one char before point.
@@ -2646,18 +2658,6 @@ the current page unless they have sections attached."
 			hywiki--but-start (hproperty:but-start hywiki--buts)
 			hywiki--but-end   (hproperty:but-end hywiki--buts))
 		  (hproperty:but-delete hywiki--buts)))))))))
-
-(defun hywiki-maybe-highlight-org-element-backward ()
-  "Highlight HyWikiWords with point at a single closing square/angle bracket.
-Dehighlight HyWikiWords when on a double closing square/angle bracket,
-since Org mode highlights those."
-  (hywiki--maybe-de/highlight-org-element-backward #'hywiki-maybe-highlight-sexp))
-
-(defun hywiki-maybe-highlight-org-element-forward ()
-  "Highlight HyWikiWords with point at a single opening square/angle bracket.
-Dehighlight HyWikiWords when on a double opening square/angle bracket,
-since Org mode highlights those."
-  (hywiki--maybe-de/highlight-org-element-forward #'hywiki-maybe-highlight-sexp))
 
 (defun hywiki-maybe-highlight-references (&optional region-start region-end skip-lookups-update-flag)
   "Highlight each non-Org link HyWiki page#section in the current buffer/region.
@@ -2796,6 +2796,14 @@ whenever `hywiki-mode' is enabled/disabled."
   (unless (hyperb:stack-frame '(hywiki-maybe-highlight-wikiwords-in-frame))
     (hywiki-maybe-directory-updated))
   nil)
+
+(defun hywiki-maybe-highlight-region (start end)
+  "Rehighlight HyWikiWord references between positions START to END."
+  (hywiki-maybe-highlight-references start end t)
+  (unless (hyperb:stack-frame '(hywiki-maybe-highlight-wikiwords-in-frame))
+    ;; Rebuild lookup tables if any HyWiki page name has changed
+    (hywiki-get-referent-hasht)
+    (hywiki-maybe-directory-updated)))
 
 (defun hywiki-maybe-highlight-sexp (direction-number)
   "Highlight any HyWikiWord within single square/angle bracket.
@@ -4028,6 +4036,9 @@ Completion requires typing at least the two first characters of the
 completion or no completion candidates are returned.
 If using `company-mode', you must use the `company-capf' backend for HyWiki
 completion to work properly."
+  ;; Make `indent-for-tab-command' by default bound to {TAB} complete HyWiki
+  ;; references.
+  (setq tab-always-indent 'complete)
   (add-hook 'completion-at-point-functions #'hywiki-completion-at-point -90 t)
   (cond ((bound-and-true-p corfu-mode)) ;; Uses :exit-function in hywiki-c-a-p
         ((bound-and-true-p company-mode)
@@ -4048,8 +4059,9 @@ completion to work properly."
   (remove-hook 'company-completion-finished-hook  #'hywiki-completion-exit-function)
   (remove-hook 'company-completion-cancelled-hook #'hywiki-completion-exit-function)
   (advice-remove 'completion--insert #'hywiki-completion-exit-function)
-  ;; Restore user's customized setting of this option.
-  (custom-reevaluate-setting 'completion-cycle-threshold))
+  ;; Restore user's customized setting of these options.
+  (custom-reevaluate-setting 'completion-cycle-threshold)
+  (custom-reevaluate-setting 'tab-always-indent))
 
 (defun hywiki-word-highlight-buffers (buffers)
   "Setup HyWikiWord auto-highlighting and highlight in BUFFERS."

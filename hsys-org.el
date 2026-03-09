@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:      7-Mar-26 at 21:31:49 by Bob Weiner
+;; Last-Mod:      7-Mar-26 at 22:39:35 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -30,6 +30,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
+(require 'package) ;; Always keep this first
 (eval-when-compile (require 'hmouse-drv))
 (require 'hargs) ;; for `hargs:delimited-p'
 (require 'hproperty) ;; requires 'hbut
@@ -39,7 +40,6 @@
 (require 'org-element)
 (require 'org-fold nil t)
 (require 'org-macs)
-(require 'package)
 (require 'warnings)
 (require 'find-func)
 ;; Avoid any potential library name conflict by giving the load directory.
@@ -314,7 +314,7 @@ Return t if Org is reloaded, else nil."
 	     (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 	     t)))))
 
-(if (version< org-version "6")
+(if (version< org-version "9.6")
 ;;; For Org less than 9.6; derived from `org-get-heading' in "org.el"
 ;;;###autoload
 (defun hsys-org-format-heading (heading &optional no-tags no-todo no-priority no-comment)

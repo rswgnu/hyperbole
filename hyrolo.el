@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     28-Feb-26 at 23:10:24 by Bob Weiner
+;; Last-Mod:      7-Mar-26 at 22:38:55 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -32,6 +32,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
+(require 'package) ;; Always keep this first
 (require 'hversion)
 (require 'hmail)
 (require 'hsys-consult)
@@ -40,7 +41,6 @@
 (eval-when-compile
   `(hyrolo-install-markdown-mode))
 (require 'outline)
-(require 'package)
 (require 'reveal)
 ;; Avoid any potential library name conflict by giving the load directory.
 (require 'set (expand-file-name "set" hyperb:dir))
