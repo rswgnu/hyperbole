@@ -1,3 +1,12 @@
+2026-03-09  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-word-add-completion-at-point):
+            (hywiki-word-remove-completion-at-point): Remove the setting and
+    unsetting of 'completion-cycle-threshold' to t.  Will solve basic Emacs
+    completion with spaces another way that does not affect this basic Emacs
+    behavior.  This fixes Emacs bug#80579: HyWiki globally overwrites
+    completion-cycle-threshold.
+
 2026-03-08  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-get-buttonize-characters): Optimize this costly function
@@ -44,7 +53,7 @@
     when using Emacs default completion.
             (hywiki-word-add-completion-at-point): With default Emacs completion,
        add: (setq completion-cycle-threshold t)
-    (hywiki-word-remove-completion-at-point): Restore customized setting of
+            (hywiki-word-remove-completion-at-point): Restore customized setting of
        'completion-cycle-threshold'.
 
 * test/hywiki-tests.el (hywiki-tests--edit):
