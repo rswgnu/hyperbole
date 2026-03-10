@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:      8-Mar-26 at 23:29:50 by Bob Weiner
+;; Last-Mod:      9-Mar-26 at 23:38:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -4066,11 +4066,7 @@ completion to work properly."
          (add-hook 'company-completion-cancelled-hook
                    #'hywiki-completion-exit-function))
         ;; Default Emacs completion
-        (t (advice-add 'completion--insert :after #'hywiki-completion-exit-function)
-           ;; Next setting is necessary to cycle through completions with
-           ;; spaces in them within the buffer since Emacs does not by
-           ;; default show completions with spaces in the *Completions* buffer.
-           (setq completion-cycle-threshold t))))
+        (t (advice-add 'completion--insert :after #'hywiki-completion-exit-function))))
 
 (defun hywiki-word-remove-completion-at-point ()
   "Remove HyWiki refs in-buffer completion from `completion-at-point-functions'."
@@ -4079,7 +4075,6 @@ completion to work properly."
   (remove-hook 'company-completion-cancelled-hook #'hywiki-completion-exit-function)
   (advice-remove 'completion--insert #'hywiki-completion-exit-function)
   ;; Restore user's customized setting of these options.
-  (custom-reevaluate-setting 'completion-cycle-threshold)
   (custom-reevaluate-setting 'tab-always-indent))
 
 (defun hywiki-word-highlight-buffers (buffers)
