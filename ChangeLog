@@ -1,3 +1,9 @@
+2026-03-11  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-grep-input): Fix bug gh#897 (Wrong type argument: listp,
+    "banana"' when try to search with hyrolo).  Always return a list, not
+    a string.  Update doc string to reflect this.
+
 2026-03-09  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-word-add-completion-at-point):

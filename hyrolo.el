@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      7-Mar-26 at 22:38:55 by Bob Weiner
+;; Last-Mod:     11-Mar-26 at 19:00:19 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -3007,9 +3007,12 @@ a default of MM/DD/YYYY."
 
 (defun hyrolo-grep-input (read-function prompt &optional path-list)
   "Use `consult-grep' if available or READ-FUNCTION with PROMPT.
-Grep over optional `path-list' or `hyrolo-file-list', which may
-contain wildcards.  Return the input read, to be fed to a HyRolo
-grep call."
+Grep over optional `path-list' or `hyrolo-file-list', which may contain
+wildcards.  When using the `consult' package, return the input read which is
+a list of (string-or-regexp-to-match (files-to-search)) to be fed to a
+HyRolo grep call. When not using `consult', return a list of
+\(string-or-regexp-to-match) and `hyrolo-file-list' provides the list of
+files to search."
   (if (and (hsys-consult-active-p)
 	   (bound-and-true-p vertico-mode))
       (hsys-consult-get-exit-value
@@ -3019,7 +3022,10 @@ grep call."
 	 #'hyrolo-consult-grep)
        nil nil path-list
        prompt)
-    (funcall read-function (concat prompt ": "))))
+    (let ((result (funcall read-function (concat prompt ": "))))
+      (if (listp result)
+          result
+        (list result)))))
 
 (defun hyrolo-highlight-matches (regexp start end)
   "Highlight matches for REGEXP in region from START to END."
