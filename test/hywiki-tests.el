@@ -2275,6 +2275,18 @@ expected result."
         (with-current-buffer (find-file-noselect wiki-page)
           (hooks-removed: "In wiki-page"))))))
 
+(ert-deftest hywiki-tests--org-link-with-wikiword-in-description ()
+  "Verify that an org-link is used even when point is at a WikiWord in the description."
+  :expected-result :failed
+  (hywiki-tests--preserve-hywiki-mode
+    (let ((hsys-org-enable-smart-keys t))
+      (org-mode)
+      (hywiki-tests--insert "[[file:WikiWord.org][Description]]")
+      (font-lock-ensure)
+      (search-backward "scription")
+      (should (eq (org-element-type (org-element-context)) 'link))
+      (should (eq (caar (hkey-actions)) 'smart-org)))))
+
 (provide 'hywiki-tests)
 
 ;; This file can't be byte-compiled without the `el-mock' package
