@@ -2287,6 +2287,20 @@ expected result."
       (should (eq (org-element-type (org-element-context)) 'link))
       (should (eq (caar (hkey-actions)) 'smart-org)))))
 
+(ert-deftest hywiki-tests--org-in-buffer-completion ()
+  "Verify org in buffer completion works with `hywiki-mode'."
+  (hywiki-tests--preserve-hywiki-mode
+    (let ((hsys-org-enable-smart-keys t))
+      (org-mode)
+      (hywiki-tests--insert "* Header\n\n[[*")
+      (execute-kbd-macro (kbd "TAB"))
+      (save-excursion
+        (beginning-of-line)
+        (should (looking-at-p (regexp-quote "[[*Header"))))
+      (ert-with-message-capture cap
+        (execute-kbd-macro (kbd "TAB"))
+        (should (string= "Sole completion\n" cap))))))
+
 (provide 'hywiki-tests)
 
 ;; This file can't be byte-compiled without the `el-mock' package
