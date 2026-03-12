@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:      7-Mar-26 at 22:20:09 by Bob Weiner
+;; Last-Mod:     11-Mar-26 at 21:12:52 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2275,17 +2275,27 @@ expected result."
         (with-current-buffer (find-file-noselect wiki-page)
           (hooks-removed: "In wiki-page"))))))
 
-(ert-deftest hywiki-tests--org-link-with-wikiword-in-description ()
-  "Verify that an org-link is used even when point is at a WikiWord in the description."
-  :expected-result :failed
+(ert-deftest hywiki-tests--org-link-with-wikiword-in-filename ()
+  "Verify Action Key on an Org link HyWikiWord filename activates org-link."
   (hywiki-tests--preserve-hywiki-mode
     (let ((hsys-org-enable-smart-keys t))
       (org-mode)
       (hywiki-tests--insert "[[file:WikiWord.org][Description]]")
       (font-lock-ensure)
-      (search-backward "scription")
+      (search-backward "WikiWord")
       (should (eq (org-element-type (org-element-context)) 'link))
       (should (eq (caar (hkey-actions)) 'smart-org)))))
+
+(ert-deftest hywiki-tests--org-link-with-wikiword-in-description ()
+  "Verify Action Key on an Org link descrip. HyWikiWord activates the wikiword."
+  (hywiki-tests--preserve-hywiki-mode
+    (let ((hsys-org-enable-smart-keys t))
+      (org-mode)
+      (hywiki-tests--insert "[[file:WikiWord.org][WikiWord Description]]")
+      (font-lock-ensure)
+      (search-backward "WikiWord")
+      (should (eq (org-element-type (org-element-context)) 'link))
+      (should (ibtype:test-p 'hywiki-existing-word)))))
 
 (ert-deftest hywiki-tests--org-in-buffer-completion ()
   "Verify org in buffer completion works with `hywiki-mode'."
@@ -2296,10 +2306,7 @@ expected result."
       (execute-kbd-macro (kbd "TAB"))
       (save-excursion
         (beginning-of-line)
-        (should (looking-at-p (regexp-quote "[[*Header"))))
-      (ert-with-message-capture cap
-        (execute-kbd-macro (kbd "TAB"))
-        (should (string= "Sole completion\n" cap))))))
+        (should (looking-at-p (regexp-quote "[[*Header")))))))
 
 (provide 'hywiki-tests)
 

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:      7-Mar-26 at 22:39:35 by Bob Weiner
+;; Last-Mod:     11-Mar-26 at 20:56:13 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -578,9 +578,9 @@ Start and end are the buffer positions of the label of the link.  This
 is either the optional description or if none, then the referent, i.e.
 either [[referent][description]] or [[referent]].
 
-If point is on a HyWikiWord within an Org link and HyWikiWords are
-recognized in the current buffer, ignore the Org link and return nil
-\(handle these elsewhere as implicit buttons).
+If the link referent is to a HyWikiWord, e.g. [[hy:WikiWord]], or point
+is on a HyWikiWord in the link description, then ignore this as an Org
+link (return nil); instead activate it as HyWikiWord reference.
 
 Assume caller has already checked that the current buffer is in
 `org-mode' or is looking for an Org link in a non-Org buffer type."
