@@ -1,3 +1,20 @@
+2026-03-11  Bob Weiner  <rsw@gnu.org>
+
+* hsys-org.el (hsys-org-link-at-p): Clarify doc string with regard to
+    HyWikiWord handling within Org links.
+
+* test/hywiki-tests.el (hywiki-tests--org-in-buffer-completion): Simplify,
+    remove 'Sole completion' check which is not always reliable.
+    (hywiki-tests--org-link-with-wikiword-in-description): Bug fixed, so
+    remove :expected-fail.  Rewrite to test when WikiWord is in description,
+    (hywiki-tests--org-link-with-wikiword-in-filename): Test that Action Key
+    treats it as an Org link if WikiWord is in the filename part of the link
+    since WikiWord's in filenames should always ignored.
+
+* hyrolo.el (hyrolo-grep-input): Fix bug gh#897 (Wrong type argument: listp,
+    "banana"' when try to search with hyrolo).  Always return a list, not
+    a string.  Update doc string to reflect this.
+
 2026-03-11  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--org-link-with-wikiword-in-description):
