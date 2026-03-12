@@ -4,6 +4,10 @@
     "banana"' when try to search with hyrolo).  Always return a list, not
     a string.  Update doc string to reflect this.
 
+2026-03-11  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--org-in-buffer-completion): Add test.
+
 2026-03-09  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-word-add-completion-at-point):
