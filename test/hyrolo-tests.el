@@ -55,14 +55,14 @@
           (insert "===\nHdr\n===\n")
           (goto-char (point-min))
           (should (looking-at "==="))
-          (ert-simulate-keys "item\n"
+          (hy-test-helpers:ert-simulate-keys "item\n"
             (call-interactively #'hyrolo-add))
           (beginning-of-line)
           (should (looking-at-p "\\*   item\n"))
           ;; hyrolo-add in mail buffer
           (with-mock
             (mock (hyrolo-name-and-email) => (list "first, last" "email"))
-            (ert-simulate-keys "\n" ;; Confirm proposed name
+            (hy-test-helpers:ert-simulate-keys "\n" ;; Confirm proposed name
               (call-interactively #'hyrolo-add))
             (beginning-of-line)
             (should (looking-at-p "\\*   first, last\t\t<email>\n"))))
@@ -236,7 +236,7 @@ and {b} the previous same level cell."
               (should (looking-at-p "^\t[0-9/]+$")))
 
             (if (eq v :interactive)
-                (ert-simulate-keys "\n" ;; Confirm proposed name
+                (hy-test-helpers:ert-simulate-keys "\n" ;; Confirm proposed name
                   (call-interactively #'hyrolo-sort))
               (hyrolo-sort))
 
@@ -299,7 +299,7 @@ and {b} the previous same level cell."
         (progn
           (dolist (v '(:interactive nil))
             (if (eq v :interactive)
-                (ert-simulate-keys "string\n"
+                (hy-test-helpers:ert-simulate-keys "string\n"
                   (call-interactively #'hyrolo-fgrep))
               (hyrolo-fgrep "string"))
             (should (string= (buffer-name) hyrolo-display-buffer))
@@ -564,7 +564,7 @@ below verifies all the details."
          (hyrolo-file-list (list org-file)))
     (unwind-protect
         (progn
-          (ert-simulate-keys "body\n"
+          (hy-test-helpers:ert-simulate-keys "body\n"
             (call-interactively #'hyrolo-grep))
           (should (string= hyrolo-display-buffer (buffer-name)))
 
