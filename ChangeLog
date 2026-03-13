@@ -1,3 +1,11 @@
+2026-03-13  Mats Lidell  <matsl@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-add-items-interactive):
+    (hyrolo-tests--hyrolo-grep-interactive): Add new separate test for
+    interactive call.
+    (hyrolo-sort-test, hyrolo-fgrep-find-all-types-of-files): Modify test to
+    do both interactive and non-interactive call.
+
 2026-03-11  Bob Weiner  <rsw@gnu.org>
 
 * hsys-org.el (hsys-org-link-at-p): Clarify doc string with regard to
