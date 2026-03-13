@@ -19,6 +19,7 @@
 ;;; Code:
 
 (require 'ert)
+(require 'ert-x)
 (require 'hact)
 (require 'hyrolo)
 (require 'hyrolo-demo)
@@ -43,6 +44,28 @@
           (hyrolo-add "a/b/c")
           (beginning-of-line)
           (should (looking-at-p "\\*\\*\\*   c")))
+      (hy-delete-file-and-buffer hyrolo-file))))
+
+(ert-deftest hyrolo-add-items-interactive ()
+  "`hyrolo-add` can add items when called interactively."
+  (let ((hyrolo-file (make-temp-file "hypb" nil ".otl")))
+    (unwind-protect
+        (let ((hyrolo-file-list (list hyrolo-file)))
+          (find-file (car (hyrolo-get-file-list)))
+          (insert "===\nHdr\n===\n")
+          (goto-char (point-min))
+          (should (looking-at "==="))
+          (hy-test-helpers:ert-simulate-keys "item\n"
+            (call-interactively #'hyrolo-add))
+          (beginning-of-line)
+          (should (looking-at-p "\\*   item\n"))
+          ;; hyrolo-add in mail buffer
+          (with-mock
+            (mock (hyrolo-name-and-email) => (list "first, last" "email"))
+            (hy-test-helpers:ert-simulate-keys "\n" ;; Confirm proposed name
+              (call-interactively #'hyrolo-add))
+            (beginning-of-line)
+            (should (looking-at-p "\\*   first, last\t\t<email>\n"))))
       (hy-delete-file-and-buffer hyrolo-file))))
 
 (ert-deftest hyrolo-demo-search-work ()
@@ -195,29 +218,34 @@ and {b} the previous same level cell."
         (let ((hyrolo-file-list (list hyrolo-file))
               (hyrolo-date-format "%m/%d/%Y"))
           (hyrolo-find-file (car (hyrolo-get-file-list)))
-          (insert "===\nHdr\n===\n")
-          (goto-char (point-min))
-          (should (looking-at "==="))
-          (hyrolo-add "c")
-          (hyrolo-add "b")
-          (hyrolo-add "a")
-          (hyrolo-add "b/d")
+          (dolist (v '(:interactive nil))
+            (erase-buffer)
+            (insert "===\nHdr\n===\n")
+            (goto-char (point-min))
+            (should (looking-at "==="))
+            (hyrolo-add "c")
+            (hyrolo-add "b")
+            (hyrolo-add "a")
+            (hyrolo-add "b/d")
 
-	  ;; Verify insertion order and following date on separate line
-          (goto-char (point-min))
-          (should (looking-at "==="))
-          (dolist (insertion-order '("a" "b" "d" "c"))
-            (goto-char (1+ (should (search-forward insertion-order))))
-            (should (looking-at-p "^\t[0-9/]+$")))
+	    ;; Verify insertion order and following date on separate line
+            (goto-char (point-min))
+            (should (looking-at "==="))
+            (dolist (insertion-order '("a" "b" "d" "c"))
+              (goto-char (1+ (should (search-forward insertion-order))))
+              (should (looking-at-p "^\t[0-9/]+$")))
 
-          (hyrolo-sort)
+            (if (eq v :interactive)
+                (hy-test-helpers:ert-simulate-keys "\n" ;; Confirm proposed name
+                  (call-interactively #'hyrolo-sort))
+              (hyrolo-sort))
 
-	  ;; Verify sorted order and following date on separate line
-          (goto-char (point-min))
-          (should (looking-at "==="))
-          (dolist (sorted-order '("a" "b" "d" "c"))
-            (goto-char (1+ (should (search-forward sorted-order))))
-            (should (looking-at-p "^\t[0-9/]+$"))))
+	    ;; Verify sorted order and following date on separate line
+            (goto-char (point-min))
+            (should (looking-at "==="))
+            (dolist (sorted-order '("a" "b" "d" "c"))
+              (goto-char (1+ (should (search-forward sorted-order))))
+              (should (looking-at-p "^\t[0-9/]+$")))))
       (hy-delete-file-and-buffer hyrolo-file))))
 
 (ert-deftest hyrolo-sort-records-at-different-levels ()
@@ -269,11 +297,15 @@ and {b} the previous same level cell."
          (hyrolo-file-list (list folder)))
     (unwind-protect
         (progn
-          (hyrolo-fgrep "string")
-          (should (string= (buffer-name) hyrolo-display-buffer))
-          (should (= (how-many "@loc>") 4))
-          (dolist (f (list org-file kotl-file md-file outl-file))
-            (should (= (how-many (concat "@loc> \"" f "\"")) 1))))
+          (dolist (v '(:interactive nil))
+            (if (eq v :interactive)
+                (hy-test-helpers:ert-simulate-keys "string\n"
+                  (call-interactively #'hyrolo-fgrep))
+              (hyrolo-fgrep "string"))
+            (should (string= (buffer-name) hyrolo-display-buffer))
+            (should (= (how-many "@loc>") 4))
+            (dolist (f (list org-file kotl-file md-file outl-file))
+              (should (= (how-many (concat "@loc> \"" f "\"")) 1)))))
       (dolist (f (list org-file kotl-file md-file outl-file))
         (hy-delete-file-and-buffer f))
       (kill-buffer hyrolo-display-buffer)
@@ -522,6 +554,25 @@ Example:
                     (hyrolo-tests--generate-heading-contents-for-tests
 		     heading-prefix-char heading (1+ section) body depth))))
     result))
+
+(ert-deftest hyrolo-tests--hyrolo-grep-interactive ()
+  "Verify `hyrolo-grep' works when called interactively.
+This just verifies it looks good when called interactively.  Other tests
+below verifies all the details."
+  (let* ((org-file (make-temp-file "hypb" nil ".org"
+                                   (hyrolo-tests--gen-outline ?* "heading" 2 "body" 2)))
+         (hyrolo-file-list (list org-file)))
+    (unwind-protect
+        (progn
+          (hy-test-helpers:ert-simulate-keys "body\n"
+            (call-interactively #'hyrolo-grep))
+          (should (string= hyrolo-display-buffer (buffer-name)))
+
+          (should (looking-at-p "==="))
+          (execute-kbd-macro (kbd "n"))
+          (should (looking-at-p "^\\* heading 1")))
+      (kill-buffer hyrolo-display-buffer)
+      (hy-delete-files-and-buffers hyrolo-file-list))))
 
 (ert-deftest hyrolo-tests--outline-next-visible-heading ()
   "Verify movement to next visible heading."
