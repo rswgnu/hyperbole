@@ -3,11 +3,11 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:     8-Jan-25 at 22:52:00
-;; Last-Mod:     19-Sep-25 at 16:43:05 by Mats Lidell
+;; Last-Mod:     14-Mar-26 at 15:37:00 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; Copyright (C) 2025  Free Software Foundation, Inc.
+;; Copyright (C) 2025-2026  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -32,7 +32,7 @@
 (ert-deftest hycontrol-tests--move-frame ()
   "Verify move frame at left and upper border stays at the border."
   (with-mock
-    (mock (frame-position) => '(0 . 0))
+    (stub frame-position => '(0 . 0))
     (mock (set-frame-position nil 0 0) => t)
     (hycontrol-move-frame 'up 10)
     (hycontrol-move-frame 'down -10)
