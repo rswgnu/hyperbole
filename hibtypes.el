@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     28-Feb-26 at 17:23:30 by Bob Weiner
+;; Last-Mod:     14-Mar-26 at 03:16:36 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1767,7 +1767,7 @@ not yet existing HyWikiWords."
 	  (if (and start end)
 	      (ibut:label-set wikiword start end)
 	    (ibut:label-set wikiword))
-	  (hact 'hywiki-find-referent wikiword))))))
+	  (hact 'link-to-wikiword wikiword))))))
 
 ;;; ========================================================================
 ;;; Inserts completion into minibuffer or other window.
