@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     14-Mar-26 at 14:00:08 by Bob Weiner
+# Last-Mod:     14-Mar-26 at 22:47:11 by Mats Lidell
 #
 # Copyright (C) 1994-2026  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -735,7 +735,7 @@ COVERAGE_TESTSPEC = t
 endif
 .PHONY: coverage
 coverage:
-	$(EMACS) --quick $(PRELOADS) \
+	$(EMACS) --quick $(PRELOADS) --eval "(setq enable-local-variables :all)" \
 	--eval "(load-file \"test/hy-test-dependencies.el\")" \
 	--eval "(load-file \"test/hy-test-coverage.el\")" \
 	--eval "(hy-test-coverage-file \"${file}\" \"${COVERAGE_TESTSPEC}\")"
