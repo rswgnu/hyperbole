@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:      7-Feb-26 at 16:17:01 by Mats Lidell
+# Last-Mod:     14-Mar-26 at 14:00:08 by Bob Weiner
 #
 # Copyright (C) 1994-2026  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -195,7 +195,7 @@ HYPB_ELC_ELN = @$(info $.  ELC+ELN  $@)
 HYPB_at      = @
 
 # Libraries that must be pre-loaded before trying to byte-compile anything.
-PRELOADS = $(SITE_PRELOADS) -l ./hload-path.el -l ./hversion.el -l ./hyperbole.el 
+PRELOADS = $(SITE_PRELOADS) -l ./hload-path.el -l ./hversion.el -l ./hyperbole.el
 
 # Compile in batch mode.  Load site-lisp/site-start.el, which may set load-path.
 # Show complete expression; do not abbreviate any exprs in batch logs with ...
@@ -344,9 +344,9 @@ src: autoloads tags
 # from emacs versions that define `byte-compile--emacs-build-warning-types'.
 #
 # Example for getting warnings for obsolete functions and variables
-#   HYPB_WARNINGS="free-vars" make bin
-# Example for surpressing the free-vars warnings
-#   HYPB_WARNINGS="not free-vars" make bin
+#   HYPB_WARNINGS="obsolete" make bin
+# Example for surpressing the obsolete warnings
+#   HYPB_WARNINGS="not obsolete" make bin
 ifeq ($(origin HYPB_WARNINGS), undefined)
 HYPB_BIN_WARN = --eval "(setq-default byte-compile-warnings (if (boundp 'byte-compile--emacs-build-warning-types) 'all t))"
 else ifeq ($(origin HYPB_WARNINGS), environment)
@@ -603,7 +603,7 @@ test-all:
 ifeq ($(TERM), dumb)
 ifneq (,$(findstring .apple.,$(DISPLAY)))
         # Found, on MacOS
-	TERM=xterm-256color $(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ((auto-save-default)) $(LOAD_TEST_ERT_FILES) $(HYPB_ERT_FAILURE) $(HYPB_ERT_INTERACTIVE))"
+	TERM=xterm-256color $(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ($(LET_VARIABLES)) $(LOAD_TEST_ERT_FILES) $(HYPB_ERT_FAILURE) $(HYPB_ERT_INTERACTIVE))"
 else
         # Not found, set TERM so tests will at least run within parent Emacs session
 	TERM=vt100 $(EMACS) --quick $(PRELOADS) --eval "(load-file \"test/hy-test-dependencies.el\")" --eval "(let ($(LET_VARIABLES)) $(LOAD_TEST_ERT_FILES) $(HYPB_ERT_FAILURE) $(HYPB_ERT_INTERACTIVE))"

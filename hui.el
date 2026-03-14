@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:      7-Mar-26 at 18:19:41 by Bob Weiner
+;; Last-Mod:     14-Mar-26 at 11:47:29 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2026,6 +2026,7 @@ Directory Name           link-to-directory
 File Name                link-to-file
 Koutline Cell            link-to-kcell
 Single-line Region       link-to-string-match
+HyWiki Org Heading       link-to-wikiword
 Outline Heading          link-to-file
 Buffer attached to File  link-to-file
 EOL in Dired Buffer      link-to-directory (Dired dir)
@@ -2124,7 +2125,33 @@ Buffer without File      link-to-buffer-tmp"
 						 (while (search-backward region nil t)
 						   (setq instance-num (1+ instance-num))))
 					       (list 'link-to-string-match region instance-num (hypb:buffer-file-name)))))
-					  ;;
+                                          ;;
+                                          ;; If on a HyWiki Org headline, use a link-to-wikiword
+                                          ;;
+					  ((and hywiki-mode
+                                                (hywiki-in-page-p)
+						(stringp outline-regexp)
+						(save-excursion
+						  (beginning-of-line)
+						  (looking-at outline-regexp))
+						(let ((title (hywiki-org-format-heading
+							      (buffer-substring-no-properties
+                                                               (line-beginning-position)
+							       (line-end-position))
+                                                              t t t nil t))
+						      (instance-num 0))
+						  (when (not (string-empty-p title))
+						    (save-excursion
+						      (end-of-line)
+                                                      (let ((exact-heading-regexp (hywiki-org-get-heading-match-regexp title)))
+						        (while (re-search-backward exact-heading-regexp nil t)
+							  (setq instance-num (1+ instance-num)))))
+						    (list 'link-to-wikiword
+							  (format "%s#%s%s"
+                                                                  (hywiki-get-buffer-page-name)
+								  title
+								  (if (> instance-num 1) (format ":I%d" instance-num) "")))))))
+                                          ;;
 					  ;; If current line starts with an outline-regexp prefix and
 					  ;; has a non-empty heading, use a link-to-string-match.
 					  ((and (hypb:buffer-file-name)

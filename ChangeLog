@@ -1,3 +1,54 @@
+2026-03-14  Bob Weiner  <rsw@gnu.org>
+
+* Makefile (HYPB_BIN_WARN): Fix preceding commentary on example use.
+           (test-all TERM=xterm-256color): Add #(LET_VARIABLES).
+
+* hywiki.el (hywiki--org-todo-regexp): Add to cache regular and custom Org
+    todo keywords for 'hywiki-directory'.
+            (hywiki--org-set-heading-regexp): Add set of above variable.
+            (hywiki-org-get-heading-match-regexp): Add and call in "hui.el"
+    and "hpath.el".
+            (hywiki-org-set-heading-regexp): Add and call when
+    load this library.
+            (hywiki-org-to-heading-instance): Update to use exact title matching
+    and fail if can't find exact instance specified without reporting how
+    many instances were found.
+
+* hui.el (hui:link-possible-types): If on a HyWiki Org heading, provide
+    a 'link-to-wikiword'.
+
+* hibtypes.el (hywiki-existing-word): Change actype to 'link-to-wikiword'
+    so this is picked up by `hbut:insert-text' when determining
+    the type of link to insert into a buffer.
+
+* hsys-org.el (hsys-org-format-heading): Move and rename to
+    'hywiki-org-format-heading' so can include 'hywiki-directory'
+    custom TODO keywords, if any.
+
+2026-03-13  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-format-grep-to-reference): Make line match to
+    .+ rather than .* since is required.
+            (hywiki-completion-at-point): Fix to return nil when
+    get a no match to any HyWiki page.
+            (hywiki-org-heading-regexp,
+             hywiki-org-get-titles-from-headings,
+             hywiki-org-directory-todo-regexp): Add.
+            (hywiki-org-to-heading-instance): Fix to initialize n when
+    not given or not a natural number.
+
+* hpath.el (hpath:org-normalize-title): Strip leading priority, e.g. [#22].
+
+2026-03-12  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:org-normalize-title, hpath:org-normalize-titles,
+            hpath:org-to-heading-instance): Add to extract the static
+    title from a heading with dynamic info like a todo keyword, priority,
+    statistics and tags.
+           (hpath:to-markup-anchor): When given an Org mode section, use
+    the above functions to limit match to a specific heading instance
+    with all the above fields.
+
 2026-03-11  Bob Weiner  <rsw@gnu.org>
 
 * hsys-org.el (hsys-org-link-at-p): Clarify doc string with regard to

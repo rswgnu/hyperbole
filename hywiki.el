@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:      9-Mar-26 at 23:38:26 by Bob Weiner
+;; Last-Mod:     14-Mar-26 at 12:51:37 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -228,6 +228,15 @@ in `hywiki-mode'.")
 (defvar hywiki--directory-mod-time nil
   "Last mod time for `hywiki-directory' or nil if the value has not been read.
 See `current-time' function for the mod time format.")
+
+(defvar hywiki--org-heading-regexp nil
+  "Cache standard `org-complex-heading-regexp' value.
+Group 4 is the title.  Call `hywiki--org-set-heading-regexp'
+to re-initialize.")
+
+(defvar hywiki--org-todo-regexp nil
+  "Cache regular and custom Org todo keywords for `hywiki-directory'.
+Call `hywiki--org-set-heading-regexp' to re-initialize.")
 
 ;; Redefine the `org-mode-syntax-table' for use in `hywiki-get-buttonize-characters'
 ;; so do not have to load all of Org mode there.
@@ -1546,14 +1555,18 @@ Each candidate is an alist with keys: file, line, text, and display."
                           existing-wikiword-prefix
                           hywiki-file-suffix))
              (output (shell-command-to-string cmd))
-             (lines (split-string output "\n" t))
-             (candidates (delq nil
-                               (nconc
-                                ;; Return only candidates that start with 'existing-wikiword-prefix'
-                                (seq-filter (lambda (str)
-                                              (string-prefix-p existing-wikiword-prefix str))
-                                            (hywiki-get-page-list))
-                                (mapcar #'hywiki-format-grep-to-reference lines))))
+             (lines (split-string output "[\n\r]" t))
+             (candidates
+              ;; If no matching HyWiki pages were found, return nil
+              (unless (and (= 1 (length lines))
+                           (string-match "No such file or directory" (car lines)))
+                (delq nil
+                      (nconc
+                       ;; Return only candidates that start with 'existing-wikiword-prefix'
+                       (seq-filter (lambda (str)
+                                     (string-prefix-p existing-wikiword-prefix str))
+                                   (hywiki-get-page-list))
+                       (mapcar #'hywiki-format-grep-to-reference lines)))))
              (candidates-alist (when candidates (mapcar #'list candidates))))
         (when candidates-alist
           (setq hywiki--char-before (char-before start)
@@ -2083,6 +2096,17 @@ This includes the delimiters: (), {}, <>, [] and \"\" (double quotes)."
 	(sort result #'<)
       '(nil nil))))
 
+(defun hywiki-org-get-titles-from-headings (headings)
+  "Given a list of Org HEADINGS, return only the titles.
+Works even when called from non-Org buffers."
+  (delq nil (mapcar (lambda (heading)
+                      (and heading
+                           (string-match hywiki--org-heading-regexp heading)
+                           (hpath:org-normalize-title
+                            ;; raw title
+                            (match-string 4 heading))))
+                    headings)))
+
 (defun hywiki-at-range-delimiter ()
   "Immediately before or after a balanced delimiter, return the delimited range.
 Include: (), {}, <>, [] and \"\" (double quotes).  Exclude Org links
@@ -2154,13 +2178,14 @@ Add double quotes if the section contains any whitespace after trimming.
 Return t if PAGE-AND-HEADLINE is a valid string, else nil.  If the page name
 therein is invalid, trigger an error."
   (when (and page-and-headline (stringp page-and-headline))
-    (if (string-match "\\`\\([^\0]+\\)[\0:]\\([0-9]+\\):\\(.*\\)"
+    (if (string-match "\\`\\([^\0]+\\)[\0:]\\([0-9]+\\):\\(.+\\)"
                       page-and-headline)
         (let ((page (file-name-base (match-string 1 page-and-headline)))
               (line (match-string 3 page-and-headline)))
           (setq line (string-trim line))
           ;; Drop '* ' prefix
-          (setq line (hsys-org-format-heading line t t t t))
+          (setq line (hpath:org-normalize-title
+                      (hywiki-org-format-heading line t t t nil t)))
           (format "%s#%s" page line))
       (message "(hwiki-format-grep-to-reference): Parse error on: %s"
                page-and-headline)
@@ -3149,6 +3174,54 @@ save and potentially set `hywiki--directory-mod-time' and
 	    (error "(hywiki-cache-save): Attempt to kill modified Environment file failed to save, \"%s\"" save-file)
 	  (kill-buffer standard-output))))))
 
+(defun hywiki-org-directory-todo-regexp (dir)
+  "Scan .org files in DIR for #+TODO keyword lines; return a matching regexp.
+This includes both standard and custom todo keywords.  Does not descend into
+subdirectories."
+  ;; Use grep, sort and uniq to find all unique #+TODO lines in the directory;
+  ;; use -h to omit filenames
+  (let ((grep-output
+         (shell-command-to-string
+          (format "grep -h '^#+TODO:' %s | sort | uniq"
+		  (expand-file-name "*.org" dir))))
+	keywords)
+    ;; Remove #+TODO: markup
+    (setq grep-output (replace-regexp-in-string "^#\\+\\(SEQ_\\|TYP_\\)?TODO:[ \t]*" "" grep-output))
+
+    ;; Remove quick keys and other annotations, as well as alternative pipes
+    (setq grep-output (replace-regexp-in-string "|\\|([^)]*)" "" grep-output))
+
+    ;; Split into individual todo keywords
+    (setq keywords (nconc (with-temp-buffer (org-mode) org-todo-keywords-1)
+                          (split-string grep-output "[ \t\n\r]" t)))
+
+    ;; Create the regexp to match to all todo keywords
+    (when keywords (format "\\(%s\\)" (regexp-opt keywords)))))
+
+(defun hywiki-org-to-heading-instance (title &optional n)
+  "To the heading whose TITLE is the optional Nth instance in an Org buffer.
+If such an instance is not found, trigger an error."
+  (interactive "sHeading Title: \nnInstance: ")
+  (unless (wholenump n)
+    (setq n 1))
+  (let ((found nil)
+        (exact-heading-regexp (hywiki-org-get-heading-match-regexp title)))
+    (save-excursion
+      (goto-char (point-min))
+      ;; Search for exact heading and then extract the title
+      (when (re-search-forward exact-heading-regexp nil t n)
+        (setq found (line-beginning-position))))
+    (if found
+        (progn
+          (goto-char found)
+          ;; Ensure the heading is visible if folded
+          (if (version< org-version "9.6")
+              (org-show-entry)
+            (org-fold-show-entry))
+          ;; (message "Instance %d of '%s'" n title)
+          t)
+      (error "(hywiki-org-to-heading-instance): Could not find %d instance(s) of '%s'" n title))))
+
 (defun hywiki-make-referent-hasht ()
   "Rebuld referent hasht from list of HyWiki page files and non-page entries."
   (setq hywiki--any-wikiword-regexp-list nil
@@ -3209,6 +3282,100 @@ Do not convert the index file."
              (not (string= (hywiki--sitemap-file) (buffer-file-name))))
     (hywiki-references-to-org-links)
     (hywiki-org-maybe-add-title)))
+
+(if (version< org-version "9.6")
+;;; For Org less than 9.6; derived from `org-get-heading' in "org.el"
+;;;###autoload
+(defun hywiki-org-format-heading (heading &optional no-tags no-todo
+                                          no-priority no-comment no-stats)
+  "Return HEADING, without the leading asterisks or a #+TITLE:.
+When NO-TAGS is non-nil, don't include tags.
+When NO-TODO is non-nil, don't include TODO keywords.
+When NO-PRIORITY is non-nil, don't include priority cookie.
+When NO-COMMENT is non-nil, don't include COMMENT string.
+When NO-STATS is non-nil, don't include statistics in square brackets."
+  (when (stringp heading)
+    (let ((case-fold-search nil))
+      (when (string-match hywiki--org-heading-regexp heading)
+        (let ((todo (and (not no-todo) (match-string 2 heading)))
+	      (priority (and (not no-priority) (match-string 3 heading)))
+	      (headline (pcase (match-string 4 heading)
+			  (`nil "")
+			  ((and (guard no-comment) h)
+			   (replace-regexp-in-string
+			    (eval-when-compile
+			      (format "\\`%s[ \t]+" org-comment-string))
+			    "" h))
+			  (h h)))
+	      (tags (and (not no-tags) (match-string 5 heading))))
+
+          (when no-stats
+            ;; Strip trailing statistics cookies [1/2] or [50%]
+            (setq headline
+                  (replace-regexp-in-string
+                   "\\(?: +\\[[0-9%+/]+\\]\\)+" "" headline)))
+
+	  (mapconcat #'identity
+		     (delq nil (list todo priority headline tags))
+		     " "))))))
+
+;;; Else
+;;; For Org 9.6 and greater; derived from `org-get-heading' in "org.el"
+;;;###autoload
+(defun hywiki-org-format-heading (heading &optional no-tags no-todo
+                                          no-priority no-comment no-stats)
+  "Return HEADING, without the leading asterisks or a #+TITLE:.
+When NO-TAGS is non-nil, don't include tags.
+When NO-TODO is non-nil, don't include TODO keywords.
+When NO-PRIORITY is non-nil, don't include priority cookie.
+When NO-COMMENT is non-nil, don't include COMMENT string.
+When NO-STATS is non-nil, don't include statistics in square brackets."
+  (when (stringp heading)
+    (let ((case-fold-search nil))
+      (when (string-match hywiki--org-heading-regexp heading)
+        ;; When using `org-fold-core--optimise-for-huge-buffers',
+        ;; returned text will be invisible.  Clear it up.
+        (save-match-data
+          (org-fold-core-remove-optimisation (match-beginning 0) (match-end 0)))
+        (let ((todo (and (not no-todo) (match-string 2 heading)))
+	      (priority (and (not no-priority) (match-string 3 heading)))
+	      (headline (pcase (match-string 4 heading)
+			  (`nil "")
+			  ((and (guard no-comment) h)
+			   (replace-regexp-in-string
+			    (eval-when-compile
+			      (format "\\`%s[ \t]+" org-comment-string))
+			    "" h))
+			  (h h)))
+	      (tags (and (not no-tags) (match-string 5 heading))))
+
+          (when no-stats
+            ;; Strip trailing statistics cookies [1/2] or [50%]
+            (setq headline
+                  (replace-regexp-in-string
+                   "\\(?: +\\[[0-9%+/]+\\]\\)+" "" headline)))
+
+          ;; Restore cleared optimization.
+          (org-fold-core-update-optimisation (match-beginning 0) (match-end 0))
+	  (mapconcat #'identity
+		     (delq nil (list todo priority headline tags))
+        	     " "))))))
+)
+
+(defun hywiki-org-get-heading-match-regexp (title)
+  "Return a regexp that matches to the TITLE and start of an Org heading."
+  ;; org-complex-heading-regexp + custom todo keywords + specific title
+  (format (concat "^\\(\\*+\\)"
+                  ;; optional todo keyword
+	          "\\(?: +"
+                  hywiki--org-todo-regexp
+                  "\\)?"
+                  ;; optional priority
+	          "\\(?: +\\(\\[#.\\]\\)\\)?"
+                  ;; title and optional stats
+	          "\\(?: +\\(%s\\)\\)")
+          ;; exact title
+          (regexp-quote title)))
 
 (defun hywiki-org-get-publish-project ()
   "Return the HyWiki Org publish project, a named set of properties.
@@ -3280,6 +3447,41 @@ backend."
 	  (_ path))
       link)))
 
+(defun hywiki-org-link-store ()
+  "Store a link to a HyWikiWord at point, if any."
+  (when (hywiki-word-at)
+    (let* ((page-name (hywiki-word-at))
+	   (link (concat
+		  (when hywiki-org-link-type-required
+		    (concat hywiki-org-link-type ":"))
+		  page-name)))
+      (org-link-store-props
+       :type hywiki-org-link-type
+       :link link
+       :description page-name))))
+
+(defun hywiki-org-maybe-add-title ()
+  "Add a title to an Org buffer if it doesn't have one."
+  (save-excursion
+    (unless (and (re-search-forward "^#\\+TITLE:[ \t]\\|^$" nil t)
+		 (not (looking-at "^$")))
+      (goto-char (point-min))
+      (insert "#+TITLE: "
+	      (if (hypb:buffer-file-name)
+		  (file-name-base (hypb:buffer-file-name))
+		(buffer-name))
+	      "\n"))))
+
+(defun hywiki-org-set-publish-project ()
+  "Setup and return the HyWiki Org publish project, a named set of properties.
+Sets the `org-publish-project-alist' and `hywiki-org-publish-project-alist'
+variables."
+  (require 'ox-publish)
+  (prog1 (hywiki-org-make-publish-project-alist)
+    ;; Remove "hywiki" entry from `org-publish-project-alist', then update it.
+    (setf (alist-get "hywiki" org-publish-project-alist nil 'remove #'equal) nil)
+    (add-to-list 'org-publish-project-alist hywiki-org-publish-project-alist t)))
+
 (defun hywiki-reference-to-referent (reference &optional full-data)
   "Resolve HyWikiWord REFERENCE to its referent file or other type of referent.
 If the referent is not a file type, return (referent-type . referent-value).
@@ -3316,41 +3518,6 @@ hywikiword suffix); otherwise:
 	      (concat pathname "::" suffix)))
 	   (t pathname))
 	referent))))
-
-(defun hywiki-org-link-store ()
-  "Store a link to a HyWikiWord at point, if any."
-  (when (hywiki-word-at)
-    (let* ((page-name (hywiki-word-at))
-	   (link (concat
-		  (when hywiki-org-link-type-required
-		    (concat hywiki-org-link-type ":"))
-		  page-name)))
-      (org-link-store-props
-       :type hywiki-org-link-type
-       :link link
-       :description page-name))))
-
-(defun hywiki-org-maybe-add-title ()
-  "Add a title to an Org buffer if it doesn't have one."
-  (save-excursion
-    (unless (and (re-search-forward "^#\\+TITLE:[ \t]\\|^$" nil t)
-		 (not (looking-at "^$")))
-      (goto-char (point-min))
-      (insert "#+TITLE: "
-	      (if (hypb:buffer-file-name)
-		  (file-name-base (hypb:buffer-file-name))
-		(buffer-name))
-	      "\n"))))
-
-(defun hywiki-org-set-publish-project ()
-  "Setup and return the HyWiki Org publish project, a named set of properties.
-Sets the `org-publish-project-alist' and `hywiki-org-publish-project-alist'
-variables."
-  (require 'ox-publish)
-  (prog1 (hywiki-org-make-publish-project-alist)
-    ;; Remove "hywiki" entry from `org-publish-project-alist', then update it.
-    (setf (alist-get "hywiki" org-publish-project-alist nil 'remove #'equal) nil)
-    (add-to-list 'org-publish-project-alist hywiki-org-publish-project-alist t)))
 
 (with-eval-after-load 'org
   (org-link-set-parameters hywiki-org-link-type
@@ -4400,6 +4567,25 @@ This must be called within a `save-excursion' or it may move point."
     (goto-char (1- (point))))
   (hywiki-maybe-highlight-between-references))
 
+(defun hywiki--org-set-heading-regexp ()
+  "Includes all custom todo keywords defined in `hywiki-directory' in regexp.
+Initializes `hywiki--org-todo-regexp' and `hywiki--org-heading-regexp'."
+  (setq hywiki--org-todo-regexp (hywiki-org-directory-todo-regexp hywiki-directory)
+        hywiki--org-heading-regexp
+        ;; org-complex-heading-regexp + custom todo keywords
+        (concat "^\\(\\*+\\)"
+                ;; optional todo keyword
+	        "\\(?: +"
+                hywiki--org-todo-regexp
+                "\\)?"
+                ;; optional priority
+	        "\\(?: +\\(\\[#.\\]\\)\\)?"
+                ;; optional title and stats
+	        "\\(?: +\\(.*?\\)\\)??"
+                ;; optional tags
+	        "\\(?:[ \t]+\\(:[[:alnum:]_@#%:]+:\\)\\)?"
+	        "[ \t]*$")))
+
 ;;; ************************************************************************
 ;;; Private initializations
 ;;; ************************************************************************
@@ -4414,6 +4600,8 @@ This must be called within a `save-excursion' or it may move point."
 	hywiki--word-and-buttonize-character-regexp
 	(concat "\\(" hywiki-word-with-optional-suffix-regexp "\\)"
 		hywiki--buttonize-character-regexp)))
+
+(hywiki--org-set-heading-regexp)
 
 ;;; ************************************************************************
 ;;; Public initializations

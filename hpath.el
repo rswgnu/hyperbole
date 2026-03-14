@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     28-Feb-26 at 00:44:36 by Bob Weiner
+;; Last-Mod:     14-Mar-26 at 12:42:35 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1716,16 +1716,21 @@ of the buffer."
 						(= (aref referent-regexp 0) ?^))
 				       (concat "^[ \t]*" (substring referent-regexp 1)))))
 			       (goto-char (point-min))
-			       (if (or (re-search-forward referent-regexp nil t instance-num)
-				       (and referent-leading-spaces-regexp
-					    (re-search-forward referent-leading-spaces-regexp nil t instance-num)))
-				   (progn (goto-char (match-beginning 0))
-					  (when (eq (current-buffer) (window-buffer))
-					    (recenter 0)))
-				 (goto-char opoint)
-				 (error "(hpath:to-markup-anchor): %s - Section `%s' not found in the visible buffer portion"
-					(buffer-name)
-					anchor-name))))))
+			       (cond ((and (derived-mode-p 'org-mode)
+                                            (hywiki-org-to-heading-instance
+                                             anchor-name instance-num))
+				      (when (eq (current-buffer) (window-buffer))
+					(recenter 0)))
+				     ((or (re-search-forward referent-regexp nil t instance-num)
+                                          (and referent-leading-spaces-regexp
+					       (re-search-forward referent-leading-spaces-regexp nil t instance-num)))
+				      (goto-char (match-beginning 0))
+				      (when (eq (current-buffer) (window-buffer))
+					(recenter 0)))
+				     (t
+                                      (goto-char opoint)
+				      (error "(hpath:to-markup-anchor): %s - Section `%s' not found in the visible buffer portion"
+					     (buffer-name) anchor-name)))))))
 		     (hash (goto-char omin))))
       (when (and (<= omin (point)) (>= omax (point)))
 	(narrow-to-region omin omax)))))
@@ -1926,6 +1931,29 @@ form is what is returned for PATH."
 		      (or (not (string-match-p "\\sw\\|\\s_" path))
 			  (string-match-p "[@#&!*]" path))))
        path)))
+
+(defun hpath:org-normalize-title (title)
+  "Strip all priority, leading ':' or '-' separators, and stats from TITLE and return."
+  (when title
+    (let ((clean (copy-sequence title)))
+      ;; Strip leading priority: [#B] or [#2} followed by ':' or '-' surrounded by any whitespace
+      (setq clean (replace-regexp-in-string "\\`\\[#\\([0-9]+\\|[A-Za-z]\\)\\]\\([ \t]*[-:][ \t]+\\)?" "" clean))
+      ;; Strip leading ':' or '-' if surrounded by spaces/start of string
+      ;; Matches: "- Title", ": Title", " - Title"
+      (setq clean (string-trim (replace-regexp-in-string "\\`[ \t]*[-:][ \t]+" "" clean)))
+       ;; Strip trailing statistics cookies [1/2] or [50%]
+      (setq clean (replace-regexp-in-string "\\(?: +\\[[0-9%+/]+\\]\\)+\\'" "" clean)))))
+
+(defun hpath:org-normalize-titles ()
+  "Get all buffer Org titles, stripping priorities, stats and leading ':' or '-' separators."
+  (let (title
+        titles)
+    (org-with-wide-buffer
+     (goto-char (point-min))
+     (while (re-search-forward org-heading-regexp nil t)
+       (setq title (org-element-property :raw-value (org-element-at-point)))
+       (push (hpath:org-normalize-title title) titles)))
+    (nreverse titles)))
 
 (defun hpath:push-tag-mark ()
   "Add a tag return marker at point if within a programming language file buffer.

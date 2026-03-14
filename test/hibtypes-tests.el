@@ -114,7 +114,7 @@
         (ibtypes::pathname)
         (should (string= "DEMO" (buffer-name)))
         (forward-line -2)
-        (should (looking-at "\* Smart Keys")))
+        (should (looking-at "\\* Smart Keys")))
     (kill-buffer "DEMO")))
 
 (ert-deftest ibtypes::pathname-line-column-test ()
