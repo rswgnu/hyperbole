@@ -3,11 +3,11 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     16-Aug-25 at 15:30:03 by Bob Weiner
+;; Last-Mod:     14-Mar-26 at 19:44:08 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; Copyright (C) 2021-2025  Free Software Foundation, Inc.
+;; Copyright (C) 2021-2026  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -1695,6 +1695,30 @@ match
     (mocklet (((hyrolo-get-file-list) => '("file")))
       (let ((buffer-file-name "file"))
         (should (hyrolo-at-tags-p t))))))
+
+(ert-deftest hyrolo-tests--display-matches ()
+  "Verify hyrolo-display-matches displays the buffer with the matches."
+  (ert-info ("No previous search nor buffer is provided")
+    (with-mock
+      (mock (get-buffer hyrolo-display-buffer) => nil)
+      (should-error (hyrolo-display-matches nil))))
+  (with-temp-buffer
+    (let ((buf1 (current-buffer)))
+      (with-temp-buffer
+        (let ((buf2 (current-buffer))
+              hyrolo--wconfig
+              (display-buffer-alist '((".*" display-buffer-same-window))))
+          (ert-info ("Provided buffer is selected with window config")
+            (hyrolo-display-matches buf1)
+            (should hyrolo--wconfig)
+            (should (equal buf1 (current-buffer))))
+          (ert-info ("Provided buffer already visible, don't save window config")
+            (setq hyrolo--wconfig nil)
+            (hyrolo-display-matches buf1)
+            (should-not hyrolo--wconfig))
+          (ert-info ("return-to-buffer is selected")
+            (hyrolo-display-matches buf1 buf2)
+            (should (equal buf2 (current-buffer)))))))))
 
 (provide 'hyrolo-tests)
 
