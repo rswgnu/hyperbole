@@ -1,3 +1,17 @@
+2026-03-15  Mats Lidell  <matsl@gnu.org>
+
+* test/hyrolo-tests.el: Prefix all tests with hyrolo-tests. Use
+    execute-kbd-macro instead of calling hact.
+    (hyrolo-tests--add-items-interactive):
+    (hyrolo-tests--hyrolo-grep-interactive): Add new separate test for
+    interactive call.
+    (hyrolo-tests--sort-test, hyrolo-tests--fgrep-find-all-types-of-files):
+    Modify test to do both interactive and non-interactive call.
+    (hyrolo-tests--fgrep-find-all-types-of-files): Use hy-delete-files-and-buffers.
+    (hyrolo-tests--get-file-list): Use hy-delete-file-and-buffer.
+    (hyrolo-tests--hyrolo-reveal-mode): Remove non-interactive guard.
+    (hyrolo-tests--sort): Remove name suffix tests.
+
 2026-03-14  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (coverage): enable-local-variables :all so test suite can execute
