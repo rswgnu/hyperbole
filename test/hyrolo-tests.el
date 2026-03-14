@@ -19,7 +19,7 @@
 ;;; Code:
 
 (require 'ert)
-(require 'hact)
+(require 'ert-x)
 (require 'hyrolo)
 (require 'hyrolo-demo)
 (require 'hy-test-dependencies) ;; can install el-mock
@@ -29,7 +29,7 @@
 
 (declare-function hy-test-helpers:consume-input-events "hy-test-helpers")
 
-(ert-deftest hyrolo-add-items-at-multiple-levels ()
+(ert-deftest hyrolo-tests--add-items-at-multiple-levels ()
   "`hyrolo-add` can add items at different levels."
   (let ((hyrolo-file (make-temp-file "hypb" nil ".otl")))
     (unwind-protect
@@ -45,182 +45,209 @@
           (should (looking-at-p "\\*\\*\\*   c")))
       (hy-delete-file-and-buffer hyrolo-file))))
 
-(ert-deftest hyrolo-demo-search-work ()
+(ert-deftest hyrolo-tests--add-items-interactive ()
+  "`hyrolo-add` can add items when called interactively."
+  (let ((hyrolo-file (make-temp-file "hypb" nil ".otl")))
+    (unwind-protect
+        (let ((hyrolo-file-list (list hyrolo-file)))
+          (find-file (car (hyrolo-get-file-list)))
+          (insert "===\nHdr\n===\n")
+          (goto-char (point-min))
+          (should (looking-at "==="))
+          (hy-test-helpers:ert-simulate-keys "item\n"
+            (call-interactively #'hyrolo-add))
+          (beginning-of-line)
+          (should (looking-at-p "\\*   item\n"))
+          ;; hyrolo-add in mail buffer
+          (with-mock
+            (mock (hyrolo-name-and-email) => (list "first, last" "email"))
+            (hy-test-helpers:ert-simulate-keys "\n" ;; Confirm proposed name
+              (call-interactively #'hyrolo-add))
+            (beginning-of-line)
+            (should (looking-at-p "\\*   first, last\t\t<email>\n"))))
+      (hy-delete-file-and-buffer hyrolo-file))))
+
+(ert-deftest hyrolo-tests--demo-search-work ()
   "Use demo example and search for work should match work."
   (unwind-protect
       (progn
         (load "../hyrolo-demo")
-        (should (hact 'kbd-key "C-x 4r work RET"))
+        (execute-kbd-macro (kbd "C-x 4r work RET"))
         (should (string= (buffer-name) hyrolo-display-buffer))
         (should (looking-at "======"))
         (forward-line 5)
         (should (looking-at "\\*.*Work")))
     (hyrolo-demo-quit)))
 
-(ert-deftest hyrolo-demo-tab-jump-to-first-match ()
+(ert-deftest hyrolo-tests--demo-tab-jump-to-first-match ()
   "{TAB} shall jump to first match."
   (unwind-protect
       (progn
         (load "../hyrolo-demo")
-        (should (hact 'kbd-key "C-x 4r work RET TAB"))
+        (execute-kbd-macro (kbd "C-x 4r work RET TAB"))
         (should (string= (buffer-name) hyrolo-display-buffer))
         (should (looking-at "Work")))
     (hyrolo-demo-quit)))
 
-(ert-deftest hyrolo-demo-toggle-visibility ()
+(ert-deftest hyrolo-tests--demo-toggle-visibility ()
   "Keys {h} and {a} shall toggle visibility."
   (unwind-protect
       (progn
         (load "../hyrolo-demo")
-        (should (hact 'kbd-key "C-x 4r work RET TAB"))
+        (execute-kbd-macro (kbd "C-x 4r work RET TAB"))
         (should (string= (buffer-name) hyrolo-display-buffer))
         (should (looking-at "Work"))
 
-        (should (hact 'kbd-key "h"))
+        (execute-kbd-macro (kbd "h"))
         (end-of-line)
         (should (get-char-property (point) 'invisible))
 
-        (should (hact 'kbd-key "a"))
+        (execute-kbd-macro (kbd "a"))
         (should-not (get-char-property (point) 'invisible))
 
-        (should (hact 'kbd-key "h"))
+        (execute-kbd-macro (kbd "h"))
         (end-of-line)
         (should (get-char-property (point) 'invisible))
 
-        (should (hact 'kbd-key "s"))
+        (execute-kbd-macro (kbd "s"))
         (should-not (get-char-property (point) 'invisible)))
     (hyrolo-demo-quit)))
 
-(ert-deftest hyrolo-demo-show-overview ()
+(ert-deftest hyrolo-tests--demo-show-overview ()
   "Key {o} shall show overview."
   (unwind-protect
       (progn
         (load "../hyrolo-demo")
-        (should (hact 'kbd-key "C-x 4r work RET TAB"))
+        (execute-kbd-macro (kbd "C-x 4r work RET TAB"))
         (should (string= (buffer-name) hyrolo-display-buffer))
         (should (looking-at "work"))
 
-        (should (hact 'kbd-key "o"))
+        (execute-kbd-macro (kbd "o"))
 	(forward-line 1)
         (end-of-line)
         (should (get-char-property (point) 'invisible))
 
         ;; Check next match is an outline
-        (should (hact 'kbd-key "TAB"))
+        (execute-kbd-macro (kbd "TAB"))
         (end-of-line)
         (should-not (get-char-property (point) 'invisible)))
     (hyrolo-demo-quit)))
 
-(ert-deftest hyrolo-demo-move-to-beginning-and-end-of-file ()
+(ert-deftest hyrolo-tests--demo-move-to-beginning-and-end-of-file ()
   "*HyRolo* keys {<} and {>} move to begin and end of file, respectively."
   (unwind-protect
       (progn
         (load "../hyrolo-demo")
-        (should (hact 'kbd-key "C-x 4r work RET TAB"))
+        (execute-kbd-macro (kbd "C-x 4r work RET TAB"))
         (should (string= (buffer-name) hyrolo-display-buffer))
         (should (looking-at "work"))
 
-        (should (hact 'kbd-key "<"))
+        (execute-kbd-macro (kbd "<"))
         (should (equal (point) (point-min)))
 
-        (should (hact 'kbd-key ">"))
+        (execute-kbd-macro (kbd ">"))
         (should (equal (point) (point-max))))
     (hyrolo-demo-quit)))
 
-(ert-deftest hyrolo-demo-move-to-beginning-and-end-of-entry ()
+(ert-deftest hyrolo-tests--demo-move-to-beginning-and-end-of-entry ()
   "*HyRolo* keys {,} and {.} move to begin and end of an entry, respectively."
   (unwind-protect
       (progn
         (load "../hyrolo-demo")
-        (should (hact 'kbd-key "C-x 4r work RET TAB"))
+        (execute-kbd-macro (kbd "C-x 4r work RET TAB"))
         (should (string= (buffer-name) hyrolo-display-buffer))
 
-        (should (hact 'kbd-key "\C-u,n"))
+        (execute-kbd-macro (kbd "\C-u,n"))
 	(should (looking-at "\\*\\*\\s-+Hansen"))
 
-        (should (hact 'kbd-key "."))
+        (execute-kbd-macro (kbd "."))
 	(should (looking-at "\\s-?\\*\\*\\*\\s-+Dunn")))
     (hyrolo-demo-quit)))
 
-(ert-deftest hyrolo-demo-move-between-entries-on-same-level ()
+(ert-deftest hyrolo-tests--demo-move-between-entries-on-same-level ()
   "Key {n} shall move to the next cell, {f} the next same level cell,
 and {b} the previous same level cell."
   (unwind-protect
       (progn
         (load "../hyrolo-demo")
-        (should (hact 'kbd-key "C-x 4r com RET TAB"))
+        (execute-kbd-macro (kbd "C-x 4r com RET TAB"))
         (should (string= (buffer-name) hyrolo-display-buffer))
-        (should (hact 'kbd-key "<"))
+        (execute-kbd-macro (kbd "<"))
         (should (equal (point) (point-min)))
 
 	(hyrolo-hdr-move-after-p)
         (should (looking-at "\\*\\*\\s-+Strong"))
 
-        (should (hact 'kbd-key "f"))
+        (execute-kbd-macro (kbd "f"))
         (should (looking-at "\\*\\*\\s-+Hansen"))
 
-        (should (hact 'kbd-key "b"))
+        (execute-kbd-macro (kbd "b"))
         (should (looking-at "\\*\\*\\s-+Strong")))
     (hyrolo-demo-quit)))
 
-(ert-deftest hyrolo-demo-no-following-same-level-heading ()
+(ert-deftest hyrolo-tests--demo-no-following-same-level-heading ()
   "Error when trying to move to non existing next level heading."
   (unwind-protect
       (progn
         (load "../hyrolo-demo")
-        (should (hact 'kbd-key "C-x 4r com RET TAB"))
+        (execute-kbd-macro (kbd "C-x 4r com RET TAB"))
 
         (should (string= (buffer-name) hyrolo-display-buffer))
-        (should (hact 'kbd-key "<"))
+        (execute-kbd-macro (kbd "<"))
         (should (equal (point) (point-min)))
 
 	(hyrolo-hdr-move-after-p)
         (should (looking-at "\\*\\*\\s-+Strong"))
 
-        (should (hact 'kbd-key "n"))
+        (execute-kbd-macro (kbd "n"))
         (should (looking-at "\\*\\*\\*\\s-+Smith"))
 
         (condition-case err
-            (should (hact 'kbd-key "f"))
+            (execute-kbd-macro (kbd "f"))
           (error
            (progn
              (should (equal (car err) 'error))
              (should (string-match "No following same-level heading" (cadr err)))))))
     (hyrolo-demo-quit)))
 
-(ert-deftest hyrolo-sort-test ()
+(ert-deftest hyrolo-tests--sort ()
   "HyRolo files can be sorted."
   (let ((hyrolo-file (make-temp-file "hypb" nil ".otl")))
     (unwind-protect
         (let ((hyrolo-file-list (list hyrolo-file))
               (hyrolo-date-format "%m/%d/%Y"))
           (hyrolo-find-file (car (hyrolo-get-file-list)))
-          (insert "===\nHdr\n===\n")
-          (goto-char (point-min))
-          (should (looking-at "==="))
-          (hyrolo-add "c")
-          (hyrolo-add "b")
-          (hyrolo-add "a")
-          (hyrolo-add "b/d")
+          (dolist (v '(:interactive nil))
+            (erase-buffer)
+            (insert "===\nHdr\n===\n")
+            (goto-char (point-min))
+            (should (looking-at "==="))
+            (hyrolo-add "c")
+            (hyrolo-add "b")
+            (hyrolo-add "a")
+            (hyrolo-add "b/d")
 
-	  ;; Verify insertion order and following date on separate line
-          (goto-char (point-min))
-          (should (looking-at "==="))
-          (dolist (insertion-order '("a" "b" "d" "c"))
-            (goto-char (1+ (should (search-forward insertion-order))))
-            (should (looking-at-p "^\t[0-9/]+$")))
+	    ;; Verify insertion order and following date on separate line
+            (goto-char (point-min))
+            (should (looking-at "==="))
+            (dolist (insertion-order '("a" "b" "d" "c"))
+              (goto-char (1+ (should (search-forward insertion-order))))
+              (should (looking-at-p "^\t[0-9/]+$")))
 
-          (hyrolo-sort)
+            (if (eq v :interactive)
+                (hy-test-helpers:ert-simulate-keys "\n" ;; Confirm proposed name
+                  (call-interactively #'hyrolo-sort))
+              (hyrolo-sort))
 
-	  ;; Verify sorted order and following date on separate line
-          (goto-char (point-min))
-          (should (looking-at "==="))
-          (dolist (sorted-order '("a" "b" "d" "c"))
-            (goto-char (1+ (should (search-forward sorted-order))))
-            (should (looking-at-p "^\t[0-9/]+$"))))
+	    ;; Verify sorted order and following date on separate line
+            (goto-char (point-min))
+            (should (looking-at "==="))
+            (dolist (sorted-order '("a" "b" "d" "c"))
+              (goto-char (1+ (should (search-forward sorted-order))))
+              (should (looking-at-p "^\t[0-9/]+$")))))
       (hy-delete-file-and-buffer hyrolo-file))))
 
-(ert-deftest hyrolo-sort-records-at-different-levels ()
+(ert-deftest hyrolo-tests--sort-records-at-different-levels ()
   "HyRolo can sort records at different levels."
   (let* ((hyrolo-file (make-temp-file "hypb" nil ".otl"
                                       (concat "* 2\n\t2022-03-20\n"
@@ -258,7 +285,7 @@ and {b} the previous same level cell."
                (should (string= (buffer-string) sorted-hyrolo-file)))
       (hy-delete-file-and-buffer hyrolo-file))))
 
-(ert-deftest hyrolo-fgrep-find-all-types-of-files ()
+(ert-deftest hyrolo-tests--fgrep-find-all-types-of-files ()
   "Verify that all types of files are found in an fgrep search."
   (let* ((folder (make-temp-file "hypb" t))
          (prefix (expand-file-name "hypb" folder))
@@ -269,17 +296,20 @@ and {b} the previous same level cell."
          (hyrolo-file-list (list folder)))
     (unwind-protect
         (progn
-          (hyrolo-fgrep "string")
-          (should (string= (buffer-name) hyrolo-display-buffer))
-          (should (= (how-many "@loc>") 4))
-          (dolist (f (list org-file kotl-file md-file outl-file))
-            (should (= (how-many (concat "@loc> \"" f "\"")) 1))))
-      (dolist (f (list org-file kotl-file md-file outl-file))
-        (hy-delete-file-and-buffer f))
+          (dolist (v '(:interactive nil))
+            (if (eq v :interactive)
+                (hy-test-helpers:ert-simulate-keys "string\n"
+                  (call-interactively #'hyrolo-fgrep))
+              (hyrolo-fgrep "string"))
+            (should (string= (buffer-name) hyrolo-display-buffer))
+            (should (= (how-many "@loc>") 4))
+            (dolist (f (list org-file kotl-file md-file outl-file))
+              (should (= (how-many (concat "@loc> \"" f "\"")) 1)))))
+      (hy-delete-files-and-buffers (list org-file kotl-file md-file outl-file))
       (kill-buffer hyrolo-display-buffer)
       (delete-directory folder))))
 
-(ert-deftest hyrolo-fgrep-and-goto-next-visible-org-heading ()
+(ert-deftest hyrolo-tests--fgrep-and-goto-next-visible-org-heading ()
   "Verify move to next heading, then action-key to go to record for org mode."
   (let* ((folder (make-temp-file "hypb" t))
          (prefix (expand-file-name "hypb" folder))
@@ -301,7 +331,7 @@ and {b} the previous same level cell."
       (kill-buffer hyrolo-display-buffer)
       (delete-directory folder))))
 
-(ert-deftest hyrolo-fgrep-and-goto-next-visible-kotl-heading ()
+(ert-deftest hyrolo-tests--fgrep-and-goto-next-visible-kotl-heading ()
   "Verify move to next heading, then action-key to go to record for kotl mode."
   (let* ((folder (make-temp-file "hypb" t))
          (prefix (expand-file-name "hypb" folder))
@@ -328,7 +358,7 @@ and {b} the previous same level cell."
       (kill-buffer hyrolo-display-buffer)
       (delete-directory folder))))
 
-(ert-deftest hyrolo-fgrep-and-goto-next-visible-outl-heading ()
+(ert-deftest hyrolo-tests--fgrep-and-goto-next-visible-outl-heading ()
   "Verify move to next heading, then action-key to go to record for outline mode."
   (let* ((folder (make-temp-file "hypb" t))
          (prefix (expand-file-name "hypb" folder))
@@ -349,7 +379,7 @@ and {b} the previous same level cell."
       (kill-buffer hyrolo-display-buffer)
       (delete-directory folder))))
 
-(ert-deftest hyrolo-fgrep-and-goto-next-visible-md-heading ()
+(ert-deftest hyrolo-tests--fgrep-and-goto-next-visible-md-heading ()
   "Verify move to next heading, then action-key to go to record for markdown mode."
   (let* ((folder (make-temp-file "hypb" t))
          (prefix (expand-file-name "hypb" folder))
@@ -370,7 +400,7 @@ and {b} the previous same level cell."
       (kill-buffer hyrolo-display-buffer)
       (delete-directory folder))))
 
-(ert-deftest hyrolo-fgrep-and-goto-next-visible-kotl-heading-level-2 ()
+(ert-deftest hyrolo-tests--fgrep-and-goto-next-visible-kotl-heading-level-2 ()
   "Verify move to next heading, then action-key to go to record for kotl mode.
 Match a string in a level 2 child cell."
   (let* ((folder (make-temp-file "hypb" t))
@@ -400,7 +430,7 @@ Match a string in a level 2 child cell."
       (kill-buffer hyrolo-display-buffer)
       (delete-directory folder))))
 
-(ert-deftest hyrolo-fgrep-and-goto-next-visible-kotl-heading-cell-2 ()
+(ert-deftest hyrolo-tests--fgrep-and-goto-next-visible-kotl-heading-cell-2 ()
   "Verify move to next heading, then action-key to go to record for kotl mode.
 Match a string in the second cell."
   (let* ((folder (make-temp-file "hypb" t))
@@ -464,8 +494,7 @@ Match a string in the second cell."
 		(progn (hyrolo-refresh-file-list)
                        (should (= 2 (length (hyrolo-get-file-list)))))
               (hy-delete-file-and-buffer org2-file))))
-      (dolist (f (list org-file))
-        (hy-delete-file-and-buffer f))
+      (hy-delete-file-and-buffer org-file)
       (delete-directory folder))))
 
 ;; Outline movement tests
@@ -523,6 +552,25 @@ Example:
 		     heading-prefix-char heading (1+ section) body depth))))
     result))
 
+(ert-deftest hyrolo-tests--hyrolo-grep-interactive ()
+  "Verify `hyrolo-grep' works when called interactively.
+This just verifies it looks good when called interactively.  Other tests
+below verifies all the details."
+  (let* ((org-file (make-temp-file "hypb" nil ".org"
+                                   (hyrolo-tests--gen-outline ?* "heading" 2 "body" 2)))
+         (hyrolo-file-list (list org-file)))
+    (unwind-protect
+        (progn
+          (hy-test-helpers:ert-simulate-keys "body\n"
+            (call-interactively #'hyrolo-grep))
+          (should (string= hyrolo-display-buffer (buffer-name)))
+
+          (should (looking-at-p "==="))
+          (execute-kbd-macro (kbd "n"))
+          (should (looking-at-p "^\\* heading 1")))
+      (kill-buffer hyrolo-display-buffer)
+      (hy-delete-files-and-buffers hyrolo-file-list))))
+
 (ert-deftest hyrolo-tests--outline-next-visible-heading ()
   "Verify movement to next visible heading."
   (let* ((org-file (make-temp-file "hypb" nil ".org"
@@ -535,27 +583,27 @@ Example:
 
           ;; Move down
           (should (looking-at-p "==="))
-          (should (hact 'kbd-key "n"))
+          (execute-kbd-macro (kbd "n"))
           (should (looking-at-p "^\\* heading 1"))
-          (should (hact 'kbd-key "n"))
+          (execute-kbd-macro (kbd "n"))
           (should (looking-at-p "^\\*\\* heading 1\\.2"))
-          (should (hact 'kbd-key "n"))
+          (execute-kbd-macro (kbd "n"))
           (should (looking-at-p "^\\* heading 2"))
-          (should (hact 'kbd-key "n"))
+          (execute-kbd-macro (kbd "n"))
           (should (looking-at-p "^\\*\\* heading 2\\.2"))
-          (should (hact 'kbd-key "n"))
+          (execute-kbd-macro (kbd "n"))
           (should (eobp))
 
           ;; Move back up
-          (should (hact 'kbd-key "p"))
+          (execute-kbd-macro (kbd "p"))
           (should (looking-at-p "^\\*\\* heading 2\\.2"))
-          (should (hact 'kbd-key "p"))
+          (execute-kbd-macro (kbd "p"))
           (should (looking-at-p "^\\* heading 2"))
-          (should (hact 'kbd-key "p"))
+          (execute-kbd-macro (kbd "p"))
           (should (looking-at-p "^\\*\\* heading 1\\.2"))
-          (should (hact 'kbd-key "p"))
+          (execute-kbd-macro (kbd "p"))
           (should (looking-at-p "^\\* heading 1"))
-          (should (hact 'kbd-key "p"))
+          (execute-kbd-macro (kbd "p"))
           (should (looking-at-p "==="))
           (should (bobp)))
       (kill-buffer hyrolo-display-buffer)
@@ -573,27 +621,27 @@ Example:
 
           ;; Move down
           (should (looking-at-p "==="))
-          (should (hact 'kbd-key "n"))
+          (execute-kbd-macro (kbd "n"))
           (should (looking-at-p "^# heading 1"))
-          (should (hact 'kbd-key "n"))
+          (execute-kbd-macro (kbd "n"))
           (should (looking-at-p "^## heading 1\\.2"))
-          (should (hact 'kbd-key "n"))
+          (execute-kbd-macro (kbd "n"))
           (should (looking-at-p "^# heading 2"))
-          (should (hact 'kbd-key "n"))
+          (execute-kbd-macro (kbd "n"))
           (should (looking-at-p "^## heading 2\\.2"))
-          (should (hact 'kbd-key "n"))
+          (execute-kbd-macro (kbd "n"))
           (should (eobp))
 
           ;; Move back up
-          (should (hact 'kbd-key "p"))
+          (execute-kbd-macro (kbd "p"))
           (should (looking-at-p "^## heading 2\\.2"))
-          (should (hact 'kbd-key "p"))
+          (execute-kbd-macro (kbd "p"))
           (should (looking-at-p "^# heading 2"))
-          (should (hact 'kbd-key "p"))
+          (execute-kbd-macro (kbd "p"))
           (should (looking-at-p "^## heading 1\\.2"))
-          (should (hact 'kbd-key "p"))
+          (execute-kbd-macro (kbd "p"))
           (should (looking-at-p "^# heading 1"))
-          (should (hact 'kbd-key "p"))
+          (execute-kbd-macro (kbd "p"))
           (should (looking-at-p "==="))
           (should (bobp)))
       (kill-buffer hyrolo-display-buffer)
@@ -611,27 +659,27 @@ Example:
 
           ;; Move down
           (should (looking-at-p "==="))
-          (should (hact 'kbd-key "n"))
+          (execute-kbd-macro (kbd "n"))
           (should (looking-at-p "^# heading 1"))
-          (should (hact 'kbd-key "n"))
+          (execute-kbd-macro (kbd "n"))
           (should (looking-at-p "^## heading 1\\.2"))
-          (should (hact 'kbd-key "n"))
+          (execute-kbd-macro (kbd "n"))
           (should (looking-at-p "^# heading 2"))
-          (should (hact 'kbd-key "n"))
+          (execute-kbd-macro (kbd "n"))
           (should (looking-at-p "^## heading 2\\.2"))
-          (should (hact 'kbd-key "n"))
+          (execute-kbd-macro (kbd "n"))
           (should (eobp))
 
           ;; Move back up
-          (should (hact 'kbd-key "p"))
+          (execute-kbd-macro (kbd "p"))
           (should (looking-at-p "^## heading 2\\.2"))
-          (should (hact 'kbd-key "p"))
+          (execute-kbd-macro (kbd "p"))
           (should (looking-at-p "^# heading 2"))
-          (should (hact 'kbd-key "p"))
+          (execute-kbd-macro (kbd "p"))
           (should (looking-at-p "^## heading 1\\.2"))
-          (should (hact 'kbd-key "p"))
+          (execute-kbd-macro (kbd "p"))
           (should (looking-at-p "^# heading 1"))
-          (should (hact 'kbd-key "p"))
+          (execute-kbd-macro (kbd "p"))
           (should (looking-at-p "==="))
           (should (bobp)))
       (kill-buffer hyrolo-display-buffer)
@@ -651,11 +699,11 @@ Example:
           (goto-char (point-max))
           (forward-line -2)
           (should (looking-at-p "^\\*\\*\\* heading 2\\.2\\.3$"))
-          (should (hact 'kbd-key "u"))
+          (execute-kbd-macro (kbd "u"))
           (should (looking-at-p "^\\*\\* heading 2\\.2$"))
-          (should (hact 'kbd-key "u"))
+          (execute-kbd-macro (kbd "u"))
           (should (looking-at-p "^\\* heading 2$"))
-          (should-error (hact 'kbd-key "u")))
+          (should-error (execute-kbd-macro (kbd "u"))))
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-file-and-buffer org-file))))
 
@@ -673,29 +721,29 @@ Example:
 
           ;; Move down
           (should (looking-at-p "==="))
-          (should (hact 'kbd-key "n"))
+          (execute-kbd-macro (kbd "n"))
           (should (looking-at-p "^\\* heading-a 1$"))
-          (should (hact 'kbd-key "n"))
+          (execute-kbd-macro (kbd "n"))
           (should (looking-at-p "^\\*\\* heading-a 1\\.2$"))
-          (should (hact 'kbd-key "n"))
-          (should (hact 'kbd-key "n"))
+          (execute-kbd-macro (kbd "n"))
+          (execute-kbd-macro (kbd "n"))
           (should (looking-at-p "^# heading-b 1$"))
-          (should (hact 'kbd-key "n"))
+          (execute-kbd-macro (kbd "n"))
           (should (looking-at-p "^## heading-b 1\\.2$"))
-          (should (hact 'kbd-key "n"))
+          (execute-kbd-macro (kbd "n"))
           (should (eobp))
 
           ;; Move back up
-          (should (hact 'kbd-key "p"))
+          (execute-kbd-macro (kbd "p"))
           (should (looking-at-p "^## heading-b 1\\.2$"))
-          (should (hact 'kbd-key "p"))
+          (execute-kbd-macro (kbd "p"))
           (should (looking-at-p "^# heading-b 1$"))
-          (should (hact 'kbd-key "p"))
-          (should (hact 'kbd-key "p"))
+          (execute-kbd-macro (kbd "p"))
+          (execute-kbd-macro (kbd "p"))
           (should (looking-at-p "^\\*\\* heading-a 1\\.2$"))
-          (should (hact 'kbd-key "p"))
+          (execute-kbd-macro (kbd "p"))
           (should (looking-at-p "^\\* heading-a 1$"))
-          (should (hact 'kbd-key "p"))
+          (execute-kbd-macro (kbd "p"))
           (should (looking-at-p "==="))
           (should (= 1 (line-number-at-pos))))
       (kill-buffer hyrolo-display-buffer)
@@ -729,10 +777,14 @@ optional DEPTH the number of sub cells are created to that depth."
           (should (string= hyrolo-display-buffer (buffer-name)))
 
           (should (looking-at-p "==="))
-          (should (and (hact 'kbd-key "n") (looking-at-p "^ +1\\. heading-kotl$")))
-          (should (and (hact 'kbd-key "n") (eobp)))
-          (should (and (hact 'kbd-key "p") (looking-at-p "^ +1\\. heading-kotl$")))
-          (should (and (hact 'kbd-key "p") (looking-at-p "==="))))
+          (execute-kbd-macro (kbd "n"))
+          (should (looking-at-p "^ +1\\. heading-kotl$"))
+          (execute-kbd-macro (kbd "n"))
+          (should (eobp))
+          (execute-kbd-macro (kbd "p"))
+          (should (looking-at-p "^ +1\\. heading-kotl$"))
+          (execute-kbd-macro (kbd "p"))
+          (should (looking-at-p "===")))
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))
 
@@ -754,13 +806,15 @@ optional DEPTH the number of sub cells are created to that depth."
           ;; Move down
           (dolist (v '("===" "^\\* heading-org 1$" "===" "^\\* heading-otl 1$"
                        "===" "^# heading-md 1$" "===" "^ +1\\. heading-kotl$"))
-            (should (and (looking-at-p v) (hact 'kbd-key "n"))))
+            (should (looking-at-p v))
+            (execute-kbd-macro (kbd "n")))
           (should (eobp))
 
           ;; Move up
           (dolist (v '("^ +1\\. heading-kotl$" "===" "^# heading-md 1$" "==="
                        "^\\* heading-otl 1$" "===" "^\\* heading-org 1$" "==="))
-            (should (and (hact 'kbd-key "p") (looking-at-p v))))
+            (execute-kbd-macro (kbd "p"))
+            (should (looking-at-p v)))
           (should (= 1 (line-number-at-pos))))
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))
@@ -789,31 +843,31 @@ optional DEPTH the number of sub cells are created to that depth."
 
           ;; Hide/Show first line hides whole section
           (should (looking-at-p "==="))
-          (should (hact 'kbd-key "h"))
+          (execute-kbd-macro (kbd "h"))
 	  (hyrolo-tests--verify-hidden-line)
-          (should (hact 'kbd-key "s"))
+          (execute-kbd-macro (kbd "s"))
 	  (hyrolo-tests--verify-not-hidden-line)
 
 	  ;; Hide/Show first section heading
-          (should (hact 'kbd-key "n"))
+          (execute-kbd-macro (kbd "n"))
           (should (looking-at-p "^\\* heading 1$"))
-          (should (hact 'kbd-key "h"))
+          (execute-kbd-macro (kbd "h"))
 	  (hyrolo-tests--verify-hidden-line)
 	  (save-excursion
 	    (forward-visible-line 1)
 	    (should (eobp)))
-          (should (hact 'kbd-key "s"))
+          (execute-kbd-macro (kbd "s"))
 	  (hyrolo-tests--verify-not-hidden-line)
 
 	  ;; Hide/Show level 2 heading
-          (should (hact 'kbd-key "n"))
+          (execute-kbd-macro (kbd "n"))
           (should (looking-at-p "^\\*\\* heading 1\\.2$"))
-          (should (hact 'kbd-key "h"))
+          (execute-kbd-macro (kbd "h"))
 	  (hyrolo-tests--verify-hidden-line)
 	  (save-excursion
 	    (forward-visible-line 1)
 	    (should (eobp)))
-          (should (hact 'kbd-key "s"))
+          (execute-kbd-macro (kbd "s"))
 	  (hyrolo-tests--verify-not-hidden-line))
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))
@@ -830,18 +884,18 @@ optional DEPTH the number of sub cells are created to that depth."
 
           ;; Hide first line hides whole section
           (should (looking-at-p "==="))
-          (should (hact 'kbd-key "h"))
+          (execute-kbd-macro (kbd "h"))
 	  (hyrolo-tests--verify-hidden-line)
 
 	  ;; Now expose just top-level headings and move to buffer beginning
-          (should (hact 'kbd-key "t"))
-          (should (hact 'kbd-key "<"))
+          (execute-kbd-macro (kbd "t"))
+          (execute-kbd-macro (kbd "<"))
 
 	  ;; Move to first heading and back to top
-          (should (hact 'kbd-key "n"))
+          (execute-kbd-macro (kbd "n"))
           (should (looking-at-p "^\\* heading 1$"))
 	  (should-not (get-char-property (point) 'invisible))
-          (should (hact 'kbd-key "p"))
+          (execute-kbd-macro (kbd "p"))
 	  (should (and (looking-at-p "===") (= 1 (line-number-at-pos))))
 	  (hyrolo-tests--verify-not-hidden-line))
       (kill-buffer hyrolo-display-buffer)
@@ -859,25 +913,25 @@ optional DEPTH the number of sub cells are created to that depth."
 
           ;; Search Down
           (should (looking-at-p "==="))
-          (should (hact 'kbd-key "TAB"))
+          (execute-kbd-macro (kbd "TAB"))
           (should (looking-at-p "^body 1$"))
-          (should (hact 'kbd-key "TAB"))
+          (execute-kbd-macro (kbd "TAB"))
           (should (looking-at-p "^body 1\\.2"))
-          (should (hact 'kbd-key "TAB"))
+          (execute-kbd-macro (kbd "TAB"))
           (should (looking-at-p "^body 2$"))
-          (should (hact 'kbd-key "TAB"))
+          (execute-kbd-macro (kbd "TAB"))
           (should (looking-at-p "^body 2\\.2"))
-          (should-error (hact 'kbd-key "TAB"))
+          (should-error (execute-kbd-macro (kbd "TAB")))
           (should (looking-at-p "^body 2\\.2"))
 
           ;; Search Up
-          (should (hact 'kbd-key "<backtab>"))
+          (execute-kbd-macro (kbd "<backtab>"))
           (should (looking-at-p "^body 2$"))
-          (should (hact 'kbd-key "<backtab>"))
+          (execute-kbd-macro (kbd "<backtab>"))
           (should (looking-at-p "^body 1\\.2"))
-          (should (hact 'kbd-key "<backtab>"))
+          (execute-kbd-macro (kbd "<backtab>"))
           (should (looking-at-p "^body 1$"))
-          (should-error (hact 'kbd-key "<backtab>")))
+          (should-error (execute-kbd-macro (kbd "<backtab>"))))
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))
 
@@ -893,20 +947,20 @@ optional DEPTH the number of sub cells are created to that depth."
 
           ;; Search Down
           (should (looking-at-p "==="))
-          (should (hact 'kbd-key "TAB"))
+          (execute-kbd-macro (kbd "TAB"))
           (should (looking-at-p "^body 1$"))
 
           ;; Edit record
           (mocklet ((y-or-n-p => t))
-            (should (hact 'kbd-key "e")))
+            (execute-kbd-macro (kbd "e")))
           (should (string= (buffer-name) (file-name-nondirectory org-file)))
           (should (looking-at-p "^body 1$"))
 
           ;; Edit next record
           (switch-to-buffer hyrolo-display-buffer)
-          (should (hact 'kbd-key "TAB"))
+          (execute-kbd-macro (kbd "TAB"))
           (should (looking-at-p "^body 1\\.2$"))
-          (should (hact 'kbd-key "e"))
+          (execute-kbd-macro (kbd "e"))
           (should (string= (buffer-name) (file-name-nondirectory org-file)))
           (should (looking-at-p "^body 1\\.2$"))
           )
@@ -934,14 +988,16 @@ All files types are present."
 		       "===" "^# heading-md 1$" "^# heading-md 2$"
                        "===" "^\\* heading-otl 1$" "^\\* heading-otl 2$"
 		       "===" "^ +1\\. heading-kotl$"))
-            (should (and (hact 'kbd-key "f") (looking-at-p v))))
+            (execute-kbd-macro (kbd "f"))
+            (should (looking-at-p v)))
 
           ;; Move backward
           (dolist (v '("===" "^\\* heading-otl 2$" "^\\* heading-otl 1$"
 		       "===" "^# heading-md 2$" "^# heading-md 1$"
                        "===" "^\\* heading-org 2$" "^\\* heading-org 1$"
 		       "==="))
-            (should (and (hact 'kbd-key "b") (looking-at-p v))))
+            (execute-kbd-macro (kbd "b"))
+            (should (looking-at-p v)))
           (should (= 1 (line-number-at-pos))))
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))
@@ -966,13 +1022,15 @@ structure."
           ;; Move forward
           (dolist (v '("===" "^\\* heading-org 1$" "===" "^# heading-md 1$"
                        "===" "^\\* heading-otl 1$" "==="))
-            (should (and (looking-at-p v) (hact 'kbd-key "f"))))
+            (should (looking-at-p v))
+            (execute-kbd-macro (kbd "f")))
           (should (looking-at-p "^ +1\\. heading-kotl$")) ; When on last match do not move further
 
           ;; Move backward
           (dolist (v '("===" "^\\* heading-otl 1$" "===" "^# heading-md 1$"
                        "===" "^\\* heading-org 1$" "==="))
-            (should (and (hact 'kbd-key "b") (looking-at-p v))))
+            (execute-kbd-macro (kbd "b"))
+            (should (looking-at-p v)))
           (should (= 1 (line-number-at-pos))))
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))
@@ -1025,18 +1083,22 @@ Useful for creating outline and markdown test data from org examples."
           (should (looking-at-p "^\\*\\* h-org 1\\.1"))
 
           ;; Move forward same level
-          (should (and (hact 'kbd-key "f") (looking-at-p "^\\*\\* h-org 1\\.2")))
+          (execute-kbd-macro (kbd "f"))
+          (should (looking-at-p "^\\*\\* h-org 1\\.2"))
 
           ;; Multiple times does not move point when there are no more headers at the same level
-          (should-error (hact 'kbd-key "f"))
+          (should-error (execute-kbd-macro (kbd "f")))
 	  (should (looking-at-p "^\\*\\* h-org 1\\.2"))
 
           ;; Move back on same level
-          (should (and (hact 'kbd-key "b") (looking-at-p "\\*\\* h-org 1\\.1")))
+          (execute-kbd-macro (kbd "b"))
+          (should (looking-at-p "\\*\\* h-org 1\\.1"))
 
           ;; Moving up from first header on a level errors, also when repeated.
-          (should-error (and (hact 'kbd-key "b") (looking-at-p "^\\*\\* h-org 1\\.1")))
-          (should-error (and (hact 'kbd-key "b") (looking-at-p "^\\*\\* h-org 1\\.1"))))
+          (should-error (execute-kbd-macro (kbd "b")))
+          (should (looking-at-p "^\\*\\* h-org 1\\.1"))
+          (should-error (execute-kbd-macro (kbd "b")))
+          (should (looking-at-p "^\\*\\* h-org 1\\.1")))
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))
 
@@ -1058,18 +1120,22 @@ Useful for creating outline and markdown test data from org examples."
           (should (looking-at-p "^\\*\\* h-org 1\\.1"))
 
           ;; Move forward same level
-          (should (and (hact 'kbd-key "f") (looking-at-p "^\\*\\* h-org 1\\.2")))
+          (execute-kbd-macro (kbd "f"))
+          (should (looking-at-p "^\\*\\* h-org 1\\.2"))
 
           ;; Multiple times does not move point when there are no more headers at the same level
-          (should-error (hact 'kbd-key "f"))
+          (should-error (execute-kbd-macro (kbd "f")))
 	  (should (looking-at-p "^\\*\\* h-org 1\\.2"))
 
           ;; Move back on same level
-          (should (and (hact 'kbd-key "b") (looking-at-p "\\*\\* h-org 1\\.1")))
+          (execute-kbd-macro (kbd "b"))
+          (should (looking-at-p "\\*\\* h-org 1\\.1"))
 
           ;; Moving up from first header on a level errors, also when repeated.
-          (should-error (and (hact 'kbd-key "b") (looking-at-p "^\\*\\* h-org 1\\.1")))
-          (should-error (and (hact 'kbd-key "b") (looking-at-p "^\\*\\* h-org 1\\.1"))))
+          (should-error (execute-kbd-macro (kbd "b")))
+          (should (looking-at-p "^\\*\\* h-org 1\\.1"))
+          (should-error (execute-kbd-macro (kbd "b")))
+          (should (looking-at-p "^\\*\\* h-org 1\\.1")))
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))
 
@@ -1316,7 +1382,6 @@ body
 
 (ert-deftest hyrolo-tests--hyrolo-reveal-mode ()
   "Verify hidden sections are shown when using {TAB} to move through matches."
-  (skip-unless (not noninteractive))
   (let* ((org-file1 (make-temp-file "hypb" nil ".org" hyrolo-tests--outline-content-org))
          (hyrolo-file-list (list org-file1)))
     (unwind-protect
@@ -1329,41 +1394,13 @@ body
                            "* h-org 1...\n* h-org 2...\n")
                    (hyrolo-tests--outline-as-string)))
 
-          (should (hact 'kbd-key "TAB"))
+          (execute-kbd-macro (kbd "TAB"))
           (should (string=
                    (concat (hyrolo-tests--hyrolo-section-header org-file1)
                            "* h-org 1\nbody\n** h-org 1.1\nbody\n** h-org 1.2\nbody\n*** h-org 1.2.1\nbody\n* h-org 2...\n")
                    (hyrolo-tests--outline-as-string)))
 
-          ;; (should (hact 'kbd-key "TAB"))
-          ;; (hy-test-helpers:consume-input-events)
-          ;; (should (string=
-          ;;          (concat (hyrolo-tests--hyrolo-section-header org-file1)
-          ;;                  "* h-org 1\nbody\n** h-org 1.1\nbody\n** h-org 1.2...\n* h-org 2...\n")
-          ;;          (hyrolo-tests--outline-as-string)))
-
-          ;; (should (hact 'kbd-key "TAB"))
-          ;; (hy-test-helpers:consume-input-events)
-          ;; (should (string=
-          ;;          (concat (hyrolo-tests--hyrolo-section-header org-file1)
-          ;;                  "* h-org 1\nbody\n** h-org 1.1\nbody\n** h-org 1.2\nbody\n*** h-org 1.2.1...\n* h-org 2...\n")
-          ;;          (hyrolo-tests--outline-as-string)))
-
-          ;; (should (hact 'kbd-key "TAB"))
-          ;; (hy-test-helpers:consume-input-events)
-          ;; (should (string=
-          ;;          (concat (hyrolo-tests--hyrolo-section-header org-file1)
-          ;;                  "* h-org 1\nbody\n** h-org 1.1\nbody\n** h-org 1.2\nbody\n*** h-org 1.2.1\nbody\n* h-org 2...\n")
-          ;;          (hyrolo-tests--outline-as-string)))
-
-          ;; (should (hact 'kbd-key "TAB"))
-          ;; (hy-test-helpers:consume-input-events)
-          ;; (should (string=
-          ;;          (concat (hyrolo-tests--hyrolo-section-header org-file1)
-          ;;                  "* h-org 1\nbody\n** h-org 1.1\nbody\n** h-org 1.2\nbody\n*** h-org 1.2.1\nbody\n* h-org 2\nbody\n** h-org 2.1...\n")
-          ;;          (hyrolo-tests--outline-as-string)))
-
-          (should (hact 'kbd-key "f TAB"))
+          (execute-kbd-macro (kbd "f TAB"))
           (should (string=
                    (concat (hyrolo-tests--hyrolo-section-header org-file1)
                            "* h-org 1\nbody\n** h-org 1.1\nbody\n** h-org 1.2\nbody\n*** h-org 1.2.1\nbody\n* h-org 2\nbody\n** h-org 2.1\nbody\n")
