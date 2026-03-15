@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     14-Mar-26 at 03:16:36 by Bob Weiner
+;; Last-Mod:     15-Mar-26 at 01:21:31 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -41,6 +41,7 @@
 (require 'find-func) ;; used by grep-msg ibtype
 (eval-when-compile (require 'hversion))
 (require 'hactypes)
+(require 'hsys-org)
 (require 'hypb)
 (require 'org-macs) ;; for org-uuid-regexp
 (require 'subr-x) ;; for string-trim
@@ -175,10 +176,12 @@ only to prevent false matches."
 	   (start (when bounds (car bounds)))
 	   (end   (when bounds (cdr bounds)))
 	   m)
+      ;; Remove any "ID:" or "id:" prefix
+      (when (and id (string-prefix-p "id:" id t))
+        (setq id (substring id 3)
+              start (+ start 3)))
       ;; Ignore ID definitions or when not on a possible ID
-      (when (and id (if (fboundp 'org-uuidgen-p)
-			(org-uuidgen-p id)
-		      (string-match org-uuid-regexp (downcase id))))
+      (when (hsys-org-uuid-is-p id)
 	(when (and start end)
 	  (ibut:label-set id start end))
 	(if (and (not assist-flag)
@@ -208,6 +211,9 @@ If the referenced location is found, return non-nil."
     (let ((id (thing-at-point 'symbol t)) ;; Could be a uuid or some other form of id
 	  m
 	  mpos)
+      ;; Remove any "ID:" or "id:" prefix
+      (when (and id (string-prefix-p "id:" id t))
+        (setq id (substring id 3)))
       ;; Ignore ID definitions or when not on a possible ID
       (when (and id
 		 (let ((inhibit-message t)) ;; Inhibit org-id-find status msgs
@@ -490,7 +496,6 @@ handle any links they recognize first."
 	     ;; Prevent infinite recursion, e.g. if called via
 	     ;; `org-metareturn-hook' from `org-meta-return' invocation.
 	     (not (hyperb:stack-frame '(ibtypes::debugger-source org-meta-return))))
-    (require 'hsys-org)
     (declare-function hsys-org-link-at-p      "hsys-org" ())
     (declare-function hsys-org-set-ibut-label "hsys-org" (start-end))
     (let ((start-end (hsys-org-link-at-p)))
@@ -985,9 +990,10 @@ See `hpath:find' function documentation for special file display options."
              (col-num (when (match-end 4)
 			(string-to-number (match-string-no-properties 5 path-line-and-col))))
 	     (label (match-string-no-properties 1 path-line-and-col))
-	     ;; Next variable must come last as it can overwrite the match-data
-	     (file (hpath:expand label)))
-        (when (setq file (hpath:is-p file))
+	     ;; Next variable should come last as it can overwrite the match-data
+	     file)
+        (when (setq file (or (hywiki-get-page-file label)
+                             (hpath:is-p (hpath:expand label))))
           (ibut:label-set label start (+ start (length label)))
           (if col-num
               (hact 'link-to-file-line-and-column file line-num col-num)
@@ -1017,8 +1023,9 @@ LINE-NUM may be an integer or string."
 		     (and (or (null (setq ext (file-name-extension file)))
 			      (member (concat "." ext) (get-load-suffixes)))
 			  (ignore-errors (find-library-name file)))
-		     (expand-file-name file))))
-    (when (file-exists-p file)
+                     (hywiki-get-page-file file)
+                     (hpath:is-p (expand-file-name file)))))
+    (when (file-exists-p (hpath:normalize file))
       (actypes::link-to-file-line file line-num))))
 
 (defib ipython-stack-frame ()

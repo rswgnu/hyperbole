@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     14-Mar-26 at 12:51:37 by Bob Weiner
+;; Last-Mod:     15-Mar-26 at 01:46:30 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -3220,7 +3220,8 @@ If such an instance is not found, trigger an error."
             (org-fold-show-entry))
           ;; (message "Instance %d of '%s'" n title)
           t)
-      (error "(hywiki-org-to-heading-instance): Could not find %d instance(s) of '%s'" n title))))
+      (error "(hywiki-org-to-heading-instance): Could not find %d instance(s) of '%s' in \"%s\""
+             n title (or buffer-file-name (current-buffer))))))
 
 (defun hywiki-make-referent-hasht ()
   "Rebuld referent hasht from list of HyWiki page files and non-page entries."
@@ -3365,10 +3366,12 @@ When NO-STATS is non-nil, don't include statistics in square brackets."
 (defun hywiki-org-get-heading-match-regexp (title)
   "Return a regexp that matches to the TITLE and start of an Org heading."
   ;; org-complex-heading-regexp + custom todo keywords + specific title
-  (format (concat "^\\(\\*+\\)"
+  (format (concat "^\\(\\*+ +\\)"
                   ;; optional todo keyword
-	          "\\(?: +"
-                  hywiki--org-todo-regexp
+	          "\\(?:"
+                  (if (hywiki-in-page-p)
+                      hywiki--org-todo-regexp
+                    org-todo-regexp)
                   "\\)?"
                   ;; optional priority
 	          "\\(?: +\\(\\[#.\\]\\)\\)?"
@@ -4573,18 +4576,19 @@ Initializes `hywiki--org-todo-regexp' and `hywiki--org-heading-regexp'."
   (setq hywiki--org-todo-regexp (hywiki-org-directory-todo-regexp hywiki-directory)
         hywiki--org-heading-regexp
         ;; org-complex-heading-regexp + custom todo keywords
-        (concat "^\\(\\*+\\)"
-                ;; optional todo keyword
-	        "\\(?: +"
-                hywiki--org-todo-regexp
-                "\\)?"
-                ;; optional priority
-	        "\\(?: +\\(\\[#.\\]\\)\\)?"
-                ;; optional title and stats
-	        "\\(?: +\\(.*?\\)\\)??"
-                ;; optional tags
-	        "\\(?:[ \t]+\\(:[[:alnum:]_@#%:]+:\\)\\)?"
-	        "[ \t]*$")))
+        (concat
+         ;; Make leading asterisks optional since (org-get-heading) may have
+         ;; already removed them.
+         "^\\(\\*+ +\\)?"
+         ;; optional todo keyword
+	 "\\(?:" hywiki--org-todo-regexp "\\)?"
+         ;; optional priority
+	 "\\(?: +\\(\\[#.\\]\\)\\)?"
+         ;; optional title and stats
+	 "\\(?: +\\(.*?\\)\\)??"
+         ;; optional tags
+	 "\\(?:[ \t]+\\(:[[:alnum:]_@#%:]+:\\)\\)?"
+	 "[ \t]*$")))
 
 ;;; ************************************************************************
 ;;; Private initializations

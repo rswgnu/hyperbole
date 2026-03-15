@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:      7-Mar-26 at 23:32:46 by Bob Weiner
+@c Last-Mod:     15-Mar-26 at 01:56:19 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,8 +30,8 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED March 7, 2026
-@set UPDATED-MONTH Marc 2026
+@set UPDATED March 15, 2026
+@set UPDATED-MONTH March 2026
 @set EDITION 9.0.2pre
 @set VERSION 9.0.2pre
 
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed March 7, 2026.
+Printed March 15, 2026.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -213,7 +213,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.2pre
-March 7, 2026 @c AUTO-REPLACE-ON-SAVE
+March 15, 2026 @c AUTO-REPLACE-ON-SAVE
 
 
   Published by the Free Software Foundation, Inc.
@@ -3887,8 +3887,8 @@ upon the referent context in which the Action Key is released.
 @example
 Referent Context         Link Type
 ----------------------------------------------------
-HyWikiWord Reference     link-to-wikiword
 Org Roam or Org Id       link-to-org-id
+HyWikiWord Reference     link-to-wikiword
 Global Button            link-to-gbut
 Explicit Button          link-to-ebut
 Implicit Button          link-to-ibut
@@ -3898,10 +3898,14 @@ Info Node                link-to-Info-node
 Texinfo Node             link-to-texinfo-node
 Mail Reader Message      link-to-mail
 Directory Name           link-to-directory
-Filename                 link-to-file
+File Name                link-to-file
 Koutline Cell            link-to-kcell
+Single-line Region       link-to-string-match
+HyWiki Page              link-to-wikiword
+Org Heading              link-to-file
 Outline Heading          link-to-file
 Buffer attached to File  link-to-file
+EOL in Dired Buffer      link-to-directory (Dired dir)
 Buffer without File      link-to-buffer-tmp
 @end example
 @end format
