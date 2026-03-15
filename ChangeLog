@@ -10,6 +10,11 @@
 * hpath.el (hpath:at-p, hpath:find-line): Handle pathname expansion of HyWiki
     page names.
 
+2026-03-14  Mats Lidell  <matsl@gnu.org>
+
+* test/hycontrol-tests.el (hycontrol-tests--move-frame): Use stub since
+    frame-position is called differenty in headless and native environment.
+
 2026-03-14  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:suffixes): Add ".org" suffix to expand HyWiki page references

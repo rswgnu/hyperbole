@@ -3,11 +3,11 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     11-Mar-26 at 19:00:19 by Bob Weiner
+;; Last-Mod:     14-Mar-26 at 19:38:41 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; Copyright (C) 1991-2025  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2026  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -582,12 +582,8 @@ after the display."
     (error "(hyrolo-display-matches): Search the rolo first"))
   ;; Save current window configuration if rolo match buffer is not
   ;; displayed in one of the windows already.
-  (or
-   ;; Handle both Emacs V18 and V19 versions of get-buffer-window.
-   (condition-case ()
-       (get-buffer-window display-buf (selected-frame))
-     (error (get-buffer-window display-buf)))
-   (setq hyrolo--wconfig (current-window-configuration)))
+  (unless (get-buffer-window display-buf (selected-frame))
+    (setq hyrolo--wconfig (current-window-configuration)))
   (hyrolo-to-buffer display-buf)
   (when (fboundp 'hproperty:but-create)
     (hproperty:but-create))
