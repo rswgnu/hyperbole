@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     14-Mar-26 at 12:42:35 by Bob Weiner
+;; Last-Mod:     15-Mar-26 at 00:28:25 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -571,9 +571,11 @@ When embedded within a path, the format is ${variable}."
 (defvar hpath:rfc "https://www.ietf.org/rfc/rfc%s.txt"
   "*Url pattern for (hpath:rfc rfc-num) to get the RFC document for `rfc-num'.")
 
-(defcustom hpath:suffixes '(".gz" ".Z")
+(defcustom hpath:suffixes '(".org" ".gz" ".Z")
   "List of filename suffixes to add or remove within hpath calls.
-Used by `hpath:exists-p' and `hpath:substitute-dir'."
+Used by `hpath:exists-p' and `hpath:substitute-dir'.  Includes \".org\" to
+expand HyWiki page references that have only instance, line, or column
+references and are handled by 'pathname-line-and-column'."
   :type '(repeat string)
   :group 'hyperbole-commands)
 
@@ -994,7 +996,8 @@ or `~'."
 				     ;; Could be a shell command from a semicolon separated
 				     ;; list; ignore if so
 				     nil)
-				    (t (expand-file-name subpath)))
+				    (t (or (hywiki-get-page-file subpath)
+                                           (expand-file-name subpath))))
 			    ;; Only default to current path if know are within a PATH value
 			    (when (string-match-p hpath:path-variable-value-regexp path)
 			      ".")))
@@ -1099,7 +1102,8 @@ Make any existing path within a file buffer absolute before returning."
 			   (file-name-absolute-p expanded-path) ;; absolute path
 			   (string-match-p hpath:variable-regexp expanded-path) ;; path with var
 			   (string-match-p "\\`([^\):]+)" expanded-path)))) ;; Info node
-	  (when (or non-exist (file-exists-p expanded-path)
+	  (when (or non-exist (and (not (string-empty-p expanded-path))
+                                   (file-exists-p expanded-path))
 		    (string-match-p ".+\\.info\\([.#]\\|\\'\\)" expanded-path))
 	    (if (string-empty-p expanded-path)
 		(concat prefix expanded-path suffix)
@@ -1544,15 +1548,16 @@ but locational suffixes within the file are utilized."
     (if (string-empty-p path)
 	(setq path ""
 	      pathname "")
-      ;; Never expand pathnames with modifier prepended.
-      (if modifier
-	  (setq path (hpath:resolve path))
-	(setq path (hpath:expand path)
-	      pathname (hpath:absolute-to path default-directory))
-	;; Remove http file:// url prefix that`hpath:absolute-to' may have
-	;; added and decode the url
-	(when (string-match "\\`file://" pathname)
-	  (setq pathname (hypb:decode-url (substring pathname (match-end 0)))))))
+      ;; Never expand pathnames with modifier prepended or Wiki page names
+      (cond (modifier
+	     (setq path (hpath:resolve path)))
+            ((hywiki-page-exists-p path))
+	    (t (setq path (hpath:expand path)
+	             pathname (hpath:absolute-to path default-directory))
+	       ;; Remove http file:// url prefix that`hpath:absolute-to' may have
+	       ;; added and decode the url
+	       (when (string-match "\\`file://" pathname)
+	         (setq pathname (hypb:decode-url (substring pathname (match-end 0))))))))
     (let ((remote-pathname (hpath:remote-p path)))
       (or modifier remote-pathname
 	  (file-exists-p pathname)
@@ -1766,7 +1771,7 @@ frame.  Always return t."
     (setq filename (substring filename (match-end 0))))
   (hpath:find
    (concat
-    filename
+    (or (hywiki-get-page-file filename) filename)
     (cond ((integerp line-num)
 	   (concat ":" (int-to-string line-num)))
 	  ((stringp line-num)
@@ -1920,17 +1925,19 @@ form is what is returned for PATH."
 					    (concat modifier (format rtn-path suffix)))
 					(concat modifier (format rtn-path ""))))))))))
 		  path non-exist)))
-     (unless (or (null path)
-		 (string-empty-p path)
-		 (string-equal "-" path)
-		 (string-match-p "#['`\"]" path)
-		 ;; If a single character in length, must be a word or
-		 ;; symbol character other than [.~ /].
-		 (and (= (length path) 1)
-		      (not (string-match-p "\\`[.~/]\\'" path))
-		      (or (not (string-match-p "\\sw\\|\\s_" path))
-			  (string-match-p "[@#&!*]" path))))
-       path)))
+    (unless (or (null path)
+		(string-empty-p path)
+		(string-equal "-" path)
+		(string-match-p "#['`\"]" path)
+		;; If a single character in length, must be a word or
+		;; symbol character other than [.~ /].
+		(and (= (length path) 1)
+		     (not (string-match-p "\\`[.~/]\\'" path))
+		     (or (not (string-match-p "\\sw\\|\\s_" path))
+			 (string-match-p "[@#&!*]" path))))
+      (when (or non-exist (file-remote-p path)
+                (file-exists-p (hpath:normalize path)))
+        path))))
 
 (defun hpath:org-normalize-title (title)
   "Strip all priority, leading ':' or '-' separators, and stats from TITLE and return."

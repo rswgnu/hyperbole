@@ -1,4 +1,54 @@
+2026-03-15  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:insert-text): Ensure line and col nums are prefixed with :L
+    and :C.
+* hywiki.el (hywiki-org-get-heading-match-regexp): Handle both HyWiki dir
+    custom todo keywords when in a page and Org standard todo keywords, otherwise.
+* hibtypes.el (pathname-line-and-column, hib-link-to-file-line): Expand HyWiki
+    page name using 'hywiki-get-page-file' before try to expand in current
+    directory
+* hpath.el (hpath:at-p, hpath:find-line): Handle pathname expansion of HyWiki
+    page names.
+
 2026-03-14  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:suffixes): Add ".org" suffix to expand HyWiki page references
+    that have only instance, line, or column references and are handled by
+    'pathname-line-and-column'."
+           (hpath:call): (file-exists-p "") returns t, so fix to check for empty
+    string before calling that.
+  hibtypes.el (hpath:is-p): Unless 'non-exist' arg is sent or path is a remote file,
+    return path only if it exists.
+
+* hui.el (require 'hsys-org): Add.
+  hibtypes.el (require 'hsys-org): Add.
+  hsys-org.el (hsys-org-uuid-is-p): Add and use in "hibtypes.el" and "hui.el".
+
+* hui.el (hui:link-possible-types): For Org/Org-Roam ids, send 2nd arg
+    of current heading string to 'link-to-org-id' call.
+         (hui:link-possible-types): If in a HyWiki page but not on a heading line,
+    use a 'link-to-wikiword' with the page name and line number.
+  hactypes.el (link-to-org-id): Add optional heading 'title' arg for use in
+    'hbut:insert-text' where ibut links are created.
+
+*  hbut.el (ibut:insert-text): For 'actypes::link-to-org-id', change from
+    a double-quoted link to a double square bracketed Org link.  This allows
+    including the title from the Org heading linked to which is stored in
+    the current Hyperbole button attribute, 'lbl-key'.
+
+* hui.el (hui:link-possible-types): For HyWiki links, wrap a call of
+    'hpath:org-normalize-title' around 'hywiki-org-format-heading' to ensure
+    everything but the title is removed.
+
+* hsys-org.el (hsys-org-link-at-p): Don't shrink label region down to just
+   the description part of the Org link, leave it as the entire space inside
+   the Org open and close brackets.  Remove this code:
+	      (when (string-match "\\]\\[" label)
+                (setq start (match-end 0)))
+   This makes link activation work better.
+
+* hibtypes.el (org-id, org-id:help): Fix to remove "id:" prefix so
+    that uuid check predicates succeed properly.
 
 * Makefile (HYPB_BIN_WARN): Fix preceding commentary on example use.
            (test-all TERM=xterm-256color): Add #(LET_VARIABLES).

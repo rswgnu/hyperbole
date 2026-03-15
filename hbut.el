@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     28-Feb-26 at 16:33:40 by Bob Weiner
+;; Last-Mod:     15-Mar-26 at 02:02:37 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2723,7 +2723,12 @@ Summary of operations based on inputs (name arg from \\='hbut:current attrs):
 	 (if (string-prefix-p "<" arg1)
 	     (insert arg1)
 	   (insert "<" arg1 ">"))))
-      ('actypes::link-to-org-id (insert (format "\"id:%s\"" arg1)))
+      ;; Insert an Org-style link here so can include the Org title linked
+      ;; to for clarity.
+      ('actypes::link-to-org-id
+       (insert (if arg2
+                   (format "[[id:%s][%s]]" arg1 arg2)
+                 (format "[[id:%s]]" arg1))))
       ('actypes::link-to-rfc (insert (format "rfc%d" arg1)))
       ('actypes::link-to-wikiword (insert (if (and (stringp arg1)
                                                    (string-match-p "\\s-" arg1))
@@ -2732,13 +2737,13 @@ Summary of operations based on inputs (name arg from \\='hbut:current attrs):
                                             arg1)))
       ('man (insert arg1))
       ('actypes::man-show (insert arg1))
-      ('actypes::link-to-file-line (insert (format "\"%s:%d\""
+      ('actypes::link-to-file-line (insert (format "\"%s:L%d\""
 						   (hpath:shorten arg1) arg2)))
       ('actypes::link-to-file-line-and-column
        (insert
 	(if (eq arg3 0)
-	    (format "\"%s:%d\"" (hpath:shorten arg1) arg2)
-	  (format "\"%s:%d:%d\"" (hpath:shorten arg1) arg2 arg3))))
+	    (format "\"%s:L%d\"" (hpath:shorten arg1) arg2)
+	  (format "\"%s:L%d:C%d\"" (hpath:shorten arg1) arg2 arg3))))
       ('actypes::link-to-file
        ;; arg2 when given is a buffer position
        (insert "\""

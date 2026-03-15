@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     14-Mar-26 at 11:47:29 by Bob Weiner
+;; Last-Mod:     15-Mar-26 at 01:59:05 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -27,6 +27,7 @@
 (require 'hmail)
 (require 'hbut)
 (eval-when-compile (require 'hactypes))
+(require 'hsys-org)
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -2012,8 +2013,8 @@ possible types.
 
 Referent Context         Possible Link Type Returned
 ----------------------------------------------------
-HyWikiWord Reference     link-to-wikiword
 Org Roam or Org Id       link-to-org-id
+HyWikiWord Reference     link-to-wikiword
 Global Button            link-to-gbut
 Explicit Button          link-to-ebut
 Implicit Button          link-to-ibut
@@ -2026,7 +2027,8 @@ Directory Name           link-to-directory
 File Name                link-to-file
 Koutline Cell            link-to-kcell
 Single-line Region       link-to-string-match
-HyWiki Org Heading       link-to-wikiword
+HyWiki Page              link-to-wikiword
+Org Heading              link-to-file
 Outline Heading          link-to-file
 Buffer attached to File  link-to-file
 EOL in Dired Buffer      link-to-directory (Dired dir)
@@ -2036,164 +2038,211 @@ Buffer without File      link-to-buffer-tmp"
 
   (let (val
 	hbut-sym
-	lbl-key)
+        id
+	lbl-key
+        heading)
     (prog1 (delq nil
-		 (list (cond ((let ((ref (hywiki-referent-exists-p)))
-				(and ref (list 'link-to-wikiword ref))))
-                             ((and (featurep 'org-id)
-				   (cond ((save-excursion
-					    (beginning-of-line)
-					    (when (looking-at "[ \t]*:\\(CUSTOM_\\)?ID:[ \t]+\\([^ \t\r\n\f]+\\)")
-					      ;; Org ID definition
-					      (list 'link-to-org-id (match-string 2)))))
-					 (t (let* ((id (thing-at-point 'symbol t)) ;; Could be a uuid or some other form of id
-						   (bounds (when id (bounds-of-thing-at-point 'symbol)))
-						   (start (when bounds (car bounds)))
-						   (case-fold-search t))
-					      ;; Org ID link - must have id: prefix or is ignored.
-					      (when start
+		 (list (cond
+                        ;; Org id or Org Roam id
+                        ((and (featurep 'org-id)
+                              (if (derived-mode-p 'org-mode)
+                                  (setq heading (org-get-heading)
+                                        id (ignore-errors (org-id-get)))
+                                t)
+			      (cond (id)
+                                    ((save-excursion
+				       (beginning-of-line)
+				       (when (looking-at "[ \t]*:\\(CUSTOM_\\)?ID:[ \t]+\\([^ \t\r\n\f]+\\)")
+					 ;; Org ID definition
+                                         (setq id (match-string 2)))))
+				    (t (let* ((id (thing-at-point 'symbol t)) ;; Could be a uuid or some other form of id
+					      (bounds (when id (bounds-of-thing-at-point 'symbol)))
+					      (start (when bounds (car bounds)))
+					      (case-fold-search t))
+					 ;; Org ID link - must have id: prefix or is ignored.
+					 (when start
+					   (save-excursion
+					     (goto-char (max (- start 3) (point-min)))
+					     (when (looking-at "\\bid:")
+                                               t))))))
+                              (when (hsys-org-uuid-is-p id)
+                                (unless (string-prefix-p "id:" id)
+                                  (setq id (concat "id:" id)))
+				(list 'link-to-org-id id
+                                      (hpath:org-normalize-title
+                                       (hywiki-org-format-heading heading
+			                                          t t t nil t))))))
+                        ;; HyWiki reference
+                        ((let ((ref (hywiki-referent-exists-p)))
+			   (and ref (list 'link-to-wikiword ref))))
+			;; Next clause forces use of any ibut name in the link
+			;; and sets hbut:current button attributes.
+			(t (cond ((and (not (derived-mode-p 'dired-mode))
+				       (prog1 (setq hbut-sym (hbut:at-p))
+					 (when (ibut:is-p hbut-sym)
+					   (save-excursion (ibut:at-to-name-p hbut-sym))))
+				       (setq lbl-key (hattr:get hbut-sym 'lbl-key))
+				       (eq (current-buffer) (get-file-buffer (gbut:file))))
+				  (list 'link-to-gbut lbl-key))
+				 ((and hbut-sym lbl-key (eq (hattr:get hbut-sym 'categ) 'explicit))
+				  (list 'link-to-ebut lbl-key))
+				 ((and hbut-sym lbl-key
+				       (not (eq (ibtype:def-symbol
+						 (hattr:get 'hbut:current 'categ))
+						'hywiki-word)))
+				  ;; On an implicit button other than a non-existing
+				  ;; potential HyWikiWord, so link to it
+				  ;; (message "%S" (hattr:list hbut-sym))
+				  (list 'link-to-ibut lbl-key (or (hypb:buffer-file-name) (buffer-name))))
+				 ((and (require 'bookmark)
+				       (derived-mode-p 'bookmark-bmenu-mode)
+				       (list 'link-to-bookmark (bookmark-bmenu-bookmark))))
+				 ((let (node)
+				    (cond ((derived-mode-p 'Info-mode)
+					   (if (and Info-current-node
+						    (member Info-current-node
+							    (Info-index-nodes Info-current-file))
+						    (Info-menu-item-at-p))
+					       (let ((hargs:reading-type 'Info-index-item))
+						 (list 'link-to-Info-index-item (hargs:at-p)))
+					     (let ((hargs:reading-type 'Info-node))
+					       (list 'link-to-Info-node (hargs:at-p)))))
+					  ((and (derived-mode-p 'texinfo-mode)
 						(save-excursion
-						  (goto-char (max (- start 3) (point-min)))
-						  (when (looking-at "\\bid:")
-						    (list 'link-to-org-id id)))))))))
+						  (beginning-of-line)
+						  (when (or (looking-at "@node ")
+							    (re-search-backward "^@node " nil t))
+						    (require 'texnfo-upd)
+						    (setq node (texinfo-copy-node-name)))))
+					   (list 'link-to-texinfo-node (hypb:buffer-file-name) node))
+					  ((hmail:reader-p)
+					   (list 'link-to-mail
+						 (list (rmail:msg-id-get) (hypb:buffer-file-name)))))))
+				 (t (cond
+				     ((let ((hargs:reading-type 'directory))
+					(setq val (hargs:at-p t)))
+				      (list 'link-to-directory val))
+				     ((let ((hargs:reading-type 'file))
+					(setq val (hargs:at-p t)))
+				      (list 'link-to-file val))
+				     ((derived-mode-p #'kotl-mode)
+				      (list 'link-to-kcell (hypb:buffer-file-name) (kcell-view:idstamp)))
+				     ;;
+				     ;; If region is active in the target buffer and it is one
+				     ;; line or less, then do a link-to-string-match to the region string.
+				     ((let ((region (and (use-region-p)
+							 (string-trim (buffer-substring-no-properties
+								       (region-beginning) (region-end)))))
+					    (instance-num 0))
+					(when (and region
+						   (not (string-empty-p region))
+						   ;; single line
+						   (not (string-match "[\n\r\f]" region)))
+					  (save-excursion
+					    (end-of-line)
+					    (while (search-backward region nil t)
+					      (setq instance-num (1+ instance-num))))
+					  (list 'link-to-string-match region instance-num (hypb:buffer-file-name)))))
+                                     ;;
+                                     ;; If on a HyWiki page, use a link-to-wikiword
+				     ((and hywiki-mode
+                                           (hywiki-in-page-p)
+					   (stringp outline-regexp))
+				      (if (save-excursion
+					    (beginning-of-line)
+					    (looking-at outline-regexp))
+					  (let ((instance-num 0)
+                                                (title
+                                                 (hpath:org-normalize-title
+                                                  (hywiki-org-format-heading
+						   (buffer-substring-no-properties
+                                                    (line-beginning-position)
+						    (line-end-position))
+                                                   t t t nil t))))
+					    (when (not (string-empty-p title))
+					      (save-excursion
+						(end-of-line)
+                                                (let ((exact-heading-regexp (hywiki-org-get-heading-match-regexp title)))
+						  (while (re-search-backward exact-heading-regexp nil t)
+						    (setq instance-num (1+ instance-num)))))
+					      (list 'link-to-wikiword
+						    (format "%s#%s%s"
+                                                            (hywiki-get-buffer-page-name)
+							    title
+							    (if (> instance-num 1) (format ":I%d" instance-num) "")))))
+					(list 'link-to-wikiword
+					      (format "%s:L%d"
+                                                      (hywiki-get-buffer-page-name)
+                                                      (line-number-at-pos)))))
 
-			     ;; Next clause forces use of any ibut name in the link
-			     ;; and sets hbut:current button attributes.
-			     (t (cond ((and (not (derived-mode-p 'dired-mode))
-					    (prog1 (setq hbut-sym (hbut:at-p))
-					      (when (ibut:is-p hbut-sym)
-						(save-excursion (ibut:at-to-name-p hbut-sym))))
-					    (setq lbl-key (hattr:get hbut-sym 'lbl-key))
-					    (eq (current-buffer) (get-file-buffer (gbut:file))))
-				       (list 'link-to-gbut lbl-key))
-				      ((and hbut-sym lbl-key (eq (hattr:get hbut-sym 'categ) 'explicit))
-				       (list 'link-to-ebut lbl-key))
-				      ((and hbut-sym lbl-key
-					    (not (eq (ibtype:def-symbol
-						      (hattr:get 'hbut:current 'categ))
-						     'hywiki-word)))
-				       ;; On an implicit button other than a non-existing
-				       ;; potential HyWikiWord, so link to it
-				       ;; (message "%S" (hattr:list hbut-sym))
-				       (list 'link-to-ibut lbl-key (or (hypb:buffer-file-name) (buffer-name))))
-				      ((and (require 'bookmark)
-					    (derived-mode-p 'bookmark-bmenu-mode)
-					    (list 'link-to-bookmark (bookmark-bmenu-bookmark))))
-				      ((let (node)
-					 (cond ((derived-mode-p 'Info-mode)
-						(if (and Info-current-node
-							 (member Info-current-node
-								 (Info-index-nodes Info-current-file))
-							 (Info-menu-item-at-p))
-						    (let ((hargs:reading-type 'Info-index-item))
-						      (list 'link-to-Info-index-item (hargs:at-p)))
-						  (let ((hargs:reading-type 'Info-node))
-						    (list 'link-to-Info-node (hargs:at-p)))))
-					       ((and (derived-mode-p 'texinfo-mode)
-						     (save-excursion
-						       (beginning-of-line)
-						       (when (or (looking-at "@node ")
-								 (re-search-backward "^@node " nil t))
-							 (require 'texnfo-upd)
-							 (setq node (texinfo-copy-node-name)))))
-						(list 'link-to-texinfo-node (hypb:buffer-file-name) node))
-					       ((hmail:reader-p)
-						(list 'link-to-mail
-						      (list (rmail:msg-id-get) (hypb:buffer-file-name)))))))
-				      (t (cond
-					  ((let ((hargs:reading-type 'directory))
-					     (setq val (hargs:at-p t)))
-					   (list 'link-to-directory val))
-					  ((let ((hargs:reading-type 'file))
-					     (setq val (hargs:at-p t)))
-					   (list 'link-to-file val))
-					  ((derived-mode-p #'kotl-mode)
-					   (list 'link-to-kcell (hypb:buffer-file-name) (kcell-view:idstamp)))
-					  ;;
-					  ;; If region is active in the target buffer and it is one
-					  ;; line or less, then do a link-to-string-match to the region string.
-					  ((let ((region (and (use-region-p)
-							      (string-trim (buffer-substring-no-properties
-									    (region-beginning) (region-end)))))
+                                     ;;
+                                     ;; If in a non-HyWiki Org file, use a link-to-file-line
+				     ((and (derived-mode-p 'org-mode)
+					   (stringp outline-regexp))
+				      (if (save-excursion
+					    (beginning-of-line)
+					    (looking-at outline-regexp))
+					  (let ((instance-num 0)
+                                                (title
+                                                 (hpath:org-normalize-title
+                                                  (org-get-heading t t t))))
+					    (when (not (string-empty-p title))
+					      (save-excursion
+						(end-of-line)
+                                                (let ((exact-heading-regexp (hywiki-org-get-heading-match-regexp title)))
+						  (while (re-search-backward exact-heading-regexp nil t)
+						    (setq instance-num (1+ instance-num)))))
+					      (list 'link-to-file
+						    (format "%s#%s%s"
+                                                            (hpath:shorten buffer-file-name)
+							    title
+							    (if (> instance-num 1) (format ":I%d" instance-num) "")))))
+					(list 'link-to-file-line
+                                              (hpath:shorten buffer-file-name)
+                                              (line-number-at-pos))))
+                                     ;;
+				     ;; If current line starts with an outline-regexp prefix and
+				     ;; has a non-empty heading, use a link-to-string-match.
+				     ((and (hypb:buffer-file-name)
+					   (derived-mode-p 'outline-mode 'kotl-mode)
+					   (stringp outline-regexp)
+					   (save-excursion
+					     (beginning-of-line)
+					     (looking-at outline-regexp))
+					   (let ((heading (string-trim
+							   (buffer-substring-no-properties
+							    (match-end 0)
+							    (line-end-position))))
 						 (instance-num 0))
-					     (when (and region
-							(not (string-empty-p region))
-							;; single line
-							(not (string-match "[\n\r\f]" region)))
+					     (when (not (string-empty-p heading))
 					       (save-excursion
 						 (end-of-line)
-						 (while (search-backward region nil t)
+						 (while (re-search-backward (format hpath:outline-section-pattern (regexp-quote heading))
+									    nil t)
 						   (setq instance-num (1+ instance-num))))
-					       (list 'link-to-string-match region instance-num (hypb:buffer-file-name)))))
-                                          ;;
-                                          ;; If on a HyWiki Org headline, use a link-to-wikiword
-                                          ;;
-					  ((and hywiki-mode
-                                                (hywiki-in-page-p)
-						(stringp outline-regexp)
-						(save-excursion
-						  (beginning-of-line)
-						  (looking-at outline-regexp))
-						(let ((title (hywiki-org-format-heading
-							      (buffer-substring-no-properties
-                                                               (line-beginning-position)
-							       (line-end-position))
-                                                              t t t nil t))
-						      (instance-num 0))
-						  (when (not (string-empty-p title))
-						    (save-excursion
-						      (end-of-line)
-                                                      (let ((exact-heading-regexp (hywiki-org-get-heading-match-regexp title)))
-						        (while (re-search-backward exact-heading-regexp nil t)
-							  (setq instance-num (1+ instance-num)))))
-						    (list 'link-to-wikiword
-							  (format "%s#%s%s"
-                                                                  (hywiki-get-buffer-page-name)
-								  title
-								  (if (> instance-num 1) (format ":I%d" instance-num) "")))))))
-                                          ;;
-					  ;; If current line starts with an outline-regexp prefix and
-					  ;; has a non-empty heading, use a link-to-string-match.
-					  ((and (hypb:buffer-file-name)
-						(derived-mode-p 'outline-mode 'org-mode 'kotl-mode)
-						(stringp outline-regexp)
-						(save-excursion
-						  (beginning-of-line)
-						  (looking-at outline-regexp))
-						(let ((heading (string-trim
-								(buffer-substring-no-properties
-								 (match-end 0)
-								 (line-end-position))))
-						      (instance-num 0))
-						  (when (not (string-empty-p heading))
-						    (save-excursion
-						      (end-of-line)
-						      (while (re-search-backward (format hpath:outline-section-pattern (regexp-quote heading))
-										 nil t)
-							(setq instance-num (1+ instance-num))))
-						    (list 'link-to-file
-							  (format "%s#%s%s"
-								  (hypb:buffer-file-name)
-								  heading
-								  (if (> instance-num 1) (format ":I%d" instance-num) "")))))))
-					  ((hypb:buffer-file-name)
-					   (list 'link-to-file (hypb:buffer-file-name) (point)))
-					  ((derived-mode-p 'dired-mode)
-					   (list 'link-to-directory
-						 (expand-file-name default-directory)))
-					  (t (list 'link-to-buffer-tmp (buffer-name)))))
-				      ;;
-				      ;; Deleted link to elisp possibility as it can embed
-				      ;; long elisp functions in the button data file and
-				      ;; possibly not parse them correctly.
-				      ;;
-				      ;; (and (fboundp 'smart-emacs-lisp-mode-p)
-				      ;;      (smart-emacs-lisp-mode-p)
-				      ;;      (or (eq (char-syntax (following-char)) ?\()
-				      ;; 	 (eq (char-syntax (preceding-char)) ?\)))
-				      ;;      (setq val (hargs:sexpression-p))
-				      ;;      (list 'eval-elisp val))
-				      )))))
+					       (list 'link-to-file
+						     (format "%s#%s%s"
+							     (hypb:buffer-file-name)
+							     heading
+							     (if (> instance-num 1) (format ":I%d" instance-num) "")))))))
+				     ((hypb:buffer-file-name)
+				      (list 'link-to-file (hypb:buffer-file-name) (point)))
+				     ((derived-mode-p 'dired-mode)
+				      (list 'link-to-directory
+					    (expand-file-name default-directory)))
+				     (t (list 'link-to-buffer-tmp (buffer-name)))))
+				 ;;
+				 ;; Deleted link to elisp possibility as it can embed
+				 ;; long elisp functions in the button data file and
+				 ;; possibly not parse them correctly.
+				 ;;
+				 ;; (and (fboundp 'smart-emacs-lisp-mode-p)
+				 ;;      (smart-emacs-lisp-mode-p)
+				 ;;      (or (eq (char-syntax (following-char)) ?\()
+				 ;; 	 (eq (char-syntax (preceding-char)) ?\)))
+				 ;;      (setq val (hargs:sexpression-p))
+				 ;;      (list 'eval-elisp val))
+				 )))))
       ;; This is a referent button to link to, not the source button,
       ;; so clear it.
       (hattr:clear 'hbut:current))))
