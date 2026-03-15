@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     15-Mar-26 at 01:21:31 by Bob Weiner
+;; Last-Mod:     15-Mar-26 at 10:16:58 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -992,8 +992,9 @@ See `hpath:find' function documentation for special file display options."
 	     (label (match-string-no-properties 1 path-line-and-col))
 	     ;; Next variable should come last as it can overwrite the match-data
 	     file)
-        (when (setq file (or (hywiki-get-page-file label)
-                             (hpath:is-p (hpath:expand label))))
+        (when (setq file (or (hpath:is-p (hpath:expand label))
+                             (and (not (file-name-directory label))
+                                  (hywiki-get-page-file label))))
           (ibut:label-set label start (+ start (length label)))
           (if col-num
               (hact 'link-to-file-line-and-column file line-num col-num)
@@ -1023,8 +1024,9 @@ LINE-NUM may be an integer or string."
 		     (and (or (null (setq ext (file-name-extension file)))
 			      (member (concat "." ext) (get-load-suffixes)))
 			  (ignore-errors (find-library-name file)))
-                     (hywiki-get-page-file file)
-                     (hpath:is-p (expand-file-name file)))))
+                     (hpath:is-p (expand-file-name file))
+                     (and (not (file-name-directory file))
+                          (hywiki-get-page-file file)))))
     (when (file-exists-p (hpath:normalize file))
       (actypes::link-to-file-line file line-num))))
 

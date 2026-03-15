@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     15-Mar-26 at 01:46:30 by Bob Weiner
+;; Last-Mod:     15-Mar-26 at 11:39:04 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -4098,8 +4098,9 @@ If point is on one, press RET immediately to use that one."
 
 (defun hywiki-page-exists-p (word)
   "Return HyWiki WORD iff it is an existing page reference."
-  (when (eq (car (hywiki-get-referent word)) 'page)
-    word))
+  (and (stringp word) (not (file-name-directory word))
+       (eq (car (hywiki-get-referent word)) 'page)
+       word))
 
 (defun hywiki-page-read (&optional prompt initial)
   "Prompt with completion for and return an existing HyWiki page name.

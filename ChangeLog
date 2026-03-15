@@ -1,5 +1,9 @@
 2026-03-15  Bob Weiner  <rsw@gnu.org>
 
+* test/hywiki-tests.el (hywiki-tests--save-referent-global-button-use-menu):
+    Rewrite to not use mocking.  Fixes this to work with latest
+    'hpath:find' as well.
+
 * hbut.el (ibut:insert-text): Ensure line and col nums are prefixed with :L
     and :C.
 * hywiki.el (hywiki-org-get-heading-match-regexp): Handle both HyWiki dir
@@ -7,6 +11,10 @@
 * hibtypes.el (pathname-line-and-column, hib-link-to-file-line): Expand HyWiki
     page name using 'hywiki-get-page-file' before try to expand in current
     directory
+              (pathname-line-and-column, hib-link-to-file-line): Call
+    'hywiki-get-page-file' only if 'label' has no directory attached.  This fixes
+    a problem where ".org" is
+    attached improperly to the filename.
 * hpath.el (hpath:at-p, hpath:find-line): Handle pathname expansion of HyWiki
     page names.
 

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     11-Mar-26 at 21:12:52 by Bob Weiner
+;; Last-Mod:     15-Mar-26 at 12:20:56 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1365,21 +1365,19 @@ named WikiReferent with a non-page referent type."
   "Verify saving and loading a referent global-button works using Hyperbole's menu."
   (skip-unless (not noninteractive))
   (hywiki-tests--referent-test
-    (progn
-      (sit-for 0.2)
-      (cons 'global-button "global"))
-    (defvar test-buffer)
-    (let* ((test-file (make-temp-file "gbut" nil ".txt"))
-           (test-buffer (find-file-noselect test-file)))
+    (cons 'global-button "global")
+    (let* ((gbut-file (make-temp-file hbmap:filename nil nil))
+	   (hbmap:filename (file-name-nondirectory gbut-file))
+	   (hbmap:dir-user (file-name-directory gbut-file))
+	   (hbmap:dir-filename (expand-file-name  "HBMAP" hbmap:dir-user))
+           (gbut-buffer (find-file-noselect gbut-file)))
       (unwind-protect
-          (with-mock
-            (mock (hpath:find-noselect (expand-file-name hbmap:filename hbmap:dir-user)) => test-buffer)
-            (stub gbut:label-list => (list "global"))
-            (mock (gbut:act "global") => t)
-            (gbut:ebut-program "global" 'link-to-file test-file)
+	  (progn
+            (gbut:ebut-program "global" 'link-to-file gbut-file)
             (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET g global RET"))
             (hy-test-helpers:consume-input-events))
-        (hy-delete-file-and-buffer test-file)))))
+        (hy-delete-files-and-buffers (list gbut-file hbmap:filename hbmap:dir-filename))))))
+
 
 ;; HyRolo
 (ert-deftest hywiki-tests--save-referent-hyrolo ()
