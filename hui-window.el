@@ -810,9 +810,7 @@ Adds a window below this one.
 Beep and print message if the window cannot be split further."
   (interactive)
   (condition-case ()
-      (if (fboundp 'split-window-quietly)
-	  (split-window-quietly nil)
-	(split-window-vertically nil))
+      (split-window-vertically nil)
     (error (beep)
 	   (message "(hmouse-horizontal-action-drag): Can't split the window further."))))
 
