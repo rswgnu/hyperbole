@@ -91,23 +91,17 @@ or a Menu; otherwise returns nil."
     ;; If at end of node, go to next node
     ;;
     ((last-line-p)
-     (if (fboundp 'Info-global-next)
-	 (Info-global-next)
-       (Info-next)))
-    ((and (fboundp 'Info-mouse-follow-link)
-	  (mouse-event-p action-key-release-args)
+     (Info-next))
+    ((and (mouse-event-p action-key-release-args)
 	  (let ((opoint (point)))
 	    (Info-mouse-follow-link action-key-release-args)
 	    (/= opoint (point)))))
-    ((and (fboundp 'mouse-event-p)
-	  (not (mouse-event-p action-key-release-args))
+    ((and (not (mouse-event-p action-key-release-args))
 	  (Info-handle-in-node-hdr)))
     ((Info-handle-in-note))
     ((Info-handle-in-menu))
     ((pos-visible-in-window-p (point-max))
-     (if (fboundp 'Info-global-next)
-	 (Info-global-next)
-       (Info-next)))
+     (Info-next))
     ;;
     ;; If nothing else scroll forward a windowful.
     ;;
@@ -138,22 +132,17 @@ or a Menu; otherwise returns nil."
     ;; If at end or beginning of node, go to previous node
     ;;
     ((last-line-p)
-     (if (fboundp 'Info-global-prev) (Info-global-prev)
-       (Info-prev)))
-    ((and (fboundp 'Info-mouse-follow-link)
-	  (mouse-event-p assist-key-release-args)
+     (Info-prev))
+    ((and (mouse-event-p assist-key-release-args)
 	  (let ((opoint (point)))
 	    (Info-mouse-follow-link assist-key-release-args)
 	    (/= opoint (point)))))
-    ((and (fboundp 'mouse-event-p)
-	  (not (mouse-event-p assist-key-release-args))
+    ((and (not (mouse-event-p assist-key-release-args))
 	  (Info-handle-in-node-hdr-assist)))
     ((Info-handle-in-note))
     ((Info-handle-in-menu))
     ((pos-visible-in-window-p (point-min))
-     (if (fboundp 'Info-global-prev)
-	 (Info-global-prev)
-       (Info-prev)))
+     (Info-prev))
     ;;
     ;; If anywhere else, scroll backward a windowful.
     ;;
