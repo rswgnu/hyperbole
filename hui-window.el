@@ -831,7 +831,7 @@ Beep and print message if the sole window which cannot be deleted."
 	     (setq w-or-f (frame-selected-window w-or-f)))
 	   (when (and (eq w-or-f window) (window-valid-p window))
 	     window)))
-	((fboundp 'window-edges)
+	(t
 	 (let* ((edges (window-edges window))
 		(w-xmin (nth 0 edges))
 		(w-ymin (nth 1 edges))
