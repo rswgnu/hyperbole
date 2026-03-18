@@ -256,7 +256,7 @@ The button's attributes are stored in the symbol, `hbut:current'.")
      . ((smart-dired-sidebar) . (smart-dired-sidebar)))
     ;;
     ;; Handle Emacs push buttons in buffers
-    ((and (fboundp 'button-at) (button-at (point)))
+    ((button-at (point))
      . ((smart-push-button nil (mouse-event-p last-command-event))
 	. (smart-push-button-help nil (mouse-event-p last-command-event))))
     ;;
