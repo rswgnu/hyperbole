@@ -1530,9 +1530,7 @@ the position (not below another application's window)."
   ;; 26 and above.  For prior versions, the ordering of the frames
   ;; returned is not guaranteed, so the frame whose window is returned
   ;; may not be the uppermost.
-  (let* ((top-to-bottom-frames (if (fboundp 'frame-list-z-order)
-				   (frame-list-z-order)
-				 (frame-list)))
+  (let* ((top-to-bottom-frames (frame-list-z-order))
 	 (pos-x (car position))
 	 (pos-y (cdr position))
 	 edges left top right bottom
