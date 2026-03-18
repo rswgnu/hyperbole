@@ -144,11 +144,6 @@ This is shown when hovering over the button with the mouse."
 ;;; Public functions
 ;;; ************************************************************************
 
-;; Support NEXTSTEP and X window systems.
-(and (not (fboundp 'display-color-p))
-     (fboundp 'x-display-color-p)
-     (defalias 'display-color-p 'x-display-color-p))
-
 (defun hproperty:but-add (start end face)
   "Add a button between START and END using FACE in the current buffer.
 Button is added only if it does not already exist.  If it does exist
