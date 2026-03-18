@@ -90,9 +90,7 @@
 	   ((not (file-writable-p parent-dir))
 	    (error
 	     "(hyperb:init): `hbmap:dir-user' parent directory not writable"))
-	   ((or (if (fboundp 'make-directory)
-		    (progn (make-directory hbmap:dir-user) t))
-		(hypb:call-process-p "mkdir" nil nil hbmap:dir-user))
+	   ((progn (make-directory hbmap:dir-user) t)
 	    (or (file-writable-p hbmap:dir-user)
 		(or (progn (hypb:chmod '+ 700 hbmap:dir-user)
 			   (file-writable-p hbmap:dir-user))
