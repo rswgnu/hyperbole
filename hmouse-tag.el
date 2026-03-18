@@ -726,7 +726,7 @@ Use `hpath:display-buffer' to show definition or documentation."
 		 ;; Ignore unbound symbols if displaying doc.
 		 (t nil)))
 
-	  ((and elisp-flag (fboundp 'find-function-noselect)
+	  ((and elisp-flag
 		(let ((result (smart-lisp-bound-symbol-def tag-sym)))
 		  (when (and (cdr result)
 			     (hpath:display-buffer (car result)))
@@ -1274,7 +1274,7 @@ known Emacs Lisp identifier."
 	   (tag-sym (intern-soft tag)))
       (cond ((and (fboundp 'ert-test-boundp) (ert-test-boundp tag-sym))
 	     tag)
-	    ((when (and (fboundp 'find-function-noselect) tag-sym)
+	    ((when tag-sym
 	       (let ((result (smart-lisp-bound-symbol-def tag-sym)))
 		 (when (cdr result)
 		   tag))))
