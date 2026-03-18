@@ -829,7 +829,7 @@ no PROJECT value is provided, it defaults to the value of
 		 (when project-dir (setq project-dir (expand-file-name project-dir)))
 		 (cond ((and project-dir (file-readable-p project-dir) (file-directory-p project-dir))
 			(if reference
-			    (if (and (equal ref-type "commits") (fboundp 'vc-print-root-log))
+			    (if (equal ref-type "commits")
 				(let ((default-directory project-dir))
 				  (vc-print-root-log))
 			      ;; Display commit diffs in a help buffer
