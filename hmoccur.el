@@ -144,10 +144,9 @@ With optional NO-FOLD-SEARCH non-nil do case sensitive search.
 	(progn
 	  (set-buffer occbuf)
 	  (moccur-mode)
-	  (if (fboundp 'outline-minor-mode)
-	      (and (progn (goto-char 1)
-			  (search-forward "\C-m" nil t))
-		   (outline-minor-mode 1)))
+	  (and (progn (goto-char 1)
+		      (search-forward "\C-m" nil t))
+	       (outline-minor-mode 1))
 	  (goto-char (point-min))
 	  (pop-to-buffer occbuf)
 	  (message "%d matches." matches)

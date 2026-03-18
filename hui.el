@@ -684,10 +684,9 @@ a menu to find any of the occurrences."
 	(progn
 	  (set-buffer out-buf)
 	  (moccur-mode)
-	  (when (fboundp 'outline-minor-mode)
-	    (and (progn (goto-char 1)
-			(search-forward "\C-m" nil t))
-		 (outline-minor-mode 1)))
+	  (and (progn (goto-char 1)
+		      (search-forward "\C-m" nil t))
+	       (outline-minor-mode 1))
 	  (when (fboundp 'hproperty:but-create)
 	    (hproperty:but-create (regexp-quote
 				   (if match-part
