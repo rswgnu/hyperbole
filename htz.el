@@ -46,8 +46,7 @@
 
 (defvar htz:local
   (let ((local-tz (or (getenv "TZ") (getenv "TIMEZONE")
-		      (if (fboundp 'current-time-zone)
-			  (car (cdr (current-time-zone))))
+		      (car (cdr (current-time-zone)))
 		      (progn
 			(require 'hypb)
 			(hypb:call-process-p
@@ -400,10 +399,9 @@ Optional argument TIMEZONE specifies a time zone."
 	(setq timezone
 	      (or (cdr (assoc (upcase timezone)
 			      htz:world-timezones))
-		  (and (fboundp 'current-time-zone)
-		       (if (listp (current-time-zone))
-			   (/ (car (current-time-zone)) 36)
-			 (current-time-zone)))
+		  (if (listp (current-time-zone))
+		      (/ (car (current-time-zone)) 36)
+		    (current-time-zone))
 		  timezone))
 	(if (stringp timezone)
 	    (setq timezone (string-to-number timezone)))
