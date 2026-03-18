@@ -650,7 +650,7 @@ invoke that command instead.  Typically prevents clashes over
 {\\`C-c' RET}, {\\`C-c´ \\`C-m'}."
   (interactive "p")
   (when interactive-flag
-    (cond ((and (fboundp 'use-region-p) (use-region-p))
+    (cond ((use-region-p)
 	   nil)
 	  ((and transient-mark-mode mark-active)
 	   nil)
