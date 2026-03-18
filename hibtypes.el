@@ -1523,9 +1523,7 @@ documentation string is displayed."
 (defib gnus-push-button ()
   "Activate GNUS-specific article push-buttons, e.g. for hiding signatures.
 GNUS is a news and mail reader."
-  (and (fboundp 'get-text-property)
-       (fboundp 'gnus-article-press-button)
-       (get-text-property (point) 'gnus-callback)
+  (and (get-text-property (point) 'gnus-callback)
        (let* ((but (button-at (point)))
 	      (but-start (when but (button-start but)))
 	      (but-end (when but (button-end but))))
