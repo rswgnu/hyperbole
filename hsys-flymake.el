@@ -179,9 +179,7 @@ Issue is inserted into the buffer after the current visible line."
 	  (lambda () (when flymake-mode
 		       (define-key flymake-mode-map "\C-c"
 			 hsys-flymake-mode-control-c-prefix-map)
-		       ;; probably Emacs 28 or greater
-		       (when (fboundp 'repeat-mode)
-			 (repeat-mode 1)))))
+		       (repeat-mode 1))))
 ;; If flymake-mode is already enabled, re-enable it to ensure
 ;; repeat-mode gets enabled.
 (when (and (featurep 'flymake) flymake-mode)
