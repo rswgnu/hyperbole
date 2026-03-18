@@ -302,10 +302,7 @@ and release to register a diagonal drag.")
 
 (defun assist-key-modeline-click-left-edge ()
   "Default function run on an Assist Mouse Key click at a modeline left edge."
-  (if (fboundp 'last)
-      (switch-to-buffer (car (last (buffer-list))))
-    (let ((buffers (buffer-list)))
-      (switch-to-buffer (nth (1- (length buffers)) buffers)))))
+  (switch-to-buffer (car (last (buffer-list)))))
 
 (defun action-key-modeline-click-right-edge ()
   "Default function run on an Action Mouse Key click at a modeline right edge."
