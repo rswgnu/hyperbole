@@ -59,6 +59,7 @@
 (defvar org--inhibit-version-check)     ; "org-macs.el"
 (defvar hywiki-org-link-type-required)  ; "hywiki.el"
 (defvar org-agenda-buffer-tmp-name)     ; "org-agenda.el"
+(defvar org-uuid-regexp)                ; "org-macs.el"
 
 (declare-function hycontrol-windows-grid "hycontrol")
 (declare-function hyrolo-tags-view "hyrolo")
@@ -538,8 +539,7 @@ Assume caller has already checked that the current buffer is in
 	  (when (and (not (and (fboundp 'hywiki-word-at) (hywiki-word-at)))
 		     (setq label-start-end (hargs:delimited "[[" "]]" nil nil t)))
 	    (let* ((start (nth 1 label-start-end))
-		   (end (nth 2 label-start-end))
-		   (label (buffer-substring-no-properties start end)))
+		   (end (nth 2 label-start-end)))
 	      (cons start end))))))))
 
 (defun hsys-org-link-label-start-end ()

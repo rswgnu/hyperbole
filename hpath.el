@@ -132,6 +132,8 @@ The format is ${variable}.  Match grouping 1 is the name of the variable.")
 ;;; Public Declarations
 ;;; ************************************************************************
 
+(defvar hywiki-directory)
+
 (declare-function Info-find-node "info")
 (declare-function br-in-browser "ext:br")
 (declare-function br-quit "ext:br")
@@ -143,10 +145,14 @@ The format is ${variable}.  Match grouping 1 is the name of the variable.")
 (declare-function hmail:editor-p "hmail")
 (declare-function hypb:decode-url "hypb")
 (declare-function hypb:object-p "hypb")
+(declare-function hywiki-get-existing-page-file "hywiki")
+(declare-function hywiki-get-referent "hywiki")
+(declare-function hywiki-org-to-heading-instance "hywiki")
 (declare-function kbd-key:key-series-to-events "hib-kbd")
 (declare-function kcell-view:indent "kcell-view")
 (declare-function klink:act "klink")
 (declare-function mm-mailcap-command "mm-decode")
+(declare-function org-element-property "org-element-ast")
 
 ;;; ************************************************************************
 ;;; MS WINDOWS PATH CONVERSIONS
@@ -1948,7 +1954,8 @@ form is what is returned for PATH."
         path))))
 
 (defun hpath:org-normalize-title (title)
-  "Strip all priority, leading ':' or '-' separators, and stats from TITLE and return."
+  "Return title in normalized form.
+Strip all priority, leading ':' or '-' separators, and stats from TITLE."
   (when title
     (let ((clean (copy-sequence title)))
       ;; Strip leading priority: [#B] or [#2} followed by ':' or '-' surrounded by any whitespace
@@ -1960,7 +1967,8 @@ form is what is returned for PATH."
       (setq clean (replace-regexp-in-string "\\(?: +\\[[0-9%+/]+\\]\\)+\\'" "" clean)))))
 
 (defun hpath:org-normalize-titles ()
-  "Get all buffer Org titles, stripping priorities, stats and leading ':' or '-' separators."
+  "Get all buffer Org titles in normalized form.
+Titles are stripped from priorities, stats and leading ':' or '-' separators."
   (let (title
         titles)
     (org-with-wide-buffer

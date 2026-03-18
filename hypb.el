@@ -766,12 +766,11 @@ Quoting conventions recognized are:
                 ;; double quote characters in strings and doesn't work in
                 ;; `change-log-mode' due to its syntax-table.
 	        (let ((open-match-string "")
-	              (close-match-string "")
                       possible-delim
 	              str
 	              str-start
 	              str-end)
-	          (cl-destructuring-bind (orig-open-regexp orig-close-regexp open-regexp close-regexp)
+	          (cl-destructuring-bind (orig-open-regexp orig-close-regexp open-regexp _close-regexp)
                       open-close-regexps
 	            (save-match-data
                       (if (and (setq possible-delim
@@ -838,8 +837,7 @@ Quoting conventions recognized are:
                                (progn (while (and (setq possible-delim (search-forward open-match-string nil t))
                                                   (= (or (char-before (match-beginning 0)) 0) ?\\)))
                                       possible-delim)
-		               (setq str-end (match-beginning 0)
-	                             close-match-string (match-string 0))
+		               (setq str-end (match-beginning 0))
 		               (setq str (buffer-substring-no-properties str-start str-end))))
 
 	                ;; Ignore if more than `max-lines' matched

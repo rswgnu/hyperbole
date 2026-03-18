@@ -1,3 +1,36 @@
+2026-03-18  Mats Lidell  <matsl@gnu.org>
+
+* hactypes.el (link-to-org-id): Fix quote in docstring.
+
+* hibtypes.el (hywiki-get-existing-page-file):
+    (hywiki-word-from-reference): Declare functions.
+
+* hpath.el (hywiki-get-existing-page-file):
+    (hywiki-get-referent):
+    (hywiki-org-to-heading-instance):
+    (org-element-property): Declare functions.
+    (hywiki-directory): Defvar.
+    (hpath:org-normalize-title):
+    (hpath:org-normalize-titles): Rephrase long docstrings to fit in 80 chars.
+
+* hsys-org.el (org-uuid-regexp): Defvar.
+    (hsys-org-link-at-p): Remove unused var: label.
+
+* hui.el (hywiki-mode): Defvar
+    (hywiki-get-buffer-page-name):
+    (hywiki-in-page-p):
+    (hywiki-org-format-heading):
+    (hywiki-org-get-heading-match-regexp): Declare functions.
+
+* hypb.el (hypb:in-string-p): Remove unused var: close-match-string. Mark
+    close-regexp as unused.
+
+* hywiki.el (hywiki-org-format-heading):
+    (org-fold-core-remove-optimisation):
+    (org-fold-core-update-optimisation):
+    (org-fold-show-entry): Declare functions.
+    (hywiki-add-org-id): Fix quote in docstring.
+
 2026-03-17  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:validate): 'suffix-start' can be nil, so replace

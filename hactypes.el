@@ -639,9 +639,9 @@ information on how to specify a mail reader to use."
 	(hypb:error "(link-to-mail): No msg `%s' in file \"%s\""
 		    mail-msg-id mail-file)))))
 
-(defact link-to-org-id (id &optional title)
+(defact link-to-org-id (id &optional _title)
   "Display the Org entry, if any, for ID with optional TITLE.
-ID is a uuid without any 'id:' prefix."
+ID is a uuid without any \\='id:' prefix."
   (when (stringp id)
     (let* ((inhibit-message t) ;; Inhibit org-id-find status msgs
 	   (m (or (and (featurep 'org-roam) (org-roam-id-find id 'marker))

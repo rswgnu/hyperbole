@@ -37,10 +37,15 @@
 (defvar cmpl-original-string)           ; "completion.el"
 (defvar completion-to-accept)           ; "completion.el"
 (defvar hyperbole-mode-map)             ; "hyperbole.el"
+(defvar hywiki-mode)                    ; "hywiki.el"
 
 (declare-function actypes::link-to-wikiword "hywiki")
 (declare-function bookmark-bmenu-bookmark "bookmark")
 (declare-function hui:menu-choose "hui-mini")
+(declare-function hywiki-get-buffer-page-name "hywiki")
+(declare-function hywiki-in-page-p "hywiki")
+(declare-function hywiki-org-format-heading "hywiki")
+(declare-function hywiki-org-get-heading-match-regexp "hywiki")
 (declare-function hywiki-referent-exists-p "hywiki")
 (declare-function kcell-view:absolute-reference "kotl/kview")
 (declare-function kcell-view:idstamp "kotl/kview")

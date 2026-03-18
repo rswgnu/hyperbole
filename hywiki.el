@@ -174,8 +174,12 @@
 (declare-function consult--lookup-member "ext:consult")
 (declare-function consult--read "ext:consult")
 (declare-function hsys-org-at-tags-p "hsys-org")
+(declare-function hywiki-org-format-heading "hywiki")
 (declare-function ibtypes::pathname "hpath")
 (declare-function ibtypes::pathname-line-and-column "hpath")
+(declare-function org-fold-core-remove-optimisation "org-fold-core")
+(declare-function org-fold-core-update-optimisation "org-fold-core")
+(declare-function org-fold-show-entry "org-fold")
 (declare-function org-link-store-props "ol" (&rest plist))
 (declare-function org-publish-property "ox-publish" (property project &optional default))
 (declare-function org-roam-node-from-title-or-alias "org-roam-node" (s &optional nocase))
@@ -1366,7 +1370,7 @@ calling this function."
 (defun hywiki-add-org-id (wikiword)
   "Make WIKIWORD display an Org file or headline with an Org id.
 Point must be in the buffer with the id.  If no id exists, it is created.
-Return the referent created with the form: '(org-id . <id-string>).
+Return the referent created with the form: \\='(org-id . <id-string>).
 
 If WIKIWORD is invalid, trigger a `user-error' if called interactively
 or return nil if not.
