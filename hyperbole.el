@@ -586,9 +586,7 @@ frame, those functions by default still return the prior frame."
 ;; Autoload this form so that when `package.el' activates Hyperbole's autoloads
 ;; it also sets up Kotl's autoloads.
 ;;;###autoload
-(let ((us (if (fboundp 'macroexp-file-name)
-              (macroexp-file-name)
-	    load-file-name)))
+(let ((us (macroexp-file-name)))
   (when us
     ;; Contrary to the usual ELPA autoloads files, `kotl-autoloads'
     ;; does not add its directory to `load-path', so let's do it here
