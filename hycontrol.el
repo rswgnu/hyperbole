@@ -431,12 +431,8 @@ for it to be omitted by `list-buffers'."
     (define-key map "u"     'unbury-buffer)
     (define-key map "w"     (lambda () (interactive) (enlarge-window-horizontally hycontrol-arg)))
     (define-key map "X"     (lambda () (interactive) (text-scale-increase 0)))
-    (define-key map "Z"     (lambda () (interactive) (if (fboundp 'text-scale-increase)
-							 ;; Emacs autoloaded function
-							 (text-scale-increase (if (< hycontrol-arg 10) hycontrol-arg (setq hycontrol-arg 1))))))
-    (define-key map "z"     (lambda () (interactive) (if (fboundp 'text-scale-decrease)
-							 ;; Emacs autoloaded function
-							 (text-scale-decrease (if (< hycontrol-arg 10) hycontrol-arg (setq hycontrol-arg 1))))))
+    (define-key map "Z"     (lambda () (interactive) (text-scale-increase (if (< hycontrol-arg 10) hycontrol-arg (setq hycontrol-arg 1)))))
+    (define-key map "z"     (lambda () (interactive) (text-scale-decrease (if (< hycontrol-arg 10) hycontrol-arg (setq hycontrol-arg 1)))))
 
     ;; Don't call these interactively because a prefix arg of 1 tries
     ;; to make one window 1 line tall.
