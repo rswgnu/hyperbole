@@ -376,19 +376,16 @@ With prefix argument, prompts for optional FILE to add entry within.
 NAME may be of the form: parent/child to insert child below a parent
 entry which begins with the parent string."
   (interactive
-   (progn
-     (unless (fboundp 'mail-fetch-field)
-       (require 'mail-utils))
-     (let* ((lst (hyrolo-name-and-email))
-	    (name (car lst))
-	    (email (car (cdr lst)))
-	    (entry (read-string "Name to add to rolo: "
-				(or name email))))
-       (list (if (and email name
-		      (string-match (concat "\\`" (regexp-quote entry)) name))
-		 (format hyrolo-email-format entry email)
-	       entry)
-	     current-prefix-arg))))
+   (let* ((lst (hyrolo-name-and-email))
+	  (name (car lst))
+	  (email (car (cdr lst)))
+	  (entry (read-string "Name to add to rolo: "
+			      (or name email))))
+     (list (if (and email name
+		    (string-match (concat "\\`" (regexp-quote entry)) name))
+	       (format hyrolo-email-format entry email)
+	     entry)
+	   current-prefix-arg)))
   (when (or (not (stringp name)) (string-equal name ""))
     (error "(hyrolo-add): Invalid name: `%s'" name))
   (when (and (called-interactively-p 'interactive) file)
