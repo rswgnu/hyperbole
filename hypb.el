@@ -1382,10 +1382,8 @@ If FILE is not an absolute path, expand it relative to `hyperb:dir'."
 Without file, the banner is prepended to the current buffer."
   (let ((hyperbole-banner-path (expand-file-name "hyperbole-banner.png" hyperb:dir)))
     (unless (file-readable-p hyperbole-banner-path)
-      (setq hyperbole-banner-path (if (fboundp 'locate-data-file)
-				      (locate-data-file "hyperbole-banner.png")
-				    (expand-file-name "hyperbole-banner.png"
-						      data-directory))))
+      (setq hyperbole-banner-path (expand-file-name "hyperbole-banner.png"
+						    data-directory)))
     (if (or (not (fboundp 'create-image))
 	    (not (display-graphic-p))
 	    (let ((button (next-button (point-min))))
