@@ -3642,15 +3642,6 @@ revealed text manually."
   :type 'boolean
   :version "28.1"))
 
-(unless (fboundp 'reveal-hide-revealed)
-(defun reveal-hide-revealed ()
-  "Hide all revealed text.
-If there is revealed text under point, this command does not hide
-that text."
-  (interactive)
-  (let ((reveal-auto-hide t))
-    (reveal-post-command))))
-
 (defun hyrolo-reveal-open-new-overlays (old-ols)
   (let ((repeat t))
     (while repeat
