@@ -134,7 +134,6 @@
 (defvar org-link--link-folding-spec)
 (defvar org-roam-directory)
 (defvar plstore-cache-passphrase-for-symmetric-encryption)
-(defvar reveal-auto-hide)
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -3633,14 +3632,6 @@ Also see the `reveal-auto-hide' variable."
   :init-value nil
   :keymap nil
   nil) ;; Make this a no-op until can debug `reveal-mode' in *HyRolo* buffer
-
-(unless (boundp 'reveal-auto-hide)
-(defcustom reveal-auto-hide t
-  "Automatically hide revealed text when leaving it.
-If nil, the `reveal-hide-revealed' command can be useful to hide
-revealed text manually."
-  :type 'boolean
-  :version "28.1"))
 
 (defun hyrolo-reveal-open-new-overlays (old-ols)
   (let ((repeat t))
