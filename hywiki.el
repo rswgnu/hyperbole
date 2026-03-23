@@ -159,6 +159,8 @@
 
 (defvar action-key-modeline-buffer-id-function)  ;; "hui-mouse.el"
 (defvar bookmark-current-bookmark)               ;; "bookmark.el"
+(defvar consult-grep-args)                       ;; "consult.el"
+(defvar consult-ripgrep-args)                    ;; "consult.el"
 (defvar hkey-value)                              ;; "hui-mouse.el"
 (defvar hywiki-referent-menu nil)                ;; "hywiki.el"
 (defvar org-agenda-buffer-tmp-name)              ;; "org-agenda.el"
@@ -3291,7 +3293,8 @@ If such an instance is not found, trigger an error."
           (goto-char found)
           ;; Ensure the heading is visible if folded
           (if (version< org-version "9.6")
-              (org-show-entry)
+              (with-suppressed-warnings ((obsolete org-show-entry))
+                (org-show-entry))
             (org-fold-show-entry))
           ;; (message "Instance %d of '%s'" n title)
           t)
