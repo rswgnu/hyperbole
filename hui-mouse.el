@@ -98,13 +98,15 @@
 (declare-function kotl-mode:eolp "kotl-mode")
 
 ;; Emacs functions
+(declare-function Custom-buffer-done "cus-edit")
+(declare-function Custom-newline "cus-edit")
+(declare-function outline-invisible-in-p "hyperbole")
+(declare-function profiler-report-find-entry "profiler")
+(declare-function profiler-report-toggle-entry "profiler")
+(declare-function tar-expunge "tar")
+(declare-function tar-extract-other-window "tar")
 (declare-function tar-flag-deleted "tar")
 (declare-function tar-unflag "tar")
-(declare-function tar-extract-other-window "tar")
-(declare-function tar-expunge "tar")
-(declare-function outline-invisible-in-p "hyperbole")
-(declare-function Custom-newline "cus-edit")
-(declare-function Custom-buffer-done "cus-edit")
 
 ;;; ************************************************************************
 ;;; Public variables
@@ -2212,7 +2214,7 @@ caller has already checked that the key was pressed in an appropriate buffer
 and has moved the cursor there.
 
 If key is pressed:
- (1) on the text of a linked call tree item, jumps to the definition of the item;
+ (1) on the text of a linked call tree item, jumps to the items definition;
  (2) on or after the last line in the buffer, quits from the profiler report."
   (interactive)
   (cond
@@ -2221,7 +2223,7 @@ If key is pressed:
     (quit-window))
    ;; If on the text of an entry, jump to its definition if is a link
    ((text-property-any (point) (1+ (point)) 'face 'link)
-    (let* ((curr-buffer)
+    (let* ((curr-buffer nil)
 	   (find-function-after-hook '((lambda ()
 					 (setq curr-buffer (current-buffer))))))
       (hpath:display-buffer (save-window-excursion
