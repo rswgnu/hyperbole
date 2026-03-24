@@ -1,3 +1,20 @@
+2026-03-24  Mats Lidell  <matsl@gnu.org>
+
+* hui-mouse.el (profiler-report-find-entry)
+    (profiler-report-toggle-entry): Declare functions and sort the
+    declarations.
+    (smart-profiler-report): Shorten docstring line below 80
+    chars. Do explicit initialization of curr-buffer since
+    byte-compiler does not see it will be set.
+
+* hywiki.el (consult-grep-args, consult-ripgrep-args): Defvar consult
+    variables.
+    (hywiki-org-to-heading-instance): Use with-suppressed-warnings for
+    obsolete org-show-entry.
+
+* hibtypes.el (hib-link-to-file-line): Use let for undefined free var
+    ext. Fix indentation.
+
 2026-03-23  Bob Weiner  <rsw@gnu.org>
 
 * hui-mouse.el (hkey-alist): Add 'profiler-report-mode' support for jumping
