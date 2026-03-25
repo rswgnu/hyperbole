@@ -12,9 +12,6 @@
     (hywiki-org-to-heading-instance): Use with-suppressed-warnings for
     obsolete org-show-entry.
 
-* hibtypes.el (hib-link-to-file-line): Use let for undefined free var
-    ext. Fix indentation.
-
 2026-03-23  Bob Weiner  <rsw@gnu.org>
 
 * hui-mouse.el (hkey-alist): Add 'profiler-report-mode' support for jumping

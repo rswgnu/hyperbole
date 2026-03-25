@@ -1027,16 +1027,15 @@ LINE-NUM may be an integer or string."
           ((stringp source-loc)
            (setq file (expand-file-name file (file-name-directory source-loc))))
           (t (setq file (or (hpath:prepend-shell-directory file)
-		            ;; find-library-name will strip file
-		            ;; suffixes, so use it only when the file
-		            ;; either doesn't have a suffix or has a
-		            ;; library suffix.
-                            (let ((ext (file-name-extension file)))
-                              (when (or (null ext)
-                                        (member (concat "." ext) (get-load-suffixes)))
-                                (ignore-errors (find-library-name file))))
-                            (hpath:is-p (expand-file-name file))
-                            (hywiki-get-existing-page-file file)))))
+		     ;; find-library-name will strip file
+		     ;; suffixes, so use it only when the file
+		     ;; either doesn't have a suffix or has a
+		     ;; library suffix.
+		     (and (or (null (setq ext (file-name-extension file)))
+			      (member (concat "." ext) (get-load-suffixes)))
+			  (ignore-errors (find-library-name file)))
+                     (hpath:is-p (expand-file-name file))
+                     (hywiki-get-existing-page-file file)))))
     (when (file-exists-p (hpath:normalize file))
       (actypes::link-to-file-line file line-num))))
 
