@@ -2807,6 +2807,14 @@ If ARG is a non-positive number, nothing is done."
 	     (kview:add-cell "1" 1)))
       (kotl-mode:to-valid-position))))
 
+(defun kotl-mode:erase-buffer ()
+  "Delete the entire contents of the current kotl buffer."
+  (kotl-mode:end-of-buffer)
+  (kotl-mode:beginning-of-tree)
+  (while (not (kotl-mode:first-line-p))
+    (kotl-mode:kill-tree))
+  (kotl-mode:kill-tree))
+
 (defun kotl-mode:move-tree-backward (&optional num-trees)
   "Move current cell before prefix arg `num-trees' at the same level.
 If arg is 0, make it 1; if arg is negative, move to before that number of trees."

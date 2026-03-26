@@ -443,6 +443,22 @@
           (should (string-empty-p (kcell-view:contents))))
       (hy-delete-file-and-buffer kotl-file))))
 
+(ert-deftest kotl-mode--erase-buffer ()
+  "Verify buffer is erased leaving just the initial empty first cell."
+  (with-temp-buffer
+    (kotl-mode)
+    (kotl-mode:erase-buffer)
+    (kotl-mode:end-of-buffer)
+    (should (kotl-mode:first-cell-p))
+    (should (string-empty-p (kcell-view:contents)))
+
+    (dotimes (i 20)
+      (kotl-mode:add-cell 1 "contents"))
+    (kotl-mode:erase-buffer)
+    (kotl-mode:end-of-buffer)
+    (should (kotl-mode:first-cell-p))
+    (should (string-empty-p (kcell-view:contents)))))
+
 (ert-deftest kotl-mode-split-cell ()
   "Kotl-mode split cell."
   :expected-result :failed
