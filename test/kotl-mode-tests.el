@@ -430,6 +430,19 @@
           (should (string= (kcell-view:idstamp) "03")))
       (hy-delete-file-and-buffer kotl-file))))
 
+(ert-deftest kotl-mode--kill-tree-first-and-only-tree ()
+  "Verify removing a one cell tree creates an initial empty first cell."
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (with-current-buffer (find-file kotl-file)
+          (insert "first")
+          (kotl-mode:add-child 1 "second")
+          (kotl-mode:beginning-of-buffer)
+          (kotl-mode:kill-tree)
+          (should (kotl-mode:first-cell-p))
+          (should (string-empty-p (kcell-view:contents))))
+      (hy-delete-file-and-buffer kotl-file))))
+
 (ert-deftest kotl-mode-split-cell ()
   "Kotl-mode split cell."
   :expected-result :failed

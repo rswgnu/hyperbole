@@ -2798,7 +2798,8 @@ If ARG is a non-positive number, nothing is done."
 	  (progn (setq arg 0)
 		 (kview:delete-region start end))
 	(kview:delete-region start end)
-	(kotl-mode:to-valid-position)))
+        (unless (kotl-mode:buffer-empty-p)
+	  (kotl-mode:to-valid-position))))
     (when killed
       (cond (sib (klabel-type:update-labels label))
 	    ((kotl-mode:buffer-empty-p)
