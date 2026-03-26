@@ -13,6 +13,18 @@
 
 2026-03-26  Mats Lidell  <matsl@gnu.org>
 
+* test/kotl-mode-tests.el (kotl-mode-split-cell): Remove
+    expected-result failed but add FIXME comment where
+    kotl-mode:split-cell fails.
+    Use kotl-mode:erase-buffer for clearer reuse of test buffer.
+    (kotl-mode--erase-buffer): Add test for new function.
+    (kotl-mode--kill-tree-first-and-only-tree): Verify change works.
+
+* kotl/kotl-mode.el (kotl-mode:erase-buffer): Add
+    kotl-mode:erase-buffer to make it easier to reuse buffers in tests.
+    (kotl-mode:kill-tree): Move to valid position first when inital cell is
+    created.
+
 * test/hui-tests.el (hui--kill-region-delimited-text-and-yank-back):
     Remove expected-result tag and expand tests.
     (hui-tests--selectable-thing-and-bounds): Add test.
