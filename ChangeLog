@@ -1,3 +1,11 @@
+2026-03-30  Mats Lidell  <matsl@gnu.org>
+
+* test/kotl-mode-tests.el (kotl-mode-split-cell): Use kotl-mode:kill-tree
+    with new arg 0 for clearer reuse of test buffer.
+    (kotl-mode--kill-tree-erase-buffer): Add test for arg 0 to erase buffer.
+    (kotl-mode--kill-tree-first-and-only-tree): Add test for verifying
+    removing one tree.
+
 2026-03-29  Bob Weiner  <rsw@gnu.org>
 
 * hypb.el (hypb:in-string-cache): Move Private Variable definitions to precede

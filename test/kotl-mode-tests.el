@@ -430,6 +430,35 @@
           (should (string= (kcell-view:idstamp) "03")))
       (hy-delete-file-and-buffer kotl-file))))
 
+(ert-deftest kotl-mode--kill-tree-first-and-only-tree ()
+  "Verify removing a one cell tree creates an initial empty first cell."
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+    (unwind-protect
+        (with-current-buffer (find-file kotl-file)
+          (insert "first")
+          (kotl-mode:add-child 1 "second")
+          (kotl-mode:beginning-of-buffer)
+          (kotl-mode:kill-tree)
+          (should (kotl-mode:first-cell-p))
+          (should (string-empty-p (kcell-view:contents))))
+      (hy-delete-file-and-buffer kotl-file))))
+
+(ert-deftest kotl-mode--kill-tree-erase-buffer ()
+  "Verify buffer is erased leaving just the initial empty first cell."
+  (with-temp-buffer
+    (kotl-mode)
+    (kotl-mode:kill-tree 0)
+    (kotl-mode:end-of-buffer)
+    (should (kotl-mode:first-cell-p))
+    (should (string-empty-p (kcell-view:contents)))
+
+    (dotimes (i 20)
+      (kotl-mode:add-cell 1 "contents"))
+    (kotl-mode:kill-tree 0)
+    (kotl-mode:end-of-buffer)
+    (should (kotl-mode:first-cell-p))
+    (should (string-empty-p (kcell-view:contents)))))
+
 (ert-deftest kotl-mode-split-cell ()
   "Kotl-mode split cell."
   :expected-result :failed
@@ -445,7 +474,7 @@
             (should (string= (kcell-view:label (point)) "1a"))
             (should (string= (kcell-view:idstamp) "02")))
           (ert-info ("Split after first line")
-            (kotl-mode:kill-tree)
+            (kotl-mode:kill-tree 0)
             (insert "first")
             (kotl-mode:newline 1)
             (insert "second")
@@ -454,7 +483,7 @@
             (kotl-mode:split-cell)
             (should (= (line-number-at-pos) 3)))
           (ert-info ("Split before second line")
-            (kotl-mode:kill-tree)
+            (kotl-mode:kill-tree 0)
             (insert "first")
             (kotl-mode:newline 1)
             (insert "second")
