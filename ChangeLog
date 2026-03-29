@@ -1,3 +1,71 @@
+2026-03-29  Mats Lidell  <matsl@gnu.org>
+
+* hproperty.el: Remove defalias of display-color-p, defined since
+    Emacs 21.1
+
+* hsys-flymake.el (flymake-mode-hook): Use repeat-mode, defined since
+    Emacs 28.1.
+
+* hui-mouse.el (hkey-alist): Use button-at, defined in Emacs before
+    version 28.
+    (smart-dired): Use dired-do-flagged-delete, defined since before Emacs 28.
+
+* hyperbole.el: Use macroexp-file-name, defined since Emacs 28.1.
+
+* htz.el (htz:zone-to-hour): Use current-time-zone, defined in Emacs 25.1
+
+* hui-window.el (assist-key-modeline-click-left-edge): Use last,
+    defined before Emacs 28.
+    (hmouse-horizontal-action-drag): Use split-window-vertically.
+    (smart-coords-in-window-p): Use window-edges, defined before Emacs 28.
+
+* hinit.el (hyperb:check-dir-user): Use make-directory, defined since
+    Emacs 19.34.
+
+* hmouse-info.el (smart-info): Use Info-next and mouse-event-p.
+    (smart-info-assist): Use Info-prev and mouse-event-p.
+
+* hycontrol.el (hycontrol-windows-mode-map): Use text-scale-increase
+    and text-scale-decrease.
+
+* hui-select.el (hui-select-thing): Use use-region-p, defined since
+    Emacs 23.1.
+
+* hypb.el (hypb:hkey-help-file): Do not check for locate-data-file, it
+    is not an Emacs function.
+    (hypb:insert-hyperbole-banner): Do not check for locate-data-file, not
+    an Emacs function.
+
+* hact.el (action:commandp): Do not use compiled-function-interactive.
+    (action:params): Do not use compiled-function-arglist. Not Emacs
+    functions.
+
+* hib-social.el (git-reference): Use vc-print-root-log, defined since
+    Emacs 24.1.
+    (hibtypes-git-find): Use locate-dominating-file, defined before Emacs 28.
+
+* hibtypes.el (gnus-push-button): Use get-text-property.
+
+* hmoccur.el (moccur):
+  hui.el (hui:ebut-search): Use outline-minor-mode, defined since Emacs 19.1.
+
+* hmouse-drv.el (mouse-drag-mode-line): Use mouse-drag-frame-move,
+    defined since Emacs 28.
+    (hmouse-window-at-absolute-pixel-position): Use frame-list-z-order,
+    defined since Emacs 26.1.
+
+* hmouse-tag.el (smart-lisp):
+    (smart-lisp-at-known-identifier-p): Use find-library, defined since
+    Emacs 25.2.
+    (smart-lisp-find-tag):
+    (smart-lisp-at-known-identifier-p): Use find-function-noselect,
+    defined before Emacs 28.
+
+* hyrolo.el (reveal-hide-revealed): Use reveal-hide-revealed, defined
+    since Emacs 28.1.
+    (reveal-auto-hide): Use reveal-auto-hide, defined since Emacs 28.1.
+    (hyrolo-add): Use mail-fetch-field, defined before Emacs 28.
+
 2026-03-28 Bob Weiner  <rsw@gnu.org>
 
 * hypb.el (hypb:sqlite-p): Add to return non-nil when Emacs supports sqlite.
