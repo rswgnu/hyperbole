@@ -1,3 +1,8 @@
+2026-04-02  Mats Lidell  <matsl@gnu.org>
+
+* hsys-org.el (hsys-org-id-find-advice): Fix docstring has wrong usage
+    of unescaped single quotes and make first line a sentence.
+
 2026-03-30  Mats Lidell  <matsl@gnu.org>
 
 * test/kotl-mode-tests.el (kotl-mode-split-cell): Use kotl-mode:kill-tree

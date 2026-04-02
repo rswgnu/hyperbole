@@ -217,10 +217,11 @@ otherwise, just match to the single tag around point."
   (hsys-org-get-agenda-tags #'hywiki-tags-view))
 
 (defun hsys-org-id-find-advice (&rest _)
-  "If `org-roam' is loaded and has advised `org-id-find' with the function
-'org-roam-id-find' but Emacs does not have the `sqlite' module, then any
-call to `org-id-find' will fail.  This :before advice function fixes this
-by removing the `org-roam' advice from `org-id-find'."
+  "Remove the `org-roam' advice from `org-id-find' if present.
+If `org-roam' is loaded and has advised `org-id-find' with the function
+`org-roam-id-find' but Emacs does not have the `sqlite' module, then any
+call to `org-id-find' will fail.  This :before advice function fixes this by
+removing the `org-roam' advice from `org-id-find'."
   (when (and (fboundp 'org-roam-id-find)
              (not (hypb:sqlite-p))
              (hypb:advised-p 'org-id-find 'org-roam-id-find))
