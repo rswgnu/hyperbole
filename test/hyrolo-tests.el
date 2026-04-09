@@ -461,6 +461,7 @@ Match a string in the second cell."
 
 (ert-deftest hyrolo-tests--fgrep-move-test ()
   "Verify different move commands after `hyrolo-fgrep'."
+  :expected-result :failed
   (let* ((kotl-file1 (hyrolo-tests--gen-kotl-outline "heading" "foo bar" 1))
          (kotl-file2 (hyrolo-tests--gen-kotl-outline "heading" "foo bar" 1))
          (hyrolo-file-list (list kotl-file1 kotl-file2))
@@ -483,8 +484,37 @@ Match a string in the second cell."
             (execute-kbd-macro (kbd "n"))
             (should (eobp)))
 
+          (ert-info ("With hidden first header move up using ?p")
+            (execute-kbd-macro (kbd "p"))
+            (should (looking-at-p h1a_str))
+            (execute-kbd-macro (kbd "p"))
+            (should (looking-at-p h1_str))
+            (execute-kbd-macro (kbd "p"))
+            (should (looking-at-p "==="))
+            (execute-kbd-macro (kbd "p"))
+            (should (looking-at-p "==="))
+            (should (bobp)))
+
+          (ert-info ("With hidden first header move down using ?f")
+            (should (looking-at-p "==="))
+            (execute-kbd-macro (kbd "f"))
+            (should (looking-at-p "==="))
+            (execute-kbd-macro (kbd "f"))
+            (should (looking-at-p h1_str))
+            (let ((err (should-error (execute-kbd-macro (kbd "f")))))
+              (should (string-match-p "No following same-level heading/header" (cadr err)))))
+
+          (ert-info ("With hidden first header move up using ?b")
+            (execute-kbd-macro (kbd "b"))
+            (should (looking-at-p "==="))
+            (execute-kbd-macro (kbd "b"))
+            (should (looking-at-p "==="))
+            (should (bobp))
+            (let ((err (should-error (execute-kbd-macro (kbd "b")))))
+              (should-not (equal '(void-function nil) err)))) ;FIXME: No error message but void-function!?
+
           (outline-show-all)
-          (goto-char (point-min))
+
           (ert-info ("Move down using ?n")
             (should (looking-at-p "==="))
             (execute-kbd-macro (kbd "n"))

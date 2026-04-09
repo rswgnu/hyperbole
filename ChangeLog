@@ -1,3 +1,8 @@
+2026-04-10  Mats Lidell  <matsl@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-tests--fgrep-move-test): Add more tests for
+    movement when a section is hidden.
+
 2026-04-08  Bob Weiner  <rsw@gnu.org>
 
 * test/hyrolo-tests.el (hyrolo-tests--fgrep-move-test): Move tests more
