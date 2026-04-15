@@ -1009,8 +1009,10 @@ optional DEPTH the number of sub cells are created to that depth."
       (hy-delete-files-and-buffers hyrolo-file-list))))
 
 (ert-deftest hyrolo-tests--tab-through-matches ()
-  "Verify tabbing through search matches."
-  (let* ((org-file (make-temp-file "hypb" nil ".org"
+  "Verify tabbing through search matches.
+File name contains the search string to verify it is not selected while
+tabbing though the matches."
+  (let* ((org-file (make-temp-file "hypb_body_" nil ".org"
                                    (hyrolo-tests--gen-outline ?* "heading" 2 "body" 2)))
          (hyrolo-file-list (list org-file)))
     (unwind-protect

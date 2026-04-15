@@ -1,3 +1,8 @@
+2026-04-16  Mats Lidell  <matsl@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-tests--tab-through-matches): Verifies
+    that the path name is not selected when tabbing through matches.
+
 2026-04-13  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-next-match, hyrolo-next-regexp-match,
