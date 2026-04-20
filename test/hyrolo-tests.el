@@ -30,8 +30,39 @@
 
 (declare-function hy-test-helpers:consume-input-events "hy-test-helpers")
 
+(ert-deftest hyrolo-tests--add--error-cases ()
+  "Verify `hyrolo-add' error cases."
+  (defvar hyrolo-file)
+  (let ((hyrolo-file (make-temp-file "hypb" nil ".otl")))
+    (unwind-protect
+        (let ((hyrolo-file-list (list hyrolo-file)))
+          (should-error (hyrolo-add ""))
+          (should-error (hyrolo-add 'symbol))
+          (should-error (hyrolo-add "a" ""))
+          (should-error (hyrolo-add "a" 'symbol))
+          (should-error (hyrolo-add "a/b/c"))
+          ;; File not writable
+          (with-mock
+            (mock (file-writable-p hyrolo-file) => nil)
+            (should-error (hyrolo-add "a")))
+          ;; File not readable
+          (with-mock
+            (mock (file-readable-p hyrolo-file) => nil)
+            (should-error (hyrolo-add "a"))))
+      (hy-delete-file-and-buffer hyrolo-file))))
+
+(ert-deftest hyrolo-tests--add-item-to-new-file ()
+  "Verify `hyrolo-add' creates and visits the file buffer if file does not exist."
+  (let ((new-file (expand-file-name (make-temp-name "hypb") "/tmp")))
+    (unwind-protect
+        (progn
+          (should-not (file-exists-p new-file))
+          (hyrolo-add "a" new-file)
+          (should (equal (current-buffer) (get-file-buffer new-file))))
+      (hy-delete-file-and-buffer new-file))))
+
 (ert-deftest hyrolo-tests--add-items-at-multiple-levels ()
-  "`hyrolo-add` can add items at different levels."
+  "`hyrolo-add' can add items at different levels."
   (let ((hyrolo-file (make-temp-file "hypb" nil ".otl")))
     (unwind-protect
         (let ((hyrolo-file-list (list hyrolo-file)))
@@ -47,7 +78,7 @@
       (hy-delete-file-and-buffer hyrolo-file))))
 
 (ert-deftest hyrolo-tests--add-items-interactive ()
-  "`hyrolo-add` can add items when called interactively."
+  "`hyrolo-add' can add items when called interactively."
   (let ((hyrolo-file (make-temp-file "hypb" nil ".otl")))
     (unwind-protect
         (let ((hyrolo-file-list (list hyrolo-file)))
