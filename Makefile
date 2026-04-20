@@ -728,12 +728,12 @@ docker-clean:
 # coverage for the specified file.
 #
 # Usage:
-#    make coverage file=<file> testspec=<testspec>
+#    make coverage file=<file> test=<testspec>
 
 # Specify file to inspect for coverage while running tests given by testspec
 COVERAGE_FILE = ${file}
-ifeq ($(origin testspec), command line)
-COVERAGE_TESTSPEC = ${testspec}
+ifeq ($(origin test), command line)
+COVERAGE_TESTSPEC = ${test}
 else
 COVERAGE_TESTSPEC = t
 endif

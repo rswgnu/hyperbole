@@ -1,3 +1,8 @@
+2026-04-21  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (COVERAGE_TESTSPEC): Use test= for specifying the test selector
+    to be used when running coverage check. Defaults to t.
+
 2026-04-16  Mats Lidell  <matsl@gnu.org>
 
 * test/hyrolo-tests.el (hyrolo-tests--tab-through-matches): Verifies
