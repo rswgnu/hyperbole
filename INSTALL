@@ -180,6 +180,53 @@ lines to your personal Emacs initialization file, "~/.emacs":
 Restart Emacs and you should see the "Hypb" hyperbole minor mode
 indicator in your modeline after startup.
 
+** Building manually from git (using git submodules and/or borg)
+
+If you prefer work directly with the git and the raw files with a
+minimal package manager or none at all
+
+1. Clone the Hyperbole repo in your emacs config directory
+run borg-assimalte on the Hyperbole package to install it
+{M-x borg-assimilate RET hyperbole RET}
+
+or from the cli in your git directory
+git submodule add --name compat \
+git@github.com:emacsmirror/compat.git lib/compat
+
+2. Link and get Hyperbole ready for Emacs
+lets add some additional lines to your .gitmodules file in the
+Hyperbole section
+[submodule "hyperbole"]
+	path = lib/hyperbole
+	url = https://git.savannah.gnu.org/git/hyperbole.git
+
+To look like this
+[submodule "hyperbole"]
+	path = lib/hyperbole
+	url = https://git.savannah.gnu.org/git/hyperbole.git
+	load-path = ./
+	load-path = ./kotl
+	info-path = man
+	build-step = make
+
+And and finally lets enable Hyperbole by adding this elsip to your init.el
+(require 'hyperbole)
+(hyperbole-mode 1)
+
+If you want to link it up by hand without borg here is your Elsip
+ELISP goes here
+(add-to-list 'load-path (expand-file-name "lib/hyperbole/" user-emacs-directory))
+(add-to-list 'load-path (expand-file-name "lib/hyperbole/kotl/" user-emacs-directory))
+(require 'hyperbole)
+(hyperbole-mode 1)
+
+3. If you want even more performance from Hyperbole should byte-compile Hyperbole
+build Hyperbole using borg
+{M-x borg-build RET hyperbole RET}
+
+Or you can cd to the directory in your shell and use the included makefile
+make
+
 ===========================================================================
 *		         Browsing the Source
 ===========================================================================
