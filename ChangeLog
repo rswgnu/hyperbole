@@ -1,3 +1,8 @@
+2026-05-03  Mats Lidell  <matsl@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-tests--consult-fgrep)
+    ((hyrolo-tests--consult-grep, hyrolo-tests--edit): Add tests.
+
 2026-04-30  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kvspec.el (kvspec:update): If updating an existing viewspec, mark
