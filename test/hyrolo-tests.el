@@ -1948,7 +1948,8 @@ match
       (hy-delete-file-and-buffer hyrolo-file))))
 
 (ert-deftest hyrolo-tests--grep-or-fgrep ()
-  "Verify `hyrolo-grep-or-fgrep'."
+  "Verify `hyrolo-grep-or-fgrep' calls hyrolo grep or fgrep based on prefix arg.
+Uses mocks to verify the call path."
   (with-mock
     (mock (call-interactively 'hyrolo-grep))
     (hyrolo-grep-or-fgrep))
@@ -1957,7 +1958,8 @@ match
     (hyrolo-grep-or-fgrep '(4))))
 
 (ert-deftest hyrolo-tests--kill ()
-  "Verify `hyrolo-kill'."
+  "Verify `hyrolo-kill' deletes hyrolo items and handles error cases.
+Dependencies on the consult package are mocked."
   (defvar hyrolo-file)
   (let ((hyrolo-file (make-temp-file "hypb" nil ".otl" "===\nHdr\n===\n"))
         (item-pat (rx bol "*" (= 3 space) "item")))
