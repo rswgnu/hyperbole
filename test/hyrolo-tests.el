@@ -2039,6 +2039,51 @@ Dependencies on the consult package are mocked."
                 (hy-test-helpers:should-last-message "not found" cap)))))
       (hy-delete-file-and-buffer hyrolo-file))))
 
+(ert-deftest hyrolo-tests--set-date ()
+  "Verify `hyrolo-set-date' sets and updates an items date."
+  (let ((test-time "2024-12-11"))
+    (cl-letf (((symbol-function 'format-time-string)
+               (lambda (_fmt &optional _time _zone) test-time)))
+      (with-temp-buffer
+        (insert "* item\n")
+
+        (ert-info ("Do not insert date if date format is empty or nil")
+          (dolist (v '("" nil))
+            (let ((hyrolo-date-format v))
+              (goto-char (point-min))
+              (hyrolo-set-date)
+              (should (string= "* item\n" (buffer-string))))))
+
+        (ert-info ("Do not insert date in kotl-mode")
+          (let ((major-mode 'kotl-mode))
+            (goto-char (point-min))
+            (hyrolo-set-date)
+            (should (string= "* item\n" (buffer-string)))))
+
+        (ert-info ("Don't set date if date is not present and request is edit-only")
+          (goto-char (point-min))
+          (hyrolo-set-date t)
+          (should (string= "* item\n" (buffer-string))))
+
+        (ert-info ("Set date if not there")
+          (goto-char (point-min))
+          (hyrolo-set-date)
+          (should (string= "* item\n\t2024-12-11\n" (buffer-string))))
+
+        (ert-info ("Update date if item has a date")
+          (setq test-time "2025-01-01")
+          (goto-char (point-min))
+          (hyrolo-set-date)
+          (should (string= "* item\n\t2025-01-01\n" (buffer-string))))
+
+        (ert-info ("Update date if item has a date, keep trailing newlines")
+          (setq test-time "2025-01-02")
+          (goto-char (point-max))
+          (insert "\n\n")
+          (goto-char (point-min))
+          (hyrolo-set-date)
+          (should (string= "* item\n\t2025-01-02\n\n\n" (buffer-string))))))))
+
 (provide 'hyrolo-tests)
 
 ;; This file can't be byte-compiled without the `el-mock' package
