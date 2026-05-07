@@ -1947,6 +1947,67 @@ match
 
       (hy-delete-file-and-buffer hyrolo-file))))
 
+(ert-deftest hyrolo-tests--grep-or-fgrep ()
+  "Verify `hyrolo-grep-or-fgrep' calls hyrolo grep or fgrep based on prefix arg.
+Uses mocks to verify the call path."
+  (with-mock
+    (mock (call-interactively 'hyrolo-grep))
+    (hyrolo-grep-or-fgrep))
+  (with-mock
+    (mock (call-interactively 'hyrolo-fgrep))
+    (hyrolo-grep-or-fgrep '(4))))
+
+(ert-deftest hyrolo-tests--kill ()
+  "Verify `hyrolo-kill' deletes hyrolo items and handles error cases.
+Dependencies on the consult package are mocked."
+  (defvar hyrolo-file)
+  (let ((hyrolo-file (make-temp-file "hypb" nil ".otl" "===\nHdr\n===\n"))
+        (item-pat (rx bol "*" (= 3 space) "item")))
+    (unwind-protect
+        (let ((hyrolo-file-list (list hyrolo-file)))
+          (find-file (car (hyrolo-get-file-list)))
+          (hyrolo-add "alpha")
+          (hyrolo-add "item")
+          (hyrolo-add "xerxes")
+          (should (= 1 (count-matches item-pat (point-min) (point-max))))
+
+          (ert-info ("Kill item")
+            (goto-char (point-min))
+            (should-not (hyrolo-kill "not-exists" hyrolo-file))
+            (should (hyrolo-kill "item" hyrolo-file))
+            (should (= 0 (count-matches item-pat (point-min) (point-max)))))
+
+          (ert-info ("Kill item called interactively")
+            (hyrolo-add "item")
+            (goto-char (point-min))
+            (with-mock
+              (mock (hsys-consult-grep-headlines-read-regexp #'hyrolo-consult-grep *) => "item")
+              (stub y-or-n-p => t)
+              (should (call-interactively #'hyrolo-kill)))
+            (should (= 0 (count-matches item-pat (point-min) (point-max)))))
+
+          (ert-info ("Kill item called interactively with consult active")
+            (hyrolo-add "item")
+            (goto-char (point-min))
+            (with-mock
+              (mock (hsys-consult-grep-headlines-read-regexp #'hyrolo-consult-grep *) =>
+                    (concat hyrolo-file ":10:item"))
+              (mock (hsys-consult-active-p) => t)
+              (stub y-or-n-p => t)
+              (call-interactively #'hyrolo-kill))
+            (should (= 0 (count-matches item-pat (point-min) (point-max)))))
+
+          (ert-info ("Error cases")
+            (should-error (hyrolo-kill 'symbol))
+            (should-error (hyrolo-kill "" (make-temp-name "hypb")))
+            (should-error (hyrolo-kill nil))
+            (with-mock
+              (mock (beep) => t)
+              (ert-with-message-capture cap
+                (should-not (hyrolo-kill "not-exist" hyrolo-file))
+                (hy-test-helpers:should-last-message "not found" cap)))))
+      (hy-delete-file-and-buffer hyrolo-file))))
+
 (provide 'hyrolo-tests)
 
 ;; This file can't be byte-compiled without the `el-mock' package
