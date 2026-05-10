@@ -2,7 +2,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     4-Jul-24 at 09:57:18
-;; Last-Mod:     11-Apr-26 at 19:35:22 by Bob Weiner
+;; Last-Mod:      6-May-26 at 08:17:25 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -189,13 +189,13 @@ prompt."
 
 (defun hsys-consult-grep-headlines-read-regexp (grep-function prompt
 						&optional regexp)
-  "With `consult', use GREP-FUNCTION and PROMPT to completing read.
+  "With `consult', use GREP-FUNCTION and PROMPT for completing read.
 The optional REGEXP is an initial pattern for the grep.  Suppress
 preview and return the selected \"file:line:line-contents\".
 GREP-FUNCTION must take these arguments: regexp max-matches path-list
 prompt.
 
-Without `consult', just read a REGEXP with PROMPT."
+Without `consult', just read a match for REGEXP with PROMPT."
   (if (hsys-consult-active-p)
       (substring-no-properties
        (hsys-consult-get-exit-value

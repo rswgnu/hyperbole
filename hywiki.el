@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     12-Apr-26 at 15:09:20 by Bob Weiner
+;; Last-Mod:     10-May-26 at 11:41:49 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1994,7 +1994,7 @@ page and reading it into a buffer, run
 `hywiki-display-page-hook'.
 
 After successfully finding a page, run `hywiki-find-page-hook'."
-  (interactive (list (hywiki-page-read-new "Add/Edit HyWikiWord Page: ")))
+  (interactive (list (hywiki-page-read-new "Add/Edit HyWiki page: ")))
   (let ((page-file (hywiki-display-page wikiword)))
     (run-hooks 'hywiki-find-page-hook)
     page-file))
@@ -4177,11 +4177,23 @@ If point is on one, press RET immediately to use that one."
 
 (defun hywiki-word-read-new (&optional prompt initial)
   "Prompt with completion for and return an existing or new HyWikiWord.
-If point is on one, press RET immediately to use that one."
-  (let ((completion-ignore-case t))
-    (completing-read (if (stringp prompt) prompt "HyWiki Word: ")
-		     (hywiki-get-referent-hasht)
-		     nil nil initial nil (hywiki-word-at-point))))
+If point is on one, press RET immediately to use that one.  Ensure
+that any name conforms to `hywiki-word-regexp'."
+  (let ((completion-ignore-case t)
+        (valid-p (lambda (input)
+                   (let ((case-fold-search nil))
+                     (string-match-p (concat "\\`" hywiki-word-regexp "\\'") input))))
+        (collection (hywiki-get-referent-hasht)))
+    (completing-read
+     (if (stringp prompt) prompt "HyWiki Word: ")
+     (lambda (input pred action)
+       (if (eq action 'lambda)
+           ;; Check that input matches `hyrolo-word-regexp'.
+           ;; If so, RET will exit the minibuffer.
+           (funcall valid-p input)
+         ;; Otherwise, complete over `collection'
+         (complete-with-action action collection input pred)))
+     nil t initial nil (hywiki-word-at-point))))
 
 (defun hywiki-page-exists-p (word)
   "Return HyWiki WORD iff it is an existing page reference."
@@ -4203,16 +4215,20 @@ If point is on one, press RET immediately to use that one."
   "Prompt with completion for and return an existing/new HyWiki page name.
 If point is on one, press RET immediately to use that one."
   (let ((completion-ignore-case t)
-        page)
-    (while (null page)
-      (setq page (completing-read
-                  (if (stringp prompt) prompt "HyWiki Page: ")
-		  (hywiki-get-page-list)
-		  nil nil initial nil (hywiki-word-at-point)))
-      ;; Prevent selection of non-page HyWikiWords
-      (unless (memq (car (hywiki-get-referent page)) '(page nil))
-        (setq page nil)))
-    page))
+        (valid-p (lambda (input)
+                   (let ((case-fold-search nil))
+                     (string-match-p (concat "\\`" hywiki-word-regexp "\\'") input))))
+	(collection (hywiki-get-page-list)))
+    (completing-read
+     (if (stringp prompt) prompt "HyWiki Page: ")
+     (lambda (input pred action)
+       (if (eq action 'lambda)
+           ;; Check that input matches `hyrolo-word-regexp'.
+           ;; If so, RET will exit the minibuffer.
+           (funcall valid-p input)
+         ;; Otherwise, complete over `collection'
+         (complete-with-action action collection input pred)))
+     nil t initial nil (hywiki-word-at-point))))
 
 (defun hywiki-word-set-auto-highlighting (hywiki-from-mode hywiki-to-mode)
   "Set HyWikiWord auto-highlighting based on HYWIKI-FROM-MODE HYWIKI-TO-MODE.
