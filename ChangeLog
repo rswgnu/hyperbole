@@ -1,3 +1,10 @@
+2026-05-10  Mats Lidell  <matsl@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-tests--add--error-cases):
+    (hyrolo-tests--add-item-to-new-file): Add tests.
+    (hyrolo-tests--add-items-at-multiple-levels):
+    (hyrolo-tests--add-items-interactive): Fix quotes in docstring.
+
 2026-05-10  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-set-date): Change edit date to replace date without
