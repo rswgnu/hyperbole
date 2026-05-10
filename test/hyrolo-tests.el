@@ -2082,7 +2082,17 @@ Dependencies on the consult package are mocked."
           (insert "\n\n")
           (goto-char (point-min))
           (hyrolo-set-date)
-          (should (string= "* item\n\t2025-01-02\n\n\n" (buffer-string))))))))
+          (should (string= "* item\n\t2025-01-02\n\n\n" (buffer-string))))
+
+        (ert-info ("Update date if item has a date, keep leading whitespace")
+          (goto-char (point-min))
+          (search-forward "2025-01-02")
+          (beginning-of-line)
+          (insert "\t\t")
+          (setq test-time "2025-01-03")
+          (goto-char (point-min))
+          (hyrolo-set-date)
+          (should (string= "* item\n\t\t\t2025-01-03\n\n\n" (buffer-string))))))))
 
 (provide 'hyrolo-tests)
 
