@@ -8,6 +8,16 @@
 * hywiki.el (hywiki-word-read-new, hywiki.el (hywiki-page-read-new):
     Update to allow inputs only if they match 'hywiki-word-regexp'.
 
+2026-05-06  Mats Lidell  <matsl@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-tests--grep-or-fgrep):
+    (hyrolo-tests--kill): Add tests.
+
+2026-05-03  Mats Lidell  <matsl@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-tests--consult-fgrep)
+    ((hyrolo-tests--consult-grep, hyrolo-tests--edit): Add tests.
+
 2026-04-30  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kvspec.el (kvspec:update): If updating an existing viewspec, mark
