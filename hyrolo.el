@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     13-Apr-26 at 22:46:49 by Bob Weiner
+;; Last-Mod:     10-May-26 at 11:09:23 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -724,7 +724,7 @@ matches."
 
 ;;;###autoload
 (defun hyrolo-fgrep (string &optional max-matches hyrolo-files-or-bufs count-only headline-only no-display)
-  "Display rolo entries matching STRING or a logical match expression.
+  "Display HyRolo entries matching STRING or a logical match expression.
 Return count of matches.
 
 To a maximum of optional prefix arg MAX-MATCHES, in file(s) from optional
@@ -3356,10 +3356,11 @@ The date format is determined by the setting, `hyrolo-date-format'."
       (hyrolo-to-entry-end)
       (skip-chars-backward " \t\n\r\f")
       (skip-chars-backward "^\n\r\f")
-      (if (looking-at "\\s-+[-0-9./]+\\s-*$") ;; a date
+      (if (looking-at "\\s-+\\([-0-9./]+\\)\\s-*$") ;; a date
 	  ;; edit date
-	  (progn (delete-region (point) (match-end 0))
-		 (insert "\t" (hyrolo-current-date)))
+	  (progn (goto-char (match-beginning 1))
+                 (delete-region (match-beginning 1) (match-end 1))
+		 (insert (hyrolo-current-date)))
 	(unless edit-only-flag
 	  ;; add date
 	  (end-of-line)

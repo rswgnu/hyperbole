@@ -1,3 +1,13 @@
+2026-05-10  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-set-date): Change edit date to replace date without
+    changing whitespace around it.
+
+2026-05-06  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-word-read-new, hywiki.el (hywiki-page-read-new):
+    Update to allow inputs only if they match 'hywiki-word-regexp'.
+
 2026-04-30  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kvspec.el (kvspec:update): If updating an existing viewspec, mark
