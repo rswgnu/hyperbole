@@ -1671,7 +1671,12 @@ body
           (mocklet (((actypes::link-to-compose-mail "second@receiver.org") => t))
             (hyrolo-mail-to)))
       (kill-buffer hyrolo-display-buffer)
-      (hy-delete-files-and-buffers hyrolo-file-list))))
+      (hy-delete-files-and-buffers hyrolo-file-list)))
+  (with-temp-buffer
+    (mocklet (((beep) => t))
+      (ert-with-message-capture cap
+        (hyrolo-mail-to)
+        (hy-test-helpers:should-last-message "Invalid buffer or no e-mail address found" cap)))))
 
 (ert-deftest hyrolo-tests--location-movement ()
   "Verify movement between location headers."
