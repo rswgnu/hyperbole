@@ -7,6 +7,11 @@
     and 'str-end' fall within the presently visible buffer range even when
     pulled from the cache.
 
+2026-05-11  Mats Lidell  <matsl@gnu.org>
+
+* test/hyrolo-tests.el: Verify all return values for hyrolo-grep and
+    hyrolo-fgrep.
+
 2026-05-10  Mats Lidell  <matsl@gnu.org>
 
 * test/hyrolo-tests.el (hyrolo-tests--set-date):

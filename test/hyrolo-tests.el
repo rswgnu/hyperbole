@@ -331,8 +331,8 @@ and {b} the previous same level cell."
           (dolist (v '(:interactive nil))
             (if (eq v :interactive)
                 (hy-test-helpers:ert-simulate-keys "string\n"
-                  (call-interactively #'hyrolo-fgrep))
-              (hyrolo-fgrep "string"))
+                  (should (= 4 (call-interactively #'hyrolo-fgrep))))
+              (should (= 4 (hyrolo-fgrep "string"))))
             (should (string= (buffer-name) hyrolo-display-buffer))
             (should (= (how-many "@loc>") 4))
             (dolist (f (list org-file kotl-file md-file outl-file))
@@ -349,7 +349,7 @@ and {b} the previous same level cell."
          (hyrolo-file-list (list folder)))
     (unwind-protect
         (progn
-          (hyrolo-fgrep "string")
+          (should (= 1 (hyrolo-fgrep "string")))
           (should (string= (buffer-name) hyrolo-display-buffer))
           (should (= (how-many "@loc>") 1))
           (should (looking-at-p "==="))
@@ -377,7 +377,7 @@ and {b} the previous same level cell."
           (insert "string")
           (kotl-mode:newline 1)
           (insert "more")
-          (hyrolo-fgrep "string")
+          (should (= 1 (hyrolo-fgrep "string")))
           (should (string= (buffer-name) hyrolo-display-buffer))
           (should (= (how-many "@loc>") 1))
           (should (looking-at-p "==="))
@@ -398,7 +398,7 @@ and {b} the previous same level cell."
          (hyrolo-file-list (list folder)))
     (unwind-protect
         (progn
-          (hyrolo-fgrep "string")
+          (should (= 1 (hyrolo-fgrep "string")))
           (should (string= (buffer-name) hyrolo-display-buffer))
           (should (= (how-many "@loc>") 1))
           (should (looking-at-p "==="))
@@ -419,7 +419,7 @@ and {b} the previous same level cell."
          (hyrolo-file-list (list folder)))
     (unwind-protect
         (progn
-          (hyrolo-fgrep "string")
+          (should (= 1 (hyrolo-fgrep "string")))
           (should (string= (buffer-name) hyrolo-display-buffer))
           (should (= (how-many "@loc>") 1))
           (should (looking-at-p "==="))
@@ -449,7 +449,7 @@ Match a string in a level 2 child cell."
           (insert "string")
           (kotl-mode:newline 1)
           (insert "more")
-          (hyrolo-fgrep "string")
+          (should (= 1 (hyrolo-fgrep "string")))
           (should (string= (buffer-name) hyrolo-display-buffer))
           (should (= (how-many "@loc>") 1))
           (should (looking-at-p "==="))
@@ -479,7 +479,7 @@ Match a string in the second cell."
           (insert "string")
           (kotl-mode:newline 1)
           (insert "more")
-          (hyrolo-fgrep "string")
+          (should (= 1 (hyrolo-fgrep "string")))
           (should (string= (buffer-name) hyrolo-display-buffer))
           (should (= (how-many "@loc>") 1))
           (should (looking-at-p "==="))
@@ -501,7 +501,7 @@ Match a string in the second cell."
          (h1a_str  "     1a\\. heading 1"))
     (unwind-protect
         (progn
-          (hyrolo-fgrep "bar")
+          (should (= 2 (hyrolo-fgrep "bar")))
           (should (string= hyrolo-display-buffer (buffer-name)))
 
           (ert-info ("Hide first header move down using ?f")
@@ -702,7 +702,7 @@ below verifies all the details."
     (unwind-protect
         (progn
           (hy-test-helpers:ert-simulate-keys "body\n"
-            (call-interactively #'hyrolo-grep))
+            (should (= 2 (call-interactively #'hyrolo-grep))))
           (should (string= hyrolo-display-buffer (buffer-name)))
 
           (should (looking-at-p "==="))
@@ -718,7 +718,7 @@ below verifies all the details."
          (hyrolo-file-list (list org-file)))
     (unwind-protect
         (progn
-          (hyrolo-grep "body")
+          (should (= 2 (hyrolo-grep "body")))
           (should (string= hyrolo-display-buffer (buffer-name)))
 
           ;; Move down
@@ -756,7 +756,7 @@ below verifies all the details."
          (hyrolo-file-list (list md-file)))
     (unwind-protect
         (progn
-          (hyrolo-grep "body")
+          (should (= 2 (hyrolo-grep "body")))
           (should (string= hyrolo-display-buffer (buffer-name)))
 
           ;; Move down
@@ -794,7 +794,7 @@ below verifies all the details."
          (hyrolo-file-list (list md-file)))
     (unwind-protect
         (progn
-          (hyrolo-grep "body")
+          (should (= 2 (hyrolo-grep "body")))
           (should (string= hyrolo-display-buffer (buffer-name)))
 
           ;; Move down
@@ -832,7 +832,7 @@ below verifies all the details."
          (hyrolo-file-list (list org-file)))
     (unwind-protect
         (progn
-          (hyrolo-grep "body")
+          (should (= 2 (hyrolo-grep "body")))
           (should (string= hyrolo-display-buffer (buffer-name)))
 
           ;; Move to last heading
@@ -856,7 +856,7 @@ below verifies all the details."
          (hyrolo-file-list (list org-file1 md-file1)))
     (unwind-protect
         (progn
-          (hyrolo-grep "body")
+          (should (= 2 (hyrolo-grep "body")))
           (should (string= hyrolo-display-buffer (buffer-name)))
 
           ;; Move down
@@ -913,7 +913,7 @@ optional DEPTH the number of sub cells are created to that depth."
          (hyrolo-file-list (list kotl-file1)))
     (unwind-protect
         (progn
-          (hyrolo-grep "body")
+          (should (= 1 (hyrolo-grep "body")))
           (should (string= hyrolo-display-buffer (buffer-name)))
 
           (should (looking-at-p "==="))
@@ -940,7 +940,7 @@ optional DEPTH the number of sub cells are created to that depth."
          (hyrolo-file-list (list org-file1 otl-file1 md-file1 kotl-file1)))
     (unwind-protect
         (progn
-          (hyrolo-grep "body")
+          (should (= 4 (hyrolo-grep "body")))
           (should (string= hyrolo-display-buffer (buffer-name)))
 
           ;; Move down
@@ -978,7 +978,7 @@ optional DEPTH the number of sub cells are created to that depth."
          (hyrolo-file-list (list org-file)))
     (unwind-protect
         (progn
-          (hyrolo-grep "body")
+          (should (= 1 (hyrolo-grep "body")))
           (should (string= hyrolo-display-buffer (buffer-name)))
 
           ;; Hide/Show first line hides whole section
@@ -1019,7 +1019,7 @@ optional DEPTH the number of sub cells are created to that depth."
          (hyrolo-file-list (list org-file)))
     (unwind-protect
         (progn
-          (hyrolo-grep "body")
+          (should (= 1 (hyrolo-grep "body")))
           (should (string= hyrolo-display-buffer (buffer-name)))
 
           ;; Hide first line hides whole section
@@ -1050,7 +1050,7 @@ tabbing though the matches."
          (hyrolo-file-list (list org-file)))
     (unwind-protect
         (progn
-          (hyrolo-grep "body")
+          (should (= 2 (hyrolo-grep "body")))
           (should (string= hyrolo-display-buffer (buffer-name)))
 
           ;; Search Down
@@ -1084,7 +1084,7 @@ tabbing though the matches."
          (hyrolo-file-list (list org-file)))
     (unwind-protect
         (progn
-          (hyrolo-grep "body")
+          (should (= 1 (hyrolo-grep "body")))
           (should (string= hyrolo-display-buffer (buffer-name)))
 
           ;; Search Down
@@ -1122,7 +1122,7 @@ All files types are present."
          (hyrolo-file-list (list org-file1 md-file1 otl-file1 kotl-file1)))
     (unwind-protect
         (progn
-          (hyrolo-grep "body")
+          (should (= 7 (hyrolo-grep "body")))
           (should (string= hyrolo-display-buffer (buffer-name)))
 
           ;; Move forward
@@ -1158,7 +1158,7 @@ structure."
          (hyrolo-file-list (list org-file1 md-file1 otl-file1 kotl-file1)))
     (unwind-protect
         (progn
-          (hyrolo-grep "body")
+          (should (= 4 (hyrolo-grep "body")))
           (should (string= hyrolo-display-buffer (buffer-name)))
 
           ;; Move forward
@@ -1216,7 +1216,7 @@ Useful for creating outline and markdown test data from org examples."
          (hyrolo-file-list (list org-file1 org-file2)))
     (unwind-protect
         (progn
-          (hyrolo-grep "body")
+          (should (= 4 (hyrolo-grep "body")))
           (should (string= hyrolo-display-buffer (buffer-name)))
 
           ;; Move to first second level header
@@ -1253,7 +1253,7 @@ Useful for creating outline and markdown test data from org examples."
          (hyrolo-file-list (list org-file1 otl-file1 md-file1 kotl-file1)))
     (unwind-protect
         (progn
-          (hyrolo-grep "body")
+          (should (= 7 (hyrolo-grep "body")))
           (should (string= hyrolo-display-buffer (buffer-name)))
 
           ;; Move to first second level header
@@ -1313,7 +1313,7 @@ optional BEGIN and END only return that part of the buffer."
          (hyrolo-file-list (list org-file1)))
     (unwind-protect
         (progn
-          (hyrolo-grep "body")
+          (should (= 2 (hyrolo-grep "body")))
 
           ;; First line
           (should (= (point) 1))
@@ -1362,7 +1362,7 @@ body...
          (hyrolo-file-list (list org-file1)))
     (unwind-protect
         (progn
-          (hyrolo-grep "body")
+          (should (= 2 (hyrolo-grep "body")))
 
           ;; First line
           (should (= (point) 1))
@@ -1455,7 +1455,7 @@ body...
          (hyrolo-file-list (list org-file1)))
     (unwind-protect
         (progn
-          (hyrolo-grep "body")
+          (should (= 2 (hyrolo-grep "body")))
 
           ;; First line - show all
           (should (= (point) 1))
@@ -1528,7 +1528,7 @@ body
          (hyrolo-file-list (list org-file1)))
     (unwind-protect
         (progn
-          (hyrolo-grep "body")
+          (should (= 2 (hyrolo-grep "body")))
           (hyrolo-top-level)
 
           (should (string=
@@ -1556,7 +1556,7 @@ body
          (hyrolo-file-list (list kotl-file1)))
     (unwind-protect
         (progn
-          (hyrolo-grep "body")
+          (should (= 1 (hyrolo-grep "body")))
           (hyrolo-top-level)
 
           (should (string= (concat
@@ -1595,7 +1595,7 @@ body
          (hyrolo-file-list (list org-file1 otl-file1 md-file1 kotl-file1)))
     (unwind-protect
         (progn
-          (hyrolo-grep "body")
+          (should (= 7 (hyrolo-grep "body")))
           (hyrolo-top-level)
 
           (should (string=
@@ -1633,7 +1633,7 @@ body
          (hyrolo-file-list (list org-file1 otl-file1 md-file1 kotl-file1)))
     (unwind-protect
         (progn
-          (hyrolo-grep "body")
+          (should (= 7 (hyrolo-grep "body")))
           (hyrolo-overview nil)
 
           (should (string=
@@ -1664,7 +1664,7 @@ body
          (hyrolo-file-list (list org-file)))
     (unwind-protect
         (let ((hypb:mail-address-mode-list '(hyrolo-mode)))
-          (hyrolo-grep "receiver\\.org")
+          (should (= 2 (hyrolo-grep "receiver\\.org")))
           (mocklet (((actypes::link-to-compose-mail "first@receiver.org") => t))
             (hyrolo-mail-to))
           (forward-line)
@@ -1680,7 +1680,7 @@ body
          (hyrolo-file-list (list org-file1 otl-file1)))
     (unwind-protect
         (progn
-          (hyrolo-grep "body")
+          (should (= 4 (hyrolo-grep "body")))
           (hyrolo-to-next-loc)
           (should (looking-at-p (concat "@loc> \"" org-file1 "\"")))
           (hyrolo-to-next-loc)
@@ -1696,7 +1696,7 @@ body
          (hyrolo-file-list (list org-file1)))
     (unwind-protect
         (progn
-          (hyrolo-grep "body")
+          (should (= 2 (hyrolo-grep "body")))
           (hyrolo-next-match)
           (action-key)
           (should (string= (hypb:buffer-file-name) org-file1))
@@ -1710,7 +1710,7 @@ body
          (hyrolo-file-list (list org-file1)))
     (unwind-protect
         (progn
-          (hyrolo-grep "h-org")
+          (should (= 2 (hyrolo-grep "h-org")))
           (hyrolo-next-match)
           (action-key)
           (should (string= (hypb:buffer-file-name) org-file1))
@@ -1724,7 +1724,7 @@ body
          (hyrolo-file-list (list kotl-file1)))
     (unwind-protect
         (progn
-          (hyrolo-grep "body")
+          (should (= 1 (hyrolo-grep "body")))
           (hyrolo-next-match)
           (action-key)
           (should (string= (hypb:buffer-file-name) kotl-file1))
@@ -1747,7 +1747,7 @@ body
          (hyrolo-file-list (list kotl-file1)))
     (unwind-protect
         (progn
-          (hyrolo-grep "h-kotl")
+          (should (= 1 (hyrolo-grep "h-kotl")))
           (hyrolo-next-match)
           (action-key)
           (should (string= (hypb:buffer-file-name) kotl-file1))
@@ -1770,7 +1770,7 @@ body
          (hyrolo-file-list (list kotl-file1)))
     (unwind-protect
         (progn
-          (hyrolo-grep "body2")
+          (should (= 1 (hyrolo-grep "body2")))
           (hyrolo-next-match)
           (action-key)
           (should (string= (hypb:buffer-file-name) kotl-file1))
@@ -1794,7 +1794,7 @@ body
     (unwind-protect
         (progn
 	  (kotl-mode:beginning-of-buffer)
-          (hyrolo-grep "h2")
+          (should (= 1 (hyrolo-grep "h2")))
           (action-key)
           (should (string= (hypb:buffer-file-name) kotl-file1))
           (should (looking-at-p "h1 / h2$"))
