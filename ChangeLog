@@ -1,3 +1,12 @@
+2026-05-11  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode (kotl-mode:just-one-space): Fix param name from 'N' to 'n'.
+
+* kotl/kotl-mode.el (kotl-mode:yank): Narrow to current cell's text region.
+  hypb.el (hypb:in-string-p): Fix kotl-mode yank error by ensuring 'str-start'
+    and 'str-end' fall within the presently visible buffer range even when
+    pulled from the cache.
+
 2026-05-10  Mats Lidell  <matsl@gnu.org>
 
 * test/hyrolo-tests.el (hyrolo-tests--set-date):
@@ -41,17 +50,17 @@
     "stripmode" package does not delete trailing whitespace from cells whose
     first line is blank or editing will not start at the proper column.
 
-* kotl/kotl-mode.el (kotl-mode:just-one-space): Add optional N arg of how
-    many spaces to leave that 'just-one-space supports and update doc string.
-    Since works for a single line only, does not support -N for removing
+* kotl/kotl-mode.el (kotl-mode:just-one-space): Add optional 'n' arg of how
+    many spaces to leave that 'just-one-space' supports and update doc string.
+    Since works for a single line only, does not support -n for removing
     newlines as 'just-one-space' does.
 
 2026-04-29  Bob Weiner  <rsw@gnu.org>
 
-* kotl/kfile.el (kfile:insert-attributes-v3): When reading in an exising
+* kotl/kfile.el (kfile:insert-attributes-v3): When reading in an existing
     Koutline, repair any cells that start with a blank line and have had
     the label separator removed or where lines of just whitespace have been
-    remove due to packages that delete trailing spaces.  Also ensure search
+    removed due to packages that delete trailing spaces.  Also ensure search
     for relative ids that only start with a digit, not alpha chars.
 
 2026-04-21  Mats Lidell  <matsl@gnu.org>
