@@ -2100,7 +2100,7 @@ Dependencies on the consult package are mocked."
           (should (string= "* item\n\t\t\t2025-01-03\n\n\n" (buffer-string))))))))
 
 (ert-deftest hyrolo-tests--rename ()
-  "Verify `hyrolo-rename' changes the name of the file."
+  "Verify `hyrolo-rename' changes the name of the old rolo file."
   (defvar new-file)
   (let* ((old-file (make-temp-file "hypb" nil ".otl" "old-file"))
          (old-file-backup (concat old-file "~"))
