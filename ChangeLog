@@ -1,5 +1,8 @@
 2026-05-11  Mats Lidell  <matsl@gnu.org>
 
+* test/hyrolo-tests.el (hyrolo-tests--mail-to): Test error case.
+    (hyrolo-tests--rename): Add test.
+
 * test/hyrolo-tests.el: Verify all return values for hyrolo-grep and
     hyrolo-fgrep.
 
