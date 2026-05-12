@@ -1,5 +1,7 @@
 2026-05-15  Mats Lidell  <matsl@gnu.org>
 
+* hload-path.el: Only generate and load autoloads when interactive.
+
 * hycontrol.el: Move minor-mode definitions section up so it occurs
     before use of the minor-mode variables.
 
