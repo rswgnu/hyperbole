@@ -30,6 +30,7 @@
 (declare-function hpath:substitute-value "hpath")
 (declare-function id-info-item "hversion")
 (declare-function br-in-browser "hpath")
+(declare-function hpath:display-buffer "hpath")
 
 ;;; ************************************************************************
 ;;; Public variables

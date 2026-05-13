@@ -13,7 +13,7 @@
 ;; This file is part of GNU Hyperbole.
 
 ;;; Commentary:
-;; 
+;;
 ;;   Automatically configured for use in "hyperbole.el".
 ;;   If hsettings loading fails prior to initializing Hyperbole Rmail support,
 ;;
@@ -36,6 +36,8 @@
 
 (defvar rmail-old-text)
 (defvar message-setup-hook)             ; "message.el"
+
+(declare-function smart-eobp "hui-mouse")
 
 ;;; ************************************************************************
 ;;; Public functions

@@ -97,6 +97,11 @@
 (declare-function kotl-mode:eobp "kotl-mode")
 (declare-function kotl-mode:eolp "kotl-mode")
 
+;; Other Hyperbole functions
+(declare-function smart-python-at-tag-p "hmouse-tag")
+(declare-function smart-tags-file-list "hmouse-tag")
+(declare-function Info-handle-in-note "hmouse-info")
+
 ;; Emacs functions
 (declare-function Custom-buffer-done "cus-edit")
 (declare-function Custom-newline "cus-edit")

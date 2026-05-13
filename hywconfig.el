@@ -64,6 +64,11 @@
           :match ,(lambda (_widget value) (and (integerp value) (> value 0))))
   :group 'hyperbole-screen)
 
+;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function hyperbole "hui-mini")
 
 ;;; ************************************************************************
 ;;; Public functions

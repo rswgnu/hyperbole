@@ -24,14 +24,15 @@
 ;;; Public declarations
 ;;; ************************************************************************
 
-(declare-function kotl-mode:goto-cell "kotl-mode")
-(declare-function kotl-mode:beginning-of-buffer "kotl-mode")
-(declare-function kotl-mode:goto-cell-ref "kotl-mode")
 (declare-function kcell-view:indent "kcell-view")
-
+(declare-function kotl-mode:beginning-of-buffer "kotl-mode")
+(declare-function kotl-mode:goto-cell "kotl-mode")
+(declare-function kotl-mode:goto-cell-ref "kotl-mode")
 (declare-function org-fold-show-context "org-fold")
 (declare-function org-roam-id-find "‎ext:org-roam-id")
 (declare-function rmail:msg-to-p "hrmail")
+(declare-function smart-eobp "hui-mouse")
+(declare-function smart-tags-file-path "hmouse-tag")
 
 ;;; ************************************************************************
 ;;; Standard Hyperbole action types

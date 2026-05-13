@@ -45,9 +45,10 @@
 
 (declare-function eww--dwim-expand-url "eww" (url))
 
+(declare-function hpath:display-buffer "hpath")
+(declare-function hpath:remote-at-p "hpath")
 (declare-function hpath:remote-available-p "hpath")
 (declare-function hpath:remote-p "hpath")
-(declare-function hpath:remote-at-p "hpath")
 (declare-function hpath:www-at-p "hpath")
 
 ;; Forward declare conditionally defined functions

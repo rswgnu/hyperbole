@@ -13,7 +13,7 @@
 ;; This file is part of GNU Hyperbole.
 
 ;;; Commentary:
-;; 
+;;
 ;;   Automatically configured for use in "hsettings.el".
 ;;   If hsettings loading fails prior to initializing Hyperbole Mh support,
 ;;
@@ -41,6 +41,7 @@
 ;;; ************************************************************************
 
 (declare-function hypb:window-list "hypb")
+(declare-function var:append "hvar")
 
 ;;; ************************************************************************
 ;;; Public functions
