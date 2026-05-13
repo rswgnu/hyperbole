@@ -1,3 +1,7 @@
+2026-05-12  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (HYPB_NATIVE_COMP): Use MAKE variable in recursive make.
+
 2026-05-11  Mats Lidell  <matsl@gnu.org>
 
 * test/hyrolo-tests.el (hyrolo-tests--mail-to): Test error case.
