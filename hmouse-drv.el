@@ -60,21 +60,19 @@
 (defvar action-key-default-function)    ; defcustom hui-mouse
 (defvar assist-key-default-function)    ; defcustom hui-mouse
 
-(declare-function mouse-drag-frame "mouse") ;; Obsolete from Emacs 28
-
-(declare-function hkey-quit-window "hmouse-drv") ; Alias defined in this file.
-
 (declare-function br-in-browser "hpath")
 (declare-function hattr:clear "hbut")
 (declare-function hattr:get "hbut")
 (declare-function hattr:list "hbut")
 (declare-function hattr:report "hbut")
 (declare-function hbut:label "hbut")
+(declare-function hkey-quit-window "hmouse-drv") ; Alias defined in this file.
 (declare-function hkey-set-key "hyperbole")
+(declare-function hpath:display-buffer "hpath")
 (declare-function hui:ebut-link-directly "hui")
 (declare-function hui:ibut-link-directly "hui")
+(declare-function mouse-drag-frame "mouse") ;; Obsolete from Emacs 28
 (declare-function org-todo "org")
-(declare-function hpath:display-buffer "hpath")
 
 ;;; ************************************************************************
 ;;; Public variables
