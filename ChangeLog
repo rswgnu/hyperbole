@@ -1,3 +1,8 @@
+2026-05-15  Mats Lidell  <matsl@gnu.org>
+
+* hycontrol.el: Move minor-mode definitions section up so it occurs
+    before use of the minor-mode variables.
+
 2026-05-12  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (HYPB_NATIVE_COMP): Use MAKE variable in recursive make.
