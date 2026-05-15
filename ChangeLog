@@ -1,3 +1,10 @@
+2026-05-16  Mats Lidell  <matsl@gnu.org>
+
+* hload-path.el (hload-path--make-directory-autoloads-in-sync-subprocess):
+    Run autoload generation in a synchronous subprocess.
+    (hyperb:generate-autoloads): Use
+    hload-path--make-directory-autoloads-in-sync-subprocess.
+
 2026-05-15  Mats Lidell  <matsl@gnu.org>
 
 * Add declare-function and defvar that replaces the autoload definitions
