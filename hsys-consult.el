@@ -38,11 +38,6 @@
 ;;; Public declarations
 ;;; ************************************************************************
 
-(declare-function hyrolo-at-tags-p "hyrolo")
-(declare-function hywiki-at-tags-p "hywiki")
-(declare-function hsys-org-directory-at-tags-p "hsys-org")
-(declare-function hsys-org-at-tags-p "hsys-org")
-
 (declare-function consult--async-command "ext:consult")
 (declare-function consult--grep "ext:consult")
 (declare-function consult--grep-make-builder "ext:consult")
@@ -51,6 +46,13 @@
 (declare-function consult--ripgrep-make-builder "ext:consult")
 (declare-function consult-grep "ext:consult")
 (declare-function consult-ripgrep "ext:consult")
+(declare-function hsys-org-at-tags-p "hsys-org")
+(declare-function hsys-org-consult-grep "hsys-org")
+(declare-function hsys-org-directory-at-tags-p "hsys-org")
+(declare-function hyrolo-at-tags-p "hyrolo")
+(declare-function hyrolo-consult-grep "hyrolo")
+(declare-function hywiki-at-tags-p "hywiki")
+(declare-function hywiki-consult-grep "hywiki")
 (declare-function org-roam-db-autosync-mode "ext:org-roam")
 (declare-function org-roam-node-find "ext:org-roam")
 (declare-function org-roam-node-level "ext:org-roam")

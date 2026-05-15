@@ -70,8 +70,11 @@ It is local to each koutline.  Nil value means it has not been set yet.")
 ;;; Public declarations
 ;;; ************************************************************************
 
-(declare-function kotl-mode:hide-subtree "kotl-mode")
 (declare-function kfile:narrow-to-kcells "kfile")
+(declare-function kotl-mode:hide-subtree "kotl-mode")
+(declare-function kotl-mode:is-p "kotl-mode")
+(declare-function kotl-mode:show-all "kotl-mode")
+(declare-function kotl-mode:show-tree "kotl-mode")
 
 ;;; ************************************************************************
 ;;; Private variables

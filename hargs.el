@@ -66,6 +66,11 @@
 
 (declare-function smart-dired-pathname-up-to-point "hui-mouse")
 
+(declare-function Info-menu-item-at-p "hmouse-info")
+(declare-function Info-note-at-p "hmouse-info")
+(declare-function Info-current-filename-sans-extension "hmouse-info")
+(declare-function Info-read-index-item-name "hmouse-info")
+
 ;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************

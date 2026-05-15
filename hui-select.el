@@ -345,10 +345,12 @@ Used to include a final line when marking indented code.")
 (defvar hyperbole-mode-map)             ; "hyperbole.el"
 (defvar org-mode-map)                   ; "org.el"
 
-(declare-function kview:valid-position-p "kotl/kview")
+(declare-function hargs:delimited "hargs")
 (declare-function hkey-set-key "hyperbole")
 (declare-function hypb:cmd-key-vector "hypb")
-(declare-function hargs:delimited "hargs")
+(declare-function kotl-mode:to-valid-position "kotl/kotl-mode")
+(declare-function kview:valid-position-p "kotl/kview")
+(declare-function smart-eobp "hui-mouse")
 
 ;;; ************************************************************************
 ;;; Private variables

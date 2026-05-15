@@ -143,8 +143,9 @@ This is used only when running from git source and not a package release."
 
 ;; Ensure *-autoloads.el files are already generated or generate them.
 ;; Then ensure they are loaded.
-(hyperb:maybe-generate-autoloads)
-(hyperb:maybe-load-autoloads)
+(unless noninteractive
+  (hyperb:maybe-generate-autoloads)
+  (hyperb:maybe-load-autoloads))
 
 (provide 'hload-path)
 

@@ -39,8 +39,10 @@
 (defvar hyperbole-mode-map)             ; "hyperbole.el"
 (defvar hywiki-mode)                    ; "hywiki.el"
 
+(declare-function Info-menu-item-at-p "hmouse-info")
 (declare-function actypes::link-to-wikiword "hywiki")
 (declare-function bookmark-bmenu-bookmark "bookmark")
+(declare-function hui-register-struct-at-point "hui-register")
 (declare-function hui:menu-choose "hui-mini")
 (declare-function hywiki-get-buffer-page-name "hywiki")
 (declare-function hywiki-in-page-p "hywiki")
@@ -50,7 +52,9 @@
 (declare-function kcell-view:absolute-reference "kotl/kview")
 (declare-function kcell-view:idstamp "kotl/kview")
 (declare-function klink:absolute "kotl/klink")
-(declare-function kotl-mode:copy-region-as-kill "kotl-mode")
+(declare-function klink:at-p "kotl/klink")
+(declare-function kotl-mode "kotl/kotl-mode")
+(declare-function kotl-mode:copy-region-as-kill "kotl/kotl-mode")
 (declare-function kotl-mode:kill-region "kotl-mode")
 (declare-function texinfo-copy-node-name "texnfo-upd")
 

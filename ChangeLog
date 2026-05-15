@@ -1,5 +1,10 @@
 2026-05-15  Mats Lidell  <matsl@gnu.org>
 
+* Add declare-function and defvar that replaces the autoload definitions
+    now when autoloads are not loaded as part of byte compiling.
+
+* hload-path.el: Only generate and load autoloads when interactive.
+
 * hycontrol.el: Move minor-mode definitions section up so it occurs
     before use of the minor-mode variables.
 

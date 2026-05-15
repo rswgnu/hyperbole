@@ -39,7 +39,7 @@
 (defvar hmouse-set-point-command)       ; "hui-mouse.el"
 (defvar hmouse-bindings)                ; "hmouse-key.el"
 (defvar hmouse-bindings-flag)           ; "hmouse-key.el"
-
+(defvar hyperbole-mode)                 ; "hyperbole.el"
 (defvar Info-mode-map)
 
 (declare-function action-key-depress-emacs "hmouse-drv")
@@ -98,7 +98,7 @@ Use nil as cmd value to unbind a key."
 	   [right-fringe down-mouse-3]
 	   [vertical-line down-mouse-3]
 	   [mode-line down-mouse-3])
-	  
+
 	  ([down-mouse-4]
 	   [double-down-mouse-4] [triple-down-mouse-4]
 	   [header-line down-mouse-4]
@@ -114,7 +114,7 @@ Use nil as cmd value to unbind a key."
 	   [right-fringe down-mouse-5]
 	   [vertical-line down-mouse-5]
 	   [mode-line down-mouse-5]))))
-	   
+
   (hmouse-set-key-list
    release-cmd
    (nth (1- mouse-key-number)
@@ -209,7 +209,7 @@ This includes depresses and drags.  Shifted Mouse Key 1 is
 	   [right-fringe S-down-mouse-3]
 	   [vertical-line S-down-mouse-3]
 	   [mode-line S-down-mouse-3])
-	  
+
 	  ([S-down-mouse-4] [header-line S-down-mouse-4]
 	   [left-fringe S-down-mouse-4]
 	   [right-fringe S-down-mouse-4]
@@ -221,7 +221,7 @@ This includes depresses and drags.  Shifted Mouse Key 1 is
 	   [right-fringe S-down-mouse-5]
 	   [vertical-line S-down-mouse-5]
 	   [mode-line S-down-mouse-5]))))
-	  
+
   (hmouse-set-key-list
    release-cmd
    (nth (1- shifted-mouse-key-number)
@@ -290,7 +290,7 @@ This includes depresses and drags.  Shifted Mouse Key 1 is
 	   [vertical-line S-mouse-5]
 	   [mode-line S-drag-mouse-5]
 	   [mode-line S-mouse-5])))))
-	   
+
 (defun hmouse-get-bindings (middle-flag)
   "Return the list of active bindings of mouse keys used by Hyperbole.
 If MIDDLE-FLAG is non-nil, include the middle mouse key
