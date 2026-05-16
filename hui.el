@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     16-May-26 at 17:37:57 by Bob Weiner
+;; Last-Mod:     16-May-26 at 17:49:30 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1545,11 +1545,14 @@ Should be used when a command is called interactively."
   (cond ((zerop message-len)
          nil)
         (thing
-         ;; Don't say "killed" or "saved"; that is misleading.
-         (message "Copied selectable thing: %s"
-	          ;; Don't show newlines literally
-	          (query-replace-descr
-                   (seq-take thing message-len))))
+         (let ((thing-excerpt (seq-take thing message-len)))
+           ;; Don't say "killed" or "saved"; that is misleading.
+           (message "Copied selectable thing: \"%s%s\""
+	            ;; Don't show newlines literally
+	            (query-replace-descr thing-excerpt)
+                    (if (< (length thing-excerpt) (length thing))
+                        "..."
+                      ""))))
 	((mark t)
 	 (indicate-copied-region message-len))))
 
