@@ -163,7 +163,6 @@ GPG = \gpg
 GZIP = \gzip -c
 INSTALL = \install -m 644 -c
 MKDIR = \mkdir -p
-MAKE = \make
 RM = \rm -f
 TAR = \tar
 ZIP = \zip -qry
@@ -386,7 +385,7 @@ bin: remove-elc src new-bin
 # Native compilation (Requires Emacs built with native compilation support.)
 .PHONY: eln
 eln:
-	HYPB_NATIVE_COMP=yes make new-bin
+	HYPB_NATIVE_COMP=yes $(MAKE) new-bin
 
 .PHONY: tags
 tags: TAGS

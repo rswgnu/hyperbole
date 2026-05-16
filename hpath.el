@@ -153,6 +153,7 @@ The format is ${variable}.  Match grouping 1 is the name of the variable.")
 (declare-function kbd-key:key-series-to-events "hib-kbd")
 (declare-function kcell-view:indent "kcell-view")
 (declare-function klink:act "klink")
+(declare-function kotl-mode:to-valid-position "kotl-mode")
 (declare-function mm-mailcap-command "mm-decode")
 (declare-function org-element-property "org-element-ast")
 

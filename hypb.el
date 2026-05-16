@@ -60,6 +60,10 @@
 (declare-function hkey-either "hmouse-drv")
 (declare-function hycontrol-frame-to-right-center "hycontrol")
 
+(defvar hsys-org-enable-smart-keys)     ; "hsys-org.el"
+(declare-function kview:char-invisible-p "kotl/kview")
+(declare-function smart-eobp "hui-mouse")
+
 ;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************

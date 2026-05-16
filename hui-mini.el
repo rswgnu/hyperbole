@@ -30,6 +30,7 @@
 (defvar hargs:reading-type)             ; "hargs.el"
 (defvar hbmap:dir-user)                 ; "hbmap.el"
 (defvar hbmap:filename)                 ; "hbmap.el"
+(defvar hsys-org-enable-smart-keys)     ; "hsys-org.el"
 (defvar hui:menu-highlight-flag)        ; "hui-mini.el"
 (defvar hui:menu-hywiki nil)            ; "hui-mini.el"
 (defvar hui:menu-mode-map)              ; "hui-mini.el"
@@ -41,9 +42,14 @@
 (defvar hywiki-mode)                    ; "hywiki.el"
 (defvar org-mode-map)                   ; "org.el"
 
-(declare-function hpath:find "hpath")
-(declare-function hmouse-update-smart-keys "hmouse-key")
 (declare-function hargs:at-p "hargs")
+(declare-function hkey-help-show "hmouse-drv")
+(declare-function hmouse-update-smart-keys "hmouse-key")
+(declare-function hpath:find "hpath")
+(declare-function hyperb:init-menubar "hinit")
+(declare-function hyperbole-mode "hyperbole")
+(declare-function hyrolo-add "hyrolo")
+(declare-function hyrolo-fgrep "hyrolo")
 (declare-function kbd-key:hyperbole-mini-menu-key-p "hib-kbd")
 
 ;;; ************************************************************************

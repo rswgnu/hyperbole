@@ -1671,7 +1671,12 @@ body
           (mocklet (((actypes::link-to-compose-mail "second@receiver.org") => t))
             (hyrolo-mail-to)))
       (kill-buffer hyrolo-display-buffer)
-      (hy-delete-files-and-buffers hyrolo-file-list))))
+      (hy-delete-files-and-buffers hyrolo-file-list)))
+  (with-temp-buffer
+    (mocklet (((beep) => t))
+      (ert-with-message-capture cap
+        (hyrolo-mail-to)
+        (hy-test-helpers:should-last-message "Invalid buffer or no e-mail address found" cap)))))
 
 (ert-deftest hyrolo-tests--location-movement ()
   "Verify movement between location headers."
@@ -2093,6 +2098,27 @@ Dependencies on the consult package are mocked."
           (goto-char (point-min))
           (hyrolo-set-date)
           (should (string= "* item\n\t\t\t2025-01-03\n\n\n" (buffer-string))))))))
+
+(ert-deftest hyrolo-tests--rename ()
+  "Verify `hyrolo-rename' changes the name of the old rolo file."
+  (defvar new-file)
+  (let* ((old-file (make-temp-file "hypb" nil ".otl" "old-file"))
+         (old-file-backup (concat old-file "~"))
+         (new-file (concat (expand-file-name (make-temp-name "hypb") "/tmp") ".otl"))
+         (new-file-backup (concat new-file "~")))
+    (unwind-protect
+        (with-mock
+          (mock (hyrolo-get-file-list) => (list new-file))
+          (mock (hyrolo-prompt 'y-or-n-p *) => t)
+          (make-empty-file old-file-backup)
+          (find-file-noselect old-file)
+          (ert-with-message-capture cap
+            (hyrolo-rename old-file new-file)
+            (should (string-search "Your personal rolo file is now" cap)))
+          (should (file-exists-p new-file-backup))
+          (with-current-buffer (find-file new-file)
+            (should (looking-at-p "old-file"))))
+      (hy-delete-files-and-buffers (list old-file old-file-backup new-file new-file-backup)))))
 
 (provide 'hyrolo-tests)
 

@@ -166,7 +166,10 @@
 (defvar org-agenda-buffer-tmp-name)              ;; "org-agenda.el"
 (defvar org-export-with-broken-links)            ;; "ox.el"
 (defvar org-publish-project-alist)               ;; "ox-publish.el"
+(defvar hyperbole-mode)                          ;; "hyperbole.el"
 
+(declare-function Info-current-filename-sans-extension "hui-mouse")
+(declare-function Info-read-index-item-name "hui-mouse")
 (declare-function activities-completing-read "activities" (:prompt prompt :default default))
 (declare-function activities-new "activities" (name))
 (declare-function activities-resume "activities" (activity :resetp resetp))
@@ -181,6 +184,8 @@
 (declare-function consult--lookup-member "ext:consult")
 (declare-function consult--read "ext:consult")
 (declare-function hsys-org-at-tags-p "hsys-org")
+(declare-function hyperbole-mode "hyperbole")
+(declare-function hyrolo-fgrep "hyrolo")
 (declare-function hywiki-org-format-heading "hywiki")
 (declare-function ibtypes::pathname "hpath")
 (declare-function ibtypes::pathname-line-and-column "hpath")
@@ -194,6 +199,7 @@
 (declare-function org-roam-node-read "org-roam" (&optional initial-input filter-fn sort-fn require-match prompt))
 (declare-function org-roam-node-title "org-roam-node" (node))
 (declare-function smart-treemacs-edit "hui-treemacs" (&optional dir))
+(declare-function smart-treemacs-modeline "hui-treemacs")
 
 ;;; ************************************************************************
 ;;; Private variables

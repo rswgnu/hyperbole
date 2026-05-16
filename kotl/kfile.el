@@ -22,6 +22,14 @@
 (eval-and-compile (mapc #'require '(kproperty kmenu kview kvspec kcell)))
 
 ;;; ************************************************************************
+;;; Public declarations
+;;; ************************************************************************
+
+(declare-function kimport:file "kimport")
+(declare-function kimport:copy-and-set-buffer "kimport")
+(declare-function kotl-mode "kotl-mode")
+
+;;; ************************************************************************
 ;;; Public variables
 ;;; ************************************************************************
 

@@ -35,7 +35,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(eval-and-compile (mapc #'require '(hload-path hmail hsmail hypb gnus-msg)))
+(eval-and-compile (mapc #'require '(hload-path hmail hsmail hypb gnus-msg hvar)))
 
 ;;; ************************************************************************
 ;;; Public variables

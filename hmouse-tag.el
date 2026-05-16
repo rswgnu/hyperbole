@@ -59,6 +59,7 @@
 (defvar hkey-value)                     ; "hui-mouse.el"
 
 (declare-function hsys-org-get-value "hsys-org")
+(declare-function hsys-org-mode-p "hsys-org")
 (declare-function org-in-src-block-p "org")
 (declare-function ibtype:def-symbol "hbut")
 
@@ -890,7 +891,7 @@ Otherwise:
      identifier, then the man page is displayed."
 
   (interactive)
-  
+
   (if (fboundp 'objc-to-definition)
       ;; Only fboundp if the OO-Browser has been loaded.
       (smart-objc-oo-browser)

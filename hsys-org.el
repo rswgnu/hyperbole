@@ -69,6 +69,9 @@
 (declare-function hsys-org-roam-tags-view "hsys-org")
 
 (declare-function org-babel-get-src-block-info "org-babel")
+(declare-function org-element--property "org-element-ast")
+(declare-function org-element-lineage "org-element-ast")
+(declare-function org-element-type "org-element-ast")
 (declare-function org-fold-show-context "org-fold")
 (declare-function org-id-find "org-id")
 (declare-function org-link-open-from-string "ol")

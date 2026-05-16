@@ -91,7 +91,7 @@
 ;;   perpendicular to that edge by 50% while keeping the original edge
 ;;   fixed in place.  Try them and you will quickly see how they can
 ;;   help.
-;;   
+;;
 ;;   ----
 ;;
 ;;   When HyControl creates a new frame, it automatically sizes it to the
@@ -531,6 +531,48 @@ The cycle is in clockwise order from the upper left corner.")
 (defvar hycontrol--initial-which-key-inhibit nil
   "Store value of `which-key-inhibit' flag from \"which-key\" package, if any.
 Used on entry to HyControl.")
+
+;; This just sets the keymap locally and shows the minor mode
+;; indicator in the buffer's mode-line; the separate global minor mode
+;; turns things on and off.
+;;;###autoload
+(define-minor-mode hycontrol-local-frames-mode
+  "Toggle Hyperbole Frames control minor mode in the current buffer."
+  :lighter " HyFrm"
+  :group 'hyperbole-screen)
+
+;;;###autoload
+(define-globalized-minor-mode hycontrol-frames-mode hycontrol-local-frames-mode
+  (lambda () (hycontrol-local-frames-mode 1))
+  :group 'hyperbole-screen)
+
+;; These hooks run by the generated `hycontrol-frames-mode' function
+;; do the global work of turning on and off the mode.
+(add-hook 'hycontrol-frames-mode-on-hook
+	  (lambda () (hycontrol-frames current-prefix-arg)))
+
+(add-hook 'hycontrol-frames-mode-off-hook 'hycontrol-end-mode)
+
+;; This just sets the keymap locally and shows the minor mode
+;; indicator in the buffer's mode-line; the separate global minor mode
+;; turns things on and off.
+;;;###autoload
+(define-minor-mode hycontrol-local-windows-mode
+  "Toggle Hyperbole Windows control minor mode in the current buffer."
+  :lighter " HyWin"
+  :group 'hyperbole-screen)
+
+;;;###autoload
+(define-globalized-minor-mode hycontrol-windows-mode hycontrol-local-windows-mode
+  (lambda () (hycontrol-local-windows-mode 1))
+  :group 'hyperbole-screen)
+
+;; These hooks run by the generated `hycontrol-windows-mode' function
+;; do the global work of turning on and off the mode.
+(add-hook 'hycontrol-windows-mode-on-hook
+	  (lambda () (hycontrol-windows current-prefix-arg)))
+
+(add-hook 'hycontrol-windows-mode-off-hook 'hycontrol-end-mode)
 
 ;;; ************************************************************************
 ;;; Private functions
@@ -1100,48 +1142,6 @@ instead of quitting HyControl."
     (when hycontrol-frames-mode
       (message "Hyperbole finished controlling frames"))
     (hycontrol-disable-modes)))
-
-;; This just sets the keymap locally and shows the minor mode
-;; indicator in the buffer's mode-line; the separate global minor mode
-;; turns things on and off.
-;;;###autoload
-(define-minor-mode hycontrol-local-frames-mode
-  "Toggle Hyperbole Frames control minor mode in the current buffer."
-  :lighter " HyFrm"
-  :group 'hyperbole-screen)
-
-;;;###autoload
-(define-globalized-minor-mode hycontrol-frames-mode hycontrol-local-frames-mode
-  (lambda () (hycontrol-local-frames-mode 1))
-  :group 'hyperbole-screen)
-
-;; These hooks run by the generated `hycontrol-frames-mode' function
-;; do the global work of turning on and off the mode.
-(add-hook 'hycontrol-frames-mode-on-hook
-	  (lambda () (hycontrol-frames current-prefix-arg)))
-
-(add-hook 'hycontrol-frames-mode-off-hook 'hycontrol-end-mode)
-
-;; This just sets the keymap locally and shows the minor mode
-;; indicator in the buffer's mode-line; the separate global minor mode
-;; turns things on and off.
-;;;###autoload
-(define-minor-mode hycontrol-local-windows-mode
-  "Toggle Hyperbole Windows control minor mode in the current buffer."
-  :lighter " HyWin"
-  :group 'hyperbole-screen)
-
-;;;###autoload
-(define-globalized-minor-mode hycontrol-windows-mode hycontrol-local-windows-mode
-  (lambda () (hycontrol-local-windows-mode 1))
-  :group 'hyperbole-screen)
-
-;; These hooks run by the generated `hycontrol-windows-mode' function
-;; do the global work of turning on and off the mode.
-(add-hook 'hycontrol-windows-mode-on-hook
-	  (lambda () (hycontrol-windows current-prefix-arg)))
-
-(add-hook 'hycontrol-windows-mode-off-hook 'hycontrol-end-mode)
 
 ;;; Frame Display Commands
 (defun hycontrol-delete-other-frames ()
