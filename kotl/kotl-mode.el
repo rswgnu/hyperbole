@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     11-May-26 at 12:50:49 by Bob Weiner
+;; Last-Mod:     16-May-26 at 11:55:50 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -3054,9 +3054,12 @@ With optional universal ARG, {\\`C-u'}, the new cell is added as the child of
 the current cell.  Non-read-only attributes from the current cell are
 replicated in the new cell."
   (interactive "*P")
-  ;; delete any surrounding whitespace
-  (delete-horizontal-space)
-  (delete-region (point) (progn (skip-chars-backward "\n\r\t ") (point)))
+  (kotl-mode:to-valid-position)
+  (kcell-view:operate
+   (lambda ()
+     ;; delete any surrounding whitespace
+     (delete-horizontal-space)
+     (delete-region (point) (progn (skip-chars-backward "\n\r\t ") (point)))))
   (let ((new-cell-contents (kotl-mode:kill-region
 			    (point) (kcell-view:end-contents) 'string))
 	(start (kcell-view:start))
