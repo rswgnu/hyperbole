@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     16-May-26 at 11:55:50 by Bob Weiner
+;; Last-Mod:     16-May-26 at 17:18:12 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -791,12 +791,14 @@ With optional COPY-FLAG equal to t, copy region to kill ring but does not
 kill it.  With COPY-FLAG any other non-nil value, return region as a
 string without affecting kill ring.
 
-If called interactively, `transient-mark-mode' is non-nil, and
-there is no active region, copy any delimited selectable thing at
-point; see `hui:delimited-selectable-thing'.
+If called interactively, `transient-mark-mode' is non-nil, there is no
+active region, and point is not on a whitespace character, then kill/copy
+the selectable thing at point including any delimiters; see
+`hui:selectable-thing-and-bounds'.
 
-If the buffer is read-only and COPY-FLAG is nil, the region will not be deleted
-but it will be copied to the kill ring and then an error will be signaled.
+If the buffer is read-only and COPY-FLAG is nil, the region will not be
+deleted but it will be copied to the kill ring and then an error will be
+signaled.
 
 If a completion is active, this aborts the completion only."
   (interactive
@@ -819,6 +821,7 @@ If a completion is active, this aborts the completion only."
 	    ((and (memq this-command kill-commands)
 		  transient-mark-mode
 		  (not (use-region-p))
+                  (not (looking-at "\\s-"))
 		  (setq thing-and-bounds (hui:selectable-thing-and-bounds)
 			thing (nth 1 thing-and-bounds)
 			start (nth 2 thing-and-bounds)

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     15-Mar-26 at 17:46:14 by Bob Weiner
+;; Last-Mod:     16-May-26 at 17:49:30 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -62,6 +62,10 @@
 ;;; Public variables
 ;;; ************************************************************************
 
+(defcustom hui:copy-message-length 40
+  "Maximum character length of the message displayed after copying text.
+  Set to 0 for no message.")
+
 (defcustom hui:ebut-prompt-for-action nil
   "Non-nil prompts for a button-specific action on explicit button creation."
   :type 'boolean
@@ -108,9 +112,14 @@ copying some text between START and END, but we're copying the region.
 
 Interactively, reads the register using `register-read-with-preview'.
 
-If called interactively, `transient-mark-mode' is non-nil, and
-there is no active region, copy any delimited selectable thing at
-point; see `hui:delimited-selectable-thing'."
+If called interactively, `transient-mark-mode' is non-nil, there is no
+active region, and point is not on a whitespace character, then copy the
+selectable thing at point including any delimiters; see
+`hui:selectable-thing-and-bounds'.
+
+Interactively, display a message with `hui:copy-message-length' characters
+of the text copied unless that variable is set to 0, in which case no
+message is shown."
   (interactive (list (register-read-with-preview "Copy to register: ")
 		     (when mark-active (region-beginning))
 		     (when mark-active (region-end))
@@ -133,6 +142,7 @@ point; see `hui:delimited-selectable-thing'."
                        ((and interactive-flag
 			     transient-mark-mode
 			     (not (use-region-p))
+                             (not (looking-at "\\s-"))
 			     (prog1 (setq thing-and-bounds
 					  (hui:selectable-thing-and-bounds)
 					  thing (nth 1 thing-and-bounds)
@@ -151,10 +161,7 @@ point; see `hui:delimited-selectable-thing'."
       (setq deactivate-mark t)
       (cond (delete-flag)
 	    (interactive-flag
-	     (cond (thing
-		    (message "Saved selectable thing: %s" thing))
-		   ((mark t)
-		    (indicate-copied-region))))))))
+             (hui:indicate-copied-region thing))))))
 
 ;; In "hyperbole.el", use this to override the {C-w} command from
 ;; either "completion.el" or "simple.el" when hyperbole-mode is active
@@ -174,7 +181,11 @@ Any command that calls this function is a \"kill command\".
 If the previous command was also a kill command,
 the text killed this time appends to the text killed last time
 to make one entry in the kill ring.
-Patched to remove the most recent completion."
+Patched to remove the most recent completion.
+
+When `transient-mark-mode' is non-nil, there is no active region, and point
+is not on a whitespace character, then kill the selectable thing at point
+including any delimiters; see `hui:selectable-thing-and-bounds'."
   ;; Pass mark first, then point, because the order matters when
   ;; calling `kill-append'.
   (interactive (list (when mark-active (mark))
@@ -191,7 +202,8 @@ Patched to remove the most recent completion."
 	  ;; if in one of `hui-select-ignore-quoted-sexp-modes'.
 	  ((let* ((major-mode 'fundamental-mode)
 		  thing-and-bounds)
-	     (when (setq thing-and-bounds (hui:selectable-thing-and-bounds))
+	     (when (and (not (looking-at "\\s-"))
+                        (setq thing-and-bounds (hui:selectable-thing-and-bounds)))
 	       (setq beg (nth 2 thing-and-bounds)
 		     end (nth 3 thing-and-bounds)
 		     region nil)
@@ -203,8 +215,8 @@ Patched to remove the most recent completion."
     (hui:kill-region-internal beg end region)))
 
 ;; In "hyperbole.el", use this to override the {M-w} command from
-;; "simple.el" when hyperbole-mode is active to allow copying kcell
-;; references, active regions and delimited areas (like sexpressions).
+;; "simple.el" when `hyperbole-mode' is active to allow copying kcell
+;; references, active regions and things (like sexpressions).
 ;;;###autoload
 (defun hui:kill-ring-save (beg end &optional region)
   "Save the active region or thing at point as if killed, but don't kill it.
@@ -212,9 +224,10 @@ In Transient Mark mode, deactivate the mark.
 If `interprogram-cut-function' is non-nil, also save the text for a window
 system cut and paste.
 
-If called interactively, `transient-mark-mode' is non-nil, and
-there is no active region, copy any delimited selectable thing at
-point; see `hui:delimited-selectable-thing'.
+If called interactively, `transient-mark-mode' is non-nil, there is no
+active region, and point is not on a whitespace character, then copy the
+selectable thing at point including any delimiters; see
+`hui:selectable-thing-and-bounds'.
 
 If you want to append the killed region to the last killed text,
 use \\[append-next-kill] before \\[kill-ring-save].
@@ -229,7 +242,11 @@ non-nil, in which case ignore BEG and END, and save the current
 region instead.
 
 This command is similar to `copy-region-as-kill', except that it gives
-visual feedback indicating the extent of the region being copied."
+visual feedback indicating the extent of the region being copied.
+
+Interactively, display a message with `hui:copy-message-length' characters
+of the text copied unless that variable is set to 0, in which case no
+message is shown."
   ;; Pass mark first, then point, because the order matters when
   ;; calling `kill-append'.
   (interactive (list (when mark-active (mark))
@@ -254,7 +271,8 @@ visual feedback indicating the extent of the region being copied."
 	;; suppressing use of `hui-select-syntax-table'
 	;; if in one of `hui-select-ignore-quoted-sexp-modes'.
 	(let ((major-mode 'fundamental-mode))
-	  (setq thing (nth 1 (hui:selectable-thing-and-bounds))))
+          (unless (looking-at "\\s-")
+	    (setq thing (nth 1 (hui:selectable-thing-and-bounds)))))
 	(if (stringp thing)
 	    (progn (kill-new thing)
 		   (setq deactivate-mark t))
@@ -267,10 +285,7 @@ visual feedback indicating the extent of the region being copied."
     ;; This use of `called-interactively-p' is correct because the
     ;; code it controls just gives the user visual feedback.
     (when (called-interactively-p 'interactive)
-      (cond (thing
-	     (message "Saved selectable thing: %s" thing))
-	    ((mark t)
-	     (indicate-copied-region))))))
+      (hui:indicate-copied-region thing))))
 
 ;;; ************************************************************************
 ;;; Public functions
@@ -1522,6 +1537,24 @@ runs this command."
 	(hui:ibut-message edit-flag))
       edit-flag)))
 
+(defun hui:indicate-copied-region (thing &optional message-len)
+  "Indicate that string THING or the region text has been copied.
+Should be used when a command is called interactively."
+  (unless message-len
+    (setq message-len hui:copy-message-length))
+  (cond ((zerop message-len)
+         nil)
+        (thing
+         (let ((thing-excerpt (seq-take thing message-len)))
+           ;; Don't say "killed" or "saved"; that is misleading.
+           (message "Copied selectable thing: \"%s%s\""
+	            ;; Don't show newlines literally
+	            (query-replace-descr thing-excerpt)
+                    (if (< (length thing-excerpt) (length thing))
+                        "..."
+                      ""))))
+	((mark t)
+	 (indicate-copied-region message-len))))
 
 ;;; ************************************************************************
 ;;; Private functions - used only within Hyperbole
