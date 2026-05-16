@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     12-Apr-26 at 15:07:51 by Bob Weiner
+;; Last-Mod:     11-May-26 at 10:56:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -775,7 +775,7 @@ Quoting conventions recognized are:
         (puthash buf cache-entry hypb:in-string-cache))
 
       ;; Check for a cache match range.  The cdr of `cache-entry' is a list of
-      ;; (in-str start end) ranges.
+      ;; (in-str-flag start end) ranges.
       (let ((match (cl-find-if (lambda (r)
                                  (and (>= pos (or (nth 1 r) (point-max)))
                                       (<= pos (or (nth 2 r) (point-min)))))
@@ -801,8 +801,8 @@ Quoting conventions recognized are:
                             ;; (hypb:narrow-to-max-lines max-lines #'hypb:in-string-check t)
                             (hypb:in-string-check t)))
                  (in-str (nth 0 entry))
-                 (str-start (nth 1 entry))
-                 (str-end (nth 2 entry)))
+                 (str-start (max (point-min) (or (nth 1 entry) 0)))
+                 (str-end (min (point-max) (or (nth 2 entry) 0))))
             (cond ((and (not match) (not hypb:in-string-cache-disable))
                    ;; Add the new range into the buffer's cache
                    (setcdr cache-entry (cons entry (cdr cache-entry))))

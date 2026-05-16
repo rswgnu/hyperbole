@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     30-Apr-26 at 13:34:27 by Bob Weiner
+;; Last-Mod:     11-May-26 at 12:50:49 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -139,8 +139,11 @@ It provides the following keys:
   (when (bound-and-true-p delete-trailing-whitespace-mode)
     (delete-trailing-whitespace-mode 0))
   ;; Prevent "stripspace" package from deleting trailing whitespace from the
-  ;; first line of cells which are blank.  These need to maintain spaces after
-  ;; the relative identifier to ensure proper editing of the first line.
+  ;; first line of cells which are blank and between paragraphs within a
+  ;; cell.  The first line of the cell needs to maintain spaces after the
+  ;; relative identifier to ensure proper editing.  Similarly, blank lines
+  ;; between paragraphs within a single cell must have an indent so that
+  ;; editing is always within a valid context.
   (when (bound-and-true-p stripspace-local-mode)
     (stripspace-local-mode 0))
   ;; Fix any wrong label separators and line indents.
@@ -731,7 +734,7 @@ With optional prefix argument TOP-P non-nil, refill all cells in the outline."
   ;; Temporarily expand, then refill cells lacking no-fill property.
   (kview:map-expanded-tree (lambda (_kview) (kotl-mode:fill-cell)) kotl-kview top-p))
 
-(defun kotl-mode:just-one-space (&optional N)
+(defun kotl-mode:just-one-space (&optional n)
   "Delete all spaces and tabs around point, leaving one or optional N spaces.
 Does not remove any newlines as `just-one-space' does when given a negative N."
   (interactive "*")
@@ -1448,13 +1451,18 @@ See also the command `yank-pop' (\\[yank-pop])."
 				   (t (1- arg)))))
 	 (indent (kcell-view:indent))
 	 (indent-str (make-string indent ?\ )))
-    ;; Convert all occurrences of newline to newline + cell indent.
-    ;; Then insert into buffer.
-    (insert-for-yank (replace-regexp-in-string
-		      "[\n\r]" (lambda (match) (concat match indent-str)) yank-text)))
+    (save-restriction
+      (narrow-to-region (kcell-view:start) (kcell-view:end-contents))
+      ;; Convert all occurrences of newline to newline + cell indent.
+      ;; Then insert into buffer.
+      (insert-for-yank (replace-regexp-in-string
+		        "[\n\r]" (lambda (match)
+                                   (concat match indent-str))
+                        yank-text))))
   (when (consp arg) (kotl-mode:exchange-point-and-mark))
-  ;; If we do get all the way thru, make this-command indicate that.
-  (when (eq this-command t) (setq this-command 'kotl-mode:yank))
+  ;; If we do get all the way thru, make `this-command' indicate that.
+  (when (eq this-command t)
+    (setq this-command 'kotl-mode:yank))
   nil)
 
 (defun kotl-mode:yank-pop (arg)
@@ -3387,7 +3395,8 @@ See also the documentation for `kotl-mode:cell-attributes'."
 	(hargs:iform-read
 	 (list 'interactive
 	       (format "+KDisplay properties of koutline %s: "
-		       (if (= arg 1) "cell" "tree"))))))
+		       (if (= arg 1) "cell" "tree")))
+         (list (kcell-view:label)))))
     (list current-prefix-arg)))
   (unless (integerp cells-flag)
     ;; If cells-flag is nil, this sets it to 1

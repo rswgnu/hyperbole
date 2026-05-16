@@ -184,9 +184,9 @@
                {C-c C-a}  - Show (expand) all cells in the outline.
                {C-x $}    - Show all cells down to a particular level.  The
                             user is prompted for the level or a prefix
-                            argument may be given. 
-                            
-               {C-M-h}    - Hide subtree at point, excluding root. 
+                            argument may be given.
+               
+               {C-M-h}    - Hide subtree at point, excluding root.
                {M-x kotl-mode:show-subtree RET} - Show subtree at point.
                
                {C-c C-o}  - Overview, show only first line of outline
@@ -389,7 +389,7 @@
             | {C-c C-,}                  | {C-c C-.}                 |
             | {C-c C-<}                  | {C-c C->}                 |
             |----------------------------+---------------------------|
-                       
+            
             |-----------------------------+----------------------------|
             | Promotion Outside Org Table | Demotion Outside Org Table |
             |-----------------------------+----------------------------|
