@@ -95,6 +95,21 @@ directory separator character.")
   "Use `loaddefs-generate' if available or fallback to `make-directory-autoloads'.
 `make-directory-autoloads' is defined since Emacs 28.")
 
+(defun hload-path--make-directory-autoloads-in-sync-subprocess (dirs output-file)
+  "Make autoloads in a synchronous subprocess for directories DIRS.
+The autoloads will be written to OUTPUT-FILE.  Use `loaddefs-generate'
+if available or fallback to `make-directory-autoloads', defined since
+Emacs 28."
+  (call-process (expand-file-name invocation-name invocation-directory)
+                nil nil nil
+                "--batch"
+                "--eval" (format "(%S '%S %S)"
+                                 (cond ((fboundp 'loaddefs-generate)
+                                        #'loaddefs-generate)
+                                       (t
+                                        #'make-directory-autoloads))
+                                 dirs output-file)))
+
 ;; Menu items could call this function before Info is loaded.
 (autoload 'Info-goto-node   "info" "Jump to specific Info node."  t)
 
@@ -119,12 +134,12 @@ This is used only when running from git source and not a package release."
 	 (al-buf (find-file-noselect al-file)))
     ;; (make-local-variable 'generated-autoload-file)
     (with-current-buffer al-buf
-      (hload-path--make-directory-autoloads "." al-file))
+      (hload-path--make-directory-autoloads-in-sync-subprocess "." al-file))
     (kill-buffer al-buf)
     (setq al-file (expand-file-name "kotl/kotl-autoloads.el")
 	  al-buf (find-file-noselect al-file))
     (with-current-buffer al-buf
-      (hload-path--make-directory-autoloads "." al-file))
+      (hload-path--make-directory-autoloads-in-sync-subprocess "." al-file))
     (kill-buffer al-buf))
   (unless (hyperb:autoloads-exist-p)
     (error "Hyperbole failed to generate autoload files; try running 'make src' in a shell in %s" hyperb:dir)))
