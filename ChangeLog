@@ -1,5 +1,22 @@
 2026-05-16  Bob Weiner  <rsw@gnu.org>
 
+* man/hyperbole.texi (Default Hyperbole Bindings): Update doc for {M-w} to copy
+    things, not just delimited things.
+                     (Koutliner Keys): Update doc for {C-w} to kill/copy things,
+    not just delimited things.
+
+* hui.el (hui:copy-to-register, hui:kill-ring-save): Change "Saved selectable
+    thing" to "Copied selectable thing" to better match regurlar emacs.  Also
+    call 'query-replace-descr' to prevent newline display within 'thing'.
+         (hui:indicate-copied-region): Add to centralize display of copied
+    text and call from the above two functions.
+         (hui:copy-message-length): Add this defcustom with default of 40
+    and use in the prior function.
+         (hui:kill-ring-save, hui:copy-to-register, hui:kill-region): Don't
+    copy a 'thing' if point is on whitespace.  Update doc strings.
+  kotl/kotl-mode.el (kotl-mode:kill-region): Don't kill a 'thing' if point
+    is on whitespace.
+
 * kotl/kotl-mode.el (kotl-mode:split-cell): Fix to ensure point within a
     valid cell position and fix to not modify label-separator and leave
     a stray character in the original cell when splitting at the first

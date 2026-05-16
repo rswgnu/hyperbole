@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     29-Mar-26 at 23:39:42 by Bob Weiner
+@c Last-Mod:     16-May-26 at 17:20:08 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,8 +30,8 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED March 29, 2026
-@set UPDATED-MONTH March 2026
+@set UPDATED May 16, 2026
+@set UPDATED-MONTH May 2026
 @set EDITION 9.0.2pre
 @set VERSION 9.0.2pre
 
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed March 29, 2026.
+Printed May 16, 2026.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -213,7 +213,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.2pre
-March 29, 2026 @c AUTO-REPLACE-ON-SAVE
+May 16, 2026 @c AUTO-REPLACE-ON-SAVE
 
 
   Published by the Free Software Foundation, Inc.
@@ -9506,7 +9506,7 @@ region only when it is active/highlighted.  When there is no active region,
 @item in a Koutline klink, copies the klink;
 @item in a Koutline cell, outside any klink, copies a klink reference to the current cell;
 @item on a Hyperbole button, copies the text of the button excluding delimiters;
-@item at the start of a paired delimiter, copy the text including the delimiters.
+@item on a thing (not at whitespace), copy the text of the thing including any delimiters.
 @end enumerate
 
 @cindex key binding, C-x r s
@@ -9935,9 +9935,10 @@ With optional COPY-P equal to t, copy region to kill ring but don't
 kill it.  With COPY-P any other non-nil value, return region as a
 string without affecting the kill ring.
 
-If called interactively and there is no active region, copy any
-delimited selectable thing at point; see the documentation for
-@code{hui:delimited-selectable-thing}.
+If called interactively, @code{transient-mark-mode} is non-nil,
+there is no active region, and point is not on a whitespace character,
+then kill/copy the selectable thing at point including any delimiters;
+see @code{hui:selectable-thing-and-bounds}.
 
 If the buffer is read-only and COPY-P is nil, the region will not be
 deleted but it will be copied to the kill ring and then an error will be
