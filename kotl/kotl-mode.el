@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     11-May-26 at 11:17:30 by Bob Weiner
+;; Last-Mod:     11-May-26 at 12:50:49 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -3395,7 +3395,8 @@ See also the documentation for `kotl-mode:cell-attributes'."
 	(hargs:iform-read
 	 (list 'interactive
 	       (format "+KDisplay properties of koutline %s: "
-		       (if (= arg 1) "cell" "tree"))))))
+		       (if (= arg 1) "cell" "tree")))
+         (list (kcell-view:label)))))
     (list current-prefix-arg)))
   (unless (integerp cells-flag)
     ;; If cells-flag is nil, this sets it to 1

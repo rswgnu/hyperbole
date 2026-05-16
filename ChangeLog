@@ -1,5 +1,8 @@
 2026-05-11  Bob Weiner  <rsw@gnu.org>
 
+* kotl/kotl-mode.el (kotl-mode:cell-help): When called interactively, default
+    to help for the cell or tree (with a prefix arg) at point.
+
 * kotl/kotl-mode (kotl-mode:just-one-space): Fix param name from 'N' to 'n'.
 
 * kotl/kotl-mode.el (kotl-mode:yank): Narrow to current cell's text region.
