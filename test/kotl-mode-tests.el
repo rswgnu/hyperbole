@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:     12-Apr-26 at 15:11:30 by Bob Weiner
+;; Last-Mod:     16-May-26 at 12:04:54 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -491,7 +491,18 @@
             (kotl-mode:previous-line 1)
             (kotl-mode:end-of-line)
             (kotl-mode:split-cell)
-            (should (= (line-number-at-pos) 3))))
+            (should (= (line-number-at-pos) 3)))
+          (ert-info ("Split on first char in cell")
+            (kotl-mode:kill-tree 0)
+            (insert "first")
+            (kotl-mode:beginning-of-line)
+            (kotl-mode:split-cell)
+            (should (= (line-number-at-pos) 3))
+            (should (string= (kcell-view:contents) "first"))
+            (kotl-mode:previous-cell 1)
+            (should (string= (kcell-view:contents) ""))
+            (should (string= "   1. " (buffer-substring-no-properties
+                                       (line-beginning-position) (point))))))
       (hy-delete-file-and-buffer kotl-file))))
 
 (ert-deftest kotl-mode-append-cell ()

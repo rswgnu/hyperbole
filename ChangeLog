@@ -1,3 +1,12 @@
+2026-05-16  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode:split-cell): Fix to ensure point within a
+    valid cell position and fix to not modify label-separator and leave
+    a stray character in the original cell when splitting at the first
+    character of that cell, i.e. all contents move to the second cell.
+  test/kotl-mode-tests.el (kotl-mode-split-cell): Add test of split on
+    first character.
+
 2026-05-16  Mats Lidell  <matsl@gnu.org>
 
 * hload-path.el (hload-path--make-directory-autoloads-in-sync-subprocess):
