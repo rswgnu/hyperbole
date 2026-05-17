@@ -8,7 +8,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:     1-Apr-24 at 01:45:27
-# Last-Mod:     30-Nov-25 at 12:44:05 by Bob Weiner
+# Last-Mod:     17-May-26 at 00:10:02 by Bob Weiner
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
@@ -27,7 +27,12 @@
 #   subtree of matching entries.
 #
 #   This outputs a file header only if there is a matching entry in that file.
-
+#
+#   Files searched are used in this order of priority (only one option is used per run):
+#      1. Files listed on the command-line
+#      2. A single file set in the environment variable, HYROLO.
+#      3. The file "~/.rolo.org" if it exists.
+#      4. The file "~/.rolo.otl" if it exists.
 # Code:
 
 import argparse
