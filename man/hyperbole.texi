@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     16-May-26 at 17:20:08 by Bob Weiner
+@c Last-Mod:     16-May-26 at 22:48:38 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -7054,14 +7054,17 @@ current frame to its state prior to the rolo search.
 @node HyRolo Settings,  , HyRolo Keys, HyRolo
 @section   HyRolo Settings
 
+@vindex hyrolo-default-file
 @vindex hyrolo-file-list
 @cindex rolo, personal
 The files used in any rolo search are given by the
-@code{hyrolo-file-list} variable, whose default value is typically
-@code{"~/.rolo.otl"}, in which case, searches scan only your personal
-rolo file.  But you can customize this to include files with variables
-in them, wildcard patterns and directories, as explained below.  Any
-paths added to this list should be absolute.
+@code{hyrolo-file-list} variable, whose default first value is given
+by the variable, @code{hyrolo-default-file} originally set to
+@code{"~/.rolo.org"}, unless the older @code{~/.rolo.otl} exists when
+Hyperbole is loaded.  You can customize @code{hyrolo-file-list} to
+include files with variables in them, wildcard patterns and
+directories, as explained below.  Any paths added to this list should
+be absolute.
 
 If you include file wildcards in paths for this variable and
 @code{find-file-wildcards} is non-nil (the default), then any files
@@ -7078,9 +7081,9 @@ that matches.
 
 If you include an existing directory (invalid ones are ignored) in
 your @code{hyrolo-file-list}, HyRolo will expand it recursively across
-all of its files that match @code{hyrolo-file-suffix-regexp}.  By
-default, this is Org files (.org), Emacs outlines (.otl), Koutlines
-(.kotl), or Markdown files (.md).  See @file{hpath.el#hpath:expand-list}.
+all of its files that match @code{hyrolo-file-suffix-regexp}.  This
+matches to Org files (.org), Emacs outlines (.otl), Koutlines (.kotl),
+and Markdown files (.md).  See @file{hpath.el#hpath:expand-list}.
 
 Once expanded, if a file in the list does not exist or is not
 readable, it is dropped.  Paths are searched in the order in which

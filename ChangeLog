@@ -1,5 +1,15 @@
 2026-05-16  Bob Weiner  <rsw@gnu.org>
 
+* hyrolo.el (hyrolo-default-file): Add customization for default HyRolo full
+    path to search if none are provided.  Use "~/.rolo.org" if none exist.
+            (hyrolo-expand-path-list): Change filter from 'file-readable-p'
+    to 'identity' since want to keep non-existent files so 'hyrolo-add' can
+    create them when an initial entry is added.  An internal filter will
+    continue to remove any non-string entries.
+            (hyrolo-file-suffix-regexp): Change from a defcustom to a defconst
+    since editing this is not sufficient to change supported file types since
+    the types are manually set in one of the grep functions as well.
+
 * man/hyperbole.texi (Default Hyperbole Bindings): Update doc for {M-w} to copy
     things, not just delimited things.
                      (Koutliner Keys): Update doc for {C-w} to kill/copy things,
