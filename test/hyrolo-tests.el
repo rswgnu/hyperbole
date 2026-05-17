@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     12-Apr-26 at 15:11:30 by Bob Weiner
+;; Last-Mod:     17-May-26 at 12:15:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1848,14 +1848,14 @@ match
     (mocklet (((hpath:expand-list
                 '("/file1")
                 "\\.\\(kotl?\\|org\\|ou?tl\\|md\\|markdown\\|mkd\\|mdown\\|mkdn\\|mdwn\\)$"
-                #'file-readable-p)
+                #'identity)
                => (list "/file1")))
       (should (equal (hyrolo-expand-path-list '("/file1")) '("/file1")))))
   (let ((bbdb-file nil))
     (mocklet (((hpath:expand-list
                 '("/file1")
                 "\\.\\(kotl?\\|org\\|ou?tl\\|md\\|markdown\\|mkd\\|mdown\\|mkdn\\|mdwn\\)$"
-                #'file-readable-p)
+                #'identity)
                => (list "/file1")))
       (should (equal (hyrolo-expand-path-list '("/file1")) '("/file1"))))))
 
