@@ -18,6 +18,12 @@
 
 ;;; Code:
 
+;; Force markdown-mode to be selected first to avoid markdown-ts-mode
+;; for now. It requires Tree-sitter grammars to be installed which
+;; conflicts with our current CI setup.
+(when (fboundp #'markdown-ts-mode)
+  (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode)))
+
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 (package-initialize)
 

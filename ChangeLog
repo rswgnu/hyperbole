@@ -1,3 +1,9 @@
+2026-05-19  Mats Lidell  <matsl@gnu.org>
+
+* test/hy-test-dependencies.el (fboundp): When markdown-ts-mode is defined
+    prefer markdown-mode. This avoids markdown-ts-mode prompting for
+    treesitter grammar.
+
 2026-05-16  Bob Weiner  <rsw@gnu.org>
 
 * man/hyperbole.texi (Default Hyperbole Bindings): Update doc for {M-w} to copy
