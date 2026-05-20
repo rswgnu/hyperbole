@@ -1,3 +1,8 @@
+2026-05-20  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:expand): Change to expand non-existing paths as they may
+    be created after expansion.  Update doc string to reflect the new behavior.
+
 2026-05-17  Bob Weiner  <rsw@gnu.org>
 
 * test/hyrolo-tests.el (hyrolo-tests--expand-path-list): Fix to use

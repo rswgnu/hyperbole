@@ -1847,15 +1847,13 @@ match
   (let ((bbdb-file nil))
     (mocklet (((hpath:expand-list
                 '("/file1")
-                "\\.\\(kotl?\\|org\\|ou?tl\\|md\\|markdown\\|mkd\\|mdown\\|mkdn\\|mdwn\\)$"
-                #'identity)
+                "\\.\\(kotl?\\|org\\|ou?tl\\|md\\|markdown\\|mkd\\|mdown\\|mkdn\\|mdwn\\)$")
                => (list "/file1")))
       (should (equal (hyrolo-expand-path-list '("/file1")) '("/file1")))))
   (let ((bbdb-file nil))
     (mocklet (((hpath:expand-list
                 '("/file1")
-                "\\.\\(kotl?\\|org\\|ou?tl\\|md\\|markdown\\|mkd\\|mdown\\|mkdn\\|mdwn\\)$"
-                #'identity)
+                "\\.\\(kotl?\\|org\\|ou?tl\\|md\\|markdown\\|mkd\\|mdown\\|mkdn\\|mdwn\\)$")
                => (list "/file1")))
       (should (equal (hyrolo-expand-path-list '("/file1")) '("/file1"))))))
 

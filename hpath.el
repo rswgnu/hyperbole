@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     12-Apr-26 at 12:59:52 by Bob Weiner
+;; Last-Mod:     20-May-26 at 15:53:30 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1252,13 +1252,12 @@ Any single ${variable} within PATH is resolved.  Then PATH is
 expanded from the first file matching regexp in
 `hpath:auto-variable-alist'.
 
-Return expanded path if it exists or it contains file wildcards of
-'[]', '*', or '?'.
+With optional EXISTS-FLAG non-nil, return the expanded path if it exists or
+if it contains file wildcards of '[]', '*', or '?'; if neither of those
+cases, return nil.
 
-Return any absolute or invalid PATH unchanged unless optional
-EXISTS-FLAG is non-nil in which case, return the expanded path
-only if it exists, otherwise, return nil."
-
+Without EXISTS-FLAG, return the expanded path if it is a string else the
+original path."
   (when (stringp path)
     (unless (string-match-p hpath:variable-regexp path)
       ;; Replace any $VAR environment variable references
@@ -1293,11 +1292,13 @@ only if it exists, otherwise, return nil."
                      (when page-file
                        (setq substituted-path (expand-file-name page-file hywiki-directory))))))
 	     (t (expand-file-name substituted-path))))
-      (if (and (stringp expanded-path)
-	       (or (file-exists-p expanded-path)
-		   (string-match "[[*?]" (file-local-name expanded-path))))
-	  expanded-path
-	(unless exists-flag
+      (if exists-flag
+          (when (and (stringp expanded-path)
+	             (or (file-exists-p expanded-path)
+		         (string-match "[[*?]" (file-local-name expanded-path))))
+	    expanded-path)
+        (if (stringp expanded-path)
+	    expanded-path
 	  path)))))
 
 (defun hpath:expand-list (paths &optional match-regexp filter)
