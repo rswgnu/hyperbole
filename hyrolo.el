@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     10-May-26 at 11:09:23 by Bob Weiner
+;; Last-Mod:     20-May-26 at 15:59:37 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -151,11 +151,9 @@ See usage in `hyrolo-any-file-type-problem-p'.")
 (defconst hyrolo-markdown-suffix-regexp "md\\|markdown\\|mkd\\|mdown\\|mkdn\\|mdwn"
   "Regexp matching Markdown file suffixes.")
 
-(defcustom hyrolo-file-suffix-regexp (concat "\\.\\(kotl?\\|org\\|ou?tl\\|"
+(defconst hyrolo-file-suffix-regexp (concat "\\.\\(kotl?\\|org\\|ou?tl\\|"
 					     hyrolo-markdown-suffix-regexp "\\)$")
-  "File suffix regexp used to select files to search with HyRolo."
-  :type 'string
-  :group 'hyperbole-hyrolo)
+  "File suffix regexp used to select files to search with HyRolo.")
 
 (defvar hyrolo-auto-mode-alist
   (list (cons (format "\\.\\(%s\\)$" hyrolo-markdown-suffix-regexp)
@@ -166,6 +164,13 @@ See usage in `hyrolo-any-file-type-problem-p'.")
 Typically, these specialized modes speed loading of files used solely
 for HyRolo text matches by avoiding the time-consuming initializations
 their standard major modes perform.")
+
+(defcustom hyrolo-default-file (if (file-readable-p "~/.rolo.otl")
+			           "~/.rolo.otl"
+			         "~/.rolo.org")
+  "Full path of default HyRolo file if none are added to `hyrolo-file-list'."
+  :type 'file
+  :group 'hyperbole-hyrolo)
 
 (defvar hyrolo-display-buffer "*HyRolo*"
   "Buffer used to display set of last matching rolo entries.")
@@ -188,9 +193,7 @@ executable must be found as well (for Oauth security)."
   :type 'boolean
   :group 'hyperbole-hyrolo)
 
-(defcustom hyrolo-file-list (list (if (file-readable-p "~/.rolo.org")
-				      "~/.rolo.org"
-				    "~/.rolo.otl"))
+(defcustom hyrolo-file-list (list hyrolo-default-file)
   "List of files containing hyrolo entries.
 The first file should be a user-specific hyrolo file, typically in the home
 directory and must have a suffix of either .org (Org mode) or .otl (Emacs
@@ -710,17 +713,14 @@ they contain that match `hyrolo-file-suffix-regexp'.  Then, if
 `find-file-wildcards' is non-nil (the default), any files
 containing [char-matches] or * wildcards are expanded to their
 matches."
-  (let ((default-file (if (file-readable-p "~/.rolo.org")
-			  "~/.rolo.org"
-			"~/.rolo.otl")))
-    (unless paths
-      (setq paths
-	    (delq nil
-		  (list default-file
-			(if (and (boundp 'bbdb-file) (stringp bbdb-file)) bbdb-file)
-			(when (hyrolo-google-contacts-p) google-contacts-buffer-name)))))
-    (or (hpath:expand-list paths hyrolo-file-suffix-regexp #'file-readable-p)
-	(list (expand-file-name default-file)))))
+  (unless paths
+    (setq paths
+	  (delq nil
+		(list hyrolo-default-file
+		      (if (and (boundp 'bbdb-file) (stringp bbdb-file)) bbdb-file)
+		      (when (hyrolo-google-contacts-p) google-contacts-buffer-name)))))
+  (or (hpath:expand-list paths hyrolo-file-suffix-regexp)
+      (list (expand-file-name hyrolo-default-file))))
 
 ;;;###autoload
 (defun hyrolo-fgrep (string &optional max-matches hyrolo-files-or-bufs count-only headline-only no-display)

@@ -1,10 +1,34 @@
+2026-05-20  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:expand): Change to expand non-existing paths as they may
+    be created after expansion.  Update doc string to reflect the new behavior.
+           (hpath:expand-with-variable): Fix to match doc and don't expand
+    absolute paths like "~/.bashrc".
+
 2026-05-19  Mats Lidell  <matsl@gnu.org>
 
 * test/hy-test-dependencies.el (fboundp): When markdown-ts-mode is defined
     prefer markdown-mode. This avoids markdown-ts-mode prompting for
     treesitter grammar.
 
+2026-05-17  Bob Weiner  <rsw@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-tests--expand-path-list): Fix to use
+    identity filter instead of file-read-p.
+
+* hyrolo.py: Expand commentary on priority order of file search.
+
 2026-05-16  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-default-file): Add customization for default HyRolo full
+    path to search if none are provided.  Use "~/.rolo.org" if none exist.
+            (hyrolo-expand-path-list): Change filter from 'file-readable-p'
+    to 'identity' since want to keep non-existent files so 'hyrolo-add' can
+    create them when an initial entry is added.  An internal filter will
+    continue to remove any non-string entries.
+            (hyrolo-file-suffix-regexp): Change from a defcustom to a defconst
+    since editing this is not sufficient to change supported file types since
+    the types are manually set in one of the grep functions as well.
 
 * man/hyperbole.texi (Default Hyperbole Bindings): Update doc for {M-w} to copy
     things, not just delimited things.

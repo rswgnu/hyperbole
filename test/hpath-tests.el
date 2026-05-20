@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 23:26:00
-;; Last-Mod:     12-Apr-26 at 15:11:31 by Bob Weiner
+;; Last-Mod:     20-May-26 at 16:01:46 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -423,7 +423,7 @@
       (hy-delete-file-and-buffer file))))
 
 (ert-deftest hpath--expand-variations-non-existing-path ()
-  "Verify expand non existing paths."
+  "Verify expanding non-existing paths."
   (should (string= (hpath:expand "/not/existing/file") "/not/existing/file"))
   (should-not (hpath:expand "/not/existing/file" t))
   (should (string= (hpath:expand "/not/existing/file*" t) "/not/existing/file*"))
@@ -435,18 +435,18 @@
   (let ((hyperb-no-trailing-slash (substring hyperb:dir 0 -1)))
     (should (string= (hpath:expand "${hyperb:dir}") hyperb-no-trailing-slash))
     (should (string= (hpath:expand "${hyperb:dir}" t) hyperb-no-trailing-slash))
-    (should (string= (hpath:expand "${hyperb:dir}/notexisting") "${hyperb:dir}/notexisting"))
+    (should (string= (hpath:expand "${hyperb:dir}/notexisting")
+                     (expand-file-name "notexisting" hyperb-no-trailing-slash)))
     (should-not (hpath:expand "${hyperb:dir}/notexisting" t))))
 
 (ert-deftest hpath--expand-environment-variable ()
-  "Verify that a $VAR environment is expanded."
+  "Verify that a $VAR environment variable is expanded."
   (let ((envvar "hpath_test"))
     (unwind-protect
         (progn
           (setenv "HPATH" envvar)
-          (should (string= (hpath:expand "$HPATH") envvar))
-          ; Should next not work? See below where is works
-          ;(should (string= (hpath:expand "${HPATH}") envvar))
+          (should (string= (hpath:expand "$HPATH") (expand-file-name envvar)))
+          (should (string= (hpath:expand "${HPATH}") (expand-file-name envvar)))
           (should-not (hpath:expand "$HPATH" t))
           (should-not (hpath:expand "${HPATH}" t)))
       (setenv "HPATH")))
