@@ -3,6 +3,12 @@
 * hpath.el (hpath:expand): Change to expand non-existing paths as they may
     be created after expansion.  Update doc string to reflect the new behavior.
 
+2026-05-19  Mats Lidell  <matsl@gnu.org>
+
+* test/hy-test-dependencies.el (fboundp): When markdown-ts-mode is defined
+    prefer markdown-mode. This avoids markdown-ts-mode prompting for
+    treesitter grammar.
+
 2026-05-17  Bob Weiner  <rsw@gnu.org>
 
 * test/hyrolo-tests.el (hyrolo-tests--expand-path-list): Fix to use
