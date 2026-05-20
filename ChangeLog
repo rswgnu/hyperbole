@@ -2,6 +2,8 @@
 
 * hpath.el (hpath:expand): Change to expand non-existing paths as they may
     be created after expansion.  Update doc string to reflect the new behavior.
+           (hpath:expand-with-variable): Fix to match doc and don't expand
+    absolute paths like "~/.bashrc".
 
 2026-05-19  Mats Lidell  <matsl@gnu.org>
 

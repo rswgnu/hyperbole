@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     20-May-26 at 15:53:30 by Bob Weiner
+;; Last-Mod:     20-May-26 at 17:41:19 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1248,9 +1248,8 @@ Optionally use symbol DISPLAY-WHERE or `hpath:display-where'."
 
 (defun hpath:expand (path &optional exists-flag)
   "Expand relative PATH using match in `hpath:auto-variable-alist'.
-Any single ${variable} within PATH is resolved.  Then PATH is
-expanded from the first file matching regexp in
-`hpath:auto-variable-alist'.
+Any single ${variable} within PATH is resolved.  Then PATH is expanded from
+the first file matching regexp in `hpath:auto-variable-alist'.
 
 With optional EXISTS-FLAG non-nil, return the expanded path if it exists or
 if it contains file wildcards of '[]', '*', or '?'; if neither of those
@@ -1397,7 +1396,9 @@ If PATH is absolute, return it unchanged."
 	  ;; Path is either absolute, contains wildcards or is
 	  ;; relative to the current directory, so don't expand
 	  ;; into `hpath:auto-variable-alist' paths.
-	  (setq path (expand-file-name path))
+          ;; Expand only if not absolute.
+          (unless (file-name-absolute-p path)
+	    (setq path (expand-file-name path)))
 	(unless (or (file-name-absolute-p path)
 		    (hpath:url-p path)
 		    (string-match-p hpath:variable-regexp path))

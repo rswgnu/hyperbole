@@ -1843,7 +1843,7 @@ match
 (ert-deftest hyrolo-tests--expand-path-list ()
   "Verify `hyrolo-expand-path-list'."
   (should (equal (hyrolo-expand-path-list nil)
-		 (list (expand-file-name "~/.rolo.otl"))))
+		 (list hyrolo-default-file)))
   (let ((bbdb-file nil))
     (mocklet (((hpath:expand-list
                 '("/file1")
