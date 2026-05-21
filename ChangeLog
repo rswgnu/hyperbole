@@ -1,3 +1,8 @@
+2026-05-21  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:expand): Don't expand if path is a "*Buffer Name*"
+    like "*Google Contacts*".
+
 2026-05-20  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:expand): Change to expand non-existing paths as they may

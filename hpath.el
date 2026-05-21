@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     20-May-26 at 17:41:19 by Bob Weiner
+;; Last-Mod:     21-May-26 at 10:01:23 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1261,44 +1261,48 @@ original path."
     (unless (string-match-p hpath:variable-regexp path)
       ;; Replace any $VAR environment variable references
       (setq path (substitute-in-file-name path)))
-    (let (variable-path
-	  substituted-path
-	  expanded-path)
-      (setq
-       ;; Expand relative path from appropriate multi-path prefix variables
-       variable-path (hpath:expand-with-variable path)
-       ;; Substitute values for Emacs Lisp variables and environment variables in PATH.
-       substituted-path (hpath:substitute-value variable-path)
-       expanded-path
-       (cond ((or (null substituted-path) (string-empty-p substituted-path))
-	      path)
-	     ((and (string-match-p hpath:variable-regexp variable-path)
-		   (string-match-p hpath:variable-regexp substituted-path))
-	      ;; If a path is invalid, then a variable may have been prepended but
-	      ;; it will remain unresolved in `substituted-path', in which case we
-	      ;; want to return `path' without any further changes.
-	      path)
-	     ;; For compressed Elisp libraries, add any found compressed suffix to the path.
-	     ((string-match-p "\\.el\\(\\.\\|\\'\\)" substituted-path)
-	      (or (locate-library substituted-path t) path))
-	     ((or (string-match-p "\\`\\(#[^#+.]\\|([^\)\\/]+)\\|[^.\\/].*\\.[^.\\/]\\)" substituted-path)
-		  (string-match-p "[\\/~]" substituted-path))
-	      ;; Don't expand if an Info path, URL, #anchor or has a directory prefix
-	      substituted-path)
-             ((and (null (file-name-directory substituted-path))
-                   ;; Could be an existing HyWikiWord
-                   (let ((page-file (cdr (hywiki-get-referent substituted-path))))
-                     (when page-file
-                       (setq substituted-path (expand-file-name page-file hywiki-directory))))))
-	     (t (expand-file-name substituted-path))))
-      (if exists-flag
-          (when (and (stringp expanded-path)
-	             (or (file-exists-p expanded-path)
-		         (string-match "[[*?]" (file-local-name expanded-path))))
-	    expanded-path)
-        (if (stringp expanded-path)
-	    expanded-path
-	  path)))))
+    ;; Don't expand if path is a "*Buffer Name*"
+    (let ((case-fold-search nil))
+      (if (string-match-p "\\`\\*[A-Z].*\\*\\'" path)
+          path
+        (let (variable-path
+	      substituted-path
+	      expanded-path)
+          (setq
+           ;; Expand relative path from appropriate multi-path prefix variables
+           variable-path (hpath:expand-with-variable path)
+           ;; Substitute values for Emacs Lisp variables and environment variables in PATH.
+           substituted-path (hpath:substitute-value variable-path)
+           expanded-path
+           (cond ((or (null substituted-path) (string-empty-p substituted-path))
+	          path)
+	         ((and (string-match-p hpath:variable-regexp variable-path)
+		       (string-match-p hpath:variable-regexp substituted-path))
+	          ;; If a path is invalid, then a variable may have been prepended but
+	          ;; it will remain unresolved in `substituted-path', in which case we
+	          ;; want to return `path' without any further changes.
+	          path)
+	         ;; For compressed Elisp libraries, add any found compressed suffix to the path.
+	         ((string-match-p "\\.el\\(\\.\\|\\'\\)" substituted-path)
+	          (or (locate-library substituted-path t) path))
+	         ((or (string-match-p "\\`\\(#[^#+.]\\|([^\)\\/]+)\\|[^.\\/].*\\.[^.\\/]\\)" substituted-path)
+		      (string-match-p "[\\/~]" substituted-path))
+	          ;; Don't expand if an Info path, URL, #anchor or has a directory prefix
+	          substituted-path)
+                 ((and (null (file-name-directory substituted-path))
+                       ;; Could be an existing HyWikiWord
+                       (let ((page-file (cdr (hywiki-get-referent substituted-path))))
+                         (when page-file
+                           (setq substituted-path (expand-file-name page-file hywiki-directory))))))
+	         (t (expand-file-name substituted-path))))
+          (if exists-flag
+              (when (and (stringp expanded-path)
+	                 (or (file-exists-p expanded-path)
+		             (string-match "[[*?]" (file-local-name expanded-path))))
+	        expanded-path)
+            (if (stringp expanded-path)
+	        expanded-path
+	      path)))))))
 
 (defun hpath:expand-list (paths &optional match-regexp filter)
   "Return expansions of PATHS, a list of dirs or wildcarded file patterns.
@@ -1317,6 +1321,8 @@ ${variable} per path."
   (when (eq filter t) (setq filter #'file-exists-p))
 
   (setq paths (mapcan (lambda (path-pat-or-list)
+                        ;; In the next line, `path-pat-or-list' is
+                        ;; guaranteed to be a string
 			(setq path-pat-or-list (hpath:expand path-pat-or-list))
 			(when (setq path-pat-or-list
 				    (or (when (and path-pat-or-list find-file-wildcards)
