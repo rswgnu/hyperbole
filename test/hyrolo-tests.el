@@ -1842,20 +1842,21 @@ match
 
 (ert-deftest hyrolo-tests--expand-path-list ()
   "Verify `hyrolo-expand-path-list'."
-  (should (equal (hyrolo-expand-path-list nil)
-		 (list hyrolo-default-file)))
-  (let ((bbdb-file nil))
-    (mocklet (((hpath:expand-list
-                '("/file1")
-                "\\.\\(kotl?\\|org\\|ou?tl\\|md\\|markdown\\|mkd\\|mdown\\|mkdn\\|mdwn\\)$")
-               => (list "/file1")))
-      (should (equal (hyrolo-expand-path-list '("/file1")) '("/file1")))))
-  (let ((bbdb-file nil))
-    (mocklet (((hpath:expand-list
-                '("/file1")
-                "\\.\\(kotl?\\|org\\|ou?tl\\|md\\|markdown\\|mkd\\|mdown\\|mkdn\\|mdwn\\)$")
-               => (list "/file1")))
-      (should (equal (hyrolo-expand-path-list '("/file1")) '("/file1"))))))
+  (let ((hyrolo-default-file "~/default"))
+    (should (equal (hyrolo-expand-path-list nil)
+		   (list hyrolo-default-file)))
+    (defvar bbdb-file)
+    (defvar google-contacts-buffer-name)
+    (let ((bbdb-file "~/bbdb")
+          (google-contacts-buffer-name "*Google Contacts*"))
+      (mocklet (((hyrolo-google-contacts-p) => t))
+        (should (equal (hyrolo-expand-path-list nil)
+		       (list hyrolo-default-file bbdb-file google-contacts-buffer-name))))))
+  (mocklet (((hpath:expand-list
+              '("/file1")
+              "\\.\\(kotl?\\|org\\|ou?tl\\|md\\|markdown\\|mkd\\|mdown\\|mkdn\\|mdwn\\)$")
+             => (list "/file1")))
+    (should (equal (hyrolo-expand-path-list '("/file1")) '("/file1")))))
 
 (ert-deftest hyrolo-tests--at-tags-p ()
   "Verify `hyrolo-at-tags-p´."
