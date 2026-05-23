@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     20-May-26 at 15:59:37 by Bob Weiner
+;; Last-Mod:     23-May-26 at 15:34:59 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1983,7 +1983,7 @@ Return number of matching entries found."
 (defun hyrolo-hdr-to-first-line-p ()
   "If point is within a file header, go to the start of its first line.
 If point moves, return t; otherwise, don't move and return nil.  Thus,
-if point is already at the start of the first line ofr the file header,
+if point is already at the start of the first line of the file header,
 return nil.
 
 The header includes lines matching both `hyrolo-hdr-regexp' and
@@ -2332,6 +2332,14 @@ See the command `outline-mode' for more information on this mode."
 Calls the functions given by `hyrolo-mode-hook'.
 \\{hyrolo-mode-map}"
   (interactive)
+  ;; Nullify next 4 variables to prevent leaving them set from
+  ;; `org-mode' as 'org-add-log-current-headline' which will call
+  ;; `org-element-at-point' outside of 'org-mode' and issue a warning.
+  (setq-local add-log-current-defun-function nil
+              imenu-generic-expression nil
+              imenu-create-index-function #'ignore
+              which-func-mode nil)
+
   (unless (eq major-mode 'hyrolo-mode)
     ;; The mode controls the data in its buffers and it is non-editable
     (put 'hyrolo-mode 'mode-class 'special)
