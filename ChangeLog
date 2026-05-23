@@ -4,6 +4,11 @@
     buffer when 'which-func' minor mode is active by nullifying relevant
     variables at the top of this function.
 
+2026-05-21  Mats Lidell  <matsl@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-tests--expand-path-list): Add test when
+    bbdb and google-contacts are in use.
+
 2026-05-21  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:expand): Don't expand if path is a "*Buffer Name*"
