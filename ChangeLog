@@ -1,3 +1,9 @@
+2026-05-23  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-mode): Prevent 'org-element-at-point' warnings in *HyRolo*
+    buffer when 'which-func' minor mode is active by nullifying relevant
+    variables at the top of this function.
+
 2026-05-21  Mats Lidell  <matsl@gnu.org>
 
 * test/hyrolo-tests.el (hyrolo-tests--expand-path-list): Add test when
