@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     23-May-26 at 15:34:59 by Bob Weiner
+;; Last-Mod:     25-May-26 at 01:07:05 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1980,92 +1980,29 @@ only (first line of entries), rather than entire entries.
 Return number of matching entries found."
   (hyrolo-grep-file hyrolo-file-or-buf (regexp-quote string) max-matches count-only headline-only))
 
-(defun hyrolo-hdr-to-first-line-p ()
-  "If point is within a file header, go to the start of its first line.
-If point moves, return t; otherwise, don't move and return nil.  Thus,
-if point is already at the start of the first line of the file header,
-return nil.
-
-The header includes lines matching both `hyrolo-hdr-regexp' and
-`hbut:source-prefix'."
-  (let ((opoint (point)))
-    ;; Skip back over blank lines
-    (when (looking-at "^[ \t]*$")
-      (skip-chars-backward " \t\n\r"))
-    (forward-visible-line 0)
-    (if (if (zerop (% (count-matches hyrolo-hdr-regexp (point-min) (point)) 2))
-            (cond ((looking-at hyrolo-hdr-regexp)
-                   ;; Now at the start of the first line of a file header
-                   t)
-                  ((looking-at hbut:source-prefix)
-                   (forward-visible-line -1)
-                   (hyrolo-hdr-to-first-line-p))
-                  (t
-                   ;; Not within a file header
-                   nil))
-          ;; If in a file header, past the first line
-          (and (hyrolo-hdr-move-after-p)
-	       (re-search-backward hyrolo-hdr-regexp nil t 2)
-               (progn (forward-visible-line 0)
-                      t)))
-        (and (/= (point) opoint)
-             (not (outline-invisible-p)))
-      (goto-char opoint)
-      nil)))
-
-(defun hyrolo-hdr-to-last-line-p ()
-  "If point is within a file header, go to its last line.
-Return t in such cases.  Otherwise, don't move and return nil.
-
-The header includes lines matching both `hyrolo-hdr-regexp' and
-`hbut:source-prefix'."
-  (when (hyrolo-hdr-move-after-p)
-    (forward-line -1)
-    t))
+(defsubst hyrolo-hdr-at-p ()
+  "Return pos if point is at the start of a `hyrolo-mode' file header, else nil."
+  (text-property-any (point) (1+ (point)) :hyrolo-hdr t))
 
 (defun hyrolo-hdr-in-p ()
   "If point is within a file header, return t, else nil."
-  (save-excursion (when (looking-at hyrolo-hdr-regexp)
-                    (goto-char (1+ (point))))
-                  (hyrolo-hdr-to-first-line-p)))
+  (or (looking-at hyrolo-hdr-regexp)
+      (save-excursion (hyrolo-hdr-to-first-line-p))))
 
 (defun hyrolo-hdr-move-after-p ()
   "If point is within a file header, move past the hdr and blank lines.
 Return non-nil if point moves, else return nil."
   (let ((opoint (point))
-        in-file-hdr-first-line
-	result)
-    (when (save-excursion
-	    (beginning-of-line)
-	    (setq in-file-hdr-first-line
-                  (zerop (% (count-matches hyrolo-hdr-regexp (point-min) (line-beginning-position)) 2))))
-      (cond ((save-excursion
-	       (beginning-of-line)
-	       (looking-at hyrolo-hdr-regexp))
-	     (setq result t)
-	     ;; On the first line of a file header pair
-	     (beginning-of-line)
-	     (when (re-search-forward hyrolo-hdr-regexp nil t 2)
-	       (forward-line 1)
-	       (when (looking-at hbut:source-prefix)
-		 ;; @loc> line after header
-		 (forward-line 1))))
-	    ((save-excursion
-	       (beginning-of-line)
-	       (looking-at hbut:source-prefix))
-	     ;; @loc> line after header
-	     (setq result t)
-	     (forward-line 1))))
-
-    ;; Within a file header pair, past the first header line
-    (when (and (not in-file-hdr-first-line)
-               (progn (beginning-of-line)
-                      (re-search-forward hyrolo-hdr-regexp nil t)))
-      (setq result t)
-      (forward-line 1)
-      (when (looking-at hbut:source-prefix)
-	;; @loc> line after header
-	(forward-line 1)))
+        result)
+    (setq result (cond ((eobp)
+	                nil)
+	               ((hyrolo-hdr-in-p)
+	                (if (derived-mode-p 'hyrolo-mode)
+	                    (or (hyrolo-to-next-entry)
+		                (goto-char (point-max)))
+	                  (if (re-search-forward hyrolo-entry-regexp nil t)
+	                      (goto-char (match-beginning 0))
+	                    (goto-char (point-max)))))))
 
     (if (> (point) opoint)
 	(progn (when (outline-invisible-p)
@@ -2080,6 +2017,51 @@ Return non-nil if point moves, else return nil."
 	       result)
       (goto-char opoint)
       nil)))
+
+(defun hyrolo-hdr-to-first-line-p ()
+  "If point is within a file header, go to the start of its first line.
+If point moves, return t; otherwise, don't move and return nil.  Thus,
+if point is already at the start of the first line of the file header,
+return nil.
+
+The header includes lines matching both `hyrolo-hdr-regexp' and
+`hbut:source-prefix'."
+  (let ((opoint (point)))
+    (if (derived-mode-p 'hyrolo-mode)
+	(cond ((get-text-property (point) :hyrolo-level)
+	       nil)
+	      ((get-text-property (1- (point)) :hyrolo-hdr)
+	       (goto-char (1- (point)))
+	       t)
+	      ((get-text-property (1- (point)) :hyrolo-level)
+	       nil)
+	      ((progn (goto-char (line-end-position))
+                      (goto-char (1- (previous-single-property-change (point) :hyrolo-level)))
+	              (looking-at hyrolo-hdr-regexp)))
+	      (t (goto-char opoint)
+		 nil))
+      ;; Otherwise, any file header must start at the first line of the buffer.
+      ;; If an entry prefix is found when searching backwards, then not
+      ;; in the header.
+      (cond ((and (bobp) (looking-at hyrolo-hdr-regexp))
+             nil)
+	    ((progn (goto-char (line-end-position))
+		    (while (and (re-search-backward hyrolo-hdr-and-entry-regexp nil t)
+				(looking-at (concat hyrolo-hdr-regexp
+						    "\\|^" (if (boundp 'hbut:source-prefix) hbut:source-prefix "@loc> ")))))
+		    (looking-at hyrolo-hdr-regexp)))
+	    (t (goto-char opoint)
+	       nil)))))
+
+(defun hyrolo-hdr-to-last-line-p ()
+  "If point is within a file header, go to the start of its last line.
+Return t in such cases.  Otherwise, don't move and return nil.
+
+The header includes lines matching both `hyrolo-hdr-regexp' and
+`hbut:source-prefix'."
+  (when (hyrolo-hdr-move-after-p)
+    (forward-line -1)
+    t))
 
 ;;;###autoload
 (defun hyrolo-grep-directories (file-regexp &rest dirs)
@@ -2205,7 +2187,8 @@ Return number of matching entries found."
                                     ;; the first char in the first line of
                                     ;; the file header so outline movement
                                     ;; commands stop there.
-                                    (add-text-properties start (1+ start) '(:hyrolo-level t)))
+                                    (add-text-properties start (1+ start)
+			                                 '(:hyrolo-hdr t :hyrolo-level t)))
 				  (set-buffer src-buf))))
 			  (setq num-found (1+ num-found))
 			  (or count-only
@@ -2633,6 +2616,11 @@ This puts point at the start of the current subtree, and mark at the end."
   (interactive "*p")
   (hyrolo-funcall-match (lambda () (outline-move-subtree-up arg)) t))
 
+(defun hyrolo-outline-next-heading ()
+  "Move to the next (possibly invisible) heading line."
+  (interactive)
+  (hyrolo-funcall-match #'outline-next-heading))
+
 (defun hyrolo-outline-next-visible-heading (arg)
   "Move to next visible heading or match buffer header.
 With ARG, repeats or can move backward if negative.
@@ -2971,6 +2959,55 @@ entire subtree.  Return INCLUDE-SUB-ENTRIES flag value."
       (t (hyrolo-hdr-move-after-p))))
   include-sub-entries)
 
+(defun hyrolo-to-next-entry ()
+  "Move point to next entry or hdr in a `hyrolo-mode' match buffer and return t.
+If no such entry, don't move and return nil."
+  (let (found)
+    (while (and (setq found (/= (point) (goto-char (or (next-single-property-change
+							(point) :hyrolo-level)
+						       (point)))))
+		(not (get-text-property (point) :hyrolo-level))))
+    found))
+
+(defun hyrolo-to-previous-entry ()
+  "Move point to prev entry or hdr in a `hyrolo-mode' match buffer and return t.
+If no such entry, don't move and return nil."
+  ;; Either at the start of an entry or move back to its start
+  (unless (get-text-property (point) :hyrolo-level)
+    (goto-char (1- (previous-single-property-change (point) :hyrolo-level))))
+  ;; Move back to start of prior entry
+  (let (found)
+    (while (and (setq found (/= (point) (goto-char (or (previous-single-property-change
+							(point) :hyrolo-level)
+						       (point)))))
+		(not (get-text-property (point) :hyrolo-level))))
+    found))
+
+(defun hyrolo-to-next-hdr ()
+  "Move to the next file/buffer header start in HyRolo display matches buffer."
+  (interactive)
+  (let ((next-hdr (text-property-any (min (1+ (point)) (point-max))
+                                     (point-max) :hyrolo-hdr t)))
+    (if next-hdr
+	(goto-char next-hdr)
+      (when (called-interactively-p 'interactive)
+	(message "No next file/buffer header") (beep)))))
+
+(defun hyrolo-to-previous-hdr ()
+  "Move to the prev file/buffer header start in HyRolo display matches buffer."
+  (interactive)
+  (let ((opoint (point))
+	pos)
+    (cond ((and (not (bobp))
+                (get-text-property (1- (point)) :hyrolo-hdr))
+           (goto-char (1- (point))))
+          ((and (setq pos (previous-single-property-change (point) :hyrolo-hdr))
+	        (get-text-property (1- pos) :hyrolo-hdr))
+	   (goto-char (1- pos)))
+          (t (goto-char opoint)
+             (when (called-interactively-p 'interactive)
+	       (message "No previous file/buffer header") (beep))))))
+
 (defun hyrolo-to-next-loc ()
   "Move to next file/buffer location header in HyRolo display matches buffer."
   (interactive)
@@ -2984,7 +3021,8 @@ entire subtree.  Return INCLUDE-SUB-ENTRIES flag value."
   "Move to previous file/buffer location header in HyRolo display matches buffer."
   (interactive)
   (let ((opoint (point)))
-    (beginning-of-line)
+    (unless (looking-at (concat "^" hbut:source-prefix))
+      (goto-char (line-end-position)))
     (unless (re-search-backward (concat "^" hbut:source-prefix) nil t)
       (goto-char opoint)
       (when (called-interactively-p 'interactive)
@@ -3765,6 +3803,8 @@ the `major-mode' from a cache.  Add `hyrolo-hdr-regexp' to
   (define-key hyrolo-mode-map "."        'hyrolo-to-entry-end)
   (define-key hyrolo-mode-map "<"        'beginning-of-buffer)
   (define-key hyrolo-mode-map ">"        'end-of-buffer)
+  (define-key hyrolo-mode-map "{"        'hyrolo-to-previous-hdr)
+  (define-key hyrolo-mode-map "}"        'hyrolo-to-next-hdr)
   (define-key hyrolo-mode-map "["        'hyrolo-to-previous-loc)
   (define-key hyrolo-mode-map "]"        'hyrolo-to-next-loc)
   (define-key hyrolo-mode-map "?"        'describe-mode)
