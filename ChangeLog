@@ -1,3 +1,8 @@
+2026-05-28  Mats Lidell  <matsl@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-tests--edit-entry-updates-the-date): Add
+    test verifying the item date is updated on edit.
+
 2026-05-24  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-hdr-to-first-line-p, hyrolo-hdr-move-after-p):
