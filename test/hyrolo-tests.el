@@ -20,6 +20,7 @@
 
 (require 'ert)
 (require 'ert-x)
+(require 'seq)
 (require 'hyrolo)
 (require 'hyrolo-demo)
 (require 'hy-test-dependencies) ;; can install el-mock
@@ -1108,6 +1109,30 @@ tabbing though the matches."
           )
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))
+
+(ert-deftest hyrolo-tests--edit-entry-updates-the-date ()
+  "Verify `hyrolo-edit-entry' moves to the entry and updates the date."
+  (let ((test-time "2024-12-11"))
+    (cl-letf (((symbol-function 'format-time-string)
+               (lambda (_fmt &optional _time _zone) test-time)))
+      (defvar hyrolo-file)
+      (let ((hyrolo-file (make-temp-file "hypb" nil ".otl" "===\nHdr\n===\n"))
+            (item-pat (rx bol "*" (= 3 space) "item")))
+        (unwind-protect
+            (let ((hyrolo-file-list (list hyrolo-file)))
+              (find-file (car (hyrolo-get-file-list)))
+              (hyrolo-add "item")
+              (save-buffer)
+              (hyrolo-grep "item")
+              (execute-kbd-macro (kbd "TAB"))
+              (should (string= (buffer-name) hyrolo-display-buffer))
+              (should (looking-at (rx-to-string `(seq "item\n" (one-or-more whitespace) ,test-time))))
+              (setq test-time "2025-01-01")
+              (hyrolo-edit-entry)
+              (should (equal (current-buffer) (get-file-buffer hyrolo-file)))
+              (should (looking-at (rx-to-string `(seq "item\n" (one-or-more whitespace) ,test-time)))))
+          (kill-buffer hyrolo-display-buffer)
+          (hy-delete-file-and-buffer hyrolo-file))))))
 
 (ert-deftest hyrolo-tests--forward-same-level-all-file-types-level1 ()
   "Verify forward and backward to first level headers and section lines.
