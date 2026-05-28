@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     27-May-26 at 14:33:45 by Bob Weiner
+;; Last-Mod:     28-May-26 at 12:18:39 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -20,7 +20,7 @@
 ;;; ************************************************************************
 
 ;; Load Org here for `org-fold-show-all'.
-(eval-and-compile (mapc #'require '(compile hversion hact hmouse-tag locate
+(eval-and-compile (mapc #'require '(compile hversion hact locate
 				    cl-lib org package seq)))
 
 ;;; ************************************************************************
