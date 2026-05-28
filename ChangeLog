@@ -3,6 +3,19 @@
 * test/hyrolo-tests.el (hyrolo-tests--edit-entry-updates-the-date): Add
     test verifying the item date is updated on edit.
 
+2026-05-27  Bob Weiner  <rsw@gnu.org>
+
+* hypb.el (hypb:remove-from-in-string-cache): Add and use to remove the
+    current buffer as part of 'kill-buffer-hook'.
+
+* hmouse-tag.el (smart-ancestor-tag-files): Fix to ensure all 'dirs' given
+    are normalized and then 'hpath:expand'ed.  This fixes handling of "."
+    and ".." as dir args.
+  hypb.el (hypb:fgrep-git-log): Walk up directory tree to find if within
+    a git archive for selecting default dir.  If none found, default to
+    'hyperb:dir'.  Default directory to 'hyperb:dir' if current  dir does
+    not contain a ".git" directory.
+
 2026-05-24  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-hdr-to-first-line-p, hyrolo-hdr-move-after-p):

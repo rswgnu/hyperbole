@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     11-May-26 at 10:56:26 by Bob Weiner
+;; Last-Mod:     28-May-26 at 12:18:39 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -566,8 +566,10 @@ the `format' function."
 Listing is asynchronous.  A press of RET, the Action Key or the
 Assist Key on any log line will display its committed changes."
   (interactive "sFgrep git commits containing: ")
-  (compile (format "git log -S'%s' --line-prefix='commit ' --oneline" string)
-	   #'hypb:fgrep-git-log-mode))
+  (let ((default-directory (or (car (smart-ancestor-tag-files "./" ".git"))
+                               hyperb:dir)))
+    (compile (format "git log -S'%s' --line-prefix='commit ' --oneline" string)
+	     #'hypb:fgrep-git-log-mode)))
 
 (defun hypb:fgrep-git-log-activate (_ignore1 &optional _ignore2)
   "Display git commit for the current line when `compile-goto-error' {RET} is used.
@@ -1551,6 +1553,17 @@ Without file, the banner is prepended to the current buffer."
 			       (- o ?0)))))
 	  oct-str)
     dec-num))
+
+(defun hypb:remove-from-in-string-cache ()
+  "Remove current buffer from `hypb:in-string-cache'.
+Use this as a `kill-buffer-hook'."
+  (remhash (current-buffer) hypb:in-string-cache))
+
+;;; ************************************************************************
+;;; Public initializations
+;;; ************************************************************************
+
+(add-hook 'kill-buffer-hook 'hypb:remove-from-in-string-cache)
 
 (provide 'hypb)
 
