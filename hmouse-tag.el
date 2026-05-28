@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     31-Dec-25 at 16:02:19 by Mats Lidell
+;; Last-Mod:     27-May-26 at 09:54:20 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1150,7 +1150,8 @@ list the found tags tables from furthest to nearest."
 		       (if (file-readable-p tags-file)
 			   (setq tags-table-list (cons tags-file tags-table-list))))
 		     tags-table-list)
-		   (if (listp dirs) dirs (list dirs))))))
+                   (mapcar (lambda (dir) (hpath:expand (file-name-as-directory dir)))
+		           (if (listp dirs) dirs (list dirs)))))))
 
 (defun smart-asm-include-file ()
   "If point is on an include file line, try to display file.
