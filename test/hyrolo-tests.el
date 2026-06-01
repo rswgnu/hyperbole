@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     17-May-26 at 12:15:26 by Bob Weiner
+;; Last-Mod:      1-Jun-26 at 00:09:22 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2143,6 +2143,36 @@ Dependencies on the consult package are mocked."
           (with-current-buffer (find-file new-file)
             (should (looking-at-p "old-file"))))
       (hy-delete-files-and-buffers (list old-file old-file-backup new-file new-file-backup)))))
+
+(ert-deftest hyrolo-tests--edit-entry-edits-the-selected-match ()
+  "Verify `hyrolo-edit-entry' moves to the selected match and not a substring."
+  (let* ((org-file (make-temp-file "hypb" nil ".org"
+                                   "\
+* heading long
+body 1
+* heading
+body 2
+"))
+         (hyrolo-file-list (list org-file)))
+    (unwind-protect
+        (progn
+          (should (= 2 (hyrolo-grep "heading")))
+          (should (string= hyrolo-display-buffer (buffer-name)))
+
+          ;; Search Down
+          (should (looking-at-p "==="))
+          (hyrolo-next-match)
+          (should (looking-at-p (rx "heading long" eol)))
+
+          ;; Edit next record
+          (hyrolo-next-match)
+          (should (looking-at-p (rx "heading" eol)))
+          (hyrolo-edit-entry)
+          (should (string= (buffer-name) (file-name-nondirectory org-file)))
+          (should (looking-at-p (rx "heading" eol)))
+          )
+      (kill-buffer hyrolo-display-buffer)
+      (hy-delete-files-and-buffers hyrolo-file-list))))
 
 (provide 'hyrolo-tests)
 

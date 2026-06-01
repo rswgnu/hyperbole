@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     25-May-26 at 01:07:05 by Bob Weiner
+;; Last-Mod:      1-Jun-26 at 01:14:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -629,7 +629,7 @@ a parent entry which begins with the parent string."
 			   name))
     (setq file-or-buf (expand-file-name (match-string 1 name))
 	  name (substring name (match-end 0)))
-    (put-text-property 0 1 'hyrolo-line-entry 0 name))
+    (put-text-property 0 1 :hyrolo-line-entry-column 0 name))
 
   (let* ((found-point)
 	 (all-files-or-bufs (hyrolo-get-file-list))
@@ -672,7 +672,7 @@ a parent entry which begins with the parent string."
 	(hmouse-pulse-line))
       (when (derived-mode-p 'kotl-mode)
 	(kotl-mode:to-valid-position))
-      (unless (get-text-property 0 'hyrolo-line-entry name)
+      (unless (get-text-property 0 :hyrolo-line-entry-column name)
 	;; Run hooks like adding a date only when handling a
 	;; delimited (rather than single-line) entry.
 	(run-hooks 'hyrolo-edit-hook)))))
@@ -683,9 +683,8 @@ Return entry name, if any, otherwise, trigger an error."
   (interactive)
   (hyrolo-funcall-match
    (lambda ()
-     (let* ((name-and-src (hyrolo-name-at-p))
-	    (name (car name-and-src))
-	    (src (cdr name-and-src)))
+     (cl-destructuring-bind (name src)
+         (hyrolo-name-at-p)
        (if name
 	   (progn (cond ((and (boundp 'bbdb-file) (stringp bbdb-file) (equal src (expand-file-name bbdb-file)))
 			 ;; For now, can't edit an entry from the bbdb database, signal an error.
@@ -2836,18 +2835,18 @@ begins or nil if not found."
 		    ;; must be a buffer
 		    file-or-buf))
       (let ((case-fold-search t) (real-name name) (parent "") (level)
-	    col-num end line line-and-col)
+	    col-num end line name-column)
 	(hyrolo-widen)
 	(goto-char (point-min))
-	(if (setq col-num (get-text-property 0 'hyrolo-line-entry name))
+	(if (setq col-num (get-text-property 0 :hyrolo-line-entry-column name))
 	    ;; this is a whole line to find without any entry delimiters
-	    (when (search-forward name nil t)
+	    (when (re-search-forward (concat (regexp-quote name) "$") nil t)
 	      (move-to-column col-num)
 	      (setq found (point)))
 	  ;; If this is the first line of an entry, then don't treat
 	  ;; '/' characters as parent/child delimiters but just as
 	  ;; part of the entry first line text.
-	  (unless (setq line-and-col (get-text-property 0 :hyrolo-name-entry name))
+	  (unless (setq name-column (get-text-property 0 :hyrolo-name-entry-column name))
 	    ;; Otherwise, navigate through parent-child records.
 	    (while (string-match "\\`[^\]\[<>{}\"]*/" name)
 	      (setq end (1- (match-end 0))
@@ -2874,7 +2873,10 @@ begins or nil if not found."
 	  (goto-char (point-min))
 	  (while (and
 		  ;; Search for just the leaf part of a name
-		  (search-forward name nil t)
+                  (if name-column
+                      ;; Then searching for a whole line
+                      (re-search-forward (concat (regexp-quote name) "$") nil t)
+		    (search-forward name nil t))
 		  (not (save-excursion
 			 (forward-line 0)
 			 (setq found
@@ -2882,14 +2884,16 @@ begins or nil if not found."
 						      'outline-regexp
 						      (current-buffer)))
 					 ;; Jump to non-first line within an entry
-					 (progn (back-to-indentation)
+					 (progn (unless name-column
+                                                  (back-to-indentation))
 						(looking-at (regexp-quote name))))
-				 (when (or line-and-col
-					   (setq line-and-col (get-text-property 0 :hyrolo-name-entry name)))
+				 (when (or name-column
+					   (setq name-column (get-text-property 0 :hyrolo-name-entry-column name)))
 				   ;; this is a whole line to find except for leading whitespace
-				   (setq line (car line-and-col)
-					 col-num (cdr line-and-col))
-				   (when (search-forward line nil t)
+				   (setq line name
+					 col-num name-column)
+				   (when (re-search-forward
+                                          (concat (regexp-quote line) "$") nil t)
 				     (move-to-column col-num)))
 				 (when (derived-mode-p 'kotl-mode)
 				   (kotl-mode:to-valid-position))
@@ -3289,7 +3293,7 @@ Name is returned as `last, first-and-middle'."
 
 (defun hyrolo-name-at-p ()
   "Iff point is at or within an entry in `hyrolo-display-buffer', return non-nil.
-Any non-nil value returned is a cons of (<entry-name> . <entry-source>)."
+Any non-nil value returned is a list of (<entry-line> <entry-source>)."
   (when (eq (current-buffer) (get-buffer hyrolo-display-buffer))
     (let ((entry-source (hbut:get-key-src t))
 	  (col-num (current-column))
@@ -3299,8 +3303,7 @@ Any non-nil value returned is a cons of (<entry-name> . <entry-source>)."
 	(save-excursion
 	  (forward-line 0)
 	  (let (case-fold-search
-		entry-line
-		entry-name)
+		entry-line)
 	    (if (and (or (looking-at hyrolo-hdr-and-entry-regexp)
 			 (re-search-backward hyrolo-hdr-and-entry-regexp nil t))
 		     (save-match-data (not (looking-at hyrolo-hdr-regexp))))
@@ -3308,21 +3311,20 @@ Any non-nil value returned is a cons of (<entry-name> . <entry-source>)."
 		       (skip-chars-forward " \t")
 		       (when (or (looking-at "[^ \t\n\r]+ ?, ?[^ \t\n\r]+")
 				 (looking-at "\\( ?[^ \t\n\r]+\\)+"))
-			 (setq entry-name (match-string-no-properties 0)
-			       entry-line (buffer-substring-no-properties line-start line-end))
-			 ;; Add a text-property of :hyrolo-name-entry with
-			 ;; value of (entry-line . current-column) to entry-name.
-			 (put-text-property 0 1 :hyrolo-name-entry
-					    (cons entry-line col-num)
-					    entry-name)
-			 (cons entry-name entry-source)))
+			 (setq entry-line (buffer-substring-no-properties line-start line-end))
+			 ;; Add a text-property of :hyrolo-name-entry-column
+                         ;; with value of (current-column)
+			 (put-text-property 0 1 :hyrolo-name-entry-column
+					    col-num entry-line)
+			 (list entry-line entry-source)))
 	      ;; If not blank, return the current line as the name with
-	      ;; a text-property of 'hyrolo-line-entry with value of (current-column).
+	      ;; a text-property of :hyrolo-line-entry-column with value of
+              ;; (current-column).
 	      (goto-char line-start)
 	      (when (not (looking-at "[ \t\f]*$"))
 		(setq entry-line (buffer-substring-no-properties line-start line-end))
-		(put-text-property 0 1 'hyrolo-line-entry col-num entry-line)
-		(cons entry-line entry-source)))))))))
+		(put-text-property 0 1 :hyrolo-line-entry-column col-num entry-line)
+		(list entry-line entry-source)))))))))
 
 (define-derived-mode hyrolo-org-mode outline-mode "HyRoloOrg"
   "Basic Org mode for use in HyRolo display match searches."

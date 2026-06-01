@@ -1,3 +1,22 @@
+2026-06-01  Bob Weiner  <rsw@gnu.org>
+
+2026-05-31  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-edit, hyrolo-name-at-p): Rename 'hyrolo-line-entry to
+    :hyrolo-line-entry-column.
+            (hyrolo-name-at-p): Rename :hyrolo-name-entry to
+    :hyrolo-name-entry-column and make its value be just the column number.
+    And change return of entry-name to entry-line to prevent partial string
+    match when jumping to an entry to edit.
+            (hyrolo-to, hyrolo-name-at-p): Adjust to handle
+    :hyrolo-name-entry-column value change.
+            (hyrolo-to): When searching for a full-line do a regexp search
+    matching the full line so do not match substrings of the line.
+            (hyrolo-name-at-p): Change return from a cons to a list.
+  test/hyrolo-tests.el (hyrolo-tests--edit-entry-edits-the-selected-match):
+    Add to test that 'hyrolo-to' does not match to a substring of the line
+    selected.
+
 2026-05-28  Mats Lidell  <matsl@gnu.org>
 
 * test/hyrolo-tests.el (hyrolo-tests--edit-entry-updates-the-date): Add
