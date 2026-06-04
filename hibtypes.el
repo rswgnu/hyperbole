@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     12-Apr-26 at 12:59:51 by Bob Weiner
+;; Last-Mod:      4-Jun-26 at 10:32:16 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1207,7 +1207,7 @@ in grep and shell buffers."
 (defun hib-python-traceback ()
 "Test for and jump to line referenced in Python pdb, traceback, or pytype error."
   (when (or (looking-at "\\(^\\|.+ \\)File \"\\([^\"\t\f\n\r]+\\S-\\)\", line \\([0-9]+\\)")
-            (looking-at ">?\\(\\s-+\\)\\([^\"()\t\f\n\r]+\\S-\\)(\\([0-9]+\\))\\S-"))
+            (looking-at ">?\\(\\s-+\\)\\([^][\"<>{}()\t\f\n\r]+\\S-\\)(\\([0-9]+\\))\\S-"))
     (let* ((file (match-string-no-properties 2))
            (line-num (match-string-no-properties 3))
            (but-label (concat file ":" line-num)))

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 12:15:16
-;; Last-Mod:     22-Jun-25 at 10:24:52 by Bob Weiner
+;; Last-Mod:      4-Jun-26 at 11:19:52 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -186,7 +186,7 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
   "Return non-nil iff point is within a klink.
 See documentation for the `actypes::link-to-kotl' function for valid klink
 formats.  Value returned is a list of: link-label, link-start-position, and
-link-end-position, (including delimiters)."
+link-end-position, (positions include delimiters)."
   (let (bol label-and-pos referent path)
     (when (and
 	   ;; Avoid false matches in certain modes.
@@ -391,6 +391,7 @@ Assume point is in klink referent buffer, where the klink points."
 	      (klink:replace-label klink link-buf start new-label)))))
 
 (defun klink:yank-handler (klink)
+  "When yanking a KLINK, make its path relative to `default-directory'."
   (if (string-match "<\\([^,]+\\)?[#,][ \t]*\\(.+\\)" klink)
       (let* ((file (or (match-string 1 klink)
 		       (get-text-property 0 'file-name klink)))
@@ -409,7 +410,7 @@ Assume point is in klink referent buffer, where the klink points."
 		     (insert klink)
 		   (insert (format "<%s#%s" file rest))))))
     (insert klink)))
-				 
+
 (provide 'klink)
 
 ;;; klink.el ends here
