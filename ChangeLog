@@ -1,4 +1,15 @@
-2026-06-01  Bob Weiner  <rsw@gnu.org>
+2026-06-04  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (hib-python-traceback, debugger-source): Fix 2nd regexp in
+    'hib-python-traceback' to not allow any paired delimiters in the file
+    name part of the regexp to prevent matching to a named man-apropos
+    implicit button where the name is split across two lines like so:
+	<[My
+	  Name]> - ls(1)
+
+* hui.el (hui:link-possible-types): Fix klink 'link-to-kcell' return string
+    to include the relative id (cell label) with syntax: relid=idstamp.  This
+    is used when inserting a klink with 'hui:ibut-link-directly'.
 
 2026-05-31  Bob Weiner  <rsw@gnu.org>
 
