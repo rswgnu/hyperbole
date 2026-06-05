@@ -62,8 +62,8 @@
 
 (defvar hsys-org-enable-smart-keys)     ; "hsys-org.el"
 (declare-function kview:char-invisible-p "kotl/kview")
-(declare-function smart-eobp "hui-mouse")
 (declare-function smart-ancestor-tag-files "hmouse-tag")
+(declare-function smart-eobp "hui-mouse")
 
 ;;; ************************************************************************
 ;;; Public variables
