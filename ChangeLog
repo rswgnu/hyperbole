@@ -1,3 +1,16 @@
+2026-06-05  Mats Lidell  <matsl@gnu.org>
+
+* hui.el (kcell-view:label): Declare function.
+    (hui:copy-message-length): Use type and group.
+
+* hypb.el (smart-ancestor-tag-files): Declare function.
+
+* hui-mouse.el (smart-calendar, smart-calendar-assist): Use
+    calendar-scroll-calendar-right and calendar-scroll-calendar-left.
+
+* hywiki.el (hywiki-org-format-heading): Use
+    org-fold-core-remove-optimization.
+
 2026-06-04  Bob Weiner  <rsw@gnu.org>
 
 * hibtypes.el (hib-python-traceback, debugger-source): Fix 2nd regexp in
