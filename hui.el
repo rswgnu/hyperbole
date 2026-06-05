@@ -51,6 +51,7 @@
 (declare-function hywiki-referent-exists-p "hywiki")
 (declare-function kcell-view:absolute-reference "kotl/kview")
 (declare-function kcell-view:idstamp "kotl/kview")
+(declare-function kcell-view:label "kotl/kview")
 (declare-function klink:absolute "kotl/klink")
 (declare-function klink:at-p "kotl/klink")
 (declare-function kotl-mode "kotl/kotl-mode")
