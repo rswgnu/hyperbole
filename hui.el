@@ -64,7 +64,9 @@
 
 (defcustom hui:copy-message-length 40
   "Maximum character length of the message displayed after copying text.
-  Set to 0 for no message.")
+Set to 0 for no message."
+  :type 'integer
+  :group 'hyperbole-buttons)
 
 (defcustom hui:ebut-prompt-for-action nil
   "Non-nil prompts for a button-specific action on explicit button creation."
