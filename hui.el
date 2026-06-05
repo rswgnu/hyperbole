@@ -51,6 +51,7 @@
 (declare-function hywiki-referent-exists-p "hywiki")
 (declare-function kcell-view:absolute-reference "kotl/kview")
 (declare-function kcell-view:idstamp "kotl/kview")
+(declare-function kcell-view:label "kotl/kview")
 (declare-function klink:absolute "kotl/klink")
 (declare-function klink:at-p "kotl/klink")
 (declare-function kotl-mode "kotl/kotl-mode")
@@ -64,7 +65,9 @@
 
 (defcustom hui:copy-message-length 40
   "Maximum character length of the message displayed after copying text.
-  Set to 0 for no message.")
+Set to 0 for no message."
+  :type 'integer
+  :group 'hyperbole-buttons)
 
 (defcustom hui:ebut-prompt-for-action nil
   "Non-nil prompts for a button-specific action on explicit button creation."
