@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:      4-Jun-26 at 09:55:07 by Bob Weiner
+;; Last-Mod:      5-Jun-26 at 07:58:00 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2144,7 +2144,13 @@ Buffer without File      link-to-buffer-tmp"
 				  ;; On an implicit button other than a non-existing
 				  ;; potential HyWikiWord, so link to it
 				  ;; (message "%S" (hattr:list hbut-sym))
-				  (list 'link-to-ibut lbl-key (or (hypb:buffer-file-name) (buffer-name))))
+                                  (let ((file (hypb:buffer-file-name)))
+                                    (if (equal file buffer-file-name)
+				        (list 'link-to-ibut
+                                              (hbut:key-to-label lbl-key))
+				      (list 'link-to-ibut
+                                            (hbut:key-to-label lbl-key)
+                                            (or file (buffer-name))))))
 				 ((and (require 'bookmark)
 				       (derived-mode-p 'bookmark-bmenu-mode)
 				       (list 'link-to-bookmark (bookmark-bmenu-bookmark))))

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     15-Mar-26 at 22:16:44 by Bob Weiner
+;; Last-Mod:      7-Jun-26 at 11:26:22 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1250,8 +1250,8 @@ button file) or within the current buffer if both are null.  Use
 of point when desired.
 
 Caller must have used (ibut:at-p) to create hbut:current prior to
-calling this function.  When KEY-SRC is given, this set's
-hbut:current's \\='loc attribute to KEY-SRC."
+calling this function.  The `hbut:current' \\='loc attribute is set
+to KEY-SRC when it is provided."
   (if buffer
       (if (bufferp buffer)
 	  (set-buffer buffer)
@@ -2683,7 +2683,7 @@ Summary of operations based on inputs (name arg from \\='hbut:current attrs):
 	   (insert ibut:label-separator))))
   (let* ((orig-actype (or (hattr:get ibut 'actype)
 			  (hattr:get ibut 'categ)))
-	 (actype (or (actype:elisp-symbol orig-actype)
+	 (actype (or (actype:def-symbol (actype:elisp-symbol orig-actype))
 		     (and (symbolp orig-actype) (fboundp orig-actype)
 			  orig-actype)))
 	 (args   (hattr:get ibut 'args))
@@ -2691,25 +2691,26 @@ Summary of operations based on inputs (name arg from \\='hbut:current attrs):
 	 (arg2   (nth 1 args))
 	 (arg3   (nth 2 args)))
     (pcase actype
-      ('actypes::kbd-key
+      ('kbd-key
        (cond ((and (stringp arg1) (string-match "\\s-*{.+}\\s-*" arg1))
 	      (insert arg1))
 	     ((stringp arg1)
 	      (insert "{" arg1 "}"))
 	     (t (insert "{}"))))
-      ((or 'actypes::link-to-directory 'actypes::link-to-Info-node 'actypes::link-to-Info-index-item)
+      ((or 'link-to-directory 'link-to-Info-node 'link-to-Info-index-item)
        (insert "\"" arg1 "\""))
-      ('actypes::annot-bib (insert "[" arg1 "]"))
-      ('actypes::exec-shell-cmd (insert "\"!" arg1 "\""))
-      ('actypes::exec-window-cmd (insert "\"&" arg1 "\""))
-      ('actypes::link-to-gbut (insert "<glink:" arg1 ">"))
-      ('actypes::link-to-ebut (progn (insert "<elink:" arg1)
-				     (when arg2 (insert ": " arg2))
-				     (insert ">")))
-      ('actypes::link-to-ibut (progn (insert "<ilink:" arg1)
-				     (when arg2 (insert ": " arg2))
-				     (insert ">")))
-      ('actypes::link-to-kcell
+      ('annot-bib (insert "[" arg1 "]"))
+      ('exec-shell-cmd (insert "\"!" arg1 "\""))
+      ('exec-window-cmd (insert "\"&" arg1 "\""))
+      ('link-to-gbut (insert "<glink:" arg1 ">"))
+      ('link-to-ebut (progn (insert "<elink:" arg1)
+			    (when arg2 (insert ": " arg2))
+			    (insert ">")))
+      ('link-to-ibut (progn (insert "<ilink:"
+                                    (hbut:key-to-label arg1))
+			    (when arg2 (insert ": " arg2))
+			    (insert ">")))
+      ('link-to-kcell
        (if arg2
 	   (progn (insert "<")
 		  (when arg1 (insert arg1))
@@ -2717,33 +2718,33 @@ Summary of operations based on inputs (name arg from \\='hbut:current attrs):
 	 (insert "<@ ")
 	 (when arg1 (insert arg1))
 	 (insert ">")))
-      ((or 'actypes::link-to-kotl 'klink:act)
+      ((or 'link-to-kotl 'klink:act)
        (when (stringp arg1)
 	 (if (string-prefix-p "<" arg1)
 	     (insert arg1)
 	   (insert "<" arg1 ">"))))
       ;; Insert an Org-style link here so can include the Org title linked
       ;; to for clarity.
-      ('actypes::link-to-org-id
+      ('link-to-org-id
        (insert (if arg2
                    (format "[[id:%s][%s]]" arg1 arg2)
                  (format "[[id:%s]]" arg1))))
-      ('actypes::link-to-rfc (insert (format "rfc%d" arg1)))
-      ('actypes::link-to-wikiword (insert (if (and (stringp arg1)
-                                                   (string-match-p "\\s-" arg1))
-                                              ;; Double-quote when has a space
-                                              (format "\"%s\"" arg1)
-                                            arg1)))
+      ('link-to-rfc (insert (format "rfc%d" arg1)))
+      ('link-to-wikiword (insert (if (and (stringp arg1)
+                                          (string-match-p "\\s-" arg1))
+                                     ;; Double-quote when has a space
+                                     (format "\"%s\"" arg1)
+                                   arg1)))
       ('man (insert arg1))
-      ('actypes::man-show (insert arg1))
-      ('actypes::link-to-file-line (insert (format "\"%s:L%d\""
-						   (hpath:shorten arg1) arg2)))
-      ('actypes::link-to-file-line-and-column
+      ('man-show (insert arg1))
+      ('link-to-file-line (insert (format "\"%s:L%d\""
+					  (hpath:shorten arg1) arg2)))
+      ('link-to-file-line-and-column
        (insert
 	(if (eq arg3 0)
 	    (format "\"%s:L%d\"" (hpath:shorten arg1) arg2)
 	  (format "\"%s:L%d:C%d\"" (hpath:shorten arg1) arg2 arg3))))
-      ('actypes::link-to-file
+      ('link-to-file
        ;; arg2 when given is a buffer position
        (insert "\""
 	       (if arg2
@@ -2752,14 +2753,14 @@ Summary of operations based on inputs (name arg from \\='hbut:current attrs):
 		 ;; filename only
 		 (hpath:shorten arg1))
 	       "\""))
-      ('actypes::link-to-string-match
+      ('link-to-string-match
        (insert (format "\"%s#%s%s\"" (hpath:shorten arg3) arg1
 		       (if (<= arg2 1) "" (concat ":I" (number-to-string arg2))))))
-      ('actypes::link-to-texinfo-node
+      ('link-to-texinfo-node
        (insert (format "\"%s#%s\"" (hpath:shorten arg1) arg2)))
       ('nil (error "(ibut:insert-text): actype must be a Hyperbole actype or Lisp function symbol, not '%s'" orig-actype))
       ;; Generic action button type
-      (_ (insert (format "<%s%s%s>" (or (actype:def-symbol actype) actype)
+      (_ (insert (format "<%s%s%s>" actype
 			 (if args " " "")
 			 (if args (hypb:format-args args) "")))))
     (unless (looking-at "\\s-\\|\\'")
@@ -2862,7 +2863,10 @@ When NAME-KEY is nil, return the ibutton at point or nil if none."
 			;; Handle a name given rather than a name key
 			(when (string-match-p "\\s-" name-key)
 			  (setq name-key (ibut:label-to-key name-key)))
-			(let ((regexp (ibut:name-regexp name-key t))
+			(let ((regexp
+                               (concat (regexp-quote ibut:label-start)
+                                       "\\(" (ibut:name-regexp name-key t) "\\)"
+                                       (regexp-quote ibut:label-end)))
 			      (start (point))
 			      at-name-key
 			      pos
@@ -2874,7 +2878,7 @@ When NAME-KEY is nil, return the ibutton at point or nil if none."
 			    (forward-line 0)
 			    ;; re-search forward
 			    (while (and (not found) (re-search-forward regexp nil t))
-			      (setq pos (match-beginning 0)
+			      (setq pos (match-beginning 1)
 				    ;; Point might be on closing delimiter of ibut in which
 				    ;; case ibut:label-p returns nil; move back one
 				    ;; character to prevent this.
@@ -2886,7 +2890,7 @@ When NAME-KEY is nil, return the ibutton at point or nil if none."
 			      (goto-char start))
 			    ;; re-search backward
 			    (while (and (not found) (re-search-backward regexp nil t))
-			      (setq pos (match-beginning 0)
+			      (setq pos (match-beginning 1)
 				    at-name-key (ibut:at-p t)
 				    found (equal at-name-key name-key))))
 			  (when found
@@ -2959,35 +2963,28 @@ Find the nearest implicit button with LBL-KEY (a name or name key)
 within the visible portion of the current buffer and move to within
 its button text.  This will find an implicit button if point is
 within its name or text or if LBL-KEY is a name/name-key of an
-existing implicit button.  It will not find other unnamed implicit
-buttons.
+existing implicit button within the current buffer.  It will not
+find other unnamed implicit buttons.
 
 The caller must have populated the attributes of \='hbut:current.
 
 Return the symbol for the button if found, else nil."
-  (unless (stringp lbl-key)
-    (error "(ibut:to-text): %s 'lbl-key' arg must be a string, not: %S"
+  (unless (and (stringp lbl-key) (not (string-empty-p lbl-key)))
+    (error "(ibut:to-text): %s 'lbl-key' arg must be a non-empty string, not: %S"
 	   (hattr:get 'hbut:current 'categ)
 	   lbl-key))
   (hbut:funcall
    (lambda (lbl-key _buffer _key-src)
-     (let* ((name-end (hattr:get 'hbut:current 'name-end))
-	    (at-name (hattr:get 'hbut:current 'name))
-	    (at-text-key (hattr:get 'hbut:current 'lbl-key))
-	    (opoint (point))
+     (let* ((opoint (point))
 	    move-flag
 	    start
 	    ibut)
        ;; Do not move point if it is already in the text of an
        ;; implicit button matching LBL-KEY.  If on the name of
        ;; the same button, move into the text of the button.
-       (cond ((and lbl-key (equal at-text-key lbl-key))
-	      (setq ibut 'hbut:current))
-	     ((and at-name (equal (ibut:label-to-key at-name) lbl-key))
-	      (setq ibut 'hbut:current
-		    move-flag t))
-	     ((and lbl-key (setq ibut (ibut:to lbl-key)))
-	      (setq move-flag t)))
+       (when (and lbl-key (setq ibut (ibut:to lbl-key)))
+	 (setq move-flag t))
+
        (when (and move-flag ibut)
 	 ;; Skip past any optional name and separators
 	 (if (setq start (hattr:get ibut 'lbl-start))

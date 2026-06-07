@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     12-Apr-26 at 15:11:31 by Bob Weiner
+;; Last-Mod:      6-Jun-26 at 01:57:18 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -648,8 +648,9 @@ of the defun."
     (unwind-protect
         (progn
           (find-file file)
+          (erase-buffer)
 	  (hy-test-helpers:ert-simulate-keys "ibut\rlink-to-rfc\r123\r"
-	    (hact (lambda () (call-interactively 'hui:ibut-create))))
+	    (call-interactively 'hui:ibut-create))
           (should (string= "<[ibut]> - rfc123" (buffer-string))))
       (hy-delete-file-and-buffer file))))
 
@@ -659,11 +660,12 @@ of the defun."
     (unwind-protect
         (progn
           (find-file file)
+          (erase-buffer)
           (insert "ibut")
           (set-mark (point-min))
           (goto-char (point-max))
 	  (hy-test-helpers:ert-simulate-keys "\rlink-to-rfc\r123\r"
-	    (hact (lambda () (call-interactively 'hui:ibut-create))))
+	    (call-interactively 'hui:ibut-create))
           (should (string= "<[ibut]> - rfc123" (buffer-string))))
       (hy-delete-file-and-buffer file))))
 
@@ -674,9 +676,10 @@ of the defun."
     (unwind-protect
         (progn
           (find-file file)
+          (erase-buffer)
           (insert "(sexp)")
 	  (hy-test-helpers:ert-simulate-keys "ibut\rlink-to-rfc\r123\r"
-	    (hact (lambda () (call-interactively 'hui:ibut-create))))
+	    (call-interactively 'hui:ibut-create))
           (should (string= "(sexp); <[ibut]> - rfc123" (buffer-string))))
       (hy-delete-file-and-buffer file))))
 

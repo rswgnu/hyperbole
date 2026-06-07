@@ -1,4 +1,6 @@
 
+
+
 * GNU Hyperbole Fast Demo by Bob Weiner
 
   Send an email or a testimonial if you like Hyperbole to <rsw@gnu.org>.
@@ -12,16 +14,19 @@
 * Introductory Videos
 
   If you prefer video introductions, visit the videos linked to in the tables below;
-  otherwise, skip to the next section.  The first table is an overview talk of
-  Hyperbole broken into few minute sections that you can watch individually.  The
-  second table has links to separate videos covering aspects of Hyperbole.
+  otherwise, skip to the next section.  The first table, "#Hyperbole Overview Video",
+  is an overview talk of Hyperbole broken into few minute sections that you can watch
+  individually.  The second table has links to separate videos covering aspects of
+  Hyperbole, including the full <ilink:Overview and Demo>.
 
-  Hyperbole video demos start with 'section 06 - Hyperbole Buttons' in this first
+** Hyperbole Overview Video
+
+  Demos of Hyperbole features start in 'section 06 - Hyperbole Buttons' in this first
   table.  Press {M-RET} either in the first column <[button name]> or in the second
   column video link to watch each section.
-  
+
   |--------------------------------------+-----------------------------------------|
-  | Hyperbole Video Overview Sections    | Video Snippets                          |
+  | Hyperbole Overview Video Sections    | Video Snippets                          |
   |--------------------------------------+-----------------------------------------|
   |--------------------------------------+-----------------------------------------|
   | 01. <[Introduction]>                 | <yt-play "WKwZHSbHmPg" "0:01" "1:38">   |
@@ -48,8 +53,10 @@
   | 22. <[The Big Picture]>              | <yt-play "WKwZHSbHmPg" "54:25" "56:44"> |
   |--------------------------------------+-----------------------------------------|
 
+** Hyperbole Videos
+
   |-----------------------------------------------------+------------------------------|
-  | GNU Hyperbole Videos                                | Web Link                     |
+  | GNU Hyperbole Videos                                | Web Links                    |
   |-----------------------------------------------------+------------------------------|
   |-----------------------------------------------------+------------------------------|
   | <[Overview and Demo]>                               | https://youtu.be/WKwZHSbHmPg |
@@ -186,7 +193,7 @@
        directories. By default, Org files, Python files and Elisp files are
        handled.
 
-    "(hyperbole)action-key-modeline-function" 
+    "(hyperbole)action-key-modeline-function"
 
        Double quoted Info manual references are also implicit buttons.  You
        can link to both nodes/sections in GNU Info manuals as well as to
@@ -271,7 +278,7 @@
        within key series surrounded by parentheses maintain spaces between
        words without the need to use 'SPC'.
 
-    {M-x shell RET M-> (export HYPERBOLE_DIR=${hyperb:dir} && 
+    {M-x shell RET M-> (export HYPERBOLE_DIR=${hyperb:dir} &&
      cd $HYPERBOLE_DIR && grep -n gbut:label-list *.el) RET}
 
        Use both a Hyperbole resolved variable, ${hyperb:dir}, and a
@@ -449,22 +456,22 @@ To learn how to create new kinds of implicit button and action types, see
   a HyWikiWord is a capitalized word that contains upper and lowercase
   letters only and has a corresponding HyWikiWord.org wiki page file
   below `hywiki-directory'.  HyWikiWords require no delimiters.
-  
+
   Use {M-RET} on the first line of the expression below to set a demo
   HyWiki directory and turn on hywiki-mode so HyWikiWords are
   highlighted outside of the HyWiki directory.
-  
+
     <progn (setq hywiki-directory (hpath:expand "${hyperb:dir}/hywiki/"))
            (hywiki-mode 1)>
-  
+
   Now all these wiki-words should be highlighted and can appear in any
   text buffer and will be treated as hyperlinks.  Simply press {M-RET}
   on each to display the associated wiki page:
-  
+
     HyWiki
     HyWikiMenus
     Publishing
-  
+
   Let's create a new page.  Press {M-RET} on the HyWikiWord below:
 
   TestWord

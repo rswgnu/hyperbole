@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     28-Mar-26 at 13:03:44 by Bob Weiner
+;; Last-Mod:      5-Jun-26 at 08:42:07 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -560,7 +560,8 @@ on the implicit button to which to link."
 
   (unless name-key
     (hypb:error "(link-to-ibut): Point must be on an implicit button to create a link-to-ibut"))
-  (let (but
+  (let (actype
+        but
 	normalized-file)
     (if but-src
 	(unless (and (get-buffer but-src)
@@ -576,8 +577,13 @@ on the implicit button to which to link."
       (goto-char (min point (point-max))))
     (setq but (ibut:to-text name-key))
     (cond (but
-	   (setq but (ibut:at-p))
-	   (hbut:act but))
+           (setq actype (actype:def-symbol (hattr:get but 'actype)))
+           (if (eq actype 'link-to-ibut)
+	       (hypb:error "(link-to-ibut): Failed to find implicit button named `%s' in `%s'"
+		           (ibut:key-to-label name-key)
+		           (or but-src (buffer-name)))
+             (apply #'actype:act (hattr:get but 'actype)
+                    (hattr:get but 'args))))
 	  (name-key
 	   (hypb:error "(link-to-ibut): No implicit button named `%s' found in `%s'"
 		       (ibut:key-to-label name-key)

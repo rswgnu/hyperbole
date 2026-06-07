@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     28-May-26 at 12:18:39 by Bob Weiner
+;; Last-Mod:      5-Jun-26 at 07:51:13 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -283,7 +283,7 @@ name differs at the start and end of BODY."
 
 ;;;###autoload
 (defun hypb:buffer-file-name (&optional buffer)
-  "Return name of file BUFFER or current buffer is visiting; nil if none.
+  "Return name of file that BUFFER or current buffer is visiting; nil if none.
 No argument or nil as argument means use the current buffer.
 Produces the correct file name for indirect buffers as well."
    (buffer-file-name (or (buffer-base-buffer buffer) buffer)))
