@@ -3,11 +3,11 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:45:00
-;; Last-Mod:     17-Mar-26 at 17:53:55 by Bob Weiner
+;; Last-Mod:      7-Jun-26 at 15:55:16 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; Copyright (C) 2021-2025  Free Software Foundation, Inc.
+;; Copyright (C) 2021-2026  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -371,6 +371,48 @@
       (should (ibtypes::grep-msg)))))
 
 ;; debugger-source
+(ert-deftest hibtypes-tests--hib-python-traceback ()
+  "Verify `hib-python-traceback' finds expected matches.
+Used in debugger-source for Python pdb or traceback, pytype error."
+  (with-temp-buffer
+    (ert-info ("Python traceback and pytype error")
+      (insert "\
+Traceback (most recent call last):
+  File \"test.py\", line 1, in <module>
+    5/0
+    ~^~
+ZeroDivisionError: division by zero
+")
+      (goto-char (point-min))
+      (forward-line 1)
+      (with-mock
+       (mock (hact 'link-to-file-line "test.py" 1) => 'hact)
+       (should (equal 'hact (hib-python-traceback)))
+       (should (string= "test.py:1" (hattr:get 'hbut:current 'lbl-key)))))
+
+    (ert-info ("pdb")
+      (erase-buffer)
+      (insert "\
+ZeroDivisionError: division by zero
+> test.py(1)<module>()
+-> 5/0
+")
+      (goto-char (point-min))
+      (forward-line 1)
+      (with-mock
+       (mock (hact 'link-to-file-line "test.py" 1) => 'hact)
+       (should (equal 'hact (hib-python-traceback)))
+       (should (string= "test.py:1" (hattr:get 'hbut:current 'lbl-key)))))
+
+    (ert-info ("Negative test: Second line on ibut name")
+      (erase-buffer)
+      (insert "\
+<[My
+  Name]> - ls(1)
+")
+      (goto-char (point-min))
+      (forward-line 1)
+      (should-not (hib-python-traceback)))))
 
 ;; pathname-line-and-column
 
