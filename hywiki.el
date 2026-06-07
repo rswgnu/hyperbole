@@ -3426,7 +3426,10 @@ When NO-STATS is non-nil, don't include statistics in square brackets."
         ;; When using `org-fold-core--optimise-for-huge-buffers',
         ;; returned text will be invisible.  Clear it up.
         (save-match-data
-          (org-fold-core-remove-optimisation (match-beginning 0) (match-end 0)))
+          (if (fboundp 'org-fold-core-remove-optimization)
+              (org-fold-core-remove-optimization (match-beginning 0) (match-end 0))
+            (with-suppressed-warnings ((obsolete org-fold-core-remove-optimisation))
+              (org-fold-core-remove-optimisation (match-beginning 0) (match-end 0)))))
         (let ((todo (and (not no-todo) (match-string 2 heading)))
 	      (priority (and (not no-priority) (match-string 3 heading)))
 	      (headline (pcase (match-string 4 heading)
@@ -3446,7 +3449,10 @@ When NO-STATS is non-nil, don't include statistics in square brackets."
                    "\\(?: +\\[[0-9%+/]+\\]\\)+" "" headline)))
 
           ;; Restore cleared optimization.
-          (org-fold-core-update-optimisation (match-beginning 0) (match-end 0))
+          (if (fboundp 'org-fold-core-remove-optimization)
+              (org-fold-core-remove-optimization (match-beginning 0) (match-end 0))
+            (with-suppressed-warnings ((obsolete org-fold-core-remove-optimisation))
+              (org-fold-core-remove-optimisation (match-beginning 0) (match-end 0))))
 	  (mapconcat #'identity
 		     (delq nil (list todo priority headline tags))
         	     " "))))))

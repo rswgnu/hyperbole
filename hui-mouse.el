@@ -889,9 +889,15 @@ If key is pressed:
 
   (interactive)
   (cond ((smart-eobp) (calendar-cursor-to-nearest-date)
-	 (calendar-scroll-left-three-months 1))
+	 (if (fboundp 'calendar-scroll-calendar-left)
+             (calendar-scroll-calendar-left)
+           (with-suppressed-warnings ((obsolete calendar-scroll-left-three-months))
+             (calendar-scroll-left-three-months 1))))
 	((< (current-column) 5) (calendar-cursor-to-nearest-date)
-	 (calendar-scroll-right-three-months 1))
+	 (if (fboundp 'calendar-scroll-calendar-right)
+             (calendar-scroll-calendar-right)
+           (with-suppressed-warnings ((obsolete calendar-scroll-right-three-months))
+             (calendar-scroll-right-three-months 1))))
 	(t (calendar-cursor-to-nearest-date)
 	   (diary-view-entries 1))))
 
@@ -911,9 +917,15 @@ If assist key is pressed:
 
   (interactive)
   (cond ((smart-eobp) (calendar-cursor-to-nearest-date)
-	 (calendar-scroll-right-three-months 1))
+	 (if (fboundp 'calendar-scroll-calendar-left)
+             (calendar-scroll-calendar-left)
+           (with-suppressed-warnings ((obsolete calendar-scroll-left-three-months))
+             (calendar-scroll-left-three-months 1))))
 	((< (current-column) 5) (calendar-cursor-to-nearest-date)
-	 (calendar-scroll-left-three-months 1))
+         (if (fboundp 'calendar-scroll-calendar-right)
+             (calendar-scroll-calendar-right)
+           (with-suppressed-warnings ((obsolete calendar-scroll-right-three-months))
+             (calendar-scroll-right-three-months 1))))
 	(t (diary-mark-entries))))
 
 ;;; ************************************************************************
