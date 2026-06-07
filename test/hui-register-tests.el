@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    10-Sep-22 at 20:43:17
-;; Last-Mod:     16-Aug-25 at 15:36:47 by Bob Weiner
+;; Last-Mod:      6-Jun-26 at 01:57:16 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -62,13 +62,16 @@
     (unwind-protect
         (progn
           (find-file file1)
-          (insert "<[label]> ${HOME}")
+          (erase-buffer)
+          (insert "<[ibut-name]> ${HOME}")
           (goto-char 5)
           (let ((content (hui-register-struct-at-point)))
             (find-file file2)
-	    ;; Inserts ebut into file2 that contains an ilink in file1
-	    ;; that jumps to ${HOME}
+            (erase-buffer)
+	    ;; Inserts ebut into file2 that contains an ilink to an ibut
+            ;; named 'ibut-name' in file1 that jumps to ${HOME}
             (register-val-insert content)
+            (save-buffer)
             (should (equal (hypb:buffer-file-name) file2))
             (goto-char 5)
             (should (ebut:at-p))

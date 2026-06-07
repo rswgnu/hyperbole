@@ -1,9 +1,9 @@
-;;; hui-register.el --- register support for Hyperbole    -*- lexical-binding: t; -*-
+;;; hui-register.el --- Hyperbole links to Emacs registers    -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:      4-Nov-24 at 00:36:58 by Mats Lidell
+;; Last-Mod:      5-Jun-26 at 07:32:34 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;

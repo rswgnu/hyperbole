@@ -1,3 +1,39 @@
+2026-06-07  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-tag.el (smart-emacs-lisp-mode-p): Add support for 'comint-mode'
+    used by shell buffers and 'compilation-mode' that contain elisp symbols.
+
+2026-06-06  Bob Weiner  <rsw@gnu.org>
+
+* test/hui-tests.el (hui--ibut-create-interactive)
+(hui--ibut-create-interactive-add-comment-char)
+(hui--ibut-create-interactive-label-using-region):
+
+2026-06-05  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:to): Fix to search for 'name-key' surrounded by
+    implicit button name delimiters.  Avoids matching to
+    <ilink:name-key> action buttons.
+          (ibut:to-text): Allow movement to the linked ibut if point
+    is on an ilink.  Fixes bug where in-buffer ilinks did not work.
+    Remove check of any hbut:current attributes prior to moving to the
+    linked to ibut as these refer to the link-to-ibut button.
+          (ibut:insert-text): For 'actypes::link-to-ibut', convert
+    label key to label text.
+  hui.el (hui:link-possible-types): Fix 'link-to-ibut' to use label
+    text rather than label key and don't include the location if
+    the link is to a button within the source buffer.
+          (ibut:insert-text): Use 'actype:def-symbol' and don't expose
+    actypes:: prefix.
+
+* MANIFEST: (hui-register.el): Add missing entry.
+
+* hbut.el (ibut:to-text): Error if 'lbl-key' is an empty string.
+
+* hactypes.el: (link-to-ibut): Fix infinite loop in <ilink:label> links
+    by replacing 'hbut:act' call with a call to 'actype:act' which
+    utilizes the actype computed from the prior 'ibut:at-p' call.
+
 2026-06-04  Bob Weiner  <rsw@gnu.org>
 
 * hibtypes.el (hib-python-traceback, debugger-source): Fix 2nd regexp in

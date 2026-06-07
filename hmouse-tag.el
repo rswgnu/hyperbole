@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     27-May-26 at 09:54:20 by Bob Weiner
+;; Last-Mod:      7-Jun-26 at 10:53:31 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -417,7 +417,7 @@ When optional NO-FLASH, do not flash."
   (ignore-errors (require 'cc-mode) (c-initialize-cc-mode))
   nil)
 
-(defun smart-emacs-lisp-mode-p (&optional skip-identifier-flag)
+(defun smart-emacs-lisp-mode-p (&optional skip-existing-identifier-flag)
   "Return non-nil if in a mode using Emacs Lisp symbols."
   ;; Beyond Lisp files, Emacs Lisp symbols appear frequently in Byte-Compiled
   ;; buffers, debugger buffers, program ChangeLog buffers, Help buffers,
@@ -430,9 +430,10 @@ When optional NO-FLASH, do not flash."
       ;; Consider the following buffer types only if on an Emacs Lisp
       ;; symbol that can be looked up, e.g. in a TAGS file or via a
       ;; previous symbol load.
-      (and (or (apply #'derived-mode-p '(help-mode change-log-mode))
+      (and (or (apply #'derived-mode-p '(change-log-mode comint-mode
+                                         compilation-mode help-mode))
 	       (string-match-p "\\`\\*Help\\|Help\\*\\'" (buffer-name)))
-	   (or skip-identifier-flag (smart-lisp-at-known-identifier-p)))))
+	   (or skip-existing-identifier-flag (smart-lisp-at-known-identifier-p)))))
 
 (defun smart-fortran (&optional identifier next)
   "Jump to the definition of optional Fortran IDENTIFIER or the one at point.

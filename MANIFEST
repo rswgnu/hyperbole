@@ -43,6 +43,7 @@ hui-jmenu.el         - Popup menus for jumping to and managing buffers, frames, 
 hui-menu.el          - Menubar menu of GNU Hyperbole commands
 hui-mini.el          - Single line command menus for GNU Hyperbole
 hui-mouse.el         - Use key or mouse key for many functions, e.g. GNU Hyperbole menus
+hui-register.el      - Hyperbole links to Emacs registers
 hui-select.el        - Select delimited or larger and larger syntax-driven regions in a buffer
 hui-treemacs.el      - GNU Hyperbole Smart Key support for the Treemacs file manager package
 hui-window.el        - Smart Mouse Key window and modeline depress/release actions
