@@ -1,3 +1,8 @@
+2026-06-07  Mats Lidell  <matsl@gnu.org>
+
+* test/hibtypes-tests.el (hibtypes-tests--hib-python-traceback):
+    Verify `hib-python-traceback' matches python debugger source ibuts.
+
 2026-06-05  Mats Lidell  <matsl@gnu.org>
 
 * hui.el (kcell-view:label): Declare function.
