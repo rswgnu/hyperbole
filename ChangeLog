@@ -1,3 +1,7 @@
+2026-06-07  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:to-text): Fix missing let of 'name-end' and assign a value.
+
 2026-06-07  Mats Lidell  <matsl@gnu.org>
 
 * test/hibtypes-tests.el (hibtypes-tests--hib-python-traceback):

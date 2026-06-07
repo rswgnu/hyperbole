@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      7-Jun-26 at 11:26:22 by Bob Weiner
+;; Last-Mod:      7-Jun-26 at 16:50:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2977,27 +2977,27 @@ Return the symbol for the button if found, else nil."
    (lambda (lbl-key _buffer _key-src)
      (let* ((opoint (point))
 	    move-flag
+            name-end
 	    start
 	    ibut)
        ;; Do not move point if it is already in the text of an
        ;; implicit button matching LBL-KEY.  If on the name of
        ;; the same button, move into the text of the button.
        (when (and lbl-key (setq ibut (ibut:to lbl-key)))
-	 (setq move-flag t))
-
-       (when (and move-flag ibut)
-	 ;; Skip past any optional name and separators
-	 (if (setq start (hattr:get ibut 'lbl-start))
-	     (goto-char start)
-	   (when name-end
-	     (goto-char name-end)
-	     (if (looking-at ibut:label-separator-regexp)
-		 ;; Move past up to 2 possible characters of ibut
-		 ;; delimiters to ensure are inside the ibut name; this
-		 ;; prevents recognizing labeled, delimited ibuts of a
-		 ;; single character since no one should need that.
-		 (goto-char (min (+ 2 (match-end 0)) (point-max)))
-	       (goto-char opoint)))))
+	 (setq move-flag t)
+         (when (and move-flag ibut)
+	   ;; Skip past any optional name and separators
+	   (if (setq start (hattr:get ibut 'lbl-start))
+	       (goto-char start)
+	     (when (setq name-end (hattr:get ibut 'name-end))
+	       (goto-char name-end)
+	       (if (looking-at ibut:label-separator-regexp)
+		   ;; Move past up to 2 possible characters of ibut
+		   ;; delimiters to ensure are inside the ibut name; this
+		   ;; prevents recognizing labeled, delimited ibuts of a
+		   ;; single character since no one should need that.
+		   (goto-char (min (+ 2 (match-end 0)) (point-max)))
+	         (goto-char opoint))))))
        ibut))
    lbl-key
    (current-buffer)))
