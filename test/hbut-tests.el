@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-may-21 at 09:33:00
-;; Last-Mod:     12-Apr-26 at 15:11:31 by Bob Weiner
+;; Last-Mod:      9-Jun-26 at 00:01:32 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -780,7 +780,7 @@ See #10 for the proper way to add an ibutton name.
     (should (equal (hattr:get (ibut:at-p) 'categ) 'ibtypes::pathname))
     (goto-char (- (point-max) 5))
     (should (equal (hattr:get (ibut:at-p) 'categ) 'ibtypes::pathname))
-    (goto-char 8)  ;; ibtypes::mail-address !!
+    (goto-char 8)
     (should (equal (hattr:get (ibut:at-p) 'categ) 'ibtypes::pathname))))
 
 (ert-deftest hypb--gbut-act-with-web-link ()

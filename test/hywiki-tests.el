@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     12-Apr-26 at 15:11:29 by Bob Weiner
+;; Last-Mod:      9-Jun-26 at 16:26:28 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -50,10 +50,7 @@ named WikiReferent with a non-page referent type."
 
 (defconst hywiki-tests--edit-string-pairs
    [
-    ;; !! TODO: This test fails
-    ;; ("\"WikiWord#section with spaces\"<backward-delete-char 1>" "\"{WikiWord#section} with spaces") ;; shrink highlight to "{WikiWord#section}
-
-    ;; These tests pass
+    ("\"WikiWord#section with spaces\"<backward-delete-char 1>" "\"{WikiWord#section} with spaces") ;; shrink highlight to "{WikiWord#section}
     ("Hi#a<insert-char ?b> cd" "{Hi#ab} cd")
     ("\"WikiWord#a b c<backward-delete-char 2>" "\"{WikiWord#a} b")
     ("Hi" "{Hi}")
