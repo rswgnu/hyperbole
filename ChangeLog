@@ -1,3 +1,17 @@
+2026-06-09  Mats Lidell  <matsl@gnu.org>
+
+* test/hbut-tests.el (hbut-tests--ibut-at-p-identifies-a-remote-pathname):
+    Remove comment.
+
+* test/hywiki-tests.el (hywiki-tests--edit-string-pairs): Uncomment
+    working test case.
+
+* test/hyrolo-tests.el (hyrolo-tests--grep-or-fgrep): Use cl-letf for
+    mocking call-interactively. Functions with optional arguments does not
+    work with el-mock and native compilation. The mock is called with the
+    optional args set to nil causing it to see different number of
+    arguments depending on whether the code is natively compiled or not.
+
 2026-06-07  Bob Weiner  <rsw@gnu.org>
 
 * hbut.el (ibut:to-text): Fix missing let of 'name-end' and assign a value.
