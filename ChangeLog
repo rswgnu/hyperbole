@@ -1,3 +1,14 @@
+2026-06-10  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--referent-test): Disable
+    vertico-mode during the test if active.
+    (hywiki-tests--save-referent-command-use-menu):
+    (hywiki-tests--save-referent-find-use-menu): Do not set vertico-mode
+    in let.
+    (hywiki-tests--save-referent-info-node-use-menu): Change expected
+    results to match result without vertico-mode active. Test now passes
+    both when in docker and native.
+
 2026-06-09  Mats Lidell  <matsl@gnu.org>
 
 * test/hbut-tests.el (hbut-tests--ibut-at-p-identifies-a-remote-pathname):
