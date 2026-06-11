@@ -34,17 +34,21 @@ The template runs the PREPARE body, and that must add the HyWikiWord
 named WikiReferent with a non-page referent type."
   (declare (indent 0) (debug t))
   `(let* ((hsys-consult-flag nil)
-	  (vertico-mode 0)
+	  (local-vertico-mode (bound-and-true-p vertico-mode))
 	  (hywiki-directory (make-temp-file "hywiki" t))
 	  (wiki-word-non-page "WikiReferent")
           (mode-require-final-newline nil))
      (unwind-protect
          (save-excursion
+           (when local-vertico-mode
+             (vertico-mode -1))
            (should (equal '() (hywiki-get-wikiword-list)))
 
            ,@prepare
 
            (should (equal ,expected-referent (hywiki-get-referent wiki-word-non-page))))
+       (when local-vertico-mode
+         (vertico-mode))
        (hy-delete-files-and-buffers (list (hywiki-cache-default-file)))
        (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory))))
 
@@ -1250,7 +1254,6 @@ Note special meaning of `hywiki-allow-plurals-flag'."
 (ert-deftest hywiki-tests--referent-cache-test ()
   "Test to check that a HyWiki referent read back from cache is as expected."
   (let* ((hsys-consult-flag nil)
-	 (vertico-mode 0)
 	 (hywiki-directory (make-temp-file "hywiki" t))
          (file (make-temp-file "hypb"))
 	 (wiki-word-non-page "WikiReferent")
@@ -1343,9 +1346,8 @@ Note special meaning of `hywiki-allow-plurals-flag'."
     (progn
       (sit-for 0.2)
       (cons 'command #'hywiki-tests--command))
-    (let ((vertico-mode 0))
-      (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET c hywiki-tests--command RET"))
-      (hy-test-helpers:consume-input-events))))
+    (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET c hywiki-tests--command RET"))
+    (hy-test-helpers:consume-input-events)))
 
 ;; Find
 (ert-deftest hywiki-tests--save-referent-find ()
@@ -1362,13 +1364,12 @@ Note special meaning of `hywiki-allow-plurals-flag'."
       (progn
         (sit-for 0.2)
         (cons 'find #'hywiki-word-grep))
-      (let ((vertico-mode 0))
-        (find-file wiki-page)
-        (hywiki-tests--insert "\nWikiReferent\n")
-        (hypb:save-buffer-silently)
-        (goto-char (point-min))
-        (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET f RET"))
-        (hy-test-helpers:consume-input-events)))))
+      (find-file wiki-page)
+      (hywiki-tests--insert "\nWikiReferent\n")
+      (hypb:save-buffer-silently)
+      (goto-char (point-min))
+      (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET f RET"))
+      (hy-test-helpers:consume-input-events))))
 
 ;; Global-button
 (ert-deftest hywiki-tests--save-referent-global-button ()
@@ -1444,7 +1445,7 @@ Note special meaning of `hywiki-allow-plurals-flag'."
   (hywiki-tests--referent-test
     (progn
       (sit-for 0.2)
-      (cons 'info-node "(emacs)*"))
+      (cons 'info-node "(emacs)"))
     (save-excursion
       (unwind-protect
           (progn
