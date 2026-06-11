@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:45:00
-;; Last-Mod:      7-Jun-26 at 15:55:16 by Mats Lidell
+;; Last-Mod:     12-Jun-26 at 20:05:17 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -324,10 +324,77 @@
 ;; hlink
 
 ;; elink
+(ert-deftest ibtypes::elink-test ()
+  "Verify link to ebut in the same buffer."
+  (let ((file (make-temp-file "elink")))
+    (unwind-protect
+        (progn
+          (find-file file)
+          (insert "<elink: Button >\n")
+          (ebut:program "Button" 'eval-elisp '(message "EBUT"))
+          (goto-char 4)
+          (should (string= "EBUT" (ibtypes::elink)))
+
+          (goto-char (point-min))
+          (insert "<elink: Other >\n")
+          (goto-char 4)
+          (let ((err (should-error (ibtypes::elink))))
+            (should
+             ;; Error message actually is: "No button ‘Other’ in ‘nil’"
+             ;; Nil looks wrong for the file name.
+             (string-match-p (rx "No button " (any punct) "Other" (any punct))
+                             (cadr err)))))
+      (hy-delete-files-and-buffers (list file)))))
 
 ;; glink
+(ert-deftest ibtypes::glink-test ()
+  "Verify link to global button."
+  (let ((file (make-temp-file "glink")))
+    (unwind-protect
+        (progn
+          (find-file file)
+          (insert "\
+<glink: Button >
+<[Button]> <identity \"ARG\">
+")
+          (goto-char 4)
+          (with-mock
+            (mock (gbut:act "Button") => "ARG")
+            (should (string= "ARG" (ibtypes::glink))))
+
+          (with-mock
+            (mock (gbut:get "Button") => nil)
+            (let ((err (should-error (ibtypes::glink) :type 'error)))
+              (should
+               (string-match-p "No global button found for label: Button"
+                               (cadr err))))))
+      (hy-delete-file-and-buffer file))))
 
 ;; ilink
+(ert-deftest ibtypes::ilink-test ()
+  "Verify link to ibut in same buffer."
+  (let ((file (make-temp-file "ilink")))
+    (unwind-protect
+        (progn
+          (find-file file)
+          (insert "\
+<ilink: Button >
+<[Button]> <identity \"ARG\">
+")
+          (goto-char 4)
+          (should (string= "ARG" (ibtypes::ilink)))
+
+          (erase-buffer)
+          (insert "\
+<ilink: Button >
+<[Other]> <identity \"ARG\">
+")
+          (goto-char 4)
+          (let ((err (should-error (ibtypes::ilink))))
+            (should
+             (string-match-p (rx "No implicit button named " (any punct) "Button" (any punct) " found")
+                             (cadr err)))))
+      (hy-delete-file-and-buffer file))))
 
 ;; ipython-stack-frame
 
