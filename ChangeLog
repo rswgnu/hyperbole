@@ -1,3 +1,9 @@
+2026-06-12  Mats Lidell  <matsl@gnu.org>
+
+* test/hibtypes-tests.el (ibtypes::elink-test):
+    (ibtypes::glink-test):
+    (ibtypes::ilink-test): Add tests.
+
 2026-06-10  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--referent-test): Disable
