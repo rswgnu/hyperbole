@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     16-May-26 at 22:48:38 by Bob Weiner
+@c Last-Mod:     12-Jun-26 at 13:53:14 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,8 +30,8 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED May 16, 2026
-@set UPDATED-MONTH May 2026
+@set UPDATED June 12, 2026
+@set UPDATED-MONTH June 2026
 @set EDITION 9.0.2pre
 @set VERSION 9.0.2pre
 
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed May 16, 2026.
+Printed June 12, 2026.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -213,7 +213,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.2pre
-May 16, 2026 @c AUTO-REPLACE-ON-SAVE
+June 12, 2026 @c AUTO-REPLACE-ON-SAVE
 
 
   Published by the Free Software Foundation, Inc.
@@ -2531,6 +2531,55 @@ minibuffer or the other window.
 When on a HyWikiWord with an existing page, display its page and
 optional section.
 
+@findex ibtypes ilink
+@cindex implicit button link
+@cindex link to implicit button
+@cindex ilink
+@anchor{ilink}
+@item link-to-ibut <ilink>
+At point, activate a link to an implicit button within the current
+buffer.  This executes the linked to implicit button's action in the
+context of the current buffer.
+
+Recognizes the format '<ilink:' button_label [':' button_file_path] '>',
+where button_file_path is given only when the link is to another file,
+e.g. <ilink: my series of keys: $@{hyperb:dir@}/HYPB>.
+
+@findex ibtypes glink
+@cindex global button link
+@cindex link to global button
+@cindex glink
+@anchor{glink}
+@item link-to-gbut <glink>
+At point, activate a link to a global button.  This executes the
+linked to global button's action in the context of the current buffer.
+
+Recognizes the format '<glink:' button_label '>', e.g. <glink: open todos>.
+
+@findex ibtypes elink
+@cindex explicit button link
+@cindex link to explicit button
+@cindex elink
+@anchor{elink}
+@item link-to-ebut <elink>
+At point, activate a link to an explicit button within the current
+buffer.  This executes the linked to explicit button's action in the
+context of the current buffer.
+
+Recognizes the format '<elink:' button_label [':' button_file_path] '>',
+where : button_file_path is given only when the link is to another file,
+e.g. <elink: project-list: ~/projs>."
+
+@findex ibtypes klink
+@cindex klink
+@cindex koutline link
+@cindex kcell link
+@anchor{klink}
+@item klink
+Follow a link delimited by <> to a koutline cell.
+See the documentation for @code{actypes::link-to-kotl} for valid link
+specifiers.
+
 @findex ibtypes action
 @cindex action button
 @cindex action implicit button
@@ -2700,55 +2749,6 @@ for remote pathnames.  May also contain hash-style link references
 with the following format: @file{<path>[#<link-anchor>]:<line-num>[:<column-num>]}.
 Line and column can also include a leading and optional character, L
 for line and C for column.
-
-@findex ibtypes ilink
-@cindex implicit button link
-@cindex link to implicit button
-@cindex ilink
-@anchor{ilink}
-@item link-to-ibut <ilink>
-At point, activate a link to an implicit button within the current
-buffer.  This executes the linked to implicit button's action in the
-context of the current buffer.
-
-Recognizes the format '<ilink:' button_label [':' button_file_path] '>',
-where button_file_path is given only when the link is to another file,
-e.g. <ilink: my series of keys: $@{hyperb:dir@}/HYPB>.
-
-@findex ibtypes glink
-@cindex global button link
-@cindex link to global button
-@cindex glink
-@anchor{glink}
-@item link-to-gbut <glink>
-At point, activate a link to a global button.  This executes the
-linked to global button's action in the context of the current buffer.
-
-Recognizes the format '<glink:' button_label '>', e.g. <glink: open todos>.
-
-@findex ibtypes elink
-@cindex explicit button link
-@cindex link to explicit button
-@cindex elink
-@anchor{elink}
-@item link-to-ebut <elink>
-At point, activate a link to an explicit button within the current
-buffer.  This executes the linked to explicit button's action in the
-context of the current buffer.
-
-Recognizes the format '<elink:' button_label [':' button_file_path] '>',
-where : button_file_path is given only when the link is to another file,
-e.g. <elink: project-list: ~/projs>."
-
-@findex ibtypes klink
-@cindex klink
-@cindex koutline link
-@cindex kcell link
-@anchor{klink}
-@item klink
-Follow a link delimited by <> to a koutline cell.
-See the documentation for @code{actypes::link-to-kotl} for valid link
-specifiers.
 
 @findex ibtypes man-apropos
 @cindex UNIX manual
@@ -6768,7 +6768,7 @@ Yank            hyrolo-yank             Insert the first matching
 @end example
 
 The 'File' menu item displays and edits the first file listed in
-@code{hyrolo-file-list} unless given a prefix argument, in which case
+@code{hyrolo-file-list}, unless given a prefix argument, in which case
 it prompts with completion for the file to edit.
 
 A prefix argument used with any of the above menu items that have 'Find'
@@ -7058,18 +7058,19 @@ current frame to its state prior to the rolo search.
 @vindex hyrolo-file-list
 @cindex rolo, personal
 The files used in any rolo search are given by the
-@code{hyrolo-file-list} variable, whose default first value is given
-by the variable, @code{hyrolo-default-file} originally set to
-@code{"~/.rolo.org"}, unless the older @code{~/.rolo.otl} exists when
-Hyperbole is loaded.  You can customize @code{hyrolo-file-list} to
-include files with variables in them, wildcard patterns and
-directories, as explained below.  Any paths added to this list should
-be absolute.
+@code{hyrolo-file-list} variable, whose default first value is
+specified by the variable, @code{hyrolo-default-file}.  Its standard
+value is @code{"~/.rolo.org"}, unless the older @code{~/.rolo.otl}
+exists when Hyperbole is loaded, in which case it is used.  You can
+customize @code{hyrolo-file-list} to include files with variables in
+them, wildcard patterns and directories, as explained below.  Any
+paths added to this list should be absolute.
 
 If you include file wildcards in paths for this variable and
-@code{find-file-wildcards} is non-nil (the default), then any files
-matching the pattern (which can include [char-matches] or * wildcards
-and regular text) when the variable is set will be included in HyRolo
+@code{find-file-wildcards} is non-nil (the default), then any existing
+files matching the pattern (which can include square bracketed
+[character matches], optional characters followed by ?, or *
+wildcards) when the variable is set will be included in future HyRolo
 searches.  For more on wildcards, see @ref{Wildcards,,,emacs,the GNU
 Emacs Manual}.
 
@@ -7109,12 +7110,12 @@ following to your Emacs initialization file:
 @cindex BBDB
 @cindex Big Brother DataBase
 If you use the Big Brother DataBase (BBDB) Emacs package to capture
-email addresses and store contact information, the rolo automatically
+email addresses and store contact information, HyRolo automatically
 works with it.  If the BBDB package is loaded before HyRolo, then your
 @code{bbdb-file} of contacts is added as the second entry in
-@code{hyrolo-file-list} and will be searched automatically for any matches by
-the rolo find commands.  Presently there is no support for editing
-BBDB entries, just finding them.
+@code{hyrolo-file-list} and will be searched automatically for any
+matches by the rolo find commands.  Presently there is no support for
+editing BBDB entries, just finding them.
 
 For finding matches within only BBDB, there are the commands
 @code{hyrolo-bbdb-fgrep} (string finding) and @code{hyrolo-bbdb-grep}
@@ -7123,15 +7124,15 @@ For finding matches within only BBDB, there are the commands
 @cindex contacts, Google
 @cindex Google Contacts
 @cindex Gmail Contacts
-If you use Google/Gmail Contacts, you can configure the HyRolo to
-query your Google Contacts for matches.  First you must download and
-install the external @file{google-contacts} package using the Emacs
-Package Manager.  Then you must install the non-Emacs GNU Privacy
-Guard (GPG) package from @uref{https://gnupg.org} so that
-the @file{gpg} or @file{gpg2} executable is in your command-line
-search path.  Once these are in place, either restart Emacs or
-use @bkbd{M-x hyrolo-initialize-file-list @key{RET}} to add Google
-Contacts to your searches.
+If you use Google/Gmail Contacts, you can configure HyRolo to query
+your Google Contacts for matches.  First you must download and install
+the external @file{google-contacts} package using the Emacs Package
+Manager.  Then you must install the non-Emacs GNU Privacy Guard (GPG)
+package from @uref{https://gnupg.org} so that the @file{gpg} or
+@file{gpg2} executable is in your command-line search path.  Once
+these are in place, either restart Emacs or use @bkbd{M-x
+hyrolo-initialize-file-list @key{RET}} to add Google Contacts to your
+searches.
 
 When you next do a search, you will be prompted for your Google
 Contacts password and may also have to enter an authorization code

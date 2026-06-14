@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      4-Jun-26 at 10:32:16 by Bob Weiner
+;; Last-Mod:     14-Jun-26 at 15:13:01 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -147,7 +147,8 @@ reference line so since not on a Hyperbole button, move back a
 line and check for a source reference line again."
   (save-excursion
     (unless (/= (forward-line -1) 0)
-      (ibut:label-set "temp") ;; Real value set in action call below
+      ;; Set temp label value here; real label value is set in action call below
+      (ibut:label-set)
       (hib-python-traceback))))
 
 ;;; ========================================================================
@@ -867,108 +868,6 @@ other buffers."
           (hact 'man topic))))))
 
 ;;; ========================================================================
-;;; Follows links to Hyperbole Koutliner cells.
-;;; ========================================================================
-
-(load "klink" nil t)
-
-;;; ========================================================================
-;;; Links to Hyperbole button types
-;;; ========================================================================
-
-(defun hlink (link-actype label-prefix start-delim end-delim)
-  "Call LINK-ACTYPE and use LABEL-PREFIX if point is within an implicit button.
-LINK-ACTYPE is the action type and button is prefixed with
-LABEL-PREFIX.  The button must be delimited by START-DELIM and
-END-DELIM."
-  ;; Used by e/g/ilink implicit buttons."
-  (let* ((label-start-end (hbut:label-p t start-delim end-delim t t))
-         (label-and-file (nth 0 label-start-end))
-         (start-pos (nth 1 label-start-end))
-         (end-pos (nth 2 label-start-end))
-         but-key lbl-key key-file partial-lbl)
-    (when label-and-file
-      (setq label-and-file (hlink:parse-label-and-file label-and-file)
-            partial-lbl (nth 0 label-and-file)
-            but-key (hbut:label-to-key partial-lbl)
-            key-file (nth 1 label-and-file)
-            lbl-key (when but-key (concat label-prefix but-key)))
-      (ibut:label-set (hbut:key-to-label lbl-key) start-pos end-pos)
-      (hact link-actype but-key key-file))))
-
-(defun hlink:parse-label-and-file (label-and-file)
-  "Parse colon-separated string LABEL-AND-FILE into a list of label and file path."
-  ;; Can't use split-string here because file path may contain colons;
-  ;; we want to split only on the first colon.
-  (let ((i 0)
-        (len (length label-and-file))
-        label
-        file)
-    (while (< i len)
-      (when (= ?: (aref label-and-file i))
-        (when (zerop i)
-          (error "(hlink:parse-label-and-file): Missing label: '%s'" label-and-file))
-        (setq label (hpath:trim (substring label-and-file 0 i))
-              file (hpath:trim (substring label-and-file (1+ i))))
-        (when (string-empty-p label) (setq label nil))
-        (when (string-empty-p file) (setq file nil))
-        (setq i len))
-      (setq i (1+ i)))
-    (unless (or label (string-empty-p label-and-file))
-      (setq label label-and-file))
-    (delq nil (list label file))))
-
-(defconst elink:start "<elink:"
-  "String matching the start of a link to a Hyperbole explicit button.")
-(defconst elink:end   ">"
-  "String matching the end of a link to a Hyperbole explicit button.")
-
-(defib elink ()
-  "At point, activate a link to an explicit button.
-This executes the linked to explicit button's action in the
-context of the current buffer.
-
-Recognizes the format '<elink:' button_label [':' button_file_path] '>',
-where : button_file_path is given only when the link is to another file,
-e.g. <elink: project-list: ~/projs>."
-  (progn
-    (ibut:label-set "temp") ;; Real value set in action call below
-    (hlink 'link-to-ebut "" elink:start elink:end)))
-
-(defconst glink:start "<glink:"
-  "String matching the start of a link to a Hyperbole global button.")
-(defconst glink:end   ">"
-  "String matching the end of a link to a Hyperbole global button.")
-
-(defib glink ()
-  "At point, activates a link to a global button.
-This executes the linked to global button's action in the context
-of the current buffer.
-
-Recognizes the format '<glink:' button_label '>',
-e.g. <glink: open todos>."
-  (progn
-    (ibut:label-set "temp") ;; Real value set in action call below
-    (hlink 'link-to-gbut "" glink:start glink:end)))
-
-(defconst ilink:start "<ilink:"
-  "String matching the start of a link to a Hyperbole implicit button.")
-(defconst ilink:end   ">"
-  "String matching the end of a link to a Hyperbole implicit button.")
-
-(defib ilink ()
-  "At point, activate a link to a labeled implicit button.
-This executes the linked to implicit button's action in the context of the
-current buffer.
-
-Recognizes the format '<ilink:' button_label [':' button_file_path] '>',
-where button_file_path is given only when the link is to another file,
-e.g. <ilink: my series of keys: ${hyperb:dir}/HYPB>."
-  (progn
-    (ibut:label-set "temp") ;; Real value set in action call below
-    (hlink 'link-to-ibut "" ilink:start ilink:end)))
-
-;;; ========================================================================
 ;;; Displays files at specific lines and optional column number
 ;;; locations.
 ;;; ========================================================================
@@ -1224,8 +1123,9 @@ xdb.  Such lines are recognized in any buffer."
     (beginning-of-line)
     (cond
      ;; Python pdb or traceback, pytype error
-     ((progn (ibut:label-set "temp") ;; Real value set in action call below
-	     (hib-python-traceback)))
+     ((progn ;; Set temp label value here; real label value is set in action call below
+        (ibut:label-set)
+	(hib-python-traceback)))
 
      ;; JavaScript traceback
      ((or (looking-at "[a-zA-Z0-9-:.()? ]+? +at \\([^() \t]+\\) (\\([^:, \t()]+\\):\\([0-9]+\\):\\([0-9]+\\))$")
@@ -1786,6 +1686,105 @@ If a boolean function or variable, display its value."
 		 (when (memq actype '(display-boolean display-variable))
 		   (apply #'actype:eval actype args)))
 	(error "(action:help): No action button labeled: %s" label)))))
+
+;;; ========================================================================
+;;; Follows links to Hyperbole Koutliner cells.
+;;; ========================================================================
+
+(load "klink" nil t)
+
+;;; ========================================================================
+;;; Links to Hyperbole button types
+;;; ========================================================================
+
+(defun hlink (link-actype label-prefix start-delim end-delim)
+  "Call LINK-ACTYPE and use LABEL-PREFIX if point is within an implicit button.
+LINK-ACTYPE is the action type and button is prefixed with
+LABEL-PREFIX.  The button must be delimited by START-DELIM and
+END-DELIM."
+  ;; Used by e/g/ilink implicit buttons."
+  (let* ((label-start-end (hbut:label-p t start-delim end-delim t t))
+         (label-and-loc (nth 0 label-start-end))
+         (start-pos (nth 1 label-start-end))
+         (end-pos (nth 2 label-start-end))
+         but-key lbl-key key-src partial-lbl)
+    (when label-and-loc
+      (setq label-and-loc (hlink:parse-label-and-loc label-and-loc)
+            partial-lbl (nth 0 label-and-loc)
+            but-key (hbut:label-to-key partial-lbl)
+            key-src (nth 1 label-and-loc)
+            lbl-key (when but-key (concat label-prefix but-key)))
+      (ibut:label-set (hbut:key-to-label lbl-key) start-pos end-pos)
+      (hact link-actype but-key key-src))))
+
+(defun hlink:parse-label-and-loc (label-and-loc)
+  "Parse colon-separated string LABEL-AND-LOC into a list of label and src loc."
+  (let (i
+        label
+        file)
+    (when (and (stringp label-and-loc) (setq i (seq-position label-and-loc ?: '=)))
+      (when (zerop i)
+        (error "(hlink:parse-label-and-loc): Missing label: '%s'" label-and-loc))
+      (setq label (hpath:trim (substring label-and-loc 0 i))
+            file (hpath:trim (substring label-and-loc (1+ i))))
+      (when (string-empty-p label) (setq label nil))
+      (when (string-empty-p file) (setq file nil)))
+    (unless (or label (string-empty-p label-and-loc))
+      (setq label label-and-loc))
+    (delq nil (list label file))))
+
+(defconst elink:start "<elink:"
+  "String matching the start of a link to a Hyperbole explicit button.")
+(defconst elink:end   ">"
+  "String matching the end of a link to a Hyperbole explicit button.")
+
+(defib elink ()
+  "At point, activate a link to an explicit button.
+This executes the linked to explicit button's action in the
+context of the current buffer.
+
+Recognizes the format '<elink:' button-label [':' button-location] '>',
+where : button-location is given only when the link is to another file,
+e.g. <elink: project-list: ~/projs>."
+  (progn
+    ;; Set temp label value here; real label value is set in action call below
+    (ibut:label-set)
+    (hlink 'link-to-ebut "" elink:start elink:end)))
+
+(defconst glink:start "<glink:"
+  "String matching the start of a link to a Hyperbole global button.")
+(defconst glink:end   ">"
+  "String matching the end of a link to a Hyperbole global button.")
+
+(defib glink ()
+  "At point, activates a link to a global button.
+This executes the linked to global button's action in the context
+of the current buffer.
+
+Recognizes the format '<glink:' button-label '>',
+e.g. <glink: open todos>."
+  (progn
+    ;; Set temp label value here; real label value is set in action call below
+    (ibut:label-set)
+    (hlink 'link-to-gbut "" glink:start glink:end)))
+
+(defconst ilink:start "<ilink:"
+  "String matching the start of a link to a Hyperbole implicit button.")
+(defconst ilink:end   ">"
+  "String matching the end of a link to a Hyperbole implicit button.")
+
+(defib ilink ()
+  "At point, activate a link to a labeled implicit button.
+This executes the linked to implicit button's action in the context of the
+current buffer.
+
+Recognizes the format '<ilink:' button-label [':' button-location] '>',
+where button-location is given only when the link is to another file,
+e.g. <ilink: my series of keys: ${hyperb:dir}/HYPB>."
+  (progn
+    ;; Set temp label value here; real label value is set in action call below
+    (ibut:label-set)
+    (hlink 'link-to-ibut "" ilink:start ilink:end)))
 
 ;;; ========================================================================
 ;;; Activates HyWikiWords with existing referents.

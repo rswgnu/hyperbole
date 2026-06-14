@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:      5-Jun-26 at 08:42:07 by Bob Weiner
+;; Last-Mod:     14-Jun-26 at 16:06:31 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -316,9 +316,9 @@ If `mail-user-agent' is `browse-url', do this in the default web browser."
   (interactive "DDirectory to link to: ")
   (hpath:find directory))
 
-(defact link-to-ebut (key &optional key-file)
-  "Perform explicit button action specified by KEY and optional KEY-FILE.
-Interactively, KEY-FILE defaults to the current buffer's file name."
+(defact link-to-ebut (key &optional key-src)
+  "Perform explicit button action specified by KEY and optional KEY-SRC.
+Interactively, KEY-SRC defaults to the current buffer's file name."
   (interactive
    (let (but-lbl
          but-file)
@@ -341,17 +341,20 @@ Interactively, KEY-FILE defaults to the current buffer's file name."
                (beep))
              (ebut:label-to-key but-lbl))
            but-file)))
-  (let (but
-        normalized-file)
-    (if key-file
-        (setq normalized-file (hpath:normalize key-file))
-      (setq normalized-file (hypb:buffer-file-name)))
-
-    (if (setq but (when normalized-file (ebut:get key nil normalized-file)))
-        (hbut:act but)
+  (let* ((key-src-buf-flag (or (bufferp key-src)
+                               (and (stringp key-src) (get-buffer key-src))))
+         (but (if key-src-buf-flag
+                  (ebut:get key key-src)
+                (ebut:get key nil key-src))))
+    (if but
+        (ebut:act but)
+      (unless key-src-buf-flag
+        (setq key-src (if key-src
+                          (hpath:normalize key-src)
+                        (hbut:get-key-src t))))
       (hypb:error "(link-to-ebut): No button `%s' in `%s'"
                   (ebut:key-to-label key)
-                  key-file))))
+                  key-src))))
 
 (defact link-to-elisp-doc (symbol)
   "Display documentation for SYMBOL."
@@ -374,8 +377,8 @@ list item returned."
 	path-buf)
     (unwind-protect
 	(let* ((default-directory (or (hattr:get 'hbut:current 'dir)
-				      (file-name-directory
-				       (or (hattr:get 'hbut:current 'loc) ""))
+				      (and (stringp (hattr:get 'hbut:current 'loc))
+				           (file-name-directory (hattr:get 'hbut:current 'loc)))
 				      default-directory))
 	       (file-path (or (car hargs:defaults) default-directory))
 	       (file-point (cadr hargs:defaults))
@@ -482,9 +485,9 @@ LINE-NUM may be an integer or string."
 		  col-num)))
       (hpath:find-line path line-num col-num))))
 
-(defact link-to-gbut (key &optional _key-file)
+(defact link-to-gbut (key &optional _key-src)
   "Perform an action given by an existing global button, specified by KEY.
-Optional second arg, KEY-FILE, is not used but is for calling
+Optional second arg, KEY-SRC, is not used but is for calling
 compatibility with the `hlink' function."
   (interactive
    (let ((gbut-file (hpath:validate (hpath:substitute-value (gbut:file))))
@@ -534,10 +537,10 @@ the .info suffix in the format with parentheses."
       (id-info string)
     (hypb:error "(link-to-Info-node): Invalid Info node: `%s'" string)))
 
-(defact link-to-ibut (name-key &optional but-src point)
-  "Activate implicit button given by NAME-KEY, optional BUT-SRC and POINT.
+(defact link-to-ibut (name-key &optional key-src point)
+  "Activate implicit button given by NAME-KEY, optional KEY-SRC and POINT.
 NAME-KEY must be a normalized key for an ibut <[name]>.
-BUT-SRC defaults to the current buffer's file or if there is no
+KEY-SRC defaults to the current buffer's file or if there is no
 attached file, then to its buffer name.  POINT defaults to the
 current point.
 
@@ -560,36 +563,58 @@ on the implicit button to which to link."
 
   (unless name-key
     (hypb:error "(link-to-ibut): Point must be on an implicit button to create a link-to-ibut"))
-  (let (actype
-        but
-	normalized-file)
-    (if but-src
-	(unless (and (get-buffer but-src)
-		     (not (hypb:buffer-file-name (get-buffer but-src))))
-	  (setq normalized-file (hpath:normalize but-src)))
-      (setq normalized-file (hpath:normalize (hypb:buffer-file-name))))
-    (when but-src
-      (set-buffer (or (get-buffer but-src) (get-file-buffer normalized-file))))
-    (widen)
-    (when (or (not normalized-file) (hmail:editor-p) (hmail:reader-p))
-      (hmail:msg-narrow))
-    (when (integerp point)
-      (goto-char (min point (point-max))))
-    (setq but (ibut:to-text name-key))
-    (cond (but
-           (setq actype (actype:def-symbol (hattr:get but 'actype)))
-           (if (eq actype 'link-to-ibut)
-	       (hypb:error "(link-to-ibut): Failed to find implicit button named `%s' in `%s'"
-		           (ibut:key-to-label name-key)
-		           (or but-src (buffer-name)))
-             (apply #'actype:act (hattr:get but 'actype)
-                    (hattr:get but 'args))))
-	  (name-key
-	   (hypb:error "(link-to-ibut): No implicit button named `%s' found in `%s'"
-		       (ibut:key-to-label name-key)
-		       (or but-src (buffer-name))))
-	  (t
-	   (hypb:error "(link-to-ibut): Link reference is null/empty")))))
+
+  (let* ((key-src-buf-flag (or (bufferp key-src)
+                               (and (stringp key-src) (get-buffer key-src))))
+         (but (if key-src-buf-flag
+                  (ibut:get name-key key-src)
+                (ibut:get name-key nil key-src)))
+         actype
+	 ;; normalized-file
+         )
+    (if but
+        (progn (setq actype (actype:def-symbol (hattr:get but 'actype)))
+               (if (eq actype 'link-to-ibut)
+                   (hypb:error "(link-to-ibut): No button `%s' in `%s'"
+                               (ibut:key-to-label name-key)
+     	                       (or key-src (buffer-name)))
+                 (ibut:act but)))
+      (unless key-src-buf-flag
+        (setq key-src (if key-src
+                          (hpath:normalize key-src)
+                        (hbut:get-key-src t))))
+      (hypb:error "(link-to-ibut): No button `%s' in `%s'"
+                  (ibut:key-to-label name-key)
+                  key-src))))
+
+
+    ;; (if key-src
+    ;;     (unless (and (get-buffer key-src)
+    ;;     	     (not (hypb:buffer-file-name (get-buffer key-src))))
+    ;;       (setq normalized-file (hpath:normalize key-src)))
+    ;;   (setq normalized-file (hpath:normalize (hypb:buffer-file-name))))
+    ;; (when key-src
+    ;;   (set-buffer (or (get-buffer key-src) (get-file-buffer normalized-file))))
+    ;; (widen)
+    ;; (when (or (not normalized-file) (hmail:editor-p) (hmail:reader-p))
+    ;;   (hmail:msg-narrow))
+    ;; (when (integerp point)
+    ;;   (goto-char (min point (point-max))))
+    ;; (setq but (ibut:to-text name-key))
+    ;; (cond (but
+    ;;        (setq actype (actype:def-symbol (hattr:get but 'actype)))
+    ;;        (if (eq actype 'link-to-ibut)
+    ;;            (hypb:error "(link-to-ibut): Failed to find implicit button named `%s' in `%s'"
+    ;;     	           (ibut:key-to-label name-key)
+    ;;     	           (or key-src (buffer-name)))
+    ;;          (apply #'actype:act (hattr:get but 'actype)
+    ;;                 (hattr:get but 'args))))
+    ;;       (name-key
+    ;;        (hypb:error "(link-to-ibut): No implicit button named `%s' found in `%s'"
+    ;;     	       (ibut:key-to-label name-key)
+    ;;     	       (or key-src (buffer-name))))
+    ;;       (t
+    ;;        (hypb:error "(link-to-ibut): Link reference is null/empty")))))
 
 (defact link-to-kcell (file cell-ref)
   "Display FILE with kcell given by CELL-REF at window top.

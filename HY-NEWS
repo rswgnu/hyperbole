@@ -5,6 +5,41 @@
 *                                   V9.0.2pre
 ===========================================================================
 
+**GNU Hyperbole 9.0.2pre NEWS**
+
+*   **HyWiki**
+    *   **Global Minor Mode**: The new `hywiki-mode` is a global minor mode that enables the highlighting and hyperlinking of **HyWikiWords** in any non-special text buffer and within the comments of programming buffers.
+    *   **Section Linking**: HyWikiWord links now support internal section jumps using the **`#` character** (e.g., `WikiWord#Section-Name`), allowing direct navigation to specific Org headlines within a wiki page.
+    *   **Web Publishing**: Added the `hywiki-publish-to-html` command (bound to `{C-h h h p}`) which utilizes Org mode’s publishing framework to export an entire HyWiki directory to HTML for web use.
+    *   **Interactive Search**: Added `hywiki-consult-grep` (bound to `{C-h h h g}`) for interactive, live-narrowing searches across all HyWiki pages using the Consult package.
+    *   **Customizable Highlighting**: Added `hywiki-word-highlight-flag` to toggle auto-highlighting and `hywiki-exclude-major-modes` to define a list of modes where HyWikiWord recognition should be disabled.
+    *   **Link Requirements**: New variable `hywiki-org-link-type-required` allows users to control whether the `hy:` prefix is required for HyWikiWords when used inside Org-style double square brackets outside of the wiki directory.
+
+*   **Smart Keys**
+    *   **Granular Org Integration**: The custom option `hsys-org-enable-smart-keys` now supports a new value, **`'buttons`**, which limits Hyperbole’s `M-RET` override to only apply when point is on a Hyperbole button, leaving other contexts to native Org mode behavior.
+    *   **Org Table Toggle**: In the Koutliner, pressing the Action Key on a `|` character now toggles **`orgtbl-mode`** for cell-based table editing.
+    *   **Modern Completion Support**: Smart Key argument selection is now fully integrated with the **Vertico and Consult** completion frameworks, allowing for modern interactive selection of buffers, files, and identifiers.
+    *   **Python Tracebacks**: The Action Key now recognizes and jumps to source lines referenced in **Python pdb, traceback, or pytype errors** within any buffer.
+
+*   **Implicit Button Types**
+    *   **Social Media References**: Added the `social-reference` type which automatically recognizes and links hashtags and usernames for platforms including **X (Twitter), Facebook, and Instagram**.
+    *   **Social Default Service**: New variable `hibtypes-social-default-service` sets the default platform (initially "x") used when a hashtag or username is referenced without a specific service prefix.
+    *   **Python Navigation**: Added `python-tb-previous-line` to handle instances where Python tracebacks place the source reference one line above the error description.
+    *   **YouTube Interaction**: Added new action types `yt-play`, `yt-info`, and `yt-search` for specialized interaction with **YouTube videos** and metadata.
+
+*   **HyRolo**
+    *   **Navigation Performance**: All movement commands within HyRolo match buffers (e.g., Next, Previous, Up) have been optimized to use **text properties** rather than overlays, ensuring instantaneous navigation even in buffers containing thousands of search results.
+    *   **Interactive Filtering**: Added `hyrolo-consult-grep` and `hyrolo-helm-org-rifle` to the Rolo menu, permitting interactive full-text search and narrowing over the `hyrolo-file-list`.
+    *   **Org Roam Integration**: HyRolo now includes convenience commands for searching **Org Roam nodes** via the Consult package, accessible through `hsys-org-roam-consult-grep`.
+
+*   **Miscellaneous**
+    *   **Emacs Version Requirements**: While Hyperbole remains compatible with GNU Emacs 27.1, this release is optimized for and recommended for use with **GNU Emacs 28 or above**.
+    *   **Path Variable Expansion**: The function `hpath:expand` has been enhanced to more robustly handle Hyperbole-specific suffixes like `#anchors` and `:line:col` in combination with environment and Lisp variables.
+
+
+-------------
+
+
 ** ACE WINDOW PACKAGE INTEGRATION - fast window and buffer switching
 
   *** OLD - After installing the ace-window package and loading Hyperbole, execute

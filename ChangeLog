@@ -1,3 +1,41 @@
+2026-06-14  Bob Weiner  <rsw@gnu.org>
+
+* hactypes.el (link-to-ibut): Fix infinite loop in <ilink:label> by preventing
+    ilinks from linking to other ilinks.
+
+* test/hibtypes-tests.el (ibtypes::ilink-test): Update match to ilink error.
+
+* hbut.el (ibut:label-set): Make 'label' arg optional.  When omitted or nil,
+    reuse the existing label or if that is null, set it to "temp".  This behavior
+    is used by the ibtypes: elink, glink, and ilink.
+          (hbut:act): Change from (< delim-text-start (point)) to
+                                  (<= delim-text-start (point)) since actions
+    can move point to the starting delimiter of a button.
+
+2026-06-12  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ebut:get): Allow a buffer name for 'buffer' argument and prioritize
+    'buffer' argument over 'key-src' argument.
+  hactypes.el (link-to-ebut, link-to-ibut): Rewrite to support links to buttons
+    in buffers without attached files.
+              (hactypes:link-to-file-interactively): Fix to handle buffer-type
+    'loc attribute.
+
+* hibtypes.el (hlink:parse-label-and-file): Simplify using 'seq-position'
+    rather than a loop.
+    (hlink:parse-label-and-file): Rename to 'hlink:parse-label-and-loc'.
+
+* hyrolo.el (hyrolo-file-list): Explain that dirs and file wildcards are
+    allowed.  Point to doc of 'hyrolo-expand-path-list' for how entries are
+    expanded.
+
+* hibtypes.el (klink, elink, ilink, glink): Move to be higher priority than
+    action buttons so are not overridden and misfired as an action button.
+    This manifested as an elink or glink matching to the action of a named
+    ilink.
+  man/hyperbole.texi (Implicit Button Types): Update priority ordering of
+    the above types.
+
 2026-06-12  Mats Lidell  <matsl@gnu.org>
 
 * test/hibtypes-tests.el (ibtypes::elink-test):
@@ -28,6 +66,11 @@
     work with el-mock and native compilation. The mock is called with the
     optional args set to nil causing it to see different number of
     arguments depending on whether the code is natively compiled or not.
+
+2026-06-09  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-mode): Move doc of 'hywiki-mode' state values here,
+    from 'hywiki-default-mode', for ease of reference.
 
 2026-06-07  Bob Weiner  <rsw@gnu.org>
 
@@ -69,10 +112,6 @@
 * MANIFEST: (hui-register.el): Add missing entry.
 
 * hbut.el (ibut:to-text): Error if 'lbl-key' is an empty string.
-
-* hactypes.el: (link-to-ibut): Fix infinite loop in <ilink:label> links
-    by replacing 'hbut:act' call with a call to 'actype:act' which
-    utilizes the actype computed from the prior 'ibut:at-p' call.
 
 2026-06-05  Mats Lidell  <matsl@gnu.org>
 
@@ -5276,7 +5315,7 @@ value to be [[WikiWord]] not [[file:WikiWord.org][WikiWord]].
 2024-10-05  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-kill-buffer-hook): Change to return t iff 'hywiki-directory'
-    change
+    changes.
 
 2024-09-30  Bob Weiner  <rsw@gnu.org>
 
@@ -5451,7 +5490,7 @@ value to be [[WikiWord]] not [[file:WikiWord.org][WikiWord]].
 
 2024-09-01  Bob Weiner  <rsw@gnu.org>
 
-* man/dir (File): Narrow width to better fit with out Info entries.
+* man/dir (File): Narrow width to better fit without Info entries.
 
 * hyrolo.el (hyrolo-org-mode): Prioritize Org 9.7 folding-spec config
     over earlier versions to fix a bug that used the wrong version.
@@ -5662,7 +5701,7 @@ value to be [[WikiWord]] not [[file:WikiWord.org][WikiWord]].
     to 0 since just want to trigger redisplay.
             (hywiki-publish-to-html): Retrieve HyWiki project by name.
 	    (hywiki-directory): Change to a defcustom so can set this before
-    loading Hyperoble.
+    loading Hyperbole.
             (hywiki-org-get-publish-property): (require 'ox-publish).
 	    (hywiki-org-maybe-add-title): Add title to HyWiki pages without one
     using the file or buffer name.
@@ -5676,7 +5715,7 @@ value to be [[WikiWord]] not [[file:WikiWord.org][WikiWord]].
     properties so that changes trigger updates in 'org-publish-project-alist'.
             (hywiki-org-maybe-add-title): Add to add the HyWikiWord as the
     title for each HyWiki page.
-            (hywiki-org-make-publish-project-alist): Add :sitemap-title property..
+            (hywiki-org-make-publish-project-alist): Add :sitemap-title property.
 	    (hywiki-org-publishing-sitemap-title): Add to set above property.
 	    (hywiki-is-wikiword): Add not 'string-empty-p' test.
 	    (hywiki-add-page): Add interactive spec.

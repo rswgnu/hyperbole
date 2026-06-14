@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:45:00
-;; Last-Mod:     12-Jun-26 at 20:05:17 by Mats Lidell
+;; Last-Mod:     14-Jun-26 at 15:57:15 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -392,7 +392,7 @@
           (goto-char 4)
           (let ((err (should-error (ibtypes::ilink))))
             (should
-             (string-match-p (rx "No implicit button named " (any punct) "Button" (any punct) " found")
+             (string-match-p (rx "No button " (any punct) "Button" (any punct) " in")
                              (cadr err)))))
       (hy-delete-file-and-buffer file))))
 

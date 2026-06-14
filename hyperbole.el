@@ -9,7 +9,7 @@
 ;; Maintainer:   Robert Weiner <rsw@gnu.org>
 ;; Maintainers:  Robert Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:      06-Oct-92 at 11:52:51
-;; Last-Mod:     28-Mar-26 at 14:44:14 by Bob Weiner
+;; Last-Mod:      9-Jun-26 at 10:58:22 by Bob Weiner
 ;; Released:     10-Mar-24
 ;; Version:      9.0.2pre
 ;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -572,9 +572,9 @@ frame, those functions by default still return the prior frame."
 	       #'hattr:save))
 
 ;; This next expression initializes the Hyperbole keymap but does not
-;; activate Hyperbole.  The only user-visible change it should make is
-;; to globally bind {C-h h} to 'hyperbole' which when invoked will both
-;; activate Hyperbole and show its minibuffer menu.
+;; activate Hyperbole, (hyperbole-mode 1) does that.  The only user-visible
+;; change it should make is to globally bind {C-h h} to 'hyperbole' which
+;; when invoked will both activate Hyperbole and show its minibuffer menu.
 (if after-init-time
     ;; Initialize Hyperbole key bindings and hooks.
     (hyperb:init)

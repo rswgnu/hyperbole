@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     10-May-26 at 11:41:49 by Bob Weiner
+;; Last-Mod:      9-Jun-26 at 11:01:49 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -859,12 +859,10 @@ since the command may have moved it off a HyWikiWord."
 
 (defcustom hywiki-default-mode :pages
   "Customizable initial mode setting for HyWiki minor mode.
-HyWiki mode has three states, any one of which can be set as the default:
-  - :pages - highlight HyWikiWords in HyWiki pages only (Org files in
-             `hywiki-directory')
-  - :all   - highlight HyWikiWords in all editable buffers except those
-             with a major mode in `hywiki-exclude-major-modes'.
-  - nil    - no highlighting, the mode is disabled."
+When Hyperbole minor mode is first activated, e.g. by pressing {C-h h},
+HyWiki minor mode is initialized to the state specified by this variable.
+See the documentation for the function, `hywiki-mode', for a summary of
+valid state values."
   :type 'string
   :group 'hyperbole-hywiki)
 
@@ -926,14 +924,23 @@ valid values."
 ;;;###autoload
 (define-minor-mode hywiki-mode
   "Toggle HyWiki global minor mode with \\[hywiki-mode].
+HyWiki minor mode automatically highlights and turns HyWikiWord references
+into Hyperbole implicit buttons that either link to HyWiki pages or activate
+typed referents such as bookmarks.
 
-HyWiki minor mode automatically highlights and turns HyWikiWord
-references into implicit buttons that either link to HyWiki pages
-or activate typed referents such as bookmarks.
+HyWiki minor mode has three states as tracked by the `hywiki-mode' variable,
+with the default state when interactively enabled set by the value of
+`hywiki-default-mode':
 
-HyWiki minor mode has three states as tracked by the `hywiki-mode'
-variable.  See the documentation for the customization, `hywiki-default-mode',
-for valid values.
+  - :pages - highlight HyWikiWords in HyWiki pages only (Org files in
+             `hywiki-directory'); also enable `hyperbole-mode' minor mode
+             if off.
+
+  - :all   - highlight HyWikiWords in all editable buffers except those
+             with a major mode in `hywiki-exclude-major-modes'; also
+             enable `hyperbole-mode' minor mode if off.
+
+  - nil    - no highlighting, the `hywiki-mode' is disabled.
 
 HyWikiWord references may also include optional suffixes:
 
