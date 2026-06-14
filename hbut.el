@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:      7-Jun-26 at 16:50:26 by Bob Weiner
+;; Last-Mod:     14-Jun-26 at 15:13:00 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -210,22 +210,24 @@ Do not save button data buffer."
       lbl-instance)))
 
 (defun    ebut:get (&optional lbl-key buffer key-src start-delim end-delim)
-  "Return explicit Hyperbole button symbol given by LBL-KEY and BUFFER.
-KEY-SRC is given when retrieving global buttons and is the full
-source pathname.  START-DELIM and END-DELIM are strings that
-override default button delimiters.
+  "Return explicit Hyperbole button symbol given by optional LBL-KEY and BUFFER.
+KEY-SRC is given when retrieving global buttons and is the full source
+pathname.  START-DELIM and END-DELIM are strings that override default
+button delimiters.
 
 Retrieve button data, convert into a button object and return a symbol
 which references the button.
 
-All arguments are optional.  When none are given, return a symbol for
-the button that point is within.  BUFFER defaults to the current
-buffer.
+All arguments are optional.  When none are given, return a symbol for the
+button that point is within or nil.  BUFFER defaults to the current buffer.
+If both BUFFER and KEY-SRC are given, BUFFER is used as the button source
+location.
 
 Return nil if no matching button is found."
   (hattr:clear 'hbut:current)
   (save-excursion
-    (let (but-data
+    (let ((buf-flag (or (bufferp buffer) (and (stringp buffer) (get-buffer buffer))))
+          but-data
 	  key-dir
 	  key-file
 	  lbl-end
@@ -237,16 +239,17 @@ Return nil if no matching button is found."
 	      lbl-start (nth 1 lbl-key-and-pos)
 	      lbl-end   (nth 2 lbl-key-and-pos)))
       (when buffer
-	  (if (bufferp buffer)
+	  (if buf-flag
 	      (set-buffer buffer)
 	    (error "(ebut:get): Invalid buffer argument: %s" buffer)))
-      (when (not key-src)
+      (when (or buf-flag (not key-src))
 	(when (not (equal lbl-key (ebut:label-p nil start-delim end-delim)))
 	  (goto-char (point-min))
 	  (ebut:next-occurrence lbl-key))
 	(when (setq key-src (ebut:to-key-src 'full))
 	  ;; `ebut:to-key-src' sets current buffer to key-src buffer.
-	  (setq buffer (current-buffer))))
+	  (setq buffer (current-buffer)
+                buf-flag t)))
       (when (and (stringp lbl-key) key-src)
 	(when (stringp key-src)
 	  (setq key-dir (file-name-directory key-src)
@@ -1087,7 +1090,7 @@ Default is the symbol hbut:current."
 		 (unless (and (or (equal loc (hypb:buffer-file-name))
 				  (equal loc (current-buffer)))
 			      delim-text-start delim-text-end
-			      (< delim-text-start (point))
+			      (<= delim-text-start (point))
 			      (>= delim-text-end (point)))
 		   (ibut:to-text (hattr:get hbut 'lbl-key))))))
 	   (setq text-point (point-marker))
@@ -2245,13 +2248,15 @@ Insert INSTANCE-FLAG after END, before ending delimiter."
 
 (defun    ibut:get (&optional lbl-key buffer key-src)
   "Return implicit Hyperbole button symbol given by LBL-KEY and BUFFER.
-KEY-SRC is given when retrieving global buttons and is the full source pathname.
+KEY-SRC is given when retrieving global buttons and is the full source
+pathname.
 
 Return a symbol which references the button.
 
-All arguments are optional.  When none are given, return a
-symbol for the button or button label that point is within or
-nil.  BUFFER defaults to the current buffer.
+All arguments are optional.  When none are given, return a symbol for the
+button or button label that point is within or nil.  BUFFER defaults to the
+current buffer.  If both BUFFER and KEY-SRC are given, BUFFER is used as the
+button source location.
 
 Return nil if no matching button is found."
   (hattr:clear 'hbut:current)
@@ -2343,24 +2348,32 @@ lines."
 			      lbl)
 	  result)))))
 
-(defun    ibut:label-set (label &optional start end)
-  "Set current implicit button label attributes.
-Provide arguments LABEL and optional START, END positions.
-Return label.  When START and END are given, they specify the
-region in the buffer to flash when this implicit button is
-activated or queried for its attributes; this typically should
-be the text of the button without any delimiters.
+(defun    ibut:label-set (&optional label start end)
+  "Set symbol `hbut:current' implicit button label attributes.
+Provide optional arguments LABEL, START, and END positions.
+Return label.
 
-If LABEL is a list, it is assumed to contain all arguments.
+LABEL may be:
+ 1. a string, then set it as the label.
+ 2. nil, then either leave the current button's label as is if set already
+    or set it temporarily to the string, \"temp\".
+ 2. a list, then get all args, LABEL, START and END from the list.
+
+When START and END are given, they specify the region in the buffer to flash
+when this implicit button is activated or queried for its attributes; this
+typically should be the text of the button without any delimiters.
 
 For legacy reasons, the label here is actually the text of the
 implicit button matched contextually and never the optional <[name]>
 preceding the text."
   (save-match-data
-    (cond ((stringp label)
+    (cond ((or (stringp label) (null label))
 	   (hattr:set 'hbut:current 'loc (save-excursion
 					   (hbut:to-key-src 'full)))
-	   (hattr:set 'hbut:current 'lbl-key (hbut:label-to-key label))
+	   (hattr:set 'hbut:current 'lbl-key (if label
+                                                 (hbut:label-to-key label)
+                                               (or (hattr:get 'hbut:current 'lbl-key)
+                                                   "temp")))
 	   (when start (hattr:set    'hbut:current 'lbl-start start))
 	   (when end   (hattr:set    'hbut:current 'lbl-end   end)))
 	  ((and label (listp label))

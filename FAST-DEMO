@@ -449,20 +449,26 @@ To learn how to create new kinds of implicit button and action types, see
 
 ** HyWiki
 
-  HyWiki is Hyperbole's markup-free personal wiki system for note-taking
-  and automatic wiki-word highlighting and hyperlinking.  It uses Org
-  mode for note taking and adds automatic hyperlinking of HyWikiWords
-  within Org files in `hywiki-directory' (default = "~/hywiki"), where
-  a HyWikiWord is a capitalized word that contains upper and lowercase
-  letters only and has a corresponding HyWikiWord.org wiki page file
-  below `hywiki-directory'.  HyWikiWords require no delimiters.
+  HyWiki is Hyperbole's markup-free personal wiki system for note-taking and
+  automatic wiki-word highlighting and hyperlinking.  It uses Org mode for
+  note taking and adds automatic hyperlinking of HyWikiWords within Org files
+  directly below the directory given by the variable, `hywiki-directory'
+  (default = "~/hywiki").  A HyWikiWord is a capitalized word that contains
+  upper and lowercase letters only and has a corresponding HyWikiWord.org
+  wiki page file below `hywiki-directory'.  HyWikiWords require no
+  delimiters.
+
+  To create a new HyWikiWord simply type it in an Org file in
+  `hywiki-directory' and then press {M-RET} with point on the word.  This
+  will create an empty wiki page for that word.  Add any text to this file
+  and save it to create the new HyWikiWord.
 
   Use {M-RET} on the first line of the expression below to set a demo
   HyWiki directory and turn on hywiki-mode so HyWikiWords are
   highlighted outside of the HyWiki directory.
 
     <progn (setq hywiki-directory (hpath:expand "${hyperb:dir}/hywiki/"))
-           (hywiki-mode 1)>
+           (hywiki-mode :all)>
 
   Now all these wiki-words should be highlighted and can appear in any
   text buffer and will be treated as hyperlinks.  Simply press {M-RET}

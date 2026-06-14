@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      1-Jun-26 at 01:14:32 by Bob Weiner
+;; Last-Mod:     13-Jun-26 at 13:33:38 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -15,9 +15,9 @@
 ;;; Commentary:
 ;;
 ;;  This is Hyperbole's advanced rolo system, HyRolo, for convenient
-;;  management of hierarchical, record-oriented information.  Most
-;;  often this is used for contact management but it can quickly be
-;;  adapted to most any record-oriented lookup task, for fast, full-text
+;;  management of hierarchical, record-oriented information.  Most often
+;;  this is used for contact management but it can quickly be adapted to
+;;  most any hierarchical record-oriented lookup task, for fast, full-text
 ;;  retrieval.
 ;;
 ;;  See all the autoloaded functions herein for interactive commands.
@@ -194,8 +194,12 @@ executable must be found as well (for Oauth security)."
   :group 'hyperbole-hyrolo)
 
 (defcustom hyrolo-file-list (list hyrolo-default-file)
-  "List of files containing hyrolo entries.
-The first file should be a user-specific hyrolo file, typically in the home
+  "List of files or directories (wildcards allowed) containing hyrolo entries.
+See the documentation string of `hyrolo-expand-path-list' and the manual
+section \"(hyperbole)HyRolo Settings\", for how entries in this list are
+expanded/resolved.
+
+The first entry should be a user-specific hyrolo file, typically in the home
 directory and must have a suffix of either .org (Org mode) or .otl (Emacs
 Outline mode).  Other files in the list may use suffixes of .org, .otl, .md
 \(Markdown mode) or .kotl (Koutline mode).
