@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     12-Apr-26 at 15:11:29 by Bob Weiner
+;; Last-Mod:      9-Jun-26 at 16:26:28 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -34,26 +34,27 @@ The template runs the PREPARE body, and that must add the HyWikiWord
 named WikiReferent with a non-page referent type."
   (declare (indent 0) (debug t))
   `(let* ((hsys-consult-flag nil)
-	  (vertico-mode 0)
+	  (local-vertico-mode (bound-and-true-p vertico-mode))
 	  (hywiki-directory (make-temp-file "hywiki" t))
 	  (wiki-word-non-page "WikiReferent")
           (mode-require-final-newline nil))
      (unwind-protect
          (save-excursion
+           (when local-vertico-mode
+             (vertico-mode -1))
            (should (equal '() (hywiki-get-wikiword-list)))
 
            ,@prepare
 
            (should (equal ,expected-referent (hywiki-get-referent wiki-word-non-page))))
+       (when local-vertico-mode
+         (vertico-mode))
        (hy-delete-files-and-buffers (list (hywiki-cache-default-file)))
        (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory))))
 
 (defconst hywiki-tests--edit-string-pairs
    [
-    ;; !! TODO: This test fails
-    ;; ("\"WikiWord#section with spaces\"<backward-delete-char 1>" "\"{WikiWord#section} with spaces") ;; shrink highlight to "{WikiWord#section}
-
-    ;; These tests pass
+    ("\"WikiWord#section with spaces\"<backward-delete-char 1>" "\"{WikiWord#section} with spaces") ;; shrink highlight to "{WikiWord#section}
     ("Hi#a<insert-char ?b> cd" "{Hi#ab} cd")
     ("\"WikiWord#a b c<backward-delete-char 2>" "\"{WikiWord#a} b")
     ("Hi" "{Hi}")
@@ -1253,7 +1254,6 @@ Note special meaning of `hywiki-allow-plurals-flag'."
 (ert-deftest hywiki-tests--referent-cache-test ()
   "Test to check that a HyWiki referent read back from cache is as expected."
   (let* ((hsys-consult-flag nil)
-	 (vertico-mode 0)
 	 (hywiki-directory (make-temp-file "hywiki" t))
          (file (make-temp-file "hypb"))
 	 (wiki-word-non-page "WikiReferent")
@@ -1346,9 +1346,8 @@ Note special meaning of `hywiki-allow-plurals-flag'."
     (progn
       (sit-for 0.2)
       (cons 'command #'hywiki-tests--command))
-    (let ((vertico-mode 0))
-      (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET c hywiki-tests--command RET"))
-      (hy-test-helpers:consume-input-events))))
+    (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET c hywiki-tests--command RET"))
+    (hy-test-helpers:consume-input-events)))
 
 ;; Find
 (ert-deftest hywiki-tests--save-referent-find ()
@@ -1365,13 +1364,12 @@ Note special meaning of `hywiki-allow-plurals-flag'."
       (progn
         (sit-for 0.2)
         (cons 'find #'hywiki-word-grep))
-      (let ((vertico-mode 0))
-        (find-file wiki-page)
-        (hywiki-tests--insert "\nWikiReferent\n")
-        (hypb:save-buffer-silently)
-        (goto-char (point-min))
-        (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET f RET"))
-        (hy-test-helpers:consume-input-events)))))
+      (find-file wiki-page)
+      (hywiki-tests--insert "\nWikiReferent\n")
+      (hypb:save-buffer-silently)
+      (goto-char (point-min))
+      (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET f RET"))
+      (hy-test-helpers:consume-input-events))))
 
 ;; Global-button
 (ert-deftest hywiki-tests--save-referent-global-button ()
@@ -1447,7 +1445,7 @@ Note special meaning of `hywiki-allow-plurals-flag'."
   (hywiki-tests--referent-test
     (progn
       (sit-for 0.2)
-      (cons 'info-node "(emacs)*"))
+      (cons 'info-node "(emacs)"))
     (save-excursion
       (unwind-protect
           (progn

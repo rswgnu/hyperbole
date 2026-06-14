@@ -31,6 +31,37 @@
   man/hyperbole.texi (Implicit Button Types): Update priority ordering of
     the above types.
 
+2026-06-12  Mats Lidell  <matsl@gnu.org>
+
+* test/hibtypes-tests.el (ibtypes::elink-test):
+    (ibtypes::glink-test):
+    (ibtypes::ilink-test): Add tests.
+
+2026-06-10  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--referent-test): Disable
+    vertico-mode during the test if active.
+    (hywiki-tests--save-referent-command-use-menu):
+    (hywiki-tests--save-referent-find-use-menu): Do not set vertico-mode
+    in let.
+    (hywiki-tests--save-referent-info-node-use-menu): Change expected
+    results to match result without vertico-mode active. Test now passes
+    both when in docker and native.
+
+2026-06-09  Mats Lidell  <matsl@gnu.org>
+
+* test/hbut-tests.el (hbut-tests--ibut-at-p-identifies-a-remote-pathname):
+    Remove comment.
+
+* test/hywiki-tests.el (hywiki-tests--edit-string-pairs): Uncomment
+    working test case.
+
+* test/hyrolo-tests.el (hyrolo-tests--grep-or-fgrep): Use cl-letf for
+    mocking call-interactively. Functions with optional arguments does not
+    work with el-mock and native compilation. The mock is called with the
+    optional args set to nil causing it to see different number of
+    arguments depending on whether the code is natively compiled or not.
+
 2026-06-09  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-mode): Move doc of 'hywiki-mode' state values here,

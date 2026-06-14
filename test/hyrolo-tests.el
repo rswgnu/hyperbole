@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:      1-Jun-26 at 00:09:22 by Bob Weiner
+;; Last-Mod:      8-Jun-26 at 23:42:26 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2010,12 +2010,14 @@ match
 (ert-deftest hyrolo-tests--grep-or-fgrep ()
   "Verify `hyrolo-grep-or-fgrep' calls hyrolo grep or fgrep based on prefix arg.
 Uses mocks to verify the call path."
-  (with-mock
-    (mock (call-interactively 'hyrolo-grep))
-    (hyrolo-grep-or-fgrep))
-  (with-mock
-    (mock (call-interactively 'hyrolo-fgrep))
-    (hyrolo-grep-or-fgrep '(4))))
+  (let ((captured-args nil))
+    (cl-letf (((symbol-function 'call-interactively)
+               (lambda (cmd &optional record-flag keys)
+                 (setq captured-args (list cmd record-flag keys)))))
+      (hyrolo-grep-or-fgrep)
+      (should (equal (car captured-args) #'hyrolo-grep))
+      (hyrolo-grep-or-fgrep '(4))
+      (should (equal (car captured-args) #'hyrolo-fgrep)))))
 
 (ert-deftest hyrolo-tests--kill ()
   "Verify `hyrolo-kill' deletes hyrolo items and handles error cases.
