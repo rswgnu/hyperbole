@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     13-Jun-26 at 12:28:31 by Bob Weiner
+;; Last-Mod:     14-Jun-26 at 16:06:31 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -563,16 +563,22 @@ on the implicit button to which to link."
 
   (unless name-key
     (hypb:error "(link-to-ibut): Point must be on an implicit button to create a link-to-ibut"))
+
   (let* ((key-src-buf-flag (or (bufferp key-src)
                                (and (stringp key-src) (get-buffer key-src))))
          (but (if key-src-buf-flag
                   (ibut:get name-key key-src)
                 (ibut:get name-key nil key-src)))
-         ;; actype
+         actype
 	 ;; normalized-file
          )
     (if but
-        (ibut:act but)
+        (progn (setq actype (actype:def-symbol (hattr:get but 'actype)))
+               (if (eq actype 'link-to-ibut)
+                   (hypb:error "(link-to-ibut): No button `%s' in `%s'"
+                               (ibut:key-to-label name-key)
+     	                       (or key-src (buffer-name)))
+                 (ibut:act but)))
       (unless key-src-buf-flag
         (setq key-src (if key-src
                           (hpath:normalize key-src)

@@ -1,5 +1,10 @@
 2026-06-14  Bob Weiner  <rsw@gnu.org>
 
+* hactypes.el (link-to-ibut): Fix infinite loop in <ilink:label> by preventing
+    ilinks from linking to other ilinks.
+
+* test/hibtypes-tests.el (ibtypes::ilink-test): Update match to ilink error.
+
 * hbut.el (ibut:label-set): Make 'label' arg optional.  When omitted or nil,
     reuse the existing label or if that is null, set it to "temp".  This behavior
     is used by the ibtypes: elink, glink, and ilink.
@@ -107,10 +112,6 @@
 * MANIFEST: (hui-register.el): Add missing entry.
 
 * hbut.el (ibut:to-text): Error if 'lbl-key' is an empty string.
-
-* hactypes.el: (link-to-ibut): Fix infinite loop in <ilink:label> links
-    by replacing 'hbut:act' call with a call to 'actype:act' which
-    utilizes the actype computed from the prior 'ibut:at-p' call.
 
 2026-06-05  Mats Lidell  <matsl@gnu.org>
 
