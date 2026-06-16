@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:      5-Jun-26 at 07:58:00 by Bob Weiner
+;; Last-Mod:     16-Jun-26 at 17:51:27 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1693,7 +1693,9 @@ from the button that point is within."
 With BUT-EDIT-FLAG non-nil message about ebut being edited."
   (let ((actype (symbol-name (hattr:get 'hbut:current 'actype)))
 	(args (hattr:get 'hbut:current 'args)))
-    (setq actype (actype:def-symbol actype))
+    (setq actype (or (actype:def-symbol (actype:elisp-symbol actype))
+		     (when (symbolp actype)
+                       actype)))
     (message "%s%s%s %s %S"
 	     ebut:label-start
 	     (hbut:key-to-label (hattr:get 'hbut:current 'lbl-key))
@@ -1944,7 +1946,9 @@ within."
 With BUT-EDIT-FLAG non-nil message about ibut being edited."
   (let ((actype (symbol-name (hattr:get 'hbut:current 'actype)))
 	(args (hattr:get 'hbut:current 'args)))
-    (setq actype (actype:def-symbol actype))
+    (setq actype (or (actype:def-symbol (actype:elisp-symbol actype))
+		     (when (symbolp actype)
+                       actype)))
     (message "%s%s%s %s %S"
 	     ibut:label-start
 	     (hbut:key-to-label (hattr:get 'hbut:current 'lbl-key))
