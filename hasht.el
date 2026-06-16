@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    16-Mar-90 at 03:38:48
-;; Last-Mod:     17-Feb-26 at 22:42:00 by Bob Weiner
+;; Last-Mod:     16-Jun-26 at 09:40:09 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -257,9 +257,9 @@ whose keys are the same."
 		       key value)
 		   (mapc
 		     (lambda (ht)
-		       (hash-map (lambda (val-key-cons)
-				   (setq value (car val-key-cons)
-					 key (cdr val-key-cons))
+		       (hash-map (lambda (val-string-key-cons)
+				   (setq value (car val-string-key-cons)
+					 key (intern (cdr val-string-key-cons)))
 				   (if (gethash key htable)
 				       ;; Merge values
 				       (puthash

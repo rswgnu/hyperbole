@@ -1,3 +1,10 @@
+2026-06-16  Bob Weiner  <rsw@gnu.org>
+
+* hasht.el (hash-merge): Fix call to hash-map which was not treating its
+    input as string-keys.  This led to HyWiki hash tables having string keys
+    rather than symbol keys whenever a non-page referent HyWiki word was read
+    in from the file where it was saved.
+
 2026-06-14  Bob Weiner  <rsw@gnu.org>
 
 * hactypes.el (link-to-ibut): Fix infinite loop in <ilink:label> by preventing

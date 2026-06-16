@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:      9-Jun-26 at 11:01:49 by Bob Weiner
+;; Last-Mod:     15-Jun-26 at 18:10:04 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -3355,15 +3355,16 @@ If such an instance is not found, trigger an error."
 					    (setq key (file-name-sans-extension file))
 					    (unless (hash-get key non-page-hasht)
 					      (cons (cons 'page file) key)))
-					  page-files))))
+					  page-files)))
+             (page-hasht (hash-make page-elts)))
 	(setq hywiki--referent-hasht
 	      (if non-page-elts
- 		  (hash-merge non-page-hasht
-			      (hash-make page-elts))
-		(hash-make page-elts)))))))
+ 		  (hash-merge non-page-hasht page-hasht)
+		page-hasht))))))
 
 (defun hywiki-non-page-elt (val-key)
-  (unless (eq (caar val-key) 'page) val-key))
+  (unless (eq (caar val-key) 'page)
+    val-key))
 
 (defun hywiki--sitemap-file ()
   "Return file name for the sitemap file."
