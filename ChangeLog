@@ -1,7 +1,7 @@
 2026-06-16  Bob Weiner  <rsw@gnu.org>
 
 * hsys-org.el (hsys-org-link-at-p): Rewrite to handle non-delimited Org links,
-    such as: file:my-file::my-text.
+    such as: file:my-file::my-text.  Leave file:// links for www-url ibtype.
 
 * hasht.el (hash-merge): Fix call to hash-map which was not treating its
     input as string-keys.  This led to HyWiki hash tables having string keys
