@@ -427,7 +427,7 @@
      4f. Flexible view handling has been only partially implemented.
 
 
-"ben" ;; kvspec:current
+"c2en" ;; kvspec:current
 69 ;; id-counter
 alpha ;; label-type
 4 ;; label-min-width

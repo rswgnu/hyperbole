@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     16-Jun-26 at 14:41:03 by Bob Weiner
+;; Last-Mod:     16-Jun-26 at 15:48:04 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -541,7 +541,7 @@ Assume caller has already checked that the current buffer is in
 `org-mode' or is looking for an Org link in a non-Org buffer type."
   (unless (or (smart-eolp) (smart-eobp)
               ;; The types below are handled by Hyperbole ibtypes
-              (let ((str (thing-at-point 'url)))
+              (let ((str (hpath:www-at-p)))
     	        (and str
                      ;; If a file link, don't consider a url unless has at
                      ;; least 2 forward slashes after the :.
