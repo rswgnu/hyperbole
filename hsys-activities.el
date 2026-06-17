@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:     7-Dec-25 at 22:48:29
-;; Last-Mod:      2-Jan-26 at 21:31:06 by Bob Weiner
+;; Last-Mod:     16-Jun-26 at 18:32:44 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -14,13 +14,19 @@
 
 ;;; Commentary:
 ;;
-;; Use as action button <hsys-activity "Activity">
+;; The 'activities' package persistently saves and restores window
+;; configurations as well as tab and frame configurations.
 ;;
-;; Create "Activity" if it does not exist.  If "Activity" is not
-;; active, switch to its latest state.  If "Activity" is active,
-;; revert it to its default state.  If "Activity" is active and the
-;; action button is called with a prefix argument a new default state
-;; is set.
+;; This library defines a single function, hsys-activities, that can be used
+;; as an action button to interface the `activities' package for use
+;; with Hyperbole.  Adding the action button:
+;;   <hsys-activities "Activity">
+;; to any text achieves the following:
+;;   1. If "Activity" does not exist, create it.
+;;   2.  If "Activity" is not active, switch to its latest saved state.
+;;   3.  If "Activity" is active, revert to its default state.
+;;   4.  If "Activity" is active and the action button is called with
+;;       a prefix argument, a new default state is set.
 
 ;;; Code:
 
