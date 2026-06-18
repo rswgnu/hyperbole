@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:45:00
-;; Last-Mod:     14-Jun-26 at 15:57:15 by Bob Weiner
+;; Last-Mod:     18-Jun-26 at 12:04:02 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -373,26 +373,31 @@
 ;; ilink
 (ert-deftest ibtypes::ilink-test ()
   "Verify link to ibut in same buffer."
-  (let ((file (make-temp-file "ilink")))
+  (let ((file (make-temp-file "ilink-test")))
     (unwind-protect
         (progn
           (find-file file)
-          (insert "\
-<ilink: Button >
-<[Button]> <identity \"ARG\">
-")
+          (insert "<ilink: Button1 >\n<[Button1]> <identity 1>")
           (goto-char 4)
-          (should (string= "ARG" (ibtypes::ilink)))
+          (should (ibtype:test-p 'ilink))
+          (should (= (ibut:act) 1))
+
+          ;; ilink with file name
+	  (erase-buffer)
+          (insert "<[Button2]> <identity 2>")
+          (save-excursion
+            (with-temp-buffer
+              (insert (format "<ilink: Button2:\"%s\">\n" file))
+              (goto-char 4)
+              (should (ibtype:test-p 'ilink))
+              (should (= (ibut:act) 2))))
 
           (erase-buffer)
-          (insert "\
-<ilink: Button >
-<[Other]> <identity \"ARG\">
-")
+          (insert "<ilink: Button3 >\n<[Other]> <identity 3>")
           (goto-char 4)
           (let ((err (should-error (ibtypes::ilink))))
             (should
-             (string-match-p (rx "No button " (any punct) "Button" (any punct) " in")
+             (string-match-p (rx "No button " (any punct) "Button3" (any punct) " in")
                              (cadr err)))))
       (hy-delete-file-and-buffer file))))
 

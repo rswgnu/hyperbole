@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     14-Jun-26 at 16:06:31 by Bob Weiner
+;; Last-Mod:     18-Jun-26 at 10:01:03 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -587,7 +587,9 @@ on the implicit button to which to link."
                   (ibut:key-to-label name-key)
                   key-src))))
 
-
+    ;; !! Left over code from an earlier version of `link-to-ibut' in case
+    ;; is ever needed for reference.  rsw - 2026-06-18
+    ;;
     ;; (if key-src
     ;;     (unless (and (get-buffer key-src)
     ;;     	     (not (hypb:buffer-file-name (get-buffer key-src))))
