@@ -1,3 +1,9 @@
+2026-06-18  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-include-special-modes): Add to recognize HyWikiWords in
+    particular special major modes, like eww and elfeed ones.
+            (hywiki-potential-buffer-p): Use above setting in this function.
+
 2026-06-16  Bob Weiner  <rsw@gnu.org>
 
 * test/demo-tests.el (fast-demo-display-kotl-starting-from-cell): Fix to
