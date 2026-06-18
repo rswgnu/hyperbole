@@ -1,5 +1,9 @@
 2026-06-18  Bob Weiner  <rsw@gnu.org>
 
+* hui-select.el (hui-select-get-syntax-table): Add and leave syntax-table
+    unchanged when in a programming mode so that <> pair syntax does not
+    interfere with {} region/sexp selection.
+
 * test/hibtypes-tests.el (ibtypes::ilink-test): Add and ensure only one
     instance of this test.
 
