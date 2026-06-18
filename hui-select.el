@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:      7-Mar-26 at 18:39:40 by Bob Weiner
+;; Last-Mod:     18-Jun-26 at 13:05:12 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -604,10 +604,7 @@ Also, add language-specific syntax setups to aid in thing selection."
 
 (defun hui-select-get-region-boundaries ()
   "Return the (START . END) boundaries of region for `hui-select-thing'."
-  (with-syntax-table
-      (if (memq major-mode hui-select-ignore-quoted-sexp-modes)
-	  (syntax-table)
-	hui-select-syntax-table)
+  (with-syntax-table (hui-select-get-syntax-table)
     (or (hui-select-boundaries (point))
 	(when (eq hui-select-previous 'punctuation)
 	  (hui-select-word (point))))))
@@ -633,10 +630,8 @@ Also, add language-specific syntax setups to aid in thing selection."
 
 (defun hui-select-scan-sexps (from count)
   "Scan FROM point across COUNT sexpressions."
-  (if (memq major-mode hui-select-ignore-quoted-sexp-modes)
-      (scan-sexps from count)
-    (with-syntax-table hui-select-syntax-table
-      (scan-sexps from count))))
+  (with-syntax-table (hui-select-get-syntax-table)
+    (scan-sexps from count)))
 
 ;;;###autoload
 (defun hui-select-thing (&optional interactive-flag)
@@ -1060,10 +1055,7 @@ call to select that syntactic unit."
   (unless (and (memq major-mode hui-select-ignore-quoted-sexp-modes)
 	       ;; Ignore quoted identifier sexpressions, like #'function
 	       (char-after) (memq (char-after) '(?# ?\')))
-    (with-syntax-table
-	(if (memq major-mode hui-select-ignore-quoted-sexp-modes)
-	    (syntax-table)
-	  hui-select-syntax-table)
+    (with-syntax-table (hui-select-get-syntax-table)
       (let ((hui-select-char-p)
 	    (hui-select-whitespace)
 	    (hui-select-syntax-alist '((?\" . hui-select-string)
@@ -1077,6 +1069,13 @@ call to select that syntactic unit."
 				       (?\. . hui-select-punctuation))))
 	(hui-select-reset)
 	(funcall func)))))
+
+(defun hui-select-get-syntax-table ()
+  "Return syntax table to use for syntactic selection based on `major-mode'."
+  (if (or (derived-mode-p 'prog-mode)
+	  (memq major-mode hui-select-ignore-quoted-sexp-modes))
+      (syntax-table)
+    hui-select-syntax-table))
 
 (defun hui-select-region-bigger-p (old-region new-region)
   "Non-nil means the new region is bigger than the old region.
