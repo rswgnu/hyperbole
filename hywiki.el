@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     15-Jun-26 at 18:10:04 by Bob Weiner
+;; Last-Mod:     18-Jun-26 at 09:15:55 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -314,12 +314,22 @@ Group 1 is the entire HyWikiWord#section:Lnum:Cnum expression.")
                       #'hywiki--clear-buttonize-characters-cache)
 
 (defcustom hywiki-exclude-major-modes nil
-  "List of major modes to exclude from HyWikiWord highlighting and recognition."
+  "List of major modes to exclude from HyWikiWord highlighting and recognition.
+Any `special' major mode, like Dired, is automatically excluded unless
+included in the list, `hywiki-include-special-modes'."
   :type '(list symbol)
   :group 'hyperbole-hywiki)
 
 (defcustom hywiki-highlight-all-in-prog-modes '(lisp-interaction-mode)
   "List of programming major modes to highlight HyWikiWords outside of comments."
+  :type '(list symbol)
+  :group 'hyperbole-hywiki)
+
+(defcustom hywiki-include-special-modes
+  '(elfeed-search-mode elfeed-show-mode eww-mode kotl-mode)
+  "List of `special' major modes to include in HyWikiWord highlighting and recognition.
+By default, all special modes, like Dired, are excluded.  A major mode
+included here will override its inclusion in `hywiki-exclude-major-modes'."
   :type '(list symbol)
   :group 'hyperbole-hywiki)
 
@@ -1184,12 +1194,11 @@ Exclude the minibuffer if selected and return nil."
 Always exclude minibuffers.
 This does not mean `hywiki-mode' is presently active in that buffer;
 use `hywiki-active-in-current-buffer-p' for that."
-
   (and (not (minibufferp))
        ;; (not (and (boundp 'edebug-active) edebug-active))
-       (not (apply #'derived-mode-p hywiki-exclude-major-modes))
-       (or (derived-mode-p 'kotl-mode)
-	   (not (eq (get major-mode 'mode-class) 'special)))))
+       (or (apply #'derived-mode-p hywiki-include-special-modes)
+           (and (not (eq (get major-mode 'mode-class) 'special))
+                (not (apply #'derived-mode-p hywiki-exclude-major-modes))))))
 
 (defun hywiki-add-activity (wikiword)
   "Make WIKIWORD resume a prompted for activity.
