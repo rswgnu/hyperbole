@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:45:00
-;; Last-Mod:     14-Jun-26 at 15:57:15 by Bob Weiner
+;; Last-Mod:     18-Jun-26 at 11:52:57 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -563,6 +563,36 @@ file.el:10:20: Warning: Message
           (should (and (search-forward "<id:") (looking-at-p id)))
           (mocklet (((actypes::link-to-org-id-marker *) => t))
             (should (ibtypes::org-id))))
+      (hy-delete-file-and-buffer file))))
+
+(ert-deftest ibtypes::ilink-test ()
+  "Verify link to ibut in same buffer."
+  (let ((file (make-temp-file "ilink-test")))
+    (unwind-protect
+        (progn
+          (find-file file)
+          (insert "<ilink: Button1 >\n<[Button1]> <identity 1>")
+          (goto-char 4)
+          (should (ibtype:test-p 'ilink))
+          (should (= (ibut:act) 1))
+
+          ;; ilink with file name
+	  (erase-buffer)
+          (insert "<[Button2]> <identity 2>")
+          (save-excursion
+            (with-temp-buffer
+              (insert (format "<ilink: Button2:\"%s\">\n" file))
+              (goto-char 4)
+              (should (ibtype:test-p 'ilink))
+              (should (= (ibut:act) 2))))
+
+          (erase-buffer)
+          (insert "<ilink: Button3 >\n<[Other]> <identity 3>")
+          (goto-char 4)
+          (let ((err (should-error (ibtypes::ilink))))
+            (should
+             (string-match-p (rx "No button " (any punct) "Button3" (any punct) " in")
+                             (cadr err)))))
       (hy-delete-file-and-buffer file))))
 
 ;; This file can't be byte-compiled without the `el-mock' package (because of
