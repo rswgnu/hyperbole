@@ -1,6 +1,7 @@
 2026-06-18  Bob Weiner  <rsw@gnu.org>
 
-* test/hibtypes-tests.el (ibtypes::ilink-test): Add.
+* test/hibtypes-tests.el (ibtypes::ilink-test): Add and ensure only one
+    instance of this test.
 
 * hywiki.el (hywiki-include-special-modes): Add to recognize HyWikiWords in
     particular special major modes, like eww and elfeed ones.
