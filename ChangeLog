@@ -1,3 +1,8 @@
+2026-06-20  Mats Lidell  <matsl@gnu.org>
+
+* test/hibtypes-tests.el: Add !!FIXME comments to highlight the ibtypes
+    where tests should be added.
+
 2026-06-24  Bob Weiner  <rsw@gnu.org>
 
 * test/hasht-tests.el: Add.
