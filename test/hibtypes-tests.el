@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:45:00
-;; Last-Mod:     20-Jun-26 at 11:06:02 by Mats Lidell
+;; Last-Mod:     20-Jun-26 at 11:14:35 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -344,6 +344,29 @@
              ;; Nil looks wrong for the file name.
              (string-match-p (rx "No button " (any punct) "Other" (any punct))
                              (cadr err)))))
+      (hy-delete-files-and-buffers (list file)))))
+
+(ert-deftest ibtypes::elink-ebut-in-other-file ()
+  "Verify link to ebut in other file."
+  (let ((file (make-temp-file "elink")))
+    (unwind-protect
+        (progn
+          (find-file file)
+          (ebut:program "Button" 'eval-elisp '(message "EBUT"))
+
+          (save-excursion
+            (with-temp-buffer
+              (insert (format "<elink: Button:\"%s\">\n" file))
+              (goto-char 4)
+              (should (string= "EBUT" (ibtypes::elink)))
+
+              (goto-char (point-min))
+              (insert (format "<elink: Other:\"%s\">\n" file))
+              (goto-char 4)
+              (let ((err (should-error (ibtypes::elink))))
+                (should
+                 (string-match-p (rx "No button " (any punct) "Other" (any punct))
+                                 (cadr err)))))))
       (hy-delete-files-and-buffers (list file)))))
 
 ;; glink
