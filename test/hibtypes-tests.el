@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:45:00
-;; Last-Mod:     20-Jun-26 at 11:14:35 by Mats Lidell
+;; Last-Mod:     20-Jun-26 at 23:08:13 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -460,9 +460,9 @@
 (ert-deftest ibtypes::ilink-error-case-missing-button ()
   "Check `ibtypes::ilink' errors when named button does not exist in `other-buffer'."
   :expected-result :failed
-  ;; FIXME: This is cept as a separate test case for showing the
-  ;; problem. When it is fixed the test can me merged in the working
-  ;; inlink tests.
+  ;; FIXME: This is kept as a separate test case for showing the
+  ;; problem. When it is fixed the test can me merged with the working
+  ;; inlink test.
   (let ((file (make-temp-file "ilink-test")))
     (unwind-protect
         (progn
