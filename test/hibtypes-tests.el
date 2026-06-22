@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:45:00
-;; Last-Mod:     18-Jun-26 at 12:04:02 by Bob Weiner
+;; Last-Mod:     20-Jun-26 at 23:08:13 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -346,6 +346,29 @@
                              (cadr err)))))
       (hy-delete-files-and-buffers (list file)))))
 
+(ert-deftest ibtypes::elink-ebut-in-other-file ()
+  "Verify link to ebut in other file."
+  (let ((file (make-temp-file "elink")))
+    (unwind-protect
+        (progn
+          (find-file file)
+          (ebut:program "Button" 'eval-elisp '(message "EBUT"))
+
+          (save-excursion
+            (with-temp-buffer
+              (insert (format "<elink: Button:\"%s\">\n" file))
+              (goto-char 4)
+              (should (string= "EBUT" (ibtypes::elink)))
+
+              (goto-char (point-min))
+              (insert (format "<elink: Other:\"%s\">\n" file))
+              (goto-char 4)
+              (let ((err (should-error (ibtypes::elink))))
+                (should
+                 (string-match-p (rx "No button " (any punct) "Other" (any punct))
+                                 (cadr err)))))))
+      (hy-delete-files-and-buffers (list file)))))
+
 ;; glink
 (ert-deftest ibtypes::glink-test ()
   "Verify link to global button."
@@ -399,6 +422,61 @@
             (should
              (string-match-p (rx "No button " (any punct) "Button3" (any punct) " in")
                              (cadr err)))))
+      (hy-delete-file-and-buffer file))))
+
+(ert-deftest ibtypes::ilink-ibut-in-other-file ()
+  "Verify link to ibut in other file."
+  (let ((file (make-temp-file "ilink.txt")))
+    (unwind-protect
+        (progn
+          (find-file file)
+          (insert "<[Button]> <identity 1>")
+
+          (save-excursion
+            (with-temp-buffer
+              (insert (format "<ilink: Button:\"%s\">\n" file))
+              (goto-char 4)
+              (should (= 1 (ibtypes::ilink)))))
+
+          (insert "<[ABC]> <identity 2>")
+
+          (save-excursion
+            (with-temp-buffer
+              (insert (format "<ilink: ABC:\"%s\">\n" file))
+              (goto-char 4)
+              (should (= 2 (ibtypes::ilink)))))
+
+          (save-excursion
+            (with-temp-buffer
+              (insert (format "<ilink: XYZ:\"%s\">\n" file))
+              (goto-char 4)
+              (let ((err (should-error (ibtypes::ilink))))
+              (should
+               (string-match-p (rx "No button " (any punct) "XYZ" (any punct) " in")
+                               (cadr err)))))))
+
+      (hy-delete-file-and-buffer file))))
+
+(ert-deftest ibtypes::ilink-error-case-missing-button ()
+  "Check `ibtypes::ilink' errors when named button does not exist in `other-buffer'."
+  :expected-result :failed
+  ;; FIXME: This is kept as a separate test case for showing the
+  ;; problem. When it is fixed the test can me merged with the working
+  ;; inlink test.
+  (let ((file (make-temp-file "ilink-test")))
+    (unwind-protect
+        (progn
+          (find-file file)
+          (insert "<[Button]> <identity 1234>\n")
+          (with-temp-buffer
+            (insert (format "<ilink: XYZ : \"%s\">\n" file))
+            (goto-char 4)
+            ;; FIXME: This is what happens
+            ;; (should (= 1234 (ibtypes::ilink))))))
+            (let ((err (should-error (ibtypes::ilink))))
+              (should
+               (string-match-p (rx "No button " (any punct) "XYZ" (any punct) " in")
+                               (cadr err))))))
       (hy-delete-file-and-buffer file))))
 
 ;; ipython-stack-frame

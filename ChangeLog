@@ -1,3 +1,9 @@
+2026-06-20  Mats Lidell  <matsl@gnu.org>
+
+* test/hibtypes-tests.el (ibtypes::ilink-ibut-in-other-file)
+    (ibtypes::ilink-error-case-missing-button)
+    (ibtypes::elink-ebut-in-other-file): Add tests.
+
 2026-06-18  Bob Weiner  <rsw@gnu.org>
 
 * hui-select.el (hui-select-get-syntax-table): Add and leave syntax-table
