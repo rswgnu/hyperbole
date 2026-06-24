@@ -10,6 +10,12 @@
            (hash-merge-values): Generalize to more sequence types
     by using 'seq-union'.
 
+2026-06-20  Mats Lidell  <matsl@gnu.org>
+
+* test/hibtypes-tests.el (ibtypes::ilink-ibut-in-other-file)
+    (ibtypes::ilink-error-case-missing-button)
+    (ibtypes::elink-ebut-in-other-file): Add tests.
+
 2026-06-18  Bob Weiner  <rsw@gnu.org>
 
 * hui.el (hui:link-possible-types): Add required arg, 'src-dir', so relative
