@@ -1,3 +1,15 @@
+2026-06-24  Bob Weiner  <rsw@gnu.org>
+
+* test/hasht-tests.el: Add.
+  test/MANIFEST: Add hasht-tests.el.
+  hasht.el (hash-copy): Fix to use Emacs builtin 'copy-hash-table'.
+           (hash-deep-copy): 'length' does not work on hash-tables.
+    Replace with 'hash-size' instead.  Also fix 'maphash' call that
+    was doing a 'hash-deep-copy' of 'obj' (causes an infinite loop
+    rather than 'value' associated with 'key'.
+           (hash-merge-values): Generalize to more sequence types
+    by using 'seq-union'.
+
 2026-06-18  Bob Weiner  <rsw@gnu.org>
 
 * hui-select.el (hui-select-get-syntax-table): Add and leave syntax-table
