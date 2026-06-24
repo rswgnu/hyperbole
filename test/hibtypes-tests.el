@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:45:00
-;; Last-Mod:     20-Jun-26 at 23:08:13 by Mats Lidell
+;; Last-Mod:     24-Jun-26 at 20:26:23 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -13,8 +13,6 @@
 ;; This file is part of GNU Hyperbole.
 
 ;;; Commentary:
-
-;; Helper functions
 
 ;;; Code:
 
@@ -295,9 +293,9 @@
       (kill-buffer "MANIFEST")
       (kill-buffer "HY-ABOUT"))))
 
-;; hib-debug
+;; hib-debug !!FIXME: Add tests.
 
-;; hib-kbd
+;; hib-kbd !!FIXME: Add tests.
 
 ;; rfc
 (ert-deftest ibtypes::rfc-test ()
@@ -319,9 +317,9 @@
      (mock (man "rm(1)") => t)
      (ibtypes::man-apropos))))
 
-;; klink
+;; klink !!FIXME: Add tests.
 
-;; hlink
+;; hlink !!FIXME: Add tests.
 
 ;; elink
 (ert-deftest ibtypes::elink-test ()
@@ -479,7 +477,7 @@
                                (cadr err))))))
       (hy-delete-file-and-buffer file))))
 
-;; ipython-stack-frame
+;; ipython-stack-frame !!FIXME: Add tests.
 
 ;; ripgrep-msg
 (ert-deftest ibtypes::ripgrep-msg-test ()
@@ -564,7 +562,7 @@ ZeroDivisionError: division by zero
       (forward-line 1)
       (should-not (hib-python-traceback)))))
 
-;; pathname-line-and-column
+;; pathname-line-and-column !!FIXME: Add tests.
 
 ;; elisp-compiler-msg
 (ert-deftest elisp-compiler-msg-test ()
@@ -597,9 +595,9 @@ file.el:10:20: Warning: Message
         (mocklet (((actypes::link-to-regexp-match "^(def[a-z \11]+hyperbole-test[ \11\n\15(]" 1 "/home/user/file.el" nil) => t))
           (should (ibtypes::elisp-compiler-msg)))))))
 
-;; patch-msg
+;; patch-msg !!FIXME: Add tests.
 
-;; texinfo-ref
+;; texinfo-ref !!FIXME: Add tests.
 
 ;; info-node
 (ert-deftest ibtypes::info-node-test ()
@@ -612,13 +610,13 @@ file.el:10:20: Warning: Message
         (should (string= "*info*" (buffer-name))))
     (kill-buffer "*info*")))
 
-;; hyp-address
+;; hyp-address !!FIXME: Add tests.
 
-;; hyp-source
+;; hyp-source !!FIXME: Add tests.
 
-;; action
+;; action !!FIXME: Add tests.
 
-;; completion
+;; completion !!FIXME: Add tests.
 
 (ert-deftest ibtypes:org-id-test ()
   "Verify `org-id' ibut."
