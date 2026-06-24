@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    22-Jun-26 at 23:25:12
-;; Last-Mod:     24-Jun-26 at 00:24:45 by Mats Lidell
+;; Last-Mod:     24-Jun-26 at 09:24:51 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -21,6 +21,7 @@
 (require 'ert-x)
 (require 'hy-test-helpers)
 (require 'hasht)
+(require 'set)
 
 (ert-deftest hasht-tests--make ()
   "Verify `hash-make'."
@@ -61,9 +62,9 @@
 (ert-deftest hasht-tests--map ()
   "Verify `hash-map´."
   (let ((h (hash-make '((1 . "k1") (2 . "k2")))))
-    (should (equal '((1 . "k1") (2 . "k2")) (hash-map #'identity h)))
-    (should (equal '(2 1) (hash-map #'car h)))
-    (should (equal '("k2" "k1") (hash-map #'cdr h)))))
+    (should (set:equal '((1 . "k1") (2 . "k2")) (hash-map #'identity h)))
+    (should (set:equal '(2 1) (hash-map #'car h)))
+    (should (set:equal '("k2" "k1") (hash-map #'cdr h)))))
 
 (ert-deftest hasht-tests--copy ()
   "Verify `hash-copy'."
