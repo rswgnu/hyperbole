@@ -30,7 +30,7 @@
 
 (defun hy-test-helpers:ensure-link-possible-type (type)
   "At point, ensure `hui:link-possible-types' returns a single TYPE."
-  (let* ((possible-types (hui:link-possible-types))
+  (let* ((possible-types (hui:link-possible-types default-directory))
 	 (first-type (caar possible-types)))
     (should (= (length possible-types) 1))
     (should (equal first-type type))))

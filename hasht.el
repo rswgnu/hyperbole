@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    16-Mar-90 at 03:38:48
-;; Last-Mod:     16-Jun-26 at 09:40:09 by Bob Weiner
+;; Last-Mod:     24-Jun-26 at 12:26:54 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -34,6 +34,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
+(require 'seq)      ; for 'seq-union'
 (require 'subr-x)   ; for `hash-table-keys/values', `hash-table-empty-p'
 
 ;;; ************************************************************************
@@ -63,12 +64,7 @@ Signal an error if anything goes wrong during addition."
 List and vector elements are shared across both tables."
   (unless (hash-table-p hash-table)
     (error "(hash-copy): Invalid hash-table: `%s'" hash-table))
-  (let ((htable-copy (make-hash-table :size (length hash-table))))
-    (hash-map
-     (lambda (val-key-cons) (hash-add (car val-key-cons) (cdr val-key-cons)
-				      htable-copy))
-     hash-table)
-    htable-copy))
+  (copy-hash-table hash-table))
 
 (defun hash-count (hash-table)
   "Return element count in HASH-TABLE or nil if not a valid hash table."
@@ -92,10 +88,10 @@ Otherwise, Return nil if KEY is not in HASH-TABLE or t otherwise."
 	((stringp obj)
 	 (copy-sequence obj))
 	((hash-table-p obj)
-	 (let ((htable-copy (make-hash-table :size (length obj))))
+	 (let ((htable-copy (make-hash-table :size (hash-size obj))))
 	   (maphash
-	    (lambda (key _value)
-	      (puthash key (hash-deep-copy obj) htable-copy))
+	    (lambda (key value)
+	      (puthash key (hash-deep-copy value) htable-copy))
 	    obj)
 	   htable-copy))
 	((vectorp obj)
@@ -289,15 +285,17 @@ assumed to be strings and the result is a set of ordered strings.
 This is suitable for use as a value of `hash-merge-values-function'."
   ;; Copy lists so that merged result does not share structure with the
   ;; hash tables being merged.
-  (if (listp value1) (setq value1 (copy-sequence value1)))
-  (if (listp value2) (setq value2 (copy-sequence value2)))
-  (cond ((and (listp value1) (listp value2))
-	 ;; Assume desired result is a set of strings.
-	 (hash-set-of-strings (sort (append value1 value2) 'string-lessp)))
-	((null value1)
+  (when (sequencep value1) (setq value1 (copy-sequence value1)))
+  (when (sequencep value2) (setq value2 (copy-sequence value2)))
+  (cond ((null value1)
 	 value2)
 	((null value2)
 	 value1)
+        ((and (sequencep value1) (sequencep value2))
+         (when (stringp value1) (setq value1 (list value1)))
+         (when (stringp value2) (setq value2 (list value2)))
+	 ;; Return a list of the union of the values elements
+         (seq-union value1 value2))
 	((listp value1)
 	 (cons value2 value1))
 	((listp value2)
