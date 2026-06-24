@@ -1,3 +1,7 @@
+2026-06-25  Mats Lidell  <matsl@gnu.org>
+
+* test/hasht-tests.el: Complete hasht tests.
+
 2026-06-25  Bob Weiner  <rsw@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--command): Fix interactive call
