@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     16-Jun-26 at 17:51:27 by Bob Weiner
+;; Last-Mod:     19-Jun-26 at 00:26:54 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -406,83 +406,6 @@ extracted from a region."
 		  (list (hattr:get thing 'categ)
 			(buffer-substring-no-properties start end) start end)))))))
 
-(defun hui:non-delimited-selectable-thing-and-bounds ()
-  "Return a list of properties for any non-delimited thing at point.
-The list returned is (<thing-type> <thing-string> <thing-start> <thing-end>)
-or nil if none.
-
-The prioritized types of things tested is \\='url plus the list of types
-in `hui:selectable-thing-priority-list' if that variable is non-nil."
-  (when hui:selectable-thing-priority-list
-    (with-syntax-table
-	(if (memq major-mode hui-select-ignore-quoted-sexp-modes)
-	    (syntax-table)
-	  hui-select-syntax-table)
-      (let* ((types hui:selectable-thing-priority-list)
-	     thing-and-bounds type thing start-end start end)
-	;; Can't use thing-at-point here since it won't recognize URLs
-	;; without a protocol prefix, e.g. www.google.com.
-	(when types
-	  (setq thing-and-bounds (hpath:www-at-p t)))
-	(if thing-and-bounds
-	    (cons 'url thing-and-bounds)
-	  (while (and (not thing) types)
-	    (setq type (car types)
-		  types (cdr types)
-		  thing (thing-at-point type t))
-	    (when thing
-	      (cond ((eq type 'filename)
-		     (unless (file-exists-p thing)
-		       (setq thing nil)))
-		    ((eq type 'email)
-		     (unless (string-match "@.+\\." thing)
-		       (setq thing nil)))
-		    ((eq type 'whitespace)
-		     (if (looking-at "[ \t\n\r\f]")
-			 (setq start (point)
-			       end (save-excursion (forward-word
-						    (prefix-numeric-value
-						     current-prefix-arg))
-						   (point))
-			       thing (buffer-substring start end))
-		       (setq thing nil)))))
-	    (when thing
-	      (setq start-end (or start-end (bounds-of-thing-at-point type))
-		    start (or start (car start-end))
-		    end   (or end (cdr start-end)))))
-	  (when thing (list type thing start end)))))))
-
-(defun hui:selectable-thing-and-bounds ()
-  "Return a list of any selectable thing at point.
-The list returned is (<thing-type> <thing-string> <thing-start> <thing-end>)
-or nil if none or if `hui:selectable-thing-priority-list' is nil.
-Start and end may be nil if the thing was generated rather than
-extracted from a region."
-  (let* (thing-and-bounds type thing start end)
-    (when (setq thing-and-bounds
-		(or (hui:delimited-selectable-thing-and-bounds)
-		    (hui:non-delimited-selectable-thing-and-bounds)))
-      (setq type (nth 0 thing-and-bounds)
-	    thing (nth 1 thing-and-bounds)
-	    start (nth 2 thing-and-bounds)
-	    end (nth 3 thing-and-bounds))
-      (unless
-	  ;; Already enclosed in delimiters
-	  (or (and (= (char-syntax (char-after start)) ?\()
-		   (= (char-syntax (char-before end)) ?\)))
-	      (and (= (char-syntax (char-after start)) ?\")
-		   (= (char-syntax (char-before end)) ?\")))
-	    ;; Surrounded by delimiters to add to the thing
-	(when (or (and (= (if (char-before start) (char-syntax (char-before start)) 0) ?\()
-		       (= (if (char-after end) (char-syntax (char-after end)) 0) ?\)))
-		  (and (= (if (char-before start) (char-syntax (char-before start)) 0) ?\")
-		       (= (if (char-after end) (char-syntax (char-after end)) 0) ?\")))
-	  ;; Include delimiters in return value
-	  (setq start (1- start)
-		end (1+ end)
-		thing (buffer-substring-no-properties start end)))))
-	(when thing (list type thing start end))))
-
 (defun hui:ebut-act (&optional but)
   "Activate optional explicit button symbol BUT in current buffer.
 Default is the current button."
@@ -625,6 +548,106 @@ Signal an error when no such button is found in the current buffer."
 	  (ebut:operate lbl new-lbl)))
       (when (called-interactively-p 'interactive)
 	(hui:ebut-message t)))))
+
+(defun hui:ebut-link-directly (&optional depress-window release-window)
+  "Create a link ebutton at Assist Key depress point, linked to release point.
+If an explicit button already exists at point, replace it with the new
+link button and return t; otherwise, return nil.
+
+With optional DEPRESS-WINDOW and RELEASE-WINDOW, use the points
+from those instead.  See also documentation for `hui:link-possible-types'.
+
+An Assist Mouse Key drag between windows (when not on an item)
+runs this command."
+  (interactive (progn
+		 ;; Clear smart key variables so this does not
+		 ;; improperly reference values left over from a prior
+		 ;; drag or click.
+		 (action-key-clear-variables)
+		 (assist-key-clear-variables)
+		 (hmouse-choose-link-and-referent-windows)))
+
+  (hattr:clear 'hbut:current)
+  (unless (called-interactively-p 'any)
+    ;; Clear smart key variables so this does not improperly reference
+    ;; values left over from a prior drag or click.
+    (action-key-clear-variables)
+    (assist-key-clear-variables))
+  (let (but-lbl edit-flag link-types num-types type-and-args lbl-key but-loc but-dir)
+    (cl-multiple-value-bind (link-but-window referent-window)
+	(if (and depress-window release-window)
+	    (list depress-window release-window)
+	  (hmouse-choose-link-and-referent-windows))
+
+      (select-window referent-window)
+      ;; This sets hbut:current to link-to button attributes.
+      (setq link-types (hui:link-possible-types (buffer-local-value
+                                                 'default-directory
+                                                 (window-buffer link-but-window)))
+	    num-types (length link-types))
+
+      (select-window link-but-window)
+      ;; It is rarely possible that a *Warnings* buffer popup might have
+      ;; displaced the button src buffer in the depress window, so switch
+      ;; to it to be safe.
+      (when (and assist-key-depress-buffer
+		 (not (eq (current-buffer) assist-key-depress-buffer))
+		 (buffer-live-p assist-key-depress-buffer))
+	(switch-to-buffer assist-key-depress-buffer))
+      (hui:buf-writable-err (current-buffer) "ebut-link-directly")
+      (if (ebut:at-p)
+	  (setq edit-flag t
+		but-loc (hattr:get 'hbut:current 'loc)
+		but-dir (hattr:get 'hbut:current 'dir)
+		lbl-key (hattr:get 'hbut:current 'lbl-key))
+	(setq but-loc (hui:key-src (current-buffer))
+	      but-dir (hui:key-dir (current-buffer)))
+	(unless lbl-key
+	  (setq but-lbl (hui:hbut-label
+			 (cond ((hmouse-prior-active-region)
+				hkey-region)
+			       ((use-region-p)
+				(hui:hbut-label-default
+				 (region-beginning) (region-end))))
+			 "ebut-link-directly"
+			 "Create ebutton named: ")
+		lbl-key (hbut:label-to-key but-lbl))))
+
+      ;; num-types is the number of possible link types to choose among
+      (cond ((= num-types 0)
+	     (error "(ebut-link-directly): No possible link type to create"))
+	    ((= num-types 1)
+	     (setq type-and-args (hui:list-remove-text-properties (car link-types)))
+	     (hui:ebut-link-create edit-flag link-but-window lbl-key but-loc but-dir type-and-args))
+	    (t ;; more than 1
+	     (let ((item)
+		   type)
+	       (setq type-and-args
+		     (hui:menu-choose
+		      (cons '("Link to>")
+			    (mapcar
+			     (lambda (type-and-args)
+			       (setq type (car type-and-args))
+			       (list
+				(capitalize
+				 (if (string-match
+				      "^\\(link-to\\|eval\\)-"
+				      (setq item (symbol-name type)))
+				     (setq item (substring
+						 item (match-end 0)))
+				   item))
+				type-and-args
+				(documentation (symtable:actype-p type))))
+			     link-types)))
+		     type-and-args (hui:list-remove-text-properties type-and-args))
+	       (hui:ebut-link-create
+		edit-flag link-but-window
+		lbl-key but-loc but-dir type-and-args))))
+      (with-selected-window referent-window
+	(hmouse-pulse-line))
+      (when (called-interactively-p 'interactive)
+	(hui:ebut-message edit-flag))
+      edit-flag)))
 
 (defun hui:ebut-rename (curr-label new-label)
   "Rename explicit Hyperbole button given by CURR-LABEL to NEW-LABEL.
@@ -1298,138 +1321,6 @@ its buttons, the label is simply inserted at point."
 	     (hui:ibut-message nil)))
 	  (t (error "(hui:ibut-label-create): To add a label, point must be within the text of an implicit button")))))
 
-(defun hui:ibut-rename (lbl-key)
-  "Rename a label preceding an implicit button in current buffer given by LBL-KEY.
-Signal an error when no such button is found in the current buffer."
-  (interactive (list (save-excursion
-		       (hui:buf-writable-err (current-buffer) "ibut-rename")
-		       (or (ibut:label-p)
-			   (ibut:label-to-key
-			    (hargs:read-match "Labeled implicit button to rename: "
-					      (ibut:alist) nil t nil 'ibut))))))
-  (let ((lbl (ibut:key-to-label lbl-key))
-	(but-buf (current-buffer))
-	new-lbl)
-    (unless (called-interactively-p 'interactive)
-      (hui:buf-writable-err but-buf "ibut-rename"))
-
-    (unless (ibut:get lbl-key but-buf)
-      (hypb:error "(ibut-rename): Invalid button: '%s'" lbl))
-
-    (setq new-lbl
-	  (hargs:read
-	   "Change implicit button label to: "
-	   (lambda (lbl)
-	     (and (not (string-equal lbl "")) (<= (length lbl) (hbut:max-len))))
-	   lbl
-	   (format "(ibut-rename): Enter a string of at most %s chars"
-		   (hbut:max-len))
-	   'string))
-
-    (save-excursion
-      (ibut:rename lbl new-lbl)
-      (when (and (called-interactively-p 'interactive)
-		 (ibut:at-p))
-	(hui:ibut-message t)))))
-
-(defun hui:ebut-link-directly (&optional depress-window release-window)
-  "Create a link ebutton at Assist Key depress point, linked to release point.
-If an explicit button already exists at point, replace it with the new
-link button and return t; otherwise, return nil.
-
-With optional DEPRESS-WINDOW and RELEASE-WINDOW, use the points
-from those instead.  See also documentation for `hui:link-possible-types'.
-
-An Assist Mouse Key drag between windows (when not on an item)
-runs this command."
-  (interactive (progn
-		 ;; Clear smart key variables so this does not
-		 ;; improperly reference values left over from a prior
-		 ;; drag or click.
-		 (action-key-clear-variables)
-		 (assist-key-clear-variables)
-		 (hmouse-choose-link-and-referent-windows)))
-
-  (hattr:clear 'hbut:current)
-  (unless (called-interactively-p 'any)
-    ;; Clear smart key variables so this does not improperly reference
-    ;; values left over from a prior drag or click.
-    (action-key-clear-variables)
-    (assist-key-clear-variables))
-  (let (but-lbl edit-flag link-types num-types type-and-args lbl-key but-loc but-dir)
-    (cl-multiple-value-bind (link-but-window referent-window)
-	(if (and depress-window release-window)
-	    (list depress-window release-window)
-	  (hmouse-choose-link-and-referent-windows))
-
-      (select-window referent-window)
-      ;; This sets hbut:current to link-to button attributes.
-      (setq link-types (hui:link-possible-types)
-	    num-types (length link-types))
-
-      (select-window link-but-window)
-      ;; It is rarely possible that a *Warnings* buffer popup might have
-      ;; displaced the button src buffer in the depress window, so switch
-      ;; to it to be safe.
-      (when (and assist-key-depress-buffer
-		 (not (eq (current-buffer) assist-key-depress-buffer))
-		 (buffer-live-p assist-key-depress-buffer))
-	(switch-to-buffer assist-key-depress-buffer))
-      (hui:buf-writable-err (current-buffer) "ebut-link-directly")
-      (if (ebut:at-p)
-	  (setq edit-flag t
-		but-loc (hattr:get 'hbut:current 'loc)
-		but-dir (hattr:get 'hbut:current 'dir)
-		lbl-key (hattr:get 'hbut:current 'lbl-key))
-	(setq but-loc (hui:key-src (current-buffer))
-	      but-dir (hui:key-dir (current-buffer)))
-	(unless lbl-key
-	  (setq but-lbl (hui:hbut-label
-			 (cond ((hmouse-prior-active-region)
-				hkey-region)
-			       ((use-region-p)
-				(hui:hbut-label-default
-				 (region-beginning) (region-end))))
-			 "ebut-link-directly"
-			 "Create ebutton named: ")
-		lbl-key (hbut:label-to-key but-lbl))))
-
-      ;; num-types is the number of possible link types to choose among
-      (cond ((= num-types 0)
-	     (error "(ebut-link-directly): No possible link type to create"))
-	    ((= num-types 1)
-	     (setq type-and-args (hui:list-remove-text-properties (car link-types)))
-	     (hui:ebut-link-create edit-flag link-but-window lbl-key but-loc but-dir type-and-args))
-	    (t ;; more than 1
-	     (let ((item)
-		   type)
-	       (setq type-and-args
-		     (hui:menu-choose
-		      (cons '("Link to>")
-			    (mapcar
-			     (lambda (type-and-args)
-			       (setq type (car type-and-args))
-			       (list
-				(capitalize
-				 (if (string-match
-				      "^\\(link-to\\|eval\\)-"
-				      (setq item (symbol-name type)))
-				     (setq item (substring
-						 item (match-end 0)))
-				   item))
-				type-and-args
-				(documentation (symtable:actype-p type))))
-			     link-types)))
-		     type-and-args (hui:list-remove-text-properties type-and-args))
-	       (hui:ebut-link-create
-		edit-flag link-but-window
-		lbl-key but-loc but-dir type-and-args))))
-      (with-selected-window referent-window
-	(hmouse-pulse-line))
-      (when (called-interactively-p 'interactive)
-	(hui:ebut-message edit-flag))
-      edit-flag)))
-
 (defun hui:ibut-link-directly (&optional depress-window release-window name-arg-flag)
   "Create a link ibutton at Action Key depress point, linked to release point.
 If an ibutton already exists at point, replace it with the new
@@ -1469,7 +1360,9 @@ runs this command."
 
       (select-window referent-window)
       ;; This sets hbut:current to link-to button attributes.
-      (setq link-types (hui:link-possible-types)
+      (setq link-types (hui:link-possible-types (buffer-local-value
+                                                 'default-directory
+                                                 (window-buffer link-but-window)))
 	    num-types (length link-types))
 
       (select-window link-but-window)
@@ -1540,6 +1433,40 @@ runs this command."
 	(hui:ibut-message edit-flag))
       edit-flag)))
 
+(defun hui:ibut-rename (lbl-key)
+  "Rename a label preceding an implicit button in current buffer given by LBL-KEY.
+Signal an error when no such button is found in the current buffer."
+  (interactive (list (save-excursion
+		       (hui:buf-writable-err (current-buffer) "ibut-rename")
+		       (or (ibut:label-p)
+			   (ibut:label-to-key
+			    (hargs:read-match "Labeled implicit button to rename: "
+					      (ibut:alist) nil t nil 'ibut))))))
+  (let ((lbl (ibut:key-to-label lbl-key))
+	(but-buf (current-buffer))
+	new-lbl)
+    (unless (called-interactively-p 'interactive)
+      (hui:buf-writable-err but-buf "ibut-rename"))
+
+    (unless (ibut:get lbl-key but-buf)
+      (hypb:error "(ibut-rename): Invalid button: '%s'" lbl))
+
+    (setq new-lbl
+	  (hargs:read
+	   "Change implicit button label to: "
+	   (lambda (lbl)
+	     (and (not (string-equal lbl "")) (<= (length lbl) (hbut:max-len))))
+	   lbl
+	   (format "(ibut-rename): Enter a string of at most %s chars"
+		   (hbut:max-len))
+	   'string))
+
+    (save-excursion
+      (ibut:rename lbl new-lbl)
+      (when (and (called-interactively-p 'interactive)
+		 (ibut:at-p))
+	(hui:ibut-message t)))))
+
 (defun hui:indicate-copied-region (thing &optional message-len)
   "Indicate that string THING or the region text has been copied.
 Should be used when a command is called interactively."
@@ -1558,6 +1485,83 @@ Should be used when a command is called interactively."
                       ""))))
 	((mark t)
 	 (indicate-copied-region message-len))))
+
+(defun hui:non-delimited-selectable-thing-and-bounds ()
+  "Return a list of properties for any non-delimited thing at point.
+The list returned is (<thing-type> <thing-string> <thing-start> <thing-end>)
+or nil if none.
+
+The prioritized types of things tested is \\='url plus the list of types
+in `hui:selectable-thing-priority-list' if that variable is non-nil."
+  (when hui:selectable-thing-priority-list
+    (with-syntax-table
+	(if (memq major-mode hui-select-ignore-quoted-sexp-modes)
+	    (syntax-table)
+	  hui-select-syntax-table)
+      (let* ((types hui:selectable-thing-priority-list)
+	     thing-and-bounds type thing start-end start end)
+	;; Can't use thing-at-point here since it won't recognize URLs
+	;; without a protocol prefix, e.g. www.google.com.
+	(when types
+	  (setq thing-and-bounds (hpath:www-at-p t)))
+	(if thing-and-bounds
+	    (cons 'url thing-and-bounds)
+	  (while (and (not thing) types)
+	    (setq type (car types)
+		  types (cdr types)
+		  thing (thing-at-point type t))
+	    (when thing
+	      (cond ((eq type 'filename)
+		     (unless (file-exists-p thing)
+		       (setq thing nil)))
+		    ((eq type 'email)
+		     (unless (string-match "@.+\\." thing)
+		       (setq thing nil)))
+		    ((eq type 'whitespace)
+		     (if (looking-at "[ \t\n\r\f]")
+			 (setq start (point)
+			       end (save-excursion (forward-word
+						    (prefix-numeric-value
+						     current-prefix-arg))
+						   (point))
+			       thing (buffer-substring start end))
+		       (setq thing nil)))))
+	    (when thing
+	      (setq start-end (or start-end (bounds-of-thing-at-point type))
+		    start (or start (car start-end))
+		    end   (or end (cdr start-end)))))
+	  (when thing (list type thing start end)))))))
+
+(defun hui:selectable-thing-and-bounds ()
+  "Return a list of any selectable thing at point.
+The list returned is (<thing-type> <thing-string> <thing-start> <thing-end>)
+or nil if none or if `hui:selectable-thing-priority-list' is nil.
+Start and end may be nil if the thing was generated rather than
+extracted from a region."
+  (let* (thing-and-bounds type thing start end)
+    (when (setq thing-and-bounds
+		(or (hui:delimited-selectable-thing-and-bounds)
+		    (hui:non-delimited-selectable-thing-and-bounds)))
+      (setq type (nth 0 thing-and-bounds)
+	    thing (nth 1 thing-and-bounds)
+	    start (nth 2 thing-and-bounds)
+	    end (nth 3 thing-and-bounds))
+      (unless
+	  ;; Already enclosed in delimiters
+	  (or (and (= (char-syntax (char-after start)) ?\()
+		   (= (char-syntax (char-before end)) ?\)))
+	      (and (= (char-syntax (char-after start)) ?\")
+		   (= (char-syntax (char-before end)) ?\")))
+	    ;; Surrounded by delimiters to add to the thing
+	(when (or (and (= (if (char-before start) (char-syntax (char-before start)) 0) ?\()
+		       (= (if (char-after end) (char-syntax (char-after end)) 0) ?\)))
+		  (and (= (if (char-before start) (char-syntax (char-before start)) 0) ?\")
+		       (= (if (char-after end) (char-syntax (char-after end)) 0) ?\")))
+	  ;; Include delimiters in return value
+	  (setq start (1- start)
+		end (1+ end)
+		thing (buffer-substring-no-properties start end)))))
+	(when thing (list type thing start end))))
 
 ;;; ************************************************************************
 ;;; Private functions - used only within Hyperbole
@@ -2050,9 +2054,12 @@ which determines the region, ignoring BEG and END."
 	 (setq completion-to-accept nil))
 	(t (kill-region beg end region))))
 
-(defun hui:link-possible-types ()
+(defun hui:link-possible-types (src-dir)
   "Return list of possible link action types during editing of a Hyperbole button.
 Point must be on the link referent, i.e. in the Action Key release buffer.
+SRC-DIR should be the `default-directory' of the source buffer where the link
+will be added.
+
 Each list element is a list of the link type and any arguments it requires.
 
 The link types considered are fixed; this function must be changed to alter
@@ -2257,11 +2264,11 @@ Buffer without File      link-to-buffer-tmp"
 						    (setq instance-num (1+ instance-num)))))
 					      (list 'link-to-file
 						    (format "%s#%s%s"
-                                                            (hpath:shorten buffer-file-name)
+                                                            (hpath:shorten buffer-file-name src-dir)
 							    title
 							    (if (> instance-num 1) (format ":I%d" instance-num) "")))))
 					(list 'link-to-file-line
-                                              (hpath:shorten buffer-file-name)
+                                              (hpath:shorten buffer-file-name src-dir)
                                               (line-number-at-pos))))
                                      ;;
 				     ;; If current line starts with an outline-regexp prefix and

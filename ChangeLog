@@ -12,6 +12,9 @@
 
 2026-06-18  Bob Weiner  <rsw@gnu.org>
 
+* hui.el (hui:link-possible-types): Add required arg, 'src-dir', so relative
+    links point to the proper directory.
+
 * hui-select.el (hui-select-get-syntax-table): Add and leave syntax-table
     unchanged when in a programming mode so that <> pair syntax does not
     interfere with {} region/sexp selection.
