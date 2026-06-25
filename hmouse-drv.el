@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     28-Sep-25 at 12:22:16 by Bob Weiner
+;; Last-Mod:     25-Jun-26 at 08:53:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1177,7 +1177,17 @@ documentation is found."
 			     (categ (hattr:get 'hbut:current 'categ))
 			     (attributes (nthcdr 2 (hattr:list 'hbut:current)))
 			     (but-def-symbol (htype:def-symbol
-					      (if (eq categ 'explicit) actype categ))))
+					      (if (eq categ 'explicit) actype categ)))
+                             (wikiword-referent
+                              (when (eq (htype:def-symbol actype) 'link-to-wikiword)
+                                (hywiki-get-referent
+                                 (hattr:get 'hbut:current 'lbl-key)))))
+
+                        (when wikiword-referent
+                          (hattr:set 'hbut:current 'referent-type
+                                     (car wikiword-referent))
+                          (hattr:set 'hbut:current 'referent-value
+                                     (cdr wikiword-referent)))
 
 			(princ (format "%s %s SPECIFICS:\n"
 				       (or but-def-symbol

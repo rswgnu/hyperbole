@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     14-Jun-26 at 15:13:00 by Bob Weiner
+;; Last-Mod:     24-Jun-26 at 19:47:03 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -450,7 +450,7 @@ button is found in the current buffer."
 
     ;; Error when on a read-only part of a buffer's text
     (when (plist-member (text-properties-at (point)) 'read-only)
-      (hypb:error "(ebut:operate): Point must not be on a read-only Org element"))
+      (hypb:error "(ebut:operate): Point must not be on a read-only text section"))
     ;; Error when on an implicit button
     (when (or (eq (hattr:get 'hbut:current 'categ) 'implicit)
 	      (string-prefix-p "ibtypes::" (symbol-name (hattr:get 'hbut:current 'categ))))
@@ -2543,7 +2543,7 @@ Summary of operations based on inputs (name arg from \\='hbut:current attrs):
 
     ;; Error when on a read-only part of a buffer's text
     (when (plist-member (text-properties-at (point)) 'read-only)
-      (hypb:error "(ibut:operate): Point must not be on a read-only Org element"))
+      (hypb:error "(ibut:operate): Point must not be on a read-only text section"))
     ;; Error when on an explicit button
     (when (eq (hattr:get 'hbut:current 'categ) 'explicit)
       (hypb:error "(ibut:operate): Point must not be on an explicit button: %s"

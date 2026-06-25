@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     12-Jun-26 at 13:53:14 by Bob Weiner
+@c Last-Mod:     25-Jun-26 at 13:36:38 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,7 +30,7 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED June 12, 2026
+@set UPDATED June 25, 2026
 @set UPDATED-MONTH June 2026
 @set EDITION 9.0.2pre
 @set VERSION 9.0.2pre
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed June 12, 2026.
+Printed June 25, 2026.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -213,7 +213,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.2pre
-June 12, 2026 @c AUTO-REPLACE-ON-SAVE
+June 25, 2026 @c AUTO-REPLACE-ON-SAVE
 
 
   Published by the Free Software Foundation, Inc.
@@ -4188,13 +4188,13 @@ menubar.  Here is the Hyperbole Menubar Menu and its Find submenu.
 
 @float Image,image:Hyperbole Menu
 @caption{Hyperbole Menubar Menu}
-@image{im/menu-hyperbole,5in,,Hyperbole Menu}
+@image{im/menu-hyperbole,2.5in,,Hyperbole Menu}
 @end float
 @page
 
 @float Image,image:Find Menu
 @caption{Find Menubar Menu}
-@image{im/menu-find,5in,,Find Menu}
+@image{im/menu-find,2.5in,,Find Menu}
 @end float
 @sp 1
 
@@ -4233,7 +4233,8 @@ look like this:
 
 @smallexample
 @noindent
-Hy>  Act Butfile/ Cust/ Doc/ Ebut/ Find/ Gbut/ HyWiki/ Ibut/ Kotl/ Msg/ Rolo/ Screen/ Win/ historY
+Hy>  Act Butfile/ Cust/ Doc/ Ebut/ Find/ Gbut/ HyWiki/ Ibut/ Kotl/ Msg/ Rolo/ Screen/
+     Win/ historY
 @end smallexample
 
 @cindex submenus
@@ -4522,7 +4523,7 @@ directory for export to the web.
 
 @float Image,image:HyWiki Page
 @caption{HyWiki Page}
-@image{im/hywiki-page,3.5in,,HyWiki Page}
+@image{im/hywiki-page,6in,,HyWiki Page}
 @end float
 @sp 1
 
@@ -4726,7 +4727,8 @@ It looks like this:
 
 @smallexample
 @noindent
-HyWiki>  Act BacklinkConsult Create DiredHyWiki EditPage FindReferent GrepConsult Help Info Link ModeSet/ Org-M-RET/ Publish TagFind
+HyWiki>  Act BacklinkConsult Create DiredHyWiki EditPage FindReferent GrepConsult
+         Help Info Link ModeSet/ Org-M-RET/ Publish TagFind
 @end smallexample
 
 @noindent
@@ -4751,10 +4753,69 @@ Activate HyWikiWord link at point.
 Use @code{hywiki-consult-backlink} to prompt for a HyWikiWord and then
 consult grep over its HyWiki backlink references, selecting one.
 
-@cindex HyWiki create a page
+@cindex HyWikiWord creation
+@cindex HyWikiWord types
+@vindex hywiki-referent-menu
+@cindex HyWiki referent type, Activity
+@cindex HyWiki referent type, Bookmark
+@cindex HyWiki referent type, Command
+@cindex HyWiki referent type, Find
+@cindex HyWiki referent type, Gbut
+@cindex HyWiki referent type, HyRolo
+@cindex HyWiki referent type, InfoIndex
+@cindex HyWiki referent type, Keys
+@cindex HyWiki referent type, pathLink
+@cindex HyWiki referent type, infoNode
+@cindex HyWiki referent type, OrgID
+@cindex HyWiki referent type, Page
+@cindex HyWiki referent type, orgRoamNode
+@cindex HyWiki referent type, Sexp
+@findex hywiki-add-activity
+@findex hywiki-add-bookmark
+@findex hywiki-add-command
+@findex hywiki-add-find
+@findex hywiki-add-global-button
+@findex hywiki-add-hyrolo
+@findex hywiki-add-info-index
+@findex hywiki-add-key-series
+@findex hywiki-add-path-link
+@findex hywiki-add-info-node
+@findex hywiki-add-org-id
+@findex hywiki-add-page
+@findex hywiki-add-org-roam-node
+@findex hywiki-add-sexpression
 @item Create
-Create and display a new HyWiki page.  Shows existing page names to
-aid in new naming.
+Create and display a new or existing HyWikiWord referent, prompting
+with any existing referent names.  With either
+@code{hywiki-referent-prompt-flag} set or optional prefix ARG, prompt
+for and choose a typed referent; otherwise, create and/or display a
+HyWiki page.  The following table details the potentially prompted for
+referent types, as given by @code{hywiki-referent-menu}, with the
+``HyWiki Add>'' prompt (Activity appears only if the @code{activities}
+package is loaded):
+
+@exampleindent 0
+@example
+@group
+Menu Item       Command                  Description
+===================================================================
+Activity        hywiki-add-activity      Activate a saved Activity
+Bookmark        hywiki-add-bookmark      Jump to an Emacs bookmark
+Command         hywiki-add-command       Run a Hypb action or cmd
+Find            hywiki-add-find          Grep through hywiki dir
+Gbut            hywiki-add-global-button Activate a global button
+HyRolo          hywiki-add-hyrolo        Search @code{hyrolo-file-list}
+InfoIndex       hywiki-add-info-index    Display an Info index item
+Keys            hywiki-add-key-series    Execute a series of keys
+pathLink        hywiki-add-path-link     Display a path and opt pos
+infoNode        hywiki-add-info-node     Display an Info doc node
+OrgID           hywiki-add-org-id        Display a sect for Org ID
+Page            hywiki-add-page          Display a HyWiki page#sect
+orgRoamNode     hywiki-add-org-roam-node Display an Org Roam node
+Sexp            hywiki-add-sexpression   Evaluate an Elisp sexp
+===================================================================
+@end group
+@end example
 
 @vindex hywiki-directory
 @vindex action-key-modeline-buffer-id-function
@@ -4823,8 +4884,6 @@ Disable highlighting HyWikiWord references everywhere.  The
 
 @kindex C-h h h o
 @kindex HyWiki, C-h h h o
-@kindex C-h h h c
-@kindex HyWiki, C-h h h c
 @cindex menu item, HyWiki/Org-M-RET
 @cindex menu item, HyWiki/Org-M-RET/Hyperbole-Buttons-Only
 @cindex customize Org M-RET
@@ -5484,7 +5543,7 @@ read the following sections explaining commands.
 
 @float Image,image:Koutline Menu
 @caption{Koutline Menu}
-@image{im/menu-koutline,6in,,Koutline Menu}
+@image{im/menu-koutline,3.5in,,Koutline Menu}
 @end float
 @sp 1
 
@@ -6702,7 +6761,8 @@ so.
 
 @smallexample
 @noindent
-Rolo>  Add  ConsultFind  Display  Edit  FileFind  Info  Kill  Mail  Order  RegexFind  StringFind  TagFind  WordFind  Yank
+Rolo>  Add  ConsultFind  Display  Edit  FileFind  Info  Kill  Mail  Order
+       RegexFind  StringFind  TagFind  WordFind  Yank
 @end smallexample
 
 @cindex Rolo menu
@@ -6745,7 +6805,7 @@ pattern narrowing):
 Menu Item       Command                 Description
 =====================================================================
 Add             hyrolo-add              Add a hyrolo entry
-ConsultFind     hyrolo-consult-grep     Interactively narrow grep matches
+ConsultFind     hyrolo-consult-grep     Interactive grep matches
 Display         hyrolo-display-matches  Display last matches again
 Edit            hyrolo-edit             Edit an existing hyrolo entry
 FileFind        hyrolo-find-file        Edit a @code{hyrolo-file-list} file
@@ -6758,7 +6818,7 @@ RegexFind       hyrolo-grep             Find all entries containing
 StringFind      hyrolo-fgrep            Find all entries containing
                                           a string (or logical
                                           expression)
-TagFind         hyrolo-tags-view        Find HyWiki Org tags
+TagFind         hyrolo-tags-view        Find hyrolo Org tags
 WordFind        hyrolo-word             Find all entries containing
                                           a string of whole words
 Yank            hyrolo-yank             Insert the first matching
@@ -6767,7 +6827,7 @@ Yank            hyrolo-yank             Insert the first matching
 @end group
 @end example
 
-The 'File' menu item displays and edits the first file listed in
+The 'FileFind' menu item displays and edits the first file listed in
 @code{hyrolo-file-list}, unless given a prefix argument, in which case
 it prompts with completion for the file to edit.
 
@@ -8993,6 +9053,7 @@ Internal Image Display        hpath:native-image-suffixes
 Internal Custom Display       hpath:internal-display-alist
 External Display              hpath:external-display-alist
 Internal Standard Display     hpath:display-where
+=====================================================================
 @end example
 
 @noindent

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:      6-Jun-26 at 01:57:18 by Bob Weiner
+;; Last-Mod:     25-Jun-26 at 09:59:14 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -990,7 +990,7 @@ With point on label suggest that ibut for rename."
        (progn
          (should (equal (car err) 'error))
          (should (string-match
-                  "(func) Read-only error in Hyperbole button buffer"
+                  "(func) Read-only error in buffer"
                   (cadr err))))))))
 
 (ert-deftest hui--gbut-link-directly-ibut ()
