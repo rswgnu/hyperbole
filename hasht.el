@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    16-Mar-90 at 03:38:48
-;; Last-Mod:     24-Jun-26 at 12:26:54 by Bob Weiner
+;; Last-Mod:     25-Jun-26 at 18:23:46 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -279,8 +279,7 @@ This is suitable for use as a value of `hash-merge-values-function'."
 
 (defun hash-merge-values (value1 value2)
   "Return a list from merging VALUE1 and VALUE2 or creating a new list.
-Nil values are thrown away.  If both arguments are lists, their elements are
-assumed to be strings and the result is a set of ordered strings.
+Nil values are thrown away.
 
 This is suitable for use as a value of `hash-merge-values-function'."
   ;; Copy lists so that merged result does not share structure with the
@@ -288,9 +287,9 @@ This is suitable for use as a value of `hash-merge-values-function'."
   (when (sequencep value1) (setq value1 (copy-sequence value1)))
   (when (sequencep value2) (setq value2 (copy-sequence value2)))
   (cond ((null value1)
-	 value2)
+	 (if (listp value2) value2 (list value2)))
 	((null value2)
-	 value1)
+	 (if (listp value1) value1 (list value1)))
         ((and (sequencep value1) (sequencep value2))
          (when (stringp value1) (setq value1 (list value1)))
          (when (stringp value2) (setq value2 (list value2)))
@@ -300,7 +299,9 @@ This is suitable for use as a value of `hash-merge-values-function'."
 	 (cons value2 value1))
 	((listp value2)
 	 (cons value1 value2))
-	(t (list value1 value2))))
+	(t (if (equal value1 value2)
+               (list value1)
+             (list value1 value2)))))
 
 (defun hash-prepend (value key hash-table)
   "Prepend VALUE onto the list value referenced by KEY, a string, in HASH-TABLE.

@@ -1,5 +1,10 @@
 2026-06-25  Bob Weiner  <rsw@gnu.org>
 
+* hasht.el (hash-merge-values): Remove ordered result requirement to allow
+    for handling a mixed set of value types.  Also fix cases where value
+    returned was not a list or duplicate values were returned.
+  test/hasht-tests.el - Add rest of Mats tests.
+
 * hbut.el (ibut:get): Fix so tests if at ibut only if 'ibut:next-occurrence'
     succeeds.  This prevents matching to a different named ibut within the
     buffer.
