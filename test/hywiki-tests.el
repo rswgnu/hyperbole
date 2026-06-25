@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     25-Jun-26 at 13:00:41 by Bob Weiner
+;; Last-Mod:     26-Jun-26 at 00:03:34 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2071,11 +2071,28 @@ expected result."
 		       (list #'hywiki-tags-view t nil bn)))
         (should (= (line-number-at-pos) 3))))))
 
+(defun hywiki-display-hywiki-test (wikiword value)
+  "Test helper for display-referent-type."
+  (format "%s:%s" wikiword value))
+
 (ert-deftest hywiki-tests--display-referent-type ()
-  "Verify error case for `hywiki-display-referent-type'."
-  (with-temp-buffer
-    (let ((err (should-error (hywiki-display-referent-type "WikiWord" (cons 'unknown-type 'value)) :type 'error)))
-      (should (string-match-p "No hywiki-display function for referent type .unknown-type." (cadr err))))))
+  "Verify `hywiki-display-referent-type'.
+See helper `hywiki-display-hywiki-test' above for verifying display call."
+  (hywiki-tests--preserve-hywiki-mode
+    (insert "WikiWord")
+    (goto-char 4)
+
+    (ert-info ("Error cases")
+      (let ((err (should-error (hywiki-display-referent-type "WikiWord" (cons "unknown-type" 'value)) :type 'error)))
+        (should (string-match-p "Referent type must be a symbol" (cadr err))))
+      (let ((err (should-error (hywiki-display-referent-type "WikiWord" (cons 'unknown-type 'value)) :type 'error)))
+        (should (string-match-p "No hywiki-display function for referent type .unknown-type." (cadr err)))))
+
+    (ert-info ("Display hywiki-test with Value")
+      (hattr:clear 'hbut:current)
+      (should (string= "WikiWord:Value" (hywiki-display-referent-type "WikiWord" (cons 'hywiki-test 'Value))))
+      (should (string= "hywiki-test" (hattr:get 'hbut:current 'referent-type)))
+      (should (equal 'Value (hattr:get 'hbut:current 'referent-value))))))
 
 (ert-deftest hywiki-tests--create-referent ()
   "Verify `hywiki-create-referent'."
