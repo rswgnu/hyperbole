@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <!-- This manual is for GNU Hyperbole
-(Edition 9.0.2pre, Published March 23, 2026).
+(Edition 9.0.2pre, Published June 25, 2026).
 
 Copyright © 1989-2026  Free Software Foundation, Inc.
 
@@ -386,7 +386,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed March 23, 2026.
+Printed June 25, 2026.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -2948,6 +2948,55 @@ minibuffer or the other window.
 <dd><p>When on a HyWikiWord with an existing page, display its page and
 optional section.
 </p>
+<a class="index-entry-id" id="index-ibtypes-ilink"></a>
+<a class="index-entry-id" id="index-implicit-button-link"></a>
+<a class="index-entry-id" id="index-link-to-implicit-button"></a>
+<a class="index-entry-id" id="index-ilink"></a>
+<a class="anchor" id="ilink"></a></dd>
+<dt><code class="code">link-to-ibut &lt;ilink&gt;</code></dt>
+<dd><p>At point, activate a link to an implicit button within the current
+buffer.  This executes the linked to implicit button&rsquo;s action in the
+context of the current buffer.
+</p>
+<p>Recognizes the format &rsquo;&lt;ilink:&rsquo; button_label [&rsquo;:&rsquo; button_file_path] &rsquo;&gt;&rsquo;,
+where button_file_path is given only when the link is to another file,
+e.g. &lt;ilink: my series of keys: ${hyperb:dir}/HYPB&gt;.
+</p>
+<a class="index-entry-id" id="index-ibtypes-glink"></a>
+<a class="index-entry-id" id="index-global-button-link"></a>
+<a class="index-entry-id" id="index-link-to-global-button"></a>
+<a class="index-entry-id" id="index-glink"></a>
+<a class="anchor" id="glink"></a></dd>
+<dt><code class="code">link-to-gbut &lt;glink&gt;</code></dt>
+<dd><p>At point, activate a link to a global button.  This executes the
+linked to global button&rsquo;s action in the context of the current buffer.
+</p>
+<p>Recognizes the format &rsquo;&lt;glink:&rsquo; button_label &rsquo;&gt;&rsquo;, e.g. &lt;glink: open todos&gt;.
+</p>
+<a class="index-entry-id" id="index-ibtypes-elink"></a>
+<a class="index-entry-id" id="index-explicit-button-link"></a>
+<a class="index-entry-id" id="index-link-to-explicit-button"></a>
+<a class="index-entry-id" id="index-elink"></a>
+<a class="anchor" id="elink"></a></dd>
+<dt><code class="code">link-to-ebut &lt;elink&gt;</code></dt>
+<dd><p>At point, activate a link to an explicit button within the current
+buffer.  This executes the linked to explicit button&rsquo;s action in the
+context of the current buffer.
+</p>
+<p>Recognizes the format &rsquo;&lt;elink:&rsquo; button_label [&rsquo;:&rsquo; button_file_path] &rsquo;&gt;&rsquo;,
+where : button_file_path is given only when the link is to another file,
+e.g. &lt;elink: project-list: ~/projs&gt;.&quot;
+</p>
+<a class="index-entry-id" id="index-ibtypes-klink"></a>
+<a class="index-entry-id" id="index-klink"></a>
+<a class="index-entry-id" id="index-koutline-link"></a>
+<a class="index-entry-id" id="index-kcell-link"></a>
+<a class="anchor" id="klink"></a></dd>
+<dt><code class="code">klink</code></dt>
+<dd><p>Follow a link delimited by &lt;&gt; to a koutline cell.
+See the documentation for <code class="code">actypes::link-to-kotl</code> for valid link
+specifiers.
+</p>
 <a class="index-entry-id" id="index-ibtypes-action"></a>
 <a class="index-entry-id" id="index-action-button"></a>
 <a class="index-entry-id" id="index-action-implicit-button"></a>
@@ -3117,55 +3166,6 @@ for remote pathnames.  May also contain hash-style link references
 with the following format: <samp class="file">&lt;path&gt;[#&lt;link-anchor&gt;]:&lt;line-num&gt;[:&lt;column-num&gt;]</samp>.
 Line and column can also include a leading and optional character, L
 for line and C for column.
-</p>
-<a class="index-entry-id" id="index-ibtypes-ilink"></a>
-<a class="index-entry-id" id="index-implicit-button-link"></a>
-<a class="index-entry-id" id="index-link-to-implicit-button"></a>
-<a class="index-entry-id" id="index-ilink"></a>
-<a class="anchor" id="ilink"></a></dd>
-<dt><code class="code">link-to-ibut &lt;ilink&gt;</code></dt>
-<dd><p>At point, activate a link to an implicit button within the current
-buffer.  This executes the linked to implicit button&rsquo;s action in the
-context of the current buffer.
-</p>
-<p>Recognizes the format &rsquo;&lt;ilink:&rsquo; button_label [&rsquo;:&rsquo; button_file_path] &rsquo;&gt;&rsquo;,
-where button_file_path is given only when the link is to another file,
-e.g. &lt;ilink: my series of keys: ${hyperb:dir}/HYPB&gt;.
-</p>
-<a class="index-entry-id" id="index-ibtypes-glink"></a>
-<a class="index-entry-id" id="index-global-button-link"></a>
-<a class="index-entry-id" id="index-link-to-global-button"></a>
-<a class="index-entry-id" id="index-glink"></a>
-<a class="anchor" id="glink"></a></dd>
-<dt><code class="code">link-to-gbut &lt;glink&gt;</code></dt>
-<dd><p>At point, activate a link to a global button.  This executes the
-linked to global button&rsquo;s action in the context of the current buffer.
-</p>
-<p>Recognizes the format &rsquo;&lt;glink:&rsquo; button_label &rsquo;&gt;&rsquo;, e.g. &lt;glink: open todos&gt;.
-</p>
-<a class="index-entry-id" id="index-ibtypes-elink"></a>
-<a class="index-entry-id" id="index-explicit-button-link"></a>
-<a class="index-entry-id" id="index-link-to-explicit-button"></a>
-<a class="index-entry-id" id="index-elink"></a>
-<a class="anchor" id="elink"></a></dd>
-<dt><code class="code">link-to-ebut &lt;elink&gt;</code></dt>
-<dd><p>At point, activate a link to an explicit button within the current
-buffer.  This executes the linked to explicit button&rsquo;s action in the
-context of the current buffer.
-</p>
-<p>Recognizes the format &rsquo;&lt;elink:&rsquo; button_label [&rsquo;:&rsquo; button_file_path] &rsquo;&gt;&rsquo;,
-where : button_file_path is given only when the link is to another file,
-e.g. &lt;elink: project-list: ~/projs&gt;.&quot;
-</p>
-<a class="index-entry-id" id="index-ibtypes-klink"></a>
-<a class="index-entry-id" id="index-klink"></a>
-<a class="index-entry-id" id="index-koutline-link"></a>
-<a class="index-entry-id" id="index-kcell-link"></a>
-<a class="anchor" id="klink"></a></dd>
-<dt><code class="code">klink</code></dt>
-<dd><p>Follow a link delimited by &lt;&gt; to a koutline cell.
-See the documentation for <code class="code">actypes::link-to-kotl</code> for valid link
-specifiers.
 </p>
 <a class="index-entry-id" id="index-ibtypes-man_002dapropos"></a>
 <a class="index-entry-id" id="index-UNIX-manual"></a>
@@ -4748,7 +4748,8 @@ of the Action Mouse Key in the minibuffer when it is inactive.  It should
 look like this:
 </p>
 <div class="example smallexample">
-<pre class="example-preformatted">Hy&gt;  Act Butfile/ Cust/ Doc/ Ebut/ Find/ Gbut/ HyWiki/ Ibut/ Kotl/ Msg/ Rolo/ Screen/ Win/ historY
+<pre class="example-preformatted">Hy&gt;  Act Butfile/ Cust/ Doc/ Ebut/ Find/ Gbut/ HyWiki/ Ibut/ Kotl/ Msg/ Rolo/ Screen/
+     Win/ historY
 </pre></div>
 
 <a class="index-entry-id" id="index-submenus"></a>
@@ -5250,7 +5251,8 @@ Previous: <a href="#Publish-HyWiki" accesskey="p" rel="prev">Publish HyWiki</a>,
 It looks like this:
 </p>
 <div class="example smallexample">
-<pre class="example-preformatted">HyWiki&gt;  Act BacklinkConsult Create DiredHyWiki EditPage FindReferent GrepConsult Help Info Link ModeSet/ Org-M-RET/ Publish TagFind
+<pre class="example-preformatted">HyWiki&gt;  Act BacklinkConsult Create DiredHyWiki EditPage FindReferent GrepConsult
+         Help Info Link ModeSet/ Org-M-RET/ Publish TagFind
 </pre></div>
 
 <p>The BacklinkConsult and GrepConsult and items appear only when the Consult
@@ -5273,10 +5275,66 @@ many files with interactive search pattern narrowing.
 consult grep over its HyWiki backlink references, selecting one.
 </p>
 </dd>
-<dt><a id="index-HyWiki-create-a-page"></a><span>Create<a class="copiable-link" href="#index-HyWiki-create-a-page"> &para;</a></span></dt>
-<dd><p>Create and display a new HyWiki page.  Shows existing page names to
-aid in new naming.
+<dt><a class="index-entry-id" id="index-HyWikiWord-types"></a>
+<a class="index-entry-id" id="index-hywiki_002dreferent_002dmenu"></a>
+<a class="index-entry-id" id="index-HyWiki-referent-type_002c-Activity"></a>
+<a class="index-entry-id" id="index-HyWiki-referent-type_002c-Bookmark"></a>
+<a class="index-entry-id" id="index-HyWiki-referent-type_002c-Command"></a>
+<a class="index-entry-id" id="index-HyWiki-referent-type_002c-Find"></a>
+<a class="index-entry-id" id="index-HyWiki-referent-type_002c-Gbut"></a>
+<a class="index-entry-id" id="index-HyWiki-referent-type_002c-HyRolo"></a>
+<a class="index-entry-id" id="index-HyWiki-referent-type_002c-InfoIndex"></a>
+<a class="index-entry-id" id="index-HyWiki-referent-type_002c-Keys"></a>
+<a class="index-entry-id" id="index-HyWiki-referent-type_002c-pathLink"></a>
+<a class="index-entry-id" id="index-HyWiki-referent-type_002c-infoNode"></a>
+<a class="index-entry-id" id="index-HyWiki-referent-type_002c-OrgID"></a>
+<a class="index-entry-id" id="index-HyWiki-referent-type_002c-Page"></a>
+<a class="index-entry-id" id="index-HyWiki-referent-type_002c-orgRoamNode"></a>
+<a class="index-entry-id" id="index-HyWiki-referent-type_002c-Sexp"></a>
+<a class="index-entry-id" id="index-hywiki_002dadd_002dactivity"></a>
+<a class="index-entry-id" id="index-hywiki_002dadd_002dbookmark"></a>
+<a class="index-entry-id" id="index-hywiki_002dadd_002dcommand"></a>
+<a class="index-entry-id" id="index-hywiki_002dadd_002dfind"></a>
+<a class="index-entry-id" id="index-hywiki_002dadd_002dglobal_002dbutton"></a>
+<a class="index-entry-id" id="index-hywiki_002dadd_002dhyrolo"></a>
+<a class="index-entry-id" id="index-hywiki_002dadd_002dinfo_002dindex"></a>
+<a class="index-entry-id" id="index-hywiki_002dadd_002dkey_002dseries"></a>
+<a class="index-entry-id" id="index-hywiki_002dadd_002dpath_002dlink"></a>
+<a class="index-entry-id" id="index-hywiki_002dadd_002dinfo_002dnode"></a>
+<a class="index-entry-id" id="index-hywiki_002dadd_002dorg_002did"></a>
+<a class="index-entry-id" id="index-hywiki_002dadd_002dpage"></a>
+<a class="index-entry-id" id="index-hywiki_002dadd_002dorg_002droam_002dnode"></a>
+<a class="index-entry-id" id="index-hywiki_002dadd_002dsexpression"></a>
+<a id="index-HyWikiWord-creation"></a><span>Create<a class="copiable-link" href="#index-HyWikiWord-creation"> &para;</a></span></dt>
+<dd><p>Create and display a new or existing HyWikiWord referent, prompting
+with any existing referent names.  With either
+<code class="code">hywiki-referent-prompt-flag</code> set or optional prefix ARG, prompt
+for and choose a typed referent; otherwise, create and/or display a
+HyWiki page.  The following table details the potentially prompted for
+referent types, as given by <code class="code">hywiki-referent-menu</code>, with the
+&ldquo;HyWiki Add&gt;&rdquo; prompt (Activity appears only if the <code class="code">activities</code>
+package is loaded):
 </p>
+<div class="example">
+<div class="group"><pre class="example-preformatted">Menu Item       Command                  Description
+===================================================================
+Activity        hywiki-add-activity      Activate a saved Activity
+Bookmark        hywiki-add-bookmark      Jump to an Emacs bookmark
+Command         hywiki-add-command       Run a Hypb action or cmd
+Find            hywiki-add-find          Grep through hywiki dir
+Gbut            hywiki-add-global-button Activate a global button
+HyRolo          hywiki-add-hyrolo        Search <code class="code">hyrolo-file-list</code>
+InfoIndex       hywiki-add-info-index    Display an Info index item
+Keys            hywiki-add-key-series    Execute a series of keys
+pathLink        hywiki-add-path-link     Display a path and opt pos
+infoNode        hywiki-add-info-node     Display an Info doc node
+OrgID           hywiki-add-org-id        Display a sect for Org ID
+Page            hywiki-add-page          Display a HyWiki page#sect
+orgRoamNode     hywiki-add-org-roam-node Display an Org Roam node
+Sexp            hywiki-add-sexpression   Evaluate an Elisp sexp
+===================================================================
+</pre></div></div>
+
 </dd>
 <dt><a class="index-entry-id" id="index-action_002dkey_002dmodeline_002dbuffer_002did_002dfunction"></a>
 <a class="index-entry-id" id="index-dired-1"></a>
@@ -5346,8 +5404,6 @@ those with major modes in <code class="code">hywiki-exclude-major-modes</code>. 
 
 </dd>
 <dt><a class="index-entry-id" id="index-HyWiki_002c-C_002dh-h-h-o"></a>
-<a class="index-entry-id" id="index-C_002dh-h-h-c-1"></a>
-<a class="index-entry-id" id="index-HyWiki_002c-C_002dh-h-h-c"></a>
 <a class="index-entry-id" id="index-menu-item_002c-HyWiki_002fOrg_002dM_002dRET"></a>
 <a class="index-entry-id" id="index-menu-item_002c-HyWiki_002fOrg_002dM_002dRET_002fHyperbole_002dButtons_002dOnly"></a>
 <a class="index-entry-id" id="index-customize-Org-M_002dRET-1"></a>
@@ -7450,7 +7506,8 @@ for searching and maintaining a personal address book.  It looks like
 so.
 </p>
 <div class="example smallexample">
-<pre class="example-preformatted">Rolo&gt;  Add  ConsultFind  Display  Edit  FileFind  Info  Kill  Mail  Order  RegexFind  StringFind  TagFind  WordFind  Yank
+<pre class="example-preformatted">Rolo&gt;  Add  ConsultFind  Display  Edit  FileFind  Info  Kill  Mail  Order
+       RegexFind  StringFind  TagFind  WordFind  Yank
 </pre></div>
 
 <a class="index-entry-id" id="index-Rolo-menu"></a>
@@ -7492,7 +7549,7 @@ pattern narrowing):
 <div class="group"><pre class="example-preformatted">Menu Item       Command                 Description
 =====================================================================
 Add             hyrolo-add              Add a hyrolo entry
-ConsultFind     hyrolo-consult-grep     Interactively narrow grep matches
+ConsultFind     hyrolo-consult-grep     Interactive grep matches
 Display         hyrolo-display-matches  Display last matches again
 Edit            hyrolo-edit             Edit an existing hyrolo entry
 FileFind        hyrolo-find-file        Edit a <code class="code">hyrolo-file-list</code> file
@@ -7505,7 +7562,7 @@ RegexFind       hyrolo-grep             Find all entries containing
 StringFind      hyrolo-fgrep            Find all entries containing
                                           a string (or logical
                                           expression)
-TagFind         hyrolo-tags-view        Find HyWiki Org tags
+TagFind         hyrolo-tags-view        Find hyrolo Org tags
 WordFind        hyrolo-word             Find all entries containing
                                           a string of whole words
 Yank            hyrolo-yank             Insert the first matching
@@ -7513,8 +7570,8 @@ Yank            hyrolo-yank             Insert the first matching
 =====================================================================
 </pre></div></div>
 
-<p>The &rsquo;File&rsquo; menu item displays and edits the first file listed in
-<code class="code">hyrolo-file-list</code> unless given a prefix argument, in which case
+<p>The &rsquo;FileFind&rsquo; menu item displays and edits the first file listed in
+<code class="code">hyrolo-file-list</code>, unless given a prefix argument, in which case
 it prompts with completion for the file to edit.
 </p>
 <p>A prefix argument used with any of the above menu items that have &rsquo;Find&rsquo;
@@ -7834,19 +7891,23 @@ Previous: <a href="#HyRolo-Keys" accesskey="p" rel="prev">HyRolo Keys</a>, Up: <
 </div>
 <h3 class="section" id="HyRolo-Settings-1"><span>10.5 HyRolo Settings<a class="copiable-link" href="#HyRolo-Settings-1"> &para;</a></span></h3>
 
+<a class="index-entry-id" id="index-hyrolo_002ddefault_002dfile"></a>
 <a class="index-entry-id" id="index-hyrolo_002dfile_002dlist-1"></a>
 <a class="index-entry-id" id="index-rolo_002c-personal"></a>
 <p>The files used in any rolo search are given by the
-<code class="code">hyrolo-file-list</code> variable, whose default value is typically
-<code class="code">&quot;~/.rolo.otl&quot;</code>, in which case, searches scan only your personal
-rolo file.  But you can customize this to include files with variables
-in them, wildcard patterns and directories, as explained below.  Any
+<code class="code">hyrolo-file-list</code> variable, whose default first value is
+specified by the variable, <code class="code">hyrolo-default-file</code>.  Its standard
+value is <code class="code">&quot;~/.rolo.org&quot;</code>, unless the older <code class="code">~/.rolo.otl</code>
+exists when Hyperbole is loaded, in which case it is used.  You can
+customize <code class="code">hyrolo-file-list</code> to include files with variables in
+them, wildcard patterns and directories, as explained below.  Any
 paths added to this list should be absolute.
 </p>
 <p>If you include file wildcards in paths for this variable and
-<code class="code">find-file-wildcards</code> is non-nil (the default), then any files
-matching the pattern (which can include [char-matches] or * wildcards
-and regular text) when the variable is set will be included in HyRolo
+<code class="code">find-file-wildcards</code> is non-nil (the default), then any existing
+files matching the pattern (which can include square bracketed
+[character matches], optional characters followed by ?, or *
+wildcards) when the variable is set will be included in future HyRolo
 searches.  For more on wildcards, see <a data-manual="emacs" href="https://www.gnu.org/software/emacs/manual/html_mono/emacs.html#Wildcards">Wildcards</a> in <cite class="cite">the GNU
 Emacs Manual</cite>.
 </p>
@@ -7858,9 +7919,9 @@ that matches.
 </p>
 <p>If you include an existing directory (invalid ones are ignored) in
 your <code class="code">hyrolo-file-list</code>, HyRolo will expand it recursively across
-all of its files that match <code class="code">hyrolo-file-suffix-regexp</code>.  By
-default, this is Org files (.org), Emacs outlines (.otl), Koutlines
-(.kotl), or Markdown files (.md).  See <samp class="file">hpath.el#hpath:expand-list</samp>.
+all of its files that match <code class="code">hyrolo-file-suffix-regexp</code>.  This
+matches to Org files (.org), Emacs outlines (.otl), Koutlines (.kotl),
+and Markdown files (.md).  See <samp class="file">hpath.el#hpath:expand-list</samp>.
 </p>
 <p>Once expanded, if a file in the list does not exist or is not
 readable, it is dropped.  Paths are searched in the order in which
@@ -7886,12 +7947,12 @@ following to your Emacs initialization file:
 <a class="index-entry-id" id="index-BBDB"></a>
 <a class="index-entry-id" id="index-Big-Brother-DataBase"></a>
 <p>If you use the Big Brother DataBase (BBDB) Emacs package to capture
-email addresses and store contact information, the rolo automatically
+email addresses and store contact information, HyRolo automatically
 works with it.  If the BBDB package is loaded before HyRolo, then your
 <code class="code">bbdb-file</code> of contacts is added as the second entry in
-<code class="code">hyrolo-file-list</code> and will be searched automatically for any matches by
-the rolo find commands.  Presently there is no support for editing
-BBDB entries, just finding them.
+<code class="code">hyrolo-file-list</code> and will be searched automatically for any
+matches by the rolo find commands.  Presently there is no support for
+editing BBDB entries, just finding them.
 </p>
 <p>For finding matches within only BBDB, there are the commands
 <code class="code">hyrolo-bbdb-fgrep</code> (string finding) and <code class="code">hyrolo-bbdb-grep</code>
@@ -7900,15 +7961,15 @@ BBDB entries, just finding them.
 <a class="index-entry-id" id="index-contacts_002c-Google"></a>
 <a class="index-entry-id" id="index-Google-Contacts"></a>
 <a class="index-entry-id" id="index-Gmail-Contacts"></a>
-<p>If you use Google/Gmail Contacts, you can configure the HyRolo to
-query your Google Contacts for matches.  First you must download and
-install the external <samp class="file">google-contacts</samp> package using the Emacs
-Package Manager.  Then you must install the non-Emacs GNU Privacy
-Guard (GPG) package from <a class="uref" href="https://gnupg.org">https://gnupg.org</a> so that
-the <samp class="file">gpg</samp> or <samp class="file">gpg2</samp> executable is in your command-line
-search path.  Once these are in place, either restart Emacs or
-use <kbd class="kbd">{M-x hyrolo-initialize-file-list <kbd class="key">RET</kbd>}</kbd> to add Google
-Contacts to your searches.
+<p>If you use Google/Gmail Contacts, you can configure HyRolo to query
+your Google Contacts for matches.  First you must download and install
+the external <samp class="file">google-contacts</samp> package using the Emacs Package
+Manager.  Then you must install the non-Emacs GNU Privacy Guard (GPG)
+package from <a class="uref" href="https://gnupg.org">https://gnupg.org</a> so that the <samp class="file">gpg</samp> or
+<samp class="file">gpg2</samp> executable is in your command-line search path.  Once
+these are in place, either restart Emacs or use <kbd class="kbd">{M-x
+hyrolo-initialize-file-list <kbd class="key">RET</kbd>}</kbd> to add Google Contacts to your
+searches.
 </p>
 <p>When you next do a search, you will be prompted for your Google
 Contacts password and may also have to enter an authorization code
@@ -9974,6 +10035,7 @@ Internal Image Display        hpath:native-image-suffixes
 Internal Custom Display       hpath:internal-display-alist
 External Display              hpath:external-display-alist
 Internal Standard Display     hpath:display-where
+=====================================================================
 </pre></div>
 
 <p>Continue reading the next sections for information on how referents
@@ -10560,7 +10622,7 @@ region only when it is active/highlighted.  When there is no active region,
 <li> in a Koutline klink, copies the klink;
 </li><li> in a Koutline cell, outside any klink, copies a klink reference to the current cell;
 </li><li> on a Hyperbole button, copies the text of the button excluding delimiters;
-</li><li> at the start of a paired delimiter, copy the text including the delimiters.
+</li><li> on a thing (not at whitespace), copy the text of the thing including any delimiters.
 </li></ol>
 
 </dd>
@@ -10612,7 +10674,7 @@ Previous: <a href="#Default-Hyperbole-Bindings" accesskey="p" rel="prev">Default
 </div>
 <h3 class="section" id="Testing-1"><span>C.3 Testing<a class="copiable-link" href="#Testing-1"> &para;</a></span></h3>
 
-<p>Hyperbole includes over 200 automated test cases in the <samp class="file">test/</samp>
+<p>Hyperbole includes over 660 automated test cases in the <samp class="file">test/</samp>
 subdirectory.  You can run all of them by moving to the Hyperbole home
 directory in a Posix shell and run <code class="code">make test-all</code> or <code class="code">make
 test</code> to run just non-interactive tests.  If any tests fail, you can
@@ -11000,9 +11062,10 @@ With optional COPY-P equal to t, copy region to kill ring but don&rsquo;t
 kill it.  With COPY-P any other non-nil value, return region as a
 string without affecting the kill ring.
 </p>
-<p>If called interactively and there is no active region, copy any
-delimited selectable thing at point; see the documentation for
-<code class="code">hui:delimited-selectable-thing</code>.
+<p>If called interactively, <code class="code">transient-mark-mode</code> is non-nil,
+there is no active region, and point is not on a whitespace character,
+then kill/copy the selectable thing at point including any delimiters;
+see <code class="code">hui:selectable-thing-and-bounds</code>.
 </p>
 <p>If the buffer is read-only and COPY-P is nil, the region will not be
 deleted but it will be copied to the kill ring and then an error will be
@@ -14131,7 +14194,6 @@ Next: <a href="#Function-Index" accesskey="n" rel="next">Function, Variable and 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-g-l"><code>C-h h g l</code></a></td><td class="printindex-index-section"><a href="#Global-Buttons">Global Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-h-a"><code>C-h h h a</code></a></td><td class="printindex-index-section"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-h-c"><code>C-h h h c</code></a></td><td class="printindex-index-section"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-h-c-1"><code>C-h h h c</code></a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-h-m"><code>C-h h h m</code></a></td><td class="printindex-index-section"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-h-o"><code>C-h h h o</code></a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-h-o-a"><code>C-h h h o a</code></a></td><td class="printindex-index-section"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
@@ -14205,7 +14267,6 @@ Next: <a href="#Function-Index" accesskey="n" rel="next">Function, Variable and 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyControl_002c-see-screen"><code>HyControl, see screen</code></a></td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyControl_002c-see-screen-1"><code>HyControl, see screen</code></a></td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyRolo_002c-see-rolo"><code>HyRolo, see rolo</code></a></td><td class="printindex-index-section"><a href="#HyRolo-Keys">HyRolo Keys</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki_002c-C_002dh-h-h-c"><code>HyWiki, C-h h h c</code></a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki_002c-C_002dh-h-h-o"><code>HyWiki, C-h h h o</code></a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td colspan="3"><hr></td></tr>
 <tr><th id="Key-Index_ky_letter-I">I</th></tr>
@@ -14874,6 +14935,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hyrolo_002dconsult_002dgrep"><code>hyrolo-consult-grep</code></a></td><td class="printindex-index-section"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hyrolo_002ddate_002dformat">hyrolo-date-format</a></td><td class="printindex-index-section"><a href="#HyRolo-Concepts">HyRolo Concepts</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hyrolo_002ddate_002dformat-1">hyrolo-date-format</a></td><td class="printindex-index-section"><a href="#HyRolo-Keys">HyRolo Keys</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-hyrolo_002ddefault_002dfile">hyrolo-default-file</a></td><td class="printindex-index-section"><a href="#HyRolo-Settings">HyRolo Settings</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hyrolo_002ddisplay_002dformat_002dfunction">hyrolo-display-format-function</a></td><td class="printindex-index-section"><a href="#HyRolo-Settings">HyRolo Settings</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hyrolo_002ddisplay_002dhook">hyrolo-display-hook</a></td><td class="printindex-index-section"><a href="#Hook-Variables">Hook Variables</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hyrolo_002ddisplay_002dmatches"><code>hyrolo-display-matches</code></a></td><td class="printindex-index-section"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
@@ -14913,6 +14975,20 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hywconfig_002dyank_002dpop"><code>hywconfig-yank-pop</code></a></td><td class="printindex-index-section"><a href="#Window-Configurations">Window Configurations</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hywconfig_002dyank_002dpop-1"><code>hywconfig-yank-pop</code></a></td><td class="printindex-index-section"><a href="#Window-Configurations">Window Configurations</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki_002dactive_002din_002dcurrent_002dbuffer_002dp"><code>hywiki-active-in-current-buffer-p</code></a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki_002dadd_002dactivity"><code>hywiki-add-activity</code></a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki_002dadd_002dbookmark"><code>hywiki-add-bookmark</code></a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki_002dadd_002dcommand"><code>hywiki-add-command</code></a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki_002dadd_002dfind"><code>hywiki-add-find</code></a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki_002dadd_002dglobal_002dbutton"><code>hywiki-add-global-button</code></a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki_002dadd_002dhyrolo"><code>hywiki-add-hyrolo</code></a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki_002dadd_002dinfo_002dindex"><code>hywiki-add-info-index</code></a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki_002dadd_002dinfo_002dnode"><code>hywiki-add-info-node</code></a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki_002dadd_002dkey_002dseries"><code>hywiki-add-key-series</code></a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki_002dadd_002dorg_002did"><code>hywiki-add-org-id</code></a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki_002dadd_002dorg_002droam_002dnode"><code>hywiki-add-org-roam-node</code></a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki_002dadd_002dpage"><code>hywiki-add-page</code></a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki_002dadd_002dpath_002dlink"><code>hywiki-add-path-link</code></a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki_002dadd_002dsexpression"><code>hywiki-add-sexpression</code></a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki_002dconsult_002dbacklink"><code>hywiki-consult-backlink</code></a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki_002dconsult_002dgrep"><code>hywiki-consult-grep</code></a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki_002ddirectory">hywiki-directory</a></td><td class="printindex-index-section"><a href="#HyWiki">HyWiki</a></td></tr>
@@ -14929,6 +15005,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki_002dorg_002dpublishing_002ddirectory">hywiki-org-publishing-directory</a></td><td class="printindex-index-section"><a href="#Publish-HyWiki">Publish HyWiki</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki_002dorg_002dpublishing_002dfunction">hywiki-org-publishing-function</a></td><td class="printindex-index-section"><a href="#Publish-HyWiki">Publish HyWiki</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki_002dpublish_002dto_002dhtml"><code>hywiki-publish-to-html</code></a></td><td class="printindex-index-section"><a href="#Publish-HyWiki">Publish HyWiki</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-hywiki_002dreferent_002dmenu">hywiki-referent-menu</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td colspan="3"><hr></td></tr>
 <tr><th id="Function-Index_fn_letter-I">I</th></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-ibtype_003acreate"><code>ibtype:create</code></a></td><td class="printindex-index-section"><a href="#Programmatic-Implicit-Button-Types">Programmatic Implicit Button Types</a></td></tr>
@@ -15857,7 +15934,6 @@ Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki">HyWiki</a></td><td class="printindex-index-section"><a href="#HyWiki">HyWiki</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-Action-Key">HyWiki Action Key</a></td><td class="printindex-index-section"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-activate-link">HyWiki activate link</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-create-a-page">HyWiki create a page</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-dired">HyWiki dired</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-documentation">HyWiki documentation</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-edit-pages">HyWiki edit pages</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
@@ -15876,6 +15952,20 @@ Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-publish-to-web">HyWiki publish to web</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-publishing-directory">HyWiki publishing directory</a></td><td class="printindex-index-section"><a href="#Publish-HyWiki">Publish HyWiki</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-publishing-function">HyWiki publishing function</a></td><td class="printindex-index-section"><a href="#Publish-HyWiki">Publish HyWiki</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-referent-type_002c-Activity">HyWiki referent type, Activity</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-referent-type_002c-Bookmark">HyWiki referent type, Bookmark</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-referent-type_002c-Command">HyWiki referent type, Command</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-referent-type_002c-Find">HyWiki referent type, Find</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-referent-type_002c-Gbut">HyWiki referent type, Gbut</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-referent-type_002c-HyRolo">HyWiki referent type, HyRolo</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-referent-type_002c-InfoIndex">HyWiki referent type, InfoIndex</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-referent-type_002c-infoNode">HyWiki referent type, infoNode</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-referent-type_002c-Keys">HyWiki referent type, Keys</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-referent-type_002c-OrgID">HyWiki referent type, OrgID</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-referent-type_002c-orgRoamNode">HyWiki referent type, orgRoamNode</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-referent-type_002c-Page">HyWiki referent type, Page</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-referent-type_002c-pathLink">HyWiki referent type, pathLink</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-referent-type_002c-Sexp">HyWiki referent type, Sexp</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-search-for-Org-tags">HyWiki search for Org tags</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-section-link">HyWiki section link</a></td><td class="printindex-index-section"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-treemacs">HyWiki treemacs</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
@@ -15887,9 +15977,11 @@ Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWikiWord-attribute-help">HyWikiWord attribute help</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWikiWord-contexts">HyWikiWord contexts</a></td><td class="printindex-index-section"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWikiWord-create">HyWikiWord create</a></td><td class="printindex-index-section"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-HyWikiWord-creation">HyWikiWord creation</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWikiWord-highlighting">HyWikiWord highlighting</a></td><td class="printindex-index-section"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWikiWord-interactive-backlink-grep">HyWikiWord interactive backlink grep</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWikiWord-link">HyWikiWord link</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-HyWikiWord-types">HyWikiWord types</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWikiWord_002c-outside-the-wiki">HyWikiWord, outside the wiki</a></td><td class="printindex-index-section"><a href="#HyWikiWords">HyWikiWords</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWikiWords-outside-hywiki_002ddirectory">HyWikiWords outside hywiki-directory</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td colspan="3"><hr></td></tr>

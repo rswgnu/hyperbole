@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:      9-Jun-26 at 16:26:28 by Mats Lidell
+;; Last-Mod:     25-Jun-26 at 13:00:41 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1149,10 +1149,15 @@ Note special meaning of `hywiki-allow-plurals-flag'."
   "Verify `hywiki-add-command'."
   (hywiki-tests--preserve-hywiki-mode
     (let ((wikiword "WikiWord"))
-      (hy-test-helpers:ert-simulate-keys "hpath:find\r"
+      (hy-test-helpers:ert-simulate-keys "hpath:find\r/tmp/a.txt\r"
 	(hywiki-add-command wikiword)
-	(should (equal '(command . hpath:find)
-		       (hywiki-get-referent wikiword)))))))
+        (let* ((referent (hywiki-get-referent wikiword))
+               (action (cdr referent))
+               (cmd (if (consp action)
+                        (car action)
+                      action)))
+          (should (equal (car referent) 'command))
+          (should (equal cmd 'hpath:find)))))))
 
 (ert-deftest hywiki-tests--add-find ()
   "Verify `hywiki-add-find'."
@@ -1329,7 +1334,7 @@ Note special meaning of `hywiki-allow-plurals-flag'."
 ;; Command
 (defun hywiki-tests--command (wikiword)
   "Verify WIKIWORD is WikiReferent."
-  (interactive)
+  (interactive (list "WikiReferent"))
   (should (string= "WikiReferent" wikiword)))
 
 (ert-deftest hywiki-tests--save-referent-command ()

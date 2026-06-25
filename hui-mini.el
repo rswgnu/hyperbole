@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     22-Mar-26 at 23:15:20 by Bob Weiner
+;; Last-Mod:     25-Jun-26 at 09:52:07 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1064,7 +1064,10 @@ support underlined faces as well."
 	   '("BacklinkConsult" hywiki-consult-backlink
 	     "Use Consult to select a backlink (reference) to a prompted for HyWikiWord."))
 	 '("Create"         hywiki-word-create-and-display
-	    "Create and display a new or existing HyWikiWord referent, prompting with any existing referent names.")
+	    "Create and display a new or existing HyWikiWord referent, prompting with any existing referent names.
+With either `hywiki-referent-prompt-flag' set or optional prefix ARG,
+prompt for and choose a typed referent, otherwise, create and/or display
+a HyWiki page.  See `hywiki-referent-menu' for valid referent types.")
 	 '("DiredHyWiki"    hywiki-directory-edit
 	   "Display and edit HyWiki directory.")
 	 '("EditPage"       hywiki-find-page

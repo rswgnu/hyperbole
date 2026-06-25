@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     18-Jun-26 at 09:15:55 by Bob Weiner
+;; Last-Mod:     25-Jun-26 at 13:00:30 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -327,7 +327,7 @@ included in the list, `hywiki-include-special-modes'."
 
 (defcustom hywiki-include-special-modes
   '(elfeed-search-mode elfeed-show-mode eww-mode kotl-mode)
-  "List of `special' major modes to include in HyWikiWord highlighting and recognition.
+  "List of `special' major modes with HyWikiWord highlighting and recognition.
 By default, all special modes, like Dired, are excluded.  A major mode
 included here will override its inclusion in `hywiki-exclude-major-modes'."
   :type '(list symbol)
@@ -1089,7 +1089,7 @@ After successfully finding a referent, run `hywiki-display-referent-hook'."
   (delq nil
 	(list
 	 '("HyWiki Add>")
-	 (when (fboundp #'activities-new)
+         (when (fboundp #'activities-new)
 	   '("Activity"   (hywiki-add-activity hkey-value)
 	     "Add a HyWikiWord that activates a saved activity from the Activities package."))
 	 '("Bookmark"     (hywiki-add-bookmark hkey-value)
@@ -1127,7 +1127,8 @@ After successfully finding a referent, run `hywiki-display-referent-hook'."
 	 '("orgRoamNode"  (hywiki-add-org-roam-node hkey-value)
 	   "Add a HyWikiWord that displays an Org Roam node given its title.")
 	 '("Sexp"         (hywiki-add-sexpression hkey-value)
-	   "Add a HyWikiWord that evaluates an Elisp sexpression.")))
+	   "Add a HyWikiWord that evaluates an Elisp sexpression.")
+	 ))
   "Menu of HyWikiWord custom referent types of the form:
 \(LABEL-STRING ACTION-SEXP DOC-STR)."
   :set  (lambda (var value) (set-default var value))
@@ -1158,8 +1159,8 @@ an error is triggered."
 
 (defun hywiki-create-referent (wikiword &optional message-flag)
   "Prompt for, add to HyWiki lookups and return a WIKIWORD custom referent.
-With optional prefix arg MESSAGE-FLAG non-nil, display a minibuffer message
-with the referent."
+With optional prefix arg MESSAGE-FLAG non-nil or when called interactively,
+display a minibuffer message with the referent."
   (interactive (list nil current-prefix-arg))
   (unless (stringp wikiword)
     (setq wikiword (hywiki-word-read-new "Create/Edit HyWikiWord: ")))
@@ -1201,7 +1202,7 @@ use `hywiki-active-in-current-buffer-p' for that."
                 (not (apply #'derived-mode-p hywiki-exclude-major-modes))))))
 
 (defun hywiki-add-activity (wikiword)
-  "Make WIKIWORD resume a prompted for activity.
+  "Make WIKIWORD resume a prompted for, existing activity.
 
 If WIKIWORD is invalid, trigger a `user-error' if called interactively
 or return nil if not.
@@ -1249,10 +1250,10 @@ calling this function."
     (bookmark-jump bookmark)))
 
 (defun hywiki-add-command (wikiword)
-  "Set a custom command symbol for WIKIWORD and return it.
-Command is the symbol used in the definition expression, which
-may be an Emacs command or a Hyperbole action type.  When invoked,
-it receives the single argument of WIKIWORD.
+  "Make WIKIWORD invoke a prompted for command with arguments and return it.
+Interactively, use any existing HyWikiWord at point or read an existing or
+valid new one.  Command is the symbol used in the definition expression,
+which may be an Emacs command or a Hyperbole action type.
 
 If WIKIWORD is invalid, trigger a `user-error' if called interactively
 or return nil if not.
@@ -1263,13 +1264,25 @@ Use `hywiki-get-referent' to determine whether WIKIWORD exists prior to
 calling this function."
   (interactive (list (or (hywiki-word-at)
 			 (hywiki-word-read-new "Add/Edit HyWikiWord: "))))
-  (let ((command (hui:actype nil (format "Command for %s: " wikiword))))
-    (hywiki-add-referent wikiword (cons 'command command))))
+  (when (string-empty-p wikiword)
+    (error "(hywiki-add-command): No HyWikiWord specified"))
+
+  (let* ((command (hui:actype nil (format "Command for %s: " wikiword)))
+	 (args (hargs:actype-get command)))
+    (hywiki-add-referent wikiword
+                         (if (equal args (list wikiword))
+                             (cons 'command command)
+                           (cons 'command (cons command args))))))
 
 (defun hywiki-display-command (wikiword command)
-  (if (fboundp command)
-      (actype:act command wikiword)
-    (error "(hywiki-display-command): Unbound referent command, '%s'" command)))
+  (cond ((consp command)
+         ;; arbitrary list of arguments
+         (apply 'actype:act command))
+        ((symbolp command)
+         ;; single arg of wikiword is sent to command
+         (actype:act command wikiword))
+        (t (error "(hywiki-display-command): Unbound referent command, '%s'"
+                  command))))
 
 (defun hywiki-add-find (wikiword)
   "Make WIKIWORD grep across `hywiki-directory' for matches to itself.
@@ -1523,13 +1536,14 @@ Use `hywiki-get-referent' to determine whether a HyWiki page exists."
       (user-error "(hywiki-add-page): Invalid HyWikiWord: '%s'; must be capitalized, all alpha" page-name))))
 
 ;;;###autoload
-(defun hywiki-word-create (wikiword &optional arg)
+(defun hywiki-word-create (wikiword &optional ref-type-flag)
   "Create a HyWiki referent for WIKIWORD and return it; don't display it.
 This replaces any existing referent the WIKIWORD may have.
 
-With either `hywiki-referent-prompt-flag' set or optional prefix ARG,
-prompt for and choose a typed referent, otherwise, create and/or display
-a HyWiki page.  See `hywiki-referent-menu' for valid referent types.
+With either `hywiki-referent-prompt-flag' set or optional prefix
+REF-TYPE-FLAG, prompt for and choose a typed referent, otherwise, create
+and/or display a HyWiki page.  See `hywiki-referent-menu' for valid referent
+types.
 
 Use `hywiki-get-referent' to test for and retrieve an existing HyWikiWord
 referent."
@@ -1542,7 +1556,7 @@ referent."
 				      "referent"
 				    "page"))))
 		     current-prefix-arg))
-  (if (or arg hywiki-referent-prompt-flag)
+  (if (or ref-type-flag hywiki-referent-prompt-flag)
       (hywiki-create-referent wikiword t)
     (hywiki-create-page wikiword t)))
 

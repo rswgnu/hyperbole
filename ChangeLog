@@ -1,7 +1,22 @@
-2026-06-20  Mats Lidell  <matsl@gnu.org>
+2026-06-25  Bob Weiner  <rsw@gnu.org>
 
-* test/hibtypes-tests.el: Add !!FIXME comments to highlight the ibtypes
-    where tests should be added.
+* test/hywiki-tests.el (hywiki-tests--command): Fix interactive call
+    which was missing wikiword argument.
+
+* hywiki.el (hywiki-add-command, hywiki-display-command): Generalize
+    to handle the arguments of any Emacs command or Hyperbole actype.
+    Now a referent can be any type of Hyperbole button action.
+  test/hywiki-tests.el (hywiki-tests--add-command): Update to handle
+    above changes.
+
+* hywiki.el (hywiki-referent-menu): Extend 'Create' doc string to explain
+    how to get a prompt for a referent type rather than just linking
+    to a HyWiki page.
+  man/hyperbole.texi (HyWiki Menu): Extend 'Create' doc and document all
+    potentially prompted for HyWikiWord referent types.
+
+* hmouse-drv.el (hkey-help): When on a HyWikiWord, include attributes
+    'referent-type' and 'referent-value' in help display.
 
 2026-06-24  Bob Weiner  <rsw@gnu.org>
 
@@ -16,6 +31,9 @@
     by using 'seq-union'.
 
 2026-06-20  Mats Lidell  <matsl@gnu.org>
+
+* test/hibtypes-tests.el: Add !!FIXME comments to highlight the ibtypes
+    where tests should be added.
 
 * test/hibtypes-tests.el (ibtypes::ilink-ibut-in-other-file)
     (ibtypes::ilink-error-case-missing-button)
@@ -10482,7 +10500,7 @@ name with 'name' and 'name-key'.
     with 'hpath:symlink-referent'.
                (smart-symlink-expand): Remove this function.
 
-* hbut.el (ibut:to-text): Fix so does not move point if lbl-key end up nil.
+* hbut.el (ibut:to-text): Fix so does not move point if lbl-key ends up nil.
 
 2023-01-28  Bob Weiner  <rsw@gnu.org>
 

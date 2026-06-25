@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     19-Jun-26 at 00:26:54 by Bob Weiner
+;; Last-Mod:     25-Jun-26 at 09:58:50 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1655,7 +1655,7 @@ Trigger an error if DEFAULT-ACTYPE is invalid."
     (with-current-buffer but-buf
       (when buffer-read-only
 	(setq err
-	      (format "(%s) Read-only error in Hyperbole button buffer '%s'.  Use {%s} to enable edits."
+	      (format "(%s) Read-only error in buffer '%s'.  Use {%s} to enable edits."
 		      func-name (buffer-name but-buf) (hmouse-read-only-toggle-key)))))
     (when err
       (pop-to-buffer but-buf)
