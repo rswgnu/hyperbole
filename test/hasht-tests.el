@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    22-Jun-26 at 23:25:12
-;; Last-Mod:     25-Jun-26 at 18:25:47 by Bob Weiner
+;; Last-Mod:     25-Jun-26 at 18:36:43 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -161,13 +161,6 @@
   "Verify `hash-size'."
   (should (<= 1 (hash-size (hash-make 1))))
   (should (<= 10 (hash-size (hash-make 10)))))
-
-(ert-deftest hasht-tests--set-of-strings ()
-  "Verify `hash-set-of-strings'."
-  (should (equal '("a" "b") (hash-set-of-strings '("a" "b"))))
-  (should (equal '(0 "a" "b") (hash-set-of-strings '("a" "b") t)))
-  (should (equal '("a" "b") (hash-set-of-strings '("a" "a" "b" "b"))))
-  (should (equal '(2 "a" "b") (hash-set-of-strings '("a" "a" "b" "b") t))))
 
 (provide 'hasht-tests)
 ;;; hasht-tests.el ends here

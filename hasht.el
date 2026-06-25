@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    16-Mar-90 at 03:38:48
-;; Last-Mod:     25-Jun-26 at 18:23:46 by Bob Weiner
+;; Last-Mod:     25-Jun-26 at 18:37:23 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -361,27 +361,6 @@ Return nil if not a valid hash table."
     (hash-table-size hash-table)))
 
 (defalias 'hash-length 'hash-size)
-
-;;; ************************************************************************
-;;; Private functions
-;;; ************************************************************************
-
-(defun hash-set-of-strings (sorted-strings &optional count)
-  "Return SORTED-STRINGS list with any duplicate entries removed.
-Optional COUNT conses number of duplicates on to front of list before return."
-  (and count (setq count 0))
-  (let ((elt1) (elt2) (lst sorted-strings)
-	(test (if count
-		  (lambda (a b)
-		    (when (string-equal a b)
-		      (setq count (1+ count))
-		      t))
-	        #'string-equal)))
-    (while (setq elt1 (car lst) elt2 (car (cdr lst)))
-      (if (funcall test elt1 elt2)
-	  (setcdr lst (cddr lst))
-	(setq lst (cdr lst)))))
-  (if count (cons count sorted-strings) sorted-strings))
 
 (provide 'hasht)
 ;;; hasht.el ends here

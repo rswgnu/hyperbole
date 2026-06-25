@@ -4,6 +4,8 @@
     for handling a mixed set of value types.  Also fix cases where value
     returned was not a list or duplicate values were returned.
   test/hasht-tests.el - Add rest of Mats tests.
+           (hash-set-of-strings): Remove together with test function for
+  it since it is no longer used.
 
 * hbut.el (ibut:get): Fix so tests if at ibut only if 'ibut:next-occurrence'
     succeeds.  This prevents matching to a different named ibut within the
