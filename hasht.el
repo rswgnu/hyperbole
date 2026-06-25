@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    16-Mar-90 at 03:38:48
-;; Last-Mod:     24-Jun-26 at 12:26:54 by Bob Weiner
+;; Last-Mod:     25-Jun-26 at 18:37:23 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -279,8 +279,7 @@ This is suitable for use as a value of `hash-merge-values-function'."
 
 (defun hash-merge-values (value1 value2)
   "Return a list from merging VALUE1 and VALUE2 or creating a new list.
-Nil values are thrown away.  If both arguments are lists, their elements are
-assumed to be strings and the result is a set of ordered strings.
+Nil values are thrown away.
 
 This is suitable for use as a value of `hash-merge-values-function'."
   ;; Copy lists so that merged result does not share structure with the
@@ -288,9 +287,9 @@ This is suitable for use as a value of `hash-merge-values-function'."
   (when (sequencep value1) (setq value1 (copy-sequence value1)))
   (when (sequencep value2) (setq value2 (copy-sequence value2)))
   (cond ((null value1)
-	 value2)
+	 (if (listp value2) value2 (list value2)))
 	((null value2)
-	 value1)
+	 (if (listp value1) value1 (list value1)))
         ((and (sequencep value1) (sequencep value2))
          (when (stringp value1) (setq value1 (list value1)))
          (when (stringp value2) (setq value2 (list value2)))
@@ -300,7 +299,9 @@ This is suitable for use as a value of `hash-merge-values-function'."
 	 (cons value2 value1))
 	((listp value2)
 	 (cons value1 value2))
-	(t (list value1 value2))))
+	(t (if (equal value1 value2)
+               (list value1)
+             (list value1 value2)))))
 
 (defun hash-prepend (value key hash-table)
   "Prepend VALUE onto the list value referenced by KEY, a string, in HASH-TABLE.
@@ -360,27 +361,6 @@ Return nil if not a valid hash table."
     (hash-table-size hash-table)))
 
 (defalias 'hash-length 'hash-size)
-
-;;; ************************************************************************
-;;; Private functions
-;;; ************************************************************************
-
-(defun hash-set-of-strings (sorted-strings &optional count)
-  "Return SORTED-STRINGS list with any duplicate entries removed.
-Optional COUNT conses number of duplicates on to front of list before return."
-  (and count (setq count 0))
-  (let ((elt1) (elt2) (lst sorted-strings)
-	(test (if count
-		  (lambda (a b)
-		    (when (string-equal a b)
-		      (setq count (1+ count))
-		      t))
-	        #'string-equal)))
-    (while (setq elt1 (car lst) elt2 (car (cdr lst)))
-      (if (funcall test elt1 elt2)
-	  (setcdr lst (cddr lst))
-	(setq lst (cdr lst)))))
-  (if count (cons count sorted-strings) sorted-strings))
 
 (provide 'hasht)
 ;;; hasht.el ends here

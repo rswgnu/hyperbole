@@ -1,5 +1,23 @@
 2026-06-25  Bob Weiner  <rsw@gnu.org>
 
+* hasht.el (hash-merge-values): Remove ordered result requirement to allow
+    for handling a mixed set of value types.  Also fix cases where value
+    returned was not a list or duplicate values were returned.
+  test/hasht-tests.el - Add rest of Mats tests.
+           (hash-set-of-strings): Remove together with test function for
+  it since it is no longer used.
+
+* hbut.el (ibut:get): Fix so tests if at ibut only if 'ibut:next-occurrence'
+    succeeds.  This prevents matching to a different named ibut within the
+    buffer.
+          (ibut:next-occurrence): Fix to not match to non-delimited matches
+    of 'name-key' as plain text, to help in solving the above problem.
+  test/hibtypes-tests.el (ibtypes::ilink-error-case-missing-button): Remove
+    and add not-failing test to 'ibtypes::ilink-ibut-in-other-file'.
+
+* hywiki.el (hywiki-add-command): Fix to compare command first arg
+    against wikiword with any #suffix stripped off.
+
 * test/hywiki-tests.el (hywiki-tests--command): Fix interactive call
     which was missing wikiword argument.
 
