@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     25-Jun-26 at 13:00:30 by Bob Weiner
+;; Last-Mod:     25-Jun-26 at 15:39:05 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1252,8 +1252,13 @@ calling this function."
 (defun hywiki-add-command (wikiword)
   "Make WIKIWORD invoke a prompted for command with arguments and return it.
 Interactively, use any existing HyWikiWord at point or read an existing or
-valid new one.  Command is the symbol used in the definition expression,
-which may be an Emacs command or a Hyperbole action type.
+valid new one.
+
+Command is the symbol used in the definition expression, which may be an
+Emacs command or a Hyperbole action type.  If it takes no more than one
+string argument and that argument is the empty string or matches WIKIWORD
+sans any #suffix, then WIKIWORD (including any suffix) is sent as the first
+argument.
 
 If WIKIWORD is invalid, trigger a `user-error' if called interactively
 or return nil if not.
@@ -1268,9 +1273,14 @@ calling this function."
     (error "(hywiki-add-command): No HyWikiWord specified"))
 
   (let* ((command (hui:actype nil (format "Command for %s: " wikiword)))
-	 (args (hargs:actype-get command)))
+	 (args (hargs:actype-get command))
+         (first-arg (car args)))
     (hywiki-add-referent wikiword
-                         (if (equal args (list wikiword))
+                         (if (and (= (length args) 1)
+                                  (stringp first-arg)
+                                  (or (string-empty-p first-arg)
+                                      (equal (hywiki-word-strip-suffix first-arg)
+                                             (hywiki-word-strip-suffix wikiword))))
                              (cons 'command command)
                            (cons 'command (cons command args))))))
 
@@ -3664,16 +3674,16 @@ hywikiword suffix); otherwise:
                                                (replace-regexp-in-string "'" "\\\\'" path)
                                                (or desc path))))))
 
-(defun hywiki-word-strip-suffix (page-name)
+(defun hywiki-word-strip-suffix (wikiword)
   "Return PAGE-NAME with any optional #section:Lnum:Cnum stripped off.
 If an empty string or not a string, return nil."
-  (when (and (stringp page-name) (not (string-empty-p page-name)))
-    (setq page-name (string-trim page-name "[# \t\n\r]+" "[# \t\n\r]+"))
-    (if (and (string-match hywiki-word-with-optional-suffix-exact-regexp page-name)
+  (when (and (stringp wikiword) (not (string-empty-p wikiword)))
+    (setq wikiword (string-trim wikiword "[# \t\n\r]+" "[# \t\n\r]+"))
+    (if (and (string-match hywiki-word-with-optional-suffix-exact-regexp wikiword)
 	     (or (match-beginning 2) (match-beginning 4)))
 	;; Remove any #section:Lnum:Cnum suffix in PAGE-NAME.
-	(match-string-no-properties 1 page-name)
-      page-name)))
+	(match-string-no-properties 1 wikiword)
+      wikiword)))
 
 (defun hywiki-publish-to-html (&optional all-pages-flag)
   "Publish/export updated HyWiki pages to html.

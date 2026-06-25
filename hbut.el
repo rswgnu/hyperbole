@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     24-Jun-26 at 19:47:03 by Bob Weiner
+;; Last-Mod:     25-Jun-26 at 17:06:59 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2266,8 +2266,8 @@ Return nil if no matching button is found."
       (setq lbl-key (ibut:label-p nil nil nil nil t)))
     (hbut:funcall (lambda (lbl-key _buffer _key-src)
 		    (goto-char (point-min))
-		    (ibut:next-occurrence lbl-key)
-		    (ibut:at-p))
+		    (when (ibut:next-occurrence lbl-key)
+		      (ibut:at-p)))
 		  lbl-key buffer key-src)))
 
 (defun    ibut:is-p (object)
@@ -2473,8 +2473,19 @@ move to the first occurrence of the button."
     (if (not (or (bufferp buffer) (and (stringp buffer) (get-buffer buffer))))
 	(error "(ibut:next-occurrence): Invalid buffer arg: %s" buffer)
       (switch-to-buffer buffer)))
-  (when (or (re-search-forward (ibut:name-regexp name-key) nil t)
-	    (re-search-forward (ibut:name-regexp name-key t) nil t))
+  (when (or
+         ;; Match to <[name-key]>
+         (re-search-forward (ibut:name-regexp name-key) nil t)
+         ;; Match to unnamed implicit button where the text is delimited in
+         ;; some way and starts with the label version of `name-key'
+	 (and (re-search-forward (ibut:name-regexp name-key t) nil t)
+              (save-match-data
+                (equal name-key
+                       (or (ibut:label-p nil "<" ">" nil t)
+                           (ibut:label-p nil "{" "}" nil t)
+                           (ibut:label-p nil "[" "]" nil t)
+                           (ibut:label-p nil "(" ")" nil t)
+                           (ibut:label-p nil "\"" "\"" nil t))))))
     (goto-char (+ (match-beginning 0) (length ibut:label-start)))))
 
 (defun    ibut:operate (&optional new-name edit-flag)

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:45:00
-;; Last-Mod:     24-Jun-26 at 20:26:23 by Mats Lidell
+;; Last-Mod:     25-Jun-26 at 17:50:27 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -428,53 +428,40 @@
     (unwind-protect
         (progn
           (find-file file)
-          (insert "<[Button]> <identity 1>")
 
+          (insert "<[Button]> <identity 1>\n")
           (save-excursion
             (with-temp-buffer
               (insert (format "<ilink: Button:\"%s\">\n" file))
               (goto-char 4)
               (should (= 1 (ibtypes::ilink)))))
 
-          (insert "<[ABC]> <identity 2>")
-
+          (insert "<[ABC]> <identity 2>\n")
           (save-excursion
             (with-temp-buffer
               (insert (format "<ilink: ABC:\"%s\">\n" file))
               (goto-char 4)
               (should (= 2 (ibtypes::ilink)))))
 
+          (insert "<[DEF]> <identity 3>\n")
           (save-excursion
             (with-temp-buffer
               (insert (format "<ilink: XYZ:\"%s\">\n" file))
               (goto-char 4)
               (let ((err (should-error (ibtypes::ilink))))
-              (should
-               (string-match-p (rx "No button " (any punct) "XYZ" (any punct) " in")
-                               (cadr err)))))))
+                (should
+                 (string-match-p (rx "No button " (any punct) "XYZ" (any punct) " in")
+                                 (cadr err))))))
 
-      (hy-delete-file-and-buffer file))))
-
-(ert-deftest ibtypes::ilink-error-case-missing-button ()
-  "Check `ibtypes::ilink' errors when named button does not exist in `other-buffer'."
-  :expected-result :failed
-  ;; FIXME: This is kept as a separate test case for showing the
-  ;; problem. When it is fixed the test can me merged with the working
-  ;; inlink test.
-  (let ((file (make-temp-file "ilink-test")))
-    (unwind-protect
-        (progn
-          (find-file file)
-          (insert "<[Button]> <identity 1234>\n")
-          (with-temp-buffer
-            (insert (format "<ilink: XYZ : \"%s\">\n" file))
-            (goto-char 4)
-            ;; FIXME: This is what happens
-            ;; (should (= 1234 (ibtypes::ilink))))))
-            (let ((err (should-error (ibtypes::ilink))))
-              (should
-               (string-match-p (rx "No button " (any punct) "XYZ" (any punct) " in")
-                               (cadr err))))))
+          (insert "<[GHI]> <identity 1234>\n")
+          (save-excursion
+            (with-temp-buffer
+              (insert (format "<ilink: XYZ : \"%s\">\n" file))
+              (goto-char 4)
+              (let ((err (should-error (ibtypes::ilink))))
+                (should
+                 (string-match-p (rx "No button " (any punct) "XYZ" (any punct) " in")
+                                 (cadr err)))))))
       (hy-delete-file-and-buffer file))))
 
 ;; ipython-stack-frame !!FIXME: Add tests.
