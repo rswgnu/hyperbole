@@ -32,6 +32,9 @@
 
 2026-06-20  Mats Lidell  <matsl@gnu.org>
 
+* test/hibtypes-tests.el: Add !!FIXME comments to highlight the ibtypes
+    where tests should be added.
+
 * test/hibtypes-tests.el (ibtypes::ilink-ibut-in-other-file)
     (ibtypes::ilink-error-case-missing-button)
     (ibtypes::elink-ebut-in-other-file): Add tests.
