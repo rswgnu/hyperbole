@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     25-Jun-26 at 15:39:05 by Bob Weiner
+;; Last-Mod:     26-Jun-26 at 11:46:24 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1088,7 +1088,7 @@ After successfully finding a referent, run `hywiki-display-referent-hook'."
 (defcustom hywiki-referent-menu
   (delq nil
 	(list
-	 '("HyWiki Add>")
+	 '("HyWiki RefType>")
          (when (fboundp #'activities-new)
 	   '("Activity"   (hywiki-add-activity hkey-value)
 	     "Add a HyWikiWord that activates a saved activity from the Activities package."))
@@ -1096,6 +1096,8 @@ After successfully finding a referent, run `hywiki-display-referent-hook'."
 	   "Add a HyWikiWord that jumps to an Emacs bookmark.")
 	 '("Command"      (hywiki-add-command hkey-value)
 	   "Add a HyWikiWord that runs an Emacs command or Hyperbole action type.")
+	 '("Elisp"        (hywiki-add-elisp hkey-value)
+	   "Add a HyWikiWord that evaluates an Elisp sexpression.")
 	 '("Find"         (hywiki-add-find hkey-value)
 	   "Add a HyWikiWord that greps through `hywiki-directory' for its matches.")
 	 ;; "<(global explicit button name)>"
@@ -1126,8 +1128,8 @@ After successfully finding a referent, run `hywiki-display-referent-hook'."
 	 ;; e.g. (kbd "key sequence")
 	 '("orgRoamNode"  (hywiki-add-org-roam-node hkey-value)
 	   "Add a HyWikiWord that displays an Org Roam node given its title.")
-	 '("Sexp"         (hywiki-add-sexpression hkey-value)
-	   "Add a HyWikiWord that evaluates an Elisp sexpression.")
+	 '("Spec"         (hywiki-add-spec hkey-value)
+	   "Highlight HyWikiWord; defer referent creation until activation.")
 	 ))
   "Menu of HyWikiWord custom referent types of the form:
 \(LABEL-STRING ACTION-SEXP DOC-STR)."
@@ -1293,6 +1295,24 @@ calling this function."
          (actype:act command wikiword))
         (t (error "(hywiki-display-command): Unbound referent command, '%s'"
                   command))))
+
+(defun hywiki-add-elisp (wikiword)
+  "Make WIKIWORD evaluate a prompted for Elisp sexpression and return it.
+
+If WIKIWORD is invalid, trigger a `user-error' if called interactively
+or return nil if not.
+
+After successfully adding the sexpression, run `hywiki-add-referent-hook'.
+
+Use `hywiki-get-referent' to determine whether WIKIWORD exists prior to
+calling this function."
+  (interactive (list (or (hywiki-word-at)
+			 (hywiki-word-read-new "Add/Edit HyWikiWord: "))))
+  (hywiki-add-referent wikiword (cons 'elisp
+				      (read--expression "Elisp Sexpr: "))))
+
+(defun hywiki-display-elisp (_wikiword elisp)
+  (eval elisp))
 
 (defun hywiki-add-find (wikiword)
   "Make WIKIWORD grep across `hywiki-directory' for matches to itself.
@@ -1476,21 +1496,6 @@ calling this function."
 		      (or (alist-get 'file org-link-frame-setup)
 			  (alist-get hpath:display-where hpath:display-where-alist))))
 
-(defun hywiki-create-page (wikiword &optional message-flag)
-  "Prompt for, add to HyWiki lookups and return a WIKIWORD page.
-With optional prefix arg MESSAGE-FLAG non-nil, display a minibuffer message
-with the page."
-  (interactive (list nil current-prefix-arg))
-  (unless (stringp wikiword)
-    (setq wikiword (hywiki-word-read-new "Create/Edit HyWikiWord: ")))
-  (setq hkey-value wikiword)
-  (let ((page-file (cdr (hywiki-add-page wikiword t))))
-    (if (or message-flag (called-interactively-p 'interactive))
-	(if page-file
-	    (message "HyWikiWord '%s' page: \"%s\"" wikiword page-file)
-          (user-error "(hywiki-create-page): Invalid HyWikiWord: '%s'; must be capitalized, all alpha" wikiword)))
-    page-file))
-
 (defun hywiki-add-page (page-name &optional force-flag)
   "Add a new or return any existing HyWiki page path for PAGE-NAME.
 Returned format is: \\='(page . \"<page-file-path>\") or nil when none.
@@ -1522,7 +1527,7 @@ Use `hywiki-get-referent' to determine whether a HyWiki page exists."
 	(let* ((page-file (hywiki-get-page-file page-name))
 	       (page-file-readable (file-readable-p page-file))
 	       (referent-hasht (hywiki-get-referent-hasht))
-	       (page-in-hasht (hywiki-get-referent page-name)))
+	       (page-in-hasht (hywiki-page-exists-p page-name)))
 	  (unless page-file-readable
 	    (if (file-writable-p page-file)
 		(write-region "" nil page-file nil 0)
@@ -1544,6 +1549,52 @@ Use `hywiki-get-referent' to determine whether a HyWiki page exists."
 	  (when page-file (cons 'page page-file))))
     (when (called-interactively-p 'interactive)
       (user-error "(hywiki-add-page): Invalid HyWikiWord: '%s'; must be capitalized, all alpha" page-name))))
+
+(defun hywiki-create-page (wikiword &optional message-flag)
+  "Prompt for, add to HyWiki lookups and return a WIKIWORD page.
+With optional prefix arg MESSAGE-FLAG non-nil, display a minibuffer message
+with the page."
+  (interactive (list nil current-prefix-arg))
+  (unless (stringp wikiword)
+    (setq wikiword (hywiki-word-read-new "Create/Edit HyWikiWord: ")))
+  (setq hkey-value wikiword)
+  (let ((page-file (cdr (hywiki-add-page wikiword t))))
+    (if (or message-flag (called-interactively-p 'interactive))
+	(if page-file
+	    (message "HyWikiWord '%s' page: \"%s\"" wikiword page-file)
+          (user-error "(hywiki-create-page): Invalid HyWikiWord: '%s'; must be capitalized, all alpha" wikiword)))
+    page-file))
+
+;;;###autoload
+(defun hywiki-add-spec (wikiword)
+  "Create a WIKIWORD spec whose action selects and displays its referent type.
+The specified WIKIWORD is highlighted.  This replaces any existing referent
+the WIKIWORD may have.  Use ‘hywiki-get-referent’ to determine any referent
+type associated with WIKIWORD prior to invoking this.
+
+This differs from `hywiki-word-create-and-display' in that selection and
+display of the WIKIWORD referent is deferred until the first Action Key
+activation of the WIKIWORD.
+
+When the WIKIWORD spec is activated, if either ‘hywiki-referent-prompt-flag’
+is set or there is a current prefix argument, prompt for and choose a typed
+referent; otherwise, create and/or display its HyWiki page.  See
+‘hywiki-referent-menu’ for valid referent types.  If prompted for the type,
+select Page for a standard HyWiki page.
+
+If WIKIWORD is invalid, trigger a `user-error' if called interactively
+or return nil if not.
+
+After successfully adding the spec, run `hywiki-add-referent-hook'."
+  (interactive (list (or (hywiki-word-at)
+			 (hywiki-word-read-new "Add HyWikiWord Spec: "))))
+  (when (or (not (stringp wikiword)) (string-empty-p wikiword))
+    (error "(hywiki-word-create-spec): No HyWikiWord specified"))
+  (setq hkey-value wikiword)
+  (hywiki-add-referent wikiword '(spec)))
+
+(defun hywiki-display-spec (wikiword)
+  (hywiki-create-referent-and-display wikiword current-prefix-arg))
 
 ;;;###autoload
 (defun hywiki-word-create (wikiword &optional ref-type-flag)
@@ -1719,22 +1770,9 @@ calling this function."
 (defun hywiki-display-path-link (_wikiword path)
   (funcall hywiki-display-page-function path))
 
-(defun hywiki-add-sexpression (wikiword)
-  "Make WIKIWORD evaluate a prompted for sexpression and return it.
-
-If WIKIWORD is invalid, trigger a `user-error' if called interactively
-or return nil if not.
-
-After successfully adding the sexpression, run `hywiki-add-referent-hook'.
-
-Use `hywiki-get-referent' to determine whether WIKIWORD exists prior to
-calling this function."
-  (interactive (list (or (hywiki-word-at)
-			 (hywiki-word-read-new "Add/Edit HyWikiWord: "))))
-  (hywiki-add-referent wikiword (cons 'sexpression
-				      (read--expression "Sexpression: "))))
-
+;; Leave for backward compatibility if any such WikiWords already exist.
 (defun hywiki-display-sexpression (_wikiword sexpression)
+  (make-obsolete 'hywiki-display-sexpression 'hywiki-display-elisp "9.0.2pre")
   (eval sexpression))
 
 ;; Presently used only in tests; maybe move it to the test/ dir
@@ -4421,16 +4459,17 @@ completion to work properly."
   (interactive)
   (dolist (buf buffers)
     (with-current-buffer buf
-      (hywiki-word-remove-completion-at-point)
-      (remove-hook 'pre-command-hook      'hywiki-word-store-around-point :local)
-      (remove-hook 'post-self-insert-hook 'hywiki-word-highlight-post-self-insert :local)
-      (remove-hook 'post-command-hook     'hywiki-word-highlight-post-command :local)
-      ;; Display buffer before `normal-mode' triggers possibly
-      ;; long-running font-locking
-      (sit-for 0)
-      ;; Force dehighlighting in buffer with this `let'
-      (setq hywiki-buffer-highlighted-state 'h)
-      (hywiki-maybe-dehighlight-references)))
+      (save-excursion
+        (hywiki-word-remove-completion-at-point)
+        (remove-hook 'pre-command-hook      'hywiki-word-store-around-point :local)
+        (remove-hook 'post-self-insert-hook 'hywiki-word-highlight-post-self-insert :local)
+        (remove-hook 'post-command-hook     'hywiki-word-highlight-post-command :local)
+        ;; Display buffer before `normal-mode' triggers possibly
+        ;; long-running font-locking
+        (sit-for 0)
+        ;; Force dehighlighting in buffer with this `let'
+        (setq hywiki-buffer-highlighted-state 'h)
+        (hywiki-maybe-dehighlight-references))))
   (hywiki-maybe-directory-updated))
 
 (defun hywiki-mode-disable ()

@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     25-Jun-26 at 13:36:38 by Bob Weiner
+@c Last-Mod:     26-Jun-26 at 11:57:45 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,7 +30,7 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED June 25, 2026
+@set UPDATED June 26, 2026
 @set UPDATED-MONTH June 2026
 @set EDITION 9.0.2pre
 @set VERSION 9.0.2pre
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed June 25, 2026.
+Printed June 26, 2026.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -213,7 +213,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.2pre
-June 25, 2026 @c AUTO-REPLACE-ON-SAVE
+June 26, 2026 @c AUTO-REPLACE-ON-SAVE
 
 
   Published by the Free Software Foundation, Inc.
@@ -4759,6 +4759,7 @@ consult grep over its HyWiki backlink references, selecting one.
 @cindex HyWiki referent type, Activity
 @cindex HyWiki referent type, Bookmark
 @cindex HyWiki referent type, Command
+@cindex HyWiki referent type, Elisp
 @cindex HyWiki referent type, Find
 @cindex HyWiki referent type, Gbut
 @cindex HyWiki referent type, HyRolo
@@ -4769,10 +4770,11 @@ consult grep over its HyWiki backlink references, selecting one.
 @cindex HyWiki referent type, OrgID
 @cindex HyWiki referent type, Page
 @cindex HyWiki referent type, orgRoamNode
-@cindex HyWiki referent type, Sexp
+@cindex HyWiki referent type, Spec
 @findex hywiki-add-activity
 @findex hywiki-add-bookmark
 @findex hywiki-add-command
+@findex hywiki-add-elisp
 @findex hywiki-add-find
 @findex hywiki-add-global-button
 @findex hywiki-add-hyrolo
@@ -4783,16 +4785,16 @@ consult grep over its HyWiki backlink references, selecting one.
 @findex hywiki-add-org-id
 @findex hywiki-add-page
 @findex hywiki-add-org-roam-node
-@findex hywiki-add-sexpression
+@findex hywiki-add-spec
 @item Create
 Create and display a new or existing HyWikiWord referent, prompting
 with any existing referent names.  With either
-@code{hywiki-referent-prompt-flag} set or optional prefix ARG, prompt
+@code{hywiki-referent-prompt-flag} set or a prefix argument, prompt
 for and choose a typed referent; otherwise, create and/or display a
 HyWiki page.  The following table details the potentially prompted for
 referent types, as given by @code{hywiki-referent-menu}, with the
-``HyWiki Add>'' prompt (Activity appears only if the @code{activities}
-package is loaded):
+``HyWiki RefType>'' prompt (Activity appears only if the
+@code{activities} package is loaded):
 
 @exampleindent 0
 @example
@@ -4802,6 +4804,7 @@ Menu Item       Command                  Description
 Activity        hywiki-add-activity      Activate a saved Activity
 Bookmark        hywiki-add-bookmark      Jump to an Emacs bookmark
 Command         hywiki-add-command       Run a Hypb action or cmd
+Elisp           hywiki-add-elisp         Evaluate an Elisp sexp
 Find            hywiki-add-find          Grep through hywiki dir
 Gbut            hywiki-add-global-button Activate a global button
 HyRolo          hywiki-add-hyrolo        Search @code{hyrolo-file-list}
@@ -4812,10 +4815,40 @@ infoNode        hywiki-add-info-node     Display an Info doc node
 OrgID           hywiki-add-org-id        Display a sect for Org ID
 Page            hywiki-add-page          Display a HyWiki page#sect
 orgRoamNode     hywiki-add-org-roam-node Display an Org Roam node
-Sexp            hywiki-add-sexpression   Evaluate an Elisp sexp
+Spec            hywiki-add-spec          Defer referent linkage
 ===================================================================
 @end group
 @end example
+
+@noindent
+A few notes on HyWiki referent types.
+@table @asis
+@item Command
+If the command referent is just a symbol without any arguments, then
+the WikiWord is passed as the sole argument when the command is run.
+If the command takes a single argument and the empty string is given
+for the argument, then this is replaced with the WikiWord when the
+command is run.
+
+@item Find
+This searches all of the HyWiki pages for matches of the WikiWord
+using the @code{hywiki-word-grep} command.
+
+@item HyRolo
+This searches all of the HyWiki pages for matches of the WikiWord
+using the @code{hywiki-word-grep} command.
+
+@item Page
+This displays the HyWiki page named for the WikiWord,
+e.g. WikiWord.org.
+
+@item Spec
+This creates and highlights a WikiWord but defers specifying its type
+and creating its referent until the WikiWord is activated with the
+Action Key.  When activated, with either @code{hywiki-referent-prompt-flag}
+set or a prefix argument, prompt for and choose a typed referent;
+otherwise, create and/or display a HyWiki page.
+@end table
 
 @vindex hywiki-directory
 @vindex action-key-modeline-buffer-id-function
@@ -4869,17 +4902,19 @@ Select from three states for the global minor mode, @code{hywiki-mode}.
 @item All-Editable-Buffers
 This is the default setting.  Highlight HyWikiWord references within
 HyWiki page buffers only.  The @code{hywiki-mode} variable is set to
-@samp{:pages}.
+@samp{:pages}.  Programatically, use: @code{(hywiki-mode :pages)}.
 
 @vindex hywiki-exclude-major-modes
 @item HyWiki-Pages-Only
 Highlight HyWikiWord references within all editable buffers except
 those with major modes in @code{hywiki-exclude-major-modes}.  The
-@code{hywiki-mode} variable is set to @samp{:all}.
+@code{hywiki-mode} variable is set to @samp{:all}.  Programatically,
+use: @code{(hywiki-mode :all)}.
 
 @item Nowhere
 Disable highlighting HyWikiWord references everywhere.  The
-@code{hywiki-mode} variable is set to @samp{nil}.
+@code{hywiki-mode} variable is set to @samp{nil}.  Programatically,
+use: @code{(hywiki-mode nil)}.
 @end table
 
 @kindex C-h h h o
@@ -4932,7 +4967,7 @@ implicit button type that HyNote defines, @code{hynote-file}.
 In the future, HyNote will also provide a universal way to easily link to
 information across many file formats.
 
-For more, @ref{HyWiki}.
+For more, @pxref{HyWiki}.
 
 
 @node HyControl, Koutliner, HyNote, Top
