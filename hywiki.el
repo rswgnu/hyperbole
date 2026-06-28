@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     27-Jun-26 at 18:45:09 by Bob Weiner
+;; Last-Mod:     28-Jun-26 at 18:53:13 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -326,7 +326,14 @@ included in the list, `hywiki-include-special-modes'."
   :group 'hyperbole-hywiki)
 
 (defcustom hywiki-include-special-modes
-  '(elfeed-search-mode elfeed-show-mode eww-mode kotl-mode)
+  '(csv-mode
+    elfeed-search-mode elfeed-show-mode
+    eww-mode
+    gnus-article-edit-mode gnus-article-mode
+    kotl-mode
+    mh-letter-mode mh-show-mode
+    mu4e-headers-mode mu4e-main-mode
+    rmail-edit-mode rmail-mode)
   "List of `special' major modes with HyWikiWord highlighting and recognition.
 By default, all special modes, like Dired, are excluded.  A major mode
 included here will override its inclusion in `hywiki-exclude-major-modes'."
