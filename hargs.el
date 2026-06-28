@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:     27-Aug-25 at 23:10:25 by Bob Weiner
+;; Last-Mod:     28-Jun-26 at 13:57:12 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -162,8 +162,8 @@ normalized as a Hyperbole button key (no spaces)."
 	 string-start-end)
 
     (if (and (null start-regexp-flag) (null end-regexp-flag)
-	     (string-match "\\`['`\"]+\\'" start-delim)
-	     (string-match "\\`['`\"]+\\'" end-delim))
+	     (string-match-p "\\`['`\"]+\\'" start-delim)
+	     (string-match-p "\\`['`\"]+\\'" end-delim))
 	;; This is a string match
 	(setq string-start-end (hypb:in-string-p 2 :range)
 	      start (nth 1 string-start-end)
