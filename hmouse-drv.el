@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     25-Jun-26 at 08:53:26 by Bob Weiner
+;; Last-Mod:     26-Jun-26 at 12:36:25 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1146,7 +1146,14 @@ documentation is found."
     (setq hkey-help-msg
 	  (if (and cmd-sym (symbolp cmd-sym))
 	      (progn
-		(let* ((condition (car hkey-form))
+		(let* ((actype (or (actype:elisp-symbol
+                                    (hattr:get 'hbut:current 'actype))
+				   (hattr:get 'hbut:current 'actype)))
+                       (assist-function-flag (and assisting
+                                                  (symbolp actype)
+				                  (fboundp actype)
+				                  (documentation actype)))
+                       (condition (car hkey-form))
 		       (temp-buffer-show-hook
 			(lambda (buf)
 			  (set-buffer buf)
@@ -1171,10 +1178,8 @@ documentation is found."
 
 		    ;; Print Hyperbole button attributes
 		    (when (memq cmd-sym '(hui:hbut-act hui:hbut-help))
-		      (let* ((actype (or (actype:elisp-symbol (hattr:get 'hbut:current 'actype))
-					 (hattr:get 'hbut:current 'actype)))
-			     ;; (lbl-key (hattr:get 'hbut:current 'lbl-key))
-			     (categ (hattr:get 'hbut:current 'categ))
+		      (let* ;; (lbl-key (hattr:get 'hbut:current 'lbl-key))
+			    ((categ (hattr:get 'hbut:current 'categ))
 			     (attributes (nthcdr 2 (hattr:list 'hbut:current)))
 			     (but-def-symbol (htype:def-symbol
 					      (if (eq categ 'explicit) actype categ)))
@@ -1227,9 +1232,7 @@ documentation is found."
 					     (replace-regexp-in-string
 					      "^" "  " (documentation type-help-func)
 					      nil t))))
-			  (when (and (symbolp actype)
-				     (fboundp actype)
-				     (documentation actype))
+			  (when assist-function-flag
 			    (princ (format "\n%s ACTION KEY SPECIFICS:\n%s\n"
 					   (or (actype:def-symbol actype) actype)
 					   (replace-regexp-in-string "^" "  " (documentation actype)
@@ -1252,34 +1255,35 @@ documentation is found."
 								     nil t))))
 			  (terpri))))
 
-		    (princ (format "A %s of the %s %sKey"
-				   (if mouse-flag
-				       (if mouse-drag-flag "drag" "click")
-				     "press")
-				   (if assisting "Assist" "Action")
-				   (if mouse-flag "Mouse " "")))
-		    (terpri)
-		    (princ "WHEN  ")
-		    (princ
-		     (or condition
-			 "there is no matching context"))
-		    (terpri)
+                    (unless assist-function-flag
+		      (princ (format "A %s of the %s %sKey"
+				     (if mouse-flag
+				         (if mouse-drag-flag "drag" "click")
+				       "press")
+				     (if assisting "Assist" "Action")
+				     (if mouse-flag "Mouse " "")))
+		      (terpri)
+		      (princ "WHEN  ")
+		      (princ
+		       (or condition
+			   "there is no matching context"))
+		      (terpri)
 
-		    (mapc (lambda (c)
-			    (when (and (> (length calls) 1)
-				       (not (eq (car calls) c)))
-			      ;; Is an 'or' set of calls
-			      (princ "OR "))
-			    (princ "CALLS ") (princ (if (consp c) c (list c)))
-			    (when (and (fboundp (setq call (if (consp c) (car c) c)))
-				       (setq doc (documentation call)))
-			      (princ " WHICH")
-			      (princ (if (string-match "\\`[a-zA-Z]*[a-rt-zA-RT-Z]+s[ [:punct:]]" doc)
-					 ":" " WILL:"))
-			      (terpri) (terpri)
-			      (princ (replace-regexp-in-string "^" "  " doc nil t))
-			      (terpri) (terpri)))
-			  calls)))
+		      (mapc (lambda (c)
+			      (when (and (> (length calls) 1)
+				         (not (eq (car calls) c)))
+			        ;; Is an 'or' set of calls
+			        (princ "OR "))
+			      (princ "CALLS ") (princ (if (consp c) c (list c)))
+			      (when (and (fboundp (setq call (if (consp c) (car c) c)))
+				         (setq doc (documentation call)))
+			        (princ " WHICH")
+			        (princ (if (string-match "\\`[a-zA-Z]*[a-rt-zA-RT-Z]+s[ [:punct:]]" doc)
+					   ":" " WILL:"))
+			        (terpri) (terpri)
+			        (princ (replace-regexp-in-string "^" "  " doc nil t))
+			        (terpri) (terpri)))
+			    calls))))
 		"")
 	    (message "No %s Key command for current context."
 		     (if assisting "Assist" "Action"))))

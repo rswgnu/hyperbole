@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     25-Jun-26 at 13:36:38 by Bob Weiner
+@c Last-Mod:     28-Jun-26 at 00:20:55 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,7 +30,7 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED June 25, 2026
+@set UPDATED June 28, 2026
 @set UPDATED-MONTH June 2026
 @set EDITION 9.0.2pre
 @set VERSION 9.0.2pre
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed June 25, 2026.
+Printed June 28, 2026.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -213,7 +213,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.2pre
-June 25, 2026 @c AUTO-REPLACE-ON-SAVE
+June 28, 2026 @c AUTO-REPLACE-ON-SAVE
 
 
   Published by the Free Software Foundation, Inc.
@@ -369,6 +369,10 @@ HyWiki
 * HyWikiWords::
 * Publish HyWiki::
 * HyWiki Menu::
+
+HyWikiWords
+
+* Creating HyWikiWords::
 
 Koutliner
 
@@ -4519,7 +4523,8 @@ It uses Org mode for note taking and adds automatic hyperlinking and
 highlighting of HyWikiWords in Org files within
 @code{hywiki-directory} (default = @file{~/hywiki}).  With @bkbd{C-h h
 h p} you can publish any updated part of your HyWiki to an HTML
-directory for export to the web.
+directory for export to the web.  HyWiki is built for scale and
+has been tested to be performant with 10,000 HyWikiWords.
 
 @float Image,image:HyWiki Page
 @caption{HyWiki Page}
@@ -4543,29 +4548,46 @@ directory for export to the web.
 @cindex Org link, HyWiki
 @cindex hy: prefix
 A @dfn{HyWikiWord} is a capitalized word that contains upper and
-lowercase letters only and has a corresponding @file{HyWikiWord.org}
-wiki page file below @code{hywiki-directory}.  HyWikiWords in HyWiki
-pages are automatically highlighted and turned into hyperlinks as soon
-as you type them, without the need for any delimiters.  However, if
-you prefer to use Org-style links, simply delimit them with double
-square brackets and the `hy:' prefix like so: [[hy:MyWikiWord]].
+lowercase letters only and has an associated referent (a link or an
+action).  The default, most common referent type is a Wiki Page, an
+Org file with the wikiword's name and a @file{.org} suffix that lives
+in @code{hywiki-directory}.
+
+HyWikiWords are automatically highlighted and turned into hyperlinks
+to their referents as soon as you type them, without the need for any
+delimiters.  By default, this happens only in HyWiki pages so as not
+to confuse new users.  But with one setting, you can enable them in
+all text buffers and within the comments of programming language
+buffers.  @xref{HyWiki Mode}.
+
+HyWiki is fully compatible with Org mode and if you prefer your HyWiki
+links to be Org links, then simply delimit them with double square
+brackets and the @samp{hy:} prefix like so: @samp{[[hy:MyWikiWord]]}.
+
+@menu
+* Creating HyWikiWords::
+@end menu
+
+@node Creating HyWikiWords,  , HyWikiWords, HyWikiWords
+@subsection Creating HyWikiWords
 
 @cindex create a HyWikiWord
 @cindex HyWikiWord create
-To create a new HyWikiWord, insert it into a text buffer, move point
-onto the word and press @bkbd{C-h h h c} to create a new blank HyWiki
-page that you can immediately start editing.  HyWiki is built for
-scalability and has been tested to be performant with 10,000
-HyWikiWords.
+To create a new HyWikiWord, insert it into a buffer where it is
+recognized, move point anywhere within the word and press @bkbd{C-h h
+h c} to create a new blank HyWiki page that you can immediately start
+editing.
 
 @cindex Org M-RET override
 @cindex override Org M-RET
 @kindex C-h h h o a
 @kindex C-h h h c
 @cindex menu item, HyWiki/Org-M-RET/All-Hyperbole-Contexts
-The Action Key can create new HyWiki pages when on an undefined
+The Action Key, @bkbd{M-@key{RET}}, provides a faster way to create
+HyWikiWords to speed your note-taking, if you let HyWiki have priority over this key rather than Org mode.  Simpl
+ can create new HyWiki pages when on an undefined
 HyWikiWord if you change the setting that controls the Org mode
-@bkbd{M-@key{RET}} binding.  Have Hyperbole override Org's control of
+ binding.  Have Hyperbole override Org's control of
 that key in all Action and Assist Key contexts with the
 @samp{All-Hyperbole-Contexts} setting bound to @bkbd{C-h h h o a}.
 
@@ -4634,6 +4656,7 @@ HyWikiWords everywhere and enabling them in all editable buffers.
 A nil value disables HyWikiWord hyperlink buttons in both HyWiki
 pages and all other buffers (since it also disables `hywiki-mode').
 
+@anchor{HyWiki Mode}
 Outside of HyWiki pages, the global minor mode `hywiki-mode' must be
 manually enabled for auto-HyWikiWord highlighting. Interactively,
 @bkbd{C-h h h m a} does this; programmatically, use `(hywiki-mode :all)'
@@ -4755,10 +4778,10 @@ consult grep over its HyWiki backlink references, selecting one.
 
 @cindex HyWikiWord creation
 @cindex HyWikiWord types
-@vindex hywiki-referent-menu
 @cindex HyWiki referent type, Activity
 @cindex HyWiki referent type, Bookmark
 @cindex HyWiki referent type, Command
+@cindex HyWiki referent type, Elisp
 @cindex HyWiki referent type, Find
 @cindex HyWiki referent type, Gbut
 @cindex HyWiki referent type, HyRolo
@@ -4769,10 +4792,11 @@ consult grep over its HyWiki backlink references, selecting one.
 @cindex HyWiki referent type, OrgID
 @cindex HyWiki referent type, Page
 @cindex HyWiki referent type, orgRoamNode
-@cindex HyWiki referent type, Sexp
+@cindex HyWiki referent type, Spec
 @findex hywiki-add-activity
 @findex hywiki-add-bookmark
 @findex hywiki-add-command
+@findex hywiki-add-elisp
 @findex hywiki-add-find
 @findex hywiki-add-global-button
 @findex hywiki-add-hyrolo
@@ -4783,16 +4807,20 @@ consult grep over its HyWiki backlink references, selecting one.
 @findex hywiki-add-org-id
 @findex hywiki-add-page
 @findex hywiki-add-org-roam-node
-@findex hywiki-add-sexpression
+@findex hywiki-add-spec
+@vindex hywiki-referent-prompt-flag
+@cindex referent type, auto-prompting
+@cindex referent type menu
+@vindex hywiki-referent-menu
 @item Create
 Create and display a new or existing HyWikiWord referent, prompting
 with any existing referent names.  With either
-@code{hywiki-referent-prompt-flag} set or optional prefix ARG, prompt
+@code{hywiki-referent-prompt-flag} set or a prefix argument, prompt
 for and choose a typed referent; otherwise, create and/or display a
 HyWiki page.  The following table details the potentially prompted for
 referent types, as given by @code{hywiki-referent-menu}, with the
-``HyWiki Add>'' prompt (Activity appears only if the @code{activities}
-package is loaded):
+``HyWiki RefType>'' prompt (Activity appears only if the
+@code{activities} package is loaded):
 
 @exampleindent 0
 @example
@@ -4802,6 +4830,7 @@ Menu Item       Command                  Description
 Activity        hywiki-add-activity      Activate a saved Activity
 Bookmark        hywiki-add-bookmark      Jump to an Emacs bookmark
 Command         hywiki-add-command       Run a Hypb action or cmd
+Elisp           hywiki-add-elisp         Evaluate an Elisp sexp
 Find            hywiki-add-find          Grep through hywiki dir
 Gbut            hywiki-add-global-button Activate a global button
 HyRolo          hywiki-add-hyrolo        Search @code{hyrolo-file-list}
@@ -4812,10 +4841,43 @@ infoNode        hywiki-add-info-node     Display an Info doc node
 OrgID           hywiki-add-org-id        Display a sect for Org ID
 Page            hywiki-add-page          Display a HyWiki page#sect
 orgRoamNode     hywiki-add-org-roam-node Display an Org Roam node
-Sexp            hywiki-add-sexpression   Evaluate an Elisp sexp
+Spec            hywiki-add-spec          Defer referent linkage
 ===================================================================
 @end group
 @end example
+
+@noindent
+Below are notes on a few of the HyWiki referent types.
+
+@table @asis
+@item Command
+If the command referent is just a symbol without any arguments, then
+the WikiWord is passed as the sole argument when the command is run.
+If the command takes a single argument and the empty string is given
+for the argument, then this is replaced with the WikiWord when the
+command is run.
+
+@findex hywiki-word-grep
+@item Find
+Search all of the HyWiki pages for matches of the WikiWord using the
+@code{hywiki-word-grep} command.
+
+@findex hyrolo-fgrep
+@item HyRolo
+Search all of the HyRolo files for matches of the WikiWord using the
+@code{hyrolo-fgrep} command.
+
+@item Page
+Display the HyWiki page named for the WikiWord, e.g. WikiWord.org.
+
+@vindex hywiki-referent-menu
+@item Spec
+Create and highlight a WikiWord but defer specifying its type and
+creating its referent until the WikiWord is activated with the Action
+Key.  When activated, prompt for and choose a typed referent.  See
+@code{hywiki-referent-menu} for valid referent types.  Select
+@emph{Page} for a standard HyWiki page.
+@end table
 
 @vindex hywiki-directory
 @vindex action-key-modeline-buffer-id-function
@@ -4869,17 +4931,19 @@ Select from three states for the global minor mode, @code{hywiki-mode}.
 @item All-Editable-Buffers
 This is the default setting.  Highlight HyWikiWord references within
 HyWiki page buffers only.  The @code{hywiki-mode} variable is set to
-@samp{:pages}.
+@samp{:pages}.  Programatically, use: @code{(hywiki-mode :pages)}.
 
 @vindex hywiki-exclude-major-modes
 @item HyWiki-Pages-Only
 Highlight HyWikiWord references within all editable buffers except
 those with major modes in @code{hywiki-exclude-major-modes}.  The
-@code{hywiki-mode} variable is set to @samp{:all}.
+@code{hywiki-mode} variable is set to @samp{:all}.  Programatically,
+use: @code{(hywiki-mode :all)}.
 
 @item Nowhere
 Disable highlighting HyWikiWord references everywhere.  The
-@code{hywiki-mode} variable is set to @samp{nil}.
+@code{hywiki-mode} variable is set to @samp{nil}.  Programatically,
+use: @code{(hywiki-mode nil)}.
 @end table
 
 @kindex C-h h h o
@@ -4932,7 +4996,7 @@ implicit button type that HyNote defines, @code{hynote-file}.
 In the future, HyNote will also provide a universal way to easily link to
 information across many file formats.
 
-For more, @ref{HyWiki}.
+For more, @pxref{HyWiki}.
 
 
 @node HyControl, Koutliner, HyNote, Top
@@ -7930,7 +7994,8 @@ same type symbol used in the type definition call (not the Hyperbole
 symbol returned by the call).  This will not delete the action type used
 by the implicit button; that must be done separately.
 
-@cindex ibtype, help
+@anchor{ibtype help}
+@cindex ibtype help
 @findex ibut:at-p
 By default, a request for help on an implicit button will display the
 button's attributes in the same manner as is done for explicit
@@ -7942,9 +8007,9 @@ assist-action whenever the Assist Key is pressed, to respond to
 requests for help on buttons of that type.  Any such function should
 take a single argument of an implicit button construct.  (This is what
 @code{(ibut:at-p)} returns when point is within an implicit button
-context).  Remember that the standard help for buttons with custom
-help functions is still available with @bkbd{C-h A} for the Action Key
-and @bkbd{C-u C-h A} for the Assist Key.
+context).  Remember that documentation of the Action Key's behavior is
+always available on @bkbd{C-h A} and @bkbd{C-u C-h A} for the Assist
+Key's.
 
 @vindex class, hattr
 @vindex class, hbut
@@ -11067,7 +11132,9 @@ When pressed on a Hyperbole button:
      Activates the button.
   ASSIST KEY
      Displays help for the button, typically a summary of its
-     attributes.
+     attributes.  For implicit button types, the help behavior can be
+     overridden by defining a help function function for the stype,
+     @pxref{ibtype help}.
 @end group
 @end format
 

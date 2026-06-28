@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     14-Jun-26 at 15:13:01 by Bob Weiner
+;; Last-Mod:     27-Jun-26 at 18:36:25 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -115,8 +115,9 @@
 
 (defib hywiki-word ()
   "When on a non-existing HyWikiWord, create it and display its referent.
-A call to (hywiki-active-in-current-buffer-p) must return non-nil
-for this to activate.
+This is the Action Key function that activates HyWikiWords.  A call
+to (hywiki-active-in-current-buffer-p) must return non-nil for this to
+activate.
 
 If the associated HyWiki referent is a page, create it automatically
 unless it is the first HyWiki page to be created, in which case,
@@ -135,6 +136,40 @@ Existing HyWikiWords are handled by the implicit button type
 		    (ibtypes::pathname))
 	  (ibut:label-set wikiword start end)
 	  (hact 'hywiki-word-create-and-display wikiword))))))
+
+(defun hywiki-word:help (ibut)
+  "Dispatch to desired HyWikiWord Assist Key function based on prefix arg.
+
+This table summarizes the function run for each prefix argument:
+|--------------------------------------+-------------------------------------|
+| Function                             | Key Binding                         |
+|--------------------------------------+-------------------------------------|
+| 1. Set Referent Type and Display     | {M-0 M-RET} or {C-u C-u M-RET}      |
+| 2. Create a WikiWord Spec            | {M-1 M-RET} or {M-0 M-RET s}        |
+|    (Set Referent on Activation)      |                                     |
+| 3. Show Assist Key Help for WikiWord | {C-u M-RET} or any other prefix arg |
+|--------------------------------------+-------------------------------------|
+
+#1 prompts for a referent type, creates and displays the wikiword's
+referent.  With an Assist Key press on a non-existing wikiword, it prompts
+for its wikiword referent type, then creates and displays it.  A call
+to (hywiki-active-in-current-buffer-p) must return non-nil for this to
+activate.
+
+#2 creates a wikiword spec that when activated via the Action Key with
+{M-RET} prompts for and replaces the spec with the chosen referent type
+and associated attributes (it follows the procedure in #2 above).
+
+#3 shows the wikiword attributes and this doc string."
+  (pcase current-prefix-arg
+    ((or '(16) 0) (hywiki-word-create-and-display
+                   (ibut:key-to-label (hattr:get ibut 'lbl-key))
+                   t))
+    (1 (let ((wikiword (ibut:key-to-label (hattr:get ibut 'lbl-key))))
+         (hywiki-add-spec wikiword)
+         (hywiki-message-spec wikiword)))
+    ;; Any other prefix arg, show wikiword attributes and the doc string.
+    (_ (hkey-help t))))
 
 ;;; ========================================================================
 ;;; Jumps to source line from Python traceback lines
@@ -1808,6 +1843,8 @@ not yet existing HyWikiWords."
 	      (ibut:label-set wikiword start end)
 	    (ibut:label-set wikiword))
 	  (hact 'link-to-wikiword wikiword))))))
+
+(defalias 'hywiki-existing-word:help 'hywiki-word:help)
 
 ;;; ========================================================================
 ;;; Inserts completion into minibuffer or other window.

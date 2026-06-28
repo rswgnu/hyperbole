@@ -1,3 +1,41 @@
+2026-06-27  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Smart Key - Hyperbole Buttons): Cross-reference
+    how to add ibtype help functions.
+
+* hywiki.el (hywiki-word-highlight-post-command): Fix to add support
+    for WikiWord rehighlighting after a capitalize, downcase or upcase
+    command.
+
+2026-06-26  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hkey-help): Suppress generic Assist Key doc when
+    ibut has its own :help function.
+
+* hibtypes.el (hywiki-word:help): Add to to dispatch for creating a
+    HyWikiWord with prompting for its reference type or displaying
+    help for the potential WikiWord ibtype.
+
+* hywiki.el (hywiki-add-page): Fix so 'page-in-hasht' is t only if ref
+    type is a page, not some other type.
+            (hywiki-word-dehighlight-in-buffers): Fix so does not move
+    point in any of these buffers.
+            (hywiki-referent-menu): Change title from 'HyWiki Add>' to
+    'HyWiki RefType>' to match that used in 'hywiki-create-referent'.
+            (hywiki-add-spec): Add this autoloaded command that
+    lets you create a HyWikiWord but defer deciding on its type until
+    it is activated with the Action Key.
+            (hywiki-display-spec): Add to transform spec to a standard
+    HyWiki referent.
+            (hywiki-referent-menu): Change "Sexp" to "Elisp" and add in
+    "Spec".
+            (hywiki-display-sexpression): Make obsolete; replace with
+    'hywiki-display-elisp'.
+            (hywiki-add-sexpression): Replace with 'hywiki-add-elisp'.
+	    (hywiki-add-elisp, hywiki-display-elisp): Add.
+  man/hyperbole.texi (HyWiki Menu): Add doc on referent types that when
+    activated aare given the WikiWord as an argument.
+
 2026-06-25  Bob Weiner  <rsw@gnu.org>
 
 * hasht.el (hash-merge-values): Remove ordered result requirement to allow
