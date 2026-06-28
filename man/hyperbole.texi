@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     27-Jun-26 at 22:34:00 by Bob Weiner
+@c Last-Mod:     28-Jun-26 at 00:20:55 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,7 +30,7 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED June 27, 2026
+@set UPDATED June 28, 2026
 @set UPDATED-MONTH June 2026
 @set EDITION 9.0.2pre
 @set VERSION 9.0.2pre
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed June 27, 2026.
+Printed June 28, 2026.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -213,7 +213,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.2pre
-June 27, 2026 @c AUTO-REPLACE-ON-SAVE
+June 28, 2026 @c AUTO-REPLACE-ON-SAVE
 
 
   Published by the Free Software Foundation, Inc.
@@ -369,6 +369,10 @@ HyWiki
 * HyWikiWords::
 * Publish HyWiki::
 * HyWiki Menu::
+
+HyWikiWords
+
+* Creating HyWikiWords::
 
 Koutliner
 
@@ -4560,7 +4564,11 @@ HyWiki is fully compatible with Org mode and if you prefer your HyWiki
 links to be Org links, then simply delimit them with double square
 brackets and the @samp{hy:} prefix like so: @samp{[[hy:MyWikiWord]]}.
 
-@node Creating HyWikiWords
+@menu
+* Creating HyWikiWords::
+@end menu
+
+@node Creating HyWikiWords,  , HyWikiWords, HyWikiWords
 @subsection Creating HyWikiWords
 
 @cindex create a HyWikiWord
@@ -4648,6 +4656,7 @@ HyWikiWords everywhere and enabling them in all editable buffers.
 A nil value disables HyWikiWord hyperlink buttons in both HyWiki
 pages and all other buffers (since it also disables `hywiki-mode').
 
+@anchor{HyWiki Mode}
 Outside of HyWiki pages, the global minor mode `hywiki-mode' must be
 manually enabled for auto-HyWikiWord highlighting. Interactively,
 @bkbd{C-h h h m a} does this; programmatically, use `(hywiki-mode :all)'
@@ -7985,7 +7994,7 @@ same type symbol used in the type definition call (not the Hyperbole
 symbol returned by the call).  This will not delete the action type used
 by the implicit button; that must be done separately.
 
-@anchor ibtype help
+@anchor{ibtype help}
 @cindex ibtype help
 @findex ibut:at-p
 By default, a request for help on an implicit button will display the
