@@ -1,5 +1,12 @@
 2026-06-28  Bob Weiner  <rsw@gnu.org>
 
+* hywiki.el (hywiki-include-special-modes): Add HyWiki support in csv,
+    GNUS, mh, mu4e and rmail modes.
+
+* hpath.el (hpath:delimited-possible-path): Fix 'char-syntax' comparison
+    to compare current char's syntax against the punctuation char, not
+    the char-syntax of the punctuation char.
+
 * test/hui-tests.el (hui--hbut-act--links): Add for testing that ilinks,
     elinks and glinks do not confuse each others referents.
 

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     28-Jun-26 at 14:18:59 by Bob Weiner
+;; Last-Mod:     28-Jun-26 at 16:52:07 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1189,7 +1189,7 @@ end-pos) or nil."
 	(when (and (stringp p) (not (string-match-p "\\`{.*}\\'\\|\"\\|\\`[/\\]+\\'" p))
 		   (delq nil (mapcar (lambda (c)
                                        (or (memq c '(?~ ?. ?/ ?* ?? ?\\))
-                                           (/= (char-syntax ?.) (char-syntax c))))
+                                           (/= (char-syntax c) ?.)))
                                      p)))
 	  ;; Prepend proper directory from cd, ls *, recursive ls or dir file
 	  ;; listings when needed.
