@@ -1,4 +1,20 @@
+2026-06-27  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Smart Key - Hyperbole Buttons): Cross-reference
+    how to add ibtype help functions.
+
+* hywiki.el (hywiki-word-highlight-post-command): Fix to add support
+    for WikiWord rehighlighting after a capitalize, downcase or upcase
+    command.
+
 2026-06-26  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hkey-help): Suppress generic Assist Key doc when
+    ibut has its own :help function.
+
+* hibtypes.el (hywiki-word:help): Add to to dispatch for creating a
+    HyWikiWord with prompting for its reference type or displaying
+    help for the potential WikiWord ibtype.
 
 * hywiki.el (hywiki-add-page): Fix so 'page-in-hasht' is t only if ref
     type is a page, not some other type.
