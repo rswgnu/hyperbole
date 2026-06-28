@@ -1,3 +1,21 @@
+2026-06-28  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hkey-help): Improve to:
+    1. show the doc for custom actype:help functions for the Assist Key
+       (in addition to ibtype:help functions, e.g. see hsys-youtube.el.
+    2. with the Assist Key on an Action button, show the doc for its
+       actype.
+    3. with the Assist Key, comment out removal of the 'actype' and
+       'action' button attributes, as seeing them can be helpful.
+
+* hibtypes.el (texinfo-ref): Update to handle references to @anchor
+    locations.  Update doc string for this and that only info (no
+    Texinfo) manuals are displayed if a cross-reference is outside
+    of the current Texinfo manual.
+  hactypes.el (link-to-texinfo-node): Update to handle references
+    to @anchor.
+  man/hyperbole.texi (link-to-Info-node): Update doc to match.
+
 2026-06-27  Bob Weiner  <rsw@gnu.org>
 
 * man/hyperbole.texi (Smart Key - Hyperbole Buttons): Cross-reference

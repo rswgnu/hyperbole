@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     28-Jun-26 at 00:20:55 by Bob Weiner
+@c Last-Mod:     28-Jun-26 at 09:49:02 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -3554,10 +3554,11 @@ available.  Filename may be given without the .info suffix."
 
 @findex actypes link-to-Info-node
 @item link-to-Info-node
-Display an Info NODE.  NODE must be a string of the form
-(filename)nodename.  During button creation, completion for both
-filename and nodename is available.  Filename may be given without the
-.info suffix.
+Display an Info node, anchor or index position given by STRING.
+STRING must be of the form: ``(filename)name'' or
+``filename.info#name''.  During button creation, completion for both
+filename and node names is available.  Filename may be given without
+the .info suffix.
 
 @findex actypes link-to-ibut
 @item link-to-ibut

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     18-Jun-26 at 10:01:03 by Bob Weiner
+;; Last-Mod:     28-Jun-26 at 09:48:58 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -521,9 +521,8 @@ suffix."
     (hypb:error "(link-to-Info-index-entry): Invalid Info index item: `%s'" index-item)))
 
 (defact link-to-Info-node (string)
-  "Display an Info node given by STRING.
-If not found, try to display it as an Info index item.
-STRING must be a string of the form \"(filename)name\" or
+  "Display an Info node, anchor or index position given by STRING.
+STRING must be of the form: \"(filename)name\" or
 \"filename.info#name\".  During button creation, completion for both
 filename and node names is available.  Filename may be given without
 the .info suffix in the format with parentheses."
@@ -736,14 +735,14 @@ Return t if found, nil if not."
   (funcall (actype:action 'link-to-regexp-match)
 	   (regexp-quote string) n source buffer-p))
 
-(defact link-to-texinfo-node (file node)
-  "Display the Texinfo FILE and NODE (a string).
+(defact link-to-texinfo-node (file node-or-anchor)
+  "Display the Texinfo FILE and NODE-OR-ANCHOR (a string).
 FILE may be a string or nil, in which case the current buffer is used."
-  (interactive "fTexinfo file to link to: \nsNode within file to link to: ")
-  (if (stringp node)
-      ;; Remove any tabs or newlines that might be in node name.
-      (setq node (replace-regexp-in-string "[ \t\n\r\f]+" " " (string-trim node) t t))
-    (setq node "Top"))
+  (interactive "fTexinfo file to link to: \nsNode or anchor within file to link to: ")
+  (if (stringp node-or-anchor)
+      ;; Remove any tabs or newlines that might be in node-or-anchor name.
+      (setq node-or-anchor (replace-regexp-in-string "[ \t\n\r\f]+" " " (string-trim node-or-anchor) t t))
+    (setq node-or-anchor "Top"))
   (let (node-point)
     (when (equal file "hyperbole.texi")
       (setq file (expand-file-name file (hpath:expand "${hyperb:dir}/man/"))))
@@ -752,17 +751,18 @@ FILE may be a string or nil, in which case the current buffer is used."
       (setq file (hypb:buffer-file-name)))
     (save-excursion
       (goto-char (point-min))
-      (if (re-search-forward (format "^@node[ \t]+%s *[,\n\r]" node) nil t)
-	  (setq node-point (match-beginning 0))
-	(hypb:error "(link-to-texinfo-node): Non-existent node: \"%s%s\""
-                    (if file
-                        (format "(%s)" (file-name-nondirectory file))
-                      "")
-		    node)))
+      (cond ((or (re-search-forward (format "^@node[ \t]+%s *[,\n\r]" node-or-anchor) nil t)
+                 (re-search-forward (format "^@anchor{%s}" node-or-anchor) nil t))
+	      (setq node-point (match-beginning 0)))
+	    (t (hypb:error "(link-to-texinfo-node): Non-existent location: \"%s%s\""
+                           (if file
+                               (format "(%s)" (file-name-nondirectory file))
+                             "")
+		           node-or-anchor))))
     (if file
         (hact 'link-to-file file node-point)
-      (hypb:error "(link-to-texinfo-node): Non-existent node: \"%s\""
-		  node))))
+      (hypb:error "(link-to-texinfo-node): Non-existent location: \"%s\""
+		  node-or-anchor))))
 
 (defact link-to-web-search (service-name search-term)
   "Search web SERVICE-NAME for SEARCH-TERM.
