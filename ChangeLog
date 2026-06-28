@@ -1,5 +1,15 @@
 2026-06-28  Bob Weiner  <rsw@gnu.org>
 
+* test/hui-tests.el (hui--hbut-act--links): Add for testing that ilinks,
+    elinks and glinks do not confuse each others referents.
+
+* hpath.el (hpath:delimited-possible-path): Fix 'delq nil' call to allow
+    for ~, ., *, ?, / and \\ valid single character/wildcard path characters.
+    Otherwise, paths like "~" and "./" are not recognized.
+
+* hypb.el (hypb:in-string-p): Fix doc to reflect that a list with positions
+    of the string is returned iff 'range-flag' is non-nil.
+
 * hmouse-drv.el (hkey-help): Improve to:
     1. show the doc for custom actype:help functions for the Assist Key
        (in addition to ibtype:help functions, e.g. see hsys-youtube.el.

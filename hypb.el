@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:      5-Jun-26 at 07:51:13 by Bob Weiner
+;; Last-Mod:     28-Jun-26 at 13:28:33 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -744,8 +744,8 @@ This will this install the Emacs helm package when needed."
 	     help-file))))
 
 (defun hypb:in-string-p (&optional max-lines range-flag)
-  "Return (is-in-string start end) for point, cached by buffer & modified time.
-Return non-nil iff point is within a string and not on the closing quote.
+  "Return non-nil iff point is within a string and not on the closing quote.
+This is cached by buffer & modified time for speed.
 
 With optional MAX-LINES, an integer, match only within that many
 lines from point.  With optional RANGE-FLAG when there is a
