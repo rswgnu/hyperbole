@@ -1,5 +1,9 @@
 2026-06-29  Mats Lidell  <matsl@gnu.org>
 
+* .github/workflows/main.yml (on): Reduce number of builds by
+    eliminating the main workflow to trigger on updates to markdown and
+    man/** files. Those are handled by the docs workflow.
+
 * hibtypes.el (hywiki-add-spec, hywiki-message-spec):
     (hywiki-word-create-and-display): Declare functions.
 
