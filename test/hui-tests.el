@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     28-Jun-26 at 14:11:17 by Bob Weiner
+;; Last-Mod:     29-Jun-26 at 14:23:29 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -35,9 +35,6 @@
 
 (ert-deftest hui--hbut-act--links ()
   "Verify `hui:hbut-act' finds the ilink but not elink and glink."
-  ;; What should happen for elink and glink is not clear to me so I'm
-  ;; keeping the current behavior below that succeeds even for those
-  ;; cases.
   (with-temp-buffer
     (set-window-buffer (selected-window) (current-buffer))
     (insert "\
@@ -49,27 +46,27 @@
       (action-key)
       (should (string-match-p "123\n" cap)))
 
-    ;; This should lead to possibly "No action defined for this
-    ;; context; try another location" or something similar.
     (erase-buffer)
     (insert "\
 <elink: Command >
 <[Command]> <identity 456)>
 ")
     (goto-char 4)
-    (ert-with-message-capture cap
-      (should-error (action-key)))
+    (let ((err (should-error (action-key) :type 'error)))
+      (should
+       (string-match-p (rx "No button " punct "Command" punct " in")
+                       (cadr err))))
 
-    ;; This should lead to possibly "No action defined for this
-    ;; context; try another location" or something similar.
     (erase-buffer)
     (insert "\
 <glink: Command >
 <[Command]> <identity 789)>
 ")
     (goto-char 4)
-    (ert-with-message-capture cap
-      (should-error (action-key)))))
+    (let ((err (should-error (action-key) :type 'error)))
+      (should
+       (string-match-p "No global button found for label: Command"
+                       (cadr err))))))
 
 (ert-deftest hui-gbut-edit-link-to-file-button ()
   "A global button with action type link-to-file shall be possible to edit."
