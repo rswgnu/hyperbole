@@ -1,5 +1,12 @@
 2026-06-29  Mats Lidell  <matsl@gnu.org>
 
+* hibtypes.el (hywiki-add-spec, hywiki-message-spec):
+    (hywiki-word-create-and-display): Declare functions.
+
+* hmouse-drv.el (hattr:set, hywiki-get-referent): Declare functions.
+
+* hywiki.el (hywiki-add-spec): Fix quotes in docstring.
+
 * test/hui-tests.el (hui--hbut-act--links): Check error messages
     matches elink and glink. Remove old comments.
 
