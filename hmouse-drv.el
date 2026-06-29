@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     28-Jun-26 at 12:32:38 by Bob Weiner
+;; Last-Mod:     29-Jun-26 at 22:30:19 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -65,12 +65,14 @@
 (declare-function hattr:get "hbut")
 (declare-function hattr:list "hbut")
 (declare-function hattr:report "hbut")
+(declare-function hattr:set "hbut")
 (declare-function hbut:label "hbut")
 (declare-function hkey-quit-window "hmouse-drv") ; Alias defined in this file.
 (declare-function hkey-set-key "hyperbole")
 (declare-function hpath:display-buffer "hpath")
 (declare-function hui:ebut-link-directly "hui")
 (declare-function hui:ibut-link-directly "hui")
+(declare-function hywiki-get-referent "hywiki")
 (declare-function mouse-drag-frame "mouse") ;; Obsolete from Emacs 28
 (declare-function org-todo "org")
 

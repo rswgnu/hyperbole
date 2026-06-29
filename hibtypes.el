@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     28-Jun-26 at 09:27:49 by Bob Weiner
+;; Last-Mod:     29-Jun-26 at 22:27:41 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -68,10 +68,13 @@
 (declare-function hyperb:stack-frame "hversion")
 (declare-function hyrolo-get-file-list "hyrolo")
 (declare-function hywiki-active-in-current-buffer-p "hywiki")
+(declare-function hywiki-add-spec wikiword "hywiki")
 (declare-function hywiki-get-existing-page-file "hywiki")
 (declare-function hywiki-get-singular-wikiword "hywiki")
 (declare-function hywiki-highlight-word-get-range "hywiki")
+(declare-function hywiki-message-spec wikiword "hywiki")
 (declare-function hywiki-referent-exists-p "hywiki")
+(declare-function hywiki-word-create-and-display "hywiki")
 (declare-function hywiki-word-from-reference "hywiki")
 (declare-function markdown-footnote-goto-text "ext:markdown")
 (declare-function markdown-footnote-marker-positions "ext:markdown")
