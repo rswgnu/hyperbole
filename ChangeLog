@@ -5,6 +5,22 @@
     lines did not have the first capital letter highlighted because were
     neglecting newlines as word separators and handling only spaces.
 
+2026-06-29  Mats Lidell  <matsl@gnu.org>
+
+* .github/workflows/main.yml (on): Reduce number of builds by
+    eliminating the main workflow to trigger on updates to markdown and
+    man/** files. Those are handled by the docs workflow.
+
+* hibtypes.el (hywiki-add-spec, hywiki-message-spec):
+    (hywiki-word-create-and-display): Declare functions.
+
+* hmouse-drv.el (hattr:set, hywiki-get-referent): Declare functions.
+
+* hywiki.el (hywiki-add-spec): Fix quotes in docstring.
+
+* test/hui-tests.el (hui--hbut-act--links): Check error messages
+    matches elink and glink. Remove old comments.
+
 2026-06-28  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-include-special-modes): Add HyWiki support in csv,

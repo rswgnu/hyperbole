@@ -1580,7 +1580,7 @@ with the page."
 (defun hywiki-add-spec (wikiword)
   "Create a WIKIWORD spec whose action selects and displays its referent type.
 The specified WIKIWORD is highlighted.  This replaces any existing referent
-the WIKIWORD may have.  Use ‘hywiki-get-referent’ to determine any referent
+the WIKIWORD may have.  Use `hywiki-get-referent' to determine any referent
 type associated with WIKIWORD prior to invoking this.
 
 This differs from `hywiki-word-create-and-display' in that selection and
@@ -1588,7 +1588,7 @@ display of the WIKIWORD referent is deferred until the first Action Key
 activation of the WIKIWORD.
 
 When the WIKIWORD spec is activated, prompt for and choose a typed referent.
-See ‘hywiki-referent-menu’ for valid referent types.  Select Page for a
+See `hywiki-referent-menu' for valid referent types.  Select Page for a
 standard HyWiki page.
 
 If WIKIWORD is invalid, trigger an error if called interactively
