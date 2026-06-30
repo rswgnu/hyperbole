@@ -1,3 +1,10 @@
+2026-06-30  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-display-hywiki-test): Add helper
+    display function.
+    (hywiki-tests--display-referent-type): Verify right display function
+    is called and hbut:current attributes are set.
+
 2026-06-30  Bob Weiner  <rsw@gnu.org>
 
 * hui-mini.el (hui:menu-maybe-highlight-item-keys): Fix that in
