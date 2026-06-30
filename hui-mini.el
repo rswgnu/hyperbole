@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     25-Jun-26 at 09:52:07 by Bob Weiner
+;; Last-Mod:     30-Jun-26 at 00:48:36 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -608,7 +608,7 @@ potentially modified MENU-STR."
 	(mapc (lambda (c)
 		(cond ((= c ?>)
 		       (setq after-menu-name-flag t))
-		      ((= c ?\ )
+		      ((memq c '(?\n ?\r ?\ ))
 		       (setq after-word-capital-letter-flag nil))
 		      ((and after-menu-name-flag
 			    (not after-word-capital-letter-flag)
