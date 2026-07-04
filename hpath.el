@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     10-Jul-26 at 14:36:54 by Bob Weiner
+;; Last-Mod:     11-Jul-26 at 18:53:47 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2283,13 +2283,13 @@ variable reference like ${variable}."
 	  (setq val (symbol-value var))
 	  (cond ((stringp val)
 		 (if (setq result
-			   (hpath:substitute-var-name var val path))
+			   (hpath:substitute-var-name var val (expand-file-name path)))
 		     (setq new-path result)))
 		((null val))
 		((listp val)
 		 (while (and val (null new-path))
 		   (when (setq result
-			       (hpath:substitute-var-name var (car val) path))
+			       (hpath:substitute-var-name var (car val) (expand-file-name path)))
 		     (setq new-path result))
 		   (setq val (cdr val))))
 		(t (error "(hpath:substitute-var): `%s' has invalid value for hpath:variables" var)))))
@@ -2890,8 +2890,7 @@ resolved without attaching the variable name.
 If PATH is modified, return PATH, otherwise return nil."
   (when (and (stringp var-dir-val) (file-name-absolute-p var-dir-val))
     (let ((new-path (replace-regexp-in-string
-		     (regexp-quote (file-name-as-directory
-				    (or var-dir-val default-directory)))
+		     (concat "^" (regexp-quote (file-name-as-directory var-dir-val)))
 		     ;; Remove matching path rather than adding the
 		     ;; variable to the path when the variable is one
 		     ;; for Elisp file paths and path is to an Elisp
