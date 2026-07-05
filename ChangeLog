@@ -1,3 +1,10 @@
+2026-07-04  Bob Weiner  <rsw@gnu.org>
+
+* hycontrol.el (hycontrol-frame-zoom-reset): Handle 'frame not zoomed'
+    error by displaying a message instead to preven leaving HyControl mode.
+               (hycontrol--frames-prompt-format, hycontrol--windows-prompt-format):
+    Reformat for easier readability.
+
 2026-06-30  Bob Weiner  <rsw@gnu.org>
 
 * hui-mini.el (hui:menu-maybe-highlight-item-keys): Fix that in
