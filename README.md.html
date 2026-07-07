@@ -18,6 +18,7 @@ Hyperbole 9.0.2pre - The Everyday Hypertextual Information Manager</a>
 <li><a href="#summary">Summary</a></li>
 <li><a href="#installation">Installation</a></li>
 <li><a href="#invocation">Invocation</a></li>
+<li><a href="#hyperbole-manual">Hyperbole Manual</a></li>
 <li><a href="#mailing-lists">Mailing Lists</a></li>
 <li><a href="#ftp-and-git-repository-downloads">Ftp and Git Repository
 Downloads</a></li>
@@ -53,6 +54,10 @@ otherwise, skip to the next section.</p>
 <li><p><a href="https://youtu.be/WKwZHSbHmPg">Overview and Demo</a> Long
 video that covers most of Hyperbole; Hyperlink timestamps to watch each
 section</p></li>
+<li><p><a href="https://youtu.be/iuwn8GpRj7w">Unscripted Hyperbole Demo
+at EmacsATX</a> On-the-fly demo of Hyperbole subsystems, showing broad
+capabilities and how it differs from Org mode. Watch demo from
+timestamps: 00:48 to 32:42.</p></li>
 <li><p><a href="https://youtu.be/K1MNUctggwI">Quick
 Introduction</a></p></li>
 <li><p><a href="https://emacsconf.org/2023/talks/hyperamp/">Top 10 ways
@@ -80,6 +85,8 @@ implicit buttons</a></p></li>
 </ul>
 <h2 id="articles">Articles</h2>
 <ul>
+<li><p><a href="https://mike.hostetlerhome.com/emacs-hyperbole">The
+Emacs Hyperbole</a></p></li>
 <li><p><a href="https://kirankp.com/blog/gnu-hyperbole/">HyWiki: My
 Favorite Part of Hyperbole</a></p></li>
 <li><p><a
@@ -233,7 +240,10 @@ Init File</a>.</p>
 (unless (package-installed-p &#39;hyperbole)
   (package-refresh-contents)
   (package-install &#39;hyperbole))
-(hyperbole-mode 1)</code></pre>
+(hyperbole-mode 1)
+;; Allow HyWikiWords in text buffers and programming buffer comments
+;; by uncommenting the next line.
+;; (hywiki-mode :all)</code></pre>
 <hr />
 <p>Now save the file and then restart Emacs. Hyperbole will then be
 downloaded and compiled for use with your version of Emacs; give it a
@@ -277,10 +287,9 @@ Hyperbole also includes the Hyperbole Manual, a full reference manual,
 not a simple introduction. It is included in the "man/" subdirectory of
 the Hyperbole package directory in four forms:</p>
 <p><a href="man/hyperbole.info">hyperbole.info</a> - online Info browser
-version<br />
-<a href="man/hyperbole.html">hyperbole.html</a> - web version<br />
-<a href="man/hyperbole.pdf">hyperbole.pdf</a> - printable version<br />
-<a href="man/hyperbole.texi">hyperbole.texi</a> - source version</p>
+version <a href="man/hyperbole.html">hyperbole.html</a> - web version <a
+href="man/hyperbole.pdf">hyperbole.pdf</a> - printable version <a
+href="man/hyperbole.texi">hyperbole.texi</a> - source version</p>
 <p>The Hyperbole package installation places the Info version of this
 manual where needed and adds an entry for Hyperbole into the Info
 directory under the Emacs category. {C-h h d i} will let you browse the
@@ -443,33 +452,30 @@ encapsulated under a Hyperbole user interface very easily.</p></li>
 <h2 id="hyperbole-uses">Hyperbole Uses</h2>
 <p>Typical Hyperbole applications include:</p>
 <ul>
-<li><p><em>Personal Information Management</em><br />
-Overlapping link paths provide a variety of views into an information
-space. A single key press activates buttons regardless of their types,
-making navigation easy.</p>
+<li><p><em>Personal Information Management</em> Overlapping link paths
+provide a variety of views into an information space. A single key press
+activates buttons regardless of their types, making navigation easy.</p>
 <p>A search facility locates buttons in context and permits quick
 selection.</p></li>
-<li><p><em>Documentation Browsing</em><br />
-Embedding cross-references in a favorite documentation format.</p>
+<li><p><em>Documentation Browsing</em> Embedding cross-references in a
+favorite documentation format.</p>
 <p>Addition of a point-and-click interface to existing
 documentation.</p>
 <p>Linkage of code and design documents. Jumping to the definition of an
 identifier from its use within code or its reference within
 documentation.</p></li>
-<li><p><em>Brainstorming</em><br />
-Capture of ideas and then quick reorganization with the Hyperbole
-Koutliner. Link to related ideas, eliminating the need to copy and paste
-information into a single place.</p></li>
-<li><p><em>Help/Training Systems</em><br />
-Creation of tutorials with embedded buttons that show students how
-things work while explaining the concepts, e.g. an introduction to UNIX
-commands. This technique can be much more effective than descriptions
-alone.</p></li>
-<li><p><em>Archive Managers</em><br />
-Supplementation of programs that manage archives from incoming
-information stream, having them add topic-based buttons that link to the
-archive holdings. Users can then search and create their own links to
-archive entries.</p></li>
+<li><p><em>Brainstorming</em> Capture of ideas and then quick
+reorganization with the Hyperbole Koutliner. Link to related ideas,
+eliminating the need to copy and paste information into a single
+place.</p></li>
+<li><p><em>Help/Training Systems</em> Creation of tutorials with
+embedded buttons that show students how things work while explaining the
+concepts, e.g. an introduction to UNIX commands. This technique can be
+much more effective than descriptions alone.</p></li>
+<li><p><em>Archive Managers</em> Supplementation of programs that manage
+archives from incoming information stream, having them add topic-based
+buttons that link to the archive holdings. Users can then search and
+create their own links to archive entries.</p></li>
 </ul>
 <h2 id="files">Files</h2>
 <p>See the <a href="HY-ABOUT">HY-ABOUT</a> file for a description and
@@ -519,13 +525,13 @@ bindings (Smart Keys).</p>
 <p>Hyperbole is a wonderful package, I love the feeling of the deep,
 well-thought out, poised engineering. It may be from the 90s, but it
 feels like a breath of fresh air to me.</p>
-<pre><code>                    -- de_sonnaz on reddit  </code></pre>
+<pre><code>                    -- de_sonnaz on reddit</code></pre>
 <p>*** MAN I love Hyperbole!!! Wow! ***</p>
-<pre><code>                    -- Ken Olstad  
+<pre><code>                    -- Ken Olstad
                        Cheyenne Software, Inc.</code></pre>
 <hr />
 <p>I <em>love</em> koutlines.</p>
-<pre><code>                    -- Bob Glickstein  
+<pre><code>                    -- Bob Glickstein
                        Z-Code Software Corporation</code></pre>
 <hr />
 <p>One of the nicest things about Hyperbole is that it's available
@@ -542,7 +548,7 @@ that's a proxy for the quality of a package. The maintainers are quite
 responsive. There's plenty more functionality that I haven't uncovered
 yet but due to the ease of installation and the quality of the
 documentation, digging into it is actually fun.</p>
-<pre><code>                    -- Aditya Siram  </code></pre>
+<pre><code>                    -- Aditya Siram</code></pre>
 <hr />
 <p>GNU Hyperbole is a game-changer for your mental model of information
 management and personal productivity. Even if you don't use it you
@@ -573,7 +579,7 @@ in our code to our issue tracking system, so clicking a reference like
 Client6502 opens the relevant conversation. Hyperbole provides a really
 useful set of power tools. If Emacs is your preferred productivity
 environment, it's definitely worth getting familiar with it.</p>
-<pre><code>                    -- Chris Nuzum  
+<pre><code>                    -- Chris Nuzum
                        Co-founder, Traction Softwarea, Inc.</code></pre>
 <hr />
 <p>I've found Hyperbole (in conjunction with XEmacs) to be very useful
@@ -586,7 +592,7 @@ for embedding graphics, I've written a mode that accepts image tags
 another program that converts the file to HTML (not perfect, but
 adequate), so I can put any aspect of development on our internal web
 for others to see.</p>
-<pre><code>                    -- Farzin Guilak  
+<pre><code>                    -- Farzin Guilak
                        Protocol Systems, Inc., Engineer</code></pre>
 <hr />
 <p>I am blind and have been using Hyperbole since 1992. I used to use a
@@ -602,7 +608,7 @@ document. Each button jumps to the document section referred to by the
 comment. This is very, very useful.</p></li>
 <li><p>The Hyperbole Koutliner, which I find a very useful tool. I've
 implemented Emacspeak extensions to support it.</p>
-<pre><code>              -- TV Raman  
+<pre><code>              -- TV Raman
                  Google Inc.</code></pre></li>
 </ol>
 <hr />
@@ -622,7 +628,7 @@ BBDB.</p>
 <p>Other than that, I keep a global button file with 30 or so explicit
 buttons that do various little things, and I index saved mail messages
 by putting explicit link-to-mail buttons in an outline file.</p>
-<pre><code>                    -- Ken Olstad  
+<pre><code>                    -- Ken Olstad
                        Cheyenne Software, Inc.</code></pre>
 <hr />
 <p>In general, Hyperbole is an embeddable, highly extensible hypertext
@@ -654,7 +660,7 @@ documentation.</p></li>
 <li><p>Other desktop organization tasks: including links to various mail
 folders, saved newsgroup conversation threads, online note-taker,
 emacs-command invocations, etc.</p>
-<pre><code>                -- Dadong Wan  
+<pre><code>                -- Dadong Wan
                    University of Hawaii</code></pre></li>
 </ul>
 <hr />
@@ -666,18 +672,18 @@ one assumes the full power of Emacs. Being able to send email with
 buttons in it is a very powerful capability. Using ange-ftp mode, one
 can make file references "across the world" as easily as normal file
 references.</p>
-<pre><code>                    -- Mark Eichin  
+<pre><code>                    -- Mark Eichin
                        Cygnus Support</code></pre>
 <hr />
 <p>I just wanted to say how much I enjoy using the Hyperbole Koutliner.
 It is a great way to quickly construct very readable technical documents
 that I can pass around to others. Thanks for the great work.</p>
-<pre><code>                    -- Jeff Fried  
+<pre><code>                    -- Jeff Fried
                        Informix</code></pre>
 <hr />
 <p>The Hyperbole system provides a nice interface to exploring corners
 of Unix that I didn't know existed before.</p>
-<pre><code>                    -- Craig Smith  </code></pre>
+<pre><code>                    -- Craig Smith</code></pre>
 <h2 id="why-was-hyperbole-developed">Why was Hyperbole developed?</h2>
 <p>Hyperbole was originally designed to aid in research aimed at
 Personalized Information production/retrieval Environments (PIEs).
