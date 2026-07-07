@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     25-Jun-26 at 13:00:41 by Bob Weiner
+;; Last-Mod:      4-Jul-26 at 20:07:04 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2265,7 +2265,7 @@ expected result."
 
 (ert-deftest hywiki-tests--verify-hook-functions ()
   "Verify that the hook functions are set and torn down."
-  (cl-flet* ((hooks-exists: (info)
+  (cl-flet* ((hooks-exist: (info)
                (ert-info ((format "Hywiki-mode %s - %s" hywiki-mode info))
                  (should (memq 'hywiki-word-store-around-point pre-command-hook))
                  (should (memq 'hywiki-word-highlight-post-self-insert post-self-insert-hook))
@@ -2276,15 +2276,15 @@ expected result."
                  (should-not (memq 'hywiki-word-highlight-post-self-insert post-self-insert-hook))
                  (should-not (memq 'hywiki-word-highlight-post-command post-command-hook)))))
     (hywiki-tests--preserve-hywiki-mode
-      (hooks-exists: "In temp buffer")
+      (hooks-exist: "In temp buffer")
       (save-excursion
         (with-current-buffer (find-file-noselect wiki-page)
-          (hooks-exists: "In wiki-page")))
+          (hooks-exist: "In wiki-page")))
       (hywiki-mode :pages)
       (hooks-removed: "In temp buffer")
       (save-excursion
         (with-current-buffer (find-file-noselect wiki-page)
-          (hooks-exists: "In wiki-page")))
+          (hooks-exist: "In wiki-page")))
       (hywiki-mode nil)
       (hooks-removed: "In temp buffer")
       (save-excursion
