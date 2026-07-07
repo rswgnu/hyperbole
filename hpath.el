@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     28-Jun-26 at 16:52:07 by Bob Weiner
+;; Last-Mod:      5-Jul-26 at 13:09:03 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1295,7 +1295,7 @@ original path."
                  ((and (null (file-name-directory substituted-path))
                        ;; Could be an existing HyWikiWord
                        (let ((page-file (cdr (hywiki-get-referent substituted-path))))
-                         (when page-file
+                         (when (stringp page-file)
                            (setq substituted-path (expand-file-name page-file hywiki-directory))))))
 	         (t (expand-file-name substituted-path))))
           (if exists-flag

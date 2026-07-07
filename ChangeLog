@@ -1,9 +1,24 @@
+2026-07-07  Bob Weiner  <rsw@gnu.org>
+
+* hui-mouse.el (hkey-alist): Trigger 'hui-select-thing' or 'hui-select-mark-delimited-sexp'
+    if (point) >= any hbut end point, not just equal to it, as before.  This was causing
+    a failure to trigger when a HyWikiWord came right before a closing double quote that
+    point was on, so the double quoted string was not selected and the HyWikiWord was
+    activated instead.
+
 2026-07-06  Bob Weiner  <rsw@gnu.org>
 
 * man/hyperbole.texi (HyWiki): Finish HyWiki manual chapter.
                      (Elpa In-Development Package Installation): Move before
     Elpa Stable given long full release cycles.
                      (Installation): Add optional (hywiki-mode :all) config.
+
+* hywiki.el (hywiki--extend-region): Fix so start is always <= end.
+
+            (hywiki-get-existing-page-file): Handle 't' value as 'file-stem-name'
+    from a HyWikiWord spec.
+  hpath.el (hpath:expand): Ensure path value is a string before trying to expand
+    to handle HyWikiWord specs.
 
 2026-07-04  Bob Weiner  <rsw@gnu.org>
 
