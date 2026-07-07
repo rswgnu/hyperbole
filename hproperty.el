@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Aug-92
-;; Last-Mod:      3-Apr-26 at 19:36:41 by Bob Weiner
+;; Last-Mod:      4-Jul-26 at 17:52:30 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -176,7 +176,7 @@ the PROPERTY at the position matches VALUE."
       (delete-overlay but))))
 
 (defun hproperty:but-clear-all (&optional regexp-match)
-  "Remove highlighting from all named Hyperbole buttons in the current buffer.
+  "Remove highlighting from all current buffer delimited Hyperbole buttons.
 If REGEXP-MATCH is non-nil, only buttons matching this argument are
 de-highlighted."
   (if regexp-match
@@ -195,8 +195,9 @@ de-highlighted."
   (mapc #'delete-overlay hbut-list))
 
 (defun hproperty:but-create (&optional regexp-match)
-  "Highlight all named Hyperbole buttons in buffer.
-De-highlight buttons unless `hproperty:but-highlight-flag' is set.
+  "Highlight all named, delimited Hyperbole buttons in buffer.
+Prior to highlighting, de-highlight buttons unless
+`hproperty:but-highlight-flag' is set.
 
 If REGEXP-MATCH is non-nil, only buttons matching this argument are
 highlighted (all others are unhighlighted).
@@ -286,7 +287,7 @@ with that PROPERTY and VALUE."
   "Return a list of all buttons in the current buffer between START and END.
 If optional PROPERTY and non-nil VALUE are given, return only matching
 buttons.  No ordering is specified; the caller must sort the buttons
-if an order is needed.
+if an order is needed.  (By default, excludes HyWikiWord buttons).
 
 Use `hproperty:but-get-first-in-region' instead if you want only the first
 matching button."
