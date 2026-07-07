@@ -1,5 +1,9 @@
 2026-07-07  Bob Weiner  <rsw@gnu.org>
 
+* hsys-youtube.el (hsys-youtube-end-format): YouTube no longer allows end times or the
+    embed protocol in video urls, so update this format to at least jump to the proper
+    start time.  The end time is sent but ignored.
+
 * hui-mouse.el (hkey-alist): Trigger 'hui-select-thing' or 'hui-select-mark-delimited-sexp'
     if (point) >= any hbut end point, not just equal to it, as before.  This was causing
     a failure to trigger when a HyWikiWord came right before a closing double quote that

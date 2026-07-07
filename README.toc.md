@@ -60,6 +60,8 @@ otherwise, skip to the next section.
 
    - [Top 10 ways Hyperbole amps up Emacs](https://emacsconf.org/2023/talks/hyperamp/)
 
+   - [HyWiki: Zero Markup Hypertext](https://youtu.be/3zG3lRmi3Zg)
+
    - [Introduction to Buttons](https://youtu.be/zoEht66N2PI)
 
    - [Linking Personal Info with Implicit Buttons](https://emacsconf.org/2022/talks/buttons/)
@@ -83,6 +85,8 @@ otherwise, skip to the next section.
 ## Articles
 
    - [The Emacs Hyperbole](https://mike.hostetlerhome.com/emacs-hyperbole)
+
+   - [HyWiki: Zero Markup Hypertext](https://www.chiply.dev/post-hyperbole-hywiki)
 
    - [HyWiki: My Favorite Part of Hyperbole](https://kirankp.com/blog/gnu-hyperbole/)
 

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:      4-Apr-26 at 23:19:29 by Bob Weiner
+;; Last-Mod:      7-Jul-26 at 01:04:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -352,8 +352,8 @@ The button's attributes are stored in the symbol, `hbut:current'.")
     ;; character of the opening or closing tag.  Ignore delimiters in
     ;; the middle of a Hyperbole button.
     ((and (if (setq hkey-at-hbut (hbut:at-p))
-	      (or (eq (point) (hattr:get 'hbut:current 'lbl-end))
-		  (eq (point) (hattr:get 'hbut:current 'name-end)))
+	      (or (>= (point) (or (hattr:get 'hbut:current 'lbl-end) (1+ (point))))
+		  (>= (point) (or (hattr:get 'hbut:current 'name-end) (1+ (point)))))
 	    t)
 	  (hui-select-at-delimited-thing-p))
      . ((hui-select-thing) . (progn (hui-select-thing)
@@ -366,8 +366,8 @@ The button's attributes are stored in the symbol, `hbut:current'.")
     ;; removed someday.  Ignore delimiters in the middle of a
     ;; Hyperbole button.
     ((and (if hkey-at-hbut
-	      (or (eq (point) (hattr:get 'hbut:current 'lbl-end))
-		  (eq (point) (hattr:get 'hbut:current 'name-end)))
+	      (or (>= (point) (or (hattr:get 'hbut:current 'lbl-end) (1+ (point))))
+		  (>= (point) (or (hattr:get 'hbut:current 'name-end) (1+ (point)))))
 	    t)
 	  (hui-select-at-delimited-sexp-p))
      . ((hui-select-mark-delimited-sexp)

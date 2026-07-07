@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10-Jul-22 at 18:10:56
-;; Last-Mod:     19-Jan-24 at 12:11:07 by Mats Lidell
+;; Last-Mod:      7-Jul-26 at 18:03:16 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -59,9 +59,12 @@ where the time string is inserted.  The time string must be a
 colon-separated hours:minutes:seconds string, e.g. 1:2:44 (1 hour, two
 minutes, 45 seconds), where the hours and minutes are optional.")
 
-(defvar hsys-youtube-end-format "https://www.youtube.com/embed/%s?autoplay=1&start=%s&end=%s"
+ ;; Old format that used to work:
+ ;; "https://www.youtube.com/embed/%s?autoplay=1&start=%s&end=%s"
+(defvar hsys-youtube-end-format "https://www.youtube.com/watch?v=%s&t=%s&end=%s"
   "Format string used to play a section of a Youtube video.
-This requires use of the `embed' api.
+This requires use of the `embed' api (but YouTube has since disallowed
+this in urls, so stop end times no longer work).
 
 The first %s is where the video id string is inserted; the second %s is
 where the start time string in seconds is inserted; the third %s is
@@ -247,4 +250,3 @@ START-TIME-STRING format is invalid, return it unchanged."
 
 (provide 'hsys-youtube)
 ;;; hsys-youtube.el ends here
-
