@@ -3085,7 +3085,9 @@ FILE-STEM-NAME should not contain a directory and may have or may omit
 Checks only that FILE-STEM-NAME is not nil, not an empty string and does
 not contain a directory path or returns nil."
   (make-directory hywiki-directory t)
-  (unless (or (null file-stem-name) (string-empty-p file-stem-name)
+  (unless (or (null file-stem-name)
+              (eq file-stem-name t) ;; HyWikiWord spec
+              (string-empty-p file-stem-name)
               (file-name-directory file-stem-name))
     (let (file-name
           referent
@@ -4643,7 +4645,7 @@ delimiters."
 	(skip-chars-backward " \t\n\r")
 	(skip-syntax-forward "w")
 	(setq end (point)))
-      (setq result (list start end)))
+      (setq result (list (min start end) (max start end))))
     result))
 
 (defun hywiki--get-all-references (function &optional start end)
