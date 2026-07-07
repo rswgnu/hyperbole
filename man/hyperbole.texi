@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:      6-Jul-26 at 21:14:36 by Bob Weiner
+@c Last-Mod:      6-Jul-26 at 22:32:48 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -452,8 +452,8 @@ Setup
 
 Installation
 
-* Elpa Stable Package Installation::
 * Elpa In-Development Package Installation::
+* Elpa Stable Package Installation::
 * Git In-Development Package Installation::
 * Manual Tarball Archive Installation::
 
@@ -9064,7 +9064,7 @@ you have GNU Emacs set up at your site.  Choose one based on your needs.
 @noindent
 After installing Hyperbole, read the next section on Invocation.
 
-@node Elpa In-Development Package Installation, Git In-Development Package Installation, Elpa Stable Package Installation, Installation
+@node Elpa In-Development Package Installation, Elpa Stable Package Installation, Installation, Installation
 @subsection Elpa In-Development Package Installation
 
 @cindex elpa-devel package
@@ -9118,7 +9118,7 @@ and compiled for use with your version of Emacs; give it a minute or two.
 You may see a bunch of compilation warnings but these can be safely
 ignored.
 
-@node Elpa Stable Package Installation, Elpa In-Development Package Installation, Installation, Installation
+@node Elpa Stable Package Installation, Git In-Development Package Installation, Elpa In-Development Package Installation, Installation
 @subsection Elpa Stable Package Installation (Emacs Package Manager)
 
 @cindex installation
@@ -9170,7 +9170,7 @@ and compiled for use with your version of Emacs; give it a minute or two.
 You may see a bunch of compilation warnings but these can be safely
 ignored.
 
-@node Git In-Development Package Installation, Manual Tarball Archive Installation, Elpa In-Development Package Installation, Installation
+@node Git In-Development Package Installation, Manual Tarball Archive Installation, Elpa Stable Package Installation, Installation
 @subsection Git In-Development Package Installation (Straight Package Manager)
 
 @cindex Straight package manager
