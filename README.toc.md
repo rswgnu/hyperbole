@@ -7,6 +7,8 @@
  send us a thank you or a testimonial describing your usage if you like
  Hyperbole to [rsw@gnu.org](mailto:rsw@gnu.org)].
 
+
+
 - [GNU Hyperbole 9.0.2pre - The Everyday Hypertextual Information Manager](#gnu-hyperbole-902pre---the-everyday-hypertextual-information-manager)
   - [Reference Manual](#reference-manual)
   - [Videos](#videos)
@@ -14,6 +16,7 @@
   - [Summary](#summary)
   - [Installation](#installation)
   - [Invocation](#invocation)
+  - [Hyperbole Manual](#hyperbole-manual)
   - [Mailing Lists](#mailing-lists)
   - [Ftp and Git Repository Downloads](#ftp-and-git-repository-downloads)
   - [Hyperbole Components](#hyperbole-components)
@@ -24,6 +27,8 @@
   - [Programmer Quick Reference](#programmer-quick-reference)
   - [User Quotes](#user-quotes)
   - [Why was Hyperbole developed?](#why-was-hyperbole-developed)
+
+
 
 ![Hyperbole screenshot of the Koutliner, DEMO file and HyRolo](man/im/hyperbole-cv.png)
 
@@ -47,10 +52,14 @@ otherwise, skip to the next section.
       Long video that covers most of Hyperbole;
       Hyperlink timestamps to watch each section
 
+   - [Unscripted Hyperbole Demo at EmacsATX](https://youtu.be/iuwn8GpRj7w)
+      On-the-fly demo of Hyperbole subsystems, showing broad capabilities and
+      how it differs from Org mode.  Watch demo from timestamps: 00:48 to 32:42.
+
    - [Quick Introduction](https://youtu.be/K1MNUctggwI)
 
    - [Top 10 ways Hyperbole amps up Emacs](https://emacsconf.org/2023/talks/hyperamp/)
-  
+
    - [Introduction to Buttons](https://youtu.be/zoEht66N2PI)
 
    - [Linking Personal Info with Implicit Buttons](https://emacsconf.org/2022/talks/buttons/)
@@ -60,18 +69,20 @@ otherwise, skip to the next section.
    - [HyRolo, fast contact/hierarchical record viewer](https://youtu.be/xdJGFdgKPFY)
 
    - [Using Koutline for stream of thought journaling](https://emacsconf.org/2023/talks/koutline/)
-  
+
    - [Build a Zettelkasten with HyRolo](https://emacsconf.org/2022/talks/rolodex/)
 
    - [HyControl, fast Emacs frame and window manager](https://youtu.be/M3-aMh1ccJk)
 
    - [Writing test cases for GNU Hyperbole](https://emacsconf.org/2023/talks/test/)
-  
+
    - [Find/Web Search](https://youtu.be/8lMlJed0-OM)
 
    - [Linking personal info with implicit buttons](https://youtu.be/TQ_fG7b1iHI)
 
 ## Articles
+
+   - [The Emacs Hyperbole](https://mike.hostetlerhome.com/emacs-hyperbole)
 
    - [HyWiki: My Favorite Part of Hyperbole](https://kirankp.com/blog/gnu-hyperbole/)
 
@@ -207,7 +218,7 @@ start moving further, faster.
 Once you have Emacs set up at your site, GNU Hyperbole may be
 installed by using the Emacs Package Manager.  If you are not
 familiar with it, see the Packages section of the GNU Emacs Manual,
-[Emacs Packages](https://www.gnu.org/software/emacs/manual/html_node/emacs/Packages.html). 
+[Emacs Packages](https://www.gnu.org/software/emacs/manual/html_node/emacs/Packages.html).
 
 If you have Hyperbole 5.10 or higher already installed and simply want to
 upgrade it, invoke the Emacs Package Manager with {M-x list-packages RET},
@@ -229,6 +240,9 @@ Below are the lines to add:
       (package-refresh-contents)
       (package-install 'hyperbole))
     (hyperbole-mode 1)
+    ;; Allow HyWikiWords in text buffers and programming buffer comments
+    ;; by uncommenting the next line.
+    ;; (hywiki-mode :all)
 
 ----
 
@@ -283,10 +297,10 @@ Hyperbole also includes the Hyperbole Manual, a full reference manual,
 not a simple introduction.  It is included in the "man/" subdirectory
 of the Hyperbole package directory in four forms:
 
-[hyperbole.info](man/hyperbole.info)   - online Info browser version  
-[hyperbole.html](man/hyperbole.html)   - web version  
-[hyperbole.pdf](man/hyperbole.pdf)     - printable version  
-[hyperbole.texi](man/hyperbole.texi)   - source version  
+[hyperbole.info](man/hyperbole.info)   - online Info browser version
+[hyperbole.html](man/hyperbole.html)   - web version
+[hyperbole.pdf](man/hyperbole.pdf)     - printable version
+[hyperbole.texi](man/hyperbole.texi)   - source version
 
 The Hyperbole package installation places the Info version of this manual
 where needed and adds an entry for Hyperbole into the Info directory under
@@ -339,7 +353,7 @@ Hyperbole consists of six parts:
        automatically recognized within text that perform actions,
        e.g. bug#24568 displays the bug status information for that bug
        number.
-       
+
        These actions may be links or arbitrary Lisp expressions.  So
        for example, you could create your own button type of
        Wikipedia searches that jumped to the named Wikipedia page
@@ -419,7 +433,7 @@ to a file or executing a shell command.
 There are three categories of Hyperbole buttons:
 
    1.  *Explicit Buttons*
-          created by Hyperbole, accessible from within a single document; 
+          created by Hyperbole, accessible from within a single document;
 
    2.  *Global Buttons*
           created by Hyperbole, accessible anywhere within a user's
@@ -473,7 +487,7 @@ Some of Hyperbole's most important features include:
 
 Typical Hyperbole applications include:
 
- - *Personal Information Management*  
+ - *Personal Information Management*
    Overlapping link paths provide a variety of views into an
    information space.  A single key press activates buttons
    regardless of their types, making navigation easy.
@@ -481,7 +495,7 @@ Typical Hyperbole applications include:
    A search facility locates buttons in context and permits quick
    selection.
 
- - *Documentation Browsing*  
+ - *Documentation Browsing*
    Embedding cross-references in a favorite documentation format.
 
    Addition of a point-and-click interface to existing documentation.
@@ -490,18 +504,18 @@ Typical Hyperbole applications include:
    of an identifier from its use within code or its reference within
    documentation.
 
- - *Brainstorming*  
+ - *Brainstorming*
    Capture of ideas and then quick reorganization with the Hyperbole
    Koutliner.  Link to related ideas, eliminating the need to copy
    and paste information into a single place.
 
- - *Help/Training Systems*  
+ - *Help/Training Systems*
    Creation of tutorials with embedded buttons that show students how
    things work while explaining the concepts, e.g. an introduction
    to UNIX commands.  This technique can be much more effective than
    descriptions alone.
 
- - *Archive Managers*  
+ - *Archive Managers*
    Supplementation of programs that manage archives from incoming
    information stream, having them add topic-based buttons that
    link to the archive holdings.  Users can then search and create
@@ -563,19 +577,19 @@ default context-sensitive Hyperbole key bindings (Smart Keys).
   well-thought out, poised engineering.  It may be from the 90s, but it
   feels like a breath of fresh air to me.
 
-                        -- de_sonnaz on reddit  
+                        -- de_sonnaz on reddit
 
 
   \*\*\* MAN I love Hyperbole!!!  Wow! \*\*\*
 
-                        -- Ken Olstad  
+                        -- Ken Olstad
                            Cheyenne Software, Inc.
 
 -------
 
   I *love* koutlines.
 
-                        -- Bob Glickstein  
+                        -- Bob Glickstein
                            Z-Code Software Corporation
 
 -------
@@ -596,7 +610,7 @@ default context-sensitive Hyperbole key bindings (Smart Keys).
   but due to the ease of installation and the quality of the documentation,
   digging into it is actually fun.
 
-                        -- Aditya Siram  
+                        -- Aditya Siram
 
 -------
 
@@ -632,7 +646,7 @@ default context-sensitive Hyperbole key bindings (Smart Keys).
   useful set of power tools.  If Emacs is your preferred productivity
   environment, it's definitely worth getting familiar with it.
 
-                        -- Chris Nuzum  
+                        -- Chris Nuzum
                            Co-founder, Traction Softwarea, Inc.
 
 -------
@@ -649,7 +663,7 @@ default context-sensitive Hyperbole key bindings (Smart Keys).
   perfect, but adequate), so I can put any aspect of development on
   our internal web for others to see.
 
-                        -- Farzin Guilak  
+                        -- Farzin Guilak
                            Protocol Systems, Inc., Engineer
 
 -------
@@ -672,7 +686,7 @@ default context-sensitive Hyperbole key bindings (Smart Keys).
    4. The Hyperbole Koutliner, which I find a very useful tool.  I've
       implemented Emacspeak extensions to support it.
 
-                        -- TV Raman  
+                        -- TV Raman
                            Google Inc.
 
 -------
@@ -695,7 +709,7 @@ default context-sensitive Hyperbole key bindings (Smart Keys).
   that do various little things, and I index saved mail messages by putting
   explicit link-to-mail buttons in an outline file.
 
-                        -- Ken Olstad  
+                        -- Ken Olstad
                            Cheyenne Software, Inc.
 
 -------
@@ -727,12 +741,12 @@ default context-sensitive Hyperbole key bindings (Smart Keys).
 
   * Organizing and viewing online documentation: using Hyperbole along with
     Hyper-man and Info makes it truly easy to look up online documentation.
-      
+
   * Other desktop organization tasks: including links to various mail
     folders, saved newsgroup conversation threads, online note-taker,
     emacs-command invocations, etc.
 
-                        -- Dadong Wan  
+                        -- Dadong Wan
                            University of Hawaii
 
 -------
@@ -745,15 +759,15 @@ default context-sensitive Hyperbole key bindings (Smart Keys).
   in it is a very powerful capability.  Using ange-ftp mode, one can make
   file references "across the world" as easily as normal file references.
 
-                        -- Mark Eichin  
+                        -- Mark Eichin
                            Cygnus Support
 -------
 
    I just wanted to say how much I enjoy using the Hyperbole Koutliner.
    It is a great way to quickly construct very readable technical documents
-   that I can pass around to others.   Thanks for the great work.  
+   that I can pass around to others.   Thanks for the great work.
 
-                        -- Jeff Fried  
+                        -- Jeff Fried
                            Informix
 
 -------
@@ -761,7 +775,7 @@ default context-sensitive Hyperbole key bindings (Smart Keys).
    The Hyperbole system provides a nice interface to exploring corners of
    Unix that I didn't know existed before.
 
-                        -- Craig Smith  
+                        -- Craig Smith
 
 
 ## Why was Hyperbole developed?

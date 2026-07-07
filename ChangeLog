@@ -1,3 +1,10 @@
+2026-07-06  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (HyWiki): Finish HyWiki manual chapter.
+                     (Elpa In-Development Package Installation): Move before
+    Elpa Stable given long full release cycles.
+                     (Installation): Add optional (hywiki-mode :all) config.
+
 2026-07-04  Bob Weiner  <rsw@gnu.org>
 
 * hycontrol.el (hycontrol-frame-zoom-reset): Handle 'frame not zoomed'
@@ -6,6 +13,10 @@
     Reformat for easier readability.
 
 2026-06-30  Bob Weiner  <rsw@gnu.org>
+
+* FAST-DEMO: Add link to EmacsATX unscripted demo of Hyperbole.
+
+* man/hyperbole.texi (HyRolo): Add examples of non-contact management usage.
 
 * hui-mini.el (hui:menu-maybe-highlight-item-keys): Fix that in
     column layout mode, items in the first column on 2nd and succeeding
