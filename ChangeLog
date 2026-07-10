@@ -1,5 +1,12 @@
 2026-07-10  Bob Weiner  <rsw@gnu.org>
 
+* hpath.el (hpath:at-p): Near the top, move (match-string 0 path) call before
+    path is modified, otherwise, with a 1 char path, shrunk to an empty string,
+    match-path will trigger an error; fixes this.
+
+* hyperbole.el (hkey-initialize): Change to bind {M-o} in 'hyperbole-mode-map'
+    only if not previously bound.
+
 * hywiki.el (hywiki-referent-menu): Add Denote support.
             (hywiki-add-denote, hywiki-display-denote, hywiki-string-to-wikiword)
              hywiki-denote-file-to-wikiword, hywiki-denote-id-to-wikiword): Add
@@ -8,17 +15,32 @@
     when called, then insert it.  If buffer is read-only in this case, trigger
     an error.
 
+2026-07-09  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-delimited-p): Fix so 'wikiword' is always set to a
+    string or nil, not the 't return value from 'hypb:in-string-p'.  Also,
+    limit region narrowing to just where it is needed near the function
+    beginning.
 2026-07-07  Bob Weiner  <rsw@gnu.org>
 
-* hsys-youtube.el (hsys-youtube-end-format): YouTube no longer allows end times or the
-    embed protocol in video urls, so update this format to at least jump to the proper
-    start time.  The end time is sent but ignored.
+* hsys-youtube.el (hsys-youtube-end-format): YouTube no longer allows end
+    times or the embed protocol in video urls, so update this format to at
+    least jump to the proper start time.  The end time is sent but
+    ignored.
 
-* hui-mouse.el (hkey-alist): Trigger 'hui-select-thing' or 'hui-select-mark-delimited-sexp'
-    if (point) >= any hbut end point, not just equal to it, as before.  This was causing
-    a failure to trigger when a HyWikiWord came right before a closing double quote that
-    point was on, so the double quoted string was not selected and the HyWikiWord was
-    activated instead.
+* FAST-DEMO (Hyperbole Videos):
+  README.md: Add "HyWiki: Zero Markup Hypertext" article video links.
+
+* man/hyperbole.texi (Implicit Button Link Types):
+  hbut.el (defil): Clarify that TEXT-REGEXP is a partial match unless surrounded
+    by start \\` and end \\' match string delimiters.
+
+* hui-mouse.el (hkey-alist): Trigger 'hui-select-thing' or
+    'hui-select-mark-delimited-sexp' if (point) >= any hbut end point, not
+    just equal to it, as before.  This was causing a failure to trigger
+    when a HyWikiWord came right before a closing double quote that point
+    was on, so the double quoted string was not selected and the
+    HyWikiWord was activated instead.
 
 2026-07-06  Bob Weiner  <rsw@gnu.org>
 
