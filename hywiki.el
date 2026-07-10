@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     10-Jul-26 at 12:07:53 by Bob Weiner
+;; Last-Mod:     10-Jul-26 at 12:24:52 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -170,9 +170,9 @@
 
 (declare-function Info-current-filename-sans-extension "hui-mouse")
 (declare-function Info-read-index-item-name "hui-mouse")
-(declare-function activities-completing-read "activities" (:prompt prompt :default default))
-(declare-function activities-new "activities" (name))
-(declare-function activities-resume "activities" (activity :resetp resetp))
+(declare-function activities-completing-read "ext:activities" (:prompt prompt :default default))
+(declare-function activities-new "ext:activities" (name))
+(declare-function activities-resume "ext:activities" (activity :resetp resetp))
 (declare-function bookmark-completing-read "bookmark" (prompt &optional default))
 (declare-function bookmark-location "bookmark" (bookmark-name-or-record))
 (declare-function consult--async-command "ext:consult")
@@ -183,6 +183,11 @@
 (declare-function consult--async-throttle "ext:consult")
 (declare-function consult--lookup-member "ext:consult")
 (declare-function consult--read "ext:consult")
+(declare-function denote-file-prompt "ext:denote")
+(declare-function denote-get-link-description "ext:denote")
+(declare-function denote-get-path-by-id "ext:denote")
+(declare-function denote-open-or-create "ext:denote")
+(declare-function denote-retrieve-filename-identifier "ext:denote")
 (declare-function hsys-org-at-tags-p "hsys-org")
 (declare-function hyperbole-mode "hyperbole")
 (declare-function hyrolo-fgrep "hyrolo")

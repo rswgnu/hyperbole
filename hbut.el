@@ -3,11 +3,11 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     25-Jun-26 at 17:06:59 by Bob Weiner
+;; Last-Mod:     10-Jul-26 at 12:26:12 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; Copyright (C) 1991-2025  Free Software Foundation, Inc.
+;; Copyright (C) 1991-2026  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -82,9 +82,20 @@ Use the function, (hbut:max-len), to read the proper value.")
 ;; Move up internal defconst to appear before their use
 (defconst ebut:label-start "<("
   "String matching the start of a Hyperbole explicit hyper-button.")
-
 (defconst ebut:label-end   ")>"
   "String matching the end of a Hyperbole explicit hyper-button.")
+
+(defconst ibut:label-start "<["
+  "String matching the start of a Hyperbole implicit button optional name.")
+(defconst ibut:label-end   "]>"
+  "String matching the end of a Hyperbole implicit button optional name.")
+
+(defconst hbut:label-delimiters-regexp
+  (format (concat "%s[^][()<>\"]+\\([\n\r][^][()<>\"]*\\)?%s"
+                  "\\|%s[^][()<>\"]+\\([\n\r][^][()<>\"]*\\)?%s")
+          (regexp-quote ibut:label-start) (regexp-quote ibut:label-end)
+	  (regexp-quote ebut:label-start) (regexp-quote ebut:label-end))
+  "Regular expression matching ibut names and ebut text/labels.")
 
 (defconst hbut:instance-sep ":"
   "String of one character, separates an ebut label from its instance num.")
@@ -2172,9 +2183,6 @@ If a new button is created, store its attributes in the symbol,
    [&optional ["&optional" arg &rest arg]]
    &optional ["&rest" arg])))
 
-(defvar ibut:label-start)
-(defvar ibut:label-end)
-
 (defun    ibut:delete (&optional but-sym)
   "Delete Hyperbole implicit button based on optional BUT-SYM.
 If it is a named button, delete all occurrences in the buffer; otherwise, delete
@@ -3031,12 +3039,6 @@ Return the symbol for the button if found, else nil."
   (when (ibut:is-p ibut)
     (hattr:get ibut 'categ)))
 
-;;; ------------------------------------------------------------------------
-(defconst ibut:label-start "<["
-  "String matching the start of a Hyperbole implicit button optional name.")
-(defconst ibut:label-end   "]>"
-  "String matching the end of a Hyperbole implicit button optional name.")
-
 ;;; ========================================================================
 ;;; ibtype class - Implicit button types
 ;;; ========================================================================
@@ -3133,9 +3135,12 @@ regular expression.  Hyperbole automatically creates a doc string
 for the type but you can override this by providing an optional
 DOC string.
 
-TEXT-REGEXP must match to the text found between a button's delimiters
-in order for this type to activate.  The matched text is applied
-to LINK-EXPR to produce the link's referent, which is then displayed.
+TEXT-REGEXP must match to part of the text found between a button's
+delimiters in order for this type to activate; to ensure it matches
+to the full text, start the REGEXP with \"\\`\" and end it with
+\"\\'\", to match to the start and end of string.  The matched text
+is applied to LINK-EXPR to produce the link's referent, which is then
+displayed.
 
 LINK-EXPR may be:
   (1) a brace-delimited key series;
