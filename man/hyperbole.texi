@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:      7-Jul-26 at 18:05:08 by Bob Weiner
+@c Last-Mod:     10-Jul-26 at 12:11:58 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,7 +30,7 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED July 7, 2026
+@set UPDATED July 10, 2026
 @set UPDATED-MONTH July 2026
 @set EDITION 9.0.2pre
 @set VERSION 9.0.2pre
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed July 7, 2026.
+Printed July 10, 2026.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -213,7 +213,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.2pre
-July 7, 2026 @c AUTO-REPLACE-ON-SAVE
+July 10, 2026 @c AUTO-REPLACE-ON-SAVE
 
 
   Published by the Free Software Foundation, Inc.
@@ -1845,6 +1845,7 @@ are not supported without a window system.
 @findex ace-window
 @findex hkey-ace-window-setup
 @cindex ace-window
+@cindex Ace Window
 @cindex window by letter
 @cindex jump to window by letter
 @cindex keyboard, jump to window
@@ -4900,6 +4901,7 @@ consult grep over its HyWiki backlink references, selecting one.
 @cindex Activity HyWiki reftype
 @cindex Bookmark HyWiki reftype
 @cindex Command HyWiki reftype
+@cindex Denote HyWiki reftype
 @cindex Elisp HyWiki reftype
 @cindex Find HyWiki reftype
 @cindex Gbut HyWiki reftype
@@ -4947,8 +4949,9 @@ appears only if the Activities package is available):
 @anchor{HyWiki Referents}
 @smallexample
 @noindent
-HyWiki RefType>  Activity Bookmark Command Elisp Find Gbut HyRolo InfoIndex
-                 Keys pathLink infoNode OrgID Page orgRoamNode Spec
+HyWiki RefType>  Activity Bookmark Denote Command Elisp Find Gbut HyRolo
+                 InfoIndex Keys pathLink infoNode OrgID Page orgRoamNode
+                 Spec
 @end smallexample
 
 @exampleindent 0
@@ -4959,6 +4962,7 @@ Menu Item       RefType Add Command      Action Description
 Activity        hywiki-add-activity      Activate a saved Activity
 Bookmark        hywiki-add-bookmark      Jump to an Emacs bookmark
 Command         hywiki-add-command       Run a Hypb action or cmd
+Denote          hywiki-add-denote        Display a denote file
 Elisp           hywiki-add-elisp         Evaluate an Elisp sexp
 Find            hywiki-add-find          Grep through hywiki dir
 Gbut            hywiki-add-global-button Activate a global button
@@ -4998,6 +5002,14 @@ arguments, then the WikiWord is passed as the sole argument when the
 command is run.  If the command takes a single argument and the empty
 string is given for the argument, then this is replaced with the
 WikiWord when the command is run.
+
+@cindex menu item, HyWiki Denote
+@cindex HyWiki Denote reftype
+@item Denote
+Add a HyWikiWord that displays a denote file.  When called
+interactively or with a WikiWord argument of nil or the empty string,
+then set the WikiWord argument to any wikiword at point; otherwise,
+convert the description from the denote file chosen to a wikiword.
 
 @cindex menu item, HyWiki Elisp
 @cindex HyWiki Elisp reftype
@@ -8585,6 +8597,11 @@ A programmatic or positional state recognized by Hyperbole.
 We speak of Smart Key and implicit button contexts.  Both are typically
 defined in terms of surrounding patterns within a buffer, but may be
 defined by arbitrary Emacs Lisp predicates.
+
+@item Denote
+An Emacs package for note taking that uses time-stamped, descriptive
+file naming conventions to label and locate notes.  HyWiki provides
+denote-specific links as one of its reference types.
 
 @item Display
 See @b{Screen}.

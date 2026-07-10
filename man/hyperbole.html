@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <!-- This manual is for GNU Hyperbole
-(Edition 9.0.2pre, Published July 6, 2026).
+(Edition 9.0.2pre, Published July 10, 2026).
 
 Copyright © 1989-2026  Free Software Foundation, Inc.
 
@@ -386,7 +386,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed July 6, 2026.
+Printed July 10, 2026.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -801,12 +801,15 @@ archives, the World-Wide Web and much more.
 <a class="index-entry-id" id="index-Hyperbole-demo"></a>
 <a class="index-entry-id" id="index-demo-file"></a>
 <a class="index-entry-id" id="index-tutorial"></a>
+<a class="index-entry-id" id="index-videos"></a>
+<a class="index-entry-id" id="index-articles"></a>
 <p>This is a reference manual with extensive details about Hyperbole use.
 If you prefer a simpler, more interactive introduction to Hyperbole,
 the <samp class="file">../FAST-DEMO</samp> file included in the Hyperbole distribution
 demonstrates many of Hyperbole&rsquo;s standard facilities without the need
-to read through this reference manual.  The <samp class="file">../FAST-DEMO</samp> is a good
-way to rapidly understand some of what Hyperbole can do for you.  Once
+to read through this reference manual.  The <samp class="file">../FAST-DEMO</samp> is a
+good way to rapidly understand some of what Hyperbole can do for you.
+It includes many links to videos and articles about Hyperbole.  Once
 Hyperbole is installed, (see <a class="pxref" href="#Setup">Setup</a>), you can access the
 <samp class="file">../FAST-DEMO</samp> with the key sequence <kbd class="kbd">{C-h h d d}</kbd>.
 </p>
@@ -2269,6 +2272,7 @@ are not supported without a window system.
 <a class="index-entry-id" id="index-ace_002dwindow-1"></a>
 <a class="index-entry-id" id="index-hkey_002dace_002dwindow_002dsetup"></a>
 <a class="index-entry-id" id="index-ace_002dwindow"></a>
+<a class="index-entry-id" id="index-Ace-Window"></a>
 <a class="index-entry-id" id="index-window-by-letter"></a>
 <a class="index-entry-id" id="index-jump-to-window-by-letter"></a>
 <a class="index-entry-id" id="index-keyboard_002c-jump-to-window"></a>
@@ -5282,12 +5286,9 @@ minor mode, <code class="code">hywiki-mode</code>, is enabled.  The <code class=
 variable is always in one of three states:
 </p>
 <ol class="enumerate">
-<li> &lsquo;<samp class="samp">:pages</samp>&rsquo;
-HyWikiWords are active only with pages within <code class="code">hywiki-directory</code>.
-</li><li> &lsquo;<samp class="samp">:all</samp>&rsquo;
-HyWikiWords are active within all text and programming buffers
-</li><li> &lsquo;<samp class="samp">nil</samp>&rsquo;
-the mode is disabled, HyWikiWords are disabled.
+<li> &lsquo;<samp class="samp">:pages</samp>&rsquo; - HyWikiWords are active only with pages within <code class="code">hywiki-directory</code>.
+</li><li> &lsquo;<samp class="samp">:all</samp>&rsquo;   - HyWikiWords are active within all text and programming buffers
+</li><li> &lsquo;<samp class="samp">nil</samp>&rsquo;    - the mode is disabled, HyWikiWords are disabled.
 </li></ol>
 
 <a class="index-entry-id" id="index-C_002dh-h-h-m"></a>
@@ -5310,7 +5311,7 @@ then <code class="code">hywiki-mode</code> is set to that default value.
 Emacs session, interactively use <kbd class="kbd">{C-h h h m a}</kbd>; programmatically,
 use <code class="code">(hywiki-mode :all)</code>.  To enable it globally for all future
 Emacs sessions, add this line to your Emacs initialization file:
-<code class="code">(setq hywiki-default-mode :all)</code>.
+<code class="code">(customize-save-variable 'hywiki-default-mode :all)</code>.
 </p>
 <a class="index-entry-id" id="index-HyWiki-programming-modes"></a>
 <a class="index-entry-id" id="index-hywiki_002dhighlight_002dall_002din_002dprog_002dmodes"></a>
@@ -5441,6 +5442,7 @@ consult grep over its HyWiki backlink references, selecting one.
 <a class="index-entry-id" id="index-Activity-HyWiki-reftype"></a>
 <a class="index-entry-id" id="index-Bookmark-HyWiki-reftype"></a>
 <a class="index-entry-id" id="index-Command-HyWiki-reftype"></a>
+<a class="index-entry-id" id="index-Denote-HyWiki-reftype"></a>
 <a class="index-entry-id" id="index-Elisp-HyWiki-reftype"></a>
 <a class="index-entry-id" id="index-Find-HyWiki-reftype"></a>
 <a class="index-entry-id" id="index-Gbut-HyWiki-reftype"></a>
@@ -5485,8 +5487,9 @@ arguments it requires.  It looks like this (Note that &lsquo;<samp class="samp">
 appears only if the Activities package is available):
 </p>
 <a class="anchor" id="HyWiki-Referents"></a><div class="example smallexample">
-<pre class="example-preformatted">HyWiki RefType&gt;  Activity Bookmark Command Elisp Find Gbut HyRolo InfoIndex
-                 Keys pathLink infoNode OrgID Page orgRoamNode Spec
+<pre class="example-preformatted">HyWiki RefType&gt;  Activity Bookmark Denote Command Elisp Find Gbut HyRolo
+                 InfoIndex Keys pathLink infoNode OrgID Page orgRoamNode
+                 Spec
 </pre></div>
 
 <div class="example">
@@ -5495,6 +5498,7 @@ appears only if the Activities package is available):
 Activity        hywiki-add-activity      Activate a saved Activity
 Bookmark        hywiki-add-bookmark      Jump to an Emacs bookmark
 Command         hywiki-add-command       Run a Hypb action or cmd
+Denote          hywiki-add-denote        Display a denote file
 Elisp           hywiki-add-elisp         Evaluate an Elisp sexp
 Find            hywiki-add-find          Grep through hywiki dir
 Gbut            hywiki-add-global-button Activate a global button
@@ -5531,6 +5535,14 @@ arguments, then the WikiWord is passed as the sole argument when the
 command is run.  If the command takes a single argument and the empty
 string is given for the argument, then this is replaced with the
 WikiWord when the command is run.
+</p>
+</dd>
+<dt><a class="index-entry-id" id="index-HyWiki-Denote-reftype"></a>
+<a id="index-menu-item_002c-HyWiki-Denote"></a><span>Denote<a class="copiable-link" href="#index-menu-item_002c-HyWiki-Denote"> &para;</a></span></dt>
+<dd><p>Add a HyWikiWord that displays a denote file.  When called
+interactively or with a WikiWord argument of nil or the empty string,
+then set the WikiWord argument to any wikiword at point; otherwise,
+convert the description from the denote file chosen to a wikiword.
 </p>
 </dd>
 <dt><a class="index-entry-id" id="index-HyWiki-Elisp-reftype"></a>
@@ -8896,7 +8908,11 @@ optional DOC string.
 </p>
 <p>When the Action Key is pressed in a buffer between the start and end
 delimiters and the text in-between matches to TEXT-REGEXP, then the
-button is activated and does one of four things with LINK-EXPR:
+button is activated.  To ensure TEXT-REGEXP matches to the full text
+and not just a part, start the REGEXP with &quot;\\&lsquo;&quot; and end it with
+&quot;\\&rsquo;&quot;, to match to the start and end of string.
+</p>
+<p>When activated, the button does one of four things with LINK-EXPR:
 </p>
 <ol class="enumerate">
 <li> executes it as a brace-delimited key series;
@@ -9485,6 +9501,12 @@ line-oriented searches.
 We speak of Smart Key and implicit button contexts.  Both are typically
 defined in terms of surrounding patterns within a buffer, but may be
 defined by arbitrary Emacs Lisp predicates.
+</p>
+</dd>
+<dt><b class="b">Denote</b></dt>
+<dd><p>An Emacs package for note taking that uses time-stamped, descriptive
+file naming conventions to label and locate notes.  HyWiki provides
+denote-specific links as one of its reference types.
 </p>
 </dd>
 <dt><b class="b">Display</b></dt>
@@ -15734,6 +15756,7 @@ Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable 
 <tr><td colspan="3"><hr></td></tr>
 <tr><th id="Concept-Index_cp_letter-A">A</th></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-abbreviated-URLs">abbreviated URLs</a></td><td class="printindex-index-section"><a href="#Using-URLs-with-Find_002dFile">Using URLs with Find-File</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-Ace-Window">Ace Window</a></td><td class="printindex-index-section"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-ace_002dwindow">ace-window</a></td><td class="printindex-index-section"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-action">action</a></td><td class="printindex-index-section"><a href="#Action-Types">Action Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-action-1">action</a></td><td class="printindex-index-section"><a href="#Action-Types">Action Types</a></td></tr>
@@ -15781,6 +15804,7 @@ Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-argument_002c-view-spec">argument, view spec</a></td><td class="printindex-index-section"><a href="#Creating-Action-Types">Creating Action Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-array">array</a></td><td class="printindex-index-section"><a href="#Thing-Selection">Thing Selection</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-array-1">array</a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Delimited-Things">Smart Key - Delimited Things</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-articles">articles</a></td><td class="printindex-index-section"><a href="#Manual-Overview">Manual Overview</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Assist-Key">Assist Key</a></td><td class="printindex-index-section"><a href="#Smart-Keys">Smart Keys</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Assist-Key-drag">Assist Key drag</a></td><td class="printindex-index-section"><a href="#By-Dragging">By Dragging</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Assist-Key-in-minibuffer">Assist Key in minibuffer</a></td><td class="printindex-index-section"><a href="#Smart-Key-Argument-Selection">Smart Key Argument Selection</a></td></tr>
@@ -16014,6 +16038,7 @@ Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-demo-file">demo file</a></td><td class="printindex-index-section"><a href="#Manual-Overview">Manual Overview</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-demonstration">demonstration</a></td><td class="printindex-index-section"><a href="#Hyperbole-Overview">Hyperbole Overview</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-demotion">demotion</a></td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-Denote-HyWiki-reftype">Denote HyWiki reftype</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-diagonal-drag">diagonal drag</a></td><td class="printindex-index-section"><a href="#Saving-and-Restoring-Window-Configurations">Saving and Restoring Window Configurations</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-diagonal-drag-1">diagonal drag</a></td><td class="printindex-index-section"><a href="#Smart-Mouse-Drags-within-a-Window">Smart Mouse Drags within a Window</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-digital-signature">digital signature</a></td><td class="printindex-index-section"><a href="#Glossary">Glossary</a></td></tr>
@@ -16304,6 +16329,7 @@ Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-Activity-reftype">HyWiki Activity reftype</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-Bookmark-reftype">HyWiki Bookmark reftype</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-Command-reftype">HyWiki Command reftype</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-Denote-reftype">HyWiki Denote reftype</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-dired">HyWiki dired</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-documentation">HyWiki documentation</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyWiki-edit-pages">HyWiki edit pages</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
@@ -16611,6 +16637,7 @@ Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-HyWiki-Activity">menu item, HyWiki Activity</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-HyWiki-Bookmark">menu item, HyWiki Bookmark</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-HyWiki-Command">menu item, HyWiki Command</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-HyWiki-Denote">menu item, HyWiki Denote</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-HyWiki-Elisp">menu item, HyWiki Elisp</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-HyWiki-Find">menu item, HyWiki Find</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-HyWiki-Gbut">menu item, HyWiki Gbut</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
@@ -17129,6 +17156,7 @@ Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-vertical-drag-1">vertical drag</a></td><td class="printindex-index-section"><a href="#Smart-Mouse-Drags-within-a-Window">Smart Mouse Drags within a Window</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Vertico-completion">Vertico completion</a></td><td class="printindex-index-section"><a href="#Smart-Key-Argument-Selection">Smart Key Argument Selection</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-video">video</a></td><td class="printindex-index-section"><a href="#Action-Types">Action Types</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-videos">videos</a></td><td class="printindex-index-section"><a href="#Manual-Overview">Manual Overview</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-view">view</a></td><td class="printindex-index-section"><a href="#Viewing-Outlines">Viewing Outlines</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-view-mode">view mode</a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-View-Mode">Smart Key - View Mode</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-view-spec">view spec</a></td><td class="printindex-index-section"><a href="#View-Specs">View Specs</a></td></tr>

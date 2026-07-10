@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     28-Jun-26 at 09:48:58 by Bob Weiner
+;; Last-Mod:     10-Jul-26 at 12:29:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -536,11 +536,11 @@ the .info suffix in the format with parentheses."
       (id-info string)
     (hypb:error "(link-to-Info-node): Invalid Info node: `%s'" string)))
 
-(defact link-to-ibut (name-key &optional key-src point)
-  "Activate implicit button given by NAME-KEY, optional KEY-SRC and POINT.
+(defact link-to-ibut (name-key &optional key-src _point)
+  "Activate implicit button given by NAME-KEY, optional KEY-SRC and _POINT.
 NAME-KEY must be a normalized key for an ibut <[name]>.
 KEY-SRC defaults to the current buffer's file or if there is no
-attached file, then to its buffer name.  POINT defaults to the
+attached file, then to its buffer name.  _POINT defaults to the
 current point.
 
 When the button with this action type is created, point must be
