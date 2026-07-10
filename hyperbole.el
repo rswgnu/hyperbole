@@ -9,7 +9,7 @@
 ;; Maintainer:   Robert Weiner <rsw@gnu.org>
 ;; Maintainers:  Robert Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:      06-Oct-92 at 11:52:51
-;; Last-Mod:      9-Jun-26 at 10:58:22 by Bob Weiner
+;; Last-Mod:     10-Jul-26 at 14:20:25 by Bob Weiner
 ;; Released:     10-Mar-24
 ;; Version:      9.0.2pre
 ;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -285,14 +285,12 @@ of the commands."
     ;; Provide a site standard way of emulating most Hyperbole mouse drag
     ;; commands from the keyboard.  This is most useful for rapidly creating
     ;; Hyperbole link buttons from the keyboard without invoking the Hyperbole
-    ;; menu.  Works only if Hyperbole is run under a window system.
-    (when (hyperb:window-system)
-      (if (eq (global-key-binding "\M-o") #'facemenu-keymap)
-	  ;; Override facemenu package that adds a keymap on M-o,
-	  ;; since this binding is more important to Hyperbole
-	  ;; users.
-	  (hkey-set-key "\M-o" #'hkey-operate)
-	(hkey-maybe-set-key "\M-o" #'hkey-operate)))
+    ;; menu.  Works only if Hyperbole is run under a window system.  Less
+    ;; important to bind now that {C-h h i l} exists to create implicit
+    ;; links between two windows, so we only bind {M-o} here if it has no
+    ;; global binding prior to Hyperbole being loaded.
+    (when (and (hyperb:window-system) (not (key-binding "\M-o")))
+      (hkey-maybe-set-key "\M-o" #'hkey-operate))
     ;;
     ;; Explicit button renames without invoking the Hyperbole menu.
     ;; No binding by default.

@@ -1,5 +1,8 @@
 2026-07-10  Bob Weiner  <rsw@gnu.org>
 
+* hyperbole.el (hkey-initialize): Change to bind {M-o} in 'hyperbole-mode-map'
+    only if not previously bound.
+
 * hywiki.el (hywiki-referent-menu): Add Denote support.
             (hywiki-add-denote, hywiki-display-denote, hywiki-string-to-wikiword)
              hywiki-denote-file-to-wikiword, hywiki-denote-id-to-wikiword): Add
