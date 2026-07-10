@@ -1,3 +1,13 @@
+2026-07-10  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-referent-menu): Add Denote support.
+            (hywiki-add-denote, hywiki-display-denote, hywiki-string-to-wikiword)
+             hywiki-denote-file-to-wikiword, hywiki-denote-id-to-wikiword): Add
+    these functions.
+            (hywiki-create-referent-and-display): If point is not on 'wikiword'
+    when called, then insert it.  If buffer is read-only in this case, trigger
+    an error.
+
 2026-07-07  Bob Weiner  <rsw@gnu.org>
 
 * hsys-youtube.el (hsys-youtube-end-format): YouTube no longer allows end times or the

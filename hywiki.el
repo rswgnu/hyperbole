@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     28-Jun-26 at 18:53:13 by Bob Weiner
+;; Last-Mod:     10-Jul-26 at 12:07:53 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1107,6 +1107,9 @@ After successfully finding a referent, run `hywiki-display-referent-hook'."
 	   "Add a HyWikiWord that jumps to an Emacs bookmark.")
 	 '("Command"      (hywiki-add-command hkey-value)
 	   "Add a HyWikiWord that runs an Emacs command or Hyperbole action type.")
+         (when (fboundp #'denote-open-or-create)
+           '("Denote"       (hywiki-add-denote hkey-value)
+	     "Add a HyWikiWord that jumps to a Denote note stored by ID."))
 	 '("Elisp"        (hywiki-add-elisp hkey-value)
 	   "Add a HyWikiWord that evaluates an Elisp sexpression.")
 	 '("Find"         (hywiki-add-find hkey-value)
@@ -1307,6 +1310,54 @@ calling this function."
         (t (error "(hywiki-display-command): Unbound referent command, '%s'"
                   command))))
 
+(defun hywiki-add-denote (wikiword)
+  "Make WIKIWORD display a denote file when the `denote' package is available.
+
+When called interactively or with WIKIWORD nil or the empty string, then set
+WIKIWORD to any wikiword at point; otherwise, convert the description from
+the denote file chosen to a wikiword.
+
+After successfully adding the link to a denote file, run
+`hywiki-add-referent-hook'.
+
+Use `hywiki-get-referent' to determine whether WIKIWORD exists prior to
+calling this function."
+  (interactive (list (hywiki-word-at)))
+  (hypb:require-package 'denote)
+  (let* ((denote-file (denote-file-prompt
+                       nil
+                       (if (stringp wikiword)
+                           (format "Link `%s' HyWikiWord to denote" wikiword)
+                         ;; Will use denote file description as `wikiword'
+                         "Add HyWikiWord denote link to")
+                       nil t))
+         (denote-desc (denote-get-link-description denote-file))
+         (denote-id (denote-retrieve-filename-identifier denote-file)))
+    (unless (or (stringp wikiword) (string-empty-p wikiword))
+      (setq wikiword (hywiki-string-to-wikiword denote-desc)))
+    (unless (equal wikiword (hywiki-get-singular-wikiword (hywiki-word-at)))
+      (if buffer-read-only
+          (error "(hywiki-add-denote): Since buffer is read-only, this must be used with point on a HyWikiWord")
+        (insert wikiword)))
+    (hywiki-add-referent wikiword (cons 'denote (cons denote-desc denote-id)))))
+
+(defun hywiki-display-denote (_wikiword denote-desc-and-id)
+  (let ((denote-desc (car denote-desc-and-id))
+        (denote-id (cdr denote-desc-and-id))
+        denote-file)
+    (cond ((not (stringp denote-id))
+           (error "(hywiki-display-denote): `denote-id' must be a string, not`%s'"
+                  denote-id))
+          ((and (setq denote-file (denote-get-path-by-id denote-id))
+                (file-readable-p denote-file))
+           (hpath:find denote-file))
+          ((not (stringp denote-file))
+           (error "(hywiki-display-denote): denote file not found for desc: \"%s\", id: \"%s\""
+                  denote-desc denote-id))
+          (t ;; denote-file not readable
+           (error "(hywiki-display-denote): Unreadable demote file: \"%s\""
+                  denote-file)))))
+
 (defun hywiki-add-elisp (wikiword)
   "Make WIKIWORD evaluate a prompted for Elisp sexpression and return it.
 
@@ -1452,8 +1503,9 @@ calling this function."
 
 (defun hywiki-add-org-id (wikiword)
   "Make WIKIWORD display an Org file or headline with an Org id.
-Point must be in the buffer with the id.  If no id exists, it is created.
-Return the referent created with the form: \\='(org-id . <id-string>).
+Point must be within the entry with with the id.  If no id exists, it is
+created.  Return the referent created with the form: \\='(org-id
+. <id-string>).
 
 If WIKIWORD is invalid, trigger an error if called interactively
 or return nil if not.
@@ -1622,9 +1674,8 @@ After successfully adding the spec, run `hywiki-add-referent-hook'."
 This replaces any existing referent the WIKIWORD may have.
 
 With either `hywiki-referent-prompt-flag' set or optional prefix
-REF-TYPE-FLAG, prompt for and choose a typed referent, otherwise, create
-and/or display a HyWiki page.  See `hywiki-referent-menu' for valid referent
-types.
+REF-TYPE-FLAG, prompt for and choose a typed referent, otherwise, create a
+HyWiki page.  See `hywiki-referent-menu' for valid referent types.
 
 Use `hywiki-get-referent' to test for and retrieve an existing HyWikiWord
 referent."
@@ -1727,21 +1778,27 @@ for WIKIWORD, add a page for it.
 
 Use `hywiki-get-referent' to determine whether a HyWikiWord referent
 or page exists."
-  (interactive (list (or (hywiki-word-at)
-			 (hywiki-word-read-new
+  (interactive (list nil current-prefix-arg))
+  (let (at-wikiword-flag)
+    (unless (stringp wikiword)
+      (setq wikiword (or (setq at-wikiword-flag (hywiki-word-at))
+		         (hywiki-word-read-new
 			  (format "Add/Edit and display HyWiki %s: "
-				  (if current-prefix-arg "referent" "page"))))
-		     current-prefix-arg))
-  (when (and (not prompt-flag) hywiki-referent-prompt-flag
-	     (called-interactively-p 'interactive))
-    (setq prompt-flag t))
-  (let* ((normalized-word (hywiki-get-singular-wikiword wikiword))
-	 (referent (hywiki-find-referent wikiword prompt-flag)))
-    (cond (referent)
-	  ((hywiki-word-is-p normalized-word)
-	   (when (hywiki-add-page normalized-word)
-	     (hywiki-display-page normalized-word)))
-	  (t (user-error "(hywiki-create-referent-and-display): Invalid HyWikiWord: '%s'; must be capitalized, all alpha" wikiword)))))
+				  (if current-prefix-arg "referent" "page"))))))
+    (unless at-wikiword-flag
+      (if buffer-read-only
+          (error "(hywiki-create-referent-and-display): Since buffer is read-only, this must be used with point on a HyWikiWord")
+        (insert wikiword)))
+    (when (and (not prompt-flag) hywiki-referent-prompt-flag
+	       (called-interactively-p 'interactive))
+      (setq prompt-flag t))
+    (let* ((normalized-word (hywiki-get-singular-wikiword wikiword))
+	   (referent (hywiki-find-referent wikiword prompt-flag)))
+      (cond (referent)
+	    ((hywiki-word-is-p normalized-word)
+	     (when (hywiki-add-page normalized-word)
+	       (hywiki-display-page normalized-word)))
+	    (t (user-error "(hywiki-create-referent-and-display): Invalid HyWikiWord: '%s'; must be capitalized, all alpha" wikiword))))))
 
 (defun hywiki-display-page (&optional wikiword file-name)
   "Display an optional WIKIWORD page and return the page file.
@@ -2019,6 +2076,26 @@ Use `hywiki-get-referent' to determine whether a HyWiki page exists."
 	    (string-match (regexp-quote (char-to-string (char-before)))
 			  "\[\(\{\<\"'`\t\n\r\f "))
     (or (char-before) 0)))
+
+(defun hywiki-denote-file-to-wikiword (denote-file)
+  "Return a hywikiword from the denote description associated with DENOTE-FILE."
+  (interactive
+   (list (denote-file-prompt nil "HyWiki denote file: "
+			     nil t)))
+  (if denote-file
+      (hywiki-string-to-wikiword
+       (denote-get-link-description denote-file))
+    (error "(hywiki-denote-file-to-wikiword): Denote file not found: \"%s\""
+	     denote-file)))
+
+(defun hywiki-denote-id-to-wikiword (denote-id)
+  "Return a hywikiword from the denote description associated with DENOTE-ID."
+  (let ((denote-file (denote-get-path-by-id denote-id)))
+    (if denote-file
+	(hywiki-string-to-wikiword
+	 (denote-get-link-description denote-file))
+      (error "(hywiki-denote-id-to-wikiword): Denote file not found for id: \"%s\""
+	     denote-id))))
 
 (defun hywiki-directory-edit ()
   "Edit HyWiki pages in current `hywiki-directory'.
@@ -3804,6 +3881,15 @@ contains no spaces."
               (section (substring link (match-beginning 0))))
 	 (concat file (hpath:dashes-to-spaces-markup-anchor section)))
      link)))
+
+(defun hywiki-string-to-wikiword (str)
+  "Convert a string to a single PascalCase HyWikiWord.
+Removes only whitespace, dashes and underscores.  Capitalizes
+each term in the string."
+  (unless (stringp str)
+    (error "(hywiki-string-to-wikiword): `str' must be a string, not `%s'" str))
+  (let ((words (split-string str "[-_ \t\n\r\f]+" t split-string-default-separators)))
+    (apply #'concat (mapcar #'capitalize words))))
 
 (defun hywiki-strip-org-link (link-str)
   "Return the hy:HyWikiWord#section part of an Org link string.
