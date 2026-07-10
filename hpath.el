@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:      5-Jul-26 at 13:09:03 by Bob Weiner
+;; Last-Mod:     10-Jul-26 at 14:36:54 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -971,9 +971,9 @@ or `~'."
       (setq path (string-trim path)))
     (when (and path (not non-exist)
 	       (string-match hpath:prefix-regexp path)
+	       (not (string-equal (match-string 0 path) path))
 	       (setq prefix (substring path 0 1)
-		     path (substring path 1))
-	       (not (string-equal (match-string 0 path) path)))
+		     path (substring path 1)))
       (setq non-exist t))
     (if (and path (not (string-empty-p path))
 	     (or (and non-exist prefix)

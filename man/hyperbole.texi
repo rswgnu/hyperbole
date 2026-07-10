@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     10-Jul-26 at 12:11:58 by Bob Weiner
+@c Last-Mod:     10-Jul-26 at 14:20:29 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -812,10 +812,11 @@ actions, e.g. bug#24568 displays the bug status information for that Emacs
 bug number, without the need for any additional markup.  Implicit link
 buttons can be added to documents with a simple drag between windows too.
 
-Or from the keyboard, With two windows on screen, an implicit link button
-can be created at point in the current buffer linking to the position in
-the other window's buffer by pressing @bkbd{C-h h i l}.  Use @bkbd{M-1
-C-h h i l} instead to be prompted for a name for the implicit button.
+Or from the keyboard, With two windows on screen, an implicit link
+button can be created at point in the current buffer linking to the
+position in the other window's buffer by pressing @bkbd{C-h h i l}.
+FYI, use @bkbd{C-u C-h h i l} instead to be prompted for a name for
+the implicit button when creating the link.
 
 @item Global buttons
 are buttons that are activated by name from anywhere within Emacs.  They may
@@ -3249,8 +3250,8 @@ other implicit button types will be tested and may activate instead.
 
 To activate a frequently used action button by name independent of
 your current buffer, simply add it to your global button file and
-precede it with a label @bkbd{C-h h i l}.  Then invoke it by label
-name with: @bkbd{C-h h g a}.
+precede it with a name using @bkbd{C-u C-h h i l}.  Then activate it
+by name with: @bkbd{C-h h g a}.
 
 
 @node Button Files, Action Types, Implicit Buttons, Buttons

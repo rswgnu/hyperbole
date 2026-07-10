@@ -1,5 +1,9 @@
 2026-07-10  Bob Weiner  <rsw@gnu.org>
 
+* hpath.el (hpath:at-p): Near the top, move (match-string 0 path) call before
+    path is modified, otherwise, with a 1 char path, shrunk to an empty string,
+    match-path will trigger an error; fixes this.
+
 * hyperbole.el (hkey-initialize): Change to bind {M-o} in 'hyperbole-mode-map'
     only if not previously bound.
 
@@ -11,17 +15,49 @@
     when called, then insert it.  If buffer is read-only in this case, trigger
     an error.
 
+2026-07-09  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-delimited-p): Fix so 'wikiword' is always set to a
+    string or nil, not the 't return value from 'hypb:in-string-p'.  Also,
+    limit region narrowing to just where it is needed near the function
+    beginning.
+            (hywiki-word-dehighlight-in-buffers, hywiki-word-highlight-in-buffers):
+    Change from using 'pre/post-command-hook' to 'before/after-change-functions'
+    so run only when buffer is modified, not on each command.
+  test/hywiki-tests.el (hywiki-tests--verify-hook-functions): Change from using
+    'pre/post-command-hook' to 'before/after-change-functions'.
+  test/hywiki-tests.el (hywiki-tests--verify-hywiki-word): Change from
+    displaying 'pre-command-hook' to 'before/after-change-functions' and
+    'post-self-insert-hook'.
+           (hywiki-word-store-around-point): Cache and call 'hywiki-word-at'
+    and 'hywiki-at-range-delimiter' maximally one time each per call of this
+    function.  (Used to call twice).
+
+2026-07-08  Bob Weiner  <rsw@gnu.org>
+
+* hib-social.el (hibtypes-git-project-regexp, hibtypes-git-file-regexp,
+                 hibtypes-social-regexp): Allow for &arguments
+
 2026-07-07  Bob Weiner  <rsw@gnu.org>
 
-* hsys-youtube.el (hsys-youtube-end-format): YouTube no longer allows end times or the
-    embed protocol in video urls, so update this format to at least jump to the proper
-    start time.  The end time is sent but ignored.
+* hsys-youtube.el (hsys-youtube-end-format): YouTube no longer allows end
+    times or the embed protocol in video urls, so update this format to at
+    least jump to the proper start time.  The end time is sent but
+    ignored.
 
-* hui-mouse.el (hkey-alist): Trigger 'hui-select-thing' or 'hui-select-mark-delimited-sexp'
-    if (point) >= any hbut end point, not just equal to it, as before.  This was causing
-    a failure to trigger when a HyWikiWord came right before a closing double quote that
-    point was on, so the double quoted string was not selected and the HyWikiWord was
-    activated instead.
+* FAST-DEMO (Hyperbole Videos):
+  README.md: Add "HyWiki: Zero Markup Hypertext" article video links.
+
+* man/hyperbole.texi (Implicit Button Link Types):
+  hbut.el (defil): Clarify that TEXT-REGEXP is a partial match unless surrounded
+    by start \\` and end \\' match string delimiters.
+
+* hui-mouse.el (hkey-alist): Trigger 'hui-select-thing' or
+    'hui-select-mark-delimited-sexp' if (point) >= any hbut end point, not
+    just equal to it, as before.  This was causing a failure to trigger
+    when a HyWikiWord came right before a closing double quote that point
+    was on, so the double quoted string was not selected and the
+    HyWikiWord was activated instead.
 
 2026-07-06  Bob Weiner  <rsw@gnu.org>
 
@@ -32,6 +68,15 @@
 
 * hywiki.el (hywiki--extend-region): Fix so start is always <= end.
 
+2026-07-05  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-word-at): Don't allow : or ; at the end of a #section.
+
+* hbut.el (hbut:label-delimiters-regexp): Add and use in
+    'hywiki-maybe-highlight-references'.
+
+* hywiki.el (hywiki-get-buttonize-characters): Allow : as a trailing
+    separator character (previously had been filtered out).
             (hywiki-get-existing-page-file): Handle 't' value as 'file-stem-name'
     from a HyWikiWord spec.
   hpath.el (hpath:expand): Ensure path value is a string before trying to expand
@@ -43,6 +88,48 @@
     error by displaying a message instead to preven leaving HyControl mode.
                (hycontrol--frames-prompt-format, hycontrol--windows-prompt-format):
     Reformat for easier readability.
+
+2026-07-02  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-position-in-hbut-label-p): Add to test if within
+    an hbut label.
+            (hywiki-maybe-dehighlight-references): Call above function to
+    allow for dehighlighting HyWikiWords within Hyperbole button labels
+    so that the Action Key always activates the label's button and doesn't
+    trigger a HyWikiWord activation.
+            (hywiki-word-store-around-point,
+             hywiki-word-highlight-post-self-insert,
+             hywiki-word-highlight-post-command,
+             hywiki-highlight-on-yank,
+             hywiki-highlight-word-get-range): Don't highlight if above
+    predicate is true.
+            (hywiki--get-delimited-range-backward): Fix to 'hbut:syntax-table'
+    during backward 'scan-sexps' so open/close angle brackets match to
+    account for use in hbut labels.  Otherwise, when point is after a closing
+    angle bracket, the region returned is a single char, not the span of the
+    brackets.
+            (hywiki-maybe-dehighlight-between-references)
+             hywiki-maybe-highlight-references): Dehighlight any HyWikiWords
+    highlighted within a delimited Hyperbole button label.
+
+* hywiki.el (hywiki-scan-sexps): Add and use in place of 'scan-sexps' in
+    hywiki code.
+            (hywiki-get-delimited-region,
+             hywiki-maybe-highlight-balanced-pairs): Use 'hbut:syntax-table'.
+  hui-select.el (hui-select-get-syntax-table): Use 'hui-select-syntax-table'
+    in most programming modes when within a comment to support angle brackets
+    as sexpression delimiters.
+
+2026-07-01  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki--get-delimited-range-at-closing-delimiter): Add to
+    separate out this code from a quoted sexp in 'hywiki-get-delimited-region'
+    and simplify debugging.
+            (hywiki--get-delimited-range-backward): Fix wrong location of
+    'save-excursion' call so that point was moved one char forward before
+    backward 'scan-sexps' was called.  This led to HyWiki words not be
+    dehighlighted when deleted the last WikiWord character within a set
+    of delimiters where it was the last word.
 
 2026-06-30  Mats Lidell  <matsl@gnu.org>
 
