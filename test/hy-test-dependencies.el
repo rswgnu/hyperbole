@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:16:00
-;; Last-Mod:     14-Jul-26 at 09:39:15 by Bob Weiner
+;; Last-Mod:     16-Jul-26 at 14:35:48 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -18,6 +18,8 @@
 
 ;;; Code:
 
+(require 'package)
+
 (declare-function markdown-ts-mode "ext:markdown-ts-mode")
 
 ;; Force markdown-mode to be selected first to avoid markdown-ts-mode
@@ -26,7 +28,10 @@
 (when (fboundp #'markdown-ts-mode)
   (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode)))
 
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(setq package-pinned-packages
+      '((markdown-mode . "nongnu")))
+
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (package-initialize)
 
 (require 'hload-path)
@@ -52,6 +57,10 @@
 ;; Log and fix any mixed version Org installation.
 ;; Ignore publishing-related errors that don't affect the tests.
 (ignore-errors (hsys-org-log-and-fix-version))
+
+;; Allow dynamic loading with no questions asked of dependencies
+;; i.e. markdown-mode
+(setq hypb:ask-to-install-package-flag nil)
 
 (provide 'hy-test-dependencies)
 ;;; hy-test-dependencies.el ends here

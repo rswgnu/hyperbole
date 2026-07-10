@@ -2,7 +2,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     4-Jul-24 at 09:57:18
-;; Last-Mod:      6-May-26 at 08:17:25 by Bob Weiner
+;; Last-Mod:     12-Jul-26 at 00:03:44 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -116,9 +116,7 @@ Requires use of `vertico' for completions."
 Install `consult' package if not yet installed."
   (unless hsys-consult-flag
     (error "`%s' command requires `hsys-consult-flag' set to t" this-command))
-  (unless (package-installed-p 'consult)
-    (package-install 'consult))
-  (require 'consult)
+  (hypb:require-package 'consult)
   (let ((consult-version (hsys-consult-get-version)))
     ;; Multi-file support added after consult version "0.32"
     (when (not (and consult-version (string-greaterp consult-version "0.32")))
@@ -403,9 +401,7 @@ tag around point."
   "Install Org Roam if necessary and then call an Org Roam FUNC."
   (unless hsys-consult-flag
     (error "`%s' command requires `hsys-consult-flag' set to t" this-command))
-  (unless (package-installed-p 'org-roam)
-    (package-install 'org-roam))
-  (require 'org-roam)
+  (hypb:require-package 'org-roam)
   (unless (file-readable-p org-roam-directory)
     (make-directory org-roam-directory))
   (unless org-roam-db-autosync-mode

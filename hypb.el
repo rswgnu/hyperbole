@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     10-Jul-26 at 17:16:28 by Bob Weiner
+;; Last-Mod:     15-Jul-26 at 21:01:28 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -91,6 +91,11 @@ preceded by a backslash are ignored.  The wrap regexp has group 1 that
 matches the beginning of line or a backslash character.  Group 2 matches the
 delimiter."
   :type 'sexp
+  :group 'hyperbole-commands)
+
+(defcustom hypb:ask-to-install-package-flag t
+  "Non-nil if user shall be queried before installing a package."
+  :type 'boolean
   :group 'hyperbole-commands)
 
 (defvar hypb:mail-address-mode-list
@@ -181,8 +186,7 @@ Uses the newer \"nadvice\" elisp library, not \"advice\"."
 This displays a clean log of Emacs keys used and commands executed."
   (interactive)
   ;; Ensure package is installed
-  (unless (package-installed-p 'interaction-log)
-    (package-install 'interaction-log))
+  (hypb:require-package 'interaction-log)
 
   ;; Ensure interaction-log-mode is disabled to removes its command
   ;; hooks which are replaced below.
@@ -1169,23 +1173,45 @@ WINDOW pixelwise."
 	     (string-join unreadable-dirs "\n"))))
   dirs)
 
+(defun hypb:users-package-manager ()
+  "Return the package manager in use.
+Current supported package managers are `straight', `elpaca', and `package'."
+  (cond ((featurep 'straight) 'straight)
+        ((featurep 'elpaca) 'elpaca)
+        (t 'package)))
+
+(defun hypb:package-el-install (package)
+  "Install PACKAGE using the default package manager `package.el'.
+If `hypb:ask-to-install-package-flag' is non-nil query user if package should
+be installed."
+  (when (or (not hypb:ask-to-install-package-flag)
+            (y-or-n-p (format "Install `%s' to enable this feature? " package)))
+    (package-install package)
+    (require package)))
+
+(defun hypb:notify-manual-install-needed (package manager)
+  "Notify user that a manual install is needed for PACKAGE.
+Suggest user to use the package MANAGER."
+  (user-error "Package '%s' is required by this command.  Use your package manager '%s' to install it" package manager))
+
+(defun hypb:ensure-dependency (package)
+  "Ensure PACKAGE is available.
+Returns non-nil if the feature can be used."
+  (or (require package nil t)
+      (pcase (hypb:users-package-manager)
+        ('package (hypb:package-el-install package))
+        (manager (hypb:notify-manual-install-needed package manager)))))
+
 ;;;###autoload
 (defun hypb:require-package (package)
-  "Prompt user to install, if necessary, and require the Emacs PACKAGE-NAME.
-PACKAGE-NAME may be a symbol or a string."
+  "Prompt user to install, if necessary, and require the Emacs PACKAGE.
+PACKAGE may be a symbol or a string."
   (when (stringp package)
     (setq package (intern package)))
   (unless (symbolp package)
     (error "(hypb:require-package): package must be a symbol or string, not '%s'" package))
-  (unless (or
-           ;; Allow for alternative package managers like elpaca that don't
-           ;; show up with a `package-installed-p' check
-           (require package nil t)
-           (package-installed-p package))
-    (if (y-or-n-p (format "Install package `%s' required by this command?" package))
-	(package-install package)
-      (keyboard-quit)))
-  (require package))
+  (unless (hypb:ensure-dependency package)
+    (error "(hypb:require-package): package '%s' could not be found" package)))
 
 ;; Adapted from cl--do-remf in "cl-extra.el" but uses 'equal' for comparisons.
 ;;;###autoload
