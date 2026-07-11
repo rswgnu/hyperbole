@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     14-Mar-26 at 22:47:11 by Mats Lidell
+# Last-Mod:     11-Jul-26 at 21:49:31 by Mats Lidell
 #
 # Copyright (C) 1994-2026  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -158,8 +158,7 @@ SHELL = /bin/sh
 # Shell commands you may want to change for your particular system.
 CP = \cp -p
 ETAGS = \etags
-GNUFTP = \gnupload --to ftp.gnu.org:hyperbole --replace
-GPG = \gpg
+GNUFTP = \gnupload --dry-run --to ftp.gnu.org:hyperbole --replace
 GZIP = \gzip -c
 INSTALL = \install -m 644 -c
 MKDIR = \mkdir -p
@@ -478,12 +477,12 @@ website: website-local
 # Generate a Hyperbole package suitable for distribution via the Emacs package manager.
 .PHONY: pkg package
 pkg: package
-package: tags doc $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.sig
+package: tags doc $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz
 
 # Generate and distribute a Hyperbole release to ftp.gnu.org.
 # One step in this is to generate an autoloads file for the Koutliner, kotl/kotl-autoloads.el.
 .PHONY: release
-release: git-pull git-verify-no-update package $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz ftp website git-tag-release
+release: git-pull package ftp website git-tag-release
 	@echo "Hyperbole $(HYPB_VERSION) is released."
 
 # Ensure local hyperbole directory is synchronized with master before building a release.
@@ -491,15 +490,11 @@ release: git-pull git-verify-no-update package $(pkg_parent)/hyperbole-$(HYPB_VE
 git-pull:
 	@echo "If this step fails check your work directory for not committed changes"
 	git checkout master && git pull
-	git diff-index --quiet master
-
-.PHONY: git-verify-no-update
-git-verify-no-update:
-	@echo "If this step fails check your work directory for updated docs and push these to savannah"
-	git diff-index --quiet master
+	git diff-index --quiet HEAD --
 
 .PHONY: git-tag-release
 git-tag-release:
+	$(call confirm,Set git tag to hyperbole-$(HYPB_VERSION) on Savannah!,TAGIT)
 	git tag -a hyperbole-$(HYPB_VERSION) -m "Hyperbole release $(HYPB_VERSION)"
 	git push origin hyperbole-$(HYPB_VERSION)
 	@echo "Hyperbole $(HYPB_VERSION) is tagged as hyperbole-$(HYPB_VERSION)."
@@ -508,6 +503,7 @@ git-tag-release:
 # containing the tarball to upload.
 .PHONY: ftp
 ftp: package $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz
+	$(call confirm,Uploads release to ftp.gnu.org!,UPLOAD)
 	cd $(pkg_parent) && $(GNUFTP) hyperbole-$(HYPB_VERSION).tar.gz
 	@echo "Hyperbole $(HYPB_VERSION) uploaded to ftp.gnu.org."
 
@@ -524,14 +520,8 @@ kotl/kotl-autoloads.el: $(EL_KOTL)
 	$(HYPB_at)$(TOUCH) $@
 
 # Used for ftp.gnu.org tarball distributions.
-$(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz:
+$(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz: $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar
 	cd $(pkg_parent) && $(GZIP) hyperbole-$(HYPB_VERSION).tar > hyperbole-$(HYPB_VERSION).tar.gz
-
-$(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.sig: $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar
-	$(RM) $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.sig && \
-	cd $(pkg_parent) && $(GPG) -ba -o hyperbole-$(HYPB_VERSION).tar.sig hyperbole-$(HYPB_VERSION).tar && \
-	echo &&  echo "Hyperbole package built successfully:" && \
-	ls -l $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar*
 
 $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar: version $(HYPERBOLE_FILES)
 	$(RM) -fr $(pkg_hyperbole) $(pkg_hyperbole).tar
@@ -544,18 +534,9 @@ $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar: version $(HYPERBOLE_FILES)
 pkgclean: packageclean
 packageclean:
 	if [ -d $(pkg_hyperbole) ]; then \
-	  cd $(pkg_hyperbole) && $(RM) -r .git* videos ChangeLog.* *autoloads.* *.elc TODO* HY-ANNOUNCE-* .DS_Store \
-	    core .place* ._* .*~ *~ *\# *- *.orig *.rej .nfs* CVS .cvsignore GNUmakefile.id \
-	    && gsed '/\f/,/\f/{/\f/!d}' .hypb | tail +2 > .hypb2 && rm -f .hypb && mv .hypb2 .hypb; fi # Filter out unneeded TODO file hbut data from .hypb
-	if [ -d $(pkg_hyperbole)/kotl ]; then \
-	  cd $(pkg_hyperbole)/kotl && $(RM) -r *autoloads.* *.elc TODO* .DS_Store \
-	    core .place* ._* .*~ *~ *\# *- *.orig *.rej .nfs* CVS .cvsignore; fi
-	if [ -d $(pkg_hyperbole)/man ]; then \
-	  cd $(pkg_hyperbole)/man && $(RM) -r .DS_Store core .place* hyperbole.{log,aux,cp*,fn*,ky*,toc,vr*} \
-	    ._* .*~ *~ *\# *- *.orig *.rej .nfs* CVS .cvsignore; fi
-	if [ -d $(pkg_hyperbole)/man/im ]; then \
-	  cd $(pkg_hyperbole)/man/im && $(RM) -r .DS_Store core .place* ._* .*~ *~ \
-	    *.ps *\# *- *.orig *.rej .nfs* CVS .cvsignore; fi
+		$(RM) -r $(pkg_hyperbole); \
+	fi
+	$(RM) $(pkg_parent)/hyperbole-$(HYPB_VERSION).*
 
 # ERT test
 .PHONY: tests test batch-tests

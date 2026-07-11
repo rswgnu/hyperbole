@@ -1,5 +1,18 @@
 2026-07-11  Mats Lidell  <matsl@gnu.org>
 
+* Makefile (package): Depend on tar-file.
+    (release): Remove targets not needed.
+    (git-pull): Make check robust for current state on the workfolder.
+    (git-tag-release):
+    (ftp): Add confirm check for these potential dangerous targets.
+    ($(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz): Add dependency on
+    tar file.
+    ($(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.sig): Remove
+    target. gnupload script handles the sig file.
+    (packageclean): Simplify cleanup by removing whole package build
+    directory.
+    (GNUFTP): Add --dry-run during for now while testing.
+
 * hpath.el (hpath:substitute-var): Try the substitution on the
     absolute path.
     (hpath:substitute-var-name): Anchor regexp substitution on first pos.
