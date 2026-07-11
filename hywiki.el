@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     10-Jul-26 at 20:15:58 by Bob Weiner
+;; Last-Mod:     10-Jul-26 at 21:05:58 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -3178,12 +3178,12 @@ Always exclude minibuffer windows."
 					    (window-list frame :no-minibuf))))
 				(or frames (frame-list))))))
 
-(defun hywiki-get-existing-page-file (file-stem-name)
-  "Return existing `hywiki-directory' path from FILE-STEM-NAME or nil.
-FILE-STEM-NAME should not contain a directory and may have or may omit
+(defun hywiki-get-existing-page-file (reference)
+  "Return existing `hywiki-directory' path from REFERENCE or nil.
+REFERENCE should not contain a directory and may have or may omit
 `hywiki-file-suffix' and an optional trailing #section.
 
-Checks only that FILE-STEM-NAME is not nil, not an empty string and does
+Checks only that REFERENCE is not nil, not an empty string and does
 not contain a directory path or returns nil."
   (make-directory hywiki-directory t)
   (unless (or (null reference)
@@ -3207,15 +3207,15 @@ not contain a directory path or returns nil."
         (concat file-name section)))))
 
 (defun hywiki-get-page-file (reference)
-  "Return possibly non-existent `hywiki-directory' path from FILE-STEM-NAME.
-FILE-STEM-NAME may be an existing absolute file path; then, return it.
-Otherwise, FILE-STEM-NAME should not contain a directory and may have or may
+  "Return possibly non-existent `hywiki-directory' path from REFERENCE.
+REFERENCE may be an existing absolute file path; then, return it.
+Otherwise, REFERENCE should not contain a directory and may have or may
 omit `hywiki-file-suffix' and an optional trailing #section, both of which
 are left attached to the result returned.  So given the input,
 WikiWord#section, the result might be:
 \"/users/me/hywiki/WikiWord.org#section\".
 
-Checks only that FILE-STEM-NAME is not nil, not an empty string and does
+Checks only that REFERENCE is not nil, not an empty string and does
 not contain a directory path or returns nil."
   (make-directory hywiki-directory t)
   (if (and (stringp reference) (file-readable-p reference))
