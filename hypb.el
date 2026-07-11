@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     28-Jun-26 at 13:28:33 by Bob Weiner
+;; Last-Mod:     10-Jul-26 at 17:16:28 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1170,18 +1170,22 @@ WINDOW pixelwise."
   dirs)
 
 ;;;###autoload
-(defun hypb:require-package (package-name)
+(defun hypb:require-package (package)
   "Prompt user to install, if necessary, and require the Emacs PACKAGE-NAME.
 PACKAGE-NAME may be a symbol or a string."
-  (when (stringp package-name)
-    (setq package-name (intern package-name)))
-  (unless (symbolp package-name)
-    (error "(hypb:require-package): package-name must be a symbol or string, not '%s'" package-name))
-  (unless (package-installed-p package-name)
-    (if (y-or-n-p (format "Install package `%s' required by this command?" package-name))
-	(package-install package-name)
+  (when (stringp package)
+    (setq package (intern package)))
+  (unless (symbolp package)
+    (error "(hypb:require-package): package must be a symbol or string, not '%s'" package))
+  (unless (or
+           ;; Allow for alternative package managers like elpaca that don't
+           ;; show up with a `package-installed-p' check
+           (require package nil t)
+           (package-installed-p package))
+    (if (y-or-n-p (format "Install package `%s' required by this command?" package))
+	(package-install package)
       (keyboard-quit)))
-  (require package-name))
+  (require package))
 
 ;; Adapted from cl--do-remf in "cl-extra.el" but uses 'equal' for comparisons.
 ;;;###autoload
