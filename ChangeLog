@@ -1,5 +1,14 @@
 2026-07-10  Bob Weiner  <rsw@gnu.org>
 
+* hywiki.el (hywiki-word-at-point, hywiki-word-at): Add to doc that point may
+    be immediately after the HyWikiWord reference and it will be found.
+            (hywiki-add-denote, hywiki-create-referent-and-display): Update
+    wikiword insertion logic to never insert within non-whitespace text.
+    Expand doc string and include return value.
+
+* hypb.el (hypb:require-package): Add support for alternative package managers
+    like elpaca that don't show up with a `package-installed-p' check.
+
 * hpath.el (hpath:at-p): Near the top, move (match-string 0 path) call before
     path is modified, otherwise, with a 1 char path, shrunk to an empty string,
     match-path will trigger an error; fixes this.

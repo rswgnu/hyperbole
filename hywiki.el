@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     10-Jul-26 at 12:24:52 by Bob Weiner
+;; Last-Mod:     10-Jul-26 at 20:15:58 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1317,34 +1317,45 @@ calling this function."
 
 (defun hywiki-add-denote (wikiword)
   "Make WIKIWORD display a denote file when the `denote' package is available.
-
 When called interactively or with WIKIWORD nil or the empty string, then set
-WIKIWORD to any wikiword at point; otherwise, convert the description from
-the denote file chosen to a wikiword.
+WIKIWORD to any wikiword at or immediately before point; otherwise, convert
+the description from the denote file chosen to be the WIKIWORD and insert
+that after any non-whitespace text at point.
 
 After successfully adding the link to a denote file, run
 `hywiki-add-referent-hook'.
 
+Return the WIKIWORD referent if WIKIWORD is of valid format, otherwise
+return nil.  The referent is a cons of (denote-description . denote-id).
+
 Use `hywiki-get-referent' to determine whether WIKIWORD exists prior to
 calling this function."
-  (interactive (list (hywiki-word-at)))
+  (interactive (list nil))
   (hypb:require-package 'denote)
-  (let* ((denote-file (denote-file-prompt
-                       nil
-                       (if (stringp wikiword)
-                           (format "Link `%s' HyWikiWord to denote" wikiword)
-                         ;; Will use denote file description as `wikiword'
-                         "Add HyWikiWord denote link to")
-                       nil t))
-         (denote-desc (denote-get-link-description denote-file))
-         (denote-id (denote-retrieve-filename-identifier denote-file)))
-    (unless (or (stringp wikiword) (string-empty-p wikiword))
-      (setq wikiword (hywiki-string-to-wikiword denote-desc)))
-    (unless (equal wikiword (hywiki-get-singular-wikiword (hywiki-word-at)))
-      (if buffer-read-only
-          (error "(hywiki-add-denote): Since buffer is read-only, this must be used with point on a HyWikiWord")
-        (insert wikiword)))
-    (hywiki-add-referent wikiword (cons 'denote (cons denote-desc denote-id)))))
+  (let ((at-wikiword-reference (hywiki-word-at)))
+    (unless (and (stringp wikiword) (not (string-empty-p wikiword)))
+      (setq wikiword at-wikiword-reference))
+    (let* ((denote-file (denote-file-prompt
+                         nil
+                         (if (stringp wikiword)
+                             (format "Link `%s' HyWikiWord to denote" wikiword)
+                           ;; Will use denote file description as `wikiword'
+                           "Add HyWikiWord denote link to")
+                         nil t))
+           (denote-desc (denote-get-link-description denote-file))
+           (denote-id (denote-retrieve-filename-identifier denote-file)))
+      (unless (and (stringp wikiword) (not (string-empty-p wikiword)))
+        (setq wikiword (hywiki-string-to-wikiword denote-desc)))
+      (unless (hyperb:stack-frame '(hywiki-create-referent-and-display))
+        (unless (equal (hywiki-get-singular-wikiword wikiword)
+                       (hywiki-get-singular-wikiword at-wikiword-reference))
+          (if buffer-read-only
+              (error "(hywiki-add-denote): Read-only buffer; call this with point on: \"%s\"" wikiword)
+            (skip-syntax-forward "^-")
+            (unless (or (bolp) (= (char-syntax (preceding-char)) ?\ ))
+              (insert " "))
+            (insert wikiword))))
+      (hywiki-add-referent wikiword (cons 'denote (cons denote-desc denote-id))))))
 
 (defun hywiki-display-denote (_wikiword denote-desc-and-id)
   (let ((denote-desc (car denote-desc-and-id))
@@ -1784,16 +1795,21 @@ for WIKIWORD, add a page for it.
 Use `hywiki-get-referent' to determine whether a HyWikiWord referent
 or page exists."
   (interactive (list nil current-prefix-arg))
-  (let (at-wikiword-flag)
+  (let ((at-wikiword-reference (hywiki-word-at)))
     (unless (stringp wikiword)
-      (setq wikiword (or (setq at-wikiword-flag (hywiki-word-at))
+      (setq wikiword (or at-wikiword-reference
 		         (hywiki-word-read-new
 			  (format "Add/Edit and display HyWiki %s: "
 				  (if current-prefix-arg "referent" "page"))))))
-    (unless at-wikiword-flag
+    (unless (equal (hywiki-get-singular-wikiword wikiword)
+                   (hywiki-get-singular-wikiword at-wikiword-reference))
       (if buffer-read-only
-          (error "(hywiki-create-referent-and-display): Since buffer is read-only, this must be used with point on a HyWikiWord")
+          (error "(hywiki-create-referent-and-display): Read-only buffer; call this with point on: \"%s\"" wikiword)
+        (skip-syntax-forward "^-")
+        (unless (or (bolp) (= (char-syntax (preceding-char)) ?\ ))
+          (insert " "))
         (insert wikiword)))
+
     (when (and (not prompt-flag) hywiki-referent-prompt-flag
 	       (called-interactively-p 'interactive))
       (setq prompt-flag t))
@@ -2946,8 +2962,11 @@ the current page unless they have sections attached."
   "Highlight each non-Org link HyWiki page#section in the current buffer/region.
 With optional REGION-START and REGION-END positions or markers (active
 region interactively), limit highlight adjustment to the region.  With
-optional SKIP-LOOKUPS-UPDATE-FLAG non-nil, HyWiki lookup tables
-should have already been updated and this is skipped.
+optional SKIP-LOOKUPS-UPDATE-FLAG non-nil, HyWiki lookup tables should have
+already been updated and this is skipped.
+
+Called by `find-file' without a region to highlight HyWikiWords when a file
+buffer is first read in to an Emacs session.
 
 Use `hywiki-word-face' to highlight.  Do not highlight references
 to the current page unless they have sections attached.
@@ -3167,19 +3186,19 @@ FILE-STEM-NAME should not contain a directory and may have or may omit
 Checks only that FILE-STEM-NAME is not nil, not an empty string and does
 not contain a directory path or returns nil."
   (make-directory hywiki-directory t)
-  (unless (or (null file-stem-name)
-              (eq file-stem-name t) ;; HyWikiWord spec
-              (string-empty-p file-stem-name)
-              (file-name-directory file-stem-name))
+  (unless (or (null reference)
+              (eq reference t) ;; HyWikiWord spec
+              (string-empty-p reference)
+              (file-name-directory reference))
     (let (file-name
           referent
 	  section)
-      ;; Remove any suffix from `file-stem-name' and make it singular
-      (if (string-match hywiki-word-suffix-regexp file-stem-name)
-	  (setq section (match-string 0 file-stem-name)
+      ;; Remove any suffix from `reference' and make it singular
+      (if (string-match hywiki-word-suffix-regexp reference)
+	  (setq section (match-string 0 reference)
 		file-name (hywiki-get-singular-wikiword
-			   (substring file-stem-name 0 (match-beginning 0))))
-	(setq file-name file-stem-name))
+			   (substring reference 0 (match-beginning 0))))
+	(setq file-name reference))
       (setq referent (hywiki-get-referent file-name))
       (when (and (eq (car referent) 'page)
                  ;; The referent replaces the page name with name.org, so can be next.
@@ -3187,27 +3206,30 @@ not contain a directory path or returns nil."
                  (file-exists-p file-name))
         (concat file-name section)))))
 
-(defun hywiki-get-page-file (file-stem-name)
+(defun hywiki-get-page-file (reference)
   "Return possibly non-existent `hywiki-directory' path from FILE-STEM-NAME.
 FILE-STEM-NAME may be an existing absolute file path; then, return it.
 Otherwise, FILE-STEM-NAME should not contain a directory and may have or may
-omit `hywiki-file-suffix' and an optional trailing #section.
+omit `hywiki-file-suffix' and an optional trailing #section, both of which
+are left attached to the result returned.  So given the input,
+WikiWord#section, the result might be:
+\"/users/me/hywiki/WikiWord.org#section\".
 
 Checks only that FILE-STEM-NAME is not nil, not an empty string and does
 not contain a directory path or returns nil."
   (make-directory hywiki-directory t)
-  (if (and (stringp file-stem-name) (file-readable-p file-stem-name))
-      file-stem-name
-    (unless (or (null file-stem-name) (string-empty-p file-stem-name)
-                (file-name-directory file-stem-name))
+  (if (and (stringp reference) (file-readable-p reference))
+      reference
+    (unless (or (null reference) (string-empty-p reference)
+                (file-name-directory reference))
       (let (file-name
 	    section)
-        ;; Remove any suffix from `file-stem-name' and make it singular
-        (if (string-match hywiki-word-suffix-regexp file-stem-name)
-	    (setq section (match-string 0 file-stem-name)
+        ;; Remove any suffix from `reference' and make it singular
+        (if (string-match hywiki-word-suffix-regexp reference)
+	    (setq section (match-string 0 reference)
 		  file-name (hywiki-get-singular-wikiword
-			     (substring file-stem-name 0 (match-beginning 0))))
-	  (setq file-name file-stem-name))
+			     (substring reference 0 (match-beginning 0))))
+	  (setq file-name reference))
         (concat (expand-file-name file-name hywiki-directory)
 	        (unless (string-suffix-p hywiki-file-suffix file-name)
 		  hywiki-file-suffix)
@@ -3967,6 +3989,7 @@ Action Key press; with a prefix ARG, emulate an Assist Key press."
 
 (defun hywiki-word-at (&optional range-flag hash-sign-only-flag)
   "Return potential HyWikiWord and optional #section:Lnum:Cnum at point or nil.
+Point may be on or immediately after the HyWikiWord reference.
 `hywiki-mode' must be enabled or this will return nil.
 
 If the HyWikiWord is delimited, point must be within the delimiters.
@@ -4266,8 +4289,9 @@ Return t if the highlighted range exists at point and gets moved."
 
 (defun hywiki-word-at-point ()
   "Return singular HyWikiWord at point with its suffix stripped or nil.
-Point should be on the HyWikiWord itself.  Suffix is anything after
-the # symbol.
+Point may be on or immediately after the HyWikiWord itself.  `hywiki-mode'
+must be enabled or this will return nil.  Suffix is anything after the #
+symbol.
 
 This does not test whether a referent exists for the HyWikiWord; call
 `hywiki-referent-exists-p' without an argument for that.
