@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     13-Jul-26 at 19:22:45 by Bob Weiner
+;; Last-Mod:     14-Jul-26 at 09:28:33 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -42,6 +42,8 @@
 (declare-function Info-menu-item-at-p "hmouse-info")
 (declare-function actypes::link-to-wikiword "hywiki")
 (declare-function bookmark-bmenu-bookmark "bookmark")
+(declare-function hsys-denote-file-at-p "hsys-denote")
+(declare-function hsys-denote-link-at-p "hsys-denote")
 (declare-function hui-register-struct-at-point "hui-register")
 (declare-function hui:menu-choose "hui-mini")
 (declare-function hywiki-get-buffer-page-name "hywiki")

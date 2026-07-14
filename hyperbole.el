@@ -9,7 +9,7 @@
 ;; Maintainer:   Robert Weiner <rsw@gnu.org>
 ;; Maintainers:  Robert Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:      06-Oct-92 at 11:52:51
-;; Last-Mod:     10-Jul-26 at 14:20:25 by Bob Weiner
+;; Last-Mod:     14-Jul-26 at 10:01:48 by Bob Weiner
 ;; Released:     10-Mar-24
 ;; Version:      9.0.2pre
 ;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -516,6 +516,19 @@ frame, those functions by default still return the prior frame."
   (message "Initializing Hyperbole...done"))
 
 
+;; Autoload this form so that when `package.el' activates Hyperbole's autoloads
+;; it also sets up Kotl's autoloads.  It must come before the (require 'hinit)
+;; call below.  -- RSW, 2026-07-14
+;;;###autoload
+(let ((us (macroexp-file-name)))
+  (when us
+    ;; Contrary to the usual ELPA autoloads files, `kotl-autoloads'
+    ;; does not add its directory to `load-path', so let's do it here
+    ;; by hand.
+    (add-to-list 'load-path
+                 (expand-file-name "kotl" (file-name-directory us)))
+    (require 'kotl-autoloads nil t)))
+
 ;; This call loads the rest of the Hyperbole system.
 (require 'hinit)
 
@@ -580,18 +593,6 @@ frame, those functions by default still return the prior frame."
   (add-hook 'after-init-hook #'hyperb:init t))
 
 (makunbound 'hyperbole-loading)
-
-;; Autoload this form so that when `package.el' activates Hyperbole's autoloads
-;; it also sets up Kotl's autoloads.
-;;;###autoload
-(let ((us (macroexp-file-name)))
-  (when us
-    ;; Contrary to the usual ELPA autoloads files, `kotl-autoloads'
-    ;; does not add its directory to `load-path', so let's do it here
-    ;; by hand.
-    (add-to-list 'load-path
-                 (expand-file-name "kotl" (file-name-directory us)))
-    (require 'kotl-autoloads nil t)))
 
 (provide 'hyperbole)
 
