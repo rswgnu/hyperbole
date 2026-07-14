@@ -1,5 +1,16 @@
 2026-07-14  Bob Weiner  <rsw@gnu.org>
 
+* test/hy-test-dependencies.el: Add 'markdown-ts-mode' declaration.
+
+* hsys-denote.el - Remove unneeded autoloads that were causing load
+    dependency issues; add autoloads for "denote.el" declared functions
+    since we don't (require 'denote) at package load time when autoloads
+    are initialized.
+  hui.el, hywiki.el - Add needed denote function declarations.
+
+* hyperbole.el (require 'kotl-autoloads): Move to before (require 'hinit)
+    to eliminate klink macro not being defined when needed.
+
 * hsys-org.el (hsys-org-link-at-p): Fix code at the end to remove hy: prefix
     from 'label'.
 

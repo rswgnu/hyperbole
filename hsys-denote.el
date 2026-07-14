@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     13-Jul-26 at 23:57:36 by Bob Weiner
+;; Last-Mod:     14-Jul-26 at 09:53:27 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -24,15 +24,23 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(require 'hywiki) ;; requires "hpath" and "hypb".
+;; Next line requires:
+;;   "hbut" (which defines `defib')
+;;   "hpath" (which requires "hact", which defines `defact')
+;;   "hypb"  (which defines support functions)
+(require 'hywiki)
 
 ;;; ************************************************************************
 ;;; Public declarations
 ;;; ************************************************************************
 
+;;;###autoload
 (declare-function denote-extract-id-from-string "ext:denote")
+;;;###autoload
 (declare-function denote-file-prompt "ext:denote")
+;;;###autoload
 (declare-function denote-get-link-description "ext:denote")
+;;;###autoload
 (declare-function denote-get-path-by-id "ext:denote")
 
 (defvar denote-date-identifier-regexp)
@@ -136,7 +144,6 @@ denote link."
               (list (substring-no-properties (match-string-no-properties 0))
                     (match-beginning 0) (match-end 0)))))))))
 
-;;;###autoload
 (defact link-to-denote (id-and-section &optional file)
   "Display a denote entry given by ID-AND-SECTION and optional FILE.
 ID-AND-SECTION optionally may be prefixed with \"denote:\" or \"dn:\" and

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:16:00
-;; Last-Mod:     14-Feb-26 at 23:46:04 by Bob Weiner
+;; Last-Mod:     14-Jul-26 at 09:39:15 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -17,6 +17,8 @@
 ;; Load prerequisites for running the tests.
 
 ;;; Code:
+
+(declare-function markdown-ts-mode "ext:markdown-ts-mode")
 
 ;; Force markdown-mode to be selected first to avoid markdown-ts-mode
 ;; for now. It requires Tree-sitter grammars to be installed which

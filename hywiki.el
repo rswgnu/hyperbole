@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     14-Jul-26 at 01:24:18 by Bob Weiner
+;; Last-Mod:     14-Jul-26 at 09:25:49 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -188,6 +188,8 @@
 (declare-function denote-get-path-by-id "ext:denote")
 (declare-function denote-open-or-create "ext:denote")
 (declare-function denote-retrieve-filename-identifier "ext:denote")
+(declare-function hsys-denote-file-at-p "hsys-denote")
+(declare-function hsys-denote-link-at-p "hsys-denote")
 (declare-function hsys-org-at-tags-p "hsys-org")
 (declare-function hyperbole-mode "hyperbole")
 (declare-function hyrolo-fgrep "hyrolo")
