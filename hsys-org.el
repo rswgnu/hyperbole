@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     13-Jul-26 at 00:45:05 by Bob Weiner
+;; Last-Mod:     14-Jul-26 at 02:41:34 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -584,7 +584,7 @@ Assume caller has already checked that the current buffer is in
               (label-start-end (when wikiword (hsys-org-link-label-start-end)))
               (label (car label-start-end)))
          (when (and label (string-match-p (concat hywiki-org-link-type ":") label))
-           (setq label (substring label)))
+           (setq label (substring label (1+ (length hywiki-org-link-type)))))
          ;; If WikiWord is the entire label, ignore it and allow ibtype
          ;; handling instead
          (unless (and wikiword label (string-equal wikiword label))

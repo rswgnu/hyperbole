@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    23-Apr-21 at 20:55:00
-;; Last-Mod:     11-Jan-26 at 09:55:03 by Bob Weiner
+;; Last-Mod:     14-Jul-26 at 02:44:59 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -64,7 +64,7 @@
     (should (hsys-org-src-block-start-at-p))))
 
 (ert-deftest hsys-org:org-link-at-p ()
-  "Should be t if point is within an org-link."
+  "Should be non-nil if point is within an org-link."
   (with-temp-buffer
     (let ((hywiki-org-link-type-required t))
       ;; Org-mode
@@ -85,11 +85,15 @@
       (hywiki-mode nil)
       (insert "[[hy:HyWiki]]\n\n")
       (goto-char 3)
-      (ert-info ("Accept link if unknown HyWiki button")
+      (ert-info ("Treat as a HyWikiWord if button description matches
+exactly to a hywikiword")
 	(should (hsys-org-link-at-p)))
-      (ert-info ("Ignore link if known HyWiki button")
-	(mocklet (((hywiki-word-at) => t))
-          (should-not (hsys-org-link-at-p)))))))
+      (ert-info ("Treat as an Org link if hywikiword is part of description")
+        (erase-buffer)
+        (insert "[[Ignore HyWiki as part of Org link]]\n\n")
+        (goto-char 13)
+	(mocklet (((hywiki-word-at) => nil))
+          (should (hsys-org-link-at-p)))))))
 
 (ert-deftest hsys-org:org-target-at-p ()
   "Should be non nil if point is within an org-radio-target."

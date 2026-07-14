@@ -1,5 +1,8 @@
 2026-07-14  Bob Weiner  <rsw@gnu.org>
 
+* hsys-org.el (hsys-org-link-at-p): Fix code at the end to remove hy: prefix
+    from 'label'.
+
 * test/smart-org-tests.el (smart-org-mode-with-smart-keys-buttons-on-org-link-activates):
     Replace 'org-open-at-point' with 'org-link-open-from-string' to get more
     flexibility in link syntax handling.
