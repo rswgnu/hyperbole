@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     10-Jul-26 at 12:29:32 by Bob Weiner
+;; Last-Mod:     14-Jul-26 at 00:15:46 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -549,10 +549,11 @@ on the implicit button to which to link."
    (let ((ibut-name-key (ibut:at-p t)))
      (cond (ibut-name-key
 	    (list ibut-name-key (or (hypb:buffer-file-name) (buffer-name)) (point)))
-	   ;; !! TODO: If default is null below and are creating, rather than editing
-	   ;; the link, it would be better to throw an error than create
-	   ;; an invalid link, but it is difficult to tell which operation
-	   ;; is in progress, so ignore this for now.  -- RSW, 01-25-2020
+	   ;; !! TODO: If default is null below and are creating, rather
+	   ;; than editing the link, it would be better to throw an error
+	   ;; than create an invalid link, but it is difficult to tell which
+	   ;; operation is in progress, so ignore this for now.  -- RSW,
+	   ;; 01-25-2020
 
 	   ;; When not on an ibut and editing the link, use existing arguments
 	   ((and (bound-and-true-p hargs:defaults) (listp hargs:defaults) hargs:defaults)
@@ -564,7 +565,10 @@ on the implicit button to which to link."
     (hypb:error "(link-to-ibut): Point must be on an implicit button to create a link-to-ibut"))
 
   (let* ((key-src-buf-flag (or (bufferp key-src)
-                               (and (stringp key-src) (get-buffer key-src))))
+                               (and (stringp key-src)
+                                    (setq key-src (or (get-buffer key-src)
+                                                      key-src))
+                                    (bufferp key-src))))
          (but (if key-src-buf-flag
                   (ibut:get name-key key-src)
                 (ibut:get name-key nil key-src)))

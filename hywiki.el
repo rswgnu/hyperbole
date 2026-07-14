@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     10-Jul-26 at 21:05:58 by Bob Weiner
+;; Last-Mod:     14-Jul-26 at 01:24:18 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1804,7 +1804,8 @@ or page exists."
     (unless (equal (hywiki-get-singular-wikiword wikiword)
                    (hywiki-get-singular-wikiword at-wikiword-reference))
       (if buffer-read-only
-          (error "(hywiki-create-referent-and-display): Read-only buffer; call this with point on: \"%s\"" wikiword)
+          (error "(hywiki-create-referent-and-display): Read-only buffer: %s; call this with point on: \"%s\""
+                 (current-buffer) wikiword)
         (skip-syntax-forward "^-")
         (unless (or (bolp) (= (char-syntax (preceding-char)) ?\ ))
           (insert " "))
@@ -3917,6 +3918,20 @@ each term in the string."
     (error "(hywiki-string-to-wikiword): `str' must be a string, not `%s'" str))
   (let ((words (split-string str "[-_ \t\n\r\f]+" t split-string-default-separators)))
     (apply #'concat (mapcar #'capitalize words))))
+
+(defun hywiki-wikiword-to-string (str)
+  "Convert a PascalCase HyWikiWord to a lowercase dash-separated string.
+For example, hy-wiki-word.  Contiguous capital letters followed
+by a lower-case letter are split before the last capital letter.
+For example, BASEBall would become, base-ball but BASE would become base."
+  (unless (stringp str)
+    (error "(hywiki-wikiword-to-string): `str' must be a string, not `%s'" str))
+    (unless (seq-position str ?- #'=)
+      (setq str (replace-regexp-in-string "\\([a-z]\\)\\([A-Z]\\)"
+					  "\\1-\\2" str)
+	    str (replace-regexp-in-string "\\([A-Z]\\)\\([A-Z][a-z]\\)"
+					  "\\1-\\2" str)))
+    (string-trim (downcase str) "[ \t\n\r]+" "[- \t\n\r]+"))
 
 (defun hywiki-strip-org-link (link-str)
   "Return the hy:HyWikiWord#section part of an Org link string.

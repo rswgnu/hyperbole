@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <!-- This manual is for GNU Hyperbole
-(Edition 9.0.2pre, Published July 10, 2026).
+(Edition 9.0.2pre, Published July 14, 2026).
 
 Copyright © 1989-2026  Free Software Foundation, Inc.
 
@@ -386,7 +386,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed July 10, 2026.
+Printed July 14, 2026.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -999,10 +999,11 @@ actions, e.g. bug#24568 displays the bug status information for that Emacs
 bug number, without the need for any additional markup.  Implicit link
 buttons can be added to documents with a simple drag between windows too.
 </p>
-<p>Or from the keyboard, With two windows on screen, an implicit link button
-can be created at point in the current buffer linking to the position in
-the other window&rsquo;s buffer by pressing <kbd class="kbd">{C-h h i l}</kbd>.  Use <kbd class="kbd">{M-1
-C-h h i l}</kbd> instead to be prompted for a name for the implicit button.
+<p>Or from the keyboard, With two windows on screen, an implicit link
+button can be created at point in the current buffer linking to the
+position in the other window&rsquo;s buffer by pressing <kbd class="kbd">{C-h h i l}</kbd>.
+FYI, use <kbd class="kbd">{C-u C-h h i l}</kbd> instead to be prompted for a name for
+the implicit button when creating the link.
 </p>
 </dd>
 <dt><em class="dfn">Global buttons</em></dt>
@@ -1985,9 +1986,10 @@ convenient screen commands that lets you select buffers grouped by
 major mode, use HyControl, or jump to specific windows, window
 configurations or frames.
 </p>
-<p>Since these are customization options, they may be change permanently like so.
-Use <kbd class="kbd">{M-x customize-set-variable <kbd class="key">RET</kbd> assist-key-modeline-function <kbd class="key">RET</kbd>}</kbd>.
-Change the value to your desired command.  Then press <kbd class="key">RET</kbd>.
+<p>Since these are customization options, they may be change permanently like
+so.  Use <kbd class="kbd">{M-x customize-set-variable <kbd class="key">RET</kbd>
+assist-key-modeline-function <kbd class="key">RET</kbd>}</kbd>.  Change the value to your desired
+command.  Then press <kbd class="key">RET</kbd>.
 </p></li></ul>
 
 <hr>
@@ -2160,12 +2162,12 @@ the Assist Mouse Key (not the Action Key) from the open area of one
 window&rsquo;s modeline to the text area of another.  This works across frames
 as well.
 </p>
-<p>If you have precisely two windows in an Emacs frame, you can swap their buffers
-from the keyboard.  Use this Hyperbole minibuffer menu key sequence
-involving the tilde key to swap the buffers and quit from the Hyperbole
-minibuffer menu: <kbd class="kbd">{C-h h s w ~ Q}</kbd>.  Similarly, if you have two single
-window frames, you can swap buffers between them with <kbd class="kbd">{C-h h s f ~
-Q}</kbd>.
+<p>If you have precisely two windows in an Emacs frame, you can swap
+their buffers from the keyboard.  Use this Hyperbole minibuffer menu
+key sequence involving the tilde key to swap the buffers and quit from
+the Hyperbole minibuffer menu: <kbd class="kbd">{C-h h s w ~ Q}</kbd>.  Similarly, if
+you have two single window frames, you can swap buffers between them
+with <kbd class="kbd">{C-h h s f ~ Q}</kbd>.
 </p>
 <hr>
 </div>
@@ -2201,11 +2203,12 @@ Next: <a href="#Displaying-Items" accesskey="n" rel="next">Displaying Items</a>,
 <a class="index-entry-id" id="index-clone-window"></a>
 <a class="index-entry-id" id="index-window_002c-clone"></a>
 <a class="index-entry-id" id="index-drag_002c-clone-window"></a>
-<p>To clone a window with its buffer to a new frame, simply drag the Action Mouse
-Key from the window to outside of Emacs and release the key.  A new frame will
-be created, selected and sized according to the original window.  Do the same
-thing with the Assist Mouse Key and the original window will be deleted as well,
-unless it is the only window in that frame.
+<p>To clone a window with its buffer to a new frame, simply drag the Action
+Mouse Key from the window to outside of Emacs and release the key.  A new
+frame will be created, selected and sized according to the original
+window.  Do the same thing with the Assist Mouse Key and the original
+window will be deleted as well, unless it is the only window in that
+frame.
 </p>
 <hr>
 </div>
@@ -2326,15 +2329,16 @@ selected window&rsquo;s buffer with that of another window, use <kbd class="kbd"
 <a class="index-entry-id" id="index-create-link-button"></a>
 <a class="index-entry-id" id="index-link-button"></a>
 <a class="index-entry-id" id="index-hui_003aibut_002dlink_002ddirectly"></a>
-<p>And finally, to create a new, <em class="emph">unnamed</em> implicit link in the
-selected window that refers to the location in the other window, use
-<kbd class="kbd">{M-o w &lt;referent-window-id&gt;}</kbd>.  This executes <code class="code">hui:ibut-link-directly</code>
-which determines the link type by using the referent context.  To create
-a <em class="emph">named</em> implicit link button in the selected window, use
-<kbd class="kbd">{M-1 M-o w &lt;window&gt;}</kbd>.  It prompts for the name and then links to
-the referent window location.  If you highlight a region
-before invoking this, Hyperbole will use that as the name for the
-implicit button.
+<p>And finally, to create a new, <em class="emph">unnamed</em> implicit link in the selected
+window that refers to the location in the other window, use <kbd class="kbd">{M-o w
+&lt;referent-window-id&gt;}</kbd>.  This executes <code class="code">hui:ibut-link-directly</code> which
+determines the link type by using the referent context.  To create a
+<em class="emph">named</em> implicit link button in the selected window, use <kbd class="kbd">{M-1
+M-o w &lt;window&gt;}</kbd>.  It prompts for the name and then links to the referent
+window location.  If you highlight a region before invoking this,
+Hyperbole will use that as the name for the implicit button.  Also see,
+see <a class="pxref" href="#implicit-link-creation">implicit link creation</a>, for equivalent Hyperbole menu-based key
+sequences.
 </p>
 <a class="index-entry-id" id="index-C_002du-M_002do-w-_003cwindow_002did_003e"></a>
 <a class="index-entry-id" id="index-hui_003aebut_002dlink_002ddirectly"></a>
@@ -2342,9 +2346,47 @@ implicit button.
 &lt;window-id&gt;}</kbd>.  This executes <code class="code">hui:ebut-link-directly</code>, prompts for
 any needed arguments, determines the link type by using the referent
 context and then creates the explicit button.  If you highlight a region
-before invoking this, Hyperbole will use that as the name for the
-explicit button.
+before invoking this, Hyperbole will use that as the name for the explicit
+button.  Also see, see <a class="pxref" href="#explicit-link-creation">explicit link creation</a>, for equivalent
+Hyperbole menu-based key sequences.
 </p>
+<a class="index-entry-id" id="index-context_002c-auto_002dselected-actions"></a>
+<a class="index-entry-id" id="index-auto_002dselected-action-types"></a>
+<a class="index-entry-id" id="index-possible-link-action-types"></a>
+<a class="index-entry-id" id="index-hui_003alink_002dpossible_002dtypes"></a>
+<p>Whether creating an implicit or an implicit button, the action type used
+is determined by this table of contexts and the associated action type for
+each one, in decreasing order of priority, as given by the
+<code class="code">hui:link-possible-types</code> function.
+</p>
+<a class="anchor" id="possible-link-action-types"></a><div class="example">
+<div class="group"><pre class="example-preformatted">Referent Context         Link Action Type Returned
+===================================================================
+Denote Link              link-to-denote
+Org Roam or Org Id       link-to-org-id
+HyWikiWord Reference     link-to-wikiword
+Global Button            link-to-gbut
+Explicit Button          link-to-ebut
+Implicit Button          link-to-ibut
+Bookmarks List           link-to-bookmark
+Info Index Item          link-to-Info-index-item
+Info Node                link-to-Info-node
+Texinfo Node             link-to-texinfo-node
+Mail Reader Message      link-to-mail
+Directory Name           link-to-directory
+File Name                link-to-file
+Koutline Cell            link-to-kcell
+Single-line Region       link-to-string-match
+HyWiki Page              link-to-wikiword
+Org Heading              link-to-file
+Outline Heading          link-to-file
+Buffer attached to File  link-to-file
+EOL in Dired Buffer      link-to-directory (Dired dir)
+Buffer without File      link-to-buffer-tmp&quot;
+===================================================================
+</pre></div></div>
+
+
 <a class="index-entry-id" id="index-M_002do-t-_003cwindow_002did_003e"></a>
 <a class="index-entry-id" id="index-item-throw"></a>
 <a class="index-entry-id" id="index-throw-item"></a>
@@ -2710,7 +2752,7 @@ possible link types.
 <a class="index-entry-id" id="index-implicit-link-creation"></a>
 <a class="index-entry-id" id="index-menu-item_002c-Ibut_002fLink"></a>
 <a class="index-entry-id" id="index-C_002dh-h-i-l"></a>
-<p>If you have exactly two Emacs windows in your current frame or exactly
+<a class="anchor" id="implicit-link-creation"></a><p>If you have exactly two Emacs windows in your current frame or exactly
 two windows visible across two Emacs frames, this is even easier.
 Simply use the Link menu item, <kbd class="kbd">{C-h h i l}</kbd>, to create a new
 unnamed implicit link button or to edit the one at point.  <kbd class="kbd">{C-u
@@ -2921,7 +2963,28 @@ this setting.
 </pre></div>
 
 <dl class="table">
-<dd><a class="index-entry-id" id="index-ibtypes-doc_002did"></a>
+<dt><a class="index-entry-id" id="index-denote-link"></a>
+<a id="index-denote-note_002dtaking-package"></a><span><code class="code">denote-link</code><a class="copiable-link" href="#index-denote-note_002dtaking-package"> &para;</a></span></dt>
+<dd><p>Denote is an Emacs package for note taking that uses time-stamped,
+descriptive file naming conventions to label and locate notes.  Hyperbole
+provides an expanded set of denote-specific link formats via this 
+reference types.
+</p>
+<p>If on a denote id with optional #section, jump to its associated note.
+The id must be prefixed with &quot;denote:&quot; and can be in double quotes if the
+section contains spaces (though ’-’ is preferred instead of space so that
+Org mode links are highlighted and selected properly).
+</p>
+<p>Two forms of denote links are accepted:
+</p>
+<p>1. The hyperbole link form with syntax:
+        &lsquo;<samp class="samp">\\(&lt;[Description]&gt;\\)? &quot;denote:&lt;file-id&gt;\\(#section-name-or-uuid\\)?&quot;</samp>&rsquo;
+</p>
+<p>2. The org link form with syntax:
+        &lsquo;<samp class="samp">[[denote:&lt;file-id&gt;\\(::*?section-name\\)?][Description]]</samp>&rsquo;
+     or &lsquo;<samp class="samp">[[denote:&lt;file-id&gt;\\(::#?section-id\\)?][Description]]</samp>&rsquo;
+</p>
+<a class="index-entry-id" id="index-ibtypes-doc_002did"></a>
 <a class="index-entry-id" id="index-online-library"></a>
 <a class="index-entry-id" id="index-document-identifier"></a>
 <a class="anchor" id="doc_002did"></a></dd>
@@ -3665,8 +3728,8 @@ other implicit button types will be tested and may activate instead.
 </p>
 <p>To activate a frequently used action button by name independent of
 your current buffer, simply add it to your global button file and
-precede it with a label <kbd class="kbd">{C-h h i l}</kbd>.  Then invoke it by label
-name with: <kbd class="kbd">{C-h h g a}</kbd>.
+precede it with a name using <kbd class="kbd">{C-u C-h h i l}</kbd>.  Then activate it
+by name with: <kbd class="kbd">{C-h h g a}</kbd>.
 </p>
 
 <hr>
@@ -4324,7 +4387,7 @@ Next: <a href="#By-Dragging" accesskey="n" rel="next">Creation Via Assist Key Dr
 <a class="index-entry-id" id="index-source-point"></a>
 <a class="index-entry-id" id="index-referent-point"></a>
 <a class="index-entry-id" id="index-C_002dh-h-e-l"></a>
-<p>If you have exactly two Emacs windows in your current frame or exactly
+<a class="anchor" id="explicit-link-creation"></a><p>If you have exactly two Emacs windows in your current frame or exactly
 two windows visible across two Emacs frames, you can quickly create
 explicit link buttons from your current point (source) to the point in
 the other window (referent).  Simply use the Link menu item, <kbd class="kbd">{C-h h
@@ -9504,9 +9567,9 @@ defined by arbitrary Emacs Lisp predicates.
 </p>
 </dd>
 <dt><b class="b">Denote</b></dt>
-<dd><p>An Emacs package for note taking that uses time-stamped, descriptive
-file naming conventions to label and locate notes.  HyWiki provides
-denote-specific links as one of its reference types.
+<dd><p>An Emacs package for note taking that uses time-stamped, descriptive file
+naming conventions to label and locate notes.  HyWiki provides an expanded
+set of denote-specific link formats as one of its reference types.
 </p>
 </dd>
 <dt><b class="b">Display</b></dt>
@@ -15260,6 +15323,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hui_003ahtype_002dhelp-_0027ibtypes"><code>hui:htype-help 'ibtypes</code></a></td><td class="printindex-index-section"><a href="#Programmatic-Implicit-Button-Types">Programmatic Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hui_003aibut_002dlink_002ddirectly"><code>hui:ibut-link-directly</code></a></td><td class="printindex-index-section"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hui_003akill_002dring_002dsave"><code>hui:kill-ring-save</code></a></td><td class="printindex-index-section"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-hui_003alink_002dpossible_002dtypes"><code>hui:link-possible-types</code></a></td><td class="printindex-index-section"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hycontrol_002ddisplay_002dbuffer_002dpredicate_002dlist">hycontrol-display-buffer-predicate-list</a></td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hycontrol_002denable_002d_002dwindows_002dmode"><code>hycontrol-enable--windows-mode</code></a></td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hycontrol_002denable_002dframes_002dmode"><code>hycontrol-enable-frames-mode</code></a></td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
@@ -15825,6 +15889,7 @@ Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Augment">Augment</a></td><td class="printindex-index-section"><a href="#Koutliner-History">Koutliner History</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Augment-1">Augment</a></td><td class="printindex-index-section"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Augment-outline">Augment outline</a></td><td class="printindex-index-section"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-auto_002dselected-action-types">auto-selected action types</a></td><td class="printindex-index-section"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-autonumber">autonumber</a></td><td class="printindex-index-section"><a href="#Koutliner">Koutliner</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-autonumber-1">autonumber</a></td><td class="printindex-index-section"><a href="#Autonumbering">Autonumbering</a></td></tr>
 <tr><td colspan="3"><hr></td></tr>
@@ -15989,6 +16054,7 @@ Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-contacts_002c-Google">contacts, Google</a></td><td class="printindex-index-section"><a href="#HyRolo-Settings">HyRolo Settings</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-context">context</a></td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-context_002dsensitive-help">context-sensitive help</a></td><td class="printindex-index-section"><a href="#Smart-Key-Operations">Smart Key Operations</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-context_002c-auto_002dselected-actions">context, auto-selected actions</a></td><td class="printindex-index-section"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-copy-and-yank">copy and yank</a></td><td class="printindex-index-section"><a href="#Thing-Selection">Thing Selection</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-copy-and-yank-1">copy and yank</a></td><td class="printindex-index-section"><a href="#Smart-Mouse-Drags-between-Windows">Smart Mouse Drags between Windows</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-copy-and-yank-2">copy and yank</a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-ERT-Results-Mode">Smart Key - ERT Results Mode</a></td></tr>
@@ -16039,6 +16105,8 @@ Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-demonstration">demonstration</a></td><td class="printindex-index-section"><a href="#Hyperbole-Overview">Hyperbole Overview</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-demotion">demotion</a></td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Denote-HyWiki-reftype">Denote HyWiki reftype</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-denote-link">denote link</a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-denote-note_002dtaking-package">denote note-taking package</a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-diagonal-drag">diagonal drag</a></td><td class="printindex-index-section"><a href="#Saving-and-Restoring-Window-Configurations">Saving and Restoring Window Configurations</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-diagonal-drag-1">diagonal drag</a></td><td class="printindex-index-section"><a href="#Smart-Mouse-Drags-within-a-Window">Smart Mouse Drags within a Window</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-digital-signature">digital signature</a></td><td class="printindex-index-section"><a href="#Glossary">Glossary</a></td></tr>
@@ -16888,6 +16956,7 @@ Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-popup-menu_002c-HyRolo">popup menu, HyRolo</a></td><td class="printindex-index-section"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-popup-menu_002c-Koutliner">popup menu, Koutliner</a></td><td class="printindex-index-section"><a href="#Menu-Commands">Menu Commands</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-popup-menu_002c-Rolo">popup menu, Rolo</a></td><td class="printindex-index-section"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-possible-link-action-types">possible link action types</a></td><td class="printindex-index-section"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-posting-buttons">posting buttons</a></td><td class="printindex-index-section"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-posting-news">posting news</a></td><td class="printindex-index-section"><a href="#Buttons-in-News">Buttons in News</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-pre_002drelease-installation">pre-release installation</a></td><td class="printindex-index-section"><a href="#Elpa-In_002dDevelopment-Package-Installation">Elpa In-Development Package Installation</a></td></tr>

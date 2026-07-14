@@ -1,3 +1,58 @@
+2026-07-14  Bob Weiner  <rsw@gnu.org>
+
+* hsys-org.el (hsys-org-link-at-p): Fix code at the end to remove hy: prefix
+    from 'label'.
+
+* test/smart-org-tests.el (smart-org-mode-with-smart-keys-buttons-on-org-link-activates):
+    Replace 'org-open-at-point' with 'org-link-open-from-string' to get more
+    flexibility in link syntax handling.
+                          (smart-org-mode-with-smart-keys-buttons-on-org-link-activates,
+                           smart-org-mode-with-smart-keys-on-org-link-activates):
+    Replace 'org-open-at-point' with 'org-link-open-from-string' to get more
+    flexibility in link syntax handling.
+
+
+* hactypes.el (link-to-ibut): Fix so 'key-src-buf-flag' is only set non-nil
+    when key-src is or is set to a buffer object.
+
+2026-07-13  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Keyboard Drags): Add table of contexts and
+    associated link action types in decreasing priority order, used
+    when creating links in a 2-window source-target configuration.
+
+* hui.el (hui:link-possible-types):
+  hbut.el (ibut:insert-text): Add 'link-to-denote' support.
+
+* hactypes.el (link-to-ibut): Fix so if find key-src buffer from a buffer
+    name, then set the key-src to the buffer object or else later 'ibut:get'
+    call will fail.
+
+* hsys-org.el (hsys-org-link-at-p): Change to allow a Wikiword in an Org
+    link description only if it is the entire description.
+
+2026-07-12  Bob Weiner  <rsw@gnu.org>
+
+* hui-mouse.el (require 'hsys-denote): Add and handle denote links ahead
+    of other Org link types so can handle Hyperbole #section syntax too.
+
+* hui-mouse.el (smart-org): Change 'org-link' to 'org-link-open-from-string'
+    to better control the link string sent when Org does not highlight the
+    full link reference string, typically when using the prefix: syntax
+    without double bracket delimiters.
+
+* hbut.el (hbut:label-to-key): Remove any label properties so potentially
+    long property list does not show in help buffers.
+
+2026-07-11  Bob Weiner  <rsw@gnu.org>
+
+* hsys-denote.el: Add with ibtype 'denote-link', actype 'link-to-denote',
+    and functions 'hsys-denote-file-at-p', 'hsys-denote-link-at-p',
+    'hsys-denote-get-description-from-id' and
+    'sys-denote-get-id-from-description'.
+  MANIFEST, Makefile: Add hsys-denote.el entry.
+  hywiki.el (hywiki-wikiword-to-string): Add.
+
 2026-07-11  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (package): Depend on tar-file.

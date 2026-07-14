@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    23-Apr-21 at 22:21:00
-;; Last-Mod:     19-Aug-24 at 22:00:29 by Bob Weiner
+;; Last-Mod:     14-Jul-26 at 01:12:06 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -86,7 +86,7 @@
       (insert "[[/tmp][desc]]")
       (goto-char 9)
       (with-mock
-       (mock (org-open-at-point) => t)
+       (mock (org-link-open-from-string "[[/tmp][desc]]") => t)
        (smart-org)))))
 
 ;; Smart Key Context
@@ -110,7 +110,7 @@
       (insert "[[/tmp][desc]]")
       (goto-char 9)
       (with-mock
-       (mock (org-open-at-point) => t)
+       (mock (org-link-open-from-string "[[/tmp][desc]]") => t)
        (smart-org)))))
 
 ;; Smart Key Context

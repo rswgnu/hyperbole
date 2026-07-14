@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     16-Jun-26 at 15:48:04 by Bob Weiner
+;; Last-Mod:     14-Jul-26 at 02:41:34 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -549,52 +549,65 @@ Assume caller has already checked that the current buffer is in
                          (string-prefix-p "file://" str)
                        t)))
 	      (thing-at-point 'email))
-    (and
-     ;; If this Org link matches a potential HyWikiWord, ignore it.
-     (not (and (fboundp 'hywiki-word-at) (hywiki-word-at)))
-     ;; Org will throw a warning that `org-element-property' must be
-     ;; used only within an `org-mode' buffer, but it works in buffers
-     ;; outside of `org-mode' when on an Org link, so just suppress any
-     ;; warning.  Using this allows recognition of Org links that are
-     ;; not surrounded by double sqare brackets,
-     ;; e.g. file:my-file::my-text.
-     (with-suppressed-warnings
-	 ((org-element))
-       (or
-	(org-in-regexp
-	 org-link-any-re
-	 (let
-	     ((origin
-	       (point)))
-	   (max
-	    (save-excursion
-	      (backward-paragraph)
-	      (count-lines
-	       (point)
-	       origin))
-	    (save-excursion
-	      (forward-paragraph)
-	      (count-lines origin
-			   (point))))))
-	(org-in-regexp org-ts-regexp-both nil t)
-	(org-in-regexp org-tsr-regexp-both nil t))))))
+    (let (start-end)
+      (and
+       ;; Org will throw a warning that `org-element-property' must be
+       ;; used only within an `org-mode' buffer, but it works in buffers
+       ;; outside of `org-mode' when on an Org link, so just suppress any
+       ;; warning.  Using this allows recognition of Org links that are
+       ;; not surrounded by double sqare brackets,
+       ;; e.g. file:my-file::my-text.
+       (setq start-end
+             (with-suppressed-warnings
+	         ((org-element))
+               (or
+	        (org-in-regexp
+	         org-link-any-re
+	         (let ((origin (point)))
+	           (max
+	            (save-excursion
+	              (backward-paragraph)
+	              (count-lines
+	               (point)
+	               origin))
+	            (save-excursion
+	              (forward-paragraph)
+	              (count-lines origin
+			           (point))))))
+	        (org-in-regexp org-ts-regexp-both nil t)
+	        (org-in-regexp org-tsr-regexp-both nil t))))
+       ;; Don't treat this as an Org link if its entire description is a
+       ;; HyWikiWord, e.g. [[hy:WikiWord]], [[WikiWord]] or
+       ;; [[link][WikiWord]], as these are handled as implicit buttons.
+       (let* ((org-link (buffer-substring-no-properties (car start-end) (cdr start-end)))
+              (wikiword (and org-link (fboundp 'hywiki-word-at) (hywiki-word-at)))
+              (label-start-end (when wikiword (hsys-org-link-label-start-end)))
+              (label (car label-start-end)))
+         (when (and label (string-match-p (concat hywiki-org-link-type ":") label))
+           (setq label (substring label (1+ (length hywiki-org-link-type)))))
+         ;; If WikiWord is the entire label, ignore it and allow ibtype
+         ;; handling instead
+         (unless (and wikiword label (string-equal wikiword label))
+           start-end))))))
 
 (defun hsys-org-link-label-start-end ()
   "With point on an Org link, return the list of (<label> <start> <end>), else nil.
 <label> is either the optional link description or the link
 referent.  <start> and <end> are buffer positions where <label>
 starts and ends, excludes delimiters."
-  (let ((thing (org-element-context)))
-    (when thing
-      (let ((ol-desc-start (org-element-property :contents-begin thing))
-	    (ol-desc-end (org-element-property :contents-end thing)))
-	(if (and ol-desc-start ol-desc-end)
-	    (list (buffer-substring-no-properties ol-desc-start ol-desc-end)
-		  ol-desc-start ol-desc-end)
-	  (let ((ol-referent (org-element-property :raw-link thing))
-		(ol-referent-start (+ (org-element-property :begin thing) 2))
-		(ol-referent-end (- (org-element-property :end thing) 2)))
-	    (list ol-referent ol-referent-start ol-referent-end)))))))
+  (with-suppressed-warnings
+      ((org-element))
+    (let ((thing (org-element-context)))
+      (when thing
+        (let ((ol-desc-start (org-element-property :contents-begin thing))
+	      (ol-desc-end (org-element-property :contents-end thing)))
+	  (if (and ol-desc-start ol-desc-end)
+	      (list (buffer-substring-no-properties ol-desc-start ol-desc-end)
+		    ol-desc-start ol-desc-end)
+	    (let ((ol-referent (org-element-property :raw-link thing))
+		  (ol-referent-start (+ (org-element-property :begin thing) 2))
+		  (ol-referent-end (- (org-element-property :end thing) 2)))
+	      (list ol-referent ol-referent-start ol-referent-end))))))))
 
 ;; Assume caller has already checked that the current buffer is in org-mode.
 (defun hsys-org-heading-at-p (&optional _)
