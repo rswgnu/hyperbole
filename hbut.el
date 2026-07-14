@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     10-Jul-26 at 12:26:12 by Bob Weiner
+;; Last-Mod:     13-Jul-26 at 19:23:07 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1539,7 +1539,8 @@ whitespace sequences with `_'."
 		 "\\`[ \t\n\r]+\\|\\([\\?][ \t\n\r]+\\'\\)\\|[ \t\n\r]+\\'"
 		 "\\1" label)
 	  label (replace-regexp-in-string "_" "__" label nil t))
-    (replace-regexp-in-string "[ \t\n\r]+" "_" label nil t)))
+    (substring-no-properties
+     (replace-regexp-in-string "[ \t\n\r]+" "_" label nil t))))
 
 (defun    hbut:list (&optional file loc-p)
   "Return list of button labels from in FILE or the current buffer.
@@ -2734,6 +2735,7 @@ Summary of operations based on inputs (name arg from \\='hbut:current attrs):
       ('annot-bib (insert "[" arg1 "]"))
       ('exec-shell-cmd (insert "\"!" arg1 "\""))
       ('exec-window-cmd (insert "\"&" arg1 "\""))
+      ('link-to-denote (insert "\"" arg1 "\""))
       ('link-to-gbut (insert "<glink:" arg1 ">"))
       ('link-to-ebut (progn (insert "<elink:" arg1)
 			    (when arg2 (insert ": " arg2))

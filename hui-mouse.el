@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:      7-Jul-26 at 01:04:32 by Bob Weiner
+;; Last-Mod:     13-Jul-26 at 16:26:41 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -45,8 +45,9 @@
 ;; so don't use if it fails to load properly.
 (ignore-errors (require 'hsys-flymake))
 (require 'hload-path)
-(require 'hsys-xref)
+(require 'hsys-denote)
 (require 'hsys-org)
+(require 'hsys-xref)
 (require 'hbut)
 (unless (fboundp 'smart-info)
   (require 'hmouse-info))
@@ -1943,7 +1944,8 @@ will invoke `org-meta-return'.
 Org links may be used outside of Org mode buffers.  Such links are
 handled by the separate implicit button type, `org-link-outside-org-mode'."
   (when (funcall hsys-org-mode-function)
-    (let (start-end)
+    (let (start-end
+          link-start-end)
       (cond ((not hsys-org-enable-smart-keys)
 	     (when (hsys-org-meta-return-shared-p)
 	       (hact 'hsys-org-meta-return))
@@ -1972,10 +1974,16 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
 		    (hact 'org-internal-target-link)
 		    t)
 		   ((setq start-end (hsys-org-link-at-p))
-		    (if (not assist-flag)
-			(progn (hsys-org-set-ibut-label start-end)
-			       (hact 'org-link))
-		      (hact 'hkey-help))
+                    (cond ((setq link-start-end (hsys-denote-link-at-p
+                                                 (car start-end)
+                                                 (cdr start-end)))
+                           (hact 'link-to-denote (car link-start-end)))
+		          ((not assist-flag)
+			   (hsys-org-set-ibut-label start-end)
+		           (hact 'org-link-open-from-string
+		                 (buffer-substring-no-properties
+		                  (car start-end) (cdr start-end))))
+		          (t (hact 'hkey-help)))
 		    t)
 		   ((hbut:at-p)
 		    ;; Fall through until Hyperbole button context and
@@ -2012,10 +2020,16 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
 		    (hact 'org-radio-target-link)
 		    t)
 		   ((setq start-end (hsys-org-link-at-p))
-		    (if (not assist-flag)
-			(progn (hsys-org-set-ibut-label start-end)
-			       (hact 'org-link))
-		      (hact 'hkey-help))
+                    (cond ((setq link-start-end (hsys-denote-link-at-p
+                                                 (car start-end)
+                                                 (cdr start-end)))
+                           (hact 'link-to-denote (car link-start-end)))
+		          ((not assist-flag)
+			   (hsys-org-set-ibut-label start-end)
+		           (hact 'org-link-open-from-string
+		                 (buffer-substring-no-properties
+		                  (car start-end) (cdr start-end))))
+		          (t (hact 'hkey-help)))
 		    t)
  		   ((hbut:at-p)
 		    ;; Fall through until Hyperbole button context and

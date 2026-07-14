@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     25-Jun-26 at 09:58:50 by Bob Weiner
+;; Last-Mod:     13-Jul-26 at 19:22:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2068,6 +2068,7 @@ possible types.
 
 Referent Context         Possible Link Type Returned
 ----------------------------------------------------
+Denote Link              link-to-denote
 Org Roam or Org Id       link-to-org-id
 HyWikiWord Reference     link-to-wikiword
 Global Button            link-to-gbut
@@ -2095,9 +2096,18 @@ Buffer without File      link-to-buffer-tmp"
 	hbut-sym
         id
 	lbl-key
+        link-start-end
         heading)
     (prog1 (delq nil
 		 (list (cond
+                        ;; Denote link (with Hyperbole additions)
+                        ((setq link-start-end (hsys-denote-link-at-p))
+                        (list 'link-to-denote (car link-start-end)))
+
+                        ;; Denote file and possible section heading
+                        ((setq lbl-key (hsys-denote-file-at-p))
+                         (list 'link-to-denote lbl-key))
+
                         ;; Org id or Org Roam id
                         ((and (featurep 'org-id)
                               (if (derived-mode-p 'org-mode)
@@ -2133,7 +2143,8 @@ Buffer without File      link-to-buffer-tmp"
                                         (hpath:org-normalize-title
                                          (hywiki-org-format-heading heading t t t nil t)))))))
                         ;;
-                        ;; HyWiki reference
+                        ;; HyWiki reference when
+                        ;; `hywiki-active-in-current-buffer-p' is t
                         ((let ((ref (hywiki-referent-exists-p)))
 			   (and ref (list 'link-to-wikiword ref))))
                         ;;
@@ -2214,7 +2225,9 @@ Buffer without File      link-to-buffer-tmp"
 					      (setq instance-num (1+ instance-num))))
 					  (list 'link-to-string-match region instance-num (hypb:buffer-file-name)))))
                                      ;;
-                                     ;; If on a HyWiki page, use a link-to-wikiword
+                                     ;; If on a HyWiki page when
+                                     ;; `hywiki-mode' is enabled,
+                                     ;; use a `link-to-wikiword'
 				     ((and hywiki-mode
                                            (hywiki-in-page-p)
 					   (stringp outline-regexp))
