@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     14-Jul-26 at 02:41:34 by Bob Weiner
+;; Last-Mod:     14-Jul-26 at 17:05:28 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -58,6 +58,7 @@
 
 (defvar hyperbole-mode-map)             ; "hyperbole.el"
 (defvar org--inhibit-version-check)     ; "org-macs.el"
+(defvar hywiki-org-link-type)           ; "hywiki.el"
 (defvar hywiki-org-link-type-required)  ; "hywiki.el"
 (defvar org-agenda-buffer-tmp-name)     ; "org-agenda.el"
 (defvar org-uuid-regexp)                ; "org-macs.el"

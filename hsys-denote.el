@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     14-Jul-26 at 09:53:27 by Bob Weiner
+;; Last-Mod:     14-Jul-26 at 17:00:54 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -37,11 +37,15 @@
 ;;;###autoload
 (declare-function denote-extract-id-from-string "ext:denote")
 ;;;###autoload
+(declare-function denote-file-has-denoted-filename-p "ext:denote")
+;;;###autoload
 (declare-function denote-file-prompt "ext:denote")
 ;;;###autoload
 (declare-function denote-get-link-description "ext:denote")
 ;;;###autoload
 (declare-function denote-get-path-by-id "ext:denote")
+;;;###autoload
+(declare-function denote-retrieve-filename-identifier "ext:denote")
 
 (defvar denote-date-identifier-regexp)
 
@@ -235,7 +239,7 @@ column number."
                                       (error (point-min))))
                                   ;; Without 1+, line count is often off by one
                                   (min (1+ (point)) (point-max)))
-                               (current-line)))
+                               (line-number-at-pos)))
                    (col-num (current-column)))
                (concat (unless (<= line-num 1)
                          (format ":L%d" line-num))
