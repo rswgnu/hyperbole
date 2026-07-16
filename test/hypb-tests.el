@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:     5-Apr-21 at 18:53:10
-;; Last-Mod:     16-Jul-26 at 00:28:23 by Mats Lidell
+;; Last-Mod:     16-Jul-26 at 15:39:59 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -173,7 +173,9 @@ See Emacs bug#74042 related to usage of texi2any."
       (hypb:package-el-install 'hypb-dummy-package-name)))
   (let* ((hypb:ask-to-install-package-flag nil)
          (err (should-error (hypb:package-el-install 'hypb-dummy-package-name) :type 'error)))
-    (should (string-match-p (rx "Package " punct "hypb-dummy-package-name" punct " is unavailable") (cadr err)))))
+    ;;FIXME: Emacs-28 includes a '-' when there is no version
+    ;;number. Can be removed when we drop support for Emacs 28.
+    (should (string-match-p (rx "Package " punct "hypb-dummy-package-name" (optional "-") punct " is unavailable") (cadr err)))))
 
 (ert-deftest hypb--notify-manual-install-needed ()
   "Verify `hypb:notify-manual-install-needed'.
