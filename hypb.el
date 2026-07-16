@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     15-Jul-26 at 21:01:28 by Mats Lidell
+;; Last-Mod:     16-Jul-26 at 17:10:28 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -94,7 +94,7 @@ delimiter."
   :group 'hyperbole-commands)
 
 (defcustom hypb:ask-to-install-package-flag t
-  "Non-nil if user shall be queried before installing a package."
+  "Non-nil means `hypb:require-package' queries the user before installing it."
   :type 'boolean
   :group 'hyperbole-commands)
 
@@ -1190,13 +1190,14 @@ be installed."
     (require package)))
 
 (defun hypb:notify-manual-install-needed (package manager)
-  "Notify user that a manual install is needed for PACKAGE.
-Suggest user to use the package MANAGER."
+  "Prompt with an error that PACKAGE must be manually installed using MANAGER."
   (user-error "Package '%s' is required by this command.  Use your package manager '%s' to install it" package manager))
 
 (defun hypb:ensure-dependency (package)
-  "Ensure PACKAGE is available.
-Returns non-nil if the feature can be used."
+  "Return non-nil if PACKAGE is installed and ready for use.
+If PACKAGE is not installed and the package.el package manager is in
+use, an install attempt may be made.  When any other package manager is
+in use, an error is triggered prompting to manually install the PACKAGE."
   (or (require package nil t)
       (pcase (hypb:users-package-manager)
         ('package (hypb:package-el-install package))

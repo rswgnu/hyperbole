@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:16:00
-;; Last-Mod:     16-Jul-26 at 14:35:48 by Mats Lidell
+;; Last-Mod:     16-Jul-26 at 17:11:52 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -31,7 +31,7 @@
 (setq package-pinned-packages
       '((markdown-mode . "nongnu")))
 
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 (package-initialize)
 
 (require 'hload-path)

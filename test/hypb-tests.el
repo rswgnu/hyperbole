@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:     5-Apr-21 at 18:53:10
-;; Last-Mod:     16-Jul-26 at 15:39:59 by Mats Lidell
+;; Last-Mod:     16-Jul-26 at 17:06:05 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -179,8 +179,7 @@ See Emacs bug#74042 related to usage of texi2any."
 
 (ert-deftest hypb--notify-manual-install-needed ()
   "Verify `hypb:notify-manual-install-needed'.
-Shall raise and user error with name of the package and the name of the
-package manger we think the user is using."
+Verifies it raises a 'need to install' package manager error."
   (let ((err (should-error (hypb:notify-manual-install-needed 'la-package 'la-manager) :type 'user-error)))
     (should (string-search "la-package" (cadr err)))
     (should (string-search "la-manager" (cadr err)))))
