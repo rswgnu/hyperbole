@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     13-Jul-26 at 19:23:07 by Bob Weiner
+;; Last-Mod:     16-Jul-26 at 16:25:00 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2686,7 +2686,7 @@ Summary of operations based on inputs (name arg from \\='hbut:current attrs):
 
     (let ((lbl-key (hattr:get 'hbut:current 'lbl-key)))
       (unless (and (stringp lbl-key) (not (string-empty-p lbl-key)))
-	(hypb:error "(ibut:operate): hbut:current lbl-key must be non-nil")))
+        (hypb:error "(ibut:operate): hbut:current lbl-key must be non-nil")))
 
     (run-hooks (if edit-flag 'ibut-edit-hook 'ibut-create-hook))
 
@@ -2732,6 +2732,7 @@ Summary of operations based on inputs (name arg from \\='hbut:current attrs):
 	     (t (insert "{}"))))
       ((or 'link-to-directory 'link-to-Info-node 'link-to-Info-index-item)
        (insert "\"" arg1 "\""))
+      ('link-to-url (insert arg1))
       ('annot-bib (insert "[" arg1 "]"))
       ('exec-shell-cmd (insert "\"!" arg1 "\""))
       ('exec-window-cmd (insert "\"&" arg1 "\""))

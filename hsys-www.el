@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Apr-94 at 17:17:39 by Bob Weiner
-;; Last-Mod:      7-Nov-25 at 19:23:34 by Mats Lidell
+;; Last-Mod:     16-Jul-26 at 17:36:43 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -91,9 +91,15 @@ Valid values of this variable include `browse-url-default-browser' and
 	 ;; Don't match if at the end of the buffer; end of line is
 	 ;; handled elsewhere.
 	 nil)
-	((and (eq major-mode 'eww-mode) (eww-link-at-point))
-	 (ibut:label-set (eww-link-at-point))
-	 (hact 'eww-follow-link))
+	((and (eq major-mode 'eww-mode) (eww-links-at-point))
+         (let ((push-button (button-at (point))))
+           ;; Set the ibut name to be the text description of the url
+           (hattr:set 'hbut:current 'name (button-label push-button))
+           ;; Set the ibut lbl-key to be the url
+	   (ibut:label-set (car (eww-links-at-point))
+                           (button-start push-button)
+                           (button-end push-button))
+	   (hact 'eww-follow-link)))
 	((eq major-mode 'eww-bookmark-mode)
 	 (ibut:label-set (concat (eww-bookmark-property :title)
 				 (if (eww-bookmark-property :url)
@@ -110,11 +116,53 @@ Valid values of this variable include `browse-url-default-browser' and
 		 (progn (ibut:label-set link-and-pos)
 			(hact 'www-url (car link-and-pos))))))))
 
-(defact www-url (url)
-  "Follow a link given by URL.
+
+(defact link-to-url (url &optional _label)
+  "Follow a link given by URL and optional text _LABEL.
 The variable, `browse-url-browser-function', customizes the url browser that
 is used.  Valid values of this variable include `browse-url-default-browser' and
-`browse-url-generic'."
+`browse-url-generic'.
+
+_LABEL is used in `hui:link-possible-types' with the `link-to-url' call and
+in `ibut:insert-text' as the name of the implicit button inserted."
+  (interactive "sURL to follow: ")
+  (unless (stringp url)
+    (error "(link-to-url): URL = `%s' but must be a string" url))
+  (unless (seq-position url ?:)
+    (setq url (concat "https://" url)))
+  (if (or (functionp browse-url-browser-function)
+	  ;; May be a predicate alist of functions from which to select
+	  (consp browse-url-browser-function))
+      (let ((browse-url-browser-function
+	     (if (eq browse-url-browser-function #'eww-browse-url)
+		 ;; Hyperbole-specific version
+		 #'www-eww-browse-url
+	       browse-url-browser-function))
+	    browse-function-name
+	    browser)
+	(if (symbolp browse-url-browser-function)
+	    (setq browse-function-name (symbol-name browse-url-browser-function)
+		  browser (and (string-match
+				"-\\([^-]+\\)\\'"
+				browse-function-name)
+			       (capitalize (substring browse-function-name
+						      (match-beginning 1)
+						      (match-end 1)))))
+	  (setq browser "default browser"))
+	(message "Sending %s to %s..." url browser)
+	(browse-url url)
+	(message "Sending %s to %s...done" url browser))
+    (error "(link-to-url): `browse-url-browser-function' must be set to a web browser invoking function")))
+
+;; !! TODO: Duplicate of `link-to-url' defact to consider getting rid of
+(defact www-url (url &optional _label)
+  "Follow a link given by URL and optional text _LABEL.
+The variable, `browse-url-browser-function', customizes the url browser that
+is used.  Valid values of this variable include `browse-url-default-browser' and
+`browse-url-generic'.
+
+_LABEL is used in `hui:link-possible-types' with the `link-to-url' call and
+in `ibut:insert-text' as the name of the implicit button inserted."
   (interactive "sURL to follow: ")
   (unless (stringp url)
     (error "(www-url): URL = `%s' but must be a string" url))

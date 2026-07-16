@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     15-Jul-26 at 17:33:26 by Bob Weiner
+;; Last-Mod:     16-Jul-26 at 16:57:49 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2892,8 +2892,8 @@ that returns a replacement string."
   "Replace with VAR-SYMBOL any occurrences of VAR-DIR-VAL in PATH.
 Replacement is done iff VAR-DIR-VAL is an absolute path.
 
-If VAR-SYMBOL is \\='hyperb:dir or \\='load-path, remove the matching PATH
-part rather than replacing it with the variable since it can be
+If VAR-SYMBOL is \\='load-path, remove the matching PATH part
+rather than replacing it with the variable since it can be
 resolved without attaching the variable name.
 
 If PATH is modified, return PATH, otherwise return nil."
@@ -2905,7 +2905,7 @@ If PATH is modified, return PATH, otherwise return nil."
 		     ;; for Elisp file paths and path is to an Elisp
 		     ;; file.  These can be resolved without the
 		     ;; variable being included in the path.
-		     (if (and (memq var-symbol '(hyperb:dir load-path))
+		     (if (and (memq var-symbol '(load-path))
 			      (delq nil (mapcar (lambda (suffix) (string-suffix-p suffix path))
 						(get-load-suffixes))))
 			 ""
