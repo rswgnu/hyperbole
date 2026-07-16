@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     14-Jul-26 at 09:28:33 by Bob Weiner
+;; Last-Mod:     16-Jul-26 at 16:29:30 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -42,6 +42,8 @@
 (declare-function Info-menu-item-at-p "hmouse-info")
 (declare-function actypes::link-to-wikiword "hywiki")
 (declare-function bookmark-bmenu-bookmark "bookmark")
+(declare-function eww-current-url "eww")
+(declare-function eww-links-at-point "eww")
 (declare-function hsys-denote-file-at-p "hsys-denote")
 (declare-function hsys-denote-link-at-p "hsys-denote")
 (declare-function hui-register-struct-at-point "hui-register")
@@ -1380,7 +1382,8 @@ runs this command."
 	  (setq edit-flag t
 		but-loc (hattr:get 'hbut:current 'loc)
 		but-dir (hattr:get 'hbut:current 'dir)
-		name-key (ibut:label-to-key (hattr:get 'hbut:current 'name)))
+		name-key (or (ibut:label-to-key (hattr:get 'hbut:current 'name))
+                             (hattr:get 'hbut:current 'lbl-key)))
 	(setq but-loc (hui:key-src (current-buffer))
 	      but-dir (hui:key-dir (current-buffer))))
 
@@ -1395,8 +1398,11 @@ runs this command."
 			       hkey-region)
 			      ((use-region-p)
 			       (hui:hbut-label-default
-				(region-beginning) (region-end))))
-			"ibut-link-directly"
+				(region-beginning) (region-end)))
+                              ((eq (caar link-types) 'link-to-url)
+                               ;; Use the link anchor text as the label default
+                               (nth 2 (car link-types))))
+                        "ibut-link-directly"
 			"Name for implicit button: ")
 	      name-key (hbut:label-to-key but-name)))
 
@@ -1957,7 +1963,8 @@ With BUT-EDIT-FLAG non-nil message about ibut being edited."
                        actype)))
     (message "%s%s%s %s %S"
 	     ibut:label-start
-	     (hbut:key-to-label (hattr:get 'hbut:current 'lbl-key))
+             (or (hattr:get 'hbut:current 'name)
+	         (hbut:key-to-label (hattr:get 'hbut:current 'lbl-key)))
 	     ibut:label-end
 	     (if but-edit-flag "now executes" "executes")
 	     (cons actype args))))
@@ -2071,6 +2078,7 @@ possible types.
 Referent Context         Possible Link Type Returned
 ----------------------------------------------------
 Denote Link              link-to-denote
+EWW Web Page Buffer      link-to-url
 Org Roam or Org Id       link-to-org-id
 HyWikiWord Reference     link-to-wikiword
 Global Button            link-to-gbut
@@ -2109,6 +2117,13 @@ Buffer without File      link-to-buffer-tmp"
                         ;; Denote file and possible section heading
                         ((setq lbl-key (hsys-denote-file-at-p))
                          (list 'link-to-denote lbl-key))
+
+		        ((derived-mode-p 'eww-mode)
+                         (let ((url-at-point (car (eww-links-at-point))))
+		           (list 'link-to-url
+                                 (or url-at-point (eww-current-url))
+                                 (when (and url-at-point current-prefix-arg)
+                                   (button-label (button-at (point)))))))
 
                         ;; Org id or Org Roam id
                         ((and (featurep 'org-id)

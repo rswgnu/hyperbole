@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Apr-94 at 17:17:39 by Bob Weiner
-;; Last-Mod:      7-Nov-25 at 19:23:34 by Mats Lidell
+;; Last-Mod:     16-Jul-26 at 17:00:46 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -91,9 +91,15 @@ Valid values of this variable include `browse-url-default-browser' and
 	 ;; Don't match if at the end of the buffer; end of line is
 	 ;; handled elsewhere.
 	 nil)
-	((and (eq major-mode 'eww-mode) (eww-link-at-point))
-	 (ibut:label-set (eww-link-at-point))
-	 (hact 'eww-follow-link))
+	((and (eq major-mode 'eww-mode) (eww-links-at-point))
+         (let ((push-button (button-at (point))))
+           ;; Set the ibut name to be the text description of the url
+           (hattr:set 'hbut:current 'name (button-label push-button))
+           ;; Set the ibut lbl-key to be the url
+	   (ibut:label-set (car (eww-links-at-point))
+                           (button-start push-button)
+                           (button-end push-button))
+	   (hact 'eww-follow-link)))
 	((eq major-mode 'eww-bookmark-mode)
 	 (ibut:label-set (concat (eww-bookmark-property :title)
 				 (if (eww-bookmark-property :url)
@@ -110,11 +116,14 @@ Valid values of this variable include `browse-url-default-browser' and
 		 (progn (ibut:label-set link-and-pos)
 			(hact 'www-url (car link-and-pos))))))))
 
-(defact www-url (url)
-  "Follow a link given by URL.
+(defact www-url (url &optional _label)
+  "Follow a link given by URL and optional text _LABEL.
 The variable, `browse-url-browser-function', customizes the url browser that
 is used.  Valid values of this variable include `browse-url-default-browser' and
-`browse-url-generic'."
+`browse-url-generic'.
+
+_LABEL is used in `hui:link-possible-types' with the `link-to-url' call and
+in `ibut:insert-text' as the name of the implicit button inserted."
   (interactive "sURL to follow: ")
   (unless (stringp url)
     (error "(www-url): URL = `%s' but must be a string" url))
@@ -143,6 +152,9 @@ is used.  Valid values of this variable include `browse-url-default-browser' and
 	(browse-url url)
 	(message "Sending %s to %s...done" url browser))
     (error "(www-url): `browse-url-browser-function' must be set to a web browser invoking function")))
+
+;; Make `link-to-url' an alias actype for `www-url'.
+(eval `(defact link-to-url ,@(nthcdr 2 (actype:action-body 'www-url))))
 
 (defun www-url-compose-mail (to &optional subject body &rest _ignore)
   "Compose a mailto url and open it in the default `browse-url' web browser.

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     14-Jul-26 at 09:25:49 by Bob Weiner
+;; Last-Mod:     16-Jul-26 at 10:42:48 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -878,6 +878,8 @@ When used within a `post-command-hook', point must be moved back to
 its location prior to the associated command run before this is called
 since the command may have moved it off a HyWikiWord."
   (or (minibuffer-window-active-p (selected-window))
+      ;; Can't be on an Emacs read-only pushbutton
+      (button-at (point))
       ;; (and (bound-and-true-p edebug-active)
       ;;   (active-minibuffer-window))
       (and (derived-mode-p 'prog-mode)

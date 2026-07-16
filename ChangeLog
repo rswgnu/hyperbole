@@ -1,4 +1,36 @@
+2026-07-16  Bob Weiner  <rsw@gnu.org>
+
+* hui.el (hui:ibut-message): Prefer 'name' to 'lbl-key' in message describing
+    an implicit button.
+         (hui:link-possible-types): For 'link-to-url', include and use anchor
+    text as button name only if a prefix argument is given because that is
+    how 'hui:ibut-link-directly' on {C-u C-h h i l} works.
+  hbut.el (ibut:insert-text): For 'link-to-url' never insert anchor text as
+    title, that is done elsewhere.
+
+* test/hpath-tests.el (hpath:substitute-var-name-test, hpath:substitute-var-test):
+  hpath.el (hpath:substitute-var-name): Don't drop ${hyperb:dir} substitution
+    because path may be to another dir with that value in the root of its path.
+    Once we drop the whole prefix, the file could resolve to the wrong directory
+    and file.  So instead put the variable into the path.
+
+* hsys-www.el (www-url): Replace call of Hyperbole-defined 'eww-link-at-point'
+    with eww-defined 'eww-links-at-point'.
+  hui.el (hui:link-possible-types): Replace 'eww--url-at-point' call with
+    '(car (eww-links-at-point)' call
+
+* hywiki.el (hywiki-non-hook-context-p): Add Emacs pushbutton read-only
+    contexts (disallow HyWiki words there).
+  hibtypes.el (hywiki-existing-word, hywiki-word): Add initial check of
+    whether in a valid context, rather than doing this after local vars
+    are bound.
+
 2026-07-15  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (ibut:insert-text):
+  hui.el (hui:link-possible-types): Add linking support to urls within
+    'eww-mode' buffers.
+  hsys-www.el (link-to-url): Add and alias to actype www-url.
 
 * Makefile (env): Add and document this target (alias of echo target).
 

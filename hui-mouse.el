@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     13-Jul-26 at 16:26:41 by Bob Weiner
+;; Last-Mod:     16-Jul-26 at 11:09:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -261,8 +261,10 @@ The button's attributes are stored in the symbol, `hbut:current'.")
     ((eq major-mode 'dired-sidebar-mode)
      . ((smart-dired-sidebar) . (smart-dired-sidebar)))
     ;;
-    ;; Handle Emacs push buttons in buffers
-    ((button-at (point))
+    ;; Handle non-eww url Emacs push buttons in buffers
+    ((and (setq hkey-value (button-at (point)))
+          ;; If an eww url button, handle later as an ibut
+          (not (and (eq major-mode 'eww-mode) (eww-links-at-point))))
      . ((smart-push-button nil (mouse-event-p last-command-event))
 	. (smart-push-button-help nil (mouse-event-p last-command-event))))
     ;;
