@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 23:26:00
-;; Last-Mod:      5-Jul-26 at 00:10:53 by Mats Lidell
+;; Last-Mod:     15-Jul-26 at 17:37:35 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -705,7 +705,7 @@ dir/subdir:
 
 (ert-deftest hpath--to-markup-anchor ()
   "Verify `hpath:to-markup-anchor'."
-  (dolist (v '((text-mode 2) (outline-mode 0)))
+  (dolist (v '((text-mode 0) (outline-mode 0)))
     (with-temp-buffer
       (funcall (car v)) ;; Mode
       (insert "Line 1\n* anchor\n* anchor")

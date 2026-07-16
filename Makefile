@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     14-Jul-26 at 02:12:12 by Bob Weiner
+# Last-Mod:     15-Jul-26 at 21:34:14 by Bob Weiner
 #
 # Copyright (C) 1994-2026  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -49,6 +49,9 @@
 #
 #		Generate the website sources and upload them:
 #		    make website - generate web site in folder $(HYPB_WEB_REPO_LOCATION)"
+#
+#               List major build env versions:
+#                   make env
 #
 #               Lint all Hyperbole code files:
 #                   make lint
@@ -241,7 +244,8 @@ HYPERBOLE_FILES = dir info html $(EL_SRC) $(EL_KOTL) \
         INSTALL DEMO DEMO-ROLO.otl FAST-DEMO MANIFEST README.md TAGS _hypb \
         .hypb hyrolo.py smart-clib-sym topwin.py hyperbole-banner.png \
 	.dir-locals.el \
-	$(man_dir)/hkey-help.txt $(man_dir)/hyperbole.texi $(man_dir)/hyperbole.css \
+	$(man_dir)/hkey-help.txt $(man_dir)/hy-package.el $(man_dir)/hy-straight.el \
+        $(man_dir)/hyperbole.texi $(man_dir)/hyperbole.css \
         $(man_dir)/texinfo-7.css
 
 TEST_ERT_FILES = $(wildcard test/*tests.el) $(wildcard test/hy-test-*.el)
@@ -301,8 +305,9 @@ help:
 .PHONY: all
 all: help
 
-.PHONY: echo
-echo:
+.PHONY: echo env
+echo: env
+env:
 	@echo "Emacs: $(shell which ${EMACS})"
 	@echo "Version: $(shell ${EMACS} --version)"
 	@echo "TERM: $(TERM)"

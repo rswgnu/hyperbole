@@ -19,6 +19,8 @@ hyperbole.el         - Loads and initializes GNU Hyperbole
 ChangeLog            - Summary of changes in recent GNU Hyperbole releases
 
 * --- DOCUMENTATION ---
+man/hy-package.el    - Hyperbole package.el installation and configuration instructions
+man/hy-straight.el   - Hyperbole Straight installation and configuration instructions
 man/dir              - GNU Hyperbole Info directory tree entry
 man/hyperbole.html   - The GNU Hyperbole Manual  (web version)
 man/hyperbole.info   - The GNU Hyperbole Manual  (GNU Info version)

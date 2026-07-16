@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     14-Jul-26 at 00:02:09 by Bob Weiner
+@c Last-Mod:     15-Jul-26 at 21:27:16 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,7 +30,7 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED July 14, 2026
+@set UPDATED July 15, 2026
 @set UPDATED-MONTH July 2026
 @set EDITION 9.0.2pre
 @set VERSION 9.0.2pre
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed July 14, 2026.
+Printed July 15, 2026.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -213,7 +213,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.0.2pre
-July 14, 2026 @c AUTO-REPLACE-ON-SAVE
+July 15, 2026 @c AUTO-REPLACE-ON-SAVE
 
 
   Published by the Free Software Foundation, Inc.
@@ -452,9 +452,8 @@ Setup
 
 Installation
 
-* Elpa In-Development Package Installation::
-* Elpa Stable Package Installation::
-* Git In-Development Package Installation::
+* Elpa Latest or Release Package Installation::
+* Git Latest Package Installation::
 * Manual Tarball Archive Installation::
 
 Customization
@@ -9147,86 +9146,49 @@ There are multiple package managers you can use to install Hyperbole once
 you have GNU Emacs set up at your site.  Choose one based on your needs.
 
 @menu
-* Elpa In-Development Package Installation::
-* Elpa Stable Package Installation::
-* Git In-Development Package Installation::
+* Elpa Latest or Release Package Installation::
+* Git Latest Package Installation::
 * Manual Tarball Archive Installation::
 @end menu
 
 @noindent
 After installing Hyperbole, read the next section on Invocation.
 
-@node Elpa In-Development Package Installation, Elpa Stable Package Installation, Installation, Installation
-@subsection Elpa In-Development Package Installation
-
-@cindex elpa-devel package
-@cindex in-development installation
-@cindex pre-release installation
-@cindex installation, pre-release
-@cindex installation, from git
-The Elpa In-Development package pulls from the latest Hyperbole
-development branch tip and does not require installation of any new
-package manager software.  Since Hyperbole is a mature package, this is
-usually fine to use and update on a day-to-day basis.  But new features
-are tested on this branch and once in awhile it may break for a short
-time before a fix is pushed.  With this branch you'll be able to submit
-bug reports and feature requests but will not be able to submit pull
-requests for changes to the developers; use the Git In-Development
-Package instead for that.
-
-If you have Hyperbole installed and simply want to upgrade it, invoke
-the Emacs Package Manager with @bkbd{M-x list-packages @key{RET}},
-then use the @bkbd{U} key followed by the @bkbd{x} key to upgrade all
-out-of-date packages, Hyperbole among them.  Then skip the text below
-and move on to the next section, @pxref{Invocation}.
-
-Otherwise, to download and install the Hyperbole package, you should add
-several lines to your personal Emacs initialization file, @file{~/.emacs}.
-(For further details, @pxref{Init File,,The Emacs Initialization File,emacs,
-the GNU Emacs Manual}).
-
-@lisp
-@group
-;; Below are the lines to add:
-
-(when (< emacs-major-version 28)
-  (error "Hyperbole requires Emacs 28 or above, not %d"
-         emacs-major-version))
-(require 'package)
-(add-to-list 'package-archives
-             '("gnu-devel" . "https://elpa.gnu.org/devel/"))
-(unless (package-installed-p 'hyperbole)
-  (package-refresh-contents)
-  (package-install 'hyperbole))
-(hyperbole-mode 1)
-;; Allow HyWikiWords in text buffers and programming buffer comments
-;; by uncommenting the next line.
-;; (hywiki-mode :all)
-@end group
-@end lisp
-
-Now save the file and restart Emacs.  Hyperbole will then be downloaded
-and compiled for use with your version of Emacs; give it a minute or two.
-You may see a bunch of compilation warnings but these can be safely
-ignored.
-
-@node Elpa Stable Package Installation, Git In-Development Package Installation, Elpa In-Development Package Installation, Installation
-@subsection Elpa Stable Package Installation (Emacs Package Manager)
+@node Elpa Latest or Release Package Installation, Git Latest Package Installation, Installation, Installation
+@subsection Elpa Latest or Release Package Installation (Emacs Package Manager)
 
 @cindex installation
 @cindex elpa package
 @cindex package manager
 @cindex Emacs package manager
-@cindex stable release installation
-@cindex installation, stable
+@cindex release installation
 @cindex obtaining Hyperbole
 @cindex Hyperbole, obtaining
-Once you have Emacs set up at your site, the stable, released version of
-GNU Hyperbole may be installed by using the Emacs Package Manager.  If
-you are not familiar with it, @pxref{Packages,,,emacs,the GNU Emacs
-Manual}.  Releases are very rare and the in-development branch may be
-many months and features ahead, so you may want to consider using either
-the Elpa In-Development or Git In-Development installation instead.
+@cindex elpa-devel package
+@cindex in-development installation
+@cindex latest installation
+@cindex installation, latest
+@cindex installation, release
+@cindex installation, from git
+Once you have Emacs set up at your site, you may install GNU Hyperbole
+using the Emacs Package Manager.  If you are not familiar with it,
+@pxref{Packages,,,emacs,the GNU Emacs Manual}.  Releases are done with
+care and occur once in awhile.  In between, there is are
+regression-tested @emph{latest} distributions packaged from the
+in-development code branch; these may be many months and features
+ahead of the release branch.
+
+Therefore, consider using the Elpa Latest package; it pulls from the
+latest Hyperbole development branch tip and uses the builtin Emacs
+package manager.  Since Hyperbole is a mature package, this is fine to
+use and update on a day-to-day basis.  But new features are tested on
+this branch and once in awhile it may break for a short time before a
+fix is pushed.
+
+With this branch you'll be able to submit bug reports and feature
+requests but will not be able to submit pull requests for changes to
+the developers; use the Git Latest Package, described in the next
+section, instead for that.
 
 If you have Hyperbole installed and simply want to upgrade it, invoke
 the Emacs Package Manager with @bkbd{M-x list-packages @key{RET}},
@@ -9234,36 +9196,26 @@ then use the @bkbd{U} key followed by the @bkbd{x} key to upgrade all
 out-of-date packages, Hyperbole among them.  Then skip the text below
 and move on to the next section, @pxref{Invocation}.
 
-Otherwise, to download and install the Hyperbole package, you should add
-several lines to your personal Emacs initialization file, @file{~/.emacs}.
-(For further details, @pxref{Init File,,The Emacs Initialization File,emacs,
-the GNU Emacs Manual}).
+Otherwise, to download and install the Hyperbole package, you should
+add the following Lisp to your Emacs initialization file, as described
+below.  It installs the Elpa Latest package; there is one commented
+line in the configuration that you can switch out to pull from the
+older Elpa production release package.  (For further details,
+@pxref{Init File,,The Emacs Initialization File,emacs, the GNU Emacs
+Manual}).
 
-@lisp
-@group
-;; Below are the lines to add:
-
-(when (< emacs-major-version 28)
-  (error "Hyperbole requires Emacs 28 or above, not %d"
-         emacs-major-version))
-(require 'package)
-(unless (package-installed-p 'hyperbole)
-  (package-refresh-contents)	
-  (package-install 'hyperbole))
-(hyperbole-mode 1)
-;; Allow HyWikiWords in text buffers and programming buffer comments
-;; by uncommenting the next line.
-;; (hywiki-mode :all)
-@end group
-@end lisp
+@sp 1
+@smalllisp
+@include hy-package.el
+@end smalllisp
+@sp 1
 
 Now save the file and restart Emacs.  Hyperbole will then be downloaded
 and compiled for use with your version of Emacs; give it a minute or two.
-You may see a bunch of compilation warnings but these can be safely
-ignored.
 
-@node Git In-Development Package Installation, Manual Tarball Archive Installation, Elpa Stable Package Installation, Installation
-@subsection Git In-Development Package Installation (Straight Package Manager)
+
+@node Git Latest Package Installation, Manual Tarball Archive Installation, Elpa Latest or Release Package Installation, Installation
+@subsection Git Latest Package Installation (Straight Package Manager)
 
 @cindex Straight package manager
 @cindex pre-release installation
@@ -9283,51 +9235,21 @@ out-of-date packages, Hyperbole among them.  Then skip the text below
 and move on to the next section, @pxref{Invocation}.
 
 Otherwise, to download and install the Hyperbole package, you should add
-several lines to your personal Emacs initialization file, @file{~/.emacs}.
+the following Lisp to your Emacs initialization file, as described below.
 (For further details, @pxref{Init File,,The Emacs Initialization File,emacs,
 the GNU Emacs Manual}).
 
+@sp 1
 @smalllisp
-@group
-;; Use this in your Emacs init file to install Straight
-(progn
-  (when (< emacs-major-version 28)
-    (error "Hyperbole requires Emacs 28 or above, not %d"
-           emacs-major-version))
-  (defvar bootstrap-version)
-  (setq package-enable-at-startup nil)
-  (let ((bootstrap-file
-         (expand-file-name "straight/repos/straight.el/bootstrap.el"
-                           user-emacs-directory))
-        (bootstrap-version 5))
-    (unless (file-exists-p bootstrap-file)
-      (with-current-buffer
-          (url-retrieve-synchronously
-           "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-           'silent 'inhibit-cookies)
-        (goto-char (point-max))
-        (eval-print-last-sexp)))
-    (load bootstrap-file nil 'nomessage)))
-
-;; Then use this to install Hyperbole
-(straight-use-package
- '(hyperbole
-   :host nil
-   :repo "https://git.savannah.gnu.org/git/hyperbole.git"
-   :config
-      (progn (hyperbole-mode 1)
-             ;; Allow HyWikiWords in text buffers and programming buffer comments
-             ;; by uncommenting the next line.
-             ;; (hywiki-mode :all)
-             )))
-@end group
+@include hy-straight.el
 @end smalllisp
+@sp 1
 
 Now save the file and restart Emacs.  Hyperbole will then be downloaded
 and compiled for use with your version of Emacs; give it a minute or two.
 
-@node Manual Tarball Archive Installation,  , Git In-Development Package Installation, Installation
-@subsection Manual Tarball Archive Installation
+@node Manual Tarball Archive Installation,  , Git Latest Package Installation, Installation
+@subsection Manual Tarball Archive Installation (SFTP)
 
 If you are old-school, don't like package managers, and prefer doing
 everything by hand, then you can obtain Hyperbole from a tarball:
@@ -9336,7 +9258,7 @@ everything by hand, then you can obtain Hyperbole from a tarball:
 Download either:
 
 @table @asis
-@item 1. a stable release tar.gz source archive from either:
+@item 1. a release tar.gz source archive from either:
 @uref{ftp://ftp.gnu.org/gnu/hyperbole/} or
 @uref{http://ftpmirror.gnu.org/hyperbole/}, which will find the closest
 mirror of the GNU ftp site and show it to you.

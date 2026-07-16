@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     11-Jul-26 at 18:53:47 by Mats Lidell
+;; Last-Mod:     15-Jul-26 at 17:33:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -693,15 +693,16 @@ Contains a %s for replacement of a specific anchor id.")
   "Regexp matching a Markdown anchor id definition.
 Contains a %s for replacement of a specific anchor id.")
 
-(defconst hpath:markdown-section-pattern "^[ \t]*\\(#+\\|\\*+\\)[ \t]+%s\\([\[<\({ \t[:punct:]]*\\)$"
-  "Regexp matching a Markdown section header.
-Contains a %s for replacement of a specific section name.")
+(defconst hpath:markdown-section-pattern "^[ \t]*\\(#+\\|\\*+\\)[ \t]*%s\\([\[<\({ \t[:punct:]]*\\)$"
+  "Bol-anchored regexp matching an exact Markdown section.
+Allows for both '#' and '*' section headers.  Contains a %s for replacement
+of a specific section name.")
 
 (defconst hpath:markdown-suffix-regexp "\\.[mM][dD]"
   "Regexp that matches to a Markdown file suffix.")
 
 (defconst hpath:outline-section-pattern "^\\(\\*+\\|#\\+TITLE:\\)[ \t]+%s[ \t]*\\([\[<\({[:punct:]]+\\|$\\)"
-  "Bol-anchored, no leading spaces regexp matching an Emacs outline section header.
+  "Bol-anchored, no leading spaces regexp matching an exact outline section.
 Also supports Org '#+TITLE:' lines and headings as sections.  Contains a %s
 for replacement of a specific section name.")
 
@@ -715,6 +716,11 @@ These are used to indicate how to display or execute the pathname.
 (defvar hpath:remote-regexp
   "\\`/[^/:]+:\\|\\`s?ftp[:.]\\|\\`www\\.\\|\\`https?:"
   "Regexp matching remote pathnames and urls which invoke remote file handlers.")
+
+(defconst hpath:shell-comment-pattern
+  "^[ \t]*#+[ \t]*%s\\([ \t]\\|\\([\[<\({ \t[:punct:]]\\)\\|$\\)"
+  "Bol-anchored regexp matching the first part of a shell comment.
+Contains a %s for replacement of the comment string.")
 
 (defconst hpath:shell-modes '(sh-mode csh-mode shell-script:mode)
   "List of modes for editing shell scripts where # is a comment character.")
@@ -1781,15 +1787,18 @@ of the buffer."
 								      (string-match-p "\\`[A-Z0-9][A-Z0-9_-]*\\'"
                                                                                       (file-name-nondirectory (hypb:buffer-file-name)))))
 							     hpath:outline-section-pattern)
-							    ((or (and (hypb:buffer-file-name)
-								      (string-match-p hpath:markdown-suffix-regexp (hypb:buffer-file-name)))
-								 (apply #'derived-mode-p hpath:shell-modes))
+							    ((and (hypb:buffer-file-name)
+								  (string-match-p hpath:markdown-suffix-regexp (hypb:buffer-file-name)))
 							     hpath:markdown-section-pattern)
+							    ((apply #'derived-mode-p hpath:shell-modes)
+							     hpath:shell-comment-pattern)
 							    ((derived-mode-p 'texinfo-mode)
 							     hpath:texinfo-section-pattern)
-							    ((or prog-mode (null (hypb:buffer-file-name))
-								 (apply #'derived-mode-p '(fundamental-mode text-mode)))
-							     "%s")
+							    (prog-mode
+							     (concat "^\\(" (regexp-quote comment-start) "\\)*" "[ \t]*%s"))
+							    ;; ((or (null (hypb:buffer-file-name))
+                                                            ;;     (apply #'derived-mode-p '(fundamental-mode text-mode)))
+                                                            ;; "^%s")
 							    (t hpath:outline-section-pattern))
 						      (regexp-quote anchor-name)))
 				    (referent-leading-spaces-regexp

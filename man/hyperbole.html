@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <!-- This manual is for GNU Hyperbole
-(Edition 9.0.2pre, Published July 14, 2026).
+(Edition 9.0.2pre, Published July 15, 2026).
 
 Copyright © 1989-2026  Free Software Foundation, Inc.
 
@@ -386,7 +386,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.0.2pre
-Printed July 14, 2026.
+Printed July 15, 2026.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -620,10 +620,9 @@ dedicated to my lovely wife, Kathy.
   <ul class="toc-numbered-mark">
     <li><a id="toc-Installation-1" href="#Installation">B.1 Installation</a>
     <ul class="toc-numbered-mark">
-      <li><a id="toc-Elpa-In_002dDevelopment-Package-Installation-1" href="#Elpa-In_002dDevelopment-Package-Installation">B.1.1 Elpa In-Development Package Installation</a></li>
-      <li><a id="toc-Elpa-Stable-Package-Installation-_0028Emacs-Package-Manager_0029" href="#Elpa-Stable-Package-Installation">B.1.2 Elpa Stable Package Installation (Emacs Package Manager)</a></li>
-      <li><a id="toc-Git-In_002dDevelopment-Package-Installation-_0028Straight-Package-Manager_0029" href="#Git-In_002dDevelopment-Package-Installation">B.1.3 Git In-Development Package Installation (Straight Package Manager)</a></li>
-      <li><a id="toc-Manual-Tarball-Archive-Installation-1" href="#Manual-Tarball-Archive-Installation">B.1.4 Manual Tarball Archive Installation</a></li>
+      <li><a id="toc-Elpa-Latest-or-Release-Package-Installation-_0028Emacs-Package-Manager_0029" href="#Elpa-Latest-or-Release-Package-Installation">B.1.1 Elpa Latest or Release Package Installation (Emacs Package Manager)</a></li>
+      <li><a id="toc-Git-Latest-Package-Installation-_0028Straight-Package-Manager_0029" href="#Git-Latest-Package-Installation">B.1.2 Git Latest Package Installation (Straight Package Manager)</a></li>
+      <li><a id="toc-Manual-Tarball-Archive-Installation-_0028SFTP_0029" href="#Manual-Tarball-Archive-Installation">B.1.3 Manual Tarball Archive Installation (SFTP)</a></li>
     </ul></li>
     <li><a id="toc-Customization-1" href="#Customization">B.2 Customization</a>
     <ul class="toc-numbered-mark">
@@ -10122,90 +10121,50 @@ you have GNU Emacs set up at your site.  Choose one based on your needs.
 <p>After installing Hyperbole, read the next section on Invocation.
 </p>
 <ul class="mini-toc">
-<li><a href="#Elpa-In_002dDevelopment-Package-Installation" accesskey="1">Elpa In-Development Package Installation</a></li>
-<li><a href="#Elpa-Stable-Package-Installation" accesskey="2">Elpa Stable Package Installation (Emacs Package Manager)</a></li>
-<li><a href="#Git-In_002dDevelopment-Package-Installation" accesskey="3">Git In-Development Package Installation (Straight Package Manager)</a></li>
-<li><a href="#Manual-Tarball-Archive-Installation" accesskey="4">Manual Tarball Archive Installation</a></li>
+<li><a href="#Elpa-Latest-or-Release-Package-Installation" accesskey="1">Elpa Latest or Release Package Installation (Emacs Package Manager)</a></li>
+<li><a href="#Git-Latest-Package-Installation" accesskey="2">Git Latest Package Installation (Straight Package Manager)</a></li>
+<li><a href="#Manual-Tarball-Archive-Installation" accesskey="3">Manual Tarball Archive Installation (SFTP)</a></li>
 </ul>
 <hr>
-<div class="subsection-level-extent" id="Elpa-In_002dDevelopment-Package-Installation">
+<div class="subsection-level-extent" id="Elpa-Latest-or-Release-Package-Installation">
 <div class="nav-panel">
 <p>
-Next: <a href="#Elpa-Stable-Package-Installation" accesskey="n" rel="next">Elpa Stable Package Installation (Emacs Package Manager)</a>, Previous: <a href="#Installation" accesskey="p" rel="prev">Installation</a>, Up: <a href="#Installation" accesskey="u" rel="up">Installation</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Git-Latest-Package-Installation" accesskey="n" rel="next">Git Latest Package Installation (Straight Package Manager)</a>, Previous: <a href="#Installation" accesskey="p" rel="prev">Installation</a>, Up: <a href="#Installation" accesskey="u" rel="up">Installation</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<h4 class="subsection" id="Elpa-In_002dDevelopment-Package-Installation-1"><span>B.1.1 Elpa In-Development Package Installation<a class="copiable-link" href="#Elpa-In_002dDevelopment-Package-Installation-1"> &para;</a></span></h4>
-
-<a class="index-entry-id" id="index-elpa_002ddevel-package"></a>
-<a class="index-entry-id" id="index-in_002ddevelopment-installation"></a>
-<a class="index-entry-id" id="index-pre_002drelease-installation"></a>
-<a class="index-entry-id" id="index-installation_002c-pre_002drelease"></a>
-<a class="index-entry-id" id="index-installation_002c-from-git"></a>
-<p>The Elpa In-Development package pulls from the latest Hyperbole
-development branch tip and does not require installation of any new
-package manager software.  Since Hyperbole is a mature package, this is
-usually fine to use and update on a day-to-day basis.  But new features
-are tested on this branch and once in awhile it may break for a short
-time before a fix is pushed.  With this branch you&rsquo;ll be able to submit
-bug reports and feature requests but will not be able to submit pull
-requests for changes to the developers; use the Git In-Development
-Package instead for that.
-</p>
-<p>If you have Hyperbole installed and simply want to upgrade it, invoke
-the Emacs Package Manager with <kbd class="kbd">{M-x list-packages <kbd class="key">RET</kbd>}</kbd>,
-then use the <kbd class="kbd">{U}</kbd> key followed by the <kbd class="kbd">{x}</kbd> key to upgrade all
-out-of-date packages, Hyperbole among them.  Then skip the text below
-and move on to the next section, see <a class="pxref" href="#Invocation">Invocation</a>.
-</p>
-<p>Otherwise, to download and install the Hyperbole package, you should add
-several lines to your personal Emacs initialization file, <samp class="file">~/.emacs</samp>.
-(For further details, see <a data-manual="emacs" href="https://www.gnu.org/software/emacs/manual/html_mono/emacs.html#Init-File">The Emacs Initialization File</a> in <cite class="cite">the GNU Emacs Manual</cite>).
-</p>
-<div class="example lisp">
-<div class="group"><pre class="lisp-preformatted">;; Below are the lines to add:
-
-(when (&lt; emacs-major-version 28)
-  (error &quot;Hyperbole requires Emacs 28 or above, not %d&quot;
-         emacs-major-version))
-(require 'package)
-(add-to-list 'package-archives
-             '(&quot;gnu-devel&quot; . &quot;https://elpa.gnu.org/devel/&quot;))
-(unless (package-installed-p 'hyperbole)
-  (package-refresh-contents)
-  (package-install 'hyperbole))
-(hyperbole-mode 1)
-;; Allow HyWikiWords in text buffers and programming buffer comments
-;; by uncommenting the next line.
-;; (hywiki-mode :all)
-</pre></div></div>
-
-<p>Now save the file and restart Emacs.  Hyperbole will then be downloaded
-and compiled for use with your version of Emacs; give it a minute or two.
-You may see a bunch of compilation warnings but these can be safely
-ignored.
-</p>
-<hr>
-</div>
-<div class="subsection-level-extent" id="Elpa-Stable-Package-Installation">
-<div class="nav-panel">
-<p>
-Next: <a href="#Git-In_002dDevelopment-Package-Installation" accesskey="n" rel="next">Git In-Development Package Installation (Straight Package Manager)</a>, Previous: <a href="#Elpa-In_002dDevelopment-Package-Installation" accesskey="p" rel="prev">Elpa In-Development Package Installation</a>, Up: <a href="#Installation" accesskey="u" rel="up">Installation</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
-</div>
-<h4 class="subsection" id="Elpa-Stable-Package-Installation-_0028Emacs-Package-Manager_0029"><span>B.1.2 Elpa Stable Package Installation (Emacs Package Manager)<a class="copiable-link" href="#Elpa-Stable-Package-Installation-_0028Emacs-Package-Manager_0029"> &para;</a></span></h4>
+<h4 class="subsection" id="Elpa-Latest-or-Release-Package-Installation-_0028Emacs-Package-Manager_0029"><span>B.1.1 Elpa Latest or Release Package Installation (Emacs Package Manager)<a class="copiable-link" href="#Elpa-Latest-or-Release-Package-Installation-_0028Emacs-Package-Manager_0029"> &para;</a></span></h4>
 
 <a class="index-entry-id" id="index-installation"></a>
 <a class="index-entry-id" id="index-elpa-package"></a>
 <a class="index-entry-id" id="index-package-manager"></a>
 <a class="index-entry-id" id="index-Emacs-package-manager"></a>
-<a class="index-entry-id" id="index-stable-release-installation"></a>
-<a class="index-entry-id" id="index-installation_002c-stable"></a>
+<a class="index-entry-id" id="index-release-installation"></a>
 <a class="index-entry-id" id="index-obtaining-Hyperbole"></a>
 <a class="index-entry-id" id="index-Hyperbole_002c-obtaining-1"></a>
-<p>Once you have Emacs set up at your site, the stable, released version of
-GNU Hyperbole may be installed by using the Emacs Package Manager.  If
-you are not familiar with it, see <a data-manual="emacs" href="https://www.gnu.org/software/emacs/manual/html_mono/emacs.html#Packages">Packages</a> in <cite class="cite">the GNU Emacs
-Manual</cite>.  Releases are very rare and the in-development branch may be
-many months and features ahead, so you may want to consider using either
-the Elpa In-Development or Git In-Development installation instead.
+<a class="index-entry-id" id="index-elpa_002ddevel-package"></a>
+<a class="index-entry-id" id="index-in_002ddevelopment-installation"></a>
+<a class="index-entry-id" id="index-latest-installation"></a>
+<a class="index-entry-id" id="index-installation_002c-latest"></a>
+<a class="index-entry-id" id="index-installation_002c-release"></a>
+<a class="index-entry-id" id="index-installation_002c-from-git"></a>
+<p>Once you have Emacs set up at your site, you may install GNU Hyperbole
+using the Emacs Package Manager.  If you are not familiar with it,
+see <a data-manual="emacs" href="https://www.gnu.org/software/emacs/manual/html_mono/emacs.html#Packages">Packages</a> in <cite class="cite">the GNU Emacs Manual</cite>.  Releases are done with
+care and occur once in awhile.  In between, there is are
+regression-tested <em class="emph">latest</em> distributions packaged from the
+in-development code branch; these may be many months and features
+ahead of the release branch.
+</p>
+<p>Therefore, consider using the Elpa Latest package; it pulls from the
+latest Hyperbole development branch tip and uses the builtin Emacs
+package manager.  Since Hyperbole is a mature package, this is fine to
+use and update on a day-to-day basis.  But new features are tested on
+this branch and once in awhile it may break for a short time before a
+fix is pushed.
+</p>
+<p>With this branch you&rsquo;ll be able to submit bug reports and feature
+requests but will not be able to submit pull requests for changes to
+the developers; use the Git Latest Package, described in the next
+section, instead for that.
 </p>
 <p>If you have Hyperbole installed and simply want to upgrade it, invoke
 the Emacs Package Manager with <kbd class="kbd">{M-x list-packages <kbd class="key">RET</kbd>}</kbd>,
@@ -10213,43 +10172,121 @@ then use the <kbd class="kbd">{U}</kbd> key followed by the <kbd class="kbd">{x}
 out-of-date packages, Hyperbole among them.  Then skip the text below
 and move on to the next section, see <a class="pxref" href="#Invocation">Invocation</a>.
 </p>
-<p>Otherwise, to download and install the Hyperbole package, you should add
-several lines to your personal Emacs initialization file, <samp class="file">~/.emacs</samp>.
-(For further details, see <a data-manual="emacs" href="https://www.gnu.org/software/emacs/manual/html_mono/emacs.html#Init-File">The Emacs Initialization File</a> in <cite class="cite">the GNU Emacs Manual</cite>).
+<p>Otherwise, to download and install the Hyperbole package, you should
+add the following Lisp to your Emacs initialization file, as described
+below.  It installs the Elpa Latest package; there is one commented
+line in the configuration that you can switch out to pull from the
+older Elpa production release package.  (For further details,
+see <a data-manual="emacs" href="https://www.gnu.org/software/emacs/manual/html_mono/emacs.html#Init-File">The Emacs Initialization File</a> in <cite class="cite">the GNU Emacs
+Manual</cite>).
 </p>
-<div class="example lisp">
-<div class="group"><pre class="lisp-preformatted">;; Below are the lines to add:
+<br>
+<div class="example smalllisp lisp">
+<pre class="lisp-preformatted">;;; ************************************************************************
+;;; Requirements
+;;; ************************************************************************
 
-(when (&lt; emacs-major-version 28)
-  (error &quot;Hyperbole requires Emacs 28 or above, not %d&quot;
-         emacs-major-version))
 (require 'package)
-(unless (package-installed-p 'hyperbole)
-  (package-refresh-contents)	
-  (package-install 'hyperbole))
-(hyperbole-mode 1)
-;; Allow HyWikiWords in text buffers and programming buffer comments
-;; by uncommenting the next line.
-;; (hywiki-mode :all)
-</pre></div></div>
+
+;;; ************************************************************************
+;;; Section 1: package.el setup
+;;; ************************************************************************
+
+;;; ========================================================================
+;;; NOTE: This section is only if you have not yet setup the package.el
+;;;       package manager.  If you have, ignore this and skip to &quot;#Section 2&quot;
+;;;       for the Hyperbole `use-package' recipe.
+;;; ========================================================================
+
+;; Step 1: Add the function definition below near the top of your
+;; &quot;~/.emacs&quot; or &quot;~/.emacs.d/early-init.el&quot; file.
+
+;; Step 2: Add a call to the function below its definition:
+;;         (setup-package)
+
+(defun setup-package ()
+  (require 'package)
+  (setq package-enable-at-startup nil) ;; Prevent double loading of libraries
+  (add-to-list 'package-archives
+	       ;; Leave only one of the following two lines uncommented
+	       '(&quot;elpa-devel&quot; . &quot;https://elpa.gnu.org/devel/&quot;))
+	       ;; '(&quot;elpa&quot; . &quot;https://elpa.gnu.org/packages/&quot;))
+  (unless (and (boundp 'package--initialized) package--initialized)
+    (package-initialize))
+  ;; To ensure you have the latest index of packages, you'll have to
+  ;; uncomment the next line.  It is commented because retrieving the
+  ;; list is slow.
+  ;; (package-refresh-contents)
+  )
+
+;;; ************************************************************************
+;;; Section 2: package.el Hyperbole installation and configuration
+;;; ************************************************************************
+
+;; Step 1: Add the following expression to your &quot;~/.emacs&quot; or
+;; &quot;~/.emacs.d/init.el&quot; file.
+
+(use-package hyperbole
+
+  ;; ensure Hyperbole is installed
+  :ensure t
+
+  ;; Initialize the global HyWiki minor mode to one of these values:
+  ;;   :all   - highlights and makes HyWikiWord links active in
+  ;;            all text and programming buffer comments
+  ;;   :pages - highlights and makes HyWikiWord links active in
+  ;;            only within HyWiki page buffers
+  ;;   nil    - leaves HyWiki mode disabled.
+  :config
+  (progn
+    ;; Older Hyperbole releases do not have HyWiki
+    (when (fboundp 'hywiki-mode)
+      (hywiki-mode :all))
+
+    ;; Initialize the global Hyperbole minor mode to one of these values:
+    ;;   1 - enabled on startup so the Action and Assist Smart Keys are active
+    ;;   0 - off until you toggle it on
+    ;; If you left hywiki-mode enabled above, that enables hyperbole-mode too.
+    (unless (and (fboundp 'hywiki-mode) hywiki-mode)
+      (hyperbole-mode 1)))
+
+  :bind
+  ((&quot;M-RET&quot; . hkey-either)
+   ;; Uncomment the next binding if you want to emulate Hyperbole mouse drag
+   ;; events from your keyboard.
+   ;; See &quot;https://www.gnu.org/s/hyperbole/man/hyperbole.html#Keyboard-Drags&quot;.
+   ;; (&quot;M-o&quot;   . hkey-operate)
+   )
+
+  ;; Customize how Hyperbole and Org mode share the M-RET key:
+  ;;   t        - With hyperbole-mode enabled, Hyperbole controls the key
+  ;;   'buttons - With hyperbole-mode enabled, Hyperbole controls the key
+  ;;              only when on a button or link; otherwise, Org controls it
+  ;;   nil      - In Org mode, Org controls the key
+  :custom
+  (hsys-org-enable-smart-keys t)
+  )
+
+;;; End
+</pre></div>
+<br>
 
 <p>Now save the file and restart Emacs.  Hyperbole will then be downloaded
 and compiled for use with your version of Emacs; give it a minute or two.
-You may see a bunch of compilation warnings but these can be safely
-ignored.
 </p>
+
 <hr>
 </div>
-<div class="subsection-level-extent" id="Git-In_002dDevelopment-Package-Installation">
+<div class="subsection-level-extent" id="Git-Latest-Package-Installation">
 <div class="nav-panel">
 <p>
-Next: <a href="#Manual-Tarball-Archive-Installation" accesskey="n" rel="next">Manual Tarball Archive Installation</a>, Previous: <a href="#Elpa-Stable-Package-Installation" accesskey="p" rel="prev">Elpa Stable Package Installation (Emacs Package Manager)</a>, Up: <a href="#Installation" accesskey="u" rel="up">Installation</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Manual-Tarball-Archive-Installation" accesskey="n" rel="next">Manual Tarball Archive Installation (SFTP)</a>, Previous: <a href="#Elpa-Latest-or-Release-Package-Installation" accesskey="p" rel="prev">Elpa Latest or Release Package Installation (Emacs Package Manager)</a>, Up: <a href="#Installation" accesskey="u" rel="up">Installation</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<h4 class="subsection" id="Git-In_002dDevelopment-Package-Installation-_0028Straight-Package-Manager_0029"><span>B.1.3 Git In-Development Package Installation (Straight Package Manager)<a class="copiable-link" href="#Git-In_002dDevelopment-Package-Installation-_0028Straight-Package-Manager_0029"> &para;</a></span></h4>
+<h4 class="subsection" id="Git-Latest-Package-Installation-_0028Straight-Package-Manager_0029"><span>B.1.2 Git Latest Package Installation (Straight Package Manager)<a class="copiable-link" href="#Git-Latest-Package-Installation-_0028Straight-Package-Manager_0029"> &para;</a></span></h4>
 
 <a class="index-entry-id" id="index-Straight-package-manager"></a>
-<a class="index-entry-id" id="index-pre_002drelease-installation-1"></a>
-<a class="index-entry-id" id="index-installation_002c-pre_002drelease-1"></a>
+<a class="index-entry-id" id="index-pre_002drelease-installation"></a>
+<a class="index-entry-id" id="index-installation_002c-pre_002drelease"></a>
 <a class="index-entry-id" id="index-installation_002c-from-git-1"></a>
 <p>If you potentially want to contribute to Hyperbole development and send
 pull requests to the Hyperbole development team or to try out new
@@ -10265,17 +10302,36 @@ out-of-date packages, Hyperbole among them.  Then skip the text below
 and move on to the next section, see <a class="pxref" href="#Invocation">Invocation</a>.
 </p>
 <p>Otherwise, to download and install the Hyperbole package, you should add
-several lines to your personal Emacs initialization file, <samp class="file">~/.emacs</samp>.
+the following Lisp to your Emacs initialization file, as described below.
 (For further details, see <a data-manual="emacs" href="https://www.gnu.org/software/emacs/manual/html_mono/emacs.html#Init-File">The Emacs Initialization File</a> in <cite class="cite">the GNU Emacs Manual</cite>).
 </p>
+<br>
 <div class="example smalllisp lisp">
-<div class="group"><pre class="lisp-preformatted">;; Use this in your Emacs init file to install Straight
-(progn
+<pre class="lisp-preformatted">;;; ************************************************************************
+;;; Section 1: Straight setup
+;;; ************************************************************************
+
+;;; ========================================================================
+;;; NOTE: This section is only if you have not yet setup the Straight
+;;;       package manager.  If you have, ignore this and skip to &quot;#Section 2&quot;
+;;;       for the Hyperbole `straight-use-package' recipe.
+;;; ========================================================================
+
+;; Step 1: Add the function definition below near the top of your
+;; &quot;~/.emacs&quot; or &quot;~/.emacs.d/early-init.el&quot; file.
+
+;; Step 2: Add a call to the function below its definition:
+;;         (setup-straight)
+
+(defun setup-straight ()
   (when (&lt; emacs-major-version 28)
     (error &quot;Hyperbole requires Emacs 28 or above, not %d&quot;
            emacs-major-version))
   (defvar bootstrap-version)
+
+  ;; Prevent double loading of libraries
   (setq package-enable-at-startup nil)
+
   (let ((bootstrap-file
          (expand-file-name &quot;straight/repos/straight.el/bootstrap.el&quot;
                            user-emacs-directory))
@@ -10289,18 +10345,34 @@ several lines to your personal Emacs initialization file, <samp class="file">~/.
         (eval-print-last-sexp)))
     (load bootstrap-file nil 'nomessage)))
 
-;; Then use this to install Hyperbole
+;;; ************************************************************************
+;;; Section 2: Straight Hyperbole installation and configuration
+;;; ************************************************************************
+
+;; Step 1: Add the following expression to your &quot;~/.emacs&quot; or
+;; &quot;~/.emacs.d/init.el&quot; file.
+
 (straight-use-package
  '(hyperbole
    :host nil
+
    :repo &quot;https://git.savannah.gnu.org/git/hyperbole.git&quot;
+
    :config
-      (progn (hyperbole-mode 1)
-             ;; Allow HyWikiWords in text buffers and programming buffer comments
-             ;; by uncommenting the next line.
-             ;; (hywiki-mode :all)
-             )))
-</pre></div></div>
+   (progn
+     (hywiki-mode :all)
+     (unless hywiki-mode
+       (hyperbole-mode 1)))
+
+   :bind
+   ((&quot;M-RET&quot; . hkey-either))
+
+   :custom
+   (hsys-org-enable-smart-keys t)))
+
+;;; End
+</pre></div>
+<br>
 
 <p>Now save the file and restart Emacs.  Hyperbole will then be downloaded
 and compiled for use with your version of Emacs; give it a minute or two.
@@ -10310,9 +10382,9 @@ and compiled for use with your version of Emacs; give it a minute or two.
 <div class="subsection-level-extent" id="Manual-Tarball-Archive-Installation">
 <div class="nav-panel">
 <p>
-Previous: <a href="#Git-In_002dDevelopment-Package-Installation" accesskey="p" rel="prev">Git In-Development Package Installation (Straight Package Manager)</a>, Up: <a href="#Installation" accesskey="u" rel="up">Installation</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Previous: <a href="#Git-Latest-Package-Installation" accesskey="p" rel="prev">Git Latest Package Installation (Straight Package Manager)</a>, Up: <a href="#Installation" accesskey="u" rel="up">Installation</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<h4 class="subsection" id="Manual-Tarball-Archive-Installation-1"><span>B.1.4 Manual Tarball Archive Installation<a class="copiable-link" href="#Manual-Tarball-Archive-Installation-1"> &para;</a></span></h4>
+<h4 class="subsection" id="Manual-Tarball-Archive-Installation-_0028SFTP_0029"><span>B.1.3 Manual Tarball Archive Installation (SFTP)<a class="copiable-link" href="#Manual-Tarball-Archive-Installation-_0028SFTP_0029"> &para;</a></span></h4>
 
 <p>If you are old-school, don&rsquo;t like package managers, and prefer doing
 everything by hand, then you can obtain Hyperbole from a tarball:
@@ -10320,7 +10392,7 @@ everything by hand, then you can obtain Hyperbole from a tarball:
 <p>Download either:
 </p>
 <dl class="table">
-<dt>1. a stable release tar.gz source archive from either:</dt>
+<dt>1. a release tar.gz source archive from either:</dt>
 <dd><p><a class="uref" href="ftp://ftp.gnu.org/gnu/hyperbole/">ftp://ftp.gnu.org/gnu/hyperbole/</a> or
 <a class="uref" href="http://ftpmirror.gnu.org/hyperbole/">http://ftpmirror.gnu.org/hyperbole/</a>, which will find the closest
 mirror of the GNU ftp site and show it to you.
@@ -16174,8 +16246,8 @@ Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-elisp-identifier">elisp identifier</a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Lisp-Source-Code">Smart Key - Lisp Source Code</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-elisp-testing">elisp testing</a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-ERT-Results-Mode">Smart Key - ERT Results Mode</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-ellipses">ellipses</a></td><td class="printindex-index-section"><a href="#View-Specs">View Specs</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-elpa-package">elpa package</a></td><td class="printindex-index-section"><a href="#Elpa-Stable-Package-Installation">Elpa Stable Package Installation</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-elpa_002ddevel-package">elpa-devel package</a></td><td class="printindex-index-section"><a href="#Elpa-In_002dDevelopment-Package-Installation">Elpa In-Development Package Installation</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-elpa-package">elpa package</a></td><td class="printindex-index-section"><a href="#Elpa-Latest-or-Release-Package-Installation">Elpa Latest or Release Package Installation</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-elpa_002ddevel-package">elpa-devel package</a></td><td class="printindex-index-section"><a href="#Elpa-Latest-or-Release-Package-Installation">Elpa Latest or Release Package Installation</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Emacs">Emacs</a></td><td class="printindex-index-section"><a href="#Hyperbole-Overview">Hyperbole Overview</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Emacs-1">Emacs</a></td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Emacs-Lisp">Emacs Lisp</a></td><td class="printindex-index-section"><a href="#Hyperbole-Overview">Hyperbole Overview</a></td></tr>
@@ -16184,7 +16256,7 @@ Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Emacs-Lisp-variables-1">Emacs Lisp variables</a></td><td class="printindex-index-section"><a href="#Link-Variable-Substitution">Link Variable Substitution</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-emacs-outline">emacs outline</a></td><td class="printindex-index-section"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Emacs-Outline-mode">Emacs Outline mode</a></td><td class="printindex-index-section"><a href="#HyRolo-Concepts">HyRolo Concepts</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-Emacs-package-manager">Emacs package manager</a></td><td class="printindex-index-section"><a href="#Elpa-Stable-Package-Installation">Elpa Stable Package Installation</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-Emacs-package-manager">Emacs package manager</a></td><td class="printindex-index-section"><a href="#Elpa-Latest-or-Release-Package-Installation">Elpa Latest or Release Package Installation</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Emacs-Regression-Test-_0028ERT_0029-symbol">Emacs Regression Test (ERT) symbol</a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Emacs-Regression-Test-framework">Emacs Regression Test framework</a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Emacs-support">Emacs support</a></td><td class="printindex-index-section"><a href="#Button-Colors">Button Colors</a></td></tr>
@@ -16374,7 +16446,7 @@ Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hyperbole_002dmode">hyperbole-mode</a></td><td class="printindex-index-section"><a href="#Invocation">Invocation</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Hyperbole_002c-embedding">Hyperbole, embedding</a></td><td class="printindex-index-section"><a href="#Embedding-Hyperbole">Embedding Hyperbole</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Hyperbole_002c-obtaining">Hyperbole, obtaining</a></td><td class="printindex-index-section"><a href="#Top">Top</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-Hyperbole_002c-obtaining-1">Hyperbole, obtaining</a></td><td class="printindex-index-section"><a href="#Elpa-Stable-Package-Installation">Elpa Stable Package Installation</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-Hyperbole_002c-obtaining-1">Hyperbole, obtaining</a></td><td class="printindex-index-section"><a href="#Elpa-Latest-or-Release-Package-Installation">Elpa Latest or Release Package Installation</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Hyperbole_002c-starting">Hyperbole, starting</a></td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Hyperbole_002c-system-encapsulation">Hyperbole, system encapsulation</a></td><td class="printindex-index-section"><a href="#Encapsulating-Systems">Encapsulating Systems</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hyperlink">hyperlink</a></td><td class="printindex-index-section"><a href="#Klinks">Klinks</a></td></tr>
@@ -16495,7 +16567,7 @@ Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-importing">importing</a></td><td class="printindex-index-section"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-importing-a-file">importing a file</a></td><td class="printindex-index-section"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-importing_002c-Koutliner">importing, Koutliner</a></td><td class="printindex-index-section"><a href="#Menu-Commands">Menu Commands</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-in_002ddevelopment-installation">in-development installation</a></td><td class="printindex-index-section"><a href="#Elpa-In_002dDevelopment-Package-Installation">Elpa In-Development Package Installation</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-in_002ddevelopment-installation">in-development installation</a></td><td class="printindex-index-section"><a href="#Elpa-Latest-or-Release-Package-Installation">Elpa Latest or Release Package Installation</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-inactive-minibuffer">inactive minibuffer</a></td><td class="printindex-index-section"><a href="#Minibuffer-Menu-Activation">Minibuffer Menu Activation</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Info-browser">Info browser</a></td><td class="printindex-index-section"><a href="#Smart-Mouse-Key-Modeline-Clicks">Smart Mouse Key Modeline Clicks</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Info-browsing">Info browsing</a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Info-Manuals">Smart Key - Info Manuals</a></td></tr>
@@ -16509,12 +16581,12 @@ Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-insert-item">insert item</a></td><td class="printindex-index-section"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-inserting-tabs">inserting tabs</a></td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-insertion">insertion</a></td><td class="printindex-index-section"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-installation">installation</a></td><td class="printindex-index-section"><a href="#Elpa-Stable-Package-Installation">Elpa Stable Package Installation</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-installation_002c-from-git">installation, from git</a></td><td class="printindex-index-section"><a href="#Elpa-In_002dDevelopment-Package-Installation">Elpa In-Development Package Installation</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-installation_002c-from-git-1">installation, from git</a></td><td class="printindex-index-section"><a href="#Git-In_002dDevelopment-Package-Installation">Git In-Development Package Installation</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-installation_002c-pre_002drelease">installation, pre-release</a></td><td class="printindex-index-section"><a href="#Elpa-In_002dDevelopment-Package-Installation">Elpa In-Development Package Installation</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-installation_002c-pre_002drelease-1">installation, pre-release</a></td><td class="printindex-index-section"><a href="#Git-In_002dDevelopment-Package-Installation">Git In-Development Package Installation</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-installation_002c-stable">installation, stable</a></td><td class="printindex-index-section"><a href="#Elpa-Stable-Package-Installation">Elpa Stable Package Installation</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-installation">installation</a></td><td class="printindex-index-section"><a href="#Elpa-Latest-or-Release-Package-Installation">Elpa Latest or Release Package Installation</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-installation_002c-from-git">installation, from git</a></td><td class="printindex-index-section"><a href="#Elpa-Latest-or-Release-Package-Installation">Elpa Latest or Release Package Installation</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-installation_002c-from-git-1">installation, from git</a></td><td class="printindex-index-section"><a href="#Git-Latest-Package-Installation">Git Latest Package Installation</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-installation_002c-latest">installation, latest</a></td><td class="printindex-index-section"><a href="#Elpa-Latest-or-Release-Package-Installation">Elpa Latest or Release Package Installation</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-installation_002c-pre_002drelease">installation, pre-release</a></td><td class="printindex-index-section"><a href="#Git-Latest-Package-Installation">Git Latest Package Installation</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-installation_002c-release">installation, release</a></td><td class="printindex-index-section"><a href="#Elpa-Latest-or-Release-Package-Installation">Elpa Latest or Release Package Installation</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-instance-number">instance number</a></td><td class="printindex-index-section"><a href="#By-Menu">By Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-interactive-cmd-char_002c-_002bI">interactive cmd char, +I</a></td><td class="printindex-index-section"><a href="#Creating-Action-Types">Creating Action Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-interactive-cmd-char_002c-_002bK">interactive cmd char, +K</a></td><td class="printindex-index-section"><a href="#Creating-Action-Types">Creating Action Types</a></td></tr>
@@ -16613,6 +16685,7 @@ Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-label_002c-button">label, button</a></td><td class="printindex-index-section"><a href="#Explicit-Buttons">Explicit Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-label_002c-button-1">label, button</a></td><td class="printindex-index-section"><a href="#Global-Buttons">Global Buttons</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-labeling-implicit-buttons">labeling implicit buttons</a></td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-latest-installation">latest installation</a></td><td class="printindex-index-section"><a href="#Elpa-Latest-or-Release-Package-Installation">Elpa Latest or Release Package Installation</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-legal-labels">legal labels</a></td><td class="printindex-index-section"><a href="#Autonumbering">Autonumbering</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-level">level</a></td><td class="printindex-index-section"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-level-1">level</a></td><td class="printindex-index-section"><a href="#View-Specs">View Specs</a></td></tr>
@@ -16865,7 +16938,7 @@ Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable 
 <tr><td colspan="3"><hr></td></tr>
 <tr><th id="Concept-Index_cp_letter-O">O</th></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-object_002doriented-code-browsing">object-oriented code browsing</a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-The-OO_002dBrowser">Smart Key - The OO-Browser</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-obtaining-Hyperbole">obtaining Hyperbole</a></td><td class="printindex-index-section"><a href="#Elpa-Stable-Package-Installation">Elpa Stable Package Installation</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-obtaining-Hyperbole">obtaining Hyperbole</a></td><td class="printindex-index-section"><a href="#Elpa-Latest-or-Release-Package-Installation">Elpa Latest or Release Package Installation</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-online-library">online library</a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-OO_002dBrowser">OO-Browser</a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-The-OO_002dBrowser">Smart Key - The OO-Browser</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-option-setting">option setting</a></td><td class="printindex-index-section"><a href="#Customization">Customization</a></td></tr>
@@ -16935,7 +17008,7 @@ Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-overview">overview</a></td><td class="printindex-index-section"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td colspan="3"><hr></td></tr>
 <tr><th id="Concept-Index_cp_letter-P">P</th></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-package-manager">package manager</a></td><td class="printindex-index-section"><a href="#Elpa-Stable-Package-Installation">Elpa Stable Package Installation</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-package-manager">package manager</a></td><td class="printindex-index-section"><a href="#Elpa-Latest-or-Release-Package-Installation">Elpa Latest or Release Package Installation</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Page-HyWiki-reftype">Page HyWiki reftype</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-paragraph_002c-filling">paragraph, filling</a></td><td class="printindex-index-section"><a href="#Filling">Filling</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-paste-region">paste region</a></td><td class="printindex-index-section"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
@@ -16959,8 +17032,7 @@ Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-possible-link-action-types">possible link action types</a></td><td class="printindex-index-section"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-posting-buttons">posting buttons</a></td><td class="printindex-index-section"><a href="#Buttons-in-Mail">Buttons in Mail</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-posting-news">posting news</a></td><td class="printindex-index-section"><a href="#Buttons-in-News">Buttons in News</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-pre_002drelease-installation">pre-release installation</a></td><td class="printindex-index-section"><a href="#Elpa-In_002dDevelopment-Package-Installation">Elpa In-Development Package Installation</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-pre_002drelease-installation-1">pre-release installation</a></td><td class="printindex-index-section"><a href="#Git-In_002dDevelopment-Package-Installation">Git In-Development Package Installation</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-pre_002drelease-installation">pre-release installation</a></td><td class="printindex-index-section"><a href="#Git-Latest-Package-Installation">Git Latest Package Installation</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-precedence_002c-buttons">precedence, buttons</a></td><td class="printindex-index-section"><a href="#Button-Type-Precedence">Button Type Precedence</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-priority-of-ibtypes">priority of ibtypes</a></td><td class="printindex-index-section"><a href="#Programmatic-Implicit-Button-Types">Programmatic Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-profiling">profiling</a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Profiler-Report-Mode">Smart Key - Profiler Report Mode</a></td></tr>
@@ -16998,6 +17070,7 @@ Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-regression-testing">regression testing</a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-ERT-Results-Mode">Smart Key - ERT Results Mode</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-relative-autonumber">relative autonumber</a></td><td class="printindex-index-section"><a href="#Koutliner">Koutliner</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-relative-identifier">relative identifier</a></td><td class="printindex-index-section"><a href="#Autonumbering">Autonumbering</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-release-installation">release installation</a></td><td class="printindex-index-section"><a href="#Elpa-Latest-or-Release-Package-Installation">Elpa Latest or Release Package Installation</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-reload-minibuffer-menus">reload minibuffer menus</a></td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-reload-Smart-Key-handlers">reload Smart Key handlers</a></td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-remote-file">remote file</a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
@@ -17115,7 +17188,6 @@ Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Spec-HyWiki-reftype">Spec HyWiki reftype</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-special-buffers_002c-HyWikiWords">special buffers, HyWikiWords</a></td><td class="printindex-index-section"><a href="#HyWiki-Mode">HyWiki Mode</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-splitting-a-cell">splitting a cell</a></td><td class="printindex-index-section"><a href="#Splitting-and-Appending">Splitting and Appending</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-stable-release-installation">stable release installation</a></td><td class="printindex-index-section"><a href="#Elpa-Stable-Package-Installation">Elpa Stable Package Installation</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-stack-frame">stack frame</a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-stack-frame-1">stack frame</a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-stack-frame-2">stack frame</a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
@@ -17123,7 +17195,7 @@ Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-starting-HyControl">starting HyControl</a></td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-starting-Hyperbole">starting Hyperbole</a></td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-storage-manager">storage manager</a></td><td class="printindex-index-section"><a href="#Operational-and-Storage-Formats">Operational and Storage Formats</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-Straight-package-manager">Straight package manager</a></td><td class="printindex-index-section"><a href="#Git-In_002dDevelopment-Package-Installation">Git In-Development Package Installation</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-Straight-package-manager">Straight package manager</a></td><td class="printindex-index-section"><a href="#Git-Latest-Package-Installation">Git Latest Package Installation</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-string">string</a></td><td class="printindex-index-section"><a href="#Thing-Selection">Thing Selection</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-string-1">string</a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Delimited-Things">Smart Key - Delimited Things</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-submenus">submenus</a></td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>

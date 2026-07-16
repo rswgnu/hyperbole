@@ -1,3 +1,33 @@
+2026-07-15  Bob Weiner  <rsw@gnu.org>
+
+* Makefile (env): Add and document this target (alias of echo target).
+
+* man/hyperbole.texi (Elpa Latest or Release Package Installation):
+    Combine Latest/In-Development and Release package installation
+    instructions into one subsection.
+
+* man/hy-package.el:
+  man/hy-straight.el: Add these two files of install and config
+    instructions for different package managers.  Include in
+    man/hyperbole.texi.
+  Makefile (HYPERBOLE_FILES):
+  MANIFEST (DOCUMENTATION): Add the above two files.
+
+* man/hyperbole-straight.el: Copy from "man/hyperbole.texi" and include
+    in the manual.  Update 'straight-use-package' configuration to latest.
+
+* hpath.el (hpath:to-markup-anchor): Fix programming mode anchors so
+    are anchored to the beginning of a line and may have one or more
+    initial 'comment-start' prefix characters.  Also, anchor to the
+    beginning of the line (plus whitespace) when in fundamental mode,
+    text mode or a non-file buffer.  These fixes prevent matching to
+    the "#link" reference rather than its referent in the same buffer.
+           (hpath:to-markup-anchor): Remove special handling for
+    fundamental and text modes as well as non-buffer files and just
+    use 'hpath:outline-section-pattern' for all of them.
+          (hpath:shell-comment-pattern): Add and use in new separate
+    shell-specific #anchor matching clause.
+
 2026-07-14  Bob Weiner  <rsw@gnu.org>
 
 * test/hy-test-dependencies.el: Add 'markdown-ts-mode' declaration.
