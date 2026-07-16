@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     15-Jul-26 at 21:34:14 by Bob Weiner
+# Last-Mod:     16-Jul-26 at 23:26:56 by Mats Lidell
 #
 # Copyright (C) 1994-2026  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -707,7 +707,7 @@ run-bash:
 
 .PHONY: docker-clean
 docker-clean:
-	docker rm elpa-local
+	docker volume rm elpa-local || true
 
 # Run with coverage. Run tests given by testspec and monitor the
 # coverage for the specified file.
