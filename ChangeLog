@@ -19,9 +19,8 @@
 * hypb.el (hypb:activate-interaction-log-mode): Use hypb:require-package.
 
 * hyrolo.el (hyrolo-any-file-type-problem-p): Use require to check if
-    markdown-mode is available. Ensure package-archives is set to nongnu
-    for markdown-mode install. Moved out from
-    hyrolo-install-markdown-mode.
+    markdown-mode is available. Use users package-archives and fail
+    markdown-mode install if nongnu is not present.
     (hyrolo-markdown-mode): Remove not needed require.
     (hyrolo-install-markdown-mode): Use hypb:require-package.
 

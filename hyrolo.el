@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     16-Jul-26 at 14:11:13 by Mats Lidell
+;; Last-Mod:     16-Jul-26 at 17:40:26 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -3088,8 +3088,7 @@ package is not installed."
 			   (hyrolo-get-file-list))))
 	file-and-major-mode-list
 	files-no-mode-list
-	files-invalid-suffix-list
-	package-archives)
+	files-invalid-suffix-list)
 
     ;;  2. Skip this if the markdown-mode package is installed
     (unless (require 'markdown-mode nil t)
@@ -3099,9 +3098,7 @@ package is not installed."
 						suffix))
 			      file-suffixes))
 
-	;;  4. if not, ensure nongnu is temporarily added to package
-	;;     source list and then install markdown-mode.
-        (add-to-list 'package-archives '("nongnu" . "https://elpa.nongnu.org/nongnu/"))
+	;;  4. then install markdown-mode.
 	(hyrolo-install-markdown-mode)))
 
     ;;  5. Check that each file has an entry in `hyrolo-auto-mode-alist' or `auto-mode-alist',
