@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Apr-94 at 17:17:39 by Bob Weiner
-;; Last-Mod:     16-Jul-26 at 17:00:46 by Bob Weiner
+;; Last-Mod:     16-Jul-26 at 17:36:43 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -116,6 +116,45 @@ Valid values of this variable include `browse-url-default-browser' and
 		 (progn (ibut:label-set link-and-pos)
 			(hact 'www-url (car link-and-pos))))))))
 
+
+(defact link-to-url (url &optional _label)
+  "Follow a link given by URL and optional text _LABEL.
+The variable, `browse-url-browser-function', customizes the url browser that
+is used.  Valid values of this variable include `browse-url-default-browser' and
+`browse-url-generic'.
+
+_LABEL is used in `hui:link-possible-types' with the `link-to-url' call and
+in `ibut:insert-text' as the name of the implicit button inserted."
+  (interactive "sURL to follow: ")
+  (unless (stringp url)
+    (error "(link-to-url): URL = `%s' but must be a string" url))
+  (unless (seq-position url ?:)
+    (setq url (concat "https://" url)))
+  (if (or (functionp browse-url-browser-function)
+	  ;; May be a predicate alist of functions from which to select
+	  (consp browse-url-browser-function))
+      (let ((browse-url-browser-function
+	     (if (eq browse-url-browser-function #'eww-browse-url)
+		 ;; Hyperbole-specific version
+		 #'www-eww-browse-url
+	       browse-url-browser-function))
+	    browse-function-name
+	    browser)
+	(if (symbolp browse-url-browser-function)
+	    (setq browse-function-name (symbol-name browse-url-browser-function)
+		  browser (and (string-match
+				"-\\([^-]+\\)\\'"
+				browse-function-name)
+			       (capitalize (substring browse-function-name
+						      (match-beginning 1)
+						      (match-end 1)))))
+	  (setq browser "default browser"))
+	(message "Sending %s to %s..." url browser)
+	(browse-url url)
+	(message "Sending %s to %s...done" url browser))
+    (error "(link-to-url): `browse-url-browser-function' must be set to a web browser invoking function")))
+
+;; !! TODO: Duplicate of `link-to-url' defact to consider getting rid of
 (defact www-url (url &optional _label)
   "Follow a link given by URL and optional text _LABEL.
 The variable, `browse-url-browser-function', customizes the url browser that
@@ -152,9 +191,6 @@ in `ibut:insert-text' as the name of the implicit button inserted."
 	(browse-url url)
 	(message "Sending %s to %s...done" url browser))
     (error "(www-url): `browse-url-browser-function' must be set to a web browser invoking function")))
-
-;; Make `link-to-url' an alias actype for `www-url'.
-(eval `(defact link-to-url ,@(nthcdr 2 (actype:action-body 'www-url))))
 
 (defun www-url-compose-mail (to &optional subject body &rest _ignore)
   "Compose a mailto url and open it in the default `browse-url' web browser.

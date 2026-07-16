@@ -1,5 +1,7 @@
 2026-07-16  Bob Weiner  <rsw@gnu.org>
 
+* hsys-www.el (link-to-url): Explicitly duplicate `www-url' defact, for now.
+
 * hui.el (hui:ibut-message): Prefer 'name' to 'lbl-key' in message describing
     an implicit button.
          (hui:link-possible-types): For 'link-to-url', include and use anchor
