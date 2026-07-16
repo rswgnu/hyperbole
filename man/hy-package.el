@@ -9,22 +9,24 @@
 ;;; ************************************************************************
 
 ;;; ========================================================================
-;;; NOTE: This section is only if you have not yet setup the Straight
+;;; NOTE: This section is only if you have not yet setup the package.el
 ;;;       package manager.  If you have, ignore this and skip to "#Section 2"
-;;;       for the Hyperbole `straight-use-package' recipe.
+;;;       for the Hyperbole `use-package' recipe.
 ;;; ========================================================================
 
 ;; Step 1: Add the function definition below near the top of your
 ;; "~/.emacs" or "~/.emacs.d/early-init.el" file.
 
 ;; Step 2: Add a call to the function below its definition:
-;;         (setup-package-el)
+;;         (setup-package)
 
-(defun setup-package-el ()
+(defun setup-package ()
   (require 'package)
   (setq package-enable-at-startup nil) ;; Prevent double loading of libraries
   (add-to-list 'package-archives
+	       ;; Leave only one of the following two lines uncommented
 	       '("elpa-devel" . "https://elpa.gnu.org/devel/"))
+	       ;; '("elpa" . "https://elpa.gnu.org/packages/"))
   (unless (and (boundp 'package--initialized) package--initialized)
     (package-initialize))
   ;; To ensure you have the latest index of packages, you'll have to
@@ -53,13 +55,15 @@
   ;;   nil    - leaves HyWiki mode disabled.
   :config
   (progn
-    (hywiki-mode :all)
+    ;; Older Hyperbole releases do not have HyWiki
+    (when (fboundp 'hywiki-mode)
+      (hywiki-mode :all))
 
     ;; Initialize the global Hyperbole minor mode to one of these values:
     ;;   1 - enabled on startup so the Action and Assist Smart Keys are active
     ;;   0 - off until you toggle it on
     ;; If you left hywiki-mode enabled above, that enables hyperbole-mode too.
-    (unless hywiki-mode
+    (unless (and (fboundp 'hywiki-mode) hywiki-mode)
       (hyperbole-mode 1)))
 
   :bind
@@ -70,7 +74,7 @@
    ;; ("M-o"   . hkey-operate)
    )
 
-  ;; Customize how Hyperbole and Org mode share the {M-RET} key:
+  ;; Customize how Hyperbole and Org mode share the M-RET key:
   ;;   t        - With hyperbole-mode enabled, Hyperbole controls the key
   ;;   'buttons - With hyperbole-mode enabled, Hyperbole controls the key
   ;;              only when on a button or link; otherwise, Org controls it
@@ -78,3 +82,5 @@
   :custom
   (hsys-org-enable-smart-keys t)
   )
+
+;;; End
