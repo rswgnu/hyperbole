@@ -1,3 +1,7 @@
+2026-07-16  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (docker-clean): Fix remove command for docker volumes.
+
 2026-07-16  Bob Weiner  <rsw@gnu.org>
 
 * hsys-www.el (link-to-url): Explicitly duplicate `www-url' defact, for now.
