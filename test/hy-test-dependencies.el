@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:16:00
-;; Last-Mod:     16-Jul-26 at 17:11:52 by Mats Lidell
+;; Last-Mod:     18-Jul-26 at 15:13:20 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -19,6 +19,33 @@
 ;;; Code:
 
 (require 'package)
+
+;; Advice with retry for package-install
+(defun hypb:package-install-advice-for-retry (pkg-install &rest args)
+  "Add a retry layer on top of package-install."
+  (let ((retries 3)
+        (attempt 0)
+        done
+        result)
+    (while (not done)
+      (setq attempt (1+ attempt))
+      (condition-case err
+          (progn
+            (setq result (apply pkg-install args))
+            (setq done t))
+      	(wrong-type-argument
+         ;; Reraise if error is not stringp nil
+         (unless (equal (cdr err) '(stringp nil))
+           (signal (car err) (cdr err)))
+         (if (<= attempt retries)
+             (message "package-install failed (attempt %d/%d): %s"
+                      attempt retries (error-message-string err))
+           (signal (car err) (cdr err))))))
+    result))
+
+;; Apply advice only for Emacs master branch version used in CI
+(unless (version< emacs-version "32.0.50")
+  (advice-add 'package-install :around #'hypb:package-install-advice-for-retry))
 
 (declare-function markdown-ts-mode "ext:markdown-ts-mode")
 

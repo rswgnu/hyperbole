@@ -1,4 +1,7 @@
-2026-07-17  Mats Lidell  <matsl@gnu.org>
+2026-07-18  Mats Lidell  <matsl@gnu.org>
+
+* test/hy-test-dependencies.el (hypb:package-install-advice-for-retry):
+    Advice for retrying package-install.
 
 * test/hy-test-helpers.el (hy-test-mocked-feature): Macro for mocking
     featurep.
