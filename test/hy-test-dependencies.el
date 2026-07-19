@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:16:00
-;; Last-Mod:     18-Jul-26 at 15:13:20 by Mats Lidell
+;; Last-Mod:     19-Jul-26 at 18:00:48 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -25,6 +25,7 @@
   "Add a retry layer on top of package-install."
   (let ((retries 3)
         (attempt 0)
+        (delay 1)
         done
         result)
     (while (not done)
@@ -37,10 +38,11 @@
          ;; Reraise if error is not stringp nil
          (unless (equal (cdr err) '(stringp nil))
            (signal (car err) (cdr err)))
-         (if (<= attempt retries)
-             (message "package-install failed (attempt %d/%d): %s"
-                      attempt retries (error-message-string err))
-           (signal (car err) (cdr err))))))
+         (if (>= attempt retries)
+             (signal (car err) (cdr err))
+           (message "(hypb:package-install-advice-for-retry) package-install of '%s' failed (attempt %d/%d): %s"
+                    (car args) attempt retries (error-message-string err))
+           (sleep-for delay)))))
     result))
 
 ;; Apply advice only for Emacs master branch version used in CI

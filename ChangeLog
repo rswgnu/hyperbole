@@ -1,3 +1,8 @@
+2026-07-19  Mats Lidell  <matsl@gnu.org>
+
+* test/hy-test-dependencies.el (hypb:package-install-advice-for-retry):
+    Add delay before retrying.
+
 2026-07-18  Mats Lidell  <matsl@gnu.org>
 
 * test/hy-test-dependencies.el (hypb:package-install-advice-for-retry):
