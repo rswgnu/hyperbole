@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:     5-Apr-21 at 18:53:10
-;; Last-Mod:     20-Jul-26 at 00:18:36 by Mats Lidell
+;; Last-Mod:     20-Jul-26 at 00:24:21 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -111,10 +111,10 @@ Verify with and without caching."
               (goto-char pos)
               (if (not response)
                   (progn
-                    (ert-info ((format "Test #%d: At pos %d, char '%c', expected not within \"%s\" in mode: %s"
+                    (ert-info ((format "Test #%d: At pos %d, char '%c', expected outside string text \"%s\" in mode: %s"
                                        test-num (point) (char-after (point)) str mode))
                       (should-not (hypb:in-string-p))))
-                (ert-info ((format "Test #%d: At pos %d, expected within \"%s\" in mode: %s"
+                (ert-info ((format "Test #%d: At pos %d, expected inside string text \"%s\" in mode: %s"
                                    test-num (point) str mode))
                   (should (hypb:in-string-p))
                   (let ((seq (hypb:in-string-p nil t)))
