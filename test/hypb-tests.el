@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:     5-Apr-21 at 18:53:10
-;; Last-Mod:      8-Mar-26 at 12:42:06 by Bob Weiner
+;; Last-Mod:     16-Jul-26 at 17:06:05 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -156,6 +156,55 @@ See Emacs bug#74042 related to usage of texi2any."
   (should-error (hypb:string-count-matches "a" "a" 1 3))
   (should-error (hypb:string-count-matches "a" "a" 0 -1))
   (should-error (hypb:string-count-matches "a" "ab" 0 3)))
+
+(ert-deftest hypb--users-package-manager ()
+  "Verify `hypb:users-package-manager'."
+  (hy-test-mocked-feature 'straight
+    (should (eq 'straight (hypb:users-package-manager))))
+  (hy-test-mocked-feature 'elpaca
+    (should (eq 'elpaca (hypb:users-package-manager))))
+  (should (eq 'package (hypb:users-package-manager))))
+
+(ert-deftest hypb--package-el-install ()
+  "Verify `hypb:package-el-install'."
+  (let ((hypb:ask-to-install-package-flag t))
+    (with-mock
+      (mock (y-or-n-p *) => nil)
+      (hypb:package-el-install 'hypb-dummy-package-name)))
+  (let* ((hypb:ask-to-install-package-flag nil)
+         (err (should-error (hypb:package-el-install 'hypb-dummy-package-name) :type 'error)))
+    ;;FIXME: Emacs-28 includes a '-' when there is no version
+    ;;number. Can be removed when we drop support for Emacs 28.
+    (should (string-match-p (rx "Package " punct "hypb-dummy-package-name" (optional "-") punct " is unavailable") (cadr err)))))
+
+(ert-deftest hypb--notify-manual-install-needed ()
+  "Verify `hypb:notify-manual-install-needed'.
+Verifies it raises a 'need to install' package manager error."
+  (let ((err (should-error (hypb:notify-manual-install-needed 'la-package 'la-manager) :type 'user-error)))
+    (should (string-search "la-package" (cadr err)))
+    (should (string-search "la-manager" (cadr err)))))
+
+(ert-deftest hypb--ensure-dependency ()
+  "Verify `hypb:ensure-dependency'."
+  (with-mock
+    (mock (hypb:users-package-manager) => 'package)
+    (mock (hypb:package-el-install 'the-package) => t)
+    (should (hypb:ensure-dependency 'the-package)))
+  (with-mock
+    (mock (hypb:users-package-manager) => 'package)
+    (mock (hypb:package-el-install 'the-package) => nil)
+    (should-not (hypb:ensure-dependency 'the-package)))
+  (with-mock
+    (mock (hypb:users-package-manager) => 'elpaca)
+    (mock (hypb:notify-manual-install-needed 'the-package 'elpaca) => (user-error "Error"))
+    (should-error (hypb:ensure-dependency 'the-package) :type 'user-error)))
+
+(ert-deftest hypb--require-package ()
+  "Verify `hypb:require-package' signals if automatic install fails."
+  (with-mock
+    (mock (hypb:ensure-dependency 'package) => nil)
+    (let ((err (should-error (hypb:require-package 'package) :type 'error)))
+      (should (string-search "could not be found" (cadr err))))))
 
 ;; This file can't be byte-compiled without the `el-mock' package (because of
 ;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Nov-17
-;; Last-Mod:      7-Mar-26 at 22:39:17 by Bob Weiner
+;; Last-Mod:     11-Jul-26 at 23:58:02 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -24,10 +24,7 @@
 (require 'package) ;; Always keep this first
 (require 'seq)
 
-(or (require 'treemacs nil t)
-    (and (package-installed-p 'treemacs)
-	 (package-activate 'treemacs))
-    (hypb:require-package 'treemacs))
+(hypb:require-package 'treemacs)
 
 (defvar treemacs-version)
 

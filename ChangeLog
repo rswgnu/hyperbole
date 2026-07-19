@@ -1,3 +1,41 @@
+2026-07-18  Mats Lidell  <matsl@gnu.org>
+
+* test/hy-test-dependencies.el (hypb:package-install-advice-for-retry):
+    Advice for retrying package-install.
+
+* test/hy-test-helpers.el (hy-test-mocked-feature): Macro for mocking
+    featurep.
+
+* test/hypb-tests.el (hypb--users-package-manager):
+    (hypb--package-el-install):
+    (hypb--notify-manual-install-needed):
+    (hypb--ensure-dependency):
+    (hypb--require-package):  Unit tests for the new functions.
+
+* test/hy-test-dependencies.el (hypb:ask-to-install-package-flag): Set to
+    nil for not asking about installing dynamic dependencies during test,
+    i.e. markdown-mode.
+
+* hsys-consult.el (hsys-consult-require-version):
+    (hsys-consult--org-roam-call-function):
+* hui-treemacs.el (treemacs):
+* hypb.el (hypb:activate-interaction-log-mode): Use hypb:require-package.
+
+* hyrolo.el (hyrolo-any-file-type-problem-p): Use require to check if
+    markdown-mode is available. Use users package-archives and fail
+    markdown-mode install if nongnu is not present.
+    (hyrolo-markdown-mode): Remove not needed require.
+    (hyrolo-install-markdown-mode): Use hypb:require-package.
+
+* hypb.el (hypb:ask-to-install-package-flag): Give user control if package
+    shall be installed when using package.el.
+    (hypb:users-package-manager): Users package manager.
+    (hypb:package-el-install): Install package using package.el.
+    (hypb:notify-manual-install-needed): Notify user manual install is needed.
+    (hypb:ensure-dependency): Ensure package is available using
+    hypb:package-el-install or hypb:notify-manual-install-needed.
+    (hypb:require-package): Use hypb:ensure-dependency.
+
 2026-07-16  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (docker-clean): Fix remove command for docker volumes.

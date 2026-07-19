@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     12-Apr-26 at 15:09:22 by Bob Weiner
+;; Last-Mod:     15-Jul-26 at 22:00:22 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -149,6 +149,17 @@ and the default WORD-LENGTH is 4."
         (setq no-face t))
       (setq beg (1+ beg)))
     (not no-face)))
+
+(defmacro hy-test-mocked-feature (feature &rest body)
+  "Mock FEATURE as being present."
+  (declare (indent 1))
+  `(let ((orig-featurep (symbol-function 'featurep)))
+     (cl-letf (((symbol-function 'featurep)
+                (lambda (f &optional subfeature)
+                  (if (eq f ,feature)
+                      t
+                    (funcall orig-featurep f subfeature)))))
+       ,@body)))
 
 (provide 'hy-test-helpers)
 ;;; hy-test-helpers.el ends here
