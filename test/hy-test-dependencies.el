@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:16:00
-;; Last-Mod:     19-Jul-26 at 09:45:26 by Mats Lidell
+;; Last-Mod:     19-Jul-26 at 18:00:48 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -40,8 +40,8 @@
            (signal (car err) (cdr err)))
          (if (>= attempt retries)
              (signal (car err) (cdr err))
-           (message "package-install failed (attempt %d/%d): %s"
-                    attempt retries (error-message-string err))
+           (message "(hypb:package-install-advice-for-retry) package-install of '%s' failed (attempt %d/%d): %s"
+                    (car args) attempt retries (error-message-string err))
            (sleep-for delay)))))
     result))
 
