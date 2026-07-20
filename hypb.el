@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     10-Jul-26 at 17:16:28 by Bob Weiner
+;; Last-Mod:     19-Jul-26 at 23:00:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -201,8 +201,8 @@ This displays a clean log of Emacs keys used and commands executed."
   (mapc (lambda (cmd-str) (cl-pushnew (format "^%s$" cmd-str) ilog-self-insert-command-regexps))
         '("hyperbole" "hui:menu-enter"))
 
-  ;; Redefine the mode to display commands on post-command-hook rather
-  ;; than pre-command-hook since Hyperbole rewrites some command names
+  ;; Redefine the mode to display commands on `post-command-hook' rather
+  ;; than `pre-command-hook' since Hyperbole rewrites some command names
   ;; and key sequences.
   (define-minor-mode interaction-log-mode
     "Global minor mode logging keys, commands, file loads and messages.
@@ -509,10 +509,12 @@ This will install the Emacs devdocs package if not yet installed."
 		       dname))))
       (concat "@" dname))))
 
-(defun hypb:empty-file-p ()
-  "Return non-nil if the current buffer has an attached file of zero size."
-  (when (and (hypb:buffer-file-name) (file-readable-p (hypb:buffer-file-name)))
-    (= (file-attribute-size (file-attributes buffer-file-name)) 0)))
+(defun hypb:empty-file-p (&optional file)
+  "Return non-nil if the current buffer's file or optional FILE is empty."
+  (unless (stringp file)
+    (setq file (hypb:buffer-file-name)))
+  (when (and file (file-readable-p file))
+    (zerop (file-attribute-size (file-attributes file)))))
 
 (defun hypb:error (&rest args)
   "Signal an error typically to be caught by `hyperbole'.

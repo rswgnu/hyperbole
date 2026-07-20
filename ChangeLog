@@ -1,3 +1,54 @@
+2026-07-19  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-completing-read-glossary-term,
+             hywiki-get-glossary-terms): Add for 'completing-read' of
+    hywiki glossary terms.
+            (hywiki-get-definition): Add use of above completing read
+    function.  When called interactively or with `display-flag',
+    display the definition in a help buffer.
+  man/hyperbole.texi (HyWiki Menu): Add initial documention for glossary
+    HyWikiWords.
+
+* hypb.el (hypb:empty-file-p): Extend to allow for an optional 'file' arg.
+
+* hmouse-drv.el (hkey-help): For a WikiWord with a glossary file entry,
+    include the definition entry in the help for the WikiWord.
+  hywiki.el (hywiki-get-definition): Add to return a HyWiki glossary
+    definition.
+            (hywiki-get-glossary-file, hywiki-add-glossary-entry,
+     hywiki-display-glossary-entry): Add.
+            (hywiki-referent-menu): Add glossarY referent type menu item.
+
+* hui-menu.el (hui-menu-hywiki):
+  hui-mini.el (hui:menu-hywiki): Add 'HyWiki/Yank' menu item.
+
+2026-07-18  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-get-entry, hywiki-read-headline-regexp, hywiki-yank,
+             hywiki-yank-reformat-function): Add to support getting first
+    matching HyWiki entry as a string and yanking/inserting it into a buffer.
+
+* hyrolo.el (hyrolo-yank, hyrolo-get-entry): Add to return first matching entry
+    as a string.
+    (hyrolo-yank): Rewrite to use 'hyrolo-get-entry'.
+
+* hsys-consult.el (hsys-consult--grep-paths): Remove requirement of whitespace
+    after the * or # character so works better with orderless.  Add a backslash
+    space if want to match to a literal space and eliminate matches to Org
+    property lines like "#+TODO:".
+                  (hsys-consult-entry-regexp): Add so can adjust this regexp
+    for different limits on entry formats.
+
+2026-07-17  Bob Weiner  <rsw@gnu.org>
+
+* hsys-consult.el (hsys-consult-grep-headlines-with-prompt,
+                   hsys-consult-grep-headlines-read-regexp): Add 4th optional arg,
+    path-list, provided to the grep-function called.  Allows these to be used
+    in HyWiki grep calls.
+
+* hywiki.el (hywiki-word-is-p): Make non-nil return value be the string index
+    at the end of tthe word.
+
 2026-07-16  Bob Weiner  <rsw@gnu.org>
 
 * hsys-www.el (link-to-url): Explicitly duplicate `www-url' defact, for now.
@@ -74,6 +125,11 @@
 
 * hyperbole.el (require 'kotl-autoloads): Move to before (require 'hinit)
     to eliminate klink macro not being defined when needed.
+
+* hyperbole.el (hyperb:init): Remove auto-enabling of 'hywiki-mode' as this
+    also enables 'hyperbole-mode' immediately after Hyperbole is installed.
+    The user needs to choose to enable Hyperbole either interactively or
+    through his configuration.
 
 * hsys-org.el (hsys-org-link-at-p): Fix code at the end to remove hy: prefix
     from 'label'.
@@ -213,6 +269,15 @@
 
 * hywiki.el (hywiki--extend-region): Fix so start is always <= end.
 
+2026-07-05  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-word-at): Don't allow : or ; at the end of a #section.
+
+* hbut.el (hbut:label-delimiters-regexp): Add and use in
+    'hywiki-maybe-highlight-references'.
+
+* hywiki.el (hywiki-get-buttonize-characters): Allow : as a trailing
+    separator character (previously had been filtered out).
             (hywiki-get-existing-page-file): Handle 't' value as 'file-stem-name'
     from a HyWikiWord spec.
   hpath.el (hpath:expand): Ensure path value is a string before trying to expand
@@ -224,6 +289,33 @@
     error by displaying a message instead to preven leaving HyControl mode.
                (hycontrol--frames-prompt-format, hycontrol--windows-prompt-format):
     Reformat for easier readability.
+
+2026-07-02  Bob Weiner  <rsw@gnu.org>
+
+            (hywiki--get-delimited-range-backward): Fix to 'hbut:syntax-table'
+    during backward 'scan-sexps' so open/close angle brackets match to
+    account for use in hbut labels.  Otherwise, when point is after a closing
+    angle bracket, the region returned is a single char, not the span of the
+    brackets.
+
+* hywiki.el (hywiki-scan-sexps): Add and use in place of 'scan-sexps' in
+    hywiki code.
+            (hywiki-get-delimited-region,
+             hywiki-maybe-highlight-balanced-pairs): Use 'hbut:syntax-table'.
+  hui-select.el (hui-select-get-syntax-table): Use 'hui-select-syntax-table'
+    in most programming modes when within a comment to support angle brackets
+    as sexpression delimiters.
+
+2026-07-01  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki--get-delimited-range-at-closing-delimiter): Add to
+    separate out this code from a quoted sexp in 'hywiki-get-delimited-region'
+    and simplify debugging.
+            (hywiki--get-delimited-range-backward): Fix wrong location of
+    'save-excursion' call so that point was moved one char forward before
+    backward 'scan-sexps' was called.  This led to HyWiki words not be
+    dehighlighted when deleted the last WikiWord character within a set
+    of delimiters where it was the last word.
 
 2026-06-30  Mats Lidell  <matsl@gnu.org>
 
@@ -3119,7 +3211,7 @@
     so 'consult' package does not interfere with testing.
   hsys-consult.el (hsys-consult-active-p): Add and autoload this so can turn
     on and off use of consult (and vertico) within Hyperbole, e.g. when running
-    ert tests where consults interactivity interferes with batch testing.
+    ert tests where consult's interactivity interferes with batch testing.
 
 * hbut.el (ibut:set-name-and-label-key-p): Move recognition of action button
     angle brackets ahead of string matches so that in a Lisp buffer, the action

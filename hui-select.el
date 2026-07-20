@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Oct-96 at 02:25:27
-;; Last-Mod:     18-Jun-26 at 13:05:12 by Bob Weiner
+;; Last-Mod:      2-Jul-26 at 14:42:52 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1072,8 +1072,10 @@ call to select that syntactic unit."
 
 (defun hui-select-get-syntax-table ()
   "Return syntax table to use for syntactic selection based on `major-mode'."
-  (if (or (derived-mode-p 'prog-mode)
-	  (memq major-mode hui-select-ignore-quoted-sexp-modes))
+  (if (or (memq major-mode hui-select-ignore-quoted-sexp-modes)
+          (and (derived-mode-p 'prog-mode)
+	       ;; Not within a comment
+	       (not (nth 4 (syntax-ppss)))))
       (syntax-table)
     hui-select-syntax-table))
 

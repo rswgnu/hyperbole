@@ -508,10 +508,6 @@ frame, those functions by default still return the prior frame."
   (when (fboundp #'vertico-mouse-mode)
     (add-hook 'vertico-mode-hook (lambda () (vertico-mouse-mode 1))))
   ;;
-  ;; Initialize HyWiki page auto-HyWikiWord highlighting and `yank-handled-properties'
-  ;; based on the `hywiki-default-mode'.
-  (hywiki-mode hywiki-default-mode)
-  ;;
   ;; Hyperbole initialization is complete.
   (message "Initializing Hyperbole...done"))
 

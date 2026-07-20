@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     13-Jun-26 at 13:33:38 by Bob Weiner
+;; Last-Mod:     18-Jul-26 at 15:44:59 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -540,7 +540,7 @@ Search for optional STRING up to MAX-MATCHES in PATH-LIST or `hyrolo-file-list'.
 Use ripgrep (rg) if found, otherwise, plain grep.  Initialize search with
 optional STRING and interactively prompt for changes.  Limit matches
 per file to the absolute value of MAX-MATCHES, if given and not 0.  If
-0, match to headlines only (lines that start with a '^[*#]+[ \t]+' regexp).
+0, match to headlines only (lines that start with a '^[*#]+' regexp).
 Optional PATH-LIST defaults to `hyrolo-file-list' when not given.  With
 optional PROMPT string, use this as the first part of the grep prompt;
 omit any trailing colon and space in the prompt."
@@ -564,7 +564,7 @@ Search for optional REGEXP up to MAX-MATCHES in PATH-LIST or `hyrolo-file-list'.
 Use ripgrep (rg) if found, otherwise, plain grep.  Initialize search with
 optional REGEXP and interactively prompt for changes.  Limit matches
 per file to the absolute value of MAX-MATCHES, if given and not 0.  If
-0, match to headlines only (lines that start with a '^[*#]+[ \t]+' regexp).
+0, match to headlines only (lines that start with a '^[*#]+' regexp).
 Optional PATH-LIST defaults to `hyrolo-file-list' when not given.  With
 optional PROMPT string, use this as the first part of the grep prompt;
 omit any trailing colon and space in the prompt."
@@ -838,6 +838,44 @@ If ARG is zero, move to the beginning of the current line."
     ;; lexical-binding is enabled and there is a local binding of
     ;; `hyrolo-file-list', so expand it.
     (hyrolo-expand-path-list hyrolo-file-list)))
+
+;;;###autoload
+(defun hyrolo-get-entry (name &optional regexp-flag)
+  "Return the first rolo entry string with a headline containing NAME.
+Return nil if no match is found.
+
+If the `consult' package is installed, interactively select and complete
+the entry to be inserted.
+
+With optional prefix arg, REGEXP-FLAG, treat NAME as a regular expression
+instead of a string."
+  (interactive (list
+		(hsys-consult-grep-headlines-read-regexp
+		 #'hyrolo-consult-grep "Yank rolo headline matching")
+		current-prefix-arg))
+  (when (and (stringp name) (string-empty-p name))
+    (setq name nil))
+  (when (or (null name) (not (stringp name)))
+    (error "(hyrolo-get-entry): Invalid name: `%s'" name))
+
+  (let ((buf (current-buffer))
+        (buf-file buffer-file-name))
+    (save-window-excursion
+      (with-temp-buffer
+	(let ((hyrolo-display-buffer (current-buffer))
+	      (start (point))
+	      found)
+	  (save-excursion
+	    (setq found
+		  (if (and (hsys-consult-active-p)
+			   (string-match "\\([^ \t\n\r\"'`]*[^ \t\n\r:\"'`0-9]\\): ?\\([1-9][0-9]*\\)[ :]"
+					 name))
+		      (hyrolo-grep-file (match-string-no-properties 1 name)
+					(regexp-quote (substring name (match-end 0)))
+					-1 nil t)
+		    (hyrolo-grep (if regexp-flag name (regexp-quote name)) -1 nil nil t))))
+          (when found
+            (buffer-string)))))))
 
 ;;;###autoload
 (defun hyrolo-grep (regexp &optional max-matches hyrolo-files-or-bufs count-only headline-only no-display)
@@ -1616,7 +1654,7 @@ Return number of entries matched.  See also documentation for the variable
 
 ;;;###autoload
 (defun hyrolo-yank (name &optional regexp-flag)
-  "Insert at point the first rolo entry with a headline containing NAME.
+  "Insert at point the first HyRolo entry with a headline containing NAME.
 If the `consult' package is installed, interactively select and complete
 the entry to be inserted.
 
@@ -1626,27 +1664,13 @@ instead of a string."
 		(hsys-consult-grep-headlines-read-regexp
 		 #'hyrolo-consult-grep "Yank rolo headline matching")
 		current-prefix-arg))
-  (when (string-empty-p name)
-    (setq name nil))
-  (when (or (null name) (not (stringp name)))
-    (error "(hyrolo-yank): Invalid name: `%s'" name))
-
-  (let ((hyrolo-display-buffer (current-buffer))
-	(start (point))
-	found)
-    (save-excursion
-      (setq found
-	    (if (and (hsys-consult-active-p)
-		     (string-match "\\([^ \t\n\r\"'`]*[^ \t\n\r:\"'`0-9]\\): ?\\([1-9][0-9]*\\)[ :]"
-				   name))
-		(hyrolo-grep-file (match-string-no-properties 1 name)
-				  (regexp-quote (substring name (match-end 0)))
-				  -1 nil t)
-	      (hyrolo-grep (if regexp-flag name (regexp-quote name)) -1 nil nil t))))
-    ;; Let user reformat the region just yanked.
-    (when (= found 1)
-      (funcall hyrolo-yank-reformat-function start (mark)))
-    found))
+  (push-mark)
+  (let ((entry (hyrolo-get-entry name regexp-flag)))
+    (when entry
+      (insert entry)
+      ;; Let user reformat the region just yanked.
+      (funcall hyrolo-yank-reformat-function (mark) (point))
+      (exchange-point-and-mark))))
 
 ;;; ************************************************************************
 ;;; Big Brother Database (BBDB) Integration

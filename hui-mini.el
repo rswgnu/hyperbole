@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     30-Jun-26 at 00:48:36 by Bob Weiner
+;; Last-Mod:     19-Jul-26 at 09:57:15 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1091,7 +1091,9 @@ With a prefix arg, insert a HyWikiWord instead.")
          '("Publish"        hywiki-publish-to-html
 	   "Publish modified pages in the HyWiki to HTML; prefix arg to publish all pages.")
 	 '("TagFind"        hywiki-tags-view
-	   "Find HyWiki Org tags.")))
+	   "Find HyWiki Org tags.")
+	 '("Yank"           hywiki-yank
+	   "Insert at point the first matching entry.")))
   "Hyperbole minibuffer HyWiki menu items of the form:
 \(LABEL-STRING ACTION-SEXP DOC-STR)."
   :set  (lambda (var value)
@@ -1122,7 +1124,8 @@ With a prefix arg, insert a HyWikiWord instead.")
 	 '("StringFind"       hyrolo-fgrep                  "Find entries containing a string.")
 	 '("TagFind"          hyrolo-tags-view              "Find HyRolo Org tags.")
 	 '("WordFind"         hyrolo-word                   "Find entries containing words.")
-	 '("Yank"             hyrolo-yank                   "Find an entry containing a string and insert it at point.")))
+	 '("Yank"             hyrolo-yank                   "Insert at point
+  the first matching entry.")))
   "Hyperbole minibuffer Rolo menu items of the form:
 \(LABEL-STRING ACTION-SEXP DOC-STR)."
   :set  (lambda (var value)
