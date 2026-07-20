@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     20-Jul-26 at 02:06:28 by Bob Weiner
+;; Last-Mod:     20-Jul-26 at 02:14:38 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2429,15 +2429,13 @@ Below is a table of how the inputs determine the lookup performed.
                  ;; wikiword, Wiki Word, wiki word
 	         (let ((glossary (hywiki-get-glossary-file file))
                        str)
-                   (if (file-readable-p glossary)
-	               (hywiki-get-entry (format "Glossary#\\(%s\\|%s\\|%s\\|%s\\)"
-                                                 (regexp-quote term)
-                                                 (regexp-quote (downcase term))
-                                                 (regexp-quote (setq str (hywiki-wikiword-to-string term " ")))
-                                                 (regexp-quote (capitalize str)))
-                                         t)
-                     (error "(hywiki-get-definition): \"%s\" is not readable; create or make it readable"
-                            glossary))))
+                   (when (file-readable-p glossary)
+	             (hywiki-get-entry (format "Glossary#\\(%s\\|%s\\|%s\\|%s\\)"
+                                               (regexp-quote term)
+                                               (regexp-quote (downcase term))
+                                               (regexp-quote (setq str (hywiki-wikiword-to-string term " ")))
+                                               (regexp-quote (capitalize str)))
+                                       t))))
                 (t ;; phrase possibly with a file to search
                  (cond ((null file)
                         (hywiki-get-entry term))

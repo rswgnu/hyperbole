@@ -2,7 +2,10 @@
 
 * hywiki.el (hywiki-add-referent): Fix #section removal so it does
     not depend on string match groupings from `hywiki-word-is-p'
-    (which no longer exist).
+    which no longer exist.
+            (hywiki-get-definition): Fix so does not trigger an error
+    but just returns nil when the Glossary file does not exist or is
+    unreadable.  Otherwise, HyWikiWord help displays will break.
 
 2026-07-19  Bob Weiner  <rsw@gnu.org>
 
