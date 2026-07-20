@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:16:00
-;; Last-Mod:     14-Jul-26 at 09:39:15 by Bob Weiner
+;; Last-Mod:     19-Jul-26 at 18:00:48 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -18,6 +18,37 @@
 
 ;;; Code:
 
+(require 'package)
+
+;; Advice with retry for package-install
+(defun hypb:package-install-advice-for-retry (pkg-install &rest args)
+  "Add a retry layer on top of package-install."
+  (let ((retries 3)
+        (attempt 0)
+        (delay 1)
+        done
+        result)
+    (while (not done)
+      (setq attempt (1+ attempt))
+      (condition-case err
+          (progn
+            (setq result (apply pkg-install args))
+            (setq done t))
+      	(wrong-type-argument
+         ;; Reraise if error is not stringp nil
+         (unless (equal (cdr err) '(stringp nil))
+           (signal (car err) (cdr err)))
+         (if (>= attempt retries)
+             (signal (car err) (cdr err))
+           (message "(hypb:package-install-advice-for-retry) package-install of '%s' failed (attempt %d/%d): %s"
+                    (car args) attempt retries (error-message-string err))
+           (sleep-for delay)))))
+    result))
+
+;; Apply advice only for Emacs master branch version used in CI
+(unless (version< emacs-version "32.0.50")
+  (advice-add 'package-install :around #'hypb:package-install-advice-for-retry))
+
 (declare-function markdown-ts-mode "ext:markdown-ts-mode")
 
 ;; Force markdown-mode to be selected first to avoid markdown-ts-mode
@@ -25,6 +56,9 @@
 ;; conflicts with our current CI setup.
 (when (fboundp #'markdown-ts-mode)
   (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode)))
+
+(setq package-pinned-packages
+      '((markdown-mode . "nongnu")))
 
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 (package-initialize)
@@ -52,6 +86,10 @@
 ;; Log and fix any mixed version Org installation.
 ;; Ignore publishing-related errors that don't affect the tests.
 (ignore-errors (hsys-org-log-and-fix-version))
+
+;; Allow dynamic loading with no questions asked of dependencies
+;; i.e. markdown-mode
+(setq hypb:ask-to-install-package-flag nil)
 
 (provide 'hy-test-dependencies)
 ;;; hy-test-dependencies.el ends here

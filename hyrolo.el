@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     18-Jul-26 at 15:44:59 by Bob Weiner
+;; Last-Mod:     20-Jul-26 at 01:53:06 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -38,8 +38,6 @@
 (require 'hsys-consult)
 (require 'hsys-org) ;; For `hsys-org-cycle-bob-file-list'
 (require 'hypb)     ;; For `hypb:mail-address-regexp' and `hypb:add-to-invisibility-spec'
-(eval-when-compile
-  `(hyrolo-install-markdown-mode))
 (require 'outline)
 (require 'reveal)
 ;; Avoid any potential library name conflict by giving the load directory.
@@ -1112,7 +1110,6 @@ or NAME is invalid, return nil."
 (define-derived-mode hyrolo-markdown-mode text-mode "Markdown"
   "Major mode for editing Markdown files."
   (hyrolo-install-markdown-mode)
-  (require 'markdown-mode)
 
   ;; Don't actually derive from `markdown-mode' to avoid its costly setup
   ;; but set its parent mode property to `markdown-mode' so `derived-mode-p' checks
@@ -3115,19 +3112,17 @@ package is not installed."
 			   (hyrolo-get-file-list))))
 	file-and-major-mode-list
 	files-no-mode-list
-	files-invalid-suffix-list
-	package-archives)
+	files-invalid-suffix-list)
 
     ;;  2. Skip this if the markdown-mode package is installed
-    (unless (package-installed-p 'markdown-mode)
+    (unless (require 'markdown-mode nil t)
     ;;  3. If any `hyrolo-file-list' file has a markdown file suffix,
       (when (delq nil (mapcar (lambda (suffix)
 				(string-match-p (concat "\\(?:" hyrolo-markdown-suffix-regexp "\\)$")
 						suffix))
 			      file-suffixes))
 
-	;;  4. if not, ensure nongnu is temporarily added to package
-	;;     source list and then install markdown-mode.
+	;;  4. then install markdown-mode.
 	(hyrolo-install-markdown-mode)))
 
     ;;  5. Check that each file has an entry in `hyrolo-auto-mode-alist' or `auto-mode-alist',
@@ -3255,13 +3250,7 @@ files to search."
 
 (defun hyrolo-install-markdown-mode ()
   "Install `markdown-mode' package unless already installed."
-  (unless (package-installed-p 'markdown-mode)
-    (unless (assoc "nongnu" package-archives)
-      (setq package-archives (cl-copy-list package-archives))
-      (add-to-list 'package-archives '("nongnu" . "https://elpa.nongnu.org/nongnu/")
-		   t))
-    (package-refresh-contents)
-    (package-install 'markdown-mode)))
+  (hypb:require-package 'markdown-mode))
 
 (defun hyrolo-isearch-for-regexp (regexp fold-search-flag)
   "Interactively search forward for the next occurrence of REGEXP.
