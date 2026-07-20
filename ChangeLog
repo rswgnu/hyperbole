@@ -1,5 +1,8 @@
 2026-07-20  Bob Weiner  <rsw@gnu.org>
 
+* test/hy-test-dependencies.el: Enable 'hyperbole-mode' for all
+    tests run via the Makefile.
+
 * hywiki.el (hywiki-add-glossary-entry): Fix to add term to the
     HyWikiWord lookup tables.
             (hywiki-string-to-wikiword): Fix to upcase only the
