@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     20-Jul-26 at 02:14:38 by Bob Weiner
+;; Last-Mod:     20-Jul-26 at 03:06:05 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1447,11 +1447,13 @@ calling this function."
   (gbut:act gbut-name))
 
 (defun hywiki-add-glossary-entry (term)
-  "Add NAME as a new HyWiki glossary entry."
-  (hyrolo-add term (hywiki-get-glossary-file)))
+  "Add TERM as a new HyWiki glossary entry to be defined."
+  (hyrolo-add term (hywiki-get-glossary-file))
+  (hywiki-add-referent (hywiki-string-to-wikiword term)
+                       (cons 'glossary-entry term)))
 
 (defun hywiki-display-glossary-entry (term)
-  "Display any HyWiki glossary entry for NAME."
+  "Display any HyWiki glossary definition for TERM."
   (hywiki-get-definition term t))
 
 (defun hywiki-add-hyrolo (wikiword)
@@ -4137,7 +4139,13 @@ start end end of each word using matches of the regexp value of
                                      (format "[-_%s\t\n\r\f]+" separator)
                                    "[-_\t\n\r\f]+")
                              t split-string-default-separators)))
-    (apply #'concat (mapcar #'capitalize words))))
+    (cl-flet ((upcase-first-char (str)
+                                 (concat (upcase (substring str 0 1))
+                                         (substring str 1))))
+      ;; Don't want to use capitalize here because if given a string that is
+      ;; already a WikiWord, it will change it to 'Wikiword', losing the
+      ;; middle capital 'W'; just upcase the first character.
+      (apply #'concat (mapcar #'upcase-first-char words)))))
 
 (defun hywiki-strip-org-link (link-str)
   "Return the hy:HyWikiWord#section part of an Org link string.

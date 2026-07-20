@@ -1,5 +1,14 @@
 2026-07-20  Bob Weiner  <rsw@gnu.org>
 
+* hywiki.el (hywiki-add-glossary-entry): Fix to add term to the
+    HyWikiWord lookup tables.
+            (hywiki-string-to-wikiword): Fix to upcase only the
+    first char of each word and not change other chars case.
+
+* test/demo-tests.el (fast-demo-key-series-emacs-lisp-mode): Ignore
+    test if {C-c @} key is not bound by Hyperbole, due to some
+    prior binding.
+
 * hywiki.el (hywiki-add-referent): Fix #section removal so it does
     not depend on string match groupings from `hywiki-word-is-p'
     which no longer exist.
