@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     20-Jul-26 at 00:39:14 by Bob Weiner
+;; Last-Mod:     20-Jul-26 at 02:06:28 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1173,9 +1173,8 @@ REFERENT must be a cons of (<referent-type> . <referent-value>) or
 an error is triggered."
   (hywiki-validate-referent referent)
   (when (hywiki-word-is-p wikiword)
-    (when (match-string-no-properties 2 wikiword)
-      ;; Remove any #section suffix in PAGE-NAME.
-      (setq wikiword (match-string-no-properties 1 wikiword)))
+    ;; Remove any #section suffix in PAGE-NAME.
+    (setq wikiword (hywiki-word-strip-suffix wikiword))
     (unless (hash-add referent (hywiki-get-singular-wikiword wikiword)
 		      (hywiki-get-referent-hasht))
       (error "(hywiki-add-referent): Failed: (hash-add %s %s %s)"

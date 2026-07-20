@@ -1,3 +1,9 @@
+2026-07-20  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-add-referent): Fix #section removal so it does
+    not depend on string match groupings from `hywiki-word-is-p'
+    (which no longer exist).
+
 2026-07-19  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-completing-read-glossary-term,
