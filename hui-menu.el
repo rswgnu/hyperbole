@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
-;; Last-Mod:     22-Mar-26 at 23:16:11 by Bob Weiner
+;; Last-Mod:     19-Jul-26 at 09:58:24 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -329,7 +329,8 @@ Return t if cutoff, else nil."
 	 ["HyWiki-Tag-Find"      hywiki-tags-view t]
 	 ["Insert-HyWiki-Link"   hywiki-insert-link t]
 	 hui-menu-org-meta-return-options
-	 ["Publish-HyWiki"       hywiki-publish-to-html t]))
+	 ["Publish-HyWiki"       hywiki-publish-to-html t]
+	 ["Yank"                 hywiki-yank t]))
   "Menu items for HyWiki editing and publishing.")
 
 (defvar infodock-hyperbole-menu nil)

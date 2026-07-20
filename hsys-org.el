@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     14-Jul-26 at 17:05:28 by Mats Lidell
+;; Last-Mod:     18-Jul-26 at 00:36:47 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -408,7 +408,7 @@ Search for optional REGEXP up to MAX-MATCHES in PATH-LIST or `org-directory'.
 Use ripgrep (rg) if found, otherwise, plain grep.  Initialize search with
 optional REGEXP and interactively prompt for changes.  Limit matches
 per file to the absolute value of MAX-MATCHES, if given and not 0.  If
-0, match to headlines only (lines that start with a '^[*#]+[ \t]+' regexp).
+0, match to headlines only (lines that start with a '^[*#]+' regexp).
 With optional PROMPT string, use this as the first part of the grep prompt;
 omit any trailing colon and space in the prompt."
   (interactive "i\nP")

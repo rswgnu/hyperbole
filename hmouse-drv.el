@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     29-Jun-26 at 22:30:19 by Mats Lidell
+;; Last-Mod:     20-Jul-26 at 01:47:30 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1111,7 +1111,11 @@ documentation is found."
 	 (hrule:action #'actype:identity)
 	 (assist-flag assisting)
 	 (pred-point (point-marker))
-	 hkey-form pred pred-value call calls cmd-sym doc)
+         (saved-but nil)
+	 hkey-form pred pred-value call calls cmd-sym def doc)
+    ;; Next line suppresses warning since var is referenced only as a quoted
+    ;; symbol
+    (ignore saved-but)
     (unwind-protect
 	(while (and (null pred-value) (setq hkey-form (car hkey-forms)))
 	  (or (setq pred (car hkey-form)
@@ -1214,6 +1218,18 @@ documentation is found."
 			;;   (hypb:remove-from-plist attributes 'actype)
 			;;   (hypb:remove-from-plist attributes 'action))
 			(hattr:report attributes)
+
+                        ;; Need to save and restore 'hbut:current here since
+                        ;; hywiki-get-definition overwrites it
+                        (unwind-protect
+                            (progn (hattr:copy 'hbut:current 'saved-but)
+                                   (setq def (hywiki-get-definition
+			                      (ibut:key-to-label (hattr:get 'hbut:current 'lbl-key))))
+                                   (when def
+                                     (terpri)
+                                     (princ def)))
+                          (hattr:copy 'saved-but 'hbut:current))
+
 			(unless (or assisting
 				    (eq categ 'explicit)
 				    (null categ)
