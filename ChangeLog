@@ -1,5 +1,9 @@
 2026-07-21  Bob Weiner  <rsw@gnu.org>
 
+* hywiki.el (hywiki-get-entry): Fix return of display-buffer string
+    when 'display-flag' is nil.  Also, removed unneeded sets of
+    `hyrolo-display-buffer'.
+
 * hyrolo.el (hyrolo-set-display-buffer, hyrolo--post-display-buffer):
     Add optional 'buffer' arg to override the value of
     'hyrolo-display-buffer', e.g. when want to use the default value

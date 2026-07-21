@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     21-Jul-26 at 00:10:01 by Bob Weiner
+;; Last-Mod:     21-Jul-26 at 01:46:11 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2617,17 +2617,15 @@ top-level headlines are searched.
                                  -1
                                  (hyrolo-expand-path-list (or path-list (list hywiki-directory)))
                                  nil t (not display-flag))))))))
-    (setq-local hyrolo-display-buffer hywiki-glossary-display-buffer)
-    (unwind-protect
-        (if display-flag
-            (progn
-              (hyrolo-display-matches)
-              ;; skip past header to the entry
-              (unless (zerop found)
-                (hyrolo-to-next-entry)))
+    (if display-flag
+        (progn
+          (hyrolo-display-matches)
+          ;; skip past header to the entry
           (unless (zerop found)
-            (buffer-string)))
-      (setq-local hyrolo-display-buffer hywiki-glossary-display-buffer))))
+            (hyrolo-to-next-entry)))
+      (unless (zerop found)
+        (with-current-buffer hyrolo-display-buffer
+          (buffer-string))))))
 
 (defun hywiki-get-glossary-file (&optional file)
   "Return the glossary file for the current HyWiki."
