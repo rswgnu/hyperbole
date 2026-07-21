@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    13-Jun-89 at 22:57:33
-;; Last-Mod:      4-Apr-26 at 14:15:14 by Bob Weiner
+;; Last-Mod:     21-Jul-26 at 00:31:11 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -177,7 +177,8 @@ to operate.
 
 Return the number of evaluations of SEXP that match entries."
   (let* ((display-buf (unless count-only
-			(prog1 (hyrolo-set-display-buffer)
+			(prog1 (hyrolo-set-display-buffer
+                                (default-value 'hyrolo-display-buffer))
 			  (erase-buffer)
 			  (hyrolo--cache-initialize))))
 	 ;; Temporarily disable magit-auto-revert-mode-enable-in-buffers for hyrolo
@@ -222,7 +223,8 @@ Return the number of evaluations of SEXP that match entries."
   (if (or (bufferp hyrolo-buf)
 	  (when (file-exists-p hyrolo-buf)
 	    (setq hyrolo-buf (find-file-noselect hyrolo-buf t))))
-      (let ((display-buf (hyrolo-set-display-buffer))
+      (let ((display-buf (hyrolo-set-display-buffer
+                          (default-value 'hyrolo-display-buffer)))
 	    (hdr-pos)
 	    (num-found 0))
 	  (set-buffer hyrolo-buf)

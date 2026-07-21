@@ -1,4 +1,66 @@
+2026-07-21  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-set-display-buffer, hyrolo--post-display-buffer):
+    Add optional 'buffer' arg to override the value of
+    'hyrolo-display-buffer', e.g. when want to use the default value
+    for interactive calls of HyRolo functions.
+    (hyrolo-grep): When called interactively, use
+    (hyrolo-set-display-buffer (default-value 'hyrolo-display-buffer)).
+  hyrolo-logic.el (hyrolo-logic, hyrolo-map-logic): Use
+    (hyrolo-set-display-buffer (default-value 'hyrolo-display-buffer)).
+    (hyrolo-fgrep, hyrolo-grep): Add last arg, 'interactive-flag' to
+  emulate interactive calls.
+    (hyrolo-set-display-buffer): Fix to return the buffer set.
+    (hyrolo-set-display-buffer-mode): Remove, combine into
+    'hyrolo--post-display-buffer' since only used there.
+
+* hywiki.el (require 'hyrolo): Since use many hyrolo functions now.
+
 2026-07-20  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-set-buffer): Add to maintain current value of
+    'hyrolo-display-buf' after 'set-buffer'.
+            (hyrolo--pre-display-buffer): Maintain current value
+     of 'hyrolo-display-buf' after 'major-mode' change.
+
+* hywiki.el (hywiki-get-definition): For 'hyrolo-grep' call,
+    set 'no-display' arg to t since display is handled by callers
+    if desired.  Make all 'hywiki-get-entry' calls use 'term' variant
+    regexp.
+            (hyrolo-glossary-display-buffer): Add this buffer name.
+	    (hywiki-get-entry): Align args with those of
+    'hywiki-get-definition', adding 'display-flag' and 'file'.
+
+* hyrolo.el (hyrolo-hdr-to-first-line-p): Fix to not use
+    (1- (point)) when at (point-min).
+            (hyrolo-edit-entry): Remove 'cl-destructuring-bind'
+    so can handle a nil return from 'hyrolo-name-at-p'.
+            (hyrolo-quit): Remove unneeded 'hyrolo-verify' call
+    and only test that buffer is in `hyrolo-mode' to work.  This
+    makes it work when used with 'hywiki-get-definition'.
+            (hyrolo-grep-file): Change so if (< max-matches 0),
+    headers are now included in the result (where removed before).
+
+* hywiki.el (hywiki-add-glossary-entry): Edit existing entry
+    if found, rather than adding a duplicate.
+            (hywiki-get-term-variant-regexp): Generalize glossary
+    term variant regexp generation.
+            (hywiki-display-glossary-entry): Fix to take 2 args since
+    generalized caller, 'hywiki-display-referent-type' sends both the
+y    wikiword and the referent-value as args.
+
+* hyrolo.el (hyrolo-grep): Remove negative 'max-matches' from
+    setting 'inserting' flag and removing headers since this
+    prevents erasing and displaying the match buffer as well
+    as jumping to source entries for editing.  Send the `no-display'
+    arg to prevent display.  Expand doc string on the meaning of
+    each `max-matches' value.
+            (hyrolo-set-display-buffer-mode): Allow for 'hyrolo-mode'
+    derived mode usage.
+            (hyrolo-set-display-buffer-mode, hyrolo-grep-file,
+             hyrolo--cache-initialize, hyrolo--cache-major-mode,
+             hyrolo--pre-display-buffer, hyrolo--post-display-buffer):
+    Create 'hyrolo-display-buffer' if it does not yet exist.
 
 * test/hy-test-dependencies.el: Enable 'hyperbole-mode' for all
     tests run via the Makefile.

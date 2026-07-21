@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     20-Jul-26 at 01:53:06 by Bob Weiner
+;; Last-Mod:     21-Jul-26 at 01:19:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -173,7 +173,7 @@ their standard major modes perform.")
 (defvar hyrolo-display-buffer "*HyRolo*"
   "Buffer used to display set of last matching rolo entries.")
 
-(defvar hyrolo-source-buffer
+(defvar hyrolo-source-buffer nil
   "The source file associated with (point) within the HyRolo display buffer.
 Each time a `hyrolo-mode' movement command is run within the HyRolo display
   buffer, this is set to the proper source buffer for (point) based on the
@@ -412,8 +412,8 @@ entry which begins with the parent string."
 	 (error "(hyrolo-add): File not readable: `%s'" file))
 	((not (file-writable-p file))
 	 (error "(hyrolo-add): File not writable: `%s'" file)))
-  (set-buffer (or (get-file-buffer file)
-		  (hyrolo-find-file-noselect file)))
+  (hyrolo-set-buffer (or (get-file-buffer file)
+		         (hyrolo-find-file-noselect file)))
   (when (called-interactively-p 'interactive)
     (message "Locating insertion point for `%s'..." name))
   (let ((parent "")
@@ -685,8 +685,9 @@ Return entry name, if any, otherwise, trigger an error."
   (interactive)
   (hyrolo-funcall-match
    (lambda ()
-     (cl-destructuring-bind (name src)
-         (hyrolo-name-at-p)
+     (let* ((name-src (hyrolo-name-at-p))
+            (name (nth 0 name-src))
+            (src (nth 1 name-src)))
        (if name
 	   (progn (cond ((and (boundp 'bbdb-file) (stringp bbdb-file) (equal src (expand-file-name bbdb-file)))
 			 ;; For now, can't edit an entry from the bbdb database, signal an error.
@@ -724,7 +725,7 @@ matches."
       (list (expand-file-name hyrolo-default-file))))
 
 ;;;###autoload
-(defun hyrolo-fgrep (string &optional max-matches hyrolo-files-or-bufs count-only headline-only no-display)
+(defun hyrolo-fgrep (string &optional max-matches hyrolo-files-or-bufs count-only headline-only no-display interactive-flag)
   "Display HyRolo entries matching STRING or a logical match expression.
 Return count of matches.
 
@@ -733,7 +734,8 @@ HYROLO-FILES-OR-BUFS or `hyrolo-file-list'.  Default is to find all matching
 entries.  Each entry is displayed with all of its sub-entries.  Optional
 COUNT-ONLY non-nil skips retrieval of matching entries.  Optional HEADLINE-ONLY
 searches only the first line of entries, not the full text.  Optional
-NO-DISPLAY non-nil retrieves entries but does not display them.
+NO-DISPLAY non-nil retrieves entries but does not display them.  Optional
+INTERACTIVE-FLAG treats this as an interactive call.
 
 Nil value of MAX-MATCHES means find all entries that match, t value means find
 all matching entries but omit file headers, negative values mean find up to the
@@ -747,7 +749,8 @@ on the logical sexpression matching."
 		 (list (car input-and-matching-files)
 		       current-prefix-arg
 		       (mapcar #'expand-file-name
-			       (cadr input-and-matching-files)))))
+			       (cadr input-and-matching-files))
+                       nil nil nil t)))
   (setq string (string-trim string "\"" "\""))
   (let ((total-matches 0))
     (if (string-match-p hyrolo-logical-regexp string)
@@ -760,8 +763,9 @@ on the logical sexpression matching."
 	    (hyrolo-fgrep-logical string count-only t t)))
       (setq total-matches (hyrolo-grep (regexp-quote string)
 				       max-matches hyrolo-files-or-bufs
-				       count-only headline-only no-display)))
-    (if (called-interactively-p 'interactive)
+				       count-only headline-only no-display
+                                       interactive-flag)))
+    (if interactive-flag
 	(message "%s matching entr%s found in HyRolo."
 		 (if (= total-matches 0) "No" total-matches)
 		 (if (= total-matches 1) "y" "ies")))
@@ -866,6 +870,8 @@ instead of a string."
 	  (save-excursion
 	    (setq found
 		  (if (and (hsys-consult-active-p)
+                           ;; Extract search string from the results of an
+                           ;; `hsys-consult' call stored in `name'
 			   (string-match "\\([^ \t\n\r\"'`]*[^ \t\n\r:\"'`0-9]\\): ?\\([1-9][0-9]*\\)[ :]"
 					 name))
 		      (hyrolo-grep-file (match-string-no-properties 1 name)
@@ -876,7 +882,7 @@ instead of a string."
             (buffer-string)))))))
 
 ;;;###autoload
-(defun hyrolo-grep (regexp &optional max-matches hyrolo-files-or-bufs count-only headline-only no-display)
+(defun hyrolo-grep (regexp &optional max-matches hyrolo-files-or-bufs count-only headline-only no-display interactive-flag)
   "Display HyRolo entries matching REGEXP and return count of matches.
 To a maximum of prefix arg MAX-MATCHES, in buffer(s) from
 optional HYROLO-FILES-OR-BUFS or `hyrolo-get-file-list'.  Default
@@ -885,14 +891,18 @@ all of its sub-entries.  Optional COUNT-ONLY non-nil means don't
 retrieve and don't display matching entries.  Optional
 HEADLINE-ONLY searches only the first line of entries, not the
 full text.  Optional NO-DISPLAY non-nil retrieves entries but
-does not display.
+does not display.  Optional INTERACTIVE-FLAG treats this as an
+interactive call.
 
-Nil value of MAX-MATCHES means find all entries that match, t
-value means find all matching entries but omit file headers,
-negative values mean find up to the inverse of that number of
-matching entries and omit file headers.
+MAX-MATCHES values are the following:
+  1. nil            - find all entries that match;
+  2. t              - find all matching entries, omit file headers,
+                      don't erase the match buffer before adding entries,
+                      and don't display the match buffer;
+  3. negative value - find up to the inverse of that number of
+                      matching entries.
 
-Return number of entries matched.  See also documentation for the
+Return the number of entries matched.  See also documentation for the
 variable `hyrolo-file-list'."
   (interactive (let ((input-and-matching-files
 		      (hyrolo-grep-input #'read-regexp
@@ -900,7 +910,8 @@ variable `hyrolo-file-list'."
 		 (list (car input-and-matching-files)
 		       current-prefix-arg
 		       (mapcar #'expand-file-name
-			       (cadr input-and-matching-files)))))
+			       (cadr input-and-matching-files))
+                       nil nil nil t)))
   (unless (or (integerp max-matches) (memq max-matches '(nil t)))
     (setq max-matches (prefix-numeric-value max-matches)))
   (let ((files-or-bufs
@@ -909,11 +920,12 @@ variable `hyrolo-file-list'."
 	       ((list hyrolo-files-or-bufs))))
 	(case-fold-search t)
 	(display-buf (unless count-only
-		       (hyrolo-set-display-buffer)))
+		       (hyrolo-set-display-buffer
+                        (when interactive-flag
+                          (default-value 'hyrolo-display-buffer)))))
 	(total-matches 0)
 	(num-matched 0)
-	(inserting (or (eq max-matches t)
-		       (and (integerp max-matches) (< max-matches 0))))
+	(inserting (eq max-matches t))
 	(file-or-buf))
     (unless count-only
       (setq buffer-read-only nil)
@@ -937,7 +949,7 @@ variable `hyrolo-file-list'."
 		  (- max-matches num-matched)
 		(+ max-matches num-matched)))))
     (unless (or count-only (= total-matches 0))
-      (hyrolo--post-display-buffer)
+      (hyrolo--post-display-buffer display-buf)
       (unless (or no-display inserting)
 	(hyrolo-display-matches display-buf)))
     (when (called-interactively-p 'interactive)
@@ -1374,10 +1386,10 @@ Raise an error if a match is not found."
 (defun hyrolo-quit ()
   "Quit from the rolo match buffer and restore the prior frame display."
   (interactive)
-  (hyrolo-verify)
-  (bury-buffer)
-  (and hyrolo--wconfig (window-configuration-p hyrolo--wconfig)
-       (set-window-configuration hyrolo--wconfig)))
+  (when (derived-mode-p 'hyrolo-mode)
+    (bury-buffer)
+    (and hyrolo--wconfig (window-configuration-p hyrolo--wconfig)
+         (set-window-configuration hyrolo--wconfig))))
 
 (defun hyrolo-rename (old-file new-file)
   "Prompt user to rename OLD-FILE to NEW-FILE."
@@ -1415,18 +1427,25 @@ Raise an error if a match is not found."
   (when (hyrolo-any-file-type-problem-p)
     (error "(HyRolo): Invalid files used in `hyrolo-file-list'; see the *HyRolo Errors* buffer")))
 
-(defun hyrolo-set-display-buffer ()
-  "For current command, set the HyRolo display buffer as the curr buffer.
-Make it writeable and return the display buffer."
-  (prog1 (set-buffer (get-buffer-create hyrolo-display-buffer))
-    (setq buffer-read-only nil)))
+(defun hyrolo-set-buffer (buf)
+  "Maintain current value of `hyrolo-display-buf' after `set-buffer'."
+  ;; This `set-buffer' can change the value of
+  ;; `hyrolo-display-buffer' improperly, so ensure it retains the
+  ;; prior value.
+  (let ((display-buf hyrolo-display-buffer))
+    (set-buffer buf)
+    (setq-local hyrolo-display-buffer display-buf)))
 
-(defun hyrolo-set-display-buffer-mode ()
-  "With curr buffer *HyRolo*, set its mode to `hyrolo-mode'."
-  (with-current-buffer hyrolo-display-buffer
-    (unless (or (eq major-mode 'hyrolo-mode)
-	        (hyperb:stack-frame '(hyrolo-yank)))
-      (hyrolo-mode))))
+(defun hyrolo-set-display-buffer (&optional buffer)
+  "For current command, set HyRolo display buffer as the curr buffer.
+With optional BUFFER, set the display buffer to that.  Make it writeable and
+return the display buffer."
+  (hyrolo-set-buffer (get-buffer-create (or buffer hyrolo-display-buffer)))
+  (when buffer (setq-local hyrolo-display-buffer buffer))
+  (setq buffer-read-only nil)
+  ;; This must return the current buffer name (not a buffer) or many tests
+  ;; will break.
+  (buffer-name))
 
 ;;;###autoload
 (defun hyrolo-let-file-list (symbol value)
@@ -2050,18 +2069,23 @@ return nil.
 
 The header includes lines matching both `hyrolo-hdr-regexp' and
 `hbut:source-prefix'."
-  (let ((opoint (point)))
+  (let ((opoint (point))
+        level-change)
     (if (derived-mode-p 'hyrolo-mode)
 	(cond ((get-text-property (point) :hyrolo-level)
 	       nil)
-	      ((get-text-property (1- (point)) :hyrolo-hdr)
+	      ((and (not (bobp))
+                    (get-text-property (1- (point)) :hyrolo-hdr))
 	       (goto-char (1- (point)))
 	       t)
-	      ((get-text-property (1- (point)) :hyrolo-level)
+	      ((and (not (bobp))
+	            (get-text-property (1- (point)) :hyrolo-level))
 	       nil)
 	      ((progn (goto-char (line-end-position))
-                      (goto-char (1- (previous-single-property-change (point) :hyrolo-level)))
-	              (looking-at hyrolo-hdr-regexp)))
+                      (when (and (not (bobp))
+                                 (setq level-change (previous-single-property-change (point) :hyrolo-level)))
+                        (goto-char (1- level-change))
+	                (looking-at hyrolo-hdr-regexp))))
 	      (t (goto-char opoint)
 		 nil))
       ;; Otherwise, any file header must start at the first line of the buffer.
@@ -2133,9 +2157,10 @@ Return number of matching entries found."
 	    (cond ((eq max-matches t)
 		   (setq incl-hdr nil max-matches nil))
 		  ((< max-matches 0)
-		   (setq incl-hdr nil
+		   (setq incl-hdr t
 			 max-matches (- max-matches)))))
-	  (set-buffer src-buf)
+
+	  (hyrolo-set-buffer src-buf)
 
 	  ;; Allow for initial asterisks being regexp-quoted in
 	  ;; string-match below.
@@ -2213,7 +2238,7 @@ Return number of matching entries found."
                                     ;; commands stop there.
                                     (add-text-properties start (1+ start)
 			                                 '(:hyrolo-hdr t :hyrolo-level t)))
-				  (set-buffer src-buf))))
+				  (hyrolo-set-buffer src-buf))))
 			  (setq num-found (1+ num-found))
 			  (or count-only
 			      ;; Highlight original pattern only here,
@@ -2221,7 +2246,7 @@ Return number of matching entries found."
 			      (hyrolo-add-match pattern entry-start (point) headline-only))))))
 		  num-found))
 	  (when (and (> num-found 0) (not count-only))
-	    (with-current-buffer hyrolo-display-buffer
+	    (with-current-buffer (get-buffer-create hyrolo-display-buffer)
 	      (push-mark nil t)
 	      ;; Require a final blank line in `hyrolo-display-buffer'
 	      ;; so that `outline-hide-sublevels' won't hide it and
@@ -2854,11 +2879,11 @@ begins or nil if not found."
 	       (error "(hyrolo-to): Buffer not live: `%s'" file-or-buf)))
 	    (t (error "(hyrolo-to): Second argument must be a file or buffer, not: `%s'" file-or-buf)))
 
-      (set-buffer (if (stringp file-or-buf)
-		      (or (get-file-buffer file-or-buf)
-			  (hyrolo-find-file-noselect file-or-buf))
-		    ;; must be a buffer
-		    file-or-buf))
+      (hyrolo-set-buffer (if (stringp file-or-buf)
+		             (or (get-file-buffer file-or-buf)
+			         (hyrolo-find-file-noselect file-or-buf))
+		           ;; must be a buffer
+		           file-or-buf))
       (let ((case-fold-search t) (real-name name) (parent "") (level)
 	    col-num end line name-column)
 	(hyrolo-widen)
@@ -3402,7 +3427,7 @@ Default is current buffer.  Used, for example, after a rolo entry is killed."
   (unless hyrolo-buf
     (setq hyrolo-buf (current-buffer)))
   (and hyrolo-save-buffers-after-use (buffer-modified-p hyrolo-buf)
-       (set-buffer hyrolo-buf) (save-buffer)))
+       (hyrolo-set-buffer hyrolo-buf) (save-buffer)))
 
 (defun hyrolo-set-date (&optional edit-only-flag)
   "Add a line with the current date at the end of the current hyrolo entry.
@@ -3720,7 +3745,7 @@ Return nil if not found."
 (defun hyrolo--cache-initialize ()
   "Init cache hash table of (major-mode-name . loc-seq-number) key value pairs.
 Call whenever `hyrolo-display-buffer' is changed."
-  (with-current-buffer hyrolo-display-buffer
+  (with-current-buffer (get-buffer-create hyrolo-display-buffer)
     (setq-local hyrolo--cache-major-mode-to-index-hasht
 		(if (hash-table-p hyrolo--cache-major-mode-to-index-hasht)
 		    (clrhash hyrolo--cache-major-mode-to-index-hasht)
@@ -3744,7 +3769,7 @@ Push (point-max) of `hyrolo-display-buffer' onto
 `hyrolo--cache-loc-match-bounds'.  Push hash table's index key to
 `hyrolo--cache-major-mode-indexes'.  Ensure SRC-BUF's
 `major-mode' is stored in the hash table."
-  (with-current-buffer hyrolo-display-buffer
+  (with-current-buffer (get-buffer-create hyrolo-display-buffer)
     (unless (hash-table-p hyrolo--cache-major-mode-to-index-hasht)
       (hyrolo--cache-initialize))
     (let* ((src-buf-file-name (buffer-local-value 'buffer-file-name src-buf))
@@ -3761,10 +3786,13 @@ Push (point-max) of `hyrolo-display-buffer' onto
 	(puthash hyrolo--cache-major-mode-index src-buf-major-mode hyrolo--cache-index-to-major-mode-hasht)
 	(setq-local hyrolo--cache-major-mode-index (1+ hyrolo--cache-major-mode-index))))))
 
-(defun hyrolo--post-display-buffer ()
+(defun hyrolo--post-display-buffer (&optional buffer)
   "Update the HyRolo display buffer after modifications are finished."
-  (with-current-buffer hyrolo-display-buffer
-    (hyrolo-set-display-buffer-mode)
+  (with-current-buffer (get-buffer-create (or buffer hyrolo-display-buffer))
+    (when buffer (setq-local hyrolo-display-buffer buffer))
+    (unless (or (derived-mode-p 'hyrolo-mode)
+	        (hyperb:stack-frame '(hyrolo-yank)))
+      (hyrolo-mode))
     ;; Reverse both of the following lists to order them properly.
     (setq-local hyrolo--cache-loc-match-bounds   (nreverse hyrolo--cache-loc-match-bounds)
 		hyrolo--cache-major-mode-indexes (nreverse hyrolo--cache-major-mode-indexes))))
@@ -3775,28 +3803,31 @@ Set its `major-mode' to be the same as optional SRC-BUF or if null, look up
 the `major-mode' from a cache.  Add `hyrolo-hdr-regexp' to
 `hyrolo-hdr-and-entry-regexp' and `outline-regexp'.  When `major-mode' is
 `markdown-mode', set `outline-level' and `hyrolo-entry-regexp'."
-  (with-current-buffer hyrolo-display-buffer
+  (with-current-buffer (get-buffer-create hyrolo-display-buffer)
+    (let ((display-buf hyrolo-display-buffer))
+      (unwind-protect
+          (progn ;; Set `major-mode' to match `src-buf'
+            (if src-buf
+                (progn (delay-mode-hooks
+                         (funcall (buffer-local-value 'major-mode src-buf)))
+                       ;; Set local `hyrolo-source-buffer' to be the source of
+                       ;; entries to add
+                       (setq-local hyrolo-source-buffer src-buf))
+              ;; Point may have moved, so `hyrolo-source-buffer' may not be set
+              ;; properly, so set the `major-mode' via a cache lookup based on
+              ;; (point).
+              (delay-mode-hooks
+                (funcall (hyrolo-cache-get-major-mode-from-pos (point)))))
 
-    ;; Set `major-mode' to match `src-buf'
-    (if src-buf
-        (progn (delay-mode-hooks
-                 (funcall (buffer-local-value 'major-mode src-buf)))
-               ;; Set local `hyrolo-source-buffer' to be the source of
-               ;; entries to add
-               (setq-local hyrolo-source-buffer src-buf))
-      ;; Point may have moved, so `hyrolo-source-buffer' may not be set
-      ;; properly, so set the `major-mode' via a cache lookup based on
-      ;; (point).
-      (delay-mode-hooks
-        (funcall (hyrolo-cache-get-major-mode-from-pos (point)))))
-
-    (unless (string-prefix-p hyrolo-hdr-regexp hyrolo-hdr-and-entry-regexp)
-      (setq-local hyrolo-hdr-and-entry-regexp (concat hyrolo-hdr-prefix-regexp hyrolo-hdr-and-entry-regexp)))
-    (unless (string-prefix-p hyrolo-hdr-regexp outline-regexp)
-      (setq-local outline-regexp (concat hyrolo-hdr-prefix-regexp outline-regexp)))
-    (when (eq outline-level #'markdown-outline-level)
-      (setq-local outline-level #'hyrolo-outline-level
-                  hyrolo-entry-regexp "^\\([#\^L]+\\)\\([ \t\n\r]+\\)"))))
+            (unless (string-prefix-p hyrolo-hdr-regexp hyrolo-hdr-and-entry-regexp)
+              (setq-local hyrolo-hdr-and-entry-regexp (concat hyrolo-hdr-prefix-regexp hyrolo-hdr-and-entry-regexp)))
+            (unless (string-prefix-p hyrolo-hdr-regexp outline-regexp)
+              (setq-local outline-regexp (concat hyrolo-hdr-prefix-regexp outline-regexp)))
+            (when (eq outline-level #'markdown-outline-level)
+              (setq-local outline-level #'hyrolo-outline-level
+                          hyrolo-entry-regexp "^\\([#\^L]+\\)\\([ \t\n\r]+\\)")))
+        ;; unwind form
+        (setq-local hyrolo-display-buffer display-buf)))))
 
 (defun hyrolo--funcall-with-outline-regexp (func)
   "Call FUNC with `outline-regexp' temporarily set to support HyRolo file hdrs."
