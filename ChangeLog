@@ -1,3 +1,8 @@
+2026-07-22  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--potential-buffer-p): New test.
+    (hywiki-tests--active-in-current-buffer-p): Refactor test, no buffers.
+
 2026-07-21  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-get-entry): Fix return of display-buffer string
