@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     23-Jul-26 at 00:10:03 by Bob Weiner
+;; Last-Mod:     23-Jul-26 at 11:38:51 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1461,14 +1461,20 @@ calling this function."
                ;; Skip past file header
                (hyrolo-to-next-entry)
                (hyrolo-edit-entry))
-      ;; add a new entry
+      ;; add a new definition entry using the original term, not any
+      ;; wikiword transformed version
       (hyrolo-add term glossary)))
+  ;; Connect wikiword version of term to the glossary definition
   (hywiki-add-referent (hywiki-string-to-wikiword term)
                        (cons 'glossary-entry term)))
 
 (defun hywiki-display-glossary-entry (_wikiword term)
   "Display any HyWiki glossary definition for TERM."
-  (hywiki-get-definition term t))
+  ;; Don't display the entry if in the middle of a
+  ;; `hywiki-create-referent-and-display' call since that displays the entry
+  ;; source buffer already.
+  (unless (hyperb:stack-frame '(hywiki-create-referent-and-display))
+    (hywiki-get-definition term t)))
 
 (defun hywiki-add-hyrolo (wikiword)
   "Make WIKIWORD search and display `hyrolo-file-list' matches.
@@ -2427,7 +2433,8 @@ therein is invalid, trigger an error."
 ;;;###autoload
 (defun hywiki-get-definition (term &optional display-flag file)
   "Return or display the HyWiki glossary definition string for TERM.
-Return nil if no match is found.
+Return nil if TERM is not a string, if TERM is the empty string or no match
+is found.
 
 If called interactively or with optional DISPLAY-FLAG non-nil, display a
 buffer with TERM's definition but don't return it.  Get definition from
@@ -2452,47 +2459,46 @@ top-level headlines are searched.
   (interactive (list (hywiki-completing-read-glossary-term
                       "HyWiki glossary definition of: ")
                      nil t))
-  (when (or (not (stringp term)) (string-empty-p term))
-    (error "(hywiki-get-definition): Invalid `term': `%s'" term))
-  (let ((glossary (hywiki-get-glossary-file file))
-        entry
-        index
-        term-regexp
-        wikiword)
-    (cond ((setq index (seq-position term ?#))
-           ;; WikiWord#section or #section
-           (setq wikiword (substring term 0 index)
-                 term (substring term (1+ index))
-                 term-regexp (hywiki-get-term-variant-regexp term)
-                 file (if (zerop index)
-                          buffer-file-name
-                        (hywiki-get-page-file wikiword))))
-          ((or (hywiki-word-is-p term t) (null file))
-           ;; Is a WikiWord or phrase only; match to any of several
-           ;; forms: WikiWord, wikiword, Wiki Word, wiki word -- in
-           ;; file when given or the Glossary file when not
-           (when (file-readable-p glossary)
-             (setq term-regexp (hywiki-get-term-variant-regexp term))
-             (unless (and (stringp file) (not (string-empty-p file)))
-               (setq file glossary))))
-          (t
-           ;; `file' is non-null so try to use that or trigger and error
-           (when (or (not (stringp file)) (string-empty-p file)
-                     (not (file-readable-p file)))
-             (error "(hywiki-get-definition): \"%s\" is invalid" file))
-           (setq term-regexp (hywiki-get-term-variant-regexp term))))
+  (when (and (stringp term) (not (string-empty-p term)))
+    (let ((glossary (hywiki-get-glossary-file file))
+          entry
+          index
+          term-regexp
+          wikiword)
+      (cond ((setq index (seq-position term ?#))
+             ;; WikiWord#section or #section
+             (setq wikiword (substring term 0 index)
+                   term (substring term (1+ index))
+                   term-regexp (hywiki-get-term-variant-regexp term)
+                   file (if (zerop index)
+                            buffer-file-name
+                          (hywiki-get-page-file wikiword))))
+            ((or (hywiki-word-is-p term t) (null file))
+             ;; Is a WikiWord or phrase only; match to any of several
+             ;; forms: WikiWord, wikiword, Wiki Word, wiki word -- in
+             ;; file when given or the Glossary file when not
+             (when (file-readable-p glossary)
+               (setq term-regexp (hywiki-get-term-variant-regexp term))
+               (unless (and (stringp file) (not (string-empty-p file)))
+                 (setq file glossary))))
+            (t
+             ;; `file' is non-null so try to use that or trigger an error
+             (when (or (not (stringp file)) (string-empty-p file)
+                       (not (file-readable-p file)))
+               (error "(hywiki-get-definition): \"%s\" is invalid" file))
+             (setq term-regexp (hywiki-get-term-variant-regexp term))))
 
-    ;; Return and possibly display matching definition
-    (setq entry (hywiki-get-entry term-regexp display-flag file t))
+      ;; Return and possibly display matching definition
+      (setq entry (hywiki-get-entry term-regexp display-flag file t))
 
-    (when (stringp entry)
-      ;; Remove * or # prefix from def entry before returning, so can be
-      ;; embedded in other doc
-      (setq entry (substring entry (if (string-match "\\`[*#]+[ \t\n\f]*"
-                                                     entry)
-                                       (match-end 0)
-                                     0))))
-    entry))
+      (when (stringp entry)
+        ;; Remove * or # prefix from def entry before returning, so can be
+        ;; embedded in other doc
+        (setq entry (substring entry (if (string-match "\\`[*#]+[ \t\n\f]*"
+                                                       entry)
+                                         (match-end 0)
+                                       0))))
+      entry)))
 
 (defun hywiki-get-delimited-region ()
   "Immediately before or after a balanced delimiter, return the delimited range.
@@ -2542,7 +2548,8 @@ This includes the delimiters: (), {}, <>, [] and \"\" (double quotes)."
 ;;;###autoload
 (defun hywiki-get-entry (reference &optional display-flag file regexp-flag)
   "Return a string of the first HyWiki entry headline containing REFERENCE.
-Return nil if no match is found.
+Return nil if REFERENCE is not a string, if REFERENCE is the empty string or
+no match is found.
 
 If called interactively or with optional DISPLAY-FLAG non-nil, display a
 buffer with REFERENCE's definition but don't return it.  If the file is not
@@ -2550,8 +2557,11 @@ readable or no matching REFERENCE entry is found, return nil; othewise,
 return t.
 
 Get definition from HyWiki's Glossary.org, optional FILE, or the current
-buffer for #in-file references.  With optional prefix arg, REGEXP-FLAG,
-treat REFERENCE as a regular expression instead of a string.
+buffer for #in-file references.  Trigger an error if an invalid non-nil FILE
+argument is sent.
+
+With optional prefix arg, REGEXP-FLAG, treat REFERENCE as a regular
+expression instead of a string.
 
 If the `consult' package is installed, interactively select and complete
 the entry to be inserted.
@@ -2569,92 +2579,88 @@ top-level headlines are searched.
 |------------------+------+---------------+----------------------------------|"
   (interactive (list (hywiki-read-headline-regexp "Return")
 		     current-prefix-arg))
-  (when (and (stringp reference) (string-empty-p reference))
-    (setq reference nil))
-  (when (or (null reference) (not (stringp reference)))
-    (error "(hywiki-get-entry): Invalid reference: `%s'" reference))
+  (when (and (stringp reference) (not (string-empty-p reference)))
+    (let ((hyrolo-display-buffer hywiki-glossary-display-buffer)
+          (buf-file buffer-file-name)
+          (found 0)
+          (word-end (hywiki-word-is-p reference t))
+          (consult-flag (and (called-interactively-p 'interactive) (hsys-consult-active-p)))
+          (phrase "")
+          entry-to-match
+          path-list)
+      (save-window-excursion
+        (with-current-buffer (get-buffer-create hywiki-glossary-display-buffer)
+          (setq hyrolo-display-buffer hywiki-glossary-display-buffer)
+          ;; (hyrolo--cache-initialize)
+	  (cond ((or consult-flag
+                     (not (string-match-p "#" reference))
+                     (not word-end))
+                 (setq phrase ""
+                       entry-to-match reference))
+                (word-end
+                 (setq phrase (string-trim (substring reference 0 word-end))
+                       entry-to-match (unless (= word-end (length reference))
+                                        (string-trim (substring reference (1+ word-end)))))))
+          ;; If path-list remains nil, then search will be across the whole wiki
+          (cond ((stringp file)
+                 ;; explicit `file' given
+                 (setq path-list (list (expand-file-name file hywiki-directory))))
+                ((and (not consult-flag) (string-match-p "\\`#" reference))
+                 ;; in-file reference
+                 (setq entry-to-match (substring reference 1)
+                       path-list (if buf-file
+                                     (list buf-file)
+                                   (user-error "(hywiki-get-entry): #section not allowed in non-file buffer: reference = %s; buffer = %S"
+                                               reference (get-buffer buf-file)))))
+                ((not (string-empty-p phrase))
+                 ;; The phrase is a WikiWord; use this as the file to search
+                 (setq path-list (list (expand-file-name
+                                        (concat phrase
+                                                (unless (string-suffix-p hywiki-file-suffix phrase)
+                                                  hywiki-file-suffix))
+                                        hywiki-directory)))))
 
-  (let ((hyrolo-display-buffer hywiki-glossary-display-buffer)
-        (buf-file buffer-file-name)
-        (found 0)
-        (word-end (hywiki-word-is-p reference t))
-        (consult-flag (and (called-interactively-p 'interactive) (hsys-consult-active-p)))
-        (phrase "")
-        entry-to-match
-        path-list)
-    (save-window-excursion
-      (with-current-buffer (get-buffer-create hywiki-glossary-display-buffer)
-        (setq hyrolo-display-buffer hywiki-glossary-display-buffer)
-        ;; (hyrolo--cache-initialize)
-	(cond ((or consult-flag
-                   (not (string-match-p "#" reference))
-                   (not word-end))
-               (setq phrase ""
-                     entry-to-match reference))
-              (word-end
-               (setq phrase (string-trim (substring reference 0 word-end))
-                     entry-to-match (unless (= word-end (length reference))
-                                      (string-trim (substring reference (1+ word-end)))))))
-        ;; If path-list remains nil, then search will be across the whole wiki
-        (cond ((stringp file)
-               ;; explicit `file' given
-               (setq path-list (list (expand-file-name file hywiki-directory))))
-              ((and (not consult-flag) (string-match-p "\\`#" reference))
-               ;; in-file reference
-               (setq entry-to-match (substring reference 1)
-                     path-list (if buf-file
-                                   (list buf-file)
-                                 (user-error "(hywiki-get-entry): #section not allowed in non-file buffer: reference = %s; buffer = %S"
-                                             reference (get-buffer buf-file)))))
-              ((not (string-empty-p phrase))
-               ;; The phrase is a WikiWord; use this as the file to search
-               (setq path-list (list (expand-file-name
-                                      (concat phrase
-                                              (unless (string-suffix-p hywiki-file-suffix phrase)
-                                                hywiki-file-suffix))
-                                      hywiki-directory)))))
+          (unless entry-to-match
+            (error "(hywiki-get-entry): No `entry-to-match' derivable from \"%s\""
+                   reference))
 
-        (unless entry-to-match
-          (error "(hywiki-get-entry): No `entry-to-match' derivable from \"%s\""
-                 reference))
-
-        (save-excursion
-          (setq found
-	        (if (and consult-flag
-                         (or path-list
-                             ;; Extract `name' from the line-numbered
-                             ;; `consult-grep' match results
-		             (string-match "\\([^ \t\n\r\"'`]*[^ \t\n\r:\"'`0-9]\\): ?\\([1-9][0-9]*\\)[ :]"
-				           reference)))
-		    (hyrolo-grep-file (if path-list (car path-list) (match-string-no-properties 1 reference))
-				      (funcall (if regexp-flag #'identity #'regexp-quote)
-                                               (if path-list
-                                                   entry-to-match
-                                                 (substring reference (match-end 0))))
-				      -1 nil t)
-	          (hyrolo-grep (if regexp-flag entry-to-match (regexp-quote entry-to-match))
-                               -1
-                               (hyrolo-expand-path-list (or path-list (list hywiki-directory)))
-                               nil t (not display-flag)))))))
-    (if display-flag
-        (if (zerop found)
-            (progn (beep)
-                   (message "(hywiki-get-entry): No match for `%s' found in `%s'"
-                            reference
-                            (or path-list hywiki-directory))
-                   nil)
-          ;; Display even if no entries are found
-          (hyrolo-display-matches)
-          ;; skip past header to the entry
-          (hyrolo-to-next-entry)
-          t)
-      (unless (zerop found)
-        (with-current-buffer hyrolo-display-buffer
           (save-excursion
-            (goto-char (point-min))
+            (setq found
+	          (if (and consult-flag
+                           (or path-list
+                               ;; Extract `name' from the line-numbered
+                               ;; `consult-grep' match results
+		               (string-match "\\([^ \t\n\r\"'`]*[^ \t\n\r:\"'`0-9]\\): ?\\([1-9][0-9]*\\)[ :]"
+				             reference)))
+		      (hyrolo-grep-file (if path-list (car path-list) (match-string-no-properties 1 reference))
+				        (funcall (if regexp-flag #'identity #'regexp-quote)
+                                                 (if path-list
+                                                     entry-to-match
+                                                   (substring reference (match-end 0))))
+				        -1 nil t)
+	            (hyrolo-grep (if regexp-flag entry-to-match (regexp-quote entry-to-match))
+                                 -1
+                                 (hyrolo-expand-path-list (or path-list (list hywiki-directory)))
+                                 nil t (not display-flag)))))))
+      (if display-flag
+          (if (zerop found)
+              (progn (beep)
+                     (message "(hywiki-get-entry): No match for `%s' found in `%s'"
+                              reference
+                              (or path-list hywiki-directory))
+                     nil)
+            ;; Display even if no entries are found
+            (hyrolo-display-matches)
             ;; skip past header to the entry
             (hyrolo-to-next-entry)
-          (buffer-substring (point) (point-max))))))))
+            t)
+        (unless (zerop found)
+          (with-current-buffer hyrolo-display-buffer
+            (save-excursion
+              (goto-char (point-min))
+              ;; skip past header to the entry
+              (hyrolo-to-next-entry)
+              (buffer-substring (point) (point-max)))))))))
 
 ;;;###autoload
 (defmacro hydef (&rest term)

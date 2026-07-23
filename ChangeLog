@@ -2,6 +2,12 @@
 
 * hywiki.el (hywiki-get-entry): Strip file header when returning
     definition as a string, as that is all should be desired.
+            (hywiki-get-definition, hywiki-get-entry): Change so just
+    returns nil if first arg is sent as a non-string or an empty string
+    rather than triggering an error.
+            (hywiki-display-glossary-entry): Don't display the entry if in
+    the middle of a 'hywiki-create-referent-and-display' call since that
+    displays the entry source buffer already.
 
 * hmouse-drv.el (hkey-help): Conditionalize HyWikiWord glossary entry
     definition output on a non-nil 'lbl-key', i.e. non-nil reference.
