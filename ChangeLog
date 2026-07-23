@@ -1,3 +1,18 @@
+2026-07-22  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (HyWiki Menu, HyWiki Glossary): Document the ways
+    to use HyWiki glossary entries.
+
+* hywiki.el (hywiki-get-term-variant-regexp): Allow the term to be
+    surrounded by Org emphasis characters.
+            (hywiki-get-term-variant-regexp): Fix to make case sensitive
+    so wikiwords are always split on capital letters properly.
+  hpath.el  (hpath:org-normalize-title): Strip any Org emphasis characters.
+            (hywiki-get-entry): Obey 'regexp-flag' when calling
+    'hyrolo-grep-file'.
+            (hydef): Add macro to use as an Action Button to display HyWiki
+    glossary definitions.
+
 2026-07-21  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-get-entry): Fix return of display-buffer string
