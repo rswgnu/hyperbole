@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     16-Jul-26 at 16:57:49 by Bob Weiner
+;; Last-Mod:     22-Jul-26 at 15:13:47 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1754,7 +1754,9 @@ but locational suffixes within the file are utilized."
   "Ignore HASH when ANCHOR is non-null and move point to ANCHOR string if found.
 Move point to beginning of buffer if HASH is non-nil and ANCHOR is null.
 With optional INSTANCE-NUM, go to that instance of ANCHOR from the start
-of the buffer."
+of the buffer.
+
+Trigger an error if the instance of the non-null anchor requested is not found."
   (let ((omin (point-min))
 	(omax (point-max)))
     (unwind-protect
@@ -2026,7 +2028,8 @@ form is what is returned for PATH."
 
 (defun hpath:org-normalize-title (title)
   "Return title in normalized form.
-Strip all priority, leading ':' or '-' separators, and stats from TITLE."
+Strip all priority, leading ':' or '-' separators, stats and Org emphasis
+characters from TITLE."
   (when title
     (let ((clean (copy-sequence title)))
       ;; Strip leading priority: [#B] or [#2} followed by ':' or '-' surrounded by any whitespace
@@ -2035,7 +2038,11 @@ Strip all priority, leading ':' or '-' separators, and stats from TITLE."
       ;; Matches: "- Title", ": Title", " - Title"
       (setq clean (string-trim (replace-regexp-in-string "\\`[ \t]*[-:][ \t]+" "" clean)))
        ;; Strip trailing statistics cookies [1/2] or [50%]
-      (setq clean (replace-regexp-in-string "\\(?: +\\[[0-9%+/]+\\]\\)+\\'" "" clean)))))
+      (setq clean (replace-regexp-in-string "\\(?: +\\[[0-9%+/]+\\]\\)+\\'" "" clean))
+      ;; Strip *bold*’, ‘/italic/’, ‘_underlined_’, ‘=verbatim=’ and ‘~code~’
+      ;; Org emphasis characters
+      (setq clean (replace-regexp-in-string "\\`[ \t]*[*/_=~]\\(.+\\)[*/_=~]"
+                                            "\\1" clean)))))
 
 (defun hpath:org-normalize-titles ()
   "Get all buffer Org titles in normalized form.

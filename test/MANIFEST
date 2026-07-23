@@ -19,6 +19,7 @@ hui-mouse-tests.el      - hui-mouse and hkey-alist Action Key tests
 hui-register-tests.el   - test for hui-register
 hui-select-tests.el     - hui-select tests
 hui-tests.el            - tests for hui.el Hyperbole UI
+hy-string-tests.el      - test whether point is inside or outside of a string
 hy-test-coverage.el     - provide test coverage information
 hy-test-dependencies.el - Hyperbole test dependencies
 hy-test-helpers.el      - unit test helpers

@@ -9,7 +9,7 @@
 ;; Maintainer:   Robert Weiner <rsw@gnu.org>
 ;; Maintainers:  Robert Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Created:      06-Oct-92 at 11:52:51
-;; Last-Mod:     14-Jul-26 at 10:01:48 by Bob Weiner
+;; Last-Mod:     22-Jul-26 at 11:15:05 by Bob Weiner
 ;; Released:     10-Mar-24
 ;; Version:      9.0.2pre
 ;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -354,20 +354,21 @@ of the commands."
 ;;    f = SELECTED_FRAME ();
 ;;    XSETFRAME (lispy_dummy, f);
 ;;
-;;  It seems like the XSETFRAME macro is not properly copying the value of f on initial frame selection under the macOS window system.
-;;  The problem occurs on other systems as well, e.g. Emacs 25.2 under Windows 7.
+;;  It seems like the XSETFRAME macro is not properly copying the value of f
+;;  on initial frame selection under the macOS window system.  The problem
+;;  occurs on other systems as well, e.g. Emacs 25.2 under Windows 7.
 ;;
 ;;  Hyperbole resolves this problem by setting the
 ;;  `mouse-position-function' variable below to properly set the
 ;;  newly selected frame.
-(if (boundp 'mouse-position-function)
-    (setq mouse-position-function
-	  (lambda (frame-x-dot-y)
-	    "Make `mouse-position' and `mouse-pixel-position' return the selected frame.
+(when (boundp 'mouse-position-function)
+  (setq mouse-position-function
+	(lambda (frame-x-dot-y)
+	  "Make `mouse-position' and `mouse-pixel-position' return the selected frame.
 Under macOS and Windows 7 at least, upon initial selection of a new
 frame, those functions by default still return the prior frame."
-	    (if (consp frame-x-dot-y) (setcar frame-x-dot-y (selected-frame)))
-	    frame-x-dot-y)))
+	  (if (consp frame-x-dot-y) (setcar frame-x-dot-y (selected-frame)))
+	  frame-x-dot-y)))
 
 ;; hmouse-drv will load hui-mouse and hmouse-key
 (mapc #'require '(hsettings hmouse-drv hmouse-sh))

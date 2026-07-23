@@ -1,3 +1,34 @@
+2026-07-23  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-get-entry): Strip file header when returning
+    definition as a string, as that is all should be desired.
+            (hywiki-get-definition, hywiki-get-entry): Change so just
+    returns nil if first arg is sent as a non-string or an empty string
+    rather than triggering an error.
+            (hywiki-display-glossary-entry): Don't display the entry if in
+    the middle of a 'hywiki-create-referent-and-display' call since that
+    displays the entry source buffer already.
+
+* hmouse-drv.el (hkey-help): Conditionalize HyWikiWord glossary entry
+    definition output on a non-nil 'lbl-key', i.e. non-nil reference.
+
+2026-07-22  Bob Weiner  <rsw@gnu.org>
+
+* test/hy-string-tests.el: Add to start 'hypb:in-string-p' testing.
+
+* man/hyperbole.texi (HyWiki Menu, HyWiki Glossary): Document the ways
+    to use HyWiki glossary entries.
+
+* hywiki.el (hywiki-get-term-variant-regexp): Allow the term to be
+    surrounded by Org emphasis characters.
+            (hywiki-get-term-variant-regexp): Fix to make case sensitive
+    so wikiwords are always split on capital letters properly.
+  hpath.el  (hpath:org-normalize-title): Strip any Org emphasis characters.
+            (hywiki-get-entry): Obey 'regexp-flag' when calling
+    'hyrolo-grep-file'.
+            (hydef): Add macro to use as an Action Button to display HyWiki
+    glossary definitions.
+
 2026-07-22  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--potential-buffer-p): New test.
