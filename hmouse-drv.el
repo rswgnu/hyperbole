@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     20-Jul-26 at 01:47:30 by Bob Weiner
+;; Last-Mod:     23-Jul-26 at 00:17:46 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1185,15 +1185,15 @@ documentation is found."
 
 		    ;; Print Hyperbole button attributes
 		    (when (memq cmd-sym '(hui:hbut-act hui:hbut-help))
-		      (let* ;; (lbl-key (hattr:get 'hbut:current 'lbl-key))
-			  ((categ (hattr:get 'hbut:current 'categ))
-			   (attributes (nthcdr 2 (hattr:list 'hbut:current)))
-			   (but-def-symbol (htype:def-symbol
-					    (if (eq categ 'explicit) actype categ)))
-                           (wikiword-referent
-                            (when (eq (htype:def-symbol actype) 'link-to-wikiword)
-                              (hywiki-get-referent
-                               (hattr:get 'hbut:current 'lbl-key)))))
+		      (let* ((lbl-key (hattr:get 'hbut:current 'lbl-key))
+			     (categ (hattr:get 'hbut:current 'categ))
+			     (attributes (nthcdr 2 (hattr:list 'hbut:current)))
+			     (but-def-symbol (htype:def-symbol
+					      (if (eq categ 'explicit) actype categ)))
+                             (wikiword-referent
+                              (when (eq (htype:def-symbol actype) 'link-to-wikiword)
+                                (hywiki-get-referent
+                                 (hattr:get 'hbut:current 'lbl-key)))))
 
                         (when wikiword-referent
                           (hattr:set 'hbut:current 'referent-type
@@ -1219,16 +1219,17 @@ documentation is found."
 			;;   (hypb:remove-from-plist attributes 'action))
 			(hattr:report attributes)
 
-                        ;; Need to save and restore 'hbut:current here since
-                        ;; hywiki-get-definition overwrites it
-                        (unwind-protect
-                            (progn (hattr:copy 'hbut:current 'saved-but)
-                                   (setq def (hywiki-get-definition
-			                      (ibut:key-to-label (hattr:get 'hbut:current 'lbl-key))))
-                                   (when def
-                                     (terpri)
-                                     (princ def)))
-                          (hattr:copy 'saved-but 'hbut:current))
+                        (when lbl-key
+                          (unwind-protect
+                              ;; Need to save and restore 'hbut:current here
+                              ;; since hywiki-get-definition overwrites it
+                              (progn (hattr:copy 'hbut:current 'saved-but)
+                                     (setq def (hywiki-get-definition
+			                        (ibut:key-to-label lbl-key)))
+                                     (when (stringp def)
+                                       (terpri)
+                                       (princ def)))
+                            (hattr:copy 'saved-but 'hbut:current)))
 
 			(unless (or assisting
 				    (eq categ 'explicit)

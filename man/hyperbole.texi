@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     22-Jul-26 at 23:25:37 by Bob Weiner
+@c Last-Mod:     22-Jul-26 at 23:56:16 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -5178,13 +5178,13 @@ There are three ways to work with HyWiki glossary terms:
 For example, @samp{<hydef Action Key>} or @samp{<hydef "Action Key">}
 
 @item Create a HyWikiWord with a glossary referent type.
-With @code{hywiki-mode} active, {M-0 M-RET y} or {C-h h h c y} will
-turn the wikiword at point into or will prompt you for a wikiword name
-whose referent displays the definition for the wikiword.
+With @code{hywiki-mode} active, @bkbd{M-0 M-RET y} or @bkbd{C-h h h c
+y} will turn the wikiword at point into or will prompt you for a
+wikiword name whose referent displays the definition for the wikiword.
 
 @item Programmatically display a glossary entry.
-Call @code{(hywiki-get-definition "term" t) to display the entry.
-@end MyNewWord enumerate
+Call @code{(hywiki-get-definition "term" t)} to display the entry.
+@end enumerate
 
 @end table
 

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     22-Jul-26 at 23:17:56 by Bob Weiner
+;; Last-Mod:     23-Jul-26 at 00:10:03 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2650,7 +2650,11 @@ top-level headlines are searched.
           t)
       (unless (zerop found)
         (with-current-buffer hyrolo-display-buffer
-          (buffer-string))))))
+          (save-excursion
+            (goto-char (point-min))
+            ;; skip past header to the entry
+            (hyrolo-to-next-entry)
+          (buffer-substring (point) (point-max))))))))
 
 ;;;###autoload
 (defmacro hydef (&rest term)

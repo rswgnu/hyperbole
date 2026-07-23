@@ -1,3 +1,11 @@
+2026-07-23  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-get-entry): Strip file header when returning
+    definition as a string, as that is all should be desired.
+
+* hmouse-drv.el (hkey-help): Conditionalize HyWikiWord glossary entry
+    definition output on a non-nil 'lbl-key', i.e. non-nil reference.
+
 2026-07-22  Bob Weiner  <rsw@gnu.org>
 
 * test/hy-string-tests.el: Add to start 'hypb:in-string-p' testing.
