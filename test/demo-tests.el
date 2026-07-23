@@ -1,9 +1,9 @@
 ;;; demo-tests.el --- unit tests from examples in the DEMO         -*- lexical-binding: t; -*-
-
+;;
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     16-Jun-26 at 22:09:58 by Bob Weiner
+;; Last-Mod:     22-Jul-26 at 23:49:19 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;

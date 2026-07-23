@@ -1,5 +1,7 @@
 2026-07-22  Bob Weiner  <rsw@gnu.org>
 
+* test/hy-string-tests.el: Add to start 'hypb:in-string-p' testing.
+
 * man/hyperbole.texi (HyWiki Menu, HyWiki Glossary): Document the ways
     to use HyWiki glossary entries.
 
