@@ -1,5 +1,7 @@
 2026-07-25  Mats Lidell  <matsl@gnu.org>
 
+* hyperbole.el: Use only Maintainer header.
+
 * man/hy-package.el:
 * man/hy-straight.el: Add copyright
 
