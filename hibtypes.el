@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     16-Jul-26 at 10:47:49 by Bob Weiner
+;; Last-Mod:     25-Jul-26 at 22:57:10 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -76,6 +76,7 @@
 (declare-function hywiki-referent-exists-p "hywiki")
 (declare-function hywiki-word-create-and-display "hywiki")
 (declare-function hywiki-word-from-reference "hywiki")
+(declare-function hywiki-non-hook-context-p "hywiki")
 (declare-function markdown-footnote-goto-text "ext:markdown")
 (declare-function markdown-footnote-marker-positions "ext:markdown")
 (declare-function markdown-footnote-return "ext:markdown")

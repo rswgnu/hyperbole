@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     21-Jul-26 at 01:19:45 by Bob Weiner
+;; Last-Mod:     25-Jul-26 at 23:08:13 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -860,26 +860,23 @@ instead of a string."
   (when (or (null name) (not (stringp name)))
     (error "(hyrolo-get-entry): Invalid name: `%s'" name))
 
-  (let ((buf (current-buffer))
-        (buf-file buffer-file-name))
-    (save-window-excursion
-      (with-temp-buffer
-	(let ((hyrolo-display-buffer (current-buffer))
-	      (start (point))
-	      found)
-	  (save-excursion
-	    (setq found
-		  (if (and (hsys-consult-active-p)
-                           ;; Extract search string from the results of an
-                           ;; `hsys-consult' call stored in `name'
-			   (string-match "\\([^ \t\n\r\"'`]*[^ \t\n\r:\"'`0-9]\\): ?\\([1-9][0-9]*\\)[ :]"
-					 name))
-		      (hyrolo-grep-file (match-string-no-properties 1 name)
-					(regexp-quote (substring name (match-end 0)))
-					-1 nil t)
-		    (hyrolo-grep (if regexp-flag name (regexp-quote name)) -1 nil nil t))))
-          (when found
-            (buffer-string)))))))
+  (save-window-excursion
+    (with-temp-buffer
+      (let ((hyrolo-display-buffer (current-buffer))
+	    found)
+	(save-excursion
+	  (setq found
+		(if (and (hsys-consult-active-p)
+                         ;; Extract search string from the results of an
+                         ;; `hsys-consult' call stored in `name'
+			 (string-match "\\([^ \t\n\r\"'`]*[^ \t\n\r:\"'`0-9]\\): ?\\([1-9][0-9]*\\)[ :]"
+				       name))
+		    (hyrolo-grep-file (match-string-no-properties 1 name)
+				      (regexp-quote (substring name (match-end 0)))
+				      -1 nil t)
+		  (hyrolo-grep (if regexp-flag name (regexp-quote name)) -1 nil nil t))))
+        (when found
+          (buffer-string))))))
 
 ;;;###autoload
 (defun hyrolo-grep (regexp &optional max-matches hyrolo-files-or-bufs count-only headline-only no-display interactive-flag)
