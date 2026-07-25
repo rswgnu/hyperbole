@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     23-Jul-26 at 00:17:46 by Bob Weiner
+;; Last-Mod:     25-Jul-26 at 23:02:11 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -62,6 +62,7 @@
 
 (declare-function br-in-browser "hpath")
 (declare-function hattr:clear "hbut")
+(declare-function hattr:copy "hbut")
 (declare-function hattr:get "hbut")
 (declare-function hattr:list "hbut")
 (declare-function hattr:report "hbut")
@@ -72,7 +73,9 @@
 (declare-function hpath:display-buffer "hpath")
 (declare-function hui:ebut-link-directly "hui")
 (declare-function hui:ibut-link-directly "hui")
+(declare-function hywiki-get-definition "hywiki")
 (declare-function hywiki-get-referent "hywiki")
+(declare-function ibut:key-to-label "hbut")
 (declare-function mouse-drag-frame "mouse") ;; Obsolete from Emacs 28
 (declare-function org-todo "org")
 

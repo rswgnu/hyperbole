@@ -1,5 +1,11 @@
 2026-07-25  Mats Lidell  <matsl@gnu.org>
 
+* hibtypes.el (hywiki-non-hook-context-p):
+  hmouse-drv.el (hattr:copy, hywiki-get-definition, ibut:key-to-label):
+  hsys-www.el (eww-links-at-point): Declare functions.
+
+* hyrolo.el (hyrolo-get-entry): Remove unused lexical variables.
+
 * hyperbole.el: Use only Maintainer header.
 
 * man/hy-package.el:
