@@ -1,3 +1,8 @@
+2026-07-25  Mats Lidell  <matsl@gnu.org>
+
+* man/hy-package.el:
+* man/hy-straight.el: Add copyright
+
 2026-07-23  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-get-entry): Strip file header when returning
