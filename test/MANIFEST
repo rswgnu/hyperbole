@@ -13,6 +13,7 @@ hmouse-info-tests.el    - hmouse-info unit tests
 hpath-tests.el          - unit tests for hpath
 hproperty-tests.el      - hproperty tests
 hsettings-tests.el      - unit tests for hsettings
+hsys-denote-tests.el    - unit test for denote note-taking
 hsys-org-tests.el       - hsys-org tests
 hui-mini-tests.el       - hui-mini tests
 hui-mouse-tests.el      - hui-mouse and hkey-alist Action Key tests
