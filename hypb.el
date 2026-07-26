@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     20-Jul-26 at 01:52:50 by Bob Weiner
+;; Last-Mod:     26-Jul-26 at 16:36:11 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -69,6 +69,33 @@
 ;;; Public variables
 ;;; ************************************************************************
 
+(defcustom hypb:exclude-major-modes nil
+  "List of major modes to exclude from HyWikiWord and mail address recognition.
+Any `special' major mode, like Dired, is automatically excluded unless
+included in the list, `hypb:include-major-modes'."
+  :type '(list symbol)
+  :group 'hyperbole-commands)
+
+(defcustom hypb:include-major-modes
+  '(csv-mode
+    elfeed-search-mode elfeed-show-mode
+    eww-mode
+    fundamental-mode
+    gnus-article-edit-mode gnus-article-mode
+    kotl-mode
+    mh-letter-mode mh-show-mode
+    mu4e-headers-mode mu4e-main-mode
+    prog-mode
+    rmail-edit-mode rmail-mode
+    text-mode)
+  "List of major modes with HyWikiWord and mail address recognition.
+If the value is nil, then include all major modes.
+
+By default, all special modes, like Dired, are excluded.  A major mode
+included here will override its inclusion in `hypb:exclude-major-modes'."
+  :type '(list symbol)
+  :group 'hyperbole-commands)
+
 (defconst hypb:help-buf-prefix "*Help: Hyperbole "
   "Prefix attached to all native Hyperbole help buffer names.
 This should end with a space.")
@@ -97,11 +124,6 @@ delimiter."
   "Non-nil means `hypb:require-package' queries the user before installing it."
   :type 'boolean
   :group 'hyperbole-commands)
-
-(defvar hypb:mail-address-mode-list
-  '(fundamental-mode prog-mode text-mode)
-  "List of major modes in which mail address implicit buttons are active.
-Also active in any Decendent modes of those listed.")
 
 (defconst hypb:mail-address-tld-regexp
   (format "\\.%s\\'"
