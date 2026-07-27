@@ -1,5 +1,9 @@
 2026-07-27  Bob Weiner  <rsw@gnu.org>
 
+* Makefile (HYPB_VERSION): Update package version to 9.1.0 as an interim
+    release to sync with the new package versioning techniques used by
+    elpa and melpa.
+
 * test/hywiki-tests.el (hywiki-tests--potential-buffer-p): Fix test to
     exclude python-mode requires it not be in the include list.
 
@@ -7423,7 +7427,7 @@ value to be [[WikiWord]] not [[file:WikiWord.org][WikiWord]].
     grouping 1 rather than the entire delimited string.
 
 * man/hyperbole.texi (Top):
-  man/version.texi: Update version to 9.0.2pre.
+  man/version.texi: Update version.
 
 * hibtypes.el (mail-address): Move so lower priority than 'pathname' ibtype
     so that Tramp paths with embedded email addresses don't trigger as
@@ -7557,7 +7561,7 @@ value to be [[WikiWord]] not [[file:WikiWord.org][WikiWord]].
   test/demo-tests.el (hy-test-dependencies): Add to ensure el-mock is installed.
 
 ==============================================================================
-V9.0.2pre changes ^^^^:
+V9.1.0 changes ^^^^:
 ==============================================================================
 
 * hversion.el:
