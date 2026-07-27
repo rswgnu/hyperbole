@@ -1,3 +1,7 @@
+2026-07-27  Bob Weiner  <rsw@gnu.org>
+
+* hypb.el (hypb:in-string-check): Rename to 'hypb:in-string-no-cache-p'.
+
 2026-07-26  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-exclude-major-modes): Rename to 'hypb:exclude-major-modes'.

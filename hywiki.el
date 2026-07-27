@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     26-Jul-26 at 16:25:46 by Bob Weiner
+;; Last-Mod:     27-Jul-26 at 10:43:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -4670,14 +4670,14 @@ a HyWikiWord at point."
     (let* ((range
             (save-restriction
               ;; Limit balanced pair checks to current through next lines for speed.
-              ;; Point must be either on the opening line.
+              ;; Point must be on the opening line.
               (narrow-to-region (line-beginning-position) (line-end-position 2))
               (or (hypb:in-string-p nil t)
 		  (hargs:delimited "[\[<\(\{]" "[\]\}\)\>]" t t t))))
            (str-start (nth 1 range))
            (str-end (nth 2 range))
-           ;; Call to 'hypb:in-string-p' may have returned t
-           ;; as its first element
+           ;; Call to 'hypb:in-string-p' may have returned t as its first
+           ;; element
 	   (wikiword (when str-start
                        (if (stringp (car range))
                            (car range)

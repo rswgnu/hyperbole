@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     26-Jul-26 at 16:36:11 by Bob Weiner
+;; Last-Mod:     27-Jul-26 at 10:18:42 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -772,19 +772,24 @@ This will this install the Emacs helm package when needed."
 	     help-file))))
 
 (defun hypb:in-string-p (&optional max-lines range-flag)
-  "Return non-nil iff point is within a string and not on the closing quote.
-This is cached by buffer & modified time for speed.
+  "Return non-nil iff point is within a string.
+Point is within the string if it is after the end of the opening
+quote and before the start of the closing quote, not on it.  This
+is cached by buffer & modified time for speed.
 
 With optional MAX-LINES, an integer, match only within that many
 lines from point.  With optional RANGE-FLAG when there is a
 match, return list of (in-string-flag start-pos end-pos), where
-in-string-flag is t or nil and the positions exclude the delimiters.
+in-string-flag is t or nil and the positions exclude the delimiters;
+the difference between end and start is the length of the string.
 
-To prevent searching back to the buffer start and producing slow
-performance, this limits its count of quotes found prior to point
-to the beginning of the first line prior to point that contains a
-non-backslashed quote mark and limits string length to a maximum
-of 9000 characters.
+When no buffer edits have occurred, this uses cached results to
+determine whether in or outside of a string.  When no cache hit is
+found, to prevent searching back to the buffer start and producing
+slow performance, this limits its count of quotes found prior to
+point to the beginning of the first line prior to point that
+contains a non-backslashed quote mark and limits string length to a
+maximum of 9000 characters.
 
 Quoting conventions recognized are:
   double-quotes:                 \"str\";
@@ -829,8 +834,8 @@ Quoting conventions recognized are:
                             ;; to be used in the cache.
                             ;; To call it with the buffer narrowed to
                             ;; according to `max-lines', use:
-                            ;; (hypb:narrow-to-max-lines max-lines #'hypb:in-string-check t)
-                            (hypb:in-string-check t)))
+                            ;; (hypb:narrow-to-max-lines max-lines #'hypb:in-string-no-cache-p t)
+                            (hypb:in-string-no-cache-p t)))
                  (in-str (nth 0 entry))
                  (str-start (max (point-min) (or (nth 1 entry) 0)))
                  (str-end (min (point-max) (or (nth 2 entry) 0))))
@@ -889,17 +894,18 @@ prior point."
 			    (line-end-position (1+ max-lines)))))
       (apply func args))))
 
-(defun hypb:in-string-check (&optional range-flag)
+(defun hypb:in-string-no-cache-p (&optional range-flag)
   "Return non-nil iff point is within a string and not on the closing quote.
 
 With optional RANGE-FLAG when there is a match, return list of (in-string-flag
 start-pos end-pos), where in-string-flag is t or nil and the positions exclude
 the delimiters.
 
-To prevent searching back to the buffer start and producing slow
-performance, this limits its count of quotes found prior to point to the
-beginning of the first line prior to point that contains a non-backslashed
-quote mark and limits string length to a maximum of 9000 characters.
+This does not use caching.  To prevent searching back to the buffer start
+and producing slow performance, this limits its count of quotes found prior
+to point to the beginning of the first line prior to point that contains a
+non-backslashed quote mark and limits string length to a maximum of 9000
+characters.
 
 Quoting conventions recognized are:
   double-quotes:                 \"str\";
