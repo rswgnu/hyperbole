@@ -1,3 +1,14 @@
+2026-07-27  Mats Lidell  <matsl@gnu.org>
+
+* test/hypb-tests.el (hypb--string-count-matches):
+    (hypb--package-el-install): Removed. Moved to hy-string-tests.el.
+
+* test/hy-string-tests.el (hy-string-tests--strings-with-quotes):
+    (hy-string-tests--strings-with-quotes-extended):
+    (hy-string-tests--max-lines):  Add tests.
+    (hy-string-tests--gen-response-list): Helper for creating a response
+    list.
+
 2026-07-25  Mats Lidell  <matsl@gnu.org>
 
 * hibtypes.el (hywiki-non-hook-context-p):
