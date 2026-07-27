@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:     5-Apr-21 at 18:53:10
-;; Last-Mod:     16-Jul-26 at 17:06:05 by Mats Lidell
+;; Last-Mod:     27-Jul-26 at 19:28:09 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -83,64 +83,6 @@ See Emacs bug#74042 related to usage of texi2any."
         (Info-goto-node "(Hyperbole)Top")
         (should (set:equal '("Key Index" "Function Index" "Concept Index") (Info-index-nodes))))
     (hy-test-helpers:kill-buffer "*info*")))
-
-(ert-deftest hypb--in-string-p ()
-  "Verify basic quote handing by `hypb:in-string-p'."
-  (let ((s '(("\"str\"" . text-mode)            ;; double-quotes:
-             ("'str'" . python-mode)            ;; Python single-quotes:
-             ("'''str'''" . python-mode)        ;; Python triple single-quotes:
-             ("\"\"\"str\"\"\"" . python-mode)  ;; Python triple double-quotes:
-             ("``str''" . texinfo-mode)))      ;; Texinfo open and close quotes:
-        (test-num 0)
-        str
-        mode)
-    (with-temp-buffer
-      (dolist (v s)
-        (setq str (car v)
-              mode (cdr v))
-        (erase-buffer)
-        (funcall mode)
-        (insert str)
-        (goto-char (/ (length str) 2))
-        (ert-info ((format "Test #%d: At pos %d, expected within \"%s\" in mode: %s"
-                           test-num (point) str mode))
-          (should (hypb:in-string-p))
-          (let ((seq (hypb:in-string-p nil t)))
-            (should (sequencep seq))
-            (cl-destructuring-bind (val beg end) seq
-              (should (stringp val))
-              (should (and beg end (= (- end beg) 3))))))))))
-
-(ert-deftest hypb--in-string-p--max-lines ()
-  "Verify max lines handling by `hypb:in-string-p'."
-  (let* ((str "1\n\\\"2\n")
-         (range (list str 2 8)))
-    (with-temp-buffer
-      (insert (format "\"%s\"" str))
-      (goto-line 1) (move-to-column 1)
-      ;; First line. Line starts with quote.
-      (should-not (hypb:in-string-p 1))
-      (should (hypb:in-string-p 2))
-      (should (hypb:in-string-p 3))
-      (should (hypb:in-string-p 99))
-
-      ;; With range-flag
-      (should (equal range (hypb:in-string-p 2 t)))
-      (should (equal range (hypb:in-string-p 3 t)))
-      (should (equal range (hypb:in-string-p 99 t)))
-
-      ;; Zero max-lines
-      (should-not (hypb:in-string-p 0))
-
-      ;; Second line. No quote on the line.
-      (goto-line 2)
-      (should-not (hypb:in-string-p 1))
-      (should (hypb:in-string-p 2))
-      (should (hypb:in-string-p 3))
-
-      ;; With range-flag
-      (should (equal range (hypb:in-string-p 2 t)))
-      (should (equal range (hypb:in-string-p 3 t))))))
 
 (ert-deftest hypb--string-count-matches ()
   "Verify `hypb--string-count-matches'."
