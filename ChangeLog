@@ -9,6 +9,19 @@
   hibtypes.el (mail-address): Replace 'hypb:mail-address-mode-list' with
     'hypb:include-major-modes'.
 
+2026-07-25  Mats Lidell  <matsl@gnu.org>
+
+* hibtypes.el (hywiki-non-hook-context-p):
+  hmouse-drv.el (hattr:copy, hywiki-get-definition, ibut:key-to-label):
+  hsys-www.el (eww-links-at-point): Declare functions.
+
+* hyrolo.el (hyrolo-get-entry): Remove unused lexical variables.
+
+* hyperbole.el: Use only Maintainer header.
+
+* man/hy-package.el:
+* man/hy-straight.el: Add copyright
+
 2026-07-23  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-get-entry): Strip file header when returning

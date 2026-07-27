@@ -2,14 +2,13 @@
 
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; Copyright (C) 1992-2025  Free Software Foundation, Inc.
+;; Copyright (C) 1992-2026  Free Software Foundation, Inc.
 
 ;; Author:       Robert Weiner <rsw@gnu.org>
-;; Authors:      Robert Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
 ;; Maintainer:   Robert Weiner <rsw@gnu.org>
-;; Maintainers:  Robert Weiner <rsw@gnu.org>, Mats Lidell <matsl@gnu.org>
+;;               Mats Lidell <matsl@gnu.org>
 ;; Created:      06-Oct-92 at 11:52:51
-;; Last-Mod:     26-Jul-26 at 15:23:24 by Bob Weiner
+;; Last-Mod:     26-Jul-26 at 21:46:00 by Bob Weiner
 ;; Released:     10-Mar-24
 ;; Version:      9.0.2pre
 ;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp

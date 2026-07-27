@@ -1,3 +1,17 @@
+;;; hy-package.el --- Hyperbole package.el installation and configuration instructions  -*- lexical-binding: t; -*-
+;;
+;; Author:       Bob Weiner
+;;
+;; Orig-Date:    15-Jul-26 at 12:28:58
+;; Last-Mod:     25-Jul-26 at 22:25:11 by Mats Lidell
+;;
+;; SPDX-License-Identifier: GPL-3.0-or-later
+;;
+;; Copyright (C) 2026  Free Software Foundation, Inc.
+;; See the "../HY-COPY" file for license information.
+;;
+;; This file is part of GNU Hyperbole.
+
 ;;; ************************************************************************
 ;;; Requirements
 ;;; ************************************************************************

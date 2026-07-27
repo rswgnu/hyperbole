@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Apr-94 at 17:17:39 by Bob Weiner
-;; Last-Mod:     16-Jul-26 at 17:36:43 by Bob Weiner
+;; Last-Mod:     25-Jul-26 at 23:06:19 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -44,6 +44,7 @@
 (defvar hpath:display-where-alist)      ; "hpath.el"
 
 (declare-function eww--dwim-expand-url "eww" (url))
+(declare-function eww-links-at-point "eww")
 
 (declare-function hpath:display-buffer "hpath")
 (declare-function hpath:remote-at-p "hpath")
