@@ -2,10 +2,10 @@
 				 by Bob Weiner
 
 ===========================================================================
-*                                   V9.0.2pre
+*                                   V9.1.0
 ===========================================================================
 
-**GNU Hyperbole 9.0.2pre NEWS**
+**GNU Hyperbole 9.1.0 NEWS**
 
 *   **HyWiki**
     *   **Global Minor Mode**: The new `hywiki-mode` is a global minor mode that enables the highlighting and hyperlinking of **HyWikiWords** in any non-special text buffer and within the comments of programming buffers.

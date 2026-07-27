@@ -108,7 +108,7 @@
 
 # This ver setup won't work under any make except GNU make, so set it manually.
 #HYPB_VERSION = "`head -3 hversion.el | tail -1 | sed -e 's/.*|\(.*\)|.*/\1/'`"
-HYPB_VERSION = 9.0.2pre
+HYPB_VERSION = 9.1.0
 
 # Emacs executable used to byte-compile .el files into .elc's.
 # To override which executable is used from the commandline, do something like this:

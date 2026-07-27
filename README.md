@@ -1,4 +1,4 @@
-# GNU Hyperbole 9.0.2pre - The Everyday Hypertextual Information Manager
+# GNU Hyperbole 9.1.0 - The Everyday Hypertextual Information Manager
 
 [ If you are looking for the documentation for the stable release look
 [here](stable/hyperbole.html).]
