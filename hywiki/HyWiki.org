@@ -53,7 +53,7 @@ Hyperbole's Action Key does the right thing in this context.
 By default, HyWikiWords are auto-highlighted within HyWiki pages.
 Outside of such pages, 'hywiki-mode' must be set to `:all' to enable
 auto-highlighting in programming and text buffers.  The custom
-setting, 'hywiki-exclude-major-modes' (default = 'nil'), is a list of
+setting, 'hypb:exclude-major-modes' (default = 'nil'), is a list of
 major modes to exclude from HyWikiWord auto-highlighting and
 recognition.
 

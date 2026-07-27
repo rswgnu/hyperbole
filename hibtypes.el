@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     25-Jul-26 at 22:57:10 by Mats Lidell
+;; Last-Mod:     26-Jul-26 at 21:44:19 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -292,16 +292,16 @@ To restore to using Emacs to compose mail:
   (setq mail-user-agent \\='message-user-agent)
 
 This implicit button type applies in any major mode listed in
-`hypb:mail-address-mode-list', the HyRolo match buffer, any buffer
+`hypb:include-major-modes', the HyRolo match buffer, any buffer
 attached to a file in `hyrolo-file-list', or any buffer with \"mail\" or
 \"rolo\" (case-insensitive) within its name.
 
-If `hypb:mail-address-mode-list' is set to nil, this button type is active
+If `hypb:include-major-modes' is set to nil, this button type is active
 in all buffers."
   (when (let ((case-fold-search t))
           (or
-           (and (or (null hypb:mail-address-mode-list)
-		    (apply #'derived-mode-p hypb:mail-address-mode-list))
+           (and (or (null hypb:include-major-modes)
+		    (apply #'derived-mode-p hypb:include-major-modes))
                 (not (string-match "-Elements\\'" (buffer-name)))
                 ;; Don't want this to trigger within an OOBR-FTR buffer.
                 (not (string-match "\\`\\(OOBR.*-FTR\\|oobr.*-ftr\\)"

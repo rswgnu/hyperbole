@@ -1688,7 +1688,7 @@ body
 "))
          (hyrolo-file-list (list org-file)))
     (unwind-protect
-        (let ((hypb:mail-address-mode-list '(hyrolo-mode)))
+        (let ((hypb:include-major-modes '(hyrolo-mode)))
           (should (= 2 (hyrolo-grep "receiver\\.org")))
           (mocklet (((actypes::link-to-compose-mail "first@receiver.org") => t))
             (hyrolo-mail-to))

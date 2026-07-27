@@ -1,3 +1,32 @@
+2026-07-27  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--potential-buffer-p): Fix test to
+    exclude python-mode requires it not be in the include list.
+
+* hypb.el (hypb:in-string-check): Rename to 'hypb:in-string-no-cache-p'.
+
+2026-07-26  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-exclude-major-modes): Rename to 'hypb:exclude-major-modes'.
+            (hywiki-include-special-modes): Rename to 'hypb:include-major-modes'
+    Because now these are used for both HyWiki and compose mail button mode checks.
+            (hywiki-potential-buffer-p): If 'hypb:include-major-modes' is nil, then
+    HyWikiWords are allowed in all major-modes.
+  test/hywiki-tests.el (hywiki-tests--potential-buffer-p): Rename above.
+  hibtypes.el (mail-address): Replace 'hypb:mail-address-mode-list' with
+    'hypb:include-major-modes'.
+
+2026-07-27  Mats Lidell  <matsl@gnu.org>
+
+* test/hypb-tests.el (hypb--string-count-matches):
+    (hypb--package-el-install): Removed. Moved to hy-string-tests.el.
+
+* test/hy-string-tests.el (hy-string-tests--strings-with-quotes):
+    (hy-string-tests--strings-with-quotes-extended):
+    (hy-string-tests--max-lines):  Add tests.
+    (hy-string-tests--gen-response-list): Helper for creating a response
+    list.
+
 2026-07-25  Mats Lidell  <matsl@gnu.org>
 
 * hibtypes.el (hywiki-non-hook-context-p):

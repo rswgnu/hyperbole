@@ -136,23 +136,22 @@ Inserts tags for highlighted areas as well as point."
 
 (ert-deftest hywiki--verify-get-buffer-text-with-point-and-highlight-compact ()
   "Verify proper highlighting after different editing actions.
-Actions can be move, insertion, killing and deletion.
+Actions can be move, insert, kill and delete.
 
-Each test is constructed as three phases:
+Each test is constructed in three phases:
 
-* First phase, pre:, empties the buffer from any previous test and then
-  prepares the text and sets the point.  Hywiki-mode is activated in the
-  prepare phase in order to set any initial
-  highlighting.
+* The first phase, pre:, empties the buffer from any previous test,
+  prepares the text and sets point.  Hywiki-mode is activated in the
+  prepare phase to set any initial highlighting.
 
 * The second phase performs some action.  It can be insertion, killing
   or deletion.  The action should call the pre- and post-command-hooks
-  in order for the highlighting overlays to be constructed.
+  in order for the highlighting to occur.
 
 * The third phase, post:, does a verification.  A representation of the
-  `buffer-string' as a string is constructed where chars are used for
-  point, and start and stop of the highlighting with angle brackets.
-  That is then compared to the expected string."
+  `buffer-string' as a string is constructed where the ^ char represents
+  the position of point and the WikiWord highlight range is delimited with
+  angle brackets.  This string is then compared to the expected string."
   (hywiki-tests--preserve-hywiki-mode
    (let* ((wikiHi (cdr (hywiki-add-page "Hi")))
           (wikiHo (cdr (hywiki-add-page "Ho"))))

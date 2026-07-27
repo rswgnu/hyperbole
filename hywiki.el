@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     23-Jul-26 at 11:38:51 by Bob Weiner
+;; Last-Mod:     27-Jul-26 at 10:43:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -77,7 +77,7 @@
 ;;  auto-highlight hooks use {C-u C-h h h m} to  toggle `hywiki-mode';
 ;;  this also enables auto-highlighting when `hywiki-mode' is non-nil.
 
-;;  The custom setting, `hywiki-exclude-major-modes' (default = nil), is
+;;  The custom setting, `hypb:exclude-major-modes' (default = nil), is
 ;;  a list of major modes to exclude from HyWikiWord auto-highlighting
 ;;  and recognition.
 ;;
@@ -147,7 +147,8 @@
 (eval-when-compile (require 'consult nil t))
 (require 'hui)        ;; For `hui:actype'
 (require 'hui-mini)   ;; For `hui:menu-act'
-(require 'hypb)       ;; Requires `seq'
+(require 'hypb)       ;; Requires `seq', hypb:exclude-major-modes,
+                      ;; hypb:include-major-modes
 (require 'hyrolo)
 (require 'outline)    ;; For `outline-mode-syntax-table'
 (require 'seq)        ;; For `seq-contains-p', `seq-difference' and `seq-intersection'
@@ -318,33 +319,11 @@ Group 1 is the entire HyWikiWord#section:Lnum:Cnum expression.")
 (add-variable-watcher 'global-map
                       #'hywiki--clear-buttonize-characters-cache)
 
-(defcustom hywiki-exclude-major-modes nil
-  "List of major modes to exclude from HyWikiWord highlighting and recognition.
-Any `special' major mode, like Dired, is automatically excluded unless
-included in the list, `hywiki-include-special-modes'."
-  :type '(list symbol)
-  :group 'hyperbole-hywiki)
-
 (defvar hywiki-glossary-display-buffer "*HyWiki Glossary*"
   "Buffer used to display the last match to a HyWiki glossary definition.")
 
 (defcustom hywiki-highlight-all-in-prog-modes '(lisp-interaction-mode)
   "List of programming major modes to highlight HyWikiWords outside of comments."
-  :type '(list symbol)
-  :group 'hyperbole-hywiki)
-
-(defcustom hywiki-include-special-modes
-  '(csv-mode
-    elfeed-search-mode elfeed-show-mode
-    eww-mode
-    gnus-article-edit-mode gnus-article-mode
-    kotl-mode
-    mh-letter-mode mh-show-mode
-    mu4e-headers-mode mu4e-main-mode
-    rmail-edit-mode rmail-mode)
-  "List of `special' major modes with HyWikiWord highlighting and recognition.
-By default, all special modes, like Dired, are excluded.  A major mode
-included here will override its inclusion in `hywiki-exclude-major-modes'."
   :type '(list symbol)
   :group 'hyperbole-hywiki)
 
@@ -974,7 +953,7 @@ with the default state when interactively enabled set by the value of
              if off.
 
   - :all   - highlight HyWikiWords in all editable buffers except those
-             with a major mode in `hywiki-exclude-major-modes'; also
+             with a major mode in `hypb:exclude-major-modes'; also
              enable `hyperbole-mode' minor mode if off.
 
   - nil    - no highlighting, the `hywiki-mode' is disabled.
@@ -1234,9 +1213,10 @@ This does not mean `hywiki-mode' is presently active in that buffer;
 use `hywiki-active-in-current-buffer-p' for that."
   (and (not (minibufferp))
        ;; (not (and (boundp 'edebug-active) edebug-active))
-       (or (apply #'derived-mode-p hywiki-include-special-modes)
+       (or (null hypb:include-major-modes) ;; means all modes allowed
+           (apply #'derived-mode-p hypb:include-major-modes)
            (and (not (eq (get major-mode 'mode-class) 'special))
-                (not (apply #'derived-mode-p hywiki-exclude-major-modes))))))
+                (not (apply #'derived-mode-p hypb:exclude-major-modes))))))
 
 (defun hywiki-add-activity (wikiword)
   "Make WIKIWORD resume a prompted for, existing activity.
@@ -4690,14 +4670,14 @@ a HyWikiWord at point."
     (let* ((range
             (save-restriction
               ;; Limit balanced pair checks to current through next lines for speed.
-              ;; Point must be either on the opening line.
+              ;; Point must be on the opening line.
               (narrow-to-region (line-beginning-position) (line-end-position 2))
               (or (hypb:in-string-p nil t)
 		  (hargs:delimited "[\[<\(\{]" "[\]\}\)\>]" t t t))))
            (str-start (nth 1 range))
            (str-end (nth 2 range))
-           ;; Call to 'hypb:in-string-p' may have returned t
-           ;; as its first element
+           ;; Call to 'hypb:in-string-p' may have returned t as its first
+           ;; element
 	   (wikiword (when str-start
                        (if (stringp (car range))
                            (car range)

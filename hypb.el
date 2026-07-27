@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     20-Jul-26 at 01:52:50 by Bob Weiner
+;; Last-Mod:     27-Jul-26 at 10:18:42 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -69,6 +69,33 @@
 ;;; Public variables
 ;;; ************************************************************************
 
+(defcustom hypb:exclude-major-modes nil
+  "List of major modes to exclude from HyWikiWord and mail address recognition.
+Any `special' major mode, like Dired, is automatically excluded unless
+included in the list, `hypb:include-major-modes'."
+  :type '(list symbol)
+  :group 'hyperbole-commands)
+
+(defcustom hypb:include-major-modes
+  '(csv-mode
+    elfeed-search-mode elfeed-show-mode
+    eww-mode
+    fundamental-mode
+    gnus-article-edit-mode gnus-article-mode
+    kotl-mode
+    mh-letter-mode mh-show-mode
+    mu4e-headers-mode mu4e-main-mode
+    prog-mode
+    rmail-edit-mode rmail-mode
+    text-mode)
+  "List of major modes with HyWikiWord and mail address recognition.
+If the value is nil, then include all major modes.
+
+By default, all special modes, like Dired, are excluded.  A major mode
+included here will override its inclusion in `hypb:exclude-major-modes'."
+  :type '(list symbol)
+  :group 'hyperbole-commands)
+
 (defconst hypb:help-buf-prefix "*Help: Hyperbole "
   "Prefix attached to all native Hyperbole help buffer names.
 This should end with a space.")
@@ -97,11 +124,6 @@ delimiter."
   "Non-nil means `hypb:require-package' queries the user before installing it."
   :type 'boolean
   :group 'hyperbole-commands)
-
-(defvar hypb:mail-address-mode-list
-  '(fundamental-mode prog-mode text-mode)
-  "List of major modes in which mail address implicit buttons are active.
-Also active in any Decendent modes of those listed.")
 
 (defconst hypb:mail-address-tld-regexp
   (format "\\.%s\\'"
@@ -750,19 +772,24 @@ This will this install the Emacs helm package when needed."
 	     help-file))))
 
 (defun hypb:in-string-p (&optional max-lines range-flag)
-  "Return non-nil iff point is within a string and not on the closing quote.
-This is cached by buffer & modified time for speed.
+  "Return non-nil iff point is within a string.
+Point is within the string if it is after the end of the opening
+quote and before the start of the closing quote, not on it.  This
+is cached by buffer & modified time for speed.
 
 With optional MAX-LINES, an integer, match only within that many
 lines from point.  With optional RANGE-FLAG when there is a
 match, return list of (in-string-flag start-pos end-pos), where
-in-string-flag is t or nil and the positions exclude the delimiters.
+in-string-flag is t or nil and the positions exclude the delimiters;
+the difference between end and start is the length of the string.
 
-To prevent searching back to the buffer start and producing slow
-performance, this limits its count of quotes found prior to point
-to the beginning of the first line prior to point that contains a
-non-backslashed quote mark and limits string length to a maximum
-of 9000 characters.
+When no buffer edits have occurred, this uses cached results to
+determine whether in or outside of a string.  When no cache hit is
+found, to prevent searching back to the buffer start and producing
+slow performance, this limits its count of quotes found prior to
+point to the beginning of the first line prior to point that
+contains a non-backslashed quote mark and limits string length to a
+maximum of 9000 characters.
 
 Quoting conventions recognized are:
   double-quotes:                 \"str\";
@@ -807,8 +834,8 @@ Quoting conventions recognized are:
                             ;; to be used in the cache.
                             ;; To call it with the buffer narrowed to
                             ;; according to `max-lines', use:
-                            ;; (hypb:narrow-to-max-lines max-lines #'hypb:in-string-check t)
-                            (hypb:in-string-check t)))
+                            ;; (hypb:narrow-to-max-lines max-lines #'hypb:in-string-no-cache-p t)
+                            (hypb:in-string-no-cache-p t)))
                  (in-str (nth 0 entry))
                  (str-start (max (point-min) (or (nth 1 entry) 0)))
                  (str-end (min (point-max) (or (nth 2 entry) 0))))
@@ -867,17 +894,18 @@ prior point."
 			    (line-end-position (1+ max-lines)))))
       (apply func args))))
 
-(defun hypb:in-string-check (&optional range-flag)
+(defun hypb:in-string-no-cache-p (&optional range-flag)
   "Return non-nil iff point is within a string and not on the closing quote.
 
 With optional RANGE-FLAG when there is a match, return list of (in-string-flag
 start-pos end-pos), where in-string-flag is t or nil and the positions exclude
 the delimiters.
 
-To prevent searching back to the buffer start and producing slow
-performance, this limits its count of quotes found prior to point to the
-beginning of the first line prior to point that contains a non-backslashed
-quote mark and limits string length to a maximum of 9000 characters.
+This does not use caching.  To prevent searching back to the buffer start
+and producing slow performance, this limits its count of quotes found prior
+to point to the beginning of the first line prior to point that contains a
+non-backslashed quote mark and limits string length to a maximum of 9000
+characters.
 
 Quoting conventions recognized are:
   double-quotes:                 \"str\";

@@ -12,7 +12,8 @@
     *   **Section Linking**: HyWikiWord links now support internal section jumps using the **`#` character** (e.g., `WikiWord#Section-Name`), allowing direct navigation to specific Org headlines within a wiki page.
     *   **Web Publishing**: Added the `hywiki-publish-to-html` command (bound to `{C-h h h p}`) which utilizes Org mode’s publishing framework to export an entire HyWiki directory to HTML for web use.
     *   **Interactive Search**: Added `hywiki-consult-grep` (bound to `{C-h h h g}`) for interactive, live-narrowing searches across all HyWiki pages using the Consult package.
-    *   **Customizable Highlighting**: Added `hywiki-word-highlight-flag` to toggle auto-highlighting and `hywiki-exclude-major-modes` to define a list of modes where HyWikiWord recognition should be disabled.
+    *   **Customizable Highlighting**: Added `hywiki-word-highlight-flag` and
+   `hypb:include-major-modes' to toggle auto-highlighting and `hypb:exclude-major-modes` to define a list of modes where HyWikiWord recognition should be disabled.
     *   **Link Requirements**: New variable `hywiki-org-link-type-required` allows users to control whether the `hy:` prefix is required for HyWikiWords when used inside Org-style double square brackets outside of the wiki directory.
 
 *   **Smart Keys**
@@ -652,7 +653,7 @@
 
   *** hypb:mail-address-tld-regexp: Renamed from 'hypb-mail-address-tld-regexp'.
       hypb:mail-address-regexp: Renamed from 'hypb-mail-address-regexp'.
-      hypb:mail-address-mode-list: Renamed from 'mail-address-mode-list'.
+      hypb:include-major-modes: Renamed from 'mail-address-mode-list'.
         Make all of these variables have a common prefix.
 
   *** (hypb:devdocs-lookup): Install and load devdocs package and then call its
@@ -1396,7 +1397,7 @@
       pressed individually, i.e. the same as the key series, {string}.
 
   *** Mail Address Activation Everywhere: Email addresses act as implicit
-      buttons in major modes derived from `hypb:mail-address-mode-list'.  If
+      buttons in major modes derived from `hypb:include-major-modes'.  If
       you set that to nil, however, they will be recognized in all major
       modes.
 
@@ -2661,7 +2662,7 @@ are new in 2016 and you should look through them all.
   MAIL
 
     - Implicit mail address buttons are recognized in many more programming
-      modes.  See the value of `hypb:mail-address-mode-list'.
+      modes.  See the value of `hypb:include-major-modes'.
 
   VARIABLES
 
@@ -3650,7 +3651,7 @@ are new in 2016 and you should look through them all.
     - Image files may be displayed within the editor if the editor supports
       this and image-mode is available.
 
-    - The new variable, hypb:mail-address-mode-list, determines the major modes
+    - The new variable, hypb:include-major-modes, determines the major modes
       in which Action Key presses on <delimited> mail addresses start
       composing mail to that address.
 

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     23-Jul-26 at 11:38:53 by Bob Weiner
+;; Last-Mod:     27-Jul-26 at 17:22:19 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2353,7 +2353,7 @@ See helper `hywiki-display-hywiki-test' above for verifying display call."
 (ert-deftest hywiki-tests--potential-buffer-p ()
   "Verify include and exclude mode treatment in `hywiki-potential-buffer-p'.
 Verifies the behavior controlled by the variables
-`hywiki-include-special-modes' and `hywiki-exclude-major-modes'."
+`hypb:include-major-modes' and `hypb:exclude-major-modes'."
   (cl-letf (((symbol-function 'minibufferp)
              (lambda (&optional _buffer _live) t)))
     (should-not (hywiki-potential-buffer-p)))
@@ -2361,14 +2361,15 @@ Verifies the behavior controlled by the variables
     ;; Regular major-mode
     (python-mode)
     (should (hywiki-potential-buffer-p))
-    (let ((hywiki-exclude-major-modes (list 'python-mode)))
+    (let ((hypb:include-major-modes '(text-mode))
+          (hypb:exclude-major-modes '(python-mode)))
       (should-not (hywiki-potential-buffer-p))
-      (let ((hywiki-include-special-modes (list 'python-mode)))
+      (let ((hypb:include-major-modes '(python-mode)))
         (should (hywiki-potential-buffer-p))))
     ;; Special major-mode
     (dired-mode)
     (should-not (hywiki-potential-buffer-p))
-    (let ((hywiki-include-special-modes (list 'dired-mode)))
+    (let ((hypb:include-major-modes '(dired-mode)))
       (should (hywiki-potential-buffer-p)))))
 
 (provide 'hywiki-tests)
