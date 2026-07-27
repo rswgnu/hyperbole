@@ -1,5 +1,8 @@
 2026-07-27  Bob Weiner  <rsw@gnu.org>
 
+* test/hywiki-tests.el (hywiki-tests--potential-buffer-p): Fix test to
+    exclude python-mode requires it not be in the include list.
+
 * hypb.el (hypb:in-string-check): Rename to 'hypb:in-string-no-cache-p'.
 
 2026-07-26  Bob Weiner  <rsw@gnu.org>
