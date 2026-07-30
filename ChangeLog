@@ -1,5 +1,12 @@
 2026-07-30  Bob Weiner  <rsw@gnu.org>
 
+* test/demo-tests.el (demo-mail-compose-test):
+  test/hmouse-drv-tests.el (hbut-mail-address-test):
+  test/hibtypes-tests.el (ibtypes::mail-address-test, mail-address-at-p-test,
+                          mail-address-at-p-no-mail-should-fail-test): Fix to
+    use 'text-mode' rather than default 'fundamental-mode' since that no longer
+    supports mail buttons by default.
+
 * hypb.el (hypb:include-major-modes): Fix/remove slow HyWikiWord scan of
     'elfeed' package database.  Remove `fundamental-mode' as we don't
     know what kind of data will be in such a buffer, so highlighting wikiwords
