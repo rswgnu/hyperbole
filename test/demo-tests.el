@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     22-Jul-26 at 23:49:19 by Bob Weiner
+;; Last-Mod:     30-Jul-26 at 14:22:24 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -292,6 +292,7 @@
 (ert-deftest demo-mail-compose-test ()
   (unwind-protect
       (with-temp-buffer
+        (text-mode)
         (insert "receiver@mail.org")
         (goto-char 2)
         (let ((mail-user-agent 'sendmail-user-agent))

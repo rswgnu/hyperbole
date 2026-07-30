@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:45:00
-;; Last-Mod:     25-Jun-26 at 17:50:27 by Bob Weiner
+;; Last-Mod:     30-Jul-26 at 14:28:21 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -28,12 +28,14 @@
 ;; Mail address
 (ert-deftest mail-address-at-p-test ()
   (with-temp-buffer
+    (text-mode)
     (insert "someone@example.org")
     (goto-char 4)
     (should (mail-address-at-p))))
 
 (ert-deftest mail-address-at-p-no-mail-should-fail-test ()
   (with-temp-buffer
+    (text-mode)
     (insert "someone@example.test")
     (goto-char 4)
     (should (not (mail-address-at-p)))))
@@ -41,6 +43,7 @@
 (ert-deftest ibtypes::mail-address-test ()
   (unwind-protect
       (with-temp-buffer
+        (text-mode)
         (insert "receiver@mail.org")
         (goto-char 2)
         (let ((mail-user-agent 'sendmail-user-agent))

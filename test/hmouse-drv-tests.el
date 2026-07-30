@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 22:52:00
-;; Last-Mod:     28-Feb-26 at 18:04:15 by Bob Weiner
+;; Last-Mod:     30-Jul-26 at 14:23:29 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -239,6 +239,7 @@
   "Open mail from mail address."
   (unwind-protect
       (with-temp-buffer
+        (text-mode)
         (insert "receiver@mail.org")
         (goto-char 2)
         (let ((mail-user-agent 'sendmail-user-agent))
