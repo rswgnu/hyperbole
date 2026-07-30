@@ -8,6 +8,10 @@
     'hypb:exclude-major-modes' from customizations to variables, since if
     these are changed, it should be done programmatically, with understanding.
 
+* hibtypes.el (Info-node): Allow for whitespace between the closing paren
+    of an Info file name and the node, index or anchor name, as the GNU
+    project writes Info refs this way.
+
 2026-07-27  Bob Weiner  <rsw@gnu.org>
 
 * Makefile (HYPB_VERSION): Update package version to 9.1.0 as an interim

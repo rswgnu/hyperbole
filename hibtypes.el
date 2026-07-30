@@ -3,11 +3,11 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     26-Jul-26 at 21:44:19 by Bob Weiner
+;; Last-Mod:     30-Jul-26 at 11:50:17 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; Copyright (C) 1991-2025 Free Software Foundation, Inc.
+;; Copyright (C) 1991-2026 Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -1505,7 +1505,11 @@ if point is within the first line of the Info reference."
          (node-ref (and (stringp ref)
 			(setq ref (hpath:to-Info-ref ref))
                         (or (string-match-p "\\`([^\): \t\n\r\f]+)\\'" ref)
-                            (string-match-p "\\`([^\): \t\n\r\f]+)[^ :;\"'`]" ref))
+                            ;; Allow for whitespace between the closing
+                            ;; paren of an Info file name and the node,
+                            ;; index or anchor name, as the GNU project
+                            ;; writes Info refs this way.
+                            (string-match-p "\\`([^\): \t\n\r\f]+)[ \t\n\r]*[^ :;\"'`]" ref))
 			;; Below handle decoding of Info node names in
 			;; Hyperbole Help buffer lbl-key: lines,
 			;; eliminating excess underscores.
