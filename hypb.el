@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     27-Jul-26 at 10:18:42 by Bob Weiner
+;; Last-Mod:     30-Jul-26 at 13:16:39 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -69,18 +69,15 @@
 ;;; Public variables
 ;;; ************************************************************************
 
-(defcustom hypb:exclude-major-modes nil
+(defvar hypb:exclude-major-modes nil
   "List of major modes to exclude from HyWikiWord and mail address recognition.
 Any `special' major mode, like Dired, is automatically excluded unless
-included in the list, `hypb:include-major-modes'."
-  :type '(list symbol)
-  :group 'hyperbole-commands)
+included in the list, `hypb:include-major-modes'.")
 
-(defcustom hypb:include-major-modes
+(defvar hypb:include-major-modes
   '(csv-mode
     elfeed-search-mode elfeed-show-mode
     eww-mode
-    fundamental-mode
     gnus-article-edit-mode gnus-article-mode
     kotl-mode
     mh-letter-mode mh-show-mode
@@ -92,9 +89,7 @@ included in the list, `hypb:include-major-modes'."
 If the value is nil, then include all major modes.
 
 By default, all special modes, like Dired, are excluded.  A major mode
-included here will override its inclusion in `hypb:exclude-major-modes'."
-  :type '(list symbol)
-  :group 'hyperbole-commands)
+included here will override its inclusion in `hypb:exclude-major-modes'.")
 
 (defconst hypb:help-buf-prefix "*Help: Hyperbole "
   "Prefix attached to all native Hyperbole help buffer names.
