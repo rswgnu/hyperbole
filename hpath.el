@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     22-Jul-26 at 15:13:47 by Bob Weiner
+;; Last-Mod:      4-Aug-26 at 09:24:34 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -331,10 +331,11 @@ Call this function manually if mount points change after Hyperbole is loaded."
                                 mount-points-to-add)))
 		      ;; Return a plist of MSWindows path-mounted mount-point pairs.
 		      ;; Next call will raise an error if default-directory is set to
-		      ;; a URL, e.g. in RFC buffers; just ignore it and return nil in
-		      ;; such a case.
-		      (ignore-errors
-			(split-string (shell-command-to-string (format "df -a -t drvfs 2> /dev/null | sort | uniq | grep -v '%s' | sed -e 's+ .*[-%%] /+ /+g'" hpath:posix-mount-points-regexp)))))
+		      ;; a URL, e.g. in RFC buffers or if tcsh shell is used; just
+                      ;; ignore it and return nil in such a case.
+		      (condition-case ()
+			  (split-string (shell-command-to-string (format "df -a -t drvfs 2> /dev/null | sort | uniq | grep -v '%s' | sed -e 's+ .*[-%%] /+ /+g'" hpath:posix-mount-points-regexp)))
+                        (error nil)))
       ;; Sort alist of (path-mounted . mount-point) elements from shortest
       ;; to longest path so that the longest path is selected first within
       ;; 'directory-abbrev-alist' (elements are added in reverse order).
