@@ -1,3 +1,10 @@
+2026-08-04  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:cache-mswindows-mount-points): Fix 'shell-command-to-string'
+    call that had been wrapped in 'ignore-errors' but this grabbed the error
+    string as the plist result (found because errors when 'tcsh' shell is used).
+    Instead wrap with a 'condition-case' so returns nil on any error.
+
 2026-07-30  Bob Weiner  <rsw@gnu.org>
 
 * test/demo-tests.el (demo-mail-compose-test):
