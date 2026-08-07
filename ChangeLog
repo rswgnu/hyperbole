@@ -1,3 +1,23 @@
+2026-08-07  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (install-all): Add install-melpa-releases target.
+
+* install-test/melpa-releases-emacs: New repo melpa/releases.
+
+* install-test/elpa-devel-emacs:
+  install-test/elpa-emacs:
+  install-test/elpaca-emacs:
+  install-test/local-emacs:
+  install-test/melpa-emacs:
+  install-test/straight-emacs:
+  install-test/tarball-emacs: Renamed and Removed Emacs 27 check.
+
+* install-test/local-install-test.sh: Use the renamed files.
+
+* install-test/tarball-install-local.sh: Renamed.
+
+* install-test/MANIFEST: Use the renamed files.
+
 2026-08-04  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:cache-mswindows-mount-points): Fix 'shell-command-to-string'

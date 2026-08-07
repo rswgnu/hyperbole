@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     16-Jul-26 at 23:26:56 by Mats Lidell
+# Last-Mod:      4-Aug-26 at 22:23:24 by Mats Lidell
 #
 # Copyright (C) 1994-2026  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -637,9 +637,9 @@ docker-batch-tests:
 # Hyperbole install tests - Verify that hyperbole can be installed
 # using different sources. See folder "install-test"
 .PHONY: install-elpa install-elpa-devel install-tarball install-straight install-all install-local
-install-all: install-elpa install-elpa-devel install-melpa install-tarball install-straight install-local
+install-all: install-elpa install-elpa-devel install-melpa install-melpa-releases install-tarball install-straight install-local
 
-install-elpa install-elpa-devel install-tarball install-melpa install-straight install-elpaca:
+install-elpa install-elpa-devel install-tarball install-melpa install-melpa-releases install-straight install-elpaca:
 	@echo "Install Hyperbole using $@"
 	(cd ./install-test/ && ./local-install-test.sh $(subst install-,,$@))
 
