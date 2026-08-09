@@ -1,0 +1,10 @@
+;; .emacs
+
+(require 'package)
+(setq package-native-compile t)
+(unless (package-installed-p 'hyperbole)
+  (package-refresh-contents)
+  (package-install 'hyperbole))
+(hyperbole-mode 1)
+
+(message "%s" "Hyperbole successfully installed and activated")

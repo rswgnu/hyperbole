@@ -1,9 +1,9 @@
 ;; .emacs
 
-(when (< emacs-major-version 27)
-  (error "Hyperbole requires Emacs 27 or above; you are running version %d" emacs-major-version))
 (require 'package)
 (setq package-native-compile t)
+(add-to-list 'package-archives '("melpa-releases" . "https://releases.melpa.org/packages/"))
+(setq package-pinned-packages '((hyperbole . "melpa-releases")))
 (unless (package-installed-p 'hyperbole)
   (package-refresh-contents)
   (package-install 'hyperbole))

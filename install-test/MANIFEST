@@ -1,9 +1,11 @@
 --- HYPERBOLE INSTALLATION TEST CONFIGURATIONS ---
-elpa/.emacs                  - Elpa package personal configuration
-elpa-devel/.emacs            - Elpa-devel package personal configuration
-local-install-test.sh        - Run one or more test installations
-straight/.emacs              - Straight git package personal configuration
-tarball/.emacs               - Manual tarball personal configuration
-tarball/install-local.sh     - Manual tarball download and build script
-local/.emacs                 - Straight git package from local repo and branch
-elpaca/.emacs                - Elpaca package configuration (elpa-devel install)
+elpa-devel-emacs            - Elpa-devel package personal configuration
+elpa-emacs                  - Elpa package personal configuration
+elpaca-emacs                - Elpaca package configuration (elpa-devel install)
+local-emacs                 - Straight git package from local repo and branch
+local-install-test.sh       - Run one or more test installations
+melpa-emacs                 - Melpa legacy package personal configuration
+melpa-releases-emacs        - Melpa releases package personal configuration
+straight-emacs              - Straight git package personal configuration
+tarball-emacs               - Manual tarball personal configuration
+tarball-install-local.sh    - Manual tarball download and build script (elpa-devel install)
