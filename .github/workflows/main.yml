@@ -38,5 +38,11 @@ jobs:
           grep "Warning:" MAKE_BIN_OUTPUT >> $GITHUB_STEP_SUMMARY || true
           echo '```' >> $GITHUB_STEP_SUMMARY
 
+      - name: Cache emacs.d/elpa
+        uses: actions/cache@v5
+        with:
+            path: ~/.emacs.d/elpa
+            key: elpa-${{ matrix.version }}-${{ hashFiles('Makefile') }}
+
       - name: Test
         run: make test

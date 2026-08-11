@@ -1,3 +1,8 @@
+2026-08-11  Mats Lidell  <matsl@gnu.org>
+
+* .github/workflows/main.yml (jobs): Use a cache for emacs.d/elpa in
+    the CI build.
+
 2026-08-10  Mats Lidell  <matsl@gnu.org>
 
 * test/MANIFEST: New test file.
