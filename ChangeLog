@@ -1,3 +1,12 @@
+2026-08-10  Mats Lidell  <matsl@gnu.org>
+
+* test/MANIFEST: New test file.
+
+* test/hsys-denote-tests.el (hsys-denote-tests--denote-link):
+    (hsys-denote-tests--link-to-denote):
+    (hsys-denote-tests--link-at-p):
+    (hsys-denote-tests--file-at-p): Test cases.
+
 2026-08-07  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (install-all): Add install-melpa-releases target.
