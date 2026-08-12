@@ -1,5 +1,7 @@
 2026-08-11  Mats Lidell  <matsl@gnu.org>
 
+* (check-copyright): Check copyright and SPDX headers.
+
 * .github/workflows/main.yml (jobs): Use a cache for emacs.d/elpa in
     the CI build.
 
