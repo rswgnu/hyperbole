@@ -1,3 +1,6 @@
+* test/hy-test-helpers.el (hy-test-helpers:with-time): Add to time any part
+    of a function.
+
 2026-08-04  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:cache-mswindows-mount-points): Fix 'shell-command-to-string'

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     15-Jul-26 at 22:00:22 by Mats Lidell
+;; Last-Mod:     12-Aug-26 at 18:27:28 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -22,6 +22,18 @@
 (require 'hmouse-drv) ;; For `action-key'
 (require 'hywiki)     ;; For `hywiki-word-face-at-p' and (require 'hypb)
 (eval-when-compile (require 'cl-lib))
+
+(defmacro hy-test-helpers:with-time (descrip &rest body)
+  "Log a message of DESCRIP; return the time in seconds to run rest, BODY."
+  (declare (indent 1) (debug (form body)))
+  (let ((start (gensym "start"))
+        (elapsed (gensym "elapsed")))
+    `(let* ((,start (float-time))
+            (,elapsed 0.0))
+       ,@body
+       (setq ,elapsed (- (float-time) ,start))
+       (message "(%s): took %.2f seconds" ,descrip ,elapsed)
+       ,elapsed)))
 
 (defun hy-test-helpers:consume-input-events ()
   "Use `recursive-edit' to consume the events kbd-key generates."

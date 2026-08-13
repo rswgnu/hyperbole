@@ -54,6 +54,7 @@ named WikiReferent with a non-page referent type."
 
 (defconst hywiki-tests--edit-string-pairs
    [
+    ("(Non#s n)<backward-delete-char 1>" "(Non#s n")
     ("\"WikiWord#section with spaces\"<backward-delete-char 1>" "\"{WikiWord#section} with spaces") ;; shrink highlight to "{WikiWord#section}
     ("Hi#a<insert-char ?b> cd" "{Hi#ab} cd")
     ("\"WikiWord#a b c<backward-delete-char 2>" "\"{WikiWord#a} b")
@@ -74,7 +75,6 @@ named WikiReferent with a non-page referent type."
     ("WikiWord#a b c<backward-delete-char 1>" "{WikiWord#a} b ")
     ("HiHo#s " "{HiHo#s} ")
     ("HiHo#s<insert-char ? >" "{HiHo#s} ")
-    ("(Non#s n)<backward-delete-char 1>" "({Non#s} n")
     ("<kill-word 1>WikiWord unhighlighted" " unhighlighted") ;; dehighlight
     ;; WikiWord below does not highlight since could be an Info node
     ;; ibut, like "(hyperbole)WikiWord", that we don't want to trigger
@@ -85,84 +85,88 @@ named WikiReferent with a non-page referent type."
 Last two elements are optional.")
 
 (ert-deftest hywiki-tests--edit ()
-  (hywiki-tests--preserve-hywiki-mode
-    (let ((test-num 0)
-	  before
-	  after
-	  name
-	  doc
-	  markedup-before
-	  markedup-after
-	  start
-	  end
-	  hywiki-ref-positions)
-      (unwind-protect
-	  (progn
-	    (org-mode)
-	    (mapc
-	     (lambda (before-after)
-	       (condition-case err
-	           (progn
-		     (setq before (nth 0 before-after)
-		           after  (nth 1 before-after)
-		           name   (nth 2 before-after)
-		           doc    (nth 3 before-after))
-		     ;; Ensure all brace delimited HyWikiWords have their pages
-		     ;; created so their references will be highlighted.
-		     (mapc #'hywiki-add-page
-		           (delq nil
-				 (mapcar #'hywiki-get-singular-wikiword
-					 (seq-remove #'string-empty-p
-						     (mapcar #'string-trim
-							     (hywiki-tests--get-brace-strings after))))))
-		     (unwind-protect
-			 (progn
-		           (pop-to-buffer (current-buffer))
-		           (erase-buffer)
-		           (hywiki-tests--insert-by-char before)
-		           (hywiki-tests--interpolate-buffer)
-		           ;; Markup before string in temp buffer
-		           ;; Surround any HyWikiWord refs with braces to match after string.
-		           (setq hywiki-ref-positions (hywiki-get-reference-positions))
-		           (dolist (start-end hywiki-ref-positions)
-			     (setq start (car start-end)
-			           end (cdr start-end))
-			     (goto-char end)
-			     (hywiki-tests--insert "}")
-			     (goto-char start)
-			     (hywiki-tests--insert "{"))
-		           ;; Store the buffer string for comparison
-		           (setq markedup-before (buffer-string))
-		           ;; Markup after string
-		           (erase-buffer)
-		           (hywiki-tests--insert after)
-		           (hywiki-tests--interpolate-buffer)
-		           (setq markedup-after (buffer-string))
-		           ;; Compare markedup-before to markedup-after
-		           (if (or name doc)
+  (hy-test-helpers:with-time "hywiki-tests--edit"
+    (hywiki-tests--preserve-hywiki-mode
+      (let ((test-num 0)
+	    before
+	    after
+	    name
+	    doc
+	    markedup-before
+	    markedup-after
+	    start
+	    end
+	    hywiki-ref-positions)
+        (unwind-protect
+	    (progn
+	      (org-mode)
+	      (mapc
+	       (lambda (before-after)
+	         (condition-case err
+                     (hy-test-helpers:with-time (format "Test #%d" test-num)
+		       (cl-incf test-num)
+		       (setq before (nth 0 before-after)
+		             after  (nth 1 before-after)
+		             name   (nth 2 before-after)
+		             doc    (nth 3 before-after))
+                       (message (format "Test #%d: At pos %d, action \"%s\", result \"%s\", name \"%s\", doc \"%s\""
+                                        test-num (point) before after name doc))
+		       ;; Ensure all brace delimited HyWikiWords expected in
+                       ;; `after' string have their pages created so their
+                       ;; references will be highlighted.
+		       (mapc #'hywiki-add-page
+		             (delq nil
+				   (mapcar #'hywiki-get-singular-wikiword
+					   (seq-remove #'string-empty-p
+						       (mapcar #'string-trim
+							       (hywiki-tests--get-brace-strings after))))))
+		       (unwind-protect
+			   (progn
+		             (pop-to-buffer (current-buffer))
+		             (erase-buffer)
+		             (hywiki-tests--insert-by-char before)
+		             (hywiki-tests--interpolate-buffer)
+		             ;; Markup before string in temp buffer
+		             ;; Surround any HyWikiWord refs with braces to match after string.
+		             (setq hywiki-ref-positions (hywiki-get-reference-positions))
+		             (dolist (start-end hywiki-ref-positions)
+			       (setq start (car start-end)
+			             end (cdr start-end))
+			       (goto-char end)
+			       (hywiki-tests--insert "}")
+			       (goto-char start)
+			       (hywiki-tests--insert "{"))
+		             ;; Store the buffer string for comparison
+		             (setq markedup-before (buffer-string))
+		             ;; Markup after string
+		             (erase-buffer)
+		             (hywiki-tests--insert after)
+		             (hywiki-tests--interpolate-buffer)
+		             (setq markedup-after (buffer-string))
+		             ;; Compare markedup-before to markedup-after
+		             (if (or name doc)
+			         (should (equal (list :test-num test-num
+						      :markedup (format "%S" markedup-before)
+						      :test-name name :doc doc
+						      :before before :after after)
+					        (list :test-num test-num
+						      :markedup (format "%S" markedup-after)
+						      :test-name name :doc doc
+						      :before before :after after)))
 			       (should (equal (list :test-num test-num
-						    :markedup (format "%S" markedup-before)
-						    :test-name name :doc doc
-						    :before before :after after)
+					            :markedup (format "%S" markedup-before)
+					            :before before :after after)
 					      (list :test-num test-num
-						    :markedup (format "%S" markedup-after)
-						    :test-name name :doc doc
-						    :before before :after after)))
-			     (should (equal (list :test-num test-num
-					          :markedup (format "%S" markedup-before)
-					          :before before :after after)
-					    (list :test-num test-num
-					          :markedup (format "%S" markedup-after)
-					          :before before :after after))))
-		           (cl-incf test-num))
-		       (goto-char (point-min))))
-		 (error (message "%s ---- %S" err (list :markedup markedup-before
-					              :test-num test-num
-					              :before before :after after)))))
-	     hywiki-tests--edit-string-pairs))
-	(let ((default-directory hywiki-directory))
-          (hy-delete-files-and-buffers
-          '("AI.org" "FAI.org" "Hi.org" "HiHo.org" "HyWiki.org" "HyWikiW.org" "HyWikiWord.org" "MyWikiWord.org" "Non.org" "Wiki.org")))))))
+					            :markedup (format "%S" markedup-after)
+					            :before before :after after)))))
+		         (goto-char (point-min))))
+		   (error (message "%s ---- %S" err (list :markedup markedup-before
+					                  :test-num test-num
+					                  :before before :after after)))))
+	       hywiki-tests--edit-string-pairs))
+	  (let ((default-directory hywiki-directory))
+            (hy-delete-files-and-buffers
+             '("AI.org" "FAI.org" "Hi.org" "HiHo.org" "HyWiki.org" "HyWikiW.org" "HyWikiWord.org" "MyWikiWord.org" "Non.org" "Wiki.org"))))))))
 
 (defun hywiki-tests--get-brace-strings (s)
   "Return the substrings in S delimited by curly braces {…}, excluding braces.
