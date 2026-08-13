@@ -1,3 +1,11 @@
+2026-08-12  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-get-referent-hasht): Compute 'hywiki--any-wikiword-regexp-list'
+    and highlight wikiwords only when the wikiword hash table is non-empty,
+    to fix bug #81594.
+  test/hywiki-tests.el (hywiki-tests--bug-81594-file,
+                        hywiki-tests--bug-81594-buffer): Add tests for this.
+
 * test/hy-test-helpers.el (hy-test-helpers:with-time): Add to time any part
     of a function.
 

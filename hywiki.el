@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     27-Jul-26 at 10:43:32 by Bob Weiner
+;; Last-Mod:     12-Aug-26 at 23:08:13 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2831,7 +2831,9 @@ regexps of wikiwords, if the hash table is out-of-date."
 	  hywiki--referent-hasht
 	;; Rebuild referent hash table
 	(hywiki-make-referent-hasht))
-    (unless hywiki--any-wikiword-regexp-list
+    (when (and (null hywiki--any-wikiword-regexp-list)
+               hywiki--referent-hasht
+               (not (hash-empty-p hywiki--referent-hasht)))
       ;; Compute these expensive regexps (matching 50
       ;; HyWikiWords at a time) only if the set of
       ;; HyWikiWords changed in `hywiki-directory'.

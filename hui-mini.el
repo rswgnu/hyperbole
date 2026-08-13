@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     19-Jul-26 at 09:57:15 by Bob Weiner
+;; Last-Mod:      9-Aug-26 at 10:46:08 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1146,7 +1146,7 @@ With a prefix arg, insert a HyWikiWord instead.")
 	("org-roam-Find"              hyrolo-org-roam)
 	;; ("recent-Files"               recentf-open-files)
 	("Global-Buttons"             (find-file (expand-file-name hbmap:filename hbmap:dir-user)))
-	;; ("Helm"                       (menu . helm) "Display Hyperbole helm control menu")
+	;; ("Home or Hyperbole"       (menu . ...))
 	;; ("I")
 	("Jump-to-Websites"           webjump)
 	("Koutlines"                  hui:menu-to-personal-section)

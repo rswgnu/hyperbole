@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     27-Jul-26 at 17:22:19 by Bob Weiner
+;; Last-Mod:     12-Aug-26 at 23:14:43 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2375,6 +2375,47 @@ Verifies the behavior controlled by the variables
     (should-not (hywiki-potential-buffer-p))
     (let ((hypb:include-major-modes '(dired-mode)))
       (should (hywiki-potential-buffer-p)))))
+
+(ert-deftest hywiki-tests--bug-81594-file ()
+  "Ensure fix for bug#81594 that scrolled window when typing a HyWikiWord."
+  ;; We can't use `hywiki-tests--preserve-hywiki-mode' since the
+  ;; `hywiki-directory' must be empty.
+  (skip-unless (not noninteractive))
+  (let* ((prior-hywiki-mode hywiki-mode)
+         (hywiki-directory (make-temp-file "hywiki" t))
+         (file (make-temp-file "hypb")))
+    (unwind-protect
+        (progn
+          (hywiki-mode :all)
+          (find-file file)
+          (let ((start (window-start)))
+            (hywiki-tests--insert "\n\n\nC")
+            (hywiki-tests--command-execute #'self-insert-command 1 ?i)
+            (should (= start (window-start)))))
+      (hywiki-mode prior-hywiki-mode)
+      (hy-delete-file-and-buffer file)
+      (hy-delete-dir-and-buffer hywiki-directory))))
+
+(ert-deftest hywiki-tests--bug-81594-buffer ()
+  "Ensure fix for bug#81594 that scrolled window when typing a HyWikiWord."
+  ;; We can't use `hywiki-tests--preserve-hywiki-mode' since the
+  ;; `hywiki-directory' must be empty.
+  (skip-unless (not noninteractive))
+  (let* ((prior-hywiki-mode hywiki-mode)
+         (hywiki-directory (make-temp-file "hywiki" t)))
+    (unwind-protect
+        (progn
+          (hywiki-mode :all)
+          (with-temp-buffer
+            (set-window-buffer (selected-window) (current-buffer))
+            (let ((start (window-start)))
+              (sit-for 0)
+              (hywiki-tests--insert "\n\n\nC")
+              (hywiki-tests--command-execute #'self-insert-command 1 ?i)
+              (sit-for 0)
+              (should (= start (window-start)))))))
+      (hywiki-mode prior-hywiki-mode)
+      (hy-delete-dir-and-buffer hywiki-directory)))
 
 (provide 'hywiki-tests)
 
