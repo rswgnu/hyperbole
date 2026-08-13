@@ -9,6 +9,42 @@
 * test/hy-test-helpers.el (hy-test-helpers:with-time): Add to time any part
     of a function.
 
+2026-08-11  Mats Lidell  <matsl@gnu.org>
+
+* (check-copyright): Check copyright and SPDX headers.
+
+* .github/workflows/main.yml (jobs): Use a cache for emacs.d/elpa in
+    the CI build.
+
+2026-08-10  Mats Lidell  <matsl@gnu.org>
+
+* test/MANIFEST: New test file.
+
+* test/hsys-denote-tests.el (hsys-denote-tests--denote-link):
+    (hsys-denote-tests--link-to-denote):
+    (hsys-denote-tests--link-at-p):
+    (hsys-denote-tests--file-at-p): Test cases.
+
+2026-08-07  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (install-all): Add install-melpa-releases target.
+
+* install-test/melpa-releases-emacs: New repo melpa/releases.
+
+* install-test/elpa-devel-emacs:
+  install-test/elpa-emacs:
+  install-test/elpaca-emacs:
+  install-test/local-emacs:
+  install-test/melpa-emacs:
+  install-test/straight-emacs:
+  install-test/tarball-emacs: Renamed and Removed Emacs 27 check.
+
+* install-test/local-install-test.sh: Use the renamed files.
+
+* install-test/tarball-install-local.sh: Renamed.
+
+* install-test/MANIFEST: Use the renamed files.
+
 2026-08-04  Bob Weiner  <rsw@gnu.org>
 
 * hpath.el (hpath:cache-mswindows-mount-points): Fix 'shell-command-to-string'

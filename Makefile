@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     16-Jul-26 at 23:26:56 by Mats Lidell
+# Last-Mod:     11-Aug-26 at 23:39:12 by Mats Lidell
 #
 # Copyright (C) 1994-2026  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -637,9 +637,9 @@ docker-batch-tests:
 # Hyperbole install tests - Verify that hyperbole can be installed
 # using different sources. See folder "install-test"
 .PHONY: install-elpa install-elpa-devel install-tarball install-straight install-all install-local
-install-all: install-elpa install-elpa-devel install-melpa install-tarball install-straight install-local
+install-all: install-elpa install-elpa-devel install-melpa install-melpa-releases install-tarball install-straight install-local
 
-install-elpa install-elpa-devel install-tarball install-melpa install-straight install-elpaca:
+install-elpa install-elpa-devel install-tarball install-melpa install-melpa-releases install-straight install-elpaca:
 	@echo "Install Hyperbole using $@"
 	(cd ./install-test/ && ./local-install-test.sh $(subst install-,,$@))
 
@@ -728,3 +728,20 @@ coverage:
 	--eval "(load-file \"test/hy-test-dependencies.el\")" \
 	--eval "(load-file \"test/hy-test-coverage.el\")" \
 	--eval "(hy-test-coverage-file \"${file}\" \"${COVERAGE_TESTSPEC}\")"
+
+# List files missing copyright headers.  ELPA fails builds where
+# .el-files does not contain the proper copyright.  The SPDX header
+# might not be checked for but we check for that here as well anyway.
+.PHONY: check-copyright
+check-copyright:
+	@missing="$$( \
+	  { \
+	    git grep -L 'Copyright.*Free Software Foundation' -- '*.el' ':(exclude)**.dir-locals.el'; \
+	    git grep -L 'SPDX-License-Identifier: GPL-3.0-or-later' -- '*.el' ':(exclude)**.dir-locals.el' ; \
+	  } | sort -u \
+	)"; \
+	if test -n "$$missing" ; then \
+	  echo "Files missing copyright statement:"; \
+	  echo "$$missing"; \
+	  exit 1; \
+	fi

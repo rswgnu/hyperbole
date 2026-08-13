@@ -1,8 +1,5 @@
 ;; .emacs
 
-(when (< emacs-major-version 27)
-  (error "Hyperbole requires Emacs 27 or above; you are running version %d" emacs-major-version))
-
 ;; elpaca
 (defvar elpaca-installer-version 0.5)
 (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
