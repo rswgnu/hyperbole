@@ -1,3 +1,10 @@
+2026-08-14  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (docker-latest, docker-run-latest): Update image if needed
+    before running the docker job.
+    (docker, docker-run): Remove dependency on update so targets can
+    be used with no automated update check.
+
 2026-08-11  Mats Lidell  <matsl@gnu.org>
 
 * (check-copyright): Check copyright and SPDX headers.
