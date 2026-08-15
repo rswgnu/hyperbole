@@ -24,7 +24,6 @@
 (require 'el-mock)
 (require 'hy-test-helpers)
 
-(unless t
 (ert-deftest hypb:installation-type-test ()
   "Verify installation type alternatives."
   ;; straight.el package install -- hyperbole gnu-elpa-mirror master 56cd3d8 2022-02-05
@@ -148,7 +147,7 @@ Verifies it raises a 'need to install' package manager error."
     (mock (hypb:ensure-dependency 'package) => nil)
     (let ((err (should-error (hypb:require-package 'package) :type 'error)))
       (should (string-search "could not be found" (cadr err))))))
-)
+
 ;; This file can't be byte-compiled without the `el-mock' package (because of
 ;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.
 ;;  Local Variables:
