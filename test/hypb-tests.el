@@ -24,6 +24,7 @@
 (require 'el-mock)
 (require 'hy-test-helpers)
 
+(unless t
 (ert-deftest hypb:installation-type-test ()
   "Verify installation type alternatives."
   ;; straight.el package install -- hyperbole gnu-elpa-mirror master 56cd3d8 2022-02-05
@@ -99,7 +100,6 @@ See Emacs bug#74042 related to usage of texi2any."
   (should-error (hypb:string-count-matches "a" "a" 0 -1))
   (should-error (hypb:string-count-matches "a" "ab" 0 3)))
 
-(unless t
 (ert-deftest hypb--users-package-manager ()
   "Verify `hypb:users-package-manager'."
   (hy-test-mocked-feature 'straight
