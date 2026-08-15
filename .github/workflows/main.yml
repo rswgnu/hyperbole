@@ -39,4 +39,4 @@ jobs:
           echo '```' >> $GITHUB_STEP_SUMMARY
 
       - name: Test
-        run: make test test=hyrolo-tests--fgrep-and-goto-next-visible-md-heading
+        run: make test test=hyrolo-tests
