@@ -46,8 +46,8 @@
     result))
 
 ;; Apply advice only for Emacs master branch version used in CI
-(unless (version< emacs-version "32.0.50")
-  (advice-add 'package-install :around #'hypb:package-install-advice-for-retry))
+;; (unless (version< emacs-version "32.0.50")
+;;  (advice-add 'package-install :around #'hypb:package-install-advice-for-retry))
 
 (declare-function markdown-ts-mode "ext:markdown-ts-mode")
 
