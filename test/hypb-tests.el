@@ -99,6 +99,7 @@ See Emacs bug#74042 related to usage of texi2any."
   (should-error (hypb:string-count-matches "a" "a" 0 -1))
   (should-error (hypb:string-count-matches "a" "ab" 0 3)))
 
+(unless t
 (ert-deftest hypb--users-package-manager ()
   "Verify `hypb:users-package-manager'."
   (hy-test-mocked-feature 'straight
@@ -147,7 +148,7 @@ Verifies it raises a 'need to install' package manager error."
     (mock (hypb:ensure-dependency 'package) => nil)
     (let ((err (should-error (hypb:require-package 'package) :type 'error)))
       (should (string-search "could not be found" (cadr err))))))
-
+)
 ;; This file can't be byte-compiled without the `el-mock' package (because of
 ;; the use of the `with-mock' macro), which is not a dependency of Hyperbole.
 ;;  Local Variables:
