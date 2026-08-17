@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     27-Jul-26 at 17:40:26 by Bob Weiner
+@c Last-Mod:     15-Aug-26 at 22:51:39 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,8 +30,8 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED July 27, 2026
-@set UPDATED-MONTH July 2026
+@set UPDATED August 15, 2026
+@set UPDATED-MONTH August 2026
 @set EDITION 9.1.0
 @set VERSION 9.1.0
 
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.1.0
-Printed July 27, 2026.
+Printed August 15, 2026.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -213,7 +213,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.1.0
-July 27, 2026 @c AUTO-REPLACE-ON-SAVE
+August 15, 2026 @c AUTO-REPLACE-ON-SAVE
 
 
   Published by the Free Software Foundation, Inc.
@@ -1026,16 +1026,22 @@ on a pathname to display the associated file or directory.
 @cindex enable Hyperbole
 @cindex disable Hyperbole
 @cindex Hyperbole minibuffer menu
+@cindex minibuffer menu help
+@cindex menu help
+@cindex help, minibuffer menu
 @kindex C-h h
 @kindex C-h h X
 @kindex C-h h Q
-@bkbd{C-h h} enables Hyperbole if it has been disabled and displays a
-Hyperbole menu in the minibuffer for quick keyboard or mouse-based
-selection.  Select an item from this menu by typing the item's first
-capital letter.  Use @bkbd{Q} (note this is capitalized) to quit from
-the minibuffer menu while leaving Hyperbole enabled.  Use @bkbd{X}
-(note this is capitalized) to quit from the minibuffer menu and
-disable Hyperbole's minor mode.
+@kindex C-h h ?
+@bkbd{C-h h} enables Hyperbole if it has been disabled and displays
+the top-level Hyperbole menu in the minibuffer for quick keyboard or
+mouse-based selection.  Within any Hyperbole minibuffer menu, select
+an item by typing the item's first capital letter.  Use @bkbd{Q} (note
+this is capitalized) to quit from the minibuffer menu while leaving
+Hyperbole enabled.  Use @bkbd{X} (note this is capitalized) to quit
+from the minibuffer menu and disable Hyperbole's minor mode.  Use
+@bkbd{?} to get help on all of the items in the current menu.  A
+second @bkbd{?} will hide this help.
 
 Use @bkbd{C-h h d d} for an interactive demonstration of standard
 Hyperbole button capabilities.
@@ -4313,10 +4319,15 @@ sequence.  @xref{Binding Minibuffer Menu Items}.
 @cindex starting Hyperbole
 @cindex Hyperbole, starting
 @cindex Hyperbole main menu
-The top-level Hyperbole minibuffer menu is invoked from a key given in your
-@file{hyperbole.el} file (by default, @bkbd{C-h h}) or with a click
-of the Action Mouse Key in the minibuffer when it is inactive.  It should
-look like this:
+The top-level Hyperbole minibuffer menu is invoked from a key given in
+your @code{use-package} configuration or if not specified, defaults to
+@bkbd{C-h h}).  A click of the Action Mouse Key in the minibuffer when
+it is inactive will also bring up this menu and continued clicks
+select items.  Use @bkbd{?} to toggle showing/hiding help for all of
+the current menu items.
+
+@noindent
+The minibuffer menu should look like this:
 
 @smallexample
 @noindent

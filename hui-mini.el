@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:      9-Aug-26 at 10:46:08 by Bob Weiner
+;; Last-Mod:     15-Aug-26 at 21:51:42 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -59,6 +59,8 @@
 (defvar hui:menu-exit-hyperbole  "X"
   "*Upper case character string which exits from/disables Hyperbole mode.
 Also exits any active minibuffer menu.")
+(defvar hui:menu-help             "?"
+  "*Character string which displays help for an entire Hyperbole minibuffer menu.")
 (defvar hui:menu-select          "\C-m"
   "*Character string which selects the Hyperbole menu item at point.")
 (defvar hui:menu-quit            "Q"
@@ -192,7 +194,7 @@ documentation, not the full text."
 				         (cdr (assq menu (or menu-list hui:menus)))))
 		              (hypb:error "(hui:menu-act): Invalid menu symbol arg: `%s'"
 				          menu)))
-      (cond ((and (consp (setq act-form (hui:menu-choose menu-alist doc-flag help-string-flag)))
+      (cond ((and (consp (setq act-form (hui:menu-choose menu menu-alist doc-flag help-string-flag)))
 		  (cdr act-form)
 		  (symbolp (cdr act-form)))
 	     ;; Display another menu
@@ -219,6 +221,57 @@ documentation, not the full text."
 	    (t (setq show-menu nil))))
     rtn))
 
+(defun hui:menu-display-help (&optional help-str)
+  "Display optional HELP-STR for a Hyperbole minibuffer menu.
+If HELP-STR is nil, display help for the current menu.  If HELP-STR is
+already displayed in a help window, instead quit from the help window."
+  (interactive)
+  (unless (stringp help-str)
+    (setq help-str (hui:menu-get-help-string)))
+  (hui:menu-help help-str))
+
+(defun hui:menu-get-help-string (&optional menu menu-alist)
+  "Return key and short doc for items in optional MENU symbol and MENU-ALIST.
+MENU and MENU-ALIST are Hyperbole minibuffer menu internal constructs.
+If not given, the top level Hyperbole menu is used."
+  (unless menu-alist
+    (setq menu-alist (or (cdr (assq (if (and menu (symbolp menu)) menu 'hyperbole)
+				    hui:menus))
+			 (hypb:error "(hui:menu-item): Invalid menu symbol arg: `%s'"
+				     menu))))
+  ;; Remove the first menu name element
+  (setq menu-alist (cdr menu-alist))
+  (let* ((name-max (apply #'max (mapcar #'length (delq nil (mapcar #'car menu-alist)))))
+
+         (action-max (apply #'max (mapcar #'length (delq nil (mapcar (lambda (item)
+                                                                       (prin1-to-string
+                                                                        (cadr item)))
+                                                                     menu-alist)))))
+         (doc-lines  (mapcar
+                      (lambda (item)
+                        (or (seq-take-while (lambda (c) (/= c ?\n)) (caddr item))
+                            ""))
+                      menu-alist))
+         (doc-max    (apply #'max (mapcar #'length doc-lines)))
+         ;; Produce a tabular output format based on the max length of each
+         ;; column, left aligned (right padded) with 2 spaces separating
+         ;; each column
+         (line-format (format "%%c %%-%ds %%-%ds %%-%ds"
+                              (1+ name-max) (1+ action-max) (1+ doc-max)))
+         key
+	 name
+	 action
+	 doc-line)
+    (mapconcat (lambda (menu-item)
+		 (setq name (nth 0 menu-item)
+		       key (downcase (hui:menu-item-key name))
+		       action (nth 1 menu-item)
+		       doc-line (car doc-lines)
+                       doc-lines (cdr doc-lines))
+		 (string-trim (format line-format key name action doc-line)
+			      nil))
+	       menu-alist "\n")))
+
 (defun hui:get-keys ()
   "Invoke the Hyperbole minibuffer menu and return menu keys pressed.
 Return nil when already in a Hyperbole minibuffer menu."
@@ -244,7 +297,7 @@ the menu list structure."
 				         (cdr (assq menu (or menu-list hui:menus)))))
 		              (hypb:error "(hui:menu-get-keys): Invalid menu symbol arg: `%s'"
 			                  menu)))
-      (cond ((and (consp (setq act-form (hui:menu-choose menu-alist)))
+      (cond ((and (consp (setq act-form (hui:menu-choose menu menu-alist)))
 		  (cdr act-form)
 		  (symbolp (cdr act-form)))
 	     ;; Display another menu
@@ -329,6 +382,7 @@ instead returns the one line help string for the key sequence."
 
 (defalias 'hui:menu-quit   #'hui:menu-enter)
 (defalias 'hui:menu-abort  #'hui:menu-enter)
+(defalias 'hui:menu-help   #'hui:menu-enter)
 (defalias 'hui:menu-top    #'hui:menu-enter)
 (defalias 'hui:menu-select #'hui:menu-enter)
 
@@ -357,30 +411,39 @@ If on the menu name prefix or the last item, move to the first item."
 	(setq arg (1- arg))))))
 
 (defun hui:menu-help (help-str)
-  "Display HELP-STR in a small window at the bottom of the selected frame."
-  (let* ((window-min-height 2)
-	 (owind (selected-window))
-	 (buf-name (hypb:help-buf-name "Menu")))
-    (unwind-protect
-	(progn
-	  (save-window-excursion
-	    (hkey-help-show buf-name)) ;; Needed to save wconfig.
-	  (if (eq (selected-window) (minibuffer-window))
-	      (other-window 1))
-	  (and (= (window-top-line) 0)
-	       (< (- (frame-height) (window-height)) 2)
-	       (split-window-vertically nil))
-	  (select-window (hui:bottom-window))
-	  (switch-to-buffer (get-buffer-create buf-name))
-	  (setq buffer-read-only nil)
-	  (erase-buffer)
-	  (insert "\n" help-str)
-	  (set-buffer-modified-p nil)
-	  (let ((neg-shrink-amount (- (+ 3 (hypb:char-count ?\n help-str)))))
-	    (if (window-resizable-p (selected-window) neg-shrink-amount)
-		(shrink-window (+ (window-height) neg-shrink-amount)))))
-      (if (eq owind (minibuffer-window))
-	  (select-window owind)))))
+  "Display HELP-STR in a small window at the bottom of the selected frame.
+If HELP-STR is already displayed in a help window, instead quit from the
+help window."
+  (let ((buf-name (hypb:help-buf-name "Menu"))
+        help-window)
+    (if (and (equal help-str hui:menu-last-help-string)
+             (setq help-window (get-buffer-window buf-name 'visible)))
+        ;; When the same `help-str' is already displayed in a window, then
+        ;; restore the prior window configuration
+        (hkey-help-hide nil help-window)
+      ;; Otherwise, display `help-str'
+      (let* ((window-min-height 2)
+	     (owind (selected-window)))
+        (unwind-protect
+	    (progn
+	      (save-window-excursion
+	        (hkey-help-show buf-name)) ;; Needed to save wconfig.
+	      (when (eq (selected-window) (minibuffer-window))
+	        (other-window 1))
+	      (and (= (window-top-line) 0)
+	           (< (- (frame-height) (window-height)) 2)
+	           (split-window-vertically nil))
+	      (select-window (hui:bottom-window))
+	      (when (switch-to-buffer (get-buffer-create buf-name))
+	        (setq buffer-read-only nil)
+	        (erase-buffer)
+	        (insert help-str)
+	        (set-buffer-modified-p nil)
+                (setq hui:menu-last-help-string help-str)
+                (fit-window-to-buffer)
+                (goto-char (point-min))))
+          (when (eq owind (minibuffer-window))
+	    (select-window owind)))))))
 
 (defun hui:menu-item-key (item)
   "Return the first capital letter in ITEM or if none, its first character."
@@ -445,8 +508,8 @@ Allows custom handling of menu lines before selecting an item."
   (read-from-minibuffer prompt initial-contents keymap read
 			hist default-value inherit-input-method))
 
-(defun hui:menu-choose (menu-alist &optional doc-flag help-string-flag)
-  "Prompt user to choose the first capitalized char of any item from MENU-ALIST.
+(defun hui:menu-choose (menu &optional menu-alist doc-flag help-string-flag)
+  "Prompt for the first capitalized item char from MENU or optional MENU-ALIST.
 Return the Lisp form associated with the selected item, which may be
 another menu.
 
@@ -465,11 +528,12 @@ documentation, not the full text."
 	 (exit-char (string-to-char hui:menu-exit-hyperbole))
 	 (quit-char (string-to-char hui:menu-quit))
 	 (abort-char (string-to-char hui:menu-abort))
+	 (help-char  (string-to-char hui:menu-help))
 	 (top-char  (string-to-char hui:menu-top))
 	 (item-keys (hui:menu-item-keys menu-alist))
 	 ;; 0 matches an empty string return, no selection
 	 (keys (apply #'list 0 1 select-char exit-char quit-char abort-char
-		      top-char item-keys))
+		      help-char top-char item-keys))
 	 (key 0)
 	 (hargs:reading-type 'hmenu))
     (while (not (memq (setq key (upcase
@@ -480,6 +544,7 @@ documentation, not the full text."
       (beep t)
       (setq hargs:reading-type 'hmenu)
       (discard-input))
+
     ;; Here, the minibuffer has been exited, and `key' has been set to one of:
     ;;   a menu item first capitalized character code;
     ;;   a menu command character code;
@@ -501,6 +566,11 @@ documentation, not the full text."
 	   (set--this-command-keys (hui:menu-this-command-keys hui:menu-abort))
 	   (setq this-command #'hui:menu-abort)
 	   nil)
+	  ((eq key help-char)
+           (hui:menu-display-help (hui:menu-get-help-string nil menu-alist))
+	   (set--this-command-keys (hui:menu-this-command-keys hui:menu-help))
+	   (setq this-command #'hui:menu-help)
+           (cons 'menu menu))
 	  ((and (eq key 1) (listp (car menu-alist))
 		(stringp (caar menu-alist))
 		(string-match "^Hy[.0-9]*[a-zA-Z0-9]*>$" (caar menu-alist)))
@@ -511,7 +581,7 @@ documentation, not the full text."
 	   (setq this-command #'hmouse-update-smart-keys)
 	   nil)
 	  ((memq key (list 1 top-char))
-	   (setq hui:menu-keys (hui:menu-this-command-keys (char-to-string top-char)))
+	   (setq hui:menu-keys (hui:menu-this-command-keys hui:menu-top))
 	   '(menu . hyperbole))
 	  ((and (eq key select-char)
 		(save-excursion
@@ -562,7 +632,7 @@ Two additional optional arguments determine the items from which key
 selects, MENU and MENU-ALIST are Hyperbole minibuffer menu internal
 constructs.  If not given, the top level Hyperbole menu is used."
   (unless menu-alist
-    (setq menu-alist (or (cdr (assq (or (and (symbolp menu) menu) 'hyperbole)
+    (setq menu-alist (or (cdr (assq (if (symbolp menu) menu 'hyperbole)
 				    hui:menus))
 			 (hypb:error "(hui:menu-item): Invalid menu symbol arg: `%s'"
 				     menu))))
@@ -748,6 +818,9 @@ command instead.  Typically prevents clashes over {\\`C-c' /}."
   (define-key hui:menu-mode-map "\C-i"                  #'hui:menu-forward-item) ;; TAB
   (define-key hui:menu-mode-map [backtab]               #'hui:menu-backward-item) ;; Shift-TAB
   (define-key hui:menu-mode-map "\M-\C-i"               #'hui:menu-backward-item)) ;; M-TAB
+
+(defvar hui:menu-last-help-string ""
+  "Any last Hyperbole minibuffer menu help displayed via {?} or {C-u M-RET}.")
 
 ;;; ************************************************************************
 ;;; Hyperbole Minibuffer Menus

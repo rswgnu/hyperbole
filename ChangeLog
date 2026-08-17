@@ -1,3 +1,66 @@
+2026-08-17  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--hywiki-create-page--adds-file-in-wiki-folder,
+                        hywiki-tests--hywiki-create-page--adds-no-wiki-word-fails)
+                        hywiki-tests--reference-to-referent,
+                        hywiki-tests--get-page/wikiword-list):
+    Update to use 'hywiki-tests--preserve-hywiki-mode'.
+                       (hywiki-tests--preserve-hywiki-mode): Replace (sit-for 0.01)
+      with (redisplay t) so tests will work within keyboard macros where 'sit-for'
+      is ineffective.
+* hywiki.el (hywiki-file-suffix): Rename to 'hywiki-file-extension' to avoid
+    terminology clash with #suffix in references.
+
+* test/hywiki-tests.el (hywiki-tests--preserve-hywiki-mode): Rewrite so that
+    'hywiki-mode' is enabled and 'wiki-page' is set after setting the current
+    buffer to fix null variable values within 'body'.
+
+2026-08-16  Bob Weiner  <rsw@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--preserve-hywiki-mode): Ensure 'wiki-page'
+    is expanded into current 'hywiki-directory' to fix improper resolution in
+    'default-directory'.  Ensure `hywiki-directory' ends with a dir sep char.
+
+* hywiki.el (hywiki-cache-save): Change 'save-buffer' to 'hypb:save-buffer-silently'.
+    Replace 'save-window-excursion' with 'save-excursion' to eliminate any display
+    change.
+
+2026-08-15  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-create-referent, hywiki-add-page): Fix to add 'wikiword'
+    suffix to returned referent.
+            (hywiki-display-referent): This fixes referents in this function
+    to always include the wikiword suffix.
+
+* hmouse-drv.el (hkey-help-show): Add ? in addition to q as quit and
+    restore window config in the help buffer, for consistency with
+    Hyperbole minibuffer menus.
+  	        (hkey-help-show): Fix failure to match to visible window because
+    'memq t' was trying to match to t when 'string-match-p' was returning the
+    position of the match.  Fix by eliminating 'memq t' and using 'seq-filter'
+    instead.
+                (hkey-help-hide): Remove saved wconfig after it is restored.
+  hui-mini.el (hui:menu-help, hui:menu-choose): Add and use ? in minibuffer
+  menus to display a buffer with help for each current menu item.
+              (hui:menu-last-help-string): Add and use in 'hui:menu-help'
+    and '(hui:menu-display-help' to determine whether to toggle display
+    of help window or not.
+              (hui:menu-choose): Add menu symbol as required first arg
+    and make 2nd arg, 'menu-alist', optional.  'menu' may be null if
+    'menu-alist' is given.
+  man/hyperbole.texi (Invocation): Add doc for {?} minibuffer menu help key.
+
+2026-08-14  Bob Weiner  <rsw@gnu.org>
+
+* hui-mini.el (hui:menu-display-help, hui:menu-get-help-string): Add.
+              (hui:menu-help): Call 'fit-window-to-buffer' for help buffer
+    rather than trying to enlarge or shrink relatively.
+
+* test/hywiki-tests.el (hywiki-tests--preserve-hywiki-mode): Don't run (hywiki-mode)
+    when already set to the newly specified mode; this prevents a cascade of
+    wikiword highlighting across all buffers when not necessary.  Also do this only
+    after temp buffers and files are killed, not before.
+
 2026-08-12  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-get-referent-hasht): Compute 'hywiki--any-wikiword-regexp-list'

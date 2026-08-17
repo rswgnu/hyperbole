@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     12-Aug-26 at 18:27:28 by Bob Weiner
+;; Last-Mod:     17-Aug-26 at 13:33:08 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -26,8 +26,8 @@
 (defmacro hy-test-helpers:with-time (descrip &rest body)
   "Log a message of DESCRIP; return the time in seconds to run rest, BODY."
   (declare (indent 1) (debug (form body)))
-  (let ((start (gensym "start"))
-        (elapsed (gensym "elapsed")))
+  (let* ((start (gensym "start"))
+         (elapsed (gensym "elapsed")))
     `(let* ((,start (float-time))
             (,elapsed 0.0))
        ,@body
@@ -37,7 +37,8 @@
 
 (defun hy-test-helpers:consume-input-events ()
   "Use `recursive-edit' to consume the events kbd-key generates."
-  (run-with-timer 0.5 nil (lambda () (if (> (recursion-depth) 0) (exit-recursive-edit))))
+  (run-with-timer
+   0.5 nil (lambda () (if (> (recursion-depth) 0) (exit-recursive-edit))))
   (recursive-edit))
 
 (defun hy-test-helpers:ensure-link-possible-type (type)
@@ -103,7 +104,7 @@ Checks ACTYPE, ARGS, LOC, LBL-KEY and NAME."
   (should (equal (hattr:get 'hbut:current 'lbl-key) lbl-key))
   (should (equal (hattr:get 'hbut:current 'name) name)))
 
-(defun hy-delete-file-and-buffer (file)
+ (defun hy-delete-file-and-buffer (file)
   "Delete FILE and buffer visiting file."
   (let ((buf (find-buffer-visiting file))
         ;; Prevents output to the echo area / stdout

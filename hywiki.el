@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     12-Aug-26 at 23:08:13 by Bob Weiner
+;; Last-Mod:     17-Aug-26 at 12:28:46 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -531,12 +531,12 @@ Nil by default."
   :initialize #'custom-initialize-default
   :group 'hyperbole-hywiki)
 
-(defvar hywiki-file-suffix ".org"
+(defvar hywiki-file-extension ".org"
   "File suffix string (including period) to use when creating HyWiki pages.")
 
 (defconst hywiki-word-regexp
   (format "\\<\\([[:upper:]][[:alpha:]]+\\)\\>\\(?:%s\\)?"
-          (regexp-quote hywiki-file-suffix))
+          (regexp-quote hywiki-file-extension))
   "Regexp that matches a HyWikiWord only.
 Do not use a start or end line/string anchor in this regexp.")
 
@@ -1177,13 +1177,15 @@ display a minibuffer message with the referent."
     (setq wikiword (hywiki-word-read-new "Create/Edit HyWikiWord: ")))
   (setq hkey-value wikiword)
   (let ((referent
-	 (hui:menu-act 'hywiki-referent-menu
+	 (progn (hui:menu-act 'hywiki-referent-menu
 		       (list (cons 'hywiki-referent-menu
 				   (cons (list (format "%s RefType>"
 						       (if (string-match hywiki-word-suffix-regexp wikiword)
 							   (substring wikiword 0 (match-beginning 0))
 							 wikiword)))
-					 (cdr hywiki-referent-menu)))))))
+					 (cdr hywiki-referent-menu)))))
+                ;; Ensure the referent returned has any wikiword suffix
+                (hywiki-get-referent wikiword))))
     (if referent
 	(when (or message-flag (called-interactively-p 'interactive))
 	  (message "HyWikiWord '%s' referent: %S" wikiword referent))
@@ -1624,10 +1626,10 @@ Use `hywiki-get-referent' to determine whether a HyWiki page exists."
 		(hyperb:stack-frame '(ert-run-test))
 		(not (hash-empty-p (hywiki-get-referent-hasht)))
 		(y-or-n-p (concat "Create new HyWiki page `" page-name "'? ")))
-	;; Remove any #section suffix in PAGE-NAME.
-	(setq page-name (hywiki-get-singular-wikiword page-name))
-
-	(let* ((page-file (hywiki-get-page-file page-name))
+	(let* ((page-name-with-suffix page-name)
+	       ;; Remove any #section suffix in PAGE-NAME.
+	       (page-name (hywiki-get-singular-wikiword page-name))
+               (page-file (hywiki-get-page-file page-name))
 	       (page-file-readable (file-readable-p page-file))
 	       (referent-hasht (hywiki-get-referent-hasht))
 	       (page-in-hasht (hywiki-page-exists-p page-name)))
@@ -1649,7 +1651,9 @@ Use `hywiki-get-referent' to determine whether a HyWiki page exists."
 	    (hywiki-cache-save)
 	    (hywiki-maybe-highlight-wikiwords-in-frame t))
 	  (run-hooks 'hywiki-add-page-hook)
-	  (when page-file (cons 'page page-file))))
+	  (when page-file
+            ;; Ensure the referent returned has any wikiword suffix
+            (hywiki-get-referent page-name-with-suffix))))
     (when (called-interactively-p 'interactive)
       (user-error "(hywiki-add-page): Invalid HyWikiWord: '%s'; must be capitalized, all alpha" page-name))))
 
@@ -1787,14 +1791,15 @@ save and potentially set `hywiki--directory-mod-time' and
   (let ((buf (get-file-buffer save-file)))
     (when buf
       (if (buffer-modified-p buf)
-	  (save-buffer)
+          (with-current-buffer buf
+	    (hypb:save-buffer-silently))
 	;; (error "(hywiki-cache-save): Attempt to kill modified Environment file failed to save, \"%s\"" save-file)
 	(kill-buffer buf))))
   (let ((dir (or (file-name-directory save-file)
 		 default-directory)))
     (unless (file-writable-p dir)
       (error "(hywiki-cache-save): Non-writable Environment directory, \"%s\"" dir)))
-  (save-window-excursion
+  (save-excursion
     (let ((standard-output (hywiki-cache-edit save-file)))
       (with-current-buffer standard-output
 	(erase-buffer)
@@ -1836,7 +1841,7 @@ Each candidate is an alist with keys: file, line, text, and display."
       (let* ((default-directory hywiki-directory)
              (cmd (format "grep -nEH '^([ \t]*\\*+|#\\+TITLE:) +' ./%s*%s"
                           existing-wikiword-prefix
-                          hywiki-file-suffix))
+                          hywiki-file-extension))
              (output (shell-command-to-string cmd))
              (lines (split-string output "[\n\r]" t))
              (candidates
@@ -2255,7 +2260,7 @@ Use `dired' unless `action-key-modeline-buffer-id-function' is set to
 		 (directory-files hywiki-directory nil
 				  (format "^%s%s$"
 					  hywiki-word-regexp
-					  (regexp-quote hywiki-file-suffix)))))))
+					  (regexp-quote hywiki-file-extension)))))))
 
 (defun hywiki-directory-treemacs-edit ()
   "Use `treemacs' to edit HyWiki pages in current `hywiki-directory'."
@@ -2596,8 +2601,8 @@ top-level headlines are searched.
                  ;; The phrase is a WikiWord; use this as the file to search
                  (setq path-list (list (expand-file-name
                                         (concat phrase
-                                                (unless (string-suffix-p hywiki-file-suffix phrase)
-                                                  hywiki-file-suffix))
+                                                (unless (string-suffix-p hywiki-file-extension phrase)
+                                                  hywiki-file-extension))
                                         hywiki-directory)))))
 
           (unless entry-to-match
@@ -2663,7 +2668,7 @@ definition from ${hywiki-directory}/Glossary.org), i.e. <hydef action key>"
   "Return the glossary file for the current HyWiki."
   (expand-file-name (if (and (stringp file) (not (string-empty-p file)))
                         file
-                      (concat "Glossary" hywiki-file-suffix))
+                      (concat "Glossary" hywiki-file-extension))
                     hywiki-directory))
 
 (defun hywiki-get-glossary-terms ()
@@ -2714,7 +2719,7 @@ Always exclude minibuffer windows."
 (defun hywiki-get-existing-page-file (reference)
   "Return existing `hywiki-directory' path from REFERENCE or nil.
 REFERENCE should not contain a directory and may have or may omit
-`hywiki-file-suffix' and an optional trailing #section.
+`hywiki-file-extension' and an optional trailing #section.
 
 Checks only that REFERENCE is not nil, not an empty string and does
 not contain a directory path or returns nil."
@@ -2742,14 +2747,13 @@ not contain a directory path or returns nil."
 (defun hywiki-get-page-file (reference)
   "Return possibly non-existent `hywiki-directory' path from REFERENCE.
 REFERENCE may be an existing absolute file path; then, return it.
-Otherwise, REFERENCE should not contain a directory and may have or may
-omit `hywiki-file-suffix' and an optional trailing #section, both of which
-are left attached to the result returned.  So given the input,
-WikiWord#section, the result might be:
-\"/users/me/hywiki/WikiWord.org#section\".
+Otherwise, REFERENCE should not contain a directory and may have or may omit
+`hywiki-file-extension' and an optional trailing #section, both of which are
+left attached to the result returned.  So given the input, WikiWord#section,
+the result might be: \"/users/me/hywiki/WikiWord.org#section\".
 
-Checks only that REFERENCE is not nil, not an empty string and does
-not contain a directory path or returns nil."
+Check only that REFERENCE is not nil, not an empty string and does
+not contain a directory path or return nil."
   (make-directory hywiki-directory t)
   (if (and (stringp reference) (file-readable-p reference))
       reference
@@ -2764,20 +2768,20 @@ not contain a directory path or returns nil."
 			     (substring reference 0 (match-beginning 0))))
 	  (setq file-name reference))
         (concat (expand-file-name file-name hywiki-directory)
-	        (unless (string-suffix-p hywiki-file-suffix file-name)
-		  hywiki-file-suffix)
+	        (unless (string-suffix-p hywiki-file-extension file-name)
+		  hywiki-file-extension)
 	        section)))))
 
 (defun hywiki-get-page-files ()
   "Return the list of existing HyWiki page file names.
-These must end with `hywiki-file-suffix'."
+These must end with `hywiki-file-extension'."
   (when (stringp hywiki-directory)
     (unless (file-directory-p hywiki-directory)
       (make-directory hywiki-directory t))
     (when (file-readable-p hywiki-directory)
       (directory-files
        hywiki-directory nil (concat "^" hywiki-word-regexp
-				    (regexp-quote hywiki-file-suffix) "$")))))
+				    (regexp-quote hywiki-file-extension) "$")))))
 
 (defun hywiki-get-page-headings (page)
   "Return a list of all headings found in FILE.
@@ -2801,7 +2805,8 @@ Strip any leading '*' and space characters from the headings."
 
 (defun hywiki-get-referent (wikiword)
   "Return the referent of HyWiki WIKIWORD or nil if it does not exist.
-If it is a pathname, expand it relative to `hywiki-directory'."
+If it is a pathname, expand it relative to `hywiki-directory' and add any
+suffix from WIKIWORD."
   (when (and (stringp wikiword) (not (string-empty-p wikiword))
 	     (string-match hywiki-word-with-optional-suffix-exact-regexp wikiword))
     (let* ((suffix (cond ((match-beginning 2)
@@ -2824,15 +2829,14 @@ If it is a pathname, expand it relative to `hywiki-directory'."
 May recreate the hash table as well as the list of
 regexps of wikiwords, if the hash table is out-of-date."
   (prog1
-      (if (and (equal hywiki--pages-directory hywiki-directory)
+      (if (and (hash-table-p hywiki--referent-hasht)
+               (equal hywiki--pages-directory hywiki-directory)
 	       ;; If page files changed, have to rebuild referent hash table
-	       (not (hywiki-directory-modified-p))
-	       (hash-table-p hywiki--referent-hasht))
+	       (not (hywiki-directory-modified-p)))
 	  hywiki--referent-hasht
 	;; Rebuild referent hash table
 	(hywiki-make-referent-hasht))
     (when (and (null hywiki--any-wikiword-regexp-list)
-               hywiki--referent-hasht
                (not (hash-empty-p hywiki--referent-hasht)))
       ;; Compute these expensive regexps (matching 50
       ;; HyWikiWords at a time) only if the set of
@@ -2974,7 +2978,7 @@ or this will return nil."
 Note that HyWiki references can occur in non-HyWiki page buffers."
   (or hywiki-page-flag
       (and buffer-file-name
-	   (string-suffix-p hywiki-file-suffix buffer-file-name)
+	   (string-suffix-p hywiki-file-extension buffer-file-name)
 	   (string-prefix-p (expand-file-name hywiki-directory)
 			    buffer-file-name)
 	   (setq hywiki-page-flag t))))
@@ -4738,7 +4742,7 @@ Search across `hywiki-directory'."
       (hywiki-consult-backlink wikiword)
     (grep (string-join (list grep-command (format "'%s'" wikiword)
 			     (concat (file-name-as-directory hywiki-directory)
-				     "*" hywiki-file-suffix))
+				     "*" hywiki-file-extension))
 		       " "))))
 
 (defun hywiki-word-is-p (word &optional regexp-flag)

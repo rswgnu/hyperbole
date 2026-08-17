@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     16-Jul-26 at 16:29:30 by Bob Weiner
+;; Last-Mod:     15-Aug-26 at 14:19:21 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -628,6 +628,7 @@ runs this command."
 		   type)
 	       (setq type-and-args
 		     (hui:menu-choose
+                      nil
 		      (cons '("Link to>")
 			    (mapcar
 			     (lambda (type-and-args)
@@ -1417,6 +1418,7 @@ runs this command."
 		   type)
 	       (setq type-and-args
 		     (hui:menu-choose
+                      nil
 		      (cons '("Link to>")
 			    (mapcar
 			     (lambda (type-and-args)
