@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     11-Aug-26 at 23:39:12 by Mats Lidell
+# Last-Mod:     14-Aug-26 at 22:22:27 by Mats Lidell
 #
 # Copyright (C) 1994-2026  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -86,7 +86,7 @@
 #                   make docker-run              - default to running master
 #                   make docker-run version=28.2 - run Emacs V28.2
 #
-#               To build and test a dockerized version of Emacs with Hyperbole:
+#               To build and test a Hyperbole with a dockerized version of Emacs:
 #                   make docker                  - defaults: version=master targets='clean bin test'
 #
 #                   make docker version=28.2 targets='clean bin' - byte-compile Hyperbole with Emacs 28.2
@@ -96,6 +96,15 @@
 #		    make docker-batch-tests      - run all non-interactive tests in docker for all CI/CD Emacs versions
 #		    make docker-all-tests        - run all tests in docker for all CI/CD Emacs versions
 #
+#               To update the docker image for Emacs:
+#                   make docker-update           - default: version=master
+#               The convenience targets docker-latest and
+#               docker-run-latest updates the image if needed
+#               available before running the docker job.
+#
+#               To clean the local elpa docker volume use:
+#                   make docker-clean
+
 #               Verify hyperbole installation using different sources:
 #                   make install-<source>
 #               Where source can be 'elpa', 'elpa-devel', 'tarball' (tarball from elpa-devel),
@@ -676,14 +685,22 @@ endif
 recompile-docker-elpa:
 	$(EMACS_BATCH) --eval "(byte-recompile-directory \"/root/.emacs.d/elpa\" 0 'force)"
 
+.PHONY: docker-latest
+docker-latest: docker-update
+	$(MAKE) docker
+
 .PHONY: docker
-docker: docker-update
+docker:
 	docker run --mount type=volume,src=elpa-local,dst=/root/.emacs.d/elpa \
 	-v $$(pwd):/hypb -v /tmp:/hypb-tmp -it --rm silex/emacs:${DOCKER_VERSION} \
 	bash -c "cp -a /hypb /hyperbole && find /hyperbole -name '*.elc' -delete && make -C hyperbole recompile-docker-elpa ${DOCKER_TARGETS}"
 
+.PHONY: docker-run-latest
+docker-run-latest: docker-update
+	$(MAKE) docker-run
+
 .PHONY: docker-run
-docker-run: docker-update
+docker-run:
 	docker run --mount type=volume,src=elpa-local,dst=/root/.emacs.d/elpa \
 	-v $$(pwd):/hypb -v /tmp:/hypb-tmp -it --rm silex/emacs:${DOCKER_VERSION}
 

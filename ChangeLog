@@ -61,6 +61,13 @@
     wikiword highlighting across all buffers when not necessary.  Also do this only
     after temp buffers and files are killed, not before.
 
+2026-08-14  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (docker-latest, docker-run-latest): Update image if needed
+    before running the docker job.
+    (docker, docker-run): Remove dependency on update so targets can
+    be used with no automated update check.
+
 2026-08-12  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-get-referent-hasht): Compute 'hywiki--any-wikiword-regexp-list'
