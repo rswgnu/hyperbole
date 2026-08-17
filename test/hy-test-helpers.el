@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     17-Aug-26 at 13:33:08 by Bob Weiner
+;; Last-Mod:     17-Aug-26 at 15:20:00 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -104,7 +104,7 @@ Checks ACTYPE, ARGS, LOC, LBL-KEY and NAME."
   (should (equal (hattr:get 'hbut:current 'lbl-key) lbl-key))
   (should (equal (hattr:get 'hbut:current 'name) name)))
 
- (defun hy-delete-file-and-buffer (file)
+(defun hy-delete-file-and-buffer (file)
   "Delete FILE and buffer visiting file."
   (let ((buf (find-buffer-visiting file))
         ;; Prevents output to the echo area / stdout

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     17-Aug-26 at 13:49:25 by Bob Weiner
+;; Last-Mod:     17-Aug-26 at 15:43:01 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -42,7 +42,7 @@ named WikiReferent with a non-page referent type."
          (save-excursion
            (when local-vertico-mode
              (vertico-mode -1))
-           (should (equal '() (hywiki-get-wikiword-list)))
+           (should (eq nil (hywiki-get-wikiword-list)))
 
            ,@prepare
 
@@ -306,7 +306,8 @@ around the call.  This is for simulating the command loop."
              ;; `wiki-page' must be set after `hywiki-mode' is enabled
              (setq wiki-page (expand-file-name (cdr (hywiki-add-page "WikiWord"))
                                                hywiki-directory))
-             ,@body))
+             (let ((default-directory hywiki-directory))
+               ,@body)))
        (hy-delete-files-and-buffers (list wiki-page (hywiki-cache-default-file)))
        (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory)
        (unless (eq hywiki-mode prior-hywiki-mode)

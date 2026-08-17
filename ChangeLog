@@ -7,7 +7,11 @@
     Update to use 'hywiki-tests--preserve-hywiki-mode'.
                        (hywiki-tests--preserve-hywiki-mode): Replace (sit-for 0.01)
       with (redisplay t) so tests will work within keyboard macros where 'sit-for'
-      is ineffective.
+      is ineffective.  Also, ensure default-directory is set to hywiki-directory
+      so relative paths are completed properly.
+                       (hywiki-tests--referent-test): Compare
+      'hywiki-get-wikiword-list) to nil rather than '() and use 'eq'.
+
 * hywiki.el (hywiki-file-suffix): Rename to 'hywiki-file-extension' to avoid
     terminology clash with #suffix in references.
 
