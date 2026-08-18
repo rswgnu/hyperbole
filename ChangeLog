@@ -1,5 +1,11 @@
 2026-08-17  Bob Weiner  <rsw@gnu.org>
 
+* test/hywiki-tests.el (hywiki-tests--nonexistent-wikiword-with-section-should-create-wikiword):
+    Add condition-case to handle error thrown when #section is not found.
+
+* hywiki.el (hywiki-create-referent): Ensure 'default-directory' is set
+    when temp 'hywiki-directory' is removed.
+
 * hywiki.el (hywiki-create-referent): Simplify let and improve error msg.
   test/hywiki-tests.el (hywiki-tests--save-referent-info-node-use-menu): Skip
     until issues with Info kbd-cmd calls are resolved.

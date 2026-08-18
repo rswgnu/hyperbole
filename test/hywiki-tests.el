@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     17-Aug-26 at 19:37:51 by Bob Weiner
+;; Last-Mod:     18-Aug-26 at 00:39:19 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -294,24 +294,25 @@ around the call.  This is for simulating the command loop."
   `(let ((prior-hywiki-mode hywiki-mode)
          (hywiki-directory (file-name-as-directory (make-temp-file "hywiki" t)))
          wiki-page)
-     (unwind-protect
-         (save-window-excursion
-           (with-temp-buffer
-             (set-window-buffer (selected-window) (current-buffer))
-             ;; `hywiki-mode' must be enabled within the current buffer or
-             ;; the setting of `wiki-page' below will fail
-             (unless (eq hywiki-mode :all)
-               (hywiki-mode :all))
-             (redisplay t)
-             ;; `wiki-page' must be set after `hywiki-mode' is enabled
-             (setq wiki-page (expand-file-name (cdr (hywiki-add-page "WikiWord"))
-                                               hywiki-directory))
+     (save-window-excursion
+       (with-temp-buffer
+         (let ((default-directory hywiki-directory))
+           (unwind-protect
+               (progn
+                 (set-window-buffer (selected-window) (current-buffer))
+                 ;; `hywiki-mode' must be enabled within the current buffer or
+                 ;; the setting of `wiki-page' below will fail
+                 (unless (eq hywiki-mode :all)
+                   (hywiki-mode :all))
+                 (redisplay t)
+                 ;; `wiki-page' must be set after `hywiki-mode' is enabled
+                 (setq wiki-page (cdr (hywiki-add-page "WikiWord")))
+                 ,@body)
              (let ((default-directory hywiki-directory))
-               ,@body)))
-       (hy-delete-files-and-buffers (list wiki-page (hywiki-cache-default-file)))
-       (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory)
-       (unless (eq hywiki-mode prior-hywiki-mode)
-         (hywiki-mode prior-hywiki-mode)))))
+               (hy-delete-files-and-buffers (list wiki-page (hywiki-cache-default-file)))
+               (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory)
+               (unless (eq hywiki-mode prior-hywiki-mode)
+                 (hywiki-mode prior-hywiki-mode)))))))))
 
 (ert-deftest hywiki-tests--verify-preserve-hywiki-mode ()
   "Verify `hywiki-tests--preserve-hywiki-mode' restores `hywiki-mode'."
@@ -1852,8 +1853,10 @@ face is verified during the change."
 	  (progn
 	    (hywiki-tests--insert (concat wikiword section))
 	    (goto-char 4)
-	    (action-key)
-	    (sit-for 0.01)
+            (condition-case ()
+	        (progn (action-key)
+	               (sit-for 0.01))
+              (error nil))
 	    (should-not (file-exists-p (expand-file-name
 					(concat wikiword
                                                 hywiki-file-extension
