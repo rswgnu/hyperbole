@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     17-Aug-26 at 12:28:46 by Bob Weiner
+;; Last-Mod:     17-Aug-26 at 19:32:53 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1176,20 +1176,20 @@ display a minibuffer message with the referent."
   (unless (stringp wikiword)
     (setq wikiword (hywiki-word-read-new "Create/Edit HyWikiWord: ")))
   (setq hkey-value wikiword)
-  (let ((referent
-	 (progn (hui:menu-act 'hywiki-referent-menu
-		       (list (cons 'hywiki-referent-menu
-				   (cons (list (format "%s RefType>"
-						       (if (string-match hywiki-word-suffix-regexp wikiword)
-							   (substring wikiword 0 (match-beginning 0))
-							 wikiword)))
-					 (cdr hywiki-referent-menu)))))
-                ;; Ensure the referent returned has any wikiword suffix
-                (hywiki-get-referent wikiword))))
+  ;; Prompt for referent type and then create the referent
+  (hui:menu-act 'hywiki-referent-menu
+		(list (cons 'hywiki-referent-menu
+			    (cons (list (format "%s RefType>"
+						(if (string-match hywiki-word-suffix-regexp wikiword)
+						    (substring wikiword 0 (match-beginning 0))
+						  wikiword)))
+				  (cdr hywiki-referent-menu)))))
+  ;; Ensure the referent returned has any wikiword suffix
+  (let ((referent (hywiki-get-referent wikiword)))
     (if referent
 	(when (or message-flag (called-interactively-p 'interactive))
 	  (message "HyWikiWord '%s' referent: %S" wikiword referent))
-      (user-error "(hywiki-create-referent): Invalid HyWikiWord: '%s'; must be capitalized, all alpha" wikiword))
+      (user-error "(hywiki-create-referent): Referent creation failed: '%s'; ensure HyWikiWord is capitalized and all alpha" wikiword))
     referent))
 
 ;;; ************************************************************************
@@ -4977,7 +4977,7 @@ instead of a string."
 (defun hywiki--add-suffix-to-referent (suffix referent)
   "Add SUFFIX to REFERENT's value and return REFERENT.
 SUFFIX includes its type prefix, e.g. #.  Return nil if any input is
-invalid.  Appended only if the referent-type supports suffixes."
+invalid.  Append only if the referent-type supports suffixes."
   (if (or (null suffix) (and (stringp suffix) (string-empty-p suffix)))
       referent
     (when (consp referent)

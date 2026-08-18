@@ -1,5 +1,13 @@
 2026-08-17  Bob Weiner  <rsw@gnu.org>
 
+* hywiki.el (hywiki-create-referent): Simplify let and improve error msg.
+  test/hywiki-tests.el (hywiki-tests--save-referent-info-node-use-menu): Skip
+    until issues with Info kbd-cmd calls are resolved.
+                       (hywiki-tests--create-referent): Fix to call
+    'hywiki-get-referent' and adjust error msg match.
+
+2026-08-17  Bob Weiner  <rsw@gnu.org>
+
 * test/hywiki-tests.el (hywiki-tests--hywiki-create-page--adds-file-in-wiki-folder,
                         hywiki-tests--hywiki-create-page--adds-no-wiki-word-fails)
                         hywiki-tests--reference-to-referent,
