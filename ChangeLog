@@ -1,3 +1,13 @@
+* hywiki.el (hywiki-add-page): Clarify input and output formats.
+            (hywiki-get-referent): Add optional 'absolute-path-flag' which
+    if non-nil converts a filename referent value to an absolute filename.
+    relative to 'hywiki-directory'.
+
+2026-08-19  Bob Weiner  <rsw@gnu.org>
+
+* test/hy-test-helpers.el (hy-delete-file-and-buffer): Add WARNING if 'file'
+    does not exist, so this is logged as a possible issue.
+
 2026-08-17  Bob Weiner  <rsw@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--nonexistent-wikiword-with-section-should-create-wikiword):
@@ -21,8 +31,7 @@
     Update to use 'hywiki-tests--preserve-hywiki-mode'.
                        (hywiki-tests--preserve-hywiki-mode): Replace (sit-for 0.01)
       with (redisplay t) so tests will work within keyboard macros where 'sit-for'
-      is ineffective.  Also, ensure default-directory is set to hywiki-directory
-      so relative paths are completed properly.
+      is ineffective.
                        (hywiki-tests--referent-test): Compare
       'hywiki-get-wikiword-list) to nil rather than '() and use 'eq'.
 
@@ -35,9 +44,8 @@
 
 2026-08-16  Bob Weiner  <rsw@gnu.org>
 
-* test/hywiki-tests.el (hywiki-tests--preserve-hywiki-mode): Ensure 'wiki-page'
-    is expanded into current 'hywiki-directory' to fix improper resolution in
-    'default-directory'.  Ensure `hywiki-directory' ends with a dir sep char.
+* test/hywiki-tests.el (hywiki-tests--preserve-hywiki-mode): Ensure
+    `hywiki-directory' ends with a dir sep char.
 
 * hywiki.el (hywiki-cache-save): Change 'save-buffer' to 'hypb:save-buffer-silently'.
     Replace 'save-window-excursion' with 'save-excursion' to eliminate any display

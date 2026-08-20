@@ -119,6 +119,8 @@ Checks ACTYPE, ARGS, LOC, LBL-KEY and NAME."
 	  ;; trying to kill it.
           (set-buffer-modified-p nil))
         (kill-buffer))))
+  (unless (file-exists-p file)
+    (message "WARNING: Deleting non-existent file: \"%s\"" (expand-file-name file)))
   (delete-file file))
 
 (defun hy-delete-files-and-buffers (files)

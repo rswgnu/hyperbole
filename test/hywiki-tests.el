@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     18-Aug-26 at 00:39:19 by Bob Weiner
+;; Last-Mod:     20-Aug-26 at 11:31:35 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -103,13 +103,13 @@ Last two elements are optional.")
 	    (mapc (lambda (before-after)
 	            (condition-case err
                         (cl-incf test-time
-                                 (hy-test-helpers:with-time (format "Test #%d" test-num)
+                                 (hy-test-helpers:with-time (format "hywiki-tests--edit #%d" test-num)
 		                   (cl-incf test-num)
 		                   (setq before (nth 0 before-after)
 		                         after  (nth 1 before-after)
 		                         name   (nth 2 before-after)
 		                         doc    (nth 3 before-after))
-                                   (message (format "Test #%d: At pos %d, action \"%s\", result \"%s\", name \"%s\", doc \"%s\""
+                                   (message (format "hywiki-tests--edit #%d: At pos %d, action \"%s\", result \"%s\", name \"%s\", doc \"%s\""
                                                     test-num (point) before after name doc))
 		                   ;; Ensure all brace delimited HyWikiWords expected in
                                    ;; `after' string have their pages created so their
@@ -304,15 +304,18 @@ around the call.  This is for simulating the command loop."
                  ;; the setting of `wiki-page' below will fail
                  (unless (eq hywiki-mode :all)
                    (hywiki-mode :all))
-                 (redisplay t)
-                 ;; `wiki-page' must be set after `hywiki-mode' is enabled
+                 ;; Since we newly created the `hywiki-directory', it is
+                 ;; empty and we don't need to do a (redisplay t) or
+                 ;; (sit-for 9.01) here.
+
+                 ;; `wiki-page' wil be set to the page's absolute filename
+                 ;; after `hywiki-mode' is enabled.
                  (setq wiki-page (cdr (hywiki-add-page "WikiWord")))
                  ,@body)
-             (let ((default-directory hywiki-directory))
-               (hy-delete-files-and-buffers (list wiki-page (hywiki-cache-default-file)))
-               (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory)
-               (unless (eq hywiki-mode prior-hywiki-mode)
-                 (hywiki-mode prior-hywiki-mode)))))))))
+             (hy-delete-files-and-buffers (list wiki-page (hywiki-cache-default-file)))
+             (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory)
+             (unless (eq hywiki-mode prior-hywiki-mode)
+               (hywiki-mode prior-hywiki-mode))))))))
 
 (ert-deftest hywiki-tests--verify-preserve-hywiki-mode ()
   "Verify `hywiki-tests--preserve-hywiki-mode' restores `hywiki-mode'."
@@ -328,13 +331,11 @@ around the call.  This is for simulating the command loop."
   "Verify add page creates file in wiki folder and sets hash table."
   (hywiki-tests--preserve-hywiki-mode
     (let ((hsys-org-enable-smart-keys t))
-      (should (string= (file-name-nondirectory wiki-page)
-                       (cdr (hywiki-add-page "WikiWord"))))
+      (should (string= wiki-page (cdr (hywiki-add-page "WikiWord"))))
       ;; Verify hash table is updated
       (with-mock
         (not-called hywiki-create-page)
-        (should (string= (file-name-nondirectory wiki-page)
-			 (cdr (hywiki-get-referent "WikiWord"))))))))
+        (should (string= wiki-page (cdr (hywiki-get-referent "WikiWord" t))))))))
 
 (ert-deftest hywiki-tests--hywiki-create-page--adds-no-wiki-word-fails ()
   "Verify add page requires a WikiWord."
@@ -356,6 +357,7 @@ around the call.  This is for simulating the command loop."
             (goto-char 4)
             (action-key)
 	    (should (equal (cons 'page wikifile) (hywiki-get-referent "WikiPage"))))
+        (redisplay t)
         (hy-delete-file-and-buffer (expand-file-name wikifile hywiki-directory))))))
 
 (ert-deftest hywiki-tests--assist-key-on-hywikiword-displays-help ()
@@ -1299,12 +1301,10 @@ Note special meaning of `hywiki-allow-plurals-flag'."
   (skip-unless (not noninteractive))
   (hywiki-tests--preserve-hywiki-mode
     `(let* ((my-wiki-page (cdr (hywiki-add-page "MyWikiPage")))
-            (my-wiki-page-absolute (expand-file-name my-wiki-page
-                                                     hywiki-directory))
             (mode-require-final-newline nil))
        (unwind-protect
            (progn
-	     (find-file my-wiki-page-absolute)
+	     (find-file my-wiki-page)
 	     (erase-buffer)
 	     (hywiki-tests--insert "WikiWord")
              (hypb:save-buffer-silently)
@@ -1317,7 +1317,7 @@ Note special meaning of `hywiki-allow-plurals-flag'."
 				   (buffer-substring-no-properties
 				    (point-min)
 				    (point-max)))))
-         (hy-delete-file-and-buffer my-wiki-page-absolute)))))
+         (hy-delete-file-and-buffer my-wiki-page)))))
 
 ;; Bookmark
 (ert-deftest hywiki-tests--save-referent-bookmark ()
@@ -1400,7 +1400,9 @@ Note special meaning of `hywiki-allow-plurals-flag'."
             (gbut:ebut-program "global" 'link-to-file gbut-file)
             (should (hact 'kbd-key "C-u C-h hhc WikiReferent RET g global RET"))
             (hy-test-helpers:consume-input-events))
-        (hy-delete-files-and-buffers (list gbut-file hbmap:filename hbmap:dir-filename))))))
+        ;; Don't delete hbmap:filename here since it is a relative filename and may expand improperly.
+        ;; It has the same absolute path as gbut-file, so including that will delete the file.
+        (hy-delete-files-and-buffers (list gbut-file hbmap:dir-filename))))))
 
 
 ;; HyRolo
@@ -1952,7 +1954,7 @@ Start and stop point of all highlighted regions in the buffer, as
 computed by `hywiki-tests--hywiki-face-regions', are compared to the
 expected result."
   (hywiki-tests--preserve-hywiki-mode
-    (let* ((wikiword (cdr (hywiki-add-page "WiWo")))
+    (let* ((wikiword-file (cdr (hywiki-add-page "WiWo")))
 	   input
 	   overlay-regions)
       (unwind-protect
@@ -1976,7 +1978,7 @@ expected result."
               (should (equal (hywiki-tests--hywiki-face-regions) overlay-regions)))
 	    (erase-buffer))
         ;; Unwind
-        (hy-delete-file-and-buffer wikiword)))))
+        (hy-delete-file-and-buffer wikiword-file)))))
 
 (ert-deftest hywiki-tests--consult-grep ()
   "Verify `hywiki-consult-grep' calls `hsys-consult-grep'."

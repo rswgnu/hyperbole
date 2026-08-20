@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     17-Aug-26 at 19:32:53 by Bob Weiner
+;; Last-Mod:     20-Aug-26 at 10:58:57 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1603,9 +1603,11 @@ calling this function."
 
 (defun hywiki-add-page (page-name &optional force-flag)
   "Add a new or return any existing HyWiki page path for PAGE-NAME.
-Returned format is: \\='(page . \"<page-file-path>\") or nil when none.
-PAGE-NAME must be the HyWikiWord that can link to the page (no file-name
-prefix or suffix).
+Returned format is: \\='(page . \"<absolute-page-file-path>\") or nil when
+none.  <absolute-page-file-path> follows the path formatting conventions
+from the documentation string for `hpath:find'.  PAGE-NAME must be the
+HyWikiWord reference that can link to the page (no pathname directory nor
+file extension).
 
 With optional FORCE-FLAG prefix arg non-nil, force an update to
 the page's modification time.  If PAGE-NAME is invalid, trigger a
@@ -1632,7 +1634,8 @@ Use `hywiki-get-referent' to determine whether a HyWiki page exists."
                (page-file (hywiki-get-page-file page-name))
 	       (page-file-readable (file-readable-p page-file))
 	       (referent-hasht (hywiki-get-referent-hasht))
-	       (page-in-hasht (hywiki-page-exists-p page-name)))
+	       (page-in-hasht (hywiki-page-exists-p page-name))
+               referent)
 	  (unless page-file-readable
 	    (if (file-writable-p page-file)
 		(write-region "" nil page-file nil 0)
@@ -1652,8 +1655,10 @@ Use `hywiki-get-referent' to determine whether a HyWiki page exists."
 	    (hywiki-maybe-highlight-wikiwords-in-frame t))
 	  (run-hooks 'hywiki-add-page-hook)
 	  (when page-file
-            ;; Ensure the referent returned has any wikiword suffix
-            (hywiki-get-referent page-name-with-suffix))))
+            ;; Ensure the referent returned has any wikiword suffix and the
+            ;; path part of the referent is absolute
+            (setq referent (hywiki-get-referent page-name-with-suffix t))
+            (or referent (debug)))))
     (when (called-interactively-p 'interactive)
       (user-error "(hywiki-add-page): Invalid HyWikiWord: '%s'; must be capitalized, all alpha" page-name))))
 
@@ -2803,10 +2808,11 @@ Strip any leading '*' and space characters from the headings."
 			  (cdr referent-type)))
 		      (hywiki-get-referent-hasht))))
 
-(defun hywiki-get-referent (wikiword)
+(defun hywiki-get-referent (wikiword &optional absolute-path-flag)
   "Return the referent of HyWiki WIKIWORD or nil if it does not exist.
-If it is a pathname, expand it relative to `hywiki-directory' and add any
-suffix from WIKIWORD."
+Add any suffix from WIKIWORD to the referent value.  With optional non-nil
+ABSOLUTE-PATH-FLAG, if the referent value is a pathname, expand it relative
+to `hywiki-directory'."
   (when (and (stringp wikiword) (not (string-empty-p wikiword))
 	     (string-match hywiki-word-with-optional-suffix-exact-regexp wikiword))
     (let* ((suffix (cond ((match-beginning 2)
@@ -2821,8 +2827,17 @@ suffix from WIKIWORD."
 	   (referent (hash-get (hywiki-get-singular-wikiword wikiword)
 			       (hywiki-get-referent-hasht))))
       ;; If a referent type that can include a # or :L line
-      ;; number suffix, append it to the referent-value.
-      (setq referent (hywiki--add-suffix-to-referent suffix referent)))))
+      ;; number suffix, append it to the referent-value.  Also, if
+      ;; `absolute-path-flag' is non-nil, assume the referent value is a
+      ;; filename and expand it relative to `hywiki-directory'.
+      (when referent
+        (hywiki--add-suffix-to-referent suffix
+                                        (cons (car referent)
+                                              (if absolute-path-flag
+                                                  (expand-file-name
+                                                   (cdr referent)
+                                                   hywiki-directory)
+                                                (cdr referent))))))))
 
 (defun hywiki-get-referent-hasht ()
   "Return hash table of existing HyWiki referents.
@@ -4100,7 +4115,8 @@ Use OPERATION-NAME in read prompt."
 
 (defun hywiki-reference-to-referent (reference &optional full-data)
   "Resolve HyWikiWord REFERENCE to its referent file or other type of referent.
-If the referent is not a file type, return (referent-type . referent-value).
+File paths are made absolute.  If the referent is not a file type,
+return (referent-type . referent-value).
 
 Otherwise:
 Reference may end with optional suffix of the form: (#|::)section:Lnum:Cnum.
