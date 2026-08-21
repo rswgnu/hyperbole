@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     20-Aug-26 at 10:58:57 by Bob Weiner
+;; Last-Mod:     21-Aug-26 at 11:55:52 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1601,7 +1601,7 @@ calling this function."
 		      (or (alist-get 'file org-link-frame-setup)
 			  (alist-get hpath:display-where hpath:display-where-alist))))
 
-(defun hywiki-add-page (page-name &optional force-flag)
+(defun hywiki-add-page (page-name &optional force-flag debug-flag)
   "Add a new or return any existing HyWiki page path for PAGE-NAME.
 Returned format is: \\='(page . \"<absolute-page-file-path>\") or nil when
 none.  <absolute-page-file-path> follows the path formatting conventions
@@ -1628,22 +1628,23 @@ Use `hywiki-get-referent' to determine whether a HyWiki page exists."
 		(hyperb:stack-frame '(ert-run-test))
 		(not (hash-empty-p (hywiki-get-referent-hasht)))
 		(y-or-n-p (concat "Create new HyWiki page `" page-name "'? ")))
-	(let* ((page-name-with-suffix page-name)
+	(let* ((case-fold-search nil)
+               (page-name-with-suffix page-name)
 	       ;; Remove any #section suffix in PAGE-NAME.
-	       (page-name (hywiki-get-singular-wikiword page-name))
-               (page-file (hywiki-get-page-file page-name))
+	       (page-name-singular (hywiki-get-singular-wikiword page-name))
+               (page-file (hywiki-get-page-file page-name-singular))
 	       (page-file-readable (file-readable-p page-file))
 	       (referent-hasht (hywiki-get-referent-hasht))
-	       (page-in-hasht (hywiki-page-exists-p page-name))
+	       (page-in-hasht (hywiki-page-exists-p page-name-singular))
                referent)
 	  (unless page-file-readable
 	    (if (file-writable-p page-file)
 		(write-region "" nil page-file nil 0)
-	      (user-error "(hywiki-add-page): No permission to write HyWikiWord page file:\n  \"%s\"" page-name)))
+	      (user-error "(hywiki-add-page): No permission to write HyWikiWord page file:\n  \"%s\"" page-name-singular)))
 	  (if (or force-flag (not page-in-hasht))
 	      (progn
 		(hash-add (cons 'page (file-name-nondirectory page-file))
-			  page-name referent-hasht)
+			  page-name-singular referent-hasht)
 		(setq hywiki--any-wikiword-regexp-list nil)
 		(when (called-interactively-p 'interactive)
 		  (message "Added HyWikiWord page: \"%s\"" page-file)))
@@ -1658,7 +1659,7 @@ Use `hywiki-get-referent' to determine whether a HyWiki page exists."
             ;; Ensure the referent returned has any wikiword suffix and the
             ;; path part of the referent is absolute
             (setq referent (hywiki-get-referent page-name-with-suffix t))
-            (or referent (debug)))))
+            (or referent (when debug-flag (debug))))))
     (when (called-interactively-p 'interactive)
       (user-error "(hywiki-add-page): Invalid HyWikiWord: '%s'; must be capitalized, all alpha" page-name))))
 

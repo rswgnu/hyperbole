@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     20-Aug-26 at 11:31:35 by Bob Weiner
+;; Last-Mod:     21-Aug-26 at 11:58:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -300,13 +300,15 @@ around the call.  This is for simulating the command loop."
            (unwind-protect
                (progn
                  (set-window-buffer (selected-window) (current-buffer))
+
                  ;; `hywiki-mode' must be enabled within the current buffer or
                  ;; the setting of `wiki-page' below will fail
                  (unless (eq hywiki-mode :all)
                    (hywiki-mode :all))
+
                  ;; Since we newly created the `hywiki-directory', it is
                  ;; empty and we don't need to do a (redisplay t) or
-                 ;; (sit-for 9.01) here.
+                 ;; (sleep-for 0.01) here.
 
                  ;; `wiki-page' wil be set to the page's absolute filename
                  ;; after `hywiki-mode' is enabled.
@@ -319,13 +321,18 @@ around the call.  This is for simulating the command loop."
 
 (ert-deftest hywiki-tests--verify-preserve-hywiki-mode ()
   "Verify `hywiki-tests--preserve-hywiki-mode' restores `hywiki-mode'."
-  (hywiki-tests--preserve-hywiki-mode
-    (hywiki-mode :all)
-    (hywiki-tests--preserve-hywiki-mode
-      (should (eq hywiki-mode :all))
-      (hywiki-mode nil)
-      (should-not hywiki-mode))
-    (should (eq hywiki-mode :all))))
+  (let ((mode hywiki-mode))
+    (unwind-protect
+        (progn (hywiki-mode :pages)
+               (should (eq hywiki-mode :pages))
+               (hywiki-mode nil)
+               (should-not hywiki-mode)
+               (hywiki-tests--preserve-hywiki-mode
+                 (hywiki-mode :all)
+                 (should (eq hywiki-mode :all))
+                 (hywiki-mode nil)
+                 (should-not hywiki-mode)))
+      (should (eq hywiki-mode mode)))))
 
 (ert-deftest hywiki-tests--hywiki-create-page--adds-file-in-wiki-folder ()
   "Verify add page creates file in wiki folder and sets hash table."
@@ -357,7 +364,7 @@ around the call.  This is for simulating the command loop."
             (goto-char 4)
             (action-key)
 	    (should (equal (cons 'page wikifile) (hywiki-get-referent "WikiPage"))))
-        (redisplay t)
+        (sit-for 0.01)
         (hy-delete-file-and-buffer (expand-file-name wikifile hywiki-directory))))))
 
 (ert-deftest hywiki-tests--assist-key-on-hywikiword-displays-help ()

@@ -1,3 +1,15 @@
+2026-08-21  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-add-page): Add optional 'debug-flag' arg so can trigger
+    a backtrace when referent returned is nil.  Also, leave 'page-name'
+    unchanged and save singular version of it to 'page-name-singular'.
+
+* test/hywiki-tests.el (hywiki-tests--verify-preserve-hywiki-mode): Rewrite
+    to not make nested use of the prdserve macro, as that fails and is
+    unnecessary for the testing purpose.
+                       (hywiki-tests--action-key-on-hywikiword-displays-page):
+    Change (redisplay t) to (sit-for 0.01) which will also call 'redisplay'.
+
 * hywiki.el (hywiki-add-page): Clarify input and output formats.
             (hywiki-get-referent): Add optional 'absolute-path-flag' which
     if non-nil converts a filename referent value to an absolute filename.
