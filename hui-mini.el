@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     15-Aug-26 at 21:51:42 by Bob Weiner
+;; Last-Mod:     22-Aug-26 at 09:58:54 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -437,6 +437,8 @@ help window."
 	      (when (switch-to-buffer (get-buffer-create buf-name))
 	        (setq buffer-read-only nil)
 	        (erase-buffer)
+                ;; Ensure no line wrapping so table looks good
+                (toggle-truncate-lines 1)
 	        (insert help-str)
 	        (set-buffer-modified-p nil)
                 (setq hui:menu-last-help-string help-str)

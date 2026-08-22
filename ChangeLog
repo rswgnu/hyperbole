@@ -1,3 +1,8 @@
+2026-08-22  Bob Weiner  <rsw@gnu.org>
+
+* hui-mini.el (hui:menu-help): Add enabling of 'truncate-lines' so table
+    looks good without any line wrapping
+
 2026-08-21  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-add-page): Add optional 'debug-flag' arg so can trigger
