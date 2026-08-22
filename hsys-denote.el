@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     14-Jul-26 at 17:00:54 by Mats Lidell
+;; Last-Mod:     12-Aug-26 at 12:35:19 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -150,8 +150,8 @@ denote link."
 
 (defact link-to-denote (id-and-section &optional file)
   "Display a denote entry given by ID-AND-SECTION and optional FILE.
-ID-AND-SECTION optionally may be prefixed with \"denote:\" or \"dn:\" and
-may be suffixed with:
+ID-AND-SECTION optionally may be prefixed with \"denote:\" and may be
+suffixed with:
 
   1. #section or ::*section, where section is any exact match to a denote
      in-file heading;
@@ -179,7 +179,7 @@ and ID-AND-SECTION or FILE is not found, trigger an error."
 	  (hypb:error "(link-to-denote): File is unreadable: \"%s\""
 		      file))
       (if (stringp id-and-section)
-	  ;; Remove any "denote:" or "dn:" prefix
+	  ;; Remove any "denote:" prefix
 	  (let ((file-id (denote-extract-id-from-string id-and-section))
                 (section (when (and (string-match (hys-denote-get-link-regexp)
                                                   id-and-section)

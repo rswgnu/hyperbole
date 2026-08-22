@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     15-Jul-26 at 22:00:22 by Mats Lidell
+;; Last-Mod:     17-Aug-26 at 15:20:00 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -23,9 +23,22 @@
 (require 'hywiki)     ;; For `hywiki-word-face-at-p' and (require 'hypb)
 (eval-when-compile (require 'cl-lib))
 
+(defmacro hy-test-helpers:with-time (descrip &rest body)
+  "Log a message of DESCRIP; return the time in seconds to run rest, BODY."
+  (declare (indent 1) (debug (form body)))
+  (let* ((start (gensym "start"))
+         (elapsed (gensym "elapsed")))
+    `(let* ((,start (float-time))
+            (,elapsed 0.0))
+       ,@body
+       (setq ,elapsed (- (float-time) ,start))
+       (message "(%s): took %.2f seconds" ,descrip ,elapsed)
+       ,elapsed)))
+
 (defun hy-test-helpers:consume-input-events ()
   "Use `recursive-edit' to consume the events kbd-key generates."
-  (run-with-timer 0.5 nil (lambda () (if (> (recursion-depth) 0) (exit-recursive-edit))))
+  (run-with-timer
+   0.5 nil (lambda () (if (> (recursion-depth) 0) (exit-recursive-edit))))
   (recursive-edit))
 
 (defun hy-test-helpers:ensure-link-possible-type (type)
@@ -106,6 +119,8 @@ Checks ACTYPE, ARGS, LOC, LBL-KEY and NAME."
 	  ;; trying to kill it.
           (set-buffer-modified-p nil))
         (kill-buffer))))
+  (unless (file-exists-p file)
+    (message "WARNING: Deleting non-existent file: \"%s\"" (expand-file-name file)))
   (delete-file file))
 
 (defun hy-delete-files-and-buffers (files)

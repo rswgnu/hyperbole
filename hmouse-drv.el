@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     25-Jul-26 at 23:02:11 by Mats Lidell
+;; Last-Mod:     15-Aug-26 at 22:29:02 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1355,7 +1355,8 @@ details."
 	(progn (set-window-configuration hkey--wconfig)
 	       (if kill
 		   (kill-buffer buf)
-		 (bury-buffer buf)))
+		 (bury-buffer buf))
+               (setq hkey--wconfig nil))
       (hkey-quit-window kill window)))
   (setq hkey--wconfig nil))
 
@@ -1376,23 +1377,27 @@ details."
 With optional second arg CURRENT-WINDOW non-nil, force display of buffer within
 the current window.  By default, it is displayed according to the setting of
 `hpath:display-where'."
-  (if (bufferp buffer) (setq buffer (buffer-name buffer)))
-  (if (null buffer) (setq buffer (buffer-name (current-buffer))))
-  (let ((hkey-org-help (and (stringp buffer) (string-match "\\`\\*Org Help\\*" buffer)))
+  (when (bufferp buffer)
+    (setq buffer (buffer-name buffer)))
+  (when (null buffer)
+    (setq buffer (buffer-name (current-buffer))))
+  (let ((hkey-org-help (and (stringp buffer)
+                            (string-match "\\`\\*Org Help\\*" buffer)))
 	(owind (selected-window)))
     (and (stringp buffer)
 	 (string-match "^\\*Help\\|Help\\*$" buffer)
-	 (not (memq t (mapcar (lambda (wind)
-				(string-match
-				 "^\\*Help\\|Help\\*$"
-				 (buffer-name (window-buffer wind))))
-			      (hypb:window-list 'no-mini))))
+	 (null (seq-filter (lambda (wind)
+			     (string-match-p
+			      "^\\*Help\\|Help\\*$"
+			      (buffer-name (window-buffer wind))))
+                           ;; Windows in selected frame only
+			   (hypb:window-list 'no-mini)))
 	 (setq hkey--wconfig (current-window-configuration)))
     (unwind-protect
 	(let* ((buf (get-buffer-create buffer))
-	       ;; Help-mode calls with-temp-buffer which invokes one of these hooks
-	       ;; which calls hkey-help-show again, so nullify them before
-	       ;; displaying the buffer.
+	       ;; Help-mode calls `with-temp-buffer' which invokes one of
+               ;; these hooks which calls `hkey-help-show' again, so nullify
+               ;; them before displaying the buffer.
 	       (temp-buffer-show-hook)
 	       (temp-buffer-show-function)
 	       (wind (cond (current-window
@@ -1402,7 +1407,7 @@ the current window.  By default, it is displayed according to the setting of
 	  ;; Ignore org-mode's temp help buffers which it handles on its own.
 	  (when (and wind (not hkey-org-help))
 	    (setq minibuffer-scroll-window wind)
-	    ;; Don't use help-mode in buffers already set up with a
+	    ;; Don't use `help-mode' in buffers already set up with a
 	    ;; quit-key to bury the buffer, e.g. minibuffer completions,
 	    ;; as this will sometimes disable default left mouse key item
 	    ;; selection.
@@ -1411,7 +1416,8 @@ the current window.  By default, it is displayed according to the setting of
 	      (when (string-match "^\\*Help\\|Help\\*$" (buffer-name))
 		(help-mode))
 	      (when (derived-mode-p 'help-mode)
-		(local-set-key "q" #'hkey-help-hide)))))
+                (local-set-key "q" #'hkey-help-hide)
+		(local-set-key "?" #'hkey-help-hide)))))
       ;; If in an *Org Help* buffer, reselect the Org buffer.
       (when hkey-org-help
 	(select-window owind))
