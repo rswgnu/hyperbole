@@ -1,3 +1,10 @@
+2026-08-26  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:tramp-file-name-regexp): Fix code so it removes beggining
+    of string  anchor rather than the improper end of string anchor that
+    was there and failed on Emacs 31.1.  Also, combine bol caret anchor
+    removal and eliminate extra cond clause.
+
 2026-08-25  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-get-entry): Since this is used only in 'hyrolo-yank',
