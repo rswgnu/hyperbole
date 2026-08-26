@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     25-Jul-26 at 23:08:13 by Mats Lidell
+;; Last-Mod:     26-Aug-26 at 00:23:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -842,7 +842,7 @@ If ARG is zero, move to the beginning of the current line."
     (hyrolo-expand-path-list hyrolo-file-list)))
 
 ;;;###autoload
-(defun hyrolo-get-entry (name &optional regexp-flag)
+(defun hyrolo-get-entry (name &optional regexp-flag exclude-sub-entries)
   "Return the first rolo entry string with a headline containing NAME.
 Return nil if no match is found.
 
@@ -850,7 +850,10 @@ If the `consult' package is installed, interactively select and complete
 the entry to be inserted.
 
 With optional prefix arg, REGEXP-FLAG, treat NAME as a regular expression
-instead of a string."
+instead of a string.
+
+With optional EXCLUDE-SUB-ENTRIES non-nil, exclude all sub-entry records
+below the matched one."
   (interactive (list
 		(hsys-consult-grep-headlines-read-regexp
 		 #'hyrolo-consult-grep "Yank rolo headline matching")
@@ -873,13 +876,15 @@ instead of a string."
 				       name))
 		    (hyrolo-grep-file (match-string-no-properties 1 name)
 				      (regexp-quote (substring name (match-end 0)))
-				      -1 nil t)
-		  (hyrolo-grep (if regexp-flag name (regexp-quote name)) -1 nil nil t))))
+				      -1 nil t exclude-sub-entries)
+		  (hyrolo-grep (if regexp-flag name (regexp-quote name)) -1 nil nil t nil nil exclude-sub-entries))))
         (when found
-          (buffer-string))))))
+          ;; Ignore any file header included before record
+          (hyrolo-outline-next-visible-heading 1)
+          (buffer-substring (point) (point-max)))))))
 
 ;;;###autoload
-(defun hyrolo-grep (regexp &optional max-matches hyrolo-files-or-bufs count-only headline-only no-display interactive-flag)
+(defun hyrolo-grep (regexp &optional max-matches hyrolo-files-or-bufs count-only headline-only no-display interactive-flag exclude-sub-entries)
   "Display HyRolo entries matching REGEXP and return count of matches.
 To a maximum of prefix arg MAX-MATCHES, in buffer(s) from
 optional HYROLO-FILES-OR-BUFS or `hyrolo-get-file-list'.  Default
@@ -889,18 +894,19 @@ retrieve and don't display matching entries.  Optional
 HEADLINE-ONLY searches only the first line of entries, not the
 full text.  Optional NO-DISPLAY non-nil retrieves entries but
 does not display.  Optional INTERACTIVE-FLAG treats this as an
-interactive call.
+interactive call.  Optional EXCLUDE-SUB-ENTRIES non-nil excludes
+all sub-entry records below the matched one.
 
 MAX-MATCHES values are the following:
   1. nil            - find all entries that match;
   2. t              - find all matching entries, omit file headers,
-                      don't erase the match buffer before adding entries,
-                      and don't display the match buffer;
+                      don't erase the match buffer before adding
+                      entries, and don't display the match buffer;
   3. negative value - find up to the inverse of that number of
                       matching entries.
 
-Return the number of entries matched.  See also documentation for the
-variable `hyrolo-file-list'."
+Return the number of entries matched.  See also documentation for
+the variable `hyrolo-file-list'."
   (interactive (let ((input-and-matching-files
 		      (hyrolo-grep-input #'read-regexp
 					 "Find rolo regular expression")))
@@ -938,7 +944,10 @@ variable `hyrolo-file-list'."
 			      ((and (hyrolo-google-contacts-p) (equal file-or-buf google-contacts-buffer-name))
 			       (hyrolo-retrieve-google-contacts (regexp-quote regexp))
 			       (hyrolo-google-contacts-grep-file file-or-buf regexp max-matches count-only))
-			      (t (hyrolo-grep-file file-or-buf regexp max-matches count-only headline-only)))
+			      (t (hyrolo-grep-file file-or-buf regexp
+                                                   max-matches count-only
+                                                   headline-only
+                                                   exclude-sub-entries)))
 	    total-matches (+ total-matches num-matched))
       (when (integerp max-matches)
 	(setq max-matches
@@ -1666,19 +1675,23 @@ Return number of entries matched.  See also documentation for the variable
     total-matches))
 
 ;;;###autoload
-(defun hyrolo-yank (name &optional regexp-flag)
+(defun hyrolo-yank (name &optional regexp-flag exclude-sub-entries)
   "Insert at point the first HyRolo entry with a headline containing NAME.
 If the `consult' package is installed, interactively select and complete
 the entry to be inserted.
 
 With optional prefix arg, REGEXP-FLAG, treat NAME as a regular expression
-instead of a string."
+instead of a string.
+
+With optional EXCLUDE-SUB-ENTRIES non-nil, exclude all sub-entry records
+below the yanked one."
   (interactive (list
 		(hsys-consult-grep-headlines-read-regexp
 		 #'hyrolo-consult-grep "Yank rolo headline matching")
-		current-prefix-arg))
+		current-prefix-arg
+                t))
   (push-mark)
-  (let ((entry (hyrolo-get-entry name regexp-flag)))
+  (let ((entry (hyrolo-get-entry name regexp-flag exclude-sub-entries)))
     (when entry
       (insert entry)
       ;; Let user reformat the region just yanked.
@@ -2113,7 +2126,7 @@ The header includes lines matching both `hyrolo-hdr-regexp' and
   "Regexp HyRolo search over files matching FILE-REGEXP in rest of DIRS."
   (apply #'hyrolo-search-directories #'hyrolo-grep file-regexp dirs))
 
-(defun hyrolo-grep-file (hyrolo-file-or-buf pattern &optional max-matches count-only headline-only)
+(defun hyrolo-grep-file (hyrolo-file-or-buf pattern &optional max-matches count-only headline-only exclude-sub-entries)
   "Retrieve entries in HYROLO-FILE-OR-BUF matching PATTERN.
 PATTERN is searched for using the function given by
 `hyrolo-next-match-function', so it can be a text property for
@@ -2126,7 +2139,8 @@ the inverse of that number of entries and omit file headers.
 
 Optional COUNT-ONLY non-nil skips display of matching entries.
 Optional HEADLINE-ONLY non-nil searches only the first line of
-entries, rather than the full text.
+entries, rather than the full text.  Optional EXCLUDE-SUB-ENTRIES
+non-nil excludes all sub-entry records below the matched one.
 
 Return number of matching entries found."
   ;;
@@ -2197,7 +2211,7 @@ Return number of matching entries found."
 			  (setq entry-start (point))
 			  (unless (re-search-forward hyrolo-hdr-and-entry-regexp nil t)
 			    (goto-char (line-end-position)))
-			  (unless (hyrolo-to-entry-end t)
+			  (unless (hyrolo-to-entry-end (not exclude-sub-entries))
 			    ;; If at the end of a line, move to the next line;
 			    ;; otherwise, move forward a character if possible.
 			    (if (eolp)

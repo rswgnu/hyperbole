@@ -1,3 +1,10 @@
+2026-08-25  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-get-entry): Since this is used only in 'hyrolo-yank',
+    fix to exclude the file header and sub-entries by default.
+            (hyrolo-get-entry, hyrolo-grep, hyrolo-grep-file, hyrolo-yank):
+    Add optional 'exclude-sub-entries' arg and when non-nil, exclude them.
+
 2026-08-22  Bob Weiner  <rsw@gnu.org>
 
 * hui-mini.el (hui:menu-help): Add enabling of 'truncate-lines' so table
