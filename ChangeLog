@@ -1,5 +1,8 @@
 2026-08-28  Mats Lidell  <matsl@gnu.org>
 
+* .github/workflows/main.yml:
+* Makefile (DOCKER_VERSIONS): Add Emacs 31.1.
+
 * hpath.el (hpath:tramp-file-name-regexp): Use variable
     tramp-file-name-regexp available from Emacs 28.  Remove unused
     tramp-localname-regexp.

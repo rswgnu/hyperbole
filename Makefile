@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     14-Aug-26 at 22:22:27 by Mats Lidell
+# Last-Mod:     28-Aug-26 at 17:58:19 by Mats Lidell
 #
 # Copyright (C) 1994-2026  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -191,7 +191,7 @@ ELISP_TO_COMPILE = $(pkg_parent)/elc-${USER}
 HYPB_WEB_REPO_LOCATION = ../hyweb/hyperbole/
 
 # CI/CD Emacs versions for local docker based tests
-DOCKER_VERSIONS=28.2 29.4 30.2 master
+DOCKER_VERSIONS=28.2 29.4 30.2 31.1 master
 
 ##########################################################################
 #                     NO CHANGES REQUIRED BELOW HERE.                    #
