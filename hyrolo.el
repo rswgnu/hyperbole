@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     26-Aug-26 at 00:23:10 by Bob Weiner
+;; Last-Mod:     28-Aug-26 at 00:45:30 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -414,6 +414,7 @@ entry which begins with the parent string."
 	 (error "(hyrolo-add): File not writable: `%s'" file)))
   (hyrolo-set-buffer (or (get-file-buffer file)
 		         (hyrolo-find-file-noselect file)))
+  (hyrolo-set-major-mode)
   (when (called-interactively-p 'interactive)
     (message "Locating insertion point for `%s'..." name))
   (let ((parent "")
@@ -1126,7 +1127,7 @@ or NAME is invalid, return nil."
 
 ;;;###autoload
 (define-derived-mode hyrolo-markdown-mode text-mode "Markdown"
-  "Major mode for editing Markdown files."
+ "Major mode for editing Markdown files."
   (hyrolo-install-markdown-mode)
 
   ;; Don't actually derive from `markdown-mode' to avoid its costly setup
@@ -2172,6 +2173,7 @@ Return number of matching entries found."
 			 max-matches (- max-matches)))))
 
 	  (hyrolo-set-buffer src-buf)
+          (hyrolo-set-major-mode)
 
 	  ;; Allow for initial asterisks being regexp-quoted in
 	  ;; string-match below.
@@ -2895,6 +2897,7 @@ begins or nil if not found."
 			         (hyrolo-find-file-noselect file-or-buf))
 		           ;; must be a buffer
 		           file-or-buf))
+      (hyrolo-set-major-mode)
       (let ((case-fold-search t) (real-name name) (parent "") (level)
 	    col-num end line name-column)
 	(hyrolo-widen)
@@ -3485,6 +3488,11 @@ This must be 1 or greater."
     (setq file-regexp hyrolo-file-suffix-regexp))
   (let ((hyrolo-file-list (hypb:filter-directories file-regexp dirs)))
     (call-interactively search-cmd)))
+
+(defun hyrolo-set-major-mode ()
+  "Set current buffer's Hyperbole major mode according to its file type."
+  (funcall (or (hyrolo-major-mode-from-file-name buffer-file-name)
+	       (buffer-local-value 'major-mode (current-buffer)))))
 
 (defun hyrolo-show-levels (levels-to-show)
   "Show only the first line of up to LEVELS-TO-SHOW of HyRolo matches.

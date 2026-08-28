@@ -1,3 +1,12 @@
+2026-08-28  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-set-major-mode): Add.
+            (hyrolo-add, hyrolo-grep-file, hyrolo-to): Call
+    'hyrolo-set-major-mode' after making hyrolo source buffer current to
+    ensure local vars are set properly for the file type.  This fixes
+    hyrolo markdown regexps and prevents 'hyrolo-to-entry-end' from
+    missing record ends and moving to (point-max).
+
 2026-08-26  Bob Weiner  <rsw@gnu.org>
 
 * test/hpath-tests.el (hpath:remote-at-p): Disable until fix with Emacs
