@@ -1,3 +1,11 @@
+2026-08-28  Mats Lidell  <matsl@gnu.org>
+
+* hpath.el (hpath:tramp-file-name-regexp): Use variable
+    tramp-file-name-regexp available from Emacs 28.  Remove unused
+    tramp-localname-regexp.
+    Error on unrecognized regexp to catch early changes in
+    tramp-file-name-regexp.
+
 2026-08-28  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-set-major-mode): Add.
