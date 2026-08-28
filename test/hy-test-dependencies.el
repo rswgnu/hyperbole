@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:16:00
-;; Last-Mod:     20-Jul-26 at 10:17:10 by Bob Weiner
+;; Last-Mod:     28-Aug-26 at 20:10:04 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -45,8 +45,8 @@
            (sleep-for delay)))))
     result))
 
-;; Apply advice only for Emacs master branch version used in CI
-(unless (version< emacs-version "32.0.50")
+;; Apply advice for Emacs 31.1 or later.  Needed in github workflow.
+(unless (version< emacs-version "31.1")
   (advice-add 'package-install :around #'hypb:package-install-advice-for-retry))
 
 (declare-function markdown-ts-mode "ext:markdown-ts-mode")

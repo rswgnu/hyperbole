@@ -1,5 +1,9 @@
 2026-08-28  Mats Lidell  <matsl@gnu.org>
 
+* test/hy-test-dependencies.el (version<): Apply advice for
+    package-install from Emacs version 31.1 now when we have that in the
+    workflow.
+
 * .github/workflows/main.yml:
 * Makefile (DOCKER_VERSIONS): Add Emacs 31.1.
 
