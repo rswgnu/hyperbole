@@ -1,3 +1,9 @@
+2026-08-29  Mats Lidell  <matsl@gnu.org>
+
+* hui-mini.el (hui:menu-last-help-string): Defvar.
+    (hkey-help-hide): Declare function.
+    (hui:menu-quit): Use function definition.
+
 2026-08-29  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-get-entry): Add call to 'hyrolo-hdr-at-p' to only skip
