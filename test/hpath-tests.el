@@ -389,7 +389,6 @@
 
 (ert-deftest hpath:remote-at-p ()
   "Verify hpath:remote-at-p match a tramp remote file name."
-  (ert-skip "!! TODO Disable until fix with Emacs 29 and 30")
   (mocklet ((hpath:remote-available-p => nil))
     (should-not (hpath:remote-at-p)))
   (let ((tramp-file "/ssh:user@host.org:/home/username/file"))

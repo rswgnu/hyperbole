@@ -6,8 +6,23 @@
 
 * test/hpath-tests.el (hpath--at-p-checks-files-with-hash-in-name-exists,
                        hpath--at-p-checks-file-that-with-hash-that-does-not-exist-returns-nil):
-    Fix to make file references be in the 'temporary-file-directory' and show all relevant
-    values if any test failure via 'ert-info'.
+    Fix to make file references be in the 'temporary-file-directory' and
+    show all relevant values if any test failure via 'ert-info'.
+
+2026-08-28  Mats Lidell  <matsl@gnu.org>
+
+* test/hy-test-dependencies.el (version<): Apply advice for
+    package-install from Emacs version 31.1 now when we have that in the
+    workflow.
+
+* .github/workflows/main.yml:
+* Makefile (DOCKER_VERSIONS): Add Emacs 31.1.
+
+* hpath.el (hpath:tramp-file-name-regexp): Use variable
+    tramp-file-name-regexp available from Emacs 28.  Remove unused
+    tramp-localname-regexp.
+    Error on unrecognized regexp to catch early changes in
+    tramp-file-name-regexp.
 
 2026-08-28  Bob Weiner  <rsw@gnu.org>
 
