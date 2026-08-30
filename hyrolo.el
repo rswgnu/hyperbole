@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     28-Aug-26 at 00:45:30 by Bob Weiner
+;; Last-Mod:     29-Aug-26 at 23:35:44 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -881,7 +881,8 @@ below the matched one."
 		  (hyrolo-grep (if regexp-flag name (regexp-quote name)) -1 nil nil t nil nil exclude-sub-entries))))
         (when found
           ;; Ignore any file header included before record
-          (hyrolo-outline-next-visible-heading 1)
+          (when (hyrolo-hdr-at-p)
+            (hyrolo-outline-next-visible-heading 1))
           (buffer-substring (point) (point-max)))))))
 
 ;;;###autoload

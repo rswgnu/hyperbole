@@ -1,3 +1,14 @@
+2026-08-29  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-get-entry): Add call to 'hyrolo-hdr-at-p' to only skip
+    to next record if there is a header included in the results.  Some
+    HyRolo files lack a header.
+
+* test/hpath-tests.el (hpath--at-p-checks-files-with-hash-in-name-exists,
+                       hpath--at-p-checks-file-that-with-hash-that-does-not-exist-returns-nil):
+    Fix to make file references be in the 'temporary-file-directory' and
+    show all relevant values if any test failure via 'ert-info'.
+
 2026-08-28  Mats Lidell  <matsl@gnu.org>
 
 * test/hy-test-dependencies.el (version<): Apply advice for
@@ -204,7 +215,8 @@
 * hpath.el (hpath:cache-mswindows-mount-points): Fix 'shell-command-to-string'
     call that had been wrapped in 'ignore-errors' but this grabbed the error
     string as the plist result (found because errors when 'tcsh' shell is used).
-    Instead wrap with a 'condition-case' so returns nil on any error.
+    Instead wrap with a 'condition-case' so returns nil on any error.  Fixes
+    bug#81549.
 
 2026-07-30  Bob Weiner  <rsw@gnu.org>
 
