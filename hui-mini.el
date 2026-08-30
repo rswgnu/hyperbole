@@ -3,11 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-<<<<<<< HEAD
-;; Last-Mod:     30-Aug-26 at 10:46:08 by Bob Weiner
-=======
-;; Last-Mod:     30-Aug-26 at 10:55:42 by Mats Lidell
->>>>>>> master
+;; Last-Mod:     30-Aug-26 at 11:19:18 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
