@@ -1,3 +1,8 @@
+2026-10-08  Mats Lidell  <matsl@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-tests--yank): Add test of yanking a
+    kotl header.
+
 2026-10-07  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (release-website): Use release tagged files for updating
