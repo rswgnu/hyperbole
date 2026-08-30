@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    28-Feb-21 at 23:26:00
-;; Last-Mod:     26-Aug-26 at 16:11:43 by Bob Weiner
+;; Last-Mod:     29-Aug-26 at 12:09:01 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -432,29 +432,34 @@
 
 (ert-deftest hpath--at-p-checks-files-with-hash-in-name-exists ()
   "Verify that file existence is checked for filenames containing a hash character."
-  (let ((dir (make-temp-file "hypb" t)))
+  (let ((dir (make-temp-file "hypb" t))
+        filename)
     (unwind-protect
         (dolist (fn '("#file#" "#.file#" "#file path#" "path#section" "#path#section"))
-          (let ((filename (expand-file-name fn dir)))
+          (setq filename (expand-file-name fn dir))
+          (ert-info ((format "Filename \"%s\":" filename))
             (unwind-protect
                 (progn
                   (find-file filename)
                   (insert "\"" fn "\"")
                   (hypb:save-buffer-silently)
-                  (goto-char 3)
-                  (should (string= (hpath:at-p) fn))
-                  (should (string= (hpath:is-p fn) fn)))
+	          (ert-info ((format "File referenced: \"%s\"" filename))
+                    (goto-char 3)
+                    (should (string= (hpath:at-p) fn))
+                    (should (string= (hpath:is-p fn) fn))))
               (hy-delete-file-and-buffer filename))))
       (delete-directory dir))))
 
 (ert-deftest hpath--at-p-checks-file-that-with-hash-that-does-not-exist-returns-nil ()
   "Verify that file existence is checked for filenames containing a hash character."
-  (dolist (fn '("#file#" "#.file#" "#file path#" "path#section" "#path#section"))
-    (with-temp-buffer
-      (insert "\"" fn "\"")
-      (goto-char 3)
-      (should-not (hpath:at-p))
-      (should-not (hpath:is-p fn)))))
+  (let ((default-directory temporary-file-directory))
+    (dolist (fn '("abc" "#file#" "#.file#" "#file path#" "path#section" "#path#section"))
+      (with-temp-buffer
+        (insert "\"" fn "\"")
+        (goto-char 3)
+        (ert-info ((format "File referenced: \"%s\"; Buffer point is in: \"%s\":" (expand-file-name fn) (buffer-name)))
+          (should-not (hpath:at-p))
+          (should-not (hpath:is-p fn)))))))
 
 (ert-deftest hpath--expand-no-wildcards-existing-path ()
   "Verify expand with no wildcards gives path back."
