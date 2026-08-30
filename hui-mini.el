@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     29-Aug-26 at 18:07:05 by Mats Lidell
+;; Last-Mod:     30-Aug-26 at 10:55:42 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -384,6 +384,8 @@ instead returns the one line help string for the key sequence."
 
 (defalias 'hui:menu-quit   #'hui:menu-enter)
 (defalias 'hui:menu-abort  #'hui:menu-enter)
+;; FIXME: Change alias, hui:menu-help is an existing function
+;;(defalias 'hui:menu-help   #'hui:menu-enter)
 (defalias 'hui:menu-top    #'hui:menu-enter)
 (defalias 'hui:menu-select #'hui:menu-enter)
 

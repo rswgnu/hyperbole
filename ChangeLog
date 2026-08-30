@@ -2,7 +2,6 @@
 
 * hui-mini.el (hui:menu-last-help-string): Defvar.
     (hkey-help-hide): Declare function.
-    (hui:menu-quit): Use function definition.
 
 2026-08-29  Bob Weiner  <rsw@gnu.org>
 
