@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     15-Aug-26 at 22:29:02 by Bob Weiner
+;; Last-Mod:     30-Aug-26 at 11:12:09 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1407,12 +1407,18 @@ the current window.  By default, it is displayed according to the setting of
 	  ;; Ignore org-mode's temp help buffers which it handles on its own.
 	  (when (and wind (not hkey-org-help))
 	    (setq minibuffer-scroll-window wind)
-	    ;; Don't use `help-mode' in buffers already set up with a
-	    ;; quit-key to bury the buffer, e.g. minibuffer completions,
-	    ;; as this will sometimes disable default left mouse key item
-	    ;; selection.
-	    (unless (or (where-is-internal 'quit-window (current-local-map))
-			(where-is-internal 'hkey-help-hide (current-local-map)))
+            (when (or
+                   ;; In more recent Emacs versions, `quit-window' is bound in
+                   ;; the default 'major-mode' (typically `fundamental-mode'),
+                   ;; so we have to specifically check for it and switch to
+                   ;; `help-mode'.
+                   (eq major-mode (default-value 'major-mode))
+	           ;; Don't use `help-mode' in buffers already set up with a
+	           ;; quit-key to bury the buffer, e.g. minibuffer completions,
+	           ;; as this will sometimes disable default left mouse key item
+	           ;; selection.
+                   (not (or (where-is-internal 'quit-window (current-local-map))
+			    (where-is-internal 'hkey-help-hide (current-local-map)))))
 	      (when (string-match "^\\*Help\\|Help\\*$" (buffer-name))
 		(help-mode))
 	      (when (derived-mode-p 'help-mode)

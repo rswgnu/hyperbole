@@ -1,3 +1,16 @@
+2026-08-30  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-drv.el (hkey-help-show): Fix that ? help buffer in Hyperbole minibuffer
+    menus was not put into 'help-mode' in some Emacs versions because
+    'quit-window' is now bound in the default major mode that the ? buffer
+    starts in.  This is typically 'fundamental-mode'.
+
+* hui-mini.el (hui:menu-help): Set menu help buffer to read only.
+
+* hywiki.el (hywiki-completion-at-point): Fix to return nil anytime an error
+    occurs when getting the candidate list, not just for one specific error.
+    This fixes gh#1048.
+
 2026-08-29  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-get-entry): Add call to 'hyrolo-hdr-at-p' to only skip

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     21-Aug-26 at 11:55:52 by Bob Weiner
+;; Last-Mod:     30-Aug-26 at 10:21:23 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1845,42 +1845,49 @@ Each candidate is an alist with keys: file, line, text, and display."
          (existing-wikiword-prefix (when ref (hywiki-word-strip-suffix ref))))
     (when prefix
       (let* ((default-directory hywiki-directory)
-             (cmd (format "grep -nEH '^([ \t]*\\*+|#\\+TITLE:) +' ./%s*%s"
+             ;; set +f ensures globbing is on, so file wildcards are
+             ;; expanded but only within the subshell created by the outer
+             ;; parens
+             (cmd (format "(set +f && grep -nEH '^([ \t]*\\*+|#\\+TITLE:) +' ./%s*%s)"
                           existing-wikiword-prefix
                           hywiki-file-extension))
-             (output (shell-command-to-string cmd))
-             (lines (split-string output "[\n\r]" t))
-             (candidates
-              ;; If no matching HyWiki pages were found, return nil
-              (unless (and (= 1 (length lines))
-                           (string-match "No such file or directory" (car lines)))
-                (delq nil
-                      (nconc
-                       ;; Return only candidates that start with 'existing-wikiword-prefix'
-                       (seq-filter (lambda (str)
-                                     (string-prefix-p existing-wikiword-prefix str))
-                                   (hywiki-get-page-list))
-                       (mapcar #'hywiki-format-grep-to-reference lines)))))
-             (candidates-alist (when candidates (mapcar #'list candidates))))
-        (when candidates-alist
-          (setq hywiki--char-before (char-before start)
-                hywiki--start-pos start
-                hywiki--end-pos end)
-          (list start end candidates-alist
-                :exclusive 'no
-                ;; For company, allow any non-delim chars in prefix
-                ;; :company-prefix-length t
-                ;; :company-prefix-dirty t
-                ;; Returning the prefix as (string . t) tells Company:
-                ;; 'This is the prefix, and yes, it is currently valid (dirty).'
-                ;; :company-prefix-snapshot (cons ref t)
+             (output (with-temp-buffer
+                       ;; Check exist status and if any error (non-zero),
+                       ;; that means there were no HyWiki page completions,
+                       ;; so return nil
+                       (when (zerop (call-process-shell-command
+                                     cmd nil (current-buffer)))
+                         (buffer-string)))))
+        (when output
+          (let* ((lines (split-string output "[\n\r]" t))
+                 (candidates
+                  (delq nil
+                        (nconc
+                         ;; Return only candidates that start with 'existing-wikiword-prefix'
+                         (seq-filter (lambda (str)
+                                       (string-prefix-p existing-wikiword-prefix str))
+                                     (hywiki-get-page-list))
+                         (mapcar #'hywiki-format-grep-to-reference lines))))
+                 (candidates-alist (when candidates (mapcar #'list candidates))))
+            (when candidates-alist
+              (setq hywiki--char-before (char-before start)
+                    hywiki--start-pos start
+                    hywiki--end-pos end)
+              (list start end candidates-alist
+                    :exclusive 'no
+                    ;; For company, allow any non-delim chars in prefix
+                    ;; :company-prefix-length t
+                    ;; :company-prefix-dirty t
+                    ;; Returning the prefix as (string . t) tells Company:
+                    ;; 'This is the prefix, and yes, it is currently valid (dirty).'
+                    ;; :company-prefix-snapshot (cons ref t)
 
-                ;; This prevents the minibuffer/Corfu/Company from
-                ;; re-parsing the # as a 'function quote' trigger.
-                :company-kind (lambda (_) 'keyword)
-                :annotation-function (lambda (_) " [HyWiki]")
-                ;; Corfu uses this
-                :exit-function #'hywiki-completion-exit-function))))))
+                    ;; This prevents the minibuffer/Corfu/Company from
+                    ;; re-parsing the # as a 'function quote' trigger.
+                    :company-kind (lambda (_) 'keyword)
+                    :annotation-function (lambda (_) " [HyWiki]")
+                    ;; Corfu uses this
+                    :exit-function #'hywiki-completion-exit-function))))))))
 
 (defun hywiki-completion-exit-function (&rest _)
   "Function called when HyWiki reference completion ends."
