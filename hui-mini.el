@@ -3,7 +3,11 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
+<<<<<<< HEAD
 ;; Last-Mod:     30-Aug-26 at 10:46:08 by Bob Weiner
+=======
+;; Last-Mod:     30-Aug-26 at 10:55:42 by Mats Lidell
+>>>>>>> master
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -33,6 +37,7 @@
 (defvar hsys-org-enable-smart-keys)     ; "hsys-org.el"
 (defvar hui:menu-highlight-flag)        ; "hui-mini.el"
 (defvar hui:menu-hywiki nil)            ; "hui-mini.el"
+(defvar hui:menu-last-help-string)      ; "hui-mini.el"
 (defvar hui:menu-mode-map)              ; "hui-mini.el"
 (defvar hui:menu-rolo nil)              ; "hui-mini.el"
 (defvar hyperbole-mode-map)             ; "hyperbole.el"
@@ -43,6 +48,7 @@
 (defvar org-mode-map)                   ; "org.el"
 
 (declare-function hargs:at-p "hargs")
+(declare-function hkey-help-hide "hmouse-drv")
 (declare-function hkey-help-show "hmouse-drv")
 (declare-function hmouse-update-smart-keys "hmouse-key")
 (declare-function hpath:find "hpath")
@@ -382,7 +388,8 @@ instead returns the one line help string for the key sequence."
 
 (defalias 'hui:menu-quit   #'hui:menu-enter)
 (defalias 'hui:menu-abort  #'hui:menu-enter)
-(defalias 'hui:menu-help   #'hui:menu-enter)
+;; FIXME: Change alias, hui:menu-help is an existing function
+;;(defalias 'hui:menu-help   #'hui:menu-enter)
 (defalias 'hui:menu-top    #'hui:menu-enter)
 (defalias 'hui:menu-select #'hui:menu-enter)
 

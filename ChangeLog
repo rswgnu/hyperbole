@@ -11,6 +11,11 @@
     occurs when getting the candidate list, not just for one specific error.
     This fixes gh#1048.
 
+2026-08-29  Mats Lidell  <matsl@gnu.org>
+
+* hui-mini.el (hui:menu-last-help-string): Defvar.
+    (hkey-help-hide): Declare function.
+
 2026-08-29  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-get-entry): Add call to 'hyrolo-hdr-at-p' to only skip
