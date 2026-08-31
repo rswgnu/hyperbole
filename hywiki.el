@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     21-Aug-26 at 11:55:52 by Bob Weiner
+;; Last-Mod:     30-Aug-26 at 23:17:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1845,28 +1845,34 @@ Each candidate is an alist with keys: file, line, text, and display."
          (existing-wikiword-prefix (when ref (hywiki-word-strip-suffix ref))))
     (when prefix
       (let* ((default-directory hywiki-directory)
-             (cmd (format "grep -nEH '^([ \t]*\\*+|#\\+TITLE:) +' ./%s*%s"
+             ;; set +f ensures globbing is on, so file wildcards are
+             ;; expanded but only within the subshell created by the outer
+             ;; parens
+             (cmd (format "(set +f && grep -nEH '^([ \t]*\\*+|#\\+TITLE:) +' ./%s*%s)"
                           existing-wikiword-prefix
                           hywiki-file-extension))
-             (output (shell-command-to-string cmd))
-             (lines (split-string output "[\n\r]" t))
+             (output (with-temp-buffer
+                       ;; Check exist status and if any error (non-zero),
+                       ;; that means there were no HyWiki #section completions,
+                       ;; so `output' will be nil.  Still need to allow for
+                       ;; HyWiki page completions further down.
+                       (when (zerop (call-process-shell-command
+                                     cmd nil (current-buffer)))
+                         (buffer-string))))
+             (lines (when output (split-string output "[\n\r]" t)))
              (candidates
-              ;; If no matching HyWiki pages were found, return nil
-              (unless (and (= 1 (length lines))
-                           (string-match "No such file or directory" (car lines)))
-                (delq nil
-                      (nconc
-                       ;; Return only candidates that start with 'existing-wikiword-prefix'
-                       (seq-filter (lambda (str)
-                                     (string-prefix-p existing-wikiword-prefix str))
-                                   (hywiki-get-page-list))
-                       (mapcar #'hywiki-format-grep-to-reference lines)))))
-             (candidates-alist (when candidates (mapcar #'list candidates))))
-        (when candidates-alist
+              (delq nil
+                    (nconc
+                     ;; Return only candidates that start with 'existing-wikiword-prefix'
+                     (seq-filter (lambda (str)
+                                   (string-prefix-p existing-wikiword-prefix str))
+                                 (hywiki-get-referent-list))
+                     (mapcar #'hywiki-format-grep-to-reference lines)))))
+        (when candidates
           (setq hywiki--char-before (char-before start)
                 hywiki--start-pos start
                 hywiki--end-pos end)
-          (list start end candidates-alist
+          (list start end candidates
                 :exclusive 'no
                 ;; For company, allow any non-delim chars in prefix
                 ;; :company-prefix-length t
@@ -2752,7 +2758,7 @@ not contain a directory path or returns nil."
 
 (defun hywiki-get-page-file (reference)
   "Return possibly non-existent `hywiki-directory' path from REFERENCE.
-REFERENCE may be an existing absolute file path; then, return it.
+REFERENCE may be an existing file path; then, return it.
 Otherwise, REFERENCE should not contain a directory and may have or may omit
 `hywiki-file-extension' and an optional trailing #section, both of which are
 left attached to the result returned.  So given the input, WikiWord#section,
@@ -2808,6 +2814,10 @@ Strip any leading '*' and space characters from the headings."
 			(when (eq (caar referent-type) 'page)
 			  (cdr referent-type)))
 		      (hywiki-get-referent-hasht))))
+
+(defun hywiki-get-referent-list ()
+  "Return the full list of HyWikiWords."
+  (delq nil (hash-map #'cdr (hywiki-get-referent-hasht))))
 
 (defun hywiki-get-referent (wikiword &optional absolute-path-flag)
   "Return the referent of HyWiki WIKIWORD or nil if it does not exist.

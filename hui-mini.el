@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     30-Aug-26 at 10:55:42 by Mats Lidell
+;; Last-Mod:     30-Aug-26 at 11:19:18 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -444,7 +444,8 @@ help window."
                 (toggle-truncate-lines 1)
 	        (insert help-str)
 	        (set-buffer-modified-p nil)
-                (setq hui:menu-last-help-string help-str)
+	        (setq buffer-read-only t
+                      hui:menu-last-help-string help-str)
                 (fit-window-to-buffer)
                 (goto-char (point-min))))
           (when (eq owind (minibuffer-window))

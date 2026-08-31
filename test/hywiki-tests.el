@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     21-Aug-26 at 11:58:32 by Bob Weiner
+;; Last-Mod:     30-Aug-26 at 23:15:25 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -303,8 +303,7 @@ around the call.  This is for simulating the command loop."
 
                  ;; `hywiki-mode' must be enabled within the current buffer or
                  ;; the setting of `wiki-page' below will fail
-                 (unless (eq hywiki-mode :all)
-                   (hywiki-mode :all))
+                 (hywiki-mode :all)
 
                  ;; Since we newly created the `hywiki-directory', it is
                  ;; empty and we don't need to do a (redisplay t) or
@@ -312,7 +311,7 @@ around the call.  This is for simulating the command loop."
 
                  ;; `wiki-page' wil be set to the page's absolute filename
                  ;; after `hywiki-mode' is enabled.
-                 (setq wiki-page (cdr (hywiki-add-page "WikiWord")))
+                 (setq wiki-page (cdr (hywiki-add-page "WikiWord" nil t)))
                  ,@body)
              (hy-delete-files-and-buffers (list wiki-page (hywiki-cache-default-file)))
              (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory)
@@ -2284,7 +2283,7 @@ See helper `hywiki-display-hywiki-test' above for verifying display call."
     (ert-info ("Word 'Wi' can be completed")
       (erase-buffer)
       (insert "Wi")
-      (should (equal (list 1 3 '(("WikiWord")))
+      (should (equal (list 1 3 '("WikiWord"))
                      (hywiki-tests--remove-keyword-args (hywiki-completion-at-point)))))
     (ert-info ("Word is extended to 'Wixx' so it can't be completed")
       (insert "xx")
@@ -2302,7 +2301,8 @@ See helper `hywiki-display-hywiki-test' above for verifying display call."
     (ert-info ("Word 'Wiki' can be completed so headers are returned")
       (erase-buffer)
       (insert "Wiki")
-      (should (equal (list 1 5 '(("WikiWord") ("WikiWord#Header") ("WikiWord#SubHeader") ("WikiWord#SubSubHeader")))
+      (should (equal (list 1 5 '("WikiWord" "WikiWord#Header"
+                                 "WikiWord#SubHeader" "WikiWord#SubSubHeader"))
                      (hywiki-tests--remove-keyword-args (hywiki-completion-at-point)))))))
 
 (ert-deftest hywiki-tests--verify-hook-functions ()
