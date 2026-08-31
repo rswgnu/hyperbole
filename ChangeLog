@@ -1,3 +1,28 @@
+2026-09-05  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (install-elpa install-elpa-devel install-tarball
+    install-melpa install-melpa-releases install-straight install-elpaca):
+    Mount install-test folder in docker container and run test from there.
+    (install-local): Remove target.
+
+* install-test/elpaca-early-init: New file for elpaca early init.
+
+* install-test/install-test.sh: Use shorter name, use interactive
+    Emacs and simplify to the environment in the docker container.
+
+* install-test/MANIFEST: Add elpaca-early-init, remove local-emacs,
+    rename local-install-test.sh to install-test.sh.
+
+* install-test/elpa-devel-emacs:
+    install-test/elpa-emacs:
+    install-test/elpaca-emacs:
+    install-test/local-emacs:
+    install-test/melpa-emacs:
+    install-test/melpa-releases-emacs:
+    install-test/straight-emacs: Added lexical-binding cookie, removed
+    message about install, use use-package config and other small
+    refactoring.
+
 2026-08-30  Bob Weiner  <rsw@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--preserve-hywiki-mode): Call

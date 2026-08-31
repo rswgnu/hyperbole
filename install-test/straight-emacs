@@ -1,4 +1,5 @@
-;; Use this in your Emacs init file to install Straight
+;;; -*- lexical-binding: t; -*-
+
 (progn
   (defvar bootstrap-version)
   (setq package-enable-at-startup nil)
@@ -14,13 +15,22 @@
         (eval-print-last-sexp)))
     (load bootstrap-file nil 'nomessage)))
 
-;; Then use this to install Hyperbole
 (straight-use-package
  '(hyperbole
    :host nil
+
    :repo "https://git.savannah.gnu.org/git/hyperbole.git"
-   :config (hyperbole-mode 1)))
+
+   :config
+   (progn
+     (hywiki-mode :all)
+     (unless hywiki-mode
+       (hyperbole-mode 1)))
+
+   :bind
+   (("M-RET" . hkey-either))
+
+   :custom
+   (hsys-org-enable-smart-keys t)))
 
 (hyperbole-mode 1)
-
-(message "%s" "Hyperbole successfully installed and activated")
