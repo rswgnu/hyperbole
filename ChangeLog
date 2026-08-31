@@ -1,5 +1,15 @@
 2026-08-30  Bob Weiner  <rsw@gnu.org>
 
+* test/hywiki-tests.el (hywiki-tests--preserve-hywiki-mode): Call
+   'hywiki-add-page' with 'debug-flag' enabled, so if ever get null a
+   null referent returned, get a stack trace showing the source of the
+   problem.
+
+* hywiki.el (hywiki-completion-at-point): Fix to not return nil if no #section
+    completions found; continue and allow for referent-only completions.
+            (hywiki-get-referent-list): Add and call in above function rather
+    than limiting to WikiWords attached to pages.
+
 * hmouse-drv.el (hkey-help-show): Fix that ? help buffer in Hyperbole minibuffer
     menus was not put into 'help-mode' in some Emacs versions because
     'quit-window' is now bound in the default major mode that the ? buffer
@@ -7,9 +17,13 @@
 
 * hui-mini.el (hui:menu-help): Set menu help buffer to read only.
 
-* hywiki.el (hywiki-completion-at-point): Fix to return nil anytime an error
-    occurs when getting the candidate list, not just for one specific error.
-    This fixes gh#1048.
+* hywiki.el (hywiki-completion-at-point): Fix to set 'output' to nil anytime
+    an error occurs with the grep call generating #section candidates.
+    Previously, the code matched to only one specific error.  This fixes bug
+    report gh#1048.  Also, change completion table to use strings rather than
+    lists of strings, for simplicity.
+  test/hywiki-tests.el (hywiki-tests--completion-at-point): Adapt to above
+    change to completion table.
 
 2026-08-29  Mats Lidell  <matsl@gnu.org>
 

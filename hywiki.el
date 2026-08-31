@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     30-Aug-26 at 10:21:23 by Bob Weiner
+;; Last-Mod:     30-Aug-26 at 23:17:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1853,41 +1853,40 @@ Each candidate is an alist with keys: file, line, text, and display."
                           hywiki-file-extension))
              (output (with-temp-buffer
                        ;; Check exist status and if any error (non-zero),
-                       ;; that means there were no HyWiki page completions,
-                       ;; so return nil
+                       ;; that means there were no HyWiki #section completions,
+                       ;; so `output' will be nil.  Still need to allow for
+                       ;; HyWiki page completions further down.
                        (when (zerop (call-process-shell-command
                                      cmd nil (current-buffer)))
-                         (buffer-string)))))
-        (when output
-          (let* ((lines (split-string output "[\n\r]" t))
-                 (candidates
-                  (delq nil
-                        (nconc
-                         ;; Return only candidates that start with 'existing-wikiword-prefix'
-                         (seq-filter (lambda (str)
-                                       (string-prefix-p existing-wikiword-prefix str))
-                                     (hywiki-get-page-list))
-                         (mapcar #'hywiki-format-grep-to-reference lines))))
-                 (candidates-alist (when candidates (mapcar #'list candidates))))
-            (when candidates-alist
-              (setq hywiki--char-before (char-before start)
-                    hywiki--start-pos start
-                    hywiki--end-pos end)
-              (list start end candidates-alist
-                    :exclusive 'no
-                    ;; For company, allow any non-delim chars in prefix
-                    ;; :company-prefix-length t
-                    ;; :company-prefix-dirty t
-                    ;; Returning the prefix as (string . t) tells Company:
-                    ;; 'This is the prefix, and yes, it is currently valid (dirty).'
-                    ;; :company-prefix-snapshot (cons ref t)
+                         (buffer-string))))
+             (lines (when output (split-string output "[\n\r]" t)))
+             (candidates
+              (delq nil
+                    (nconc
+                     ;; Return only candidates that start with 'existing-wikiword-prefix'
+                     (seq-filter (lambda (str)
+                                   (string-prefix-p existing-wikiword-prefix str))
+                                 (hywiki-get-referent-list))
+                     (mapcar #'hywiki-format-grep-to-reference lines)))))
+        (when candidates
+          (setq hywiki--char-before (char-before start)
+                hywiki--start-pos start
+                hywiki--end-pos end)
+          (list start end candidates
+                :exclusive 'no
+                ;; For company, allow any non-delim chars in prefix
+                ;; :company-prefix-length t
+                ;; :company-prefix-dirty t
+                ;; Returning the prefix as (string . t) tells Company:
+                ;; 'This is the prefix, and yes, it is currently valid (dirty).'
+                ;; :company-prefix-snapshot (cons ref t)
 
-                    ;; This prevents the minibuffer/Corfu/Company from
-                    ;; re-parsing the # as a 'function quote' trigger.
-                    :company-kind (lambda (_) 'keyword)
-                    :annotation-function (lambda (_) " [HyWiki]")
-                    ;; Corfu uses this
-                    :exit-function #'hywiki-completion-exit-function))))))))
+                ;; This prevents the minibuffer/Corfu/Company from
+                ;; re-parsing the # as a 'function quote' trigger.
+                :company-kind (lambda (_) 'keyword)
+                :annotation-function (lambda (_) " [HyWiki]")
+                ;; Corfu uses this
+                :exit-function #'hywiki-completion-exit-function))))))
 
 (defun hywiki-completion-exit-function (&rest _)
   "Function called when HyWiki reference completion ends."
@@ -2759,7 +2758,7 @@ not contain a directory path or returns nil."
 
 (defun hywiki-get-page-file (reference)
   "Return possibly non-existent `hywiki-directory' path from REFERENCE.
-REFERENCE may be an existing absolute file path; then, return it.
+REFERENCE may be an existing file path; then, return it.
 Otherwise, REFERENCE should not contain a directory and may have or may omit
 `hywiki-file-extension' and an optional trailing #section, both of which are
 left attached to the result returned.  So given the input, WikiWord#section,
@@ -2815,6 +2814,10 @@ Strip any leading '*' and space characters from the headings."
 			(when (eq (caar referent-type) 'page)
 			  (cdr referent-type)))
 		      (hywiki-get-referent-hasht))))
+
+(defun hywiki-get-referent-list ()
+  "Return the full list of HyWikiWords."
+  (delq nil (hash-map #'cdr (hywiki-get-referent-hasht))))
 
 (defun hywiki-get-referent (wikiword &optional absolute-path-flag)
   "Return the referent of HyWiki WIKIWORD or nil if it does not exist.
