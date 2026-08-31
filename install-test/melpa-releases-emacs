@@ -1,12 +1,10 @@
-;; .emacs
+;;; -*- mode: emacs-lisp; lexical-binding: t; -*-
 
 (require 'package)
-(setq package-native-compile t)
 (add-to-list 'package-archives '("melpa-releases" . "https://releases.melpa.org/packages/"))
 (setq package-pinned-packages '((hyperbole . "melpa-releases")))
-(unless (package-installed-p 'hyperbole)
-  (package-refresh-contents)
-  (package-install 'hyperbole))
-(hyperbole-mode 1)
 
-(message "%s" "Hyperbole successfully installed and activated")
+(unless (locate-library "hyperbole")
+   (package-install 'hyperbole))
+
+;;; End melpa-releases

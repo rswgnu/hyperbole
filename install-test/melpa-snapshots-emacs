@@ -1,0 +1,10 @@
+;;; -*- mode: emacs-lisp; lexical-binding: t; -*-
+
+(require 'package)
+(add-to-list 'package-archives '("melpa-snapshots" . "https://snapshots.melpa.org/packages/"))
+(setq package-pinned-packages '((hyperbole . "melpa-snapshots")))
+
+(unless (locate-library "hyperbole")
+   (package-install 'hyperbole))
+
+;;; End melpa-snapshots-emacs

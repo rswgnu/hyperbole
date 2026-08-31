@@ -1,3 +1,37 @@
+2026-09-13  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (install-melpa-snapshots install-melpa-releases): Use
+    melpas new releases and snapshots archives. For all install test
+    targets add debug parameter and mount man/use-package for use by the
+    install-test.sh script.
+    (install-local): Remove target.
+
+* install-test/MANIFEST: Add elpaca-early-init and
+    melpa-snapshot-emacs. Remove melpa-emacs and local-emacs. Rename
+    local-install-test.sh to install-test.sh.
+
+* install-test/elpaca-early-init: Early init required by elpaca.
+
+* install-test/elpa-devel-emacs:
+* install-test/elpa-emacs:
+* install-test/elpaca-emacs:
+* install-test/melpa-releases-emacs:
+* install-test/melpa-snapshots-emacs:
+* install-test/straight-emacs:
+* install-test/tarball-emacs: Remove use-package declaration and only
+    keep package manager aware install.
+
+* install-test/melpa-emacs:
+* install-test/local-emacs: Delete these old removed install tests.
+
+* install-test/install-test.sh: Renamed from
+    local-install-test.sh. Add debug option
+
+* MANIFEST: Add man/use-package.
+
+* man/use-package: New file, use-package declaration in man folder for
+    use in documentation and in install tests.
+
 2026-09-13  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-word-section-regexp): Fix that character after the
