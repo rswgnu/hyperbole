@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     28-Aug-26 at 17:58:19 by Mats Lidell
+# Last-Mod:      5-Sep-26 at 00:25:03 by Mats Lidell
 #
 # Copyright (C) 1994-2026  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -645,17 +645,14 @@ docker-batch-tests:
 
 # Hyperbole install tests - Verify that hyperbole can be installed
 # using different sources. See folder "install-test"
-.PHONY: install-elpa install-elpa-devel install-tarball install-straight install-all install-local
-install-all: install-elpa install-elpa-devel install-melpa install-melpa-releases install-tarball install-straight install-local
+.PHONY: install-elpa install-elpa-devel install-tarball install-straight install-all
+install-all: install-elpa install-elpa-devel install-melpa install-melpa-releases install-tarball install-straight
 
 install-elpa install-elpa-devel install-tarball install-melpa install-melpa-releases install-straight install-elpaca:
 	@echo "Install Hyperbole using $@"
-	(cd ./install-test/ && ./local-install-test.sh $(subst install-,,$@))
-
-install-local:
-	@echo "Install Hyperbole using $@"
-	(cd ./install-test/ && \
-	./local-install-test.sh $(subst install-,,$@) $(shell pwd) $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null))
+	cd ./install-test/ && \
+		docker run -v $$(pwd):/hypb-install -v /tmp:/hypb-tmp -it --rm silex/emacs:${DOCKER_VERSION} \
+		bash -c "cd /hypb-install && ./install-test.sh $(subst install-,,$@)"
 
 .PHONY: lint
 lint:

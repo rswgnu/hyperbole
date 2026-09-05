@@ -4,5 +4,3 @@
   (push (expand-file-name "hyperbole" (getenv "HOME")) load-path)
   (require 'hyperbole)
   (hyperbole-mode 1))
-
-(message "%s" "Hyperbole successfully installed and activated")

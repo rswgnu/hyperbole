@@ -1,9 +1,9 @@
 --- HYPERBOLE INSTALLATION TEST CONFIGURATIONS ---
 elpa-devel-emacs            - Elpa-devel package personal configuration
 elpa-emacs                  - Elpa package personal configuration
+elpaca-early-init           - Early init file for elpaca
 elpaca-emacs                - Elpaca package configuration (elpa-devel install)
-local-emacs                 - Straight git package from local repo and branch
-local-install-test.sh       - Run one or more test installations
+install-test.sh             - Run one or more test installations
 melpa-emacs                 - Melpa legacy package personal configuration
 melpa-releases-emacs        - Melpa releases package personal configuration
 straight-emacs              - Straight git package personal configuration
