@@ -1,3 +1,7 @@
+2026-09-09  Mats Lidell  <matsl@gnu.org>
+
+* man/.dir-locals.el: Set before-save-hook to a list.
+
 2026-08-30  Bob Weiner  <rsw@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--preserve-hywiki-mode): Call

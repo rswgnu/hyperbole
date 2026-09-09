@@ -1,6 +1,6 @@
 ((texinfo-mode
   . ((before-save-hook
-      . (lambda ()
+      . ((lambda ()
           (let ((our-set-env
                  (lambda () (let ((day (string-trim (format-time-string "%e" (current-time))))
                                   (month (capitalize (format-time-string "%B" (current-time))))
@@ -21,4 +21,4 @@
             (if (fboundp 'with-locale-environment)
                 (with-locale-environment "en_US.utf8"
                   (funcall our-set-env))
-              (funcall our-set-env))))))))
+              (funcall our-set-env)))))))))
