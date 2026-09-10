@@ -256,7 +256,19 @@ Each test is constructed in three phases:
              (ert-info ("16" :prefix "Verify highlighting: ")
                (pre: "WikiWo^kill-wordrd")
                (del:        "kill-word")
-               (post: "<WikiWo^rd>")))
+               (post: "<WikiWo^rd>"))
+
+             ;; PASS: WikiWord -> insert . before should dehighlight
+             (ert-info ("17" :prefix "Verify dehighlighting: ")
+               (pre: "^WikiWord")
+               (hywiki-tests--insert-by-char ".")
+               (post: ".^WikiWord"))
+
+             ;; FAIL: WikiWord -> insert char before should dehighlight
+             (ert-info ("18" :prefix "Verify dehighlighting: ")
+               (pre: "^WikiWord")
+               (hywiki-tests--insert-by-char "a")
+               (post: "a^WikiWord")))
 
          (hy-delete-files-and-buffers (list wikiHi wikiHo)))))))
 

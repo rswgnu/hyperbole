@@ -1,3 +1,16 @@
+2026-09-11  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--hywiki-face-regions): Add beg
+    and end parameter for listing hywiki--word-face in a limited region.
+    (hywiki-tests--word-at): Use hywiki-tests--hywiki-face-regions for
+    verifying a non WikiWord is not highlighted.
+    (hywiki-tests--wikiword-step-check): Add test that inserts a char
+    before a WikiWord.
+
+* test/hywiki-yki-tests.el
+    (hywiki--verify-get-buffer-text-with-point-and-highlight-compact): Add
+    test that inserts a char before a WikiWord.
+
 2026-09-11  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-word-highlight-post-self-insert): Replace call to

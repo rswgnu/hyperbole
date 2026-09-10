@@ -1554,12 +1554,12 @@ See gh#rswgnu/hyperbole/669."
     (goto-char 4)
     (should (hywiki-word-face-at-p))))
 
-(defun hywiki-tests--hywiki-face-regions ()
+(defun hywiki-tests--hywiki-face-regions (&optional beg end)
   "Return (start . end) for all hywiki--word-face overlays in buffer.
 The result is returned as a lexicographical sorted list to make
 comparison with expected overlays stable."
   (let (overlay-list)
-    (dolist (overlay (overlays-in (point-min) (point-max)))
+    (dolist (overlay (overlays-in (or beg (point-min)) (or end (point-max))))
       (when (equal (overlay-get overlay 'face) 'hywiki--word-face)
         (push (cons (overlay-start overlay) (overlay-end overlay)) overlay-list)))
     (sort overlay-list
@@ -1579,7 +1579,7 @@ highlighting and the range of the HyWikiWord is, as a side effect,
 checked for consistency."
   (let* ((range (hywiki-referent-exists-p :range))
          (wikiword (car range)))
-    (when wikiword
+    (if wikiword
       (if (not hywiki-tests--with-face-test)
           wikiword
         (save-excursion
@@ -1588,7 +1588,10 @@ checked for consistency."
                  (highlighted-wikiword (car highlighted-range)))
             (when highlighted-wikiword
               (should (equal range highlighted-range)))
-            highlighted-wikiword))))))
+            highlighted-wikiword)))
+      (when hywiki-tests--with-face-test
+        (when-let ((bounds (bounds-of-thing-at-point 'word)))
+          (should-not (hywiki-tests--hywiki-face-regions (car bounds) (cdr bounds))))))))
 
 (defun hywiki-tests--verify-hywiki-word (step expected)
   "Verify that `hywiki-word-at' returns t if a wikiword is EXPECTED.
@@ -1661,6 +1664,8 @@ point when the function is called."
 (defconst hywiki-tests--wikiword-step-check
   '(
     (("Hi" . "Hi"))
+    (("Hi" . "Hi") (p1 . "Hi") ("."))
+    (("Hi" . "Hi") (p1 . "Hi") ("a"))
     (("HiHo" . t) ("#"))
     (("HiHo" . t) ("#s " . "HiHo#s"))
     (("HiHo" . t) ("#s" . t) (-2 . "HiHo"))
