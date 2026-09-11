@@ -264,7 +264,7 @@ Each test is constructed in three phases:
                (hywiki-tests--insert-by-char ".")
                (post: ".^WikiWord"))
 
-             ;; FAIL: WikiWord -> insert char before should dehighlight
+             ;; PASS: WikiWord -> insert char before should dehighlight
              (ert-info ("18" :prefix "Verify dehighlighting: ")
                (pre: "^WikiWord")
                (hywiki-tests--insert-by-char "a")
