@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     10-Sep-26 at 15:23:19 by Bob Weiner
+;; Last-Mod:     12-Sep-26 at 14:01:53 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1158,11 +1158,6 @@ documentation is found."
 		(let* ((actype (or (actype:elisp-symbol
                                     (hattr:get 'hbut:current 'actype))
 				   (hattr:get 'hbut:current 'actype)))
-		       (actype-doc-flag (and (symbolp actype)
-					     (fboundp actype)
-				             (documentation actype)))
-                       (assist-function-flag (and assisting
-						  actype-doc-flag))
                        (condition (car hkey-form))
 		       (temp-buffer-show-hook
 			(lambda (buf)
