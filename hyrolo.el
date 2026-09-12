@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     29-Aug-26 at 23:35:44 by Bob Weiner
+;; Last-Mod:     12-Sep-26 at 13:57:08 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -841,6 +841,10 @@ If ARG is zero, move to the beginning of the current line."
     ;; lexical-binding is enabled and there is a local binding of
     ;; `hyrolo-file-list', so expand it.
     (hyrolo-expand-path-list hyrolo-file-list)))
+
+(defsubst hyrolo-hdr-at-p ()
+  "Return pos if point is at the start of a `hyrolo-mode' file header, else nil."
+  (text-property-any (point) (1+ (point)) :hyrolo-hdr t))
 
 ;;;###autoload
 (defun hyrolo-get-entry (name &optional regexp-flag exclude-sub-entries)
@@ -2034,10 +2038,6 @@ only (first line of entries), rather than entire entries.
 
 Return number of matching entries found."
   (hyrolo-grep-file hyrolo-file-or-buf (regexp-quote string) max-matches count-only headline-only))
-
-(defsubst hyrolo-hdr-at-p ()
-  "Return pos if point is at the start of a `hyrolo-mode' file header, else nil."
-  (text-property-any (point) (1+ (point)) :hyrolo-hdr t))
 
 (defun hyrolo-hdr-in-p ()
   "If point is within a file header, return t, else nil."
