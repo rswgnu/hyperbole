@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     12-Sep-26 at 14:01:53 by Mats Lidell
+;; Last-Mod:     12-Sep-26 at 16:43:46 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1332,7 +1332,7 @@ documentation is found."
 
 (defun hkey-help-hbut (&optional assisting)
   "Display hbut help for Action or Assist Keys.
-If ASSISTING prefix arg is non-nil show help for assist key."
+If ASSISTING prefix arg is non-nil, show help for assist key."
   (interactive)
   (let* ((actype (or (actype:elisp-symbol
                       (hattr:get 'hbut:current 'actype))
