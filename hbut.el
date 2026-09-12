@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     10-Sep-26 at 08:50:44 by Bob Weiner
+;; Last-Mod:     12-Sep-26 at 13:33:57 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -50,6 +50,7 @@ Use the function, (hbut:max-len), to read the proper value.")
 (declare-function hargs:delimited "hargs")
 (declare-function hargs:read-match "hargs")
 (declare-function hpath:display-buffer "hpath")
+(declare-function hpath:expand "hpath")
 (declare-function hpath:file-position-to-line-and-column "hpath")
 (declare-function hpath:find "hpath")
 (declare-function hpath:find-noselect "hpath")
