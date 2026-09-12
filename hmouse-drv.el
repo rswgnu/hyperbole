@@ -1331,14 +1331,14 @@ documentation is found."
     doc))
 
 (defun hkey-help-hbut (&optional assisting)
-  "Display hbut help for Action or Assist Keys (if ASSISTING prefix arg is non-nil)."
+  "Display hbut help for Action or Assist Keys.
+If ASSISTING prefix arg is non-nil show help for assist key."
   (interactive)
   (let* ((actype (or (actype:elisp-symbol
                       (hattr:get 'hbut:current 'actype))
 		     (hattr:get 'hbut:current 'actype)))
 	 (mouse-flag (when (mouse-event-p last-command-event)
 		       (or action-key-depress-position assist-key-depress-position)))
-	 (mouse-drag-flag (hmouse-drag-p))
 	 (temp-buffer-show-hook
 	  (lambda (buf)
 	    (set-buffer buf)
