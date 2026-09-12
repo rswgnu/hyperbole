@@ -1401,11 +1401,11 @@ If ASSISTING prefix arg is non-nil show help for assist key."
               ;; Need to save and restore 'hbut:current here
               ;; since `hywiki-get-definition' overwrites it
               (progn (hattr:copy 'hbut:current 'saved-but)
-                     (setq def (hywiki-get-definition
-			        (ibut:key-to-label lbl-key)))
-                     (when (stringp def)
-                       (terpri)
-                       (princ def)))
+                     (let ((def (hywiki-get-definition
+			         (ibut:key-to-label lbl-key))))
+                       (when (stringp def)
+                         (terpri)
+                         (princ def))))
             (hattr:copy 'saved-but 'hbut:current)))
 
 	(unless (or assisting
