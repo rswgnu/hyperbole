@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     11-Sep-26 at 10:58:58 by Bob Weiner
+;; Last-Mod:     13-Sep-26 at 11:21:07 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -541,7 +541,7 @@ Nil by default."
 Do not use a start or end line/string anchor in this regexp.")
 
 (defconst hywiki-word-section-regexp
-  "\\(#[^][# \t\n\r\f]+\\)"
+  "\\(#[^][#()<>{}\" \t\n\r\f]+\\)"
   "Regexp that matches a non-delimited HyWikiWord #section extension.
 After the first # character, this may contain any non-square-bracket,
 non-# and non-whitespace characters.")

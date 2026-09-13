@@ -1,3 +1,10 @@
+2026-09-13  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-word-section-regexp): Fix that character after the
+    '#' section separator cannot be any of these additional characters
+    that were missing: ()<>{}\".  This fixes a bug where 'Wiki#'
+    would be highlighted within: ("Wiki#").
+
 2026-09-12  Mats Lidell  <matsl@gnu.org>
 
 * hmouse-drv.el (hkey-help-hbut): Make def lexical var.
