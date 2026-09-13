@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     30-Aug-26 at 23:15:25 by Bob Weiner
+;; Last-Mod:     13-Sep-26 at 11:26:36 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1808,9 +1808,7 @@ face is verified during the change."
           (should (string= "WikiWord" (hywiki-tests--word-at)))))
 
       ;; Does not highlight as a WikiWord
-      ;; FIXME: "WikiWord#" (with no ending space) replaced below with
-      ;; version with an extra space for a passing test.
-      (dolist (v '("WikiWord# " "[[WikiWord]]" "<<WikiWord>>"
+      (dolist (v '("WikiWord#" "WikiWord# " "[[WikiWord]]" "<<WikiWord>>"
 		   "{[[WikiWord]]}" "([[WikiWord]])"))
 	(erase-buffer)
         (hywiki-tests--insert (setq str (format ";; %s" v)))

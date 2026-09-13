@@ -4,6 +4,8 @@
     '#' section separator cannot be any of these additional characters
     that were missing: ()<>{}\".  This fixes a bug where 'Wiki#'
     would be highlighted within: ("Wiki#").
+  test/hywiki-tests.el (hywiki-tests--wikiword-identified-in-emacs-lisp-mode):
+    Add back previously failing test for "WikiWord#".
 
 2026-09-12  Mats Lidell  <matsl@gnu.org>
 
