@@ -4,7 +4,7 @@ elpa-emacs                  - Elpa package personal configuration
 elpaca-early-init           - Early init file for elpaca
 elpaca-emacs                - Elpaca package configuration (elpa-devel install)
 install-test.sh             - Run one or more test installations
-melpa-snapshot-emacs        - Melpa snapshots package personal configuration
+melpa-snapshots-emacs       - Melpa snapshots package personal configuration
 melpa-releases-emacs        - Melpa releases package personal configuration
 straight-emacs              - Straight git package personal configuration
 tarball-emacs               - Manual tarball personal configuration
