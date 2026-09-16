@@ -7,10 +7,17 @@
     ;; Initialize the global Hyperbole minor mode to one of these values:
     ;;   1 - enabled on startup so the Action and Assist Smart Keys are active
     ;;   0 - off until you toggle it on
-    ;; If you left hywiki-mode enabled above, that enables hyperbole-mode too.
-    (unless (and (fboundp 'hywiki-mode)
-                 (bound-and-true-p hywiki-mode))
-      (hyperbole-mode 1)))
+    (hyperbole-mode 1)
+
+    ;; Initialize the global HyWiki minor mode to one of these values:
+    ;;   :all   - highlights and makes HyWikiWord links active in
+    ;;            all text and programming buffer comments
+    ;;   :pages - highlights and makes HyWikiWord links active in
+    ;;            only within HyWiki page buffers
+    ;;   nil    - leaves HyWiki mode disabled.
+    ;; Note: If hywiki-mode is set active hyperbole-mode will be
+    ;; activated too.
+    (hywiki-mode :all))
 
     ;; Older Hyperbole releases do not have HyWiki
     (when (bound-and-true-p hywiki-mode)
@@ -23,14 +30,23 @@
       (hywiki-mode :all))
 
   :bind
-  ;; Bind Smart Keys: {M-RET} is the Action Key; {C-u M-RET} is the
-  ;; Assist Key
-  (("M-RET" . hkey-either)
-   ;; Uncomment the next binding if you want to emulate Hyperbole mouse drag
-   ;; events from your keyboard.
-   ;; See "https://www.gnu.org/s/hyperbole/man/hyperbole.html#Keyboard-Drags".
-   ;; ("M-o"   . hkey-operate)
-   )
+  (:map hyperbole-mode-map
+        ;; Bind Smart Keys: {M-RET} is the Action Key; {C-u M-RET} is the
+        ;; Assist Key
+        (("M-RET" . hkey-either)
+         ;; Uncomment the next binding if you want to emulate Hyperbole mouse drag
+         ;; events from your keyboard.
+         ;; See "https://www.gnu.org/s/hyperbole/man/hyperbole.html#Keyboard-Drags".
+         ;; ("M-o"   . hkey-operate)
+         ))
+
+  :config
+  ;; Hyperbole binds {C-h h} by default in the global-map. If you
+  ;; prefer some other key binding to invoke the hyperbole minibuffer
+  ;; menu, uncomment the lines below to restore the default for {C-h
+  ;; h} and set your preferred binding, example {C-c h}.
+  ;(global-set-key (kbd "C-h h") #'view-hello-file)
+  ;(global-set-key (kbd "C-c h") #'hyperbole)
 
   ;; Customize how Hyperbole and Org mode share the M-RET key:
   ;;   t        - With hyperbole-mode enabled, Hyperbole controls the key
@@ -39,4 +55,5 @@
   ;;   nil      - In Org mode, Org controls the key
   :custom
   (hsys-org-enable-smart-keys t)
+
   )
