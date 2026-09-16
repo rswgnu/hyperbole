@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     23-Sep-26 at 10:32:53 by Bob Weiner
+@c Last-Mod:     23-Sep-26 at 23:54:07 by Mats Lidell
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -9262,9 +9262,7 @@ older Elpa production release package.  (For further details,
 Manual}).
 
 @sp 1
-@smalllisp
-@include hy-package.el
-@end smalllisp
+@verbatiminclude use-package
 @sp 1
 
 Now save the file and restart Emacs.  Hyperbole will then be downloaded
@@ -9297,9 +9295,7 @@ the following Lisp to your Emacs initialization file, as described below.
 the GNU Emacs Manual}).
 
 @sp 1
-@smalllisp
-@include hy-straight.el
-@end smalllisp
+@verbatiminclude use-package
 @sp 1
 
 Now save the file and restart Emacs.  Hyperbole will then be downloaded
