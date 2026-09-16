@@ -2,21 +2,8 @@
 
 (use-package hyperbole
 
-  ;; ensure Hyperbole is installed
-  ;; :ensure t
-
-  ;; Initialize the global HyWiki minor mode to one of these values:
-  ;;   :all   - highlights and makes HyWikiWord links active in
-  ;;            all text and programming buffer comments
-  ;;   :pages - highlights and makes HyWikiWord links active in
-  ;;            only within HyWiki page buffers
-  ;;   nil    - leaves HyWiki mode disabled.
   :init
   (progn
-    ;; Older Hyperbole releases do not have HyWiki
-    (when (fboundp 'hywiki-mode)
-      (hywiki-mode :all))
-
     ;; Initialize the global Hyperbole minor mode to one of these values:
     ;;   1 - enabled on startup so the Action and Assist Smart Keys are active
     ;;   0 - off until you toggle it on
@@ -25,7 +12,19 @@
                  (bound-and-true-p hywiki-mode))
       (hyperbole-mode 1)))
 
+    ;; Older Hyperbole releases do not have HyWiki
+    (when (bound-and-true-p hywiki-mode)
+      ;; Initialize the global HyWiki minor mode to one of these values:
+      ;;   :all   - highlights and makes HyWikiWord links active in
+      ;;            all text and programming buffer comments
+      ;;   :pages - highlights and makes HyWikiWord links active in
+      ;;            only within HyWiki page buffers
+      ;;   nil    - leaves HyWiki mode disabled.
+      (hywiki-mode :all))
+
   :bind
+  ;; Bind Smart Keys: {M-RET} is the Action Key; {C-u M-RET} is the
+  ;; Assist Key
   (("M-RET" . hkey-either)
    ;; Uncomment the next binding if you want to emulate Hyperbole mouse drag
    ;; events from your keyboard.

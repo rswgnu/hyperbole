@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     18-Jul-26 at 00:36:47 by Bob Weiner
+;; Last-Mod:     16-Sep-26 at 12:54:13 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -67,6 +67,8 @@
 (declare-function hyrolo-tags-view "hyrolo")
 (declare-function hyrolo-at-tags-p "hyrolo")
 (declare-function hywiki-at-tags-p "hywiki")
+(declare-function hywiki-maybe-highlight-region "hywiki")
+(declare-function hywiki-non-hook-context-p "hywiki")
 (declare-function hywiki-tags-view "hywiki")
 (declare-function hsys-org-roam-tags-view "hsys-org")
 
@@ -396,9 +398,20 @@ Do nothing if called outside of `org-mode'."
       (error "(hsys-org-meta-return): \"%s\" must not be read-only; toggle with {%s}"
 	     (buffer-name)
 	     (key-description (car (where-is-internal #'read-only-mode)))))
-   (if current-prefix-arg
-	(org-meta-return (prefix-numeric-value current-prefix-arg))
-      (org-meta-return))))
+    ;; `org-meta-return' runs delete and insert functions over prior list
+    ;; items, as an example, which can erase HyWiki highlighting, so ensure
+    ;; the appropriate region is re-highlighted when needed.
+    ;; -- RSW, 2026-09-16
+    (let ((opoint (point-marker)))
+      (unwind-protect
+          (progn
+            (if current-prefix-arg
+	        (org-meta-return (prefix-numeric-value current-prefix-arg))
+              (org-meta-return))
+            (when (and (fboundp 'hywiki-non-hook-context-p)
+                       (not (hywiki-non-hook-context-p)))
+              (hywiki-maybe-highlight-region opoint (point))))
+        (set-marker opoint nil)))))
 
 ;;;###autoload
 (defun hsys-org-consult-grep (&optional regexp max-matches path-list prompt)
