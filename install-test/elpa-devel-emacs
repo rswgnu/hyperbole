@@ -3,6 +3,9 @@
 (require 'package)
 (add-to-list 'package-archives '("gnu-devel" . "https://elpa.gnu.org/devel/"))
 
+(when (version< emacs-version "29")
+  (package-install 'use-package))
+
 (unless (locate-library "hyperbole")
    (package-install 'hyperbole))
 

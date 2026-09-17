@@ -4,6 +4,9 @@
 (add-to-list 'package-archives '("melpa-releases" . "https://releases.melpa.org/packages/"))
 (setq package-pinned-packages '((hyperbole . "melpa-releases")))
 
+(when (version< emacs-version "29")
+  (package-install 'use-package))
+
 (unless (locate-library "hyperbole")
    (package-install 'hyperbole))
 
