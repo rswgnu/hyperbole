@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <!-- This manual is for GNU Hyperbole
-(Edition 9.1.0, Published September 16, 2026).
+(Edition 9.1.0, Published September 22, 2026).
 
 Copyright © 1989-2026  Free Software Foundation, Inc.
 
@@ -381,7 +381,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.1.0
-Printed September 16, 2026.
+Printed September 22, 2026.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -613,23 +613,24 @@ dedicated to my lovely wife, Kathy.
   <li><a id="toc-Glossary" href="#Glossary">Appendix A Glossary</a></li>
   <li><a id="toc-Setup" href="#Setup">Appendix B Setup</a>
   <ul class="toc-numbered-mark">
-    <li><a id="toc-Installation" href="#Installation">B.1 Installation</a>
+    <li><a id="toc-Installation-and-Configuration" href="#Installation-and-Configuration">B.1 Installation and Configuration</a>
     <ul class="toc-numbered-mark">
-      <li><a id="toc-Elpa-Latest-or-Release-Package-Installation-_0028Emacs-Package-Manager_0029" href="#Elpa-Latest-or-Release-Package-Installation">B.1.1 Elpa Latest or Release Package Installation (Emacs Package Manager)</a></li>
-      <li><a id="toc-Git-Latest-Package-Installation-_0028Straight-Package-Manager_0029" href="#Git-Latest-Package-Installation">B.1.2 Git Latest Package Installation (Straight Package Manager)</a></li>
+      <li><a id="toc-Elpa-and-Melpa-Latest-or-Release-Package-Installation-_0028Emacs-Package-Manager_0029" href="#Elpa-and-Melpa-Latest-or-Release-Package-Installation">B.1.1 Elpa and Melpa Latest or Release Package Installation (Emacs Package Manager)</a></li>
+      <li><a id="toc-Git-Latest-Package-Installation" href="#Git-Latest-Package-Installation">B.1.2 Git Latest Package Installation</a></li>
       <li><a id="toc-Manual-Tarball-Archive-Installation-_0028SFTP_0029" href="#Manual-Tarball-Archive-Installation">B.1.3 Manual Tarball Archive Installation (SFTP)</a></li>
     </ul></li>
-    <li><a id="toc-Customization" href="#Customization">B.2 Customization</a>
+    <li><a id="toc-Configuration" href="#Configuration">B.2 Configuration</a></li>
+    <li><a id="toc-Customization" href="#Customization">B.3 Customization</a>
     <ul class="toc-numbered-mark">
-      <li><a id="toc-Referent-Display" href="#Referent-Display">B.2.1 Referent Display</a></li>
-      <li><a id="toc-Internal-Viewers" href="#Internal-Viewers">B.2.2 Internal Viewers</a></li>
-      <li><a id="toc-External-Viewers" href="#External-Viewers">B.2.3 External Viewers</a></li>
-      <li><a id="toc-Link-Variable-Substitution" href="#Link-Variable-Substitution">B.2.4 Link Variable Substitution</a></li>
-      <li><a id="toc-Web-Search-Engines" href="#Web-Search-Engines">B.2.5 Web Search Engines</a></li>
-      <li><a id="toc-Using-URLs-with-Find_002dFile" href="#Using-URLs-with-Find_002dFile">B.2.6 Using URLs with Find-File</a></li>
-      <li><a id="toc-Invisible-Text-Searches" href="#Invisible-Text-Searches">B.2.7 Invisible Text Searches</a></li>
-      <li><a id="toc-Highlight-Menu-Key-Toggle" href="#Highlight-Menu-Key-Toggle">B.2.8 Highlight Menu Key Toggle</a></li>
-      <li><a id="toc-Configuring-Button-Colors" href="#Button-Colors">B.2.9 Configuring Button Colors</a></li>
+      <li><a id="toc-Referent-Display" href="#Referent-Display">B.3.1 Referent Display</a></li>
+      <li><a id="toc-Internal-Viewers" href="#Internal-Viewers">B.3.2 Internal Viewers</a></li>
+      <li><a id="toc-External-Viewers" href="#External-Viewers">B.3.3 External Viewers</a></li>
+      <li><a id="toc-Link-Variable-Substitution" href="#Link-Variable-Substitution">B.3.4 Link Variable Substitution</a></li>
+      <li><a id="toc-Web-Search-Engines" href="#Web-Search-Engines">B.3.5 Web Search Engines</a></li>
+      <li><a id="toc-Using-URLs-with-Find_002dFile" href="#Using-URLs-with-Find_002dFile">B.3.6 Using URLs with Find-File</a></li>
+      <li><a id="toc-Invisible-Text-Searches" href="#Invisible-Text-Searches">B.3.7 Invisible Text Searches</a></li>
+      <li><a id="toc-Highlight-Menu-Key-Toggle" href="#Highlight-Menu-Key-Toggle">B.3.8 Highlight Menu Key Toggle</a></li>
+      <li><a id="toc-Configuring-Button-Colors" href="#Button-Colors">B.3.9 Configuring Button Colors</a></li>
     </ul></li>
   </ul></li>
   <li><a id="toc-Hyperbole-Key-Bindings" href="#Hyperbole-Key-Bindings">Appendix C Hyperbole Key Bindings</a>
@@ -949,12 +950,13 @@ activate it, so you can always be sure of what you are doing when needed
 or if someone emails you a button (Hyperbole allows embedding buttons
 in email messages too).
 </p>
-<p>Hyperbole is something to be experienced and interacted with, not understood
-from reading alone.  It installs normally as a single Emacs package with no
-dependencies outside of built-in Emacs libraries, see <a class="pxref" href="#Installation">Installation</a>.  Most
-of Hyperbole is a single global minor mode that you can activate and
-deactivate at will.  And it can be uninstalled quickly as well if need be, so
-there is no risk in giving it a spin.
+<p>Hyperbole is something to be experienced and interacted with, not
+understood from reading alone.  It installs normally as a single Emacs
+package with no dependencies outside of built-in Emacs libraries,
+see <a class="pxref" href="#Installation-and-Configuration">Installation and Configuration</a>.  Most of Hyperbole is a single
+global minor mode that you can activate and deactivate at will.  And
+it can be uninstalled quickly as well if need be, so there is no risk
+in giving it a spin.
 </p>
 <p>Once you have it installed, try the interactive demo with <kbd class="kbd">{C-h h d d}</kbd>.
 In fact, if you have Hyperbole loaded and you use the Emacs Info reader to
@@ -2903,7 +2905,7 @@ this setting.
 <a id="index-denote-note_002dtaking-package"></a><span><code class="code">denote-link</code><a class="copiable-link" href="#index-denote-note_002dtaking-package"> &para;</a></span></dt>
 <dd><p>Denote is an Emacs package for note taking that uses time-stamped,
 descriptive file naming conventions to label and locate notes.  Hyperbole
-provides an expanded set of denote-specific link formats via this 
+provides an expanded set of denote-specific link formats via this
 reference types.
 </p>
 <p>If on a denote id with optional #section, jump to its associated note.
@@ -3338,7 +3340,7 @@ Each line of the summary may be selected to jump to the associated section.
 <dt><code class="code">markdown-internal-link</code></dt>
 <dd><p>Display any in-file Markdown link referent.  Pathnames and urls are
 handled elsewhere.
-</p>  
+</p>
 <a class="index-entry-id" id="index-ibtypes-org_002dlink_002doutside_002dorg_002dmode"></a>
 <a class="index-entry-id" id="index-Org-link_002c-outside-Org"></a>
 <a class="anchor" id="org_002dlink_002doutside_002dorg_002dmode"></a></dd>
@@ -3756,7 +3758,7 @@ delimiters = [ ].
 </dd>
 <dt><a id="index-actypes-completion"></a><span><code class="code">completion</code><a class="copiable-link" href="#index-actypes-completion"> &para;</a></span></dt>
 <dd><p>Insert a completion at point into the minibuffer or a buffer.
-Unless point is at the end of buffer or if a completion has already been 
+Unless point is at the end of buffer or if a completion has already been
 inserted, in which case, delete the completions window.
 </p>
 </dd>
@@ -3833,7 +3835,7 @@ See <samp class="file">${hyperb:dir}/DEMO#Git (Local) References</samp> for exam
 
 <a class="index-entry-id" id="index-hibtypes_002dgit_002ddefault_002dproject-1"></a>
 <p>If given, PROJECT overrides any project value in REFERENCE.  If no PROJECT
-value is provided, it defaults to the value of <code class="code">hibtypes-git-default-project</code>. 
+value is provided, it defaults to the value of <code class="code">hibtypes-git-default-project</code>.
 </p>
 </dd>
 <dt><a class="index-entry-id" id="index-github-reference"></a>
@@ -4891,7 +4893,7 @@ access to popular web search engines.
                    files.  Set <code class="code">hui-select-rgrep-command</code> to change the
                    grep command or options.
 
-</li><li>LocateFiles -      Prompt for a pattern and display a list of all 
+</li><li>LocateFiles -      Prompt for a pattern and display a list of all
                    matching pathnames found throughout the file
                    system.  On Mac OS X, this uses Spotlight
                    (the <code class="code">mdfind</code> command); on UNIX, it uses
@@ -5218,7 +5220,7 @@ non-&lsquo;<samp class="samp">nil</samp>&rsquo; for this to activate.
 This is the Action Key function that activates HyWikiWords.  A call to
 <code class="code">(hywiki-active-in-current-buffer-p)</code> must return non-&lsquo;<samp class="samp">nil</samp>&rsquo;
 for this to activate.
-</p>  
+</p>
 <p>If the associated HyWiki referent is a page, create it automatically
 unless it is the first HyWiki page to be created, in which case,
 prompt the user whether to create it, to prevent any unexpected HyWiki
@@ -7842,7 +7844,7 @@ containing &quot;Staffer&quot; at any level in a hierarchy, like so:
 section, the menu item names from the minibuffer menu are used to
 refer to each command.
 </p>
-<p>The <code class="code">RegexFind</code> menu item searches the rolo list for all entries 
+<p>The <code class="code">RegexFind</code> menu item searches the rolo list for all entries
 which contain matches for a given regular expression.  The regular
 expression syntax used is the same as the one used within Emacs
 and across the GNU set of tools.  See <a data-manual="emacs" href="https://www.gnu.org/software/emacs/manual/html_mono/emacs.html#Regexps">Syntax of Regular
@@ -8251,7 +8253,7 @@ matching entries retrieved from multiple files during a single search.
 </dd>
 <dt><a id="index-hyrolo_002dhdr_002dand_002dentry_002dregexp"></a><span><code class="code">hyrolo-hdr-and-entry-regexp</code><a class="copiable-link" href="#index-hyrolo_002dhdr_002dand_002dentry_002dregexp"> &para;</a></span></dt>
 <dd><p>The rolo entry start delimiter is given by the regular expression
-variable, <code class="code">hyrolo-hdr-and-entry-regexp</code>, whose default value is &quot;^\*+&quot;, i.e. 
+variable, <code class="code">hyrolo-hdr-and-entry-regexp</code>, whose default value is &quot;^\*+&quot;, i.e.
 one or more asterisks at the beginning of a line.
 </p>
 </dd>
@@ -8845,7 +8847,7 @@ link referent.
 buttons perform a grep-like function over a current repo&rsquo;s git log
 entries.  The buttons use this format: [&lt;text to match&gt;].
 </p>
-<p>The following defines the button type called <code class="code">search-git-log</code> with a 
+<p>The following defines the button type called <code class="code">search-git-log</code> with a
 a key series action surrounded by braces:
 </p>
 <p><code class="code">(defil search-git-log &quot;[&lt;&quot; &quot;&gt;]&quot; &quot;.*&quot; &quot;{M-: (hypb:fgrep-git-log \&quot;\\&amp;\&quot;) RET}&quot;)</code>
@@ -9940,41 +9942,41 @@ specifiable filters or from a list.
 <h2 class="appendix" id="Setup-1"><span>Appendix B Setup<a class="copiable-link" href="#Setup-1"> &para;</a></span></h2>
 
 <p>Hyperbole must be obtained and setup at your site before you can
-use it.  Instructions are given below.  If you are using InfoDock
-version 4.0.7 or higher, Hyperbole is pre-installed so you may skip
-the installation instructions and simply continue with the
-next section about customizing Hyperbole&rsquo;s behavior.
+use it.  Instructions are given below.
 </p>
 
 <ul class="mini-toc">
-<li><a href="#Installation">Installation</a></li>
+<li><a href="#Installation-and-Configuration">Installation and Configuration</a></li>
+<li><a href="#Configuration">Configuration</a></li>
 <li><a href="#Customization">Customization</a></li>
 </ul>
 <hr>
-<div class="section-level-extent" id="Installation">
+<div class="section-level-extent" id="Installation-and-Configuration">
 <p class="nav-panel">
 <span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="#Customization" rel="next">Customization</a></span></span>, <span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="#Setup" rel="prev">Setup</a></span></span>, <span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Setup" rel="up">Setup</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="#Concept-Index" title="Index" rel="index">Index</a>]</span></p>
-<h3 class="section" id="Installation-1"><span>B.1 Installation<a class="copiable-link" href="#Installation-1"> &para;</a></span></h3>
+<h3 class="section" id="Installation-and-Configuration-1"><span>B.1 Installation and Configuration<a class="copiable-link" href="#Installation-and-Configuration-1"> &para;</a></span></h3>
 
-<p>There are multiple package managers you can use to install Hyperbole once
-you have GNU Emacs set up at your site.  Choose one based on your needs.
+<p>Hyperbole can be installed using Emacs&rsquo; package manager, from its
+development repository or manually from the tarball archive.
 </p>
 
-<p>After installing Hyperbole, read the next section on Invocation.
+<p>After installing and configuring Hyperbole, read the next section on Invocation.
 </p>
 <ul class="mini-toc">
-<li><a href="#Elpa-Latest-or-Release-Package-Installation">Elpa Latest or Release Package Installation (Emacs Package Manager)</a></li>
-<li><a href="#Git-Latest-Package-Installation">Git Latest Package Installation (Straight Package Manager)</a></li>
+<li><a href="#Elpa-and-Melpa-Latest-or-Release-Package-Installation">Elpa and Melpa Latest or Release Package Installation (Emacs Package Manager)</a></li>
+<li><a href="#Git-Latest-Package-Installation">Git Latest Package Installation</a></li>
 <li><a href="#Manual-Tarball-Archive-Installation">Manual Tarball Archive Installation (SFTP)</a></li>
 </ul>
 <hr>
-<div class="subsection-level-extent" id="Elpa-Latest-or-Release-Package-Installation">
+<div class="subsection-level-extent" id="Elpa-and-Melpa-Latest-or-Release-Package-Installation">
 <p class="nav-panel">
-<span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="#Git-Latest-Package-Installation" rel="next">Git Latest Package Installation (Straight Package Manager)</a></span></span>, <span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="#Installation" rel="prev">Installation</a></span></span>, <span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Installation" rel="up">Installation</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="#Concept-Index" title="Index" rel="index">Index</a>]</span></p>
-<h4 class="subsection" id="Elpa-Latest-or-Release-Package-Installation-_0028Emacs-Package-Manager_0029"><span>B.1.1 Elpa Latest or Release Package Installation (Emacs Package Manager)<a class="copiable-link" href="#Elpa-Latest-or-Release-Package-Installation-_0028Emacs-Package-Manager_0029"> &para;</a></span></h4>
+<span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="#Git-Latest-Package-Installation" rel="next">Git Latest Package Installation</a></span></span>, <span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="#Installation-and-Configuration" rel="prev">Installation and Configuration</a></span></span>, <span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Installation-and-Configuration" rel="up">Installation and Configuration</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="#Concept-Index" title="Index" rel="index">Index</a>]</span></p>
+<h4 class="subsection" id="Elpa-and-Melpa-Latest-or-Release-Package-Installation-_0028Emacs-Package-Manager_0029"><span>B.1.1 Elpa and Melpa Latest or Release Package Installation (Emacs Package Manager)<a class="copiable-link" href="#Elpa-and-Melpa-Latest-or-Release-Package-Installation-_0028Emacs-Package-Manager_0029"> &para;</a></span></h4>
 
 <a class="index-entry-id" id="index-installation"></a>
+<a class="index-entry-id" id="index-configuration"></a>
 <a class="index-entry-id" id="index-elpa-package"></a>
+<a class="index-entry-id" id="index-melpa-package"></a>
 <a class="index-entry-id" id="index-package-manager"></a>
 <a class="index-entry-id" id="index-Emacs-package-manager"></a>
 <a class="index-entry-id" id="index-release-installation"></a>
@@ -9988,182 +9990,80 @@ you have GNU Emacs set up at your site.  Choose one based on your needs.
 <a class="index-entry-id" id="index-installation_002c-from-git"></a>
 <p>Once you have Emacs set up at your site, you may install GNU Hyperbole
 using the Emacs Package Manager.  If you are not familiar with it,
-see <a data-manual="emacs" href="https://www.gnu.org/software/emacs/manual/html_mono/emacs.html#Packages">Packages</a> in <cite class="cite">the GNU Emacs Manual</cite>.  Releases are done with
-care and occur once in awhile.  In between, there is are
-regression-tested <em class="emph">latest</em> distributions packaged from the
-in-development code branch; these may be many months and features
-ahead of the release branch.
+see <a data-manual="emacs" href="https://www.gnu.org/software/emacs/manual/html_mono/emacs.html#Packages">Packages</a> in <cite class="cite">the GNU Emacs Manual</cite>.
 </p>
-<p>Therefore, consider using the Elpa Latest package; it pulls from the
-latest Hyperbole development branch tip and uses the builtin Emacs
-package manager.  Since Hyperbole is a mature package, this is fine to
-use and update on a day-to-day basis.  But new features are tested on
-this branch and once in awhile it may break for a short time before a
-fix is pushed.
+<p>Install Hyperbole like this:
 </p>
-<p>With this branch you&rsquo;ll be able to submit bug reports and feature
-requests but will not be able to submit pull requests for changes to
-the developers; use the Git Latest Package, described in the next
-section, instead for that.
+<p><code class="code">M-x package-install RET hyperbole RET</code>
 </p>
-<p>If you have Hyperbole installed and simply want to upgrade it, invoke
-the Emacs Package Manager with <kbd class="kbd">{M-x list-packages <kbd class="key">RET</kbd>}</kbd>,
-then use the <kbd class="kbd">{U}</kbd> key followed by the <kbd class="kbd">{x}</kbd> key to upgrade all
-out-of-date packages, Hyperbole among them.  Then skip the text below
-and move on to the next section, see <a class="pxref" href="#Invocation">Invocation</a>.
+<p>Stable releases are done with care and occur once in awhile.  In between,
+there is are regression-tested <em class="emph">latest</em> distributions packaged
+from the in-development code branch; these may be many months and
+features ahead of the release branch.
 </p>
-<p>Otherwise, to download and install the Hyperbole package, you should
-add the following Lisp to your Emacs initialization file, as described
-below.  It installs the Elpa Latest package; there is one commented
-line in the configuration that you can switch out to pull from the
-older Elpa production release package.  (For further details,
-see <a data-manual="emacs" href="https://www.gnu.org/software/emacs/manual/html_mono/emacs.html#Init-File">The Emacs Initialization File</a> in <cite class="cite">the GNU Emacs
-Manual</cite>).
+<p>Therefore, consider using the GNU-devel ELPA package; it pulls from the
+latest Hyperbole development branch tip.  Since Hyperbole is a mature
+package, this is fine to use and update on a day-to-day basis.  But
+new features are tested on this branch and once in awhile it may break
+for a short time before a fix is pushed.
 </p>
-<br>
-<pre class="verbatim">;;; -*- mode: emacs-lisp; lexical-binding: t; -*-
-
-(use-package hyperbole
-
-  :init
-  (progn
-    ;; Initialize the global Hyperbole minor mode to one of these values:
-    ;;   1 - enabled on startup so the Action and Assist Smart Keys are active
-    ;;   0 - off until you toggle it on
-    (hyperbole-mode 1)
-
-    ;; Initialize the global HyWiki minor mode to one of these values:
-    ;;   :all   - highlights and makes HyWikiWord links active in
-    ;;            all text and programming buffer comments
-    ;;   :pages - highlights and makes HyWikiWord links active in
-    ;;            only within HyWiki page buffers
-    ;;   nil    - leaves HyWiki mode disabled.
-    ;; Note: If hywiki-mode is set active hyperbole-mode will be
-    ;; activated too.
-    (hywiki-mode :all))
-
-  :bind
-  (:map hyperbole-mode-map
-        ;; Bind Smart Keys: {M-RET} is the Action Key; {C-u M-RET} is the
-        ;; Assist Key
-        ((&quot;M-RET&quot; . hkey-either)
-         ;; Uncomment the next binding if you want to emulate Hyperbole mouse drag
-         ;; events from your keyboard.
-         ;; See &quot;https://www.gnu.org/s/hyperbole/man/hyperbole.html#Keyboard-Drags&quot;.
-         ;; (&quot;M-o&quot;   . hkey-operate)
-         ))
-
-  :config
-  ;; Hyperbole binds {C-h h} by default in the global-map. If you
-  ;; prefer some other key binding to invoke the hyperbole minibuffer
-  ;; menu, uncomment the lines below to restore the default for {C-h
-  ;; h} and set your preferred binding, example {C-c h}.
-  ;(global-set-key (kbd &quot;C-h h&quot;) #'view-hello-file)
-  ;(global-set-key (kbd &quot;C-c h&quot;) #'hyperbole)
-
-  ;; Customize how Hyperbole and Org mode share the M-RET key:
-  ;;   t        - With hyperbole-mode enabled, Hyperbole controls the key
-  ;;   'buttons - With hyperbole-mode enabled, Hyperbole controls the key
-  ;;              only when on a button or link; otherwise, Org controls it
-  ;;   nil      - In Org mode, Org controls the key
-  :custom
-  (hsys-org-enable-smart-keys t)
-
-  )
-</pre><br>
-
-<p>Now save the file and restart Emacs.  Hyperbole will then be downloaded
-and compiled for use with your version of Emacs; give it a minute or two.
+<p>If you prefer Hyperbole is also available from MELPA.
 </p>
+<p>For installing from GNU-devel ELPA, MELPA releases or MELPA snapshots
+add the respective archive to package-archives in your init
+file, see see <a data-manual="emacs" href="https://www.gnu.org/software/emacs/manual/html_mono/emacs.html#Init-File">The Emacs Initialization File</a> in <cite class="cite">the GNU Emacs
+Manual</cite>.
+</p>
+<p>GNU-devel ELPA:
+</p>
+<p><code class="code">(add-to-list 'package-archives '(&quot;gnu-devel&quot;. &quot;https://elpa.gnu.org/devel/&quot;) t)</code>
+</p>
+<p>MELPA Releases:
+</p>
+<p><code class="code">(add-to-list 'package-archives '(&quot;melpa-releases&quot; . &quot;https://releases.melpa.org/packages/&quot;) t)</code>
+</p>
+<p>MELPA Snapshots:
+</p>
+<p><code class="code">(add-to-list 'package-archives '(&quot;melpa-snapshots&quot; . &quot;https://snapshots.melpa.org/packages/&quot;) t)</code>
+</p>
+<p>If you prefer to automate the install of Hyperbole you can also add
+the following lines to your init file after setting
+package-archives. Then Hyperbole will be installed when Emacs is
+started if not available.
+</p>
+<div class="example lisp">
+<div class="group"><pre class="lisp-preformatted">(require 'package)
+(unless (package-installed-p 'hyperbole)
+   (package-install 'hyperbole))
+</pre></div></div>
 
 <hr>
 </div>
 <div class="subsection-level-extent" id="Git-Latest-Package-Installation">
 <p class="nav-panel">
-<span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="#Manual-Tarball-Archive-Installation" rel="next">Manual Tarball Archive Installation (SFTP)</a></span></span>, <span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="#Elpa-Latest-or-Release-Package-Installation" rel="prev">Elpa Latest or Release Package Installation (Emacs Package Manager)</a></span></span>, <span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Installation" rel="up">Installation</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="#Concept-Index" title="Index" rel="index">Index</a>]</span></p>
-<h4 class="subsection" id="Git-Latest-Package-Installation-_0028Straight-Package-Manager_0029"><span>B.1.2 Git Latest Package Installation (Straight Package Manager)<a class="copiable-link" href="#Git-Latest-Package-Installation-_0028Straight-Package-Manager_0029"> &para;</a></span></h4>
+<span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="#Manual-Tarball-Archive-Installation" rel="next">Manual Tarball Archive Installation (SFTP)</a></span></span>, <span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="#Elpa-and-Melpa-Latest-or-Release-Package-Installation" rel="prev">Elpa and Melpa Latest or Release Package Installation (Emacs Package Manager)</a></span></span>, <span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Installation-and-Configuration" rel="up">Installation and Configuration</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="#Concept-Index" title="Index" rel="index">Index</a>]</span></p>
+<h4 class="subsection" id="Git-Latest-Package-Installation-1"><span>B.1.2 Git Latest Package Installation<a class="copiable-link" href="#Git-Latest-Package-Installation-1"> &para;</a></span></h4>
 
 <a class="index-entry-id" id="index-Straight-package-manager"></a>
+<a class="index-entry-id" id="index-Elpaca-package-manager"></a>
+<a class="index-entry-id" id="index-Quelpa-package-manager"></a>
 <a class="index-entry-id" id="index-pre_002drelease-installation"></a>
 <a class="index-entry-id" id="index-installation_002c-pre_002drelease"></a>
 <a class="index-entry-id" id="index-installation_002c-from-git-1"></a>
-<p>If you potentially want to contribute to Hyperbole development and send
-pull requests to the Hyperbole development team or to try out new
-features still in testing, you can use the Straight package manager.  It
-pulls the latest Hyperbole source code directly from its git repository.
-This also gives you a clean installation process without showing you any
-minor byte compilation warnings.
+
+<p>Some package manager support downloading directly from a git
+repository. This is the url to the repository:
 </p>
-<p>If you have Hyperbole installed and simply want to upgrade it, invoke
-the Emacs Package Manager with <kbd class="kbd">{M-x list-packages <kbd class="key">RET</kbd>}</kbd>,
-then use the <kbd class="kbd">{U}</kbd> key followed by the <kbd class="kbd">{x}</kbd> key to upgrade all
-out-of-date packages, Hyperbole among them.  Then skip the text below
-and move on to the next section, see <a class="pxref" href="#Invocation">Invocation</a>.
+<p><code class="code">https://git.savannah.gnu.org/git/hyperbole.git</code>
 </p>
-<p>Otherwise, to download and install the Hyperbole package, you should add
-the following Lisp to your Emacs initialization file, as described below.
-(For further details, see <a data-manual="emacs" href="https://www.gnu.org/software/emacs/manual/html_mono/emacs.html#Init-File">The Emacs Initialization File</a> in <cite class="cite">the GNU Emacs Manual</cite>).
-</p>
-<br>
-<pre class="verbatim">;;; -*- mode: emacs-lisp; lexical-binding: t; -*-
-
-(use-package hyperbole
-
-  :init
-  (progn
-    ;; Initialize the global Hyperbole minor mode to one of these values:
-    ;;   1 - enabled on startup so the Action and Assist Smart Keys are active
-    ;;   0 - off until you toggle it on
-    (hyperbole-mode 1)
-
-    ;; Initialize the global HyWiki minor mode to one of these values:
-    ;;   :all   - highlights and makes HyWikiWord links active in
-    ;;            all text and programming buffer comments
-    ;;   :pages - highlights and makes HyWikiWord links active in
-    ;;            only within HyWiki page buffers
-    ;;   nil    - leaves HyWiki mode disabled.
-    ;; Note: If hywiki-mode is set active hyperbole-mode will be
-    ;; activated too.
-    (hywiki-mode :all))
-
-  :bind
-  (:map hyperbole-mode-map
-        ;; Bind Smart Keys: {M-RET} is the Action Key; {C-u M-RET} is the
-        ;; Assist Key
-        ((&quot;M-RET&quot; . hkey-either)
-         ;; Uncomment the next binding if you want to emulate Hyperbole mouse drag
-         ;; events from your keyboard.
-         ;; See &quot;https://www.gnu.org/s/hyperbole/man/hyperbole.html#Keyboard-Drags&quot;.
-         ;; (&quot;M-o&quot;   . hkey-operate)
-         ))
-
-  :config
-  ;; Hyperbole binds {C-h h} by default in the global-map. If you
-  ;; prefer some other key binding to invoke the hyperbole minibuffer
-  ;; menu, uncomment the lines below to restore the default for {C-h
-  ;; h} and set your preferred binding, example {C-c h}.
-  ;(global-set-key (kbd &quot;C-h h&quot;) #'view-hello-file)
-  ;(global-set-key (kbd &quot;C-c h&quot;) #'hyperbole)
-
-  ;; Customize how Hyperbole and Org mode share the M-RET key:
-  ;;   t        - With hyperbole-mode enabled, Hyperbole controls the key
-  ;;   'buttons - With hyperbole-mode enabled, Hyperbole controls the key
-  ;;              only when on a button or link; otherwise, Org controls it
-  ;;   nil      - In Org mode, Org controls the key
-  :custom
-  (hsys-org-enable-smart-keys t)
-
-  )
-</pre><br>
-
-<p>Now save the file and restart Emacs.  Hyperbole will then be downloaded
-and compiled for use with your version of Emacs; give it a minute or two.
+<p>For further details check your package managers documentation related
+to using a git repository.
 </p>
 <hr>
 </div>
 <div class="subsection-level-extent" id="Manual-Tarball-Archive-Installation">
 <p class="nav-panel">
-<span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="#Git-Latest-Package-Installation" rel="prev">Git Latest Package Installation (Straight Package Manager)</a></span></span>, <span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Installation" rel="up">Installation</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="#Concept-Index" title="Index" rel="index">Index</a>]</span></p>
+<span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="#Configuration" rel="next">Configuration</a></span></span>, <span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="#Git-Latest-Package-Installation" rel="prev">Git Latest Package Installation</a></span></span>, <span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Installation-and-Configuration" rel="up">Installation and Configuration</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="#Concept-Index" title="Index" rel="index">Index</a>]</span></p>
 <h4 class="subsection" id="Manual-Tarball-Archive-Installation-_0028SFTP_0029"><span>B.1.3 Manual Tarball Archive Installation (SFTP)<a class="copiable-link" href="#Manual-Tarball-Archive-Installation-_0028SFTP_0029"> &para;</a></span></h4>
 
 <p>If you are old-school, don&rsquo;t like package managers, and prefer doing
@@ -10190,36 +10090,99 @@ the following Posix shell command:
 <p><code class="code">make bin</code>
 </p>
 <p>to byte-compile the Hyperbole lisp files.  Then add the following
-lines to your personal Emacs initialization file, <samp class="file">~/.emacs</samp>:
+lines to your personal init file:
 </p>
 <div class="example lisp">
-<div class="group"><pre class="lisp-preformatted">(unless (and (featurep 'hyperbole) hyperbole-mode)
-  (when (&lt; emacs-major-version 28)
-    (error &quot;Hyperbole requires Emacs 28 or above, not %d&quot;
-           emacs-major-version))
-  (push &quot;&lt;directory-ending-with-hyperbole-where-you-unpacked&gt;&quot;
+<div class="group"><pre class="lisp-preformatted">  (push &quot;&lt;directory-ending-with-hyperbole-where-you-unpacked&gt;&quot;
         load-path)
-  (require 'hyperbole)
-  (hyperbole-mode 1)
-  ;; Allow HyWikiWords in text buffers and programming buffer comments,
-  ;; not just in HyWiki pages, by uncommenting the next line.
-  ;; (hywiki-mode :all)
-  )
 </pre></div></div>
 
-<p>Restart Emacs and you should see the <code class="code">Hypb</code> hyperbole minor mode
-indicator in your modeline after startup.
-</p>
 <hr>
 </div>
 </div>
+<div class="section-level-extent" id="Configuration">
+<p class="nav-panel">
+<span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="#Customization" rel="next">Customization</a></span></span>, <span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="#Manual-Tarball-Archive-Installation" rel="prev">Manual Tarball Archive Installation (SFTP)</a></span></span>, <span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Installation-and-Configuration" rel="up">Installation and Configuration</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="#Concept-Index" title="Index" rel="index">Index</a>]</span></p>
+<h3 class="section" id="Configuration-1"><span>B.2 Configuration<a class="copiable-link" href="#Configuration-1"> &para;</a></span></h3>
+
+<p>For configuring Hyperbole use the following use-package declaration
+and place it in your init file.
+</p>
+<br>
+<pre class="verbatim">;;; -*- mode: emacs-lisp; lexical-binding: t; -*-
+
+(use-package hyperbole
+
+  :init
+  (progn
+    ;; Initialize the global Hyperbole minor mode to one of these values:
+    ;;   1 - enabled on startup so the Action and Assist Smart Keys are active
+    ;;   0 - off until you toggle it on
+    (hyperbole-mode 1)
+
+    ;; Initialize the global HyWiki minor mode to one of these values:
+    ;;   :all   - highlights and makes HyWikiWord links active in
+    ;;            all text and programming buffer comments
+    ;;   :pages - highlights and makes HyWikiWord links active in
+    ;;            only within HyWiki page buffers
+    ;;   nil    - leaves HyWiki mode disabled.
+    ;; Note: If hywiki-mode is set active hyperbole-mode will be
+    ;; activated too.
+    (hywiki-mode :all))
+
+    ;; Older Hyperbole releases do not have HyWiki
+    (when (bound-and-true-p hywiki-mode)
+      ;; Initialize the global HyWiki minor mode to one of these values:
+      ;;   :all   - highlights and makes HyWikiWord links active in
+      ;;            all text and programming buffer comments
+      ;;   :pages - highlights and makes HyWikiWord links active in
+      ;;            only within HyWiki page buffers
+      ;;   nil    - leaves HyWiki mode disabled.
+      (hywiki-mode :all))
+
+  :bind
+  (:map hyperbole-mode-map
+        ;; Bind Smart Keys: {M-RET} is the Action Key; {C-u M-RET} is the
+        ;; Assist Key
+        ((&quot;M-RET&quot; . hkey-either)
+         ;; Uncomment the next binding if you want to emulate Hyperbole mouse drag
+         ;; events from your keyboard.
+         ;; See &quot;https://www.gnu.org/s/hyperbole/man/hyperbole.html#Keyboard-Drags&quot;.
+         ;; (&quot;M-o&quot;   . hkey-operate)
+         ))
+
+  :config
+  ;; Hyperbole binds {C-h h} by default in the global-map. If you
+  ;; prefer some other key binding to invoke the hyperbole minibuffer
+  ;; menu, uncomment the lines below to restore the default for {C-h
+  ;; h} and set your preferred binding, example {C-c h}.
+  ;(global-set-key (kbd &quot;C-h h&quot;) #'view-hello-file)
+  ;(global-set-key (kbd &quot;C-c h&quot;) #'hyperbole)
+
+  ;; Customize how Hyperbole and Org mode share the M-RET key:
+  ;;   t        - With hyperbole-mode enabled, Hyperbole controls the key
+  ;;   'buttons - With hyperbole-mode enabled, Hyperbole controls the key
+  ;;              only when on a button or link; otherwise, Org controls it
+  ;;   nil      - In Org mode, Org controls the key
+  :custom
+  (hsys-org-enable-smart-keys t)
+
+  )
+</pre><br>
+
+<p>With Hyperbole now installed and configured you should see the
+<code class="code">Hypb</code> hyperbole minor mode indicator in your modeline after
+startup.
+</p>
+<hr>
+</div>
 <div class="section-level-extent" id="Customization">
 <p class="nav-panel">
-<span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="#Installation" rel="prev">Installation</a></span></span>, <span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Setup" rel="up">Setup</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="#Concept-Index" title="Index" rel="index">Index</a>]</span></p>
-<h3 class="section" id="Customization-1"><span>B.2 Customization<a class="copiable-link" href="#Customization-1"> &para;</a></span></h3>
+<span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="#Installation-and-Configuration" rel="prev">Installation and Configuration</a></span></span>, <span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Setup" rel="up">Setup</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="#Concept-Index" title="Index" rel="index">Index</a>]</span></p>
+<h3 class="section" id="Customization-1"><span>B.3 Customization<a class="copiable-link" href="#Customization-1"> &para;</a></span></h3>
 
 <a class="index-entry-id" id="index-menu_002c-Cust-1"></a>
-<a class="index-entry-id" id="index-configuration"></a>
+<a class="index-entry-id" id="index-configuration-1"></a>
 <a class="index-entry-id" id="index-customization"></a>
 <p>Major Hyperbole user options may be set from the Customize submenu
 below the Hyperbole menubar menu, as seen here.
@@ -10235,7 +10198,7 @@ below the Hyperbole menubar menu, as seen here.
 <a class="index-entry-id" id="index-variable-setting"></a>
 <p>Generally, you should not need to change anything other than these options.
 However, if you like to customize your environment extensively, there
-are many additional Hyperbole customization options that may be 
+are many additional Hyperbole customization options that may be
 changed with the Emacs customization interface,
 see <a data-manual="emacs" href="https://www.gnu.org/software/emacs/manual/html_mono/emacs.html#Easy-Customization">Easy Customization Interface</a> in <cite class="cite">the GNU
 Emacs Manual</cite>.  When you save any changes within this interface, the
@@ -10278,7 +10241,7 @@ be of interest to users.
 <div class="subsection-level-extent" id="Referent-Display">
 <p class="nav-panel">
 <span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="#Internal-Viewers" rel="next">Internal Viewers</a></span></span>, <span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="#Customization" rel="prev">Customization</a></span></span>, <span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Customization" rel="up">Customization</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="#Concept-Index" title="Index" rel="index">Index</a>]</span></p>
-<h4 class="subsection" id="Referent-Display-1"><span>B.2.1 Referent Display<a class="copiable-link" href="#Referent-Display-1"> &para;</a></span></h4>
+<h4 class="subsection" id="Referent-Display-1"><span>B.3.1 Referent Display<a class="copiable-link" href="#Referent-Display-1"> &para;</a></span></h4>
 <a class="index-entry-id" id="index-hpath_003adisplay_002dwhere-1"></a>
 <a class="index-entry-id" id="index-referent-display"></a>
 <a class="index-entry-id" id="index-link-display"></a>
@@ -10312,7 +10275,7 @@ are displayed internally and externally.
 <div class="subsection-level-extent" id="Internal-Viewers">
 <p class="nav-panel">
 <span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="#External-Viewers" rel="next">External Viewers</a></span></span>, <span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="#Referent-Display" rel="prev">Referent Display</a></span></span>, <span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Customization" rel="up">Customization</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="#Concept-Index" title="Index" rel="index">Index</a>]</span></p>
-<h4 class="subsection" id="Internal-Viewers-1"><span>B.2.2 Internal Viewers<a class="copiable-link" href="#Internal-Viewers-1"> &para;</a></span></h4>
+<h4 class="subsection" id="Internal-Viewers-1"><span>B.3.2 Internal Viewers<a class="copiable-link" href="#Internal-Viewers-1"> &para;</a></span></h4>
 <a class="index-entry-id" id="index-hpath_003ainternal_002ddisplay_002dalist"></a>
 <a class="index-entry-id" id="index-file-display-function"></a>
 <a class="index-entry-id" id="index-display-function"></a>
@@ -10400,7 +10363,7 @@ external, window-system specific viewers.
 <div class="subsection-level-extent" id="External-Viewers">
 <p class="nav-panel">
 <span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="#Link-Variable-Substitution" rel="next">Link Variable Substitution</a></span></span>, <span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="#Internal-Viewers" rel="prev">Internal Viewers</a></span></span>, <span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Customization" rel="up">Customization</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="#Concept-Index" title="Index" rel="index">Index</a>]</span></p>
-<h4 class="subsection" id="External-Viewers-1"><span>B.2.3 External Viewers<a class="copiable-link" href="#External-Viewers-1"> &para;</a></span></h4>
+<h4 class="subsection" id="External-Viewers-1"><span>B.3.3 External Viewers<a class="copiable-link" href="#External-Viewers-1"> &para;</a></span></h4>
 <a class="index-entry-id" id="index-hpath_003aget_002dexternal_002ddisplay_002dalist"></a>
 <a class="index-entry-id" id="index-hpath_003aexternal_002ddisplay_002dalist_002dmacos"></a>
 <a class="index-entry-id" id="index-hpath_003aexternal_002ddisplay_002dalist_002dmswindows"></a>
@@ -10449,7 +10412,7 @@ Emacs.
 <div class="subsection-level-extent" id="Link-Variable-Substitution">
 <p class="nav-panel">
 <span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="#Web-Search-Engines" rel="next">Web Search Engines</a></span></span>, <span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="#External-Viewers" rel="prev">External Viewers</a></span></span>, <span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Customization" rel="up">Customization</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="#Concept-Index" title="Index" rel="index">Index</a>]</span></p>
-<h4 class="subsection" id="Link-Variable-Substitution-1"><span>B.2.4 Link Variable Substitution<a class="copiable-link" href="#Link-Variable-Substitution-1"> &para;</a></span></h4>
+<h4 class="subsection" id="Link-Variable-Substitution-1"><span>B.3.4 Link Variable Substitution<a class="copiable-link" href="#Link-Variable-Substitution-1"> &para;</a></span></h4>
 <a class="index-entry-id" id="index-hpath_003avariables"></a>
 <a class="index-entry-id" id="index-environment-variables-1"></a>
 <a class="index-entry-id" id="index-Emacs-Lisp-variables-1"></a>
@@ -10478,7 +10441,7 @@ you in deciding whether or not to modify the value of <code class="code">hpath:v
 <div class="subsection-level-extent" id="Web-Search-Engines">
 <p class="nav-panel">
 <span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="#Using-URLs-with-Find_002dFile" rel="next">Using URLs with Find-File</a></span></span>, <span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="#Link-Variable-Substitution" rel="prev">Link Variable Substitution</a></span></span>, <span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Customization" rel="up">Customization</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="#Concept-Index" title="Index" rel="index">Index</a>]</span></p>
-<h4 class="subsection" id="Web-Search-Engines-1"><span>B.2.5 Web Search Engines<a class="copiable-link" href="#Web-Search-Engines-1"> &para;</a></span></h4>
+<h4 class="subsection" id="Web-Search-Engines-1"><span>B.3.5 Web Search Engines<a class="copiable-link" href="#Web-Search-Engines-1"> &para;</a></span></h4>
 
 <a class="index-entry-id" id="index-menu_002c-Find_002fWeb"></a>
 <a class="index-entry-id" id="index-menu_002c-Web-1"></a>
@@ -10530,7 +10493,7 @@ Cust/Web-Search menu.  Below is the equivalent Hyperbole menubar menu.
 <div class="subsection-level-extent" id="Using-URLs-with-Find_002dFile">
 <p class="nav-panel">
 <span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="#Invisible-Text-Searches" rel="next">Invisible Text Searches</a></span></span>, <span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="#Web-Search-Engines" rel="prev">Web Search Engines</a></span></span>, <span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Customization" rel="up">Customization</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="#Concept-Index" title="Index" rel="index">Index</a>]</span></p>
-<h4 class="subsection" id="Using-URLs-with-Find_002dFile-1"><span>B.2.6 Using URLs with Find-File<a class="copiable-link" href="#Using-URLs-with-Find_002dFile-1"> &para;</a></span></h4>
+<h4 class="subsection" id="Using-URLs-with-Find_002dFile-1"><span>B.3.6 Using URLs with Find-File<a class="copiable-link" href="#Using-URLs-with-Find_002dFile-1"> &para;</a></span></h4>
 
 <a class="index-entry-id" id="index-find_002dfile"></a>
 <a class="index-entry-id" id="index-find_002dfile_002c-browsing-URLs"></a>
@@ -10585,7 +10548,7 @@ menu.
 <div class="subsection-level-extent" id="Invisible-Text-Searches">
 <p class="nav-panel">
 <span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="#Highlight-Menu-Key-Toggle" rel="next">Highlight Menu Key Toggle</a></span></span>, <span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="#Using-URLs-with-Find_002dFile" rel="prev">Using URLs with Find-File</a></span></span>, <span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Customization" rel="up">Customization</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="#Concept-Index" title="Index" rel="index">Index</a>]</span></p>
-<h4 class="subsection" id="Invisible-Text-Searches-1"><span>B.2.7 Invisible Text Searches<a class="copiable-link" href="#Invisible-Text-Searches-1"> &para;</a></span></h4>
+<h4 class="subsection" id="Invisible-Text-Searches-1"><span>B.3.7 Invisible Text Searches<a class="copiable-link" href="#Invisible-Text-Searches-1"> &para;</a></span></h4>
 
 <a class="index-entry-id" id="index-menu-item_002c-Isearch_002dInvisible"></a>
 <a class="index-entry-id" id="index-menu-item_002c-Toggle_002dIsearch_002dInvisible"></a>
@@ -10608,7 +10571,7 @@ current interactive search only.
 <div class="subsection-level-extent" id="Highlight-Menu-Key-Toggle">
 <p class="nav-panel">
 <span class="nav-button"><span class="nav-label">Next: </span><span class="nav-link"><a href="#Button-Colors" rel="next">Configuring Button Colors</a></span></span>, <span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="#Invisible-Text-Searches" rel="prev">Invisible Text Searches</a></span></span>, <span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Customization" rel="up">Customization</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="#Concept-Index" title="Index" rel="index">Index</a>]</span></p>
-<h4 class="subsection" id="Highlight-Menu-Key-Toggle-1"><span>B.2.8 Highlight Menu Key Toggle<a class="copiable-link" href="#Highlight-Menu-Key-Toggle-1"> &para;</a></span></h4>
+<h4 class="subsection" id="Highlight-Menu-Key-Toggle-1"><span>B.3.8 Highlight Menu Key Toggle<a class="copiable-link" href="#Highlight-Menu-Key-Toggle-1"> &para;</a></span></h4>
 
 <a class="index-entry-id" id="index-menu-item_002c-Cust_002fHighlight_002dMenu_002dKeys_002dToggle"></a>
 <a class="index-entry-id" id="index-highlight-menu-keys"></a>
@@ -10621,7 +10584,7 @@ default and typically bolds and underlines the highlighted key.
 <div class="subsection-level-extent" id="Button-Colors">
 <p class="nav-panel">
 <span class="nav-button"><span class="nav-label">Previous: </span><span class="nav-link"><a href="#Highlight-Menu-Key-Toggle" rel="prev">Highlight Menu Key Toggle</a></span></span>, <span class="nav-button"><span class="nav-label">Up: </span><span class="nav-link"><a href="#Customization" rel="up">Customization</a></span></span><span class="nav-button"> &nbsp; </span><span class="nav-button">[<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</span><span class="nav-button">[<a href="#Concept-Index" title="Index" rel="index">Index</a>]</span></p>
-<h4 class="subsection" id="Configuring-Button-Colors"><span>B.2.9 Configuring Button Colors<a class="copiable-link" href="#Configuring-Button-Colors"> &para;</a></span></h4>
+<h4 class="subsection" id="Configuring-Button-Colors"><span>B.3.9 Configuring Button Colors<a class="copiable-link" href="#Configuring-Button-Colors"> &para;</a></span></h4>
 <a class="index-entry-id" id="index-Emacs-support"></a>
 <a class="index-entry-id" id="index-button-highlighting-1"></a>
 <a class="index-entry-id" id="index-highlighting-buttons"></a>
@@ -11882,7 +11845,7 @@ the minimal diagonal movements which register a drag):
      Restores the prior window configuration from the ring.  A prefix
      argument N specifies the Nth prior configuration from the ring.
 </pre></div></div>
-     
+
 <hr>
 </div>
 <div class="subsection-level-extent" id="Smart-Mouse-Drags-outside-a-Window">
@@ -12340,7 +12303,7 @@ necessary for its use.
      (1) on the last line, quit from the magit mode (<kbd class="kbd">{q}</kbd> key binding);
      (2) at the end of a line, scroll up a windowful;
      (3) in a <code class="code">magit-status-mode</code> buffer on a merge conflict
-         marker, keep either the upper, both or the lower version of 
+         marker, keep either the upper, both or the lower version of
          the conflict. See also <a class="ref" href="#smerge">smerge</a>.
      (4) on a line starting with a &lsquo;+&rsquo; char in &lsquo;magit-status-mode&rsquo; or
          &lsquo;magit-revision-mode&rsquo; go to the worktree file.
@@ -12433,7 +12396,7 @@ the thing.
 <p>Because of the way helm is written, you may need a modified version of
 helm for these Smart Key actions to work.  Try them in your own
 version and if there are any issues, install helm from
-<samp class="file">github.com/rswgnu/helm</samp>. 
+<samp class="file">github.com/rswgnu/helm</samp>.
 </p>
 <a class="index-entry-id" id="index-helm_002dmode"></a>
 <a class="index-entry-id" id="index-completion-4"></a>
@@ -12865,7 +12828,7 @@ buffer:
          &lsquo;smart-c-cpp-include-path&rsquo; and
          &lsquo;smart-c-include-path&rsquo;;
      (2) within a method definition before the opening brace, its
-         declaration is displayed; 
+         declaration is displayed;
      (3) within a method declaration, its definition is displayed;
      (4) on a class name, the class definition is shown;
      (5) on a member reference (past any :: scoping operator), the
@@ -13364,7 +13327,7 @@ Use <kbd class="kbd">{s}</kbd> within an Info manual to search for any concept t
 <div class="format">
 <div class="group"><pre class="format-preformatted">  ASSIST KEY
      (1) on the first or second column of an entry, the selected buffer is unmarked
-         for display or deletion; 
+         for display or deletion;
      (2) anywhere else within an entry line, the selected buffer is marked for
          deletion;
      (3) on the first or last line in the buffer, all display, save, and delete
@@ -15728,7 +15691,8 @@ Austin, TX, ACM: NY,NY, 1989, pp. 37-42.
 <tr><td class="printindex-index-entry"><a href="#index-completion-4">completion</a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Helm-Mode">Smart Key - Helm Mode</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-completion_002c-Ivy">completion, Ivy</a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Ivy">Smart Key - Ivy</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-concepts">concepts</a></td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
-<tr><td class="printindex-index-entry"><a href="#index-configuration">configuration</a></td><td class="printindex-index-section"><a href="#Customization">Customization</a></td></tr>
+<tr><td class="printindex-index-entry"><a href="#index-configuration">configuration</a></td><td class="printindex-index-section"><a href="#Elpa-and-Melpa-Latest-or-Release-Package-Installation">Elpa and Melpa Latest or Release Package Installation</a></td></tr>
+<tr><td class="printindex-index-entry"><a href="#index-configuration-1">configuration</a></td><td class="printindex-index-section"><a href="#Customization">Customization</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-consult-grep-org-tags">consult grep org tags</a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-consult-package">consult package</a></td><td class="printindex-index-section"><a href="#Glossary">Glossary</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-consult_002dorg_002droam-package">consult-org-roam package</a></td><td class="printindex-index-section"><a href="#Glossary">Glossary</a></td></tr>
@@ -15858,8 +15822,9 @@ Austin, TX, ACM: NY,NY, 1989, pp. 37-42.
 <tr><td class="printindex-index-entry"><a href="#index-elisp-identifier">elisp identifier</a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Lisp-Source-Code">Smart Key - Lisp Source Code</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-elisp-testing">elisp testing</a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-ERT-Results-Mode">Smart Key - ERT Results Mode</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-ellipses">ellipses</a></td><td class="printindex-index-section"><a href="#View-Specs">View Specs</a></td></tr>
-<tr><td class="printindex-index-entry"><a href="#index-elpa-package">elpa package</a></td><td class="printindex-index-section"><a href="#Elpa-Latest-or-Release-Package-Installation">Elpa Latest or Release Package Installation</a></td></tr>
-<tr><td class="printindex-index-entry"><a href="#index-elpa_002ddevel-package">elpa-devel package</a></td><td class="printindex-index-section"><a href="#Elpa-Latest-or-Release-Package-Installation">Elpa Latest or Release Package Installation</a></td></tr>
+<tr><td class="printindex-index-entry"><a href="#index-elpa-package">elpa package</a></td><td class="printindex-index-section"><a href="#Elpa-and-Melpa-Latest-or-Release-Package-Installation">Elpa and Melpa Latest or Release Package Installation</a></td></tr>
+<tr><td class="printindex-index-entry"><a href="#index-elpa_002ddevel-package">elpa-devel package</a></td><td class="printindex-index-section"><a href="#Elpa-and-Melpa-Latest-or-Release-Package-Installation">Elpa and Melpa Latest or Release Package Installation</a></td></tr>
+<tr><td class="printindex-index-entry"><a href="#index-Elpaca-package-manager">Elpaca package manager</a></td><td class="printindex-index-section"><a href="#Git-Latest-Package-Installation">Git Latest Package Installation</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-Emacs">Emacs</a></td><td class="printindex-index-section"><a href="#Hyperbole-Overview">Hyperbole Overview</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-Emacs-1">Emacs</a></td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-Emacs-Lisp">Emacs Lisp</a></td><td class="printindex-index-section"><a href="#Hyperbole-Overview">Hyperbole Overview</a></td></tr>
@@ -15868,7 +15833,7 @@ Austin, TX, ACM: NY,NY, 1989, pp. 37-42.
 <tr><td class="printindex-index-entry"><a href="#index-Emacs-Lisp-variables-1">Emacs Lisp variables</a></td><td class="printindex-index-section"><a href="#Link-Variable-Substitution">Link Variable Substitution</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-emacs-outline">emacs outline</a></td><td class="printindex-index-section"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-Emacs-Outline-mode">Emacs Outline mode</a></td><td class="printindex-index-section"><a href="#HyRolo-Concepts">HyRolo Concepts</a></td></tr>
-<tr><td class="printindex-index-entry"><a href="#index-Emacs-package-manager">Emacs package manager</a></td><td class="printindex-index-section"><a href="#Elpa-Latest-or-Release-Package-Installation">Elpa Latest or Release Package Installation</a></td></tr>
+<tr><td class="printindex-index-entry"><a href="#index-Emacs-package-manager">Emacs package manager</a></td><td class="printindex-index-section"><a href="#Elpa-and-Melpa-Latest-or-Release-Package-Installation">Elpa and Melpa Latest or Release Package Installation</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-Emacs-Regression-Test-_0028ERT_0029-symbol">Emacs Regression Test (ERT) symbol</a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-Emacs-Regression-Test-framework">Emacs Regression Test framework</a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-Emacs-support">Emacs support</a></td><td class="printindex-index-section"><a href="#Button-Colors">Button Colors</a></td></tr>
@@ -16061,7 +16026,7 @@ Austin, TX, ACM: NY,NY, 1989, pp. 37-42.
 <tr><td class="printindex-index-entry"><a href="#index-hyperbole_002dmode">hyperbole-mode</a></td><td class="printindex-index-section"><a href="#Invocation">Invocation</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-Hyperbole_002c-embedding">Hyperbole, embedding</a></td><td class="printindex-index-section"><a href="#Embedding-Hyperbole">Embedding Hyperbole</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-Hyperbole_002c-obtaining">Hyperbole, obtaining</a></td><td class="printindex-index-section"><a href="#Top">Top</a></td></tr>
-<tr><td class="printindex-index-entry"><a href="#index-Hyperbole_002c-obtaining-1">Hyperbole, obtaining</a></td><td class="printindex-index-section"><a href="#Elpa-Latest-or-Release-Package-Installation">Elpa Latest or Release Package Installation</a></td></tr>
+<tr><td class="printindex-index-entry"><a href="#index-Hyperbole_002c-obtaining-1">Hyperbole, obtaining</a></td><td class="printindex-index-section"><a href="#Elpa-and-Melpa-Latest-or-Release-Package-Installation">Elpa and Melpa Latest or Release Package Installation</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-Hyperbole_002c-starting">Hyperbole, starting</a></td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-Hyperbole_002c-system-encapsulation">Hyperbole, system encapsulation</a></td><td class="printindex-index-section"><a href="#Encapsulating-Systems">Encapsulating Systems</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-hyperlink">hyperlink</a></td><td class="printindex-index-section"><a href="#Klinks">Klinks</a></td></tr>
@@ -16185,7 +16150,7 @@ Austin, TX, ACM: NY,NY, 1989, pp. 37-42.
 <tr><td class="printindex-index-entry"><a href="#index-importing">importing</a></td><td class="printindex-index-section"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-importing-a-file">importing a file</a></td><td class="printindex-index-section"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-importing_002c-Koutliner">importing, Koutliner</a></td><td class="printindex-index-section"><a href="#Menu-Commands">Menu Commands</a></td></tr>
-<tr><td class="printindex-index-entry"><a href="#index-in_002ddevelopment-installation">in-development installation</a></td><td class="printindex-index-section"><a href="#Elpa-Latest-or-Release-Package-Installation">Elpa Latest or Release Package Installation</a></td></tr>
+<tr><td class="printindex-index-entry"><a href="#index-in_002ddevelopment-installation">in-development installation</a></td><td class="printindex-index-section"><a href="#Elpa-and-Melpa-Latest-or-Release-Package-Installation">Elpa and Melpa Latest or Release Package Installation</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-inactive-minibuffer">inactive minibuffer</a></td><td class="printindex-index-section"><a href="#Minibuffer-Menu-Activation">Minibuffer Menu Activation</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-Info-browser">Info browser</a></td><td class="printindex-index-section"><a href="#Smart-Mouse-Key-Modeline-Clicks">Smart Mouse Key Modeline Clicks</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-Info-browsing">Info browsing</a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Info-Manuals">Smart Key - Info Manuals</a></td></tr>
@@ -16199,12 +16164,12 @@ Austin, TX, ACM: NY,NY, 1989, pp. 37-42.
 <tr><td class="printindex-index-entry"><a href="#index-insert-item">insert item</a></td><td class="printindex-index-section"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-inserting-tabs">inserting tabs</a></td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-insertion">insertion</a></td><td class="printindex-index-section"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
-<tr><td class="printindex-index-entry"><a href="#index-installation">installation</a></td><td class="printindex-index-section"><a href="#Elpa-Latest-or-Release-Package-Installation">Elpa Latest or Release Package Installation</a></td></tr>
-<tr><td class="printindex-index-entry"><a href="#index-installation_002c-from-git">installation, from git</a></td><td class="printindex-index-section"><a href="#Elpa-Latest-or-Release-Package-Installation">Elpa Latest or Release Package Installation</a></td></tr>
+<tr><td class="printindex-index-entry"><a href="#index-installation">installation</a></td><td class="printindex-index-section"><a href="#Elpa-and-Melpa-Latest-or-Release-Package-Installation">Elpa and Melpa Latest or Release Package Installation</a></td></tr>
+<tr><td class="printindex-index-entry"><a href="#index-installation_002c-from-git">installation, from git</a></td><td class="printindex-index-section"><a href="#Elpa-and-Melpa-Latest-or-Release-Package-Installation">Elpa and Melpa Latest or Release Package Installation</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-installation_002c-from-git-1">installation, from git</a></td><td class="printindex-index-section"><a href="#Git-Latest-Package-Installation">Git Latest Package Installation</a></td></tr>
-<tr><td class="printindex-index-entry"><a href="#index-installation_002c-latest">installation, latest</a></td><td class="printindex-index-section"><a href="#Elpa-Latest-or-Release-Package-Installation">Elpa Latest or Release Package Installation</a></td></tr>
+<tr><td class="printindex-index-entry"><a href="#index-installation_002c-latest">installation, latest</a></td><td class="printindex-index-section"><a href="#Elpa-and-Melpa-Latest-or-Release-Package-Installation">Elpa and Melpa Latest or Release Package Installation</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-installation_002c-pre_002drelease">installation, pre-release</a></td><td class="printindex-index-section"><a href="#Git-Latest-Package-Installation">Git Latest Package Installation</a></td></tr>
-<tr><td class="printindex-index-entry"><a href="#index-installation_002c-release">installation, release</a></td><td class="printindex-index-section"><a href="#Elpa-Latest-or-Release-Package-Installation">Elpa Latest or Release Package Installation</a></td></tr>
+<tr><td class="printindex-index-entry"><a href="#index-installation_002c-release">installation, release</a></td><td class="printindex-index-section"><a href="#Elpa-and-Melpa-Latest-or-Release-Package-Installation">Elpa and Melpa Latest or Release Package Installation</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-instance-number">instance number</a></td><td class="printindex-index-section"><a href="#By-Menu">By Menu</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-interactive-cmd-char_002c-_002bI">interactive cmd char, +I</a></td><td class="printindex-index-section"><a href="#Creating-Action-Types">Creating Action Types</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-interactive-cmd-char_002c-_002bK">interactive cmd char, +K</a></td><td class="printindex-index-section"><a href="#Creating-Action-Types">Creating Action Types</a></td></tr>
@@ -16303,7 +16268,7 @@ Austin, TX, ACM: NY,NY, 1989, pp. 37-42.
 <tr><td class="printindex-index-entry"><a href="#index-label_002c-button">label, button</a></td><td class="printindex-index-section"><a href="#Explicit-Buttons">Explicit Buttons</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-label_002c-button-1">label, button</a></td><td class="printindex-index-section"><a href="#Global-Buttons">Global Buttons</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-labeling-implicit-buttons">labeling implicit buttons</a></td><td class="printindex-index-section"><a href="#Implicit-Buttons">Implicit Buttons</a></td></tr>
-<tr><td class="printindex-index-entry"><a href="#index-latest-installation">latest installation</a></td><td class="printindex-index-section"><a href="#Elpa-Latest-or-Release-Package-Installation">Elpa Latest or Release Package Installation</a></td></tr>
+<tr><td class="printindex-index-entry"><a href="#index-latest-installation">latest installation</a></td><td class="printindex-index-section"><a href="#Elpa-and-Melpa-Latest-or-Release-Package-Installation">Elpa and Melpa Latest or Release Package Installation</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-legal-labels">legal labels</a></td><td class="printindex-index-section"><a href="#Autonumbering">Autonumbering</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-level">level</a></td><td class="printindex-index-section"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-level-1">level</a></td><td class="printindex-index-section"><a href="#View-Specs">View Specs</a></td></tr>
@@ -16366,6 +16331,7 @@ Austin, TX, ACM: NY,NY, 1989, pp. 37-42.
 <tr><td class="printindex-index-entry"><a href="#index-match-lines-3">match lines</a></td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-maximize-frame">maximize frame</a></td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-maximize-window">maximize window</a></td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
+<tr><td class="printindex-index-entry"><a href="#index-melpa-package">melpa package</a></td><td class="printindex-index-section"><a href="#Elpa-and-Melpa-Latest-or-Release-Package-Installation">Elpa and Melpa Latest or Release Package Installation</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-menu-exit">menu exit</a></td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-menu-help">menu help</a></td><td class="printindex-index-section"><a href="#Invocation">Invocation</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-menu-help-1">menu help</a></td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
@@ -16559,7 +16525,7 @@ Austin, TX, ACM: NY,NY, 1989, pp. 37-42.
 <tr><td colspan="2"><hr></td></tr>
 <tr><th class="index-letter-header-printindex cp-letter-header-printindex" colspan="2" id="Concept-Index_cp_letter-O">O</th></tr>
 <tr><td class="printindex-index-entry"><a href="#index-object_002doriented-code-browsing">object-oriented code browsing</a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-The-OO_002dBrowser">Smart Key - The OO-Browser</a></td></tr>
-<tr><td class="printindex-index-entry"><a href="#index-obtaining-Hyperbole">obtaining Hyperbole</a></td><td class="printindex-index-section"><a href="#Elpa-Latest-or-Release-Package-Installation">Elpa Latest or Release Package Installation</a></td></tr>
+<tr><td class="printindex-index-entry"><a href="#index-obtaining-Hyperbole">obtaining Hyperbole</a></td><td class="printindex-index-section"><a href="#Elpa-and-Melpa-Latest-or-Release-Package-Installation">Elpa and Melpa Latest or Release Package Installation</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-online-library">online library</a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-OO_002dBrowser">OO-Browser</a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-The-OO_002dBrowser">Smart Key - The OO-Browser</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-option-setting">option setting</a></td><td class="printindex-index-section"><a href="#Customization">Customization</a></td></tr>
@@ -16629,7 +16595,7 @@ Austin, TX, ACM: NY,NY, 1989, pp. 37-42.
 <tr><td class="printindex-index-entry"><a href="#index-overview">overview</a></td><td class="printindex-index-section"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td colspan="2"><hr></td></tr>
 <tr><th class="index-letter-header-printindex cp-letter-header-printindex" colspan="2" id="Concept-Index_cp_letter-P">P</th></tr>
-<tr><td class="printindex-index-entry"><a href="#index-package-manager">package manager</a></td><td class="printindex-index-section"><a href="#Elpa-Latest-or-Release-Package-Installation">Elpa Latest or Release Package Installation</a></td></tr>
+<tr><td class="printindex-index-entry"><a href="#index-package-manager">package manager</a></td><td class="printindex-index-section"><a href="#Elpa-and-Melpa-Latest-or-Release-Package-Installation">Elpa and Melpa Latest or Release Package Installation</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-Page-HyWiki-reftype">Page HyWiki reftype</a></td><td class="printindex-index-section"><a href="#HyWiki-Menu">HyWiki Menu</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-paragraph_002c-filling">paragraph, filling</a></td><td class="printindex-index-section"><a href="#Filling">Filling</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-paste-region">paste region</a></td><td class="printindex-index-section"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
@@ -16669,6 +16635,7 @@ Austin, TX, ACM: NY,NY, 1989, pp. 37-42.
 <tr><td class="printindex-index-entry"><a href="#index-python-traceback-1">python traceback</a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td colspan="2"><hr></td></tr>
 <tr><th class="index-letter-header-printindex cp-letter-header-printindex" colspan="2" id="Concept-Index_cp_letter-Q">Q</th></tr>
+<tr><td class="printindex-index-entry"><a href="#index-Quelpa-package-manager">Quelpa package manager</a></td><td class="printindex-index-section"><a href="#Git-Latest-Package-Installation">Git Latest Package Installation</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-quit-HyControl">quit HyControl</a></td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-quit-menus">quit menus</a></td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td colspan="2"><hr></td></tr>
@@ -16691,7 +16658,7 @@ Austin, TX, ACM: NY,NY, 1989, pp. 37-42.
 <tr><td class="printindex-index-entry"><a href="#index-regression-testing">regression testing</a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-ERT-Results-Mode">Smart Key - ERT Results Mode</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-relative-autonumber">relative autonumber</a></td><td class="printindex-index-section"><a href="#Koutliner">Koutliner</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-relative-identifier">relative identifier</a></td><td class="printindex-index-section"><a href="#Autonumbering">Autonumbering</a></td></tr>
-<tr><td class="printindex-index-entry"><a href="#index-release-installation">release installation</a></td><td class="printindex-index-section"><a href="#Elpa-Latest-or-Release-Package-Installation">Elpa Latest or Release Package Installation</a></td></tr>
+<tr><td class="printindex-index-entry"><a href="#index-release-installation">release installation</a></td><td class="printindex-index-section"><a href="#Elpa-and-Melpa-Latest-or-Release-Package-Installation">Elpa and Melpa Latest or Release Package Installation</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-reload-minibuffer-menus">reload minibuffer menus</a></td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-reload-Smart-Key-handlers">reload Smart Key handlers</a></td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td class="printindex-index-entry"><a href="#index-remote-file">remote file</a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>

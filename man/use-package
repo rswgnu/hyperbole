@@ -19,16 +19,6 @@
     ;; activated too.
     (hywiki-mode :all))
 
-    ;; Older Hyperbole releases do not have HyWiki
-    (when (bound-and-true-p hywiki-mode)
-      ;; Initialize the global HyWiki minor mode to one of these values:
-      ;;   :all   - highlights and makes HyWikiWord links active in
-      ;;            all text and programming buffer comments
-      ;;   :pages - highlights and makes HyWikiWord links active in
-      ;;            only within HyWiki page buffers
-      ;;   nil    - leaves HyWiki mode disabled.
-      (hywiki-mode :all))
-
   :bind
   (:map hyperbole-mode-map
         ;; Bind Smart Keys: {M-RET} is the Action Key; {C-u M-RET} is the
