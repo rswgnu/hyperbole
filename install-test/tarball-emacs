@@ -1,6 +1,11 @@
 ;;; -*- mode: emacs-lisp; lexical-binding: t; -*-
 ;; tarball -- hyperbole installed from a tar ball
 
+(require 'package)
+
+(when (version< emacs-version "29")
+  (package-install 'use-package))
+
 (unless (and (featurep 'hyperbole) hyperbole-mode)
   (push (expand-file-name "hyperbole" (getenv "HOME")) load-path)
   (require 'hyperbole)

@@ -2,6 +2,10 @@
 
 (require 'package)
 (add-to-list 'package-archives '("melpa-snapshots" . "https://snapshots.melpa.org/packages/"))
+
+(when (version< emacs-version "29")
+  (package-install 'use-package))
+
 (setq package-pinned-packages '((hyperbole . "melpa-snapshots")))
 
 (unless (locate-library "hyperbole")

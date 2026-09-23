@@ -7,28 +7,7 @@
  send us a thank you or a testimonial describing your usage if you like
  Hyperbole to [rsw@gnu.org](mailto:rsw@gnu.org)].
 
-
-
-- [GNU Hyperbole 9.1.0 - The Everyday Hypertextual Information Manager](#gnu-hyperbole-902pre---the-everyday-hypertextual-information-manager)
-  - [Reference Manual](#reference-manual)
-  - [Videos](#videos)
-  - [Articles](#articles)
-  - [Summary](#summary)
-  - [Installation](#installation)
-  - [Invocation](#invocation)
-  - [Hyperbole Manual](#hyperbole-manual)
-  - [Mailing Lists](#mailing-lists)
-  - [Ftp and Git Repository Downloads](#ftp-and-git-repository-downloads)
-  - [Hyperbole Components](#hyperbole-components)
-  - [Hyperbole Buttons](#hyperbole-buttons)
-  - [Important Features](#important-features)
-  - [Hyperbole Uses](#hyperbole-uses)
-  - [Files](#files)
-  - [Programmer Quick Reference](#programmer-quick-reference)
-  - [User Quotes](#user-quotes)
-  - [Why was Hyperbole developed?](#why-was-hyperbole-developed)
-
-
+[TOC]
 
 ![Hyperbole screenshot of the Koutliner, DEMO file and HyRolo](man/im/hyperbole-cv.png)
 

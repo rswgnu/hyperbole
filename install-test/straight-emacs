@@ -20,4 +20,7 @@
    :host nil
    :repo "https://git.savannah.gnu.org/git/hyperbole.git"))
 
+(when (version< emacs-version "29")
+  (straight-use-package 'use-package))
+
 ;;; End straight-emacs
