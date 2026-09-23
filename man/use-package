@@ -21,14 +21,15 @@
 
   :bind
   (:map hyperbole-mode-map
-        ;; Bind Smart Keys: {M-RET} is the Action Key; {C-u M-RET} is the
-        ;; Assist Key
-        (("M-RET" . hkey-either)
+        (
          ;; Uncomment the next binding if you want to emulate Hyperbole mouse drag
          ;; events from your keyboard.
          ;; See "https://www.gnu.org/s/hyperbole/man/hyperbole.html#Keyboard-Drags".
          ;; ("M-o"   . hkey-operate)
-         ))
+
+         ;; Bind Smart Keys: {M-RET} is the Action Key; {C-u M-RET} is the
+         ;; Assist Key
+         ("M-RET" . hkey-either)))
 
   :config
   ;; Hyperbole binds {C-h h} by default in the global-map. If you
@@ -38,12 +39,10 @@
   ;(global-set-key (kbd "C-h h") #'view-hello-file)
   ;(global-set-key (kbd "C-c h") #'hyperbole)
 
+  :custom
   ;; Customize how Hyperbole and Org mode share the M-RET key:
   ;;   t        - With hyperbole-mode enabled, Hyperbole controls the key
   ;;   'buttons - With hyperbole-mode enabled, Hyperbole controls the key
   ;;              only when on a button or link; otherwise, Org controls it
   ;;   nil      - In Org mode, Org controls the key
-  :custom
-  (hsys-org-enable-smart-keys t)
-
-  )
+  (hsys-org-enable-smart-keys t))
