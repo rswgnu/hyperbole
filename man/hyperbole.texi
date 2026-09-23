@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     15-Aug-26 at 22:51:39 by Bob Weiner
+@c Last-Mod:     23-Sep-26 at 10:32:53 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,8 +30,8 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED August 15, 2026
-@set UPDATED-MONTH August 2026
+@set UPDATED September 23, 2026
+@set UPDATED-MONTH September 2026
 @set EDITION 9.1.0
 @set VERSION 9.1.0
 
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.1.0
-Printed August 15, 2026.
+Printed September 23, 2026.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -213,7 +213,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.1.0
-August 15, 2026 @c AUTO-REPLACE-ON-SAVE
+September 23, 2026 @c AUTO-REPLACE-ON-SAVE
 
 
   Published by the Free Software Foundation, Inc.
@@ -2567,7 +2567,7 @@ The following table summarizes the effect of this option setting.
 @item denote-link
 Denote is an Emacs package for note taking that uses time-stamped,
 descriptive file naming conventions to label and locate notes.  Hyperbole
-provides an expanded set of denote-specific link formats via this 
+provides an expanded set of denote-specific link formats via this
 reference types.
 
 If on a denote id with optional #section, jump to its associated note.
@@ -3003,7 +3003,7 @@ Each line of the summary may be selected to jump to the associated section.
 @item markdown-internal-link
 Display any in-file Markdown link referent.  Pathnames and urls are
 handled elsewhere.
-  
+
 @findex ibtypes org-link-outside-org-mode
 @cindex Org link, outside Org
 @anchor{org-link-outside-org-mode}
@@ -3410,7 +3410,7 @@ delimiters = [ ].
 @findex actypes completion
 @item completion
 Insert a completion at point into the minibuffer or a buffer.
-Unless point is at the end of buffer or if a completion has already been 
+Unless point is at the end of buffer or if a completion has already been
 inserted, in which case, delete the completions window.
 
 @findex actypes debbugs-gnu-query
@@ -3483,7 +3483,7 @@ the files in the branch are listed.
 
 @vindex hibtypes-git-default-project
 If given, PROJECT overrides any project value in REFERENCE.  If no PROJECT
-value is provided, it defaults to the value of @code{hibtypes-git-default-project}. 
+value is provided, it defaults to the value of @code{hibtypes-git-default-project}.
 
 @findex actypes github-reference
 @cindex github reference
@@ -4496,7 +4496,7 @@ GrepFiles -        Show numbered line matches for a regexp in all
                    grep command or options.
 
 @item
-LocateFiles -      Prompt for a pattern and display a list of all 
+LocateFiles -      Prompt for a pattern and display a list of all
                    matching pathnames found throughout the file
                    system.  On Mac OS X, this uses Spotlight
                    (the @code{mdfind} command); on UNIX, it uses
@@ -4814,7 +4814,7 @@ When on a non-existing HyWikiWord, create it and display its referent.
 This is the Action Key function that activates HyWikiWords.  A call to
 @code{(hywiki-active-in-current-buffer-p)} must return non-@samp{nil}
 for this to activate.
-  
+
 If the associated HyWiki referent is a page, create it automatically
 unless it is the first HyWiki page to be created, in which case,
 prompt the user whether to create it, to prevent any unexpected HyWiki
@@ -4966,7 +4966,7 @@ Below are descriptions of each menu item.
 @cindex HyWiki menu
 @cindex menu, HyWiki
 @table @asis
-@cindex HyWiki activate link 
+@cindex HyWiki activate link
 @item Act
 Activate HyWikiWord link at point.
 
@@ -7263,7 +7263,7 @@ containing "Staffer" at any level in a hierarchy, like so:
 section, the menu item names from the minibuffer menu are used to
 refer to each command.
 
-The @code{RegexFind} menu item searches the rolo list for all entries 
+The @code{RegexFind} menu item searches the rolo list for all entries
 which contain matches for a given regular expression.  The regular
 expression syntax used is the same as the one used within Emacs
 and across the GNU set of tools.  @xref{Regexps,,Syntax of Regular
@@ -7642,7 +7642,7 @@ matching entries retrieved from multiple files during a single search.
 
 @item hyrolo-hdr-and-entry-regexp
 The rolo entry start delimiter is given by the regular expression
-variable, @code{hyrolo-hdr-and-entry-regexp}, whose default value is "^\*+", i.e.@: 
+variable, @code{hyrolo-hdr-and-entry-regexp}, whose default value is "^\*+", i.e.@:
 one or more asterisks at the beginning of a line.
 
 @item hyrolo-display-format-function
@@ -8206,7 +8206,7 @@ Here is a sample use case.  Let's create a button type whose
 buttons perform a grep-like function over a current repo's git log
 entries.  The buttons use this format: [<text to match>].
 
-The following defines the button type called @code{search-git-log} with a 
+The following defines the button type called @code{search-git-log} with a
 a key series action surrounded by braces:
 
 @code{(defil search-git-log "[<" ">]" ".*" "@{M-: (hypb:fgrep-git-log \"\\&\") RET@}")}
@@ -9377,7 +9377,7 @@ Alternatively, the minibuffer-based menu, Cust/ may be used.
 @cindex variable setting
 Generally, you should not need to change anything other than these options.
 However, if you like to customize your environment extensively, there
-are many additional Hyperbole customization options that may be 
+are many additional Hyperbole customization options that may be
 changed with the Emacs customization interface,
 @pxref{Easy Customization,,Easy Customization Interface,emacs, the GNU
 Emacs Manual}.  When you save any changes within this interface, the
@@ -10962,7 +10962,7 @@ the minimal diagonal movements which register a drag):
      argument N specifies the Nth prior configuration from the ring.
 @end group
 @end format
-     
+
 @node Smart Mouse Drags outside a Window,  , Smart Mouse Drags within a Window, Smart Mouse Keys
 @subsection Smart Mouse Drags outside a Window
 
@@ -11397,7 +11397,7 @@ If pressed within a Magit buffer and not on a button:
      (1) on the last line, quit from the magit mode (@bkbd{q} key binding);
      (2) at the end of a line, scroll up a windowful;
      (3) in a @code{magit-status-mode} buffer on a merge conflict
-         marker, keep either the upper, both or the lower version of 
+         marker, keep either the upper, both or the lower version of
          the conflict. See also @ref{smerge}.
      (4) on a line starting with a `+' char in `magit-status-mode' or
          `magit-revision-mode' go to the worktree file.
@@ -11481,7 +11481,7 @@ If pressed within a buffer in View minor mode:
 Because of the way helm is written, you may need a modified version of
 helm for these Smart Key actions to work.  Try them in your own
 version and if there are any issues, install helm from
-@file{github.com/rswgnu/helm}. 
+@file{github.com/rswgnu/helm}.
 
 @cindex helm-mode
 @cindex completion
@@ -11889,7 +11889,7 @@ buffer:
          `smart-c-cpp-include-path' and
          `smart-c-include-path';
      (2) within a method definition before the opening brace, its
-         declaration is displayed; 
+         declaration is displayed;
      (3) within a method declaration, its definition is displayed;
      (4) on a class name, the class definition is shown;
      (5) on a member reference (past any :: scoping operator), the
@@ -12092,7 +12092,7 @@ When pressed within a Fortran source code file:
 @end format
 
 @node Smart Key - Identifier Menu Mode , Smart Key - Calendar Mode, Smart Key - Fortran Source Code, Smart Keyboard Keys
-@subsection Smart Key - Identifier Menu Mode 
+@subsection Smart Key - Identifier Menu Mode
 
 @format
 @group
@@ -12395,7 +12395,7 @@ If pressed within an interactive buffer menu (ibuffer-mode):
 @group
   ASSIST KEY
      (1) on the first or second column of an entry, the selected buffer is unmarked
-         for display or deletion; 
+         for display or deletion;
      (2) anywhere else within an entry line, the selected buffer is marked for
          deletion;
      (3) on the first or last line in the buffer, all display, save, and delete
