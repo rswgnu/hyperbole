@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     30-Jul-26 at 13:16:39 by Bob Weiner
+;; Last-Mod:     26-Sep-26 at 10:36:35 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -375,6 +375,25 @@ key binding is found.
 The returned value may be compared with `equal' to `this-single-command-keys'.
 Use `key-description' to make it human readable."
   (where-is-internal cmd-sym keymap t))
+
+;;;###autoload
+(defun hypb:count-visible-lines (start end)
+  "Count visible lines between START and END by scanning property boundaries.
+`count-lines' returns 1 rather than 0 when all characters in the region are
+invisible, hence this function."
+  (save-excursion
+    (goto-char start)
+    (let ((count 0))
+      (while (< (point) end)
+        (if (invisible-p (point))
+            ;; Fast-forward past the invisible block
+            (goto-char (next-single-char-property-change (point) 'invisible nil end))
+          ;; Step line by line through visible text
+          (let ((line-end (min end (line-end-position))))
+            (unless (= (point) line-end)
+              (setq count (1+ count)))
+            (goto-char (min end (1+ line-end))))))
+      count)))
 
 ;;;###autoload
 (defun hypb:count-visible-windows ()

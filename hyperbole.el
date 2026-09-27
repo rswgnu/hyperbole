@@ -8,9 +8,9 @@
 ;; Maintainer:   Robert Weiner <rsw@gnu.org>
 ;;               Mats Lidell <matsl@gnu.org>
 ;; Created:      06-Oct-92 at 11:52:51
-;; Last-Mod:     27-Jul-26 at 19:22:04 by Bob Weiner
+;; Last-Mod:     27-Sep-26 at 02:24:35 by Bob Weiner
 ;; Released:     27-Jul-26
-;; Version:      9.1.0
+;; Version:      9.2.0
 ;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
 ;; Package:      hyperbole
 ;; Package-Requires: ((emacs "28"))
@@ -313,8 +313,9 @@ of the commands."
     ;; or regions to the kill ring.
     (hkey-set-key [remap kill-ring-save]         #'hui:kill-ring-save)
     ;;
-    ;; Override the {C-x r s} command from "register.el" when hyperbole-mode is active
-    ;; to allow copying delimited things, kcell references or regions to a register.
+    ;; Override the {C-x r s} command from "register.el" when hyperbole-mode
+    ;; is active to allow copying delimited things, kcell references or
+    ;; regions to a register.
     (hkey-set-key "\C-xrs" #'hui:copy-to-register)
     ;;
     ;; Bind {C-c @} to create a user-specified sized grid of windows

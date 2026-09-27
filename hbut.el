@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     12-Sep-26 at 13:33:57 by Mats Lidell
+;; Last-Mod:     27-Sep-26 at 01:27:28 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2761,8 +2761,10 @@ Summary of operations based on inputs (name arg from \\='hbut:current attrs):
       ('link-to-kcell
        (if arg2
 	   (progn (insert "<")
-		  (when arg1 (insert arg1))
-		  (insert ", " arg2 ">"))
+		  (if arg1
+                      (insert arg1 ", ")
+                    (insert "@ "))
+		  (insert arg2 ">"))
 	 (insert "<@ ")
 	 (when arg1 (insert arg1))
 	 (insert ">")))

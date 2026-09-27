@@ -1,6 +1,108 @@
+2026-09-27  Bob Weiner  <rsw@gnu.org>
+
+* hui.el (hui:link-possible-types):
+  hbut.el (ibut:insert-text): For a klink, if source and referent are in
+    the same buffer, use the simplified link format: <@ relative-id=idstamp>.
+
+2026-09-26  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode:action-key):
+  man/hyperbole.texi (Smart Key - The Koutliner): Fix doc to match code.
+
+* hargs.el (hargs:at-p): Move (eolp) test to the end of the 'cond'
+    expression so it doesn't interfere with reading any of the specified
+    types.
+
+* kotl/kotl-mode.el (kotl-mode:emulate-tab): Add this customization.
+                    (kotl-mode:before-tab-emulation-hook,
+		     kotl-mode:tab-pre-hook, kotl-mode:tab-post-hook): Add.
+		     (kotl-mode:toggle-tab-flag, kotl-mode:tab-command,
+                      kotl-mode:untab-command): Non-backward compatible
+    change: toggle {TAB}/{M-TAB} between promote/demote and Org-style cycling.
+                    (kotl-mode:demote-siblings, kotl-mode:promote-siblings):
+    Add to move following siblings.
+                    (kotl-mode:current-level, kotl-mode:previous-cell-level,
+                     kotl-mode:at-cell-empty-first-line-p,
+                     kotl-mode:cycle-globally, kotl-mode:cycle-locally,
+                     kotl-mode:all-cells-all-lines-visible-p,
+                     kotl-mode:all-cells-one-line-visible-p,
+                     kotl-mode:top-cells-one-line-visible-p,
+                     kotl-mode:root-first-line-only-shown-p,
+                     kotl-mode:show-root-first-line,
+                     kotl-mode:show-tree-children-first-lines,
+                     kotl-mode:tree-collapsed-p): Add.
+  man/hyperbole.texi (Promoting and Demoting):
+  kotl/EXAMPLE.kotl (Tree Demotion and Promotion): Update this section
+    to reflect key changes.  Remove {M-TAB} as a binding for promoting trees
+    outside of Org tables and M-1 as a prefix to toggle 'kotl-mode:tab-flag'.
+                     (kotl-mode:mark-whole-buffer):Allow selection of entire
+    buffer including first relative id, so can copy it.
+
+* hypb.el (hypb:count-visible-lines): Add.
+
+2026-09-24  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode:demote-tree, kotl-mode:promote-tree):
+    If given a null prefix arg, set it to 1.
+
+* kotl/kview.el (kcell-view:sibling-p): Return sibling idstamp rather
+    than t, so can jump back to it.
+                (kcell-view:child-p): Return child idstamp rather
+    than t, so can jump back to it.
+
 2026-09-23  Bob Weiner  <rsw@gnu.org>
 
+* kotl/kotl-mode.el (kotl-mode:tab-command)
+                     kotl-mode:untab-command): Remove use of ARG=1
+    to toggle 'kotl-mode:tab-flag'.  Use 'kotl-mode:toggle-tab-flag'
+    instead, bound to {C-tab}.
+                    (kotl-mode:cycle-locally): Add.
+
+* kotl/kvspec.el (kvspec:default): Add this so view spec can be
+    reset to its default value.
+  kotl/kfile.el  (kfile:read-v4-or-v3, kvspec:update): ): Set 'kvspec:default'.
+                 (kvspec:reset): Add to reset view spec to default.
+
 * man/hyperbole.texi: Remove trailing whitespace from lines.
+
+2026-09-21  Bob Weiner  <rsw@gnu.org>
+
+* kotl/klink.el (klink:replace-label): Improve read-only message
+    and include source buffer name.
+
+2026-09-20  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:find-koutline-reference): Add and use in
+    pathname ibtype so that koutline reference links have
+    their relative labels updated on activation just like
+    klinks do.
+
+* kotl/klink.el (klink:update-label): Improve doc string.
+
+* hibtypes.el (pathname): Update first section to handle kotl
+    path's with an =idstamp referent where the relative label
+    needs updating upon activation.
+
+* kotl/kfile.el (kfile:read): Rewrite 'cond using pcase'
+
+* kotl/kvspec.el (kvspec:initialize): Remove this which just made
+    2 vars, kvspec:current and kvspec:string, buffer local.  Define
+    them with 'defvar-local' instead.
+
+2026-09-19  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode:tab-flag): Update values to allow for
+    Org-like cycling when {tab} and {S-tab} are pressed in a context
+    other than the one specified by 'org-cycle-emulate-tab'.
+
+2026-09-18  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode:show-to-level,
+                     kotl-mode:show-lines-per-cell): Add.
+
+==============================================================================
+V9.2.0 changes ^^^^:
+==============================================================================
 
 2026-09-16  Bob Weiner  <rsw@gnu.org>
 

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Oct-95 at 15:17:07
-;; Last-Mod:     30-Apr-26 at 10:20:02 by Bob Weiner
+;; Last-Mod:     23-Sep-26 at 17:58:06 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -62,9 +62,16 @@
 ;;; Public variables
 ;;; ************************************************************************
 
-(defvar kvspec:current nil
-  "String that represents the current view spec.
+(defvar-local kvspec:current nil
+  "String that represents the current view spec of a Koutline.
 It is local to each koutline.  Nil value means it has not been set yet.")
+
+(defvar-local kvspec:default nil
+  "String that represents the default view spec of a Koutline.
+This is first non-null value that the view spec is set to, either when an
+existing Koutline is read-in from disk or it is newly created and
+'kvspec:update' has been called.  It is local to each koutline.  Nil value
+means it has not been set yet.")
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -90,7 +97,7 @@ It is local to each koutline.  Nil value means it has not been set yet.")
     )
   "Alist of (view-spec-character . label-type) pairs.")
 
-(defvar kvspec:string ""
+(defvar-local kvspec:string ""
   "String displayed in koutline modelines to reflect the current view spec.
 It is local to each koutline.  Set this to nil to disable modeline display of
 the view spec settings.")
@@ -107,33 +114,26 @@ characters at run-time.")
 (defun kvspec:activate (&optional view-spec)
   "Activate optional VIEW-SPEC or existing view spec in the current koutline.
 VIEW-SPEC is a string or t, which means recompute the current view spec.  See
-${hyperb:dir}/kotl/EXAMPLE.kotl#3b19c=042 for details on valid view specs."
+${hyperb:dir}/kotl/EXAMPLE.kotl#3=039 for details on valid view specs."
   (interactive (list (read-string "Set view spec: " kvspec:current)))
   (kotl-mode:is-p)
   (kfile:narrow-to-kcells)
   (when (equal view-spec "")
     (setq view-spec nil))
-  (kvspec:initialize)
   (kvspec:update view-spec)
   (kvspec:update-view))
-
-(defun kvspec:initialize ()
-  "Ensure that view spec settings will be local to the current buffer."
-  (unless (local-variable-p 'kvspec:current (current-buffer))
-    (make-local-variable 'kvspec:current)
-    (make-local-variable 'kvspec:string)))
 
 (defun kvspec:levels-to-show (levels-to-keep)
   "Hide all cells in outline at levels deeper than LEVELS-TO-KEEP (a number).
 Shows any hidden cells within LEVELS-TO-KEEP.  1 is the first level.  0 means
-display all levels of cells."
+display all levels of cells.  Nil means prompt for the value."
   (if (null levels-to-keep)
       (setq levels-to-keep
 	    (read-from-minibuffer "Show cells down to level (0 = show all levels): "
 				  nil nil t)))
   (setq levels-to-keep (prefix-numeric-value levels-to-keep))
-  (if (< levels-to-keep 0)
-      (error "(kvspec:levels-to-show): Must display at least one level"))
+  (when (< levels-to-keep 0)
+    (error "(kvspec:levels-to-show): Must display at least one level"))
   (kview:map-tree
    (lambda (_kview)
      (if (/= (kcell-view:level) levels-to-keep)
@@ -147,8 +147,13 @@ display all levels of cells."
    kotl-kview t)
   (kview:set-attr kotl-kview 'levels-to-show levels-to-keep))
 
+(defun kvspec:reset ()
+  "Reset current view to `kvspec:default' view spec."
+  (kvspec:activate kvspec:default))
+
 (defun kvspec:show-lines-per-cell (num)
-  "Show NUM lines per visible cell; 0 means show all lines in each visible cell."
+  "Show NUM lines per visible cell; 0 means show all lines in each visible cell.
+Applies to the entire outline."
   (if (or (not (integerp num)) (< num 0))
       (error "(kvspec:show-lines-per-cell): Invalid lines per cell, `%d'" num))
   (kview:set-attr kotl-kview 'lines-to-show num)
@@ -189,6 +194,8 @@ ${hyperb:dir}/kotl/EXAMPLE.kotl#3b19c=042 for details on valid view specs."
 	   (setq kvspec:current view-spec)))
 	((or (eq view-spec t) (null kvspec:current))
 	 (setq kvspec:current (kvspec:compute))))
+  (unless kvspec:default
+    (setq kvspec:default kvspec:current))
   ;; Update display using current specs.
   (kvspec:update-modeline))
 
@@ -224,7 +231,7 @@ ${hyperb:dir}/kotl/EXAMPLE.kotl#3b19c=042 for details on valid view specs."
    ;; it off when he resets the view specs.
 
    ;; b - blank separator lines
-   (if (kview:get-attr kotl-kview 'blank-lines) "b")
+   (when (kview:get-attr kotl-kview 'blank-lines) "b")
 
    ;; c - cutoff lines per cell
    (let ((lines (kview:get-attr kotl-kview 'lines-to-show)))
@@ -233,7 +240,7 @@ ${hyperb:dir}/kotl/EXAMPLE.kotl#3b19c=042 for details on valid view specs."
        (concat "c" (int-to-string lines))))
 
    ;; e - ellipses on
-   (if selective-display-ellipses "e")
+   (when selective-display-ellipses "e")
 
    ;; l - hide some levels
    (let ((levels (kview:get-attr kotl-kview 'levels-to-show)))
@@ -304,17 +311,16 @@ available, the cell remains fully expanded."
 	   (outline-flag-region (1- (point)) end t)))))
 
 (defun kvspec:update-modeline ()
-  "Setup or update display of the current kview spec in the modeline."
-  (if (stringp kvspec:current)
+  "Setup or update display of the current view spec in the modeline."
+  (when (stringp kvspec:current)
       (setq kvspec:string (format kvspec:string-format kvspec:current)))
-  (if (memq 'kvspec:string mode-line-format)
-      nil
+  (unless (memq 'kvspec:string mode-line-format)
     (setq mode-line-format (copy-sequence mode-line-format))
     (let ((elt (or (memq 'mode-line-buffer-identification mode-line-format)
 		   (memq 'modeline-buffer-identification
 			 mode-line-format))))
-      (if elt
-	  (setcdr elt (cons 'kvspec:string (cdr elt)))))))
+      (when elt
+	(setcdr elt (cons 'kvspec:string (cdr elt)))))))
 
 (defun kvspec:update-view ()
   "Update view according to current setting of local `kvspec:current' variable."

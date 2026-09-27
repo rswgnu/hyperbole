@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     30-Jul-26 at 11:50:17 by Bob Weiner
+;; Last-Mod:     20-Sep-26 at 22:29:53 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -385,13 +385,20 @@ display options."
 			 (t nil)))
 		  (t (when (string-match "\\`file://" path)
                        (setq path (substring path (match-end 0))))
-		     (if (or (> (cl-count ?: orig-path) 2)
-			     (> (cl-count ?\; orig-path) 2))
-			 ;; PATH-like set of values; select just the one point is on
-			 (apply #'ibut:label-set path (hpath:start-end path))
-		       ;; Otherwise, use the unchanged orig-path
-                       (apply #'ibut:label-set orig-path (hpath:start-end orig-path)))
-                     (hact 'link-to-file path)))
+                     (let (start-end
+                           start)
+		       (if (or (> (cl-count ?: orig-path) 2)
+			       (> (cl-count ?\; orig-path) 2))
+			   ;; PATH-like set of values; select just the one
+			   ;; point is on
+			   (apply #'ibut:label-set
+                                  path (setq start-end (hpath:start-end path)))
+		         ;; Otherwise, use the unchanged orig-path
+                         (apply #'ibut:label-set
+                                orig-path (setq start-end
+                                                (hpath:start-end orig-path))))
+                       (setq start (car start-end))
+                       (hact 'hpath:find-koutline-reference path start))))
           ;;
           ;; Match PATH-related Environment and Lisp variable names and
 	  ;; Emacs Lisp and Info files without any directory component.

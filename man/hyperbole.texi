@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     23-Sep-26 at 10:32:53 by Bob Weiner
+@c Last-Mod:     27-Sep-26 at 02:23:16 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,10 +30,10 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED September 23, 2026
+@set UPDATED September 27, 2026
 @set UPDATED-MONTH September 2026
-@set EDITION 9.1.0
-@set VERSION 9.1.0
+@set EDITION 9.2.0
+@set VERSION 9.2.0
 
 @ifnotinfo
 @macro bkbd {arg}
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.1.0
-Printed September 23, 2026.
+Printed September 27, 2026.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -213,7 +213,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.1.0
-September 23, 2026 @c AUTO-REPLACE-ON-SAVE
+September 27, 2026 @c AUTO-REPLACE-ON-SAVE
 
 
   Published by the Free Software Foundation, Inc.
@@ -399,6 +399,8 @@ Editing Outlines
 
 * Adding and Killing::
 * Promoting and Demoting::
+* Org-like Visibility Cycling::
+* Inserting Literal Tabs::
 * Relocating and Copying::
 * Moving Around::
 * Filling::
@@ -6085,6 +6087,8 @@ selected region, since that will destroy the outline structure.
 @menu
 * Adding and Killing::
 * Promoting and Demoting::
+* Org-like Visibility Cycling::
+* Inserting Literal Tabs::
 * Relocating and Copying::
 * Moving Around::
 * Filling::
@@ -6125,7 +6129,7 @@ kills the entire contents of the cell regardless of the location of
 point.  You may then yank the contents into another cell or another
 buffer with @bkbd{C-y}.
 
-@node Promoting and Demoting, Relocating and Copying, Adding and Killing, Editing Outlines
+@node Promoting and Demoting, Org-like Visibility Cycling, Adding and Killing, Editing Outlines
 @subsection  Promoting and Demoting
 
 @cindex promotion
@@ -6139,7 +6143,6 @@ the inverse operation.  Note that trees (cells and their entire
 substructure) are promoted and demoted, not individual cells.
 
 @kindex koutliner, @key{TAB}
-@kindex koutliner, M-@key{TAB}
 @kindex koutliner, Shift-@key{TAB}
 @kindex koutliner, M-<left>
 @kindex koutliner, M-<right>
@@ -6155,71 +6158,102 @@ substructure) are promoted and demoted, not individual cells.
 |-----------------------------+----------------------------|
 | Promotion Outside Org Table | Demotion Outside Org Table |
 |-----------------------------+----------------------------|
-| M-TAB or Shift-TAB          | TAB                        |
+| S-TAB                       | TAB                        |
 | M-<left>                    | M-<right>                  |
-| M-Shift-<left>              | M-Shift-<right>            |
+| M-S-<left>                  | M-S-<right>                |
 | C-c C-,                     | C-c C-.                    |
 | C-c C-<                     | C-c C->                    |
 |-----------------------------+----------------------------|
 @end example
 
-
-Trees may be demoted or promoted by pressing @key{TAB} or
-@bkbd{M-@key{TAB}}.  @bkbd{M-0 @key{TAB}} and @bkbd{M-0 M-@key{TAB}}
-demote and promote trees and additionally refill each cell that is not
-specially marked to prevent refilling.  @xref{Filling}.  A positive or
-negative prefix argument to these commands promotes or demotes the
-tree up to a maximum of the number of levels given by the argument.
-The outline may not support movement of the tree by the number of
-levels requested, however, in which case the maximal possible
-adjustment is made.
-
-@kindex koutliner, M-1 @key{TAB}
-@cindex inserting tabs
-@cindex tabs, inserting
-@vindex kotl-mode:indent-tabs-mode
-@cindex Koutliner, toggle tab behavior
-@bkbd{M-1 @key{TAB}} behaves specially.  It toggles the function of
-@key{TAB} and @bkbd{M-@key{TAB}} so that they insert a tab
-and remove the previous character, respectively.  This is useful when
-one is formatting information within a single cell.  When in this
-mode, @bkbd{@key{TAB}} inserts a literal TAB character, by default.
-Set the variable, @code{kotl-mode:indent-tabs-mode}, to
-@samp{nil} if you want space characters used to form the tab.
-Use @bkbd{M-1 @key{TAB}} to toggle the @key{TAB} and
-@bkbd{M-@key{TAB}} keys back to promoting and demoting trees.
-
+@cindex koutliner, no-fill property
+Promote or demote the tree at point with @key{TAB} or @bkbd{M-@key{TAB}},
+respectively.  These also refill the text of each cell not marked with a
+@code{no-fill} property.  To override the @code{no-fill} property and
+refill all promoted/demoted cells, use @bkbd{M-0 @key{TAB}} and @bkbd{M-0
+M-@key{TAB}}.  @xref{Filling}.  A positive or negative prefix argument to
+these commands promotes or demotes the tree up to a maximum of that number
+of levels, depending on what the outline allows at any given point.
 
 @cindex Org tables
-The Koutliner also supports Org Table editing, @pxref{Tables,,, org,
-the Org Mode Manual}, via Org table minor mode.  Use @bkbd{M-x
-orgtbl-mode @key{RET}} to toggle this on and off.  A press of the
-Action Key on a @code{|} symbol, also toggles this minor mode on or
-off.
+The Koutliner also supports Org Table editing, @pxref{Tables,,, org, the
+Org Mode Manual}, via Org table minor mode.  Use @bkbd{M-x orgtbl-mode
+@key{RET}} to toggle this on and off.  A press of the Action Key on a
+@code{|} symbol anywhere within a table, also toggles this minor mode on
+or off.
 
 @cindex outline mode
 @kindex M-0 @key{TAB}
-@kindex M-0 M-@key{TAB}
+@kindex M-0 S-@key{TAB}
 Tree demotion and promotion keys match the defaults in Org mode and
 Outline mode, plus some easier to type ones.  The tables below
 summarize which keys work whether inside an Org table or outside.
 
-Note that you must use @bkbd{M-0 @key{TAB}} and @bkbd{M-0 M-@key{TAB}}
-to demote/promote Koutline trees when in a table since @key{TAB} and
-@bkbd{M-@key{TAB}} move between fields within a table.
+Note that you must use @bkbd{M-0 @key{TAB}} and @bkbd{M-0 S-@key{TAB}} to
+demote/promote Koutline trees when in a table since @key{TAB} and
+@bkbd{S-@key{TAB}} move between fields within tables when Org Table minor
+mode is active.
 
 @example
 @noindent
 |----------------------------+-----------------------------|
 | Promotion Inside Org Table | Demotion Inside Org Table   |
 |----------------------------+-----------------------------|
-| M-0 M-TAB                  | M-0 TAB                     |
+| M-0 S-TAB                  | M-0 TAB                     |
 | C-c C-,                    | C-c C-.                     |
 | C-c C-<                    | C-c C->                     |
 |----------------------------+-----------------------------|
 @end example
 
-@node Relocating and Copying, Moving Around, Promoting and Demoting, Editing Outlines
+@node Org-like Visibility Cycling, Inserting Literal Tabs, Promoting and Demoting, Editing Outlines
+@subsection  Org-like Visibility Cycling
+
+@kindex koutliner, C-@key{TAB}
+@findex kotl-mode:tab-command
+@findex kotl-mode:untab-command
+@cindex Koutliner, toggle tab behavior
+@cindex Koutliner, cycling
+@cindex Koutliner, Org-like cycling
+@bkbd{C-@key{TAB}} toggles the function of @key{TAB} and
+@bkbd{M-@key{TAB}} between promotion/demotion and Org-like tree
+visibility cycling.  For precise details, see the documentation strings
+for @code{kotl-mode:tab-command} and @code{kotl-mode:untab-command}.
+
+@node Inserting Literal Tabs, Relocating and Copying, Org-like Visibility Cycling, Editing Outlines
+@subsection  Inserting Literal Tabs
+
+@cindex inserting tabs
+@cindex tabs, inserting
+Insertion of TAB characters can be as simple or as complex as you like.
+The simplest technique is to use @bkbd{C-q TAB} whenever you want to
+insert a TAB.
+
+@vindex kotl-mode:tab-flag
+If you don't use the TAB key for tree demotion or visibility cycling and
+prefer that it always insert a TAB character, then set the variable,
+@code{kotl-mode:tab-flag} to @samp{t}.
+
+@vindex kotl-mode:emulate-tab
+If you prefer that the TAB key inserts a TAB character only in some
+contexts, as it does in Org mode, then see the documentation for the
+variable, @code{kotl-mode:emulate-tab}, and set it appropriately.
+
+@vindex kotl-mode:indent-tabs-mode
+In contexts where the TAB key inserts a TAB character, you have the
+option of having it insert spaces instead.  Set the variable,
+@code{kotl-mode:indent-tabs-mode}, to @samp{nil}.
+
+so that they insert a tab and remove the previous
+character, respectively.  This is useful when one is formatting
+information within a single cell.  When in this mode, @bkbd{@key{TAB}}
+inserts a literal TAB character, by default.  Set the variable,
+@code{kotl-mode:indent-tabs-mode}, to @samp{nil} if you want space
+characters used to form the tab.  Use @bkbd{M-1 @key{TAB}} to toggle
+the @key{TAB} and @bkbd{M-@key{TAB}} keys back to promoting and
+demoting trees.
+
+
+@node Relocating and Copying, Moving Around, Inserting Literal Tabs, Editing Outlines
 @subsection  Relocating and Copying
 
 @cindex tree, copying
@@ -11582,13 +11616,16 @@ When pressed within a Hyperbole Koutliner buffer (kotl-mode):
   ACTION KEY
      (1) at the end of the buffer, uncollapses and unhides all cells in
          the view;
-     (2) within a cell, if its subtree is hidden then shows it,
-         otherwise hides it;
+     (2) at the end of a visible line, call the @code{action-key-eol-function};
      (3) between cells or within the read-only indentation region to the
          left of a cell, begins creation of a klink to some other
          outline cell; press the Action Key twice on another cell to
          select the link referent cell;
-     (4) anywhere else, scrolls up a windowful.
+     (4) on a | character within an Org-style table, toggle Org Table minor
+         mode;
+     (5) within a cell, if its subtree is hidden then shows it,
+         otherwise hides it;
+     (6) anywhere else, scrolls up a windowful.
 @end group
 @end format
 @format
