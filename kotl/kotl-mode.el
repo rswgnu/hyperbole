@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     27-Sep-26 at 02:38:02 by Bob Weiner
+;; Last-Mod:     27-Sep-26 at 12:35:22 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1072,7 +1072,7 @@ When `kotl-mode:tab-flag' is:
   \\='cycle: cycle views of parts of the outline;
   nil:       demote trees a maximum of ARG levels;
   t:         indent or tab over by ARG tab stops.
-Toggle its value between `cycle' and nil with \\[kotl-mode:toggle-tab-flag].
+Toggle its value between `cycle' and nil with {M-1 TAB}.
 
 See also the documentation strings for `kotl-mode:indent-line',
 `kotl-mode:demote-tree', and 'kotl-mode:demote-siblings'.
@@ -1127,6 +1127,10 @@ point and refill all its cells regardless of any cell `no-fill' property."
       (kotl-mode:show-all)
       (let ((message-log-max nil))
         (message "Entire outline expanded")))
+     ((eq arg 1)
+      (if (called-interactively-p 'interactive)
+          (call-interactively 'kotl-mode:toggle-tab-flag)
+        (kotl-mode:toggle-tab-flag)))
      ((and (eq arg 0) (not (eq kotl-mode:tab-flag 'cycle)))
       (kotl-mode:demote-tree 0))
      ((and (integerp arg) (eq kotl-mode:tab-flag 'cycle))
@@ -1292,7 +1296,7 @@ When `kotl-mode:tab-flag' is:
   \\='cycle: cycle views of the whole outline;
   nil:       promote trees a maximum of ARG levels;
   t:         delete backward ARG characters.
-Toggle its value between `cycle' and nil with \\[kotl-mode:toggle-tab-flag].
+Toggle its value between `cycle' and nil with {M-1 TAB}.
 
 See also the documentation strings for `kotl-mode:delete-backward-char',
 `kotl-mode:promote-tree', and 'kotl-mode:promote-siblings'.
@@ -2657,8 +2661,7 @@ If key is pressed:
      klink to some other outline cell; press the Action Key twice to select the
      link referent cell;
  (4) on a | character within an Org-style table, toggle Org Table minor mode;
- (5) within a cell, if its subtree is hidden then show it,
-     otherwise hide it;
+ (5) within a cell, if its subtree is hidden then show it, otherwise hide it;
  (6) anywhere else, invoke `action-key-eol-function', typically to scroll up
      a windowful."
   (interactive)
@@ -4496,10 +4499,9 @@ Leave point at end of line now residing at START."
         ;; similar function appropriate for kotl-mode.
 	(define-key kotl-mode-map "\C-x$"         'kotl-mode:hide-sublevels)
 
-        ;; Use "<C-tab>" as binding to switch TAB/S-TAB between normal
-        ;; kotl-mode operation and Org cycling compatibility.  Show a
-        ;; message each time is toggled.
-	(define-key kotl-mode-map [C-tab]         'kotl-mode:toggle-tab-flag) ;; Shift-TAB
+        ;; Use {M-1 TAB} to switch TAB/S-TAB between normal kotl-mode
+        ;; operation and Org cycling compatibility.  Show a message each
+        ;; time is toggled.
 
 	(define-key kotl-mode-map [tab]           'kotl-mode:tab-command) ;; TAB
 	(define-key kotl-mode-map "\C-i"          'kotl-mode:tab-command) ;; TAB
@@ -4507,9 +4509,6 @@ Leave point at end of line now residing at START."
 	(define-key kotl-mode-map [S-tab]         'kotl-mode:untab-command) ;; Shift-TAB
 	(define-key kotl-mode-map [S-iso-lefttab] 'kotl-mode:untab-command) ;; Shift-TAB
 	(define-key kotl-mode-map [backtab]       'kotl-mode:untab-command) ;; Shift-TAB
-
-	(define-key kotl-mode-map [M-tab]         'kotl-mode:untab-command) ;; M-TAB
-	(define-key kotl-mode-map "\M-\C-i"       'kotl-mode:untab-command) ;; M-TAB
 
 	(define-key kotl-mode-map "\C-c\C-i"      'kotl-mode:set-or-remove-cell-attribute)
 	(define-key kotl-mode-map "\C-j"      'kotl-mode:add-cell)

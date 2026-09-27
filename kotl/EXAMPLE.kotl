@@ -77,7 +77,7 @@
             See also <@ 3d=059>, for how tab key bindings differ when Org
             Table minor mode is enabled.
             
-            {C-TAB} toggles the function of {TAB} and {S-TAB} between
+            {M-1 TAB} toggles the function of {TAB} and {S-TAB} between
             promotion/demotion and Org-like tree visibility cycling.  See
             the documentation of `kotl-mode:tab-command' and
             `kotl-mode:untab-command' for full details.

@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     27-Sep-26 at 02:23:16 by Bob Weiner
+@c Last-Mod:     27-Sep-26 at 12:41:07 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -6208,13 +6208,13 @@ mode is active.
 @node Org-like Visibility Cycling, Inserting Literal Tabs, Promoting and Demoting, Editing Outlines
 @subsection  Org-like Visibility Cycling
 
-@kindex koutliner, C-@key{TAB}
+@kindex koutliner, M-1 @key{TAB}
 @findex kotl-mode:tab-command
 @findex kotl-mode:untab-command
 @cindex Koutliner, toggle tab behavior
 @cindex Koutliner, cycling
 @cindex Koutliner, Org-like cycling
-@bkbd{C-@key{TAB}} toggles the function of @key{TAB} and
+@bkbd{M-1 @key{TAB}} toggles the function of @key{TAB} and
 @bkbd{M-@key{TAB}} between promotion/demotion and Org-like tree
 visibility cycling.  For precise details, see the documentation strings
 for @code{kotl-mode:tab-command} and @code{kotl-mode:untab-command}.

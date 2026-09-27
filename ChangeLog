@@ -1,5 +1,11 @@
 2026-09-27  Bob Weiner  <rsw@gnu.org>
 
+* kotl/kotl-mode.el (kotl-mode:setup-keymap): Remove errant binding of {M-TAB}
+    since this is typically used to switch applications by many users.
+                    (kotl-mode:tab-command): Since {C-TAB} is not a valid
+    key binding on many terminals, move 'kotl-mode:toggle-tab-flag' back to
+    {M-1 TAB}, which is where it used to be.
+
 * hui.el (hui:link-possible-types):
   hbut.el (ibut:insert-text): For a klink, if source and referent are in
     the same buffer, use the simplified link format: <@ relative-id=idstamp>.
@@ -34,7 +40,7 @@
   man/hyperbole.texi (Promoting and Demoting):
   kotl/EXAMPLE.kotl (Tree Demotion and Promotion): Update this section
     to reflect key changes.  Remove {M-TAB} as a binding for promoting trees
-    outside of Org tables and M-1 as a prefix to toggle 'kotl-mode:tab-flag'.
+    outside of Org tables.
                      (kotl-mode:mark-whole-buffer):Allow selection of entire
     buffer including first relative id, so can copy it.
 
@@ -52,11 +58,7 @@
 
 2026-09-23  Bob Weiner  <rsw@gnu.org>
 
-* kotl/kotl-mode.el (kotl-mode:tab-command)
-                     kotl-mode:untab-command): Remove use of ARG=1
-    to toggle 'kotl-mode:tab-flag'.  Use 'kotl-mode:toggle-tab-flag'
-    instead, bound to {C-tab}.
-                    (kotl-mode:cycle-locally): Add.
+* kotl/kotl-mode.el (kotl-mode:cycle-locally): Add.
 
 * kotl/kvspec.el (kvspec:default): Add this so view spec can be
     reset to its default value.
