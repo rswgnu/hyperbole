@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:      7-Jun-26 at 10:53:31 by Bob Weiner
+;; Last-Mod:     28-Sep-26 at 10:50:55 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1242,6 +1242,17 @@ Look for include file in `smart-c-cpp-include-path' and in directory list
 	  path)
       (goto-char opoint)
       nil)))
+
+(defun smart-flash-tag-at-point (tag)
+  "Try to flash and return any previously recognized TAG at point.
+This indicates that TAG is serving as a hyperlink button.  TAG may be a
+string or a symbol but is always returned as a string."
+  (let ((start-end (bounds-of-thing-at-point 'symbol)))
+    (when start-end
+      (when (symbolp tag)
+        (setq tag (symbol-name hkey-value)))
+      (smart-flash-tag tag (car start-end) (cdr start-end))
+      tag)))
 
 (defun smart-flash-tag (tag start end)
   "Try to flash TAG at START to END in current buffer and return TAG.

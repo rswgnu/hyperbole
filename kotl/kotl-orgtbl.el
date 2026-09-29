@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10/18/2020
-;; Last-Mod:     14-Jul-24 at 23:32:40 by Bob Weiner
+;; Last-Mod:     28-Sep-26 at 08:50:29 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -72,16 +72,43 @@
 ;;; Public functions
 ;;; ************************************************************************
 
-;; Redefine this Org Table function to handle Koutlines as well.
+;; Redefine this Org Table function on {TAB} to handle Koutlines as well.
 (defun orgtbl-tab (arg)
   "Justification and field motion for `orgtbl-mode' with Koutline support."
   (interactive "P")
   (cond ((and (derived-mode-p 'kotl-mode) arg)
-	 (kotl-mode:tab-command (if (= (prefix-numeric-value arg) 1) nil arg)))
+	 (kotl-mode:tab-command arg))
 	(arg
 	 (org-table-edit-field t))
 	(t (org-table-justify-field-maybe)
 	   (org-table-next-field))))
+
+;; Redefine this Org Table function on {S-TAB} to handle Koutlines as well.
+(defun org-table-previous-field (&optional arg)
+  "Go to the previous field in the table.
+Before doing so, re-align the table if necessary."
+  (interactive "P")
+  (if (and (derived-mode-p 'kotl-mode) arg)
+      (kotl-mode:untab-command arg)
+    (org-table-justify-field-maybe)
+    (org-table-maybe-recalculate-line)
+    (when (and org-table-automatic-realign
+	       org-table-may-need-update)
+      (org-table-align))
+    (when (org-at-table-hline-p)
+      (end-of-line))
+    (let ((start (org-table-begin))
+	  (origin (point)))
+      (condition-case nil
+	  (progn
+	    (search-backward "|" start nil 2)
+	    (while (looking-at-p "|\\(?:-\\|[ \t]*$\\)")
+	      (search-backward "|" start)))
+        (error
+         (goto-char origin)
+         (user-error "Cannot move to previous table field"))))
+    (when (looking-at "| ?")
+      (goto-char (match-end 0)))))
 
 (defun kotl-mode:transpose-lines-up ()
   "Exchange current line and previous line, maintaining point location.

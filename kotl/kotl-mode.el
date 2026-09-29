@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     27-Sep-26 at 12:35:22 by Bob Weiner
+;; Last-Mod:     29-Sep-26 at 01:35:06 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -21,7 +21,8 @@
 
 (eval-when-compile '(require 'klink)) ;; hibtypes.el loads this at run-time
 (eval-and-compile (mapc #'require '(cl-lib delsel hsettings hmail hypb hyrolo
-				    kfile klabel outline org org-table kotl-orgtbl)))
+				    kfile klabel outline org org-table
+                                    kotl-orgtbl)))
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -1067,35 +1068,45 @@ With prefix arg TURN-OFF or at begin of line, turns fill prefix off."
 ;; Derived from and meant to emulate `org-cycle'
 (defun kotl-mode:tab-command (&optional arg)
   "Tab key demote, cycle visibility or insert tabs for Koutlines.
+Optional prefix ARG is used as a flag or a numeric argument depending on its
+value.
 
 When `kotl-mode:tab-flag' is:
   \\='cycle: cycle views of parts of the outline;
   nil:       demote trees a maximum of ARG levels;
   t:         indent or tab over by ARG tab stops.
-Toggle its value between `cycle' and nil with {M-1 TAB}.
+Use {M-1 TAB} to toggle its value between `cycle' and nil.
 
 See also the documentation strings for `kotl-mode:indent-line',
-`kotl-mode:demote-tree', and 'kotl-mode:demote-siblings'.
+`kotl-mode:demote-tree', and `kotl-mode:demote-siblings'.
 
-If in `cycle' mode without a prefix argument, call `kotl-mode:cycle-locally':
-  When point is at the beginning of a headline, rotate the tree at point
-  through 3 different states (local cycling):
+If in `cycle' mode without a prefix argument, call `kotl-mode:cycle-locally'
+to rotate the tree at point through three different states (local cycling):
     1. FOLDED:   Hide all but the first line of the tree at point
     2. CHILDREN: Hide all but the first line of the root cell at point and its
                  children
     3. SUBTREE:  Show the entire tree at point; if there is no subtree, switch
                  directly from CHILDREN to FOLDED.
 
-If in `cycle' mode without a single universal argument, C-u, call
-`kotl-mode:cycle-locally':
-  With a single \\[universal-argument] prefix, cycle the whole outline through
-  these 3 modes:
+If in `cycle' mode with a single universal argument, C-u, call
+`kotl-mode:cycle-globally' to cycle the whole outline through
+these three different states:
     1. OVERVIEW: Show only the first line of level 1 cells
     2. CONTENTS: Show the first line of all cells at all levels
     3. SHOW ALL: Show the entire outline.
 
 With a prefix argument of 0 when not in `cycle' mode, demote the tree at
-point and refill all its cells regardless of any cell `no-fill' property."
+point and refill all its cells regardless of any cell `no-fill' property.
+
+Any numeric prefix argument other than 0 or 1 is available for use by any
+function this calls.
+
+The variable, `kotl-mode:emulate-tab', works just like
+`org-cycle-emulate-tab' does in Org mode, except that it is disabled, set to
+nil by default.  Use it if you haven't set `kotl-mode:tab-flag' to t.  It
+determines where the TAB key indents or inserts TAB characters rather than
+performing the functions detailed above.  See its documentation string for
+valid settings."
   (interactive "P")
   (unless (run-hook-with-args-until-success 'kotl-mode:tab-pre-hook)
     ;; Skip additional org-like code originally in the above `unless' clause
@@ -1291,35 +1302,38 @@ or after point and around or after mark are interchanged."
 
 (defun kotl-mode:untab-command (&optional arg)
   "Shift-tab key promote, cycle visibility or delete tabs for Koutlines.
+Optional prefix ARG is used as a flag or a numeric argument depending on its
+value.
 
 When `kotl-mode:tab-flag' is:
   \\='cycle: cycle views of the whole outline;
   nil:       promote trees a maximum of ARG levels;
   t:         delete backward ARG characters.
-Toggle its value between `cycle' and nil with {M-1 TAB}.
+Use {M-1 TAB} to toggle its value between `cycle' and nil.
 
 See also the documentation strings for `kotl-mode:delete-backward-char',
-`kotl-mode:promote-tree', and 'kotl-mode:promote-siblings'.
+`kotl-mode:promote-tree', and `kotl-mode:promote-siblings'.
 
-If in `cycle' mode without a prefix argument, call `kotl-mode:cycle-locally':
-  When point is at the beginning of a headline, rotate the tree at point
-  through 3 different states (local cycling):
-    1. FOLDED:   Hide all but the first line of the tree at point
-    2. CHILDREN: Hide all but the first line of the root cell at point and its
-                 children
-    3. SUBTREE:  Show the entire tree at point; if there is no subtree, switch
-                 directly from CHILDREN to FOLDED.
-
-If in `cycle' mode without a single universal argument, C-u, call
-`kotl-mode:cycle-locally':
-  With a single \\[universal-argument] prefix, cycle the whole outline through
-  these 3 modes:
+If in `cycle' mode and given either no prefix argument or a single
+unviversal argument, C-u, call `kotl-mode:cycle-globally' to cycle the whole
+outline through these three different states:
     1. OVERVIEW: Show only the first line of level 1 cells
     2. CONTENTS: Show the first line of all cells at all levels
     3. SHOW ALL: Show the entire outline.
 
 With a prefix argument of 0 when not in `cycle' mode, promote the tree at
-point and refill all its cells regardless of any cell `no-fill' property."
+point and refill all its cells regardless of any cell `no-fill' property.
+
+With a numeric prefix argument when in `cycle' mode, show cells across the
+whole outline down to prefix argument level, one line per cell.  Zero means
+show all cell levels.
+
+The variable, `kotl-mode:emulate-tab', works just like
+`org-cycle-emulate-tab' does in Org mode, except that it is disabled, set to
+nil by default.  Use it if you haven't set `kotl-mode:tab-flag' to t.  It
+determines where the TAB key indents or inserts TAB characters rather than
+performing the functions detailed above.  See its documentation string for
+valid settings."
   (interactive "P")
   (unless (run-hook-with-args-until-success 'kotl-mode:tab-pre-hook)
     (cond
@@ -1349,11 +1363,10 @@ point and refill all its cells regardless of any cell `no-fill' property."
      ((and (eq arg 0) (not (eq kotl-mode:tab-flag 'cycle)))
       (kotl-mode:promote-tree 0))
      ((and (integerp arg) (eq kotl-mode:tab-flag 'cycle))
-      ;; Expand the outline tree up to ARG levels above point; if negative,
-      ;; means up to ARG levels below point
-      (save-excursion
-        (kotl-mode:up-level arg)
-        (kotl-mode:show-tree)))
+      ;; Across the whole outline, show cells down to ARG level, 1 line per
+      ;; cell; 0 means show all cell levels
+      (kotl-mode:show-to-level arg)
+      (kotl-mode:show-lines-per-cell 1))
      (t
       ;; Null or any other prefix arg;
       (let ((pos (point)))
@@ -1363,8 +1376,8 @@ point and refill all its cells regardless of any cell `no-fill' property."
                            (kotl-mode:bocp))
                          (not (eq kotl-mode:emulate-tab 'exc-hl-bol))))
                 (if (eq kotl-mode:tab-flag 'cycle)
-                    ;; Cycle through views of the tree rooted at point
-                    (kotl-mode:cycle-locally)
+                    ;; Cycle through whole outline views
+                    (kotl-mode:cycle-globally)
                   ;; Promote tree rooted at point up to ARG levels
                   (kotl-mode:promote-tree arg)))
                ;; <tab> emulation and template completion
@@ -2646,7 +2659,6 @@ With optional NEXT-CHAR-VISIBLE, return t only if the following char is visible.
 ;;; Smart Key Support
 ;;; ------------------------------------------------------------------------
 
-
 (defun kotl-mode:action-key ()
   "Collapses, expands, links to, and scrolls through koutline cells.
 Invoked via a key press when in kotl-mode.  It assumes that its caller has
@@ -2661,9 +2673,8 @@ If key is pressed:
      klink to some other outline cell; press the Action Key twice to select the
      link referent cell;
  (4) on a | character within an Org-style table, toggle Org Table minor mode;
- (5) within a cell, if its subtree is hidden then show it, otherwise hide it;
- (6) anywhere else, invoke `action-key-eol-function', typically to scroll up
-     a windowful."
+ (5) in an Org-style table, wrap the table cell or region;
+ (6) within a cell, if its subtree is hidden then show it, otherwise hide it."
   (interactive)
   (cond	((kotl-mode:eobp) (kotl-mode:show-all))
 	((kotl-mode:eolp t) (funcall action-key-eol-function))
@@ -2685,7 +2696,7 @@ If key is pressed:
 	 ;; Wrap the table cell or region
 	 (org-table-wrap-region current-prefix-arg))
 	(t ;; On a cell line (not at the end of line).
-	 (if (smart-outline-subtree-hidden-p)
+	 (if (kcell-view:collapsed-p)
 	     (kotl-mode:show-tree)
 	   (kotl-mode:hide-tree))))
   (kotl-mode:to-valid-position))
@@ -2699,14 +2710,15 @@ and has moved the cursor to the selected buffer.
 If assist-key is pressed:
  (1) at the end of buffer, collapse all cells and hide all non-level-one
      cells;
- (2) on a header line but not at the beginning or end, display properties of
+ (2) at the end of a visible line, call the `assist-key-eol-function';
+ (3) on a header line but not at the beginning or end, display properties of
      each cell in tree beginning at point;
- (3) between cells or within the read-only indentation region to the left of
+ (4) between cells or within the read-only indentation region to the left of
      a cell, then move point to prior location and prompt to move one tree to
      a new location in the outline; press the Action Key twice to select the
      tree to move and where to move it;
- (4) anywhere else, invoke `assist-key-eol-function', typically to scroll down
-     a windowful."
+ (5) anywhere else, invoke `smart-scroll-down', typically to scroll down a
+     windowful."
   (interactive)
   (cond ((kotl-mode:eobp) (kotl-mode:overview))
 	((kotl-mode:eolp t) (funcall assist-key-eol-function))

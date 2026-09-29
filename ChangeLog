@@ -1,3 +1,48 @@
+2026-09-29  Bob Weiner  <rsw@gnu.org>
+
+* kotl/EXAMPLE.kotl: Add summary tables of {TAB} and {S-TAB} behavior.
+
+* kotl/kotl-mode.el (kotl-mode:untab-command):
+  man/hyperbole.texi (Org-style Visibility Cycling): Fix to better
+    match Org mode and have {S-TAB} cycle globally instead of locally
+    without a prefix argument or with a single C-u.  Also match Org
+    behavior by making numeric prefix arguments show a single line
+    for each cell down to the prefix argument level.  Zero means show
+    one line of all levels.
+
+2026-09-28  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode:action-key):
+  man/hyperbole.texi (Smart Key - The Koutliner): Add doc for wrapping
+    text when inside an Org-style table.
+
+* hui-mouse.el (smart-outline, smart-outline-assist): Fix eolp check
+    to ensure not at an invisible char (prior code checked that was
+    invisible).
+
+* kotl/kotl-mode.el (kotl-mode:action-key): Replace call to
+    'smart-outline-subtree-hidden-p' with 'kcell-view:collapsed-p'
+    which properly determines the collapsed state of a root cell.
+
+* man/hyperbole.texi (Promoting and Demoting): Expand this Koutliner
+    section with latest key bindings and Org table support.
+                     (Inserting Literal Tabs): Add this Koutliner section.
+
+* hui-mouse.el (hkey-alist): In 'smart-prog-at-tag-p' clause, change
+    to flash tag only if the second call to 'smart-tags-find-p' is true.
+    This prevents flashing words in text modes that aren't actually
+    programming symbols.
+  hmouse-tag.el (smart-flag-tag-at-point): Add to do the flashing.
+
+* kotl/kotl-orgtbl.el (orgtbl-tab): Fix to allow prefix arg of 1 to pass
+    through rather than converting to nil.
+                      (org-table-previous-field): Override this function
+    on {S-TAB} from 'orgtbl-mode' to make it compatible with Koutlines.
+
+* hsys-org.el (hsys-org-link-at-p): Wrap 'org-element' and 'org-in-regexp'
+    calls in 'ignore-errors' macro as it is possible `syntax-ppss-flush-cache'
+    can trigger an error, e.g. using orgtbl minor mode in .texi files.
+
 2026-09-27  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kotl-mode.el (kotl-mode:setup-keymap): Remove errant binding of {M-TAB}

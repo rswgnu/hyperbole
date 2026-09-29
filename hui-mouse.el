@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     10-Sep-26 at 13:59:46 by Bob Weiner
+;; Last-Mod:     28-Sep-26 at 13:10:00 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -473,16 +473,18 @@ The button's attributes are stored in the symbol, `hbut:current'.")
     ;; If a variable holding an in-memory Hyperbole button object, e.g. hbut:current:
     ;; Action Key - Jump to variable definition
     ;; Assist Key - Display button attributes of any Hyperbole button symbol at point
-    ((and (setq hkey-value (smart-prog-at-tag-p))
-	  (hbut:is-p (intern-soft hkey-value)))
+    ((and (setq hkey-value (smart-prog-at-tag-p t))
+	  (hbut:is-p (intern-soft hkey-value))
+          (setq hkey-value (smart-flash-tag-at-point hkey-value)))
      . ((ignore-errors (smart-prog-tag hkey-value)) .
 	(hbut:report (intern-soft hkey-value))))
     ;;
     ;; Handle programming language tag definition finding via xref.
     ;; For most programming languages use xref which supports various
     ;; Language Servers
-    ((and (setq hkey-value (smart-prog-at-tag-p))
-	  (smart-tags-find-p hkey-value))
+    ((and (setq hkey-value (smart-prog-at-tag-p t))
+	  (smart-tags-find-p hkey-value)
+          (setq hkey-value (smart-flash-tag-at-point hkey-value)))
      . ((ignore-errors (smart-prog-tag hkey-value)) .
 	(ignore-errors (smart-prog-tag hkey-value))))
     ;;
@@ -2108,10 +2110,10 @@ If key is pressed:
  (2) at the end of buffer, show all buffer text
  (3) at the beginning of a heading line, cut the headings subtree from the
      buffer;
- (4) on a heading line but not at the beginning or end, if headings subtree is
-     hidden then show it, otherwise hide it;
- (5) at the end of a line, invoke `action-key-eol-function', typically to
-     scroll up a windowful."
+ (4) at the visible end of a line, invoke `action-key-eol-function',
+     typically to scroll up a windowful;
+ (5) on a heading line but not at the beginning or end, if heading's subtree
+     is hidden then show it, otherwise hide it."
 
   (interactive)
   (cond (smart-outline-cut
@@ -2125,7 +2127,7 @@ If key is pressed:
 	      ;; Skip past start of current entry
 	      (progn (re-search-forward outline-regexp nil t)
 		     (smart-outline-to-entry-end t)))))
-	((eolp)
+	((and (eolp) (not (smart-outline-char-invisible-p)))
 	 (funcall action-key-eol-function))
 	((zerop (smart-outline-level))
 	 nil)
@@ -2133,7 +2135,6 @@ If key is pressed:
 	((smart-outline-subtree-hidden-p)
 	 (outline-show-subtree))
 	(t (outline-hide-subtree))))
-
 
 (defun smart-outline-assist ()
   "Collapse, expand, and move outline entries.
@@ -2148,10 +2149,10 @@ If assist key is pressed:
  (2) at the end of buffer, hide all bodies in buffer;
  (3) at the beginning of a heading line, cut the current heading (sans
      subtree) from the buffer;
- (4) on a heading line but not at the beginning or end, if heading body is
-     hidden then show it, otherwise hide it;
- (5) at the end of a line, invoke `assist-key-eol-function', typically to
-     scroll down a windowful."
+ (4) on a heading line but not at the beginning or end of the line, if
+     the heading's body is hidden, then show it, otherwise hide it;
+ (5) at the visible end of a line, invoke `assist-key-eol-function',
+     typically to scroll down a windowful."
 
   (interactive)
   (cond (smart-outline-cut (yank))
@@ -2162,7 +2163,7 @@ If assist key is pressed:
 		      ;; Skip past start of current entry
 		      (progn (re-search-forward outline-regexp nil t)
 			     (smart-outline-to-entry-end))))
-	((eolp)
+	((and (eolp) (not (smart-outline-char-invisible-p)))
 	 (funcall assist-key-eol-function))
 	((zerop (smart-outline-level))
 	 nil)
