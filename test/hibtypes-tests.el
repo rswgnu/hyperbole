@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:45:00
-;; Last-Mod:     30-Jul-26 at 14:28:21 by Bob Weiner
+;; Last-Mod:     29-Sep-26 at 03:20:07 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -198,7 +198,7 @@
           (default-directory hyperb:dir))
       (hkey-help)
       (set-buffer help-buffer)
-      (should (string-match "actype:.*link-to-file" (buffer-string))))))
+      (should (string-match "hpath:find-koutline-reference" (buffer-string))))))
 
 (ert-deftest ibtypes::pathname-directory-test ()
   "Goto directory at point in path variable and open Dired."

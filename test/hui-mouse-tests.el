@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    15-Mar-25 at 22:39:37
-;; Last-Mod:     29-Sep-26 at 03:13:39 by Bob Weiner
+;; Last-Mod:     29-Sep-26 at 03:34:13 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -111,7 +111,8 @@
   ;; If reading a Hyperbole menu item and nothing is selected, just
   ;; return.  Or if in a helm session with point in the minibuffer,
   ;; quit the session and activate the selected item.
-  (mocklet (((minibuffer-depth) => 1)
+  (mocklet (((hargs:at-p) => nil)
+            ((minibuffer-depth) => 1)
             ((selected-window) => (minibuffer-window)))
     (let ((hargs:reading-type 'hmenu))
       (should (equal (hkey-actions)
@@ -225,7 +226,8 @@
                      (cons '(hkey-help-hide) '(hkey-help-hide))))))
 
   ;; Any other programming mode
-  (mocklet (((smart-prog-at-tag-p) => t)
+  (mocklet (((hbut:at-p) => t)
+            ((smart-prog-at-tag-p) => t)
 	    ((smart-tags-find-p hkey-value) => t))
     (should (equal (hkey-actions)
                    (cons '(ignore-errors (smart-prog-tag hkey-value))

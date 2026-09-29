@@ -1,5 +1,8 @@
 2026-09-29  Bob Weiner  <rsw@gnu.org>
 
+* test/hui-mouse-tests.el (hui-mouse-tests--hkey-alist): Fix some
+    failures.
+
 * test/hui-tests.el (hui-gibut-create-link-to-file): Fix to compare
     :args with second numeric argument.
 
@@ -15,6 +18,7 @@
                       hbut-tests--ibut-operate--name-ignore-region,
                       hbut-tests--ibut-operate--none,
                       hbut-tests--ibut-operate--rename-from-name:
+  test/hibtypes-tests.el (ibtypes::pathname-dot-slash-in-same-folder-test):
     Match to updated action type, 'hpath:find-koutline-reference', not
     the previous 'actypes::link-to-file'.
                      (hbut-tests:should-match-tmp-folder): Remove match
