@@ -4,7 +4,7 @@
 ;; Maintainer:   Bob Weiner, Mats Lidell
 ;;
 ;; Orig-Date:     1-Jan-94
-;; Last-Mod:     22-Mar-24 at 08:51:59 by Bob Weiner
+;; Last-Mod:     27-Sep-26 at 02:27:07 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -36,7 +36,7 @@
 ;;; Public variables
 ;;; ************************************************************************
 
-(defconst hyperb:version "9.1.0" "GNU Hyperbole revision number.")
+(defconst hyperb:version "9.2.0" "GNU Hyperbole revision number.")
 
 (defvar hyperb:mouse-buttons
   (if (or (and hyperb:microsoft-os-p (not (memq window-system '(w32 w64 x))))

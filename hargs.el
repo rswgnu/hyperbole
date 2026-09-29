@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:     28-Jun-26 at 13:57:12 by Bob Weiner
+;; Last-Mod:     26-Sep-26 at 17:44:06 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -672,7 +672,6 @@ Handles all of the interactive argument types that `hargs:iform-read' does."
 	((eq hargs:reading-type 'kvspec)
 	 (read-string "Koutline view spec: "
 		      (when (boundp 'kvspec:current) kvspec:current)))
-	((eolp) nil)
 	((and (eq hargs:reading-type 'hmenu)
 	      (eq (selected-window) (minibuffer-window)))
 	   (char-to-string
@@ -767,7 +766,8 @@ Handles all of the interactive argument types that `hargs:iform-read' does."
 	((eq hargs:reading-type 'integer)
 	 (save-excursion (skip-chars-backward "-0-9")
 			 (when (looking-at "-?[0-9]+")
-			   (read (current-buffer)))))))
+			   (read (current-buffer)))))
+	((eolp) nil)))
 
 (defun hargs:completion (&optional no-insert)
   "If in the completions buffer, return completion at point.

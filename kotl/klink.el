@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 12:15:16
-;; Last-Mod:      4-Jun-26 at 11:19:52 by Bob Weiner
+;; Last-Mod:     21-Sep-26 at 09:17:09 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -329,8 +329,8 @@ See `actypes::link-to-kotl' for valid KLINK formats."
     (prog1 (hact 'link-to-kotl klink)
       (when (derived-mode-p 'kotl-mode)
 	(save-excursion
-	  ;; Update klink label if need be, which might be in a different buffer
-	  ;; than the current one.
+	  ;; Update klink label if need be, which might be in a different
+	  ;; buffer than the current one.
 	  (klink:update-label klink start-pos obuf))))))
 
 (defun klink:parse (reference)
@@ -368,8 +368,8 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
   "Replace out of date relative id in a link reference of the form, relid=idstamp."
   (with-current-buffer link-buf
     (if buffer-read-only
-	(message "Relative label should be `%s' in klink <%s>."
-		 new-label klink)
+	(message "Buffer <%s> is read-only; update relative koutline label to `%s' in ref \"%s\""
+		 (buffer-name) new-label klink)
       (goto-char start)
       (cond ((or (looking-at "<\\s-*[#@]\\s-*")
 		 (looking-at "[^,]+?[#,]\\s-*"))
@@ -380,7 +380,8 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
 
 (defun klink:update-label (klink start link-buf)
   "Update label of KLINK if its relative cell id has changed.
-Assume point is in klink referent buffer, where the klink points."
+Assume point is in klink referent buffer, where the klink points.
+START is the start of the KLINK reference in the source LINK-BUF."
   (and (stringp klink)
        (string-match "[#@,]\\s-*\\([*0-9][*.0-9a-zA-Z]*\\)\\s-*=\\s-*0[0-9]*"
 		     klink)

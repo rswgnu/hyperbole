@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     29-Mar-26 at 12:34:05 by Bob Weiner
+;; Last-Mod:     24-Sep-26 at 16:47:15 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -210,7 +210,8 @@ a cell's label and the start of its contents."
   (save-excursion
     (when pos
       (goto-char pos))
-    (kcell-view:child visible-p lbl-sep-len)))
+    (when (kcell-view:child visible-p lbl-sep-len)
+      (kcell-view:idstamp))))
 
 (defun kcell-view:collapse (&optional pos lbl-sep-len)
   "Collapse cell at optional POS or point to a single line within the current view.
@@ -628,7 +629,8 @@ With optional VISIBLE-P, consider only visible siblings."
   (save-excursion
     (when pos
       (goto-char pos))
-    (kcell-view:forward visible-p lbl-sep-len)))
+    (when (kcell-view:forward visible-p lbl-sep-len)
+      (kcell-view:idstamp))))
 
 (defun kcell-view:start (&optional pos lbl-sep-len)
   "Return start position of visible cell contents from optional POS or point."

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     16-Sep-26 at 12:54:13 by Bob Weiner
+;; Last-Mod:     28-Sep-26 at 08:09:55 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -565,31 +565,33 @@ Assume caller has already checked that the current buffer is in
 	      (thing-at-point 'email))
     (let (start-end)
       (and
-       ;; Org will throw a warning that `org-element-property' must be
-       ;; used only within an `org-mode' buffer, but it works in buffers
-       ;; outside of `org-mode' when on an Org link, so just suppress any
-       ;; warning.  Using this allows recognition of Org links that are
-       ;; not surrounded by double sqare brackets,
+       ;; Org will throw a warning that `org-element-property' must be used
+       ;; only within an `org-mode' buffer, but it works in buffers outside
+       ;; of `org-mode' when on an Org link, so just suppress any warning.
+       ;; `syntax-ppss-flush-cache' is also called and can trigger an error,
+       ;; so ignore that as well.  Using this allows recognition of Org
+       ;; links that are not surrounded by double sqare brackets,
        ;; e.g. file:my-file::my-text.
        (setq start-end
-             (with-suppressed-warnings
-	         ((org-element))
-               (or
-	        (org-in-regexp
-	         org-link-any-re
-	         (let ((origin (point)))
-	           (max
-	            (save-excursion
-	              (backward-paragraph)
-	              (count-lines
-	               (point)
-	               origin))
-	            (save-excursion
-	              (forward-paragraph)
-	              (count-lines origin
-			           (point))))))
-	        (org-in-regexp org-ts-regexp-both nil t)
-	        (org-in-regexp org-tsr-regexp-both nil t))))
+             (ignore-errors
+               (with-suppressed-warnings
+	           ((org-element))
+                 (or
+	          (org-in-regexp
+	           org-link-any-re
+	           (let ((origin (point)))
+	             (max
+	              (save-excursion
+	                (backward-paragraph)
+	                (count-lines
+	                 (point)
+	                 origin))
+	              (save-excursion
+	                (forward-paragraph)
+	                (count-lines origin
+			             (point))))))
+	          (org-in-regexp org-ts-regexp-both nil t)
+	          (org-in-regexp org-tsr-regexp-both nil t)))))
        ;; Don't treat this as an Org link if its entire description is a
        ;; HyWikiWord, e.g. [[hy:WikiWord]], [[WikiWord]] or
        ;; [[link][WikiWord]], as these are handled as implicit buttons.

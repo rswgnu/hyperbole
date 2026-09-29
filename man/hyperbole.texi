@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     23-Sep-26 at 10:32:53 by Bob Weiner
+@c Last-Mod:     29-Sep-26 at 01:42:53 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,10 +30,10 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED September 23, 2026
+@set UPDATED September 29, 2026
 @set UPDATED-MONTH September 2026
-@set EDITION 9.1.0
-@set VERSION 9.1.0
+@set EDITION 9.2.0
+@set VERSION 9.2.0
 
 @ifnotinfo
 @macro bkbd {arg}
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.1.0
-Printed September 23, 2026.
+Printed September 29, 2026.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -213,7 +213,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.1.0
-September 23, 2026 @c AUTO-REPLACE-ON-SAVE
+September 29, 2026 @c AUTO-REPLACE-ON-SAVE
 
 
   Published by the Free Software Foundation, Inc.
@@ -399,6 +399,8 @@ Editing Outlines
 
 * Adding and Killing::
 * Promoting and Demoting::
+* Org-style Visibility Cycling::
+* Inserting Literal Tabs::
 * Relocating and Copying::
 * Moving Around::
 * Filling::
@@ -6085,6 +6087,8 @@ selected region, since that will destroy the outline structure.
 @menu
 * Adding and Killing::
 * Promoting and Demoting::
+* Org-style Visibility Cycling::
+* Inserting Literal Tabs::
 * Relocating and Copying::
 * Moving Around::
 * Filling::
@@ -6125,21 +6129,91 @@ kills the entire contents of the cell regardless of the location of
 point.  You may then yank the contents into another cell or another
 buffer with @bkbd{C-y}.
 
-@node Promoting and Demoting, Relocating and Copying, Adding and Killing, Editing Outlines
+@node Promoting and Demoting, Org-style Visibility Cycling, Adding and Killing, Editing Outlines
 @subsection  Promoting and Demoting
 
 @cindex promotion
 @cindex demotion
 @cindex tree, promoting
 @cindex tree, demoting
-@dfn{Demotion} is the act of moving a tree down one or more levels in the
-outline.  The new tree will become either the successor or the first
-child of the cell which precedes it in the outline.  @dfn{Promotion} is
-the inverse operation.  Note that trees (cells and their entire
-substructure) are promoted and demoted, not individual cells.
+@dfn{Demotion} is the act of moving a tree down one or more levels in
+the outline.  The new tree will become either the successor/sibling or
+the first child of the cell which precedes it in the outline.
+@dfn{Promotion} is the inverse operation.  Note that trees (cells and
+their entire substructure) are promoted and demoted, not individual
+cells.
+
+@cindex koutliner, no-fill property
+Promote or demote the tree at point with @key{TAB} or @bkbd{M-@key{TAB}},
+respectively.  These also refill the text of each cell not marked with a
+@code{no-fill} property.  To override the @code{no-fill} property and
+refill all promoted/demoted cells, use @bkbd{M-0 @key{TAB}} and @bkbd{M-0
+M-@key{TAB}}.  @xref{Filling}.  A positive or negative prefix argument to
+these commands promotes or demotes the tree up to a maximum of that number
+of levels, depending on what the outline allows at any given point.
+
+With @code{kotl-mode:tab-flag} = @samp{t}, @bkbd{@key{TAB}} executes
+@code{kotl-mode:indent-line} with any prefix argument given.  This
+bypasses all of the functionality in the following tables.
+
+@example
+@noindent
+With @code{kotl-mode:tab-flag} = @samp{nil} (default):
+|-------------+------------------------+-------------------------|
+| Prefix Arg  | TAB Function           | Shift-TAB Function      |
+|-------------+------------------------+-------------------------|
+| nil         | Demote Tree            | Promote Tree            |
+| C-u         | Demote Siblings        | Promote Siblings        |
+| C-u C-u     | Reset View Spec        | Reset View Spec         |
+| C-u C-u C-u | Show Whole Outline     | Show Whole Outlin       |
+| 0           | Demote and Refill Tree | Promote and Refill Tree |
+| 1           | Toggle tab-flag        |                         |
+| Other ARG   | Demote Tree ARG Levels | Promote Tree ARG Levels |
+|-------------+------------------------+-------------------------|
+@end example
+
+@cindex Org Table Minor Mode
+@cindex tables
+@cindex enabling table mode
+@cindex toggling table mode
+@findex orgtbl-mode
+The Koutliner also supports Org Table editing, @pxref{Tables,,, org,
+the Org Mode Manual}, via Org table minor mode.  Use @bkbd{M-x
+orgtbl-mode @key{RET}} to toggle this on and off.  Alternatively, a
+press of the Action Key on a @code{|} table delimiter also toggles
+this minor mode on or off.
+
+When @code{orgtbl-mode} is enabled within a Koutline and point is
+inside a table, @bkbd{@key{TAB}} moves forward one table item and
+@bkbd{S-@key{TAB}} moves backward an item.  However, if given any
+prefix argument, these keys behave as shown in the prior tables.
+
+@cindex outline mode
+@kindex M-0 @key{TAB}
+@kindex M-0 S-@key{TAB}
+Tree demotion and promotion keys match the defaults in Org mode and
+Outline mode, plus some easier to type ones.  The tables below
+summarize which keys work whether inside an Org table or outside.
+
+Note that you can use @bkbd{M-0 @key{TAB}} and @bkbd{M-0 S-@key{TAB}}
+to demote/promote Koutline trees when in a table since @key{TAB} and
+@bkbd{S-@key{TAB}} move between fields within tables when Org Table
+minor mode is active.  Within a table, to demote and promote the
+Koutline tree rooted at point, you can use any of the keys in the
+following table:
+
+@example
+@noindent
+|-------------------------------------+----------------------------|
+| Demotion Inside Org Table           | Promotion Inside Org Table |
+|-------------------------------------+----------------------------|
+| M-0 TAB  (kotl-mode:tab-flag = nil) | M-0 S-TAB                  |
+| C-c C-.                             | C-c C-,                    |
+| C-c C->                             | C-c C-<                    |
+|-------------------------------------+----------------------------|
+@end example
 
 @kindex koutliner, @key{TAB}
-@kindex koutliner, M-@key{TAB}
 @kindex koutliner, Shift-@key{TAB}
 @kindex koutliner, M-<left>
 @kindex koutliner, M-<right>
@@ -6152,74 +6226,136 @@ substructure) are promoted and demoted, not individual cells.
 
 @example
 @noindent
-|-----------------------------+----------------------------|
-| Promotion Outside Org Table | Demotion Outside Org Table |
-|-----------------------------+----------------------------|
-| M-TAB or Shift-TAB          | TAB                        |
-| M-<left>                    | M-<right>                  |
-| M-Shift-<left>              | M-Shift-<right>            |
-| C-c C-,                     | C-c C-.                    |
-| C-c C-<                     | C-c C->                    |
-|-----------------------------+----------------------------|
+|---------------------------------+-----------------------------|
+| Demotion Outside Org Table      | Promotion Outside Org Table |
+|---------------------------------+-----------------------------|
+| TAB  (kotl-mode:tab-flag = nil) | S-TAB                       |
+| M-<right>                       | M-<left>                    |
+| M-S-<right>                     | M-S-<left>                  |
+| C-c C-.                         | C-c C-,                     |
+| C-c C->                         | C-c C-<                     |
+|---------------------------------+-----------------------------|
 @end example
 
-
-Trees may be demoted or promoted by pressing @key{TAB} or
-@bkbd{M-@key{TAB}}.  @bkbd{M-0 @key{TAB}} and @bkbd{M-0 M-@key{TAB}}
-demote and promote trees and additionally refill each cell that is not
-specially marked to prevent refilling.  @xref{Filling}.  A positive or
-negative prefix argument to these commands promotes or demotes the
-tree up to a maximum of the number of levels given by the argument.
-The outline may not support movement of the tree by the number of
-levels requested, however, in which case the maximal possible
-adjustment is made.
+@node Org-style Visibility Cycling, Inserting Literal Tabs, Promoting and Demoting, Editing Outlines
+@subsection  Org-style Visibility Cycling
 
 @kindex koutliner, M-1 @key{TAB}
-@cindex inserting tabs
-@cindex tabs, inserting
-@vindex kotl-mode:indent-tabs-mode
+@findex kotl-mode:tab-command
+@findex kotl-mode:untab-command
 @cindex Koutliner, toggle tab behavior
-@bkbd{M-1 @key{TAB}} behaves specially.  It toggles the function of
-@key{TAB} and @bkbd{M-@key{TAB}} so that they insert a tab
-and remove the previous character, respectively.  This is useful when
-one is formatting information within a single cell.  When in this
-mode, @bkbd{@key{TAB}} inserts a literal TAB character, by default.
-Set the variable, @code{kotl-mode:indent-tabs-mode}, to
-@samp{nil} if you want space characters used to form the tab.
-Use @bkbd{M-1 @key{TAB}} to toggle the @key{TAB} and
-@bkbd{M-@key{TAB}} keys back to promoting and demoting trees.
-
-
-@cindex Org tables
-The Koutliner also supports Org Table editing, @pxref{Tables,,, org,
-the Org Mode Manual}, via Org table minor mode.  Use @bkbd{M-x
-orgtbl-mode @key{RET}} to toggle this on and off.  A press of the
-Action Key on a @code{|} symbol, also toggles this minor mode on or
-off.
-
-@cindex outline mode
-@kindex M-0 @key{TAB}
-@kindex M-0 M-@key{TAB}
-Tree demotion and promotion keys match the defaults in Org mode and
-Outline mode, plus some easier to type ones.  The tables below
-summarize which keys work whether inside an Org table or outside.
-
-Note that you must use @bkbd{M-0 @key{TAB}} and @bkbd{M-0 M-@key{TAB}}
-to demote/promote Koutline trees when in a table since @key{TAB} and
-@bkbd{M-@key{TAB}} move between fields within a table.
+@cindex Koutliner, cycling
+@cindex Koutliner, Org-style cycling
+@bkbd{M-1 @key{TAB}} toggles the function of @key{TAB} and
+@bkbd{S-@key{TAB}} between promotion/demotion and Org-style tree
+visibility cycling.  The following table summarizes their behavior
+with Org-style view cycling enabled:
 
 @example
 @noindent
-|----------------------------+-----------------------------|
-| Promotion Inside Org Table | Demotion Inside Org Table   |
-|----------------------------+-----------------------------|
-| M-0 M-TAB                  | M-0 TAB                     |
-| C-c C-,                    | C-c C-.                     |
-| C-c C-<                    | C-c C->                     |
-|----------------------------+-----------------------------|
+With @code{kotl-mode:tab-flag} = @samp{'cycle}:
+|---------------+-------------------------+----------------------|
+| Prefix Arg    | TAB Function            | Shift-TAB Function   |
+|---------------+-------------------------+----------------------|
+| nil           | Cycle Tree              | Cycle Outline        |
+| C-u           | Cycle Outline           | Cycle Outline        |
+| C-u C-u       | Reset View Spec         | Reset View Spec      |
+| C-u C-u C-u   | Show Whole Outline      | Show Whole Outline   |
+| 1             | Toggle tab-flag         |                      |
+| Other Num ARG | Show tree ARG levels up | Show 1 line per cell |
+|               |                         | down to ARGth level  |
+|---------------+-------------------------+----------------------|
 @end example
 
-@node Relocating and Copying, Moving Around, Promoting and Demoting, Editing Outlines
+@cindex local cycling
+@cindex cycle, local
+@cindex Org-style cycling
+@findex kotl-mode:cycle-locally
+By default, use @bkbd{@key{TAB}} to cycle the tree at point through
+three different states,
+@code{kotl-mode:cycle-locally}:
+@table @emph
+@item FOLDED
+Hide all but the first line of the tree at point
+@item CHILDREN
+Hide all but the first line of the root cell at point and its children
+@item SUBTREE
+Show the entire tree at point; if there is no subtree, switch directly
+from CHILDREN to FOLDED.
+@end table
+
+@cindex local cycling
+@cindex cycle, local
+@findex kotl-mode:cycle-globally
+By default, use either @bkbd{C-u @key{TAB}} or @bkbd{S-@key{TAB}} to
+cycle the entire outline through three different states,
+@code{kotl-mode:cycle-globally}:
+@table @emph
+@item OVERVIEW
+Show only the first line of level 1 cells
+@item CONTENTS
+Show the first line of all cells at all levels
+@item SHOW ALL
+Show the entire outline.
+@end table
+
+@cindex Koutliner, outline to ARGth level
+@cindex outline to ARGth level
+@cindex prefix numeric arg, outline show to level
+@bkbd{S-@key{TAB}} with a numeric prefix argument shows cells across
+the whole outline down to prefix argument level, one line per cell.
+Zero means show all cell levels.
+
+See the documentation string for @code{kotl-mode:emulate-tab} for how
+to constrain the contexts in which cycling will trigger.
+
+For even more details, see the documentation strings for
+@code{kotl-mode:tab-command} and @code{kotl-mode:untab-command}.
+
+
+@node Inserting Literal Tabs, Relocating and Copying, Org-style Visibility Cycling, Editing Outlines
+@subsection  Inserting Literal Tabs
+
+@cindex inserting tabs
+@cindex tabs, inserting
+Insertion of TAB characters can be as simple or as complex as you like.
+The simplest technique is to use @bkbd{C-q @key{TAB}} whenever you want to
+insert a TAB character.
+
+@vindex kotl-mode:tab-flag
+If you don't use the @bkbd{@key{TAB}} key for tree demotion or
+visibility cycling and prefer that it always insert a TAB character,
+then set the variable, @code{kotl-mode:tab-flag} to @samp{t}.
+
+@vindex kotl-mode:emulate-tab
+If you prefer that the @bkbd{@key{TAB}} key runs
+@code{kotl-mode:indent-line} (typically inserting a TAB character)
+only in certain contexts, as it does in Org mode, then change the
+value of the variable, @code{kotl-mode:emulate-tab}, from its default
+@samp{nil} value.
+
+@noindent
+Its possible values are:
+@table @samp
+@item nil
+Never call @code{kotl-mode:indent-line}
+@item white
+Only in completely white lines
+@item whitestart
+Only at the beginning of lines, before the first non-white character
+@item t
+Everywhere except in the first line of cells
+@item exc-hl-bol
+Everywhere except at the start of a cell
+@end table
+
+@vindex kotl-mode:indent-tabs-mode
+In contexts where the @bkbd{@key{TAB}} key inserts a TAB character,
+you have the option of having it insert spaces instead.  Set the
+variable, @code{kotl-mode:indent-tabs-mode}, to @samp{nil}.
+
+
+@node Relocating and Copying, Moving Around, Inserting Literal Tabs, Editing Outlines
 @subsection  Relocating and Copying
 
 @cindex tree, copying
@@ -7359,7 +7495,7 @@ displayed.
 @kindex HyRolo, see rolo
 @kindex rolo, @key{TAB}
 @kindex rolo, M-@key{TAB}
-@kindex rolo, @key{SHIFT}-@key{TAB}
+@kindex rolo, @key{Shift}-@key{TAB}
 @cindex rolo, highlighting matches
 @cindex rolo, finding matches
 @cindex rolo, moving through matches
@@ -7368,7 +7504,7 @@ is highlighted for quick, visual location.  @bkbd{@key{TAB}} moves
 point forward to successive spans of text which match the search
 expression.  If the matching text is hidden/invisible, it is shown;
 the body of the entry with the match, as well as all of its sub-entries
-are shown.  @bkbd{M-@key{TAB}} or @bkbd{@key{SHIFT}-@key{TAB}} move
+are shown.  @bkbd{M-@key{TAB}} or @bkbd{@key{Shift}-@key{TAB}} move
 point backward to earlier matches.  These keys allow you to quickly
 find the matching entry of most interest to you if your search
 expression failed to narrow the matches sufficiently.
@@ -10476,7 +10612,7 @@ Move to prefix ARG previous cell (any level) within current view.
 Move point to ARGth previous line and return point.
 
 @findex kotl-mode:promote-tree
-@item kotl-mode:promote-tree  @bkbd{M-@key{TAB}} or @bkbd{@key{SHIFT}-@key{TAB}}
+@item kotl-mode:promote-tree  @bkbd{@key{Shift}-@key{TAB}}
 Move current tree a maximum of prefix ARG levels higher in current view.
 Each cell is refilled iff its @emph{no-fill} attribute is nil and
 @code{kotl-mode:refill-flag} is non-nil.  With prefix ARG = 0, cells are
@@ -11582,13 +11718,16 @@ When pressed within a Hyperbole Koutliner buffer (kotl-mode):
   ACTION KEY
      (1) at the end of the buffer, uncollapses and unhides all cells in
          the view;
-     (2) within a cell, if its subtree is hidden then shows it,
-         otherwise hides it;
+     (2) at the end of a visible line, call the @code{action-key-eol-function};
      (3) between cells or within the read-only indentation region to the
          left of a cell, begins creation of a klink to some other
          outline cell; press the Action Key twice on another cell to
          select the link referent cell;
-     (4) anywhere else, scrolls up a windowful.
+     (4) on a | character within an Org-style table, toggle Org Table minor
+         mode;
+     (5) in an Org-style table, wrap the table cell or region;
+     (6) within a cell, if its subtree is hidden then shows it,
+         otherwise hides it.
 @end group
 @end format
 @format
@@ -11596,14 +11735,14 @@ When pressed within a Hyperbole Koutliner buffer (kotl-mode):
   ASSIST KEY
      (1) at the end of the buffer, collapses all cells and hides all
          non-level-one cells;
-     (2) on a header line but not at the beginning or end, displays the
+     (2) at the end of a visible line, call the @code{assist-key-eol-function};
+     (3) on a header line but not at the beginning or end, displays the
          properties of each following cell in the koutline, starting
          with the cell at point;
-     (3) between cells or within the read-only indentation region to the
+     (4) between cells or within the read-only indentation region to the
          left of a cell, prompts to move one tree to a new location in
          the outline; press the Action Key twice to select the tree to
-         move and where to move it;
-     (4) anywhere else, scrolls down a windowful.
+         move and where to move it.
 @end group
 @end format
 
@@ -12172,9 +12311,9 @@ and outline-minor-mode is enabled:
      (3) at the beginning of a heading line, cuts the headings subtree
          from the buffer;
      (4) on a header line but not at the beginning or end of the line,
-         if the headings subtree is hidden, shows it, otherwise hides
+         if the heading's subtree is hidden, shows it, otherwise hides
          it;
-     (5) at the end of a line, invokes @code{action-key-eol-function},
+     (5) at the visible end of a line, invokes @code{action-key-eol-function},
          typically to scroll up a windowful.
   ASSIST KEY
      (1) after an outline heading has been cut via the Action Key,
@@ -12183,9 +12322,9 @@ and outline-minor-mode is enabled:
      (2) at the end of the buffer, hides all bodies in the buffer;
      (3) at the beginning of a heading line, cuts the current heading
          (sans subtree) from the buffer;
-     (4) on a header line but not at the beginning or end, if the
-         heading body is hidden, shows it, otherwise hides it;
-     (5) at the end of a line, invokes @code{assist-key-eol-function},
+     (4) on a header line but not at the beginning or end of the line,
+         if the heading's body is hidden, shows it, otherwise hides it;
+     (5) at the visible end of a line, invokes @code{assist-key-eol-function},
          typically to scroll down a windowful.
 @end group
 @end format

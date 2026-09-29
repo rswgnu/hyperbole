@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     28-Aug-26 at 09:41:18 by Mats Lidell
+;; Last-Mod:     29-Sep-26 at 02:16:49 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1518,6 +1518,18 @@ result is abbreviated relative to the caller's buffer directory."
 		  (line-number-at-pos (point) t)
 		  (current-column)))))))
 
+(defun hpath:find-koutline-reference (path start)
+  "Find a potential koutline reference, PATH, with ref at START position."
+  ;; If is a koutline reference with an =idstamp, then update reference
+  ;; relative label if need be; this may be in a different buffer than the
+  ;; current one.  Otherwise, just find the path.
+  (let ((kotl-flag (string-match-p "\\.kotl\\([:#]\\|\\'\\)" path))
+        (obuf (current-buffer)))
+    (funcall (actype:elisp-symbol 'link-to-file) path)
+    (when kotl-flag
+      (save-excursion
+	(klink:update-label path start obuf)))))
+
 (defun hpath:find-noselect (filename)
   "Find but don't display FILENAME.
 Use user customizable settings of display program and location.
@@ -1635,7 +1647,8 @@ but locational suffixes within the file are utilized."
           ;; down below.
           (setq path (cdr referent))))
       (cond (modifier
-	     (setq path (hpath:resolve path)))
+	     (setq path (hpath:resolve path)
+                   pathname path))
 	    (t (setq path (hpath:expand path)
 	             pathname (hpath:absolute-to path default-directory))
 	       ;; Remove http file:// url prefix that`hpath:absolute-to' may have
@@ -1690,7 +1703,7 @@ but locational suffixes within the file are utilized."
 			(error "(hpath:find): No available executable from: %s"
 			       display-executables)))
 		     (t (setq path (hpath:validate path) ;; signals error when invalid
-			      kotl-flag (string-match "\\.kotl?\\'" path))
+			      kotl-flag (string-match-p "\\.kotl?\\'" path))
 			(let ((buf (cond
 				    ;; If no path, e.g. just an anchor link in a non-file buffer,
 				    ;; then must display within Emacs, ignoring any external programs.

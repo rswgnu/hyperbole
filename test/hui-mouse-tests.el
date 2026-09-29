@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    15-Mar-25 at 22:39:37
-;; Last-Mod:     20-Sep-25 at 01:16:24 by Mats Lidell
+;; Last-Mod:     29-Sep-26 at 17:08:46 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -59,6 +59,7 @@
            (todotxt-mode . ((smart-todotxt) . (smart-todotxt-assist))))))
     (dolist (mode mode-list)
       (let ((major-mode (car mode)))
+        (message "%s" major-mode)
         (should (equal (hkey-actions)
                        (cdr mode))))))
 
@@ -110,7 +111,8 @@
   ;; If reading a Hyperbole menu item and nothing is selected, just
   ;; return.  Or if in a helm session with point in the minibuffer,
   ;; quit the session and activate the selected item.
-  (mocklet (((minibuffer-depth) => 1)
+  (mocklet (((hargs:at-p) => nil)
+            ((minibuffer-depth) => 1)
             ((selected-window) => (minibuffer-window)))
     (let ((hargs:reading-type 'hmenu))
       (should (equal (hkey-actions)
@@ -158,10 +160,27 @@
     (should (equal (hkey-actions)
                    (cons '(xref-goto-xref) '(xref-show-location-at-point)))))
 
+  ;; Select or select-and-kill a markup pair ...
+  (mocklet (((hui-select-at-delimited-thing-p) => t))
+    (let ((hkey-at-hbut nil))
+      (should (equal (hkey-actions)
+                     (cons '(hui-select-thing)
+                           '(progn (hui-select-thing)
+				   (hmouse-kill-region)))))))
+
+  ;; sexpression
+  (mocklet (((hui-select-at-delimited-sexp-p) => t))
+    (let ((hkey-at-hbut nil))
+      (should (equal (hkey-actions)
+                     (cons '(hui-select-mark-delimited-sexp)
+	                   '(progn (hui-select-mark-delimited-sexp)
+                                   (hmouse-kill-region)))))))
+
   ;; Hyperbole buttons
   (mocklet (((hbut:at-p) => t))
-    (should (equal (hkey-actions)
-                   (cons '(hui:hbut-act 'hbut:current) '(hui:hbut-help 'hbut:current)))))
+    (let ((hkey-at-hbut t))
+      (should (equal (hkey-actions)
+                     (cons '(hui:hbut-act 'hbut:current) '(hui:hbut-help 'hbut:current))))))
 
   ;; View minor mode
   (let ((view-mode t))
@@ -192,31 +211,6 @@
                        (cons '(smart-ert-results hkey-value)
                              '(smart-ert-results-assist hkey-value)))))))
 
-  ;; OO-Browser
-  (mocklet (((br-in-browser) => t))
-    (should (equal (hkey-actions)
-                   (cons '(smart-br-dispatch)
-                         '(smart-br-assist-dispatch)))))
-  (mocklet (((br-in-browser) => nil))
-    (let ((major-mode 'br-mode))
-      (should (equal (hkey-actions)
-                     (cons '(smart-br-dispatch)
-                           '(smart-br-assist-dispatch))))))
-
-  ;; Select or select-and-kill a markup pair ...
-  (mocklet (((hui-select-at-delimited-thing-p) => t))
-    (should (equal (hkey-actions)
-                   (cons '(hui-select-thing)
-                         '(progn (hui-select-thing)
-				 (hmouse-kill-region))))))
-
-  ;; sexpression
-  (mocklet (((hui-select-at-delimited-sexp-p) => t))
-    (should (equal (hkey-actions)
-                   (cons '(hui-select-mark-delimited-sexp)
-	                 '(progn (hui-select-mark-delimited-sexp)
-                                 (hmouse-kill-region))))))
-
   ;; Restore window config and hide help buffer when click at buffer end.
   (mocklet (((point-max) => (point)))
     (cl-letf (((symbol-function 'buffer-name) (lambda (&optional _) "*Help*")))
@@ -224,11 +218,12 @@
                      (cons '(hkey-help-hide) '(hkey-help-hide))))))
 
   ;; Any other programming mode
-  (mocklet (((smart-prog-at-tag-p) => t)
-	    ((smart-tags-find-p hkey-value) => t))
+  (mocklet (((smart-prog-at-tag-p t) => t)
+            ((smart-tags-find-p t) => t)
+            ((smart-flash-tag-at-point hkey-value) => t))
     (should (equal (hkey-actions)
                    (cons '(ignore-errors (smart-prog-tag hkey-value))
-			 '(ignore-errors (smart-prog-tag hkey-value))))))
+			 '(hbut:report (intern-soft hkey-value))))))
 
   ;; Python files
   (let ((major-mode 'python-mode))
@@ -278,18 +273,12 @@
     (mocklet (((smart-lisp-at-load-expression-p) => nil)
               ((smart-lisp-at-tag-p) => t))
       (should (equal (hkey-actions)
+                     (cons '(smart-lisp) '(smart-lisp 'show-doc)))))
+    (mocklet (((smart-lisp-at-load-expression-p) => nil)
+              ((smart-lisp-at-tag-p) => t)
+              ((smart-lisp-at-change-log-tag-p) => t))
+      (should (equal (hkey-actions)
                      (cons '(smart-lisp) '(smart-lisp 'show-doc))))))
-  ;;; !!FIXME(BUG!?) -- See source: "../hui-mouse.el:L470"
-  ;; When smart-lisp-mode-p is t then hkey-value can be set
-  ;; non-nil. That will however make the predicate complete non-nil
-  ;; and smart-lisp-at-change-log-tag-p will never be called!? Should
-  ;; maybe the `or' statement be an `and' so that
-  ;; smart-lisp-at-change-log-tag-p cabn be called in case
-  ;; smart-lisp-at-tag-p is nil!?
-  ;;;
-  ;; (mocklet (((smart-lisp-mode-p) => nil) ((smart-lisp-at-change-log-tag-p) => t))
-  ;;   (should (equal (hkey-actions)
-  ;;                  (cons '(smart-prog-tag hkey-value) '(smart-prog-tag hkey-value)))))
 
   ;; Java
   (let ((major-mode 'java-mode))
@@ -356,15 +345,21 @@
   ;; OO-Browser
   (mocklet (((br-in-browser) => t))
     (should (equal (hkey-actions)
-                   (cons '(smart-br-dispatch) '(smart-br-assist-dispatch)))))
+                   (cons '(smart-br-dispatch)
+                         '(smart-br-assist-dispatch)))))
+  (mocklet (((br-in-browser) => nil))
+    (let ((major-mode 'br-mode))
+      (should (equal (hkey-actions)
+                     (cons '(smart-br-dispatch)
+                           '(smart-br-assist-dispatch))))))
 
   ;; Outline minor mode
   (let ((outline-minor-mode t))
     (should (equal (hkey-actions)
                    (cons '(smart-outline) '(smart-outline-assist)))))
 
-  ;;; No action matches
-  (mocklet (((smart-prog-at-tag-p) => nil))
+;;; No action matches
+  (mocklet (((smart-prog-at-tag-p t) => nil))
     (should-not (hkey-actions))))
 
 (provide 'hui-mouse-tests)

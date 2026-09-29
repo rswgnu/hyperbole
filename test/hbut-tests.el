@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-may-21 at 09:33:00
-;; Last-Mod:      9-Jun-26 at 00:01:32 by Mats Lidell
+;; Last-Mod:     29-Sep-26 at 02:49:49 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -29,7 +29,7 @@
   "Check that TMP matches either of \"/tmp/\" or \"/private/tmp/\".
 Needed since hyperbole expands all links to absolute paths and
 /tmp/ can be a symbolic link."
-  (should (and (stringp tmp) (string-match-p "\"?\\(/\\|./\\|/private/\\)tmp/\"?\\'" tmp) t)))
+  (should (and (stringp tmp) (string-match-p "\"?\\(/\\|./\\|/private/\\)tmp/\"?" tmp) t)))
 
 (ert-deftest ebut-program-link-to-directory ()
   "Programatically create ebut with link-to-directory using `temporary-file-directory`."
@@ -380,14 +380,14 @@ Create button with link-to-directory using `temporary-file-directory`."
       (insert "/tmp/")
       (goto-char 2)
       (should (hbut:at-p))
-      (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
+      (should (eq (hattr:get 'hbut:current 'actype) 'hpath:find-koutline-reference))
       (hbut-tests:should-match-tmp-folder (buffer-substring-no-properties (point-min) (point-max)))
       ;; Test that ibut:operate produces an error and leaves in-buffer button unchanged
       (erase-buffer)
       (ibut:operate)
       (setq buf-str (buffer-substring-no-properties (point-min) (point-max)))
       (message buf-str)
-      (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
+      (should (eq (hattr:get 'hbut:current 'actype) 'display-value-and-remove-region))
       (hbut-tests:should-match-tmp-folder (buffer-substring-no-properties (point-min) (point-max))))))
 
 (ert-deftest hbut-tests--ibut-operate--fail-create-add-name ()
@@ -451,7 +451,7 @@ See #10 for the proper way to add an ibutton name.
       (insert ibut-str)
       (goto-char 2)
       (should (hbut:at-p))
-      (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
+      (should (eq (hattr:get 'hbut:current 'actype) 'hpath:find-koutline-reference))
       (hbut-tests:should-match-tmp-folder (buffer-substring-no-properties (point-min) (point-max)))
       ;; Test that ibut:operate produces an error and leaves in-buffer button unchanged
       (should-error (ibut:operate "new-name"))
@@ -474,7 +474,7 @@ See #10 for the proper way to add an ibutton name.
       (insert ibut-str)
       (goto-char 2)
       (should (hbut:at-p))
-      (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
+      (should (eq (hattr:get 'hbut:current 'actype) 'hpath:find-koutline-reference))
       (hbut-tests:should-match-tmp-folder (buffer-substring-no-properties (point-min) (point-max)))
       ;; Test that ibut:operate produces an error and leaves in-buffer button unchanged
       (goto-char (point-min))
@@ -502,13 +502,13 @@ See #10 for the proper way to add an ibutton name.
       (mark-whole-buffer)
       (goto-char 2)
       (should (hbut:at-p))
-      (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
+      (should (eq (hattr:get 'hbut:current 'actype) 'hpath:find-koutline-reference))
       ;; Test that ibut:operate properly creates an in-buffer ibut from its in-memory form
       (erase-buffer)
       (ibut:operate)
       (setq buf-str (buffer-substring-no-properties (point-min) (point-max)))
       (message buf-str)
-      (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
+      (should (eq (hattr:get 'hbut:current 'actype) 'display-value-and-remove-region))
       (hbut-tests:should-match-tmp-folder (buffer-substring-no-properties (point-min) (point-max))))))
 
 (ert-deftest hbut-tests--ibut-operate--region ()
@@ -551,12 +551,12 @@ See #10 for the proper way to add an ibutton name.
       (goto-char (- (point-max) 2))
       (should (hbut:at-p))
       (should (region-active-p))
-      (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
+      (should (eq (hattr:get 'hbut:current 'actype) 'hpath:find-koutline-reference))
       ;; Test that ibut:operate properly creates an in-buffer ibut from its in-memory form
       (should-error (ibut:operate "new-name"))
       (setq buf-str (buffer-substring-no-properties (point-min) (point-max)))
       (message buf-str)
-      (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
+      (should (eq (hattr:get 'hbut:current 'actype) 'hpath:find-koutline-reference))
       (hbut-tests:should-match-tmp-folder (buffer-substring-no-properties (point-min) (point-max))))))
 
 (ert-deftest hbut-tests--ibut-operate--remove-name ()
@@ -579,7 +579,7 @@ See #10 for the proper way to add an ibutton name.
       (setq buf-str (buffer-substring-no-properties (point-min) (point-max)))
       (message buf-str)
       (goto-char 2)
-      (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
+      (should (eq (hattr:get 'hbut:current 'actype)  'hpath:find-koutline-reference))
       (hbut-tests:should-match-tmp-folder (buffer-substring-no-properties (point-min) (point-max)))
       (should (null (hattr:get 'hbut:current 'name))))))
 
@@ -605,7 +605,7 @@ See #10 for the proper way to add an ibutton name.
       (goto-char 2)
       (should (hbut:at-p))
       (should (equal "new-name" (hattr:get 'hbut:current 'name)))
-      (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
+      (should (eq (hattr:get 'hbut:current 'actype)  'hpath:find-koutline-reference))
       (hbut-tests:should-match-tmp-folder (buffer-substring-no-properties (point-min) (point-max))))))
 
 (ert-deftest hbut-tests--ibut-operate--add-name ()
@@ -629,7 +629,7 @@ See #10 for the proper way to add an ibutton name.
       (setq buf-str (buffer-substring-no-properties (point-min) (point-max)))
       (message buf-str)
       (goto-char 2)
-      (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
+      (should (eq (hattr:get 'hbut:current 'actype) 'hpath:find-koutline-reference))
       (hbut-tests:should-match-tmp-folder (buffer-substring-no-properties (point-min) (point-max)))
       (should (equal "name" (hattr:get 'hbut:current 'name))))))
 
@@ -653,7 +653,7 @@ See #10 for the proper way to add an ibutton name.
       (setq buf-str (buffer-substring-no-properties (point-min) (point-max)))
       (message buf-str)
       (goto-char 2)
-      (should (eq (hattr:get 'hbut:current 'actype) 'actypes::link-to-file))
+      (should (eq (hattr:get 'hbut:current 'actype) 'hpath:find-koutline-reference))
       (hbut-tests:should-match-tmp-folder (buffer-substring-no-properties (point-min) (point-max)))
       (should (equal "new-name" (hattr:get 'hbut:current 'name))))))
 

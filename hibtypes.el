@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     30-Jul-26 at 11:50:17 by Bob Weiner
+;; Last-Mod:     29-Sep-26 at 16:11:57 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -96,6 +96,27 @@
 ;;; ************************************************************************
 
 (run-hooks 'hibtypes-begin-load-hook)
+
+;;; ========================================================================
+;;; Jumps to and displays help for variables that store Hyperbole buttons
+;;; ========================================================================
+
+(defib hbut-identifier ()
+  "When on the name of a variable that holds a Hyperbole button, e.g. hbut:current:
+  Action Key - Jump to variable definition."
+  (let ((identifier (smart-prog-at-tag-p t))
+	start-end)
+    (when (and identifier
+	       (hbut:is-p (intern-soft identifier))
+	       (setq start-end (bounds-of-thing-at-point 'symbol)))
+      (ibut:label-set identifier (car start-end) (cdr start-end))
+      (ignore-errors
+	(hact #'smart-prog-tag identifier)))))
+
+(defun hbut-identifier:help (ibut)
+  "When on the name of a variable that holds a Hyperbole button, e.g. hbut:current:
+  Assist Key - Display button attributes of any Hyperbole button symbol at point."
+  (hbut:report ibut))
 
 ;; Don't use require below here for any libraries with ibtypes in
 ;; them.  Use load instead to ensure are reloaded when resetting
@@ -385,13 +406,20 @@ display options."
 			 (t nil)))
 		  (t (when (string-match "\\`file://" path)
                        (setq path (substring path (match-end 0))))
-		     (if (or (> (cl-count ?: orig-path) 2)
-			     (> (cl-count ?\; orig-path) 2))
-			 ;; PATH-like set of values; select just the one point is on
-			 (apply #'ibut:label-set path (hpath:start-end path))
-		       ;; Otherwise, use the unchanged orig-path
-                       (apply #'ibut:label-set orig-path (hpath:start-end orig-path)))
-                     (hact 'link-to-file path)))
+                     (let (start-end
+                           start)
+		       (if (or (> (cl-count ?: orig-path) 2)
+			       (> (cl-count ?\; orig-path) 2))
+			   ;; PATH-like set of values; select just the one
+			   ;; point is on
+			   (apply #'ibut:label-set
+                                  path (setq start-end (hpath:start-end path)))
+		         ;; Otherwise, use the unchanged orig-path
+                         (apply #'ibut:label-set
+                                orig-path (setq start-end
+                                                (hpath:start-end orig-path))))
+                       (setq start (car start-end))
+                       (hact 'hpath:find-koutline-reference path start))))
           ;;
           ;; Match PATH-related Environment and Lisp variable names and
 	  ;; Emacs Lisp and Info files without any directory component.

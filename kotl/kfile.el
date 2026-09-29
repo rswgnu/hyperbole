@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10/31/93
-;; Last-Mod:     30-Apr-26 at 13:24:40 by Bob Weiner
+;; Last-Mod:     23-Sep-26 at 11:27:18 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -179,16 +179,13 @@ Return the new view."
 	   (set-buffer buffer)
 	   (not (or (stringp ver-string) (setq ver-string (kfile:is-p)))))
 	 (error "(kfile:read): `%s' is not a koutline file" buffer))
-	((equal ver-string "Kotl-4.0")
-	 (kfile:read-v4-or-v3 buffer nil))
-	((equal ver-string "Kotl-3.0")
-	 (kfile:read-v4-or-v3 buffer t))
-	((equal ver-string "Kotl-2.0")
-	 (kfile:read-v2 buffer))
-	((equal ver-string "Kotl-1.0")
-	 (error "(kfile:read): V1 koutlines are no longer supported"))
-	(t (error "(kfile:read): `%s' has unknown kotl version, %s"
-		  buffer ver-string))))
+        ((pcase ver-string
+           ("Kotl-4.0" (kfile:read-v4-or-v3 buffer nil))
+	   ("Kotl-3.0" (kfile:read-v4-or-v3 buffer t))
+	   ("Kotl-2.0" (kfile:read-v2 buffer))
+	   ("Kotl-1.0" (error "(kfile:read): V1 koutlines are no longer supported"))
+	   (_ (error "(kfile:read): `%s' has unknown kotl version, %s"
+		     buffer ver-string))))))
 
 (defun kfile:read-v2 (buffer)
   "Create a kotl view by reading kotl version-2 BUFFER.  Return the new view."
@@ -238,8 +235,8 @@ If V3-FLAG is true, read as a version-3 buffer."
     (search-forward "\n\^_" nil t 2)
     ;; Read rest of file data.
     (unless v3-flag ;; V3 files did not store viewspecs.
-      (kvspec:initialize)
-      (setq kvspec:current (read)))
+      (setq kvspec:current (read)
+            kvspec:default kvspec:current))
     (setq cell-count (read)
 	  label-type (read)
 	  label-min-width (read)

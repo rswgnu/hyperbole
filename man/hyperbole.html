@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <!-- This manual is for GNU Hyperbole
-(Edition 9.1.0, Published July 27, 2026).
+(Edition 9.2.0, Published September 27, 2026).
 
 Copyright © 1989-2026  Free Software Foundation, Inc.
 
@@ -386,7 +386,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.1.0
-Printed July 27, 2026.
+Printed September 27, 2026.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -567,13 +567,15 @@ dedicated to my lovely wife, Kathy.
     <ul class="toc-numbered-mark">
       <li><a id="toc-Adding-and-Killing-1" href="#Adding-and-Killing">9.5.1 Adding and Killing</a></li>
       <li><a id="toc-Promoting-and-Demoting-1" href="#Promoting-and-Demoting">9.5.2 Promoting and Demoting</a></li>
-      <li><a id="toc-Relocating-and-Copying-1" href="#Relocating-and-Copying">9.5.3 Relocating and Copying</a></li>
-      <li><a id="toc-Moving-Around-1" href="#Moving-Around">9.5.4 Moving Around</a></li>
-      <li><a id="toc-Filling-1" href="#Filling">9.5.5 Filling</a></li>
-      <li><a id="toc-Transposing-1" href="#Transposing">9.5.6 Transposing</a></li>
-      <li><a id="toc-Splitting-and-Appending-1" href="#Splitting-and-Appending">9.5.7 Splitting and Appending</a></li>
-      <li><a id="toc-Inserting-and-Importing-1" href="#Inserting-and-Importing">9.5.8 Inserting and Importing</a></li>
-      <li><a id="toc-Exporting-1" href="#Exporting">9.5.9 Exporting</a></li>
+      <li><a id="toc-Org_002dlike-Visibility-Cycling-1" href="#Org_002dlike-Visibility-Cycling">9.5.3 Org-like Visibility Cycling</a></li>
+      <li><a id="toc-Inserting-Literal-Tabs-1" href="#Inserting-Literal-Tabs">9.5.4 Inserting Literal Tabs</a></li>
+      <li><a id="toc-Relocating-and-Copying-1" href="#Relocating-and-Copying">9.5.5 Relocating and Copying</a></li>
+      <li><a id="toc-Moving-Around-1" href="#Moving-Around">9.5.6 Moving Around</a></li>
+      <li><a id="toc-Filling-1" href="#Filling">9.5.7 Filling</a></li>
+      <li><a id="toc-Transposing-1" href="#Transposing">9.5.8 Transposing</a></li>
+      <li><a id="toc-Splitting-and-Appending-1" href="#Splitting-and-Appending">9.5.9 Splitting and Appending</a></li>
+      <li><a id="toc-Inserting-and-Importing-1" href="#Inserting-and-Importing">9.5.10 Inserting and Importing</a></li>
+      <li><a id="toc-Exporting-1" href="#Exporting">9.5.11 Exporting</a></li>
     </ul></li>
     <li><a id="toc-Viewing-Outlines-1" href="#Viewing-Outlines">9.6 Viewing Outlines</a>
     <ul class="toc-numbered-mark">
@@ -1230,16 +1232,22 @@ on a pathname to display the associated file or directory.
 <a class="index-entry-id" id="index-enable-Hyperbole"></a>
 <a class="index-entry-id" id="index-disable-Hyperbole"></a>
 <a class="index-entry-id" id="index-Hyperbole-minibuffer-menu"></a>
+<a class="index-entry-id" id="index-minibuffer-menu-help"></a>
+<a class="index-entry-id" id="index-menu-help"></a>
+<a class="index-entry-id" id="index-help_002c-minibuffer-menu"></a>
 <a class="index-entry-id" id="index-C_002dh-h"></a>
 <a class="index-entry-id" id="index-C_002dh-h-X"></a>
 <a class="index-entry-id" id="index-C_002dh-h-Q"></a>
-<p><kbd class="kbd">{C-h h}</kbd> enables Hyperbole if it has been disabled and displays a
-Hyperbole menu in the minibuffer for quick keyboard or mouse-based
-selection.  Select an item from this menu by typing the item&rsquo;s first
-capital letter.  Use <kbd class="kbd">{Q}</kbd> (note this is capitalized) to quit from
-the minibuffer menu while leaving Hyperbole enabled.  Use <kbd class="kbd">{X}</kbd>
-(note this is capitalized) to quit from the minibuffer menu and
-disable Hyperbole&rsquo;s minor mode.
+<a class="index-entry-id" id="index-C_002dh-h-_003f"></a>
+<p><kbd class="kbd">{C-h h}</kbd> enables Hyperbole if it has been disabled and displays
+the top-level Hyperbole menu in the minibuffer for quick keyboard or
+mouse-based selection.  Within any Hyperbole minibuffer menu, select
+an item by typing the item&rsquo;s first capital letter.  Use <kbd class="kbd">{Q}</kbd> (note
+this is capitalized) to quit from the minibuffer menu while leaving
+Hyperbole enabled.  Use <kbd class="kbd">{X}</kbd> (note this is capitalized) to quit
+from the minibuffer menu and disable Hyperbole&rsquo;s minor mode.  Use
+<kbd class="kbd">{?}</kbd> to get help on all of the items in the current menu.  A
+second <kbd class="kbd">{?}</kbd> will hide this help.
 </p>
 <p>Use <kbd class="kbd">{C-h h d d}</kbd> for an interactive demonstration of standard
 Hyperbole button capabilities.
@@ -2966,7 +2974,7 @@ this setting.
 <a id="index-denote-note_002dtaking-package"></a><span><code class="code">denote-link</code><a class="copiable-link" href="#index-denote-note_002dtaking-package"> &para;</a></span></dt>
 <dd><p>Denote is an Emacs package for note taking that uses time-stamped,
 descriptive file naming conventions to label and locate notes.  Hyperbole
-provides an expanded set of denote-specific link formats via this 
+provides an expanded set of denote-specific link formats via this
 reference types.
 </p>
 <p>If on a denote id with optional #section, jump to its associated note.
@@ -3401,7 +3409,7 @@ Each line of the summary may be selected to jump to the associated section.
 <dt><code class="code">markdown-internal-link</code></dt>
 <dd><p>Display any in-file Markdown link referent.  Pathnames and urls are
 handled elsewhere.
-</p>  
+</p>
 <a class="index-entry-id" id="index-ibtypes-org_002dlink_002doutside_002dorg_002dmode"></a>
 <a class="index-entry-id" id="index-Org-link_002c-outside-Org"></a>
 <a class="anchor" id="org_002dlink_002doutside_002dorg_002dmode"></a></dd>
@@ -3825,7 +3833,7 @@ delimiters = [ ].
 </dd>
 <dt><a id="index-actypes-completion"></a><span><code class="code">completion</code><a class="copiable-link" href="#index-actypes-completion"> &para;</a></span></dt>
 <dd><p>Insert a completion at point into the minibuffer or a buffer.
-Unless point is at the end of buffer or if a completion has already been 
+Unless point is at the end of buffer or if a completion has already been
 inserted, in which case, delete the completions window.
 </p>
 </dd>
@@ -3902,7 +3910,7 @@ See <samp class="file">${hyperb:dir}/DEMO#Git (Local) References</samp> for exam
 
 <a class="index-entry-id" id="index-hibtypes_002dgit_002ddefault_002dproject-1"></a>
 <p>If given, PROJECT overrides any project value in REFERENCE.  If no PROJECT
-value is provided, it defaults to the value of <code class="code">hibtypes-git-default-project</code>. 
+value is provided, it defaults to the value of <code class="code">hibtypes-git-default-project</code>.
 </p>
 </dd>
 <dt><a class="index-entry-id" id="index-github-reference"></a>
@@ -4816,10 +4824,14 @@ sequence.  See <a class="xref" href="#Binding-Minibuffer-Menu-Items">Binding Min
 <a class="index-entry-id" id="index-starting-Hyperbole"></a>
 <a class="index-entry-id" id="index-Hyperbole_002c-starting"></a>
 <a class="index-entry-id" id="index-Hyperbole-main-menu"></a>
-<p>The top-level Hyperbole minibuffer menu is invoked from a key given in your
-<samp class="file">hyperbole.el</samp> file (by default, <kbd class="kbd">{C-h h}</kbd>) or with a click
-of the Action Mouse Key in the minibuffer when it is inactive.  It should
-look like this:
+<p>The top-level Hyperbole minibuffer menu is invoked from a key given in
+your <code class="code">use-package</code> configuration or if not specified, defaults to
+<kbd class="kbd">{C-h h}</kbd>).  A click of the Action Mouse Key in the minibuffer when
+it is inactive will also bring up this menu and continued clicks
+select items.  Use <kbd class="kbd">{?}</kbd> to toggle showing/hiding help for all of
+the current menu items.
+</p>
+<p>The minibuffer menu should look like this:
 </p>
 <div class="example smallexample">
 <pre class="example-preformatted">Hy&gt;  Act Butfile/ Cust/ Doc/ Ebut/ Find/ Gbut/ HyWiki/ Ibut/ Kotl/ Msg/ Rolo/ Screen/
@@ -4828,7 +4840,7 @@ look like this:
 
 <a class="index-entry-id" id="index-submenus"></a>
 <a class="index-entry-id" id="index-menu-exit"></a>
-<a class="index-entry-id" id="index-menu-help"></a>
+<a class="index-entry-id" id="index-menu-help-1"></a>
 <a class="index-entry-id" id="index-menu-quit"></a>
 <a class="index-entry-id" id="index-disable-Hyperbole-mode"></a>
 <a class="index-entry-id" id="index-quit-menus"></a>
@@ -4982,7 +4994,7 @@ access to popular web search engines.
                    files.  Set <code class="code">hui-select-rgrep-command</code> to change the
                    grep command or options.
 
-</li><li>LocateFiles -      Prompt for a pattern and display a list of all 
+</li><li>LocateFiles -      Prompt for a pattern and display a list of all
                    matching pathnames found throughout the file
                    system.  On Mac OS X, this uses Spotlight
                    (the <code class="code">mdfind</code> command); on UNIX, it uses
@@ -5321,7 +5333,7 @@ non-&lsquo;<samp class="samp">nil</samp>&rsquo; for this to activate.
 This is the Action Key function that activates HyWikiWords.  A call to
 <code class="code">(hywiki-active-in-current-buffer-p)</code> must return non-&lsquo;<samp class="samp">nil</samp>&rsquo;
 for this to activate.
-</p>  
+</p>
 <p>If the associated HyWiki referent is a page, create it automatically
 unless it is the first HyWiki page to be created, in which case,
 prompt the user whether to create it, to prevent any unexpected HyWiki
@@ -6697,13 +6709,15 @@ selected region, since that will destroy the outline structure.
 <ul class="mini-toc">
 <li><a href="#Adding-and-Killing" accesskey="1">Adding and Killing</a></li>
 <li><a href="#Promoting-and-Demoting" accesskey="2">Promoting and Demoting</a></li>
-<li><a href="#Relocating-and-Copying" accesskey="3">Relocating and Copying</a></li>
-<li><a href="#Moving-Around" accesskey="4">Moving Around</a></li>
-<li><a href="#Filling" accesskey="5">Filling</a></li>
-<li><a href="#Transposing" accesskey="6">Transposing</a></li>
-<li><a href="#Splitting-and-Appending" accesskey="7">Splitting and Appending</a></li>
-<li><a href="#Inserting-and-Importing" accesskey="8">Inserting and Importing</a></li>
-<li><a href="#Exporting" accesskey="9">Exporting</a></li>
+<li><a href="#Org_002dlike-Visibility-Cycling" accesskey="3">Org-like Visibility Cycling</a></li>
+<li><a href="#Inserting-Literal-Tabs" accesskey="4">Inserting Literal Tabs</a></li>
+<li><a href="#Relocating-and-Copying" accesskey="5">Relocating and Copying</a></li>
+<li><a href="#Moving-Around" accesskey="6">Moving Around</a></li>
+<li><a href="#Filling" accesskey="7">Filling</a></li>
+<li><a href="#Transposing" accesskey="8">Transposing</a></li>
+<li><a href="#Splitting-and-Appending" accesskey="9">Splitting and Appending</a></li>
+<li><a href="#Inserting-and-Importing">Inserting and Importing</a></li>
+<li><a href="#Exporting">Exporting</a></li>
 </ul>
 <hr>
 <div class="subsection-level-extent" id="Adding-and-Killing">
@@ -6746,7 +6760,7 @@ buffer with <kbd class="kbd">{C-y}</kbd>.
 <div class="subsection-level-extent" id="Promoting-and-Demoting">
 <div class="nav-panel">
 <p>
-Next: <a href="#Relocating-and-Copying" accesskey="n" rel="next">Relocating and Copying</a>, Previous: <a href="#Adding-and-Killing" accesskey="p" rel="prev">Adding and Killing</a>, Up: <a href="#Editing-Outlines" accesskey="u" rel="up">Editing Outlines</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Org_002dlike-Visibility-Cycling" accesskey="n" rel="next">Org-like Visibility Cycling</a>, Previous: <a href="#Adding-and-Killing" accesskey="p" rel="prev">Adding and Killing</a>, Up: <a href="#Editing-Outlines" accesskey="u" rel="up">Editing Outlines</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <h4 class="subsection" id="Promoting-and-Demoting-1"><span>9.5.2 Promoting and Demoting<a class="copiable-link" href="#Promoting-and-Demoting-1"> &para;</a></span></h4>
 
@@ -6761,7 +6775,6 @@ the inverse operation.  Note that trees (cells and their entire
 substructure) are promoted and demoted, not individual cells.
 </p>
 <a class="index-entry-id" id="index-koutliner_002c-TAB"></a>
-<a class="index-entry-id" id="index-koutliner_002c-M_002dTAB"></a>
 <a class="index-entry-id" id="index-koutliner_002c-Shift_002dTAB"></a>
 <a class="index-entry-id" id="index-koutliner_002c-M_002d_003cleft_003e"></a>
 <a class="index-entry-id" id="index-koutliner_002c-M_002d_003cright_003e"></a>
@@ -6776,63 +6789,47 @@ substructure) are promoted and demoted, not individual cells.
 <pre class="example-preformatted">|-----------------------------+----------------------------|
 | Promotion Outside Org Table | Demotion Outside Org Table |
 |-----------------------------+----------------------------|
-| M-TAB or Shift-TAB          | TAB                        |
+| S-TAB                       | TAB                        |
 | M-&lt;left&gt;                    | M-&lt;right&gt;                  |
-| M-Shift-&lt;left&gt;              | M-Shift-&lt;right&gt;            |
+| M-S-&lt;left&gt;                  | M-S-&lt;right&gt;                |
 | C-c C-,                     | C-c C-.                    |
 | C-c C-&lt;                     | C-c C-&gt;                    |
 |-----------------------------+----------------------------|
 </pre></div>
 
-
-<p>Trees may be demoted or promoted by pressing <kbd class="key">TAB</kbd> or
-<kbd class="kbd">{M-<kbd class="key">TAB</kbd>}</kbd>.  <kbd class="kbd">{M-0 <kbd class="key">TAB</kbd>}</kbd> and <kbd class="kbd">{M-0 M-<kbd class="key">TAB</kbd>}</kbd>
-demote and promote trees and additionally refill each cell that is not
-specially marked to prevent refilling.  See <a class="xref" href="#Filling">Filling</a>.  A positive or
-negative prefix argument to these commands promotes or demotes the
-tree up to a maximum of the number of levels given by the argument.
-The outline may not support movement of the tree by the number of
-levels requested, however, in which case the maximal possible
-adjustment is made.
+<a class="index-entry-id" id="index-koutliner_002c-no_002dfill-property"></a>
+<p>Promote or demote the tree at point with <kbd class="key">TAB</kbd> or <kbd class="kbd">{M-<kbd class="key">TAB</kbd>}</kbd>,
+respectively.  These also refill the text of each cell not marked with a
+<code class="code">no-fill</code> property.  To override the <code class="code">no-fill</code> property and
+refill all promoted/demoted cells, use <kbd class="kbd">{M-0 <kbd class="key">TAB</kbd>}</kbd> and <kbd class="kbd">{M-0
+M-<kbd class="key">TAB</kbd>}</kbd>.  See <a class="xref" href="#Filling">Filling</a>.  A positive or negative prefix argument to
+these commands promotes or demotes the tree up to a maximum of that number
+of levels, depending on what the outline allows at any given point.
 </p>
-<a class="index-entry-id" id="index-koutliner_002c-M_002d1-TAB"></a>
-<a class="index-entry-id" id="index-inserting-tabs"></a>
-<a class="index-entry-id" id="index-tabs_002c-inserting"></a>
-<a class="index-entry-id" id="index-kotl_002dmode_003aindent_002dtabs_002dmode"></a>
-<a class="index-entry-id" id="index-Koutliner_002c-toggle-tab-behavior"></a>
-<p><kbd class="kbd">{M-1 <kbd class="key">TAB</kbd>}</kbd> behaves specially.  It toggles the function of
-<kbd class="key">TAB</kbd> and <kbd class="kbd">{M-<kbd class="key">TAB</kbd>}</kbd> so that they insert a tab
-and remove the previous character, respectively.  This is useful when
-one is formatting information within a single cell.  When in this
-mode, <kbd class="kbd">{<kbd class="key">TAB</kbd>}</kbd> inserts a literal TAB character, by default.
-Set the variable, <code class="code">kotl-mode:indent-tabs-mode</code>, to
-&lsquo;<samp class="samp">nil</samp>&rsquo; if you want space characters used to form the tab.
-Use <kbd class="kbd">{M-1 <kbd class="key">TAB</kbd>}</kbd> to toggle the <kbd class="key">TAB</kbd> and
-<kbd class="kbd">{M-<kbd class="key">TAB</kbd>}</kbd> keys back to promoting and demoting trees.
-</p>
-
 <a class="index-entry-id" id="index-Org-tables"></a>
-<p>The Koutliner also supports Org Table editing, see <a data-manual="org" href="https://www.gnu.org/software/emacs/manual/html_mono/org.html#Tables">Tables</a> in <cite class="cite">the Org Mode Manual</cite>, via Org table minor mode.  Use <kbd class="kbd">{M-x
-orgtbl-mode <kbd class="key">RET</kbd>}</kbd> to toggle this on and off.  A press of the
-Action Key on a <code class="code">|</code> symbol, also toggles this minor mode on or
-off.
+<p>The Koutliner also supports Org Table editing, see <a data-manual="org" href="https://www.gnu.org/software/emacs/manual/html_mono/org.html#Tables">Tables</a> in <cite class="cite">the
+Org Mode Manual</cite>, via Org table minor mode.  Use <kbd class="kbd">{M-x orgtbl-mode
+<kbd class="key">RET</kbd>}</kbd> to toggle this on and off.  A press of the Action Key on a
+<code class="code">|</code> symbol anywhere within a table, also toggles this minor mode on
+or off.
 </p>
 <a class="index-entry-id" id="index-outline-mode"></a>
 <a class="index-entry-id" id="index-M_002d0-TAB"></a>
-<a class="index-entry-id" id="index-M_002d0-M_002dTAB"></a>
+<a class="index-entry-id" id="index-M_002d0-S_002dTAB"></a>
 <p>Tree demotion and promotion keys match the defaults in Org mode and
 Outline mode, plus some easier to type ones.  The tables below
 summarize which keys work whether inside an Org table or outside.
 </p>
-<p>Note that you must use <kbd class="kbd">{M-0 <kbd class="key">TAB</kbd>}</kbd> and <kbd class="kbd">{M-0 M-<kbd class="key">TAB</kbd>}</kbd>
-to demote/promote Koutline trees when in a table since <kbd class="key">TAB</kbd> and
-<kbd class="kbd">{M-<kbd class="key">TAB</kbd>}</kbd> move between fields within a table.
+<p>Note that you must use <kbd class="kbd">{M-0 <kbd class="key">TAB</kbd>}</kbd> and <kbd class="kbd">{M-0 S-<kbd class="key">TAB</kbd>}</kbd> to
+demote/promote Koutline trees when in a table since <kbd class="key">TAB</kbd> and
+<kbd class="kbd">{S-<kbd class="key">TAB</kbd>}</kbd> move between fields within tables when Org Table minor
+mode is active.
 </p>
 <div class="example">
 <pre class="example-preformatted">|----------------------------+-----------------------------|
 | Promotion Inside Org Table | Demotion Inside Org Table   |
 |----------------------------+-----------------------------|
-| M-0 M-TAB                  | M-0 TAB                     |
+| M-0 S-TAB                  | M-0 TAB                     |
 | C-c C-,                    | C-c C-.                     |
 | C-c C-&lt;                    | C-c C-&gt;                     |
 |----------------------------+-----------------------------|
@@ -6840,12 +6837,72 @@ to demote/promote Koutline trees when in a table since <kbd class="key">TAB</kbd
 
 <hr>
 </div>
+<div class="subsection-level-extent" id="Org_002dlike-Visibility-Cycling">
+<div class="nav-panel">
+<p>
+Next: <a href="#Inserting-Literal-Tabs" accesskey="n" rel="next">Inserting Literal Tabs</a>, Previous: <a href="#Promoting-and-Demoting" accesskey="p" rel="prev">Promoting and Demoting</a>, Up: <a href="#Editing-Outlines" accesskey="u" rel="up">Editing Outlines</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h4 class="subsection" id="Org_002dlike-Visibility-Cycling-1"><span>9.5.3 Org-like Visibility Cycling<a class="copiable-link" href="#Org_002dlike-Visibility-Cycling-1"> &para;</a></span></h4>
+
+<a class="index-entry-id" id="index-koutliner_002c-M_002d1-TAB"></a>
+<a class="index-entry-id" id="index-kotl_002dmode_003atab_002dcommand"></a>
+<a class="index-entry-id" id="index-kotl_002dmode_003auntab_002dcommand"></a>
+<a class="index-entry-id" id="index-Koutliner_002c-toggle-tab-behavior"></a>
+<a class="index-entry-id" id="index-Koutliner_002c-cycling"></a>
+<a class="index-entry-id" id="index-Koutliner_002c-Org_002dlike-cycling"></a>
+<p><kbd class="kbd">{M-1 <kbd class="key">TAB</kbd>}</kbd> toggles the function of <kbd class="key">TAB</kbd> and
+<kbd class="kbd">{M-<kbd class="key">TAB</kbd>}</kbd> between promotion/demotion and Org-like tree
+visibility cycling.  For precise details, see the documentation strings
+for <code class="code">kotl-mode:tab-command</code> and <code class="code">kotl-mode:untab-command</code>.
+</p>
+<hr>
+</div>
+<div class="subsection-level-extent" id="Inserting-Literal-Tabs">
+<div class="nav-panel">
+<p>
+Next: <a href="#Relocating-and-Copying" accesskey="n" rel="next">Relocating and Copying</a>, Previous: <a href="#Org_002dlike-Visibility-Cycling" accesskey="p" rel="prev">Org-like Visibility Cycling</a>, Up: <a href="#Editing-Outlines" accesskey="u" rel="up">Editing Outlines</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h4 class="subsection" id="Inserting-Literal-Tabs-1"><span>9.5.4 Inserting Literal Tabs<a class="copiable-link" href="#Inserting-Literal-Tabs-1"> &para;</a></span></h4>
+
+<a class="index-entry-id" id="index-inserting-tabs"></a>
+<a class="index-entry-id" id="index-tabs_002c-inserting"></a>
+<p>Insertion of TAB characters can be as simple or as complex as you like.
+The simplest technique is to use <kbd class="kbd">{C-q TAB}</kbd> whenever you want to
+insert a TAB.
+</p>
+<a class="index-entry-id" id="index-kotl_002dmode_003atab_002dflag"></a>
+<p>If you don&rsquo;t use the TAB key for tree demotion or visibility cycling and
+prefer that it always insert a TAB character, then set the variable,
+<code class="code">kotl-mode:tab-flag</code> to &lsquo;<samp class="samp">t</samp>&rsquo;.
+</p>
+<a class="index-entry-id" id="index-kotl_002dmode_003aemulate_002dtab"></a>
+<p>If you prefer that the TAB key inserts a TAB character only in some
+contexts, as it does in Org mode, then see the documentation for the
+variable, <code class="code">kotl-mode:emulate-tab</code>, and set it appropriately.
+</p>
+<a class="index-entry-id" id="index-kotl_002dmode_003aindent_002dtabs_002dmode"></a>
+<p>In contexts where the TAB key inserts a TAB character, you have the
+option of having it insert spaces instead.  Set the variable,
+<code class="code">kotl-mode:indent-tabs-mode</code>, to &lsquo;<samp class="samp">nil</samp>&rsquo;.
+</p>
+<p>so that they insert a tab and remove the previous
+character, respectively.  This is useful when one is formatting
+information within a single cell.  When in this mode, <kbd class="kbd">{<kbd class="key">TAB</kbd>}</kbd>
+inserts a literal TAB character, by default.  Set the variable,
+<code class="code">kotl-mode:indent-tabs-mode</code>, to &lsquo;<samp class="samp">nil</samp>&rsquo; if you want space
+characters used to form the tab.  Use <kbd class="kbd">{M-1 <kbd class="key">TAB</kbd>}</kbd> to toggle
+the <kbd class="key">TAB</kbd> and <kbd class="kbd">{M-<kbd class="key">TAB</kbd>}</kbd> keys back to promoting and
+demoting trees.
+</p>
+
+<hr>
+</div>
 <div class="subsection-level-extent" id="Relocating-and-Copying">
 <div class="nav-panel">
 <p>
-Next: <a href="#Moving-Around" accesskey="n" rel="next">Moving Around</a>, Previous: <a href="#Promoting-and-Demoting" accesskey="p" rel="prev">Promoting and Demoting</a>, Up: <a href="#Editing-Outlines" accesskey="u" rel="up">Editing Outlines</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Moving-Around" accesskey="n" rel="next">Moving Around</a>, Previous: <a href="#Inserting-Literal-Tabs" accesskey="p" rel="prev">Inserting Literal Tabs</a>, Up: <a href="#Editing-Outlines" accesskey="u" rel="up">Editing Outlines</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<h4 class="subsection" id="Relocating-and-Copying-1"><span>9.5.3 Relocating and Copying<a class="copiable-link" href="#Relocating-and-Copying-1"> &para;</a></span></h4>
+<h4 class="subsection" id="Relocating-and-Copying-1"><span>9.5.5 Relocating and Copying<a class="copiable-link" href="#Relocating-and-Copying-1"> &para;</a></span></h4>
 
 <a class="index-entry-id" id="index-tree_002c-copying"></a>
 <a class="index-entry-id" id="index-tree_002c-moving"></a>
@@ -6955,7 +7012,7 @@ See <a class="xref" href="#Inserting-and-Importing">Inserting and Importing</a>.
 <p>
 Next: <a href="#Filling" accesskey="n" rel="next">Filling</a>, Previous: <a href="#Relocating-and-Copying" accesskey="p" rel="prev">Relocating and Copying</a>, Up: <a href="#Editing-Outlines" accesskey="u" rel="up">Editing Outlines</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<h4 class="subsection" id="Moving-Around-1"><span>9.5.4 Moving Around<a class="copiable-link" href="#Moving-Around-1"> &para;</a></span></h4>
+<h4 class="subsection" id="Moving-Around-1"><span>9.5.6 Moving Around<a class="copiable-link" href="#Moving-Around-1"> &para;</a></span></h4>
 
 <a class="index-entry-id" id="index-outline_002c-motion"></a>
 <p>In addition to normal emacs movement commands, you can move within a
@@ -7019,7 +7076,7 @@ cell or from one cell or tree to another.
 <p>
 Next: <a href="#Transposing" accesskey="n" rel="next">Transposing</a>, Previous: <a href="#Moving-Around" accesskey="p" rel="prev">Moving Around</a>, Up: <a href="#Editing-Outlines" accesskey="u" rel="up">Editing Outlines</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<h4 class="subsection" id="Filling-1"><span>9.5.5 Filling<a class="copiable-link" href="#Filling-1"> &para;</a></span></h4>
+<h4 class="subsection" id="Filling-1"><span>9.5.7 Filling<a class="copiable-link" href="#Filling-1"> &para;</a></span></h4>
 
 <a class="index-entry-id" id="index-outline_002c-filling"></a>
 <a class="index-entry-id" id="index-filling"></a>
@@ -7066,7 +7123,7 @@ a &lsquo;no-fill&rsquo; property, then your formatting will be lost.
 <p>
 Next: <a href="#Splitting-and-Appending" accesskey="n" rel="next">Splitting and Appending</a>, Previous: <a href="#Filling" accesskey="p" rel="prev">Filling</a>, Up: <a href="#Editing-Outlines" accesskey="u" rel="up">Editing Outlines</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<h4 class="subsection" id="Transposing-1"><span>9.5.6 Transposing<a class="copiable-link" href="#Transposing-1"> &para;</a></span></h4>
+<h4 class="subsection" id="Transposing-1"><span>9.5.8 Transposing<a class="copiable-link" href="#Transposing-1"> &para;</a></span></h4>
 
 <p>The Koutliner move and copy commands rearrange entire trees.  The
 following two commands, in contrast, exchange the locations of two
@@ -7100,7 +7157,7 @@ fewer visible, it makes the current cell the last cell in the outline.
 <p>
 Next: <a href="#Inserting-and-Importing" accesskey="n" rel="next">Inserting and Importing</a>, Previous: <a href="#Transposing" accesskey="p" rel="prev">Transposing</a>, Up: <a href="#Editing-Outlines" accesskey="u" rel="up">Editing Outlines</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<h4 class="subsection" id="Splitting-and-Appending-1"><span>9.5.7 Splitting and Appending<a class="copiable-link" href="#Splitting-and-Appending-1"> &para;</a></span></h4>
+<h4 class="subsection" id="Splitting-and-Appending-1"><span>9.5.9 Splitting and Appending<a class="copiable-link" href="#Splitting-and-Appending-1"> &para;</a></span></h4>
 
 <a class="index-entry-id" id="index-splitting-a-cell"></a>
 <a class="index-entry-id" id="index-cell_002c-splitting"></a>
@@ -7134,7 +7191,7 @@ This helps maintain any special formatting the appended text may have.
 <p>
 Next: <a href="#Exporting" accesskey="n" rel="next">Exporting</a>, Previous: <a href="#Splitting-and-Appending" accesskey="p" rel="prev">Splitting and Appending</a>, Up: <a href="#Editing-Outlines" accesskey="u" rel="up">Editing Outlines</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<h4 class="subsection" id="Inserting-and-Importing-1"><span>9.5.8 Inserting and Importing<a class="copiable-link" href="#Inserting-and-Importing-1"> &para;</a></span></h4>
+<h4 class="subsection" id="Inserting-and-Importing-1"><span>9.5.10 Inserting and Importing<a class="copiable-link" href="#Inserting-and-Importing-1"> &para;</a></span></h4>
 
 <a class="index-entry-id" id="index-outline_002c-inserting-into"></a>
 <a class="index-entry-id" id="index-outline_002c-importing-into"></a>
@@ -7228,7 +7285,7 @@ information.
 <p>
 Previous: <a href="#Inserting-and-Importing" accesskey="p" rel="prev">Inserting and Importing</a>, Up: <a href="#Editing-Outlines" accesskey="u" rel="up">Editing Outlines</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<h4 class="subsection" id="Exporting-1"><span>9.5.9 Exporting<a class="copiable-link" href="#Exporting-1"> &para;</a></span></h4>
+<h4 class="subsection" id="Exporting-1"><span>9.5.11 Exporting<a class="copiable-link" href="#Exporting-1"> &para;</a></span></h4>
 
 <a class="index-entry-id" id="index-outline_002c-exporting-1"></a>
 <a class="index-entry-id" id="index-outline_002c-HTML-conversion"></a>
@@ -8005,7 +8062,7 @@ Next: <a href="#HyRolo-Keys" accesskey="n" rel="next">HyRolo Keys</a>, Previous:
 section, the menu item names from the minibuffer menu are used to
 refer to each command.
 </p>
-<p>The <code class="code">RegexFind</code> menu item searches the rolo list for all entries 
+<p>The <code class="code">RegexFind</code> menu item searches the rolo list for all entries
 which contain matches for a given regular expression.  The regular
 expression syntax used is the same as the one used within Emacs
 and across the GNU set of tools.  See <a data-manual="emacs" href="https://www.gnu.org/software/emacs/manual/html_mono/emacs.html#Regexps">Syntax of Regular
@@ -8418,7 +8475,7 @@ matching entries retrieved from multiple files during a single search.
 </dd>
 <dt><a id="index-hyrolo_002dhdr_002dand_002dentry_002dregexp"></a><span><code class="code">hyrolo-hdr-and-entry-regexp</code><a class="copiable-link" href="#index-hyrolo_002dhdr_002dand_002dentry_002dregexp"> &para;</a></span></dt>
 <dd><p>The rolo entry start delimiter is given by the regular expression
-variable, <code class="code">hyrolo-hdr-and-entry-regexp</code>, whose default value is &quot;^\*+&quot;, i.e. 
+variable, <code class="code">hyrolo-hdr-and-entry-regexp</code>, whose default value is &quot;^\*+&quot;, i.e.
 one or more asterisks at the beginning of a line.
 </p>
 </dd>
@@ -9028,7 +9085,7 @@ link referent.
 buttons perform a grep-like function over a current repo&rsquo;s git log
 entries.  The buttons use this format: [&lt;text to match&gt;].
 </p>
-<p>The following defines the button type called <code class="code">search-git-log</code> with a 
+<p>The following defines the button type called <code class="code">search-git-log</code> with a
 a key series action surrounded by braces:
 </p>
 <p><code class="code">(defil search-git-log &quot;[&lt;&quot; &quot;&gt;]&quot; &quot;.*&quot; &quot;{M-: (hypb:fgrep-git-log \&quot;\\&amp;\&quot;) RET}&quot;)</code>
@@ -10530,7 +10587,7 @@ below the Hyperbole menubar menu, as seen here.
 <a class="index-entry-id" id="index-variable-setting"></a>
 <p>Generally, you should not need to change anything other than these options.
 However, if you like to customize your environment extensively, there
-are many additional Hyperbole customization options that may be 
+are many additional Hyperbole customization options that may be
 changed with the Emacs customization interface,
 see <a data-manual="emacs" href="https://www.gnu.org/software/emacs/manual/html_mono/emacs.html#Easy-Customization">Easy Customization Interface</a> in <cite class="cite">the GNU
 Emacs Manual</cite>.  When you save any changes within this interface, the
@@ -12221,7 +12278,7 @@ the minimal diagonal movements which register a drag):
      Restores the prior window configuration from the ring.  A prefix
      argument N specifies the Nth prior configuration from the ring.
 </pre></div></div>
-     
+
 <hr>
 </div>
 <div class="subsection-level-extent" id="Smart-Mouse-Drags-outside-a-Window">
@@ -12709,7 +12766,7 @@ Next: <a href="#Smart-Key-_002d-Delimited-Things" accesskey="n" rel="next">Smart
      (1) on the last line, quit from the magit mode (<kbd class="kbd">{q}</kbd> key binding);
      (2) at the end of a line, scroll up a windowful;
      (3) in a <code class="code">magit-status-mode</code> buffer on a merge conflict
-         marker, keep either the upper, both or the lower version of 
+         marker, keep either the upper, both or the lower version of
          the conflict. See also <a class="ref" href="#smerge">smerge</a>.
      (4) on a line starting with a &lsquo;+&rsquo; char in &lsquo;magit-status-mode&rsquo; or
          &lsquo;magit-revision-mode&rsquo; go to the worktree file.
@@ -12810,7 +12867,7 @@ Next: <a href="#Smart-Key-_002d-ERT-Results-Mode" accesskey="n" rel="next">Smart
 <p>Because of the way helm is written, you may need a modified version of
 helm for these Smart Key actions to work.  Try them in your own
 version and if there are any issues, install helm from
-<samp class="file">github.com/rswgnu/helm</samp>. 
+<samp class="file">github.com/rswgnu/helm</samp>.
 </p>
 <a class="index-entry-id" id="index-helm_002dmode"></a>
 <a class="index-entry-id" id="index-completion-4"></a>
@@ -12920,13 +12977,16 @@ Next: <a href="#Smart-Key-_002d-Flymake-Mode" accesskey="n" rel="next">Smart Key
   ACTION KEY
      (1) at the end of the buffer, uncollapses and unhides all cells in
          the view;
-     (2) within a cell, if its subtree is hidden then shows it,
-         otherwise hides it;
+     (2) at the end of a visible line, call the <code class="code">action-key-eol-function</code>;
      (3) between cells or within the read-only indentation region to the
          left of a cell, begins creation of a klink to some other
          outline cell; press the Action Key twice on another cell to
          select the link referent cell;
-     (4) anywhere else, scrolls up a windowful.
+     (4) on a | character within an Org-style table, toggle Org Table minor
+         mode;
+     (5) within a cell, if its subtree is hidden then shows it,
+         otherwise hides it;
+     (6) anywhere else, scrolls up a windowful.
 </pre></div></div>
 <div class="format">
 <div class="group"><pre class="format-preformatted">  ASSIST KEY
@@ -13268,7 +13328,7 @@ buffer:
          &lsquo;smart-c-cpp-include-path&rsquo; and
          &lsquo;smart-c-include-path&rsquo;;
      (2) within a method definition before the opening brace, its
-         declaration is displayed; 
+         declaration is displayed;
      (3) within a method declaration, its definition is displayed;
      (4) on a class name, the class definition is shown;
      (5) on a member reference (past any :: scoping operator), the
@@ -13795,7 +13855,7 @@ Next: <a href="#Smart-Key-_002d-Tar-File-Mode" accesskey="n" rel="next">Smart Ke
 <div class="format">
 <div class="group"><pre class="format-preformatted">  ASSIST KEY
      (1) on the first or second column of an entry, the selected buffer is unmarked
-         for display or deletion; 
+         for display or deletion;
      (2) anywhere else within an entry line, the selected buffer is marked for
          deletion;
      (3) on the first or last line in the buffer, all display, save, and delete
@@ -14738,6 +14798,7 @@ Next: <a href="#Function-Index" accesskey="n" rel="next">Function, Variable and 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h"><code>C-h h</code></a></td><td class="printindex-index-section"><a href="#Invocation">Invocation</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-1"><code>C-h h</code></a></td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-2"><code>C-h h</code></a></td><td class="printindex-index-section"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-_003f"><code>C-h h ?</code></a></td><td class="printindex-index-section"><a href="#Invocation">Invocation</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-c-a"><code>C-h h c a</code></a></td><td class="printindex-index-section"><a href="#Customization">Customization</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-c-d"><code>C-h h c d</code></a></td><td class="printindex-index-section"><a href="#Smart-Key-Debugging">Smart Key Debugging</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dh-h-c-o"><code>C-h h c o</code></a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
@@ -14889,13 +14950,12 @@ Next: <a href="#Function-Index" accesskey="n" rel="next">Function, Variable and 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-M_002d_003cleft_003e"><code>koutliner, M-&lt;left&gt;</code></a></td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-M_002d_003cright_003e"><code>koutliner, M-&lt;right&gt;</code></a></td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-M_002d0-C_002dc-t"><code>koutliner, M-0 C-c t</code></a></td><td class="printindex-index-section"><a href="#Transposing">Transposing</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-M_002d1-TAB"><code>koutliner, M-1 <kbd class="key">TAB</kbd></code></a></td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-M_002d1-TAB"><code>koutliner, M-1 <kbd class="key">TAB</kbd></code></a></td><td class="printindex-index-section"><a href="#Org_002dlike-Visibility-Cycling">Org-like Visibility Cycling</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-M_002dj"><code>koutliner, M-j</code></a></td><td class="printindex-index-section"><a href="#Filling">Filling</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-M_002dq"><code>koutliner, M-q</code></a></td><td class="printindex-index-section"><a href="#Filling">Filling</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-M_002dRET"><code>koutliner, M-<kbd class="key">RET</kbd></code></a></td><td class="printindex-index-section"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-M_002dShift_002d_003cleft_003e"><code>koutliner, M-Shift-&lt;left&gt;</code></a></td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-M_002dShift_002d_003cright_003e"><code>koutliner, M-Shift-&lt;right&gt;</code></a></td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-M_002dTAB"><code>koutliner, M-<kbd class="key">TAB</kbd></code></a></td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-Shift_002dTAB"><code>koutliner, Shift-<kbd class="key">TAB</kbd></code></a></td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-TAB"><code>koutliner, <kbd class="key">TAB</kbd></code></a></td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td colspan="3"><hr></td></tr>
@@ -14909,7 +14969,7 @@ Next: <a href="#Function-Index" accesskey="n" rel="next">Function, Variable and 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-M_002d_003cdown_003e"><code>M-&lt;down&gt;</code></a></td><td class="printindex-index-section"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-M_002d_003cup_003e"><code>M-&lt;up&gt;</code></a></td><td class="printindex-index-section"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-M_002d0-M_002dRET-s"><code>M-0 M-<kbd class="key">RET</kbd> s</code></a></td><td class="printindex-index-section"><a href="#HyWikiWord-Specs">HyWikiWord Specs</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-M_002d0-M_002dTAB"><code>M-0 M-<kbd class="key">TAB</kbd></code></a></td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-M_002d0-S_002dTAB"><code>M-0 S-<kbd class="key">TAB</kbd></code></a></td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-M_002d0-TAB"><code>M-0 <kbd class="key">TAB</kbd></code></a></td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-M_002d1-M_002do-w-_003cwindow_002did_003e"><code>M-1 M-o w &lt;window-id&gt;</code></a></td><td class="printindex-index-section"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-M_002d1-M_002dRET"><code>M-1 M-<kbd class="key">RET</kbd></code></a></td><td class="printindex-index-section"><a href="#HyWikiWord-Specs">HyWikiWord Specs</a></td></tr>
@@ -15720,6 +15780,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td class="printindex-index-entry"><a href="#index-kotl_002dmode_003adelete_002dindentation"><code>kotl-mode:delete-indentation</code></a></td><td class="printindex-index-section"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-kotl_002dmode_003ademote_002dtree"><code>kotl-mode:demote-tree</code></a></td><td class="printindex-index-section"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-kotl_002dmode_003adown_002dlevel"><code>kotl-mode:down-level</code></a></td><td class="printindex-index-section"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-kotl_002dmode_003aemulate_002dtab">kotl-mode:emulate-tab</a></td><td class="printindex-index-section"><a href="#Inserting-Literal-Tabs">Inserting Literal Tabs</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-kotl_002dmode_003aend_002dof_002dbuffer"><code>kotl-mode:end-of-buffer</code></a></td><td class="printindex-index-section"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-kotl_002dmode_003aend_002dof_002dcell"><code>kotl-mode:end-of-cell</code></a></td><td class="printindex-index-section"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-kotl_002dmode_003aend_002dof_002dline"><code>kotl-mode:end-of-line</code></a></td><td class="printindex-index-section"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
@@ -15748,7 +15809,7 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td class="printindex-index-entry"><a href="#index-kotl_002dmode_003ahide_002dtree-1"><code>kotl-mode:hide-tree</code></a></td><td class="printindex-index-section"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-kotl_002dmode_003aindent_002dline"><code>kotl-mode:indent-line</code></a></td><td class="printindex-index-section"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-kotl_002dmode_003aindent_002dregion"><code>kotl-mode:indent-region</code></a></td><td class="printindex-index-section"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-kotl_002dmode_003aindent_002dtabs_002dmode">kotl-mode:indent-tabs-mode</a></td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-kotl_002dmode_003aindent_002dtabs_002dmode">kotl-mode:indent-tabs-mode</a></td><td class="printindex-index-section"><a href="#Inserting-Literal-Tabs">Inserting Literal Tabs</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-kotl_002dmode_003ajust_002done_002dspace"><code>kotl-mode:just-one-space</code></a></td><td class="printindex-index-section"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-kotl_002dmode_003akill_002dcontents"><code>kotl-mode:kill-contents</code></a></td><td class="printindex-index-section"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-kotl_002dmode_003akill_002dline"><code>kotl-mode:kill-line</code></a></td><td class="printindex-index-section"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
@@ -15782,12 +15843,15 @@ Next: <a href="#Concept-Index" accesskey="n" rel="next">Concept Index</a>, Previ
 <tr><td></td><td class="printindex-index-entry"><a href="#index-kotl_002dmode_003ashow_002dtree"><code>kotl-mode:show-tree</code></a></td><td class="printindex-index-section"><a href="#Menu-Commands">Menu Commands</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-kotl_002dmode_003ashow_002dtree-1"><code>kotl-mode:show-tree</code></a></td><td class="printindex-index-section"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-kotl_002dmode_003asplit_002dcell"><code>kotl-mode:split-cell</code></a></td><td class="printindex-index-section"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-kotl_002dmode_003atab_002dcommand"><code>kotl-mode:tab-command</code></a></td><td class="printindex-index-section"><a href="#Org_002dlike-Visibility-Cycling">Org-like Visibility Cycling</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-kotl_002dmode_003atab_002dflag">kotl-mode:tab-flag</a></td><td class="printindex-index-section"><a href="#Inserting-Literal-Tabs">Inserting Literal Tabs</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-kotl_002dmode_003atop_002dcells"><code>kotl-mode:top-cells</code></a></td><td class="printindex-index-section"><a href="#Menu-Commands">Menu Commands</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-kotl_002dmode_003atop_002dcells-1"><code>kotl-mode:top-cells</code></a></td><td class="printindex-index-section"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-kotl_002dmode_003atranspose_002dcells"><code>kotl-mode:transpose-cells</code></a></td><td class="printindex-index-section"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-kotl_002dmode_003atranspose_002dchars"><code>kotl-mode:transpose-chars</code></a></td><td class="printindex-index-section"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-kotl_002dmode_003atranspose_002dlines"><code>kotl-mode:transpose-lines</code></a></td><td class="printindex-index-section"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-kotl_002dmode_003atranspose_002dwords"><code>kotl-mode:transpose-words</code></a></td><td class="printindex-index-section"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-kotl_002dmode_003auntab_002dcommand"><code>kotl-mode:untab-command</code></a></td><td class="printindex-index-section"><a href="#Org_002dlike-Visibility-Cycling">Org-like Visibility Cycling</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-kotl_002dmode_003aup_002dlevel"><code>kotl-mode:up-level</code></a></td><td class="printindex-index-section"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-kotl_002dmode_003ayank"><code>kotl-mode:yank</code></a></td><td class="printindex-index-section"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-kotl_002dmode_003ayank_002dpop"><code>kotl-mode:yank-pop</code></a></td><td class="printindex-index-section"><a href="#Koutliner-Keys">Koutliner Keys</a></td></tr>
@@ -16472,6 +16536,7 @@ Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-help_002c-button">help, button</a></td><td class="printindex-index-section"><a href="#Smart-Key-Operations">Smart Key Operations</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-help_002c-HyWikiWords">help, HyWikiWords</a></td><td class="printindex-index-section"><a href="#Using-HyWikiWords">Using HyWikiWords</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-help_002c-menu-items">help, menu items</a></td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-help_002c-minibuffer-menu">help, minibuffer menu</a></td><td class="printindex-index-section"><a href="#Invocation">Invocation</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-help_002c-Smart-Key">help, Smart Key</a></td><td class="printindex-index-section"><a href="#Smart-Key-Operations">Smart Key Operations</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hide-levels">hide levels</a></td><td class="printindex-index-section"><a href="#View-Specs">View Specs</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-hide-lines">hide lines</a></td><td class="printindex-index-section"><a href="#View-Specs">View Specs</a></td></tr>
@@ -16661,7 +16726,7 @@ Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-inhibit-org_002dmode-support">inhibit org-mode support</a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-initialization-file">initialization file</a></td><td class="printindex-index-section"><a href="#Autonumbering">Autonumbering</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-insert-item">insert item</a></td><td class="printindex-index-section"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-inserting-tabs">inserting tabs</a></td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-inserting-tabs">inserting tabs</a></td><td class="printindex-index-section"><a href="#Inserting-Literal-Tabs">Inserting Literal Tabs</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-insertion">insertion</a></td><td class="printindex-index-section"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-installation">installation</a></td><td class="printindex-index-section"><a href="#Elpa-Latest-or-Release-Package-Installation">Elpa Latest or Release Package Installation</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-installation_002c-from-git">installation, from git</a></td><td class="printindex-index-section"><a href="#Elpa-Latest-or-Release-Package-Installation">Elpa Latest or Release Package Installation</a></td></tr>
@@ -16752,7 +16817,10 @@ Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Koutliner-commands">Koutliner commands</a></td><td class="printindex-index-section"><a href="#Menu-Commands">Menu Commands</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Koutliner-import_002fexport-commands">Koutliner import/export commands</a></td><td class="printindex-index-section"><a href="#Menu-Commands">Menu Commands</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-Koutliner-menu">Koutliner menu</a></td><td class="printindex-index-section"><a href="#Menu-Commands">Menu Commands</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-Koutliner_002c-toggle-tab-behavior">Koutliner, toggle tab behavior</a></td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-Koutliner_002c-cycling">Koutliner, cycling</a></td><td class="printindex-index-section"><a href="#Org_002dlike-Visibility-Cycling">Org-like Visibility Cycling</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-no_002dfill-property">koutliner, no-fill property</a></td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-Koutliner_002c-Org_002dlike-cycling">Koutliner, Org-like cycling</a></td><td class="printindex-index-section"><a href="#Org_002dlike-Visibility-Cycling">Org-like Visibility Cycling</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-Koutliner_002c-toggle-tab-behavior">Koutliner, toggle tab behavior</a></td><td class="printindex-index-section"><a href="#Org_002dlike-Visibility-Cycling">Org-like Visibility Cycling</a></td></tr>
 <tr><td colspan="3"><hr></td></tr>
 <tr><th id="Concept-Index_cp_letter-L">L</th></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-label-separator_002c-changing">label separator, changing</a></td><td class="printindex-index-section"><a href="#Autonumbering">Autonumbering</a></td></tr>
@@ -16831,7 +16899,8 @@ Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-maximize-frame">maximize frame</a></td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-maximize-window">maximize window</a></td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu-exit">menu exit</a></td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-menu-help">menu help</a></td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-menu-help">menu help</a></td><td class="printindex-index-section"><a href="#Invocation">Invocation</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-menu-help-1">menu help</a></td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item-key-bindings">menu item key bindings</a></td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item-selection">menu item selection</a></td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-menu-item_002c-Act">menu item, Act</a></td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
@@ -16964,6 +17033,7 @@ Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-minibuffer-menu">minibuffer menu</a></td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-minibuffer-menu-1">minibuffer menu</a></td><td class="printindex-index-section"><a href="#Minibuffer-Menu-Activation">Minibuffer Menu Activation</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-minibuffer-menu-bindings">minibuffer menu bindings</a></td><td class="printindex-index-section"><a href="#Binding-Minibuffer-Menu-Items">Binding Minibuffer Menu Items</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-minibuffer-menu-help">minibuffer menu help</a></td><td class="printindex-index-section"><a href="#Invocation">Invocation</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-minibuffer-menus">minibuffer menus</a></td><td class="printindex-index-section"><a href="#Menus">Menus</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-minibuffer_002c-buffer-menu">minibuffer, buffer menu</a></td><td class="printindex-index-section"><a href="#Minibuffer-Menu-Activation">Minibuffer Menu Activation</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-minibuffer_002c-default-actions">minibuffer, default actions</a></td><td class="printindex-index-section"><a href="#Minibuffer-Menu-Activation">Minibuffer Menu Activation</a></td></tr>
@@ -17294,7 +17364,7 @@ Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-table-of-contents">table of contents</a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-table-of-contents-1">table of contents</a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-table-of-contents-2">table of contents</a></td><td class="printindex-index-section"><a href="#Action-Types">Action Types</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-tabs_002c-inserting">tabs, inserting</a></td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-tabs_002c-inserting">tabs, inserting</a></td><td class="printindex-index-section"><a href="#Inserting-Literal-Tabs">Inserting Literal Tabs</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-tag">tag</a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-TAGS-file">TAGS file</a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-tags-file">tags file</a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>

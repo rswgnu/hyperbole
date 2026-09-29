@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     15-Aug-26 at 14:19:21 by Bob Weiner
+;; Last-Mod:     27-Sep-26 at 01:27:23 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2224,12 +2224,16 @@ Buffer without File      link-to-buffer-tmp"
 					(setq val (hargs:at-p t)))
 				      (list 'link-to-file val))
 				     ((derived-mode-p #'kotl-mode)
-				      (list 'link-to-kcell (hypb:buffer-file-name)
+				      (list 'link-to-kcell
+                                            (unless (equal (hbut:get-key-src t) buffer-file-name)
+                                              (hypb:buffer-file-name))
                                             (concat (kcell-view:label) "="
                                                     (kcell-view:idstamp))))
 				     ;;
-				     ;; If region is active in the target buffer and it is one
-				     ;; line or less, then do a link-to-string-match to the region string.
+				     ;; If region is active in the target
+				     ;; buffer and it is one line or less,
+				     ;; then do a link-to-string-match to
+				     ;; the region string.
 				     ((let ((region (and (use-region-p)
 							 (string-trim (buffer-substring-no-properties
 								       (region-beginning) (region-end)))))
@@ -2303,8 +2307,10 @@ Buffer without File      link-to-buffer-tmp"
                                               (hpath:shorten buffer-file-name src-dir)
                                               (line-number-at-pos))))
                                      ;;
-				     ;; If current line starts with an outline-regexp prefix and
-				     ;; has a non-empty heading, use a link-to-string-match.
+				     ;; If current line starts with an
+				     ;; `outline-regexp' prefix and has a
+				     ;; non-empty heading, use a
+				     ;; link-to-string-match.
 				     ((and (hypb:buffer-file-name)
 					   (derived-mode-p 'outline-mode 'kotl-mode)
 					   (stringp outline-regexp)
