@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     28-Sep-26 at 13:10:00 by Bob Weiner
+;; Last-Mod:     29-Sep-26 at 17:08:43 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -470,15 +470,6 @@ The button's attributes are stored in the symbol, `hbut:current'.")
     ((eq major-mode 'pages-directory-mode)
      . ((pages-directory-goto) . (pages-directory-goto)))
     ;;
-    ;; If a variable holding an in-memory Hyperbole button object, e.g. hbut:current:
-    ;; Action Key - Jump to variable definition
-    ;; Assist Key - Display button attributes of any Hyperbole button symbol at point
-    ((and (setq hkey-value (smart-prog-at-tag-p t))
-	  (hbut:is-p (intern-soft hkey-value))
-          (setq hkey-value (smart-flash-tag-at-point hkey-value)))
-     . ((ignore-errors (smart-prog-tag hkey-value)) .
-	(hbut:report (intern-soft hkey-value))))
-    ;;
     ;; Handle programming language tag definition finding via xref.
     ;; For most programming languages use xref which supports various
     ;; Language Servers
@@ -486,7 +477,7 @@ The button's attributes are stored in the symbol, `hbut:current'.")
 	  (smart-tags-find-p hkey-value)
           (setq hkey-value (smart-flash-tag-at-point hkey-value)))
      . ((ignore-errors (smart-prog-tag hkey-value)) .
-	(ignore-errors (smart-prog-tag hkey-value))))
+	(hbut:report (intern-soft hkey-value))))
     ;;
     ;; Python files - ensure this comes before Imenu for more advanced
     ;; definition lookups
@@ -512,16 +503,16 @@ The button's attributes are stored in the symbol, `hbut:current'.")
 	  (hypb:buffer-file-name) (smart-asm-at-tag-p))
      . ((smart-asm) . (smart-asm nil 'next-tag)))
     ;;
-    ((setq hkey-value nil
-	   hkey-value
-	   (or (when (smart-lisp-mode-p)
-		 (or (setq hkey-value (smart-lisp-at-load-expression-p))
-		     (smart-lisp-at-tag-p)))
-	       ;; Tightly limit Lisp matches in change-log-mode but
-	       ;; call this only if hkey-value is true since
-	       ;; otherwise, already know there is no tag at point.
-	       (when hkey-value
-	         (smart-lisp-at-change-log-tag-p))))
+    ((progn (setq hkey-value nil)
+	    (and (setq hkey-value
+	               (when (smart-lisp-mode-p)
+	                 (or (setq hkey-value (smart-lisp-at-load-expression-p))
+		             (smart-lisp-at-tag-p))))
+	         ;; Tightly limit Lisp matches in change-log-mode but
+	         ;; call this only if hkey-value is true since
+	         ;; otherwise, already know there is no tag at point.
+	         (setq hkey-value (or (smart-lisp-at-change-log-tag-p)
+                                      hkey-value))))
      . ((smart-lisp) . (smart-lisp 'show-doc)))
     ;;
     ;;

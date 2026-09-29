@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     20-Sep-26 at 22:29:53 by Bob Weiner
+;; Last-Mod:     29-Sep-26 at 16:11:57 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -96,6 +96,27 @@
 ;;; ************************************************************************
 
 (run-hooks 'hibtypes-begin-load-hook)
+
+;;; ========================================================================
+;;; Jumps to and displays help for variables that store Hyperbole buttons
+;;; ========================================================================
+
+(defib hbut-identifier ()
+  "When on the name of a variable that holds a Hyperbole button, e.g. hbut:current:
+  Action Key - Jump to variable definition."
+  (let ((identifier (smart-prog-at-tag-p t))
+	start-end)
+    (when (and identifier
+	       (hbut:is-p (intern-soft identifier))
+	       (setq start-end (bounds-of-thing-at-point 'symbol)))
+      (ibut:label-set identifier (car start-end) (cdr start-end))
+      (ignore-errors
+	(hact #'smart-prog-tag identifier)))))
+
+(defun hbut-identifier:help (ibut)
+  "When on the name of a variable that holds a Hyperbole button, e.g. hbut:current:
+  Assist Key - Display button attributes of any Hyperbole button symbol at point."
+  (hbut:report ibut))
 
 ;; Don't use require below here for any libraries with ibtypes in
 ;; them.  Use load instead to ensure are reloaded when resetting
