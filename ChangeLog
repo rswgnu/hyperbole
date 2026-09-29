@@ -1,5 +1,34 @@
 2026-09-29  Bob Weiner  <rsw@gnu.org>
 
+* test/hui-tests.el (hui-gibut-create-link-to-file): Fix to compare
+    :args with second numeric argument.
+
+* test/kotl-mode-tests.el (kotl-mode-indent-cell-changes-level): Fix
+    to ensure test is run in demote/promote mode.
+
+* test/hbut-tests.el (hbut-tests--ibut-operate--add-name,
+                      hbut-tests--ibut-operate--add-new-name,
+                      hbut-tests--ibut-operate--remove-name,
+                      hbut-tests--ibut-operate--fail-new-name-ignore-region,
+                      hbut-tests--ibut-operate--fail-rename-from-name,
+                      hbut-tests--ibut-operate--fail-rename-from-name-ignore-region,
+                      hbut-tests--ibut-operate--name-ignore-region,
+                      hbut-tests--ibut-operate--none,
+                      hbut-tests--ibut-operate--rename-from-name:
+    Match to updated action type, 'hpath:find-koutline-reference', not
+    the previous 'actypes::link-to-file'.
+                     (hbut-tests:should-match-tmp-folder): Remove match
+    of path to end of string as string may contain arguments after the
+    pathname.
+
+* hpath.el (hpath:find): Fix that 'pathname' was not set after
+    resolving variables in a path with a modifier prefix.  This
+    caused the test, 'hbut-pathname-with-dash-loads-file-test'
+    to fail.
+
+* test/demo-tests.el (fast-demo-display-kotl-starting-from-cell): Fix
+    cell ref number.
+
 * kotl/EXAMPLE.kotl: Add summary tables of {TAB} and {S-TAB} behavior.
 
 * kotl/kotl-mode.el (kotl-mode:untab-command):

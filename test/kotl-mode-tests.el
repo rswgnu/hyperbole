@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:     16-May-26 at 12:04:54 by Bob Weiner
+;; Last-Mod:     29-Sep-26 at 02:56:59 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -72,6 +72,7 @@
 (ert-deftest kotl-mode-indent-cell-changes-level ()
   "Loading kotl-mode example file works."
   (setup-kotl-mode-example-test
+   (setq kotl-mode:tab-flag nil)
    (kotl-mode:example temporary-file-directory t)
    (kotl-mode:beginning-of-buffer)
    (should (kotl-mode:first-cell-p))

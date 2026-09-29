@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    15-Mar-25 at 22:39:37
-;; Last-Mod:     20-Sep-25 at 01:16:24 by Mats Lidell
+;; Last-Mod:     29-Sep-26 at 03:13:39 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -59,6 +59,7 @@
            (todotxt-mode . ((smart-todotxt) . (smart-todotxt-assist))))))
     (dolist (mode mode-list)
       (let ((major-mode (car mode)))
+        (message "%s" major-mode)
         (should (equal (hkey-actions)
                        (cdr mode))))))
 

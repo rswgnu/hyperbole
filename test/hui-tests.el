@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     29-Jun-26 at 14:23:29 by Mats Lidell
+;; Last-Mod:     29-Sep-26 at 03:04:53 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -302,9 +302,12 @@ Ensure modifying the button but keeping the label does not create a double label
             (mock (hpath:find-noselect (gbut:file)) => test-buffer)
             (hui:gibut-create "global" test-file))
 	  (with-current-buffer test-buffer
-            (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-file :args (list test-file) :loc test-file
-					       :lbl-key (ibut:label-to-key test-file)
-					       :name "global")))
+            (hy-test-helpers-verify-hattr-at-p
+             :actype 'hpath:find-koutline-reference
+             :args (list test-file 13)
+             :loc test-file
+	     :lbl-key (ibut:label-to-key test-file)
+	     :name "global")))
       (hy-delete-file-and-buffer test-file))))
 
 (ert-deftest hui-gibut-create-link-to-file-line ()
@@ -318,9 +321,12 @@ Ensure modifying the button but keeping the label does not create a double label
             (mock (hpath:find-noselect (gbut:file)) => test-buffer)
             (hui:gibut-create "global" file-and-line-num))
 	  (with-current-buffer test-buffer
-            (hy-test-helpers-verify-hattr-at-p :actype 'actypes::link-to-file-line :args (list test-file 10) :loc test-file
-					       :lbl-key (ibut:label-to-key test-file)
-					       :name "global")))
+            (hy-test-helpers-verify-hattr-at-p
+             :actype 'actypes::link-to-file-line
+             :args (list test-file 10)
+             :loc test-file
+	     :lbl-key (ibut:label-to-key test-file)
+	     :name "global")))
       (hy-delete-file-and-buffer test-file))))
 
 (ert-deftest hui-gibut-create-link-to-file-line-and-column ()

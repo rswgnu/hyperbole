@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     20-Sep-26 at 22:29:32 by Bob Weiner
+;; Last-Mod:     29-Sep-26 at 02:16:49 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1647,7 +1647,8 @@ but locational suffixes within the file are utilized."
           ;; down below.
           (setq path (cdr referent))))
       (cond (modifier
-	     (setq path (hpath:resolve path)))
+	     (setq path (hpath:resolve path)
+                   pathname path))
 	    (t (setq path (hpath:expand path)
 	             pathname (hpath:absolute-to path default-directory))
 	       ;; Remove http file:// url prefix that`hpath:absolute-to' may have
