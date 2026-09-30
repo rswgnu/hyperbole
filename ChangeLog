@@ -1,4 +1,13 @@
+2026-09-30  Bob Weiner  <rsw@gnu.org>
+
+* man/hy-package.el:
+  man/hy-straight.el: Remove configuration from these two files.
+  man/use-package: Finish reference 'use-package' configuration here.
+
 2026-09-29  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Implicit Button Types): Add new hbut-identifier
+    type.
 
 * hibtypes.el (hbut-identifier, hbut-identifier:help): Move smart
     tag handling of Hyperbole button variables from 'hkey-alist'

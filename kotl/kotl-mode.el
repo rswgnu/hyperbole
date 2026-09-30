@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     29-Sep-26 at 01:35:06 by Bob Weiner
+;; Last-Mod:     29-Sep-26 at 19:20:34 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -95,16 +95,16 @@ tree and {\\[kotl-mode:untab-command]} promotes the tree.  See their
 associated documentation strings for deeper details.
 
 2. The symbol, cycle, enables org-like outline view cycling when point is in
-a context other than that specified by `org-cycle-emulate-tab'.  Then
+a context other than that specified by `kotl-mode:emulate-tab'.  Then
 {\\[kotl-mode:tab-command]} cycles the current tree through three views.
 With a universal prefix arg, C-u, or via {\\[kotl-mode:untab-command]}, it
-cycles the whole outline through three views as defined in
-`kotl-mode:cycle'.
+cycles the whole outline through three views.  See the documentation strings
+for those commands for details.
 
 3. Any other non-nil value, makes {\\[kotl-mode:tab-command]} indent lines
 and insert literal <tab> characters according to the context setting of
-`org-cycle-emulate-tab'.  It also determines where
-{\\[kotl-mode:untab-command]} deletes backward."
+`kotl-mode:emulate-tab'.  It also determines where {\\[kotl-mode:untab-command]}
+deletes backward."
   :type 'boolean
   :group 'hyperbole-koutliner)
 

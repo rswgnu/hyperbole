@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     29-Sep-26 at 01:42:53 by Bob Weiner
+@c Last-Mod:     29-Sep-26 at 19:05:46 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -3241,6 +3241,15 @@ for a matching @code{should} clause in the source buffer where the
 associated test is defined.  This speeds debugging when a single test
 name contains many subtests, each with their own unique @code{should}
 clauses.
+
+@findex ibtypes hbut-identifier
+@cindex tag definition
+@cindex button variable
+@item hbut-identifier
+When on the name of a variable that holds a Hyperbole button, e.g. hbut:current:
+  Action Key - Jump to variable definition;
+  Assist Key - Display button attributes of any Hyperbole button symbol at point.
+
 @end table
 
 @node Action Buttons,  , Implicit Button Types, Implicit Buttons

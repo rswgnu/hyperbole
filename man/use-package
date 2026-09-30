@@ -1,42 +1,91 @@
-;;; -*- mode: emacs-lisp; lexical-binding: t; -*-
+;;; use-package --- Hyperbole use-package reference configuration   -*- mode: emacs-lisp; lexical-binding: t; -*-
 
+;; Default values herein represent the settings Hyperbole will default
+;; to if not set within this `use-package' configuration.
 (use-package hyperbole
 
-  :init
-  (progn
-    ;; Initialize the global Hyperbole minor mode to one of these values:
-    ;;   1 - enabled on startup so the Action and Assist Smart Keys are active
-    ;;   0 - off until you toggle it on
-    ;; If you left hywiki-mode enabled above, that enables hyperbole-mode too.
-    (unless (and (fboundp 'hywiki-mode)
-                 (bound-and-true-p hywiki-mode))
-      (hyperbole-mode 1)))
+  :config
+  ;; Hyperbole binds {C-h h} in the `global-map' to display its
+  ;; minibuffer command menus. If you prefer a different binding,
+  ;; uncomment the two lines below which restore the standard binding
+  ;; for {C-h h} and set your preferred binding: example {C-c h}.
+  ;;   (global-set-key (kbd "C-h h") #'view-hello-file)
+  ;;   (global-set-key (kbd "C-c h") #'hyperbole)
 
-    ;; Older Hyperbole releases do not have HyWiki
-    (when (bound-and-true-p hywiki-mode)
-      ;; Initialize the global HyWiki minor mode to one of these values:
-      ;;   :all   - highlights and makes HyWikiWord links active in
-      ;;            all text and programming buffer comments
-      ;;   :pages - highlights and makes HyWikiWord links active in
-      ;;            only within HyWiki page buffers
-      ;;   nil    - leaves HyWiki mode disabled.
-      (hywiki-mode :all))
+  :init
+  ;; Enable or disable the global Hyperbole minor mode on startup:
+  ;;   1 - enabled after Hyperbole is loaded so the Action and
+  ;;       Assist Smart Keys are active
+  ;;
+  ;;   0 - off (default)
+  (hyperbole-mode 1)
+
+  ;; Initialize the global HyWiki minor mode to one of these values:
+  ;; - :all   - highlight HyWikiWords in all editable buffers except those
+  ;;            with a major mode in ‘hypb:exclude-major-modes’; also
+  ;;            enable ‘hyperbole-mode’ minor mode if off.
+  ;;
+  ;; - :pages - highlight HyWikiWords in HyWiki pages only (Org files in
+  ;;            ‘hywiki-directory’); also enable ‘hyperbole-mode’ minor mode
+  ;;            if off. (default)
+  ;;
+  ;; - nil    - no highlighting, the ‘hywiki-mode’ is disabled.
+  (hywiki-mode :all)
 
   :bind
-  ;; Bind Smart Keys: {M-RET} is the Action Key; {C-u M-RET} is the
-  ;; Assist Key
-  (("M-RET" . hkey-either)
-   ;; Uncomment the next binding if you want to emulate Hyperbole mouse drag
-   ;; events from your keyboard.
-   ;; See "https://www.gnu.org/s/hyperbole/man/hyperbole.html#Keyboard-Drags".
-   ;; ("M-o"   . hkey-operate)
-   )
+  (:map hyperbole-mode-map
+	;; Bind Smart Keys: {M-RET} executes `action-key' and {C-u M-RET}
+	;; executes `assist-key' via this next binding
+	("M-RET" . hkey-either))
+
+  :custom
+  ;; Action and Assist Key Customizations
 
   ;; Customize how Hyperbole and Org mode share the M-RET key:
-  ;;   t        - With hyperbole-mode enabled, Hyperbole controls the key
-  ;;   'buttons - With hyperbole-mode enabled, Hyperbole controls the key
-  ;;              only when on a button or link; otherwise, Org controls it
-  ;;   nil      - In Org mode, Org controls the key
-  :custom
+  ;;   t        - With `hyperbole-mode' enabled, Hyperbole controls the key.
+  ;;
+  ;;   'buttons - With `hyperbole-mode enabled', Hyperbole controls the key
+  ;;              only when on a button or link; otherwise, Org controls
+  ;;              it. (default)
+  ;;
+  ;;   nil      - In Org mode, Org controls the key.
   (hsys-org-enable-smart-keys t)
-  )
+
+  ;; Koutliner Customizations
+
+  ;; Customize the behavior of the <tab> and S-<tab> keys in a Koutline.
+  ;; One of three possible values:
+  ;;   nil      - {TAB} demotes the current tree and {Shift-TAB} promotes the
+  ;;              tree. (default)
+  ;;
+  ;;   'cycle  -  enables Org-like outline view cycling when point is in
+  ;;              a context other than that specified by ‘org-cycle-emulate-tab’.
+  ;;              See {C-h f kotl-mode:tab-command RET} for details.
+  ;;
+  ;;   t       -  makes {TAB} indent lines and insert literal <tab> characters
+  ;;              according to the context setting of ‘kotl-mode:emulate-tab’,
+  ;;              which also determines where {Shift-TAB} deletes backward.
+  (kotl-mode:tab-flag nil)
+
+  ;; Setup contexts where ‘kotl-mode:tab-command’ should override
+  ;; `kotl-mode:tab-flag' and run ‘kotl-mode:indent-line’, often
+  ;; inserting a <tab> character.
+  ;; Potential values are:
+  ;;   nil         - Never
+  ;;
+  ;;   white       - Only in completely white lines
+  ;;
+  ;;   whitestart  - Only at the beginning of lines, before the first non-white char
+  ;;
+  ;;   t           - Everywhere except in headlines
+  ;;
+  ;;   exc-hl-bol  - Everywhere except at the start of a headline
+  (kotl-mode:emulate-tab nil)
+
+  ;; Configure whether `kotl-mode:indent-line' uses tabs and spaces or
+  ;; spaces only.
+  ;; Potential values are:
+  ;;   t   - may insert literal <tab> characters. (default)
+  ;;
+  ;;   nil - may insert <spc> characters only.
+  (kotl-mode:indent-tabs-mode t))
