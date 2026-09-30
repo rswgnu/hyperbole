@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     13-Sep-26 at 11:21:07 by Bob Weiner
+;; Last-Mod:     30-Sep-26 at 12:03:56 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -948,13 +948,13 @@ HyWiki minor mode has three states as tracked by the `hywiki-mode' variable,
 with the default state when interactively enabled set by the value of
 `hywiki-default-mode':
 
-  - :pages - highlight HyWikiWords in HyWiki pages only (Org files in
-             `hywiki-directory'); also enable `hyperbole-mode' minor mode
-             if off.
-
   - :all   - highlight HyWikiWords in all editable buffers except those
              with a major mode in `hypb:exclude-major-modes'; also
              enable `hyperbole-mode' minor mode if off.
+
+  - :pages - highlight HyWikiWords in HyWiki pages only (Org files in
+             `hywiki-directory'); also enable `hyperbole-mode' minor mode
+             if off. (default)
 
   - nil    - no highlighting, the `hywiki-mode' is disabled.
 

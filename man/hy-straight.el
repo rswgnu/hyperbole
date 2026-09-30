@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Jul-26 at 12:28:58
-;; Last-Mod:     25-Jul-26 at 22:25:45 by Mats Lidell
+;; Last-Mod:     30-Sep-26 at 12:41:25 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -13,7 +13,7 @@
 ;; This file is part of GNU Hyperbole.
 
 ;;; ************************************************************************
-;;; Section 1: Straight setup
+;;; Straight installation setup
 ;;; ************************************************************************
 
 ;;; ========================================================================
@@ -49,30 +49,5 @@
         (goto-char (point-max))
         (eval-print-last-sexp)))
     (load bootstrap-file nil 'nomessage)))
-
-;;; ************************************************************************
-;;; Section 2: Straight Hyperbole installation and configuration
-;;; ************************************************************************
-
-;; Step 1: Add the following expression to your "~/.emacs" or
-;; "~/.emacs.d/init.el" file.
-
-(straight-use-package
- '(hyperbole
-   :host nil
-
-   :repo "https://git.savannah.gnu.org/git/hyperbole.git"
-
-   :config
-   (progn
-     (hywiki-mode :all)
-     (unless hywiki-mode
-       (hyperbole-mode 1)))
-
-   :bind
-   (("M-RET" . hkey-either))
-
-   :custom
-   (hsys-org-enable-smart-keys t)))
 
 ;;; End

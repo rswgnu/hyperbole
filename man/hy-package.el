@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Jul-26 at 12:28:58
-;; Last-Mod:     25-Jul-26 at 22:25:11 by Mats Lidell
+;; Last-Mod:     30-Sep-26 at 12:37:33 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -47,54 +47,6 @@
   ;; uncomment the next line.  It is commented because retrieving the
   ;; list is slow.
   ;; (package-refresh-contents)
-  )
-
-;;; ************************************************************************
-;;; Section 2: package.el Hyperbole installation and configuration
-;;; ************************************************************************
-
-;; Step 1: Add the following expression to your "~/.emacs" or
-;; "~/.emacs.d/init.el" file.
-
-(use-package hyperbole
-
-  ;; ensure Hyperbole is installed
-  :ensure t
-
-  ;; Initialize the global HyWiki minor mode to one of these values:
-  ;;   :all   - highlights and makes HyWikiWord links active in
-  ;;            all text and programming buffer comments
-  ;;   :pages - highlights and makes HyWikiWord links active in
-  ;;            only within HyWiki page buffers
-  ;;   nil    - leaves HyWiki mode disabled.
-  :config
-  (progn
-    ;; Older Hyperbole releases do not have HyWiki
-    (when (fboundp 'hywiki-mode)
-      (hywiki-mode :all))
-
-    ;; Initialize the global Hyperbole minor mode to one of these values:
-    ;;   1 - enabled on startup so the Action and Assist Smart Keys are active
-    ;;   0 - off until you toggle it on
-    ;; If you left hywiki-mode enabled above, that enables hyperbole-mode too.
-    (unless (and (fboundp 'hywiki-mode) hywiki-mode)
-      (hyperbole-mode 1)))
-
-  :bind
-  (("M-RET" . hkey-either)
-   ;; Uncomment the next binding if you want to emulate Hyperbole mouse drag
-   ;; events from your keyboard.
-   ;; See "https://www.gnu.org/s/hyperbole/man/hyperbole.html#Keyboard-Drags".
-   ;; ("M-o"   . hkey-operate)
-   )
-
-  ;; Customize how Hyperbole and Org mode share the M-RET key:
-  ;;   t        - With hyperbole-mode enabled, Hyperbole controls the key
-  ;;   'buttons - With hyperbole-mode enabled, Hyperbole controls the key
-  ;;              only when on a button or link; otherwise, Org controls it
-  ;;   nil      - In Org mode, Org controls the key
-  :custom
-  (hsys-org-enable-smart-keys t)
   )
 
 ;;; End
