@@ -1,6 +1,10 @@
 ;;; -*- mode: emacs-lisp; lexical-binding: t; -*-
 
 (require 'package)
+
+(when (version< emacs-version "29")
+  (package-install 'use-package))
+
 (unless (locate-library "hyperbole")
    (package-install 'hyperbole))
 
