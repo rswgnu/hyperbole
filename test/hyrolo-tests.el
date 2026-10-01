@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     30-Sep-26 at 22:24:06 by Bob Weiner
+;; Last-Mod:      1-Oct-26 at 02:31:22 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -502,7 +502,7 @@ Match a string in the second cell."
          (h1a_str  "     1a\\. heading 1"))
     (unwind-protect
         (progn
-          (should (= 2 (hyrolo-fgrep "bar")))
+          (should (= 4 (hyrolo-fgrep "bar")))
           (should (string= (hyrolo-display-buffer-name) (buffer-name)))
 
           (ert-info ("Hide first header move down using ?f")
@@ -1100,7 +1100,7 @@ tabbing though the matches."
           (should (looking-at-p "^body 1$"))
 
           ;; Edit next record
-          (switch-to-buffer (hyrolo-display-buffer-name))
+          (switch-to-buffer hyrolo-display-buffer)
           (execute-kbd-macro (kbd "TAB"))
           (should (looking-at-p "^body 1\\.2$"))
           (execute-kbd-macro (kbd "e"))
@@ -1183,7 +1183,7 @@ structure."
          (hyrolo-file-list (list org-file1 md-file1 otl-file1 kotl-file1)))
     (unwind-protect
         (progn
-          (should (= 4 (hyrolo-grep "body")))
+          (should (= 6 (hyrolo-grep "body")))
           (should (string= (hyrolo-display-buffer-name) (buffer-name)))
 
           ;; Move forward
@@ -1278,7 +1278,7 @@ Useful for creating outline and markdown test data from org examples."
          (hyrolo-file-list (list org-file1 otl-file1 md-file1 kotl-file1)))
     (unwind-protect
         (progn
-          (should (= 7 (hyrolo-grep "body")))
+          (should (= 9 (hyrolo-grep "body")))
           (should (string= (hyrolo-display-buffer-name) (buffer-name)))
 
           ;; Move to first second level header
@@ -1581,7 +1581,7 @@ body
          (hyrolo-file-list (list kotl-file1)))
     (unwind-protect
         (progn
-          (should (= 1 (hyrolo-grep "body")))
+          (should (= 2 (hyrolo-grep "body")))
           (hyrolo-top-level)
 
           (should (string= (concat
@@ -1596,7 +1596,6 @@ body
                             "\
    1. h-kotl
       body
-
      1a. h-kotl 1
          body 1
 ")
@@ -1620,7 +1619,7 @@ body
          (hyrolo-file-list (list org-file1 otl-file1 md-file1 kotl-file1)))
     (unwind-protect
         (progn
-          (should (= 7 (hyrolo-grep "body")))
+          (should (= 9 (hyrolo-grep "body")))
           (hyrolo-top-level)
 
           (should (string=
@@ -1658,7 +1657,7 @@ body
          (hyrolo-file-list (list org-file1 otl-file1 md-file1 kotl-file1)))
     (unwind-protect
         (progn
-          (should (= 7 (hyrolo-grep "body")))
+          (should (= 9 (hyrolo-grep "body")))
           (hyrolo-overview nil)
 
           (should (string=
@@ -1754,7 +1753,7 @@ body
          (hyrolo-file-list (list kotl-file1)))
     (unwind-protect
         (progn
-          (should (= 1 (hyrolo-grep "body")))
+          (should (= 2 (hyrolo-grep "body")))
           (hyrolo-next-match)
           (action-key)
           (should (string= (hypb:buffer-file-name) kotl-file1))
@@ -1777,7 +1776,7 @@ body
          (hyrolo-file-list (list kotl-file1)))
     (unwind-protect
         (progn
-          (should (= 1 (hyrolo-grep "h-kotl")))
+          (should (= 2 (hyrolo-grep "h-kotl")))
           (hyrolo-next-match)
           (action-key)
           (should (string= (hypb:buffer-file-name) kotl-file1))
@@ -1800,7 +1799,7 @@ body
          (hyrolo-file-list (list kotl-file1)))
     (unwind-protect
         (progn
-          (should (= 1 (hyrolo-grep "body2")))
+          (should (= 2 (hyrolo-grep "body2")))
           (hyrolo-next-match)
           (action-key)
           (should (string= (hypb:buffer-file-name) kotl-file1))
@@ -1824,7 +1823,7 @@ body
     (unwind-protect
         (progn
 	  (kotl-mode:beginning-of-buffer)
-          (should (= 1 (hyrolo-grep "h2")))
+          (should (= 2 (hyrolo-grep "h2")))
           (action-key)
           (should (string= (hypb:buffer-file-name) kotl-file1))
           (should (looking-at-p "h1 / h2$"))

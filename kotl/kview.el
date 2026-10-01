@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     30-Sep-26 at 23:53:14 by Bob Weiner
+;; Last-Mod:      1-Oct-26 at 01:36:36 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -93,8 +93,9 @@ Default value is \". \"."
   :type 'string
   :group 'hyperbole-koutliner)
 
-(defconst kview:outline-regexp (concat "\\(\\s-*\\)\\([0-9][0-9a-z.]*\\)\\("
-				       "[\\\\]*" (regexp-quote kview:default-label-separator)
+(defconst kview:outline-regexp (concat "\\(\\s-*\\)\\([0-9][0-9a-z.]*\\)"
+				       "\\([\\\\]*"
+                                       (regexp-quote kview:default-label-separator)
 				       "\\)")
   "Koutline view `outline-regexp' value that handles all label formats.")
 

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     30-Sep-26 at 17:04:12 by Bob Weiner
+;; Last-Mod:      1-Oct-26 at 01:39:17 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -4242,7 +4242,7 @@ but always operates upon the current view."
 ;; Adapted from outline-reveal-toggle-invisible; called by isearch.
 (defun kotl-mode:reveal-toggle-invisible (o hidep)
   (if (not (derived-mode-p 'kotl-mode))
-      (if (and (eq (current-buffer) (get-buffer (hyrolo-display-buffer-name)))
+      (if (and (eq (current-buffer) (get-buffer hyrolo-display-buffer))
 	       (eq (hyrolo-cache-get-major-mode-from-pos (point))
 		   'kotl-mode))
 	  (hyrolo-funcall-match
