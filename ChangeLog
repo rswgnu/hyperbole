@@ -1,3 +1,14 @@
+2026-10-01  Mats Lidell  <matsl@gnu.org>
+
+* install-test/install-test.sh: Don't let debug check set return status.
+
+* install-test/elpa-devel-emacs:
+* install-test/elpa-emacs:
+* install-test/melpa-releases-emacs:
+* install-test/melpa-snapshots-emacs:
+* install-test/straight-emacs:
+* install-test/tarball-emacs: Install use-package for pre Emacs 29.
+
 2026-10-01  Bob Weiner  <rsw@gnu.org>
 
 * test/hyrolo-tests.el (hyrolo-tests--gen-kotl-outline): Fix kotl tests
