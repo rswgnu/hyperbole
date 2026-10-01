@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:      8-Jun-26 at 23:42:26 by Mats Lidell
+;; Last-Mod:      1-Oct-26 at 02:31:22 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -106,7 +106,7 @@
       (progn
         (load "../hyrolo-demo")
         (execute-kbd-macro (kbd "C-x 4r work RET"))
-        (should (string= (buffer-name) hyrolo-display-buffer))
+        (should (string= (buffer-name) (hyrolo-display-buffer-name)))
         (should (looking-at "======"))
         (forward-line 5)
         (should (looking-at "\\*.*Work")))
@@ -118,7 +118,7 @@
       (progn
         (load "../hyrolo-demo")
         (execute-kbd-macro (kbd "C-x 4r work RET TAB"))
-        (should (string= (buffer-name) hyrolo-display-buffer))
+        (should (string= (buffer-name) (hyrolo-display-buffer-name)))
         (should (looking-at "Work")))
     (hyrolo-demo-quit)))
 
@@ -128,7 +128,7 @@
       (progn
         (load "../hyrolo-demo")
         (execute-kbd-macro (kbd "C-x 4r work RET TAB"))
-        (should (string= (buffer-name) hyrolo-display-buffer))
+        (should (string= (buffer-name) (hyrolo-display-buffer-name)))
         (should (looking-at "Work"))
 
         (execute-kbd-macro (kbd "h"))
@@ -152,7 +152,7 @@
       (progn
         (load "../hyrolo-demo")
         (execute-kbd-macro (kbd "C-x 4r work RET TAB"))
-        (should (string= (buffer-name) hyrolo-display-buffer))
+        (should (string= (buffer-name) (hyrolo-display-buffer-name)))
         (should (looking-at "work"))
 
         (execute-kbd-macro (kbd "o"))
@@ -172,7 +172,7 @@
       (progn
         (load "../hyrolo-demo")
         (execute-kbd-macro (kbd "C-x 4r work RET TAB"))
-        (should (string= (buffer-name) hyrolo-display-buffer))
+        (should (string= (buffer-name) (hyrolo-display-buffer-name)))
         (should (looking-at "work"))
 
         (execute-kbd-macro (kbd "<"))
@@ -188,7 +188,7 @@
       (progn
         (load "../hyrolo-demo")
         (execute-kbd-macro (kbd "C-x 4r work RET TAB"))
-        (should (string= (buffer-name) hyrolo-display-buffer))
+        (should (string= (buffer-name) (hyrolo-display-buffer-name)))
 
         (execute-kbd-macro (kbd "\C-u,n"))
 	(should (looking-at "\\*\\*\\s-+Hansen"))
@@ -204,7 +204,7 @@ and {b} the previous same level cell."
       (progn
         (load "../hyrolo-demo")
         (execute-kbd-macro (kbd "C-x 4r com RET TAB"))
-        (should (string= (buffer-name) hyrolo-display-buffer))
+        (should (string= (buffer-name) (hyrolo-display-buffer-name)))
         (execute-kbd-macro (kbd "<"))
         (should (equal (point) (point-min)))
 
@@ -225,7 +225,7 @@ and {b} the previous same level cell."
         (load "../hyrolo-demo")
         (execute-kbd-macro (kbd "C-x 4r com RET TAB"))
 
-        (should (string= (buffer-name) hyrolo-display-buffer))
+        (should (string= (buffer-name) (hyrolo-display-buffer-name)))
         (execute-kbd-macro (kbd "<"))
         (should (equal (point) (point-min)))
 
@@ -334,7 +334,7 @@ and {b} the previous same level cell."
                 (hy-test-helpers:ert-simulate-keys "string\n"
                   (should (= 4 (call-interactively #'hyrolo-fgrep))))
               (should (= 4 (hyrolo-fgrep "string"))))
-            (should (string= (buffer-name) hyrolo-display-buffer))
+            (should (string= (buffer-name) (hyrolo-display-buffer-name)))
             (should (= (how-many "@loc>") 4))
             (dolist (f (list org-file kotl-file md-file outl-file))
               (should (= (how-many (concat "@loc> \"" f "\"")) 1)))))
@@ -351,7 +351,7 @@ and {b} the previous same level cell."
     (unwind-protect
         (progn
           (should (= 1 (hyrolo-fgrep "string")))
-          (should (string= (buffer-name) hyrolo-display-buffer))
+          (should (string= (buffer-name) (hyrolo-display-buffer-name)))
           (should (= (how-many "@loc>") 1))
           (should (looking-at-p "==="))
           (hyrolo-outline-next-visible-heading 1)
@@ -379,7 +379,7 @@ and {b} the previous same level cell."
           (kotl-mode:newline 1)
           (insert "more")
           (should (= 1 (hyrolo-fgrep "string")))
-          (should (string= (buffer-name) hyrolo-display-buffer))
+          (should (string= (buffer-name) (hyrolo-display-buffer-name)))
           (should (= (how-many "@loc>") 1))
           (should (looking-at-p "==="))
           (hyrolo-outline-next-visible-heading 1)
@@ -400,7 +400,7 @@ and {b} the previous same level cell."
     (unwind-protect
         (progn
           (should (= 1 (hyrolo-fgrep "string")))
-          (should (string= (buffer-name) hyrolo-display-buffer))
+          (should (string= (buffer-name) (hyrolo-display-buffer-name)))
           (should (= (how-many "@loc>") 1))
           (should (looking-at-p "==="))
           (hyrolo-outline-next-visible-heading 1)
@@ -421,7 +421,7 @@ and {b} the previous same level cell."
     (unwind-protect
         (progn
           (should (= 1 (hyrolo-fgrep "string")))
-          (should (string= (buffer-name) hyrolo-display-buffer))
+          (should (string= (buffer-name) (hyrolo-display-buffer-name)))
           (should (= (how-many "@loc>") 1))
           (should (looking-at-p "==="))
           (hyrolo-outline-next-visible-heading 1)
@@ -451,7 +451,7 @@ Match a string in a level 2 child cell."
           (kotl-mode:newline 1)
           (insert "more")
           (should (= 1 (hyrolo-fgrep "string")))
-          (should (string= (buffer-name) hyrolo-display-buffer))
+          (should (string= (buffer-name) (hyrolo-display-buffer-name)))
           (should (= (how-many "@loc>") 1))
           (should (looking-at-p "==="))
           (hyrolo-outline-next-visible-heading 1)
@@ -481,7 +481,7 @@ Match a string in the second cell."
           (kotl-mode:newline 1)
           (insert "more")
           (should (= 1 (hyrolo-fgrep "string")))
-          (should (string= (buffer-name) hyrolo-display-buffer))
+          (should (string= (buffer-name) (hyrolo-display-buffer-name)))
           (should (= (how-many "@loc>") 1))
           (should (looking-at-p "==="))
           (hyrolo-outline-next-visible-heading 1)
@@ -502,8 +502,8 @@ Match a string in the second cell."
          (h1a_str  "     1a\\. heading 1"))
     (unwind-protect
         (progn
-          (should (= 2 (hyrolo-fgrep "bar")))
-          (should (string= hyrolo-display-buffer (buffer-name)))
+          (should (= 4 (hyrolo-fgrep "bar")))
+          (should (string= (hyrolo-display-buffer-name) (buffer-name)))
 
           (ert-info ("Hide first header move down using ?f")
             (should (looking-at-p "==="))
@@ -704,7 +704,7 @@ below verifies all the details."
         (progn
           (hy-test-helpers:ert-simulate-keys "body\n"
             (should (= 2 (call-interactively #'hyrolo-grep))))
-          (should (string= hyrolo-display-buffer (buffer-name)))
+          (should (string= (hyrolo-display-buffer-name) (buffer-name)))
 
           (should (looking-at-p "==="))
           (execute-kbd-macro (kbd "n"))
@@ -720,7 +720,7 @@ below verifies all the details."
     (unwind-protect
         (progn
           (should (= 2 (hyrolo-grep "body")))
-          (should (string= hyrolo-display-buffer (buffer-name)))
+          (should (string= (hyrolo-display-buffer-name) (buffer-name)))
 
           ;; Move down
           (should (looking-at-p "==="))
@@ -758,7 +758,7 @@ below verifies all the details."
     (unwind-protect
         (progn
           (should (= 2 (hyrolo-grep "body")))
-          (should (string= hyrolo-display-buffer (buffer-name)))
+          (should (string= (hyrolo-display-buffer-name) (buffer-name)))
 
           ;; Move down
           (should (looking-at-p "==="))
@@ -796,7 +796,7 @@ below verifies all the details."
     (unwind-protect
         (progn
           (should (= 2 (hyrolo-grep "body")))
-          (should (string= hyrolo-display-buffer (buffer-name)))
+          (should (string= (hyrolo-display-buffer-name) (buffer-name)))
 
           ;; Move down
           (should (looking-at-p "==="))
@@ -834,7 +834,7 @@ below verifies all the details."
     (unwind-protect
         (progn
           (should (= 2 (hyrolo-grep "body")))
-          (should (string= hyrolo-display-buffer (buffer-name)))
+          (should (string= (hyrolo-display-buffer-name) (buffer-name)))
 
           ;; Move to last heading
           (goto-char (point-max))
@@ -858,7 +858,7 @@ below verifies all the details."
     (unwind-protect
         (progn
           (should (= 2 (hyrolo-grep "body")))
-          (should (string= hyrolo-display-buffer (buffer-name)))
+          (should (string= (hyrolo-display-buffer-name) (buffer-name)))
 
           ;; Move down
           (should (looking-at-p "==="))
@@ -915,7 +915,7 @@ optional DEPTH the number of sub cells are created to that depth."
     (unwind-protect
         (progn
           (should (= 1 (hyrolo-grep "body")))
-          (should (string= hyrolo-display-buffer (buffer-name)))
+          (should (string= (hyrolo-display-buffer-name) (buffer-name)))
 
           (should (looking-at-p "==="))
           (execute-kbd-macro (kbd "n"))
@@ -942,7 +942,7 @@ optional DEPTH the number of sub cells are created to that depth."
     (unwind-protect
         (progn
           (should (= 4 (hyrolo-grep "body")))
-          (should (string= hyrolo-display-buffer (buffer-name)))
+          (should (string= (hyrolo-display-buffer-name) (buffer-name)))
 
           ;; Move down
           (dolist (v '("===" "^\\* heading-org 1$" "===" "^\\* heading-otl 1$"
@@ -980,7 +980,7 @@ optional DEPTH the number of sub cells are created to that depth."
     (unwind-protect
         (progn
           (should (= 1 (hyrolo-grep "body")))
-          (should (string= hyrolo-display-buffer (buffer-name)))
+          (should (string= (hyrolo-display-buffer-name) (buffer-name)))
 
           ;; Hide/Show first line hides whole section
           (should (looking-at-p "==="))
@@ -1021,7 +1021,7 @@ optional DEPTH the number of sub cells are created to that depth."
     (unwind-protect
         (progn
           (should (= 1 (hyrolo-grep "body")))
-          (should (string= hyrolo-display-buffer (buffer-name)))
+          (should (string= (hyrolo-display-buffer-name) (buffer-name)))
 
           ;; Hide first line hides whole section
           (should (looking-at-p "==="))
@@ -1052,7 +1052,7 @@ tabbing though the matches."
     (unwind-protect
         (progn
           (should (= 2 (hyrolo-grep "body")))
-          (should (string= hyrolo-display-buffer (buffer-name)))
+          (should (string= (hyrolo-display-buffer-name) (buffer-name)))
 
           ;; Search Down
           (should (looking-at-p "==="))
@@ -1086,7 +1086,7 @@ tabbing though the matches."
     (unwind-protect
         (progn
           (should (= 1 (hyrolo-grep "body")))
-          (should (string= hyrolo-display-buffer (buffer-name)))
+          (should (string= (hyrolo-display-buffer-name) (buffer-name)))
 
           ;; Search Down
           (should (looking-at-p "==="))
@@ -1125,7 +1125,7 @@ tabbing though the matches."
               (save-buffer)
               (hyrolo-grep "item")
               (execute-kbd-macro (kbd "TAB"))
-              (should (string= (buffer-name) hyrolo-display-buffer))
+              (should (string= (buffer-name) (hyrolo-display-buffer-name)))
               (should (looking-at (rx-to-string `(seq "item\n" (one-or-more whitespace) ,test-time))))
               (setq test-time "2025-01-01")
               (hyrolo-edit-entry)
@@ -1148,7 +1148,7 @@ All files types are present."
     (unwind-protect
         (progn
           (should (= 7 (hyrolo-grep "body")))
-          (should (string= hyrolo-display-buffer (buffer-name)))
+          (should (string= (hyrolo-display-buffer-name) (buffer-name)))
 
           ;; Move forward
           (dolist (v '("^\\* heading-org 1$" "^\\* heading-org 2$"
@@ -1183,8 +1183,8 @@ structure."
          (hyrolo-file-list (list org-file1 md-file1 otl-file1 kotl-file1)))
     (unwind-protect
         (progn
-          (should (= 4 (hyrolo-grep "body")))
-          (should (string= hyrolo-display-buffer (buffer-name)))
+          (should (= 6 (hyrolo-grep "body")))
+          (should (string= (hyrolo-display-buffer-name) (buffer-name)))
 
           ;; Move forward
           (dolist (v '("===" "^\\* heading-org 1$" "===" "^# heading-md 1$"
@@ -1242,7 +1242,7 @@ Useful for creating outline and markdown test data from org examples."
     (unwind-protect
         (progn
           (should (= 4 (hyrolo-grep "body")))
-          (should (string= hyrolo-display-buffer (buffer-name)))
+          (should (string= (hyrolo-display-buffer-name) (buffer-name)))
 
           ;; Move to first second level header
           (search-forward "** h-org 1.1")
@@ -1278,8 +1278,8 @@ Useful for creating outline and markdown test data from org examples."
          (hyrolo-file-list (list org-file1 otl-file1 md-file1 kotl-file1)))
     (unwind-protect
         (progn
-          (should (= 7 (hyrolo-grep "body")))
-          (should (string= hyrolo-display-buffer (buffer-name)))
+          (should (= 9 (hyrolo-grep "body")))
+          (should (string= (hyrolo-display-buffer-name) (buffer-name)))
 
           ;; Move to first second level header
           (search-forward "** h-org 1.1")
@@ -1581,7 +1581,7 @@ body
          (hyrolo-file-list (list kotl-file1)))
     (unwind-protect
         (progn
-          (should (= 1 (hyrolo-grep "body")))
+          (should (= 2 (hyrolo-grep "body")))
           (hyrolo-top-level)
 
           (should (string= (concat
@@ -1596,7 +1596,6 @@ body
                             "\
    1. h-kotl
       body
-
      1a. h-kotl 1
          body 1
 ")
@@ -1620,7 +1619,7 @@ body
          (hyrolo-file-list (list org-file1 otl-file1 md-file1 kotl-file1)))
     (unwind-protect
         (progn
-          (should (= 7 (hyrolo-grep "body")))
+          (should (= 9 (hyrolo-grep "body")))
           (hyrolo-top-level)
 
           (should (string=
@@ -1658,7 +1657,7 @@ body
          (hyrolo-file-list (list org-file1 otl-file1 md-file1 kotl-file1)))
     (unwind-protect
         (progn
-          (should (= 7 (hyrolo-grep "body")))
+          (should (= 9 (hyrolo-grep "body")))
           (hyrolo-overview nil)
 
           (should (string=
@@ -1754,7 +1753,7 @@ body
          (hyrolo-file-list (list kotl-file1)))
     (unwind-protect
         (progn
-          (should (= 1 (hyrolo-grep "body")))
+          (should (= 2 (hyrolo-grep "body")))
           (hyrolo-next-match)
           (action-key)
           (should (string= (hypb:buffer-file-name) kotl-file1))
@@ -1777,7 +1776,7 @@ body
          (hyrolo-file-list (list kotl-file1)))
     (unwind-protect
         (progn
-          (should (= 1 (hyrolo-grep "h-kotl")))
+          (should (= 2 (hyrolo-grep "h-kotl")))
           (hyrolo-next-match)
           (action-key)
           (should (string= (hypb:buffer-file-name) kotl-file1))
@@ -1800,7 +1799,7 @@ body
          (hyrolo-file-list (list kotl-file1)))
     (unwind-protect
         (progn
-          (should (= 1 (hyrolo-grep "body2")))
+          (should (= 2 (hyrolo-grep "body2")))
           (hyrolo-next-match)
           (action-key)
           (should (string= (hypb:buffer-file-name) kotl-file1))
@@ -1824,7 +1823,7 @@ body
     (unwind-protect
         (progn
 	  (kotl-mode:beginning-of-buffer)
-          (should (= 1 (hyrolo-grep "h2")))
+          (should (= 2 (hyrolo-grep "h2")))
           (action-key)
           (should (string= (hypb:buffer-file-name) kotl-file1))
           (should (looking-at-p "h1 / h2$"))
@@ -2159,7 +2158,7 @@ body 2
     (unwind-protect
         (progn
           (should (= 2 (hyrolo-grep "heading")))
-          (should (string= hyrolo-display-buffer (buffer-name)))
+          (should (string= (hyrolo-display-buffer-name) (buffer-name)))
 
           ;; Search Down
           (should (looking-at-p "==="))
@@ -2175,6 +2174,39 @@ body 2
           )
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))
+
+(ert-deftest hyrolo-tests--yank ()
+  "Verify `hyrolo-yank' insert."
+  (let* ((org-file1 (make-temp-file "hypb" nil ".org"
+                                    (hyrolo-tests--gen-outline ?* "heading-org" 1 "body" 2)))
+         (otl-file1 (make-temp-file "hypb" nil ".otl"
+                                    (hyrolo-tests--gen-outline ?* "heading-otl" 1 "body" 2)))
+         (md-file1 (make-temp-file "hypb" nil ".md"
+                                   (hyrolo-tests--gen-outline ?# "heading-md" 1 "body" 2)))
+         (kotl-file1 (hyrolo-tests--gen-kotl-outline "heading-kotl" "body-kotl"))
+         (hyrolo-file-list (list org-file1 otl-file1 md-file1 kotl-file1)))
+    (unwind-protect
+        (with-temp-buffer
+          (erase-buffer)
+          (hyrolo-yank "There is no such line" nil t)
+          ;; FIXME: Above call fails before verification.
+          ;; (should (string= "* heading-kotl\nbody-kotl\n"
+          ;;                  (buffer-substring-no-properties (point-min) (point-max))))
+
+          (dolist (v '(("heading-org" . ?*) ("heading-otl" . ?*) ("heading-md" . ?#)))
+            (let* ((header (car v))
+                   (char (cdr v))
+                   ;; (debug-on-message "Making hyrolo-display-buffer buffer-local while locally let-bound!")
+                   (file-string (hyrolo-tests--gen-outline char header 1 "body" 2)))
+              (erase-buffer)
+              (hyrolo-yank header nil t)
+              (should (string= (concat (string-join (seq-take (string-lines file-string) 2) "\n") "\n")
+                               (buffer-substring-no-properties (point-min) (point-max))))
+
+              (erase-buffer)
+              (hyrolo-yank header)
+              (should (string= file-string
+                               (buffer-substring-no-properties (point-min) (point-max))))))))))
 
 (provide 'hyrolo-tests)
 

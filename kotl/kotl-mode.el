@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     29-Sep-26 at 19:20:34 by Bob Weiner
+;; Last-Mod:      1-Oct-26 at 01:39:17 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -231,7 +231,7 @@ It provides the following keys:
   ;; Used by kimport.el functions.
   (unless (and (boundp 'kotl-previous-mode) kotl-previous-mode
 	       (eq kotl-previous-mode #'kotl-mode)
-	       (not (string-prefix-p hyrolo-display-buffer (buffer-name))))
+	       (not (string-prefix-p (hyrolo-display-buffer-name) (buffer-name))))
     (setq hyrolo-entry-regexp (concat "^" kview:outline-regexp)
 	  hyrolo-hdr-and-entry-regexp (concat hyrolo-hdr-prefix-regexp hyrolo-entry-regexp)
 	  hyrolo-entry-group-number 2
@@ -284,7 +284,7 @@ It provides the following keys:
   ;; May be a portion of a Koutline in a HyRolo match buffer; we set
   ;; kotl-mode then to use its local variable settings but don't want
   ;; to do any of the following formatting.
-  (if (string-prefix-p hyrolo-display-buffer (buffer-name))
+  (if (string-prefix-p (hyrolo-display-buffer-name) (buffer-name))
       (unless (and (boundp 'kotl-kview) (kview:is-p kotl-kview))
 	(kview:create (buffer-name))) ;; sets buffer-local `kotl-kview'
     ;; If buffer has not yet been formatted for editing, format it.
@@ -311,7 +311,7 @@ It provides the following keys:
     (with-suppressed-warnings ((free-vars kotl-previous-mode))
       (setq kotl-previous-mode 'kotl-mode))
     (run-mode-hooks 'kotl-mode-hook)
-    (unless (string-prefix-p hyrolo-display-buffer (buffer-name))
+    (unless (string-prefix-p (hyrolo-display-buffer-name) (buffer-name))
       (add-hook 'change-major-mode-hook #'kotl-mode:show-all nil t))))
 
 ;;;###autoload

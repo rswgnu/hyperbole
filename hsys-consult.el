@@ -2,7 +2,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     4-Jul-24 at 09:57:18
-;; Last-Mod:     20-Jul-26 at 01:52:39 by Bob Weiner
+;; Last-Mod:      1-Oct-26 at 00:36:12 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -28,11 +28,12 @@
 ;; Don't (require 'consult) here since want to create that dependency only
 ;; when a function within this library is called.
 
+(require 'find-func)
 (require 'hbut)
 (require 'hargs)
 (require 'hproperty)
 (require 'hsys-org-roam)
-(require 'find-func)
+(require 'kview) ;; For `kview:outline-regexp'
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -69,8 +70,12 @@
 ;;; Public variables
 ;;; ************************************************************************
 
-(defvar hsys-consult-entry-regexp "^[*#]+ "
-   "Regexp prefix to match to multi-line entries with `consult-grep'.")
+;; This regexp is used interactively by `consult-grep' and can easily break
+;; if changed.  The groupings and not anchoring `kview:outline-regexp' to
+;; the beginning of the line are necessary for matching to work properly.
+;; -- RSW, 2026-10-01
+(defvar hsys-consult-entry-regexp (concat "\\(\\(^[*#]+ \\)\\|" kview:outline-regexp "\\)")
+   "`consult-grep' regexp to match to the first line of multi-line entries.")
 
 (defvar hsys-consult-exit-value nil
   "Value from a user-defined exit-hook sent to `hsys-consult-get-exit-value'.")
@@ -153,7 +158,7 @@ optional REGEXP up to MAX-MATCHES in PATH-LIST.
 Use ripgrep (rg) if found, otherwise, plain grep.  Initialize search with
 optional REGEXP and interactively prompt for changes.  Limit matches per
 file to the absolute value of MAX-MATCHES, if given and not 0.  If 0, match
-to headlines only (lines that start with a '^[*#]+' regexp).
+to headlines only (lines that start with `hsys-consult-entry-regexp').
 
 With optional PROMPT string, use this as the first part of the grep prompt;
 omit any trailing colon and space in the prompt."
@@ -270,7 +275,7 @@ Use ripgrep (rg) if found, otherwise, plain grep to search Org files within
 `org-roam-directory'.  Initialize search with optional REGEXP and
 interactively prompt for changes.  Limit matches per file to the absolute
 value of MAX-MATCHES, if given and not 0.  If 0, match to the start of
-headline text only (lines that start with the '^[*#]+' regexp)."
+headline text only (lines that start with `hsys-consult-entry-regexp')."
   (interactive "i\nP")
   (hsys-consult--org-roam-call-function
    (lambda ()
