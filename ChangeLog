@@ -1,5 +1,23 @@
 2026-09-30  Bob Weiner  <rsw@gnu.org>
 
+* hsys-consult.el (hsys-consult-entry-regexp): Add support for Koutline
+    cell relative ids trailing separators.
+
+* hyrolo.el (hyrolo-grep-file): Add check to not add 'hyrolo-entry-regexp'
+    prefix to patterns that already contain the prefix.  This fixes
+    'hyrolo-yank' for 'kotl-mode' entries.
+  kotl/kview.el (kview:outline-regexp): Allow for regexp quoted
+    backslashes in front of a period at the start of
+    'kview:default-label-separator' so works properly when used in
+    'hyrolo-entry-regexp' in 'hyrolo-grep-file' call from 'hyrolo-yank'.
+  test/hyrolo-tests.el (hyrolo-tests--yank): Add test from Mats that
+    now passes.
+
+* hyrolo.el (hyrolo-display-buffer): Clarify that this can be a buffer
+    or buffer name.
+            (hyrolo-display-buffer-name): Add and use where a string
+    type is required.
+
 * man/hy-package.el:
   man/hy-straight.el: Remove configuration from these two files.
   man/use-package: Finish reference 'use-package' configuration here.

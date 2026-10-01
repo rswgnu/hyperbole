@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     29-Sep-26 at 02:06:23 by Bob Weiner
+;; Last-Mod:     30-Sep-26 at 17:04:16 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -151,7 +151,7 @@
       (with-temp-buffer
         (load (expand-file-name "hyrolo-demo.el" hyperb:dir))
         (should (hact 'kbd-key "C-x 4 r work RET"))
-        (should (string= (buffer-name) hyrolo-display-buffer))
+        (should (string= (buffer-name) (hyrolo-display-buffer-name)))
         (should (search-forward "Dunn, John")))
     (hyrolo-demo-quit)))
 
