@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:      1-Oct-26 at 02:31:22 by Bob Weiner
+;; Last-Mod:      3-Oct-26 at 21:47:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2206,7 +2206,9 @@ body 2
               (erase-buffer)
               (hyrolo-yank header)
               (should (string= file-string
-                               (buffer-substring-no-properties (point-min) (point-max))))))))))
+                               (buffer-substring-no-properties (point-min) (point-max)))))))
+      (kill-buffer hyrolo-display-buffer)
+      (hy-delete-files-and-buffers hyrolo-file-list))))
 
 (provide 'hyrolo-tests)
 

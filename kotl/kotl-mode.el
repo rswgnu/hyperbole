@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:      1-Oct-26 at 01:39:17 by Bob Weiner
+;; Last-Mod:      1-Oct-26 at 18:31:22 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2696,7 +2696,7 @@ If key is pressed:
 	 ;; Wrap the table cell or region
 	 (org-table-wrap-region current-prefix-arg))
 	(t ;; On a cell line (not at the end of line).
-	 (if (kcell-view:collapsed-p)
+	 (if (kotl-mode:tree-collapsed-p)
 	     (kotl-mode:show-tree)
 	   (kotl-mode:hide-tree))))
   (kotl-mode:to-valid-position))

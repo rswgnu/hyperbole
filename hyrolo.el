@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     30-Sep-26 at 17:28:37 by Bob Weiner
+;; Last-Mod:      3-Oct-26 at 12:00:28 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1701,16 +1701,21 @@ Return number of entries matched.  See also documentation for the variable
 If the `consult' package is installed, interactively select and complete
 the entry to be inserted.
 
-With optional prefix arg, REGEXP-FLAG, treat NAME as a regular expression
-instead of a string.
+With optional REGEXP-FLAG (any prefix arg other than C-u, the
+`univeral-argument'), treat NAME as a regular expression instead of a
+string.
 
 With optional EXCLUDE-SUB-ENTRIES non-nil, exclude all sub-entry records
-below the yanked one."
+below the yanked one (default when called interactively)."
   (interactive (list
 		(hsys-consult-grep-headlines-read-regexp
 		 #'hyrolo-consult-grep "Yank rolo headline matching")
-		current-prefix-arg
-                t))
+                ;; Enable `regexp-flag' if any prefix arg other the
+                ;; universal argument
+		(and current-prefix-arg (not (equal '(4) current-prefix-arg)))
+                ;; Exclude-sub-entries if no prefix arg or any prefix arg
+                ;; other than the universal argument
+                (or (null current-prefix-arg) (not (equal '(4) current-prefix-arg)))))
   (push-mark)
   (let ((entry (hyrolo-get-entry name regexp-flag exclude-sub-entries)))
     (when entry
