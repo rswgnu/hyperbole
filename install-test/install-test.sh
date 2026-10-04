@@ -40,4 +40,7 @@ else
 fi
 
 # Debug - after install
-[[ -n "$debug" ]] && bash
+if [[ -n "$debug" ]]
+then
+  bash
+fi
