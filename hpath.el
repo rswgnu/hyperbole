@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     29-Sep-26 at 02:16:49 by Bob Weiner
+;; Last-Mod:      3-Oct-26 at 11:39:31 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1354,6 +1354,28 @@ ${variable} per path."
   (if filter
       (seq-filter filter paths)
     paths))
+
+(defun hpath:extension-in-list-p (extension path-list)
+  "Return t if EXTENSION exists in any filename of PATH-LIST.
+Otherwise, return nil.  EXTENSION may be of any of these forms:
+\"*.kotl\", \".kotl\", or \"kotl\"."
+  ;; Normalize extension with a glob prefix
+  (setq extension (concat
+		   (cond ((string-prefix-p "*." extension)
+			  "")
+			 ((string-prefix-p "." extension)
+			  "*")
+			 (t "*."))
+		   extension))
+  ;; Log any errors from the 'find' file call below to the *Messages* buffer
+  ;; but don't display them in the minimbuffer
+  (let ((inhibit-message t))
+    (condition-case ()
+        ;; Set status to 0 if any filename to be grepped ends in .kotl; otherwise, set it to 1
+        (eq 0 (shell-command (format "find %s -name '%s' -print -quit 2>/dev/null | grep -q ."
+			             (mapconcat #'prin1-to-string (mapcar #'expand-file-name (mapcar #'hpath:expand path-list)) " ")
+			             extension)))
+      (error nil))))
 
 (defun hpath:prepend-shell-directory (&optional filename)
   "Prepend subdir to an optional FILENAME in an \\='ls'-file listing.

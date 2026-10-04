@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     29-Sep-26 at 19:05:46 by Bob Weiner
+@c Last-Mod:      3-Oct-26 at 12:17:59 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,8 +30,8 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED September 29, 2026
-@set UPDATED-MONTH September 2026
+@set UPDATED October 3, 2026
+@set UPDATED-MONTH October 2026
 @set EDITION 9.2.0
 @set VERSION 9.2.0
 
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.1.0
-Printed September 29, 2026.
+Printed October 3, 2026.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -213,7 +213,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.1.0
-September 29, 2026 @c AUTO-REPLACE-ON-SAVE
+October 3, 2026 @c AUTO-REPLACE-ON-SAVE
 
 
   Published by the Free Software Foundation, Inc.
@@ -7315,7 +7315,6 @@ set of commands as the menubar Rolo menu but with more concise labels.
 @cindex Rolo commands
 @cindex HyRolo commands
 @cindex ConsultFind
-@cindex HelmFind
 @findex hyrolo-add
 @findex hyrolo-consult-grep
 @findex hyrolo-display-matches
@@ -7330,10 +7329,9 @@ set of commands as the menubar Rolo menu but with more concise labels.
 @findex hyrolo-word
 @findex hyrolo-yank
 The minibuffer Rolo/ menu offers the following commands (ConsultFind
-appears only when the Consult and Helm packages are installed prior to
-loading Hyperbole.  They are especially noteworthy as they allow for
-fast line-level searching across many files with interactive search
-pattern narrowing):
+appears only when the Consult package is installed prior to loading
+Hyperbole; it provides fast line-level searching across many files
+with interactive search pattern narrowing):
 
 @example
 @group
@@ -7356,15 +7354,24 @@ StringFind      hyrolo-fgrep            Find all entries containing
 TagFind         hyrolo-tags-view        Find hyrolo Org tags
 WordFind        hyrolo-word             Find all entries containing
                                           a string of whole words
-Yank            hyrolo-yank             Insert the first matching
-                                          hyrolo entry at point
+Yank            hyrolo-yank             Insert at point the first
+                                          matching hyrolo entry
 =====================================================================
 @end group
 @end example
 
-The 'FileFind' menu item displays and edits the first file listed in
+@cindex FileFind
+The @dfn{FileFind} menu item displays and edits the first file listed in
 @code{hyrolo-file-list}, unless given a prefix argument, in which case
 it prompts with completion for the file to edit.
+
+@cindex Yank
+The @dfn{Yank} menu item inserts at point the first entry found that
+matches the given expression.  With any prefix argument other than
+C-u, the universal argument, the search expression is treated as a
+regular expression rather than a string.  By default, sub-entries are
+not included in the match inserted; but with C-u, the universal
+argument, as the prefix argument, they are included.
 
 A prefix argument used with any of the above menu items that have 'Find'
 in their names limits the search to a maximum number of matches given by

@@ -1,3 +1,23 @@
+2026-10-03  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-yank): INCOMPATIBLE CHANGE: Interactively, 'regexp-flag'
+    is set only if prefix arg is not C-u, as C-u now disables the 3rd arg,
+    'exclude-sub-entries'.
+  man/hyperbole.texi (HyRolo Menu): Remove referent to 'helm' package no
+    longer supported by HyRolo.
+                     (HyRolo Menu): Add prefix arg handling details for the
+    Yank menu item (hyrolo-yank).
+
+* hpath.el (hpath:extension-in-list-p): Add and use in deciding whether
+    to add the complex regexp needed to match Koutline cell relative ids
+    to any 'hsys-consult--grep-paths' calls, for example, when calling
+    'hyrolo-yank' interactively.
+
+2026-10-02  Bob Weiner  <rsw@gnu.org>
+
+* hsys-consult.el (hsys-consult-entry-regexp): Ensure always ends with
+    a SPC character to support Orderless searching.
+
 2026-10-01  Mats Lidell  <matsl@gnu.org>
 
 * install-test/install-test.sh: Don't let debug check set return status.
@@ -10,6 +30,10 @@
 * install-test/tarball-emacs: Install use-package for pre Emacs 29.
 
 2026-10-01  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode:action-key): Fix to test if tree, rather
+    than current cell, is collapsed.  Fixes bug where single line cells
+    with subtrees would not expand.
 
 * test/hyrolo-tests.el (hyrolo-tests--gen-kotl-outline): Fix kotl tests
     that previously got no results from kotl calls and so undercounted
