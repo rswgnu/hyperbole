@@ -1,3 +1,12 @@
+2026-10-05  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-init): Add to move HyWiki initializations from load-time
+    to after system and user init time.  This fixes bug gh#1023 where
+    a directory given by the default value of 'hywiki-directory' was created
+    though the value was changed prior to loading HyWiki.
+
+* man/use-package (hyperbole): Add 'hywiki-directory' to :custom section.
+
 2026-10-03  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-yank): INCOMPATIBLE CHANGE: Interactively, 'regexp-flag'
