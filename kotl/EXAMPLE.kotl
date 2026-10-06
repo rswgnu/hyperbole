@@ -259,9 +259,18 @@
                toggle display of blank lines between cells as well,
                e.g. {C-u C-c C-o}.  Try it now.
 
-        3b14b. A click or press of the Action Key within a cell's body, but
-               not on a button, toggles between hiding and showing the tree
-               rooted at point.
+        3b14b. If you have enabled `hywiki-mode' with a setting of ':all'
+               buffers, then a click or a press of the Action Key on a
+               potential HyWikiWord creates and opens a blank wiki page for
+               the word.  If it already exists, then the existing page is
+               opened.
+
+        3b14c. A click or press of the Action Key anywhere else within a
+               cell's body, but not on a button, calls the value of the
+               `kotl-mode:action-key-default-function' variable, which
+               defaults to doing nothing, to avoid confusion with HyWikiWord
+               activation.  Set it to ‘kotl-mode:show-or-hide-tree’ if you
+               want the old Koutliner behavior.
 
       3b15. Cell Identifiers: Permanent ids are associated with each cell
             and can be used in hyperlinks that are maintained as cells are
@@ -489,7 +498,7 @@
 
 
 "ben" ;; kvspec:current
-78 ;; id-counter
+79 ;; id-counter
 alpha ;; label-type
 4 ;; label-min-width
 ". " ;; label-separator
@@ -497,7 +506,7 @@ alpha ;; label-type
 
 ;; depth-first kcell attributes
 [[0
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07" id-counter 78)]
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07" id-counter 79)]
  [2
   (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
  [3
@@ -558,6 +567,8 @@ alpha ;; label-type
   (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
  [24
   (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [79
+  (creator "rsw@gnu.org" create-time "20261006:04:24:06")]
  [25
   (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
  [26

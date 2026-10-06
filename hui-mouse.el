@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:     29-Sep-26 at 17:08:43 by Bob Weiner
+;; Last-Mod:      6-Oct-26 at 00:08:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -168,6 +168,18 @@ Its default value is `smart-scroll-up'.  To disable it, set it to
   "Function run by the Assist Key at the end of a line.
 Its default value is `smart-scroll-down'.  To disable it, set it to
 #\\='ignore."
+  :type 'function
+  :group 'hyperbole-keys)
+
+(defcustom smart-org-action-key-heading-function #'ignore
+  "Function run by the Action Key in `org-mode' when within a heading.
+Set it to `smart-org-cycle' if you want the old `smart-org' behavior."
+  :type 'function
+  :group 'hyperbole-keys)
+
+(defcustom smart-org-assist-key-heading-function #'ignore
+  "Function run by the Assist Key in `org-mode' when within a heading.
+Set it to `smart-org-cycle' if you want the old `smart-org-assist' behavior."
   :type 'function
   :group 'hyperbole-keys)
 
@@ -1900,8 +1912,9 @@ either t or `:buttons':
      or #+end_example header, execute the code block via the Org mode
      standard binding of {\\`C-c' \\`C-c'}, (`org-ctrl-c-ctrl-c').
 
- 10. With point on an Org mode heading, cycle the view of the subtree at
-     point.
+ 10. With point on an Org mode heading but not a Hyperbole button, call the
+     function given by the `smart-org-action-key-heading-function' variable,
+     which defaults to doing nothing.
 
  11. In any other context besides the end of a line, invoke the Org mode
      standard binding of {M-RET}, (`org-meta-return').
@@ -1929,8 +1942,8 @@ in these contexts:
   6. With point on any #+BEGIN_SRC, #+END_SRC, #+RESULTS, #+begin_example
      or #+end_example header, remove source block results.
 
-  7. Not on a Hyperbole button but on an Org mode heading, cycle
-     through views of the whole buffer outline.
+  7. With point on an Org mode heading but not a Hyperbole button, call the
+     function given by the `smart-org-assist-key-heading-function' variable,
 
 To disable ALL Hyperbole support within Org major and minor modes, set the
 custom option `hsys-org-enable-smart-keys' to nil.  Then in Org modes, this
@@ -2001,9 +2014,11 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
 				    (t (message "No results to remove for this code block."))))))
 		    t)
 		   ((hsys-org-heading-at-p)
-		    (if (not assist-flag)
-			(hact 'hsys-org-cycle)
-		      (hact 'hsys-org-global-cycle))
+		    (if assist-flag
+                        (when (fboundp smart-org-assist-key-heading-function)
+                          (funcall smart-org-assist-key-heading-function))
+                      (when (fboundp smart-org-action-key-heading-function)
+                        (funcall smart-org-action-key-heading-function)))
 		    t)
 		   ((equal (hsys-org-get-value :language) "python")
 		    (setq hkey-value (smart-python-at-tag-p))
@@ -2048,8 +2063,8 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
 		   ;; Ignore any further Smart Key non-Org contexts
 		   (t)))
 	    (t
-	     ;; hsys-org-enable-smart-keys is set to t, so try other Smart
-	     ;; contexts
+	     ;; hsys-org-enable-smart-keys is set to t, so try other
+             ;; Smart contexts
 	     nil)))))
 
 (defun smart-org-bob-and-non-heading-p ()
@@ -2060,6 +2075,12 @@ handled by the separate implicit button type, `org-link-outside-org-mode'."
        (not (org-at-heading-p))
        (member (hypb:buffer-file-name)
 	       (hpath:expand-list hsys-org-cycle-bob-file-list))))
+
+(defun smart-org-cycle ()
+  "Cycle Org tree unless `assist-flag' is non-nil, then cycle whole outline."
+  (if assist-flag
+      (hact 'hsys-org-cycle-global)
+    (hact 'hsys-org-cycle)))
 
 ;;; ************************************************************************
 ;;; smart-outline functions

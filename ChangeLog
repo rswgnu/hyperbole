@@ -1,9 +1,49 @@
 2026-10-05  Bob Weiner  <rsw@gnu.org>
 
+* hui-mouse.el (smart-org-action-key-heading-function,
+                smart-org-assist-key-heading-function): Add to allow user-settable
+    behavior when point is anywhere within a heading line (not at the end).
+               (smart-org-cycle): Add as a possible setting for the above variables.
+  man/hyperbole.texi (Smart Key - Org Mode):
+                     (Implicit Button Types): smart-org update doc.
+
+* hsys-org.el (hsys-org-cycle-global): Change all 'org-global-cycle' references
+    to 'org-cycle-global' and set this command to 'org-cycle-global'.
+
+* kotl/kotl-mode.el (kotl-mode:action-key-default-function): Add this defcustom.
+                    (kotl-mode:action-key): INCOMPATIBLE CHANGE: Replace default
+    action in a kcell of show/hide tree with a call to the function specified by
+    the new action defcustom above, which defaults to a no-op, since we have added
+    tree cycling on the TAB key.
+                    (kotl-mode:show-or-hide-tree): Encode prior Action Key
+    behavior in this function if user wants to set it as the defcustom value.
+  man/use-package (kotl-mode): Add comment on how to utilize the above function.
+  man/hyperbole.texi (Hiding and Showing): Update Action Key behavior doc.
+                    (kotl-mode:assist-key-default-function): Add this defcustom.
+                    (kotl-mode:assist-key): INCOMPATIBLE CHANGE: Replace default
+    action in a kcell of 'smart-scroll-down' with a call to the function specified
+    by the new assist defcustom above, which defaults to a no-op, for symmetry with
+    the Action Key.
+  test/kotl-mode-tests.el (kotl-mode-hide-cell): Add needed 'let' binding of
+    'kotl-mode:action-key-default-function'.
+
+* kotl/kcell.el (kcell-data:create): Signal an error if buffer-local 'kotl-kview'
+    is not a valid kview.
+
 * hywiki.el (hywiki-init): Add to move HyWiki initializations from load-time
     to after system and user init time.  This fixes bug gh#1023 where
     a directory given by the default value of 'hywiki-directory' was created
     though the value was changed prior to loading HyWiki.
+
+2026-10-04  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-word-action-key-creation-allowed-p,
+             hywiki-word-create-exclude-action-key-modes): Add.
+  hibtypes.el (hywiki-word): Use the above in ibtype, 'hywiki-word, to control
+    which major modes disable Action Key WikiWord creation, by default, none.
+  man/hyperbole.texi (Creating HyWikiWords): Doc above variable.
+                     (Implicit Button Types): Update doc for 'hywiki-word'
+    and 'hywiki-existing-word' ibtypes.
 
 * man/use-package (hyperbole): Add 'hywiki-directory' to :custom section.
 
@@ -11,7 +51,8 @@
 
 * hyrolo.el (hyrolo-yank): INCOMPATIBLE CHANGE: Interactively, 'regexp-flag'
     is set only if prefix arg is not C-u, as C-u now disables the 3rd arg,
-    'exclude-sub-entries'.
+    'exclude-sub-entries'.  Interactively, indicate whether yanking an
+    entry or a tree (sub-entries).
   man/hyperbole.texi (HyRolo Menu): Remove referent to 'helm' package no
     longer supported by HyRolo.
                      (HyRolo Menu): Add prefix arg handling details for the
@@ -8803,7 +8844,7 @@ V9.0.1 changes ^^^^:
   hyrolo.el (hyrolo-verify): Allow buffers associated with files from
     'hsys-org-cycle-bob-file-list' as well.
   hui-mouse.el (smart-org-bob-and-non-heading-p): Check whether {TAB} or
-    {M-RET} should org-global-cycle at point."
+    {M-RET} should org-cycle-global at point."
                (smart-eolp): Allow for org global cycling at start of
     buffer on a non-heading line in Hyperbole doc files when displayed from
     Hyperbole menu items.
@@ -10441,7 +10482,7 @@ V9.0.1 changes ^^^^:
                 (assist-key, assist-key-internal): FIX: Set 'assist-key-depressed-flag'
     to t when executing keyboard assist-key actions.
 
-* hsys-org.el (hsys-org-global-cycle, hsys-org-cycle): FIX: Temp move point to beginning
+* hsys-org.el (hsys-org-cycle-global, hsys-org-cycle): FIX: Temp move point to beginning
     of heading so TAB invocations cycle through all states properly.
 
 2023-07-24  Mats Lidell  <matsl@gnu.org>
@@ -13032,7 +13073,7 @@ name with 'name' and 'name-key'.
 
 * man/hyperbole.texi (Implicit Button Types, Smart Key - Org Mode): Add Org
     mode Action Key todo cycling and Assist Key todo set cycling.
-  hsys-org.el (hsys-org-cycle, hsys-org-global-cycle): FIX: Remove setting of
+  hsys-org.el (hsys-org-cycle, hsys-org-cycle-global): FIX: Remove setting of
     last-command which causes cursor to jump around somewhere else in the
     buffer when unfolding a headline rather than just unfolding it
               (hsys-org-todo-at-p, hsys-org-todo-cycle, hsys-org-todo-set-cycle):

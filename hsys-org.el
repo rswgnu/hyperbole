@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     28-Sep-26 at 08:09:55 by Bob Weiner
+;; Last-Mod:      5-Oct-26 at 22:23:15 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -490,12 +490,12 @@ omit any trailing colon and space in the prompt."
 	  (car src-block-info)
 	(cdr (assq attribute (caddr src-block-info)))))))
 
-(defun hsys-org-global-cycle ()
-  "Call `org-global-cycle' and set as `this-command' to cycle through all states."
-  (setq this-command 'org-cycle)
+(defun hsys-org-cycle-global ()
+  "Call `org-cycle-global' and set as `this-command' to cycle through all states."
+  (setq this-command 'org-cycle-global)
   (save-excursion
     (org-back-to-heading)
-    (org-global-cycle nil)))
+    (org-cycle-global nil)))
 
 (defun hsys-org-todo-cycle ()
   "Call `org-todo' and set as `this-command' to cycle through all states."

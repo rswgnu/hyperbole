@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:      3-Oct-26 at 12:17:59 by Bob Weiner
+@c Last-Mod:      6-Oct-26 at 00:08:28 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,7 +30,7 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED October 3, 2026
+@set UPDATED October 6, 2026
 @set UPDATED-MONTH October 2026
 @set EDITION 9.2.0
 @set VERSION 9.2.0
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.1.0
-Printed October 3, 2026.
+Printed October 6, 2026.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -213,7 +213,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.1.0
-October 3, 2026 @c AUTO-REPLACE-ON-SAVE
+October 6, 2026 @c AUTO-REPLACE-ON-SAVE
 
 
   Published by the Free Software Foundation, Inc.
@@ -2430,8 +2430,8 @@ priority).
 @cindex Action Key, Org Mode
 @cindex Assist Key, Org Mode
 @item smart-org
-@code{smart-org} is not an actual implicit button type, just an Elisp function,
-but it behaves similarly, so it is documented here.
+@code{smart-org} is not an actual implicit button type, just an Elisp
+function, but it behaves similarly, so it is documented here.
 
 Hyperbole recognizes Org mode constructs in any of these modes:
 @code{org-mode}, @code{org-agenda-mode}, @code{outshine-mode}
@@ -2486,8 +2486,9 @@ or #+end_example header, execute the code block via the Org mode
 standard binding of @bkbd{C-c C-c}, @code{org-ctrl-c-ctrl-c}.
 
 @item
-With point on an Org mode heading, cycle the view of the subtree at
-point.
+With point on an Org mode heading but not a Hyperbole button, call the
+function given by the @code{smart-org-action-key-heading-function}
+variable, which defaults to doing nothing.
 
 @item
 In any other context besides the end of a line, invoke the Org mode
@@ -2529,8 +2530,9 @@ With point on any #+BEGIN_SRC, #+END_SRC, #+RESULTS, #+begin_example
 or #+end_example header, remove any associated results.
 
 @item
-Not on a Hyperbole button but on an Org mode heading, cycle
-through views of the whole buffer outline.
+With point on an Org mode heading but not a Hyperbole button, call the
+function given by the @code{smart-org-assist-key-heading-function}
+variable, which defaults to doing nothing.
 @end enumerate
 
 @vindex hsys-org-enable-smart-keys
@@ -2621,8 +2623,13 @@ minibuffer or the other window.
 @cindex hywiki existing word
 @anchor{hywiki-existing-word}
 @item hywiki-existing-word
-When on a HyWikiWord with an existing page, display its page and
-optional section.
+When on a HyWikiWord with an existing referent, display the referent.
+This is the Action Key function that activates existing HyWikiWords.
+Calls to @code{(hywiki-active-in-current-buffer-p)} and @code{(not
+(hywiki-non-hook-context-p))} must return non-nil for this to activate.
+
+Potential, not-yet-existing HyWikiWords are handled by the implicit
+button type, @pxref{hywiki-word}.
 
 @findex ibtypes ilink
 @cindex implicit button link
@@ -3212,8 +3219,21 @@ source reference line again.
 @cindex hywiki word
 @anchor{hywiki-word}
 @item hywiki-word
-When on a HyWikiWord, display its page and optional section.  If the
-associated HyWiki page does not exist, create it automatically.
+When on a non-existing HyWikiWord, create it and display its referent.
+This is the Action Key function that creates HyWikiWords.  Calls to
+@code{(hywiki-word-action-key-creation-allowed-p)},
+@code{(hywiki-active-in-current-buffer-p)} and
+@code{(not (hywiki-non-hook-context-p))} must return non-nil for this to
+activate.  If the associated HyWiki page does not exist, create it
+automatically.
+
+If the associated HyWiki referent is a page, create it automatically
+unless it is the first HyWiki page to be created, in which case,
+prompt the user whether to create it, to prevent any unexpected HyWiki
+use.
+
+Existing HyWikiWords are handled by the implicit button type,
+@pxref{hywiki-existing-word}.
 
 @findex ibtypes hynote-file
 @findex hywiki-active-in-current-buffer-p
@@ -4703,10 +4723,11 @@ editing.
 @cindex HyWiki Action Key
 @cindex Action Key, HyWiki
 The Action Key, @bkbd{M-@key{RET}}, provides a faster way to create
-HyWikiWords to speed your note-taking, if you let HyWiki have priority
-over this key rather than having Org mode split lines and create new
-headlines when on a HyWikiWord.  Simply have Hyperbole override Org's
-control of that key in all Action and Assist Key contexts with the
+HyWikiWords to speed your note-taking in many text and programming
+modes, if you let HyWiki have priority over this key rather than
+having Org mode split lines and create new headlines when on a
+HyWikiWord.  Simply have Hyperbole override Org's control of that key
+in all Action and Assist Key contexts with the
 @samp{All-Hyperbole-Contexts} setting bound to @bkbd{C-h h h o a}.
 This sets the persistent customization option,
 @code{hsys-org-enable-smart-keys} to @samp{t} across all your Emacs
@@ -4816,20 +4837,12 @@ that they trigger only when other types are not recognized first.
 
 @table @code
 @item hywiki-existing-word
-On a HyWikiWord with an existing referent, display the referent.  A
-call to @code{(hywiki-active-in-current-buffer-p)} must return
-non-@samp{nil} for this to activate.
+On a HyWikiWord with an existing referent, display the referent.
+@xref{hywiki-existing-word}.
 
 @item hywiki-word
-When on a non-existing HyWikiWord, create it and display its referent.
-This is the Action Key function that activates HyWikiWords.  A call to
-@code{(hywiki-active-in-current-buffer-p)} must return non-@samp{nil}
-for this to activate.
-
-If the associated HyWiki referent is a page, create it automatically
-unless it is the first HyWiki page to be created, in which case,
-prompt the user whether to create it, to prevent any unexpected HyWiki
-use.
+On a non-existing HyWikiWord, create it and display its referent.
+@xref{hywiki-word}.
 @end table
 
 @node HyWiki Mode, Publishing a HyWiki, HyWikiWords, HyWiki
@@ -6814,10 +6827,21 @@ between cells.
 @cindex cell, collapse
 @cindex cell, expand
 @kindex koutliner, M-@key{RET}
+@vindex kotl-mode:action-key-default-function
 A click or a press of the Action Key within a cell's body, but not on a
-Hyperbole button, toggles between hiding and showing the tree rooted at
-point.  Try it with either your mouse or with @bkbd{M-@key{RET}}.
+Hyperbole button, runs the function stored in the variable, 
+@code{kotl-mode:action-key-default-function}, which by default does nothing.
 
+@cindex koutliner, hide/show tree
+In prior Koutliner versions, this would toggle between showing and
+hiding the tree at point; however,now you can use the Org-style tree
+visibility cycling on @bkbd{@key{TAB}} instead.  If you prefer the
+prior behavior, uncomment the setting for that variable near the
+bottom of the Hyperbole @file{man/use-package} reference file when you
+add it to your persnal init file.  Note, however, that if
+@code{hywiki-mode} is set to @samp{:all} then when point is on a
+capitalized word in a Koutline, an Action Key press will create a new
+HyWiki page, as that has higher priority than this setting.
 
 @node View Specs,  , Hiding and Showing, Viewing Outlines
 @subsection  View Specs
@@ -11224,62 +11248,76 @@ When company-mode is active:
 @subsection Smart Key - Org Mode
 
 @vindex hsys-org-enable-smart-keys
+@findex hsys-org-agenda-tags-p
 @cindex Org mode
 @format
 @group
 When in an Org mode context and @code{hsys-org-enable-smart-keys} is non-nil:
   ACTION KEY
-     (1) If on an Org todo keyword, cycle through the keywords in
+     (1) If on an Org tag, call @code{hsys-org-agenda-tags-p} and an
+         appropriate view tags function based on current directory or
+         buffer name, matching to the tag.  If on a colon between
+         tags, match to all tags on the line.
+
+     (2) If on an Org todo keyword, cycle through the keywords in
          that set or if final done keyword, remove it.
 
-     (2) If on an Org agenda view item, jump to the item for editing.
+     (3) If on an Org agenda view item, jump to the item for editing.
 
-     (3) Within a radio or internal target or a link to it, jump between
+     (4) Within a radio or internal target or a link to it, jump between
          the target and the first link to it, allowing two-way navigation.
 
-     (4) Follow other internal links and ID references in Org mode files.
+     (5) Follow other internal links and ID references in Org mode files.
 
-     (5) Follow Org mode external links.
+     (6) Follow Org mode external links.
 
-     (6) When on a Hyperbole button, activate the button.
+     (7) When on a Hyperbole button, activate the button.
 
-     (7) With point on the :dir path of a code block definition, display the
+     (8) With point on the :dir path of a code block definition, display the
          directory given by the path.
 
-     (8) With point on any #+BEGIN_SRC, #+END_SRC, #+RESULTS, #+begin_example
+     (9) With point on any #+BEGIN_SRC, #+END_SRC, #+RESULTS, #+begin_example
          or #+end_example header, execute the code block via the Org mode
          standard binding of @bkbd{C-c C-c}, @code{org-ctrl-c-ctrl-c}.
 
-     (9) When point is on an Org mode heading, cycle the view of the subtree
-         at point.
+     (10) With point on an Org mode heading but not a Hyperbole button, call
+         the function given by the @code{smart-org-action-key-heading-function}
+         variable, which defaults to doing nothing.
 
-     (10) In any other context besides the end of a line, invoke the Org mode
+     (11) In any other context besides the end of a line, invoke the Org mode
           standard binding of @bkbd{M-@key{RET}}, @code{org-meta-return}.
 @end group
 @end format
 
+@findex hsys-consult-org-grep-tags-p
 @format
 @group
    When the ASSIST KEY is pressed, it behaves just like the Action Key except
    in these contexts:
 
-     (1) If on an Org todo keyword, move to the first todo keyword in
+     (1) If on an Org tag, call @code{hsys-consult-org-grep-tags-p} and an
+         appropriate consult grep function based on current directory
+         or buffer name, prompting with and matching to the tag.  If on a
+         colon between tags, prompt and match to all tags on the line.
+
+     (2) If on an Org todo keyword, move to the first todo keyword in
          the next set, if any.
 
-     (2) If on an Org mode link, ID reference or agenda view item, display
-         Hyperbole context-sensitive help.
+     (3) If on an Org mode link or agenda view item, display Hyperbole
+         context-sensitive help.
 
-     (3) On a Hyperbole button, perform the Assist Key function, generally
+     (4) On a Hyperbole button, perform the Assist Key function, generally
          showing help for the button.
 
-     (4) With point on the :dir value of a code block definition, display
+     (5) With point on the :dir value of a code block definition, display
          a help summary of this implicit directory button.
 
-     (5) With point on any #+BEGIN_SRC, #+END_SRC, #+RESULTS, #+begin_example
+     (6) With point on any #+BEGIN_SRC, #+END_SRC, #+RESULTS, #+begin_example
          or #+end_example header, remove source block results.
 
-     (6) Not on a Hyperbole button but on an Org mode heading, cycle
-         through views of the whole buffer outline.
+     (7) With point on an Org mode heading but not a Hyperbole button, call
+         the function given by the @code{smart-org-assist-key-heading-function}
+         variable, which defaults to doing nothing.
 @end group
 @end format
 
@@ -11728,6 +11766,7 @@ When pressed within an occur-mode, moccur-mode or amoccur-mode buffer:
 
 @node Smart Key - The Koutliner, Smart Key - Flymake Mode, Smart Key - Occurrence Matches, Smart Keyboard Keys
 @subsection Smart Key - The Koutliner
+@vindex kotl-mode:action-key-default-function
 @format
 @group
 When pressed within a Hyperbole Koutliner buffer (kotl-mode):
@@ -11742,10 +11781,11 @@ When pressed within a Hyperbole Koutliner buffer (kotl-mode):
      (4) on a | character within an Org-style table, toggle Org Table minor
          mode;
      (5) in an Org-style table, wrap the table cell or region;
-     (6) within a cell, if its subtree is hidden then shows it,
-         otherwise hides it.
+     (6) within a cell, call the value of @code{kotl-mode:action-key-default-function},
+         which defaults to doing nothing.
 @end group
 @end format
+@vindex kotl-mode:assist-key-default-function
 @format
 @group
   ASSIST KEY
@@ -11759,6 +11799,8 @@ When pressed within a Hyperbole Koutliner buffer (kotl-mode):
          left of a cell, prompts to move one tree to a new location in
          the outline; press the Action Key twice to select the tree to
          move and where to move it.
+     (5) anywhere else within a kcell, call the value of
+         @code{kotl-mode:assist-key-default-function}, which defaults to doing nothing.
 @end group
 @end format
 

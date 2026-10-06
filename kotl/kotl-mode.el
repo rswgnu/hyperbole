@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:      1-Oct-26 at 18:31:22 by Bob Weiner
+;; Last-Mod:      5-Oct-26 at 23:36:48 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -41,6 +41,17 @@
 ;;; Public variables
 ;;; ************************************************************************
 
+(defcustom kotl-mode:action-key-default-function #'ignore
+  "Function run by the Action Key in `kotl-mode' when no other context matches.
+Set it to `kotl-mode:show-or-hide-tree' if you want the old Koutliner behavior."
+  :type 'function
+  :group 'hyperbole-koutliner)
+
+(defcustom kotl-mode:assist-key-default-function #'ignore
+  "Function run by the Assist Key in `kotl-mode' when no other context matches.
+Set it to `smart-scroll-down' if you want the old Koutliner behavior."
+  :type 'function
+  :group 'hyperbole-koutliner)
 
 ;; Derived from `org-cycle-emulate-tab'
 (defcustom kotl-mode:emulate-tab nil
@@ -53,12 +64,12 @@ t           - Everywhere except in headlines
 exc-hl-bol  - Everywhere except at the start of a headline
 If <tab> is used in a place where it does not emulate global <tab>, the
 value of `kotl-mode:tab-flag' determines what it does."
-  :group 'hyperbole-koutliner
   :type '(choice (const :tag "Never" nil)
 		 (const :tag "Only in completely white lines" white)
 		 (const :tag "Before first char in a line" whitestart)
 		 (const :tag "Everywhere except in headlines" t)
-		 (const :tag "Everywhere except at bol in headlines" exc-hl-bol)))
+		 (const :tag "Everywhere except at bol in headlines" exc-hl-bol))
+  :group 'hyperbole-koutliner)
 
 (defcustom kotl-mode:indent-tabs-mode t
   "Non-nil means {\\[kotl-mode:tab-command]} may insert literal tab characters.
@@ -2660,46 +2671,47 @@ With optional NEXT-CHAR-VISIBLE, return t only if the following char is visible.
 ;;; ------------------------------------------------------------------------
 
 (defun kotl-mode:action-key ()
-  "Collapses, expands, links to, and scrolls through koutline cells.
-Invoked via a key press when in kotl-mode.  It assumes that its caller has
-already checked that the key was pressed in an appropriate buffer and has
-moved the cursor to the selected buffer.
+  "Collapse, expand, link to, or scroll through koutline cells.
+Invoke via a key press when in kotl-mode.  Assume that caller has
+checked that the key was pressed in an appropriate buffer and has moved
+the cursor to the selected buffer.
 
 If key is pressed:
  (1) at the end of buffer, uncollapse and unhide all cells in view;
  (2) at the end of a visible line, call the `action-key-eol-function';
- (3) between cells or within the read-only indentation region to the left of
-     a cell, then move point to prior location and begin creation of a
-     klink to some other outline cell; press the Action Key twice to select the
-     link referent cell;
+ (3) between cells or within the read-only indentation region to the
+     left of a cell, then move point to prior location and begin
+     creation of a klink to some other outline cell; press the Action
+     Key twice to select the link referent cell;
  (4) on a | character within an Org-style table, toggle Org Table minor mode;
  (5) in an Org-style table, wrap the table cell or region;
- (6) within a cell, if its subtree is hidden then show it, otherwise hide it."
+ (6) within a kcell, call the value of `kotl-mode:action-key-default-function',
+     which defaults to doing nothing."
   (interactive)
-  (cond	((kotl-mode:eobp) (kotl-mode:show-all))
-	((kotl-mode:eolp t) (funcall action-key-eol-function))
-	((not (kview:valid-position-p))
-	 (if (markerp action-key-depress-prev-point)
-	     (progn (select-window
-		     (get-buffer-window
-		      (marker-buffer action-key-depress-prev-point)))
-		    (goto-char (marker-position action-key-depress-prev-point))
-		    (call-interactively 'klink:create))
-	   (kotl-mode:to-valid-position)
-	   (error "(kotl-mode:action-key): Action Key released at invalid position")))
-	((and (/= (point) (point-max)) (= (following-char) ?|)
-	      (or (org-at-table-p t) (looking-at "[| \t]+$")))
-	 ;; On a | separator in a table, toggle Org table minor mode
-	 (orgtbl-mode 'toggle)
-	 (message "Org table minor mode %s" (if orgtbl-mode "enabled" "disabled")))
-	((org-at-table-p t)
-	 ;; Wrap the table cell or region
-	 (org-table-wrap-region current-prefix-arg))
-	(t ;; On a cell line (not at the end of line).
-	 (if (kotl-mode:tree-collapsed-p)
-	     (kotl-mode:show-tree)
-	   (kotl-mode:hide-tree))))
-  (kotl-mode:to-valid-position))
+  (unwind-protect
+      (cond ((kotl-mode:eobp) (kotl-mode:show-all))
+	    ((kotl-mode:eolp t) (funcall action-key-eol-function))
+	    ((not (kview:valid-position-p))
+	     (if (markerp action-key-depress-prev-point)
+	         (progn (select-window
+		         (get-buffer-window
+		          (marker-buffer action-key-depress-prev-point)))
+		        (goto-char (marker-position action-key-depress-prev-point))
+		        (call-interactively 'klink:create))
+	       (kotl-mode:to-valid-position)
+	       (error "(kotl-mode:action-key): Action Key released at invalid position")))
+	    ((and (/= (point) (point-max)) (= (following-char) ?|)
+	          (or (org-at-table-p t) (looking-at "[| \t]+$")))
+	     ;; On a | separator in a table, toggle Org table minor mode
+	     (orgtbl-mode 'toggle)
+	     (message "Org table minor mode %s" (if orgtbl-mode "enabled" "disabled")))
+	    ((org-at-table-p t)
+	     ;; Wrap the table cell or region
+	     (org-table-wrap-region current-prefix-arg))
+	    (t ;; Within a cell line (not at the end of line).
+             (when (fboundp kotl-mode:action-key-default-function)
+	       (funcall kotl-mode:action-key-default-function))))
+    (kotl-mode:to-valid-position)))
 
 (defun kotl-mode:assist-key ()
   "Displays properties of koutline cells, collapses all cells, and scrolls back.
@@ -2717,27 +2729,30 @@ If assist-key is pressed:
      a cell, then move point to prior location and prompt to move one tree to
      a new location in the outline; press the Action Key twice to select the
      tree to move and where to move it;
- (5) anywhere else, invoke `smart-scroll-down', typically to scroll down a
-     windowful."
+ (5) anywhere else within a kcell, call the value of
+     `kotl-mode:assist-key-default-function', which defaults to doing nothing."
   (interactive)
-  (cond ((kotl-mode:eobp) (kotl-mode:overview))
-	((kotl-mode:eolp t) (funcall assist-key-eol-function))
-	((not (kview:valid-position-p))
-	 (if (markerp assist-key-depress-prev-point)
-	     (progn (select-window
-		     (get-buffer-window
-		      (marker-buffer assist-key-depress-prev-point)))
-		    (goto-char (marker-position
-				assist-key-depress-prev-point))
-		    (call-interactively 'kotl-mode:move-after))
-	   (kotl-mode:to-valid-position)
-	   (error "(kotl-mode:assist-key): Help Key released at invalid position")))
-	((not (bolp))
-	 ;; On an outline header line but not at the start/end of line,
-	 ;; show attributes for tree at point.
-	 (kotl-mode:cell-help (kcell-view:label) (or current-prefix-arg 2)))
-	((smart-scroll-down)))
-  (kotl-mode:to-valid-position))
+  (unwind-protect
+      (cond ((kotl-mode:eobp) (kotl-mode:overview))
+	    ((kotl-mode:eolp t) (funcall assist-key-eol-function))
+	    ((not (kview:valid-position-p))
+	     (if (markerp assist-key-depress-prev-point)
+	         (progn (select-window
+		         (get-buffer-window
+		          (marker-buffer assist-key-depress-prev-point)))
+		        (goto-char (marker-position
+				    assist-key-depress-prev-point))
+		        (call-interactively 'kotl-mode:move-after))
+	       (kotl-mode:to-valid-position)
+	       (error "(kotl-mode:assist-key): Help Key released at invalid position")))
+	    ((not (bolp))
+	     ;; On an outline header line but not at the start/end of line,
+	     ;; show attributes for tree at point.
+	     (kotl-mode:cell-help (kcell-view:label) (or current-prefix-arg 2)))
+	    (t ;; Within a cell line (not at the end of line).
+             (when (fboundp kotl-mode:assist-key-default-function)
+	       (funcall kotl-mode:assist-key-default-function))))
+    (kotl-mode:to-valid-position)))
 
 ;;; ------------------------------------------------------------------------
 ;;; Structure Editing
@@ -3868,6 +3883,13 @@ With optional SHOW-FLAG, expand the tree instead."
 	   ;; Leave first line visible.
 	   (setq start (1- (point))))
       (outline-flag-region start end (not show-flag)))))
+
+;;;###autoload
+(defun kotl-mode:show-or-hide-tree ()
+  "Show all of the tree at point when collapsed, else collapse it to one line."
+  (if (kotl-mode:tree-collapsed-p)
+      (kotl-mode:show-tree)
+    (kotl-mode:hide-tree)))
 
 ;;;###autoload
 (defun kotl-mode:show-tree (&optional cell-ref)

@@ -1,5 +1,11 @@
 ;;; use-package --- Hyperbole use-package reference configuration   -*- mode: emacs-lisp; lexical-binding: t; -*-
 
+;; NOTE: If you use Emacs 28 or earlier, you'll need to install the
+;; `use-package' Emacs package before using this configuration file
+;; since it is not built-in to your Emacs.
+
+;; -----------------------------------------------------------------
+
 ;; Default values herein represent the settings Hyperbole will default
 ;; to if not set within this `use-package' configuration.
 (use-package hyperbole
@@ -93,4 +99,17 @@
   ;;   t   - may insert literal <tab> characters. (default)
   ;;
   ;;   nil - may insert <spc> characters only.
-  (kotl-mode:indent-tabs-mode t))
+  (kotl-mode:indent-tabs-mode t)
+
+  ;; Prior to the addition of Org-style visibility cycling to the
+  ;; Koutliner on the TAB key, a press of the Action Key on a Koutline
+  ;; cell line used to toggle showing/hiding the tree rooted at point.
+  ;; Today, this does nothing.
+  ;;
+  ;; Uncomment the next expression if you prefer the prior behavior
+  ;; but note that if `hywiki-mode' is set to `:all' when point is on
+  ;; a capitalized word, an Action Key press will create a new HyWiki
+  ;; page, as that has higher priority than this setting.
+  ;;
+  ;; (kotl-mode:action-key-default-function 'kotl-mode:show-or-hide-tree)
+  )
