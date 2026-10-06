@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:     5-Oct-26 at 21:58:13
-;; Last-Mod:      6-Oct-26 at 10:44:16 by Mats Lidell
+;; Last-Mod:      6-Oct-26 at 22:31:38 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -20,7 +20,8 @@
 (require 'lisp-mnt)
 
 (defvar hypb-release-version-files
-  '("HY-ABOUT"
+  '("hversion.el"
+    "HY-ABOUT"
     "HY-ANNOUNCE"
     "HY-NEWS"
     "Makefile"
