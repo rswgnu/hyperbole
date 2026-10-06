@@ -1,8 +1,11 @@
-2026-10-05  Mats Lidell  <matsl@gnu.org>
+2026-10-06  Mats Lidell  <matsl@gnu.org>
 
 * hypb-release.el (hypb-release-update-version): Update version string
     in files in hypb-release-version-files.
     (hypb-release-version-files): Files to update.
+    (hypb-release-update-hyperbole-version-header): Update hyperbole.el
+    version header.
+
 * MANIFEST:  Add hypb-release.el
 
 2026-10-05  Bob Weiner  <rsw@gnu.org>

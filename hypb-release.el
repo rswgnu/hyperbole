@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:     5-Oct-26 at 21:58:13
-;; Last-Mod:      5-Oct-26 at 23:20:51 by Mats Lidell
+;; Last-Mod:      6-Oct-26 at 10:44:16 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -26,7 +26,10 @@
     "Makefile"
     "README.md"
     "man/hyperbole.texi")
-  "Files in which the Hyperbole version number is stored.")
+  "Files in which the Hyperbole version number is stored.
+The list does not include hyperbole.el since that needs to be updated in
+the last commit for a release.  That update is controlled by a make
+target.  See also `hypb-release-update-hyperbole-version-header'.")
 
 (defun hypb-release-update-version (new-version)
   "Replace old-version with NEW-VERSION in `hypb-release-version-files'.
@@ -66,5 +69,12 @@ Files are saved normally by Emacs, so hooks are applied as if edited manually."
                old-version new-version
                replacements (length hypb-release-version-files)))))
 
-(provide 'hypb-mnt)
+(defun hypb-release-update-hyperbole-version-header (new-version)
+  "Update the version header in hyperbole.el to NEW-VERSION.
+This update needs to be in the last commit for a release and is run by a
+Makefile target."
+  (let ((hypb-release-version-files '("hyperbole.el")))
+    (hypb-release-update-version new-version)))
+
+(provide 'hypb-release)
 ;;; hypb-release.el ends here
