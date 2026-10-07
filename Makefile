@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:      3-Oct-26 at 23:59:23 by Mats Lidell
+# Last-Mod:      7-Oct-26 at 21:31:58 by Mats Lidell
 #
 # Copyright (C) 1994-2026  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -234,7 +234,7 @@ EL_COMPILE = hact.el hactypes.el hargs.el hbdata.el hbmap.el hbut.el \
 	     hui-treemacs.el hui-window.el hui.el hvar.el hversion.el hynote.el hypb.el hyperbole.el \
 	     hyrolo-demo.el hyrolo-logic.el hyrolo-menu.el hyrolo.el hywconfig.el hywiki.el \
              hasht.el set.el hypb-ert.el hui-dired-sidebar.el hypb-maintenance.el \
-             hui-register.el
+             hui-register.el hypb-release.el
 
 EL_SRC = $(EL_COMPILE)
 
@@ -501,7 +501,9 @@ release-website:
 .PHONY: release-pre
 release-pre:
 	git switch -c release/$(HYPB_VERSION)
-	sed -i 's/^;; Version:      .*/;; Version:      $(HYPB_VERSION)/' hyperbole.el
+	$(EMACS_BATCH) -l hypb-release \
+	  --eval '(hypb-release-update-hyperbole-version-header "$(HYPB_VERSION)")'
+	$(MAKE) version
 	git add hyperbole.el
 	git commit -m "Release Hyperbole $(HYPB_VERSION)"
 	git push github_origin HEAD
