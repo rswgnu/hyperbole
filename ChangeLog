@@ -12,6 +12,7 @@
     ($(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz): Create tarball
     from the release tagged files.
     (EL_COMPILE): Byte compile hypb-release.el
+    General update of the target documentation. Remove of unused targets.
 
 2026-10-06  Mats Lidell  <matsl@gnu.org>
 

@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:      7-Oct-26 at 21:31:58 by Mats Lidell
+# Last-Mod:      7-Oct-26 at 22:33:41 by Mats Lidell
 #
 # Copyright (C) 1994-2026  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -36,20 +36,6 @@
 #               To build only the output formats of the Hyperbole Manual:
 #		     make doc
 #
-#		Note: Releasing to ELPA is automatic in that the
-#		master branch on savannah is automatically synced
-#		daily by ELPA. The pkg and release targets are for
-#		making and uploading a tar ball to ftp.gnu.org.
-#
-#               To assemble a Hyperbole Emacs package for testing:
-#		     make pkg
-#
-#               To release a Hyperbole Emacs package to ftp.gnu.org:
-#		     make release
-#
-#		Generate the website sources and upload them:
-#		    make website - generate web site in folder $(HYPB_WEB_REPO_LOCATION)"
-#
 #               List major build env versions:
 #                   make env
 #
@@ -74,6 +60,35 @@
 #                  "man/hyperbole.texi"   - source form
 #
 #               * Developer targets
+#
+#		Note: Releasing to ELPA is automatic in that the
+#		master branch on savannah is automatically synced
+#		daily by ELPA. The ftp target is for making and
+#		uploading a tar ball to ftp.gnu.org.
+#
+#               To release a Hyperbole Emacs package. The release
+#               process uses a pre and a post step.
+#
+#		Pre:
+#		    M-x hypb-release-update-version (Update all version strings except in Hyperbole.el)
+#		    -- Do all other preparations left for the release.
+#		    -- Commit and push all updates to master
+#		    make release-pre - Creates release branch, updates package version header,
+#			creates a PR with the changes for review.
+#
+#		Post:
+#		    Approve and merge the PR from the pre step.
+#		    make release-post	- tags the release commit, upload tarball to ftp.gnu.org, update website
+#
+#		Sub targets for the release:
+#		    make sync-repos	- Sync savannah and github/rswgnu repos.
+#		    make git-tag-release	- Sync repos, create and push the release tag to both repos.
+#		    make ftp 	- Build and upload tarball to ftp.gnu.org.
+#
+#		Generate the website sources and upload them:
+#		    make website-local - generate web site in folder $(HYPB_WEB_REPO_LOCATION)"
+#		    make website - As website-local and update live hyperbole web (cvs commit ...)
+#		    make release-website - As website but act on the release tag.
 #
 #               To run unit tests:
 #                   make all-tests                    - run all tests in a new interactive Emacs
@@ -105,7 +120,9 @@
 #               To clean the local elpa docker volume use:
 #                   make docker-clean
 
-#               Verify hyperbole installation using different sources:
+#               Verify hyperbole installation using docker. The
+#               different install sources are selected by the name of
+#               the target.
 #                   make install-<source>
 #               Where source can be 'elpa', 'elpa-devel', 'tarball' (tarball from elpa-devel),
 #               'straight' (git master from savannah) or 'all'.
@@ -289,20 +306,24 @@ help:
 	@echo "  Using docker and the macro DOCKER_VERSIONS for selected Emacs versions to test against"
 	@echo "     make docker-all-tests   - run all tests"
 	@echo "     make docker-batch-tests - run non-interactive tests"
+	@echo "  To run test coverage analysis:"
+	@echo "     make coverage file=<file> test=<testspec>"
+	@echo "  To run lint on all sources"
+	@echo "     make lint"
+	@echo "  To check if a file is missings the copyright statement"
+	@echo "     make check-copyright"
 	@echo "  To selectively run make targets in docker:"
 	@echo "     make docker version=<emacs-version> targets=<make targets>"
 	@echo "  To verify hyperbole installation using different sources:"
 	@echo "     make install-<source>"
-	@echo "   where <source> can be 'elpa', 'elpa-devel', 'tarball' (tarball from elpa-devel),"
-	@echo "   'straight' (git master from savannah) or 'all'."
-	@echo "  To build the Hyperbole distribution package:"
-	@echo "     make pkg"
+	@echo "     where <source> can be 'elpa', 'elpa-devel', 'tarball', ..."
 	@echo "  To build documentation formats only:"
 	@echo "     make doc"
 	@echo "  To generate and upload the public Hyperbole website:"
 	@echo "     make website"
-	@echo "  To release a Hyperbole Emacs package to ELPA and ftp.gnu.org:"
-	@echo "     make release"
+	@echo "  Help targets used when making a release:"
+	@echo "     make release-pre"
+	@echo "     make release-post"
 	@echo ""
 
 	@echo "The Hyperbole Manual is included in the package in four forms:"
@@ -551,10 +572,6 @@ hyperbole-autoloads.el: $(EL_COMPILE)
 kotl/kotl-autoloads.el: $(EL_KOTL)
 	$(HYPB_GEN)$(EMACS_BATCH) --debug --eval "(let ((autoload-file (expand-file-name \"kotl/kotl-autoloads.el\")) (backup-inhibited t) (find-file-hooks)) (hload-path--make-directory-autoloads \"kotl/\" autoload-file))"
 	$(HYPB_at)$(TOUCH) $@
-
-.PHONY: pkg package
-pkg: package
-package: $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz
 
 # Used for ftp uploads. Pick tagged release files, make autoloads and
 # put together as a compressed tarball.
