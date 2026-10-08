@@ -105,6 +105,7 @@ hload-path.el        - GNU Hyperbole load-path and autoload early initialization
 hsettings.el         - GNU Hyperbole settings which may require customization
 hvar.el              - Variable manipulation routines for GNU Hyperbole
 hypb-maintenance.el  - Support for updating Hyperbole web pages
+hypb-release.el      - Support for release management
 hyperbole-banner.png - Graphic of GNU Hyperbole for display with About Hyperbole
 smart-clib-sym       - Test whether symbol appears within a set of C libraries
 topwin.py            - Python script to find the topmost macOS app window at a screen position

@@ -67,6 +67,16 @@
   test/smart-org-tests.el (smart-org-mode-on-header-cycles-visibility): Bind Action
     Key variable needed for the test to restore prior Hyperbole Org mode behavior.
 
+2026-10-06  Mats Lidell  <matsl@gnu.org>
+
+* hypb-release.el (hypb-release-update-version): Update version string
+    in files in hypb-release-version-files.
+    (hypb-release-version-files): Files to update.
+    (hypb-release-update-hyperbole-version-header): Update hyperbole.el
+    version header.
+
+* MANIFEST:  Add hypb-release.el
+
 2026-10-05  Bob Weiner  <rsw@gnu.org>
 
 * hui-mouse.el (smart-org-action-key-heading-function,
