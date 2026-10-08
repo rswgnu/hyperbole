@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-90
-;; Last-Mod:     12-Sep-26 at 16:43:46 by Mats Lidell
+;; Last-Mod:      8-Oct-26 at 13:00:37 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1157,7 +1157,8 @@ documentation is found."
 	      (progn
 		(let* ((actype (or (actype:elisp-symbol
                                     (hattr:get 'hbut:current 'actype))
-				   (hattr:get 'hbut:current 'actype)))
+				   (hattr:get 'hbut:current 'actype)
+                                   cmd-sym))
                        (condition (car hkey-form))
 		       (temp-buffer-show-hook
 			(lambda (buf)

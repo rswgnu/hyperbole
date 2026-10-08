@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:      8-Oct-26 at 09:05:32 by Bob Weiner
+;; Last-Mod:      8-Oct-26 at 15:48:27 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -78,6 +78,15 @@ Tab characters are inserted rather than space characters when
 of this variable is local to each Koutline buffer."
   :type 'boolean
   :group 'hyperbole-koutliner)
+
+(defvar kotl-mode-letter-map (make-sparse-keymap)
+  "Keymap of alphabetic bound letter keys prefaced by `kotl-mode:letter-prefix'.")
+
+(defvar kotl-mode:letter-prefix "C-c ;"
+  "Koutliner current default or user-specified letter key binding prefix.")
+
+(defvar kotl-mode:letter-prefix-saved nil
+  "Prior Koutliner letter key prefix saved when the prefix is set to `C-c'.")
 
 (defcustom kotl-mode:refill-flag nil
   "Non-nil means automatically refill cells during operations.
@@ -1208,20 +1217,26 @@ valid settings."
 
 (defun kotl-mode:toggle-letter-prefix ()
   (interactive)
-  "Toggle `kotl-mode:letter-prefix' between its initial setting and `C-c'.
-Its default setting is `C-c ;'."
-  (if (equal kotl-mode:letter-prefix "C-c")
+  "Toggle whether `C-c' is the active letter prefix or not.
+Initially this is off as the default value is `C-c ;'."
+  (if (member kotl-mode:letter-prefix '("C-c" "\C-c"))
       (kotl-mode:set-letter-prefix-standard)
     (kotl-mode:set-letter-prefix-control-c))
 
   (when (called-interactively-p 'interactive)
     (message "Koutline prefix for letter keys is now: `%s'" kotl-mode:letter-prefix)))
 
-(defun kotl-mode:set-letter-prefix-standard ()
-  "Bind `kotl-mode' letter keys prefaced with `kotl-mode:letter-prefix'."
+(defun kotl-mode:set-letter-prefix-standard (&optional letter-prefix)
+  "Bind `kotl-mode' letter keys with a newly computed `kotl-mode:letter-prefix'.
+Use (in this order) the optional LETTER-PREFIX, a string, if given, the
+`kotl-mode:letter-prefix-saved' or the default value of
+`kotl-mode:letter-prefix'.  Use only when current `kotl-mode:letter-prefix'
+is C-c."
   (interactive)
-  ;; Remove letter map from prior value of letter prefix but only
-  ;; bindings on letter keys, not the entire C-c map
+  (when (not (member kotl-mode:letter-prefix '("C-c" "\C-c")))
+    (error "(kotl-mode:set-letter-prefix-standard): Prefix must be \"C-c\" when this is called"))
+  ;; Remove letter map from prior value of letter prefix but only bindings
+  ;; on letter keys, not the entire map, since prefix is just C-c.
   (map-keymap
    (lambda (key _cmd) (when (and (integerp key)
                                  (or (and (>= key ?a) (<= key ?z))
@@ -1233,21 +1248,27 @@ Its default setting is `C-c ;'."
    kotl-mode-letter-map)
   ;; Update the prefix and then bind to the letter map
   (setq kotl-mode:letter-prefix
-        (or kotl-mode:letter-prefix-saved
+        (or letter-prefix
+            kotl-mode:letter-prefix-saved
             (default-value 'kotl-mode:letter-prefix)))
   (define-key kotl-mode-map (kbd kotl-mode:letter-prefix)
     kotl-mode-letter-map))
 
 (defun kotl-mode:set-letter-prefix-control-c ()
-  "Bind `kotl-mode' letter keys prefaced with `C-c'."
+  "Bind `kotl-mode' letter keys prefaced with `C-c'.
+Does not disable any other active prefix."
   (interactive)
   ;; Ensure prefix is valid
   (unless (stringp kotl-mode:letter-prefix)
     (setq kotl-mode:letter-prefix (default-value 'kotl-mode:letter-prefix)))
+  (unless (stringp kotl-mode:letter-prefix)
+    (error "(kotl-mode:set-letter-prefix-control-c): `kotl-mode:letter-prefix' must be a string, not `%S'"
+           kotl-mode:letter-prefix))
   ;; Save existing prefix for future restore
   (setq kotl-mode:letter-prefix-saved kotl-mode:letter-prefix)
-  ;; Remove letter map from prior value of letter prefix
-  (define-key kotl-mode-map (kbd kotl-mode:letter-prefix) nil)
+  ;; Leave letter map from prior value of letter prefix; uncomment to remove it
+  ;; (define-key kotl-mode-map (kbd kotl-mode:letter-prefix) nil)
+  ;;
   ;; Update the prefix and then bind to the letter map
   (setq kotl-mode:letter-prefix "C-c")
   ;; Can't replace the whole C-c map, so add each letter key to it instead
@@ -4446,11 +4467,6 @@ Leave point at end of line now residing at START."
   (setq transient-mark-mode t))
 
 ;;; ------------------------------------------------------------------------
-
-(defvar kotl-mode-letter-map (make-sparse-keymap))
-
-(defvar kotl-mode:letter-prefix "C-c ;")
-(defvar kotl-mode:letter-prefix-saved nil)
 
 (defun kotl-mode:setup-keymap ()
   (condition-case err

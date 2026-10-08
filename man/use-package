@@ -69,9 +69,14 @@
   ;; prefix was `C-c'); this avoids overriding global user settings of
   ;; `C-c <letter>'.
   ;;
-  ;; If you want the prior Koutline-specific letter key bindings
-  ;; instead of the current ones, uncomment the following line:
-  ;; (kotl-mode:letter-prefix "C-c")
+  ;;   If you want the prior Koutline {C-c <letter>} key bindings
+  ;;   in addition to the current ones on {C-c ; <letter>), uncomment the
+  ;;   following line:
+  ;;     (kotl-mode:set-letter-prefix-control-c)
+
+  ;;   If you want to use your own prefix for these letter
+  ;;   keys, uncomment the following line and substitute your prefix:
+  ;;     (kotl-mode:set-letter-prefix-standard "your-prefix-string")
 
   ;; Customize the behavior of the <tab> and S-<tab> keys in a Koutline.
   ;; One of three possible values:

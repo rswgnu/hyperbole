@@ -1,5 +1,24 @@
 2026-10-08  Bob Weiner  <rsw@gnu.org>
 
+
+* kotl/kotl-mode.el (kotl-mode:toggle-letter-prefix,
+                     kotl-mode:set-letter-prefix-standard): Add support for
+    matching "\C-c" in addition to "C-c".
+                   (kotl-mode:set-letter-prefix-control-c): Trigger error
+    if 'kotl-mode:letter-prefix' is not a string.  Also, change so does
+    not disable any prior prefix so default letter bindings are always
+    available.
+                   (kotl-mode:set-letter-prefix-standard): Add optional
+    'letter-prefix' argument so user can specify own prefix to letter keys.
+  man/use-package (hyperbole): Offer commented out settings for the above.
+
+* test/demo-tests.el (demo-org-hide-header-test): Fix test for Org 9.5.5 or
+    earlier in Emacs 28.
+
+* hmouse-drv.el (hkey-help): Fix error when 'actype' was nil because there
+    is no 'hbut:current' actype but there is a 'cmd-sym'.  In this case,
+    set 'actype' to 'cmd-sym' and use its doc string.
+
 * hsys-org.el (hsys-org-cycle-global): Trigger error to upgrade Org if
     'org-cycle-global' is not defined.
 

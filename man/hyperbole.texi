@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:      8-Oct-26 at 11:29:38 by Bob Weiner
+@c Last-Mod:      8-Oct-26 at 15:48:26 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -10274,10 +10274,12 @@ is named @emph{kotl-mode:cmd}.
 NOTE: As of Hyperbole version 9.3.0, the Koutliner @bkbd{C-c <letter>}
 keys have moved to @bkbd{C-c ; <letter>} so as not to override keys
 reserved for global user-specific bindings.  If you don't care about
-this and want the old bindings back, uncomment the
-@code{kotl-mode:letter-prefix} setting documented in
-@file{$@{hyperb:dir@}/man/use-package}.  You can also interactively toggle
-between @samp{C-c ;} and @samp{C-c} prefixes with @bkbd{M-1 C-c C-l}.
+this and want the old bindings back (in addition to the new ones),
+uncomment the @code{(kotl-mode:set-letter-prefix-control-c)} line in
+your Hyperbole @code{use-package} initialization based on the
+reference file @file{$@{hyperb:dir@}/man/use-package}.  You can also
+interactively toggle @samp{C-c} letter bindings on and off with
+@bkbd{M-1 C-c C-l}.
 
 @table @code
 
