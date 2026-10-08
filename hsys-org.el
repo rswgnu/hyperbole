@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:      5-Oct-26 at 22:23:15 by Bob Weiner
+;; Last-Mod:      8-Oct-26 at 10:34:42 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -492,10 +492,12 @@ omit any trailing colon and space in the prompt."
 
 (defun hsys-org-cycle-global ()
   "Call `org-cycle-global' and set as `this-command' to cycle through all states."
-  (setq this-command 'org-cycle-global)
-  (save-excursion
-    (org-back-to-heading)
-    (org-cycle-global nil)))
+  (if (fboundp 'org-cycle-global)
+      (progn (setq this-command 'org-cycle-global)
+             (save-excursion
+               (org-back-to-heading)
+               (org-cycle-global nil)))
+    (error "(hsys-org-cycle-global): Upgrade your Org version to at least 9.6 for `org-cycle-global' command")))
 
 (defun hsys-org-todo-cycle ()
   "Call `org-todo' and set as `this-command' to cycle through all states."

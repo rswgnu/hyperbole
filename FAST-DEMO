@@ -514,9 +514,11 @@ To learn how to create new kinds of implicit button and action types, see
 ** Koutliner
 
   The Hyperbole Koutliner produces multi-level, autonumbered hierarchies of
-  cells.  Each cell has two identifiers, a relative autonumber indicating its
-  present position within the outline and a permanent identifier suitable for
-  use within hyperlink references to the cell.
+  cells.  Each cell has two identifiers, a relative autonumber indicating
+  its present position within the outline and a permanent identifier
+  suitable for use within hyperlink references to the cell.  It has
+  extensive Org mode key binding compatibility including for visibility
+  cycling, tree moving and table editing.
 
   A demonstration of the Koutliner is found on the Hyperbole Kotl/Example
   menu entry, {C-h h k e}.  This gives you an editable copy of Hyperbole's

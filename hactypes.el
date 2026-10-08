@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     14-Jul-26 at 00:15:46 by Bob Weiner
+;; Last-Mod:      7-Oct-26 at 20:05:20 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -650,6 +650,17 @@ If CELL-REF is nil, show the first cell in the view."
 	(hpath:find file)
       ;; file can be a buffer from get-key-src call
       (hpath:display-buffer (or file (current-buffer)))))
+  ;;
+  ;; `cell-ref' could have an extra trailing punctuation character that
+  ;;  needs removal, like: "3b=071.; if it includes a | character for a
+  ;;  viewspec, then don't remove final punctuation as it is part of the
+  ;;  viewspec."  -- RSW, 2026-10-07
+  (when (and (stringp cell-ref)
+             (bound-and-true-p klink:cell-ref-regexp)
+             (not (string-match "|" cell-ref))
+             (string-match klink:cell-ref-regexp cell-ref)
+             (eq ?. (char-syntax (aref cell-ref (1- (length cell-ref))))))
+    (setq cell-ref (substring cell-ref 0 -1)))
   (kotl-mode:goto-cell-ref cell-ref))
 
 (defact link-to-mail (mail-msg-id &optional mail-file)

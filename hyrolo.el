@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      4-Oct-26 at 18:24:04 by Bob Weiner
+;; Last-Mod:      7-Oct-26 at 13:16:55 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -3920,8 +3920,10 @@ the `major-mode' from a cache.  Add `hyrolo-hdr-regexp' to
   (define-key hyrolo-mode-map "\M-s"     'hyrolo-isearch)
   (define-key hyrolo-mode-map "t"        'hyrolo-top-level)
   (define-key hyrolo-mode-map "\C-i"     'hyrolo-next-match) ;; {TAB}
-  (define-key hyrolo-mode-map "\M-\C-i"  'hyrolo-previous-match) ;; {M-TAB}
-  (define-key hyrolo-mode-map [backtab]  'hyrolo-previous-match) ;; {Shift-TAB}
+  (define-key hyrolo-mode-map [tab]      'hyrolo-next-match) ;; {TAB}
+  (define-key hyrolo-mode-map [S-tab]         'hyrolo-previous-match) ;; {Shift-TAB}
+  (define-key hyrolo-mode-map [S-iso-lefttab] 'hyrolo-previous-match) ;; {Shift-TAB}
+  (define-key hyrolo-mode-map [backtab]       'hyrolo-previous-match) ;; {Shift-TAB}
   (define-key hyrolo-mode-map "u"        'hyrolo-outline-up-heading)
 
   ;; Rebind all `outline-mode-prefix-map' keys to hyrolo equivalents

@@ -1,4 +1,67 @@
+2026-10-08  Bob Weiner  <rsw@gnu.org>
+
+* hsys-org.el (hsys-org-cycle-global): Trigger error to upgrade Org if
+    'org-cycle-global' is not defined.
+
+* kotl/EXAMPLE.kotl:
+  man/hyperbole.texi (Promoting and Demoting): Remove {M-0 TAB} and {M-0 S-TAB}
+    for demoting and promoting within Org tables as M-0 is used as a flag to
+    these commands to also fill cells.  Additionally, these bindings worked only
+    when 'kotl-mode:tab-flag' /= 'cycle.
+
+* kotl/kotl-mode.el (kotl-mode:tab/untab-command): Remove {M-1 TAB} for toggling
+    TAB/S-TAB function for greater Org compatibility.  {M-0 TAB} still works
+    for tree demotion/promotion if not in Org-style cycle mode.  Use existing
+    bindings of {C-c C-.} and {C-c C-,} for tree demotion/promotion regardless
+    of TAB mode.
+                    (kotl-mode:setup-keymap): Add {C-c C-]} binding for
+    'kotl-mode:toggle-tab-flag' to replace {M-1 TAB}.
+
+2026-10-07  Bob Weiner  <rsw@gnu.org>
+
+* kotl/EXAMPLE.kotl: Finish doc updates for various TAB key uses and settings of
+    'kotl-mode:tab-flag'.
+
+* hactypes.el (link-to-kcell): Fix to handle when 'cell-ref' has an extra
+    trailing punctuation character that needs removal, like: "3b=071.".
+
+* kotl/kotl-mode.el (kotl-mode:tab-flag): Make 'cycle the default for Org-style
+    compatibility.
+
+* man/use-package (kotl-mode:letter-prefix): Add comment to the :custom setting of how
+    to change the Koutliner {C-c ; <letter>} bindings back to {C-c <letter>} if desired.
+    Bindings were changed.
+  man/hyperbole.texi (Koutliner, Koutliner Keys):
+  kotl/EXAMPLE.kotl: Update these files with the above change.
+
+* kotl/kotl-mode.el (kotl-mode:set-letter-prefix-standard,
+                     kotl-mode:set-letter-prefix-control-c): Add these discrete commands
+    for interactive use and use them in 'kotl-mode:toggle-letter-prefix'.
+                    (kotl-mode:setup-keymap): Enable letter key bindings to handle prefix
+    remapping.
+
+* hsys-flymake.el (hsys-flymake-global-control-l-prefix-map): Create and fix global
+    {C-c C-l t} map and key for flymake toggling.
+  man/hyperbole.texi (Smart Key - Flymake Mode): Note that {C-c C-l t} is a global
+    binding made only if {C-c C-l} is unbound when Hyperbole is loaded.
+
 2026-10-06  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode): Ensure `flymake-mode' is disabled or it will override
+    the {C-c C-l} in this mode.
+
+* hui-mini.el (hui:menu-mode-map):
+  hyrolo.el (hyrolo-mode-map): Adjust to bind same TAB/S-TAB keys as in Koutliner.
+    INCOMPATIBLE CHANGE: Remove M-TAB binding since often used to switch applications.
+
+* kotl/kotl-mode.el (kotl-mode-letter-map, kotl-mode-letter-prefix): Add.
+                    (kotl-mode:setup-keymap): INCOMPATIBLE CHANGE: Use above
+    to move all {C-c <letter>} bindings to {C-c ; <letter>} so do not override what
+    should be left as user-bindable keys.  User can then change the C-c ; prefix as
+    desired by setting 'kotl-mode-letter-prefix'.
+                    (kotl-mode:toggle-letter-prefix): Add and bind to {M-1 C-c C-l}.
+  kotl/kview.el (kview:set-label-type): Update to take a prefix arg and call the above
+    function when sent an arg of 1.
 
 * test/demo-tests.el (demo-org-hide-header-test):
   test/smart-org-tests.el (smart-org-mode-on-header-cycles-visibility): Bind Action
@@ -16409,11 +16472,11 @@ absolute paths.
     mode is active and point is in a table):
 
      |----------------------------+-----------------------------|
-     | Demotion Inside  Org Table | Promotion Inside  Org Table |
+     | Demotion Inside Org Table  | Promotion Inside Org Table  |
      |----------------------------+-----------------------------|
      | M-0 TAB                    | M-0 Shift-TAB or M-0 M-TAB  |
-     | C-c C-,                    | C-c C-.                     |
-     | C-c C-<                    | C-c C->                     |
+     | C-c C-.                    | C-c C-,                     |
+     | C-c C->                    | C-c C-<                     |
      |----------------------------+-----------------------------|
 
      |----------------------------+-----------------------------|
@@ -16421,8 +16484,8 @@ absolute paths.
      |----------------------------+-----------------------------|
      | TAB                        | Shift-TAB or M-TAB          |
      | M-left-arrow               | M-right-arrow               |
-     | C-c C-,                    | C-c C-.                     |
-     | C-c C-<                    | C-c C->                     |
+     | C-c C-.                    | C-c C-,                     |
+     | C-c C->                    | C-c C-<                     |
      |----------------------------+-----------------------------|
 
 2020-10-11  Bob Weiner  <rsw@gnu.org>

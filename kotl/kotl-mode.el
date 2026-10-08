@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:      5-Oct-26 at 23:36:48 by Bob Weiner
+;; Last-Mod:      8-Oct-26 at 09:05:32 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -96,21 +96,21 @@ Default value is nil."
   :type 'boolean
   :group 'hyperbole-koutliner)
 
-(defcustom kotl-mode:tab-flag nil
+(defcustom kotl-mode:tab-flag 'cycle
   "Determines the behavior of the <tab> and S-<tab> keys.
 
 The 3 allowed values are:
 
-1. Nil, the default, means {\\[kotl-mode:tab-command]} demotes the current
-tree and {\\[kotl-mode:untab-command]} promotes the tree.  See their
-associated documentation strings for deeper details.
+1. The symbol, cycle, the default, enables org-like outline view cycling
+when point is in a context other than that specified by
+`kotl-mode:emulate-tab'.  Then {\\[kotl-mode:tab-command]} cycles the
+current tree through three views.  With a universal prefix arg, C-u, or via
+{\\[kotl-mode:untab-command]}, it cycles the whole outline through three
+views.  See the documentation strings for those commands for details.
 
-2. The symbol, cycle, enables org-like outline view cycling when point is in
-a context other than that specified by `kotl-mode:emulate-tab'.  Then
-{\\[kotl-mode:tab-command]} cycles the current tree through three views.
-With a universal prefix arg, C-u, or via {\\[kotl-mode:untab-command]}, it
-cycles the whole outline through three views.  See the documentation strings
-for those commands for details.
+2. Nil means {\\[kotl-mode:tab-command]} demotes the current tree and
+{\\[kotl-mode:untab-command]} promotes the tree.  See their associated
+documentation strings for deeper details.
 
 3. Any other non-nil value, makes {\\[kotl-mode:tab-command]} indent lines
 and insert literal <tab> characters according to the context setting of
@@ -198,6 +198,10 @@ It provides the following keys:
 	  paragraph-separate
 	  paragraph-start
 	  selective-display-ellipses))
+  ;; Ensure `flymake-mode' is disabled or it will override the {C-c C-l}
+  ;; binding herein
+  (when (bound-and-true-p flymake-mode)
+    (flymake-mode 0))
   ;; Prevent 'delete-trailing-whitespace-mode' from deleting trailing
   ;; whitespace from any lines within kcells.
   (when (bound-and-true-p delete-trailing-whitespace-mode)
@@ -1086,7 +1090,7 @@ When `kotl-mode:tab-flag' is:
   \\='cycle: cycle views of parts of the outline;
   nil:       demote trees a maximum of ARG levels;
   t:         indent or tab over by ARG tab stops.
-Use {M-1 TAB} to toggle its value between `cycle' and nil.
+Use {C-c C-]} to toggle its value between `cycle' and nil.
 
 See also the documentation strings for `kotl-mode:indent-line',
 `kotl-mode:demote-tree', and `kotl-mode:demote-siblings'.
@@ -1149,10 +1153,6 @@ valid settings."
       (kotl-mode:show-all)
       (let ((message-log-max nil))
         (message "Entire outline expanded")))
-     ((eq arg 1)
-      (if (called-interactively-p 'interactive)
-          (call-interactively 'kotl-mode:toggle-tab-flag)
-        (kotl-mode:toggle-tab-flag)))
      ((and (eq arg 0) (not (eq kotl-mode:tab-flag 'cycle)))
       (kotl-mode:demote-tree 0))
      ((and (integerp arg) (eq kotl-mode:tab-flag 'cycle))
@@ -1206,11 +1206,62 @@ valid settings."
 	  (message "Tab insertion now uses literal tabs.")
 	(message "Tab insertion now uses spaces to form tabs."))))
 
+(defun kotl-mode:toggle-letter-prefix ()
+  (interactive)
+  "Toggle `kotl-mode:letter-prefix' between its initial setting and `C-c'.
+Its default setting is `C-c ;'."
+  (if (equal kotl-mode:letter-prefix "C-c")
+      (kotl-mode:set-letter-prefix-standard)
+    (kotl-mode:set-letter-prefix-control-c))
+
+  (when (called-interactively-p 'interactive)
+    (message "Koutline prefix for letter keys is now: `%s'" kotl-mode:letter-prefix)))
+
+(defun kotl-mode:set-letter-prefix-standard ()
+  "Bind `kotl-mode' letter keys prefaced with `kotl-mode:letter-prefix'."
+  (interactive)
+  ;; Remove letter map from prior value of letter prefix but only
+  ;; bindings on letter keys, not the entire C-c map
+  (map-keymap
+   (lambda (key _cmd) (when (and (integerp key)
+                                 (or (and (>= key ?a) (<= key ?z))
+                                     (and (>= key ?A) (<= key ?Z))))
+	                (define-key
+                          kotl-mode-map
+                          (kbd (concat "C-c " (char-to-string key)))
+                          nil)))
+   kotl-mode-letter-map)
+  ;; Update the prefix and then bind to the letter map
+  (setq kotl-mode:letter-prefix
+        (or kotl-mode:letter-prefix-saved
+            (default-value 'kotl-mode:letter-prefix)))
+  (define-key kotl-mode-map (kbd kotl-mode:letter-prefix)
+    kotl-mode-letter-map))
+
+(defun kotl-mode:set-letter-prefix-control-c ()
+  "Bind `kotl-mode' letter keys prefaced with `C-c'."
+  (interactive)
+  ;; Ensure prefix is valid
+  (unless (stringp kotl-mode:letter-prefix)
+    (setq kotl-mode:letter-prefix (default-value 'kotl-mode:letter-prefix)))
+  ;; Save existing prefix for future restore
+  (setq kotl-mode:letter-prefix-saved kotl-mode:letter-prefix)
+  ;; Remove letter map from prior value of letter prefix
+  (define-key kotl-mode-map (kbd kotl-mode:letter-prefix) nil)
+  ;; Update the prefix and then bind to the letter map
+  (setq kotl-mode:letter-prefix "C-c")
+  ;; Can't replace the whole C-c map, so add each letter key to it instead
+  (map-keymap (lambda (key cmd)
+                (define-key kotl-mode-map
+                  (kbd (concat "C-c " (char-to-string key)))
+                  cmd))
+              kotl-mode-letter-map))
+
 (defun kotl-mode:toggle-tab-flag ()
   (interactive)
   "Toggle the value of `kotl-mode:tab-flag' and explain its current usage.
-This now toggles TAB/M-TAB between the traditional Koutliner demote/promote
-commands and the Org-compatible cycling commands."
+This now toggles TAB/S-TAB between the Org-compatible cycling commands and
+the traditional Koutliner demote/promote commands."
   (if (eq kotl-mode:tab-flag 'cycle)
       (progn
         (setq kotl-mode:tab-flag
@@ -1320,7 +1371,7 @@ When `kotl-mode:tab-flag' is:
   \\='cycle: cycle views of the whole outline;
   nil:       promote trees a maximum of ARG levels;
   t:         delete backward ARG characters.
-Use {M-1 TAB} to toggle its value between `cycle' and nil.
+Use {C-c C-]} to toggle its value between `cycle' and nil.
 
 See also the documentation strings for `kotl-mode:delete-backward-char',
 `kotl-mode:promote-tree', and `kotl-mode:promote-siblings'.
@@ -4396,6 +4447,11 @@ Leave point at end of line now residing at START."
 
 ;;; ------------------------------------------------------------------------
 
+(defvar kotl-mode-letter-map (make-sparse-keymap))
+
+(defvar kotl-mode:letter-prefix "C-c ;")
+(defvar kotl-mode:letter-prefix-saved nil)
+
 (defun kotl-mode:setup-keymap ()
   (condition-case err
       (progn
@@ -4501,8 +4557,33 @@ Leave point at end of line now residing at START."
 	     yank
 	     yank-pop
 	     zap-to-char)))
-	
+
 	;; kotl-mode keys
+        (let ((keymap kotl-mode-letter-map))
+          (define-key keymap "a" 'kotl-mode:add-child)
+          (define-key keymap "b" 'kvspec:toggle-blank-lines)
+          (define-key keymap "c" 'kotl-mode:copy-after)
+          (define-key keymap "d" 'kotl-mode:down-level)
+          (define-key keymap "e" 'kotl-mode:exchange-cells)
+          (define-key keymap "g" 'kotl-mode:goto-cell)
+          (define-key keymap "h" 'kotl-mode:cell-help)
+          (define-key keymap "k" 'kotl-mode:kill-contents)
+          (define-key keymap "l" 'klink:create)
+          (define-key keymap "m" 'kotl-mode:move-after)
+          (define-key keymap "p" 'kotl-mode:add-prior-cell)
+          (define-key keymap "s" 'kotl-mode:split-cell)
+          (define-key keymap "t" 'kotl-mode:transpose-cells)
+          (define-key keymap "u" 'kotl-mode:up-level))
+
+        ;; Don't just bind the `kotl-mode-letter-map' to
+        ;; `kotl-mode:letter-prefix' here since the prefix might be just C-c
+        ;; which has other, non-letter bindings; instead bind each key.
+        (map-keymap (lambda (key cmd) (define-key kotl-mode-map
+                                        (kbd (concat kotl-mode:letter-prefix
+                                                     " " (char-to-string key)))
+                                        cmd))
+                    kotl-mode-letter-map)
+
 	(define-key kotl-mode-map "\C-c\C-@"  'kotl-mode:mail-tree)
 	(define-key kotl-mode-map "\C-c+"     'kotl-mode:append-cell)
 	(define-key kotl-mode-map "\C-c,"     'kotl-mode:beginning-of-cell)
@@ -4511,19 +4592,12 @@ Leave point at end of line now residing at START."
 	(define-key kotl-mode-map "\C-c>"     'kotl-mode:last-sibling)
 	(define-key kotl-mode-map "\C-c^"     'kotl-mode:beginning-of-tree)
 	(define-key kotl-mode-map "\C-c$"     'kotl-mode:end-of-tree)
-	(define-key kotl-mode-map "\C-ca"     'kotl-mode:add-child)
 	(define-key kotl-mode-map "\C-c\C-a"  'kotl-mode:show-all)
-	(define-key kotl-mode-map "\C-cb"     'kvspec:toggle-blank-lines)
 	(define-key kotl-mode-map "\C-c\C-b"  'kotl-mode:backward-cell)
-	(define-key kotl-mode-map "\C-cc"     'kotl-mode:copy-after)
 	(define-key kotl-mode-map "\C-c\C-c"  'kotl-mode:copy-before)
 	(define-key kotl-mode-map "\C-c\M-c"  'kotl-mode:copy-tree-or-region-to-buffer)
-	(define-key kotl-mode-map "\C-cd"     'kotl-mode:down-level)
 	(define-key kotl-mode-map "\C-c\C-d"  'kotl-mode:down-level)
-	(define-key kotl-mode-map "\C-ce"     'kotl-mode:exchange-cells)
 	(define-key kotl-mode-map "\C-c\C-f"  'kotl-mode:forward-cell)
-	(define-key kotl-mode-map "\C-cg"     'kotl-mode:goto-cell)
-	(define-key kotl-mode-map "\C-ch"     'kotl-mode:cell-help)
 	(define-key kotl-mode-map "\C-c\C-h"  'kotl-mode:hide-tree)
 	;; Since the next key binds M-BS, it may already have a local binding,
 	;; in which case we don't want to bind it here.
@@ -4533,9 +4607,10 @@ Leave point at end of line now residing at START."
         ;; similar function appropriate for kotl-mode.
 	(define-key kotl-mode-map "\C-x$"         'kotl-mode:hide-sublevels)
 
-        ;; Use {M-1 TAB} to switch TAB/S-TAB between normal kotl-mode
-        ;; operation and Org cycling compatibility.  Show a message each
-        ;; time is toggled.
+        ;; Use this next binding to switch TAB/S-TAB between Org-style
+        ;; visibility cycling and demotion/promotion behavior.  Show a
+        ;; message each time it is toggled.
+	(define-key kotl-mode-map "\C-c\C-]"      'kotl-mode:toggle-tab-flag)
 
 	(define-key kotl-mode-map [tab]           'kotl-mode:tab-command) ;; TAB
 	(define-key kotl-mode-map "\C-i"          'kotl-mode:tab-command) ;; TAB
@@ -4550,35 +4625,27 @@ Leave point at end of line now residing at START."
 	(define-key kotl-mode-map "\C-c\M-j"  'kotl-mode:fill-cell)
 	(define-key kotl-mode-map "\M-\C-j"   'kotl-mode:fill-tree)
 	(define-key kotl-mode-map "\C-c\C-k"  'kotl-mode:kill-tree)
-	(define-key kotl-mode-map "\C-ck"     'kotl-mode:kill-contents)
 	;; Force an override of the global {C-x i} insert-file binding
 	(define-key kotl-mode-map "\C-xi"     'kimport:insert-file)
 	;; Force an override of the global {C-x r i} insert-register binding
 	(define-key kotl-mode-map "\C-xri"    'kimport:insert-register)
-	(define-key kotl-mode-map "\C-ck"     'kotl-mode:kill-contents)
-	(define-key kotl-mode-map "\C-cl"     'klink:create)
 	(define-key kotl-mode-map "\C-c\C-l"  'kview:set-label-type)
 	(define-key kotl-mode-map "\C-c\M-l"  'kview:set-label-separator)
 	(define-key kotl-mode-map "\C-m"      'kotl-mode:newline)
-	(define-key kotl-mode-map "\C-cm"     'kotl-mode:move-after)
 	(define-key kotl-mode-map "\C-c\C-m"  'kotl-mode:move-before)
 	(define-key kotl-mode-map "\C-c\C-n"  'kotl-mode:next-cell)
 	(define-key kotl-mode-map "\C-c\C-o"  'kotl-mode:overview)
 	(define-key kotl-mode-map "\C-c\C-p"  'kotl-mode:previous-cell)
-	(define-key kotl-mode-map "\C-cp"     'kotl-mode:add-prior-cell)
 	(if (memq (global-key-binding "\M-q") '(fill-paragraph
 						fill-paragraph-or-region))
 	    (progn
 	      (define-key kotl-mode-map "\C-c\M-q" 'kotl-mode:fill-cell)
 	      (define-key kotl-mode-map "\M-\C-q"  'kotl-mode:fill-tree)))
-	(define-key kotl-mode-map "\C-cs"     'kotl-mode:split-cell)
 	(define-key kotl-mode-map "\C-c\C-s"  'kotl-mode:show-tree)
 	(define-key kotl-mode-map "\C-c\C-\\" 'kotl-mode:show-tree)
 	(define-key kotl-mode-map "\M-s"      'kotl-mode:center-line)
 	(define-key kotl-mode-map "\M-S"      'kotl-mode:center-paragraph)
-	(define-key kotl-mode-map "\C-ct"     'kotl-mode:transpose-cells)
 	(define-key kotl-mode-map "\C-c\C-t"  'kotl-mode:top-cells)
-	(define-key kotl-mode-map "\C-cu"     'kotl-mode:up-level)
 	(define-key kotl-mode-map "\C-c\C-u"  'kotl-mode:up-level)
 	(define-key kotl-mode-map "\C-c\C-v"  'kvspec:activate)
 	(define-key kotl-mode-map "\C-x\C-w"  'kfile:write)

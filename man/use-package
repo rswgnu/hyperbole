@@ -64,6 +64,15 @@
 
   ;; Koutliner Customizations
 
+  ;; NOTE: As of Hyperbole version 9.3.0, the Koutliner uses `C-c ;'
+  ;; as the prefix for mode-specific <letter> key bindings (prior
+  ;; prefix was `C-c'); this avoids overriding global user settings of
+  ;; `C-c <letter>'.
+  ;;
+  ;; If you want the prior Koutline-specific letter key bindings
+  ;; instead of the current ones, uncomment the following line:
+  ;; (kotl-mode:letter-prefix "C-c")
+
   ;; Customize the behavior of the <tab> and S-<tab> keys in a Koutline.
   ;; One of three possible values:
   ;;   nil      - {TAB} demotes the current tree and {Shift-TAB} promotes the

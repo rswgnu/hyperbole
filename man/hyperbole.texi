@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:      6-Oct-26 at 00:08:28 by Bob Weiner
+@c Last-Mod:      8-Oct-26 at 11:29:38 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,7 +30,7 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED October 6, 2026
+@set UPDATED October 8, 2026
 @set UPDATED-MONTH October 2026
 @set EDITION 9.2.0
 @set VERSION 9.2.0
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.1.0
-Printed October 6, 2026.
+Printed October 8, 2026.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -213,7 +213,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.1.0
-October 6, 2026 @c AUTO-REPLACE-ON-SAVE
+October 8, 2026 @c AUTO-REPLACE-ON-SAVE
 
 
   Published by the Free Software Foundation, Inc.
@@ -241,9 +241,7 @@ Hyperbole.
 This manual explains user operation and summarizes basic developer
 facilities of GNU Hyperbole.  Hyperbole provides convenient access
 to information, control over its display and easy linking of items
-across documents and across the web.  The Hyperbole Koutliner offers
-flexible views and structure manipulation within bodies of
-information.
+across documents and across the web.
 
 We hope you enjoy using Hyperbole and that it improves your
 productivity.  If it does, consider sending us a quote or short note
@@ -398,9 +396,7 @@ Koutliner
 Editing Outlines
 
 * Adding and Killing::
-* Promoting and Demoting::
-* Org-style Visibility Cycling::
-* Inserting Literal Tabs::
+* TAB and Shift-TAB::
 * Relocating and Copying::
 * Moving Around::
 * Filling::
@@ -408,6 +404,12 @@ Editing Outlines
 * Splitting and Appending::
 * Inserting and Importing::
 * Exporting::
+
+TAB and Shift-TAB
+
+* Org-style Visibility Cycling::
+* Promoting and Demoting::
+* Inserting Literal Tabs::
 
 Viewing Outlines
 
@@ -687,9 +689,9 @@ where HyWiki support is active.
 Emacs windows and frames display and where they appear.
 
 @xref{Koutliner}, for concept and usage information on the
-autonumbered, hypertextual outliner.  It uses its own major mode.
-@xref{Koutliner Keys}, for a full summary of the outliner commands
-that are bound to keys.
+autonumbered, hypertextual outliner with Org mode key compatibility.
+It uses its own major mode.  @xref{Koutliner Keys}, for a full summary
+of the outliner commands that are bound to keys.
 
 @xref{HyRolo}, for concept and usage information on the rapid lookup,
 hierarchical, full-text record management system included with Hyperbole.
@@ -868,9 +870,10 @@ information is presented on-screen.  @xref{HyControl}.
 
 @item Koutliner
 an advanced outliner with multi-level autonumbering and permanent
-identifiers attached to each outline node for use as hypertext link anchors,
-per node properties and flexible view specifications that can be included in
-links or used interactively.  @xref{Koutliner}.
+identifiers attached to each outline node for use as hypertext link
+anchors, per node properties and flexible view specifications that can
+be included in links or used interactively.  Includes Org mode key
+compatibility.  @xref{Koutliner}.
 
 @item Hyperbole API
 a set of programming libraries for system developers who want to integrate
@@ -5860,6 +5863,10 @@ Cells also store their time of creation and the user who created the
 cell.  User-defined attributes may also be added to cells.  @xref{Cell
 Attributes}.
 
+The Koutliner should feel comfortable to Org mode users as it offers
+similar key bindings for outline visibility cycling, tree moving and
+table editing.
+
 @vindex file, EXAMPLE.kotl
 @cindex menu item, Kotl/Example
 @kindex C-h h k e
@@ -5902,11 +5909,11 @@ The Kotl/ menu entry on the Hyperbole minibuffer menu provides access to
 a number of major Koutliner commands:
 
 @cindex outliner commands
-@cindex Koutliner commands
-@cindex Koutliner import/export commands
+@cindex koutliner commands
+@cindex koutliner import/export commands
 @cindex importing, Koutliner
 @cindex exporting, Koutliner
-@cindex Koutliner menu
+@cindex koutliner menu
 @cindex menu, Koutliner
 @findex kotl-mode:show-all
 @findex kvspec:toggle-blank-lines
@@ -6108,9 +6115,7 @@ selected region, since that will destroy the outline structure.
 
 @menu
 * Adding and Killing::
-* Promoting and Demoting::
-* Org-style Visibility Cycling::
-* Inserting Literal Tabs::
+* TAB and Shift-TAB::
 * Relocating and Copying::
 * Moving Around::
 * Filling::
@@ -6120,13 +6125,13 @@ selected region, since that will destroy the outline structure.
 * Exporting::
 @end menu
 
-@node Adding and Killing, Promoting and Demoting, Editing Outlines, Editing Outlines
+@node Adding and Killing, TAB and Shift-TAB, Editing Outlines, Editing Outlines
 @subsection  Adding and Killing
 
 @kindex koutliner, C-j
 @kindex koutliner, C-u c-j
-@kindex koutliner, C-c a
-@kindex koutliner, C-c p
+@kindex koutliner, C-c ; a
+@kindex koutliner, C-c ; p
 @cindex cell, adding
 @cindex cell, creating
 @bkbd{C-j} adds a new cell as a successor sibling of the
@@ -6134,144 +6139,71 @@ current cell, that is, the next cell at the same level as the current
 cell.  If you enter a positive number as a prefix argument, that number
 of cells will be inserted, all at the same level.  @bkbd{C-u C-j} is
 handled specially.  It adds a single cell as a child of the current cell.
-@bkbd{C-c a} does the same thing.  @bkbd{C-c p} adds the cell as
+@bkbd{C-c ; a} does the same thing.  @bkbd{C-c ; p} adds the cell as
 the successor of the current cell's parent.
 
 @kindex koutliner, C-c C-k
-@kindex koutliner, C-c k
-@kindex koutliner, C-u C-c k
+@kindex koutliner, C-c ; k
+@kindex koutliner, C-u C-c ; k
 @kindex koutliner, C-y
 @cindex cell, killing
 @cindex cell, yanking contents
 @cindex tree, killing
 @bkbd{C-c C-k} kills the current cell and its entire subtree.
-@bkbd{C-c k} kills the contents of a cell from point through the end
-of the cell; it does not remove the cell itself.  @bkbd{C-u C-c k}
+@bkbd{C-c ; k} kills the contents of a cell from point through the end
+of the cell; it does not remove the cell itself.  @bkbd{C-u C-c ; k}
 kills the entire contents of the cell regardless of the location of
 point.  You may then yank the contents into another cell or another
 buffer with @bkbd{C-y}.
 
-@node Promoting and Demoting, Org-style Visibility Cycling, Adding and Killing, Editing Outlines
-@subsection  Promoting and Demoting
+@node TAB and Shift-TAB, Relocating and Copying, Adding and Killing, Editing Outlines
+@subsection TAB and Shift-TAB
 
-@cindex promotion
-@cindex demotion
-@cindex tree, promoting
-@cindex tree, demoting
-@dfn{Demotion} is the act of moving a tree down one or more levels in
-the outline.  The new tree will become either the successor/sibling or
-the first child of the cell which precedes it in the outline.
-@dfn{Promotion} is the inverse operation.  Note that trees (cells and
-their entire substructure) are promoted and demoted, not individual
-cells.
+@kindex @key{TAB}
+@kindex Shift-@key{TAB}
+@cindex koutliner, TAB
+The @bkbd{@key{TAB}} and @bkbd{S-@key{TAB}} perform different functions
+depending on the setting of the variable, @code{kotl-mode:tab-flag}, as
+shown in the table below.
 
-@cindex koutliner, no-fill property
-Promote or demote the tree at point with @key{TAB} or @bkbd{M-@key{TAB}},
-respectively.  These also refill the text of each cell not marked with a
-@code{no-fill} property.  To override the @code{no-fill} property and
-refill all promoted/demoted cells, use @bkbd{M-0 @key{TAB}} and @bkbd{M-0
-M-@key{TAB}}.  @xref{Filling}.  A positive or negative prefix argument to
-these commands promotes or demotes the tree up to a maximum of that number
-of levels, depending on what the outline allows at any given point.
-
-With @code{kotl-mode:tab-flag} = @samp{t}, @bkbd{@key{TAB}} executes
-@code{kotl-mode:indent-line} with any prefix argument given.  This
-bypasses all of the functionality in the following tables.
-
-@example
+@vindex kotl-mode:tab-flag
+@cindex koutliner, TAB function
+@smallexample
 @noindent
-With @code{kotl-mode:tab-flag} = @samp{nil} (default):
-|-------------+------------------------+-------------------------|
-| Prefix Arg  | TAB Function           | Shift-TAB Function      |
-|-------------+------------------------+-------------------------|
-| nil         | Demote Tree            | Promote Tree            |
-| C-u         | Demote Siblings        | Promote Siblings        |
-| C-u C-u     | Reset View Spec        | Reset View Spec         |
-| C-u C-u C-u | Show Whole Outline     | Show Whole Outlin       |
-| 0           | Demote and Refill Tree | Promote and Refill Tree |
-| 1           | Toggle tab-flag        |                         |
-| Other ARG   | Demote Tree ARG Levels | Promote Tree ARG Levels |
-|-------------+------------------------+-------------------------|
-@end example
+|--------------------+-------------------------------+--------------------------|
+| kotl-mode:tab-flag | TAB Function                  | Shift-TAB Function       |
+|--------------------+-------------------------------+--------------------------|
+| 'cycle  (default)  | Cycle tree visibility         | Cycle outline visibility |
+| nil                | Demote tree                   | Promote tree             |
+| t                  | Indent line / insert TABs     | Delete backward a char   |
+|--------------------+-------------------------------+--------------------------|
+@end smallexample
 
-@cindex Org Table Minor Mode
-@cindex tables
-@cindex enabling table mode
-@cindex toggling table mode
-@findex orgtbl-mode
-The Koutliner also supports Org Table editing, @pxref{Tables,,, org,
-the Org Mode Manual}, via Org table minor mode.  Use @bkbd{M-x
-orgtbl-mode @key{RET}} to toggle this on and off.  Alternatively, a
-press of the Action Key on a @code{|} table delimiter also toggles
-this minor mode on or off.
+@kindex C-c C-]
+Org-style cycling is now the default.  In Hyperbole versions earlier
+than 9.3.0, the default was @samp{nil} for demotion and promotion.  You
+can toggle between using these keys for cycling or demotion/promotion
+by pressing @bkbd{C-c C-]}.  Or you can change the default by setting
+@code{kotl-mode:tab-flag} in your Hyperbole @code{use-package}
+configuration.See the following subsections for further details.
 
-When @code{orgtbl-mode} is enabled within a Koutline and point is
-inside a table, @bkbd{@key{TAB}} moves forward one table item and
-@bkbd{S-@key{TAB}} moves backward an item.  However, if given any
-prefix argument, these keys behave as shown in the prior tables.
+@menu
+* Org-style Visibility Cycling::
+* Promoting and Demoting::
+* Inserting Literal Tabs::
+@end menu
 
-@cindex outline mode
-@kindex M-0 @key{TAB}
-@kindex M-0 S-@key{TAB}
-Tree demotion and promotion keys match the defaults in Org mode and
-Outline mode, plus some easier to type ones.  The tables below
-summarize which keys work whether inside an Org table or outside.
+@node Org-style Visibility Cycling, Promoting and Demoting, TAB and Shift-TAB, TAB and Shift-TAB
+@subsubsection  Org-style Visibility Cycling
 
-Note that you can use @bkbd{M-0 @key{TAB}} and @bkbd{M-0 S-@key{TAB}}
-to demote/promote Koutline trees when in a table since @key{TAB} and
-@bkbd{S-@key{TAB}} move between fields within tables when Org Table
-minor mode is active.  Within a table, to demote and promote the
-Koutline tree rooted at point, you can use any of the keys in the
-following table:
-
-@example
-@noindent
-|-------------------------------------+----------------------------|
-| Demotion Inside Org Table           | Promotion Inside Org Table |
-|-------------------------------------+----------------------------|
-| M-0 TAB  (kotl-mode:tab-flag = nil) | M-0 S-TAB                  |
-| C-c C-.                             | C-c C-,                    |
-| C-c C->                             | C-c C-<                    |
-|-------------------------------------+----------------------------|
-@end example
-
-@kindex koutliner, @key{TAB}
-@kindex koutliner, Shift-@key{TAB}
-@kindex koutliner, M-<left>
-@kindex koutliner, M-<right>
-@kindex koutliner, M-Shift-<left>
-@kindex koutliner, M-Shift-<right>
-@kindex koutliner, C-c C-,
-@kindex koutliner, C-c C-.
-@kindex koutliner, C-c C->
-@kindex koutliner, C-c C-<
-
-@example
-@noindent
-|---------------------------------+-----------------------------|
-| Demotion Outside Org Table      | Promotion Outside Org Table |
-|---------------------------------+-----------------------------|
-| TAB  (kotl-mode:tab-flag = nil) | S-TAB                       |
-| M-<right>                       | M-<left>                    |
-| M-S-<right>                     | M-S-<left>                  |
-| C-c C-.                         | C-c C-,                     |
-| C-c C->                         | C-c C-<                     |
-|---------------------------------+-----------------------------|
-@end example
-
-@node Org-style Visibility Cycling, Inserting Literal Tabs, Promoting and Demoting, Editing Outlines
-@subsection  Org-style Visibility Cycling
-
-@kindex koutliner, M-1 @key{TAB}
-@findex kotl-mode:tab-command
-@findex kotl-mode:untab-command
-@cindex Koutliner, toggle tab behavior
-@cindex Koutliner, cycling
-@cindex Koutliner, Org-style cycling
-@bkbd{M-1 @key{TAB}} toggles the function of @key{TAB} and
-@bkbd{S-@key{TAB}} between promotion/demotion and Org-style tree
-visibility cycling.  The following table summarizes their behavior
-with Org-style view cycling enabled:
+@kindex koutliner, C-c C-]
+@cindex koutliner, toggle tab behavior
+@cindex koutliner, cycling
+@cindex koutliner, Org-style cycling
+@bkbd{C-c C-]} toggles the function of @key{TAB} and @bkbd{S-@key{TAB}}
+between promotion/demotion and Org-style tree visibility cycling.  The
+following table summarizes their behavior with Org-style view cycling
+enabled:
 
 @example
 @noindent
@@ -6321,22 +6253,140 @@ Show the first line of all cells at all levels
 Show the entire outline.
 @end table
 
-@cindex Koutliner, outline to ARGth level
+@cindex koutliner, outline to ARGth level
 @cindex outline to ARGth level
 @cindex prefix numeric arg, outline show to level
 @bkbd{S-@key{TAB}} with a numeric prefix argument shows cells across
 the whole outline down to prefix argument level, one line per cell.
 Zero means show all cell levels.
 
+@vindex kotl-mode:emulate-tab
+@cindex koutliner, TAB contexts
 See the documentation string for @code{kotl-mode:emulate-tab} for how
 to constrain the contexts in which cycling will trigger.
 
+@findex kotl-mode:tab-command
+@findex kotl-mode:untab-command
 For even more details, see the documentation strings for
 @code{kotl-mode:tab-command} and @code{kotl-mode:untab-command}.
 
+@node Promoting and Demoting, Inserting Literal Tabs, Org-style Visibility Cycling, TAB and Shift-TAB
+@subsubsection  Promoting and Demoting
 
-@node Inserting Literal Tabs, Relocating and Copying, Org-style Visibility Cycling, Editing Outlines
-@subsection  Inserting Literal Tabs
+@cindex promotion
+@cindex demotion
+@cindex tree, promoting
+@cindex tree, demoting
+@cindex koutliner, promoting
+@cindex koutliner, demoting
+@dfn{Demotion} is the act of moving a tree down one or more levels in
+the outline.  The new tree will become either the successor/sibling or
+the first child of the cell which precedes it in the outline.
+@dfn{Promotion} is the inverse operation.  Note that trees (cells and
+their entire substructure) are promoted and demoted, not individual
+cells.
+
+@kindex koutliner, C-c C-,
+@kindex koutliner, C-c C-.
+@kindex koutliner, C-c C->
+@kindex koutliner, C-c C-<
+@kindex koutliner, M-<left>
+@kindex koutliner, M-<right>
+There are many key bindings for demoting and promoting trees.  The
+easiest to type that works regardless of the setting of
+@code{kotl-mode:tab-flag} is @bkbd{C-c C-.} for demoting the current
+tree and @bkbd{C-c C-,} for promoting it.  Org-compatible keys
+@bkbd{C-c C->} or @bkbd{M-<left>} and @bkbd{C-c C-<} or
+@bkbd{M-<right>} also work.
+
+@kindex koutliner, @key{TAB}
+@kindex koutliner, Shift-@key{TAB}
+@kindex koutliner, C-c C-]
+@cindex koutliner, no-fill property
+Use @bkbd{C-c C-]} to toggle the function of @key{TAB} and
+@bkbd{S-@key{TAB}} to demote and promote trees.  These also refill the
+text of each cell not marked with a @code{no-fill} property.  To
+override the @code{no-fill} property and refill all promoted/demoted
+cells, use @bkbd{M-0 @key{TAB}} and @bkbd{M-0 M-@key{TAB}}.
+@xref{Filling}.  A positive or negative prefix argument to these
+commands promotes or demotes the tree up to a maximum of that number of
+levels, depending on what the outline allows at any given point.  The
+same prefix argument works on any of the key bindings for these
+commands.
+
+@kindex koutliner, M-Shift-<left>
+@kindex koutliner, M-Shift-<right>
+@noindent
+Below is a table of all standard key bindings for demotion/promotion of
+Koutliner trees:
+
+@example
+@noindent
+|---------------------------------+-----------------------------|
+| Demotion Outside Org Table      | Promotion Outside Org Table |
+|---------------------------------+-----------------------------|
+| C-c C-.                         | C-c C-,                     |
+| C-c C->                         | C-c C-<                     |
+| M-<right>                       | M-<left>                    |
+| M-S-<right>                     | M-S-<left>                  |
+| TAB  (kotl-mode:tab-flag = nil) | S-TAB                       |
+|---------------------------------+-----------------------------|
+@end example
+
+Note that with @code{kotl-mode:tab-flag} = @samp{t}, @bkbd{@key{TAB}}
+executes @code{kotl-mode:indent-line} with any prefix argument given.
+This bypasses all of the functionality in the following tables.
+
+@noindent
+Here is a summary of how different prefix arguments affect the function
+of these key bindings.  With @code{kotl-mode:tab-flag} = @samp{nil}
+(default):
+
+@example
+@noindent
+|-------------+------------------------+-------------------------|
+| Prefix Arg  | TAB Function           | Shift-TAB Function      |
+|-------------+------------------------+-------------------------|
+| nil         | Demote Tree            | Promote Tree            |
+| C-u         | Demote Siblings        | Promote Siblings        |
+| C-u C-u     | Reset View Spec        | Reset View Spec         |
+| C-u C-u C-u | Show Whole Outline     | Show Whole Outlin       |
+| 0           | Demote and Refill Tree | Promote and Refill Tree |
+| Other ARG   | Demote Tree ARG Levels | Promote Tree ARG Levels |
+|-------------+------------------------+-------------------------|
+@end example
+
+@cindex Org Table Minor Mode
+@cindex tables
+@cindex enabling table mode
+@cindex toggling table mode
+@findex orgtbl-mode
+The Koutliner also supports Org Table editing, @pxref{Tables,,, org,
+the Org Mode Manual}, via Org table minor mode.  Use @bkbd{M-x
+orgtbl-mode @key{RET}} to toggle this on and off.  Alternatively, a
+press of the Action Key on a @code{|} table delimiter also toggles
+this minor mode on or off.
+
+When @code{orgtbl-mode} is enabled within a Koutline and point is
+inside a table, @bkbd{@key{TAB}} moves forward one table item and
+@bkbd{S-@key{TAB}} moves backward an item.  However, if given any
+prefix argument, these keys behave as shown in the prior tables.
+
+Within a table, to demote and promote the Koutline tree rooted at
+point, you can use any of the keys in the following table:
+
+@example
+@noindent
+|-----------------------------------------+----------------------------|
+| Demotion Inside Org Table               | Promotion Inside Org Table |
+|-----------------------------------------+----------------------------|
+| C-c C-.                                 | C-c C-,                    |
+| C-c C->                                 | C-c C-<                    |
+|-----------------------------------------+----------------------------|
+@end example
+
+@node Inserting Literal Tabs,  , Promoting and Demoting, TAB and Shift-TAB
+@subsubsection  Inserting Literal Tabs
 
 @cindex inserting tabs
 @cindex tabs, inserting
@@ -6345,9 +6395,13 @@ The simplest technique is to use @bkbd{C-q @key{TAB}} whenever you want to
 insert a TAB character.
 
 @vindex kotl-mode:tab-flag
+@cindex tabs, deleting
 If you don't use the @bkbd{@key{TAB}} key for tree demotion or
-visibility cycling and prefer that it always insert a TAB character,
-then set the variable, @code{kotl-mode:tab-flag} to @samp{t}.
+visibility cycling and prefer that it always indent the current line or
+insert a TAB character, then set the variable,
+@code{kotl-mode:tab-flag} to @samp{t}.  @bkbd{S-@key{TAB}} then will
+delete backward either one or the number of characters given by the
+prefix argument.
 
 @vindex kotl-mode:emulate-tab
 If you prefer that the @bkbd{@key{TAB}} key runs
@@ -6377,7 +6431,7 @@ you have the option of having it insert spaces instead.  Set the
 variable, @code{kotl-mode:indent-tabs-mode}, to @samp{nil}.
 
 
-@node Relocating and Copying, Moving Around, Inserting Literal Tabs, Editing Outlines
+@node Relocating and Copying, Moving Around, TAB and Shift-TAB, Editing Outlines
 @subsection  Relocating and Copying
 
 @cindex tree, copying
@@ -6410,9 +6464,9 @@ Move current tree past prefix arg same level trees.
 @kitem M-<up>
 Move current tree back prefix arg same level trees.
 
-@kitem C-c c
+@kitem C-c ; c
 Copy <tree> to be the successor of <cell>.
-@kitem C-u C-c c
+@kitem C-u C-c ; c
 Copy <tree> to follow as the first child of <cell>.
 
 @kitem C-c C-c
@@ -6420,9 +6474,9 @@ Copy <tree> to be the predecessor of <cell>.
 @kitem C-u C-c C-c
 Copy <tree> to be the first child of the parent of <cell>.
 
-@kitem C-c m
+@kitem C-c ; m
 Move <tree> to be the successor of <cell>.
-@kitem C-u C-c m
+@kitem C-u C-c ; m
 Move <tree> to follow as the first child of <cell>.
 
 @kitem C-c C-m
@@ -6551,23 +6605,23 @@ The Koutliner move and copy commands rearrange entire trees.  The
 following two commands, in contrast, exchange the locations of two
 individual cells.
 
-@kindex koutliner, C-c e
+@kindex koutliner, C-c ; e
 @cindex cell, transposing
 @cindex cell, exchanging
 @cindex exchanging cells
 @cindex transposing cells
-@bkbd{C-c e} prompts for two cell addresses and exchanges the cell
+@bkbd{C-c ; e} prompts for two cell addresses and exchanges the cell
 locations.
 
-@kindex koutliner, C-c t
-@bkbd{C-c t} does not prompt.  It exchanges the current
+@kindex koutliner, C-c ; t
+@bkbd{C-c ; t} does not prompt.  It exchanges the current
 and immediately prior cell, regardless of their levels.  If there is no
 prior cell it exchanges the current and next cell.
 
 @cindex cell, mark and point
-@kindex koutliner, M-0 C-c t
-@bkbd{M-0 C-c t} exchanges the cells in which point and mark fall.
-@bkbd{C-c t} with a non-zero numeric prefix argument, N, moves
+@kindex koutliner, M-0 C-c ; t
+@bkbd{M-0 C-c ; t} exchanges the cells in which point and mark fall.
+@bkbd{C-c ; t} with a non-zero numeric prefix argument, N, moves
 the current tree maximally past the next N visible cells.  If there are
 fewer visible, it makes the current cell the last cell in the outline.
 
@@ -6577,13 +6631,13 @@ fewer visible, it makes the current cell the last cell in the outline.
 
 @cindex splitting a cell
 @cindex cell, splitting
-@kindex koutliner, C-c s
-@kindex koutliner, C-u C-c s
+@kindex koutliner, C-c ; s
+@kindex koutliner, C-u C-c ; s
 One cell may be split into two adjacent sibling cells with @bkbd{C-c
-s}.  This leaves the cell contents preceding point in the current
+; s}.  This leaves the cell contents preceding point in the current
 cell, minus any trailing whitespace, and moves the contents following
 point to a new sibling cell which is inserted into the outline.
-@bkbd{C-u C-c s} instead adds the new cell as the first child of the
+@bkbd{C-u C-c ; s} instead adds the new cell as the first child of the
 original cell, rather than as its successor.
 
 All cell attributes in the original cell are propagated to the new one,
@@ -6628,7 +6682,7 @@ cell.
 @cindex koutline mode
 @cindex file, importing
 @cindex importing a file
-@cindex Koutline import
+@cindex koutline import
 For information on mode and suffix-specific conversions performed on
 file elements before they are inserted, see the documentation for the
 variables, @code{kimport:mode-alist} and @code{kimport:suffix-alist}.  This
@@ -6888,14 +6942,14 @@ view spec is <|ben>.
 @item a
 Show all cell levels and all lines in cells.
 
-@kindex koutliner, C-c b
+@kindex koutliner, C-c ; b
 @cindex blank lines, toggle
 @cindex view spec, blank lines
-@kindex koutliner, C-c b
+@kindex koutliner, C-c ; b
 @cindex toggling blank lines
 @item b
 Turn on blank lines between cells.  Without this character, blank lines
-will be turned off.  You may also use the @bkbd{C-c b} key binding to
+will be turned off.  You may also use the @bkbd{C-c ; b} key binding to
 toggle blank lines on and off independently of any other view settings.
 
 @cindex view spec, lines per cell
@@ -7005,12 +7059,12 @@ window.  If the klink contains a view spec, it will be applied when
 the referent is displayed.
 
 @cindex klink, inserting
-@kindex koutliner, C-c l
+@kindex koutliner, C-c ; l
 There are a number of easy ways to insert klinks into koutlines.  If you
 have mouse support under Hyperbole, simply click the Action Key within
 the indentation to the left of a cell text.  If you then double click on
 some cell, a link to that cell will be inserted where you started.  From
-a keyboard, use @bkbd{C-c l} when in a koutline or @bkbd{C-h h k l} when
+a keyboard, use @bkbd{C-c ; l} when in a koutline or @bkbd{C-h h k l} when
 not in a koutline to insert a klink.  Since klinks are implicit buttons,
 you may instead type in the text of the klink just as you saw them in the
 examples above and they will work exactly as if they had been entered with
@@ -7151,9 +7205,9 @@ you from invoking explicit commands that refill the cell.
 @cindex attributes, displaying
 @cindex displaying attributes
 @cindex outline, attribute list
-@kindex koutliner, C-c h
-@bkbd{C-c h} prompts for a cell label and displays the cell's
-attributes.  @bkbd{C-u C-c h} prompts for a cell label and displays
+@kindex koutliner, C-c ; h
+@bkbd{C-c ; h} prompts for a cell label and displays the cell's
+attributes.  @bkbd{C-u C-c ; h} prompts for a cell label and displays
 the attributes for it and its subtree; use 0 as the kcell id to see
 attributes for all visible cells in the outline.
 
@@ -7231,7 +7285,7 @@ by zero or more rolo records which we call entries.
 @cindex Org mode
 @cindex Markdown mode
 @cindex Emacs Outline mode
-@cindex Koutline mode
+@cindex koutline mode
 The first file in the list should be a user-specific hyrolo file,
 typically in the home directory and must have a suffix of either .org
 (Org mode) or .otl (Emacs Outline mode).  Other files in the list may
@@ -8928,7 +8982,7 @@ Flymake is an Emacs library that lints your code in the background.
 It provides @code{flymake-minor-mode} for source buffers and
 @code{flymake-diagnostics-buffer-mode} for listing the linter issues
 for a given source buffer.  Hyperbole extends this library with Smart
-Key jump and display issue contexts as well as a key map of commands
+Key jump and display issue contexts as well as a keymap of commands
 in source buffers to support removal of flymake issues without having
 to jump to the issue listing buffer.
 
@@ -10217,6 +10271,14 @@ editing keys are modified to account for the structure within outlines.
 An outliner command which overloads an emacs command named @emph{cmd}
 is named @emph{kotl-mode:cmd}.
 
+NOTE: As of Hyperbole version 9.3.0, the Koutliner @bkbd{C-c <letter>}
+keys have moved to @bkbd{C-c ; <letter>} so as not to override keys
+reserved for global user-specific bindings.  If you don't care about
+this and want the old bindings back, uncomment the
+@code{kotl-mode:letter-prefix} setting documented in
+@file{$@{hyperb:dir@}/man/use-package}.  You can also interactively toggle
+between @samp{C-c ;} and @samp{C-c} prefixes with @bkbd{M-1 C-c C-l}.
+
 @table @code
 
 @findex kfile:write
@@ -10224,14 +10286,14 @@ is named @emph{kotl-mode:cmd}.
 Write the current outline to FILE.
 
 @findex klink:create
-@item klink:create  @bkbd{C-c l}
+@item klink:create  @bkbd{C-c ; l}
 Insert at point an implicit link to REFERENCE.
 REFERENCE should be a cell-ref or a string containing "filename, cell-ref".
 See the documentation for @code{(kcell:ref-to-id)} for valid cell-ref
 formats.
 
 @findex kotl-mode:add-below-parent
-@item kotl-mode:add-below-parent  @bkbd{C-c p}
+@item kotl-mode:add-below-parent  @bkbd{C-c ; p}
 Add a new cell to current kview after current cell's parent.
 If parent is the hidden root cell 0, then add as the first cell of the
 outline.  Otherwise, add it as the next sibling of the parent cell.
@@ -10247,7 +10309,7 @@ used as a repeat count for the number of cells to add.
 Return last newly added cell.
 
 @findex kotl-mode:add-child
-@item kotl-mode:add-child  @bkbd{C-c a}
+@item kotl-mode:add-child  @bkbd{C-c ; a}
 Add a new cell to current kview as first child of current cell.
 
 @findex kotl-mode:add-prior-cell
@@ -10303,7 +10365,7 @@ Move point to the level 1 root of the current cell's tree.
 Leave point at the start of the cell.
 
 @findex kotl-mode:cell-help
-@item kotl-mode:cell-help  @bkbd{C-c h}
+@item kotl-mode:cell-help  @bkbd{C-c ; h}
 Display a temporary buffer of CELL-REF's attributes.
 CELL-REF defaults to current cell.  Optional prefix arg CELLS-FLAG
 selects the cells to print:
@@ -10332,7 +10394,7 @@ Center each nonblank line in the paragraph at or after point.
 See @code{center-line} for more information.
 
 @findex kotl-mode:copy-after
-@item kotl-mode:copy-after  @bkbd{C-c c}
+@item kotl-mode:copy-after  @bkbd{C-c ; c}
 Copy tree rooted at FROM-CELL-REF to follow tree rooted at TO-CELL-REF.
 If prefix arg CHILD-P is non-nil, make FROM-CELL-REF the first child of
 TO-CELL-REF, otherwise make it the sibling following TO-CELL-REF.
@@ -10423,7 +10485,7 @@ Leave point at the start of the cell.
 Display the Koutliner example file for demonstration use by a user.
 
 @findex kotl-mode:exchange-cells
-@item kotl-mode:exchange-cells  @bkbd{C-c e}
+@item kotl-mode:exchange-cells  @bkbd{C-c ; e}
 Exchange CELL-REF-1 with CELL-REF-2 in current view.  Don't move point.
 
 @findex kotl-mode:fill-cell
@@ -10490,7 +10552,7 @@ Move point forward ARG (or 1) sentences and return point.
 Move point forward ARG (or 1) words and return point.
 
 @findex kotl-mode:goto-cell
-@item kotl-mode:goto-cell  @bkbd{C-c g}
+@item kotl-mode:goto-cell  @bkbd{C-c ; g}
 Move point to start of cell given by CELL-REF.  (See the documentation
 for @code{(kcell:ref-to-id)}, for valid formats).  Return point iff
 CELL-REF is found within current view.  With a prefix argument, CELL-REF
@@ -10548,7 +10610,7 @@ Interactively, second arg is non-nil if prefix arg is supplied.
 Delete all spaces and tabs around point and leave one space.
 
 @findex kotl-mode:kill-contents
-@item kotl-mode:kill-contents  @bkbd{C-c k}
+@item kotl-mode:kill-contents  @bkbd{C-c ; k}
 Kill contents of cell from point to cell end.
 With prefix ARG, kill entire cell contents.
 
@@ -10602,7 +10664,7 @@ already within the last sibling cell.
 Mail outline tree rooted at CELL-REF.  Use "0" for whole outline buffer.
 
 @findex kotl-mode:move-after
-@item kotl-mode:move-after  @bkbd{C-c m}
+@item kotl-mode:move-after  @bkbd{C-c ; m}
 Move tree rooted at FROM-CELL-REF to follow tree rooted at TO-CELL-REF.
 If prefix arg CHILD-P is non-nil, make FROM-CELL-REF the first child of
 TO-CELL-REF, otherwise make it the sibling following TO-CELL-REF.
@@ -10692,7 +10754,7 @@ point).
 Display fully expanded tree rooted at CELL-REF.
 
 @findex kotl-mode:split-cell
-@item kotl-mode:split-cell  @bkbd{C-c s}
+@item kotl-mode:split-cell  @bkbd{C-c ; s}
 Split cell into two cells and move to new cell.
 Cell contents after point become part of newly created cell.
 Default is to create new cell as sibling of current cell.
@@ -10706,7 +10768,7 @@ With a prefix arg, also toggle the display of blank lines between
 cells.
 
 @findex kotl-mode:transpose-cells
-@item kotl-mode:transpose-cells  @bkbd{C-c t}
+@item kotl-mode:transpose-cells  @bkbd{C-c ; t}
 Exchange current and previous visible cells, leaving point after both.
 If no previous cell, exchange current with next cell.
 With prefix ARG, take current cell and move it past ARG cells.
@@ -10790,7 +10852,7 @@ current koutline.  VIEW-SPEC must be a string.  See
 on valid view specs.
 
 @findex kvspec:toggle-blank-lines
-@item kvspec:toggle-blank-lines @bkbd{C-c b}
+@item kvspec:toggle-blank-lines @bkbd{C-c ; b}
 Toggle blank lines between cells on or off.
 
 @end table
@@ -11823,13 +11885,13 @@ When pressed within a line of the flymake linter list of issues buffer:
 @cindex flymake keymap
 The flymake library comes with only a pulldown menu and no other
 source buffer key bindings, forcing you to first display the list of
-issues and then find the issue of interest and jump to it.  Hyperbole
-adds a source buffer keymap on the @bkbd{C-c C-l} prefix that lets you
-navigate and remediate flymake issues exclusively in the source
-buffer.  It also makes it more convenient to jump to the issue listing
-buffer, to toggle @code{flymake-mode} on and off and to toggle whether
-the movement between issue commands wrap around at the end of the
-buffer or not.
+issues and then find the issue of interest and jump to it.  With
+@code{flymake-mode} enabled, Hyperbole adds a source buffer keymap on
+the @bkbd{C-c C-l} prefix that lets you navigate and remediate flymake
+issues exclusively in the source buffer.  It also makes it more
+convenient to jump to the issue listing buffer, to toggle
+@code{flymake-mode} on and off and to toggle whether the movement
+between issue commands wraps around at the end of the buffer or not.
 
 
 @table @asis
@@ -11884,7 +11946,9 @@ current buffer.
 @kindex C-c C-l t
 @kitem C-c C-l t
 @code{hsys-flymake-toggle} - Toggle whether minor mode
-@code{flymake-mode} is enabled in the current buffer.
+@code{flymake-mode} is enabled in the current buffer.  This is a
+global key binding made only if there is no binding on @bkbd{C-c C-l}
+when Hyperbole is loaded.  Otherwise, you'll have to bind it yourself.
 
 @findex hsys-flymake-toggle-wraparound
 @kindex C-c C-l w
