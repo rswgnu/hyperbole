@@ -1,5 +1,11 @@
 ;;; use-package --- Hyperbole use-package reference configuration   -*- mode: emacs-lisp; lexical-binding: t; -*-
 
+;; NOTE: If you use Emacs 28 or earlier, you'll need to install the
+;; `use-package' Emacs package before using this configuration file
+;; since it is not built-in to your Emacs.
+
+;; -----------------------------------------------------------------
+
 ;; Default values herein represent the settings Hyperbole will default
 ;; to if not set within this `use-package' configuration.
 (use-package hyperbole
@@ -58,6 +64,20 @@
 
   ;; Koutliner Customizations
 
+  ;; NOTE: As of Hyperbole version 9.3.0, the Koutliner uses `C-c ;'
+  ;; as the prefix for mode-specific <letter> key bindings (prior
+  ;; prefix was `C-c'); this avoids overriding global user settings of
+  ;; `C-c <letter>'.
+  ;;
+  ;;   If you want the prior Koutline {C-c <letter>} key bindings
+  ;;   in addition to the current ones on {C-c ; <letter>), uncomment the
+  ;;   following line:
+  ;;     (kotl-mode:set-letter-prefix-control-c)
+
+  ;;   If you want to use your own prefix for these letter
+  ;;   keys, uncomment the following line and substitute your prefix:
+  ;;     (kotl-mode:set-letter-prefix-standard "your-prefix-string")
+
   ;; Customize the behavior of the <tab> and S-<tab> keys in a Koutline.
   ;; One of three possible values:
   ;;   nil      - {TAB} demotes the current tree and {Shift-TAB} promotes the
@@ -93,4 +113,17 @@
   ;;   t   - may insert literal <tab> characters. (default)
   ;;
   ;;   nil - may insert <spc> characters only.
-  (kotl-mode:indent-tabs-mode t))
+  (kotl-mode:indent-tabs-mode t)
+
+  ;; Prior to the addition of Org-style visibility cycling to the
+  ;; Koutliner on the TAB key, a press of the Action Key on a Koutline
+  ;; cell line used to toggle showing/hiding the tree rooted at point.
+  ;; Today, this does nothing.
+  ;;
+  ;; Uncomment the next expression if you prefer the prior behavior
+  ;; but note that if `hywiki-mode' is set to `:all' when point is on
+  ;; a capitalized word, an Action Key press will create a new HyWiki
+  ;; page, as that has higher priority than this setting.
+  ;;
+  ;; (kotl-mode:action-key-default-function 'kotl-mode:show-or-hide-tree)
+  )

@@ -1,3 +1,91 @@
+2026-10-08  Bob Weiner  <rsw@gnu.org>
+
+
+* kotl/kotl-mode.el (kotl-mode:toggle-letter-prefix,
+                     kotl-mode:set-letter-prefix-standard): Add support for
+    matching "\C-c" in addition to "C-c".
+                   (kotl-mode:set-letter-prefix-control-c): Trigger error
+    if 'kotl-mode:letter-prefix' is not a string.  Also, change so does
+    not disable any prior prefix so default letter bindings are always
+    available.
+                   (kotl-mode:set-letter-prefix-standard): Add optional
+    'letter-prefix' argument so user can specify own prefix to letter keys.
+  man/use-package (hyperbole): Offer commented out settings for the above.
+
+* test/demo-tests.el (demo-org-hide-header-test): Fix test for Org 9.5.5 or
+    earlier in Emacs 28.
+
+* hmouse-drv.el (hkey-help): Fix error when 'actype' was nil because there
+    is no 'hbut:current' actype but there is a 'cmd-sym'.  In this case,
+    set 'actype' to 'cmd-sym' and use its doc string.
+
+* hsys-org.el (hsys-org-cycle-global): Trigger error to upgrade Org if
+    'org-cycle-global' is not defined.
+
+* kotl/EXAMPLE.kotl:
+  man/hyperbole.texi (Promoting and Demoting): Remove {M-0 TAB} and {M-0 S-TAB}
+    for demoting and promoting within Org tables as M-0 is used as a flag to
+    these commands to also fill cells.  Additionally, these bindings worked only
+    when 'kotl-mode:tab-flag' /= 'cycle.
+
+* kotl/kotl-mode.el (kotl-mode:tab/untab-command): Remove {M-1 TAB} for toggling
+    TAB/S-TAB function for greater Org compatibility.  {M-0 TAB} still works
+    for tree demotion/promotion if not in Org-style cycle mode.  Use existing
+    bindings of {C-c C-.} and {C-c C-,} for tree demotion/promotion regardless
+    of TAB mode.
+                    (kotl-mode:setup-keymap): Add {C-c C-]} binding for
+    'kotl-mode:toggle-tab-flag' to replace {M-1 TAB}.
+
+2026-10-07  Bob Weiner  <rsw@gnu.org>
+
+* kotl/EXAMPLE.kotl: Finish doc updates for various TAB key uses and settings of
+    'kotl-mode:tab-flag'.
+
+* hactypes.el (link-to-kcell): Fix to handle when 'cell-ref' has an extra
+    trailing punctuation character that needs removal, like: "3b=071.".
+
+* kotl/kotl-mode.el (kotl-mode:tab-flag): Make 'cycle the default for Org-style
+    compatibility.
+
+* man/use-package (kotl-mode:letter-prefix): Add comment to the :custom setting of how
+    to change the Koutliner {C-c ; <letter>} bindings back to {C-c <letter>} if desired.
+    Bindings were changed.
+  man/hyperbole.texi (Koutliner, Koutliner Keys):
+  kotl/EXAMPLE.kotl: Update these files with the above change.
+
+* kotl/kotl-mode.el (kotl-mode:set-letter-prefix-standard,
+                     kotl-mode:set-letter-prefix-control-c): Add these discrete commands
+    for interactive use and use them in 'kotl-mode:toggle-letter-prefix'.
+                    (kotl-mode:setup-keymap): Enable letter key bindings to handle prefix
+    remapping.
+
+* hsys-flymake.el (hsys-flymake-global-control-l-prefix-map): Create and fix global
+    {C-c C-l t} map and key for flymake toggling.
+  man/hyperbole.texi (Smart Key - Flymake Mode): Note that {C-c C-l t} is a global
+    binding made only if {C-c C-l} is unbound when Hyperbole is loaded.
+
+2026-10-06  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode): Ensure `flymake-mode' is disabled or it will override
+    the {C-c C-l} in this mode.
+
+* hui-mini.el (hui:menu-mode-map):
+  hyrolo.el (hyrolo-mode-map): Adjust to bind same TAB/S-TAB keys as in Koutliner.
+    INCOMPATIBLE CHANGE: Remove M-TAB binding since often used to switch applications.
+
+* kotl/kotl-mode.el (kotl-mode-letter-map, kotl-mode-letter-prefix): Add.
+                    (kotl-mode:setup-keymap): INCOMPATIBLE CHANGE: Use above
+    to move all {C-c <letter>} bindings to {C-c ; <letter>} so do not override what
+    should be left as user-bindable keys.  User can then change the C-c ; prefix as
+    desired by setting 'kotl-mode-letter-prefix'.
+                    (kotl-mode:toggle-letter-prefix): Add and bind to {M-1 C-c C-l}.
+  kotl/kview.el (kview:set-label-type): Update to take a prefix arg and call the above
+    function when sent an arg of 1.
+
+* test/demo-tests.el (demo-org-hide-header-test):
+  test/smart-org-tests.el (smart-org-mode-on-header-cycles-visibility): Bind Action
+    Key variable needed for the test to restore prior Hyperbole Org mode behavior.
+
 2026-10-07  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (release-website): Use release tagged files for updating
@@ -26,10 +114,50 @@
 
 2026-10-05  Bob Weiner  <rsw@gnu.org>
 
+* hui-mouse.el (smart-org-action-key-heading-function,
+                smart-org-assist-key-heading-function): Add to allow user-settable
+    behavior when point is anywhere within a heading line (not at the end).
+               (smart-org-cycle): Add as a possible setting for the above variables.
+  man/hyperbole.texi (Smart Key - Org Mode):
+                     (Implicit Button Types): smart-org update doc.
+
+* hsys-org.el (hsys-org-cycle-global): Change all 'org-global-cycle' references
+    to 'org-cycle-global' and set this command to 'org-cycle-global'.
+
+* kotl/kotl-mode.el (kotl-mode:action-key-default-function): Add this defcustom.
+                    (kotl-mode:action-key): INCOMPATIBLE CHANGE: Replace default
+    action in a kcell of show/hide tree with a call to the function specified by
+    the new action defcustom above, which defaults to a no-op, since we have added
+    tree cycling on the TAB key.
+                    (kotl-mode:show-or-hide-tree): Encode prior Action Key
+    behavior in this function if user wants to set it as the defcustom value.
+  man/use-package (kotl-mode): Add comment on how to utilize the above function.
+  man/hyperbole.texi (Hiding and Showing): Update Action Key behavior doc.
+                    (kotl-mode:assist-key-default-function): Add this defcustom.
+                    (kotl-mode:assist-key): INCOMPATIBLE CHANGE: Replace default
+    action in a kcell of 'smart-scroll-down' with a call to the function specified
+    by the new assist defcustom above, which defaults to a no-op, for symmetry with
+    the Action Key.
+  test/kotl-mode-tests.el (kotl-mode-hide-cell): Add needed 'let' binding of
+    'kotl-mode:action-key-default-function'.
+
+* kotl/kcell.el (kcell-data:create): Signal an error if buffer-local 'kotl-kview'
+    is not a valid kview.
+
 * hywiki.el (hywiki-init): Add to move HyWiki initializations from load-time
     to after system and user init time.  This fixes bug gh#1023 where
     a directory given by the default value of 'hywiki-directory' was created
     though the value was changed prior to loading HyWiki.
+
+2026-10-04  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-word-action-key-creation-allowed-p,
+             hywiki-word-create-exclude-action-key-modes): Add.
+  hibtypes.el (hywiki-word): Use the above in ibtype, 'hywiki-word, to control
+    which major modes disable Action Key WikiWord creation, by default, none.
+  man/hyperbole.texi (Creating HyWikiWords): Doc above variable.
+                     (Implicit Button Types): Update doc for 'hywiki-word'
+    and 'hywiki-existing-word' ibtypes.
 
 * man/use-package (hyperbole): Add 'hywiki-directory' to :custom section.
 
@@ -37,7 +165,8 @@
 
 * hyrolo.el (hyrolo-yank): INCOMPATIBLE CHANGE: Interactively, 'regexp-flag'
     is set only if prefix arg is not C-u, as C-u now disables the 3rd arg,
-    'exclude-sub-entries'.
+    'exclude-sub-entries'.  Interactively, indicate whether yanking an
+    entry or a tree (sub-entries).
   man/hyperbole.texi (HyRolo Menu): Remove referent to 'helm' package no
     longer supported by HyRolo.
                      (HyRolo Menu): Add prefix arg handling details for the
@@ -8829,7 +8958,7 @@ V9.0.1 changes ^^^^:
   hyrolo.el (hyrolo-verify): Allow buffers associated with files from
     'hsys-org-cycle-bob-file-list' as well.
   hui-mouse.el (smart-org-bob-and-non-heading-p): Check whether {TAB} or
-    {M-RET} should org-global-cycle at point."
+    {M-RET} should org-cycle-global at point."
                (smart-eolp): Allow for org global cycling at start of
     buffer on a non-heading line in Hyperbole doc files when displayed from
     Hyperbole menu items.
@@ -10467,7 +10596,7 @@ V9.0.1 changes ^^^^:
                 (assist-key, assist-key-internal): FIX: Set 'assist-key-depressed-flag'
     to t when executing keyboard assist-key actions.
 
-* hsys-org.el (hsys-org-global-cycle, hsys-org-cycle): FIX: Temp move point to beginning
+* hsys-org.el (hsys-org-cycle-global, hsys-org-cycle): FIX: Temp move point to beginning
     of heading so TAB invocations cycle through all states properly.
 
 2023-07-24  Mats Lidell  <matsl@gnu.org>
@@ -13058,7 +13187,7 @@ name with 'name' and 'name-key'.
 
 * man/hyperbole.texi (Implicit Button Types, Smart Key - Org Mode): Add Org
     mode Action Key todo cycling and Assist Key todo set cycling.
-  hsys-org.el (hsys-org-cycle, hsys-org-global-cycle): FIX: Remove setting of
+  hsys-org.el (hsys-org-cycle, hsys-org-cycle-global): FIX: Remove setting of
     last-command which causes cursor to jump around somewhere else in the
     buffer when unfolding a headline rather than just unfolding it
               (hsys-org-todo-at-p, hsys-org-todo-cycle, hsys-org-todo-set-cycle):
@@ -16388,11 +16517,11 @@ absolute paths.
     mode is active and point is in a table):
 
      |----------------------------+-----------------------------|
-     | Demotion Inside  Org Table | Promotion Inside  Org Table |
+     | Demotion Inside Org Table  | Promotion Inside Org Table  |
      |----------------------------+-----------------------------|
      | M-0 TAB                    | M-0 Shift-TAB or M-0 M-TAB  |
-     | C-c C-,                    | C-c C-.                     |
-     | C-c C-<                    | C-c C->                     |
+     | C-c C-.                    | C-c C-,                     |
+     | C-c C->                    | C-c C-<                     |
      |----------------------------+-----------------------------|
 
      |----------------------------+-----------------------------|
@@ -16400,8 +16529,8 @@ absolute paths.
      |----------------------------+-----------------------------|
      | TAB                        | Shift-TAB or M-TAB          |
      | M-left-arrow               | M-right-arrow               |
-     | C-c C-,                    | C-c C-.                     |
-     | C-c C-<                    | C-c C->                     |
+     | C-c C-.                    | C-c C-,                     |
+     | C-c C->                    | C-c C-<                     |
      |----------------------------+-----------------------------|
 
 2020-10-11  Bob Weiner  <rsw@gnu.org>

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Oct-91 at 23:17:35
-;; Last-Mod:     26-Sep-26 at 17:44:06 by Bob Weiner
+;; Last-Mod:      7-Oct-26 at 19:08:39 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1017,10 +1017,13 @@ Hyperbole menu item help when appropriate."
 	  ;; This command requires recursive minibuffers.
 	  (enable-recursive-minibuffers t)
 	  mini)
-      (when (stringp value)
-	(setq value (list value nil)))
+      (cond ((stringp value)
+	     (setq value (list value nil)))
+            ((and (listp value) (= 1 (length value)))
+             (setq value (list (car value) t))))
       (unwind-protect
-	  (cl-destructuring-bind (str-value exact-completion-flag) value
+	  (cl-destructuring-bind (str-value exact-completion-flag)
+              value
 	    (setq str-value (and str-value (format "%s" str-value)))
 	    (select-window (minibuffer-window))
 	    (set-buffer (window-buffer (minibuffer-window)))

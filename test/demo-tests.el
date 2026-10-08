@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     30-Sep-26 at 17:04:16 by Bob Weiner
+;; Last-Mod:      8-Oct-26 at 13:10:41 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -266,7 +266,12 @@
     ;; Without this next let, default Org behavior may occur which
     ;; inserts a new heading when org-meta-return is called rather
     ;; than collapsing the existing tree of headings.
-    (let ((hsys-org-enable-smart-keys t))
+    (let ((hsys-org-enable-smart-keys t)
+          (smart-org-action-key-heading-function
+           (if (fboundp 'org-fold-hide-subtree)
+               'org-fold-hide-subtree
+             ;; Org 9.5.5 or earlier in Emacs 28 and earlier
+             'org-hide-entry)))
       (insert "* 1\n** 2\n*** 3\n")
       (goto-char 1)
       (should (not (org-check-for-hidden 'headlines)))

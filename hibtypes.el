@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     30-Sep-26 at 17:04:10 by Bob Weiner
+;; Last-Mod:      5-Oct-26 at 10:27:23 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -53,6 +53,7 @@
 ;;; ************************************************************************
 
 (defvar cscope-output-line-regexp)
+(defvar hywiki-word-create-exclude-action-key-modes)
 (defvar id-cflow-repeated-indicator)
 (defvar markdown-regex-link-reference)
 (defvar markdown-regex-reference-definition)
@@ -74,6 +75,7 @@
 (declare-function hywiki-highlight-word-get-range "hywiki")
 (declare-function hywiki-message-spec wikiword "hywiki")
 (declare-function hywiki-referent-exists-p "hywiki")
+(declare-function hywiki-word-action-key-creation-allowed-p "hywiki")
 (declare-function hywiki-word-create-and-display "hywiki")
 (declare-function hywiki-word-from-reference "hywiki")
 (declare-function hywiki-non-hook-context-p "hywiki")
@@ -140,9 +142,10 @@
 
 (defib hywiki-word ()
   "When on a non-existing HyWikiWord, create it and display its referent.
-This is the Action Key function that activates HyWikiWords.  A call
-to (hywiki-active-in-current-buffer-p) must return non-nil for this to
-activate.
+This is the Action Key function that creates HyWikiWords.  Calls
+to (hywiki-word-action-key-creation-allowed-p),
+(hywiki-active-in-current-buffer-p) and (not (hywiki-non-hook-context-p))
+must return non-nil for this to activate.
 
 If the associated HyWiki referent is a page, create it automatically
 unless it is the first HyWiki page to be created, in which case,
@@ -151,7 +154,8 @@ use.
 
 Existing HyWikiWords are handled by the implicit button type
 `hywiki-existing-word'."
-  (when (and (hywiki-active-in-current-buffer-p)
+  (when (and (hywiki-word-action-key-creation-allowed-p)
+             (hywiki-active-in-current-buffer-p)
              (not (hywiki-non-hook-context-p)))
     (let* ((wikiword-start-end (hywiki-highlight-word-get-range))
 	   (wikiword (nth 0 wikiword-start-end))
@@ -1868,8 +1872,9 @@ e.g. <ilink: my series of keys: ${hyperb:dir}/HYPB>."
 
 (defib hywiki-existing-word ()
   "On a HyWikiWord with an existing referent, display the referent.
-A call to (hywiki-active-in-current-buffer-p) must return non-nil
-for this to activate.
+This is the Action Key function that activates existing HyWikiWords.
+Calls to (hywiki-active-in-current-buffer-p) and (not
+(hywiki-non-hook-context-p)) must return non-nil for this to activate.
 
 See the implicit button type `hywiki-word' for creation of referents to
 not yet existing HyWikiWords."

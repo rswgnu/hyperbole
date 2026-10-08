@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    23-Apr-21 at 22:21:00
-;; Last-Mod:     14-Jul-26 at 01:12:06 by Bob Weiner
+;; Last-Mod:      6-Oct-26 at 01:15:43 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -30,7 +30,8 @@
   "With smart keys on an outline header `smart-org' cycles visibility."
   (with-temp-buffer
     (let ((bn (buffer-name))
-          (hsys-org-enable-smart-keys t))
+          (hsys-org-enable-smart-keys t)
+          (smart-org-action-key-heading-function 'org-cycle))
       (org-mode)
       (insert "* 1\n** 2\n*** 3\n")
       (goto-char 1)

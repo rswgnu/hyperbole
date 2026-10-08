@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:      1-Oct-26 at 18:31:22 by Bob Weiner
+;; Last-Mod:      8-Oct-26 at 15:48:27 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -41,6 +41,17 @@
 ;;; Public variables
 ;;; ************************************************************************
 
+(defcustom kotl-mode:action-key-default-function #'ignore
+  "Function run by the Action Key in `kotl-mode' when no other context matches.
+Set it to `kotl-mode:show-or-hide-tree' if you want the old Koutliner behavior."
+  :type 'function
+  :group 'hyperbole-koutliner)
+
+(defcustom kotl-mode:assist-key-default-function #'ignore
+  "Function run by the Assist Key in `kotl-mode' when no other context matches.
+Set it to `smart-scroll-down' if you want the old Koutliner behavior."
+  :type 'function
+  :group 'hyperbole-koutliner)
 
 ;; Derived from `org-cycle-emulate-tab'
 (defcustom kotl-mode:emulate-tab nil
@@ -53,12 +64,12 @@ t           - Everywhere except in headlines
 exc-hl-bol  - Everywhere except at the start of a headline
 If <tab> is used in a place where it does not emulate global <tab>, the
 value of `kotl-mode:tab-flag' determines what it does."
-  :group 'hyperbole-koutliner
   :type '(choice (const :tag "Never" nil)
 		 (const :tag "Only in completely white lines" white)
 		 (const :tag "Before first char in a line" whitestart)
 		 (const :tag "Everywhere except in headlines" t)
-		 (const :tag "Everywhere except at bol in headlines" exc-hl-bol)))
+		 (const :tag "Everywhere except at bol in headlines" exc-hl-bol))
+  :group 'hyperbole-koutliner)
 
 (defcustom kotl-mode:indent-tabs-mode t
   "Non-nil means {\\[kotl-mode:tab-command]} may insert literal tab characters.
@@ -67,6 +78,15 @@ Tab characters are inserted rather than space characters when
 of this variable is local to each Koutline buffer."
   :type 'boolean
   :group 'hyperbole-koutliner)
+
+(defvar kotl-mode-letter-map (make-sparse-keymap)
+  "Keymap of alphabetic bound letter keys prefaced by `kotl-mode:letter-prefix'.")
+
+(defvar kotl-mode:letter-prefix "C-c ;"
+  "Koutliner current default or user-specified letter key binding prefix.")
+
+(defvar kotl-mode:letter-prefix-saved nil
+  "Prior Koutliner letter key prefix saved when the prefix is set to `C-c'.")
 
 (defcustom kotl-mode:refill-flag nil
   "Non-nil means automatically refill cells during operations.
@@ -85,21 +105,21 @@ Default value is nil."
   :type 'boolean
   :group 'hyperbole-koutliner)
 
-(defcustom kotl-mode:tab-flag nil
+(defcustom kotl-mode:tab-flag 'cycle
   "Determines the behavior of the <tab> and S-<tab> keys.
 
 The 3 allowed values are:
 
-1. Nil, the default, means {\\[kotl-mode:tab-command]} demotes the current
-tree and {\\[kotl-mode:untab-command]} promotes the tree.  See their
-associated documentation strings for deeper details.
+1. The symbol, cycle, the default, enables org-like outline view cycling
+when point is in a context other than that specified by
+`kotl-mode:emulate-tab'.  Then {\\[kotl-mode:tab-command]} cycles the
+current tree through three views.  With a universal prefix arg, C-u, or via
+{\\[kotl-mode:untab-command]}, it cycles the whole outline through three
+views.  See the documentation strings for those commands for details.
 
-2. The symbol, cycle, enables org-like outline view cycling when point is in
-a context other than that specified by `kotl-mode:emulate-tab'.  Then
-{\\[kotl-mode:tab-command]} cycles the current tree through three views.
-With a universal prefix arg, C-u, or via {\\[kotl-mode:untab-command]}, it
-cycles the whole outline through three views.  See the documentation strings
-for those commands for details.
+2. Nil means {\\[kotl-mode:tab-command]} demotes the current tree and
+{\\[kotl-mode:untab-command]} promotes the tree.  See their associated
+documentation strings for deeper details.
 
 3. Any other non-nil value, makes {\\[kotl-mode:tab-command]} indent lines
 and insert literal <tab> characters according to the context setting of
@@ -187,6 +207,10 @@ It provides the following keys:
 	  paragraph-separate
 	  paragraph-start
 	  selective-display-ellipses))
+  ;; Ensure `flymake-mode' is disabled or it will override the {C-c C-l}
+  ;; binding herein
+  (when (bound-and-true-p flymake-mode)
+    (flymake-mode 0))
   ;; Prevent 'delete-trailing-whitespace-mode' from deleting trailing
   ;; whitespace from any lines within kcells.
   (when (bound-and-true-p delete-trailing-whitespace-mode)
@@ -1075,7 +1099,7 @@ When `kotl-mode:tab-flag' is:
   \\='cycle: cycle views of parts of the outline;
   nil:       demote trees a maximum of ARG levels;
   t:         indent or tab over by ARG tab stops.
-Use {M-1 TAB} to toggle its value between `cycle' and nil.
+Use {C-c C-]} to toggle its value between `cycle' and nil.
 
 See also the documentation strings for `kotl-mode:indent-line',
 `kotl-mode:demote-tree', and `kotl-mode:demote-siblings'.
@@ -1138,10 +1162,6 @@ valid settings."
       (kotl-mode:show-all)
       (let ((message-log-max nil))
         (message "Entire outline expanded")))
-     ((eq arg 1)
-      (if (called-interactively-p 'interactive)
-          (call-interactively 'kotl-mode:toggle-tab-flag)
-        (kotl-mode:toggle-tab-flag)))
      ((and (eq arg 0) (not (eq kotl-mode:tab-flag 'cycle)))
       (kotl-mode:demote-tree 0))
      ((and (integerp arg) (eq kotl-mode:tab-flag 'cycle))
@@ -1195,11 +1215,74 @@ valid settings."
 	  (message "Tab insertion now uses literal tabs.")
 	(message "Tab insertion now uses spaces to form tabs."))))
 
+(defun kotl-mode:toggle-letter-prefix ()
+  (interactive)
+  "Toggle whether `C-c' is the active letter prefix or not.
+Initially this is off as the default value is `C-c ;'."
+  (if (member kotl-mode:letter-prefix '("C-c" "\C-c"))
+      (kotl-mode:set-letter-prefix-standard)
+    (kotl-mode:set-letter-prefix-control-c))
+
+  (when (called-interactively-p 'interactive)
+    (message "Koutline prefix for letter keys is now: `%s'" kotl-mode:letter-prefix)))
+
+(defun kotl-mode:set-letter-prefix-standard (&optional letter-prefix)
+  "Bind `kotl-mode' letter keys with a newly computed `kotl-mode:letter-prefix'.
+Use (in this order) the optional LETTER-PREFIX, a string, if given, the
+`kotl-mode:letter-prefix-saved' or the default value of
+`kotl-mode:letter-prefix'.  Use only when current `kotl-mode:letter-prefix'
+is C-c."
+  (interactive)
+  (when (not (member kotl-mode:letter-prefix '("C-c" "\C-c")))
+    (error "(kotl-mode:set-letter-prefix-standard): Prefix must be \"C-c\" when this is called"))
+  ;; Remove letter map from prior value of letter prefix but only bindings
+  ;; on letter keys, not the entire map, since prefix is just C-c.
+  (map-keymap
+   (lambda (key _cmd) (when (and (integerp key)
+                                 (or (and (>= key ?a) (<= key ?z))
+                                     (and (>= key ?A) (<= key ?Z))))
+	                (define-key
+                          kotl-mode-map
+                          (kbd (concat "C-c " (char-to-string key)))
+                          nil)))
+   kotl-mode-letter-map)
+  ;; Update the prefix and then bind to the letter map
+  (setq kotl-mode:letter-prefix
+        (or letter-prefix
+            kotl-mode:letter-prefix-saved
+            (default-value 'kotl-mode:letter-prefix)))
+  (define-key kotl-mode-map (kbd kotl-mode:letter-prefix)
+    kotl-mode-letter-map))
+
+(defun kotl-mode:set-letter-prefix-control-c ()
+  "Bind `kotl-mode' letter keys prefaced with `C-c'.
+Does not disable any other active prefix."
+  (interactive)
+  ;; Ensure prefix is valid
+  (unless (stringp kotl-mode:letter-prefix)
+    (setq kotl-mode:letter-prefix (default-value 'kotl-mode:letter-prefix)))
+  (unless (stringp kotl-mode:letter-prefix)
+    (error "(kotl-mode:set-letter-prefix-control-c): `kotl-mode:letter-prefix' must be a string, not `%S'"
+           kotl-mode:letter-prefix))
+  ;; Save existing prefix for future restore
+  (setq kotl-mode:letter-prefix-saved kotl-mode:letter-prefix)
+  ;; Leave letter map from prior value of letter prefix; uncomment to remove it
+  ;; (define-key kotl-mode-map (kbd kotl-mode:letter-prefix) nil)
+  ;;
+  ;; Update the prefix and then bind to the letter map
+  (setq kotl-mode:letter-prefix "C-c")
+  ;; Can't replace the whole C-c map, so add each letter key to it instead
+  (map-keymap (lambda (key cmd)
+                (define-key kotl-mode-map
+                  (kbd (concat "C-c " (char-to-string key)))
+                  cmd))
+              kotl-mode-letter-map))
+
 (defun kotl-mode:toggle-tab-flag ()
   (interactive)
   "Toggle the value of `kotl-mode:tab-flag' and explain its current usage.
-This now toggles TAB/M-TAB between the traditional Koutliner demote/promote
-commands and the Org-compatible cycling commands."
+This now toggles TAB/S-TAB between the Org-compatible cycling commands and
+the traditional Koutliner demote/promote commands."
   (if (eq kotl-mode:tab-flag 'cycle)
       (progn
         (setq kotl-mode:tab-flag
@@ -1309,7 +1392,7 @@ When `kotl-mode:tab-flag' is:
   \\='cycle: cycle views of the whole outline;
   nil:       promote trees a maximum of ARG levels;
   t:         delete backward ARG characters.
-Use {M-1 TAB} to toggle its value between `cycle' and nil.
+Use {C-c C-]} to toggle its value between `cycle' and nil.
 
 See also the documentation strings for `kotl-mode:delete-backward-char',
 `kotl-mode:promote-tree', and `kotl-mode:promote-siblings'.
@@ -2660,46 +2743,47 @@ With optional NEXT-CHAR-VISIBLE, return t only if the following char is visible.
 ;;; ------------------------------------------------------------------------
 
 (defun kotl-mode:action-key ()
-  "Collapses, expands, links to, and scrolls through koutline cells.
-Invoked via a key press when in kotl-mode.  It assumes that its caller has
-already checked that the key was pressed in an appropriate buffer and has
-moved the cursor to the selected buffer.
+  "Collapse, expand, link to, or scroll through koutline cells.
+Invoke via a key press when in kotl-mode.  Assume that caller has
+checked that the key was pressed in an appropriate buffer and has moved
+the cursor to the selected buffer.
 
 If key is pressed:
  (1) at the end of buffer, uncollapse and unhide all cells in view;
  (2) at the end of a visible line, call the `action-key-eol-function';
- (3) between cells or within the read-only indentation region to the left of
-     a cell, then move point to prior location and begin creation of a
-     klink to some other outline cell; press the Action Key twice to select the
-     link referent cell;
+ (3) between cells or within the read-only indentation region to the
+     left of a cell, then move point to prior location and begin
+     creation of a klink to some other outline cell; press the Action
+     Key twice to select the link referent cell;
  (4) on a | character within an Org-style table, toggle Org Table minor mode;
  (5) in an Org-style table, wrap the table cell or region;
- (6) within a cell, if its subtree is hidden then show it, otherwise hide it."
+ (6) within a kcell, call the value of `kotl-mode:action-key-default-function',
+     which defaults to doing nothing."
   (interactive)
-  (cond	((kotl-mode:eobp) (kotl-mode:show-all))
-	((kotl-mode:eolp t) (funcall action-key-eol-function))
-	((not (kview:valid-position-p))
-	 (if (markerp action-key-depress-prev-point)
-	     (progn (select-window
-		     (get-buffer-window
-		      (marker-buffer action-key-depress-prev-point)))
-		    (goto-char (marker-position action-key-depress-prev-point))
-		    (call-interactively 'klink:create))
-	   (kotl-mode:to-valid-position)
-	   (error "(kotl-mode:action-key): Action Key released at invalid position")))
-	((and (/= (point) (point-max)) (= (following-char) ?|)
-	      (or (org-at-table-p t) (looking-at "[| \t]+$")))
-	 ;; On a | separator in a table, toggle Org table minor mode
-	 (orgtbl-mode 'toggle)
-	 (message "Org table minor mode %s" (if orgtbl-mode "enabled" "disabled")))
-	((org-at-table-p t)
-	 ;; Wrap the table cell or region
-	 (org-table-wrap-region current-prefix-arg))
-	(t ;; On a cell line (not at the end of line).
-	 (if (kotl-mode:tree-collapsed-p)
-	     (kotl-mode:show-tree)
-	   (kotl-mode:hide-tree))))
-  (kotl-mode:to-valid-position))
+  (unwind-protect
+      (cond ((kotl-mode:eobp) (kotl-mode:show-all))
+	    ((kotl-mode:eolp t) (funcall action-key-eol-function))
+	    ((not (kview:valid-position-p))
+	     (if (markerp action-key-depress-prev-point)
+	         (progn (select-window
+		         (get-buffer-window
+		          (marker-buffer action-key-depress-prev-point)))
+		        (goto-char (marker-position action-key-depress-prev-point))
+		        (call-interactively 'klink:create))
+	       (kotl-mode:to-valid-position)
+	       (error "(kotl-mode:action-key): Action Key released at invalid position")))
+	    ((and (/= (point) (point-max)) (= (following-char) ?|)
+	          (or (org-at-table-p t) (looking-at "[| \t]+$")))
+	     ;; On a | separator in a table, toggle Org table minor mode
+	     (orgtbl-mode 'toggle)
+	     (message "Org table minor mode %s" (if orgtbl-mode "enabled" "disabled")))
+	    ((org-at-table-p t)
+	     ;; Wrap the table cell or region
+	     (org-table-wrap-region current-prefix-arg))
+	    (t ;; Within a cell line (not at the end of line).
+             (when (fboundp kotl-mode:action-key-default-function)
+	       (funcall kotl-mode:action-key-default-function))))
+    (kotl-mode:to-valid-position)))
 
 (defun kotl-mode:assist-key ()
   "Displays properties of koutline cells, collapses all cells, and scrolls back.
@@ -2717,27 +2801,30 @@ If assist-key is pressed:
      a cell, then move point to prior location and prompt to move one tree to
      a new location in the outline; press the Action Key twice to select the
      tree to move and where to move it;
- (5) anywhere else, invoke `smart-scroll-down', typically to scroll down a
-     windowful."
+ (5) anywhere else within a kcell, call the value of
+     `kotl-mode:assist-key-default-function', which defaults to doing nothing."
   (interactive)
-  (cond ((kotl-mode:eobp) (kotl-mode:overview))
-	((kotl-mode:eolp t) (funcall assist-key-eol-function))
-	((not (kview:valid-position-p))
-	 (if (markerp assist-key-depress-prev-point)
-	     (progn (select-window
-		     (get-buffer-window
-		      (marker-buffer assist-key-depress-prev-point)))
-		    (goto-char (marker-position
-				assist-key-depress-prev-point))
-		    (call-interactively 'kotl-mode:move-after))
-	   (kotl-mode:to-valid-position)
-	   (error "(kotl-mode:assist-key): Help Key released at invalid position")))
-	((not (bolp))
-	 ;; On an outline header line but not at the start/end of line,
-	 ;; show attributes for tree at point.
-	 (kotl-mode:cell-help (kcell-view:label) (or current-prefix-arg 2)))
-	((smart-scroll-down)))
-  (kotl-mode:to-valid-position))
+  (unwind-protect
+      (cond ((kotl-mode:eobp) (kotl-mode:overview))
+	    ((kotl-mode:eolp t) (funcall assist-key-eol-function))
+	    ((not (kview:valid-position-p))
+	     (if (markerp assist-key-depress-prev-point)
+	         (progn (select-window
+		         (get-buffer-window
+		          (marker-buffer assist-key-depress-prev-point)))
+		        (goto-char (marker-position
+				    assist-key-depress-prev-point))
+		        (call-interactively 'kotl-mode:move-after))
+	       (kotl-mode:to-valid-position)
+	       (error "(kotl-mode:assist-key): Help Key released at invalid position")))
+	    ((not (bolp))
+	     ;; On an outline header line but not at the start/end of line,
+	     ;; show attributes for tree at point.
+	     (kotl-mode:cell-help (kcell-view:label) (or current-prefix-arg 2)))
+	    (t ;; Within a cell line (not at the end of line).
+             (when (fboundp kotl-mode:assist-key-default-function)
+	       (funcall kotl-mode:assist-key-default-function))))
+    (kotl-mode:to-valid-position)))
 
 ;;; ------------------------------------------------------------------------
 ;;; Structure Editing
@@ -3870,6 +3957,13 @@ With optional SHOW-FLAG, expand the tree instead."
       (outline-flag-region start end (not show-flag)))))
 
 ;;;###autoload
+(defun kotl-mode:show-or-hide-tree ()
+  "Show all of the tree at point when collapsed, else collapse it to one line."
+  (if (kotl-mode:tree-collapsed-p)
+      (kotl-mode:show-tree)
+    (kotl-mode:hide-tree)))
+
+;;;###autoload
 (defun kotl-mode:show-tree (&optional cell-ref)
   "Display fully expanded tree rooted at CELL-REF."
   (interactive)
@@ -4479,8 +4573,33 @@ Leave point at end of line now residing at START."
 	     yank
 	     yank-pop
 	     zap-to-char)))
-	
+
 	;; kotl-mode keys
+        (let ((keymap kotl-mode-letter-map))
+          (define-key keymap "a" 'kotl-mode:add-child)
+          (define-key keymap "b" 'kvspec:toggle-blank-lines)
+          (define-key keymap "c" 'kotl-mode:copy-after)
+          (define-key keymap "d" 'kotl-mode:down-level)
+          (define-key keymap "e" 'kotl-mode:exchange-cells)
+          (define-key keymap "g" 'kotl-mode:goto-cell)
+          (define-key keymap "h" 'kotl-mode:cell-help)
+          (define-key keymap "k" 'kotl-mode:kill-contents)
+          (define-key keymap "l" 'klink:create)
+          (define-key keymap "m" 'kotl-mode:move-after)
+          (define-key keymap "p" 'kotl-mode:add-prior-cell)
+          (define-key keymap "s" 'kotl-mode:split-cell)
+          (define-key keymap "t" 'kotl-mode:transpose-cells)
+          (define-key keymap "u" 'kotl-mode:up-level))
+
+        ;; Don't just bind the `kotl-mode-letter-map' to
+        ;; `kotl-mode:letter-prefix' here since the prefix might be just C-c
+        ;; which has other, non-letter bindings; instead bind each key.
+        (map-keymap (lambda (key cmd) (define-key kotl-mode-map
+                                        (kbd (concat kotl-mode:letter-prefix
+                                                     " " (char-to-string key)))
+                                        cmd))
+                    kotl-mode-letter-map)
+
 	(define-key kotl-mode-map "\C-c\C-@"  'kotl-mode:mail-tree)
 	(define-key kotl-mode-map "\C-c+"     'kotl-mode:append-cell)
 	(define-key kotl-mode-map "\C-c,"     'kotl-mode:beginning-of-cell)
@@ -4489,19 +4608,12 @@ Leave point at end of line now residing at START."
 	(define-key kotl-mode-map "\C-c>"     'kotl-mode:last-sibling)
 	(define-key kotl-mode-map "\C-c^"     'kotl-mode:beginning-of-tree)
 	(define-key kotl-mode-map "\C-c$"     'kotl-mode:end-of-tree)
-	(define-key kotl-mode-map "\C-ca"     'kotl-mode:add-child)
 	(define-key kotl-mode-map "\C-c\C-a"  'kotl-mode:show-all)
-	(define-key kotl-mode-map "\C-cb"     'kvspec:toggle-blank-lines)
 	(define-key kotl-mode-map "\C-c\C-b"  'kotl-mode:backward-cell)
-	(define-key kotl-mode-map "\C-cc"     'kotl-mode:copy-after)
 	(define-key kotl-mode-map "\C-c\C-c"  'kotl-mode:copy-before)
 	(define-key kotl-mode-map "\C-c\M-c"  'kotl-mode:copy-tree-or-region-to-buffer)
-	(define-key kotl-mode-map "\C-cd"     'kotl-mode:down-level)
 	(define-key kotl-mode-map "\C-c\C-d"  'kotl-mode:down-level)
-	(define-key kotl-mode-map "\C-ce"     'kotl-mode:exchange-cells)
 	(define-key kotl-mode-map "\C-c\C-f"  'kotl-mode:forward-cell)
-	(define-key kotl-mode-map "\C-cg"     'kotl-mode:goto-cell)
-	(define-key kotl-mode-map "\C-ch"     'kotl-mode:cell-help)
 	(define-key kotl-mode-map "\C-c\C-h"  'kotl-mode:hide-tree)
 	;; Since the next key binds M-BS, it may already have a local binding,
 	;; in which case we don't want to bind it here.
@@ -4511,9 +4623,10 @@ Leave point at end of line now residing at START."
         ;; similar function appropriate for kotl-mode.
 	(define-key kotl-mode-map "\C-x$"         'kotl-mode:hide-sublevels)
 
-        ;; Use {M-1 TAB} to switch TAB/S-TAB between normal kotl-mode
-        ;; operation and Org cycling compatibility.  Show a message each
-        ;; time is toggled.
+        ;; Use this next binding to switch TAB/S-TAB between Org-style
+        ;; visibility cycling and demotion/promotion behavior.  Show a
+        ;; message each time it is toggled.
+	(define-key kotl-mode-map "\C-c\C-]"      'kotl-mode:toggle-tab-flag)
 
 	(define-key kotl-mode-map [tab]           'kotl-mode:tab-command) ;; TAB
 	(define-key kotl-mode-map "\C-i"          'kotl-mode:tab-command) ;; TAB
@@ -4528,35 +4641,27 @@ Leave point at end of line now residing at START."
 	(define-key kotl-mode-map "\C-c\M-j"  'kotl-mode:fill-cell)
 	(define-key kotl-mode-map "\M-\C-j"   'kotl-mode:fill-tree)
 	(define-key kotl-mode-map "\C-c\C-k"  'kotl-mode:kill-tree)
-	(define-key kotl-mode-map "\C-ck"     'kotl-mode:kill-contents)
 	;; Force an override of the global {C-x i} insert-file binding
 	(define-key kotl-mode-map "\C-xi"     'kimport:insert-file)
 	;; Force an override of the global {C-x r i} insert-register binding
 	(define-key kotl-mode-map "\C-xri"    'kimport:insert-register)
-	(define-key kotl-mode-map "\C-ck"     'kotl-mode:kill-contents)
-	(define-key kotl-mode-map "\C-cl"     'klink:create)
 	(define-key kotl-mode-map "\C-c\C-l"  'kview:set-label-type)
 	(define-key kotl-mode-map "\C-c\M-l"  'kview:set-label-separator)
 	(define-key kotl-mode-map "\C-m"      'kotl-mode:newline)
-	(define-key kotl-mode-map "\C-cm"     'kotl-mode:move-after)
 	(define-key kotl-mode-map "\C-c\C-m"  'kotl-mode:move-before)
 	(define-key kotl-mode-map "\C-c\C-n"  'kotl-mode:next-cell)
 	(define-key kotl-mode-map "\C-c\C-o"  'kotl-mode:overview)
 	(define-key kotl-mode-map "\C-c\C-p"  'kotl-mode:previous-cell)
-	(define-key kotl-mode-map "\C-cp"     'kotl-mode:add-prior-cell)
 	(if (memq (global-key-binding "\M-q") '(fill-paragraph
 						fill-paragraph-or-region))
 	    (progn
 	      (define-key kotl-mode-map "\C-c\M-q" 'kotl-mode:fill-cell)
 	      (define-key kotl-mode-map "\M-\C-q"  'kotl-mode:fill-tree)))
-	(define-key kotl-mode-map "\C-cs"     'kotl-mode:split-cell)
 	(define-key kotl-mode-map "\C-c\C-s"  'kotl-mode:show-tree)
 	(define-key kotl-mode-map "\C-c\C-\\" 'kotl-mode:show-tree)
 	(define-key kotl-mode-map "\M-s"      'kotl-mode:center-line)
 	(define-key kotl-mode-map "\M-S"      'kotl-mode:center-paragraph)
-	(define-key kotl-mode-map "\C-ct"     'kotl-mode:transpose-cells)
 	(define-key kotl-mode-map "\C-c\C-t"  'kotl-mode:top-cells)
-	(define-key kotl-mode-map "\C-cu"     'kotl-mode:up-level)
 	(define-key kotl-mode-map "\C-c\C-u"  'kotl-mode:up-level)
 	(define-key kotl-mode-map "\C-c\C-v"  'kvspec:activate)
 	(define-key kotl-mode-map "\C-x\C-w"  'kfile:write)

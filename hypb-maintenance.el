@@ -1,9 +1,9 @@
-;;; hypb-maintenance.el --- functions for maintenance tasks  -*- lexical-binding: t; -*-
+;;; hypb-maintenance.el --- Support for updating Hyperbole web pages  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    31-Mar-21 at 21:11:00
-;; Last-Mod:     12-Mar-24 at 22:36:34 by Bob Weiner
+;; Last-Mod:      5-Oct-26 at 18:07:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
