@@ -1,3 +1,19 @@
+2026-10-07  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (release-website): Use release tagged files for updating
+    the website.
+    (release-pre): Update version header and create a PR. Update
+    hyperbole.el version header using
+    hypb-release-update-hyperbole-version-header.
+    (release-post): Go through post release updates.
+    (git-tag-release): Add a release tag on origin and github_origin.
+    (sync-repos): Sync origin and github_origin.
+    (ftp): Remove package as a dependency
+    ($(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz): Create tarball
+    from the release tagged files.
+    (EL_COMPILE): Byte compile hypb-release.el
+    General update of the target documentation. Remove of unused targets.
+
 2026-10-06  Mats Lidell  <matsl@gnu.org>
 
 * hypb-release.el (hypb-release-update-version): Update version string
