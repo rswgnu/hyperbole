@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     27-Sep-26 at 02:26:14 by Bob Weiner
+# Last-Mod:      7-Oct-26 at 22:33:41 by Mats Lidell
 #
 # Copyright (C) 1994-2026  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -36,20 +36,6 @@
 #               To build only the output formats of the Hyperbole Manual:
 #		     make doc
 #
-#		Note: Releasing to ELPA is automatic in that the
-#		master branch on savannah is automatically synced
-#		daily by ELPA. The pkg and release targets are for
-#		making and uploading a tar ball to ftp.gnu.org.
-#
-#               To assemble a Hyperbole Emacs package for testing:
-#		     make pkg
-#
-#               To release a Hyperbole Emacs package to ftp.gnu.org:
-#		     make release
-#
-#		Generate the website sources and upload them:
-#		    make website - generate web site in folder $(HYPB_WEB_REPO_LOCATION)"
-#
 #               List major build env versions:
 #                   make env
 #
@@ -74,6 +60,35 @@
 #                  "man/hyperbole.texi"   - source form
 #
 #               * Developer targets
+#
+#		Note: Releasing to ELPA is automatic in that the
+#		master branch on savannah is automatically synced
+#		daily by ELPA. The ftp target is for making and
+#		uploading a tar ball to ftp.gnu.org.
+#
+#               To release a Hyperbole Emacs package. The release
+#               process uses a pre and a post step.
+#
+#		Pre:
+#		    M-x hypb-release-update-version (Update all version strings except in Hyperbole.el)
+#		    -- Do all other preparations left for the release.
+#		    -- Commit and push all updates to master
+#		    make release-pre - Creates release branch, updates package version header,
+#			creates a PR with the changes for review.
+#
+#		Post:
+#		    Approve and merge the PR from the pre step.
+#		    make release-post	- tags the release commit, upload tarball to ftp.gnu.org, update website
+#
+#		Sub targets for the release:
+#		    make sync-repos	- Sync savannah and github/rswgnu repos.
+#		    make git-tag-release	- Sync repos, create and push the release tag to both repos.
+#		    make ftp 	- Build and upload tarball to ftp.gnu.org.
+#
+#		Generate the website sources and upload them:
+#		    make website-local - generate web site in folder $(HYPB_WEB_REPO_LOCATION)"
+#		    make website - As website-local and update live hyperbole web (cvs commit ...)
+#		    make release-website - As website but act on the release tag.
 #
 #               To run unit tests:
 #                   make all-tests                    - run all tests in a new interactive Emacs
@@ -105,7 +120,9 @@
 #               To clean the local elpa docker volume use:
 #                   make docker-clean
 
-#               Verify hyperbole installation using different sources:
+#               Verify hyperbole installation using docker. The
+#               different install sources are selected by the name of
+#               the target.
 #                   make install-<source>
 #               Where source can be 'elpa', 'elpa-devel', 'tarball' (tarball from elpa-devel),
 #               'straight' (git master from savannah) or 'all'.
@@ -170,7 +187,8 @@ SHELL = /bin/sh
 # Shell commands you may want to change for your particular system.
 CP = \cp -p
 ETAGS = \etags
-GNUFTP = \gnupload --dry-run --to ftp.gnu.org:hyperbole --replace
+# With gnupload the option --dry-run can be used for testing the upload.
+GNUFTP = \gnupload --to ftp.gnu.org:hyperbole --replace
 GZIP = \gzip -c
 INSTALL = \install -m 644 -c
 MKDIR = \mkdir -p
@@ -233,7 +251,7 @@ EL_COMPILE = hact.el hactypes.el hargs.el hbdata.el hbmap.el hbut.el \
 	     hui-treemacs.el hui-window.el hui.el hvar.el hversion.el hynote.el hypb.el hyperbole.el \
 	     hyrolo-demo.el hyrolo-logic.el hyrolo-menu.el hyrolo.el hywconfig.el hywiki.el \
              hasht.el set.el hypb-ert.el hui-dired-sidebar.el hypb-maintenance.el \
-             hui-register.el
+             hui-register.el hypb-release.el
 
 EL_SRC = $(EL_COMPILE)
 
@@ -288,20 +306,24 @@ help:
 	@echo "  Using docker and the macro DOCKER_VERSIONS for selected Emacs versions to test against"
 	@echo "     make docker-all-tests   - run all tests"
 	@echo "     make docker-batch-tests - run non-interactive tests"
+	@echo "  To run test coverage analysis:"
+	@echo "     make coverage file=<file> test=<testspec>"
+	@echo "  To run lint on all sources"
+	@echo "     make lint"
+	@echo "  To check if a file is missings the copyright statement"
+	@echo "     make check-copyright"
 	@echo "  To selectively run make targets in docker:"
 	@echo "     make docker version=<emacs-version> targets=<make targets>"
 	@echo "  To verify hyperbole installation using different sources:"
 	@echo "     make install-<source>"
-	@echo "   where <source> can be 'elpa', 'elpa-devel', 'tarball' (tarball from elpa-devel),"
-	@echo "   'straight' (git master from savannah) or 'all'."
-	@echo "  To build the Hyperbole distribution package:"
-	@echo "     make pkg"
+	@echo "     where <source> can be 'elpa', 'elpa-devel', 'tarball', ..."
 	@echo "  To build documentation formats only:"
 	@echo "     make doc"
 	@echo "  To generate and upload the public Hyperbole website:"
 	@echo "     make website"
-	@echo "  To release a Hyperbole Emacs package to ELPA and ftp.gnu.org:"
-	@echo "     make release"
+	@echo "  Help targets used when making a release:"
+	@echo "     make release-pre"
+	@echo "     make release-post"
 	@echo ""
 
 	@echo "The Hyperbole Manual is included in the package in four forms:"
@@ -478,7 +500,7 @@ endef
 
 # Locally update Hyperbole website
 .PHONY: website-local
-website-local: README.md.html
+website-local:
 	$(EMACS_BATCH) --debug -l hypb-maintenance --eval '(let ((hypb:web-repo-location "$(HYPB_WEB_REPO_LOCATION)")) (hypb:web-repo-update))'
 
 # Push to public Hyperbole website
@@ -488,35 +510,53 @@ website: website-local
 	cd $(HYPB_WEB_REPO_LOCATION) && $(CVS) commit -m "Hyperbole release $(HYPB_VERSION)"
 	@echo "Website for Hyperbole $(HYPB_VERSION) is updated."
 
-# Generate a Hyperbole package suitable for distribution via the Emacs package manager.
-.PHONY: pkg package
-pkg: package
-package: tags doc $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz
+# Checkout the release version of Hyperbole and use that to update the
+# webpage.
+.PHONY: release-website
+release-website:
+	git checkout hyperbole-$(HYPB_VERSION)
+	$(MAKE) website
 
-# Generate and distribute a Hyperbole release to ftp.gnu.org.
-# One step in this is to generate an autoloads file for the Koutliner, kotl/kotl-autoloads.el.
-.PHONY: release
-release: git-pull package ftp website git-tag-release
-	@echo "Hyperbole $(HYPB_VERSION) is released."
+# Update Version header in package file hyperbole.el, commit and push
+# the change and prepare a PR with the update.
+.PHONY: release-pre
+release-pre:
+	git switch -c release/$(HYPB_VERSION)
+	$(EMACS_BATCH) -l hypb-release \
+	  --eval '(hypb-release-update-hyperbole-version-header "$(HYPB_VERSION)")'
+	$(MAKE) version
+	git add hyperbole.el
+	git commit -m "Release Hyperbole $(HYPB_VERSION)"
+	git push github_origin HEAD
+	gh pr create \
+          --repo rswgnu/hyperbole \
+          --base master \
+          --head release/$(HYPB_VERSION) \
+          --title "Prepare release $(HYPB_VERSION)" \
+          --body "Prepare release $(HYPB_VERSION)"
 
-# Ensure local hyperbole directory is synchronized with master before building a release.
-.PHONY: git-pull
-git-pull:
-	@echo "If this step fails check your work directory for not committed changes"
-	git checkout master && git pull
-	git diff-index --quiet HEAD --
+# After PR has been merged: Sync the repos, tag the release, create
+# and upload the tarball to ftp.gnu.org and update the website.
+.PHONY: release-post
+release-post: git-tag-release ftp release-website
 
 .PHONY: git-tag-release
-git-tag-release:
-	$(call confirm,Set git tag to hyperbole-$(HYPB_VERSION) on Savannah!,TAGIT)
-	git tag -a hyperbole-$(HYPB_VERSION) -m "Hyperbole release $(HYPB_VERSION)"
+git-tag-release: sync-repos
+	$(call confirm,Set git tag to hyperbole-$(HYPB_VERSION) on Savannah and GitHub!,TAGIT)
+	git tag -a hyperbole-$(HYPB_VERSION) github_origin/master -m "Hyperbole release $(HYPB_VERSION)"
 	git push origin hyperbole-$(HYPB_VERSION)
+	git push github_origin hyperbole-$(HYPB_VERSION)
 	@echo "Hyperbole $(HYPB_VERSION) is tagged as hyperbole-$(HYPB_VERSION)."
 
-# Send compressed tarball for uploading to GNU ftp site; this must be done from the directory
-# containing the tarball to upload.
+.PHONY: sync-repos
+sync-repos:
+	git fetch github_origin
+	git push origin github_origin/master:refs/heads/master
+
+# Send compressed tarball for uploading to GNU ftp site; this must be
+# done from the directory containing the tarball to upload.
 .PHONY: ftp
-ftp: package $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz
+ftp: $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz
 	$(call confirm,Uploads release to ftp.gnu.org!,UPLOAD)
 	cd $(pkg_parent) && $(GNUFTP) hyperbole-$(HYPB_VERSION).tar.gz
 	@echo "Hyperbole $(HYPB_VERSION) uploaded to ftp.gnu.org."
@@ -533,16 +573,16 @@ kotl/kotl-autoloads.el: $(EL_KOTL)
 	$(HYPB_GEN)$(EMACS_BATCH) --debug --eval "(let ((autoload-file (expand-file-name \"kotl/kotl-autoloads.el\")) (backup-inhibited t) (find-file-hooks)) (hload-path--make-directory-autoloads \"kotl/\" autoload-file))"
 	$(HYPB_at)$(TOUCH) $@
 
-# Used for ftp.gnu.org tarball distributions.
-$(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz: $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar
-	cd $(pkg_parent) && $(GZIP) hyperbole-$(HYPB_VERSION).tar > hyperbole-$(HYPB_VERSION).tar.gz
-
-$(pkg_parent)/hyperbole-$(HYPB_VERSION).tar: version $(HYPERBOLE_FILES)
-	$(RM) -fr $(pkg_hyperbole) $(pkg_hyperbole).tar
-        # git archive --format=tar --prefix=hyperbole-$(HYPB_VERSION)/ HEAD | (cd $(pkg_parent) && tar xf -)
-	(mkdir -p $(pkg_hyperbole) && git ls-files | tar Tzcf - - | (cd $(pkg_hyperbole) && tar zxf -)) && \
-	cd $(pkg_hyperbole) && make autoloads && chmod 755 topwin.py && \
-	COPYFILE_DISABLE=1 $(TAR) -C $(pkg_parent) -clf $(pkg_hyperbole).tar hyperbole-$(HYPB_VERSION)
+# Used for ftp uploads. Pick tagged release files, make autoloads and
+# put together as a compressed tarball.
+$(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz:
+	git archive --format=tar --prefix=hyperbole-$(HYPB_VERSION)/ hyperbole-$(HYPB_VERSION) \
+	  | (cd $(pkg_parent) && tar xf -)
+	cd $(pkg_hyperbole) && \
+	  $(MAKE) autoloads && \
+	  chmod 755 topwin.py && \
+	  COPYFILE_DISABLE=1 $(TAR) -C $(pkg_parent) -clzf $(pkg_hyperbole).tar.gz hyperbole-$(HYPB_VERSION)
+	$(RM) -fr $(pkg_hyperbole)
 
 .PHONY: pkgclean packageclean
 pkgclean: packageclean

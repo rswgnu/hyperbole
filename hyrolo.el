@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     12-Sep-26 at 13:57:08 by Mats Lidell
+;; Last-Mod:      3-Oct-26 at 12:00:28 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -171,7 +171,8 @@ their standard major modes perform.")
   :group 'hyperbole-hyrolo)
 
 (defvar hyrolo-display-buffer "*HyRolo*"
-  "Buffer used to display set of last matching rolo entries.")
+  "Buffer or buffer name used to display set of last matching HyRolo entries.
+Call `hyrolo-display-buffer-name' to get its buffer name value.")
 
 (defvar hyrolo-source-buffer nil
   "The source file associated with (point) within the HyRolo display buffer.
@@ -580,6 +581,16 @@ omit any trailing colon and space in the prompt."
 				    "Grep HyRolo files")))))
 
 ;;;###autoload
+(defun hyrolo-display-buffer-name ()
+  "Return `hyrolo-display-buffer's name or signal an error if an invalid type."
+  (cond ((stringp hyrolo-display-buffer)
+         hyrolo-display-buffer)
+        ((bufferp hyrolo-display-buffer)
+         (buffer-name hyrolo-display-buffer))
+        (t (error "(hyrolo-display-buffer-name): `hyrolo-display-buffer' must be a string or buffer but is of type: %s"
+                  (type-of hyrolo-display-buffer)))))
+
+;;;###autoload
 (defun hyrolo-display-matches (&optional display-buf return-to-buffer)
   "Display optional DISPLAY-BUF buffer of previously found rolo matches.
 If DISPLAY-BUF is nil, use the value in `hyrolo-display-buffer'.
@@ -844,7 +855,7 @@ If ARG is zero, move to the beginning of the current line."
 
 (defsubst hyrolo-hdr-at-p ()
   "Return pos if point is at the start of a `hyrolo-mode' file header, else nil."
-  (text-property-any (point) (1+ (point)) :hyrolo-hdr t))
+  (text-property-any (point) (min (1+ (point)) (point-max)) :hyrolo-hdr t))
 
 ;;;###autoload
 (defun hyrolo-get-entry (name &optional regexp-flag exclude-sub-entries)
@@ -1303,12 +1314,16 @@ Raise an error if a match is not found."
 
 (define-derived-mode hyrolo-outline-mode outline-mode "HyRoloOtl"
   "Set major mode for HyRolo searches of outlines with selective display.
+Emacs outline files with extensions of .otl and .outl use this mode
+automatically.
+
 The difference from `outline-mode' is that it does not change the hidden
 state of any entries when invoked, as it is used in the HyRolo display
 matches buffer when moving through entries.
 
-Headings are lines which start with asterisks: one for major headings,
-two for subheadings, etc.  Lines not starting with asterisks are body lines.
+By default, headings are lines which start with asterisks: one for major
+headings, two for subheadings, etc.  Lines not starting with asterisks are
+body lines.
 
 Body text or subheadings under a heading can be made temporarily
 invisible, or visible again.  Invisible lines are attached to the end
@@ -1686,16 +1701,21 @@ Return number of entries matched.  See also documentation for the variable
 If the `consult' package is installed, interactively select and complete
 the entry to be inserted.
 
-With optional prefix arg, REGEXP-FLAG, treat NAME as a regular expression
-instead of a string.
+With optional REGEXP-FLAG (any prefix arg other than C-u, the
+`univeral-argument'), treat NAME as a regular expression instead of a
+string.
 
 With optional EXCLUDE-SUB-ENTRIES non-nil, exclude all sub-entry records
-below the yanked one."
+below the yanked one (default when called interactively)."
   (interactive (list
 		(hsys-consult-grep-headlines-read-regexp
 		 #'hyrolo-consult-grep "Yank rolo headline matching")
-		current-prefix-arg
-                t))
+                ;; Enable `regexp-flag' if any prefix arg other the
+                ;; universal argument
+		(and current-prefix-arg (not (equal '(4) current-prefix-arg)))
+                ;; Exclude-sub-entries if no prefix arg or any prefix arg
+                ;; other than the universal argument
+                (or (null current-prefix-arg) (not (equal '(4) current-prefix-arg)))))
   (push-mark)
   (let ((entry (hyrolo-get-entry name regexp-flag exclude-sub-entries)))
     (when entry
@@ -2184,7 +2204,8 @@ Return number of matching entries found."
 						"#+[ \t]+\\|"
 						(regexp-quote "^") "\\|"
 						(regexp-quote "\\`") "\\)")
-					pattern)))
+					pattern))
+                     (not (string-match-p hyrolo-entry-regexp pattern)))
 	    ;; If matching only to headlines and pattern is not already
 	    ;; anchored to the beginning of lines, add a file-type-specific
 	    ;; headline prefix regexp to the pattern to match.

@@ -51,6 +51,11 @@
   ;;   nil      - In Org mode, Org controls the key.
   (hsys-org-enable-smart-keys t)
 
+  ;; HyWiki Customizations
+
+  ;; Directory to store all HyWiki pages in (default = "~/hywiki/")
+  (hywiki-directory "~/hywiki/")
+
   ;; Koutliner Customizations
 
   ;; Customize the behavior of the <tab> and S-<tab> keys in a Koutline.

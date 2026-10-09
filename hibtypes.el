@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     29-Sep-26 at 16:11:57 by Bob Weiner
+;; Last-Mod:     30-Sep-26 at 17:04:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -333,7 +333,7 @@ in all buffers."
             ;; Don't want this to trigger in a mail/news summary buffer.
             (not (or (hmail:lister-p) (hnews:lister-p))))
            (when (boundp 'hyrolo-display-buffer)
-             (equal (buffer-name) hyrolo-display-buffer))
+             (equal (buffer-name) (hyrolo-display-buffer-name)))
            (and (hypb:buffer-file-name)
                 (boundp 'hyrolo-file-list)
                 (set:member (current-buffer)

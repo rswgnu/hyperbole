@@ -1,4 +1,103 @@
+2026-10-08  Mats Lidell  <matsl@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-tests--yank): Add test of yanking a
+    kotl header.
+
+2026-10-07  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (release-website): Use release tagged files for updating
+    the website.
+    (release-pre): Update version header and create a PR. Update
+    hyperbole.el version header using
+    hypb-release-update-hyperbole-version-header.
+    (release-post): Go through post release updates.
+    (git-tag-release): Add a release tag on origin and github_origin.
+    (sync-repos): Sync origin and github_origin.
+    (ftp): Remove package as a dependency
+    ($(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz): Create tarball
+    from the release tagged files.
+    (EL_COMPILE): Byte compile hypb-release.el
+    General update of the target documentation. Remove of unused targets.
+
+2026-10-06  Mats Lidell  <matsl@gnu.org>
+
+* hypb-release.el (hypb-release-update-version): Update version string
+    in files in hypb-release-version-files.
+    (hypb-release-version-files): Files to update.
+    (hypb-release-update-hyperbole-version-header): Update hyperbole.el
+    version header.
+
+* MANIFEST:  Add hypb-release.el
+
+2026-10-05  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-init): Add to move HyWiki initializations from load-time
+    to after system and user init time.  This fixes bug gh#1023 where
+    a directory given by the default value of 'hywiki-directory' was created
+    though the value was changed prior to loading HyWiki.
+
+* man/use-package (hyperbole): Add 'hywiki-directory' to :custom section.
+
+2026-10-03  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-yank): INCOMPATIBLE CHANGE: Interactively, 'regexp-flag'
+    is set only if prefix arg is not C-u, as C-u now disables the 3rd arg,
+    'exclude-sub-entries'.
+  man/hyperbole.texi (HyRolo Menu): Remove referent to 'helm' package no
+    longer supported by HyRolo.
+                     (HyRolo Menu): Add prefix arg handling details for the
+    Yank menu item (hyrolo-yank).
+
+* hpath.el (hpath:extension-in-list-p): Add and use in deciding whether
+    to add the complex regexp needed to match Koutline cell relative ids
+    to any 'hsys-consult--grep-paths' calls, for example, when calling
+    'hyrolo-yank' interactively.
+
+2026-10-02  Bob Weiner  <rsw@gnu.org>
+
+* hsys-consult.el (hsys-consult-entry-regexp): Ensure always ends with
+    a SPC character to support Orderless searching.
+
+2026-10-01  Mats Lidell  <matsl@gnu.org>
+
+* install-test/install-test.sh: Don't let debug check set return status.
+
+* install-test/elpa-devel-emacs:
+* install-test/elpa-emacs:
+* install-test/melpa-releases-emacs:
+* install-test/melpa-snapshots-emacs:
+* install-test/straight-emacs:
+* install-test/tarball-emacs: Install use-package for pre Emacs 29.
+
+2026-10-01  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-mode.el (kotl-mode:action-key): Fix to test if tree, rather
+    than current cell, is collapsed.  Fixes bug where single line cells
+    with subtrees would not expand.
+
+* test/hyrolo-tests.el (hyrolo-tests--gen-kotl-outline): Fix kotl tests
+    that previously got no results from kotl calls and so undercounted
+    matches.  Set the proper number to fix tests.
+
 2026-09-30  Bob Weiner  <rsw@gnu.org>
+
+* hsys-consult.el (hsys-consult-entry-regexp): Add support for Koutline
+    cell relative ids trailing separators.
+
+* hyrolo.el (hyrolo-grep-file): Add check to not add 'hyrolo-entry-regexp'
+    prefix to patterns that already contain the prefix.  This fixes
+    'hyrolo-yank' for 'kotl-mode' entries.
+  kotl/kview.el (kview:outline-regexp): Allow for regexp quoted
+    backslashes in front of a period at the start of
+    'kview:default-label-separator' so works properly when used in
+    'hyrolo-entry-regexp' in 'hyrolo-grep-file' call from 'hyrolo-yank'.
+  test/hyrolo-tests.el (hyrolo-tests--yank): Add test from Mats that
+    now passes.
+
+* hyrolo.el (hyrolo-display-buffer): Clarify that this can be a buffer
+    or buffer name.
+            (hyrolo-display-buffer-name): Add and use where a string
+    type is required.
 
 * man/hy-package.el:
   man/hy-straight.el: Remove configuration from these two files.

@@ -5311,34 +5311,46 @@ Initializes `hywiki--org-todo-regexp' and `hywiki--org-heading-regexp'."
 	 "[ \t]*$")))
 
 ;;; ************************************************************************
-;;; Private initializations
+;;; Initializations
 ;;; ************************************************************************
 
-;; Must be set after `hywiki-get-buttonize-characters' is defined
-(unless hywiki--buttonize-character-regexp
-  (setq hywiki--buttonize-character-regexp
-	(concat "\\([]["
-		(regexp-quote (concat "()<>{}\"' \t\r\n"
-				      (hywiki-get-buttonize-characters)))
-		"]\\|$\\)")
-	hywiki--word-and-buttonize-character-regexp
-	(concat "\\(" hywiki-word-with-optional-suffix-regexp "\\)"
-		hywiki--buttonize-character-regexp)))
+(defun hywiki-init ()
+  "Initialize HyWiki settings but don't enable the HyWiki minor mode.
+Use (hywiki-mode hywiki-default-mode) for that."
 
-(hywiki--org-set-heading-regexp)
+  ;; Private initializations
 
-;;; ************************************************************************
-;;; Public initializations
-;;; ************************************************************************
+  ;; Must be set after `hywiki-get-buttonize-characters' is defined
+  (unless hywiki--buttonize-character-regexp
+    (setq hywiki--buttonize-character-regexp
+	  (concat "\\([]["
+		  (regexp-quote (concat "()<>{}\"' \t\r\n"
+				        (hywiki-get-buttonize-characters)))
+		  "]\\|$\\)")
+	  hywiki--word-and-buttonize-character-regexp
+	  (concat "\\(" hywiki-word-with-optional-suffix-regexp "\\)"
+		  hywiki--buttonize-character-regexp)))
 
-(add-hook 'kill-buffer-hook 'hywiki-kill-buffer-hook)
+  (hywiki--org-set-heading-regexp)
 
-;; Use for its side effects, setting variables
-(eval-after-load "ox-publish" '(hywiki-org-get-publish-project))
+  ;; Public initializations
 
-;; Ensure HyWiki referent lookup table is initialized as are HyWiki Org
-;; Publish settings.
-(hywiki-set-directory 'hywiki-directory hywiki-directory)
+  (add-hook 'kill-buffer-hook 'hywiki-kill-buffer-hook)
+
+  ;; Use for its side effects, setting variables
+  (eval-after-load "ox-publish" '(hywiki-org-get-publish-project))
+
+  ;; Ensure HyWiki referent lookup table is initialized as are HyWiki
+  ;; Org Publish settings.
+  (hywiki-set-directory 'hywiki-directory hywiki-directory))
+
+;; This next expression initializes HyWiki settings but does not enable
+;; its minor mode.  (hywiki-mode hywiki-default-mode) does that.
+(if after-init-time
+    ;; Initialize HyWiki settings
+    (hywiki-init)
+  ;; Initialize after other key bindings are loaded at startup.
+  (add-hook 'after-init-hook #'hywiki-init t))
 
 (provide 'hywiki)
 

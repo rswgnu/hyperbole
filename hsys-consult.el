@@ -2,7 +2,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     4-Jul-24 at 09:57:18
-;; Last-Mod:     20-Jul-26 at 01:52:39 by Bob Weiner
+;; Last-Mod:      3-Oct-26 at 11:39:17 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -28,11 +28,12 @@
 ;; Don't (require 'consult) here since want to create that dependency only
 ;; when a function within this library is called.
 
+(require 'find-func)
 (require 'hbut)
 (require 'hargs)
 (require 'hproperty)
 (require 'hsys-org-roam)
-(require 'find-func)
+(require 'kview) ;; For `kview:outline-regexp'
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -69,8 +70,13 @@
 ;;; Public variables
 ;;; ************************************************************************
 
-(defvar hsys-consult-entry-regexp "^[*#]+ "
-   "Regexp prefix to match to multi-line entries with `consult-grep'.")
+;; This regexp is used interactively by `consult-grep' and can easily break
+;; if changed.  The groupings and not anchoring `kview:outline-regexp' to
+;; the beginning of the line are necessary for matching to work properly.
+;; Final space character in this regexp makes it work properly with the
+;; Orderless package. -- RSW, 2026-10-02
+(defvar hsys-consult-entry-regexp (concat "\\(\\(^[*#]+\\)\\|" kview:outline-regexp "\\) ")
+   "`consult-grep' regexp to match to the first line of multi-line entries.")
 
 (defvar hsys-consult-exit-value nil
   "Value from a user-defined exit-hook sent to `hsys-consult-get-exit-value'.")
@@ -153,7 +159,7 @@ optional REGEXP up to MAX-MATCHES in PATH-LIST.
 Use ripgrep (rg) if found, otherwise, plain grep.  Initialize search with
 optional REGEXP and interactively prompt for changes.  Limit matches per
 file to the absolute value of MAX-MATCHES, if given and not 0.  If 0, match
-to headlines only (lines that start with a '^[*#]+' regexp).
+to headlines only (lines that start with `hsys-consult-entry-regexp').
 
 With optional PROMPT string, use this as the first part of the grep prompt;
 omit any trailing colon and space in the prompt."
@@ -270,7 +276,7 @@ Use ripgrep (rg) if found, otherwise, plain grep to search Org files within
 `org-roam-directory'.  Initialize search with optional REGEXP and
 interactively prompt for changes.  Limit matches per file to the absolute
 value of MAX-MATCHES, if given and not 0.  If 0, match to the start of
-headline text only (lines that start with the '^[*#]+' regexp)."
+headline text only (lines that start with `hsys-consult-entry-regexp')."
   (interactive "i\nP")
   (hsys-consult--org-roam-call-function
    (lambda ()
@@ -333,17 +339,14 @@ matches from PATHS; see the documentation for the `dir' argument in
 Initialize search with optional REGEXP and interactively prompt for changes.
 Limit matches per file to the absolute value of optional MAX-MATCHES, if
 given and not 0.  If 0, match to the start of headline text only (lines that
-start with the `hsys-consult-entry-regexp').
+start with `hsys-consult-entry-regexp', which is dynamically simplified if no
+Koutline \".kotl\" files are being searched).
 
 With optional PROMPT string, use this as the first part of the grep prompt;
 omit any trailing colon and space in the prompt."
   (hsys-consult-require-version)
   (when max-matches
     (setq max-matches (prefix-numeric-value max-matches)))
-  (when (and (integerp max-matches) (zerop max-matches))
-    ;; Final space in leading regexp in next line makes it work with
-    ;; the Orderless package.
-    (setq regexp (concat hsys-consult-entry-regexp (or regexp ""))))
   (let ((consult-grep-args (if (and (integerp max-matches) (not (zerop max-matches)))
 			       (if (listp consult-grep-args)
 				   (append consult-grep-args
@@ -357,7 +360,17 @@ omit any trailing colon and space in the prompt."
 					      (list (format "-m %d" (abs max-matches))))
 				    (concat consult-ripgrep-args
 					    (format " -m %d" (abs max-matches))))
-				consult-ripgrep-args)))
+				consult-ripgrep-args))
+        (hsys-consult-entry-regexp
+         (if (hpath:extension-in-list-p "*.kotl" paths)
+             hsys-consult-entry-regexp
+           ;; If no Koutline files, use simplified heading search regexp
+           "^[*#]+ ")))
+
+    (when (and (integerp max-matches) (zerop max-matches))
+      ;; Final space in leading regexp in next line makes it work with
+      ;; the Orderless package.
+      (setq regexp (concat hsys-consult-entry-regexp (or regexp ""))))
 
     ;; Ensure any env or lisp variables in paths are replaced so
     ;; grep does not ignore them.
@@ -373,7 +386,6 @@ omit any trailing colon and space in the prompt."
 			 #'consult--ripgrep-make-builder paths regexp)
 	(consult--grep (or prompt "Grep")
 		       #'consult--grep-make-builder paths regexp)))))
-
 
 (defun hsys-consult--org-grep-tags-string ()
   "When on or between Org tags, return a `consult-grep' match string for them.
