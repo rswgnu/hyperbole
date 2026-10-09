@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:      3-Oct-26 at 21:47:45 by Bob Weiner
+;; Last-Mod:      8-Oct-26 at 00:55:44 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2183,20 +2183,18 @@ body 2
                                     (hyrolo-tests--gen-outline ?* "heading-otl" 1 "body" 2)))
          (md-file1 (make-temp-file "hypb" nil ".md"
                                    (hyrolo-tests--gen-outline ?# "heading-md" 1 "body" 2)))
-         (kotl-file1 (hyrolo-tests--gen-kotl-outline "heading-kotl" "body-kotl"))
+         (kotl-file1 (hyrolo-tests--gen-kotl-outline "heading-kotl" "body-kotl" 2))
          (hyrolo-file-list (list org-file1 otl-file1 md-file1 kotl-file1)))
     (unwind-protect
         (with-temp-buffer
-          (erase-buffer)
-          (hyrolo-yank "There is no such line" nil t)
-          ;; FIXME: Above call fails before verification.
-          ;; (should (string= "* heading-kotl\nbody-kotl\n"
-          ;;                  (buffer-substring-no-properties (point-min) (point-max))))
+          ;; Verify yank of no match don't trip
+          (should-not (hyrolo-yank "There is no such line" nil t))
+          (should-not (hyrolo-yank "There is no such line"))
 
+          ;; Go through matches
           (dolist (v '(("heading-org" . ?*) ("heading-otl" . ?*) ("heading-md" . ?#)))
             (let* ((header (car v))
                    (char (cdr v))
-                   ;; (debug-on-message "Making hyrolo-display-buffer buffer-local while locally let-bound!")
                    (file-string (hyrolo-tests--gen-outline char header 1 "body" 2)))
               (erase-buffer)
               (hyrolo-yank header nil t)
@@ -2206,8 +2204,19 @@ body 2
               (erase-buffer)
               (hyrolo-yank header)
               (should (string= file-string
-                               (buffer-substring-no-properties (point-min) (point-max)))))))
-      (kill-buffer hyrolo-display-buffer)
+                               (buffer-substring-no-properties (point-min) (point-max))))))
+
+          (erase-buffer)
+          (hyrolo-yank "heading-kotl" nil t)
+          (should (string= "   1. heading-kotl\n      body-kotl\n"
+                           (buffer-substring-no-properties (point-min) (point-max))))
+
+          ;; kotl-mode yanks no sub entries.
+          (erase-buffer)
+          (hyrolo-yank "heading-kotl")
+          (should (string= "   1. heading-kotl\n      body-kotl\n"
+                           (buffer-substring-no-properties (point-min) (point-max)))))
+      (hy-test-helpers:kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))
 
 (provide 'hyrolo-tests)
