@@ -1,3 +1,11 @@
+2026-10-10  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (pkg): Put back target (PHONY).
+    ($(pkg_parent)/hyperbole-local.tar.gz): Rule for making a tarball
+    from local git version controlled files.
+    (packageclean): Remove hyperbole-local tar file and build
+    directory if present.
+
 2026-10-08  Mats Lidell  <matsl@gnu.org>
 
 * test/hyrolo-tests.el (hyrolo-tests--yank): Add test of yanking a

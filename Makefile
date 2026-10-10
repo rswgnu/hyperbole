@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:      7-Oct-26 at 22:33:41 by Mats Lidell
+# Last-Mod:     10-Oct-26 at 00:19:52 by Mats Lidell
 #
 # Copyright (C) 1994-2026  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -584,13 +584,31 @@ $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz:
 	  COPYFILE_DISABLE=1 $(TAR) -C $(pkg_parent) -clzf $(pkg_hyperbole).tar.gz hyperbole-$(HYPB_VERSION)
 	$(RM) -fr $(pkg_hyperbole)
 
+# Create a tarball based on local files. Pick version controlled
+# files, make autoloads and put together as a compressed tarball.
+.PHONY: pkg
+pkg: $(pkg_parent)/hyperbole-local.tar.gz
+
+$(pkg_parent)/hyperbole-local.tar.gz:
+	mkdir -p $(pkg_parent)/hyperbole-local
+	git ls-files -z | xargs -0 cp --parents -t $(pkg_parent)/hyperbole-local
+	cd $(pkg_parent)/hyperbole-local && \
+	  $(MAKE) autoloads && \
+	  chmod 755 topwin.py && \
+	  COPYFILE_DISABLE=1 $(TAR) -C $(pkg_parent) -clzf $(pkg_parent)/hyperbole-local.tar.gz hyperbole-local
+	$(RM) -fr $(pkg_parent)/hyperbole-local
+
 .PHONY: pkgclean packageclean
 pkgclean: packageclean
 packageclean:
 	if [ -d $(pkg_hyperbole) ]; then \
-		$(RM) -r $(pkg_hyperbole); \
+	  $(RM) -r $(pkg_hyperbole); \
 	fi
 	$(RM) $(pkg_parent)/hyperbole-$(HYPB_VERSION).*
+	if [ -d $(pkg_parent)/hyperbole-local ]; then \
+	  $(RM) -r $(pkg_parent)/hyperbole-local; \
+	fi
+	$(RM) $(pkg_parent)/hyperbole-local.tar.gz
 
 # ERT test
 .PHONY: tests test batch-tests
