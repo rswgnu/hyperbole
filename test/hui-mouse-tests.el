@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    15-Mar-25 at 22:39:37
-;; Last-Mod:     29-Sep-26 at 17:08:46 by Bob Weiner
+;; Last-Mod:     11-Oct-26 at 11:13:17 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -20,6 +20,7 @@
 
 (require 'ert)
 (require 'el-mock)
+(require 'hy-test-helpers)
 
 (ert-deftest hui-mouse-tests--hkey-alist ()
   "Verify that given predicate values result in the proper action."
@@ -205,8 +206,7 @@
   ;; Ert
   (let ((major-mode 'ert-results-mode))
     (mocklet (((ert-results-filter-status-p) => t))
-      (cl-letf (((symbol-function 'featurep)
-                 (lambda (symbol &optional _) (equal symbol 'ert-results))))
+      (hy-test-mocked-feature 'ert-results
         (should (equal (hkey-actions)
                        (cons '(smart-ert-results hkey-value)
                              '(smart-ert-results-assist hkey-value)))))))

@@ -1,3 +1,13 @@
+2026-10-11  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (%.elc): Use load-prefer-newer.
+
+* hbut.el: Use local variable byte-compile-docstring-max-column to
+    silence warning for a long docstring that is hard to shorten.
+
+* test/hui-mouse-tests.el (hui-mouse-tests--hkey-alist): Use
+    hy-test-mocked-feature.
+
 2026-10-10  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (pkg): Put back target (PHONY).

@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     10-Oct-26 at 00:19:52 by Mats Lidell
+# Last-Mod:     11-Oct-26 at 11:23:36 by Mats Lidell
 #
 # Copyright (C) 1994-2026  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -400,6 +400,7 @@ HYPB_BYTE_COMP_FUNC = batch-byte-compile
 endif
 %.elc: %.el
 	$(HYPB_BYTE_COMP_INFO)$(EMACS) --batch --quick \
+	--eval "(setq load-prefer-newer t)" \
 	$(HYPB_BYTE_COMP_ELN_LOAD_PATH) \
 	--eval "(progn (add-to-list 'load-path \"$(curr_dir)\") (add-to-list 'load-path \"$(curr_dir)/kotl\"))" \
 	-l bytecomp ${HYPB_BIN_WARN} \

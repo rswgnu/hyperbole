@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     27-Sep-26 at 01:27:28 by Bob Weiner
+;; Last-Mod:     11-Oct-26 at 11:16:09 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -3333,4 +3333,9 @@ Return TYPE's symbol if it existed, else nil."
     (and elisp-sym (funcall elisp-sym) t)))
 
 (provide 'hbut)
+
+;; Local Variables:
+;; byte-compile-docstring-max-column: 88
+;; End:
+
 ;;; hbut.el ends here
