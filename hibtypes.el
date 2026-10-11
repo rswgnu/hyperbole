@@ -103,8 +103,9 @@
 ;;; ========================================================================
 
 (defib hbut-identifier ()
-  "When on the name of a variable that holds a Hyperbole button, e.g. hbut:current:
-  Action Key - Jump to variable definition."
+  "Action Key - Jump to variable definition.
+When on the name of a variable that holds a Hyperbole button,
+e.g. hbut:current."
   (let ((identifier (smart-prog-at-tag-p t))
 	start-end)
     (when (and identifier
@@ -115,8 +116,9 @@
 	(hact #'smart-prog-tag identifier)))))
 
 (defun hbut-identifier:help (ibut)
-  "When on the name of a variable that holds a Hyperbole button, e.g. hbut:current:
-  Assist Key - Display button attributes of any Hyperbole button symbol at point."
+  "Assist Key - Display button attributes of any Hyperbole button symbol at point.
+When on the name of a variable that holds a Hyperbole button, e.g. hbut:current."
+
   (hbut:report ibut))
 
 ;; Don't use require below here for any libraries with ibtypes in
