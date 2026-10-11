@@ -522,6 +522,8 @@ release-website:
 # the change and prepare a PR with the update.
 .PHONY: release-pre
 release-pre:
+	git fetch github_master
+	git diff --quiet github_origin/master
 	git switch -c release/$(HYPB_VERSION)
 	$(EMACS_BATCH) -l hypb-release \
 	  --eval '(hypb-release-update-hyperbole-version-header "$(HYPB_VERSION)")'
