@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:      1-Oct-26 at 18:31:22 by Bob Weiner
+;; Last-Mod:     11-Oct-26 at 09:55:29 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1196,10 +1196,10 @@ valid settings."
 	(message "Tab insertion now uses spaces to form tabs."))))
 
 (defun kotl-mode:toggle-tab-flag ()
-  (interactive)
   "Toggle the value of `kotl-mode:tab-flag' and explain its current usage.
 This now toggles TAB/M-TAB between the traditional Koutliner demote/promote
 commands and the Org-compatible cycling commands."
+  (interactive)
   (if (eq kotl-mode:tab-flag 'cycle)
       (progn
         (setq kotl-mode:tab-flag
