@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:      3-Oct-26 at 11:39:31 by Bob Weiner
+;; Last-Mod:     11-Oct-26 at 10:02:40 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -153,6 +153,7 @@ The format is ${variable}.  Match grouping 1 is the name of the variable.")
 (declare-function kbd-key:key-series-to-events "hib-kbd")
 (declare-function kcell-view:indent "kcell-view")
 (declare-function klink:act "klink")
+(declare-function klink:update-label "klink")
 (declare-function kotl-mode:to-valid-position "kotl-mode")
 (declare-function mm-mailcap-command "mm-decode")
 (declare-function org-element-property "org-element-ast")
