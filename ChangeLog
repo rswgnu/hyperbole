@@ -1,5 +1,15 @@
 2026-10-11  Mats Lidell  <matsl@gnu.org>
 
+* hibtypes.el (hbut-identifier, hbut-identifier:help):
+* kotl/kvspec.el (kvspec:default): Shorten first line in docstring.
+
+* kotl/kotl-mode.el (kotl-mode:toggle-tab-flag): Move docstring above
+    interactive.
+
+* hibtypes.el (hyrolo-display-buffer-name):
+* hpath.el (klink:update-label):
+* kotl/kotl-orgtbl.el (kotl-mode:untab-command): Declare functions.
+
 * MANIFEST: Remove deleted files.
 
 * man/hy-package.el:
