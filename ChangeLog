@@ -1,5 +1,10 @@
 2026-10-11  Mats Lidell  <matsl@gnu.org>
 
+* MANIFEST: Remove deleted files.
+
+* man/hy-package.el:
+* man/hy-straight.el: Remove, not used.
+
 * Makefile (%.elc): Use load-prefer-newer.
 
 * hbut.el: Use local variable byte-compile-docstring-max-column to
