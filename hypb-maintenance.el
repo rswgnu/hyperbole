@@ -66,7 +66,7 @@ Point `hypb:web-repo-location' to where the web repo is located."
   ;; DEMO DEMO-ROLO.otl HY-ABOUT INSTALL HY-COPY COPYING MANIFEST
   ;; hui.el hbut.el hbdata.el hmail.el - referenced in hyperbole.el
   (mapc (lambda (file) (copy-file file hypb:web-repo-location t))
-	'("DEMO" "DEMO-ROLO.otl" "FAST-DEMO" "HY-ABOUT" "INSTALL"
+	'("DEMO" "DEMO-ROLO.otl" "FAST-DEMO" "HY-ABOUT"
 	  "HY-COPY" "COPYING" "MANIFEST"
 	  "hui.el" "hbut.el" "hbdata.el" "hib-doc-id.el" "hmail.el"))
 
@@ -91,7 +91,7 @@ Point `hypb:web-repo-location' to where the web repo is located."
     (with-current-buffer (get-file-buffer example-src-name)
       (set-buffer-modified-p nil)
       (kill-buffer)))
- 
+
   ;; HY-WHY.html
   (let ((hy-why-src-name "HY-WHY.kotl"))
     (kexport:html hy-why-src-name (concat hypb:web-repo-location "HY-WHY.html") nil)
