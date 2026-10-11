@@ -5,6 +5,12 @@
 * man/hy-package.el:
 * man/hy-straight.el: Remove, not used.
 
+* hibtypes.el (hbut-identifier, hbut-identifier:help):
+* kotl/kvspec.el (kvspec:default): Shorten first line in docstring.
+
+* kotl/kotl-mode.el (kotl-mode:toggle-tab-flag): Move docstring above
+    interactive.
+
 * Makefile (%.elc): Use load-prefer-newer.
 
 * hbut.el: Use local variable byte-compile-docstring-max-column to
