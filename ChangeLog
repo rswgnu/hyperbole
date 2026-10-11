@@ -1,5 +1,7 @@
 2026-10-11  Mats Lidell  <matsl@gnu.org>
 
+* Makefile (%.elc): Use load-prefer-newer.
+
 * hbut.el: Use local variable byte-compile-docstring-max-column to
     silence warning for a long docstring that is hard to shorten.
 
