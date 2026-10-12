@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     10-Oct-26 at 15:08:16 by Bob Weiner
+;; Last-Mod:     12-Oct-26 at 14:33:57 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1279,7 +1279,6 @@ Does not disable any other active prefix."
               kotl-mode-letter-map))
 
 (defun kotl-mode:toggle-tab-flag ()
-  (interactive)
   "Toggle the value of `kotl-mode:tab-flag' and explain its current usage.
 This now toggles TAB/S-TAB between the Org-compatible cycling commands and
 the traditional Koutliner demote/promote commands."

@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:      7-Oct-26 at 22:33:41 by Mats Lidell
+# Last-Mod:     11-Oct-26 at 22:35:30 by Mats Lidell
 #
 # Copyright (C) 1994-2026  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -400,6 +400,7 @@ HYPB_BYTE_COMP_FUNC = batch-byte-compile
 endif
 %.elc: %.el
 	$(HYPB_BYTE_COMP_INFO)$(EMACS) --batch --quick \
+	--eval "(setq load-prefer-newer t)" \
 	$(HYPB_BYTE_COMP_ELN_LOAD_PATH) \
 	--eval "(progn (add-to-list 'load-path \"$(curr_dir)\") (add-to-list 'load-path \"$(curr_dir)/kotl\"))" \
 	-l bytecomp ${HYPB_BIN_WARN} \
@@ -506,7 +507,7 @@ website-local:
 # Push to public Hyperbole website
 .PHONY: website
 website: website-local
-	$(call confirm,Deploys to website!,DEPLOY)
+	$(call confirm,Deploys to website!,YES)
 	cd $(HYPB_WEB_REPO_LOCATION) && $(CVS) commit -m "Hyperbole release $(HYPB_VERSION)"
 	@echo "Website for Hyperbole $(HYPB_VERSION) is updated."
 
@@ -521,6 +522,8 @@ release-website:
 # the change and prepare a PR with the update.
 .PHONY: release-pre
 release-pre:
+	git fetch github_master
+	git diff --quiet github_origin/master
 	git switch -c release/$(HYPB_VERSION)
 	$(EMACS_BATCH) -l hypb-release \
 	  --eval '(hypb-release-update-hyperbole-version-header "$(HYPB_VERSION)")'
@@ -542,7 +545,7 @@ release-post: git-tag-release ftp release-website
 
 .PHONY: git-tag-release
 git-tag-release: sync-repos
-	$(call confirm,Set git tag to hyperbole-$(HYPB_VERSION) on Savannah and GitHub!,TAGIT)
+	$(call confirm,Set git tag to hyperbole-$(HYPB_VERSION) on Savannah and GitHub!,YES)
 	git tag -a hyperbole-$(HYPB_VERSION) github_origin/master -m "Hyperbole release $(HYPB_VERSION)"
 	git push origin hyperbole-$(HYPB_VERSION)
 	git push github_origin hyperbole-$(HYPB_VERSION)
@@ -557,7 +560,7 @@ sync-repos:
 # done from the directory containing the tarball to upload.
 .PHONY: ftp
 ftp: $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz
-	$(call confirm,Uploads release to ftp.gnu.org!,UPLOAD)
+	$(call confirm,Uploads release to ftp.gnu.org!,YES)
 	cd $(pkg_parent) && $(GNUFTP) hyperbole-$(HYPB_VERSION).tar.gz
 	@echo "Hyperbole $(HYPB_VERSION) uploaded to ftp.gnu.org."
 
@@ -584,13 +587,31 @@ $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz:
 	  COPYFILE_DISABLE=1 $(TAR) -C $(pkg_parent) -clzf $(pkg_hyperbole).tar.gz hyperbole-$(HYPB_VERSION)
 	$(RM) -fr $(pkg_hyperbole)
 
+# Create a tarball based on local files. Pick version controlled
+# files, make autoloads and put together as a compressed tarball.
+.PHONY: pkg
+pkg: $(pkg_parent)/hyperbole-local.tar.gz
+
+$(pkg_parent)/hyperbole-local.tar.gz:
+	mkdir -p $(pkg_parent)/hyperbole-local
+	git ls-files -z | xargs -0 cp --parents -t $(pkg_parent)/hyperbole-local
+	cd $(pkg_parent)/hyperbole-local && \
+	  $(MAKE) autoloads && \
+	  chmod 755 topwin.py && \
+	  COPYFILE_DISABLE=1 $(TAR) -C $(pkg_parent) -clzf $(pkg_parent)/hyperbole-local.tar.gz hyperbole-local
+	$(RM) -fr $(pkg_parent)/hyperbole-local
+
 .PHONY: pkgclean packageclean
 pkgclean: packageclean
 packageclean:
 	if [ -d $(pkg_hyperbole) ]; then \
-		$(RM) -r $(pkg_hyperbole); \
+	  $(RM) -r $(pkg_hyperbole); \
 	fi
 	$(RM) $(pkg_parent)/hyperbole-$(HYPB_VERSION).*
+	if [ -d $(pkg_parent)/hyperbole-local ]; then \
+	  $(RM) -r $(pkg_parent)/hyperbole-local; \
+	fi
+	$(RM) $(pkg_parent)/hyperbole-local.tar.gz
 
 # ERT test
 .PHONY: tests test batch-tests

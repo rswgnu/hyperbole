@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:      5-Oct-26 at 10:27:23 by Bob Weiner
+;; Last-Mod:     12-Oct-26 at 14:35:15 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -67,6 +67,7 @@
 (declare-function htype:def-symbol "hact")
 (declare-function hui:help-ebut-highlight "hui")
 (declare-function hyperb:stack-frame "hversion")
+(declare-function hyrolo-display-buffer-name "hyrolo")
 (declare-function hyrolo-get-file-list "hyrolo")
 (declare-function hywiki-active-in-current-buffer-p "hywiki")
 (declare-function hywiki-add-spec wikiword "hywiki")
@@ -104,8 +105,9 @@
 ;;; ========================================================================
 
 (defib hbut-identifier ()
-  "When on the name of a variable that holds a Hyperbole button, e.g. hbut:current:
-  Action Key - Jump to variable definition."
+  "Action Key - Jump to variable definition.
+When on the name of a variable that holds a Hyperbole button,
+e.g. hbut:current."
   (let ((identifier (smart-prog-at-tag-p t))
 	start-end)
     (when (and identifier
@@ -116,8 +118,9 @@
 	(hact #'smart-prog-tag identifier)))))
 
 (defun hbut-identifier:help (ibut)
-  "When on the name of a variable that holds a Hyperbole button, e.g. hbut:current:
-  Assist Key - Display button attributes of any Hyperbole button symbol at point."
+  "Assist Key - Display button attributes of any Hyperbole button symbol at point.
+When on the name of a variable that holds a Hyperbole button, e.g. hbut:current."
+
   (hbut:report ibut))
 
 ;; Don't use require below here for any libraries with ibtypes in

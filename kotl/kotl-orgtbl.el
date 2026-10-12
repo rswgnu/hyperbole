@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10/18/2020
-;; Last-Mod:      6-Oct-26 at 16:08:22 by Bob Weiner
+;; Last-Mod:     12-Oct-26 at 14:34:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -58,8 +58,9 @@
 ;;; ************************************************************************
 
 (declare-function kotl-mode:next-line "kotl-mode")
-(declare-function kotl-mode:transpose-lines "kotl-mode")
 (declare-function kotl-mode:tab-command "kotl-mode")
+(declare-function kotl-mode:transpose-lines "kotl-mode")
+(declare-function kotl-mode:untab-command "kotl-mode")
 
 ;;; ************************************************************************
 ;;; Public variables

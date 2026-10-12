@@ -1,4 +1,42 @@
-2026-10-08  Bob Weiner  <rsw@gnu.org>
+2026-10-11  Mats Lidell  <matsl@gnu.org>
+
+* hypb-maintenance.el (hypb:web-repo-update): Do not copy INSTALL.
+
+* Makefile (release-pre):  Check current branch is egual to
+    github_origin/master before creating the release branch.
+
+* Makefile (website, git-tag-release, ftp): Confirm to continue with YES.
+
+* hibtypes.el (hbut-identifier, hbut-identifier:help):
+* kotl/kvspec.el (kvspec:default): Shorten first line in docstring.
+
+* kotl/kotl-mode.el (kotl-mode:toggle-tab-flag): Move docstring above
+    interactive.
+
+* hibtypes.el (hyrolo-display-buffer-name):
+* hpath.el (klink:update-label):
+* kotl/kotl-orgtbl.el (kotl-mode:untab-command): Declare functions.
+
+* MANIFEST: Remove deleted files.
+
+* man/hy-package.el:
+* man/hy-straight.el: Remove, not used.
+
+* Makefile (%.elc): Use load-prefer-newer.
+
+* hbut.el: Use local variable byte-compile-docstring-max-column to
+    silence warning for a long docstring that is hard to shorten.
+
+* test/hui-mouse-tests.el (hui-mouse-tests--hkey-alist): Use
+    hy-test-mocked-feature.
+
+2026-10-10  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (pkg): Put back target (PHONY).
+    ($(pkg_parent)/hyperbole-local.tar.gz): Rule for making a tarball
+    from local git version controlled files.
+    (packageclean): Remove hyperbole-local tar file and build
+    directory if present.
 
 2026-10-10  Bob Weiner  <rsw@gnu.org>
 
@@ -53,6 +91,27 @@
                     (kotl-mode:setup-keymap): Add {C-c C-]} binding for
     'kotl-mode:toggle-tab-flag' to replace {M-1 TAB}.
 
+2026-10-08  Mats Lidell  <matsl@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-tests--yank): Add test of yanking a
+    kotl header.
+
+2026-10-07  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (release-website): Use release tagged files for updating
+    the website.
+    (release-pre): Update version header and create a PR. Update
+    hyperbole.el version header using
+    hypb-release-update-hyperbole-version-header.
+    (release-post): Go through post release updates.
+    (git-tag-release): Add a release tag on origin and github_origin.
+    (sync-repos): Sync origin and github_origin.
+    (ftp): Remove package as a dependency
+    ($(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz): Create tarball
+    from the release tagged files.
+    (EL_COMPILE): Byte compile hypb-release.el
+    General update of the target documentation. Remove of unused targets.
+
 2026-10-07  Bob Weiner  <rsw@gnu.org>
 
 * kotl/EXAMPLE.kotl: Finish doc updates for various TAB key uses and settings of
@@ -102,27 +161,6 @@
 * test/demo-tests.el (demo-org-hide-header-test):
   test/smart-org-tests.el (smart-org-mode-on-header-cycles-visibility): Bind Action
     Key variable needed for the test to restore prior Hyperbole Org mode behavior.
-
-2026-10-08  Mats Lidell  <matsl@gnu.org>
-
-* test/hyrolo-tests.el (hyrolo-tests--yank): Add test of yanking a
-    kotl header.
-
-2026-10-07  Mats Lidell  <matsl@gnu.org>
-
-* Makefile (release-website): Use release tagged files for updating
-    the website.
-    (release-pre): Update version header and create a PR. Update
-    hyperbole.el version header using
-    hypb-release-update-hyperbole-version-header.
-    (release-post): Go through post release updates.
-    (git-tag-release): Add a release tag on origin and github_origin.
-    (sync-repos): Sync origin and github_origin.
-    (ftp): Remove package as a dependency
-    ($(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz): Create tarball
-    from the release tagged files.
-    (EL_COMPILE): Byte compile hypb-release.el
-    General update of the target documentation. Remove of unused targets.
 
 2026-10-06  Mats Lidell  <matsl@gnu.org>
 
