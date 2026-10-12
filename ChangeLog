@@ -1,5 +1,22 @@
 2026-10-08  Bob Weiner  <rsw@gnu.org>
 
+2026-10-10  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kview.el (kcell-view:first-line): Add and use in kotl-download.el.
+
+* kotl/kotl-mode.el (kotl-mode:setup-keymap): Bind {C-c C-x C-v} to toggling
+    inline image display for Org compatibility.
+  man/use-package (hyperbole): Add note on how to permanently enable inline
+    image display in Koutline buffers.
+
+2026-10-09  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kvspec.el (kvspec:update-modeline): Fix kvspec mod to mode-line without
+    explicitly copying the mode-line; make it buffer-local.
+* kotl/kotl-mode.el (kotl-mode): Fix removal of Narrowed indicator in mode-line
+    without copying the mode-line and losing updates to the minor modes.
+
+12026-10-08  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kotl-mode.el (kotl-mode:toggle-letter-prefix,
                      kotl-mode:set-letter-prefix-standard): Add support for
@@ -85,6 +102,11 @@
 * test/demo-tests.el (demo-org-hide-header-test):
   test/smart-org-tests.el (smart-org-mode-on-header-cycles-visibility): Bind Action
     Key variable needed for the test to restore prior Hyperbole Org mode behavior.
+
+2026-10-08  Mats Lidell  <matsl@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-tests--yank): Add test of yanking a
+    kotl header.
 
 2026-10-07  Mats Lidell  <matsl@gnu.org>
 

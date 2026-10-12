@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:      8-Oct-26 at 15:48:27 by Bob Weiner
+;; Last-Mod:     10-Oct-26 at 15:08:16 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -272,11 +272,11 @@ It provides the following keys:
 						      minor-mode-alist)
 	  minor-mode-alist (set:remove '(selective-display " Otl")
 						      minor-mode-alist)
-	  ;; Remove indication that buffer is narrowed.
-	  mode-line-format (copy-sequence mode-line-format)
-	  mode-line-format (set:remove "%n" mode-line-format)
+
 	  outline-level  #'hyrolo-outline-level
-	  outline-regexp hyrolo-hdr-and-entry-regexp))
+	  outline-regexp hyrolo-hdr-and-entry-regexp)
+    ;; Remove indication that buffer is narrowed.
+    (setq-local mode-line-modes (remove "%n" mode-line-modes)))
   ;;
   (hypb:add-to-invisibility-spec '(outline . t))
   (setq indent-line-function 'kotl-mode:indent-line
@@ -4665,6 +4665,8 @@ Leave point at end of line now residing at START."
 	(define-key kotl-mode-map "\C-c\C-u"  'kotl-mode:up-level)
 	(define-key kotl-mode-map "\C-c\C-v"  'kvspec:activate)
 	(define-key kotl-mode-map "\C-x\C-w"  'kfile:write)
+        ;; Next function is autoloaded by core emacs, so no declaration is necessary
+	(define-key kotl-mode-map "\C-C\C-x\C-v"  'iimage-mode)
 	(define-key kotl-mode-map [M-up]              'kotl-mode:move-tree-backward)
 	(define-key kotl-mode-map (kbd "ESC <up>")    'kotl-mode:move-tree-backward)
 	(define-key kotl-mode-map [M-down]            'kotl-mode:move-tree-forward)

@@ -10,6 +10,9 @@
 ;; to if not set within this `use-package' configuration.
 (use-package hyperbole
 
+  ;; Install the package from a package archive if not already installed
+  :ensure
+
   :config
   ;; Hyperbole binds {C-h h} in the `global-map' to display its
   ;; minibuffer command menus. If you prefer a different binding,
@@ -63,6 +66,11 @@
   (hywiki-directory "~/hywiki/")
 
   ;; Koutliner Customizations
+
+  ;; Inline image display can be toggled on/off with {C-c C-x C-v} but
+  ;; if you want inline images to display all the time in Koutline
+  ;; buffers, uncomment the next line:
+  ;; (add-hook 'kotl-mode-hook 'iimage-mode)
 
   ;; NOTE: As of Hyperbole version 9.3.0, the Koutliner uses `C-c ;'
   ;; as the prefix for mode-specific <letter> key bindings (prior

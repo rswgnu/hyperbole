@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:      6-Oct-26 at 19:35:19 by Bob Weiner
+;; Last-Mod:     11-Oct-26 at 10:38:48 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -359,6 +359,13 @@ Excludes blank lines following cell contents."
   (save-excursion
     (goto-char (kcell-view:start pos lbl-sep-len))
     (outline-flag-region (point) (kcell-view:end-contents) hide-p)))
+
+(defun kcell-view:first-line ()
+  "Return the first line of the current cell as a string
+Visibility is ignored."
+  (save-excursion
+    (goto-char (kcell-view:start))
+    (buffer-substring-no-properties (point) (line-end-position))))
 
 (defun kcell-view:forward (&optional visible-p lbl-sep-len)
   "Move to start of the following cell at the same level as the current cell.
@@ -1309,8 +1316,9 @@ See documentation for variable, kview:default-label-type, for
 valid values of NEW-TYPE.
 
 Separately, if sent an optional prefix ARG of 1, instead call
-`kotl-mode:toggle-letter-prefix' to toggle between a longer and shorter prefix
-for C-c keys."
+`kotl-mode:toggle-letter-prefix' to toggle on or off the shorter C-c prefix
+for letter key bindings.  This does not affect the default C-c ; letter
+prefix."
   (interactive (list kotl-kview
 		     (unless (eq current-prefix-arg 1)
                        (let ((completion-ignore-case)
