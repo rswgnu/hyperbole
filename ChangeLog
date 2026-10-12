@@ -1,5 +1,12 @@
 2026-10-11  Mats Lidell  <matsl@gnu.org>
 
+* hypb-maintenance.el (hypb:web-repo-update): Do not copy INSTALL.
+
+* Makefile (release-pre):  Check current branch is egual to
+    github_origin/master before creating the release branch.
+
+* Makefile (website, git-tag-release, ftp): Confirm to continue with YES.
+
 * hibtypes.el (hbut-identifier, hbut-identifier:help):
 * kotl/kvspec.el (kvspec:default): Shorten first line in docstring.
 
