@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     11-Oct-26 at 22:35:30 by Mats Lidell
+# Last-Mod:     12-Oct-26 at 14:47:02 by Bob Weiner
 #
 # Copyright (C) 1994-2026  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -271,8 +271,7 @@ HYPERBOLE_FILES = dir info html $(EL_SRC) $(EL_KOTL) \
         INSTALL DEMO DEMO-ROLO.otl FAST-DEMO MANIFEST README.md TAGS _hypb \
         .hypb hyrolo.py smart-clib-sym topwin.py hyperbole-banner.png \
 	.dir-locals.el \
-	$(man_dir)/hkey-help.txt $(man_dir)/hy-package.el $(man_dir)/hy-straight.el \
-        $(man_dir)/hyperbole.texi $(man_dir)/hyperbole.css \
+	$(man_dir)/hkey-help.txt $(man_dir)/hyperbole.texi $(man_dir)/hyperbole.css \
         $(man_dir)/texinfo-7.css
 
 TEST_ERT_FILES = $(wildcard test/*tests.el) $(wildcard test/hy-test-*.el)
@@ -485,7 +484,7 @@ $(man_dir)/hyperbole.html: $(TEXINFO_SRC) $(man_dir)/hyperbole.css $(man_dir)/te
 #    https://github.com/jgm/pandoc
 README.toc.md: README.md
 	cp -p README.md README.toc.md && md_toc -p -m [TOC] github README.toc.md \
-	  && sed -i -e 's/^\[TOC\]//g' README.toc.md
+	  && sed -i -e "s/^\[TOC\]//g" -e "s+[ \t]*\[man/use-package\](man/use-package)+cat man/use-package+e" README.toc.md
 
 README.md.html: README.toc.md
 	pandoc --from=gfm-tex_math_dollars --to=html+gfm_auto_identifiers -o README.md.html README.toc.md
@@ -495,7 +494,7 @@ define confirm
 	@echo "═══════════════════════════════════════"
 	@echo "  WARNING: $(1)"
 	@echo "═══════════════════════════════════════"
-	@read -r -p "Are you sure? Write '$(2)' to continue: " answer; \
+	@read -r -p "Are you sure? Write $(2)'' to continue: " answer; \
 	[[ "$$answer" == "$(2)" ]] || { echo "Aborted."; exit 1; }
 endef
 

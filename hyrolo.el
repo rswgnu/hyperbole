@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      7-Oct-26 at 13:16:55 by Bob Weiner
+;; Last-Mod:     13-Oct-26 at 15:41:47 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -934,6 +934,7 @@ the variable `hyrolo-file-list'."
                        nil nil nil t)))
   (unless (or (integerp max-matches) (memq max-matches '(nil t)))
     (setq max-matches (prefix-numeric-value max-matches)))
+
   (let ((files-or-bufs
 	 (cond ((null hyrolo-files-or-bufs) (hyrolo-get-file-list))
 	       ((listp hyrolo-files-or-bufs) hyrolo-files-or-bufs)
@@ -947,6 +948,13 @@ the variable `hyrolo-file-list'."
 	(num-matched 0)
 	(inserting (eq max-matches t))
 	(file-or-buf))
+
+    ;; If not called interactively when `consult' is available, then filter
+    ;; the list of files to search to only those with matches using a
+    ;; `consult-grep' call that finds just the first match in each file.
+    (unless (or interactive-flag (seq-filter #'bufferp files-or-bufs))
+      (setq files-or-bufs (cadr (hsys-consult--noninteractive-grep-paths files-or-bufs regexp max-matches))))
+
     (unless count-only
       (setq buffer-read-only nil)
       (unless inserting

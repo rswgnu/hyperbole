@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    04-Feb-89
-;; Last-Mod:      6-Oct-26 at 00:08:26 by Bob Weiner
+;; Last-Mod:     13-Oct-26 at 09:53:03 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -274,11 +274,11 @@ The button's attributes are stored in the symbol, `hbut:current'.")
      . ((smart-dired-sidebar) . (smart-dired-sidebar)))
     ;;
     ;; Handle non-eww url Emacs push buttons in buffers
+    ;; Set `hkey-value' here only for debugging use
     ((and (setq hkey-value (button-at (point)))
           ;; If an eww url button, handle later as an ibut
           (not (and (eq major-mode 'eww-mode) (eww-links-at-point))))
-     . ((smart-push-button nil (mouse-event-p last-command-event))
-	. (smart-push-button-help nil (mouse-event-p last-command-event))))
+     . ((smart-push-button) . (smart-push-button-help)))
     ;;
     ;; If in a window reading an argument with vertico, run the
     ;; vertico command on {M-RET} which by default accepts the
@@ -2220,17 +2220,16 @@ With optional POS, use that instead of point."
 ;;; ************************************************************************
 
 ;; Emacs push button support
-(defun smart-push-button (&optional _pos _use-mouse-action)
+(defun smart-push-button (&optional pos use-mouse-action)
   "Activate an Emacs `push-button', including text-property follow-link buttons.
 Button is at optional POS or at point.  USE-MOUSE-ACTION prefers
 mouse-action to action property."
-  (or
-   ;; Handle Emacs text-property buttons which don't work with 'button-activate'.
-   ;; Use whatever command is bound to RET within the button's keymap.
-   (call-interactively (or (lookup-key (get-text-property (point) 'keymap) (kbd "RET"))
-			   (lambda () (interactive) nil)))
-   ;; non-text-property push-buttons
-   (push-button nil (mouse-event-p last-command-event))))
+  (if (setq hkey-value (lookup-key (get-text-property (or pos (point)) 'keymap) (kbd "RET")))
+      ;; Handle Emacs text-property buttons which don't work with 'button-activate'.
+      ;; Use whatever command is bound to RET within the button's keymap.
+      (call-interactively hkey-value)
+    ;; non-text-property push-buttons
+    (push-button pos (or use-mouse-action (mouse-event-p last-command-event)))))
 
 (defun smart-push-button-help (&optional pos use-mouse-action)
   "Show help about a push button's action.

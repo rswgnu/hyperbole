@@ -1,3 +1,28 @@
+2026-10-13  Bob Weiner  <rsw@gnu.org>
+
+* test/hyrolo-tests.el (hyrolo-tests--fgrep-and-goto-next-visible-kotl-heading,
+                        hyrolo-tests--fgrep-and-goto-next-visible-kotl-heading-level-2,
+                        hyrolo-tests--fgrep-and-goto-next-visible-kotl-heading-cell-2):
+    Now must save a HyRolo file before trying to do a HyRolo search on it due
+    to an optimization using grep, so add a 'save-buffer' call before testing.
+
+* hypb.el (hypb:require-package): Return t on success.
+          (hypb:package-el-install): Trigger an error if package is not
+    installable in the current Emacs version.
+
+* hsys-consult.el (hsys-consult--noninteractive-grep-paths): Add and use
+    in 'hyrolo-grep' to minimize the number of files that must be searched
+    for entry matches.
+                  (hsys-consult--grep-paths): Add doc of return value.
+
+* hpath.el (hpath:expand): Update doc to note that this does not expand
+    tilde home directory references.  Call 'expand-file-name' for that.
+
+* hui-mouse.el (hkey-alist, smart-push-button): Fix Emacs push button
+    handling so 'smart-push-button' is not dependent on the return
+    value of any push-button activated from a text property, as that
+    can commonly return nil.
+
 2026-10-11  Mats Lidell  <matsl@gnu.org>
 
 * hypb-maintenance.el (hypb:web-repo-update): Do not copy INSTALL.
@@ -37,6 +62,14 @@
     from local git version controlled files.
     (packageclean): Remove hyperbole-local tar file and build
     directory if present.
+
+2026-10-11  Bob Weiner  <rsw@gnu.org>
+
+* Makefile (README.toc.md): Include man/use-package into README.md.html
+    via sed expression.
+
+* man/hyperbole.texi (Koutliner Keys): Add {C-c C-]} doc for toggling
+    between tab modes.
 
 2026-10-10  Bob Weiner  <rsw@gnu.org>
 
