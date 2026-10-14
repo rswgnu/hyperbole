@@ -1,5 +1,11 @@
 2026-10-14  Bob Weiner  <rsw@gnu.org>
 
+* hyrolo.el (hyrolo-grep): Add check of 'hsys-consult-flag' before
+    calling 'hsys-consult--noninteractive-grep-paths'.
+
+* test/hypb-tests.el (hypb--require-package): Rename test package
+    to 'non-exist-pkg'.
+
 * DEMO: Remove the INSTALL file and replace it with references to
     "README.md#Installation".
 

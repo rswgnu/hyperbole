@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:     5-Apr-21 at 18:53:10
-;; Last-Mod:     27-Jul-26 at 16:34:09 by Bob Weiner
+;; Last-Mod:     14-Oct-26 at 12:37:58 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -144,8 +144,8 @@ Verifies it raises a 'need to install' package manager error."
 (ert-deftest hypb--require-package ()
   "Verify `hypb:require-package' signals if automatic install fails."
   (with-mock
-    (mock (hypb:ensure-dependency 'package) => nil)
-    (let ((err (should-error (hypb:require-package 'package) :type 'error)))
+    (mock (hypb:ensure-dependency 'non-exist-pkg) => nil)
+    (let ((err (should-error (hypb:require-package 'non-exist-pkg) :type 'error)))
       (should (string-search "could not be found" (cadr err))))))
 
 ;; This file can't be byte-compiled without the `el-mock' package (because of

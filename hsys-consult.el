@@ -2,7 +2,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     4-Jul-24 at 09:57:18
-;; Last-Mod:     13-Oct-26 at 15:25:18 by Bob Weiner
+;; Last-Mod:     14-Oct-26 at 12:21:25 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -81,7 +81,9 @@
 (defvar hsys-consult-exit-value nil
   "Value from a user-defined exit-hook sent to `hsys-consult-get-exit-value'.")
 
-(defcustom hsys-consult-flag t
+;; `consult' now requires a minimum of Emacs 29.1; enable this next flag
+;; only if on a compatible Emacs version
+(defcustom hsys-consult-flag (not (string-lessp emacs-version "29.1"))
   "Non-nil means use the consult package with vertico for filtering searches.
 When non-nil and interactively calling non-consult-specific Hyperbole search
 and yank commands, if consult is installed it will be used to filter to
