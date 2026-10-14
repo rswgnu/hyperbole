@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:      3-Oct-26 at 12:00:28 by Bob Weiner
+;; Last-Mod:     14-Oct-26 at 13:17:41 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -934,6 +934,7 @@ the variable `hyrolo-file-list'."
                        nil nil nil t)))
   (unless (or (integerp max-matches) (memq max-matches '(nil t)))
     (setq max-matches (prefix-numeric-value max-matches)))
+
   (let ((files-or-bufs
 	 (cond ((null hyrolo-files-or-bufs) (hyrolo-get-file-list))
 	       ((listp hyrolo-files-or-bufs) hyrolo-files-or-bufs)
@@ -947,6 +948,14 @@ the variable `hyrolo-file-list'."
 	(num-matched 0)
 	(inserting (eq max-matches t))
 	(file-or-buf))
+
+    ;; If not called interactively when `consult' is available, then filter
+    ;; the list of files to search to only those with matches using a
+    ;; `consult-grep' call that finds just the first match in each file.
+    ;; (unless (or (not hsys-consult-flag) interactive-flag
+    ;;             (seq-filter #'bufferp files-or-bufs))
+    ;;   (setq files-or-bufs (cadr (hsys-consult--noninteractive-grep-paths files-or-bufs regexp max-matches))))
+
     (unless count-only
       (setq buffer-read-only nil)
       (unless inserting
@@ -1707,15 +1716,17 @@ string.
 
 With optional EXCLUDE-SUB-ENTRIES non-nil, exclude all sub-entry records
 below the yanked one (default when called interactively)."
-  (interactive (list
-		(hsys-consult-grep-headlines-read-regexp
-		 #'hyrolo-consult-grep "Yank rolo headline matching")
-                ;; Enable `regexp-flag' if any prefix arg other the
-                ;; universal argument
-		(and current-prefix-arg (not (equal '(4) current-prefix-arg)))
-                ;; Exclude-sub-entries if no prefix arg or any prefix arg
-                ;; other than the universal argument
-                (or (null current-prefix-arg) (not (equal '(4) current-prefix-arg)))))
+  (interactive
+   ;; Exclude-sub-entries if no prefix arg or any prefix arg
+   ;; other than the universal argument
+   (let ((exclude-sub-entries (or (null current-prefix-arg) (not (equal '(4) current-prefix-arg)))))
+     (list (hsys-consult-grep-headlines-read-regexp
+            #'hyrolo-consult-grep
+            (format "Yank HyRolo %s matching regexp"
+                    (if exclude-sub-entries "entry" "tree")))
+           ;; Enable `regexp-flag' if any prefix arg other the universal argument
+           (and current-prefix-arg (not (equal '(4) current-prefix-arg)))
+           exclude-sub-entries)))
   (push-mark)
   (let ((entry (hyrolo-get-entry name regexp-flag exclude-sub-entries)))
     (when entry
@@ -3918,8 +3929,10 @@ the `major-mode' from a cache.  Add `hyrolo-hdr-regexp' to
   (define-key hyrolo-mode-map "\M-s"     'hyrolo-isearch)
   (define-key hyrolo-mode-map "t"        'hyrolo-top-level)
   (define-key hyrolo-mode-map "\C-i"     'hyrolo-next-match) ;; {TAB}
-  (define-key hyrolo-mode-map "\M-\C-i"  'hyrolo-previous-match) ;; {M-TAB}
-  (define-key hyrolo-mode-map [backtab]  'hyrolo-previous-match) ;; {Shift-TAB}
+  (define-key hyrolo-mode-map [tab]      'hyrolo-next-match) ;; {TAB}
+  (define-key hyrolo-mode-map [S-tab]         'hyrolo-previous-match) ;; {Shift-TAB}
+  (define-key hyrolo-mode-map [S-iso-lefttab] 'hyrolo-previous-match) ;; {Shift-TAB}
+  (define-key hyrolo-mode-map [backtab]       'hyrolo-previous-match) ;; {Shift-TAB}
   (define-key hyrolo-mode-map "u"        'hyrolo-outline-up-heading)
 
   ;; Rebind all `outline-mode-prefix-map' keys to hyrolo equivalents

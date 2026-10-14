@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     6-Oct-91 at 03:42:38
-;; Last-Mod:     26-Sep-26 at 10:36:35 by Bob Weiner
+;; Last-Mod:     13-Oct-26 at 17:21:34 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1224,12 +1224,35 @@ Current supported package managers are `straight', `elpaca', and `package'."
         ((featurep 'elpaca) 'elpaca)
         (t 'package)))
 
+(defun hypb:package-compatible (pkg)
+  "Check if PKG symbol is compatible with the current Emacs version.
+If it is, return t.  If it is not, return a string of the minimum Emacs
+version required."
+  ;; Get package archive data when not already loaded
+  (unless package-archive-contents
+    (package-initialize)
+    (unless package-archive-contents
+      (package-refresh-contents)))
+  ;; Compare required package Emacs version to the current Emacs version
+  (let* ((desc (cadr (assq pkg package-archive-contents)))
+	 (reqs (and desc (package-desc-reqs desc)))
+	 (emacs-version-required (cadr (assq 'emacs reqs))))
+      (if emacs-version-required
+	  (or (version-list-<= emacs-version-required (version-to-list emacs-version))
+              (mapconcat (lambda (part) (format "%s" part)) emacs-version-required "."))
+      ;; Returns t by default if the package doesn't include a minimum Emacs version
+      t)))
+
 (defun hypb:package-el-install (package)
-  "Install PACKAGE using the default package manager `package.el'.
+  "Install PACKAGE symbol using the default package manager `package.el'.
 If `hypb:ask-to-install-package-flag' is non-nil query user if package should
 be installed."
   (when (or (not hypb:ask-to-install-package-flag)
             (y-or-n-p (format "Install `%s' to enable this feature? " package)))
+    (let ((compatible-version (hypb:package-compatible package)))
+      (when (stringp compatible-version)
+        (error "(hypb:package-el-install): Required package %S not found and cannot be installed in Emacs %s; requires Emacs %s"
+               package emacs-version compatible-version)))
     (package-install package)
     (require package)))
 
@@ -1256,7 +1279,8 @@ PACKAGE may be a symbol or a string."
   (unless (symbolp package)
     (error "(hypb:require-package): package must be a symbol or string, not '%s'" package))
   (unless (hypb:ensure-dependency package)
-    (error "(hypb:require-package): package '%s' could not be found" package)))
+    (error "(hypb:require-package): package '%s' could not be found" package))
+  t)
 
 ;; Adapted from cl--do-remf in "cl-extra.el" but uses 'equal' for comparisons.
 ;;;###autoload

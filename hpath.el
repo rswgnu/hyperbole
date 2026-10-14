@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     11-Oct-26 at 10:02:40 by Mats Lidell
+;; Last-Mod:     14-Oct-26 at 11:16:08 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1261,7 +1261,8 @@ Optionally use symbol DISPLAY-WHERE or `hpath:display-where'."
 (defun hpath:expand (path &optional exists-flag)
   "Expand relative PATH using match in `hpath:auto-variable-alist'.
 Any single ${variable} within PATH is resolved.  Then PATH is expanded from
-the first file matching regexp in `hpath:auto-variable-alist'.
+the first file matching regexp in `hpath:auto-variable-alist'.  This does
+not expand tilde references to home directories.
 
 With optional EXISTS-FLAG non-nil, return the expanded path if it exists or
 if it contains file wildcards of '[]', '*', or '?'; if neither of those
@@ -1822,7 +1823,7 @@ Trigger an error if the instance of the non-null anchor requested is not found."
 				    (referent-regexp (format
 						      (cond ((or (derived-mode-p 'outline-mode) ;; Includes Org mode
 								 ;; Treat all caps filenames without suffix like outlines,
-                                                                 ;; e.g. README, INSTALL, HY-NEWS, ...
+                                                                 ;; e.g. README, HY-NEWS, ...
 								 (and (hypb:buffer-file-name)
 								      (string-match-p "\\`[A-Z0-9][A-Z0-9_-]*\\'"
                                                                                       (file-name-nondirectory (hypb:buffer-file-name)))))

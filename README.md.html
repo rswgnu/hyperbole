@@ -1,6 +1,6 @@
 <h1
-id="gnu-hyperbole-920---the-everyday-hypertextual-information-manager">GNU
-Hyperbole 9.2.0 - The Everyday Hypertextual Information Manager</h1>
+id="gnu-hyperbole-930---the-everyday-hypertextual-information-manager">GNU
+Hyperbole 9.3.0 - The Everyday Hypertextual Information Manager</h1>
 <p>[ If you are looking for the documentation for the stable release
 look <a href="stable/hyperbole.html">here</a>.]</p>
 <p>[We work on Hyperbole as a gift to the Emacs community and request
@@ -9,13 +9,14 @@ like Hyperbole to <a href="mailto:rsw@gnu.org"><a
 href="mailto:rsw@gnu.org">rsw@gnu.org</a></a>].</p>
 <ul>
 <li><a
-href="#gnu-hyperbole-902pre---the-everyday-hypertextual-information-manager">GNU
-Hyperbole 9.2.0 - The Everyday Hypertextual Information Manager</a>
+href="#gnu-hyperbole-930---the-everyday-hypertextual-information-manager">GNU
+Hyperbole 9.3.0 - The Everyday Hypertextual Information Manager</a>
 <ul>
 <li><a href="#reference-manual">Reference Manual</a></li>
 <li><a href="#videos">Videos</a></li>
 <li><a href="#articles">Articles</a></li>
 <li><a href="#summary">Summary</a></li>
+<li><a href="#upgrading">Upgrading</a></li>
 <li><a href="#installation">Installation</a></li>
 <li><a href="#invocation">Invocation</a></li>
 <li><a href="#hyperbole-manual">Hyperbole Manual</a></li>
@@ -220,39 +221,172 @@ installation</a> through the GNU Emacs package manager.</p>
 <p>Unlock the power of GNU Hyperbole to make your information work for
 you. One system. One language. One manual. One solution. Learn Hyperbole
 and start moving further, faster.</p>
+<h2 id="upgrading">Upgrading</h2>
+<p>To upgrade an existing Hyperbole installation, invoke the Emacs
+Package Manager with {M-x list-packages RET}, then use the {U} key
+followed by the {x} key to upgrade all out-of-date packages, Hyperbole
+among them. Then skip to the <a href="#invocation">Invocation</a>
+section.</p>
 <h2 id="installation">Installation</h2>
 <p>Once you have Emacs set up at your site, GNU Hyperbole may be
 installed by using the Emacs Package Manager. If you are not familiar
 with it, see the Packages section of the GNU Emacs Manual, <a
 href="https://www.gnu.org/software/emacs/manual/html_node/emacs/Packages.html">Emacs
 Packages</a>.</p>
-<p>If you have Hyperbole 5.10 or higher already installed and simply
-want to upgrade it, invoke the Emacs Package Manager with {M-x
-list-packages RET}, then use the {U} key followed by the {x} key to
-upgrade all out-of-date packages, Hyperbole among them. Then skip the
-text below and move on to the next section, <a
-href="#invocation">Invocation</a>.</p>
-<p>Otherwise, to download and install the Hyperbole package, you should
-add several lines to your personal Emacs initialization file, typically
-"~/.emacs". For further details, see <a
+<p>To download and install the Hyperbole package, you should add the
+following use-package expression into your personal Emacs initialization
+file, see <a
 href="https://www.gnu.org/software/emacs/manual/html_node/emacs/Init-File.html">Emacs
-Init File</a>.</p>
-<p>Below are the lines to add:</p>
-<pre><code>(require &#39;package)
-(setq package-enable-at-startup nil) ;; Prevent double loading of libraries
-(package-initialize)
-(unless (package-installed-p &#39;hyperbole)
-  (package-refresh-contents)
-  (package-install &#39;hyperbole))
-(hyperbole-mode 1)
-;; Allow HyWikiWords in text buffers and programming buffer comments
-;; by uncommenting the next line.
-;; (hywiki-mode :all)</code></pre>
-<hr />
-<p>Now save the file and then restart Emacs. Hyperbole will then be
+Init File</a> for init file details:</p>
+<pre><code>
+;;; use-package --- Reference configuration   -*- mode: emacs-lisp; lexical-binding: t; -*-
+
+;; NOTE: If you use Emacs 28 or earlier, you'll need to install the
+;; `use-package' Emacs package before using this configuration file
+;; since it is not built-in to your Emacs.
+
+;; -----------------------------------------------------------------
+
+;; Default values herein represent the settings Hyperbole will default
+;; to if not set within this `use-package' configuration.
+(use-package hyperbole
+
+  ;; Install the package from a package archive if not already installed
+  :ensure t
+
+  ;; Hyperbole binds {C-h h} in the `global-map' to display its
+  ;; minibuffer command menus. If you prefer a different binding,
+  ;; you can restore the standard Emacs binding of {C-h h} and set
+  ;; your preferred Hyperbole menu binding: example {C-c h} by
+  ;; uncommenting the next three lines:
+  ;; :config
+  ;;   (global-set-key (kbd "C-h h") #'view-hello-file)
+  ;;   (global-set-key (kbd "C-c h") #'hyperbole)
+
+  :init
+  ;; Enable or disable the global Hyperbole minor mode on startup:
+  ;;   1 - enabled after Hyperbole is loaded so the Action and
+  ;;       Assist Smart Keys are active
+  ;;
+  ;;   0 - off (default)
+  (hyperbole-mode 1)
+
+  ;; Initialize the global HyWiki minor mode to one of these values:
+  ;; - :all   - highlight HyWikiWords in all editable buffers except
+  ;;            those with a major mode in ‘hypb:exclude-major-modes’;
+  ;;            also enable ‘hyperbole-mode’ minor mode if off.
+  ;;
+  ;; - :pages - highlight HyWikiWords in HyWiki pages only (Org files in
+  ;;            ‘hywiki-directory’); also enable ‘hyperbole-mode’ minor
+  ;;            mode if off. (default)
+  ;;
+  ;; - nil    - no highlighting, the ‘hywiki-mode’ is disabled.
+  (hywiki-mode :all)
+
+  :bind
+  (:map hyperbole-mode-map
+    ;; Bind Smart Keys: {M-RET} executes `action-key' and {C-u M-RET}
+    ;; executes `assist-key' via this next binding
+    ("M-RET" . hkey-either))
+
+  :custom
+  ;; Action and Assist Key Customizations
+
+  ;; Customize how Hyperbole and Org mode share the M-RET key:
+  ;;   t        - With `hyperbole-mode' enabled, Hyperbole controls the
+  ;;              key.
+  ;;
+  ;;   'buttons - With `hyperbole-mode enabled', Hyperbole controls the
+  ;;              key only when on a button or link; otherwise, Org
+  ;;              controls it. (default)
+  ;;
+  ;;   nil      - In Org mode, Org controls the key.
+  (hsys-org-enable-smart-keys t)
+
+  ;; HyWiki Customizations
+
+  ;; Directory to store all HyWiki pages in (default = "~/hywiki/")
+  (hywiki-directory "~/hywiki/")
+
+  ;; Koutliner Customizations
+
+  ;; Inline image display can be toggled on/off with {C-c C-x C-v} but
+  ;; if you want inline images to display all the time in Koutline
+  ;; buffers, uncomment the next line:
+  ;; (add-hook 'kotl-mode-hook 'iimage-mode)
+
+  ;; NOTE: As of Hyperbole version 9.3.0, the Koutliner uses `C-c ;'
+  ;; as the prefix for mode-specific <letter> key bindings (prior
+  ;; prefix was `C-c'); this avoids overriding global user settings of
+  ;; `C-c <letter>'.
+  ;;
+  ;;   If you want the prior Koutline {C-c <letter>} key bindings
+  ;;   in addition to the current ones on {C-c ; <letter>), uncomment the
+  ;;   following line:
+  ;;     (kotl-mode:set-letter-prefix-control-c)
+
+  ;;   If you want to use your own prefix for these letter
+  ;;   keys, uncomment the following line and substitute your prefix:
+  ;;     (kotl-mode:set-letter-prefix-standard "your-prefix-string")
+
+  ;; Customize the behavior of the <tab> and S-<tab> keys in a Koutline.
+  ;; One of three possible values:
+  ;;   nil      - {TAB} demotes the current tree and {Shift-TAB}
+  ;;              promotes the tree. (default)
+  ;;
+  ;;   'cycle  -  enables Org-like outline view cycling when point is in
+  ;;              a context other than that specified by
+  ;;              ‘org-cycle-emulate-tab’.  See {C-h f
+  ;;              kotl-mode:tab-command RET} for details.
+  ;;
+  ;;   t       -  makes {TAB} indent lines and insert literal <tab>
+  ;;              characters according to the context setting of
+  ;;              ‘kotl-mode:emulate-tab’, which also determines where
+  ;;              {Shift-TAB} deletes backward.
+  (kotl-mode:tab-flag nil)
+
+  ;; Setup contexts where ‘kotl-mode:tab-command’ should override
+  ;; `kotl-mode:tab-flag' and run ‘kotl-mode:indent-line’, often
+  ;; inserting a <tab> character.
+  ;; Potential values are:
+  ;;   nil         - Never
+  ;;
+  ;;   white       - Only in completely white lines
+  ;;
+  ;;   whitestart  - Only at the beginning of lines, before the first
+  ;;                 non-white char
+  ;;
+  ;;   t           - Everywhere except in headlines
+  ;;
+  ;;   exc-hl-bol  - Everywhere except at the start of a headline
+  (kotl-mode:emulate-tab nil)
+
+  ;; Configure whether `kotl-mode:indent-line' uses tabs and spaces or
+  ;; spaces only.
+  ;; Potential values are:
+  ;;   t   - may insert literal <tab> characters. (default)
+  ;;
+  ;;   nil - may insert <spc> characters only.
+  (kotl-mode:indent-tabs-mode t)
+
+  ;; Prior to the addition of Org-style visibility cycling to the
+  ;; Koutliner on the TAB key, a press of the Action Key on a Koutline
+  ;; cell line used to toggle showing/hiding the tree rooted at point.
+  ;; Today, this does nothing.
+  ;;
+  ;; Uncomment the next expression if you prefer the prior behavior
+  ;; but note that if `hywiki-mode' is set to `:all' when point is on
+  ;; a capitalized word, an Action Key press will create a new HyWiki
+  ;; page, as that has higher priority than this setting.
+  ;;
+  ;; (kotl-mode:action-key-default-function 'kotl-mode:show-or-hide-tree)
+  )
+</pre></code>
+
+<p>Now save the init file and restart Emacs. Hyperbole will be
 downloaded and compiled for use with your version of Emacs; give it a
-minute or two. You may see a bunch of compilation warnings but these can
-be safely ignored and have no impact on Hyperbole's performance.</p>
+minute or two. You may see a few compilation warnings but these can be
+safely ignored and have no impact on Hyperbole's performance.</p>
 <h2 id="invocation">Invocation</h2>
 <p>Once Hyperbole has been installed for use at your site and loaded
 into your Emacs session, it is ready for use. You will see a Hyperbole
@@ -486,8 +620,7 @@ create their own links to archive entries.</p></li>
 overview of Hyperbole.</p>
 <p>See the <a href="HY-NEWS.html">HY-NEWS</a> file for a summary of new
 features in this release.</p>
-<p>See the <a href="INSTALL">INSTALL</a> file for installation and
-invocation instructions.</p>
+<p>See #Installation for installation and invocation instructions.</p>
 <p>See the <a href="HY-COPY">HY-COPY</a> and <a
 href="COPYING">COPYING</a> files for license information.</p>
 <p>See the <a href="MANIFEST">MANIFEST</a> file for summaries of

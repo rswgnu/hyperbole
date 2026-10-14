@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-May-93
-;; Last-Mod:     31-Jul-25 at 20:35:20 by Mats Lidell
+;; Last-Mod:      5-Oct-26 at 15:40:43 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -198,7 +198,7 @@ Augment capabilities not yet implemented and ignored for now:
 		     (concat idstamp-string kviewspec)
 		   (string-to-number idstamp-string))
 	       kviewspec)))))
-	
+
 (defun kcell:remove-attr (kcell attribute)
   "Remove KCELL's ATTRIBUTE, if any, and return modified KCELL."
   (let ((tail kcell)
@@ -237,12 +237,14 @@ Augment capabilities not yet implemented and ignored for now:
   "Given a kotl CELL and IDSTAMP (an integer), return a kcell-data structure.
 If CELL, its idstamp, or its property list are nil, this repairs the cell by
 assuming it is the cell at point and filling in the missing information."
-   (let ((plist (kcell:plist cell)))
-     (if (and cell idstamp plist)
-	 (vector idstamp plist)
-       (kcell-data:create
-	(kcell:create plist)
-	(or idstamp (kview:id-increment kotl-kview))))))
+  (if (kview:is-p kotl-kview)
+      (let ((plist (kcell:plist cell)))
+        (if (and cell idstamp plist)
+	    (vector idstamp plist)
+          (kcell-data:create
+	   (kcell:create plist)
+	   (or idstamp (kview:id-increment kotl-kview)))))
+    (error "(kcell-data:create): Invalid `kotl-kview': %S" kotl-kview)))
 
 (defun kcell-data:idstamp (kcell-data)
   (aref kcell-data 0))

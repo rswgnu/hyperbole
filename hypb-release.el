@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:     5-Oct-26 at 21:58:13
-;; Last-Mod:      6-Oct-26 at 22:31:38 by Mats Lidell
+;; Last-Mod:     14-Oct-26 at 13:49:08 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -24,8 +24,9 @@
     "HY-ABOUT"
     "HY-ANNOUNCE"
     "HY-NEWS"
+    "hyperbole-pkg.el"
     "Makefile"
-    "README.md"
+    "README.in.md"
     "man/hyperbole.texi")
   "Files in which the Hyperbole version number is stored.
 The list does not include hyperbole.el since that needs to be updated in

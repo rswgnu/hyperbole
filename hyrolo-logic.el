@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    13-Jun-89 at 22:57:33
-;; Last-Mod:     21-Jul-26 at 00:31:11 by Bob Weiner
+;; Last-Mod:     14-Oct-26 at 11:10:24 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -16,36 +16,39 @@
 ;;
 ;;  INSTALLATION:
 ;;
-;;   See also hyrolo.el.  These functions are separated from hyrolo.el since many
-;;   users may never want or need them.  They can be automatically loaded when
-;;   desired by adding the following to one of your Emacs init files:
+;;   See also hyrolo.el.  These functions are separated from hyrolo.el since
+;;   many users may never want or need them.  They can be automatically
+;;   loaded when desired by adding the following to one of your Emacs init
+;;   files:
 ;;
-;;    (autoload 'hyrolo-fgrep-logical "hyrolo-logic" "Rolo search with logical operators." t)
+;;    (autoload 'hyrolo-fgrep-logical "hyrolo-logic" "Rolo search with
+;;    logical operators." t)
 ;;
 ;;  FEATURES:
 ;;
-;;   1.  One command, `hyrolo-fgrep-logical' which prompts for a logical search
-;;       expression string and displays any matching entries.  A sample expression
-;;       might be:
-;;        (and (or (not time card) (xor "french balloons" spanish)) teacher pet)
+;;   1.  One command, `hyrolo-fgrep-logical' which prompts for a logical
+;;       search expression string and displays any matching entries.  A
+;;       sample expression might be:
+;;        (and (or (not time card) (xor "french balloons" spanish))
+;;                 teacher pet)
 ;;
 ;;       By default, only sub-entries with matches are shown, not entire
-;;       hierarchies of entries, for more intuitive results.  Use a prefix argument
+;;       hierarchies of entries, for more intuitive results.
 ;;
 ;;       Either double quotes or parentheses may be used to group multiple
 ;;       words as a single argument.
 ;;
-;;   2.  Logical `hyrolo-and', `hyrolo-or', `hyrolo-not', and `hyrolo-xor' rolo
-;;       entry string filter functions.  They take any number of string or
-;;       boolean arguments and may be nested.  NOTE THAT THESE FUNCTIONS
+;;   2.  Logical `hyrolo-and', `hyrolo-or', `hyrolo-not', and `hyrolo-xor'
+;;       rolo entry string filter functions.  They take any number of string
+;;       or boolean arguments and may be nested.  NOTE THAT THESE FUNCTIONS
 ;;       SHOULD NEVER BE CALLED DIRECTLY UNLESS THE FREE VARIABLES `start'
 ;;       and `end' ARE BOUND BEFOREHAND.
 ;;
-;;   3.  Logical `hyrolo-r-and', `hyrolo-r-or', `hyrolo-r-not', and `hyrolo-r-xor'
-;;       rolo entry regexp filter functions.  They take any number of string or
-;;       boolean arguments and may be nested.  NOTE THAT THESE FUNCTIONS
-;;       SHOULD NEVER BE CALLED DIRECTLY UNLESS THE FREE VARIABLES `start'
-;;       and `end' ARE BOUND BEFOREHAND.
+;;   3.  Logical `hyrolo-r-and', `hyrolo-r-or', `hyrolo-r-not', and
+;;       hyrolo-r-xor' rolo entry regexp filter functions.  They take any
+;;       number of string or boolean arguments and may be nested.  NOTE THAT
+;;       THESE FUNCTIONS SHOULD NEVER BE CALLED DIRECTLY UNLESS THE FREE
+;;       VARIABLES `start' and `end' ARE BOUND BEFOREHAND.
 ;;
 ;;  EXAMPLE PROGRAMMATIC USAGE:
 ;;

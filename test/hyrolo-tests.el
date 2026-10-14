@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:      8-Oct-26 at 00:55:44 by Mats Lidell
+;; Last-Mod:     13-Oct-26 at 17:51:03 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -378,6 +378,7 @@ and {b} the previous same level cell."
           (insert "string")
           (kotl-mode:newline 1)
           (insert "more")
+          (save-buffer)
           (should (= 1 (hyrolo-fgrep "string")))
           (should (string= (buffer-name) (hyrolo-display-buffer-name)))
           (should (= (how-many "@loc>") 1))
@@ -450,6 +451,7 @@ Match a string in a level 2 child cell."
           (insert "string")
           (kotl-mode:newline 1)
           (insert "more")
+          (save-buffer)
           (should (= 1 (hyrolo-fgrep "string")))
           (should (string= (buffer-name) (hyrolo-display-buffer-name)))
           (should (= (how-many "@loc>") 1))
@@ -480,6 +482,7 @@ Match a string in the second cell."
           (insert "string")
           (kotl-mode:newline 1)
           (insert "more")
+          (save-buffer)
           (should (= 1 (hyrolo-fgrep "string")))
           (should (string= (buffer-name) (hyrolo-display-buffer-name)))
           (should (= (how-many "@loc>") 1))

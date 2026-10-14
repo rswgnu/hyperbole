@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     30-Sep-26 at 12:03:56 by Bob Weiner
+;; Last-Mod:      5-Oct-26 at 18:35:00 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -534,6 +534,10 @@ Nil by default."
 (defvar hywiki-file-extension ".org"
   "File suffix string (including period) to use when creating HyWiki pages.")
 
+(defvar hywiki-word-create-exclude-action-key-modes '(org-mode)
+  "Suppress WikiWord creation from Action Key presses in this major mode list.
+Typically used in any modes where the Action Key shows/hides sections.")
+
 (defconst hywiki-word-regexp
   (format "\\<\\([[:upper:]][[:alpha:]]+\\)\\>\\(?:%s\\)?"
           (regexp-quote hywiki-file-extension))
@@ -940,21 +944,21 @@ valid values."
 ;;;###autoload
 (define-minor-mode hywiki-mode
   "Toggle HyWiki global minor mode with \\[hywiki-mode].
-HyWiki minor mode automatically highlights and turns HyWikiWord references
-into Hyperbole implicit buttons that either link to HyWiki pages or activate
-typed referents such as bookmarks.
+HyWiki minor mode automatically highlights and turns HyWikiWord
+references into Hyperbole implicit buttons that either link to HyWiki
+pages or activate typed referents such as bookmarks.
 
-HyWiki minor mode has three states as tracked by the `hywiki-mode' variable,
-with the default state when interactively enabled set by the value of
-`hywiki-default-mode':
+HyWiki minor mode has three states as tracked by the `hywiki-mode'
+variable, with the default state when interactively enabled set by the
+value of `hywiki-default-mode':
 
   - :all   - highlight HyWikiWords in all editable buffers except those
              with a major mode in `hypb:exclude-major-modes'; also
              enable `hyperbole-mode' minor mode if off.
 
   - :pages - highlight HyWikiWords in HyWiki pages only (Org files in
-             `hywiki-directory'); also enable `hyperbole-mode' minor mode
-             if off. (default)
+             `hywiki-directory'); also enable `hyperbole-mode' minor
+             mode if off. (default)
 
   - nil    - no highlighting, the `hywiki-mode' is disabled.
 
@@ -964,10 +968,10 @@ HyWikiWord references may also include optional suffixes:
     other outline file.  Spaces in the headline must be converted
     to dash characters for proper recognition;
 
-  - optionally followed by :L<line-number>:C<column-number>
-    where the column part is also optional.  If a section is
-    given, the line number is relative to the section and the
-    section headline is line 1.
+  - optionally followed by :L<line-number>:C<column-number> where the
+    column part is also optional.  If a section is given, the line
+    number is relative to the section and the section headline is line
+    1.
 
 See the Info documentation at \"(hyperbole)HyWiki\".
 
@@ -984,24 +988,27 @@ See the Info documentation at \"(hyperbole)HyWiki\".
     (pcase arg
      (:all (progn
              ;; Enable across all editable buffers
-             ;; Need hyperbole-mode
+             ;; Need `hyperbole-mode'
              (unless hyperbole-mode
 	       (hyperbole-mode 1))
              (hywiki-word-set-auto-highlighting hywiki--prior-mode arg)
              (setq hywiki-mode arg)))
      ('nil (progn
-            ;; Disable across all editable buffers.
-            ;; Dehighlight HyWikiWords in this buffer when 'hywiki-mode' is
-            ;; disabled and this is not a HyWiki page buffer. If this is a
-            ;; HyWiki page buffer, then dehighlight when `hywiki-mode' is nil.
+             ;; Disable across all editable buffers.
+
+             ;; Dehighlight HyWikiWords in this buffer when
+             ;; 'hywiki-mode' is disabled and this is not a HyWiki page
+             ;; buffer. If this is a HyWiki page buffer, then
+             ;; dehighlight when `hywiki-mode' is nil.
             (hywiki-word-set-auto-highlighting hywiki--prior-mode arg)
             (setq hywiki-mode arg)))
      (:pages (progn
                ;; Enable in HyWiki page buffers only
-               ;; Need hyperbole-mode
+               ;; Need `hyperbole-mode'
                (unless hyperbole-mode
 	         (hyperbole-mode 1))
-               (hywiki-word-set-auto-highlighting hywiki--prior-mode arg)
+               (hywiki-word-set-auto-highlighting
+                hywiki--prior-mode arg)
                (setq hywiki-mode arg))))))
 
 (defun hywiki-mode-around-advice (hywiki-mode-fn &optional to-mode)
@@ -4320,6 +4327,14 @@ For example, BASEBall would become, base-ball but BASE would become base."
 					  sep-replacement str)))
     (string-trim (downcase str) "[ \t\n\r]+" (format "[%s \t\n\r]+"
                                                      separator))))
+
+;;;###autoload
+(defun hywiki-word-action-key-creation-allowed-p ()
+  "Return non-nil iff current major mode allows Action Key WikiWord creation.
+The variable, `hywiki-word-create-exclude-action-key-modes', is a list of
+modes where Action Key WikiWord creation is disabled, typically in outlining
+modes where the Action Key shows/hides nodes."
+  (not (apply #'derived-mode-p hywiki-word-create-exclude-action-key-modes)))
 
 (defun hywiki-word-activate (&optional arg)
   "Display HyWiki referent for wikiword at point.

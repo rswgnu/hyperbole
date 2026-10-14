@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:      3-Oct-26 at 12:17:59 by Bob Weiner
+@c Last-Mod:     14-Oct-26 at 13:38:52 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,10 +30,10 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED October 3, 2026
+@set UPDATED October 14, 2026
 @set UPDATED-MONTH October 2026
-@set EDITION 9.2.0
-@set VERSION 9.2.0
+@set EDITION 9.3.0
+@set VERSION 9.3.0
 
 @ifnotinfo
 @macro bkbd {arg}
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.1.0
-Printed October 3, 2026.
+Printed October 14, 2026.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -213,7 +213,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.1.0
-October 3, 2026 @c AUTO-REPLACE-ON-SAVE
+October 14, 2026 @c AUTO-REPLACE-ON-SAVE
 
 
   Published by the Free Software Foundation, Inc.
@@ -235,15 +235,14 @@ October 3, 2026 @c AUTO-REPLACE-ON-SAVE
 @cindex Hyperbole, obtaining
 @cindex anonymous ftp
 GNU Hyperbole was designed and written by Bob Weiner.
+
 @xref{Setup}, for information on how to obtain and to install
 Hyperbole.
 
 This manual explains user operation and summarizes basic developer
 facilities of GNU Hyperbole.  Hyperbole provides convenient access
 to information, control over its display and easy linking of items
-across documents and across the web.  The Hyperbole Koutliner offers
-flexible views and structure manipulation within bodies of
-information.
+across documents and across the web.
 
 We hope you enjoy using Hyperbole and that it improves your
 productivity.  If it does, consider sending us a quote or short note
@@ -398,9 +397,7 @@ Koutliner
 Editing Outlines
 
 * Adding and Killing::
-* Promoting and Demoting::
-* Org-style Visibility Cycling::
-* Inserting Literal Tabs::
+* TAB and Shift-TAB::
 * Relocating and Copying::
 * Moving Around::
 * Filling::
@@ -408,6 +405,12 @@ Editing Outlines
 * Splitting and Appending::
 * Inserting and Importing::
 * Exporting::
+
+TAB and Shift-TAB
+
+* Org-style Visibility Cycling::
+* Promoting and Demoting::
+* Inserting Literal Tabs::
 
 Viewing Outlines
 
@@ -452,12 +455,12 @@ Setup
 * Installation and Configuration::
 * Customization::
 
-Installation
+Installation and Configuration
 
-* Elpa and Melpa Latest or Release Package Installation::
+* Package Upgrades::
+* Package Installation::
 * Git Latest Package Installation::
-* Manual Tarball Archive Installation::
-* Configuration::
+* Tarball Installation::
 
 Customization
 
@@ -688,9 +691,9 @@ where HyWiki support is active.
 Emacs windows and frames display and where they appear.
 
 @xref{Koutliner}, for concept and usage information on the
-autonumbered, hypertextual outliner.  It uses its own major mode.
-@xref{Koutliner Keys}, for a full summary of the outliner commands
-that are bound to keys.
+autonumbered, hypertextual outliner with Org mode key compatibility.
+It uses its own major mode.  @xref{Koutliner Keys}, for a full summary
+of the outliner commands that are bound to keys.
 
 @xref{HyRolo}, for concept and usage information on the rapid lookup,
 hierarchical, full-text record management system included with Hyperbole.
@@ -777,12 +780,13 @@ activate it, so you can always be sure of what you are doing when needed
 or if someone emails you a button (Hyperbole allows embedding buttons
 in email messages too).
 
-Hyperbole is something to be experienced and interacted with, not understood
-from reading alone.  It installs normally as a single Emacs package with no
-dependencies outside of built-in Emacs libraries, @pxref{Installation  and Configuration}.  Most
-of Hyperbole is a single global minor mode that you can activate and
-deactivate at will.  And it can be uninstalled quickly as well if need be, so
-there is no risk in giving it a spin.
+Hyperbole is something to be experienced and interacted with, not
+understood from reading alone.  It installs normally as a single Emacs
+package with no dependencies outside of built-in Emacs libraries,
+@pxref{Installation and Configuration}.  Much of Hyperbole is a single
+global minor mode that you can activate and deactivate at will.  And it
+can be uninstalled quickly as well if need be, so there is no risk in
+giving it a spin.
 
 Once you have it installed, try the interactive demo with @bkbd{C-h h d d}.
 In fact, if you have Hyperbole loaded and you use the Emacs Info reader to
@@ -795,10 +799,10 @@ the number of keyboard/mouse keys you'll need to work efficiently.
 
 @page
 @noindent
-Hyperbole consists of five parts.
+Hyperbole consists of six parts.
 
-@table @emph
-@item Buttons and Smart Keys
+@table @b
+@item 1. Buttons and Smart Keys
 There are three categories of buttons:
 
 @table @dfn
@@ -849,16 +853,30 @@ mouse versions of these keys additionally allow for drag actions.  We
 call these the Action Mouse and Action Assist keys or buttons.  @xref{Smart
 Keys}.
 
-@item HyRolo
-a powerful, hierarchical contact manager which anyone can use, is also
-included.  It is easy to learn since it introduces only a few new
-mechanisms and has a menu interface, which may be operated from the
-keyboard or the mouse.  It may also be used for full-text searching
-over any record-based information in any number of Org, Markdown,
-Koutline or Emacs Outline files.  Hyperbole buttons may be embedded in
-any records.  @xref{HyRolo}.
+@item 2. HyWiki
+Hyperbole's markup-free, personal wiki system with automatic WikiWord
+highlighting and hyperlinking.  It uses Org mode for note taking and
+adds automatic hyperlinking and highlighting of WikiWord references
+within wiki pages and can be set so WikiWord links appear in all text
+and programming files,  @xref{HyWiki}.
 
-@item HyControl
+@item 3. HyRolo
+a fast, powerful, hierarchical record manager that does not require
+any indexing, unique ids nor a database.  It works with pure text
+files and supports full-text record-level searching over any number of
+Org, Markdown, Koutline or Emacs Outline files.  It is easy to learn
+since it introduces only a few new mechanisms and has a menu
+interface, which may be operated from the keyboard or the mouse.
+Hyperbole buttons may be embedded in any records.  @xref{HyRolo}.
+
+@item 4. Koutliner
+an advanced outliner with multi-level autonumbering and permanent
+identifiers attached to each outline node for use as hypertext link
+anchors, per node properties and flexible view specifications that can
+be included in links or used interactively.  Includes Org mode key
+compatibility.  @xref{Koutliner}.
+
+@item 5. HyControl
 the fastest, easiest-to-use window and frame control available for GNU
 Emacs.  With just a few keystrokes, you can shift from
 increasing a window's height by 5 lines to moving a frame by 220 pixels
@@ -867,19 +885,14 @@ frame may be enlarged or shrunk (zoomed) for easy viewing, plus many
 other features; this allows Hyperbole to quickly control the way
 information is presented on-screen.  @xref{HyControl}.
 
-@item Koutliner
-an advanced outliner with multi-level autonumbering and permanent
-identifiers attached to each outline node for use as hypertext link anchors,
-per node properties and flexible view specifications that can be included in
-links or used interactively.  @xref{Koutliner}.
-
-@item Hyperbole API
+@item 6. Hyperbole API
 a set of programming libraries for system developers who want to integrate
 Hyperbole with another user interface or as a back-end to a distinct system.
 (All of Hyperbole is written in Emacs Lisp for ease of modification.  It has
 been engineered for real-world usage and is well structured). @xref{Developing
 with Hyperbole}.
 @end table
+@page
 
 @kindex C-h h d d
 @vindex file, FAST-DEMO
@@ -1187,8 +1200,7 @@ Key.  If you want both the middle mouse key as the Action Key and the
 right mouse key as the Assist Key for ease of use, then within your
 personal @file{~/.emacs} file, add:
 @lisp
-(add-hook 'hyperbole-init-hook
-          'hmouse-add-unshifted-smart-keys)
+(add-hook 'hyperbole-init-hook 'hmouse-add-unshifted-smart-keys)
 @end lisp
 @noindent
 and then restart Emacs.
@@ -1724,12 +1736,12 @@ Drags of either Smart Key from a bottommost modeline can be configured to
 drag Emacs frames to new locations on screen.  To configure all existing
 and future frames for such dragging, use:
 
-  @code{(modify-all-frames-parameters '((drag-with-mode-line . t)))}.
+  @code{(modify-all-frames-parameters '((drag-with-mode-line . t)))}
 
 @noindent
 To configure just the selected frame for such dragging, use:
 
-  @code{(set-frame-parameter nil 'drag-with-mode-line t)}.
+  @code{(set-frame-parameter nil 'drag-with-mode-line t)}
 
 @noindent
 on each frame you would like to drag.
@@ -1939,6 +1951,7 @@ Whether creating an implicit or an implicit button, the action type used
 is determined by this table of contexts and the associated action type for
 each one, in decreasing order of priority, as given by the
 @code{hui:link-possible-types} function.
+@page
 
 @anchor{possible link action types}
 @exampleindent 0
@@ -2431,8 +2444,8 @@ priority).
 @cindex Action Key, Org Mode
 @cindex Assist Key, Org Mode
 @item smart-org
-@code{smart-org} is not an actual implicit button type, just an Elisp function,
-but it behaves similarly, so it is documented here.
+@code{smart-org} is not an actual implicit button type, just an Elisp
+function, but it behaves similarly, so it is documented here.
 
 Hyperbole recognizes Org mode constructs in any of these modes:
 @code{org-mode}, @code{org-agenda-mode}, @code{outshine-mode}
@@ -2487,8 +2500,9 @@ or #+end_example header, execute the code block via the Org mode
 standard binding of @bkbd{C-c C-c}, @code{org-ctrl-c-ctrl-c}.
 
 @item
-With point on an Org mode heading, cycle the view of the subtree at
-point.
+With point on an Org mode heading but not a Hyperbole button, call the
+function given by the @code{smart-org-action-key-heading-function}
+variable, which defaults to doing nothing.
 
 @item
 In any other context besides the end of a line, invoke the Org mode
@@ -2530,8 +2544,9 @@ With point on any #+BEGIN_SRC, #+END_SRC, #+RESULTS, #+begin_example
 or #+end_example header, remove any associated results.
 
 @item
-Not on a Hyperbole button but on an Org mode heading, cycle
-through views of the whole buffer outline.
+With point on an Org mode heading but not a Hyperbole button, call the
+function given by the @code{smart-org-assist-key-heading-function}
+variable, which defaults to doing nothing.
 @end enumerate
 
 @vindex hsys-org-enable-smart-keys
@@ -2580,12 +2595,15 @@ Org mode links are highlighted and selected properly).
 
 Two forms of denote links are accepted:
 
-  1. The hyperbole link form with syntax:
-        @samp{\\(<[Description]>\\)? "denote:<file-id>\\(#section-name-or-uuid\\)?"}
+@enumerate
+@item The hyperbole link form with syntax:@*
+  @samp{\\(<[Description]>\\)? @*
+  "denote:<file-id>\\(#section-name-or-uuid\\)?"}
 
-  2. The org link form with syntax:
-        @samp{[[denote:<file-id>\\(::*?section-name\\)?][Description]]}
-     or @samp{[[denote:<file-id>\\(::#?section-id\\)?][Description]]}
+@item The org link form with syntax:@*
+  @samp{[[denote:<file-id>\\(::*?section-name\\)?][Description]]}@*
+  or @samp{[[denote:<file-id>\\(::#?section-id\\)?][Description]]}
+@end enumerate
 
 @findex ibtypes doc-id
 @cindex online library
@@ -2622,8 +2640,13 @@ minibuffer or the other window.
 @cindex hywiki existing word
 @anchor{hywiki-existing-word}
 @item hywiki-existing-word
-When on a HyWikiWord with an existing page, display its page and
-optional section.
+When on a HyWikiWord with an existing referent, display the referent.
+This is the Action Key function that activates existing HyWikiWords.
+Calls to @code{(hywiki-active-in-current-buffer-p)} and @code{(not
+(hywiki-non-hook-context-p))} must return non-nil for this to activate.
+
+Potential, not-yet-existing HyWikiWords are handled by the implicit
+button type, @pxref{hywiki-word}.
 
 @findex ibtypes ilink
 @cindex implicit button link
@@ -3213,8 +3236,21 @@ source reference line again.
 @cindex hywiki word
 @anchor{hywiki-word}
 @item hywiki-word
-When on a HyWikiWord, display its page and optional section.  If the
-associated HyWiki page does not exist, create it automatically.
+When on a non-existing HyWikiWord, create it and display its referent.
+This is the Action Key function that creates HyWikiWords.  Calls to
+@code{(hywiki-word-action-key-creation-allowed-p)},
+@code{(hywiki-active-in-current-buffer-p)} and
+@code{(not (hywiki-non-hook-context-p))} must return non-nil for this to
+activate.  If the associated HyWiki page does not exist, create it
+automatically.
+
+If the associated HyWiki referent is a page, create it automatically
+unless it is the first HyWiki page to be created, in which case,
+prompt the user whether to create it, to prevent any unexpected HyWiki
+use.
+
+Existing HyWikiWords are handled by the implicit button type,
+@pxref{hywiki-existing-word}.
 
 @findex ibtypes hynote-file
 @findex hywiki-active-in-current-buffer-p
@@ -3247,9 +3283,12 @@ clauses.
 @cindex tag definition
 @cindex button variable
 @item hbut-identifier
-When on the name of a variable that holds a Hyperbole button, e.g. hbut:current:
-  Action Key - Jump to variable definition;
-  Assist Key - Display button attributes of any Hyperbole button symbol at point.
+When on the name of a variable that holds a Hyperbole button,
+e.g. hbut:current:
+@itemize
+@item Action Key - Jump to variable definition;
+@item Assist Key - Display button attributes of any Hyperbole button symbol at point.
+@end itemize
 
 @end table
 
@@ -3277,18 +3316,13 @@ buttons are delimited by angle brackets, < >, and come in four types:
 @item action type invocations
 These begin with an action type name (from the list displayed by
 @bkbd{C-h h d t a @key{RET}}) and are followed by any needed arguments
-to form the action, e.g.
-@example
-<link-to-file-line "$@{hyperb:dir@}/hact.el" 40>
-@end example
+to form the action, e.g. @code{<link-to-file-line "$@{hyperb:dir@}/hact.el"
+40>}.
 
 @item function calls
 These are similar to action type invocations but begin with an Emacs
 Lisp function name rather than an action type name, e.g.
-
-@example
-<find-file-other-window "/tmp">
-@end example
+@code{<find-file-other-window "/tmp">}.
 
 Generally, such functions are invoked for their side-effects and their
 return value is silently ignored.  But if a function is a boolean
@@ -3298,30 +3332,18 @@ in the minibuffer.
 @item test executions
 Each of these consists solely of the name of an ERT test defined with
 @code{ert-deftest} and surrounded by angle brackets, e.g.
-
-@example
-<hbut-tests-ibut-insert-kbd-key>
-@end example
+@code{<hbut-tests-ibut-insert-kbd-key>}.
 
 The above example runs a Hyperbole regression test when activated and
 shows the pass/fail result in a pop-up buffer.
 
 @item variable displays
 These consist of an Emacs Lisp variable name only.  They display
-messages with their variable name and value, e.g.
-
-@example
-<fill-column>
-@end example
+messages with their variable name and value, e.g. @code{<fill-column>}.
 
 If there is a function binding with the same name as the variable you
-wish to display, to prevent interpretation as a function call
-action button, precede the name with a @code{$}, e.g.
-
-@example
-<$fill-column>
-@end example
-
+wish to display, to prevent interpretation as a function call action
+button, precede the name with a @code{$}, e.g. @code{<$fill-column>}.
 @end table
 
 With action buttons you need not remember any special syntax for each
@@ -4704,10 +4726,11 @@ editing.
 @cindex HyWiki Action Key
 @cindex Action Key, HyWiki
 The Action Key, @bkbd{M-@key{RET}}, provides a faster way to create
-HyWikiWords to speed your note-taking, if you let HyWiki have priority
-over this key rather than having Org mode split lines and create new
-headlines when on a HyWikiWord.  Simply have Hyperbole override Org's
-control of that key in all Action and Assist Key contexts with the
+HyWikiWords to speed your note-taking in many text and programming
+modes, if you let HyWiki have priority over this key rather than
+having Org mode split lines and create new headlines when on a
+HyWikiWord.  Simply have Hyperbole override Org's control of that key
+in all Action and Assist Key contexts with the
 @samp{All-Hyperbole-Contexts} setting bound to @bkbd{C-h h h o a}.
 This sets the persistent customization option,
 @code{hsys-org-enable-smart-keys} to @samp{t} across all your Emacs
@@ -4817,20 +4840,12 @@ that they trigger only when other types are not recognized first.
 
 @table @code
 @item hywiki-existing-word
-On a HyWikiWord with an existing referent, display the referent.  A
-call to @code{(hywiki-active-in-current-buffer-p)} must return
-non-@samp{nil} for this to activate.
+On a HyWikiWord with an existing referent, display the referent.
+@xref{hywiki-existing-word}.
 
 @item hywiki-word
-When on a non-existing HyWikiWord, create it and display its referent.
-This is the Action Key function that activates HyWikiWords.  A call to
-@code{(hywiki-active-in-current-buffer-p)} must return non-@samp{nil}
-for this to activate.
-
-If the associated HyWiki referent is a page, create it automatically
-unless it is the first HyWiki page to be created, in which case,
-prompt the user whether to create it, to prevent any unexpected HyWiki
-use.
+On a non-existing HyWikiWord, create it and display its referent.
+@xref{hywiki-word}.
 @end table
 
 @node HyWiki Mode, Publishing a HyWiki, HyWikiWords, HyWiki
@@ -5051,25 +5066,25 @@ HyWiki RefType>  Activity Bookmark Denote Command Elisp Find Gbut HyRolo
 @exampleindent 0
 @example
 @group
-Menu Item       RefType Add Command       Display Action Description
+Menu Item       RefType Add Command       Display Action
 ===================================================================
 Activity        hywiki-add-activity       Activate a saved Activity
 Bookmark        hywiki-add-bookmark       Jump to an Emacs bookmark
 Command         hywiki-add-command        Run a Hypb action or cmd
-Denote          hywiki-add-denote         Display a denote file
+Denote          hywiki-add-denote         Show a denote file
 Elisp           hywiki-add-elisp          Evaluate an Elisp sexp
 Find            hywiki-add-find           Grep through hywiki dir
 Gbut            hywiki-add-global-button  Activate a global button
 HyRolo          hywiki-add-hyrolo         Search @code{hyrolo-file-list}
-InfoIndex       hywiki-add-info-index     Display an Info index item
+InfoIndex       hywiki-add-info-index     Show an Info index item
 Keys            hywiki-add-key-series     Execute a series of keys
-pathLink        hywiki-add-path-link      Display a path and opt pos
-infoNode        hywiki-add-info-node      Display an Info doc node
-OrgID           hywiki-add-org-id         Display a sect for Org ID
-Page            hywiki-add-page           Display a HyWiki page#sect
-orgRoamNode     hywiki-add-org-roam-node  Display an Org Roam node
+pathLink        hywiki-add-path-link      Show a path and opt pos
+infoNode        hywiki-add-info-node      Show an Info doc node
+OrgID           hywiki-add-org-id         Show a sect for Org ID
+Page            hywiki-add-page           Show a HyWiki page#sect
+orgRoamNode     hywiki-add-org-roam-node  Show an Org Roam node
 Spec            hywiki-add-spec           Defer referent linkage
-glossarY        hywiki-add-glossary-entry Display a HyWiki term def
+glossarY        hywiki-add-glossary-entry Show a HyWiki term def
 ===================================================================
 @end group
 @end example
@@ -5168,6 +5183,7 @@ section therein, e.g. WikiWord.org, within the
 
 @cindex menu item, HyWiki orgRoamNode
 @cindex HyWiki orgRoamNode reftype
+@item orgRoamNode
 Add a HyWikiWord that displays an Org Roam node given its title.
 
 @cindex menu item, HyWiki Spec
@@ -5184,7 +5200,7 @@ which point the HyWiki RefType menu is displayed for selection.
 @cindex definition, HyWikiWord
 @findex hywiki-get-definition
 @anchor{HyWiki Glossary}
-@item Glossary
+@item GlossarY
 Add or edit the definition of a HyWikiWord that displays its own
 definition from the HyWiki's Glossary.org file.
 
@@ -5837,31 +5853,53 @@ press that key, the other command can be reached by pressing @bkbd{t}.
 @cindex hyperlink anchor
 The Hyperbole outliner, the Koutliner (pronounced Kay-outliner),
 produces structured, autonumbered documents composed of hierarchies of
-cells.  Each @dfn{cell} has two identifiers, a
-@dfn{relative identifier} indicating its present position within the
-outline and a @dfn{permanent identifier} called an @dfn{idstamp},
-suitable for use within hyperlink references to the cell.  The idstamp
-is typically not displayed but is available when needed.
-@xref{Autonumbering}.
+cells.  Each @dfn{cell} has two identifiers, a @dfn{relative
+identifier} indicating its present position within the outline and a
+@dfn{permanent identifier} called an @dfn{idstamp}, suitable for use
+within hyperlink references to the cell.  The idstamp is typically not
+displayed but is available when needed.  @xref{Autonumbering}.
 
 Cells also store their time of creation and the user who created the
 cell.  User-defined attributes may also be added to cells.  @xref{Cell
 Attributes}.
 
+The Koutliner should feel comfortable to Org mode users as it offers
+similar key bindings for outline visibility cycling, cursor key tree
+moving and table editing.
+
 @vindex file, EXAMPLE.kotl
 @cindex menu item, Kotl/Example
+@cindex koutliner, example file
 @kindex C-h h k e
-This chapter expands on the information given in the @file{EXAMPLE.kotl}
-file included with Hyperbole.  Use @bkbd{C-h h k e} to display that
-file, as pictured on the following page.  It is an actual outline file
-that explains major outliner operations.  You can test out the viewing,
-editing and motion commands with this file since a personal copy is made
-when you invoke this command.  If you have already edited this file and
-want to start with a fresh one, give the command a prefix argument:
-@bkbd{C-u C-h h k e}.
+This chapter expands on the information given in the interactive
+Koutliner tutorial file, @file{EXAMPLE.kotl}, included with Hyperbole.
+Use @bkbd{C-h h k e} to display that file, as pictured on the
+following page.  It is an actual outline file that explains major
+outliner operations.  You can test out the viewing, editing and motion
+commands with this file since a personal copy is made when you invoke
+this command.  If you have already edited this file and want to start
+with a fresh one, give the command a prefix argument: @bkbd{C-u C-h h
+k e}.
 
 @xref{Koutliner Keys}, for a full summary of the key bindings and
 commands available in the Koutliner.
+
+@cindex koutline, C-c ; letter key prefix
+@cindex koutline, toggle C-c letter key prefix
+@findex kotl-mode:set-letter-prefix-control-c
+@findex kotl-mode:toggle-letter-prefix
+@kindex koutliner, M-1 C-c C-l
+NOTE: As of Hyperbole version 9.3.0, the Koutliner @bkbd{C-c <letter>}
+keys have moved to @bkbd{C-c ; <letter>} so as not to override keys
+reserved for global user-specific bindings.  If you don't care about
+this and want the old bindings back (in addition to the new ones),
+uncomment the @code{(kotl-mode:set-letter-prefix-control-c)} line in
+your Hyperbole @code{use-package} initialization based on
+the reference file @file{$@{hyperb:dir@}/man/use-package}.  You can
+also interactively toggle the @samp{C-c} prefix for letter key
+bindings on and off with @bkbd{M-1 C-c C-l}, the command
+@code{kotl-mode:toggle-letter-prefix}.
+@page
 
 @float Image,image:Koutliner
 @caption{Koutliner Screenshot}
@@ -5890,11 +5928,11 @@ The Kotl/ menu entry on the Hyperbole minibuffer menu provides access to
 a number of major Koutliner commands:
 
 @cindex outliner commands
-@cindex Koutliner commands
-@cindex Koutliner import/export commands
+@cindex koutliner commands
+@cindex koutliner import/export commands
 @cindex importing, Koutliner
 @cindex exporting, Koutliner
-@cindex Koutliner menu
+@cindex koutliner menu
 @cindex menu, Koutliner
 @findex kotl-mode:show-all
 @findex kvspec:toggle-blank-lines
@@ -5927,14 +5965,14 @@ Vspec        kvspec:activate            Set a view specification
 ====================================================================
 @end example
 
-@page
 @kindex C-mouse-3
 @cindex popup menu, Koutliner
 @cindex menubar menu, Koutliner
-The popup and menubar Koutline menu, as displayed here, offers a more
-complete set of the Koutliner commands.  @bkbd{C-mouse-3} pops up the
-mode-specific menu in Emacs.  Experiment with the menu or
-read the following sections explaining commands.
+The popup and menubar Koutline menu, as displayed in the next image,
+offers a more complete set of the Koutliner commands.
+@bkbd{C-mouse-3} pops up the mode-specific menu in Emacs.  Experiment
+with the menu or read the following sections explaining commands.
+@page
 
 @float Image,image:Koutline Menu
 @caption{Koutline Menu}
@@ -5959,18 +5997,18 @@ operating systems with 3-character suffix limitations.
 @cindex cell, idstamp 0
 When a new koutline is created, an invisible root cell is added.  Its
 permanent and relative ids are both 0, and it is considered to be at
-level 0 in the outline.  All visible cells in the outline are at level 1
-or deeper, and thus are descendants of this root cell.  Some koutliner
-commands prompt for cell numbers as arguments.  An argument of 0 makes
-commands operate upon the entire outline.
+level 0 in the outline.  All visible cells in the outline are at level
+1 or deeper, and thus are descendants of this root cell.  Some
+koutliner commands prompt for cell numbers as arguments.  An argument
+of 0 makes commands operate upon the entire outline.
 
 An initial level 1 cell is also created to make it easy to start
 entering text in the outline.  A koutline always has at least one
 visible cell in it.
 
-@xref{Autonumbering}, which explains how cells are labeled according to their
-respective levels in the outline and how these labels are updated as the
-structure of the outline changes.
+@xref{Autonumbering}, which explains how cells are labeled according
+to their respective levels in the outline and how these labels are
+updated as the structure of the outline changes.
 
 
 @node Autonumbering, Idstamps, Creating Outlines, Koutliner
@@ -5978,17 +6016,17 @@ structure of the outline changes.
 
 @cindex autonumber
 @cindex relative identifier
-@xref{Adding and Killing}, for information on how to add new cells to or
-remove cells from a koutline.  As you do this, or as you promote or
+@xref{Adding and Killing}, for information on how to add new cells to
+or remove cells from a koutline.  As you do this, or as you promote or
 demote cells within the outline, the labels preceding the contents of
 each cell automatically update to reflect the new structure.  These
 labels are also known as @dfn{autonumbers} and as @dfn{relative ids}
 because they change as the structure changes.
 
 @cindex outline structure
-The outline structure is shown by these labels and by the indentation of
-each outline level.  Normally, each deeper level is indented another
-three characters, to reflect the nesting.
+The outline structure is shown by these labels and by the indentation
+of each outline level.  Normally, each deeper level is indented
+another three characters, to reflect the nesting.
 
 @cindex label type, alpha
 @cindex label type, legal
@@ -5997,15 +6035,16 @@ three characters, to reflect the nesting.
 @cindex outline, label type
 The default autonumbers are called @dfn{alphanumeric labels} because
 they alternate between using numbers and letters to distinguish each
-successive level.  Each alphanumeric label uniquely identifies a cell's
-position in an outline, so that there is no need to scan back to prior
-cells to see what the current section number of an outline is.  This is
-similar to a legal numbering scheme but without all the period
-characters between level numbers.  As an example, 1b3 is equivalent to a
-legal label of 1.2.3.  Both refer to the 3rd cell at level 3,
-below the 2nd child of the first cell at level 1.  Said another way,
-this is the 3rd child of the 1st cell's 2nd child.  In other words, it
-is easier to visualize hierarchies than to talk about them.
+successive level.  Each alphanumeric label uniquely identifies a
+cell's position in an outline, so that there is no need to scan back
+to prior cells to see what the current section number of an outline
+is.  This is similar to a legal numbering scheme but without all the
+period characters between level numbers.  As an example, 1b3 is
+equivalent to a legal label of 1.2.3.  Both refer to the 3rd cell at
+level 3, below the 2nd child of the first cell at level 1.  Said
+another way, this is the 3rd child of the 1st cell's 2nd child.  In
+other words, it is easier to visualize hierarchies than to talk about
+them.
 
 Alphanumeric labels are the default because they are shorter and easier
 to read aloud than equivalent legal ones.  They also simplify
@@ -6025,19 +6064,20 @@ permanent idstamps (permanent cell ids) are all available.
 @kindex koutliner, C-c M-l
 @kindex koutliner, C-u C-c M-l
 A cell label is normally followed by a period and a space, called the
-@dfn{label separator}, prior to the start of the cell contents.  You can
-change the separator for the current outline with @bkbd{C-c M-l}.
+@dfn{label separator}, prior to the start of the cell contents.  You
+can change the separator for the current outline with @bkbd{C-c M-l}.
 @bkbd{C-u C-c M-l} will additionally change the default separator
-value used when new outlines are created (for the current session only).
-For example, use the value "  " (two spaces) to get eliminate the
-trailing period after each cell label.  The separator must be at least
-two characters long but may be longer.
+value used when new outlines are created (for the current session
+only).  For example, use the value " " (two spaces) to get eliminate
+the trailing period after each cell label.  The separator must be at
+least two characters long but may be longer.
 
 @vindex file, .emacs
 @cindex initialization file
 If you find a separator that you prefer for all outlines, change the
-separator setting permanently by adding the following line to your Emacs
-initialization file, @file{~/.emacs}, substituting for `your-separator':
+separator setting permanently by adding the following line to your
+Emacs initialization file, @file{~/.emacs}, substituting for
+`your-separator':
 
 @cindex label separator, default
 @vindex kview:default-label-separator
@@ -6059,34 +6099,35 @@ Use @bkbd{C-c C-l id @key{RET}}.
 @cindex idstamp counter
 An idstamp counter for each outline starts at 0 and is incremented by
 one each time a cell is added to the outline.  This idstamp stays with
-the cell no matter where it is moved within the outline.  If the cell is
-deleted, its idstamp is not reused.
+the cell no matter where it is moved within the outline.  If the cell
+is deleted, its idstamp is not reused.
 
 @cindex root cell
 @cindex top-level cell
 @cindex cell, top-level
 @cindex cell, idstamp 0
 @cindex idstamp 0
-The 0 idstamp is always assigned to the root node of the entire outline.
-This node is never visible within the outline, but is used so that the
-outline may be treated as a single tree when needed.  Idstamps always
-begin with a 0, as in 012, to distinguish them from relative ids.
+The 0 idstamp is always assigned to the root node of the entire
+outline.  This node is never visible within the outline, but is used
+so that the outline may be treated as a single tree when needed.
+Idstamps always begin with a 0, as in 012, to distinguish them from
+relative ids.
 
 
 @node Editing Outlines, Viewing Outlines, Idstamps, Koutliner
 @section   Editing Outlines
 
 Text editing within the Koutliner works just as it does for other
-buffers, except when you need to deal with the structural components of
-an outline.  Within the contents of a cell, all of your standard editing
-keys should work properly.  You can just type in text and the left and
-right margins of the lines will be maintained for you.  @xref{Filling},
-for the times when you need to refill a paragraph or to control when
-filling occurs.
+buffers, except when you need to deal with the structural components
+of an outline.  Within the contents of a cell, all of your standard
+editing keys should work properly.  You can just type in text and the
+left and right margins of the lines will be maintained for you.
+@xref{Filling}, for the times when you need to refill a paragraph or
+to control when filling occurs.
 
 Don't invoke editing commands with @bkbd{M-x command-name @key{RET}}
-since the Koutliner uses differently named commands made to act
-like the regular editing commands.  Koutliner commands, however, account
+since the Koutliner uses differently named commands made to act like
+the regular editing commands.  Koutliner commands, however, account
 for the structure and indentation in koutlines.
 
 @cindex cell selection
@@ -6096,9 +6137,7 @@ selected region, since that will destroy the outline structure.
 
 @menu
 * Adding and Killing::
-* Promoting and Demoting::
-* Org-style Visibility Cycling::
-* Inserting Literal Tabs::
+* TAB and Shift-TAB::
 * Relocating and Copying::
 * Moving Around::
 * Filling::
@@ -6108,13 +6147,13 @@ selected region, since that will destroy the outline structure.
 * Exporting::
 @end menu
 
-@node Adding and Killing, Promoting and Demoting, Editing Outlines, Editing Outlines
+@node Adding and Killing, TAB and Shift-TAB, Editing Outlines, Editing Outlines
 @subsection  Adding and Killing
 
 @kindex koutliner, C-j
 @kindex koutliner, C-u c-j
-@kindex koutliner, C-c a
-@kindex koutliner, C-c p
+@kindex koutliner, C-c ; a
+@kindex koutliner, C-c ; p
 @cindex cell, adding
 @cindex cell, creating
 @bkbd{C-j} adds a new cell as a successor sibling of the
@@ -6122,144 +6161,70 @@ current cell, that is, the next cell at the same level as the current
 cell.  If you enter a positive number as a prefix argument, that number
 of cells will be inserted, all at the same level.  @bkbd{C-u C-j} is
 handled specially.  It adds a single cell as a child of the current cell.
-@bkbd{C-c a} does the same thing.  @bkbd{C-c p} adds the cell as
+@bkbd{C-c ; a} does the same thing.  @bkbd{C-c ; p} adds the cell as
 the successor of the current cell's parent.
 
 @kindex koutliner, C-c C-k
-@kindex koutliner, C-c k
-@kindex koutliner, C-u C-c k
+@kindex koutliner, C-c ; k
+@kindex koutliner, C-u C-c ; k
 @kindex koutliner, C-y
 @cindex cell, killing
 @cindex cell, yanking contents
 @cindex tree, killing
 @bkbd{C-c C-k} kills the current cell and its entire subtree.
-@bkbd{C-c k} kills the contents of a cell from point through the end
-of the cell; it does not remove the cell itself.  @bkbd{C-u C-c k}
+@bkbd{C-c ; k} kills the contents of a cell from point through the end
+of the cell; it does not remove the cell itself.  @bkbd{C-u C-c ; k}
 kills the entire contents of the cell regardless of the location of
 point.  You may then yank the contents into another cell or another
 buffer with @bkbd{C-y}.
 
-@node Promoting and Demoting, Org-style Visibility Cycling, Adding and Killing, Editing Outlines
-@subsection  Promoting and Demoting
+@node TAB and Shift-TAB, Relocating and Copying, Adding and Killing, Editing Outlines
+@subsection TAB and Shift-TAB
 
-@cindex promotion
-@cindex demotion
-@cindex tree, promoting
-@cindex tree, demoting
-@dfn{Demotion} is the act of moving a tree down one or more levels in
-the outline.  The new tree will become either the successor/sibling or
-the first child of the cell which precedes it in the outline.
-@dfn{Promotion} is the inverse operation.  Note that trees (cells and
-their entire substructure) are promoted and demoted, not individual
-cells.
+@kindex @key{TAB}
+@kindex Shift-@key{TAB}
+@cindex koutliner, TAB
+The @bkbd{@key{TAB}} and @bkbd{S-@key{TAB}} perform different functions
+depending on the setting of the variable, @code{kotl-mode:tab-flag}, as
+shown in the table below.
 
-@cindex koutliner, no-fill property
-Promote or demote the tree at point with @key{TAB} or @bkbd{M-@key{TAB}},
-respectively.  These also refill the text of each cell not marked with a
-@code{no-fill} property.  To override the @code{no-fill} property and
-refill all promoted/demoted cells, use @bkbd{M-0 @key{TAB}} and @bkbd{M-0
-M-@key{TAB}}.  @xref{Filling}.  A positive or negative prefix argument to
-these commands promotes or demotes the tree up to a maximum of that number
-of levels, depending on what the outline allows at any given point.
-
-With @code{kotl-mode:tab-flag} = @samp{t}, @bkbd{@key{TAB}} executes
-@code{kotl-mode:indent-line} with any prefix argument given.  This
-bypasses all of the functionality in the following tables.
-
-@example
+@vindex kotl-mode:tab-flag
+@cindex koutliner, TAB function
+@smallexample
 @noindent
-With @code{kotl-mode:tab-flag} = @samp{nil} (default):
-|-------------+------------------------+-------------------------|
-| Prefix Arg  | TAB Function           | Shift-TAB Function      |
-|-------------+------------------------+-------------------------|
-| nil         | Demote Tree            | Promote Tree            |
-| C-u         | Demote Siblings        | Promote Siblings        |
-| C-u C-u     | Reset View Spec        | Reset View Spec         |
-| C-u C-u C-u | Show Whole Outline     | Show Whole Outlin       |
-| 0           | Demote and Refill Tree | Promote and Refill Tree |
-| 1           | Toggle tab-flag        |                         |
-| Other ARG   | Demote Tree ARG Levels | Promote Tree ARG Levels |
-|-------------+------------------------+-------------------------|
-@end example
+|--------------------+-------------------------------+--------------------------|
+| kotl-mode:tab-flag | TAB Function                  | Shift-TAB Function       |
+|--------------------+-------------------------------+--------------------------|
+| 'cycle  (default)  | Cycle tree visibility         | Cycle outline visibility |
+| nil                | Demote tree                   | Promote tree             |
+| t                  | Indent line / insert TABs     | Delete backward a char   |
+|--------------------+-------------------------------+--------------------------|
+@end smallexample
 
-@cindex Org Table Minor Mode
-@cindex tables
-@cindex enabling table mode
-@cindex toggling table mode
-@findex orgtbl-mode
-The Koutliner also supports Org Table editing, @pxref{Tables,,, org,
-the Org Mode Manual}, via Org table minor mode.  Use @bkbd{M-x
-orgtbl-mode @key{RET}} to toggle this on and off.  Alternatively, a
-press of the Action Key on a @code{|} table delimiter also toggles
-this minor mode on or off.
+@kindex koutliner, C-c C-]
+@cindex koutliner, toggle tab behavior
+Org-style cycling is now the default.  In Hyperbole versions earlier
+than 9.3.0, the default was @samp{nil} for demotion and promotion.  You
+can toggle between using these keys for cycling or demotion/promotion
+by pressing @bkbd{C-c C-]}.  Or you can change the default by setting
+@code{kotl-mode:tab-flag} in your Hyperbole @code{use-package}
+configuration.  See the following subsections for further details.
 
-When @code{orgtbl-mode} is enabled within a Koutline and point is
-inside a table, @bkbd{@key{TAB}} moves forward one table item and
-@bkbd{S-@key{TAB}} moves backward an item.  However, if given any
-prefix argument, these keys behave as shown in the prior tables.
+@menu
+* Org-style Visibility Cycling::
+* Promoting and Demoting::
+* Inserting Literal Tabs::
+@end menu
 
-@cindex outline mode
-@kindex M-0 @key{TAB}
-@kindex M-0 S-@key{TAB}
-Tree demotion and promotion keys match the defaults in Org mode and
-Outline mode, plus some easier to type ones.  The tables below
-summarize which keys work whether inside an Org table or outside.
+@node Org-style Visibility Cycling, Promoting and Demoting, TAB and Shift-TAB, TAB and Shift-TAB
+@subsubsection  Org-style Visibility Cycling
 
-Note that you can use @bkbd{M-0 @key{TAB}} and @bkbd{M-0 S-@key{TAB}}
-to demote/promote Koutline trees when in a table since @key{TAB} and
-@bkbd{S-@key{TAB}} move between fields within tables when Org Table
-minor mode is active.  Within a table, to demote and promote the
-Koutline tree rooted at point, you can use any of the keys in the
-following table:
-
-@example
-@noindent
-|-------------------------------------+----------------------------|
-| Demotion Inside Org Table           | Promotion Inside Org Table |
-|-------------------------------------+----------------------------|
-| M-0 TAB  (kotl-mode:tab-flag = nil) | M-0 S-TAB                  |
-| C-c C-.                             | C-c C-,                    |
-| C-c C->                             | C-c C-<                    |
-|-------------------------------------+----------------------------|
-@end example
-
-@kindex koutliner, @key{TAB}
-@kindex koutliner, Shift-@key{TAB}
-@kindex koutliner, M-<left>
-@kindex koutliner, M-<right>
-@kindex koutliner, M-Shift-<left>
-@kindex koutliner, M-Shift-<right>
-@kindex koutliner, C-c C-,
-@kindex koutliner, C-c C-.
-@kindex koutliner, C-c C->
-@kindex koutliner, C-c C-<
-
-@example
-@noindent
-|---------------------------------+-----------------------------|
-| Demotion Outside Org Table      | Promotion Outside Org Table |
-|---------------------------------+-----------------------------|
-| TAB  (kotl-mode:tab-flag = nil) | S-TAB                       |
-| M-<right>                       | M-<left>                    |
-| M-S-<right>                     | M-S-<left>                  |
-| C-c C-.                         | C-c C-,                     |
-| C-c C->                         | C-c C-<                     |
-|---------------------------------+-----------------------------|
-@end example
-
-@node Org-style Visibility Cycling, Inserting Literal Tabs, Promoting and Demoting, Editing Outlines
-@subsection  Org-style Visibility Cycling
-
-@kindex koutliner, M-1 @key{TAB}
-@findex kotl-mode:tab-command
-@findex kotl-mode:untab-command
-@cindex Koutliner, toggle tab behavior
-@cindex Koutliner, cycling
-@cindex Koutliner, Org-style cycling
-@bkbd{M-1 @key{TAB}} toggles the function of @key{TAB} and
-@bkbd{S-@key{TAB}} between promotion/demotion and Org-style tree
-visibility cycling.  The following table summarizes their behavior
-with Org-style view cycling enabled:
+@cindex koutliner, cycling
+@cindex koutliner, Org-style cycling
+@bkbd{C-c C-]} toggles the function of @key{TAB} and @bkbd{S-@key{TAB}}
+between promotion/demotion and Org-style tree visibility cycling.  The
+following table summarizes their behavior with Org-style view cycling
+enabled:
 
 @example
 @noindent
@@ -6309,22 +6274,141 @@ Show the first line of all cells at all levels
 Show the entire outline.
 @end table
 
-@cindex Koutliner, outline to ARGth level
+@cindex koutliner, outline to ARGth level
 @cindex outline to ARGth level
 @cindex prefix numeric arg, outline show to level
 @bkbd{S-@key{TAB}} with a numeric prefix argument shows cells across
 the whole outline down to prefix argument level, one line per cell.
 Zero means show all cell levels.
 
+@vindex kotl-mode:emulate-tab
+@cindex koutliner, TAB contexts
 See the documentation string for @code{kotl-mode:emulate-tab} for how
 to constrain the contexts in which cycling will trigger.
 
+@findex kotl-mode:tab-command
+@findex kotl-mode:untab-command
 For even more details, see the documentation strings for
 @code{kotl-mode:tab-command} and @code{kotl-mode:untab-command}.
 
+@node Promoting and Demoting, Inserting Literal Tabs, Org-style Visibility Cycling, TAB and Shift-TAB
+@subsubsection  Promoting and Demoting
 
-@node Inserting Literal Tabs, Relocating and Copying, Org-style Visibility Cycling, Editing Outlines
-@subsection  Inserting Literal Tabs
+@cindex promotion
+@cindex demotion
+@cindex tree, promoting
+@cindex tree, demoting
+@cindex koutliner, promoting
+@cindex koutliner, demoting
+@dfn{Demotion} is the act of moving a tree down one or more levels in
+the outline.  The new tree will become either the successor/sibling or
+the first child of the cell which precedes it in the outline.
+@dfn{Promotion} is the inverse operation.  Note that trees (cells and
+their entire substructure) are promoted and demoted, not individual
+cells.
+
+@kindex koutliner, C-c C-,
+@kindex koutliner, C-c C-.
+@kindex koutliner, C-c C->
+@kindex koutliner, C-c C-<
+@kindex koutliner, M-<left>
+@kindex koutliner, M-<right>
+There are many key bindings for demoting and promoting trees.  The
+easiest to type that works regardless of the setting of
+@code{kotl-mode:tab-flag} is @bkbd{C-c C-.} for demoting the current
+tree and @bkbd{C-c C-,} for promoting it.  Org-compatible keys
+@bkbd{C-c C->} or @bkbd{M-<left>} and @bkbd{C-c C-<} or
+@bkbd{M-<right>} also work.
+
+@kindex koutliner, @key{TAB}
+@kindex koutliner, Shift-@key{TAB}
+@kindex koutliner, C-c C-]
+@cindex koutliner, no-fill property
+Use @bkbd{C-c C-]} to toggle the function of @key{TAB} and
+@bkbd{S-@key{TAB}} to demote and promote trees.  These also refill the
+text of each cell not marked with a @code{no-fill} property.  To
+override the @code{no-fill} property and refill all promoted/demoted
+cells, use @bkbd{M-0 @key{TAB}} and @bkbd{M-0 M-@key{TAB}}.
+@xref{Filling}.  A positive or negative prefix argument to these
+commands promotes or demotes the tree up to a maximum of that number of
+levels, depending on what the outline allows at any given point.  The
+same prefix argument works on any of the key bindings for these
+commands.
+
+@kindex koutliner, M-Shift-<left>
+@kindex koutliner, M-Shift-<right>
+@noindent
+Below is a table of all standard key bindings for demotion/promotion of
+Koutliner trees:
+
+@example
+@noindent
+|---------------------------------+-----------------------------|
+| Demotion Outside Org Table      | Promotion Outside Org Table |
+|---------------------------------+-----------------------------|
+| C-c C-.                         | C-c C-,                     |
+| C-c C->                         | C-c C-<                     |
+| M-<right>                       | M-<left>                    |
+| M-S-<right>                     | M-S-<left>                  |
+| TAB  (kotl-mode:tab-flag = nil) | S-TAB                       |
+|---------------------------------+-----------------------------|
+@end example
+
+Note that with @code{kotl-mode:tab-flag} = @samp{t}, @bkbd{@key{TAB}}
+executes @code{kotl-mode:indent-line} with any prefix argument given.
+This bypasses all of the functionality in the following tables.
+
+@page
+@noindent
+Here is a summary of how different prefix arguments affect the function
+of these key bindings.  With @code{kotl-mode:tab-flag} = @samp{nil}
+(default):
+
+@example
+@noindent
+|-------------+------------------------+-------------------------|
+| Prefix Arg  | TAB Function           | Shift-TAB Function      |
+|-------------+------------------------+-------------------------|
+| nil         | Demote Tree            | Promote Tree            |
+| C-u         | Demote Siblings        | Promote Siblings        |
+| C-u C-u     | Reset View Spec        | Reset View Spec         |
+| C-u C-u C-u | Show Whole Outline     | Show Whole Outlin       |
+| 0           | Demote and Refill Tree | Promote and Refill Tree |
+| Other ARG   | Demote Tree ARG Levels | Promote Tree ARG Levels |
+|-------------+------------------------+-------------------------|
+@end example
+
+@cindex Org Table Minor Mode
+@cindex tables
+@cindex enabling table mode
+@cindex toggling table mode
+@findex orgtbl-mode
+The Koutliner also supports Org Table editing, @pxref{Tables,,, org,
+the Org Mode Manual}, via Org table minor mode.  Use @bkbd{M-x
+orgtbl-mode @key{RET}} to toggle this on and off.  Alternatively, a
+press of the Action Key on a @code{|} table delimiter also toggles
+this minor mode on or off.
+
+When @code{orgtbl-mode} is enabled within a Koutline and point is
+inside a table, @bkbd{@key{TAB}} moves forward one table item and
+@bkbd{S-@key{TAB}} moves backward an item.  However, if given any
+prefix argument, these keys behave as shown in the prior tables.
+
+Within a table, to demote and promote the Koutline tree rooted at
+point, you can use any of the keys in the following table:
+
+@example
+@noindent
+|-----------------------------------------+----------------------------|
+| Demotion Inside Org Table               | Promotion Inside Org Table |
+|-----------------------------------------+----------------------------|
+| C-c C-.                                 | C-c C-,                    |
+| C-c C->                                 | C-c C-<                    |
+|-----------------------------------------+----------------------------|
+@end example
+
+@node Inserting Literal Tabs,  , Promoting and Demoting, TAB and Shift-TAB
+@subsubsection  Inserting Literal Tabs
 
 @cindex inserting tabs
 @cindex tabs, inserting
@@ -6333,9 +6417,13 @@ The simplest technique is to use @bkbd{C-q @key{TAB}} whenever you want to
 insert a TAB character.
 
 @vindex kotl-mode:tab-flag
+@cindex tabs, deleting
 If you don't use the @bkbd{@key{TAB}} key for tree demotion or
-visibility cycling and prefer that it always insert a TAB character,
-then set the variable, @code{kotl-mode:tab-flag} to @samp{t}.
+visibility cycling and prefer that it always indent the current line or
+insert a TAB character, then set the variable,
+@code{kotl-mode:tab-flag} to @samp{t}.  @bkbd{S-@key{TAB}} then will
+delete backward either one or the number of characters given by the
+prefix argument.
 
 @vindex kotl-mode:emulate-tab
 If you prefer that the @bkbd{@key{TAB}} key runs
@@ -6365,7 +6453,7 @@ you have the option of having it insert spaces instead.  Set the
 variable, @code{kotl-mode:indent-tabs-mode}, to @samp{nil}.
 
 
-@node Relocating and Copying, Moving Around, Inserting Literal Tabs, Editing Outlines
+@node Relocating and Copying, Moving Around, TAB and Shift-TAB, Editing Outlines
 @subsection  Relocating and Copying
 
 @cindex tree, copying
@@ -6398,9 +6486,9 @@ Move current tree past prefix arg same level trees.
 @kitem M-<up>
 Move current tree back prefix arg same level trees.
 
-@kitem C-c c
+@kitem C-c ; c
 Copy <tree> to be the successor of <cell>.
-@kitem C-u C-c c
+@kitem C-u C-c ; c
 Copy <tree> to follow as the first child of <cell>.
 
 @kitem C-c C-c
@@ -6408,9 +6496,9 @@ Copy <tree> to be the predecessor of <cell>.
 @kitem C-u C-c C-c
 Copy <tree> to be the first child of the parent of <cell>.
 
-@kitem C-c m
+@kitem C-c ; m
 Move <tree> to be the successor of <cell>.
-@kitem C-u C-c m
+@kitem C-u C-c ; m
 Move <tree> to follow as the first child of <cell>.
 
 @kitem C-c C-m
@@ -6539,23 +6627,23 @@ The Koutliner move and copy commands rearrange entire trees.  The
 following two commands, in contrast, exchange the locations of two
 individual cells.
 
-@kindex koutliner, C-c e
+@kindex koutliner, C-c ; e
 @cindex cell, transposing
 @cindex cell, exchanging
 @cindex exchanging cells
 @cindex transposing cells
-@bkbd{C-c e} prompts for two cell addresses and exchanges the cell
+@bkbd{C-c ; e} prompts for two cell addresses and exchanges the cell
 locations.
 
-@kindex koutliner, C-c t
-@bkbd{C-c t} does not prompt.  It exchanges the current
+@kindex koutliner, C-c ; t
+@bkbd{C-c ; t} does not prompt.  It exchanges the current
 and immediately prior cell, regardless of their levels.  If there is no
 prior cell it exchanges the current and next cell.
 
 @cindex cell, mark and point
-@kindex koutliner, M-0 C-c t
-@bkbd{M-0 C-c t} exchanges the cells in which point and mark fall.
-@bkbd{C-c t} with a non-zero numeric prefix argument, N, moves
+@kindex koutliner, M-0 C-c ; t
+@bkbd{M-0 C-c ; t} exchanges the cells in which point and mark fall.
+@bkbd{C-c ; t} with a non-zero numeric prefix argument, N, moves
 the current tree maximally past the next N visible cells.  If there are
 fewer visible, it makes the current cell the last cell in the outline.
 
@@ -6565,13 +6653,13 @@ fewer visible, it makes the current cell the last cell in the outline.
 
 @cindex splitting a cell
 @cindex cell, splitting
-@kindex koutliner, C-c s
-@kindex koutliner, C-u C-c s
+@kindex koutliner, C-c ; s
+@kindex koutliner, C-u C-c ; s
 One cell may be split into two adjacent sibling cells with @bkbd{C-c
-s}.  This leaves the cell contents preceding point in the current
+; s}.  This leaves the cell contents preceding point in the current
 cell, minus any trailing whitespace, and moves the contents following
 point to a new sibling cell which is inserted into the outline.
-@bkbd{C-u C-c s} instead adds the new cell as the first child of the
+@bkbd{C-u C-c ; s} instead adds the new cell as the first child of the
 original cell, rather than as its successor.
 
 All cell attributes in the original cell are propagated to the new one,
@@ -6616,7 +6704,7 @@ cell.
 @cindex koutline mode
 @cindex file, importing
 @cindex importing a file
-@cindex Koutline import
+@cindex koutline import
 For information on mode and suffix-specific conversions performed on
 file elements before they are inserted, see the documentation for the
 variables, @code{kimport:mode-alist} and @code{kimport:suffix-alist}.  This
@@ -6815,10 +6903,21 @@ between cells.
 @cindex cell, collapse
 @cindex cell, expand
 @kindex koutliner, M-@key{RET}
+@vindex kotl-mode:action-key-default-function
 A click or a press of the Action Key within a cell's body, but not on a
-Hyperbole button, toggles between hiding and showing the tree rooted at
-point.  Try it with either your mouse or with @bkbd{M-@key{RET}}.
+Hyperbole button, runs the function stored in the variable, 
+@code{kotl-mode:action-key-default-function}, which by default does nothing.
 
+@cindex koutliner, hide/show tree
+In prior Koutliner versions, this would toggle between showing and
+hiding the tree at point; however,now you can use the Org-style tree
+visibility cycling on @bkbd{@key{TAB}} instead.  If you prefer the
+prior behavior, uncomment the setting for that variable near the
+bottom of the Hyperbole @file{man/use-package} reference file when you
+add it to your persnal init file.  Note, however, that if
+@code{hywiki-mode} is set to @samp{:all} then when point is on a
+capitalized word in a Koutline, an Action Key press will create a new
+HyWiki page, as that has higher priority than this setting.
 
 @node View Specs,  , Hiding and Showing, Viewing Outlines
 @subsection  View Specs
@@ -6865,14 +6964,14 @@ view spec is <|ben>.
 @item a
 Show all cell levels and all lines in cells.
 
-@kindex koutliner, C-c b
+@kindex koutliner, C-c ; b
 @cindex blank lines, toggle
 @cindex view spec, blank lines
-@kindex koutliner, C-c b
+@kindex koutliner, C-c ; b
 @cindex toggling blank lines
 @item b
 Turn on blank lines between cells.  Without this character, blank lines
-will be turned off.  You may also use the @bkbd{C-c b} key binding to
+will be turned off.  You may also use the @bkbd{C-c ; b} key binding to
 toggle blank lines on and off independently of any other view settings.
 
 @cindex view spec, lines per cell
@@ -6982,12 +7081,12 @@ window.  If the klink contains a view spec, it will be applied when
 the referent is displayed.
 
 @cindex klink, inserting
-@kindex koutliner, C-c l
+@kindex koutliner, C-c ; l
 There are a number of easy ways to insert klinks into koutlines.  If you
 have mouse support under Hyperbole, simply click the Action Key within
 the indentation to the left of a cell text.  If you then double click on
 some cell, a link to that cell will be inserted where you started.  From
-a keyboard, use @bkbd{C-c l} when in a koutline or @bkbd{C-h h k l} when
+a keyboard, use @bkbd{C-c ; l} when in a koutline or @bkbd{C-h h k l} when
 not in a koutline to insert a klink.  Since klinks are implicit buttons,
 you may instead type in the text of the klink just as you saw them in the
 examples above and they will work exactly as if they had been entered with
@@ -7128,9 +7227,9 @@ you from invoking explicit commands that refill the cell.
 @cindex attributes, displaying
 @cindex displaying attributes
 @cindex outline, attribute list
-@kindex koutliner, C-c h
-@bkbd{C-c h} prompts for a cell label and displays the cell's
-attributes.  @bkbd{C-u C-c h} prompts for a cell label and displays
+@kindex koutliner, C-c ; h
+@bkbd{C-c ; h} prompts for a cell label and displays the cell's
+attributes.  @bkbd{C-u C-c ; h} prompts for a cell label and displays
 the attributes for it and its subtree; use 0 as the kcell id to see
 attributes for all visible cells in the outline.
 
@@ -7208,7 +7307,7 @@ by zero or more rolo records which we call entries.
 @cindex Org mode
 @cindex Markdown mode
 @cindex Emacs Outline mode
-@cindex Koutline mode
+@cindex koutline mode
 The first file in the list should be a user-specific hyrolo file,
 typically in the home directory and must have a suffix of either .org
 (Org mode) or .otl (Emacs Outline mode).  Other files in the list may
@@ -8504,6 +8603,7 @@ To programmatically query implicit buttons for their attributes, use
 the functions from the @samp{hbut} and @samp{hattr} classes.  See
 the @file{hib-kbd.el} file for an example of a custom help function.
 
+@page
 @node Explicit Button Technicalities, Encapsulating Systems, Creating Types, Developing with Hyperbole
 @section   Explicit Button Technicalities
 @menu
@@ -8905,7 +9005,7 @@ Flymake is an Emacs library that lints your code in the background.
 It provides @code{flymake-minor-mode} for source buffers and
 @code{flymake-diagnostics-buffer-mode} for listing the linter issues
 for a given source buffer.  Hyperbole extends this library with Smart
-Key jump and display issue contexts as well as a key map of commands
+Key jump and display issue contexts as well as a keymap of commands
 in source buffers to support removal of flymake issues without having
 to jump to the issue listing buffer.
 
@@ -9349,93 +9449,126 @@ use it.  Instructions are given below.
 @node Installation and Configuration, Customization, Setup, Setup
 @section   Installation and Configuration
 
-Hyperbole can be installed using Emacs' package manager, from its
-development repository or manually from the tarball archive.
+Hyperbole can be upgraded or installed using Emacs' package manager
+from ELPA or MELPA archives, using Straight or Elpaca package managers
+from Hyperbole's git development repository or manually downloaded via
+sftp from a tarball archive.  The following sections explain these methods.
 
 @menu
-* Elpa and Melpa Latest or Release Package Installation::
+* Package Upgrades::
+* Package Installation::
 * Git Latest Package Installation::
-* Manual Tarball Archive Installation::
-* Configuration::
+* Tarball Installation::
 @end menu
 
 @noindent
-After installing and configuring Hyperbole, read the next section on Invocation.
+After installing and configuring Hyperbole, read the next section, @pxref{Invocation}.
 
-@node Elpa and Melpa Latest or Release Package Installation, Git Latest Package Installation, Installation and Configuration, Installation and Configuration
-@subsection Elpa and Melpa Latest or Release Package Installation (Emacs Package Manager)
+@node Package Upgrades, Package Installation, Installation and Configuration, Installation and Configuration
+@subsection Package Upgrades
+
+@cindex upgrading Hyperbole
+@cindex Hyperbole upgrades
+To upgrade an existing Hyperbole installation, invoke the Emacs
+Package Manager, @pxref{Packages,,,emacs,the GNU Emacs Manual}, with
+@bkbd{M-x list-packages @key{RET}}, then use the @bkbd{U} key followed
+by the @bkbd{x} key to upgrade all out-of-date packages, Hyperbole
+among them.  Then skip to the @ref{Invocation} section.
+
+@node Package Installation, Git Latest Package Installation, Package Upgrades, Installation and Configuration
+@subsection Package Installation (Emacs Package Manager)
 
 @cindex installation
 @cindex configuration
-@cindex elpa package
-@cindex melpa package
 @cindex package manager
 @cindex Emacs package manager
+@cindex Hyperbole releases
+@cindex Hyperbole package installation
 @cindex release installation
 @cindex obtaining Hyperbole
 @cindex Hyperbole, obtaining
-@cindex elpa-devel package
 @cindex in-development installation
 @cindex latest installation
 @cindex installation, latest
 @cindex installation, release
 @cindex installation, from git
-Once you have Emacs set up at your site, you may install GNU Hyperbole
+Once you have Emacs set up at your site, you can install GNU Hyperbole
 using the Emacs Package Manager.  If you are not familiar with it,
-@pxref{Packages,,,emacs,the GNU Emacs Manual}.
+@pxref{Packages,,,emacs,the GNU Emacs Manual} for usage instructions
+and @pxref{Package Installation,,,emacs,the GNU Emacs Manual} for an
+introduction to package archive sites which host libraries of Emacs
+packages.
 
-Install Hyperbole like this:
-
-@code{M-x package-install RET hyperbole RET}
-
-Stable releases are done with care and occur once in awhile.  In between,
-there are regression-tested @emph{latest} distributions packaged
-from the in-development code branch; these may be many months and
-features ahead of the release branch.
-
-Therefore, consider using the GNU-devel ELPA package; it pulls from the
-latest Hyperbole development branch tip.  Since Hyperbole is a mature
-package, this is fine to use and update on a day-to-day basis.  But
-new features are tested on this branch and once in awhile it may break
-for a short time before a fix is pushed.
-
-If you prefer Hyperbole is also available from MELPA.
-
-For installing from GNU-devel ELPA, MELPA releases or MELPA snapshots
-add the respective archive to package-archives in your init
-file, see @pxref{Init File,,The Emacs Initialization File,emacs, the GNU Emacs
-Manual}.
+@cindex ELPA-devel archive
+@cindex MELPA-snapshots archive
+@cindex ELPA package archive
+@cindex MELPA package archive
+@dfn{Hyperbole releases} update the Hyperbole package version number
+and occur slowly. with major releases typically at least a year apart.
+In between, many significant feature updates are made, tested and
+promoted to package archives that track the Hyperbole master git
+development branch (elpa-devel and melpa-snapshots).  Since Hyperbole
+is a mature package with regression testing, the latest snapshots are
+usually fine for everyday use.  Most users should choose a package
+archive site that tracks these latest updates (elpa-devel and
+melpa-snapshots).  If you need slow-moving stability, get the latest
+release from elpa or melpa.
 
 @noindent
-GNU-devel ELPA:
+Here are the installation and configuration steps:
 
-@code{(add-to-list 'package-archives '("gnu-devel". "https://elpa.gnu.org/devel/") t)}
+@itemize
+@item Choose one package archive source for Hyperbole by adding
+one of the following expressions to your Emacs init file, see
+@pxref{Init File,,The Emacs Initialization File,emacs,the GNU Emacs
+Manual}:
+
+@table @b
+@noindent
+@item elpa-devel (latest Hyperbole updates):
+@code{(add-to-list 'package-archives@*
+'("elpa-devel". "https://elpa.gnu.org/devel/") t)}
 
 @noindent
-MELPA Releases:
-
-@code{(add-to-list 'package-archives '("melpa-releases" . "https://releases.melpa.org/packages/") t)}
-
-@noindent
-MELPA Snapshots:
-
-@code{(add-to-list 'package-archives '("melpa-snapshots" . "https://snapshots.melpa.org/packages/") t)}
+@item melpa-snapshots (latest Hyperbole updates):
+@code{(add-to-list 'package-archives@*
+'("melpa-snapshots" . "https://snapshots.melpa.org/packages/") t)}
 
 @noindent
-If you prefer to automate the install of Hyperbole you can also add
-the following lines to your init file after setting
-package-archives. Then Hyperbole will be installed when Emacs is
-started if not available.
+@item elpa (updates only when Hyperbole version number changes):
+@code{(add-to-list 'package-archives@*
+'("elpa". "https://elpa.gnu.org") t)}
 
-@lisp
-@group
-(require 'package)
-(unless (package-installed-p 'hyperbole)
-   (package-install 'hyperbole))
-@end group
-@end lisp
+@noindent
+@item melpa-releases (updates only when Hyperbole version number changes):
+@code{(add-to-list 'package-archives@*
+'("melpa-releases" . "https://releases.melpa.org/packages/") t)}
+@end table
 
-@node Git Latest Package Installation, Manual Tarball Archive Installation, Elpa and Melpa Latest or Release Package Installation, Installation and Configuration
+@findex man/use-package
+@cindex use-package configuration
+@item Then copy Hyperbole's @file{$@{hyperb:dir@}/man/use-package}
+file to your Emacs init file and customize it to your taste based on
+the comments therein, though everything will work fine without any
+modifications to the @file{use-package} file.
+
+@sp 1
+@verbatiminclude use-package
+@sp 1
+
+@item Restart Emacs to Install, Configure and Activate Hyperbole
+
+With Hyperbole now installed and configured you should see the
+@code{Hypb} hyperbole minor mode indicator in your modeline after
+Emacs startup and initializaton.
+
+The @file{use-package} expression will download and install Hyperbole, if
+need be, and then configure it as you have specified there.  If you
+want to do any further interactive customization, see the section,
+@pxref{Customization}.
+@end itemize
+
+@node Git Latest Package Installation, Tarball Installation, Package Installation, Installation and Configuration
 @subsection Git Latest Package Installation
 
 @cindex Straight package manager
@@ -9444,26 +9577,25 @@ started if not available.
 @cindex pre-release installation
 @cindex installation, pre-release
 @cindex installation, from git
-If you potentially want to contribute to Hyperbole development and send
-pull requests to the Hyperbole development team or to try out new
-features still in testing, you can use the Straight package manager.  It
-pulls the latest Hyperbole source code directly from its git repository.
-This also gives you a clean installation process without showing you any
-minor byte compilation warnings.
+To build your own packages straight from the Hyperbole development
+source, you can use package managers that pull from the Hyperbole git
+repo: Straight, Elpaca or Quelpa.  These allow you to make pull
+requests to the Hyperbole development team or to try out just
+published new features.
 
-Some package managers support downloading directly from a git
-repository. This is the url to the repository:
+@noindent
+This is the url to the Hypebole repo:
 
   @code{https://git.savannah.gnu.org/git/hyperbole.git}
 
-For further details check your package managers documentation related
-to using a git repository.
+For further usage details on your specific git-based package manager,
+see its own documentation.
 
-@node Manual Tarball Archive Installation,  Configuration, Git Latest Package Installation, Installation and Configuration
-@subsection Manual Tarball Archive Installation (SFTP)
+@node Tarball Installation,  , Git Latest Package Installation, Installation and Configuration
+@subsection Tarball Installation (SFTP)
 
-If you are old-school, don't like package managers, and prefer doing
-everything by hand, then you can obtain Hyperbole from a tarball:
+If you avoid package managers and like to manually install packages,
+a @code{tar} archive is available for sftp download and installation.
 
 @noindent
 Download either:
@@ -9474,7 +9606,7 @@ Download either:
 @uref{http://ftpmirror.gnu.org/hyperbole/}, which will find the closest
 mirror of the GNU ftp site and show it to you.
 
-@item 2. the latest in-development pre-release tar.gz source archive linked to at the top of this web page:
+@item 2. the latest in-development pre-release tar.gz source archive:
 @uref{https://elpa.gnu.org/devel/hyperbole.html}.
 @end table
 
@@ -9489,25 +9621,10 @@ lines to your personal init file:
 
 @lisp
 @group
-  (push "<directory-ending-with-hyperbole-where-you-unpacked>"
+  (push "<hyperbole-version-directory-where-you-unpacked>"
         load-path)
 @end group
 @end lisp
-
-@page
-@node Configuration, Customization, Manual Tarball Archive Installation, Installation and Configuration
-@section   Configuration
-
-For configuring Hyperbole use the following use-package declaration
-and place it in your init file.
-
-@sp 1
-@verbatiminclude use-package
-@sp 1
-
-With Hyperbole now installed and configured you should see the
-@code{Hypb} hyperbole minor mode indicator in your modeline after
-startup.
 
 @page
 @node Customization,  , Installation and Configuration, Setup
@@ -9516,8 +9633,11 @@ startup.
 @cindex menu, Cust
 @cindex configuration
 @cindex customization
-Major Hyperbole user options may be set from the Customize submenu
-below the Hyperbole menubar menu, as seen here.
+Most permanent configuration changes are made in the Hyperbole
+@code{use-package} expression in your init file.  But many Hyperbole
+variables are custom options that can be changed interactively and the
+changes will persist across Emacs sessions.  Use the Customize submenu
+below the Hyperbole menubar menu to set any of these, as seen here.
 
 @float Image,image:Customize Menu
 @caption{Hyperbole Customize Menu}
@@ -9951,7 +10071,7 @@ override Hyperbole's defaults.
 @end menu
 
 @node Binding Minibuffer Menu Items, Default Hyperbole Bindings, Hyperbole Key Bindings, Hyperbole Key Bindings
-@section Binding Minibuffer Menu Items
+@section   Binding Minibuffer Menu Items
 
 @cindex binding keys
 @cindex minibuffer menu bindings
@@ -9971,7 +10091,7 @@ menu.  Simply type the keys to select the item you want to bind to
 your key.
 
 @node Default Hyperbole Bindings, Testing, Binding Minibuffer Menu Items, Hyperbole Key Bindings
-@section Default Hyperbole Bindings
+@section   Default Hyperbole Bindings
 
 Hyperbole's default key bindings can be viewed and edited from
 either the Cust/KeyBindings minibuffer menu or from the Hyperbole
@@ -10191,27 +10311,33 @@ Example uses with a press of the Action Key:
 
 @cindex outliner keys
 This appendix summarizes the specialized key bindings available when
-editing a koutline with Hyperbole.  Each key is shown together with its
-command binding and the documentation for that command.  Normal emacs
-editing keys are modified to account for the structure within outlines.
-An outliner command which overloads an emacs command named @emph{cmd}
-is named @emph{kotl-mode:cmd}.
+editing a koutline with Hyperbole.  Each key is shown together with
+its command binding and the documentation for that command.  Normal
+emacs editing keys are modified to account for the structure within
+outlines.  An outliner command which overloads an emacs command named
+@emph{cmd} is named @emph{kotl-mode:cmd}.
 
 @table @code
+
+@findex kotl-mode:toggle-tab-flag
+@item kotl-mode:toggle-tab-flag @bkbd{C-c C-]}
+Toggle the value of @code{kotl-mode:tab-flag} and explain its current
+usage.  This toggles TAB/S-TAB between the Org-compatible cycling
+commands and the traditional Koutliner demote/promote commands."
 
 @findex kfile:write
 @item kfile:write  @bkbd{C-x C-w}
 Write the current outline to FILE.
 
 @findex klink:create
-@item klink:create  @bkbd{C-c l}
+@item klink:create  @bkbd{C-c ; l}
 Insert at point an implicit link to REFERENCE.
 REFERENCE should be a cell-ref or a string containing "filename, cell-ref".
 See the documentation for @code{(kcell:ref-to-id)} for valid cell-ref
 formats.
 
 @findex kotl-mode:add-below-parent
-@item kotl-mode:add-below-parent  @bkbd{C-c p}
+@item kotl-mode:add-below-parent  @bkbd{C-c ; p}
 Add a new cell to current kview after current cell's parent.
 If parent is the hidden root cell 0, then add as the first cell of the
 outline.  Otherwise, add it as the next sibling of the parent cell.
@@ -10227,7 +10353,7 @@ used as a repeat count for the number of cells to add.
 Return last newly added cell.
 
 @findex kotl-mode:add-child
-@item kotl-mode:add-child  @bkbd{C-c a}
+@item kotl-mode:add-child  @bkbd{C-c ; a}
 Add a new cell to current kview as first child of current cell.
 
 @findex kotl-mode:add-prior-cell
@@ -10283,7 +10409,7 @@ Move point to the level 1 root of the current cell's tree.
 Leave point at the start of the cell.
 
 @findex kotl-mode:cell-help
-@item kotl-mode:cell-help  @bkbd{C-c h}
+@item kotl-mode:cell-help  @bkbd{C-c ; h}
 Display a temporary buffer of CELL-REF's attributes.
 CELL-REF defaults to current cell.  Optional prefix arg CELLS-FLAG
 selects the cells to print:
@@ -10312,7 +10438,7 @@ Center each nonblank line in the paragraph at or after point.
 See @code{center-line} for more information.
 
 @findex kotl-mode:copy-after
-@item kotl-mode:copy-after  @bkbd{C-c c}
+@item kotl-mode:copy-after  @bkbd{C-c ; c}
 Copy tree rooted at FROM-CELL-REF to follow tree rooted at TO-CELL-REF.
 If prefix arg CHILD-P is non-nil, make FROM-CELL-REF the first child of
 TO-CELL-REF, otherwise make it the sibling following TO-CELL-REF.
@@ -10403,7 +10529,7 @@ Leave point at the start of the cell.
 Display the Koutliner example file for demonstration use by a user.
 
 @findex kotl-mode:exchange-cells
-@item kotl-mode:exchange-cells  @bkbd{C-c e}
+@item kotl-mode:exchange-cells  @bkbd{C-c ; e}
 Exchange CELL-REF-1 with CELL-REF-2 in current view.  Don't move point.
 
 @findex kotl-mode:fill-cell
@@ -10470,7 +10596,7 @@ Move point forward ARG (or 1) sentences and return point.
 Move point forward ARG (or 1) words and return point.
 
 @findex kotl-mode:goto-cell
-@item kotl-mode:goto-cell  @bkbd{C-c g}
+@item kotl-mode:goto-cell  @bkbd{C-c ; g}
 Move point to start of cell given by CELL-REF.  (See the documentation
 for @code{(kcell:ref-to-id)}, for valid formats).  Return point iff
 CELL-REF is found within current view.  With a prefix argument, CELL-REF
@@ -10528,7 +10654,7 @@ Interactively, second arg is non-nil if prefix arg is supplied.
 Delete all spaces and tabs around point and leave one space.
 
 @findex kotl-mode:kill-contents
-@item kotl-mode:kill-contents  @bkbd{C-c k}
+@item kotl-mode:kill-contents  @bkbd{C-c ; k}
 Kill contents of cell from point to cell end.
 With prefix ARG, kill entire cell contents.
 
@@ -10582,7 +10708,7 @@ already within the last sibling cell.
 Mail outline tree rooted at CELL-REF.  Use "0" for whole outline buffer.
 
 @findex kotl-mode:move-after
-@item kotl-mode:move-after  @bkbd{C-c m}
+@item kotl-mode:move-after  @bkbd{C-c ; m}
 Move tree rooted at FROM-CELL-REF to follow tree rooted at TO-CELL-REF.
 If prefix arg CHILD-P is non-nil, make FROM-CELL-REF the first child of
 TO-CELL-REF, otherwise make it the sibling following TO-CELL-REF.
@@ -10672,7 +10798,7 @@ point).
 Display fully expanded tree rooted at CELL-REF.
 
 @findex kotl-mode:split-cell
-@item kotl-mode:split-cell  @bkbd{C-c s}
+@item kotl-mode:split-cell  @bkbd{C-c ; s}
 Split cell into two cells and move to new cell.
 Cell contents after point become part of newly created cell.
 Default is to create new cell as sibling of current cell.
@@ -10686,7 +10812,7 @@ With a prefix arg, also toggle the display of blank lines between
 cells.
 
 @findex kotl-mode:transpose-cells
-@item kotl-mode:transpose-cells  @bkbd{C-c t}
+@item kotl-mode:transpose-cells  @bkbd{C-c ; t}
 Exchange current and previous visible cells, leaving point after both.
 If no previous cell, exchange current with next cell.
 With prefix ARG, take current cell and move it past ARG cells.
@@ -10762,6 +10888,10 @@ Change kview's label display type to NEW-TYPE, updating all displayed labels.
 See documentation for the @code{kview:default-label-type} variable,
 for valid values of NEW-TYPE.
 
+Separately, with an optional prefix argument of 1, toggle the @samp{C-c}
+prefix for letter key bindings on and off.  This does not affect the
+default @samp{C-c ;} letter key prefix.
+
 @findex kvspec:activate
 @item kvspec:activate  @bkbd{C-c C-v}
 Activate optional VIEW-SPEC or existing view specification over the
@@ -10770,7 +10900,7 @@ current koutline.  VIEW-SPEC must be a string.  See
 on valid view specs.
 
 @findex kvspec:toggle-blank-lines
-@item kvspec:toggle-blank-lines @bkbd{C-c b}
+@item kvspec:toggle-blank-lines @bkbd{C-c ; b}
 Toggle blank lines between cells on or off.
 
 @end table
@@ -11228,62 +11358,76 @@ When company-mode is active:
 @subsection Smart Key - Org Mode
 
 @vindex hsys-org-enable-smart-keys
+@findex hsys-org-agenda-tags-p
 @cindex Org mode
 @format
 @group
 When in an Org mode context and @code{hsys-org-enable-smart-keys} is non-nil:
   ACTION KEY
-     (1) If on an Org todo keyword, cycle through the keywords in
+     (1) If on an Org tag, call @code{hsys-org-agenda-tags-p} and an
+         appropriate view tags function based on current directory or
+         buffer name, matching to the tag.  If on a colon between
+         tags, match to all tags on the line.
+
+     (2) If on an Org todo keyword, cycle through the keywords in
          that set or if final done keyword, remove it.
 
-     (2) If on an Org agenda view item, jump to the item for editing.
+     (3) If on an Org agenda view item, jump to the item for editing.
 
-     (3) Within a radio or internal target or a link to it, jump between
+     (4) Within a radio or internal target or a link to it, jump between
          the target and the first link to it, allowing two-way navigation.
 
-     (4) Follow other internal links and ID references in Org mode files.
+     (5) Follow other internal links and ID references in Org mode files.
 
-     (5) Follow Org mode external links.
+     (6) Follow Org mode external links.
 
-     (6) When on a Hyperbole button, activate the button.
+     (7) When on a Hyperbole button, activate the button.
 
-     (7) With point on the :dir path of a code block definition, display the
+     (8) With point on the :dir path of a code block definition, display the
          directory given by the path.
 
-     (8) With point on any #+BEGIN_SRC, #+END_SRC, #+RESULTS, #+begin_example
+     (9) With point on any #+BEGIN_SRC, #+END_SRC, #+RESULTS, #+begin_example
          or #+end_example header, execute the code block via the Org mode
          standard binding of @bkbd{C-c C-c}, @code{org-ctrl-c-ctrl-c}.
 
-     (9) When point is on an Org mode heading, cycle the view of the subtree
-         at point.
+     (10) With point on an Org mode heading but not a Hyperbole button, call
+         the function given by the @code{smart-org-action-key-heading-function}
+         variable, which defaults to doing nothing.
 
-     (10) In any other context besides the end of a line, invoke the Org mode
+     (11) In any other context besides the end of a line, invoke the Org mode
           standard binding of @bkbd{M-@key{RET}}, @code{org-meta-return}.
 @end group
 @end format
 
+@findex hsys-consult-org-grep-tags-p
 @format
 @group
    When the ASSIST KEY is pressed, it behaves just like the Action Key except
    in these contexts:
 
-     (1) If on an Org todo keyword, move to the first todo keyword in
+     (1) If on an Org tag, call @code{hsys-consult-org-grep-tags-p} and an
+         appropriate consult grep function based on current directory
+         or buffer name, prompting with and matching to the tag.  If on a
+         colon between tags, prompt and match to all tags on the line.
+
+     (2) If on an Org todo keyword, move to the first todo keyword in
          the next set, if any.
 
-     (2) If on an Org mode link, ID reference or agenda view item, display
-         Hyperbole context-sensitive help.
+     (3) If on an Org mode link or agenda view item, display Hyperbole
+         context-sensitive help.
 
-     (3) On a Hyperbole button, perform the Assist Key function, generally
+     (4) On a Hyperbole button, perform the Assist Key function, generally
          showing help for the button.
 
-     (4) With point on the :dir value of a code block definition, display
+     (5) With point on the :dir value of a code block definition, display
          a help summary of this implicit directory button.
 
-     (5) With point on any #+BEGIN_SRC, #+END_SRC, #+RESULTS, #+begin_example
+     (6) With point on any #+BEGIN_SRC, #+END_SRC, #+RESULTS, #+begin_example
          or #+end_example header, remove source block results.
 
-     (6) Not on a Hyperbole button but on an Org mode heading, cycle
-         through views of the whole buffer outline.
+     (7) With point on an Org mode heading but not a Hyperbole button, call
+         the function given by the @code{smart-org-assist-key-heading-function}
+         variable, which defaults to doing nothing.
 @end group
 @end format
 
@@ -11732,6 +11876,7 @@ When pressed within an occur-mode, moccur-mode or amoccur-mode buffer:
 
 @node Smart Key - The Koutliner, Smart Key - Flymake Mode, Smart Key - Occurrence Matches, Smart Keyboard Keys
 @subsection Smart Key - The Koutliner
+@vindex kotl-mode:action-key-default-function
 @format
 @group
 When pressed within a Hyperbole Koutliner buffer (kotl-mode):
@@ -11746,10 +11891,11 @@ When pressed within a Hyperbole Koutliner buffer (kotl-mode):
      (4) on a | character within an Org-style table, toggle Org Table minor
          mode;
      (5) in an Org-style table, wrap the table cell or region;
-     (6) within a cell, if its subtree is hidden then shows it,
-         otherwise hides it.
+     (6) within a cell, call the value of @code{kotl-mode:action-key-default-function},
+         which defaults to doing nothing.
 @end group
 @end format
+@vindex kotl-mode:assist-key-default-function
 @format
 @group
   ASSIST KEY
@@ -11763,6 +11909,8 @@ When pressed within a Hyperbole Koutliner buffer (kotl-mode):
          left of a cell, prompts to move one tree to a new location in
          the outline; press the Action Key twice to select the tree to
          move and where to move it.
+     (5) anywhere else within a kcell, call the value of
+         @code{kotl-mode:assist-key-default-function}, which defaults to doing nothing.
 @end group
 @end format
 
@@ -11785,13 +11933,13 @@ When pressed within a line of the flymake linter list of issues buffer:
 @cindex flymake keymap
 The flymake library comes with only a pulldown menu and no other
 source buffer key bindings, forcing you to first display the list of
-issues and then find the issue of interest and jump to it.  Hyperbole
-adds a source buffer keymap on the @bkbd{C-c C-l} prefix that lets you
-navigate and remediate flymake issues exclusively in the source
-buffer.  It also makes it more convenient to jump to the issue listing
-buffer, to toggle @code{flymake-mode} on and off and to toggle whether
-the movement between issue commands wrap around at the end of the
-buffer or not.
+issues and then find the issue of interest and jump to it.  With
+@code{flymake-mode} enabled, Hyperbole adds a source buffer keymap on
+the @bkbd{C-c C-l} prefix that lets you navigate and remediate flymake
+issues exclusively in the source buffer.  It also makes it more
+convenient to jump to the issue listing buffer, to toggle
+@code{flymake-mode} on and off and to toggle whether the movement
+between issue commands wraps around at the end of the buffer or not.
 
 
 @table @asis
@@ -11846,7 +11994,9 @@ current buffer.
 @kindex C-c C-l t
 @kitem C-c C-l t
 @code{hsys-flymake-toggle} - Toggle whether minor mode
-@code{flymake-mode} is enabled in the current buffer.
+@code{flymake-mode} is enabled in the current buffer.  This is a
+global key binding made only if there is no binding on @bkbd{C-c C-l}
+when Hyperbole is loaded.  Otherwise, you'll have to bind it yourself.
 
 @findex hsys-flymake-toggle-wraparound
 @kindex C-c C-l w

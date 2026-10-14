@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Oct-95 at 15:17:07
-;; Last-Mod:     11-Oct-26 at 09:55:53 by Mats Lidell
+;; Last-Mod:     12-Oct-26 at 14:33:11 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -315,7 +315,7 @@ available, the cell remains fully expanded."
   (when (stringp kvspec:current)
       (setq kvspec:string (format kvspec:string-format kvspec:current)))
   (unless (memq 'kvspec:string mode-line-format)
-    (setq mode-line-format (copy-sequence mode-line-format))
+    (setq-local mode-line-format mode-line-format)
     (let ((elt (or (memq 'mode-line-buffer-identification mode-line-format)
 		   (memq 'modeline-buffer-identification
 			 mode-line-format))))

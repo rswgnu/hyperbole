@@ -29,12 +29,22 @@
 
      3b. Advanced outline processing
 
-       3b1. Autonumbering: Full auto-numbering in Augment (1a2) or legal
+       3b1. NOTE: As of Hyperbole version 9.3.0, the Koutliner {C-c
+            <letter>} keys have moved to {C-c ; <letter>} so as not to
+            override keys reserved for global user-specific bindings.  If
+            you don't care about this and want the old bindings back,
+            uncomment the `kotl-mode:letter-prefix' setting in your
+            Hyperbole `use-package' initialization based on the reference
+            file "${hyperb:dir}/man/use-package".  You can also
+            interactively toggle between `C-c ;' and `C-c' prefixes with
+            {M-1 C-c C-l}.
+
+       3b2. Autonumbering: Full auto-numbering in Augment (1a2) or legal
             (1.1.2) formats.  Augment style is the default because it is
             shorter and quicker to read.  Use {C-c C-l ?}  to see the full
             set of label types and to select a different label type.
 
-       3b2. Label Separators: By default, the Koutliner separates labels from
+       3b3. Label Separators: By default, the Koutliner separates labels from
             cell contents by two spaces.  If you want to change the separator
             for the current outline, use {C-c M-l}.  {C-u C-c M-l} will
             additionally change the default separator value used when new
@@ -42,8 +52,8 @@
             trailing period after each cell label.  The separator must be at
             least two characters long.
 
-       3b3. Cell Creation: {C-j} adds a new cell as a sibling following the
-            current cell.  {C-u C-j} or {C-c a} adds the cell as a child of
+       3b4. Cell Creation: {C-j} adds a new cell as a sibling following the
+            current cell.  {C-u C-j} or {C-c ; a} adds the cell as a child of
             the current cell.  Any other positive prefix arg to {C-j} adds
             that many following cells at the same level as the current
             one.  A negative prefix arg to {C-j} adds that many
@@ -51,74 +61,49 @@
             a zero prefix arg adds a new cell as the first one in the
             outline at the top level.
             
-            {C-c p} adds the cell as the preceding sibling of the current
+            {C-c ; p} adds the cell as the preceding sibling of the current
             cell, i.e. a new cell immediately prior to the current cell at
             the same level; same as {C-u -1 C-j}.
             
-            {C-u C-c p} adds the cell as the sibling of the current cell's
+            {C-u C-c ; p} adds the cell as the sibling of the current cell's
             parent.
 
-       3b4. Cell and Tree Deletion: {C-c C-k} kills the current cell and its
-            entire subtree.  {C-c k} kills the contents of a cell from point
-            through the end of the cell.  {C-u C-c k} kills the entire
+       3b5. Cell and Tree Deletion: {C-c C-k} kills the current cell and its
+            entire subtree.  {C-c ; k} kills the contents of a cell from point
+            through the end of the cell.  {C-u C-c ; k} kills the entire
             contents of the cell regardless of the location of point.  You may
             then yank the contents into another cell with {C-y}.
 
-       3b5. Tree Demotion and Promotion: Demote or promote the tree at point
-            with {TAB} and {S-TAB}, respectively.  These also refill the text
-            of each cell not marked with a no-fill property.  To override
-            the no-fill property and refill all demoted/promoted cells, use
-            {M-0 TAB} and {M-0 S-TAB}.
-            
-            Any other positive or negative prefix argument to these commands
-            promotes or demotes the tree up to a maximum of that number of
-            levels, depending on what the outline allows at any given point.
-            
-            See also <@ 3d=059>, for how tab key bindings differ when Org
-            Table minor mode is enabled.
-            
-            To insert a literal tab character, use {C-q TAB} or adjust the
-            value of `kotl-mode:emulate-tab' to suit your needs.
+       3b6. TAB and Shift-TAB: Org-style Cycling or Tree Demotion and Promotion
 
-       3b6. Org-style Visibility Cycling
+         3b6a. By default, TAB and S-TAB perform Org-style tree and outline
+               visibility cycling respectively.  See <@ 3b7=071>.
 
-         3b6a. {M-1 TAB} toggles the function of {TAB} and {S-TAB} between
-               demotion/promotion and Org-like tree visibility cycling.
+         3b6b. {C-c C-]} toggles the function of {TAB} and {S-TAB} between
+               Org-like tree visibility cycling and demotion/promotion.  See
+               <@ 3b8=013>.
 
-         3b6b. When cycling is toggled on, {TAB} rotates the tree at point
-               through three different states (local cycling):
+       3b7. Org-style Visibility Cycling  (kotl-mode:tab-flag = 'cycle) (default)
+
+         3b7a. {TAB} rotates the tree at point through three different
+               states (local cycling):
                    1. FOLDED:   Hide all but the first line of the tree at point
                    2. CHILDREN: Hide all but the first line of the root cell at
                                 point and its children
                    3. SUBTREE:  Show the entire tree at point; if there is no
                                 subtree, switch directly from CHILDREN to FOLDED.
 
-         3b6c. When cycling is toggled on, {C-u TAB} or {S-TAB} rotates the the
-               whole outline through these three different states (global
-               cycling):
+         3b7b. {C-u TAB} or {S-TAB} rotates the the whole outline through
+               these three different states (global cycling):
                    1. OVERVIEW: Show only the first line of level 1 cells
                    2. CONTENTS: Show the first line of all cells at all levels
                    3. SHOW ALL: Show the entire outline.
 
-         3b6d. When cycling is toggled on, {S-TAB} With a numeric prefix
-               argument shows cells across the whole outline down to prefix
-               argument level, one line per cell.  Zero means show all cell
-               levels.
+         3b7c. {S-TAB} With a numeric prefix argument shows cells across the
+               whole outline down to prefix argument level, one line per
+               cell.  Zero means show all cell levels.
 
-         3b6e. In summary, with kotl-mode:tab-flag = nil (default):
-               |-------------+------------------------+-------------------------|
-               | Prefix Arg  | TAB Function           | Shift-TAB Function      |
-               |-------------+------------------------+-------------------------|
-               | nil         | Demote Tree            | Promote Tree            |
-               | C-u         | Demote Siblings        | Promote Siblings        |
-               | C-u C-u     | Reset View Spec        | Reset View Spec         |
-               | C-u C-u C-u | Show Whole Outline     | Show Whole Outlin       |
-               | 0           | Demote and Refill Tree | Promote and Refill Tree |
-               | 1           | Toggle tab-flag        |                         |
-               | Other ARG   | Demote Tree ARG Levels | Promote Tree ARG Levels |
-               |-------------+------------------------+-------------------------|
-
-         3b6f. With kotl-mode:tab-flag = 'cycle:
+         3b7d. In summary:
                |---------------+-------------------------+----------------------|
                | Prefix Arg    | TAB Function            | Shift-TAB Function   |
                |---------------+-------------------------+----------------------|
@@ -134,7 +119,45 @@
                See {C-h f kotl-mode:tab-command RET} and {C-h f
                kotl-mode:untab-command RET} for full details.
 
-       3b7. Cell and Tree Filling: {M-q} or {M-j} refills a paragraph within
+       3b8. Tree Demotion and Promotion (kotl-mode:tab-flag = nil)
+
+         3b8a. {TAB} and {S-TAB} demote and promote the tree at point,
+               respectively.  These also refill the text of each cell not
+               marked with a no-fill property.  To override the no-fill
+               property and refill all demoted/promoted cells, use {M-0 TAB}
+               and {M-0 S-TAB}.
+               
+               Any other positive or negative prefix argument to these commands
+               promotes or demotes the tree up to a maximum of that number of
+               levels, depending on what the outline allows at any given point.
+
+         3b8b. In summary:
+               |-------------+------------------------+-------------------------|
+               | Prefix Arg  | TAB Function           | Shift-TAB Function      |
+               |-------------+------------------------+-------------------------|
+               | nil         | Demote Tree            | Promote Tree            |
+               | C-u         | Demote Siblings        | Promote Siblings        |
+               | C-u C-u     | Reset View Spec        | Reset View Spec         |
+               | C-u C-u C-u | Show Whole Outline     | Show Whole Outlin       |
+               | 0           | Demote and Refill Tree | Promote and Refill Tree |
+               | 1           | Toggle tab-flag        |                         |
+               | Other ARG   | Demote Tree ARG Levels | Promote Tree ARG Levels |
+               |-------------+------------------------+-------------------------|
+
+       3b9. Literal TABs
+
+         3b9a. To insert a literal tab character, use {C-q TAB} or adjust the
+               value of `kotl-mode:emulate-tab' to suit your needs.
+
+         3b9b. See also <@ 3d=059>, for how tab key bindings differ when Org
+               Table minor mode is enabled.
+
+         3b9c. If you want the TAB key to always indent lines and insert
+               whitespace (no visiblity cycling and no demotion/promotion),
+               then set `kotl-mode:tab-flag' to t.  This will override all
+               other uses of the key.
+
+      3b10. Cell and Tree Filling: {M-q} or {M-j} refills a paragraph within
             a cell so that its lines wrap within the current margin
             settings.  {C-c M-q} or {C-c M-j} refills all paragraphs within
             a cell.  {C-M-q} or {C-M-j} refills all cells within a tree.
@@ -143,7 +166,7 @@
             moving, promoting, demoting, exchanging, splitting and appending
             cells to also automatically refill each cell.
 
-       3b8. Cursor Movement:  In addition to normal Emacs movement commands,
+      3b11. Cursor Movement:  In addition to normal Emacs movement commands,
             you can move within a cell or from one cell or tree to another.
             
              {C-c ,}       - Move to the beginning of the current cell.
@@ -165,7 +188,7 @@
              {C-c ^}       - Move to the level 1 root of the current tree.
              {C-c $}       - Move to the last cell in the tree rooted at point.
 
-       3b9. Tree Movement and Copying: Entire outline trees can be moved or
+      3b12. Tree Movement and Copying: Entire outline trees can be moved or
             copied within an outline with single commands.  Simply invoke
             the desired command and then double click/press with the Action
             Key on the desired root cell for each argument for which you are
@@ -177,14 +200,14 @@
              {M-<down>}    - Move current tree past prefix arg same level trees.
              {M-<up>}      - Move current tree back prefix arg same level trees.
             
-             {C-c c}       - Copy <tree> to follow as sibling of <cell>.
-             {C-u C-c c}   - Copy <tree> to follow as first child of <cell>.
+             {C-c ; c}     - Copy <tree> to follow as sibling of <cell>.
+             {C-u C-c ; c} - Copy <tree> to follow as first child of <cell>.
             
              {C-c C-c}     - Copy <tree> to precede <cell>.
              {C-u C-c C-c} - Copy <tree> as first child of the parent of <cell>.
             
-             {C-c m}       - Move <tree> to follow as sibling of <cell>.
-             {C-u C-c m}   - Move <tree> to follow as first child of <cell>.
+             {C-c ; m}     - Move <tree> to follow as sibling of <cell>.
+             {C-u C-c ; m} - Move <tree> to follow as first child of <cell>.
             
              {C-c C-m}     - Move <tree> to precede <cell>.
              {C-u C-c C-m} - Move <tree> as first child of the parent of <cell>.
@@ -196,7 +219,7 @@
             of the root cell of the tree to move and then double click within
             the body of the root cell of the tree you want it to follow.
 
-      3b10. Tree Text or Region Copying to a Non-Koutline Buffer:
+      3b13. Tree Text or Region Copying to a Non-Koutline Buffer:
              {C-c M-c} - Copy <tree> text or active region to a non-Koutline buffer.
              {C-c C-@} - Copy <tree> text to an outgoing mail message.
             
@@ -204,43 +227,43 @@
             hidden/invisible text when copying.  If yes, all invisible text
             is expanded before copying.
 
-      3b11. Cell Transposition:  The move and copy commands rearrange entire
+      3b14. Cell Transposition:  The move and copy commands rearrange entire
             trees.  The following two commands exchange the locations of two
             cells.
 
-        3b11a. {C-c e} prompts for two cell addresses and exchanges the cells.
+        3b14a. {C-c ; e} prompts for two cell addresses and exchanges the cells.
 
-        3b11b. {C-c t} does not prompt.  It exchanges the current and
+        3b14b. {C-c ; t} does not prompt.  It exchanges the current and
                preceding cells.  If there is no preceding cell it exchanges
                the current and next cell.
                
-               {C-c t} with a prefix argument of zero exchanges the cells in
+               {C-c ; t} with a prefix argument of zero exchanges the cells in
                which point and mark fall.
                
-               {C-c t} with a non-zero numeric prefix argument, N, moves
+               {C-c ; t} with a non-zero numeric prefix argument, N, moves
                the current tree past maximally the next N visible cells.  If
                there are fewer visible, it makes the current cell the last
                cell in the outline.
 
-      3b12. Cell Splitting: You can split one cell into two adjacent cells
-            with {C-c s}.  This leaves the cell contents preceding point in
+      3b15. Cell Splitting: You can split one cell into two adjacent cells
+            with {C-c ; s}.  This leaves the cell contents preceding point in
             the current cell, minus any trailing whitespace, and moves the
             contents following point to a new sibling cell which is inserted
-            into the outline.  {C-u C-c s} adds the new cell as the first
+            into the outline.  {C-u C-c ; s} adds the new cell as the first
             child of the original cell, rather than as its sibling.
             
             All cell attributes in the original cell are propagated to the new
             one.
 
-      3b13. Cell Appending:  {C-c +} appends the contents of a specified cell
+      3b16. Cell Appending:  {C-c +} appends the contents of a specified cell
             to the end of another cell.
 
-      3b14. Hiding and Showing:  Individual cells, branches, or particular
+      3b17. Hiding and Showing:  Individual cells, branches, or particular
             levels in the outline may be hidden or shown.  These commands work
             even when an outline buffer is read-only, e.g. when its file is
             not checked out of a version control system yet.
 
-        3b14a. {C-c C-h}  - Hide (collapse) tree rooted at point.
+        3b17a. {C-c C-h}  - Hide (collapse) tree rooted at point.
                {C-c C-s}  - Show (expand)   tree rooted at point.
                
                {C-c C-a}  - Show (expand) all cells in the outline.
@@ -259,11 +282,20 @@
                toggle display of blank lines between cells as well,
                e.g. {C-u C-c C-o}.  Try it now.
 
-        3b14b. A click or press of the Action Key within a cell's body, but
-               not on a button, toggles between hiding and showing the tree
-               rooted at point.
+        3b17b. If you have enabled `hywiki-mode' with a setting of ':all'
+               buffers, then a click or a press of the Action Key on a
+               potential HyWikiWord creates and opens a blank wiki page for
+               the word.  If it already exists, then the existing page is
+               opened.
 
-      3b15. Cell Identifiers: Permanent ids are associated with each cell
+        3b17c. A click or press of the Action Key anywhere else within a
+               cell's body, but not on a button, calls the value of the
+               `kotl-mode:action-key-default-function' variable, which
+               defaults to doing nothing, to avoid confusion with HyWikiWord
+               activation.  Set it to ‘kotl-mode:show-or-hide-tree’ if you
+               want the old Koutliner behavior.
+
+      3b18. Cell Identifiers: Permanent ids are associated with each cell
             and can be used in hyperlinks that are maintained as cells are
             reordered in a file.  (These ids may also be displayed in place
             of the outline level relative ids.  Use {C-c C-l id RET}).
@@ -272,10 +304,10 @@
             outline.  Permanent ids always begin with a 0, as in 012, to
             distinguish them from relative ids.
 
-      3b16. Cell Attributes: Each cell has its own attribute list.  The
+      3b19. Cell Attributes: Each cell has its own attribute list.  The
             attribute lists for the cells in the tree rooted at point can be
-            displayed by pressing the Assist Key.  {C-c h} prompts for a kcell
-            id and displays its attributes.  {C-u C-c h} prompts for a kcell
+            displayed by pressing the Assist Key.  {C-c ; h} prompts for a kcell
+            id and displays its attributes.  {C-u C-c ; h} prompts for a kcell
             id and displays the attributes for it and its subtree; use 0 as
             the kcell id to see attributes for all visible cells in the
             outline, including the invisible 0 cell that is the root of
@@ -286,29 +318,29 @@
             {C-0 C-c C-i} sets an attribute of the invisible 0 root cell.
             {C--1 C-c C-i} removes an attribute of the invisible 0 root cell.
 
-      3b17. File Insertion: The elements of another buffer or file may be
+      3b20. File Insertion: The elements of another buffer or file may be
             inserted into a koutline as a set of cells by using the {C-x i}
             command.  When prompted, you may use a buffer name or file name
             from which to insert.
 
-        3b17a. The cells will be inserted as the successors of the current
+        3b20a. The cells will be inserted as the successors of the current
                cell unless {C-u C-x i} is used and then they are inserted as
                the initial children of the current cell.
 
-        3b17b. See {C-h v kimport:mode-alist RET} and {C-h v
+        3b20b. See {C-h v kimport:mode-alist RET} and {C-h v
                kimport:suffix-alist RET}, for information on mode and 
                suffix-specific conversions performed on files before they
                are inserted.  This same conversion process applies if you
                invoke {M-x kotl-mode RET} in a non-koutline buffer or if you
                perform a generic file import as described in <@ 4=063>.
 
-        3b17c. Use {M-x kimport:insert-file-contents RET} to insert the
+        3b20c. Use {M-x kimport:insert-file-contents RET} to insert the
                entire contents of a file into the current cell at the
                location of point.  {M-x kimport:insert-buffer RET} does the
                same for an existing buffer.  {C-x r i} does the same with the
                contents of a text register that you specify.
 
-      3b18. File Importing: The Koutliner supports conversion of three
+      3b21. File Importing: The Koutliner supports conversion of three
             types of files into koutline files.  You can choose to
             import a file into an existing koutline, following the tree
             at point, or to create a new koutline of the imported file
@@ -317,13 +349,13 @@
             the file to import.  Use one of the following commands if
             you want to control the type of importation explicitly.
 
-        3b18a. Text Files
+        3b21a. Text Files
 
-          3b18a1. In a text buffer, use {M-x kotl-mode RET} to convert the
+          3b21a1. In a text buffer, use {M-x kotl-mode RET} to convert the
                   buffer into a koutline in-place.  You will lose the old
                   format of the buffer when you do this.
 
-          3b18a2. Use {M-x kimport:text RET} and you will be prompted for a
+          3b21a2. Use {M-x kimport:text RET} and you will be prompted for a
                   text buffer or file to import and the new koutline buffer or
                   file to create from its text.  It will also import the
                   contents, attributes and level structure of cells from a
@@ -331,13 +363,13 @@
                   
                   With this command, your original file remains intact.
 
-        3b18b. Star Outline Files: Star outlines are standard Emacs outlines
+        3b21b. Star Outline Files: Star outlines are standard Emacs outlines
                or Org outlines, where each entry begins with one or more
                asterisk characters.  Use {M-x kimport:star-outline RET} and
                you will be prompted for the star outline buffer or file to
                import and the new koutline buffer or file to create.
 
-        3b18c. Augment Files Numbered on the Right-Side: (Skip this if you are
+        3b21c. Augment Files Numbered on the Right-Side: (Skip this if you are
                unfamiliar with this sort of file).  Files exported from the
                Augment system as text often have alphanumeric statement
                identifiers on the right side.
@@ -346,48 +378,48 @@
                for the augment buffer or file to import and the koutline to
                create.
 
-      3b19. File Exporting: The Koutliner can produce a nicely indented HTML
+      3b22. File Exporting: The Koutliner can produce a nicely indented HTML
             version of an outline with hyperlinks and hyperlink anchors
             intact.  Use {M-x kexport:html RET} to export a koutline file or
             existing buffer.
 
-      3b20. View Specification: Flexible views of outlines may be specified
+      3b23. View Specification: Flexible views of outlines may be specified
             with succinct single character codes.
 
-        3b20a. The current view spec is shown in the modeline after the buffer
+        3b23a. The current view spec is shown in the modeline after the buffer
                name, delimited by <|>.
 
-        3b20b. The current view spec is saved whenever the outline is saved.
+        3b23b. The current view spec is saved whenever the outline is saved.
                The next time the outline is read in, this will be the initial
                view.  The standard initial viewspec is <|ben>.
 
-        3b20c. {C-c C-v} prompts for a view spec string in which the following
+        3b23c. {C-c C-v} prompts for a view spec string in which the following
                codes are valid.  Any invalid characters in a view spec are
                ignored.
 
-          3b20c1. a:  Show all cell levels and all lines in cells.
+          3b23c1. a:  Show all cell levels and all lines in cells.
 
-          3b20c2. b: Turn on blank lines between cells.  Without this code,
+          3b23c2. b: Turn on blank lines between cells.  Without this code,
                   blank lines will be turned off.  You can also use the {C-c
-                  b} key binding to toggle line numbers on and off
+                  ; b} key binding to toggle line numbers on and off
                   independent of any other view settings.
 
-          3b20c3. cN: Hide any lines greater than N in each cell.  0 means
+          3b23c3. cN: Hide any lines greater than N in each cell.  0 means
                   don't cutoff any lines.
 
-          3b20c4. e: Show ellipses when some content is hidden (This is
+          3b23c4. e: Show ellipses when some content is hidden (This is
                   always on in modern versions of Emacs; it cannot be
                   turned off).
 
-          3b20c5. lN: Hide cells at levels deeper than N.  0 means don't hide
+          3b23c5. lN: Hide cells at levels deeper than N.  0 means don't hide
                   any cells.
 
-          3b20c6. n:  Turn on the default label type.
+          3b23c6. n:  Turn on the default label type.
                   n0: Display idstamps.
                   n1: Display alpha labels.
                   n.: Display legal labels.
 
-        3b20d. Press the Action Key on this view spec of <|c2l1> to turn off
+        3b23d. Press the Action Key on this view spec of <|c2l1> to turn off
                blank lines, to clip each cell after its second line, and to
                hide all cells below level one.  Use {C-u C-c C-a} to restore a
                view of all cells.
@@ -420,8 +452,8 @@
             If you have mouse support under Hyperbole, simply click the Action
             Key within the indentation to the left of a cell text.  If you
             then double click on some cell, a link to that cell will be
-            inserted where you started.  From a keyboard, use {C-c l} when in
-            a koutline or {C-h h k l} when not in a koutline to insert a
+            inserted where you started.  From a keyboard, use {C-c ; l} when
+            in a koutline or {C-h h k l} when not in a koutline to insert a
             klink.
 
        3c3. If you prefer the standard copy and yank model that Emacs
@@ -443,53 +475,53 @@
             as tables require only blanks to the left of each row.
 
        3d2. Here are two table examples:
-            
-            |---------------------------------------+----------------------------|
-            | Demotion Inside Org Table             | Promotion Inside Org Table |
-            |---------------------------------------+----------------------------|
-            | {M-0 TAB}  (kotl-mode:tab-flag = nil) | {M-0 S-TAB}                |
-            | {C-c C-.}                             | {C-c C-,}                  |
-            | {C-c C->}                             | {C-c C-<}                  |
-            |---------------------------------------+----------------------------|
-            
-            |------------------------------------+-----------------------------|
-            | Demotion Outside Org Table         | Promotion Outside Org Table |
-            |------------------------------------+-----------------------------|
-            | {TAB}   (kotl-mode:tab-flag = nil) | {S-TAB}                     |
-            | {M-<right>}                        | {M-<left>}                  |
-            | {M-S-<right>}                      | {M-S-<left>}                |
-            | {C-c C-.}                          | {C-c C-,}                   |
-            | {C-c C->}                          | {C-c C-<}                   |
-            |------------------------------------+-----------------------------|
-            
-            To toggle table editing mode on or off, press the Action Key on
-            any of the table | delimiters and then edit as you would any Org
-            table.  Note how the above tables show how {TAB} and {S-TAB}
-            behave differently in and outside of tables.  See "(Org)Tables"
-            for how to work with tables.
+               
+               |-----------------------------------------+----------------------------|
+               | Demotion Inside Org Table               | Promotion Inside Org Table |
+               |-----------------------------------------+----------------------------|
+               | {C-c C-.}                               | {C-c C-,}                  |
+               | {C-c C->}                               | {C-c C-<}                  |
+               | M-0 TAB  (kotl-mode:tab-flag /= 'cycle) | M-0 S-TAB                  |
+               |-----------------------------------------+----------------------------|
+               
+               |------------------------------------+-----------------------------|
+               | Demotion Outside Org Table         | Promotion Outside Org Table |
+               |------------------------------------+-----------------------------|
+               | {C-c C-.}                          | {C-c C-,}                   |
+               | {C-c C->}                          | {C-c C-<}                   |
+               | {M-<right>}                        | {M-<left>}                  |
+               | {M-S-<right>}                      | {M-S-<left>}                |
+               | {TAB}   (kotl-mode:tab-flag = nil) | {S-TAB}                     |
+               |------------------------------------+-----------------------------|
+               
+               To toggle table editing mode on or off, press the Action Key on
+               any of the table | delimiters and then edit as you would any Org
+               table.  Note how the above tables show how {TAB} and {S-TAB}
+               behave differently in and outside of tables.  See "(Org)Tables"
+               for how to work with tables.
 
-     3e. The Koutliner code runs on any system that supports Emacs,
-         whether under a window system or from a dumb terminal display.
+         3d2a. The Koutliner code runs on any system that supports Emacs,
+               whether under a window system or from a dumb terminal display.
 
-   4. Major features left to be implemented:
+  3e. Major features left to be implemented:
 
-     4a. Branch handling commands (all cells at same level).
+    3e1. Branch handling commands (all cells at same level).
 
-     4b. Copying a single cell without its subtree.
+    3e2. Copying a single cell without its subtree.
 
-     4c. Replacing one cell or one tree with another.
+    3e3. Replacing one cell or one tree with another.
 
-     4d. Transposing two trees, rather than two cells.
+    3e4. Transposing two trees, rather than two cells.
 
-     4e. A small amount of work remains to enable setting different per
+    3e5. A small amount of work remains to enable setting different per
          level fonts and colors, so that outline levels are visually easy to
          distinguish.
 
-     4f. Flexible view handling has been only partially implemented.
+    3e6. Flexible view handling has been only partially implemented.
 
 
 "ben" ;; kvspec:current
-78 ;; id-counter
+90 ;; id-counter
 alpha ;; label-type
 4 ;; label-min-width
 ". " ;; label-separator
@@ -497,7 +529,7 @@ alpha ;; label-type
 
 ;; depth-first kcell attributes
 [[0
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07" id-counter 78)]
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07" id-counter 90)]
  [2
   (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
  [3
@@ -512,6 +544,8 @@ alpha ;; label-type
   (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
  [8
   (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [81
+  (creator "rsw@gnu.org" create-time "20261007:21:15:24")]
  [9
   (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
  [10
@@ -520,22 +554,36 @@ alpha ;; label-type
   (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
  [12
   (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [13
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [71
-  (creator "rsw@gnu.org" create-time "20260928:21:33:05")]
+ [82
+  (creator "rsw@gnu.org" create-time "20261007:22:18:48")]
  [73
   (creator "rsw@gnu.org" create-time "20260929:05:48:56")]
+ [83
+  (creator "rsw@gnu.org" create-time "20261007:22:21:39")]
+ [71
+  (creator "rsw@gnu.org" create-time "20260928:21:33:05")]
  [74
   (creator "rsw@gnu.org" create-time "20260929:05:49:02")]
  [75
   (creator "rsw@gnu.org" create-time "20260929:05:49:09")]
  [76
   (creator "rsw@gnu.org" create-time "20260929:05:49:14")]
- [77
-  (creator "rsw@gnu.org" create-time "20260929:05:49:25")]
  [78
   (creator "rsw@gnu.org" create-time "20260929:05:50:44")]
+ [13
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [85
+  (creator "rsw@gnu.org" create-time "20261007:23:56:26")]
+ [77
+  (creator "rsw@gnu.org" create-time "20260929:05:49:25")]
+ [86
+  (creator "rsw@gnu.org" create-time "20261008:00:02:09")]
+ [88
+  (creator "rsw@gnu.org" create-time "20261008:00:02:30")]
+ [89
+  (creator "rsw@gnu.org" create-time "20261008:00:02:56")]
+ [90
+  (creator "rsw@gnu.org" create-time "20261008:00:03:52")]
  [14
   (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
  [15
@@ -558,6 +606,8 @@ alpha ;; label-type
   (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
  [24
   (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [79
+  (creator "rsw@gnu.org" create-time "20261006:04:24:06")]
  [25
   (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
  [26
@@ -648,4 +698,4 @@ alpha ;; label-type
   (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
  [69
   (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- nil nil nil]
+ nil nil nil nil nil nil]

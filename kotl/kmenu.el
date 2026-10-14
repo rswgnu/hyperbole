@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Mar-94 at 11:22:09
-;; Last-Mod:     11-Jun-25 at 00:20:09 by Mats Lidell
+;; Last-Mod:      6-Oct-26 at 16:07:48 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -41,7 +41,7 @@
       ["Demote"              kotl-mode:demote-tree
        :active t :keys "TAB"]
       ["Promote"             kotl-mode:promote-tree
-       :active t :keys "M-TAB"]
+       :active t :keys "S-TAB"]
       "----"
       ["Add-After-Parent"    kotl-mode:add-after-parent     t]
       ["Add-Before-Parent"   kotl-mode:add-before-parent    t]
@@ -111,7 +111,7 @@
       ["Kill"                kotl-mode:kill-tree            t]
       ["Mail"                kotl-mode:mail-tree            t]
       ["Promote"             kotl-mode:promote-tree
-       :active t :keys "M-TAB"]
+       :active t :keys "S-TAB"]
       ["Show-Attributes"     (kotl-mode:cell-help nil 2)
        :active t :keys "C-u C-c h"]
       "----"

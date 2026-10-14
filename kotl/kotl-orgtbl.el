@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10/18/2020
-;; Last-Mod:     11-Oct-26 at 09:55:07 by Mats Lidell
+;; Last-Mod:     12-Oct-26 at 14:34:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -35,7 +35,7 @@
 ;;     |----------------------------+-----------------------------|
 ;;     | Demotion Outside Org Table | Promotion Outside Org Table |
 ;;     |----------------------------+-----------------------------|
-;;     | TAB                        | Shift-TAB or M-TAB          |
+;;     | TAB                        | Shift-TAB                   |
 ;;     | M-left-arrow               | M-right-arrow               |
 ;;     | C-c C-,                    | C-c C-.                     |
 ;;     | C-c C-<                    | C-c C->                     |

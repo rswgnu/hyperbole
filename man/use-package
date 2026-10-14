@@ -1,14 +1,24 @@
-;;; use-package --- Hyperbole use-package reference configuration   -*- mode: emacs-lisp; lexical-binding: t; -*-
+;;; use-package --- Reference configuration   -*- mode: emacs-lisp; lexical-binding: t; -*-
+
+;; NOTE: If you use Emacs 28 or earlier, you'll need to install the
+;; `use-package' Emacs package before using this configuration file
+;; since it is not built-in to your Emacs.
+
+;; -----------------------------------------------------------------
 
 ;; Default values herein represent the settings Hyperbole will default
 ;; to if not set within this `use-package' configuration.
 (use-package hyperbole
 
-  :config
+  ;; Install the package from a package archive if not already installed
+  :ensure t
+
   ;; Hyperbole binds {C-h h} in the `global-map' to display its
   ;; minibuffer command menus. If you prefer a different binding,
-  ;; uncomment the two lines below which restore the standard binding
-  ;; for {C-h h} and set your preferred binding: example {C-c h}.
+  ;; you can restore the standard Emacs binding of {C-h h} and set
+  ;; your preferred Hyperbole menu binding: example {C-c h} by
+  ;; uncommenting the next three lines:
+  ;; :config
   ;;   (global-set-key (kbd "C-h h") #'view-hello-file)
   ;;   (global-set-key (kbd "C-c h") #'hyperbole)
 
@@ -21,13 +31,13 @@
   (hyperbole-mode 1)
 
   ;; Initialize the global HyWiki minor mode to one of these values:
-  ;; - :all   - highlight HyWikiWords in all editable buffers except those
-  ;;            with a major mode in ‘hypb:exclude-major-modes’; also
-  ;;            enable ‘hyperbole-mode’ minor mode if off.
+  ;; - :all   - highlight HyWikiWords in all editable buffers except
+  ;;            those with a major mode in ‘hypb:exclude-major-modes’;
+  ;;            also enable ‘hyperbole-mode’ minor mode if off.
   ;;
   ;; - :pages - highlight HyWikiWords in HyWiki pages only (Org files in
-  ;;            ‘hywiki-directory’); also enable ‘hyperbole-mode’ minor mode
-  ;;            if off. (default)
+  ;;            ‘hywiki-directory’); also enable ‘hyperbole-mode’ minor
+  ;;            mode if off. (default)
   ;;
   ;; - nil    - no highlighting, the ‘hywiki-mode’ is disabled.
   (hywiki-mode :all)
@@ -42,11 +52,12 @@
   ;; Action and Assist Key Customizations
 
   ;; Customize how Hyperbole and Org mode share the M-RET key:
-  ;;   t        - With `hyperbole-mode' enabled, Hyperbole controls the key.
+  ;;   t        - With `hyperbole-mode' enabled, Hyperbole controls the
+  ;;              key.
   ;;
-  ;;   'buttons - With `hyperbole-mode enabled', Hyperbole controls the key
-  ;;              only when on a button or link; otherwise, Org controls
-  ;;              it. (default)
+  ;;   'buttons - With `hyperbole-mode enabled', Hyperbole controls the
+  ;;              key only when on a button or link; otherwise, Org
+  ;;              controls it. (default)
   ;;
   ;;   nil      - In Org mode, Org controls the key.
   (hsys-org-enable-smart-keys t)
@@ -58,18 +69,39 @@
 
   ;; Koutliner Customizations
 
+  ;; Inline image display can be toggled on/off with {C-c C-x C-v} but
+  ;; if you want inline images to display all the time in Koutline
+  ;; buffers, uncomment the next line:
+  ;; (add-hook 'kotl-mode-hook 'iimage-mode)
+
+  ;; NOTE: As of Hyperbole version 9.3.0, the Koutliner uses `C-c ;'
+  ;; as the prefix for mode-specific <letter> key bindings (prior
+  ;; prefix was `C-c'); this avoids overriding global user settings of
+  ;; `C-c <letter>'.
+  ;;
+  ;;   If you want the prior Koutline {C-c <letter>} key bindings
+  ;;   in addition to the current ones on {C-c ; <letter>), uncomment the
+  ;;   following line:
+  ;;     (kotl-mode:set-letter-prefix-control-c)
+
+  ;;   If you want to use your own prefix for these letter
+  ;;   keys, uncomment the following line and substitute your prefix:
+  ;;     (kotl-mode:set-letter-prefix-standard "your-prefix-string")
+
   ;; Customize the behavior of the <tab> and S-<tab> keys in a Koutline.
   ;; One of three possible values:
-  ;;   nil      - {TAB} demotes the current tree and {Shift-TAB} promotes the
-  ;;              tree. (default)
+  ;;   nil      - {TAB} demotes the current tree and {Shift-TAB}
+  ;;              promotes the tree. (default)
   ;;
   ;;   'cycle  -  enables Org-like outline view cycling when point is in
-  ;;              a context other than that specified by ‘org-cycle-emulate-tab’.
-  ;;              See {C-h f kotl-mode:tab-command RET} for details.
+  ;;              a context other than that specified by
+  ;;              ‘org-cycle-emulate-tab’.  See {C-h f
+  ;;              kotl-mode:tab-command RET} for details.
   ;;
-  ;;   t       -  makes {TAB} indent lines and insert literal <tab> characters
-  ;;              according to the context setting of ‘kotl-mode:emulate-tab’,
-  ;;              which also determines where {Shift-TAB} deletes backward.
+  ;;   t       -  makes {TAB} indent lines and insert literal <tab>
+  ;;              characters according to the context setting of
+  ;;              ‘kotl-mode:emulate-tab’, which also determines where
+  ;;              {Shift-TAB} deletes backward.
   (kotl-mode:tab-flag nil)
 
   ;; Setup contexts where ‘kotl-mode:tab-command’ should override
@@ -80,7 +112,8 @@
   ;;
   ;;   white       - Only in completely white lines
   ;;
-  ;;   whitestart  - Only at the beginning of lines, before the first non-white char
+  ;;   whitestart  - Only at the beginning of lines, before the first
+  ;;                 non-white char
   ;;
   ;;   t           - Everywhere except in headlines
   ;;
@@ -93,4 +126,17 @@
   ;;   t   - may insert literal <tab> characters. (default)
   ;;
   ;;   nil - may insert <spc> characters only.
-  (kotl-mode:indent-tabs-mode t))
+  (kotl-mode:indent-tabs-mode t)
+
+  ;; Prior to the addition of Org-style visibility cycling to the
+  ;; Koutliner on the TAB key, a press of the Action Key on a Koutline
+  ;; cell line used to toggle showing/hiding the tree rooted at point.
+  ;; Today, this does nothing.
+  ;;
+  ;; Uncomment the next expression if you prefer the prior behavior
+  ;; but note that if `hywiki-mode' is set to `:all' when point is on
+  ;; a capitalized word, an Action Key press will create a new HyWiki
+  ;; page, as that has higher priority than this setting.
+  ;;
+  ;; (kotl-mode:action-key-default-function 'kotl-mode:show-or-hide-tree)
+  )

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     30-Aug-26 at 11:19:18 by Bob Weiner
+;; Last-Mod:      7-Oct-26 at 13:14:52 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -821,9 +821,11 @@ command instead.  Typically prevents clashes over {\\`C-c' /}."
   (define-key hui:menu-mode-map hui:menu-select         #'hui:menu-select)
   (define-key hui:menu-mode-map "\M-b"                  #'hui:menu-backward-item)
   (define-key hui:menu-mode-map "\M-f"                  #'hui:menu-forward-item)
-  (define-key hui:menu-mode-map "\C-i"                  #'hui:menu-forward-item) ;; TAB
-  (define-key hui:menu-mode-map [backtab]               #'hui:menu-backward-item) ;; Shift-TAB
-  (define-key hui:menu-mode-map "\M-\C-i"               #'hui:menu-backward-item)) ;; M-TAB
+  (define-key hui:menu-mode-map "\C-i"                  #'hui:menu-forward-item)   ;; TAB
+  (define-key hui:menu-mode-map [tab]                   #'hui:menu-forward-item)   ;; TAB
+  (define-key hui:menu-mode-map [S-tab]                 #'hui:menu-backward-item)  ;; Shift-TAB
+  (define-key hui:menu-mode-map [S-iso-lefttab]         #'hui:menu-backward-item)  ;; Shift-TAB
+  (define-key hui:menu-mode-map [backtab]               #'hui:menu-backward-item)) ;; Shift-TAB
 
 (defvar hui:menu-last-help-string ""
   "Any last Hyperbole minibuffer menu help displayed via {?} or {C-u M-RET}.")

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:      1-Oct-26 at 01:36:36 by Bob Weiner
+;; Last-Mod:     11-Oct-26 at 10:38:48 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -359,6 +359,13 @@ Excludes blank lines following cell contents."
   (save-excursion
     (goto-char (kcell-view:start pos lbl-sep-len))
     (outline-flag-region (point) (kcell-view:end-contents) hide-p)))
+
+(defun kcell-view:first-line ()
+  "Return the first line of the current cell as a string
+Visibility is ignored."
+  (save-excursion
+    (goto-char (kcell-view:start))
+    (buffer-substring-no-properties (point) (line-end-position))))
 
 (defun kcell-view:forward (&optional visible-p lbl-sep-len)
   "Move to start of the following cell at the same level as the current cell.
@@ -1303,37 +1310,46 @@ displayed, since it has hidden branches."
        (setq cell-status-list (cdr cell-status-list)))
      kview t start end)))
 
-(defun kview:set-label-type (kview new-type)
+(defun kview:set-label-type (kview new-type &optional arg)
   "Change KVIEW's label display type to NEW-TYPE, updating all displayed labels.
 See documentation for variable, kview:default-label-type, for
-valid values of NEW-TYPE."
+valid values of NEW-TYPE.
+
+Separately, if sent an optional prefix ARG of 1, instead call
+`kotl-mode:toggle-letter-prefix' to toggle on or off the shorter C-c prefix
+for letter key bindings.  This does not affect the default C-c ; letter
+prefix."
   (interactive (list kotl-kview
-		     (let ((completion-ignore-case)
-			   (label-type (kview:label-type kotl-kview))
-			   new-type-str)
-		       (if (string-equal
-			    ""
-			    (setq new-type-str
-				  (completing-read
-				   (format "View label type (current = %s): "
-					   label-type)
-				   '(("alpha") ("legal") ("id")
-				     ;; ("no") ("partial-alpha") ("star")
-				     )
-				   nil t)))
-			   label-type
-			 (intern new-type-str)))))
-  ;; no partial-alpha star
-  (unless (memq new-type '(alpha legal id))
-    (error "(kview:set-label-type): Invalid label type, `%s'" new-type))
-  (let ((old-label-type (kview:label-type kview)))
-    (if (eq old-label-type new-type)
-	;; Per kview function definitions might have changed, so reset them.
-	(kview:set-functions new-type)
-      (klabel-type:set-labels new-type)
-      (kview:set-attr kview 'label-type new-type)
-      (kview:set-functions new-type)
-      (kvspec:update t))))
+		     (unless (eq current-prefix-arg 1)
+                       (let ((completion-ignore-case)
+			     (label-type (kview:label-type kotl-kview))
+			     new-type-str)
+		         (if (string-equal
+			      ""
+			      (setq new-type-str
+				    (completing-read
+				     (format "View label type (current = %s): "
+					     label-type)
+				     '(("alpha") ("legal") ("id")
+				       ;; ("no") ("partial-alpha") ("star")
+				       )
+				     nil t)))
+			     label-type
+			   (intern new-type-str))))
+                     current-prefix-arg))
+  (if (eq arg 1)
+      (call-interactively 'kotl-mode:toggle-letter-prefix)
+    ;; no partial-alpha star
+    (unless (memq new-type '(alpha legal id))
+      (error "(kview:set-label-type): Invalid label type, `%s'" new-type))
+    (let ((old-label-type (kview:label-type kview)))
+      (if (eq old-label-type new-type)
+	  ;; Per kview function definitions might have changed, so reset them.
+	  (kview:set-functions new-type)
+        (klabel-type:set-labels new-type)
+        (kview:set-attr kview 'label-type new-type)
+        (kview:set-functions new-type)
+        (kvspec:update t)))))
 
 (defun kview:top-cell (kview)
   "Return KVIEW's invisible top cell with idstamp 0 or nil if not a kview."

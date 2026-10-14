@@ -5,7 +5,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    31-Dec-23 at 13:54:08
-;; Last-Mod:      9-Jan-24 at 21:29:43 by Bob Weiner
+;; Last-Mod:      7-Oct-26 at 16:06:45 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -153,6 +153,8 @@ Issue is inserted into the buffer after the current visible line."
     (define-key map "w" 'hsys-flymake-toggle-wraparound)
     map))
 
+(defvar hsys-flymake-global-control-l-prefix-map (make-sparse-keymap))
+
 ;; Use `repeat-map' property for appropriate flymake commands so can
 ;; repeat them with their last keystroke, e.g. repeat {C-c C-l n} by
 ;; pressing {n} repeatedly.
@@ -168,18 +170,17 @@ Issue is inserted into the buffer after the current visible line."
 	    hsys-flymake-toggle-wraparound))
     map))
 
-(defvar hsys-flymake-mode-control-c-prefix-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map "\C-l" hsys-flymake-mode-control-l-prefix-map)
-    map))
-
-(global-set-key "\C-c\C-lt" 'hsys-flymake-toggle)
+(unless (lookup-key (current-global-map) (kbd "C-c C-l"))
+  (global-set-key (kbd "C-c C-l")   hsys-flymake-global-control-l-prefix-map)
+  (global-set-key (kbd "C-c C-l t") 'hsys-flymake-toggle))
 
 (add-hook 'flymake-mode-hook
 	  (lambda () (when flymake-mode
-		       (define-key flymake-mode-map "\C-c"
-			 hsys-flymake-mode-control-c-prefix-map)
+                       (define-key flymake-mode-map
+                         (kbd "C-c C-l")
+                         hsys-flymake-mode-control-l-prefix-map)
 		       (repeat-mode 1))))
+
 ;; If flymake-mode is already enabled, re-enable it to ensure
 ;; repeat-mode gets enabled.
 (when (and (featurep 'flymake) flymake-mode)

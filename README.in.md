@@ -1,4 +1,4 @@
-# GNU Hyperbole 9.2.0 - The Everyday Hypertextual Information Manager
+# GNU Hyperbole 9.3.0 - The Everyday Hypertextual Information Manager
 
 [ If you are looking for the documentation for the stable release look
 [here](stable/hyperbole.html).]
@@ -196,6 +196,13 @@ Unlock the power of GNU Hyperbole to make your information work for you.
 One system.  One language.  One manual.  One solution.  Learn Hyperbole and
 start moving further, faster.
 
+## Upgrading
+
+To upgrade an existing Hyperbole installation, invoke the Emacs Package
+Manager with {M-x list-packages RET}, then use the {U} key followed by the
+{x} key to upgrade all out-of-date packages, Hyperbole among them.  Then
+skip to the [Invocation](#invocation) section.
+
 ## Installation
 
 Once you have Emacs set up at your site, GNU Hyperbole may be
@@ -203,36 +210,19 @@ installed by using the Emacs Package Manager.  If you are not
 familiar with it, see the Packages section of the GNU Emacs Manual,
 [Emacs Packages](https://www.gnu.org/software/emacs/manual/html_node/emacs/Packages.html).
 
-If you have Hyperbole 5.10 or higher already installed and simply want to
-upgrade it, invoke the Emacs Package Manager with {M-x list-packages RET},
-then use the {U} key followed by the {x} key to upgrade all out-of-date
-packages, Hyperbole among them.  Then skip the text below and move on to
-the next section, [Invocation](#invocation).
+To download and install the Hyperbole package, you should add the
+following use-package expression into your personal Emacs initialization
+file, see [Emacs Init File](https://www.gnu.org/software/emacs/manual/html_node/emacs/Init-File.html) for init file details:
 
-Otherwise, to download and install the Hyperbole package, you should
-add several lines to your personal Emacs initialization file,
-typically "~/.emacs".  For further details, see [Emacs Init
-File](https://www.gnu.org/software/emacs/manual/html_node/emacs/Init-File.html).
+```elisp
+    [man/use-package](man/use-package)
+```
 
-Below are the lines to add:
+Now save the init file and restart Emacs.  Hyperbole will be downloaded and
+compiled for use with your version of Emacs; give it a minute or two.  You
+may see a few compilation warnings but these can be safely ignored and
+have no impact on Hyperbole's performance.
 
-    (require 'package)
-    (setq package-enable-at-startup nil) ;; Prevent double loading of libraries
-    (package-initialize)
-    (unless (package-installed-p 'hyperbole)
-      (package-refresh-contents)
-      (package-install 'hyperbole))
-    (hyperbole-mode 1)
-    ;; Allow HyWikiWords in text buffers and programming buffer comments
-    ;; by uncommenting the next line.
-    ;; (hywiki-mode :all)
-
-----
-
-Now save the file and then restart Emacs.  Hyperbole will then be
-downloaded and compiled for use with your version of Emacs; give it a
-minute or two.  You may see a bunch of compilation warnings but these
-can be safely ignored and have no impact on Hyperbole's performance.
 
 ## Invocation
 
@@ -510,7 +500,7 @@ See the [HY-ABOUT](HY-ABOUT) file for a description and overview of Hyperbole.
 
 See the [HY-NEWS](HY-NEWS.html) file for a summary of new features in this release.
 
-See the [INSTALL](INSTALL) file for installation and invocation instructions.
+See #Installation for installation and invocation instructions.
 
 See the [HY-COPY](HY-COPY) and [COPYING](COPYING) files for license information.
 

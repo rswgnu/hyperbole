@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     30-Sep-26 at 17:04:16 by Bob Weiner
+;; Last-Mod:     14-Oct-26 at 12:05:23 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -244,10 +244,10 @@
 
 (ert-deftest demo-implicit-button-hash-link-test ()
   (with-temp-buffer
-    (insert (format "\"%s%s\"" (expand-file-name "README.md" hyperb:dir) "#why-was-hyperbole-developed"))
+    (insert (format "\"%s%s\"" (expand-file-name "README.in.md" hyperb:dir) "#why-was-hyperbole-developed"))
     (goto-char 5)
     (action-key)
-    (should (string= "README.md" (buffer-name)))
+    (should (string= "README.in.md" (buffer-name)))
     (should (looking-at "## Why was Hyperbole developed\\?"))))
 
 (ert-deftest demo-implicit-button-line-and-column-rtest ()
@@ -266,7 +266,12 @@
     ;; Without this next let, default Org behavior may occur which
     ;; inserts a new heading when org-meta-return is called rather
     ;; than collapsing the existing tree of headings.
-    (let ((hsys-org-enable-smart-keys t))
+    (let ((hsys-org-enable-smart-keys t)
+          (smart-org-action-key-heading-function
+           (if (fboundp 'org-fold-hide-subtree)
+               'org-fold-hide-subtree
+             ;; Org 9.5.5 or earlier in Emacs 28 and earlier
+             'org-hide-entry)))
       (insert "* 1\n** 2\n*** 3\n")
       (goto-char 1)
       (should (not (org-check-for-hidden 'headlines)))
@@ -441,12 +446,12 @@
   (unwind-protect
       (let ((default-directory hyperb:dir))
         (with-temp-buffer
-          (insert "\"README.md#Hyperbole Components\"")
+          (insert "\"README.in.md#Hyperbole Components\"")
           (goto-char 3)
           (action-key)
-          (should (string= (buffer-name (current-buffer)) "README.md"))
+          (should (string= (buffer-name (current-buffer)) "README.in.md"))
           (should (looking-at-p "## Hyperbole Components"))))
-    (hy-test-helpers:kill-buffer "README.md")))
+    (hy-test-helpers:kill-buffer "README.in.md")))
 
 (ert-deftest fast-demo-elisp-or-env-vars ()
   "Verify Elisp or env variables work in paths."

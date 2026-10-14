@@ -1,9 +1,9 @@
-;;; hypb-maintenance.el --- functions for maintenance tasks  -*- lexical-binding: t; -*-
+;;; hypb-maintenance.el --- Support for updating Hyperbole web pages  -*- lexical-binding: t; -*-
 ;;
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    31-Mar-21 at 21:11:00
-;; Last-Mod:     12-Mar-24 at 22:36:34 by Bob Weiner
+;; Last-Mod:     14-Oct-26 at 11:13:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -63,8 +63,8 @@ Point `hypb:web-repo-location' to where the web repo is located."
   ;; hyperbole.html
   (copy-file "README.md.html" (concat hypb:web-repo-location "hyperbole.html") t)
 
-  ;; DEMO DEMO-ROLO.otl HY-ABOUT INSTALL HY-COPY COPYING MANIFEST
-  ;; hui.el hbut.el hbdata.el hmail.el - referenced in hyperbole.el
+  ;; DEMO DEMO-ROLO.otl HY-ABOUT HY-COPY COPYING MANIFEST hui.el hbut.el
+  ;; hbdata.el hmail.el - referenced in hyperbole.el
   (mapc (lambda (file) (copy-file file hypb:web-repo-location t))
 	'("DEMO" "DEMO-ROLO.otl" "FAST-DEMO" "HY-ABOUT"
 	  "HY-COPY" "COPYING" "MANIFEST"

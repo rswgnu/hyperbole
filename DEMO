@@ -36,7 +36,7 @@ You should be looking at this file within Emacs and Hyperbole should already
 be installed within your copy of Emacs.  To be sure, press 'C-h h' and you
 should see the Hyperbole menu in your minibuffer window at the bottom of
 your current Emacs frame.  Press 'q' to quit out of this menu and we can
-begin.  If Hyperbole is not installed, see the "INSTALL" file, in the
+begin.  If Hyperbole is not installed, see "README.md#Installation", in the
 same directory as this file, for instructions on installing it.
 
 This demo illustrates simple usage of the basic Hyperbole button-action-type

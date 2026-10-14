@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:     29-Sep-26 at 02:56:59 by Bob Weiner
+;; Last-Mod:      6-Oct-26 at 00:37:17 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -681,7 +681,8 @@
 
 (ert-deftest kotl-mode-hide-cell ()
   "Verify cell is hidden and unhidden on `action-key' press."
-  (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
+  (let ((kotl-file (make-temp-file "hypb" nil ".kotl"))
+        (kotl-mode:action-key-default-function 'kotl-mode:show-or-hide-tree))
     (unwind-protect
         (progn
           (find-file kotl-file)
