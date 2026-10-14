@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     14-Oct-26 at 12:50:55 by Bob Weiner
+;; Last-Mod:     14-Oct-26 at 13:17:41 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -952,9 +952,9 @@ the variable `hyrolo-file-list'."
     ;; If not called interactively when `consult' is available, then filter
     ;; the list of files to search to only those with matches using a
     ;; `consult-grep' call that finds just the first match in each file.
-    (unless (or (not hsys-consult-flag) interactive-flag
-                (seq-filter #'bufferp files-or-bufs))
-      (setq files-or-bufs (cadr (hsys-consult--noninteractive-grep-paths files-or-bufs regexp max-matches))))
+    ;; (unless (or (not hsys-consult-flag) interactive-flag
+    ;;             (seq-filter #'bufferp files-or-bufs))
+    ;;   (setq files-or-bufs (cadr (hsys-consult--noninteractive-grep-paths files-or-bufs regexp max-matches))))
 
     (unless count-only
       (setq buffer-read-only nil)

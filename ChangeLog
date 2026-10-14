@@ -1,7 +1,10 @@
 2026-10-14  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-grep): Add check of 'hsys-consult-flag' before
-    calling 'hsys-consult--noninteractive-grep-paths'.
+    calling 'hsys-consult--noninteractive-grep-paths' and disable
+    this whole call (commented out for now) because it was causing
+    hyrolo tests to fail intermittently due to some difference in
+    timing.
 
 * test/hypb-tests.el (hypb--require-package): Rename test package
     to 'non-exist-pkg'.
