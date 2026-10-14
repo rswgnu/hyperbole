@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     14-Oct-26 at 11:19:35 by Bob Weiner
+# Last-Mod:     14-Oct-26 at 13:51:47 by Bob Weiner
 #
 # Copyright (C) 1994-2026  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -135,7 +135,7 @@
 
 # This ver setup won't work under any make except GNU make, so set it manually.
 #HYPB_VERSION = "`head -3 hversion.el | tail -1 | sed -e 's/.*|\(.*\)|.*/\1/'`"
-HYPB_VERSION = 9.2.0
+HYPB_VERSION = 9.3.0
 
 # Emacs executable used to byte-compile .el files into .elc's.
 # To override which executable is used from the commandline, do something like this:
@@ -435,7 +435,7 @@ clean:
 .PHONY: version
 version:
 	@echo ""
-	@fgrep -L $(HYPB_VERSION) Makefile HY-ABOUT HY-ANNOUNCE HY-NEWS README.in.md hversion.el hyperbole.el man/hyperbole.texi > WRONG-VERSIONS
+	@fgrep -L $(HYPB_VERSION) Makefile HY-ABOUT HY-ANNOUNCE HY-NEWS README.in.md hversion.el man/hyperbole.texi > WRONG-VERSIONS
 	@# If any file(s) have wrong version number, print them and exit with code 1
 	@if [ -s WRONG-VERSIONS ]; then \
 	  echo "The following files do not have the proper Hyperbole version number, $(HYPB_VERSION):"; \

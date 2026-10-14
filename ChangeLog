@@ -296,6 +296,10 @@
     to any 'hsys-consult--grep-paths' calls, for example, when calling
     'hyrolo-yank' interactively.
 
+==============================================================================
+V9.3.0 changes ^^^^:
+==============================================================================
+
 2026-10-02  Bob Weiner  <rsw@gnu.org>
 
 * hsys-consult.el (hsys-consult-entry-regexp): Ensure always ends with
