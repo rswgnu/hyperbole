@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     14-Oct-26 at 13:51:47 by Bob Weiner
+# Last-Mod:     14-Oct-26 at 21:44:33 by Mats Lidell
 #
 # Copyright (C) 1994-2026  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -495,7 +495,7 @@ define confirm
 	@echo "  WARNING: $(1)"
 	@echo "═══════════════════════════════════════"
 	@read -r -p "Are you sure? Write '$(2)' to continue: " answer; \
-	[[ "$$answer" == "$(2)" ]] || { echo "Aborted."; exit 1; }
+	[ "$$answer" = "$(2)" ] || { echo "Aborted."; exit 1; }
 endef
 
 # Locally update Hyperbole website

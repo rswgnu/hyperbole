@@ -1,3 +1,7 @@
+2026-10-14  Mats Lidell  <matsl@gnu.org>
+
+* Makefile(confirm): Use POSIX standard for equality.
+
 2026-10-14  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-grep): Add check of 'hsys-consult-flag' before
