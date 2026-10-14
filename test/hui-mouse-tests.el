@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    15-Mar-25 at 22:39:37
-;; Last-Mod:     11-Oct-26 at 11:13:17 by Mats Lidell
+;; Last-Mod:     14-Oct-26 at 11:41:04 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -76,8 +76,7 @@
   ;; Handle Emacs push buttons in buffers
   (mocklet (((button-at (point)) => t))
     (should (equal (hkey-actions)
-                   (cons '(smart-push-button nil (mouse-event-p last-command-event))
-	                 '(smart-push-button-help nil (mouse-event-p last-command-event))))))
+                   (cons '(smart-push-button) '(smart-push-button-help)))))
 
   ;; Vertico
   (defvar vertico-mode)

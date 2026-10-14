@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Apr-91 at 00:48:49
-;; Last-Mod:     31-Dec-25 at 16:06:23 by Mats Lidell
+;; Last-Mod:     14-Oct-26 at 11:08:02 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -14,8 +14,8 @@
 
 ;;; Commentary:
 ;;
-;;   See the "INSTALL" file for installation instructions and the
-;;   "README" file for general information.
+;;   See "README.md#Installation" for installation instructions and the
+;;   "README.md" file for general information.
 ;;
 ;;   Be sure to have users load any personal mail/news personalizations
 ;;   before they load Hyperbole so that Hyperbole's mail or news

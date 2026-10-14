@@ -107,9 +107,10 @@
   already be installed within your copy of Emacs.  To be sure, press 'C-h h'
   and you should see the Hyperbole menu in your minibuffer window at the
   bottom of your current Emacs frame.  Press 'q' to quit out of this menu
-  and we can begin.  If Hyperbole is not installed, see the "INSTALL" file,
-  in the same directory as this file, for instructions on installing it,
-  though {M-x package-install RET hyperbole RET} is typically all you need.
+  and we can begin.  If Hyperbole is not installed, see
+  "README.md#Installation", in the same directory as this file, for
+  instructions on installing it, though {M-x package-install RET hyperbole
+  RET} is typically all you need.
 
   If you simply want to know what Hyperbole is, see the file "HY-ABOUT".
   Hyperbole displays that file when you press the minibuffer menu command,

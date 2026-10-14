@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:      8-Oct-26 at 15:48:26 by Bob Weiner
+@c Last-Mod:     14-Oct-26 at 10:40:44 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,7 +30,7 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED October 8, 2026
+@set UPDATED October 14, 2026
 @set UPDATED-MONTH October 2026
 @set EDITION 9.2.0
 @set VERSION 9.2.0
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.1.0
-Printed October 8, 2026.
+Printed October 14, 2026.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -213,7 +213,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.1.0
-October 8, 2026 @c AUTO-REPLACE-ON-SAVE
+October 14, 2026 @c AUTO-REPLACE-ON-SAVE
 
 
   Published by the Free Software Foundation, Inc.
@@ -235,6 +235,7 @@ October 8, 2026 @c AUTO-REPLACE-ON-SAVE
 @cindex Hyperbole, obtaining
 @cindex anonymous ftp
 GNU Hyperbole was designed and written by Bob Weiner.
+
 @xref{Setup}, for information on how to obtain and to install
 Hyperbole.
 
@@ -451,14 +452,15 @@ Explicit Button Technicalities
 
 Setup
 
-* Installation::
+* Installation and Configuration::
 * Customization::
 
-Installation
+Installation and Configuration
 
-* Elpa Latest or Release Package Installation::
+* Package Upgrades::
+* Package Installation::
 * Git Latest Package Installation::
-* Manual Tarball Archive Installation::
+* Tarball Installation::
 
 Customization
 
@@ -778,12 +780,13 @@ activate it, so you can always be sure of what you are doing when needed
 or if someone emails you a button (Hyperbole allows embedding buttons
 in email messages too).
 
-Hyperbole is something to be experienced and interacted with, not understood
-from reading alone.  It installs normally as a single Emacs package with no
-dependencies outside of built-in Emacs libraries, @pxref{Installation}.  Most
-of Hyperbole is a single global minor mode that you can activate and
-deactivate at will.  And it can be uninstalled quickly as well if need be, so
-there is no risk in giving it a spin.
+Hyperbole is something to be experienced and interacted with, not
+understood from reading alone.  It installs normally as a single Emacs
+package with no dependencies outside of built-in Emacs libraries,
+@pxref{Installation and Configuration}.  Much of Hyperbole is a single
+global minor mode that you can activate and deactivate at will.  And it
+can be uninstalled quickly as well if need be, so there is no risk in
+giving it a spin.
 
 Once you have it installed, try the interactive demo with @bkbd{C-h h d d}.
 In fact, if you have Hyperbole loaded and you use the Emacs Info reader to
@@ -796,10 +799,10 @@ the number of keyboard/mouse keys you'll need to work efficiently.
 
 @page
 @noindent
-Hyperbole consists of five parts.
+Hyperbole consists of six parts.
 
-@table @emph
-@item Buttons and Smart Keys
+@table @b
+@item 1. Buttons and Smart Keys
 There are three categories of buttons:
 
 @table @dfn
@@ -850,16 +853,30 @@ mouse versions of these keys additionally allow for drag actions.  We
 call these the Action Mouse and Action Assist keys or buttons.  @xref{Smart
 Keys}.
 
-@item HyRolo
-a powerful, hierarchical contact manager which anyone can use, is also
-included.  It is easy to learn since it introduces only a few new
-mechanisms and has a menu interface, which may be operated from the
-keyboard or the mouse.  It may also be used for full-text searching
-over any record-based information in any number of Org, Markdown,
-Koutline or Emacs Outline files.  Hyperbole buttons may be embedded in
-any records.  @xref{HyRolo}.
+@item 2. HyWiki
+Hyperbole's markup-free, personal wiki system with automatic WikiWord
+highlighting and hyperlinking.  It uses Org mode for note taking and
+adds automatic hyperlinking and highlighting of WikiWord references
+within wiki pages and can be set so WikiWord links appear in all text
+and programming files,  @xref{HyWiki}.
 
-@item HyControl
+@item 3. HyRolo
+a fast, powerful, hierarchical record manager that does not require
+any indexing, unique ids nor a database.  It works with pure text
+files and supports full-text record-level searching over any number of
+Org, Markdown, Koutline or Emacs Outline files.  It is easy to learn
+since it introduces only a few new mechanisms and has a menu
+interface, which may be operated from the keyboard or the mouse.
+Hyperbole buttons may be embedded in any records.  @xref{HyRolo}.
+
+@item 4. Koutliner
+an advanced outliner with multi-level autonumbering and permanent
+identifiers attached to each outline node for use as hypertext link
+anchors, per node properties and flexible view specifications that can
+be included in links or used interactively.  Includes Org mode key
+compatibility.  @xref{Koutliner}.
+
+@item 5. HyControl
 the fastest, easiest-to-use window and frame control available for GNU
 Emacs.  With just a few keystrokes, you can shift from
 increasing a window's height by 5 lines to moving a frame by 220 pixels
@@ -868,20 +885,14 @@ frame may be enlarged or shrunk (zoomed) for easy viewing, plus many
 other features; this allows Hyperbole to quickly control the way
 information is presented on-screen.  @xref{HyControl}.
 
-@item Koutliner
-an advanced outliner with multi-level autonumbering and permanent
-identifiers attached to each outline node for use as hypertext link
-anchors, per node properties and flexible view specifications that can
-be included in links or used interactively.  Includes Org mode key
-compatibility.  @xref{Koutliner}.
-
-@item Hyperbole API
+@item 6. Hyperbole API
 a set of programming libraries for system developers who want to integrate
 Hyperbole with another user interface or as a back-end to a distinct system.
 (All of Hyperbole is written in Emacs Lisp for ease of modification.  It has
 been engineered for real-world usage and is well structured). @xref{Developing
 with Hyperbole}.
 @end table
+@page
 
 @kindex C-h h d d
 @vindex file, FAST-DEMO
@@ -1189,8 +1200,7 @@ Key.  If you want both the middle mouse key as the Action Key and the
 right mouse key as the Assist Key for ease of use, then within your
 personal @file{~/.emacs} file, add:
 @lisp
-(add-hook 'hyperbole-init-hook
-          'hmouse-add-unshifted-smart-keys)
+(add-hook 'hyperbole-init-hook 'hmouse-add-unshifted-smart-keys)
 @end lisp
 @noindent
 and then restart Emacs.
@@ -1726,12 +1736,12 @@ Drags of either Smart Key from a bottommost modeline can be configured to
 drag Emacs frames to new locations on screen.  To configure all existing
 and future frames for such dragging, use:
 
-  @code{(modify-all-frames-parameters '((drag-with-mode-line . t)))}.
+  @code{(modify-all-frames-parameters '((drag-with-mode-line . t)))}
 
 @noindent
 To configure just the selected frame for such dragging, use:
 
-  @code{(set-frame-parameter nil 'drag-with-mode-line t)}.
+  @code{(set-frame-parameter nil 'drag-with-mode-line t)}
 
 @noindent
 on each frame you would like to drag.
@@ -1941,6 +1951,7 @@ Whether creating an implicit or an implicit button, the action type used
 is determined by this table of contexts and the associated action type for
 each one, in decreasing order of priority, as given by the
 @code{hui:link-possible-types} function.
+@page
 
 @anchor{possible link action types}
 @exampleindent 0
@@ -2584,12 +2595,15 @@ Org mode links are highlighted and selected properly).
 
 Two forms of denote links are accepted:
 
-  1. The hyperbole link form with syntax:
-        @samp{\\(<[Description]>\\)? "denote:<file-id>\\(#section-name-or-uuid\\)?"}
+@enumerate
+@item The hyperbole link form with syntax:@*
+  @samp{\\(<[Description]>\\)? @*
+  "denote:<file-id>\\(#section-name-or-uuid\\)?"}
 
-  2. The org link form with syntax:
-        @samp{[[denote:<file-id>\\(::*?section-name\\)?][Description]]}
-     or @samp{[[denote:<file-id>\\(::#?section-id\\)?][Description]]}
+@item The org link form with syntax:@*
+  @samp{[[denote:<file-id>\\(::*?section-name\\)?][Description]]}@*
+  or @samp{[[denote:<file-id>\\(::#?section-id\\)?][Description]]}
+@end enumerate
 
 @findex ibtypes doc-id
 @cindex online library
@@ -3269,9 +3283,12 @@ clauses.
 @cindex tag definition
 @cindex button variable
 @item hbut-identifier
-When on the name of a variable that holds a Hyperbole button, e.g. hbut:current:
-  Action Key - Jump to variable definition;
-  Assist Key - Display button attributes of any Hyperbole button symbol at point.
+When on the name of a variable that holds a Hyperbole button,
+e.g. hbut:current:
+@itemize
+@item Action Key - Jump to variable definition;
+@item Assist Key - Display button attributes of any Hyperbole button symbol at point.
+@end itemize
 
 @end table
 
@@ -3299,18 +3316,13 @@ buttons are delimited by angle brackets, < >, and come in four types:
 @item action type invocations
 These begin with an action type name (from the list displayed by
 @bkbd{C-h h d t a @key{RET}}) and are followed by any needed arguments
-to form the action, e.g.
-@example
-<link-to-file-line "$@{hyperb:dir@}/hact.el" 40>
-@end example
+to form the action, e.g. @code{<link-to-file-line "$@{hyperb:dir@}/hact.el"
+40>}.
 
 @item function calls
 These are similar to action type invocations but begin with an Emacs
 Lisp function name rather than an action type name, e.g.
-
-@example
-<find-file-other-window "/tmp">
-@end example
+@code{<find-file-other-window "/tmp">}.
 
 Generally, such functions are invoked for their side-effects and their
 return value is silently ignored.  But if a function is a boolean
@@ -3320,30 +3332,18 @@ in the minibuffer.
 @item test executions
 Each of these consists solely of the name of an ERT test defined with
 @code{ert-deftest} and surrounded by angle brackets, e.g.
-
-@example
-<hbut-tests-ibut-insert-kbd-key>
-@end example
+@code{<hbut-tests-ibut-insert-kbd-key>}.
 
 The above example runs a Hyperbole regression test when activated and
 shows the pass/fail result in a pop-up buffer.
 
 @item variable displays
 These consist of an Emacs Lisp variable name only.  They display
-messages with their variable name and value, e.g.
-
-@example
-<fill-column>
-@end example
+messages with their variable name and value, e.g. @code{<fill-column>}.
 
 If there is a function binding with the same name as the variable you
-wish to display, to prevent interpretation as a function call
-action button, precede the name with a @code{$}, e.g.
-
-@example
-<$fill-column>
-@end example
-
+wish to display, to prevent interpretation as a function call action
+button, precede the name with a @code{$}, e.g. @code{<$fill-column>}.
 @end table
 
 With action buttons you need not remember any special syntax for each
@@ -5066,25 +5066,25 @@ HyWiki RefType>  Activity Bookmark Denote Command Elisp Find Gbut HyRolo
 @exampleindent 0
 @example
 @group
-Menu Item       RefType Add Command       Display Action Description
+Menu Item       RefType Add Command       Display Action
 ===================================================================
 Activity        hywiki-add-activity       Activate a saved Activity
 Bookmark        hywiki-add-bookmark       Jump to an Emacs bookmark
 Command         hywiki-add-command        Run a Hypb action or cmd
-Denote          hywiki-add-denote         Display a denote file
+Denote          hywiki-add-denote         Show a denote file
 Elisp           hywiki-add-elisp          Evaluate an Elisp sexp
 Find            hywiki-add-find           Grep through hywiki dir
 Gbut            hywiki-add-global-button  Activate a global button
 HyRolo          hywiki-add-hyrolo         Search @code{hyrolo-file-list}
-InfoIndex       hywiki-add-info-index     Display an Info index item
+InfoIndex       hywiki-add-info-index     Show an Info index item
 Keys            hywiki-add-key-series     Execute a series of keys
-pathLink        hywiki-add-path-link      Display a path and opt pos
-infoNode        hywiki-add-info-node      Display an Info doc node
-OrgID           hywiki-add-org-id         Display a sect for Org ID
-Page            hywiki-add-page           Display a HyWiki page#sect
-orgRoamNode     hywiki-add-org-roam-node  Display an Org Roam node
+pathLink        hywiki-add-path-link      Show a path and opt pos
+infoNode        hywiki-add-info-node      Show an Info doc node
+OrgID           hywiki-add-org-id         Show a sect for Org ID
+Page            hywiki-add-page           Show a HyWiki page#sect
+orgRoamNode     hywiki-add-org-roam-node  Show an Org Roam node
 Spec            hywiki-add-spec           Defer referent linkage
-glossarY        hywiki-add-glossary-entry Display a HyWiki term def
+glossarY        hywiki-add-glossary-entry Show a HyWiki term def
 ===================================================================
 @end group
 @end example
@@ -5183,6 +5183,7 @@ section therein, e.g. WikiWord.org, within the
 
 @cindex menu item, HyWiki orgRoamNode
 @cindex HyWiki orgRoamNode reftype
+@item orgRoamNode
 Add a HyWikiWord that displays an Org Roam node given its title.
 
 @cindex menu item, HyWiki Spec
@@ -5199,7 +5200,7 @@ which point the HyWiki RefType menu is displayed for selection.
 @cindex definition, HyWikiWord
 @findex hywiki-get-definition
 @anchor{HyWiki Glossary}
-@item Glossary
+@item GlossarY
 Add or edit the definition of a HyWikiWord that displays its own
 definition from the HyWiki's Glossary.org file.
 
@@ -5852,35 +5853,53 @@ press that key, the other command can be reached by pressing @bkbd{t}.
 @cindex hyperlink anchor
 The Hyperbole outliner, the Koutliner (pronounced Kay-outliner),
 produces structured, autonumbered documents composed of hierarchies of
-cells.  Each @dfn{cell} has two identifiers, a
-@dfn{relative identifier} indicating its present position within the
-outline and a @dfn{permanent identifier} called an @dfn{idstamp},
-suitable for use within hyperlink references to the cell.  The idstamp
-is typically not displayed but is available when needed.
-@xref{Autonumbering}.
+cells.  Each @dfn{cell} has two identifiers, a @dfn{relative
+identifier} indicating its present position within the outline and a
+@dfn{permanent identifier} called an @dfn{idstamp}, suitable for use
+within hyperlink references to the cell.  The idstamp is typically not
+displayed but is available when needed.  @xref{Autonumbering}.
 
 Cells also store their time of creation and the user who created the
 cell.  User-defined attributes may also be added to cells.  @xref{Cell
 Attributes}.
 
 The Koutliner should feel comfortable to Org mode users as it offers
-similar key bindings for outline visibility cycling, tree moving and
-table editing.
+similar key bindings for outline visibility cycling, cursor key tree
+moving and table editing.
 
 @vindex file, EXAMPLE.kotl
 @cindex menu item, Kotl/Example
+@cindex koutliner, example file
 @kindex C-h h k e
-This chapter expands on the information given in the @file{EXAMPLE.kotl}
-file included with Hyperbole.  Use @bkbd{C-h h k e} to display that
-file, as pictured on the following page.  It is an actual outline file
-that explains major outliner operations.  You can test out the viewing,
-editing and motion commands with this file since a personal copy is made
-when you invoke this command.  If you have already edited this file and
-want to start with a fresh one, give the command a prefix argument:
-@bkbd{C-u C-h h k e}.
+This chapter expands on the information given in the interactive
+Koutliner tutorial file, @file{EXAMPLE.kotl}, included with Hyperbole.
+Use @bkbd{C-h h k e} to display that file, as pictured on the
+following page.  It is an actual outline file that explains major
+outliner operations.  You can test out the viewing, editing and motion
+commands with this file since a personal copy is made when you invoke
+this command.  If you have already edited this file and want to start
+with a fresh one, give the command a prefix argument: @bkbd{C-u C-h h
+k e}.
 
 @xref{Koutliner Keys}, for a full summary of the key bindings and
 commands available in the Koutliner.
+
+@cindex koutline, C-c ; letter key prefix
+@cindex koutline, toggle C-c letter key prefix
+@findex kotl-mode:set-letter-prefix-control-c
+@findex kotl-mode:toggle-letter-prefix
+@kindex koutliner, M-1 C-c C-l
+NOTE: As of Hyperbole version 9.3.0, the Koutliner @bkbd{C-c <letter>}
+keys have moved to @bkbd{C-c ; <letter>} so as not to override keys
+reserved for global user-specific bindings.  If you don't care about
+this and want the old bindings back (in addition to the new ones),
+uncomment the @code{(kotl-mode:set-letter-prefix-control-c)} line in
+your Hyperbole @code{use-package} initialization based on
+the reference file @file{$@{hyperb:dir@}/man/use-package}.  You can
+also interactively toggle the @samp{C-c} prefix for letter key
+bindings on and off with @bkbd{M-1 C-c C-l}, the command
+@code{kotl-mode:toggle-letter-prefix}.
+@page
 
 @float Image,image:Koutliner
 @caption{Koutliner Screenshot}
@@ -5946,14 +5965,14 @@ Vspec        kvspec:activate            Set a view specification
 ====================================================================
 @end example
 
-@page
 @kindex C-mouse-3
 @cindex popup menu, Koutliner
 @cindex menubar menu, Koutliner
-The popup and menubar Koutline menu, as displayed here, offers a more
-complete set of the Koutliner commands.  @bkbd{C-mouse-3} pops up the
-mode-specific menu in Emacs.  Experiment with the menu or
-read the following sections explaining commands.
+The popup and menubar Koutline menu, as displayed in the next image,
+offers a more complete set of the Koutliner commands.
+@bkbd{C-mouse-3} pops up the mode-specific menu in Emacs.  Experiment
+with the menu or read the following sections explaining commands.
+@page
 
 @float Image,image:Koutline Menu
 @caption{Koutline Menu}
@@ -5978,18 +5997,18 @@ operating systems with 3-character suffix limitations.
 @cindex cell, idstamp 0
 When a new koutline is created, an invisible root cell is added.  Its
 permanent and relative ids are both 0, and it is considered to be at
-level 0 in the outline.  All visible cells in the outline are at level 1
-or deeper, and thus are descendants of this root cell.  Some koutliner
-commands prompt for cell numbers as arguments.  An argument of 0 makes
-commands operate upon the entire outline.
+level 0 in the outline.  All visible cells in the outline are at level
+1 or deeper, and thus are descendants of this root cell.  Some
+koutliner commands prompt for cell numbers as arguments.  An argument
+of 0 makes commands operate upon the entire outline.
 
 An initial level 1 cell is also created to make it easy to start
 entering text in the outline.  A koutline always has at least one
 visible cell in it.
 
-@xref{Autonumbering}, which explains how cells are labeled according to their
-respective levels in the outline and how these labels are updated as the
-structure of the outline changes.
+@xref{Autonumbering}, which explains how cells are labeled according
+to their respective levels in the outline and how these labels are
+updated as the structure of the outline changes.
 
 
 @node Autonumbering, Idstamps, Creating Outlines, Koutliner
@@ -5997,17 +6016,17 @@ structure of the outline changes.
 
 @cindex autonumber
 @cindex relative identifier
-@xref{Adding and Killing}, for information on how to add new cells to or
-remove cells from a koutline.  As you do this, or as you promote or
+@xref{Adding and Killing}, for information on how to add new cells to
+or remove cells from a koutline.  As you do this, or as you promote or
 demote cells within the outline, the labels preceding the contents of
 each cell automatically update to reflect the new structure.  These
 labels are also known as @dfn{autonumbers} and as @dfn{relative ids}
 because they change as the structure changes.
 
 @cindex outline structure
-The outline structure is shown by these labels and by the indentation of
-each outline level.  Normally, each deeper level is indented another
-three characters, to reflect the nesting.
+The outline structure is shown by these labels and by the indentation
+of each outline level.  Normally, each deeper level is indented
+another three characters, to reflect the nesting.
 
 @cindex label type, alpha
 @cindex label type, legal
@@ -6016,15 +6035,16 @@ three characters, to reflect the nesting.
 @cindex outline, label type
 The default autonumbers are called @dfn{alphanumeric labels} because
 they alternate between using numbers and letters to distinguish each
-successive level.  Each alphanumeric label uniquely identifies a cell's
-position in an outline, so that there is no need to scan back to prior
-cells to see what the current section number of an outline is.  This is
-similar to a legal numbering scheme but without all the period
-characters between level numbers.  As an example, 1b3 is equivalent to a
-legal label of 1.2.3.  Both refer to the 3rd cell at level 3,
-below the 2nd child of the first cell at level 1.  Said another way,
-this is the 3rd child of the 1st cell's 2nd child.  In other words, it
-is easier to visualize hierarchies than to talk about them.
+successive level.  Each alphanumeric label uniquely identifies a
+cell's position in an outline, so that there is no need to scan back
+to prior cells to see what the current section number of an outline
+is.  This is similar to a legal numbering scheme but without all the
+period characters between level numbers.  As an example, 1b3 is
+equivalent to a legal label of 1.2.3.  Both refer to the 3rd cell at
+level 3, below the 2nd child of the first cell at level 1.  Said
+another way, this is the 3rd child of the 1st cell's 2nd child.  In
+other words, it is easier to visualize hierarchies than to talk about
+them.
 
 Alphanumeric labels are the default because they are shorter and easier
 to read aloud than equivalent legal ones.  They also simplify
@@ -6044,19 +6064,20 @@ permanent idstamps (permanent cell ids) are all available.
 @kindex koutliner, C-c M-l
 @kindex koutliner, C-u C-c M-l
 A cell label is normally followed by a period and a space, called the
-@dfn{label separator}, prior to the start of the cell contents.  You can
-change the separator for the current outline with @bkbd{C-c M-l}.
+@dfn{label separator}, prior to the start of the cell contents.  You
+can change the separator for the current outline with @bkbd{C-c M-l}.
 @bkbd{C-u C-c M-l} will additionally change the default separator
-value used when new outlines are created (for the current session only).
-For example, use the value "  " (two spaces) to get eliminate the
-trailing period after each cell label.  The separator must be at least
-two characters long but may be longer.
+value used when new outlines are created (for the current session
+only).  For example, use the value " " (two spaces) to get eliminate
+the trailing period after each cell label.  The separator must be at
+least two characters long but may be longer.
 
 @vindex file, .emacs
 @cindex initialization file
 If you find a separator that you prefer for all outlines, change the
-separator setting permanently by adding the following line to your Emacs
-initialization file, @file{~/.emacs}, substituting for `your-separator':
+separator setting permanently by adding the following line to your
+Emacs initialization file, @file{~/.emacs}, substituting for
+`your-separator':
 
 @cindex label separator, default
 @vindex kview:default-label-separator
@@ -6078,34 +6099,35 @@ Use @bkbd{C-c C-l id @key{RET}}.
 @cindex idstamp counter
 An idstamp counter for each outline starts at 0 and is incremented by
 one each time a cell is added to the outline.  This idstamp stays with
-the cell no matter where it is moved within the outline.  If the cell is
-deleted, its idstamp is not reused.
+the cell no matter where it is moved within the outline.  If the cell
+is deleted, its idstamp is not reused.
 
 @cindex root cell
 @cindex top-level cell
 @cindex cell, top-level
 @cindex cell, idstamp 0
 @cindex idstamp 0
-The 0 idstamp is always assigned to the root node of the entire outline.
-This node is never visible within the outline, but is used so that the
-outline may be treated as a single tree when needed.  Idstamps always
-begin with a 0, as in 012, to distinguish them from relative ids.
+The 0 idstamp is always assigned to the root node of the entire
+outline.  This node is never visible within the outline, but is used
+so that the outline may be treated as a single tree when needed.
+Idstamps always begin with a 0, as in 012, to distinguish them from
+relative ids.
 
 
 @node Editing Outlines, Viewing Outlines, Idstamps, Koutliner
 @section   Editing Outlines
 
 Text editing within the Koutliner works just as it does for other
-buffers, except when you need to deal with the structural components of
-an outline.  Within the contents of a cell, all of your standard editing
-keys should work properly.  You can just type in text and the left and
-right margins of the lines will be maintained for you.  @xref{Filling},
-for the times when you need to refill a paragraph or to control when
-filling occurs.
+buffers, except when you need to deal with the structural components
+of an outline.  Within the contents of a cell, all of your standard
+editing keys should work properly.  You can just type in text and the
+left and right margins of the lines will be maintained for you.
+@xref{Filling}, for the times when you need to refill a paragraph or
+to control when filling occurs.
 
 Don't invoke editing commands with @bkbd{M-x command-name @key{RET}}
-since the Koutliner uses differently named commands made to act
-like the regular editing commands.  Koutliner commands, however, account
+since the Koutliner uses differently named commands made to act like
+the regular editing commands.  Koutliner commands, however, account
 for the structure and indentation in koutlines.
 
 @cindex cell selection
@@ -6179,13 +6201,14 @@ shown in the table below.
 |--------------------+-------------------------------+--------------------------|
 @end smallexample
 
-@kindex C-c C-]
+@kindex koutliner, C-c C-]
+@cindex koutliner, toggle tab behavior
 Org-style cycling is now the default.  In Hyperbole versions earlier
 than 9.3.0, the default was @samp{nil} for demotion and promotion.  You
 can toggle between using these keys for cycling or demotion/promotion
 by pressing @bkbd{C-c C-]}.  Or you can change the default by setting
 @code{kotl-mode:tab-flag} in your Hyperbole @code{use-package}
-configuration.See the following subsections for further details.
+configuration.  See the following subsections for further details.
 
 @menu
 * Org-style Visibility Cycling::
@@ -6196,8 +6219,6 @@ configuration.See the following subsections for further details.
 @node Org-style Visibility Cycling, Promoting and Demoting, TAB and Shift-TAB, TAB and Shift-TAB
 @subsubsection  Org-style Visibility Cycling
 
-@kindex koutliner, C-c C-]
-@cindex koutliner, toggle tab behavior
 @cindex koutliner, cycling
 @cindex koutliner, Org-style cycling
 @bkbd{C-c C-]} toggles the function of @key{TAB} and @bkbd{S-@key{TAB}}
@@ -6337,6 +6358,7 @@ Note that with @code{kotl-mode:tab-flag} = @samp{t}, @bkbd{@key{TAB}}
 executes @code{kotl-mode:indent-line} with any prefix argument given.
 This bypasses all of the functionality in the following tables.
 
+@page
 @noindent
 Here is a summary of how different prefix arguments affect the function
 of these key bindings.  With @code{kotl-mode:tab-flag} = @samp{nil}
@@ -8581,6 +8603,7 @@ To programmatically query implicit buttons for their attributes, use
 the functions from the @samp{hbut} and @samp{hattr} classes.  See
 the @file{hib-kbd.el} file for an example of a custom help function.
 
+@page
 @node Explicit Button Technicalities, Encapsulating Systems, Creating Types, Developing with Hyperbole
 @section   Explicit Button Technicalities
 @menu
@@ -9416,130 +9439,163 @@ specifiable filters or from a list.
 @appendix Setup
 
 Hyperbole must be obtained and setup at your site before you can
-use it.  Instructions are given below.  If you are using InfoDock
-version 4.0.7 or higher, Hyperbole is pre-installed so you may skip
-the installation instructions and simply continue with the
-next section about customizing Hyperbole's behavior.
+use it.  Instructions are given below.
 
 @menu
-* Installation::
+* Installation and Configuration::
 * Customization::
 @end menu
 
-@node Installation, Customization, Setup, Setup
-@section   Installation
+@node Installation and Configuration, Customization, Setup, Setup
+@section   Installation and Configuration
 
-There are multiple package managers you can use to install Hyperbole once
-you have GNU Emacs set up at your site.  Choose one based on your needs.
+Hyperbole can be upgraded or installed using Emacs' package manager
+from ELPA or MELPA archives, using Straight or Elpaca package managers
+from Hyperbole's git development repository or manually downloaded via
+sftp from a tarball archive.  The following sections explain these methods.
 
 @menu
-* Elpa Latest or Release Package Installation::
+* Package Upgrades::
+* Package Installation::
 * Git Latest Package Installation::
-* Manual Tarball Archive Installation::
+* Tarball Installation::
 @end menu
 
 @noindent
-After installing Hyperbole, read the next section on Invocation.
+After installing and configuring Hyperbole, read the next section, @pxref{Invocation}.
 
-@node Elpa Latest or Release Package Installation, Git Latest Package Installation, Installation, Installation
-@subsection Elpa Latest or Release Package Installation (Emacs Package Manager)
+@node Package Upgrades, Package Installation, Installation and Configuration, Installation and Configuration
+@subsection Package Upgrades
+
+@cindex upgrading Hyperbole
+@cindex Hyperbole upgrades
+To upgrade an existing Hyperbole installation, invoke the Emacs
+Package Manager, @pxref{Packages,,,emacs,the GNU Emacs Manual}, with
+@bkbd{M-x list-packages @key{RET}}, then use the @bkbd{U} key followed
+by the @bkbd{x} key to upgrade all out-of-date packages, Hyperbole
+among them.  Then skip to the @ref{Invocation} section.
+
+@node Package Installation, Git Latest Package Installation, Package Upgrades, Installation and Configuration
+@subsection Package Installation (Emacs Package Manager)
 
 @cindex installation
-@cindex elpa package
+@cindex configuration
 @cindex package manager
 @cindex Emacs package manager
+@cindex Hyperbole releases
+@cindex Hyperbole package installation
 @cindex release installation
 @cindex obtaining Hyperbole
 @cindex Hyperbole, obtaining
-@cindex elpa-devel package
 @cindex in-development installation
 @cindex latest installation
 @cindex installation, latest
 @cindex installation, release
 @cindex installation, from git
-Once you have Emacs set up at your site, you may install GNU Hyperbole
+Once you have Emacs set up at your site, you can install GNU Hyperbole
 using the Emacs Package Manager.  If you are not familiar with it,
-@pxref{Packages,,,emacs,the GNU Emacs Manual}.  Releases are done with
-care and occur once in awhile.  In between, there is are
-regression-tested @emph{latest} distributions packaged from the
-in-development code branch; these may be many months and features
-ahead of the release branch.
+@pxref{Packages,,,emacs,the GNU Emacs Manual} for usage instructions
+and @pxref{Package Installation,,,emacs,the GNU Emacs Manual} for an
+introduction to package archive sites which host libraries of Emacs
+packages.
 
-Therefore, consider using the Elpa Latest package; it pulls from the
-latest Hyperbole development branch tip and uses the builtin Emacs
-package manager.  Since Hyperbole is a mature package, this is fine to
-use and update on a day-to-day basis.  But new features are tested on
-this branch and once in awhile it may break for a short time before a
-fix is pushed.
+@cindex ELPA-devel archive
+@cindex MELPA-snapshots archive
+@cindex ELPA package archive
+@cindex MELPA package archive
+@dfn{Hyperbole releases} update the Hyperbole package version number
+and occur slowly. with major releases typically at least a year apart.
+In between, many significant feature updates are made, tested and
+promoted to package archives that track the Hyperbole master git
+development branch (elpa-devel and melpa-snapshots).  Since Hyperbole
+is a mature package with regression testing, the latest snapshots are
+usually fine for everyday use.  Most users should choose a package
+archive site that tracks these latest updates (elpa-devel and
+melpa-snapshots).  If you need slow-moving stability, get the latest
+release from elpa or melpa.
 
-With this branch you'll be able to submit bug reports and feature
-requests but will not be able to submit pull requests for changes to
-the developers; use the Git Latest Package, described in the next
-section, instead for that.
+@noindent
+Here are the installation and configuration steps:
 
-If you have Hyperbole installed and simply want to upgrade it, invoke
-the Emacs Package Manager with @bkbd{M-x list-packages @key{RET}},
-then use the @bkbd{U} key followed by the @bkbd{x} key to upgrade all
-out-of-date packages, Hyperbole among them.  Then skip the text below
-and move on to the next section, @pxref{Invocation}.
+@itemize
+@item Choose one package archive source for Hyperbole by adding
+one of the following expressions to your Emacs init file, see
+@pxref{Init File,,The Emacs Initialization File,emacs,the GNU Emacs
+Manual}:
 
-Otherwise, to download and install the Hyperbole package, you should
-add the following Lisp to your Emacs initialization file, as described
-below.  It installs the Elpa Latest package; there is one commented
-line in the configuration that you can switch out to pull from the
-older Elpa production release package.  (For further details,
-@pxref{Init File,,The Emacs Initialization File,emacs, the GNU Emacs
-Manual}).
+@table @b
+@noindent
+@item elpa-devel (latest Hyperbole updates):
+@code{(add-to-list 'package-archives@*
+'("elpa-devel". "https://elpa.gnu.org/devel/") t)}
+
+@noindent
+@item melpa-snapshots (latest Hyperbole updates):
+@code{(add-to-list 'package-archives@*
+'("melpa-snapshots" . "https://snapshots.melpa.org/packages/") t)}
+
+@noindent
+@item elpa (updates only when Hyperbole version number changes):
+@code{(add-to-list 'package-archives@*
+'("elpa". "https://elpa.gnu.org") t)}
+
+@noindent
+@item melpa-releases (updates only when Hyperbole version number changes):
+@code{(add-to-list 'package-archives@*
+'("melpa-releases" . "https://releases.melpa.org/packages/") t)}
+@end table
+
+@findex man/use-package
+@cindex use-package configuration
+@item Then copy Hyperbole's @file{$@{hyperb:dir@}/man/use-package}
+file to your Emacs init file and customize it to your taste based on
+the comments therein, though everything will work fine without any
+modifications to the @file{use-package} file.
 
 @sp 1
-@smalllisp
-@include hy-package.el
-@end smalllisp
+@verbatiminclude use-package
 @sp 1
 
-Now save the file and restart Emacs.  Hyperbole will then be downloaded
-and compiled for use with your version of Emacs; give it a minute or two.
+@item Restart Emacs to Install, Configure and Activate Hyperbole
 
+With Hyperbole now installed and configured you should see the
+@code{Hypb} hyperbole minor mode indicator in your modeline after
+Emacs startup and initializaton.
 
-@node Git Latest Package Installation, Manual Tarball Archive Installation, Elpa Latest or Release Package Installation, Installation
-@subsection Git Latest Package Installation (Straight Package Manager)
+The @file{use-package} expression will download and install Hyperbole, if
+need be, and then configure it as you have specified there.  If you
+want to do any further interactive customization, see the section,
+@pxref{Customization}.
+@end itemize
+
+@node Git Latest Package Installation, Tarball Installation, Package Installation, Installation and Configuration
+@subsection Git Latest Package Installation
 
 @cindex Straight package manager
+@cindex Elpaca package manager
+@cindex Quelpa package manager
 @cindex pre-release installation
 @cindex installation, pre-release
 @cindex installation, from git
-If you potentially want to contribute to Hyperbole development and send
-pull requests to the Hyperbole development team or to try out new
-features still in testing, you can use the Straight package manager.  It
-pulls the latest Hyperbole source code directly from its git repository.
-This also gives you a clean installation process without showing you any
-minor byte compilation warnings.
+To build your own packages straight from the Hyperbole development
+source, you can use package managers that pull from the Hyperbole git
+repo: Straight, Elpaca or Quelpa.  These allow you to make pull
+requests to the Hyperbole development team or to try out just
+published new features.
 
-If you have Hyperbole installed and simply want to upgrade it, invoke
-the Emacs Package Manager with @bkbd{M-x list-packages @key{RET}},
-then use the @bkbd{U} key followed by the @bkbd{x} key to upgrade all
-out-of-date packages, Hyperbole among them.  Then skip the text below
-and move on to the next section, @pxref{Invocation}.
+@noindent
+This is the url to the Hypebole repo:
 
-Otherwise, to download and install the Hyperbole package, you should add
-the following Lisp to your Emacs initialization file, as described below.
-(For further details, @pxref{Init File,,The Emacs Initialization File,emacs,
-the GNU Emacs Manual}).
+  @code{https://git.savannah.gnu.org/git/hyperbole.git}
 
-@sp 1
-@smalllisp
-@include hy-straight.el
-@end smalllisp
-@sp 1
+For further usage details on your specific git-based package manager,
+see its own documentation.
 
-Now save the file and restart Emacs.  Hyperbole will then be downloaded
-and compiled for use with your version of Emacs; give it a minute or two.
+@node Tarball Installation,  , Git Latest Package Installation, Installation and Configuration
+@subsection Tarball Installation (SFTP)
 
-@node Manual Tarball Archive Installation,  , Git Latest Package Installation, Installation
-@subsection Manual Tarball Archive Installation (SFTP)
-
-If you are old-school, don't like package managers, and prefer doing
-everything by hand, then you can obtain Hyperbole from a tarball:
+If you avoid package managers and like to manually install packages,
+a @code{tar} archive is available for sftp download and installation.
 
 @noindent
 Download either:
@@ -9550,7 +9606,7 @@ Download either:
 @uref{http://ftpmirror.gnu.org/hyperbole/}, which will find the closest
 mirror of the GNU ftp site and show it to you.
 
-@item 2. the latest in-development pre-release tar.gz source archive linked to at the top of this web page:
+@item 2. the latest in-development pre-release tar.gz source archive:
 @uref{https://elpa.gnu.org/devel/hyperbole.html}.
 @end table
 
@@ -9561,37 +9617,27 @@ the following Posix shell command:
   @code{make bin}
 
 to byte-compile the Hyperbole lisp files.  Then add the following
-lines to your personal Emacs initialization file, @file{~/.emacs}:
+lines to your personal init file:
 
 @lisp
 @group
-(unless (and (featurep 'hyperbole) hyperbole-mode)
-  (when (< emacs-major-version 28)
-    (error "Hyperbole requires Emacs 28 or above, not %d"
-           emacs-major-version))
-  (push "<directory-ending-with-hyperbole-where-you-unpacked>"
+  (push "<hyperbole-version-directory-where-you-unpacked>"
         load-path)
-  (require 'hyperbole)
-  (hyperbole-mode 1)
-  ;; Allow HyWikiWords in text buffers and programming buffer comments,
-  ;; not just in HyWiki pages, by uncommenting the next line.
-  ;; (hywiki-mode :all)
-  )
 @end group
 @end lisp
 
-Restart Emacs and you should see the @code{Hypb} hyperbole minor mode
-indicator in your modeline after startup.
-
 @page
-@node Customization,  , Installation, Setup
+@node Customization,  , Installation and Configuration, Setup
 @section   Customization
 
 @cindex menu, Cust
 @cindex configuration
 @cindex customization
-Major Hyperbole user options may be set from the Customize submenu
-below the Hyperbole menubar menu, as seen here.
+Most permanent configuration changes are made in the Hyperbole
+@code{use-package} expression in your init file.  But many Hyperbole
+variables are custom options that can be changed interactively and the
+changes will persist across Emacs sessions.  Use the Customize submenu
+below the Hyperbole menubar menu to set any of these, as seen here.
 
 @float Image,image:Customize Menu
 @caption{Hyperbole Customize Menu}
@@ -10025,7 +10071,7 @@ override Hyperbole's defaults.
 @end menu
 
 @node Binding Minibuffer Menu Items, Default Hyperbole Bindings, Hyperbole Key Bindings, Hyperbole Key Bindings
-@section Binding Minibuffer Menu Items
+@section   Binding Minibuffer Menu Items
 
 @cindex binding keys
 @cindex minibuffer menu bindings
@@ -10045,7 +10091,7 @@ menu.  Simply type the keys to select the item you want to bind to
 your key.
 
 @node Default Hyperbole Bindings, Testing, Binding Minibuffer Menu Items, Hyperbole Key Bindings
-@section Default Hyperbole Bindings
+@section   Default Hyperbole Bindings
 
 Hyperbole's default key bindings can be viewed and edited from
 either the Cust/KeyBindings minibuffer menu or from the Hyperbole
@@ -10265,23 +10311,19 @@ Example uses with a press of the Action Key:
 
 @cindex outliner keys
 This appendix summarizes the specialized key bindings available when
-editing a koutline with Hyperbole.  Each key is shown together with its
-command binding and the documentation for that command.  Normal emacs
-editing keys are modified to account for the structure within outlines.
-An outliner command which overloads an emacs command named @emph{cmd}
-is named @emph{kotl-mode:cmd}.
-
-NOTE: As of Hyperbole version 9.3.0, the Koutliner @bkbd{C-c <letter>}
-keys have moved to @bkbd{C-c ; <letter>} so as not to override keys
-reserved for global user-specific bindings.  If you don't care about
-this and want the old bindings back (in addition to the new ones),
-uncomment the @code{(kotl-mode:set-letter-prefix-control-c)} line in
-your Hyperbole @code{use-package} initialization based on the
-reference file @file{$@{hyperb:dir@}/man/use-package}.  You can also
-interactively toggle @samp{C-c} letter bindings on and off with
-@bkbd{M-1 C-c C-l}.
+editing a koutline with Hyperbole.  Each key is shown together with
+its command binding and the documentation for that command.  Normal
+emacs editing keys are modified to account for the structure within
+outlines.  An outliner command which overloads an emacs command named
+@emph{cmd} is named @emph{kotl-mode:cmd}.
 
 @table @code
+
+@findex kotl-mode:toggle-tab-flag
+@item kotl-mode:toggle-tab-flag @bkbd{C-c C-]}
+Toggle the value of @code{kotl-mode:tab-flag} and explain its current
+usage.  This toggles TAB/S-TAB between the Org-compatible cycling
+commands and the traditional Koutliner demote/promote commands."
 
 @findex kfile:write
 @item kfile:write  @bkbd{C-x C-w}
@@ -10845,6 +10887,10 @@ separator value used for new outlines is also set to this new value.
 Change kview's label display type to NEW-TYPE, updating all displayed labels.
 See documentation for the @code{kview:default-label-type} variable,
 for valid values of NEW-TYPE.
+
+Separately, with an optional prefix argument of 1, toggle the @samp{C-c}
+prefix for letter key bindings on and off.  This does not affect the
+default @samp{C-c ;} letter key prefix.
 
 @findex kvspec:activate
 @item kvspec:activate  @bkbd{C-c C-v}

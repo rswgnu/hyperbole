@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     13-Oct-26 at 14:22:01 by Bob Weiner
+;; Last-Mod:     14-Oct-26 at 11:16:08 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1823,7 +1823,7 @@ Trigger an error if the instance of the non-null anchor requested is not found."
 				    (referent-regexp (format
 						      (cond ((or (derived-mode-p 'outline-mode) ;; Includes Org mode
 								 ;; Treat all caps filenames without suffix like outlines,
-                                                                 ;; e.g. README, INSTALL, HY-NEWS, ...
+                                                                 ;; e.g. README, HY-NEWS, ...
 								 (and (hypb:buffer-file-name)
 								      (string-match-p "\\`[A-Z0-9][A-Z0-9_-]*\\'"
                                                                                       (file-name-nondirectory (hypb:buffer-file-name)))))

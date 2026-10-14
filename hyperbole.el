@@ -8,7 +8,7 @@
 ;; Maintainer:   Robert Weiner <rsw@gnu.org>
 ;;               Mats Lidell <matsl@gnu.org>
 ;; Created:      06-Oct-92 at 11:52:51
-;; Last-Mod:      5-Oct-26 at 12:11:48 by Bob Weiner
+;; Last-Mod:     14-Oct-26 at 11:15:22 by Bob Weiner
 ;; Released:     27-Jul-26
 ;; Version:      9.2.0
 ;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -64,8 +64,8 @@
 ;;
 ;; ----
 ;;
-;; See the "INSTALL" file for installation instructions and the "README.md" file
-;; for general information.
+;; See "README.md#Installation" for installation instructions and the
+;;"README.md" file for general information.
 ;;
 ;; There is no need to manually edit this file unless there are specific
 ;; customizations you would like to make, such as whether a Hyperbole Action

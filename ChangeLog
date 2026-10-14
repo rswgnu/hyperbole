@@ -1,4 +1,21 @@
+2026-10-14  Bob Weiner  <rsw@gnu.org>
+
+* DEMO: Remove the INSTALL file and replace it with references to
+    "README.md#Installation".
+
+* man/hyperbole.texi (Hyperbole Overview): Add HyWiki summary.
+                     (Installation and Configuration): Finish this section.
+
+* Makefile (confirm): Fix typo that moved single quotes improperly.
+           (README.md.html): Remove this target; build as part of README.md.
+
 2026-10-13  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (Tarball Install, Package Installation): Simplified naming of
+    these two sections.
+
+* MANIFEST, Makefile: Move README.md to README.in.md.  Format it to produce README.md
+    as part of the 'doc' target.  Eliminate README.toc.md.
 
 * test/hyrolo-tests.el (hyrolo-tests--fgrep-and-goto-next-visible-kotl-heading,
                         hyrolo-tests--fgrep-and-goto-next-visible-kotl-heading-level-2,

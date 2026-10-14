@@ -1,4 +1,4 @@
-;;; use-package --- Hyperbole use-package reference configuration   -*- mode: emacs-lisp; lexical-binding: t; -*-
+;;; use-package --- Reference configuration   -*- mode: emacs-lisp; lexical-binding: t; -*-
 
 ;; NOTE: If you use Emacs 28 or earlier, you'll need to install the
 ;; `use-package' Emacs package before using this configuration file
@@ -11,13 +11,14 @@
 (use-package hyperbole
 
   ;; Install the package from a package archive if not already installed
-  :ensure
+  :ensure t
 
-  :config
   ;; Hyperbole binds {C-h h} in the `global-map' to display its
   ;; minibuffer command menus. If you prefer a different binding,
-  ;; uncomment the two lines below which restore the standard binding
-  ;; for {C-h h} and set your preferred binding: example {C-c h}.
+  ;; you can restore the standard Emacs binding of {C-h h} and set
+  ;; your preferred Hyperbole menu binding: example {C-c h} by
+  ;; uncommenting the next three lines:
+  ;; :config
   ;;   (global-set-key (kbd "C-h h") #'view-hello-file)
   ;;   (global-set-key (kbd "C-c h") #'hyperbole)
 
@@ -30,13 +31,13 @@
   (hyperbole-mode 1)
 
   ;; Initialize the global HyWiki minor mode to one of these values:
-  ;; - :all   - highlight HyWikiWords in all editable buffers except those
-  ;;            with a major mode in ‘hypb:exclude-major-modes’; also
-  ;;            enable ‘hyperbole-mode’ minor mode if off.
+  ;; - :all   - highlight HyWikiWords in all editable buffers except
+  ;;            those with a major mode in ‘hypb:exclude-major-modes’;
+  ;;            also enable ‘hyperbole-mode’ minor mode if off.
   ;;
   ;; - :pages - highlight HyWikiWords in HyWiki pages only (Org files in
-  ;;            ‘hywiki-directory’); also enable ‘hyperbole-mode’ minor mode
-  ;;            if off. (default)
+  ;;            ‘hywiki-directory’); also enable ‘hyperbole-mode’ minor
+  ;;            mode if off. (default)
   ;;
   ;; - nil    - no highlighting, the ‘hywiki-mode’ is disabled.
   (hywiki-mode :all)
@@ -51,11 +52,12 @@
   ;; Action and Assist Key Customizations
 
   ;; Customize how Hyperbole and Org mode share the M-RET key:
-  ;;   t        - With `hyperbole-mode' enabled, Hyperbole controls the key.
+  ;;   t        - With `hyperbole-mode' enabled, Hyperbole controls the
+  ;;              key.
   ;;
-  ;;   'buttons - With `hyperbole-mode enabled', Hyperbole controls the key
-  ;;              only when on a button or link; otherwise, Org controls
-  ;;              it. (default)
+  ;;   'buttons - With `hyperbole-mode enabled', Hyperbole controls the
+  ;;              key only when on a button or link; otherwise, Org
+  ;;              controls it. (default)
   ;;
   ;;   nil      - In Org mode, Org controls the key.
   (hsys-org-enable-smart-keys t)
@@ -88,16 +90,18 @@
 
   ;; Customize the behavior of the <tab> and S-<tab> keys in a Koutline.
   ;; One of three possible values:
-  ;;   nil      - {TAB} demotes the current tree and {Shift-TAB} promotes the
-  ;;              tree. (default)
+  ;;   nil      - {TAB} demotes the current tree and {Shift-TAB}
+  ;;              promotes the tree. (default)
   ;;
   ;;   'cycle  -  enables Org-like outline view cycling when point is in
-  ;;              a context other than that specified by ‘org-cycle-emulate-tab’.
-  ;;              See {C-h f kotl-mode:tab-command RET} for details.
+  ;;              a context other than that specified by
+  ;;              ‘org-cycle-emulate-tab’.  See {C-h f
+  ;;              kotl-mode:tab-command RET} for details.
   ;;
-  ;;   t       -  makes {TAB} indent lines and insert literal <tab> characters
-  ;;              according to the context setting of ‘kotl-mode:emulate-tab’,
-  ;;              which also determines where {Shift-TAB} deletes backward.
+  ;;   t       -  makes {TAB} indent lines and insert literal <tab>
+  ;;              characters according to the context setting of
+  ;;              ‘kotl-mode:emulate-tab’, which also determines where
+  ;;              {Shift-TAB} deletes backward.
   (kotl-mode:tab-flag nil)
 
   ;; Setup contexts where ‘kotl-mode:tab-command’ should override
@@ -108,7 +112,8 @@
   ;;
   ;;   white       - Only in completely white lines
   ;;
-  ;;   whitestart  - Only at the beginning of lines, before the first non-white char
+  ;;   whitestart  - Only at the beginning of lines, before the first
+  ;;                 non-white char
   ;;
   ;;   t           - Everywhere except in headlines
   ;;

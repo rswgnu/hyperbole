@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     12-Oct-26 at 14:47:02 by Bob Weiner
+# Last-Mod:     14-Oct-26 at 11:19:35 by Bob Weiner
 #
 # Copyright (C) 1994-2026  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -17,8 +17,9 @@
 #   **********
 #
 #   GNU Hyperbole should be installed for use via the Emacs package system;
-#   see the "INSTALL" file for installation instructions and the Info node,
-#   "(emacs)Packages", if you are unfamiliar with the Emacs package system.
+#   see "README.md#Installation" for installation instructions and the Info
+#   node, "(emacs)Packages", if you are unfamiliar with the Emacs package
+#   system.
 #
 #   Only Hyperbole developers (those who develop the source code) and testers
 #   need to use this file for building Hyperbole distributions.  Others
@@ -190,7 +191,7 @@ ETAGS = \etags
 # With gnupload the option --dry-run can be used for testing the upload.
 GNUFTP = \gnupload --to ftp.gnu.org:hyperbole --replace
 GZIP = \gzip -c
-INSTALL = \install -m 644 -c
+INSTALLER = \install -m 644 -c
 MKDIR = \mkdir -p
 RM = \rm -f
 TAR = \tar
@@ -268,7 +269,7 @@ HY-TALK  = HY-TALK/.hypb HY-TALK/HYPB HY-TALK/HY-TALK.org HY-TALK/HYPERAMP.org H
 HYPERBOLE_FILES = dir info html $(EL_SRC) $(EL_KOTL) \
 	$(HY-TALK) .mailmap ChangeLog COPYING Makefile HY-ABOUT HY-ANNOUNCE \
         HY-CONCEPTS.kotl HY-NEWS HY-WHY.kotl $(wildcard hywiki/*.org) \
-        INSTALL DEMO DEMO-ROLO.otl FAST-DEMO MANIFEST README.md TAGS _hypb \
+        DEMO DEMO-ROLO.otl FAST-DEMO MANIFEST README.in.md TAGS _hypb \
         .hypb hyrolo.py smart-clib-sym topwin.py hyperbole-banner.png \
 	.dir-locals.el \
 	$(man_dir)/hkey-help.txt $(man_dir)/hyperbole.texi $(man_dir)/hyperbole.css \
@@ -285,7 +286,7 @@ EL_TAGS = $(EL_SRC) $(EL_KOTL) $(TEST_ERT_FILES)
 help:
 	@echo "Use the Emacs Package Manager to build and install the latest release of GNU Hyperbole."
 	@echo "For help with Emacs packages, see the GNU Emacs Info Manual section, \"(emacs)Packages\"."
-	@echo "See \"$(shell pwd)/INSTALL\" for detailed installation instructions,"
+	@echo "See \"$(shell pwd)/README.md#Installation\" for detailed installation instructions,"
 	@echo "including how to install Hyperbole pre-releases from the git repo tip."
 	@echo ""
 
@@ -354,18 +355,18 @@ install: elc install-info install-html $(data_dir)/hkey-help.txt
 install-info: $(info_dir)/hyperbole.info
 $(info_dir)/hyperbole.info: $(man_dir)/hyperbole.info
 	$(MKDIR) $(info_dir)/im; \
-	  cd $(man_dir); $(INSTALL) hyperbole.info* $(info_dir); \
-	  $(INSTALL) im/*.{png,eps} $(info_dir)/im
+	  cd $(man_dir); $(INSTALLER) hyperbole.info* $(info_dir); \
+	  $(INSTALLER) im/*.{png,eps} $(info_dir)/im
 
 .PHONY: install-html
 install-html: $(html_dir)/hyperbole.html
 $(html_dir)/hyperbole.html: $(man_dir)/hyperbole.html $(man_dir)/hyperbole.css $(man_dir)/texinfo-7.css
 	$(MKDIR) $(html_dir)/im; \
-	  cd $(man_dir); $(INSTALL) hyperbole.html* hyperbole.css texinfo-7.css $(html_dir); \
-	  $(INSTALL) im/*.{png,eps} $(html_dir)/im
+	  cd $(man_dir); $(INSTALLER) hyperbole.html* hyperbole.css texinfo-7.css $(html_dir); \
+	  $(INSTALLER) im/*.{png,eps} $(html_dir)/im
 
 $(data_dir)/hkey-help.txt: $(man_dir)/hkey-help.txt
-	$(INSTALL) hkey-help.txt $(data_dir)
+	$(INSTALLER) hkey-help.txt $(data_dir)
 
 # Setup to run Hyperbole from .el source files
 .PHONY: src
@@ -434,7 +435,7 @@ clean:
 .PHONY: version
 version:
 	@echo ""
-	@fgrep -L $(HYPB_VERSION) Makefile HY-ABOUT HY-ANNOUNCE HY-NEWS README.md hversion.el hyperbole.el man/hyperbole.texi > WRONG-VERSIONS
+	@fgrep -L $(HYPB_VERSION) Makefile HY-ABOUT HY-ANNOUNCE HY-NEWS README.in.md hversion.el hyperbole.el man/hyperbole.texi > WRONG-VERSIONS
 	@# If any file(s) have wrong version number, print them and exit with code 1
 	@if [ -s WRONG-VERSIONS ]; then \
 	  echo "The following files do not have the proper Hyperbole version number, $(HYPB_VERSION):"; \
@@ -443,16 +444,16 @@ version:
 	@rm -f WRONG-VERSIONS
 	@echo ""
 
-# Build the README.md.html and Info, HTML and Postscript versions of the user manual
+# Build the README.md, README.md.html and Info, HTML and Postscript versions of the user manual
 .PHONY: doc
-doc: version README.md.html manual
+doc: version README.md manual
 
 # Convenience targets for regenerating the docs
 DOC_SUFFIXES = log aux cp cpz fn fns ky toc vr vrs info pdf html
 .PHONY: doc-clean doc-regenerate
 doc-clean:
 	$(RM) $(foreach suf,$(DOC_SUFFIXES),$(man_dir)/hyperbole.$(suf))
-	$(RM) README.md.html README.toc.md
+	$(RM) README.md README.md.html
 
 doc-regenerate: doc-clean doc
 
@@ -482,19 +483,18 @@ $(man_dir)/hyperbole.html: $(TEXINFO_SRC) $(man_dir)/hyperbole.css $(man_dir)/te
 #
 # `pandoc' is available from:
 #    https://github.com/jgm/pandoc
-README.toc.md: README.md
-	cp -p README.md README.toc.md && md_toc -p -m [TOC] github README.toc.md \
-	  && sed -i -e "s/^\[TOC\]//g" -e "s+[ \t]*\[man/use-package\](man/use-package)+cat man/use-package+e" README.toc.md
-
-README.md.html: README.toc.md
-	pandoc --from=gfm-tex_math_dollars --to=html+gfm_auto_identifiers -o README.md.html README.toc.md
+README.md: README.in.md
+	cp -p README.in.md README.md && md_toc -p -m [TOC] github README.md \
+	  && sed -i -e "s+^\[TOC\]++g" -e "s+\`\`\`elisp+<pre><code>+g" -e "s+\`\`\`+</pre></code>+g" \
+                    -e "s+[ \t]*\[man/use-package\](man/use-package)+cat man/use-package+e" README.md
+	pandoc --from=gfm-tex_math_dollars --to=html+gfm_auto_identifiers -o README.md.html README.md
 
 # website maintenance: "https://www.gnu.org/software/hyperbole/"
 define confirm
 	@echo "═══════════════════════════════════════"
 	@echo "  WARNING: $(1)"
 	@echo "═══════════════════════════════════════"
-	@read -r -p "Are you sure? Write $(2)'' to continue: " answer; \
+	@read -r -p "Are you sure? Write '$(2)' to continue: " answer; \
 	[[ "$$answer" == "$(2)" ]] || { echo "Aborted."; exit 1; }
 endef
 
