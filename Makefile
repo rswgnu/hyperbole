@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     14-Oct-26 at 13:51:47 by Bob Weiner
+# Last-Mod:     16-Oct-26 at 11:12:54 by Mats Lidell
 #
 # Copyright (C) 1994-2026  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -521,9 +521,8 @@ release-website:
 # the change and prepare a PR with the update.
 .PHONY: release-pre
 release-pre:
-	git fetch github_master
-	git diff --quiet github_origin/master
-	git switch -c release/$(HYPB_VERSION)
+	git fetch github_origin
+	git switch -c release_$(HYPB_VERSION) --no-track github_origin/master
 	$(EMACS_BATCH) -l hypb-release \
 	  --eval '(hypb-release-update-hyperbole-version-header "$(HYPB_VERSION)")'
 	$(MAKE) version
@@ -533,7 +532,7 @@ release-pre:
 	gh pr create \
           --repo rswgnu/hyperbole \
           --base master \
-          --head release/$(HYPB_VERSION) \
+          --head release_$(HYPB_VERSION) \
           --title "Prepare release $(HYPB_VERSION)" \
           --body "Prepare release $(HYPB_VERSION)"
 

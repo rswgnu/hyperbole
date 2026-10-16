@@ -26,6 +26,11 @@
     table.  Also, change C-0 to M-0 and C--1 to M--1 since control
     digits don't typically work on a terminal.
 
+2026-10-16  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (release-pre): Use remote for fetching and creating release
+    branch. Use underscore in branch name.
+
 2026-10-15  Mats Lidell  <matsl@gnu.org>
 
 * man/hyperbole.texi (Top, Introduction): Updated version number to 9.3.0.
