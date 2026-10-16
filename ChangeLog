@@ -1,3 +1,31 @@
+2026-10-16  Bob Weiner  <rsw@gnu.org>
+
+* man/hyperbole.texi (View Specs, Relocating and Copying, Koutliner Keys):
+* kotl/EXAMPLE.kotl: INCOMPATIBLE CHANGE: Move {C-c ; b}
+    (kotl-mode:toggle-blank-lines) to {C-c ]}.  Move {C-c C-c}
+    (kotl-mode:copy-before) to {C-c ; b} to match with {c-c ; c}
+    (kotl-mode:copy-after) binding.  {C-c C-c} no longer worked
+    because Org-compatibility overrode its binding.
+
+* kotl/EXAMPLE.kotl:
+  man/hyperbole.texi (Promoting and Demoting):
+  kotl/kotl-mode.el (kotl-mode:setup-keymap): INCOMPATIBLE CHANGE:
+    Move {C-c C-]} binding to {C-c [} as is easier-to-type and is a
+    'left' opening brace like left 'TAB' key.
+
+* kotl/kotl-mode.el (kotl-mode:toggle-tab-flag): Add missing
+    (interactive) expression and fix mis-printing of TAB/S-TAB
+    keys due to bindings being wrapped in org-hijacker calls.
+                    (kotl-mode:to-end-of-line): Rename to
+    'kotl-mode:end-of-line'.  This was not done previously due to an old
+    XEmacs compiler but XEmacs is no longer supported.
+
+* kotl/EXAMPLE.kotl:
+  man/hyperbole.texi (Cell Attributes): Update key binding
+    descriptions and move {C-c ; h} description into the key binding
+    table.  Also, change C-0 to M-0 and C--1 to M--1 since control
+    digits don't typically work on a terminal.
+
 2026-10-14  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-grep): Add check of 'hsys-consult-flag' before

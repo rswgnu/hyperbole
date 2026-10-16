@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     11-Oct-26 at 10:38:48 by Bob Weiner
+;; Last-Mod:     16-Oct-26 at 11:57:13 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -50,7 +50,7 @@
 (declare-function kotl-mode:goto-cell "kotl-mode")
 (declare-function kotl-mode:goto-heading "kotl/kotl-mode")
 (declare-function kotl-mode:hide-subtree "kotl-mode")
-(declare-function kotl-mode:to-end-of-line "kotl-mode")
+(declare-function kotl-mode:end-of-line "kotl-mode")
 (declare-function kotl-mode:to-valid-position "kotl-mode")
 (declare-function kotl-mode:to-visible-position "kotl-mode")
 (declare-function kotl-mode:tree-end "kotl-mode")
@@ -461,7 +461,7 @@ characters of the cell whose level is desired."
     (when pos
       (goto-char pos))
     (if (kview:valid-position-p)
-	(buffer-substring (kotl-mode:beginning-of-line) (kotl-mode:to-end-of-line))
+	(buffer-substring (kotl-mode:beginning-of-line) (kotl-mode:end-of-line))
       (error "(kcell-view:line): Invalid position, `%d'" (point)))))
 
 (defun kcell-view:lines-visible ()

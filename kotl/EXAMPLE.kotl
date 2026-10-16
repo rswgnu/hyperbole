@@ -29,15 +29,21 @@
 
      3b. Advanced outline processing
 
-       3b1. NOTE: As of Hyperbole version 9.3.0, the Koutliner {C-c
-            <letter>} keys have moved to {C-c ; <letter>} so as not to
-            override keys reserved for global user-specific bindings.  If
-            you don't care about this and want the old bindings back,
-            uncomment the `kotl-mode:letter-prefix' setting in your
-            Hyperbole `use-package' initialization based on the reference
-            file "${hyperb:dir}/man/use-package".  You can also
-            interactively toggle between `C-c ;' and `C-c' prefixes with
-            {M-1 C-c C-l}.
+       3b1. NOTE: There are two major changes to the Koutliner as of
+            Hyperbole version 9.3.0:
+
+         3b1a. The {TAB} and {S-TAB} keys default to Org-style cycling
+               rather than tree demotion/promotion (use {M-<right> and
+               M-<left> arrow keys for tree demotion/promotion).  {C-c [}
+               toggles {TAB} and {S-TAB} from Org-style cycling to tree
+               demotion/promotion and back again, for this traditional
+               outliner operation.
+
+         3b1b. The Koutliner {C-c <letter>} keys have moved to {C-c ;
+               <letter>} so as not to override keys reserved for global
+               user-specific bindings.  {M-1 C-c C-l} will toggle between
+               restoring the original {C-c <letter>} bindings and removing
+               them; it does not affect the {C-c ; <letter>} bindings.
 
        3b2. Autonumbering: Full auto-numbering in Augment (1a2) or legal
             (1.1.2) formats.  Augment style is the default because it is
@@ -53,17 +59,17 @@
             least two characters long.
 
        3b4. Cell Creation: {C-j} adds a new cell as a sibling following the
-            current cell.  {C-u C-j} or {C-c ; a} adds the cell as a child of
-            the current cell.  Any other positive prefix arg to {C-j} adds
-            that many following cells at the same level as the current
-            one.  A negative prefix arg to {C-j} adds that many
-            preceding cells at the same level as the current one.  And
-            a zero prefix arg adds a new cell as the first one in the
-            outline at the top level.
+            current cell.  {C-u C-j} or {C-c ; a} adds the cell as the first
+            child of the current cell.  Any other positive prefix arg to
+            {C-j} adds that many following cells at the same level as the
+            current one.  A negative prefix arg to {C-j} adds that many
+            preceding cells at the same level as the current one.  And a
+            zero prefix arg adds a new cell as the first one in the outline
+            at level 1.
             
             {C-c ; p} adds the cell as the preceding sibling of the current
             cell, i.e. a new cell immediately prior to the current cell at
-            the same level; same as {C-u -1 C-j}.
+            the same level; same as {M--1 C-j}.
             
             {C-u C-c ; p} adds the cell as the sibling of the current cell's
             parent.
@@ -79,7 +85,7 @@
          3b6a. By default, TAB and S-TAB perform Org-style tree and outline
                visibility cycling respectively.  See <@ 3b7=071>.
 
-         3b6b. {C-c C-]} toggles the function of {TAB} and {S-TAB} between
+         3b6b. {C-c [} toggles the function of {TAB} and {S-TAB} between
                Org-like tree visibility cycling and demotion/promotion.  See
                <@ 3b8=013>.
 
@@ -200,11 +206,11 @@
              {M-<down>}    - Move current tree past prefix arg same level trees.
              {M-<up>}      - Move current tree back prefix arg same level trees.
             
+             {C-c ; b}     - Copy <tree> to precede <cell>.
+             {C-u C-c ; b} - Copy <tree> as first child of the parent of <cell>.
+            
              {C-c ; c}     - Copy <tree> to follow as sibling of <cell>.
              {C-u C-c ; c} - Copy <tree> to follow as first child of <cell>.
-            
-             {C-c C-c}     - Copy <tree> to precede <cell>.
-             {C-u C-c C-c} - Copy <tree> as first child of the parent of <cell>.
             
              {C-c ; m}     - Move <tree> to follow as sibling of <cell>.
              {C-u C-c ; m} - Move <tree> to follow as first child of <cell>.
@@ -315,8 +321,8 @@
             
             {C-c C-i} sets an attribute of the cell at point.
             {C-u C-c C-i} removes an attribute of the cell at point.
-            {C-0 C-c C-i} sets an attribute of the invisible 0 root cell.
-            {C--1 C-c C-i} removes an attribute of the invisible 0 root cell.
+            {M-0 C-c C-i} sets an attribute of the invisible 0 root cell.
+            {M--1 C-c C-i} removes an attribute of the invisible 0 root cell.
 
       3b20. File Insertion: The elements of another buffer or file may be
             inserted into a koutline as a set of cells by using the {C-x i}
@@ -400,8 +406,8 @@
           3b23c1. a:  Show all cell levels and all lines in cells.
 
           3b23c2. b: Turn on blank lines between cells.  Without this code,
-                  blank lines will be turned off.  You can also use the {C-c
-                  ; b} key binding to toggle line numbers on and off
+                  blank lines will be turned off.  You can also use the
+                  {C-c ]} key binding to toggle line numbers on and off
                   independent of any other view settings.
 
           3b23c3. cN: Hide any lines greater than N in each cell.  0 means
@@ -521,7 +527,7 @@
 
 
 "ben" ;; kvspec:current
-90 ;; id-counter
+93 ;; id-counter
 alpha ;; label-type
 4 ;; label-min-width
 ". " ;; label-separator
@@ -529,7 +535,7 @@ alpha ;; label-type
 
 ;; depth-first kcell attributes
 [[0
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07" id-counter 90)]
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07" id-counter 93)]
  [2
   (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
  [3
@@ -546,6 +552,10 @@ alpha ;; label-type
   (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
  [81
   (creator "rsw@gnu.org" create-time "20261007:21:15:24")]
+ [92
+  (creator "rsw@gnu.org" create-time "20261016:15:05:05")]
+ [93
+  (creator "rsw@gnu.org" create-time "20261016:15:05:27")]
  [9
   (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
  [10
@@ -558,8 +568,6 @@ alpha ;; label-type
   (creator "rsw@gnu.org" create-time "20261007:22:18:48")]
  [73
   (creator "rsw@gnu.org" create-time "20260929:05:48:56")]
- [83
-  (creator "rsw@gnu.org" create-time "20261007:22:21:39")]
  [71
   (creator "rsw@gnu.org" create-time "20260928:21:33:05")]
  [74
@@ -698,4 +706,4 @@ alpha ;; label-type
   (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
  [69
   (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- nil nil nil nil nil nil]
+ nil nil nil nil nil nil nil nil]

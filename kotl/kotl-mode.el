@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     12-Oct-26 at 14:33:57 by Bob Weiner
+;; Last-Mod:     16-Oct-26 at 12:17:14 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -671,7 +671,7 @@ Do not delete across cell boundaries."
      (save-excursion
        (kotl-mode:beginning-of-line))
      (save-excursion
-       (kotl-mode:to-end-of-line)))
+       (kotl-mode:end-of-line)))
     (delete-horizontal-space)))
 
 (defun kotl-mode:delete-indentation (&optional arg)
@@ -818,7 +818,7 @@ Does not remove any newlines as `just-one-space' does when given a negative N."
   (save-excursion
     (save-restriction
       (save-excursion
-	(narrow-to-region (kotl-mode:beginning-of-line) (kotl-mode:to-end-of-line)))
+	(narrow-to-region (kotl-mode:beginning-of-line) (kotl-mode:end-of-line)))
       (just-one-space n))))
 
 (defun kotl-mode:kill-line (&optional arg)
@@ -842,7 +842,7 @@ Does not remove any newlines as `just-one-space' does when given a negative N."
       (cond
        ((and (null arg) (not (kotl-mode:eolp)))
 	;; kill to eol but not newline
-	(kill-region (point) (setq arg (kotl-mode:to-end-of-line))))
+	(kill-region (point) (setq arg (kotl-mode:end-of-line))))
        ((= num-arg 0)
 	;; kill to bol
 	(kill-region (point) (setq arg (kotl-mode:beginning-of-line))))
@@ -1099,7 +1099,7 @@ When `kotl-mode:tab-flag' is:
   \\='cycle: cycle views of parts of the outline;
   nil:       demote trees a maximum of ARG levels;
   t:         indent or tab over by ARG tab stops.
-Use {C-c C-]} to toggle its value between `cycle' and nil.
+Use {C-c [} to toggle its value between `cycle' and nil.
 
 See also the documentation strings for `kotl-mode:indent-line',
 `kotl-mode:demote-tree', and `kotl-mode:demote-siblings'.
@@ -1282,6 +1282,7 @@ Does not disable any other active prefix."
   "Toggle the value of `kotl-mode:tab-flag' and explain its current usage.
 This now toggles TAB/S-TAB between the Org-compatible cycling commands and
 the traditional Koutliner demote/promote commands."
+  (interactive)
   (if (eq kotl-mode:tab-flag 'cycle)
       (progn
         (setq kotl-mode:tab-flag
@@ -1290,14 +1291,22 @@ the traditional Koutliner demote/promote commands."
         (when (eq kotl-mode:tab-flag 'cycle)
           (setq kotl-mode:tab-flag nil))
         (when (called-interactively-p 'interactive)
-          (message (substitute-command-keys
-                    (format "Disabled Org-style TAB cycling; use {\\[%s]} to demote trees and {\\[%s]} to promote trees"
-                            (if kotl-mode:tab-flag
-                                'kotl-mode:demote-tree
-                              'kotl-mode:tab-command)
-                            (if kotl-mode:tab-flag
-                                'kotl-mode:promote-tree
-                              'kotl-mode:untab-command))))))
+          (if kotl-mode:tab-flag
+              (message (substitute-command-keys
+                        (format "Disabled Org-style TAB cycling; use {\\[kotl-mode:demote-tree]} to demote trees and {\\[kotl-mode:promote-tree]} to promotes trees")))
+            ;; Don't use `substitute-command-keys' here as it won't display
+            ;; the right bindings for {TAB} and {S-TAB} because of the
+            ;; org-hijacker bindings of these keys for in-table support.
+            (message
+             (format "Disabled Org-style TAB cycling; use {%s} to demote trees and {%s} to promote trees"
+                     (key-description
+                      (car (where-is-internal
+                            'kotl-mode:tab-command kotl-mode-map)))
+                     (let ((untab-key (key-description
+                                       (car (where-is-internal
+                                             'kotl-mode:untab-command
+                                             kotl-mode-map)))))
+                       (if (equal untab-key "<backtab>") "S-TAB" untab-key)))))))
     (setq kotl-mode:tab-flag 'cycle)
     (when (called-interactively-p 'interactive)
       (message (substitute-command-keys "Enabled Org-style TAB cycling; use {\\[kotl-mode:demote-tree]} to demote trees and {\\[kotl-mode:promote-tree]} to promotes trees")))))
@@ -1358,7 +1367,7 @@ that contains mark."
       (ignore-errors (kotl-mode:delete-char 1))
       (goto-char mark)
       (set-marker mark nil)
-      (kotl-mode:to-end-of-line)
+      (kotl-mode:end-of-line)
       (insert "\n")
       (insert-char ?\  (kcell-view:indent))
       (insert line-to-move)
@@ -1391,7 +1400,7 @@ When `kotl-mode:tab-flag' is:
   \\='cycle: cycle views of the whole outline;
   nil:       promote trees a maximum of ARG levels;
   t:         delete backward ARG characters.
-Use {C-c C-]} to toggle its value between `cycle' and nil.
+Use {C-c [} to toggle its value between `cycle' and nil.
 
 See also the documentation strings for `kotl-mode:delete-backward-char',
 `kotl-mode:promote-tree', and `kotl-mode:promote-siblings'.
@@ -2075,27 +2084,22 @@ With optional ARG < 0, move to the ARGth previous visible cell."
   (kotl-mode:next-cell (if (> arg 0) (1- arg) arg))
   (goto-char (kcell-view:end-contents)))
 
-;;; Avoid XEmacs byte-compiler bug which inserts nil for calls to this
-;;; function if named kotl-mode:end-of-line.
-;;;
-(defun kotl-mode:to-end-of-line (&optional arg)
+(defun kotl-mode:end-of-line (&optional arg)
   "Move point to end of current or ARGth - 1 line and return point."
   (interactive "p")
   (kotl-mode:maintain-region-highlight)
   (unless arg
     (setq arg 1))
   (unless (integer-or-marker-p arg)
-      (error "(kotl-mode:to-end-of-line): Wrong type arg, integer-or-marker, `%s'" arg))
+      (error "(kotl-mode:end-of-line): Wrong type arg, integer-or-marker, `%s'" arg))
   (kfill:forward-line (1- arg))
   (end-of-visible-line)
   ;; May have to move backwards to before label if support labels
   ;; at end of cells.
   (point))
 
-;;; This ensures that the key bound to `end-of-line' is replaced in kotl-mode.
-(defalias 'kotl-mode:end-of-line 'kotl-mode:to-end-of-line)
-(defalias 'kotl-mode:end-of-visual-line 'kotl-mode:to-end-of-line)
-(defalias 'kotl-mode:move-end-of-line 'kotl-mode:to-end-of-line)
+(defalias 'kotl-mode:end-of-visual-line 'kotl-mode:end-of-line)
+(defalias 'kotl-mode:move-end-of-line 'kotl-mode:end-of-line)
 
 (defun kotl-mode:end-of-tree ()
   "Move point to the start of the last cell in tree rooted at the current cell."
@@ -2687,7 +2691,7 @@ With optional NEXT-CHAR-VISIBLE, return t only if the following char is visible.
 (defun kotl-mode:last-line-p ()
   "Return t iff point is on the last line of the outline."
   (save-excursion
-    (kotl-mode:to-end-of-line)
+    (kotl-mode:end-of-line)
     (looking-at "\n*\\'")))
 
 (defun kotl-mode:root-first-line-only-shown-p ()
@@ -3403,7 +3407,7 @@ up to one level and `kotl-mode:refill-flag' is treated as true."
 
 (defun kotl-mode:remove-cell-attribute (attribute &optional pos top-cell-flag)
   "Remove ATTRIBUTE from the current cell or the cell at optional POS.
-With optional prefix arg TOP-CELL-FLAG non-nil, removethe hidden top cell's
+With optional prefix arg TOP-CELL-FLAG non-nil, remove the hidden top cell's
 ATTRIBUTE and ignore any value of POS."
   (interactive
    (let* ((plist (copy-sequence (kcell-view:plist)))
@@ -3447,10 +3451,10 @@ ATTRIBUTE and ignore any value of POS."
 			 (kcell-view:label pos)))))
 
 (defun kotl-mode:set-cell-attribute (attribute value &optional pos top-cell-flag)
-  "Include ATTRIBUTE VALUE with the current cell or the cell at optional POS.
+  "Set ATTRIBUTE to VALUE in the current cell or the cell at optional POS.
 Replace any existing value that ATTRIBUTE has.  With optional prefix arg
-TOP-CELL-FLAG non-nil, modify the hidden top cell's ATTRIBUTE and ignore any
-value of POS.
+TOP-CELL-FLAG non-nil, modify the hidden top zero cell's ATTRIBUTE and
+ignore any value of POS.
 
 When called interactively, display the setting in the minibuffer as
 confirmation."
@@ -3505,12 +3509,12 @@ confirmation."
 				 (kcell-view:label pos)))))
 
 (defun kotl-mode:set-or-remove-cell-attribute (arg)
-  "Run kotl-mode:remove-cell-attribute or kotl-mode:set-cell-attribute.
-With numeric prefix ARG, interactively run kotl-mode:remove-cell-attribute;
-otherwise, run kotl-mode:set-cell-attribute.
-Prefix ARG selects the cells whose attributes are removed or set:
-  If =  0, set one of the attributes of the invisible root cell;
-  If <  0, remove one of the attributes of the invisible root cell;
+  "Add, modify or remove an attribute from a cell.
+With numeric prefix ARG, interactively run `kotl-mode:remove-cell-attribute';
+otherwise, run `kotl-mode:set-cell-attribute'.
+A prefix ARG selects the cells whose attributes are removed or set:
+  If =  0, set one of the attributes of the invisible zero root cell;
+  If <  0, remove one of the attributes of the invisible zero root cell;
   If =  1, set one of the attributes of the current cell;
   If >  1, remove one of the attributes of the current cell."
   (interactive "p")
@@ -3530,9 +3534,9 @@ Prefix ARG selects the cells whose attributes are removed or set:
   "Split the current cell into two cells and move to the new cell.
 The cell contents after point become part of the newly created cell.
 The default is to create the new cell as a sibling of the current cell.
-With optional universal ARG, {\\`C-u'}, the new cell is added as the child of
-the current cell.  Non-read-only attributes from the current cell are
-replicated in the new cell."
+With optional universal ARG, {\\`C-u'}, the new cell is added as the child
+of the current cell.  Non-read-only attributes from the current cell are
+replicated to the new cell."
   (interactive "*P")
   (kotl-mode:to-valid-position)
   (kcell-view:operate
@@ -3985,11 +3989,13 @@ See also the documentation for `kotl-mode:cell-help'."
 
 (defun kotl-mode:cell-help (&optional cell-ref cells-flag)
   "Display a temporary buffer with CELL-REF's attributes.
-CELL-REF defaults to current cell.
+CELL-REF defaults to the current cell.
 Optional prefix arg CELLS-FLAG selects the cells whose attributes are printed:
-  If =  1, print CELL-REF's cell only;
-  If >  1, print CELL-REF's visible tree (the tree rooted at CELL-REF);
-  If <= 0, print all visible cells in current view (CELL-REF is not used).
+  If =  1, print CELL-REF's attributes only;
+  If >  1, print CELL-REF's visible tree attributes;
+  If <= 0, print all the invisible outline 0 root cell's attributes and
+  those of its visible subtree across the outline (CELL-REF is ignored in
+  this case).
 
 See also the documentation for `kotl-mode:cell-attributes'."
   (interactive
@@ -4162,7 +4168,7 @@ Do not delete newline at end of line."
       (goto-char pos))
     (if (kview:valid-position-p)
 	(let ((bol (kotl-mode:beginning-of-line))
-	      (eol (kotl-mode:to-end-of-line)))
+	      (eol (kotl-mode:end-of-line)))
 	  (prog1
 	      (buffer-substring bol eol)
 	    (delete-region bol eol)))
@@ -4576,7 +4582,7 @@ Leave point at end of line now residing at START."
 	;; kotl-mode keys
         (let ((keymap kotl-mode-letter-map))
           (define-key keymap "a" 'kotl-mode:add-child)
-          (define-key keymap "b" 'kvspec:toggle-blank-lines)
+          (define-key keymap "b" 'kotl-mode:copy-before)
           (define-key keymap "c" 'kotl-mode:copy-after)
           (define-key keymap "d" 'kotl-mode:down-level)
           (define-key keymap "e" 'kotl-mode:exchange-cells)
@@ -4617,24 +4623,27 @@ Leave point at end of line now residing at START."
 	;; Since the next key binds M-BS, it may already have a local binding,
 	;; in which case we don't want to bind it here.
 	(unless (lookup-key kotl-mode-map "\M-\C-h")
-	  (define-key kotl-mode-map "\M-\C-h"   'kotl-mode:hide-subtree))
+	  (define-key kotl-mode-map "\M-\C-h" 'kotl-mode:hide-subtree))
 	;; Override this global binding for set-selective-display with a
         ;; similar function appropriate for kotl-mode.
-	(define-key kotl-mode-map "\C-x$"         'kotl-mode:hide-sublevels)
+	(define-key kotl-mode-map "\C-x$"     'kotl-mode:hide-sublevels)
+
+        ;; Toggle whole outline viewspec for blank lines off/on
+        (define-key kotl-mode-map "\C-c]" 'kvspec:toggle-blank-lines)
 
         ;; Use this next binding to switch TAB/S-TAB between Org-style
         ;; visibility cycling and demotion/promotion behavior.  Show a
         ;; message each time it is toggled.
-	(define-key kotl-mode-map "\C-c\C-]"      'kotl-mode:toggle-tab-flag)
+	(define-key kotl-mode-map "\C-c["     'kotl-mode:toggle-tab-flag)
 
-	(define-key kotl-mode-map [tab]           'kotl-mode:tab-command) ;; TAB
-	(define-key kotl-mode-map "\C-i"          'kotl-mode:tab-command) ;; TAB
+	(define-key kotl-mode-map [tab]       'kotl-mode:tab-command) ;; TAB
+	(define-key kotl-mode-map "\C-i"      'kotl-mode:tab-command) ;; TAB
 
-	(define-key kotl-mode-map [S-tab]         'kotl-mode:untab-command) ;; Shift-TAB
+	(define-key kotl-mode-map [S-tab]     'kotl-mode:untab-command) ;; Shift-TAB
 	(define-key kotl-mode-map [S-iso-lefttab] 'kotl-mode:untab-command) ;; Shift-TAB
-	(define-key kotl-mode-map [backtab]       'kotl-mode:untab-command) ;; Shift-TAB
+	(define-key kotl-mode-map [backtab]   'kotl-mode:untab-command) ;; Shift-TAB
 
-	(define-key kotl-mode-map "\C-c\C-i"      'kotl-mode:set-or-remove-cell-attribute)
+	(define-key kotl-mode-map "\C-c\C-i"  'kotl-mode:set-or-remove-cell-attribute)
 	(define-key kotl-mode-map "\C-j"      'kotl-mode:add-cell)
 	(define-key kotl-mode-map "\M-j"      'kotl-mode:fill-paragraph)
 	(define-key kotl-mode-map "\C-c\M-j"  'kotl-mode:fill-cell)
@@ -4675,7 +4684,7 @@ Leave point at end of line now residing at START."
 	      (list (kbd "M-S-<left>") (kbd "M-<left>") (kbd "ESC S-<left>")
                     (kbd "ESC <left>") (kbd "C-c C-<") (kbd "C-c C-,")))
 	(mapc (lambda (key)
-		(define-key kotl-mode-map key         'kotl-mode:demote-tree))
+		(define-key kotl-mode-map key 'kotl-mode:demote-tree))
 	      (list (kbd "M-S-<right>") (kbd "M-<right>") (kbd "ESC S-<right>")
                     (kbd "ESC <right>") (kbd "C-c C->") (kbd "C-c C-.")))
 

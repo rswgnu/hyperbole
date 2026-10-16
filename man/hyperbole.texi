@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     14-Oct-26 at 13:38:52 by Bob Weiner
+@c Last-Mod:     16-Oct-26 at 12:32:51 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,7 +30,7 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED October 14, 2026
+@set UPDATED October 16, 2026
 @set UPDATED-MONTH October 2026
 @set EDITION 9.3.0
 @set VERSION 9.3.0
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.1.0
-Printed October 14, 2026.
+Printed October 16, 2026.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -213,7 +213,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.1.0
-October 14, 2026 @c AUTO-REPLACE-ON-SAVE
+October 16, 2026 @c AUTO-REPLACE-ON-SAVE
 
 
   Published by the Free Software Foundation, Inc.
@@ -6201,12 +6201,12 @@ shown in the table below.
 |--------------------+-------------------------------+--------------------------|
 @end smallexample
 
-@kindex koutliner, C-c C-]
+@kindex koutliner, C-c [
 @cindex koutliner, toggle tab behavior
 Org-style cycling is now the default.  In Hyperbole versions earlier
 than 9.3.0, the default was @samp{nil} for demotion and promotion.  You
 can toggle between using these keys for cycling or demotion/promotion
-by pressing @bkbd{C-c C-]}.  Or you can change the default by setting
+by pressing @bkbd{C-c [}.  Or you can change the default by setting
 @code{kotl-mode:tab-flag} in your Hyperbole @code{use-package}
 configuration.  See the following subsections for further details.
 
@@ -6221,7 +6221,7 @@ configuration.  See the following subsections for further details.
 
 @cindex koutliner, cycling
 @cindex koutliner, Org-style cycling
-@bkbd{C-c C-]} toggles the function of @key{TAB} and @bkbd{S-@key{TAB}}
+@bkbd{C-c [} toggles the function of @key{TAB} and @bkbd{S-@key{TAB}}
 between promotion/demotion and Org-style tree visibility cycling.  The
 following table summarizes their behavior with Org-style view cycling
 enabled:
@@ -6322,9 +6322,9 @@ tree and @bkbd{C-c C-,} for promoting it.  Org-compatible keys
 
 @kindex koutliner, @key{TAB}
 @kindex koutliner, Shift-@key{TAB}
-@kindex koutliner, C-c C-]
+@kindex koutliner, C-c [
 @cindex koutliner, no-fill property
-Use @bkbd{C-c C-]} to toggle the function of @key{TAB} and
+Use @bkbd{C-c [} to toggle the function of @key{TAB} and
 @bkbd{S-@key{TAB}} to demote and promote trees.  These also refill the
 text of each cell not marked with a @code{no-fill} property.  To
 override the @code{no-fill} property and refill all promoted/demoted
@@ -6486,15 +6486,15 @@ Move current tree past prefix arg same level trees.
 @kitem M-<up>
 Move current tree back prefix arg same level trees.
 
+@kitem C-c ; b
+Copy <tree> to be the predecessor of <cell>.
+@kitem C-u C-c ; b
+Copy <tree> to be the first child of the parent of <cell>.
+
 @kitem C-c ; c
 Copy <tree> to be the successor of <cell>.
 @kitem C-u C-c ; c
 Copy <tree> to follow as the first child of <cell>.
-
-@kitem C-c C-c
-Copy <tree> to be the predecessor of <cell>.
-@kitem C-u C-c C-c
-Copy <tree> to be the first child of the parent of <cell>.
 
 @kitem C-c ; m
 Move <tree> to be the successor of <cell>.
@@ -6964,14 +6964,13 @@ view spec is <|ben>.
 @item a
 Show all cell levels and all lines in cells.
 
-@kindex koutliner, C-c ; b
+@kindex koutliner, C-c ]
 @cindex blank lines, toggle
 @cindex view spec, blank lines
-@kindex koutliner, C-c ; b
 @cindex toggling blank lines
 @item b
 Turn on blank lines between cells.  Without this character, blank lines
-will be turned off.  You may also use the @bkbd{C-c ; b} key binding to
+will be turned off.  You may also use the @bkbd{C-c ]} key binding to
 toggle blank lines on and off independently of any other view settings.
 
 @cindex view spec, lines per cell
@@ -7038,7 +7037,7 @@ current outline viewspecs.  This section discusses klinks.
 @noindent
 There are three forms of klinks:
 
-@table @emph
+@table @asis
 @cindex internal klink
 @cindex klink, internal
 @cindex <#klink>
@@ -7167,7 +7166,7 @@ mistakenly recognizes a pattern within a comment as a klink when it isn't.
 outline cell.  Thus, each cell, including the invisible 0 root cell,
 has its own attribute list.  Every cell has three standard attributes:
 
-@table @emph
+@table @asis
 @cindex idstamp attribute
 @item idstamp
 The permanent id of the cell, typically used in cross-file hyperlinks
@@ -7188,27 +7187,41 @@ allows for easy data comparisons but is displayed in a human readable
 format, such as @samp{Jan 28 18:27:59 CST 2021}.
 @end table
 
-@kindex koutliner, C-c C-i
 @cindex attribute, adding
 @cindex attribute, modifying
 @cindex attribute, removing
 @cindex attribute, setting
-@bkbd{C-c C-i} adds, modifies or removes an attribute from a cell.
-The prefix argument given to this command determines what it does.
+@noindent
+The following keys edit and display outline attributes:
 
+@kindex koutliner, Assist Key, listing attributes
+@cindex Assist Key, listing attributes
+@cindex attributes, displaying
+@cindex displaying attributes
+@cindex outline, attribute list
 @table @asis
+
+@kindex koutliner, C-c ; h
+Prompt for a cell label and display the cell's attributes (show help
+for the cell).  @bkbd{C-u C-c ; h} wil prompt for a cell label and
+display the attributes for it and any of its visible subtree.  Use 0
+for the cell label to see attributes for the invisible outline 0 root
+cell and all of its visible subtree (the whole visible outline).
+
+@kindex koutliner, C-c C-i
 @item @bkbd{C-c C-i}
-sets an attribute of the cell at point; setting an attribute's value
-to @samp{nil} is the same as removing it.
+With no prefix arg or a prefix arg of 1, set a current cell attribute.
+Setting an attribute's value to @samp{nil} is the same as removing it.
+See the following items for how the prefix argument affects this command.
 
 @item @bkbd{C-u C-c C-i}
-removes an attribute of the cell at point
+Remove an attribute of the cell at point.
 
-@item @bkbd{C-0 C-c C-i}
-sets an attribute of the invisible 0 root cell
+@item @bkbd{M-0 C-c C-i}
+Set an attribute of the invisible 0 root cell.
 
-@item @bkbd{C--1 C-c C-i}
-removes an attribute of the invisible 0 root cell
+@item @bkbd{M--1 C-c C-i}
+Remove an attribute of the invisible 0 root cell.
 @end table
 
 
@@ -7221,17 +7234,6 @@ commands from refilling the cell, even if the variable,
 @code{kotl-mode:refill-flag}, is set to @samp{t}.  It does not prevent
 you from invoking explicit commands that refill the cell.
 @xref{Filling}.
-
-@kindex koutliner, Assist Key, listing attributes
-@cindex Assist Key, listing attributes
-@cindex attributes, displaying
-@cindex displaying attributes
-@cindex outline, attribute list
-@kindex koutliner, C-c ; h
-@bkbd{C-c ; h} prompts for a cell label and displays the cell's
-attributes.  @bkbd{C-u C-c ; h} prompts for a cell label and displays
-the attributes for it and its subtree; use 0 as the kcell id to see
-attributes for all visible cells in the outline.
 
 @node Koutliner History,  , Cell Attributes, Koutliner
 @section   Koutliner History
@@ -10320,7 +10322,7 @@ outlines.  An outliner command which overloads an emacs command named
 @table @code
 
 @findex kotl-mode:toggle-tab-flag
-@item kotl-mode:toggle-tab-flag @bkbd{C-c C-]}
+@item kotl-mode:toggle-tab-flag @bkbd{C-c [}
 Toggle the value of @code{kotl-mode:tab-flag} and explain its current
 usage.  This toggles TAB/S-TAB between the Org-compatible cycling
 commands and the traditional Koutliner demote/promote commands."
@@ -10446,7 +10448,7 @@ TO-CELL-REF, otherwise make it the sibling following TO-CELL-REF.
 Leave point at the start of the root cell of the new tree.
 
 @findex kotl-mode:copy-before
-@item kotl-mode:copy-before  @bkbd{C-c C-c}
+@item kotl-mode:copy-before  @bkbd{C-c ; b}
 Copy tree rooted at FROM-CELL-REF to precede tree rooted at TO-CELL-REF.
 If prefix arg PARENT-P is non-nil, make FROM-CELL-REF the first child of
 TO-CELL-REF's parent, otherwise make it the preceding sibling of TO-CELL-REF.
@@ -10900,7 +10902,7 @@ current koutline.  VIEW-SPEC must be a string.  See
 on valid view specs.
 
 @findex kvspec:toggle-blank-lines
-@item kvspec:toggle-blank-lines @bkbd{C-c ; b}
+@item kvspec:toggle-blank-lines @bkbd{C-c ]}
 Toggle blank lines between cells on or off.
 
 @end table
@@ -11391,8 +11393,8 @@ When in an Org mode context and @code{hsys-org-enable-smart-keys} is non-nil:
          standard binding of @bkbd{C-c C-c}, @code{org-ctrl-c-ctrl-c}.
 
      (10) With point on an Org mode heading but not a Hyperbole button, call
-         the function given by the @code{smart-org-action-key-heading-function}
-         variable, which defaults to doing nothing.
+          the function given by the @code{smart-org-action-key-heading-function}
+          variable, which defaults to doing nothing.
 
      (11) In any other context besides the end of a line, invoke the Org mode
           standard binding of @bkbd{M-@key{RET}}, @code{org-meta-return}.
