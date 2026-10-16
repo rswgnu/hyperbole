@@ -1,5 +1,20 @@
 2026-10-16  Mats Lidell  <matsl@gnu.org>
 
+* hypb-release.el (hypb-release-version-file-list): Rename variable as
+it is now a list of lists.
+(hypb-release--replace-version): Replaces the version number based on
+a given pattern
+(hypb-release-update-version): Use hypb-release-update-version.
+(hypb-release-update-hyperbole-version-header): Add pattern.
+
+* test/MANIFEST: Add hypb-release-tests.el.
+
+* test/hypb-release-tests.el: New test file for hypb-release.el.
+(hypb-release-tests--replace-version):
+(hypb-release-tests--update-version): Test cases.
+
+* man/hyperbole.texi: Use EDITION and VERSION variables.
+
 * Makefile (release-pre): Use remote for fetching and creating release
     branch. Use underscore in branch name.
 
