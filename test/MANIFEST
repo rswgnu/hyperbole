@@ -26,6 +26,7 @@ hy-test-dependencies.el - Hyperbole test dependencies
 hy-test-helpers.el      - unit test helpers
 hycontrol-tests.el      - hycontrol unit tests
 hypb-ert-tests.el       - hypb-ert tests
+hypb-release-tests.el   - tests for hypb-release
 hypb-tests.el           - tests for hypb.el utility functions
 hyperbole-tests.el      - tests for hyperbole.el
 hyrolo-tests.el         - unit tests for hyrolo.el
