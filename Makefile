@@ -495,7 +495,7 @@ define confirm
 	@echo "  WARNING: $(1)"
 	@echo "═══════════════════════════════════════"
 	@read -r -p "Are you sure? Write '$(2)' to continue: " answer; \
-	[[ "$$answer" == "$(2)" ]] || { echo "Aborted."; exit 1; }
+	[ "$$answer" = "$(2)" ] || { echo "Aborted."; exit 1; }
 endef
 
 # Locally update Hyperbole website
