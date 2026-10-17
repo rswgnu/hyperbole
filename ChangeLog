@@ -1,4 +1,27 @@
+2026-10-17  Bob Weiner  <rsw@gnu.org>
+
+* hsys-consult.el (hsys-consult--noninteractive-grep-paths): Fix to ensure
+    eliminates any duplicate files and returns file list in orgiinal order.
+  hyrolo.el (hyrolo-grep): Restore call to above function to filter file
+    list to just those with a match.
+  test/hyrolo-tests.el (hyrolo-tests--forward-same-level-all-file-types-level1):
+    Above changes now work with this test.
+
+* hsys-consult.el (hsys-consult-grep): Improve doc and fix arg order
+    in doc.
+                 (hsys-consult--grep-paths): Remove doc with wrong
+    return value.
+                 (hsys-consult--noninteractive-grep-paths): Remove
+    'max-matches' since finds just the first match per file.
+
 2026-10-16  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kfile.el (kfile:update): Temp bind 'inhibit-redisplay' to t
+    to prevent display of internal outline data during saves.
+
+* FAST-DEMO: Add a link to "README.md#Articles".
+  FAST-DEMO, README.in.md: Add Charlie's Hyrolo and Implicit Button
+    video and article links.
 
 * man/hyperbole.texi (View Specs, Relocating and Copying, Koutliner Keys):
 * kotl/EXAMPLE.kotl: INCOMPATIBLE CHANGE: Move {C-c ; b}

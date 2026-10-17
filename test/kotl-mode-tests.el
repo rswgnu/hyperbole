@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:      6-Oct-26 at 00:37:17 by Bob Weiner
+;; Last-Mod:     17-Oct-26 at 02:56:46 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -490,7 +490,7 @@
             (kotl-mode:newline 1)
             (insert "second")
             (kotl-mode:previous-line 1)
-            (kotl-mode:end-of-line)
+            (kotl-mode:to-end-of-line)
             (kotl-mode:split-cell)
             (should (= (line-number-at-pos) 3)))
           (ert-info ("Split on first char in cell")
@@ -956,7 +956,7 @@ actually depends on the point adjustment heuristics."
           (kotl-mode:beginning-of-buffer)
           (kotl-mode:forward-char)
           (should (outline-invisible-p))
-          (kotl-mode:end-of-line)
+          (kotl-mode:to-end-of-line)
           (should-not (outline-invisible-p))
           (kotl-mode:forward-char)
           (should (looking-at-p "2")))
@@ -1408,19 +1408,19 @@ marked with :ignore t")
         (should (looking-at-p "23")))
       (ert-info ("Delete one char backward")
         (init)
-        (kotl-mode:end-of-line)
+        (kotl-mode:to-end-of-line)
         (kotl-mode:delete-char -1)
         (kotl-mode:beginning-of-line)
         (should (looking-at-p "012")))
       (ert-info ("Delete one char backward - using backward-char")
         (init)
-        (kotl-mode:end-of-line)
+        (kotl-mode:to-end-of-line)
         (kotl-mode:delete-backward-char 1)
         (kotl-mode:beginning-of-line)
         (should (looking-at-p "012")))
       (ert-info ("Delete two chars backward")
         (init)
-        (kotl-mode:end-of-line)
+        (kotl-mode:to-end-of-line)
         (kotl-mode:delete-char -2)
         (kotl-mode:beginning-of-line)
         (should (looking-at-p "01")))
@@ -1428,7 +1428,7 @@ marked with :ignore t")
         (init)
         (let ((current-prefix-arg 2)
               kill-ring)
-          (kotl-mode:end-of-line)
+          (kotl-mode:to-end-of-line)
           (call-interactively #'kotl-mode:delete-backward-char)
           (kotl-mode:beginning-of-line)
           (should (looking-at-p "01"))

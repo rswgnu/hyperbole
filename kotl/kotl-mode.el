@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     16-Oct-26 at 12:17:14 by Bob Weiner
+;; Last-Mod:     17-Oct-26 at 03:00:27 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -671,7 +671,7 @@ Do not delete across cell boundaries."
      (save-excursion
        (kotl-mode:beginning-of-line))
      (save-excursion
-       (kotl-mode:end-of-line)))
+       (kotl-mode:to-end-of-line)))
     (delete-horizontal-space)))
 
 (defun kotl-mode:delete-indentation (&optional arg)
@@ -818,7 +818,7 @@ Does not remove any newlines as `just-one-space' does when given a negative N."
   (save-excursion
     (save-restriction
       (save-excursion
-	(narrow-to-region (kotl-mode:beginning-of-line) (kotl-mode:end-of-line)))
+	(narrow-to-region (kotl-mode:beginning-of-line) (kotl-mode:to-end-of-line)))
       (just-one-space n))))
 
 (defun kotl-mode:kill-line (&optional arg)
@@ -842,7 +842,7 @@ Does not remove any newlines as `just-one-space' does when given a negative N."
       (cond
        ((and (null arg) (not (kotl-mode:eolp)))
 	;; kill to eol but not newline
-	(kill-region (point) (setq arg (kotl-mode:end-of-line))))
+	(kill-region (point) (setq arg (kotl-mode:to-end-of-line))))
        ((= num-arg 0)
 	;; kill to bol
 	(kill-region (point) (setq arg (kotl-mode:beginning-of-line))))
@@ -1216,9 +1216,9 @@ valid settings."
 	(message "Tab insertion now uses spaces to form tabs."))))
 
 (defun kotl-mode:toggle-letter-prefix ()
-  (interactive)
   "Toggle whether `C-c' is the active letter prefix or not.
 Initially this is off as the default value is `C-c ;'."
+  (interactive)
   (if (member kotl-mode:letter-prefix '("C-c" "\C-c"))
       (kotl-mode:set-letter-prefix-standard)
     (kotl-mode:set-letter-prefix-control-c))
@@ -1367,7 +1367,7 @@ that contains mark."
       (ignore-errors (kotl-mode:delete-char 1))
       (goto-char mark)
       (set-marker mark nil)
-      (kotl-mode:end-of-line)
+      (kotl-mode:to-end-of-line)
       (insert "\n")
       (insert-char ?\  (kcell-view:indent))
       (insert line-to-move)
@@ -2084,22 +2084,26 @@ With optional ARG < 0, move to the ARGth previous visible cell."
   (kotl-mode:next-cell (if (> arg 0) (1- arg) arg))
   (goto-char (kcell-view:end-contents)))
 
-(defun kotl-mode:end-of-line (&optional arg)
+(defun kotl-mode:to-end-of-line (&optional arg)
   "Move point to end of current or ARGth - 1 line and return point."
   (interactive "p")
   (kotl-mode:maintain-region-highlight)
   (unless arg
     (setq arg 1))
   (unless (integer-or-marker-p arg)
-      (error "(kotl-mode:end-of-line): Wrong type arg, integer-or-marker, `%s'" arg))
+      (error "(kotl-mode:to-end-of-line): Wrong type arg, integer-or-marker, `%s'" arg))
   (kfill:forward-line (1- arg))
   (end-of-visible-line)
   ;; May have to move backwards to before label if support labels
   ;; at end of cells.
   (point))
 
+;; This next alias is because of an Emacs byte-compiler bug that causes
+;; a failure in this function if it is directly named
+;; 'kotl-mode:end-of-line'.  -- RSW, 2026-10-17
+(defalias 'kotl-mode:end-of-line        'kotl-mode:to-end-of-line)
 (defalias 'kotl-mode:end-of-visual-line 'kotl-mode:end-of-line)
-(defalias 'kotl-mode:move-end-of-line 'kotl-mode:end-of-line)
+(defalias 'kotl-mode:move-end-of-line   'kotl-mode:end-of-line)
 
 (defun kotl-mode:end-of-tree ()
   "Move point to the start of the last cell in tree rooted at the current cell."
@@ -2691,7 +2695,7 @@ With optional NEXT-CHAR-VISIBLE, return t only if the following char is visible.
 (defun kotl-mode:last-line-p ()
   "Return t iff point is on the last line of the outline."
   (save-excursion
-    (kotl-mode:end-of-line)
+    (kotl-mode:to-end-of-line)
     (looking-at "\n*\\'")))
 
 (defun kotl-mode:root-first-line-only-shown-p ()
@@ -4168,7 +4172,7 @@ Do not delete newline at end of line."
       (goto-char pos))
     (if (kview:valid-position-p)
 	(let ((bol (kotl-mode:beginning-of-line))
-	      (eol (kotl-mode:end-of-line)))
+	      (eol (kotl-mode:to-end-of-line)))
 	  (prog1
 	      (buffer-substring bol eol)
 	    (delete-region bol eol)))

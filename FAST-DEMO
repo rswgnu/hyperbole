@@ -10,22 +10,24 @@
   This interactive demo is the fast way to get started with Hyperbole after
   installation.  The prior, lengthier Hyperbole demo/tutorial can be found
   in this file: "DEMO".  For a non-interactive introduction to Hyperbole
-  concepts, see "HY-CONCEPTS.kotl".
+  concepts, see "HY-CONCEPTS.kotl".  For a list of web articles on
+  Hyperbole, see "README.md#Articles".
 
 
 * Introductory Videos
 
-  If you prefer video introductions, visit the videos linked to in the tables below;
-  otherwise, skip to the next section.  The first table, "#Hyperbole Overview Video",
-  is an overview talk of Hyperbole broken into few minute sections that you can watch
-  individually.  The second table has links to separate videos covering aspects of
-  Hyperbole, including the full <ilink:Overview and Demo>.
+  If you prefer video introductions, visit the videos linked to in the
+  tables below; otherwise, skip to the next section.  The first table,
+  "#Hyperbole Overview Video", is an overview talk of Hyperbole broken into
+  few minute sections that you can watch individually.  The second table has
+  links to separate videos covering aspects of Hyperbole, including the full
+  <ilink:Overview and Demo>.
 
 ** Hyperbole Overview Video
 
-  Demos of Hyperbole features start in 'section 06 - Hyperbole Buttons' in this first
-  table.  Press {M-RET} either in the first column <[button name]> or in the second
-  column video link to watch each section.
+  Demos of Hyperbole features start in 'section 06 - Hyperbole Buttons' in
+  this first table.  Press {M-RET} either in the first column <[button
+  name]> or in the second column video link to watch each section.
 
   |--------------------------------------+-----------------------------------------|
   | Hyperbole Overview Video Sections    | Video Snippets                          |
@@ -70,7 +72,11 @@
   |-----------------------------------------------------+----------------------------------------|
   | <[Top 10 ways Hyperbole amps up Emacs]>             | https://youtu.be/BysjfL25Nlc           |
   |-----------------------------------------------------+----------------------------------------|
+  | <[Implicit Buttons: Build Your Hyperverse]>         | https://youtu.be/o2KMvSCXwlU           |
+  |-----------------------------------------------------+----------------------------------------|
   | <[HyWiki: Zero Markup Hypertext]>                   | https://youtu.be/3zG3lRmi3Zg           |
+  |-----------------------------------------------------+----------------------------------------|
+  | <[HyRolo: Records are Trees, Not Lines]>            | https://youtu.be/5Oo_KqVcLFM           |
   |-----------------------------------------------------+----------------------------------------|
   | <[Introduction to Buttons]>                         | https://youtu.be/zoEht66N2PI           |
   |-----------------------------------------------------+----------------------------------------|
@@ -119,6 +125,7 @@
 
     (global-set-key "\C-cd" (kbd "C-h h d a"))
 
+
 * Implicit Buttons
 
   Hyperbole automatically recognizes many common and complex patterns within
@@ -160,7 +167,6 @@
   referent window and its associated point to which to link.  If the Ace
   Window package is installed and active, this will be used to choose the
   window; otherwise, you will be prompted to select it by mouse.
-
 
 ** Pathname Implicit Buttons
 
@@ -207,7 +213,6 @@
        specific lines referenced by an index entry, as shown above, providing
        fine-grained structured document linking.  Remember this as there will
        be more Info links below.
-
 
 ** Key Series Implicit Buttons
 
@@ -261,11 +266,10 @@
 
        Buffer list of directory buffers only
 
-
 ** Posix/Linux Shell Command Implicit Buttons
 
-    Some of the below commands require recursive use of the minibuffer, so let's
-    ensure that is enabled:
+    Some of the below commands require recursive use of the minibuffer, so
+    let's ensure that is enabled:
 
     <setq enable-recursive-minibuffers t>
 
@@ -298,7 +302,6 @@
        {M-RET} on any lines output to display the man page for the associated
        command.
 
-
 ** Grep Messages, Stack Traces, Man Page Apropos Implicit Buttons
 
   These implicit buttons typically appear in shell buffers.  You issue a
@@ -328,7 +331,6 @@ pspell-config(1)         - prints information about a libpspell installation
 
        An Action Key press anywhere on the above 3 non-blank lines displays
        the associated man documentation page.
-
 
 ** Action Buttons
 
@@ -379,7 +381,6 @@ pspell-config(1)         - prints information about a libpspell installation
 
        The above will even run all Hyperbole regression tests for the HyRolo
        hierarchical full-text record retriever part of Hyperbole.
-
 
 ** Many More Implicit Button Types to Learn Across Time
 
@@ -449,10 +450,11 @@ To learn how to create new kinds of implicit button and action types, see
 
 * Hyperbole Subsystems
 
-  Hyperbole includes a number of subsystems that can raise your productivity
-  when looking up any kind of hierarchical records (including those from Org
-  mode or Outline mode), managing the precise location of windows and frames,
-  and one of the most advanced legal outliners available anywhere.
+  Hyperbole includes a number of subsystems/applications that can raise your
+  productivity when looking up any kind of hierarchical records (including
+  those from Org mode or Outline mode), managing the precise location of
+  windows and frames, and one of the most advanced legal outliners available
+  anywhere.
 
 ** HyWiki
 
@@ -494,7 +496,8 @@ To learn how to create new kinds of implicit button and action types, see
 
     <setq hywiki-directory "~/hywiki/">
 
-  See "(hyperbole)HyWiki" for full details on HyWiki.
+  See "(hyperbole)HyWiki" for full details on HyWiki, including how to
+  link to many other types of Emacs objects.
 
 ** HyRolo
 

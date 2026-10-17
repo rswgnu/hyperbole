@@ -24,9 +24,11 @@
 
    2. GNU Hyperbole is a turnkey Emacs package with no external package
       requirements that offers an extensive, extensible, hypertextual
-      information management system. It works with all kinds of file formats,
-      including Org mode.  The core of Hyperbole supplies a default
-      set of hyperbutton types, each of which performs a specific action.
+      information management system and a number of subsystems/applications,
+      such as this outliner and a note taking app. It works with all kinds
+      of file formats, including Org mode.  The core of Hyperbole supplies a
+      default set of hyperbutton types, each of which performs a specific
+      action.
 
    3. Hyperbole's Action {M-RET} and Assist Keys {C-u M-RET}, collectively
       known as the Smart Keys, provide context-sensitive activation of

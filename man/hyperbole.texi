@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     16-Oct-26 at 13:31:32 by Bob Weiner
+@c Last-Mod:     16-Oct-26 at 22:59:00 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -858,7 +858,8 @@ Hyperbole's markup-free, personal wiki system with automatic WikiWord
 highlighting and hyperlinking.  It uses Org mode for note taking and
 adds automatic hyperlinking and highlighting of WikiWord references
 within wiki pages and can be set so WikiWord links appear in all text
-and programming files,  @xref{HyWiki}.
+and programming files, WikiWords can also link to all different types
+of Emacs objects, if desired.  @xref{HyWiki}.
 
 @item 3. HyRolo
 a fast, powerful, hierarchical record manager that does not require
