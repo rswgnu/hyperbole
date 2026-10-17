@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Sep-91 at 19:24:19
-;; Last-Mod:     18-Feb-24 at 12:51:49 by Mats Lidell
+;; Last-Mod:     17-Oct-26 at 11:10:13 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -153,6 +153,10 @@ Assume elements of SET are of the form (key . value)."
 
 (defun set:intersection (&rest sets)
   "Return intersection of all SETS given as arguments.
+The result ordering returns elements from the sets left-to-right, so for
+example, if the intersection is exactly the elements in the first set, the
+result is ordered as the first set.
+
 Uses `set:equal-op' for comparison."
   (let (rtn-set)
     (mapc (lambda (elt) (or (memq nil (mapcar (lambda (set) (set:member elt set))

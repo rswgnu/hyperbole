@@ -1,5 +1,16 @@
 2026-10-17  Bob Weiner  <rsw@gnu.org>
 
+* hyrolo.el (hyrolo-grep):
+  hsys-consult.el (hsys-consult--noninteractive-grep-paths): Remove
+    and replace with new 'hyrolo-noninteractive-grep-paths' that does
+    not require the 'consult' package.  Use in 'hyrolo-grep'.
+
+* set.el (set:intersection): Document the ordering of the result elements.
+
+* README.in.md: Remove reference to stable release as there is no stable
+    directory when looking at the README file in a sourcE directory.  Fill
+    paragraphs to a max of 72 to simpify side-by-side viewing.
+
 * kotl/EXAMPLE.kotl: Fix mistakenly deleted cell data.
   test/demo-tests.el (fast-demo-display-kotl-starting-from-cell): Fix cell
     reference to match updated EXAMPLE.kotl.
