@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     14-Oct-26 at 12:05:23 by Bob Weiner
+;; Last-Mod:     17-Oct-26 at 03:27:37 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -810,7 +810,7 @@ enough files with matching mode loaded."
 	(buf))
     (with-temp-buffer
       (setq default-directory hyperb:dir)
-      (insert (format "<%skotl/EXAMPLE.kotl#3b11=018|c2en>"
+      (insert (format "<%skotl/EXAMPLE.kotl#3b14=019|c2en>"
 		      default-directory))
       (goto-char 5)
       (unwind-protect

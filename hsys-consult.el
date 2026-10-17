@@ -2,7 +2,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     4-Jul-24 at 09:57:18
-;; Last-Mod:     14-Oct-26 at 12:21:25 by Bob Weiner
+;; Last-Mod:     17-Oct-26 at 12:09:36 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -28,6 +28,7 @@
 ;; Don't (require 'consult) here since want to create that dependency only
 ;; when a function within this library is called.
 
+(require 'cl-lib) ;; for `cl-copy-list'
 (require 'find-func)
 (require 'hbut)
 (require 'hargs)
@@ -151,17 +152,19 @@ Install `consult' package if not yet installed."
 	  (kill-buffer buf))))))
 
 ;;;###autoload
-(defun hsys-consult-grep (grep-includes ripgrep-globs &optional regexp max-matches
-					path-list prompt)
-  "Interactively search PATH-LIST with a consult package grep command.
+(defun hsys-consult-grep (grep-includes ripgrep-globs
+                          &optional regexp max-matches
+                                    path-list prompt)
+  "Interactively narrow and search with a consult grep command.
+Use ripgrep (rg) if found, otherwise, plain grep.
 
-With GREP-INCLUDES or RIPGREP-GLOBS file suffixes to include, search for
-optional REGEXP up to MAX-MATCHES in PATH-LIST.
+With GREP-INCLUDES or RIPGREP-GLOBS file suffixes to include, initialize
+search with optional REGEXP and interactively prompt for changes.  Limit
+matches per file to the absolute value of MAX-MATCHES, if given and not 0.
+If 0, match to the start of headline text only (lines that start with
+`hsys-consult-entry-regexp').
 
-Use ripgrep (rg) if found, otherwise, plain grep.  Initialize search with
-optional REGEXP and interactively prompt for changes.  Limit matches per
-file to the absolute value of MAX-MATCHES, if given and not 0.  If 0, match
-to headlines only (lines that start with `hsys-consult-entry-regexp').
+Search over PATH-LIST.
 
 With optional PROMPT string, use this as the first part of the grep prompt;
 omit any trailing colon and space in the prompt."
@@ -334,7 +337,6 @@ return the selection from CONSULT-FUNCTION."
 
 (defun hsys-consult--grep-paths (paths &optional regexp max-matches prompt)
   "Interactively search PATHS with a consult package grep command.
-Return a list of (<final-regexp> (<paths-with-matches)).
 
 Use ripgrep (rg) if found, otherwise, plain grep.  Interactively show all
 matches from PATHS; see the documentation for the `dir' argument in
@@ -390,72 +392,6 @@ omit any trailing colon and space in the prompt."
 			 #'consult--ripgrep-make-builder paths regexp)
 	(consult--grep (or prompt "Grep")
 		       #'consult--grep-make-builder paths regexp)))))
-
-(defun hsys-consult--noninteractive-grep-paths (paths regexp &optional max-matches)
-  "Non-interactively search PATHS for any REGEXP match with consult grep.
-Return a list of (REGEXP (<paths-with-matches)).
-
-Use ripgrep (rg) if found, otherwise, plain grep.  Interactively show all
-matches from PATHS; see the documentation for the `dir' argument in
-`consult-grep' for valid values of PATHS.
-
-Limit matches per file to the absolute value of optional MAX-MATCHES, if
-given and not 0.  If 0, match to the start of headline text only (lines that
-start with `hsys-consult-entry-regexp', which is dynamically simplified if no
-Koutline \".kotl\" files are being searched)."
-  (hsys-consult-require-version)
-  (when max-matches
-    (setq max-matches (prefix-numeric-value max-matches)))
-  (let ((consult-grep-args (if (and (integerp max-matches) (not (zerop max-matches)))
-			       (if (listp consult-grep-args)
-				   (append consult-grep-args
-					   (list (format "-m %d" (abs max-matches))))
-				 (concat consult-grep-args
-					 (format " -m %d" (abs max-matches))))
-			     (if (listp consult-grep-args)
-				 (append consult-grep-args '("-l"))
-			       (concat consult-grep-args " -l"))))
-	(consult-ripgrep-args (if (and (integerp max-matches) (not (zerop max-matches)))
-				  (if (listp consult-ripgrep-args)
-				      (append consult-ripgrep-args
-					      (list (format "-m %d" (abs max-matches))))
-				    (concat consult-ripgrep-args
-					    (format " -m %d" (abs max-matches))))
-				(if (listp consult-ripgrep-args)
-				    (append consult-ripgrep-args '("-l"))
-				  (concat consult-ripgrep-args " -l"))))
-        (hsys-consult-entry-regexp
-         (if (hpath:extension-in-list-p "*.kotl" paths)
-             hsys-consult-entry-regexp
-           ;; If no Koutline files, use simplified heading search regexp
-           "^[*#]+ ")))
-
-    (when (and (integerp max-matches) (zerop max-matches))
-      ;; Final space in leading regexp in next line makes it work with
-      ;; the Orderless package.
-      (setq regexp (concat hsys-consult-entry-regexp (or regexp ""))))
-
-    ;; Ensure any env or lisp variables in paths are replaced so
-    ;; grep does not ignore them.
-    (setq paths (mapcar #'expand-file-name (hpath:expand-list paths)))
-
-    ;; Consult split style usually uses '#' as a separator char but
-    ;; that interferes with matching to Markdown # chars at the start
-    ;; of a line in the regexp, so disable the separator char as it is
-    ;; not needed for simple regexp searches.
-    (let* ((consult-async-split-style nil)
-	   (builder-result (funcall
-			    (funcall
-			     (if (executable-find "rg")
-				 #'consult--ripgrep-make-builder
-			       #'consult--grep-make-builder)
-			     paths)
-			    regexp))
-	 (cmd-list (car builder-result))
-	 ;; Grep for filenames with matches in them and cache the line-level results
-	 (null-separated-files (ignore-errors (car (apply #'process-lines (car cmd-list) (cdr cmd-list)))))
-	 (matching-files (when null-separated-files (nreverse (split-string null-separated-files "\^@" t)))))
-      (list regexp matching-files))))
 
 (defun hsys-consult--org-grep-tags-string ()
   "When on or between Org tags, return a `consult-grep' match string for them.

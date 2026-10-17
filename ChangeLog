@@ -1,3 +1,72 @@
+2026-10-17  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-grep):
+  hsys-consult.el (hsys-consult--noninteractive-grep-paths): Remove
+    and replace with new 'hyrolo-noninteractive-grep-paths' that does
+    not require the 'consult' package.  Use in 'hyrolo-grep'.
+
+* set.el (set:intersection): Document the ordering of the result elements.
+
+* README.in.md: Remove reference to stable release as there is no stable
+    directory when looking at the README file in a sourcE directory.  Fill
+    paragraphs to a max of 72 to simpify side-by-side viewing.
+
+* kotl/EXAMPLE.kotl: Fix mistakenly deleted cell data.
+  test/demo-tests.el (fast-demo-display-kotl-starting-from-cell): Fix cell
+    reference to match updated EXAMPLE.kotl.
+
+* hsys-consult.el (hsys-consult--noninteractive-grep-paths): (require 'cl-lib)
+    and call its 'cl-copy-list' to fix CI/CD failure.
+
+* hsys-consult.el (hsys-consult--noninteractive-grep-paths): Fix to ensure
+    eliminates any duplicate files and returns file list in orgiinal order.
+  hyrolo.el (hyrolo-grep): Restore call to above function to filter file
+    list to just those with a match.
+  test/hyrolo-tests.el (hyrolo-tests--forward-same-level-all-file-types-level1):
+    Above changes now work with this test.
+
+* hsys-consult.el (hsys-consult-grep): Improve doc and fix arg order
+    in doc.
+                 (hsys-consult--grep-paths): Remove doc with wrong
+    return value.
+                 (hsys-consult--noninteractive-grep-paths): Remove
+    'max-matches' since finds just the first match per file.
+
+2026-10-16  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kfile.el (kfile:update): Temp bind 'inhibit-redisplay' to t
+    to prevent display of internal outline data during saves.
+
+* FAST-DEMO: Add a link to "README.md#Articles".
+  FAST-DEMO, README.in.md: Add Charlie's Hyrolo and Implicit Button
+    video and article links.
+
+* man/hyperbole.texi (View Specs, Relocating and Copying, Koutliner Keys):
+* kotl/EXAMPLE.kotl: INCOMPATIBLE CHANGE: Move {C-c ; b}
+    (kotl-mode:toggle-blank-lines) to {C-c ]}.  Move {C-c C-c}
+    (kotl-mode:copy-before) to {C-c ; b} to match with {c-c ; c}
+    (kotl-mode:copy-after) binding.  {C-c C-c} no longer worked
+    because Org-compatibility overrode its binding.
+
+* kotl/EXAMPLE.kotl:
+  man/hyperbole.texi (Promoting and Demoting):
+  kotl/kotl-mode.el (kotl-mode:setup-keymap): INCOMPATIBLE CHANGE:
+    Move {C-c C-]} binding to {C-c [} as is easier-to-type and is a
+    'left' opening brace like left 'TAB' key.
+
+* kotl/kotl-mode.el (kotl-mode:toggle-tab-flag): Add missing
+    (interactive) expression and fix mis-printing of TAB/S-TAB
+    keys due to bindings being wrapped in org-hijacker calls.
+                    (kotl-mode:to-end-of-line): Rename to
+    'kotl-mode:end-of-line'.  This was not done previously due to an old
+    XEmacs compiler but XEmacs is no longer supported.
+
+* kotl/EXAMPLE.kotl:
+  man/hyperbole.texi (Cell Attributes): Update key binding
+    descriptions and move {C-c ; h} description into the key binding
+    table.  Also, change C-0 to M-0 and C--1 to M--1 since control
+    digits don't typically work on a terminal.
+
 2026-10-16  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (release-pre): Use remote for fetching and creating release
@@ -5,9 +74,7 @@
 
 2026-10-15  Mats Lidell  <matsl@gnu.org>
 
-* man/hyperbole.texi (Top):
-    (Introduction): Updated version number to 9.3.0.
-* README.toc.md: Remove unused file.
+* man/hyperbole.texi (Top, Introduction): Updated version number to 9.3.0.
 
 2026-10-14  Mats Lidell  <matsl@gnu.org>
 
@@ -39,7 +106,7 @@
     these two sections.
 
 * MANIFEST, Makefile: Move README.md to README.in.md.  Format it to produce README.md
-    as part of the 'doc' target.  Eliminate README.toc.md.
+    as part of the 'doc' target.  Remove now unused README.toc.md.
 
 * test/hyrolo-tests.el (hyrolo-tests--fgrep-and-goto-next-visible-kotl-heading,
                         hyrolo-tests--fgrep-and-goto-next-visible-kotl-heading-level-2,

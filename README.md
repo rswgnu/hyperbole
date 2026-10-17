@@ -61,7 +61,11 @@ otherwise, skip to the next section.
 
    - [Top 10 ways Hyperbole amps up Emacs](https://emacsconf.org/2023/talks/hyperamp/)
 
+   - [Implicit Buttons: Build Your Hyperverse](https://youtu.be/o2KMvSCXwlU)
+
    - [HyWiki: Zero Markup Hypertext](https://youtu.be/3zG3lRmi3Zg)
+
+   - [HyRolo: Records are Trees, Not Lines](https://youtu.be/5Oo_KqVcLFM)
 
    - [Introduction to Buttons](https://youtu.be/zoEht66N2PI)
 
@@ -69,7 +73,7 @@ otherwise, skip to the next section.
 
    - [Powerful Productivity with Hyperbole and Org Mode](https://emacsconf.org/2022/talks/hyperorg/)
 
-   - [HyRolo, fast contact/hierarchical record viewer](https://youtu.be/xdJGFdgKPFY)
+   - [HyRolo: Search, Retrieve and Insert Records, Not Lines](https://youtu.be/xdJGFdgKPFY)
 
    - [Using Koutline for stream of thought journaling](https://emacsconf.org/2023/talks/koutline/)
 
@@ -88,6 +92,9 @@ otherwise, skip to the next section.
    - [The Emacs Hyperbole](https://mike.hostetlerhome.com/emacs-hyperbole)
 
    - [HyWiki: Zero Markup Hypertext](https://www.chiply.dev/post-hyperbole-hywiki)
+   - [Implicit Buttons: Build Your Hyperverse](https://www.chiply.dev/post-hyperbole-implicit-buttons)
+
+   - [HyRolo: Search, Retrieve and Insert Records, Not Lines](https://www.chiply.dev/post-hyperbole-hyrolo)
 
    - [HyWiki: My Favorite Part of Hyperbole](https://kirankp.com/blog/gnu-hyperbole/)
 
@@ -512,10 +519,14 @@ Hyperbole consists of six parts:
        complex operations without having to use a different key for each
        operation.  Just press a Smart Key and the right thing happens;
 
-   2.  **Auto-Wiki Note Taker**: HyWiki is a simple note taking system
-       that uses Org mode and automatically highlights and turns each
-       WikiWord into a hyperlink to its Wiki page or section without any
-       markup.
+   2.  [**HyWiki**](man/hyperbole.html#HyWiki)
+
+       Hyperbole's markup-free, personal wiki system with automatic WikiWord
+       highlighting and hyperlinking.  It uses Org mode for note taking and
+       adds automatic hyperlinking and highlighting of WikiWord references
+       within wiki pages and can be set so WikiWord links appear in all text
+       and programming files, WikiWords can also link to all different types
+       of Emacs objects, if desired.
 
    3.  **Autonumbered Legal Outliner**: The Koutliner is an advanced
        outliner with multi-level autonumbering and permanent ids
