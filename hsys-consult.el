@@ -2,7 +2,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     4-Jul-24 at 09:57:18
-;; Last-Mod:     17-Oct-26 at 02:33:45 by Bob Weiner
+;; Last-Mod:     17-Oct-26 at 03:11:36 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -28,6 +28,7 @@
 ;; Don't (require 'consult) here since want to create that dependency only
 ;; when a function within this library is called.
 
+(require 'cl-lib) ;; for `cl-copy-list'
 (require 'find-func)
 (require 'hbut)
 (require 'hargs)
@@ -422,7 +423,7 @@ matches from PATHS; see the documentation for the `dir' argument in
 			     #'consult--grep-make-builder)
                            ;; Use `copy-list' to avoid sort modifying
                            ;; `expanded-paths'
-			   (sort (copy-list expanded-paths) #'string-lessp))
+			   (sort (cl-copy-list expanded-paths) #'string-lessp))
 			  regexp))
 	 (cmd-list (car builder-result))
 	 ;; Grep for filenames with matches in them and cache the line-level

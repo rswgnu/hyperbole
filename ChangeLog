@@ -1,5 +1,8 @@
 2026-10-17  Bob Weiner  <rsw@gnu.org>
 
+* hsys-consult.el (hsys-consult--noninteractive-grep-paths): (require 'cl-lib)
+    and call its 'cl-copy-list' to fix CI/CD failure.
+
 * hsys-consult.el (hsys-consult--noninteractive-grep-paths): Fix to ensure
     eliminates any duplicate files and returns file list in orgiinal order.
   hyrolo.el (hyrolo-grep): Restore call to above function to filter file
