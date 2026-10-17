@@ -334,7 +334,7 @@
                the initial children of the current cell.
 
         3b20b. See {C-h v kimport:mode-alist RET} and {C-h v
-               kimport:suffix-alist RET}, for information on mode and 
+               kimport:suffix-alist RET}, for information on mode and
                suffix-specific conversions performed on files before they
                are inserted.  This same conversion process applies if you
                invoke {M-x kotl-mode RET} in a non-koutline buffer or if you
@@ -481,7 +481,7 @@
             as tables require only blanks to the left of each row.
 
        3d2. Here are two table examples:
-               
+            
                |-----------------------------------------+----------------------------|
                | Demotion Inside Org Table               | Promotion Inside Org Table |
                |-----------------------------------------+----------------------------|
@@ -489,7 +489,7 @@
                | {C-c C->}                               | {C-c C-<}                  |
                | M-0 TAB  (kotl-mode:tab-flag /= 'cycle) | M-0 S-TAB                  |
                |-----------------------------------------+----------------------------|
-               
+            
                |------------------------------------+-----------------------------|
                | Demotion Outside Org Table         | Promotion Outside Org Table |
                |------------------------------------+-----------------------------|
@@ -499,7 +499,7 @@
                | {M-S-<right>}                      | {M-S-<left>}                |
                | {TAB}   (kotl-mode:tab-flag = nil) | {S-TAB}                     |
                |------------------------------------+-----------------------------|
-               
+            
                To toggle table editing mode on or off, press the Action Key on
                any of the table | delimiters and then edit as you would any Org
                table.  Note how the above tables show how {TAB} and {S-TAB}
@@ -527,7 +527,7 @@
 
 
 "ben" ;; kvspec:current
-93 ;; id-counter
+94 ;; id-counter
 alpha ;; label-type
 4 ;; label-min-width
 ". " ;; label-separator
@@ -535,7 +535,7 @@ alpha ;; label-type
 
 ;; depth-first kcell attributes
 [[0
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07" id-counter 93)]
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07" id-counter 94)]
  [2
   (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
  [3
@@ -552,4 +552,160 @@ alpha ;; label-type
   (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
  [81
   (creator "rsw@gnu.org" create-time "20261007:21:15:24")]
- nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil]
+ [92
+  (creator "rsw@gnu.org" create-time "20261016:15:05:05")]
+ [93
+  (creator "rsw@gnu.org" create-time "20261016:15:05:27")]
+ [9
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [10
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [11
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [12
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [82
+  (creator "rsw@gnu.org" create-time "20261007:22:18:48")]
+ [73
+  (creator "rsw@gnu.org" create-time "20260929:05:48:56")]
+ [71
+  (creator "rsw@gnu.org" create-time "20260928:21:33:05")]
+ [74
+  (creator "rsw@gnu.org" create-time "20260929:05:49:02")]
+ [75
+  (creator "rsw@gnu.org" create-time "20260929:05:49:09")]
+ [76
+  (creator "rsw@gnu.org" create-time "20260929:05:49:14")]
+ [78
+  (creator "rsw@gnu.org" create-time "20260929:05:50:44")]
+ [13
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [85
+  (creator "rsw@gnu.org" create-time "20261007:23:56:26")]
+ [77
+  (creator "rsw@gnu.org" create-time "20260929:05:49:25")]
+ [86
+  (creator "rsw@gnu.org" create-time "20261008:00:02:09")]
+ [88
+  (creator "rsw@gnu.org" create-time "20261008:00:02:30")]
+ [89
+  (creator "rsw@gnu.org" create-time "20261008:00:02:56")]
+ [90
+  (creator "rsw@gnu.org" create-time "20261008:00:03:52")]
+ [14
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [15
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [16
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [17
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [18
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [19
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [20
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [21
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [22
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [23
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [24
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [79
+  (creator "rsw@gnu.org" create-time "20261006:04:24:06")]
+ [25
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [26
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [27
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [28
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [29
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [30
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [31
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [32
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [33
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [34
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [35
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [36
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [37
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [38
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [39
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [40
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [41
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [42
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [43
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [44
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [45
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [46
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [47
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [48
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [49
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [50
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [51
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [52
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [53
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [54
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [55
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [56
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [57
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [58
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [59
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [60
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [61
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [62
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [63
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [64
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [65
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [66
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [67
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [68
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [69
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
+ [94
+  (creator "rsw@gnu.org" create-time "20261017:07:25:04")]
+ nil nil nil nil nil nil nil nil]

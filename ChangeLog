@@ -1,5 +1,9 @@
 2026-10-17  Bob Weiner  <rsw@gnu.org>
 
+* kotl/EXAMPLE.kotl: Fix mistakenly deleted cell data.
+  test/demo-tests.el (fast-demo-display-kotl-starting-from-cell): Fix cell
+    reference to match updated EXAMPLE.kotl.
+
 * hsys-consult.el (hsys-consult--noninteractive-grep-paths): (require 'cl-lib)
     and call its 'cl-copy-list' to fix CI/CD failure.
 
