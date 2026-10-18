@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+set -e
+
+make README.md && git diff --quiet README.md || (echo -e "\nERROR: README.md is out of date\n  Run 'make README.md', commit the updated file, and try again.\n" && exit 1)

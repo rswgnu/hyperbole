@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     17-Oct-26 at 03:00:27 by Bob Weiner
+;; Last-Mod:     17-Oct-26 at 17:22:03 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -3722,7 +3722,7 @@ non-nil."
 With optional prefix ALL-FLAG non-nil, collapse all cells visible
 within the current view."
   (interactive "P")
-  (kotl-mode:is-p)
+  (kotl-mode:is)
   (let (buffer-read-only)
     (kview:map-tree (lambda (_kview)
 		      ;; Use free variable kview-label-sep-len bound in kview:map-tree for speed.
@@ -3739,7 +3739,7 @@ within the current view."
 With optional prefix ALL-FLAG non-nil, expand all cells visible within
 the current view."
   (interactive "P")
-  (kotl-mode:is-p)
+  (kotl-mode:is)
   (let (buffer-read-only)
     (kview:map-tree
      (lambda (_kview)
@@ -3764,6 +3764,7 @@ Act on all visible cells if optional prefix arg ALL-FLAG is given.
 If current cell is collapsed, cells will be expanded, otherwise they will be
 collapsed."
   (interactive "P")
+  (kotl-mode:is)
   (if (kcell-view:collapsed-p)
        ;; expand cells
       (kotl-mode:expand-tree all-flag)
@@ -3775,6 +3776,7 @@ collapsed."
   2. CONTENTS: Show the first line of all cells at all levels
   3. SHOW ALL: Show the entire outline."
   (interactive)
+  (kotl-mode:is)
   (cond ((kotl-mode:top-cells-one-line-visible-p)
          ;; When only the first line all level 1 cells are visible:
          ;; 1. CONTENTS: Show the first line of all cells at all levels
@@ -3797,18 +3799,19 @@ collapsed."
   3. SUBTREE:  Show the entire tree at point; if there is no subtree, switch
                directly from CHILDREN to FOLDED."
   (interactive)
-    (cond ((not (kotl-mode:tree-collapsed-p))
-           ;; If the whole tree is showing, then show just the first line of
-           ;; the root cell
-	   (kotl-mode:show-root-first-line))
-	  ((kotl-mode:root-first-line-only-shown-p)
-	   ;; If only the first line of the root cell is showing and it
-           ;; has at least one child, then show the first line of all of its
-           ;; children
-	   (kotl-mode:show-tree-children-first-lines))
-	  (t
-	  ;; Otherwise, show the whole tree
-           (kotl-mode:show-tree))))
+  (kotl-mode:is)
+  (cond ((not (kotl-mode:tree-collapsed-p))
+         ;; If the whole tree is showing, then show just the first line of
+         ;; the root cell
+	 (kotl-mode:show-root-first-line))
+	((kotl-mode:root-first-line-only-shown-p)
+	 ;; If only the first line of the root cell is showing and it
+         ;; has at least one child, then show the first line of all of its
+         ;; children
+	 (kotl-mode:show-tree-children-first-lines))
+	(t
+	 ;; Otherwise, show the whole tree
+         (kotl-mode:show-tree))))
 
 ;;;
 ;;;###autoload
@@ -3826,21 +3829,21 @@ With optional prefix ARG, toggle display of blank lines between cells."
   "Show (expand) all cells in the current view.
 With optional prefix ARG, toggle display of blank lines between cells."
   (interactive "P")
-  (when (kotl-mode:is-p)
-    (kview:set-attr kotl-kview 'levels-to-show 0)
-    (kview:set-attr kotl-kview 'lines-to-show 0)
-    (outline-flag-region (point-min) (point-max) nil)
-    (when arg
-      (kvspec:toggle-blank-lines))
-    (when (called-interactively-p 'interactive)
-      (kvspec:update t))))
+  (kotl-mode:is)
+  (kview:set-attr kotl-kview 'levels-to-show 0)
+  (kview:set-attr kotl-kview 'lines-to-show 0)
+  (outline-flag-region (point-min) (point-max) nil)
+  (when arg
+    (kvspec:toggle-blank-lines))
+  (when (called-interactively-p 'interactive)
+    (kvspec:update t)))
 
 ;;;###autoload
 (defun kotl-mode:top-cells (&optional arg)
   "Collapse all level 1 cells in view and hide any deeper sublevels.
 With optional prefix ARG, toggle display of blank lines between cells."
   (interactive "P")
-  (kotl-mode:is-p)
+  (kotl-mode:is)
   (let ((modified-p (buffer-modified-p))
 	(buffer-read-only))
     (kvspec:levels-to-show 1)
@@ -3866,7 +3869,7 @@ display all levels of cells.  Interactively, prompts for LEVELS-TO-KEEP."
   "Hide subtree, ignoring root, at optional CELL-REF (defaults to cell at point).
 With optional SHOW-FLAG, expand the subtree instead."
   (interactive)
-  (kotl-mode:is-p)
+  (kotl-mode:is)
   (save-excursion
     ;; Next line ensures point is in the root of the current tree if
     ;; the tree is at all hidden.
@@ -3948,7 +3951,7 @@ Interactively, LEVELS-TO-KEEP is the prefix argument."
   "Collapse tree rooted at optional CELL-REF (defaults to cell at point).
 With optional SHOW-FLAG, expand the tree instead."
   (interactive)
-  (kotl-mode:is-p)
+  (kotl-mode:is)
   (save-excursion
     ;; Next line ensures point is in the root of the current tree if
     ;; the tree is at all hidden.
@@ -4203,12 +4206,12 @@ on when tabs are used for indenting."
   (indent-region start end nil))
 
 ;;;###autoload
-(defun kotl-mode:is-p ()
+(defun kotl-mode:is ()
   "Signal an error if current buffer is not a Hyperbole outline, else return t."
   (if (kview:is-p kotl-kview)
       t
     (hypb:error
-     "(kotl-mode:is-p): '%s' is not a valid Hyperbole koutline" (current-buffer))))
+     "(kotl-mode:is): '%s' is not a valid Hyperbole koutline" (current-buffer))))
 
 (defun kotl-mode:shrink-region ()
   "Shrink region within visible bounds of a single cell.

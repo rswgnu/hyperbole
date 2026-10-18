@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     16-Oct-26 at 22:59:00 by Bob Weiner
+@c Last-Mod:     17-Oct-26 at 23:02:18 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,7 +30,7 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED October 16, 2026
+@set UPDATED October 17, 2026
 @set UPDATED-MONTH October 2026
 @set EDITION 9.3.0
 @set VERSION 9.3.0
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.3.0
-Printed October 16, 2026.
+Printed October 17, 2026.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -213,7 +213,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.3.0
-October 16, 2026 @c AUTO-REPLACE-ON-SAVE
+October 17, 2026 @c AUTO-REPLACE-ON-SAVE
 
 
   Published by the Free Software Foundation, Inc.
@@ -2570,6 +2570,7 @@ this setting.
 The following table summarizes the effect of this option setting.
 @end table
 
+@noindent
 @smallexample
 |--------------+-------------------+------------------+----------+------------------|
 | This Setting | Smart Key Context | Hyperbole Button | Org Link | Fallback Command |
@@ -4364,8 +4365,8 @@ the current menu items.
 @noindent
 The minibuffer menu should look like this:
 
-@smallexample
 @noindent
+@smallexample
 Hy>  Act Butfile/ Cust/ Doc/ Ebut/ Find/ Gbut/ HyWiki/ Ibut/ Kotl/ Msg/ Rolo/ Screen/
      Win/ historY
 @end smallexample
@@ -4572,8 +4573,8 @@ Web/ -             Select a search engine and term and search with them or
 
                    The Find/Web menu looks like this:
 
-@smallexample
 @noindent
+@smallexample
 Web>  Amazon Bing Dictionary ducKduckgo Elisp Facebook
       Google gitHub Images Jump Maps RFCs StackOverflow
       Wikipedia X Youtube
@@ -4976,8 +4977,8 @@ this function if necessary with: @bkbd{M-x customize-variable
 The HyWiki minibuffer menu at @bkbd{C-h h h} offers quick access to important HyWiki features.
 It looks like this:
 
-@smallexample
 @noindent
+@smallexample
 HyWiki>  Act BacklinkConsult Create DiredHyWiki EditPage FindReferent GrepConsult
          Help Info Link ModeSet/ Org-M-RET/ Publish TagFind
 @end smallexample
@@ -5057,8 +5058,8 @@ arguments it requires.  It looks like this (Note that @samp{Activity}
 appears only if the Activities package is available):
 
 @anchor{HyWiki Referents}
-@smallexample
 @noindent
+@smallexample
 HyWiki RefType>  Activity Bookmark Denote Command Elisp Find Gbut HyRolo
                  InfoIndex Keys pathLink infoNode OrgID Page orgRoamNode
                  Spec glossarY
@@ -6191,8 +6192,8 @@ shown in the table below.
 
 @vindex kotl-mode:tab-flag
 @cindex koutliner, TAB function
-@smallexample
 @noindent
+@smallexample
 |--------------------+-------------------------------+--------------------------|
 | kotl-mode:tab-flag | TAB Function                  | Shift-TAB Function       |
 |--------------------+-------------------------------+--------------------------|
@@ -7397,8 +7398,8 @@ The Rolo submenu of the Hyperbole menu offers a full set of commands
 for searching and maintaining a personal address book.  It looks like
 so.
 
-@smallexample
 @noindent
+@smallexample
 Rolo>  Add  ConsultFind  Display  Edit  FileFind  Info  Kill  Mail  Order
        RegexFind  StringFind  TagFind  WordFind  Yank
 @end smallexample

@@ -1,9 +1,194 @@
+;;; -*- mode: org; org-open-link-functions: (hbut:activate-at-p); org-cycle-global-at-bob: t; hsys-org-enable-smart-keys: t -*-
+
 *			  What's New in GNU Hyperbole
 				 by Bob Weiner
 
 ===========================================================================
+*                                   V9.3.1
+===========================================================================
+
+** ACE WINDOW PACKAGE INTEGRATION - fast window and buffer switching
+
+** ACTION AND ASSIST (SMART) KEYS  (See "(hyperbole)Smart Keys").
+
+** ACTION TYPES  (See "(hyperbole)Action Types").
+
+** DOCUMENTATION
+
+** EXPLICIT BUTTONS  (See "(hyperbole)Explicit Buttons").
+
+** GLOBAL BUTTONS  (See "(hyperbole)Global Buttons").
+
+** HYCONTROL  (See "(hyperbole)HyControl").
+
+** HYPERBOLE SYSTEM  (See "(hyperbole)").
+
+** HYROLO  (See "(hyperbole)HyRolo").
+
+** IMPLICIT BUTTONS  (See "(hyperbole)Implicit Buttons").
+
+** KOUTLINER  (See "(hyperbole)Koutliner").
+
+** MENUS  (See "(hyperbole)Menus").
+
+** PROGRAMMING INTERFACE CHANGES  (See "(hyperbole)Embedding Hyperbole").
+
+** ORG MODE INTEGRATION (See "(hyperbole)Smart Key - Org Mode").
+
+** TEST CASES  (See "${hyperb:dir}/test").
+
+** WINDOW GRIDS (See "(hyperbole)grid of windows").
+
+===========================================================================
 *                                   V9.3.0
 ===========================================================================
+** ACE WINDOW PACKAGE INTEGRATION - fast window and buffer switching
+
+** ACTION AND ASSIST (SMART) KEYS  (See "(hyperbole)Smart Keys").
+
+** ACTION TYPES  (See "(hyperbole)Action Types").
+
+** DOCUMENTATION
+
+** EXPLICIT BUTTONS  (See "(hyperbole)Explicit Buttons").
+
+** GLOBAL BUTTONS  (See "(hyperbole)Global Buttons").
+
+** HYCONTROL  (See "(hyperbole)HyControl").
+
+** HYPERBOLE SYSTEM  (See "(hyperbole)").
+
+** HYROLO  (See "(hyperbole)HyRolo").
+
+** IMPLICIT BUTTONS  (See "(hyperbole)Implicit Buttons").
+
+** KOUTLINER  (See "(hyperbole)Koutliner").
+
+** MENUS  (See "(hyperbole)Menus").
+
+** PROGRAMMING INTERFACE CHANGES  (See "(hyperbole)Embedding Hyperbole").
+
+** ORG MODE INTEGRATION (See "(hyperbole)Smart Key - Org Mode").
+
+** TEST CASES  (See "${hyperb:dir}/test").
+
+** WINDOW GRIDS (See "(hyperbole)grid of windows").
+
+===========================================================================
+*                                   V9.2.0
+===========================================================================
+
+  *** After installing the ace-window package and loading Hyperbole, execute
+
+
+** ACE WINDOW PACKAGE INTEGRATION - fast window and buffer switching
+
+** ACTION AND ASSIST (SMART) KEYS  (See "(hyperbole)Smart Keys").
+
+** ACTION TYPES  (See "(hyperbole)Action Types").
+
+** DOCUMENTATION
+
+** EXPLICIT BUTTONS  (See "(hyperbole)Explicit Buttons").
+
+** GLOBAL BUTTONS  (See "(hyperbole)Global Buttons").
+
+** HYCONTROL  (See "(hyperbole)HyControl").
+
+** HYPERBOLE SYSTEM  (See "(hyperbole)").
+
+** HYROLO  (See "(hyperbole)HyRolo").
+
+** IMPLICIT BUTTONS  (See "(hyperbole)Implicit Buttons").
+
+  *** Klink Pathnames: Handle #relative-id=idstamp syntax at the end
+      of a pathname to jump to display the specified Koutline cell.
+      Also, update relative-id if need be when the link is activated.
+
+      When Hyperbole is prompting to create a klink referring to a cell
+      in the current buffer, {M-RET} pressed twice on a cell will use
+      that cell as the referent and the link will be inserted now without
+      the file path, i.e. <@ relative-id=idstamp>.
+
+
+** KOUTLINER  (See "(hyperbole)Koutliner").
+
+  *** Org-style Cycling: {TAB} and {S-TAB} emulate Org-style visibility
+      cycling, by default, when pressed in a context other than ones
+      covered by the `kotl-mode:emulate-tab' setting.  Remove {M-TAB}
+      as a binding for promoting trees outside of Org tables since often
+      used to switch applications under a window system.
+
+   .  {TAB} cycles the tree rooted at point and {S-TAB} cycles the whole
+      outline.  See [[(hyperbole)TAB and Shift-TAB]].
+
+      Numeric prefix arguments show a single line for each cell down to
+      the prefix argument level.  Zero shows one line of all levels.
+
+      See [[(hyperbole)Org-style Visibility Cycling]]
+      and [[(hyperbole)Promoting and Demoting]] for summary tables of {TAB}
+      and {S-TAB} behavior.
+
+  *** {C-c [} runs [[kotl-mode:toggle-tab-flag]] which sets the value of
+      [[kotl-mode:tab-flag]] and toggles {TAB} and {S-TAB} between Org-style
+      cycling and demoting and promoting outline trees.
+
+
+** MENUS  (See "(hyperbole)Menus").
+
+** PROGRAMMING INTERFACE CHANGES  (See "(hyperbole)Embedding Hyperbole").
+
+  **** Add [[hypb:count-visible-lines]].
+
+  **** [[kcell-view:sibling-p]]: Return sibling idstamp rather than t, so
+       can jump back to it.
+       [[kcell-view:child-p]]: Return child idstamp rather than t, so can
+       jump back to it.
+
+  **** Add [[kotl-mode:cycle-locally]] and [[kotl-mode:cycle-globally]].
+
+  **** Add [[kotl-mode:demote-siblings]] and [[kotl-mode:promote-siblings]] to
+       move siblings at and following point down or up levels.
+
+  **** [[kotl-mode:demote-tree]], [[kotl-mode:promote-tree]]: If given a null
+       prefix arg, set it to 1, so does a normal one-level shift.
+
+  **** [[kotl-mode:mark-whole-buffer]]: Allow selection of entire buffer
+       including first relative id, so can copy it with all labels.
+
+  **** Add [[kotl-mode:show-to-level]] and [[kotl-mode:show-lines-per-cell]].
+
+  **** Add these functions to support Org-style cycling:
+         [[kotl-mode:all-cells-all-lines-visible-p]],
+         [[kotl-mode:all-cells-one-line-visible-p]],
+         [[kotl-mode:at-cell-empty-first-line-p]],
+         [[kotl-mode:current-level]],
+         [[kotl-mode:previous-cell-level]],
+         [[kotl-mode:root-first-line-only-shown-p]],
+         [[kotl-mode:show-root-first-line]],
+         [[kotl-mode:show-tree-children-first-lines]],
+         [[kotl-mode:top-cells-one-line-visible-p]],
+         [[kotl-mode:tree-collapsed-p]]
+
+  **** [[kotl-mode:emulate-tab]]: Add this customization to determine where
+       in cells the {TAB} key will indent or insert tabs.
+
+  **** Add these to support Org-style cycling:
+         [[kotl-mode:before-tab-emulation-hook]],
+	 [[kotl-mode:tab-pre-hook]],
+         [[kotl-mode:tab-post-hook]],
+	 [[kotl-mode:tab-command]]
+
+  **** Add [[kvspec:reset]] to reset view spec to default and set this
+       default in `kfile:read-v4-or-v3' and `kvspec:update'.
+
+  **** Add [[smart-flash-tag-at-point]] to flash programming identifier
+       implicit links.
+
+
+** TEST CASES  (See "${hyperb:dir}/test").
+
+** WINDOW GRIDS (See "(hyperbole)grid of windows").
 
 ===========================================================================
 *                                   V9.1.0
@@ -11,7 +196,7 @@
 
 **GNU Hyperbole 9.1.0 NEWS**
 
-*   **HyWiki**
+**   **HyWiki**
     *   **Global Minor Mode**: The new `hywiki-mode` is a global minor mode that enables the highlighting and hyperlinking of **HyWikiWords** in any non-special text buffer and within the comments of programming buffers.
     *   **Section Linking**: HyWikiWord links now support internal section jumps using the **`#` character** (e.g., `WikiWord#Section-Name`), allowing direct navigation to specific Org headlines within a wiki page.
     *   **Web Publishing**: Added the `hywiki-publish-to-html` command (bound to `{C-h h h p}`) which utilizes Org mode’s publishing framework to export an entire HyWiki directory to HTML for web use.
@@ -20,24 +205,24 @@
    `hypb:include-major-modes' to toggle auto-highlighting and `hypb:exclude-major-modes` to define a list of modes where HyWikiWord recognition should be disabled.
     *   **Link Requirements**: New variable `hywiki-org-link-type-required` allows users to control whether the `hy:` prefix is required for HyWikiWords when used inside Org-style double square brackets outside of the wiki directory.
 
-*   **Smart Keys**
+**   **Smart Keys**
     *   **Granular Org Integration**: The custom option `hsys-org-enable-smart-keys` now supports a new value, **`'buttons`**, which limits Hyperbole’s `M-RET` override to only apply when point is on a Hyperbole button, leaving other contexts to native Org mode behavior.
     *   **Org Table Toggle**: In the Koutliner, pressing the Action Key on a `|` character now toggles **`orgtbl-mode`** for cell-based table editing.
     *   **Modern Completion Support**: Smart Key argument selection is now fully integrated with the **Vertico and Consult** completion frameworks, allowing for modern interactive selection of buffers, files, and identifiers.
     *   **Python Tracebacks**: The Action Key now recognizes and jumps to source lines referenced in **Python pdb, traceback, or pytype errors** within any buffer.
 
-*   **Implicit Button Types**
+**   **Implicit Button Types**
     *   **Social Media References**: Added the `social-reference` type which automatically recognizes and links hashtags and usernames for platforms including **X (Twitter), Facebook, and Instagram**.
     *   **Social Default Service**: New variable `hibtypes-social-default-service` sets the default platform (initially "x") used when a hashtag or username is referenced without a specific service prefix.
     *   **Python Navigation**: Added `python-tb-previous-line` to handle instances where Python tracebacks place the source reference one line above the error description.
     *   **YouTube Interaction**: Added new action types `yt-play`, `yt-info`, and `yt-search` for specialized interaction with **YouTube videos** and metadata.
 
-*   **HyRolo**
+**   **HyRolo**
     *   **Navigation Performance**: All movement commands within HyRolo match buffers (e.g., Next, Previous, Up) have been optimized to use **text properties** rather than overlays, ensuring instantaneous navigation even in buffers containing thousands of search results.
     *   **Interactive Filtering**: Added `hyrolo-consult-grep` and `hyrolo-helm-org-rifle` to the Rolo menu, permitting interactive full-text search and narrowing over the `hyrolo-file-list`.
     *   **Org Roam Integration**: HyRolo now includes convenience commands for searching **Org Roam nodes** via the Consult package, accessible through `hsys-org-roam-consult-grep`.
 
-*   **Miscellaneous**
+**   **Miscellaneous**
     *   **Emacs Version Requirements**: While Hyperbole remains compatible with GNU Emacs 27.1, this release is optimized for and recommended for use with **GNU Emacs 28 or above**.
     *   **Path Variable Expansion**: The function `hpath:expand` has been enhanced to more robustly handle Hyperbole-specific suffixes like `#anchors` and `:line:col` in combination with environment and Lisp variables.
 
@@ -124,7 +309,7 @@
 
 ** KOUTLINER  (See "(hyperbole)Koutliner").
 
-  *** OLD - New Klink Format: Hash character, #, may now be used to separate a 
+  *** OLD - New Klink Format: Hash character, #, may now be used to separate a
 
 
 ** MENUS  (See "(hyperbole)Menus").
@@ -389,7 +574,7 @@
       eln build.
                (echo): Show Emacs location and version in build environment
       info.
-               (lint): Use "package-lint" to lint Hyperbole source code. 
+               (lint): Use "package-lint" to lint Hyperbole source code.
 
   *** mhtml-mode Markup Selection: Hyperbole's matching markup pair selection,
       copying and movement now works with Emacs' builtin mhtml-mode.  See
@@ -416,7 +601,7 @@
 
   *** Koutline and Markdown File Support: The `hyrolo-file-list' can now
       contain Koutline or Markdown files and will search their outline entries
-      just like it does for Org and Emacs outline files.  The `markdown-mode'  
+      just like it does for Org and Emacs outline files.  The `markdown-mode'
       package will be auto-installed if a Markdown file is searched by HyRolo.
       See "(hyperbole)HyRolo Concepts".
 
@@ -598,7 +783,7 @@
 
 ** KOUTLINER  (See "(hyperbole)Koutliner").
 
-  *** New Klink Format: Hash character, #, may now be used to separate a 
+  *** New Klink Format: Hash character, #, may now be used to separate a
       pathname from a Koutline cell reference.  Both <koutline-path#cell-ref> and
       "koutline-path#cell-ref" work, e.g. "${hyperb:dir}/kotl/EXAMPLE.kotl#2a"
 
@@ -677,7 +862,7 @@
 
   *** (hypb:require-package): Add to install a package, if necessary, and
       require its library with the same name.
-  
+
   *** (hypb:helm-info): Add to require helm package and call helm-info.
 
   *** (action:help): Allow for Action Button Assist Key :help functions, even
@@ -715,7 +900,7 @@
 
   *** (hyrolo-grep-file): Remove `backward-search-limit' as may miss prior
       entry starting positions.
-  
+
   *** (hyrolo-add-match): Remove first arg, `hyrolo-matches-buffer' and
       use global `hyrolo-display-buffer' instead.
 
@@ -926,7 +1111,7 @@
   *** (hui--ibut-link-directly-to-dired): Handle alternative dired formats with text
       after the last colon on the first
 
-  *** (hywconfig-add-by-name, hywconfig-delete-by-name, hywconfig-restore-by-name): 
+  *** (hywconfig-add-by-name, hywconfig-delete-by-name, hywconfig-restore-by-name):
       Change all these to return a  boolean value based on whether the operation
       succeeds or not.
 
@@ -1144,12 +1329,12 @@
       all tests pass.  If any fail, you can press the Action Key to see the
       source of the failure.  Full testing is supported under POSIX systems
       only.  See "Makefile" and "test/MANIFEST".
- 
+
   *** Action Link Types to Run Tests: The file "hypb-ert.el" contains two
       action link types:
         hyperbole-run-test  - run a single Hyperbole test by name
         hyperbole-run-tests - run one more tests matching a pattern
-      
+
         Example uses:
           Run the test hbut-defal-url
             <hyperbole-run-test hbut-defal-url>
@@ -1159,7 +1344,7 @@
 
           Run all tests
             <hyperbole-run-tests t>
- 
+
   *** Installation Testing: install-test/local-install-test.sh automatically
       installs Hyperbole for testing from one or more of its releases or
       development branches.  See "Makefile" and "install-test/MANIFEST".
@@ -1466,7 +1651,7 @@
 
   *** gbut:ebut-program: Programmatically add global explicit buttons at the
       end of the personal button file.
-      
+
   *** kbd-key implicit button type: Interactive creation now allows for a
       full key series, not just a single key binding.
 
@@ -2154,7 +2339,7 @@
 
     - Keyboard Drags: Keyboard emulation of many Smart Mouse Key drag actions.
       See "(hyperbole)Keyboard Drags".
-  
+
     - Keyboard Help: When {M-o} is bound to the `hkey-operate' command to
       emulate drag depress and release events; when in the release window
       prior to pressing the second {M-o}, {C-h A} now reports the drag
@@ -2456,7 +2641,7 @@
     - Minibuffer Help: Improved help strings shown in the minibuffer while
       HyControl is active.  Added {?} key which toggles this display on and
       off.
-      
+
     - ESC: Removed this as a quit key since now that regular key sequences are
       supported, this is often used as a meta key prefix.  Use {q} to quit.
 
@@ -2720,7 +2905,7 @@ are new in 2016 and you should look through them all.
       completions after typing a few characters.  Since Emacs and most GNU
       programs include Info manuals, you now ​have ​a simple way to link to and
 ​      ​jump​ ​to any marked item within any manual.
-      
+
       Previously, when creating a link to an Info manual node, Hyperbole
       would ignore cross-references and menu items and just link directly
       to the node rather than anything it referenced.  To get that behavior
@@ -2737,10 +2922,10 @@ are new in 2016 and you should look through them all.
       delimited existing pathname followed by a :line-num and an optional
       :column-num displays the path at line-num and column-num.  So
       "~/.emacs:10:40" shows your Emacs initialization file at line 10 and
-      column 40.  The column number is optional.​
+      column 40.  The column number is optional.
 
     - GNU Info Manual Key Sequences: Previously, Hyperbole recognized​ ​key
-      sequences delimited by curly braces only, {}.  Now it recognizes​ the​
+      sequences delimited by curly braces only, {}.  Now it recognizes​ the
       ​quotation ​marks used in GNU Info manuals as well and can execute them
       with an Action Key press within Info buffers.
 
@@ -2926,7 +3111,7 @@ are new in 2016 and you should look through them all.
   BUTTONS
 
     - Prevented keyword matches as identifiers in Java, C++, C, Objective-C
-      and Python. 
+      and Python.
 
     - Prevented @ annotation matches when matching to Java identifiers/tags.
 
@@ -2949,7 +3134,7 @@ are new in 2016 and you should look through them all.
     - Added chapter on HyControl, window, frame and buffer control.
 
     - In the Hyperbole Manual Glossary, added Buffer, Frame, HyControl
-      and Window definitions. 
+      and Window definitions.
 
     - Added additional Q&A in an appendix.
 
@@ -2982,7 +3167,7 @@ are new in 2016 and you should look through them all.
       key binding {C-c \}.
 
     - Removed {C-c C-t} hmouse-toggle-bindings key binding.  This
-      should be used rarely, so force use of {M-x hmouse-toggle-bindings RET). 
+      should be used rarely, so force use of {M-x hmouse-toggle-bindings RET).
 
     - Updated "hmouse-mod.el" library for Emacs 25; it allows using the Smart
       Mouse Keys as Control and Meta modifiers when desired.
@@ -2998,7 +3183,7 @@ are new in 2016 and you should look through them all.
       and end of lines for times when there are not 2 chars to transpose.
 
   ROLO
-  
+
     - Improved {M-s} interactive string searching for rolo match buffer strings.
       Made {C-u M-s} do a regexp search for rolo match buffer strings.
 
@@ -3061,7 +3246,7 @@ are new in 2016 and you should look through them all.
       setup hooks as necessary.
 
   ROLO
-  
+
     - New {o} key binding for an overview of all Rolo matches at all
       levels, one line per entry.
 
@@ -3242,7 +3427,7 @@ are new in 2016 and you should look through them all.
       The Assist Key displays the same but leaves point in the listing buffer.
       Xref is a built-in Emacs package that displays definitions and
       cross-references of identifier strings.  It is similar to etags, but
-      more general. 
+      more general.
 
   KOUTLINER
 
@@ -3380,7 +3565,7 @@ are new in 2016 and you should look through them all.
       users with this behavior.  More skilled users can set
       `action-key-default-function' to do what they would like.
 
-    - Fixed bug that caused proportional scrolling to not be the default when 
+    - Fixed bug that caused proportional scrolling to not be the default when
       the Action Key is pressed at the end of a line.
 
   KOUTLINER
@@ -3425,7 +3610,7 @@ are new in 2016 and you should look through them all.
 
     - Added `rolo-display-format-function' which can be used to customize the
       display of rolo search matches.  See the Info manual section,
-      "(hyperbole)HyRolo Settings" for details. 
+      "(hyperbole)HyRolo Settings" for details.
 
   KOUTLINER
 
@@ -3456,7 +3641,7 @@ are new in 2016 and you should look through them all.
       moves forward (instead of back) through this location history list.
 
     - Added support for multiple TAGS file searches when looking for an
-      identifier definition from an Action Key click.  Each TAG file found in 
+      identifier definition from an Action Key click.  Each TAG file found in
       an ancestor directory of the current directory is searched until an
       exact match is found (otherwise, an error message is displayed).
       This works only under newer editors whose tag support includes multiple
@@ -3497,7 +3682,7 @@ are new in 2016 and you should look through them all.
   HYPERLINKS
 
     - An entry in (hpath:get-external-display-alist) used to externally display
-      special file types may now contain a list of executables, the first of 
+      special file types may now contain a list of executables, the first of
       which is found on a system is used to do the display.  The executable
       to use is recomputed each time a file is displayed to account for any
       changes in executables found in the search path.
@@ -3804,7 +3989,7 @@ are new in 2016 and you should look through them all.
   BUTTON TYPES
 
     - "hsys-w3.el" is now automatically loaded so that the Action Key can
-      follow URLs by default.  It defines the implicit button type, www-url. 
+      follow URLs by default.  It defines the implicit button type, www-url.
 
     - New implicit button type, text-toc, makes table of contents entries in
       README files jump to the associated section of the file.  Try it with
@@ -3888,7 +4073,7 @@ are new in 2016 and you should look through them all.
       view-related tree operations from Tree menu to View menu.
 
     - Fixed importation of star outline and Augment-style files.
-    
+
     - The elements of a another buffer or file may be inserted into a
       koutline as a set of cells by using the {C-x i} command. When prompted,
       you may use a buffer name or file name from which to insert.
@@ -3913,7 +4098,7 @@ are new in 2016 and you should look through them all.
 
     - {C-c +} appends the contents of one cell to the end of another.  Added
       this as Append-Cell to popup and pulldown menus.
-    
+
     - {M-w}, copy-region, now works properly in read-only outlines.
 
   CONTACT MANAGER
@@ -3933,7 +4118,7 @@ are new in 2016 and you should look through them all.
     - New variable, wrolo-yank-reformat-function, permits reformatting of an
       entry yanked into the current buffer with {C-h h r y}, rolo-yank.
 
-  WINDOW CONFIGURATIONS 
+  WINDOW CONFIGURATIONS
 
     - The minibuffer menu items, Win/PopRing and Win/YankRing now redisplay
       the Win menu after performing their actions.  This allows you to yank

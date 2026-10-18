@@ -1,8 +1,6 @@
 <h1
 id="gnu-hyperbole-930---the-everyday-hypertextual-information-manager">GNU
 Hyperbole 9.3.0 - The Everyday Hypertextual Information Manager</h1>
-<p>[ If you are looking for the documentation for the stable release
-look <a href="stable/hyperbole.html">here</a>.]</p>
 <p>[We work on Hyperbole as a gift to the Emacs community and request
 you send us a thank you or a testimonial describing your usage if you
 like Hyperbole to <a href="mailto:rsw@gnu.org"><a
@@ -487,12 +485,15 @@ here</a> to clone the Hyperbole project tree.</p>
 <h2 id="hyperbole-components">Hyperbole Components</h2>
 <p>Hyperbole consists of six parts:</p>
 <ol type="1">
-<li><p><strong>Buttons and Smart Keys</strong>: A set of hyperbutton
-types which supply core hypertext and other behaviors. Buttons may be
-added to documents (explicit buttons) with a simple drag between
-windows, no markup language needed. Implicit buttons are patterns
-automatically recognized within text that perform actions, e.g.
-bug#24568 displays the bug status information for that bug number.</p>
+<li><p><a href="man/hyperbole.html#Buttons"><strong>Buttons</strong></a>
+<strong>and</strong> <a
+href="man/hyperbole.html#Smart-Keys"><strong>Smart Keys</strong></a></p>
+<p>Hyperbole offers a set of hyperbutton types which supply core
+hypertext and other behaviors. Buttons may be added to documents
+(explicit buttons) with a simple drag between windows, no markup
+language needed. Implicit buttons are patterns automatically recognized
+within text that perform actions, e.g. bug#24568 displays the bug status
+information for that bug number.</p>
 <p>These actions may be links or arbitrary Lisp expressions. So for
 example, you could create your own button type of Wikipedia searches
 that jumped to the named Wikipedia page whenever point was within text
@@ -519,35 +520,43 @@ automatic hyperlinking and highlighting of WikiWord references within
 wiki pages and can be set so WikiWord links appear in all text and
 programming files, WikiWords can also link to all different types of
 Emacs objects, if desired.</p></li>
-<li><p><strong>Autonumbered Legal Outliner</strong>: The Koutliner is an
-advanced outliner with multi-level autonumbering and permanent ids
-attached to each outline node for use as hypertext link anchors, per
-node properties and flexible view specifications that can be embedded
-within links or used interactively;</p></li>
-<li><p><strong>Contact and Text Finder</strong>: HyRolo is a powerful,
-hierarchical contact manager and fast text record search interface with
-expand/collapse capabilities over search results for quick views. HyRolo
-is easy to learn to use since it introduces only a few new mechanisms
-and has a menu interface, which may be operated from the keyboard or the
+<li><p><a
+href="man/hyperbole.html#Koutliner"><strong>Koutliner</strong></a></p>
+<p>The Koutliner is an advanced outliner with multi-level autonumbering
+(alphanumeric or legal-style numbering) and permanent ids attached to
+each outline node for use as hypertext link anchors, per node properties
+and flexible view specifications that can be embedded within links or
+used interactively;</p></li>
+<li><p><a
+href="man/hyperbole.html#HyRolo"><strong>HyRolo</strong></a></p>
+<p>HyRolo is a fast, powerful, hierarchical record full-text search and
+edit interface with expand/collapse capabilities over search results for
+quick views. It can be used for contact or note management. It is easy
+to learn to use since it introduces only a few new mechanisms and has a
+menu interface, which may be operated from the keyboard or the
 mouse.</p>
 <p><img src="man/im/menu-rolo.png" alt="HyRolo Menubar Menu" /></p></li>
-<li><p><strong>Screen Control</strong>: HyControl is the fastest,
-easiest-to-use window and frame control available for GNU Emacs. With
-just a few keystrokes, you can shift from increasing a window's height
-by 5 lines to moving a frame by 220 pixels or immediately moving it to a
-screen corner. Text in each window or frame may be enlarged or shrunk
-(zoomed) for easy viewing, plus many other features;</p>
+<li><p><a
+href="man/hyperbole.html#HyControl"><strong>HyControl</strong></a></p>
+<p>HyControl is the fastest, easiest-to-use window and frame (screen)
+control available for GNU Emacs. With just a few keystrokes, you can
+shift from increasing a window's height by 5 lines to moving a frame by
+220 pixels or immediately moving it to a screen corner. Text in each
+window or frame may be enlarged or shrunk (zoomed) for easy viewing,
+plus many other features;</p>
 <p>The broader vision for HyControl is to support persistent window and
 frame configurations as link targets. Then a user will be able to create
 the views of information he wants and store them as links for rapid
 display. Work remains to implement this feature but it helps explain the
 connection of HyControl to the rest of Hyperbole;</p></li>
-<li><p><strong>Programming Library</strong>: a set of programming
-library classes for system developers who want to integrate Hyperbole
-with another user interface or as a back-end to a distinct system. (All
-of Hyperbole is written in Emacs Lisp for ease of modification.
-Hyperbole has been engineered for real-world usage and is well
-structured).</p></li>
+<li><p><a
+href="man/hyperbole.html#Embedding-Hyperbole"><strong>Programming
+Library</strong></a></p>
+<p>Hyperbole includes a set of programming library classes for system
+developers who want to integrate Hyperbole with another user interface
+or as a back-end to a distinct system. (All of Hyperbole is written in
+Emacs Lisp for ease of modification. Hyperbole has been engineered for
+real-world usage and is well structured).</p></li>
 </ol>
 <p>We find Hyperbole's parts are more powerful as one package, i.e. the
 sum is greater than the parts, so we don't offer them separately.

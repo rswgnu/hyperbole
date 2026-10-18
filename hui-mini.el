@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:      7-Oct-26 at 13:14:52 by Bob Weiner
+;; Last-Mod:     17-Oct-26 at 17:18:07 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1046,7 +1046,7 @@ command instead.  Typically prevents clashes over {\\`C-c' /}."
 	    ("Downto"    kotl-mode:hide-sublevels  "Hide all cells in outline deeper than a particular level.")
 	    ("Examp"     kotl-mode:example         "Display a self-descriptive example outline file.")
 	    ("Format/"   (menu . kotl-format)      "Import/Export Koutlines.")
-	    ("Hide"      (progn (kotl-mode:is-p)
+	    ("Hide"      (progn (kotl-mode:is)
 				(kotl-mode:hide-tree (kcell-view:label)))
 	     "Collapse tree rooted at point.")
 	    ("Info"
@@ -1058,7 +1058,7 @@ command instead.  Typically prevents clashes over {\\`C-c' /}."
 	     "Create and insert an implicit link at point.")
 	    ("Overvw"    kotl-mode:overview
 	     "Show first line of each cell.")
-	    ("Show"      (progn (kotl-mode:is-p)
+	    ("Show"      (progn (kotl-mode:is)
 				(kotl-mode:show-tree (kcell-view:label)))
 	     "Expand tree rooted at point.")
 	    ("Top"       kotl-mode:top-cells

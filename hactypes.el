@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:      7-Oct-26 at 20:05:20 by Bob Weiner
+;; Last-Mod:     18-Oct-26 at 08:42:03 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -436,20 +436,29 @@ list item returned."
       (when (and path-buf (not existing-buf))
 	(kill-buffer path-buf)))))
 
-(defact link-to-file (path &optional point)
-  "Display a file given by PATH scrolled to optional POINT.
-If POINT is given, display the buffer with POINT at the top of
-the window or as close as possible."
+(defact link-to-file (path &optional referent-start)
+  "Display a file given by PATH scrolled to optional REFERENT-START.
+If REFERENT-START position is given, display the buffer with REFERENT-START
+at the top of the window or as close as possible."
   (interactive (hactypes:link-to-file-interactively))
-  (if path
-      (progn
+  (if (stringp path)
+      (let ((src-buf (current-buffer))
+            (src-start (point))
+            referent-buf)
 	;; Remove any double quotes and whitespace at the start and end of
 	;; the path that use within a key series may have introduced.
 	(setq path (hpath:trim path))
-	(and (hpath:find path)
-	     (integer-or-marker-p point)
-	     (progn (goto-char (min (point-max) point))
-		    (recenter 0))))
+	(when (and (setq referent-buf (hpath:find path))
+	           (integer-or-marker-p referent-start)
+                   (eq (current-buffer) referent-buf))
+	  (goto-char (min (point-max) referent-start))
+	  (recenter 0))
+        (when (string-match-p "\\.kotl\\([:#]\\|\\'\\)" path)
+          ;; If is a koutline reference with an =idstamp, then update
+          ;; reference relative label if need be; this may be in a different
+          ;; buffer than the current one.
+          (save-excursion
+	    (klink:update-label path src-start src-buf))))
     (hypb:error "(link-to-file): Invalid file name: \"%s\"" path)))
 
 (defact link-to-file-line (path line-num)

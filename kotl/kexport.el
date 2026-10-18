@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    26-Feb-98
-;; Last-Mod:     31-Dec-25 at 16:10:47 by Mats Lidell
+;; Last-Mod:     17-Oct-26 at 17:18:08 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -413,7 +413,7 @@ used.  Also converts Urls and Klinks into Html hyperlinks.
 		 (buffer-name (get-file-buffer export-from)))
 		((and (or (bufferp export-from)
 			  (get-buffer export-from))
-		      (kotl-mode:is-p))
+		      (kotl-mode:is))
 		 (buffer-name (get-buffer export-from)))
 		((and (stringp export-from)
 		      (string-match "\\.kotl$" export-from)

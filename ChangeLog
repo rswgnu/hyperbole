@@ -1,4 +1,35 @@
+2026-10-18  Bob Weiner  <rsw@gnu.org>
+
+* hibtypes.el (pathname): Fix when is a url local file:// path,
+    don't send pos arg to link-to-file since it is the referent
+    pos needed but were sending the src pos instead.
+
+* kotl/klink.el (klink:replace-label, klink:update-label): Rename
+   'start' to 'src-start' and 'link-buf' to 'src-buf' for clarity.
+
 2026-10-17  Bob Weiner  <rsw@gnu.org>
+
+* hactypes.el (link-to-file): Add support for updating Koutline
+    relative ids when activated and replace 'hpath:find-koutline-reference'.
+  hpath.el (hpath:find-koutline-reference): Delete.
+
+* hibtypes.el (Info-node): Allow for Org link square bracket delims
+    so can match within an `org-open-link-functions' call.
+
+* hbut.el (hbut:activate-at-p):
+  hmouse-tag.el (smart-prog-to-definition): Add for use in
+    'org-open-link-functions'.  Used in "README.md".
+
+* kotl/kotl-mode.el (is-p): Rename to 'kotl-mode:is' since is not a
+    predicate but triggers an error if not in 'kotl-mode' major mode.
+                    (kotl-mode:toggle-tree-expansion,
+                     kotl-mode:cycle-globally,
+                     kotl-mode:cycle-locally): Add initial call to
+    'kotl-mode:is'.
+
+* .githooks/pre-push - Add git push gate that ensure README.md is
+     up-to-date first.
+  README.md - Build for next release.
 
 * hyrolo.el (hyrolo-grep):
   hsys-consult.el (hsys-consult--noninteractive-grep-paths): Remove
@@ -76,6 +107,10 @@
 
 * man/hyperbole.texi (Top, Introduction): Updated version number to 9.3.0.
 
+==============================================================================
+V9.3.1 changes ^^^^:
+==============================================================================
+
 2026-10-14  Mats Lidell  <matsl@gnu.org>
 
 * Makefile(confirm): Use POSIX standard for equality.
@@ -102,11 +137,11 @@
 
 2026-10-13  Bob Weiner  <rsw@gnu.org>
 
-* man/hyperbole.texi (Tarball Install, Package Installation): Simplified naming of
-    these two sections.
+* man/hyperbole.texi (Tarball Install, Package Installation): Simplified
+    naming of these two sections.
 
-* MANIFEST, Makefile: Move README.md to README.in.md.  Format it to produce README.md
-    as part of the 'doc' target.  Remove now unused README.toc.md.
+* MANIFEST, Makefile: Move README.md to README.in.md.  Format it to produce
+    README.md as part of the 'doc' target.  Remove now unused README.toc.md.
 
 * test/hyrolo-tests.el (hyrolo-tests--fgrep-and-goto-next-visible-kotl-heading,
                         hyrolo-tests--fgrep-and-goto-next-visible-kotl-heading-level-2,
@@ -514,7 +549,7 @@ V9.3.0 changes ^^^^:
     to flash tag only if the second call to 'smart-tags-find-p' is true.
     This prevents flashing words in text modes that aren't actually
     programming symbols.
-  hmouse-tag.el (smart-flag-tag-at-point): Add to do the flashing.
+  hmouse-tag.el (smart-flash-tag-at-point): Add to do the flashing.
 
 * kotl/kotl-orgtbl.el (orgtbl-tab): Fix to allow prefix arg of 1 to pass
     through rather than converting to nil.
@@ -589,7 +624,7 @@ V9.3.0 changes ^^^^:
 
 * kotl/kvspec.el (kvspec:default): Add this so view spec can be
     reset to its default value.
-  kotl/kfile.el  (kfile:read-v4-or-v3, kvspec:update): ): Set 'kvspec:default'.
+  kotl/kfile.el  (kfile:read-v4-or-v3, kvspec:update): Set 'kvspec:default'.
                  (kvspec:reset): Add to reset view spec to default.
 
 * man/hyperbole.texi: Remove trailing whitespace from lines.
@@ -609,7 +644,7 @@ V9.3.0 changes ^^^^:
 * kotl/klink.el (klink:update-label): Improve doc string.
 
 * hibtypes.el (pathname): Update first section to handle kotl
-    path's with an =idstamp referent where the relative label
+    paths with an =idstamp referent where the relative label
     needs updating upon activation.
 
 * kotl/kfile.el (kfile:read): Rewrite 'cond using pcase'
