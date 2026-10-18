@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     17-Oct-26 at 23:02:18 by Bob Weiner
+@c Last-Mod:     18-Oct-26 at 09:47:54 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,7 +30,7 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED October 17, 2026
+@set UPDATED October 18, 2026
 @set UPDATED-MONTH October 2026
 @set EDITION 9.3.0
 @set VERSION 9.3.0
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.3.0
-Printed October 17, 2026.
+Printed October 18, 2026.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -213,7 +213,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.3.0
-October 17, 2026 @c AUTO-REPLACE-ON-SAVE
+October 18, 2026 @c AUTO-REPLACE-ON-SAVE
 
 
   Published by the Free Software Foundation, Inc.
@@ -558,7 +558,7 @@ Smart Keyboard Keys
 @chapter Introduction
 
 This edition of the GNU Hyperbole Manual is for use with any version
-9.3.0 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs
+@value{VERSION} or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs
 28 or higher.  It will trigger an error if your Emacs is older.
 
 This chapter summarizes the structure of the rest of the manual,

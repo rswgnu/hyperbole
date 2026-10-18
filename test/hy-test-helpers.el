@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     17-Aug-26 at 15:20:00 by Bob Weiner
+;; Last-Mod:     16-Oct-26 at 18:42:29 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -175,6 +175,12 @@ and the default WORD-LENGTH is 4."
                       t
                     (funcall orig-featurep f subfeature)))))
        ,@body)))
+
+(defun hy-test-file-contents (file)
+  "Return FILE contents as a string."
+  (with-temp-buffer
+    (insert-file-contents file)
+    (buffer-string)))
 
 (provide 'hy-test-helpers)
 ;;; hy-test-helpers.el ends here
