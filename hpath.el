@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     17-Oct-26 at 23:46:29 by Bob Weiner
+;; Last-Mod:     18-Oct-26 at 23:37:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2262,10 +2262,9 @@ used.  Then abbreviate any remaining path."
       (setq relative-to (expand-file-name
 			 (hpath:substitute-value relative-to))
 	    path
-	    (cond ((hyperb:stack-frame '(gbut:act))
+	    (cond ((or (hyperb:stack-frame '(gbut:act))
+		       (string-equal path relative-to))
 		   path)
-		  ((string-equal path relative-to)
-		   "")
 		  ((string-equal (file-name-directory path) relative-to)
 		   (file-name-nondirectory path))
 		  (t (hpath:relative-to path relative-to)))))

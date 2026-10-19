@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     17-Oct-26 at 22:56:43 by Bob Weiner
+;; Last-Mod:     18-Oct-26 at 23:37:27 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2739,8 +2739,9 @@ Summary of operations based on inputs (name arg from \\='hbut:current attrs):
   (let* ((orig-actype (or (hattr:get ibut 'actype)
 			  (hattr:get ibut 'categ)))
 	 (actype (or (actype:def-symbol (actype:elisp-symbol orig-actype))
-		     (and (symbolp orig-actype) (fboundp orig-actype)
-			  orig-actype)))
+                     ;; This line prevents an Elisp function actype
+                     ;; registering as nil
+                     (actype:elisp-symbol orig-actype)))
 	 (args   (hattr:get ibut 'args))
 	 (arg1   (nth 0 args))
 	 (arg2   (nth 1 args))

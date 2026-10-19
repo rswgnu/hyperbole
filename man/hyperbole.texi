@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     18-Oct-26 at 09:47:54 by Bob Weiner
+@c Last-Mod:     18-Oct-26 at 23:06:37 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -1960,6 +1960,8 @@ each one, in decreasing order of priority, as given by the
 @group
 Referent Context         Link Action Type Returned
 ===================================================================
+Single-line Region       link-to-string-match
+Koutline Cell            link-to-kcell
 Denote Link              link-to-denote
 Org Roam or Org Id       link-to-org-id
 HyWikiWord Reference     link-to-wikiword
@@ -1973,8 +1975,6 @@ Texinfo Node             link-to-texinfo-node
 Mail Reader Message      link-to-mail
 Directory Name           link-to-directory
 File Name                link-to-file
-Koutline Cell            link-to-kcell
-Single-line Region       link-to-string-match
 HyWiki Page              link-to-wikiword
 Org Heading              link-to-file
 Outline Heading          link-to-file

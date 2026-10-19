@@ -1,4 +1,45 @@
+2026-10-19  Bob Weiner  <rsw@gnu.org>
+
+* test/demo-tests.el (fast-demo-outline-section-anchor-and-relative-line-number,
+                      fast-demo-elisp-or-env-vars): Enable all local
+    vars so are not prompted to do so.
+
+* hywiki.el (hywiki-word-not-followed-by-p): Add and use where used to
+    check only if followed by a #.
+
 2026-10-18  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-cache-save): Remove save of 'hyperb:version'
+    and 'hywiki-directory' so do not overwrite current values
+    when hywiki cache is read in.  Also ensure when reading the
+    cache file in that any setting of these variables is ignored.
+
+* hpath.el (hpath:shorten): Fix to return path unchanged if it
+    matches 'relative-to' (defaults to 'default-directory') rather
+    than return the empty string.  This fixes the last test in
+    'hbut-tests--ibut-operate--name-ignore-region.
+
+* man/hyperbole.texi (Keyboard Drags):
+  hui.el (hui:link-possible-types): Reprioritize single line region
+    and link to Koutline kcell as the first two highest priority types.
+
+* hui.el (hui:link-possible-types): Add second 'src-buffer' arg
+    needed to determine the source of a klink; first arg, 'src-dir'
+    is not enough.  Update code to compare current file name
+    to 'src-buffer' one, accounting for indirect buffers.
+  hui.el (hui:ebut-link-directly, hui:ibut-link-directly):
+  test/hy-test-helpers.el (hy-test-helpers:ensure-link-possible-type):
+    Add 2nd param to call of above function.
+         (hui:ebut-messag, hui:ibut-message): Fix problem that 'actype'
+    was getting set to nil when it was a regular function name, not a
+    symbol.
+
+* test/hui-tests.el (hui-gibut-create-link-to-file): Remove
+    referent-start pos as is no longer sent.
+
+* test/hy-test-helpers.el (hy-test-helpers-verify-hattr-at-p):
+     Reverse args so expected value comes first since most
+     tests are this way.
 
 * hibtypes.el (pathname): Fix when is a url local file:// path,
     don't send pos arg to link-to-file since it is the referent

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     17-Oct-26 at 23:50:13 by Bob Weiner
+;; Last-Mod:     18-Oct-26 at 10:11:41 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -304,7 +304,7 @@ Ensure modifying the button but keeping the label does not create a double label
 	  (with-current-buffer test-buffer
             (hy-test-helpers-verify-hattr-at-p
              :actype (actype:elisp-symbol 'link-to-file)
-             :args (list test-file 13)
+             :args (list test-file)
              :loc test-file
 	     :lbl-key (ibut:label-to-key test-file)
 	     :name "global")))

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-may-21 at 09:33:00
-;; Last-Mod:     17-Oct-26 at 23:56:17 by Bob Weiner
+;; Last-Mod:     18-Oct-26 at 20:04:50 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -383,12 +383,12 @@ Create button with link-to-directory using `temporary-file-directory`."
       (should (eq (hattr:get 'hbut:current 'actype) (actype:elisp-symbol 'link-to-file)))
       (hbut-tests:should-match-tmp-folder (buffer-substring-no-properties (point-min) (point-max)))
       ;; Test that ibut:operate produces an error and leaves in-buffer button unchanged
+      (hbut-tests:should-match-tmp-folder (buffer-substring-no-properties (point-min) (point-max)))
       (erase-buffer)
       (ibut:operate)
       (setq buf-str (buffer-substring-no-properties (point-min) (point-max)))
       (message buf-str)
-      (should (eq (hattr:get 'hbut:current 'actype) 'display-value-and-remove-region))
-      (hbut-tests:should-match-tmp-folder (buffer-substring-no-properties (point-min) (point-max))))))
+      (should (eq (hattr:get 'hbut:current 'actype) (actype:elisp-symbol 'link-to-file))))))
 
 (ert-deftest hbut-tests--ibut-operate--fail-create-add-name ()
   "Test that trying to add `new-name' to an unnamed ibutton fails when `edit-flag' is nil.
@@ -508,7 +508,7 @@ See #10 for the proper way to add an ibutton name.
       (ibut:operate)
       (setq buf-str (buffer-substring-no-properties (point-min) (point-max)))
       (message buf-str)
-      (should (eq (hattr:get 'hbut:current 'actype) 'display-value-and-remove-region))
+      (should (eq (hattr:get 'hbut:current 'actype) (actype:elisp-symbol 'link-to-file)))
       (hbut-tests:should-match-tmp-folder (buffer-substring-no-properties (point-min) (point-max))))))
 
 (ert-deftest hbut-tests--ibut-operate--region ()

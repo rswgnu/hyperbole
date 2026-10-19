@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     18-Oct-26 at 08:42:03 by Bob Weiner
+;; Last-Mod:     18-Oct-26 at 21:12:57 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -457,7 +457,7 @@ at the top of the window or as close as possible."
           ;; If is a koutline reference with an =idstamp, then update
           ;; reference relative label if need be; this may be in a different
           ;; buffer than the current one.
-          (save-excursion
+          (save-window-excursion
 	    (klink:update-label path src-start src-buf))))
     (hypb:error "(link-to-file): Invalid file name: \"%s\"" path)))
 

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:      5-Oct-26 at 18:35:00 by Bob Weiner
+;; Last-Mod:     19-Oct-26 at 00:44:46 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1818,9 +1818,11 @@ save and potentially set `hywiki--directory-mod-time' and
 	(erase-buffer)
 	(princ ";; -*- mode:lisp-data; coding: utf-8-emacs; -*-\n")
 
-	(princ (format "\n(setq\nhyperb:version %S\n" hyperb:version))
-
-	(princ (format "\nhywiki-directory %S\n" hywiki-directory))
+        ;; Don't save these 2 as then when read back, they overwrite the
+        ;; current values improperly.  Left commented here temporarily
+        ;; while testing this change.  -- RSW 2026-10-18
+	;; (princ (format "\n(setq\nhyperb:version %S\n" hyperb:version))
+	;; (princ (format "\nhywiki-directory %S\n" hywiki-directory))
 
 	;; Save last `hywiki-directory' mod time and checksum, nil if none.
 	(princ (format "\nhywiki--directory-mod-time '%S\n" (hywiki-directory-set-mod-time)))
@@ -2871,9 +2873,9 @@ regexps of wikiwords, if the hash table is out-of-date."
 	(hywiki-make-referent-hasht))
     (when (and (null hywiki--any-wikiword-regexp-list)
                (not (hash-empty-p hywiki--referent-hasht)))
-      ;; Compute these expensive regexps (matching 50
-      ;; HyWikiWords at a time) only if the set of
-      ;; HyWikiWords changed in `hywiki-directory'.
+      ;; Compute these expensive regexps (matching 50 HyWikiWords at a
+      ;; time in a batch) only if the set of HyWikiWords changed in
+      ;; `hywiki-directory'.
       (setq hywiki--any-wikiword-regexp-list
 	    (mapcar (lambda (wikiword-sublist)
 		      ;; Add plurals to the list
@@ -3727,17 +3729,23 @@ Use `hywiki-word-face' to highlight."
   (let* ((cache-file (hywiki-cache-default-file))
 	 (cache-buffer (when (file-readable-p cache-file)
 			 (find-file-noselect cache-file)))
+         ;; Pre-9.3.1 versions of Hyperbole saved `hyperb:version' and
+         ;; `hywiki-directory' in this cache, improperly overwriting the
+         ;; current values.  To prevent this, we `let' bind these variables
+         ;; during the cache read so that any changes are discarded.
 	 (hywiki-loaded-flag (when cache-buffer
-			       (with-current-buffer cache-buffer
-				 (widen)
-				 (goto-char (point-min))
-				 ;; Skip past initial comments
-				 (when (re-search-forward "^(" nil t)
-				   (goto-char (1- (point)))
-				   (condition-case ()
-				       (progn (eval (read (buffer-string)))
-					      t)
-				     (error nil)))))))
+                               (let ((hyperb:version hyperb:version)
+                                     (hywiki-directory hywiki-directory))
+			         (with-current-buffer cache-buffer
+				   (widen)
+				   (goto-char (point-min))
+				   ;; Skip past initial comments
+				   (when (re-search-forward "^(" nil t)
+				     (goto-char (1- (point)))
+				     (condition-case ()
+				         (progn (eval (read (buffer-string)))
+					        t)
+				       (error nil))))))))
     (if (and hywiki-loaded-flag (not (hywiki-directory-modified-p)))
 	;; Rebuild from loaded data
         (prog1 (setq hywiki--referent-hasht (hash-make hywiki--referent-alist t))
@@ -4443,9 +4451,7 @@ non-nil or this will return nil."
 					   (looking-at hywiki-word-with-optional-suffix-exact-regexp))
 					 ;; WikiWord ref is the entirety of the string
 					 (= end (match-end 0))
-					 ;; Can't be followed by a # character
-					 (/= (or (char-after (match-end 0)) 0)
-					     ?#))
+                                         (hywiki-word-not-followed-by-p))
 				    (setq wikiword (match-string-no-properties 0)
 					  start (match-beginning 0)
 					  end   (match-end 0))
@@ -4487,9 +4493,7 @@ non-nil or this will return nil."
 						      hywiki-word-regexp
 						      "\\(#[^][#()<>{}\" \t\n\r\f]*\\)?"
 						      hywiki-word-line-and-column-numbers-regexp "?"))
-					 ;; Can't be followed by a # character
-					 (/= (or (char-after (match-end 0)) 0)
-					     ?#)
+                                         (hywiki-word-not-followed-by-p)
 					 (progn (goto-char (match-end 0))
 						(skip-syntax-forward "-")))
 				    (setq start (match-beginning 0)
@@ -4524,9 +4528,7 @@ non-nil or this will return nil."
 						      hywiki-word-regexp
 						      "\\(#[^][#()<>{}\" \t\n\r\f]+\\)?"
 						      hywiki-word-line-and-column-numbers-regexp "?"))
-					 ;; Can't be followed by a # character
-					 (/= (or (char-after (match-end 0)) 0)
-					     ?#)
+                                         (hywiki-word-not-followed-by-p)
 					 (goto-char (match-end 0)))
 				(setq start (match-beginning 0)
 				      end   (match-end 0)
@@ -4549,9 +4551,7 @@ non-nil or this will return nil."
 					       end (match-end 1)
 					       wikiword (string-trim (match-string-no-properties 1))))
 					((or (and (looking-at hywiki-word-with-optional-suffix-regexp)
-						  ;; Can't be followed by a # character
-						  (/= (or (char-after (match-end 0)) 0)
-						      ?#))
+                                                  (hywiki-word-not-followed-by-p))
 					     (and hash-sign-only-flag
 						  (looking-at (concat hywiki-word-regexp "#"))))
 					 (setq start (match-beginning 0)
@@ -4813,6 +4813,10 @@ these are handled by the Org mode link handler."
                 (if (string-match-p "#" word)
 		    (string-match "#[^][#()<>{}\"\n\r\f]+\\'" word)
 		  (length word)))))))
+
+(defun hywiki-word-not-followed-by-p ()
+  "Ensure prior buffer match is not followed by any char in [-_#]."
+  (not (memq (or (char-after (match-end 0)) 0) '(?# ?- ?_))))
 
 (defun hywiki-word-read (&optional prompt initial)
   "Prompt with completion for and return an existing HyWikiWord.
