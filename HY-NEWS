@@ -1,4 +1,4 @@
-;;; -*- mode: org; org-open-link-functions: (hbut:activate-at-p); org-cycle-global-at-bob: t; hsys-org-enable-smart-keys: t -*-
+# -*- mode: org; org-open-link-functions: (hbut:activate-at-p); org-cycle-global-at-bob: t; hsys-org-enable-smart-keys: t -*-
 
 *			  What's New in GNU Hyperbole
 				 by Bob Weiner

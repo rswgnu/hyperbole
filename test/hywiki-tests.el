@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    18-May-24 at 23:59:48
-;; Last-Mod:     13-Sep-26 at 11:26:36 by Bob Weiner
+;; Last-Mod:     19-Oct-26 at 17:24:19 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1492,7 +1492,7 @@ Note special meaning of `hywiki-allow-plurals-flag'."
 	        (hywiki-add-org-id wiki-word-non-page)))
 	  (hy-delete-file-and-buffer filea))))))
 
-;; !! FIXME: Add Org-id links tests.
+;; !! TODO FIXME: Add Org-id links tests.
 
 ;; Org roam
 (ert-deftest hywiki-tests--save-referent-org-roam-node ()
@@ -1504,7 +1504,7 @@ Note special meaning of `hywiki-allow-plurals-flag'."
 	      ((org-roam-node-title "node") => "node-title"))
       (hywiki-add-org-roam-node wiki-word-non-page))))
 
-;; !! TODO RSW having problems with this test so disabled for now
+;; !! TODO FIX: RSW having problems with this test so disabled for now
 ;; (ert-deftest hywiki-tests--save-referent-org-roam-node-use-menu ()
 ;;   "Verify saving and loading a referent org roam node works using Hyperbole's menu."
 ;;   (skip-unless (not noninteractive))

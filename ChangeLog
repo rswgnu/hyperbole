@@ -1,9 +1,34 @@
 2026-10-19  Bob Weiner  <rsw@gnu.org>
 
+* hywiki.el (hywiki-directory-changed): Fix so don't recursively
+    call 'hywiki-make-referent-hasht' when loading from .eld
+    cache file.
+            (hywiki-make-referent-hasht): Fix that the cons action
+    of the unless clause was stuck in the predicate part and so was
+    not called, due to a missing paren in the unless predicate.
+    This fixes test: 'hywiki-tests--referent-cache-test'.
+            (hywiki-cache-save): Fix that print calls were not
+    advancing point in standard-output; required using a marker
+    with insertion-type t for advance.  This fixes test:
+    'hywiki-tests--referent-cache-test'.
+
+* Makefile ($(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz,
+            $(pkg_parent)/hyperbole-local.tar.gz): Start target by
+    removing any prior dir used to create the tar file and leave
+    this dir for inspection after creating the package tar file at
+    rsw request.
+
 * hywiki.el (hywiki-cache-save): Add back mistakenly removed '(setq'
     in the .eld cache file so variables are saved properly.
             (hywiki-make-referent-hasht): Fix to load non-page entries
     when there are no page entries.
+            (hywiki-directory-modified-p): Change to test checksum and
+    dir mod-time separately to account for both page and non-page WikiWords.
+            (hywiki-directory-get-mod-time): Change to base mod-time only
+    on changes to HyWiki page files in the directory, eliminating race
+    condition where mod-time stored in .eld cache file was always earlier
+    than latest dir mod-time since that included the dir mod-time change
+    from saving the cache file after the mod-time was stored in that file.
 
 * test/demo-tests.el (fast-demo-outline-section-anchor-and-relative-line-number,
                       fast-demo-elisp-or-env-vars): Enable all local

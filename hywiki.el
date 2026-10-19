@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     19-Oct-26 at 02:52:23 by Bob Weiner
+;; Last-Mod:     19-Oct-26 at 18:03:35 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -367,9 +367,10 @@ See `hywiki-org-publishing-directory' for exported pages in html format."
 (defun hywiki-directory-changed (option set-to-value operation _where)
   "Watch function for variable `hywiki-directory'.
 Function is called with 4 arguments: (OPTION SET-TO-VALUE OPERATION WHERE)."
-  (if (memq operation '(let unlet)) ;; not setting global value
-      (hywiki-let-directory option set-to-value)
-    (hywiki-set-directory option set-to-value)))
+  (unless (hyperb:stack-frame '(hywiki-make-referent-hasht))
+    (if (memq operation '(let unlet)) ;; not setting global value
+        (hywiki-let-directory option set-to-value)
+      (hywiki-set-directory option set-to-value))))
 
 ;; This next line is needed to invoke `hywiki-set-directory' when
 ;; `hywiki-directory' is changed via `setq' or `let' rather than
@@ -1616,12 +1617,13 @@ from the documentation string for `hpath:find'.  PAGE-NAME must be the
 HyWikiWord reference that can link to the page (no pathname directory nor
 file extension).
 
-With optional FORCE-FLAG prefix arg non-nil, force an update to
-the page's modification time.  If PAGE-NAME is invalid, trigger a
-`user-error' if called interactively or return nil if not.
+With optional FORCE-FLAG prefix arg non-nil, force an update to the page's
+modification time and create it if needed without asking.  If PAGE-NAME is
+invalid, trigger a `user-error' if called interactively or return nil if
+not.
 
-By default, create any non-existent page.  When not in batch or
-ert test results mode, if this is the first HyWiki page in
+By default, create any non-existent page.  When not in batch or ert test
+results mode and FORCE-FLAG is nil, if this is the first HyWiki page in
 `hywiki-directory', prompt to create it.
 
 After successfully adding a page, run `hywiki-add-page-hook'.
@@ -1632,6 +1634,7 @@ Use `hywiki-get-referent' to determine whether a HyWiki page exists."
 		     current-prefix-arg))
   (if (hywiki-word-is-p page-name)
       (when (or noninteractive
+                force-flag
 		(hyperb:stack-frame '(ert-run-test))
 		(not (hash-empty-p (hywiki-get-referent-hasht)))
 		(y-or-n-p (concat "Create new HyWiki page `" page-name "'? ")))
@@ -1792,7 +1795,7 @@ absolute path."
 	  buffer-read-only nil)))
 
 (defun hywiki-cache-save (&optional save-file)
-  "Save the modified Environment to a file.
+  "Save `hywiki-directory' lookup data to a file.
 The file is given by optional SAVE-FILE or `hywiki-cache-file'.  Also
 save and potentially set `hywiki--directory-mod-time' and
 `hywiki--directory-checksum'."
@@ -1813,32 +1816,43 @@ save and potentially set `hywiki--directory-mod-time' and
     (unless (file-writable-p dir)
       (error "(hywiki-cache-save): Non-writable Environment directory, \"%s\"" dir)))
   (save-excursion
-    (let ((standard-output (hywiki-cache-edit save-file)))
-      (with-current-buffer standard-output
-	(erase-buffer)
-	(princ ";; -*- mode:lisp-data; coding: utf-8-emacs; -*-\n")
+    (let ((output-buffer (hywiki-cache-edit save-file))
+          marker
+          standard-output)
+      (with-current-buffer output-buffer
+        ;; Need to use a marker here or point will not always advance
+        ;; after the print calls
+        (unwind-protect
+            (progn (setq marker (copy-marker (point) t)
+                         standard-output marker)
+                   (set-marker-insertion-type standard-output t)
+	           (erase-buffer)
+	           (princ ";; -*- mode:lisp-data; coding: utf-8-emacs; -*-\n")
 
-        ;; Don't save these 2 as then when read back, they overwrite the
-        ;; current values improperly.  Left commented here temporarily
-        ;; while testing this change.  -- RSW 2026-10-18
-	;; (princ (format "\n(setq\nhyperb:version %S\n" hyperb:version))
-	;; (princ (format "\nhywiki-directory %S\n" hywiki-directory))
+                   ;; Save these next two values only as comments for reference.
+                   ;; Otherwise, they would improperly override the current values.
+                   ;; -- RSW 2026-10-19
+                   (terpri)
+	           (princ (format ";; hyperb:version: %S\n" hyperb:version))
+	           (princ (format ";; hywiki-directory: %S\n" hywiki-directory))
 
-	;; Save last `hywiki-directory' mod time and checksum, nil if none.
-	(princ (format "\n(setq\nhywiki--directory-mod-time '%S\n"
-                       (hywiki-directory-set-mod-time)))
+	           ;; Save last `hywiki-directory' mod time and checksum, nil if none.
+	           (princ (format "\n(setq\nhywiki--directory-mod-time '%S\n"
+                                  (hywiki-directory-set-mod-time)))
 
-	(princ (format "\nhywiki--directory-checksum %S\n"
-		       (hywiki-directory-set-checksum)))
+	           (princ (format "\nhywiki--directory-checksum %S\n"
+		                  (hywiki-directory-set-checksum)))
 
-	(princ "\nhywiki--referent-alist\n'")
-	(hash-prin1 (hywiki-get-referent-hasht) nil t)
-	(princ ")\n")
+	           (princ "\nhywiki--referent-alist\n'")
+	           (hash-prin1 (hywiki-get-referent-hasht) nil t)
+	           (princ ")\n")
 
-	(hypb:save-buffer-silently)
-	(if (buffer-modified-p)
-	    (error "(hywiki-cache-save): Attempt to kill modified Environment file failed to save, \"%s\"" save-file)
-	  (kill-buffer standard-output))))))
+	           (hypb:save-buffer-silently))
+          (set-marker marker nil)
+	  (if (buffer-modified-p)
+	      (error "(hywiki-cache-save): HyWiki cache file failed to save: \"%s\"" save-file)
+	    (kill-buffer output-buffer))
+          save-file)))))
 
 (defun hywiki-completion-at-point ()
   "Complete a HyWiki reference at point.
@@ -2297,21 +2311,34 @@ Use `dired' unless `action-key-modeline-buffer-id-function' is set to
       (md5 (apply #'concat hywiki-page-files) nil nil nil t))))
 
 (defun hywiki-directory-get-mod-time ()
-  "Return the last mod time for `hywiki-directory' or nil."
+  "Return the last page file mod time for `hywiki-directory' or nil.
+Page file deletion is handled by a checksum over the set of
+HyWiki pages, which is verified before this mod-time check."
   (when (file-readable-p hywiki-directory)
-    (time-convert (file-attribute-modification-time
-		   (file-attributes hywiki-directory))
-		  'list)))
+    (let* ((default-directory (expand-file-name (hpath:expand hywiki-directory)))
+	   (page-files (hywiki-get-page-files))
+	   (max-page-mod-time (if page-files
+				  (truncate
+				   (apply #'max (mapcar (lambda (f)
+						          (float-time (file-attribute-modification-time
+							               (file-attributes f))))
+						        page-files)))
+			        0)))
+      (time-convert max-page-mod-time))))
 
 (defun hywiki-directory-modified-p ()
   "Return non-nil if any HyWiki page name change since last read."
   (or (null hywiki--directory-mod-time)
-      ;; Both dir mod-time and filename checksum over HyWiki page
-      ;; files must have changed for this to be an update to report.
-      ;; Don't change this logic as many other dir changes can occur
-      ;; that should not be reported here.
-      (not (or (equal hywiki--directory-mod-time (hywiki-directory-get-mod-time))
-	       (string-equal hywiki--directory-checksum (hywiki-directory-get-checksum))))))
+      ;; If checksum over HyWiki page files has changed, consider the
+      ;; directory modified
+      (not (string-equal hywiki--directory-checksum
+                         (or (hywiki-directory-get-checksum) "")))
+      ;; The checksum handles only page file changes; here we have to
+      ;; account for the .eld cache file being updated with changes to
+      ;; WikiWords with non-page referents.  Use the directory mod-time
+      ;; comparison for this.
+      (not (equal hywiki--directory-mod-time
+                  (hywiki-directory-get-mod-time)))))
 
 (defun hywiki-directory-set-checksum ()
   "Store the last page name checksum for `hywiki-directory' as a string."
@@ -3768,8 +3795,8 @@ Use `hywiki-word-face' to highlight."
 	     (page-elts (delq nil (mapcar (lambda (file)
 					    (setq key (file-name-sans-extension file))
 					    (unless (and non-page-hasht
-                                                         (hash-get key non-page-hasht)
-					                 (cons (cons 'page file) key))))
+                                                         (hash-get key non-page-hasht))
+					      (cons (cons 'page file) key)))
 					  page-files)))
              (page-hasht (hash-make page-elts)))
 	(setq hywiki--referent-hasht
