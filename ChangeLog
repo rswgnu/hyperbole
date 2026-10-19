@@ -1,5 +1,10 @@
 2026-10-19  Bob Weiner  <rsw@gnu.org>
 
+* hywiki.el (hywiki-cache-save): Add back mistakenly removed '(setq'
+    in the .eld cache file so variables are saved properly.
+            (hywiki-make-referent-hasht): Fix to load non-page entries
+    when there are no page entries.
+
 * test/demo-tests.el (fast-demo-outline-section-anchor-and-relative-line-number,
                       fast-demo-elisp-or-env-vars): Enable all local
     vars so are not prompted to do so.

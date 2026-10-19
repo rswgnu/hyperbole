@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     19-Oct-26 at 00:44:46 by Bob Weiner
+;; Last-Mod:     19-Oct-26 at 02:52:23 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1825,7 +1825,8 @@ save and potentially set `hywiki--directory-mod-time' and
 	;; (princ (format "\nhywiki-directory %S\n" hywiki-directory))
 
 	;; Save last `hywiki-directory' mod time and checksum, nil if none.
-	(princ (format "\nhywiki--directory-mod-time '%S\n" (hywiki-directory-set-mod-time)))
+	(princ (format "\n(setq\nhywiki--directory-mod-time '%S\n"
+                       (hywiki-directory-set-mod-time)))
 
 	(princ (format "\nhywiki--directory-checksum %S\n"
 		       (hywiki-directory-set-checksum)))
@@ -3722,7 +3723,7 @@ Use `hywiki-word-face' to highlight."
   (hywiki-maybe-directory-updated))
 
 (defun hywiki-make-referent-hasht ()
-  "Rebuld referent hasht from list of HyWiki page files and non-page entries."
+  "Rebuild referent hasht from list of HyWiki page files and non-page entries."
   (setq hywiki--any-wikiword-regexp-list nil
 	hywiki--pages-directory hywiki-directory)
   ;; Try to load from a .hywiki.eld cache file if up-to-date
@@ -3750,6 +3751,11 @@ Use `hywiki-word-face' to highlight."
 	;; Rebuild from loaded data
         (prog1 (setq hywiki--referent-hasht (hash-make hywiki--referent-alist t))
 	  (setq hywiki--referent-alist nil))
+      (when hywiki-loaded-flag
+        ;; Rebuild from loaded data to get non-page-elts
+        ;; !! TODO FIX - Delete out-of-date page file entries
+        (setq hywiki--referent-hasht (hash-make hywiki--referent-alist t)
+              hywiki--referent-alist nil))
       ;; Read `hywiki-directory' for current page files and merge with
       ;; non-page referents
       (let* ((page-files (hywiki-get-page-files))
@@ -3757,19 +3763,21 @@ Use `hywiki-word-face' to highlight."
 			      (delq nil
 				    (hash-map 'hywiki-non-page-elt
 					      hywiki--referent-hasht))))
-	     (non-page-hasht (hash-make non-page-elts))
+	     (non-page-hasht (when non-page-elts (hash-make non-page-elts)))
 	     (key)
 	     (page-elts (delq nil (mapcar (lambda (file)
 					    (setq key (file-name-sans-extension file))
-					    (unless (hash-get key non-page-hasht)
-					      (cons (cons 'page file) key)))
+					    (unless (and non-page-hasht
+                                                         (hash-get key non-page-hasht)
+					                 (cons (cons 'page file) key))))
 					  page-files)))
              (page-hasht (hash-make page-elts)))
 	(setq hywiki--referent-hasht
-	      (if non-page-elts
- 		  (hash-merge non-page-hasht page-hasht)
-		page-hasht))))))
-
+              (cond
+               ((and non-page-hasht page-hasht)
+                (hash-merge non-page-hasht page-hasht))
+               (non-page-hasht non-page-hasht)
+               (t page-hasht)))))))
 
 (defun hywiki-non-page-elt (val-key)
   (unless (eq (caar val-key) 'page)
