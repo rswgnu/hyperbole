@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     19-Oct-26 at 18:03:35 by Bob Weiner
+;; Last-Mod:     20-Oct-26 at 01:15:31 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -250,8 +250,8 @@ in `hywiki-mode'.")
 (defvar hywiki--directory-checksum ""
   "String checksum for `hywiki-directory' page names.")
 
-(defvar hywiki--directory-mod-time nil
-  "Last mod time for `hywiki-directory' or nil if the value has not been read.
+(defvar hywiki--directory-mod-time 0
+  "Last mod time for `hywiki-directory' or 0 if the value has not been read.
 See `current-time' function for the mod time format.")
 
 (defvar hywiki--org-heading-regexp nil
@@ -535,7 +535,7 @@ Nil by default."
 (defvar hywiki-file-extension ".org"
   "File suffix string (including period) to use when creating HyWiki pages.")
 
-(defvar hywiki-word-create-exclude-action-key-modes '(org-mode)
+(defvar hywiki-word-create-exclude-action-key-modes '()
   "Suppress WikiWord creation from Action Key presses in this major mode list.
 Typically used in any modes where the Action Key shows/hides sections.")
 
@@ -1644,7 +1644,6 @@ Use `hywiki-get-referent' to determine whether a HyWiki page exists."
 	       (page-name-singular (hywiki-get-singular-wikiword page-name))
                (page-file (hywiki-get-page-file page-name-singular))
 	       (page-file-readable (file-readable-p page-file))
-	       (referent-hasht (hywiki-get-referent-hasht))
 	       (page-in-hasht (hywiki-page-exists-p page-name-singular))
                referent)
 	  (unless page-file-readable
@@ -1654,7 +1653,7 @@ Use `hywiki-get-referent' to determine whether a HyWiki page exists."
 	  (if (or force-flag (not page-in-hasht))
 	      (progn
 		(hash-add (cons 'page (file-name-nondirectory page-file))
-			  page-name-singular referent-hasht)
+			  page-name-singular (hywiki-get-referent-hasht))
 		(setq hywiki--any-wikiword-regexp-list nil)
 		(when (called-interactively-p 'interactive)
 		  (message "Added HyWikiWord page: \"%s\"" page-file)))
@@ -1809,7 +1808,7 @@ save and potentially set `hywiki--directory-mod-time' and
       (if (buffer-modified-p buf)
           (with-current-buffer buf
 	    (hypb:save-buffer-silently))
-	;; (error "(hywiki-cache-save): Attempt to kill modified Environment file failed to save, \"%s\"" save-file)
+	;; (error "(hywiki-cache-save): HyWiki cache file failed to save: \"%s\"" save-file)
 	(kill-buffer buf))))
   (let ((dir (or (file-name-directory save-file)
 		 default-directory)))
@@ -2311,10 +2310,11 @@ Use `dired' unless `action-key-modeline-buffer-id-function' is set to
       (md5 (apply #'concat hywiki-page-files) nil nil nil t))))
 
 (defun hywiki-directory-get-mod-time ()
-  "Return the last page file mod time for `hywiki-directory' or nil.
+  "Return the last page file mod time for `hywiki-directory' or 0.
 Page file deletion is handled by a checksum over the set of
 HyWiki pages, which is verified before this mod-time check."
-  (when (file-readable-p hywiki-directory)
+  (if (not (file-readable-p hywiki-directory))
+      0
     (let* ((default-directory (expand-file-name (hpath:expand hywiki-directory)))
 	   (page-files (hywiki-get-page-files))
 	   (max-page-mod-time (if page-files
@@ -2324,11 +2324,16 @@ HyWiki pages, which is verified before this mod-time check."
 							               (file-attributes f))))
 						        page-files)))
 			        0)))
-      (time-convert max-page-mod-time))))
+      max-page-mod-time)))
 
 (defun hywiki-directory-modified-p ()
   "Return non-nil if any HyWiki page name change since last read."
-  (or (null hywiki--directory-mod-time)
+  (when (listp hywiki--directory-mod-time)
+    ;; Prior to Hyperbole 9.3.1, mod-times were stored as lists of 4
+    ;; integers, so we need to read this old format and convert to the new
+    ;; single integer of Epoch seconds.
+    (setq hywiki--directory-mod-time (time-convert hywiki--directory-mod-time 'integer)))
+  (or (zerop hywiki--directory-mod-time)
       ;; If checksum over HyWiki page files has changed, consider the
       ;; directory modified
       (not (string-equal hywiki--directory-checksum
@@ -2337,8 +2342,7 @@ HyWiki pages, which is verified before this mod-time check."
       ;; account for the .eld cache file being updated with changes to
       ;; WikiWords with non-page referents.  Use the directory mod-time
       ;; comparison for this.
-      (not (equal hywiki--directory-mod-time
-                  (hywiki-directory-get-mod-time)))))
+      (/= hywiki--directory-mod-time (hywiki-directory-get-mod-time))))
 
 (defun hywiki-directory-set-checksum ()
   "Store the last page name checksum for `hywiki-directory' as a string."
@@ -3803,7 +3807,7 @@ Use `hywiki-word-face' to highlight."
               (cond
                ((and non-page-hasht page-hasht)
                 (hash-merge non-page-hasht page-hasht))
-               (non-page-hasht non-page-hasht)
+               (non-page-hasht)
                (t page-hasht)))))))
 
 (defun hywiki-non-page-elt (val-key)

@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     18-Oct-26 at 20:04:41 by Bob Weiner
+;; Last-Mod:     20-Oct-26 at 00:06:53 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -126,6 +126,7 @@ Checks ACTYPE, ARGS, LOC, LBL-KEY and NAME."
 
 (defun hy-delete-files-and-buffers (files)
   "Delete all FILES and all buffers visiting those files."
+  (setq files (delq nil files))
   (dolist (f files)
     (hy-delete-file-and-buffer f)))
 

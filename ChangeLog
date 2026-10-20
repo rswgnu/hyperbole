@@ -1,4 +1,28 @@
+2026-10-20  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-add-page): Fix referent htable not getting page
+    added because local variable 'referent-htable' was pointing to
+    a different htable.  Remove the local variable to resolve.  This
+    fixes test: 'hywiki--verify-get-buffer-text-with-point-and-highlight-compact'.
+            (hywiki-directory-get-mod-time): Stop returning a list of 4 ints
+    for mod-time and use a single integer of Epoch seconds.  Return 0 instead
+    of nil if no file to read dir mod-time from.
+            (hywiki--directory-mod-time): Set default to 0 instead of nil.
+	    (hywiki-directory-modified-p): Handle both old-style list of 4 ints
+    and new single integer mod-time formats.
+* test/hywiki-tests.el (hywiki-tests--directory-get-mod-time): Support new mod-time
+    format.
+                       (hywiki-tests--directory-modified-p): Change this test
+    so if either checksum or mod-time changes, then 'hywiki-directory-modified-p'
+    returns t.
+
 2026-10-19  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-word-create-exclude-action-key-modes): Make the
+    default be nil, (previously was 'org-mode') so no text or
+    programming modes are excluded from Action Key HyWikiWord creation.
+  man/use-package (hyperbole): Add description of the use and setting
+    of the above variable (in a comment).
 
 * hywiki.el (hywiki-directory-changed): Fix so don't recursively
     call 'hywiki-make-referent-hasht' when loading from .eld

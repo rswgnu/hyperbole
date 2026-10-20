@@ -67,6 +67,20 @@
   ;; Directory to store all HyWiki pages in (default = "~/hywiki/")
   (hywiki-directory "~/hywiki/")
 
+  ;; If using these settings:
+  ;;   (hywiki-mode :all)
+  ;;   (hsys-org-enable-smart-keys t)
+  ;;
+  ;; then when Hyperbole's Action Key, {M-RET}, is pressed on any
+  ;; potential WikiWord, e.g. any capitalized word, in any text or
+  ;; programming buffer comment, it will display a page file of notes
+  ;; associated with that WikiWord, creating it if it doesn't exist.
+  ;;
+  ;; If there are major-modes where you want to disable this
+  ;; capability, uncomment the following line and add the mode names
+  ;; inside the empty list:
+  ;; (hywiki-word-create-exclude-action-key-modes '())
+
   ;; Koutliner Customizations
 
   ;; Inline image display can be toggled on/off with {C-c C-x C-v} but

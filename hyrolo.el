@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     17-Oct-26 at 12:13:41 by Bob Weiner
+;; Last-Mod:     20-Oct-26 at 00:09:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -3179,7 +3179,7 @@ unless `hyrolo-boolean-only-flag' is set to t (used for testing).
 This will install `markdown-mode' if any Markdown files are specified and the
 package is not installed."
   ;;  1. Ignore files without suffixes in step 2
-  (let ((file-suffixes
+  (let ((file-extensions
 	 (delq nil (mapcar (lambda (filename) (file-name-extension filename))
 			   (hyrolo-get-file-list))))
 	file-and-major-mode-list
@@ -3192,7 +3192,7 @@ package is not installed."
       (when (delq nil (mapcar (lambda (suffix)
 				(string-match-p (concat "\\(?:" hyrolo-markdown-suffix-regexp "\\)$")
 						suffix))
-			      file-suffixes))
+			      file-extensions))
 
 	;;  4. then install markdown-mode.
 	(hyrolo-install-markdown-mode)))
