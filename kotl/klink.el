@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 12:15:16
-;; Last-Mod:     18-Oct-26 at 08:32:18 by Bob Weiner
+;; Last-Mod:     20-Oct-26 at 12:40:05 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -232,7 +232,7 @@ link-end-position, (positions include delimiters)."
 	   (stringp (setq referent (car label-and-pos)))
 	   (setq referent (string-trim referent))
 	   ;; Ensure it conforms to some klink specification.
-	   (or (string-match "\\`[ \t]*[-#@|!&]" referent)
+	   (or (string-match "\\`[ \t]*[#@|!&]" referent)
 	       (and (or (when (string-match "\\s-*,\\|#[0-9a-z.=]+\\'" referent)
 			  (setq path (substring referent 0 (match-beginning 0)))
 			  (hpath:is-p (expand-file-name path (hbut:get-key-src t t))))

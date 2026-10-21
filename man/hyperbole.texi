@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     18-Oct-26 at 23:06:37 by Bob Weiner
+@c Last-Mod:     20-Oct-26 at 15:10:29 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,7 +30,7 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED October 18, 2026
+@set UPDATED October 20, 2026
 @set UPDATED-MONTH October 2026
 @set EDITION 9.3.0
 @set VERSION 9.3.0
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.3.0
-Printed October 18, 2026.
+Printed October 20, 2026.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -213,7 +213,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition 9.3.0
-October 18, 2026 @c AUTO-REPLACE-ON-SAVE
+October 20, 2026 @c AUTO-REPLACE-ON-SAVE
 
 
   Published by the Free Software Foundation, Inc.
@@ -8465,20 +8465,20 @@ entries.  The buttons use this format: [<text to match>].
 The following defines the button type called @code{search-git-log} with a
 a key series action surrounded by braces:
 
-@code{(defil search-git-log "[<" ">]" ".*" "@{M-: (hypb:fgrep-git-log \"\\&\") RET@}")}
+@code{(defil search-git-log "@{<" ">@}" ".*" "@{M-: (hypb:fgrep-git-log \"\\&\") RET@}")}
 
 @noindent
 or this simpler version skips the explicit text substitution (\\\\&)
 and instead uses the function that takes the button text as an argument:
 
-@code{(defil search-git-log "[<" ">]" ".*" #’hypb:fgrep-git-log)}
+@code{(defil search-git-log "@{<" ">@}" ".*" #’hypb:fgrep-git-log)}
 
 Place point after one of the above expressions and evaluate it with
 @bkbd{C-x C-e} @code{eval-last-sexp} to define the implicit button
 type.  Then if you have cloned the Hyperbole repo and are in a
 Hyperbole source buffer, an Action Key press on a button of the form:
 
-@code{;; [<test release>]}
+@code{;; @{<test release>@}}
 
 @noindent
 will display one line per commit whose change set matches 'test

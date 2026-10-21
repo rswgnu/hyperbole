@@ -36,7 +36,7 @@
 ** ORG MODE INTEGRATION (See "(hyperbole)Smart Key - Org Mode").
 
 ** TEST CASES  (See "${hyperb:dir}/test").
-
+w
 ** WINDOW GRIDS (See "(hyperbole)grid of windows").
 
 ===========================================================================
@@ -50,6 +50,34 @@
 
 ** DOCUMENTATION
 
+  *** Document changes to Koutliner {C-c <letter>} key bindings in:
+        man/use-package (kotl-mode:letter-prefix)
+        man/hyperbole.texi (Koutliner, Koutliner Keys)
+        kotl/EXAMPLE.kotl
+
+  *** [[(hyperbole)Hiding and Showing]]: Remove Koutline tree visibility
+      cycling from the Action Key default context since it is now on
+      the {TAB} key.
+
+  *** Update [[smart-org]] documentation in [[(hyperbole)Smart-Key - Org Mode]]
+      and (hyperbole)Implicit Button Types]] to reflect:
+        1.  new Org-style visibility cycling on the {TAB} and {S-TAB} keys.
+
+        2.  new settings to control Action and Assist Key behavior when
+            within a heading (defaults are no-ops):
+            [[smart-org-action-key-heading-function]] and
+            [[smart-org-assist-key-heading-function]].  The new [[smart-org-cycle]]
+            command is one option for such as setting.
+
+  *** [[kotl/EXAMPLE.kotl]]:
+      [[(hyperbole)Promoting and Demoting]]: Remove {M-0 TAB} and {M-0 S-TAB}
+      for demoting and promoting within Org tables as M-0 is used as a flag to
+      these commands to also fill cells.  Additionally, these bindings worked
+      only when 'kotl-mode:tab-flag' /= 'cycle.
+
+  *** man/use-package: Add commented out settings for customization of
+      [[hyrolo-file-list]] and  [[hywiki-directory]].
+
 ** EXPLICIT BUTTONS  (See "(hyperbole)Explicit Buttons").
 
 ** GLOBAL BUTTONS  (See "(hyperbole)Global Buttons").
@@ -60,15 +88,91 @@
 
 ** HYROLO  (See "(hyperbole)HyRolo").
 
+
+  *** INCOMPATIBLE CHANGE: In [[hyrolo-yank]], interactively, 'regexp-flag' is
+      set only if prefix arg is not C-u, as C-u now disables the 3rd arg,
+      'exclude-sub-entries'.  Interactively, indicate whether yanking an
+      entry or a tree (sub-entries).
+
+** HYWIKI  (See "(hyperbole)HyWiki").
+
 ** IMPLICIT BUTTONS  (See "(hyperbole)Implicit Buttons").
 
+  *** [[hywiki-word]] matching can now be customized to limit which major modes
+      allow HyWikiWord creaton via the {M-RET} Action Key.  Add any such
+      text or programming modes to [[hywiki-word-create-exclude-action-key-modes]].
+      Then this ibtype will use [[hywiki-word-action-key-creation-allowed-p]]
+      to check for a valid mode.  You can bypass this setting by creating
+      a HyWikiWord via the keyboard menu with {C-h h h c}.
+
 ** KOUTLINER  (See "(hyperbole)Koutliner").
+
+  *** In [[kotl-mode:setup-keymap]] add {C-c C-]} key binding for
+      [[kotl-mode:toggle-tab-flag]] to toggle {TAB} and {S-TAB} between Org-style
+      visibility cycling and tree demotion/promotion.
+
+  *** Remove {M-1 TAB} for toggling TAB/S-TAB functions for greater Org
+      compatibility.  {M-0 TAB} still works for tree demotion/promotion if
+      not in Org-style cycle mode.  Existing bindings of {C-c C-.} or {M-right}
+      and {C-c C-,} or {M-left} for tree demotion/promotion always work
+      regardless of TAB mode.
+
+  *** * kotl/EXAMPLE.kotl:
+  man/hyperbole.texi (Promoting and Demoting): Remove {M-0 TAB} and {M-0 S-TAB}
+    for demoting and promoting within Org tables as M-0 is used as a flag to
+    these commands to also fill cells.  Additionally, these bindings worked only
+    when 'kotl-mode:tab-flag' /= 'cycle.
+
+
+  *** INCOMPATIBLE CHANGE: In [[kotl-mode:setup-keymap]], by default, move all
+      {C-c <letter>} key bindings to {C-c ; <letter>} so do not override keys
+      reserved for user-specific key bindings.  The new {M-1 C-c C-l} will
+      toggle the old {C-c <letter>} bindings back on/off when desired for
+      users who don't care about overriding global bindings.  Alternatively,
+      you can also modify the new [[kotl-mode:letter-prefix]] in your Hyperbole
+      `use-package' setup to use any prefix you prefer.
+
+  *** INCOMPATIBLE CHANGE: Previously in Koutlines, the {M-RET} Action Key
+      default action when no matching context was found was to run
+      [[kotl-mode:show-or-hide-tree]].  Now instead it calls the function
+      specified by the new [[kotl-mode:action-key-default-function]], which
+      defaults to a no-op, since Koutline tree visibility cycling is now
+      on the {TAB} key by default.
+
+  *** INCOMPATIBLE CHANGE: Previously in Koutlines, the {C-u M-RET} Assist
+      Key default action when no matching context was found was to run
+      [[smart-scroll-down]].  Now instead it calls the function specified
+      by the new [[kotl-mode:assist-key-default-function]], which defaults
+      to a no-op, for symmetry with the Action Key.
+
+  *** INCOMPATIBLE CHANGE: Remove {M-TAB} binding since often used to
+      switch applications.  Use {S-TAB} instead.
 
 ** MENUS  (See "(hyperbole)Menus").
 
 ** PROGRAMMING INTERFACE CHANGES  (See "(hyperbole)Embedding Hyperbole").
 
+  *** Add [[hpath:extension-in-list-p]] and use in deciding whether
+      to add the complex regexp needed to match Koutline cell relative ids
+      to any [[hsys-consult--grep-paths]] calls, for example, when calling
+      [[hyrolo-yank]] interactively.
+
+  *** [[kotl-mode:tab-flag]]: Make 'cycle the default for Org-style visibility
+      cycling compatibility.
+
+  *** Add [[kotl-mode:toggle-letter-prefix]] and discrete sub-commands
+      [[kotl-mode:set-letter-prefix-standard]] and
+      [[kotl-mode:set-letter-prefix-control-c]] to control Koutline C-c
+      <letter> key bindings.
+
 ** ORG MODE INTEGRATION (See "(hyperbole)Smart Key - Org Mode").
+
+  *** New Action and Assist Key settings for the action to run when pressed
+      on an Org heading if [[hsys-org-enable-smart-keys]] is set to t:
+      [[smart-org-action-key-heading-function]] and
+      [[smart-org-assist-key-heading-function]].  Both of these default to
+      no-ops.  The new [[smart-org-cycle]] command is one possible command to
+      set them to, though {TAB} will do that by default now.
 
 ** TEST CASES  (See "${hyperb:dir}/test").
 
@@ -78,26 +182,33 @@
 *                                   V9.2.0
 ===========================================================================
 
-  *** After installing the ace-window package and loading Hyperbole, execute
-
-
-** ACE WINDOW PACKAGE INTEGRATION - fast window and buffer switching
-
-** ACTION AND ASSIST (SMART) KEYS  (See "(hyperbole)Smart Keys").
-
-** ACTION TYPES  (See "(hyperbole)Action Types").
-
 ** DOCUMENTATION
 
-** EXPLICIT BUTTONS  (See "(hyperbole)Explicit Buttons").
+  *** [[man/use-package]]: Add the reference version of the `use-package'
+      configuration for Hyperbole.
 
-** GLOBAL BUTTONS  (See "(hyperbole)Global Buttons").
+  *** [[(hyperbole)Inserting Literal Tabs]]: Add this manual section
+      to the Koutliner chapter.
 
-** HYCONTROL  (See "(hyperbole)HyControl").
+  *** [[(hyperbole)Promoting and Demoting]]: Expand this Koutliner
+      section with latest key bindings and Org table support.
 
-** HYPERBOLE SYSTEM  (See "(hyperbole)").
+  *** [[(hyperbole)mplicit Button Types]]: Add new [[hbut-identifier]]
+      type to control ibut type prioritization for jumping to
+      Hyperbole button symbols like [[hbut:current]].
+
 
 ** HYROLO  (See "(hyperbole)HyRolo").
+
+  *** When using the `consult' package in searches, use an entry
+      match regexp that supports the 'orderless' package.
+
+
+** HYWIKI  (See "(hyperbole)HyWiki").
+
+  *** When using the `consult' package in searches, use an entry
+      match regexp that supports the 'orderless' package.
+
 
 ** IMPLICIT BUTTONS  (See "(hyperbole)Implicit Buttons").
 
@@ -133,8 +244,6 @@
       [[kotl-mode:tab-flag]] and toggles {TAB} and {S-TAB} between Org-style
       cycling and demoting and promoting outline trees.
 
-
-** MENUS  (See "(hyperbole)Menus").
 
 ** PROGRAMMING INTERFACE CHANGES  (See "(hyperbole)Embedding Hyperbole").
 
@@ -179,16 +288,12 @@
          [[kotl-mode:tab-post-hook]],
 	 [[kotl-mode:tab-command]]
 
-  **** Add [[kvspec:reset]] to reset view spec to default and set this
-       default in `kfile:read-v4-or-v3' and `kvspec:update'.
+  **** Add [[kvspec:reset]] to reset view spec to [[kvspec:default]] and set this
+       default in [[kfile:read-v4-or-v3]] and [[kvspec:update]].
 
   **** Add [[smart-flash-tag-at-point]] to flash programming identifier
        implicit links.
 
-
-** TEST CASES  (See "${hyperb:dir}/test").
-
-** WINDOW GRIDS (See "(hyperbole)grid of windows").
 
 ===========================================================================
 *                                   V9.1.0

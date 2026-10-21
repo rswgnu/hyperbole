@@ -1,20 +1,64 @@
+2026-10-21  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (defil): Use curly braces instead of square brackets in
+    example `search-git-log' so such buttons can be embedded within
+    org link brackets if desired, so buttons are highlighted.
+
+* hactypes.el (button-series): Improve doc and var naming.
+
+* kotl/kotl-mode.el (kotl-mode:insert-tab, kotl-mode:indent-to): Add and
+    use in `kotl-mode:tab-command'.
+                    (kotl-mode:indent-line): Simplify and remove prefix
+    arg now that `kotl-mode:insert-tab' is handled separately.  This
+    fixes tab handling as specified by `kotl-mode:emulate-tab'.
+
+* hbut.el (ibut:create): Change 'condition-case' to
+   'condition-case-unless-debug' so get full stack trace showing where
+   ibtype error occurred regardless of `debug-on-error' setting.  If
+   continue from the debugger, a message with the error is logged to
+   *Messages*.
+
+* hib-kbd.el (kbd-key): Fix bug when 'start' was nil, (char-before
+    start) call would trigger an error.  Fix by first testing if
+    'key-series' is a valid string and move to next ibtype if not,
+    bypassing use of 'start'.
+
+* man/use-package (hyrolo-file-list): Add a commented out setting for
+    this for customization reference.
+
 2026-10-20  Bob Weiner  <rsw@gnu.org>
+
+* man/use-package (org-open-link-function): Document how to enable Org
+    link delimiters and highlighting of Hyperbole buttons via:
+    (push #'hbut:activate-at-p org-open-link-functions)
+
+* man/hyperbole.texi (Implicit Button Link Types):
+  hbut.el (defil search-git-log): Change to use curly braces instead of
+    square brackets so it can be embedded within Org [[links]].
+
+* kotl/klink.el (klink:at-p): Remove `-' as first non-whitspace char
+    between angle brackets; can't think of any klink format that
+    conforms to and leads to matching to things like: <- 4 2>.
+
+* hib-kbd.el (kbd-key): Add support for Org/MediaWiki links around
+    brace-delimited key series, e.g.. [[{C-h h d d}]]
 
 * hywiki.el (hywiki-add-page): Fix referent htable not getting page
     added because local variable 'referent-htable' was pointing to
     a different htable.  Remove the local variable to resolve.  This
-    fixes test: 'hywiki--verify-get-buffer-text-with-point-and-highlight-compact'.
-            (hywiki-directory-get-mod-time): Stop returning a list of 4 ints
-    for mod-time and use a single integer of Epoch seconds.  Return 0 instead
-    of nil if no file to read dir mod-time from.
+    fixes test:
+    'hywiki--verify-get-buffer-text-with-point-and-highlight-compact'.
+            (hywiki-directory-get-mod-time): Stop returning a list of 4
+    ints for mod-time and use a single integer of Epoch seconds.  Return
+    0 instead of nil if no file to read dir mod-time from.
             (hywiki--directory-mod-time): Set default to 0 instead of nil.
-	    (hywiki-directory-modified-p): Handle both old-style list of 4 ints
-    and new single integer mod-time formats.
-* test/hywiki-tests.el (hywiki-tests--directory-get-mod-time): Support new mod-time
-    format.
-                       (hywiki-tests--directory-modified-p): Change this test
-    so if either checksum or mod-time changes, then 'hywiki-directory-modified-p'
-    returns t.
+	    (hywiki-directory-modified-p): Handle both old-style list of
+    4 ints and new single integer mod-time formats.
+* test/hywiki-tests.el (hywiki-tests--directory-get-mod-time): Support
+    new mod-time format.
+                       (hywiki-tests--directory-modified-p): Change this
+    test so if either checksum or mod-time changes, then
+    'hywiki-directory-modified-p' returns t.
 
 2026-10-19  Bob Weiner  <rsw@gnu.org>
 
@@ -370,7 +414,7 @@ V9.3.1 changes ^^^^:
     when 'kotl-mode:tab-flag' /= 'cycle.
 
 * kotl/kotl-mode.el (kotl-mode:tab/untab-command): Remove {M-1 TAB} for toggling
-    TAB/S-TAB function for greater Org compatibility.  {M-0 TAB} still works
+    TAB/S-TAB functions for greater Org compatibility.  {M-0 TAB} still works
     for tree demotion/promotion if not in Org-style cycle mode.  Use existing
     bindings of {C-c C-.} and {C-c C-,} for tree demotion/promotion regardless
     of TAB mode.
@@ -433,13 +477,13 @@ V9.3.1 changes ^^^^:
 
 * hui-mini.el (hui:menu-mode-map):
   hyrolo.el (hyrolo-mode-map): Adjust to bind same TAB/S-TAB keys as in Koutliner.
-    INCOMPATIBLE CHANGE: Remove M-TAB binding since often used to switch applications.
+    INCOMPATIBLE CHANGE: Remove {M-TAB} binding since often used to switch applications.
 
-* kotl/kotl-mode.el (kotl-mode-letter-map, kotl-mode-letter-prefix): Add.
+* kotl/kotl-mode.el (kotl-mode-letter-map, kotl-mode:letter-prefix): Add.
                     (kotl-mode:setup-keymap): INCOMPATIBLE CHANGE: Use above
     to move all {C-c <letter>} bindings to {C-c ; <letter>} so do not override what
     should be left as user-bindable keys.  User can then change the C-c ; prefix as
-    desired by setting 'kotl-mode-letter-prefix'.
+    desired by setting 'kotl-mode:letter-prefix'.
                     (kotl-mode:toggle-letter-prefix): Add and bind to {M-1 C-c C-l}.
   kotl/kview.el (kview:set-label-type): Update to take a prefix arg and call the above
     function when sent an arg of 1.
@@ -463,6 +507,7 @@ V9.3.1 changes ^^^^:
 * hui-mouse.el (smart-org-action-key-heading-function,
                 smart-org-assist-key-heading-function): Add to allow user-settable
     behavior when point is anywhere within a heading line (not at the end).
+    Default values are no-ops.
                (smart-org-cycle): Add as a possible setting for the above variables.
   man/hyperbole.texi (Smart Key - Org Mode):
                      (Implicit Button Types): smart-org update doc.
@@ -505,6 +550,9 @@ V9.3.1 changes ^^^^:
                      (Implicit Button Types): Update doc for 'hywiki-word'
     and 'hywiki-existing-word' ibtypes.
 
+* man/use-package (hywiki-directory): Add a commented out setting for this
+    for customization reference.
+
 * man/use-package (hyperbole): Add 'hywiki-directory' to :custom section.
 
 2026-10-03  Bob Weiner  <rsw@gnu.org>
@@ -513,7 +561,7 @@ V9.3.1 changes ^^^^:
     is set only if prefix arg is not C-u, as C-u now disables the 3rd arg,
     'exclude-sub-entries'.  Interactively, indicate whether yanking an
     entry or a tree (sub-entries).
-  man/hyperbole.texi (HyRolo Menu): Remove referent to 'helm' package no
+  man/hyperbole.texi (HyRolo Menu): Remove reference to 'helm' package no
     longer supported by HyRolo.
                      (HyRolo Menu): Add prefix arg handling details for the
     Yank menu item (hyrolo-yank).
@@ -595,7 +643,7 @@ V9.3.0 changes ^^^^:
     the 'hbut:is-p' programming tag clause above it.
     Also, in Hyperbole button recognition clause, add a call
     (not (smart-prog-at-tag-p t)) to prevent that from firing when
-    on a programming id since those are handled further down
+    on a programming id since those are handled further down.
 
 * test/hui-tests.el (hui-gibut-create-link-to-file): Fix to compare
     :args with second numeric argument.

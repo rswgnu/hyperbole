@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     18-Oct-26 at 21:12:57 by Bob Weiner
+;; Last-Mod:     21-Oct-26 at 10:58:06 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -857,13 +857,15 @@ SECTION is a string and can be just the leading part of a section heading."
      (append (ebut:list) (ibut:list)))
    (gbut:label-list)))
 
-(defact button-series (buts)
-  "Combine multiple buttons given by their labels into one series of buttons.
-Local buttons are preferred over global buttons."
+(defact button-series (but-names)
+  "Combine multiple buttons given by BUT-NAMES list into one series of buttons.
+If the button name is found in the current buffer, that button is used;
+otherwise, activate any global button with that name."
   (interactive
-   (list (completing-read-multiple "Button labels: " (hactypes:buffer-button-list)
+   (list (completing-read-multiple "Comma-separated Button labels: "
+                                   (hactypes:buffer-button-list)
                                    nil t)))
-  (dolist (b buts)
+  (dolist (b but-names)
     (let ((but (hbut:get (hbut:label-to-key b))))
       (if but
           (hbut:act but)

@@ -42,6 +42,13 @@
   ;; - nil    - no highlighting, the ‘hywiki-mode’ is disabled.
   (hywiki-mode :all)
 
+  ;; If you want to treat your Hyperbole link buttons like Org links,
+  ;; uncomment this next Lisp sexpression and then you can surround
+  ;; your Hyperbole buttons with double square brackets and get Org
+  ;; link highlighting, e.g. [[bug#8291]].
+  ;;
+  ;; (push #'hbut:activate-at-p org-open-link-functions)
+
   :bind
   (:map hyperbole-mode-map
 	;; Bind Smart Keys: {M-RET} executes `action-key' and {C-u M-RET}
@@ -62,10 +69,23 @@
   ;;   nil      - In Org mode, Org controls the key.
   (hsys-org-enable-smart-keys t)
 
+  ;; HyRolo Customizations
+
+  ;; Uncomment and set `hyrolo-file-list' to a list of files,
+  ;; directories and file wildcard expressions you want to find notes,
+  ;; contacts or any hierarchical records in.  Directories are
+  ;; searched recursively and filtered to only Org, Markdown, Koutline
+  ;; and Emacs outline files.  The first entry is where HyRolo adds
+  ;; new records.  (default = '("~/.rolo.org"))
+  ;;
+  ;; (hyrolo-file-list '("~/.rolo.org" "~/org/" "~/org-roam/" "~/Documents/notes/"))
+
   ;; HyWiki Customizations
 
-  ;; Directory to store all HyWiki pages in (default = "~/hywiki/")
-  (hywiki-directory "~/hywiki/")
+  ;; Uncomment and set `hywiki-directory' to the directory to store
+  ;; all HyWiki pages in (default = "~/hywiki/").
+  ;;
+  ;; (hywiki-directory "~/hywiki/")
 
   ;; If using these settings:
   ;;   (hywiki-mode :all)

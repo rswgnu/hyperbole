@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     18-Oct-26 at 23:37:27 by Bob Weiner
+;; Last-Mod:     21-Oct-26 at 13:22:41 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2068,14 +2068,12 @@ If a new button is created, store its attributes in the symbol,
 			 (setq ibtype-point (point-marker))
 			 (while (and (not is-type) types)
 			   (setq itype (car types))
-			   (when (condition-case err
+			   (when (condition-case-unless-debug err
 				     (and itype (setq args (funcall itype)))
-				   (error (progn (message "%S: %S" itype err)
-						 ;; Show full stack trace
-						 (debug))))
+				   (error (message "%S: %S" itype err)))
 			     (setq is-type itype))
-			   ;; Any implicit button type check should leave point
-			   ;; unchanged.  Trigger an error if not.
+			   ;; Any implicit button type check should leave
+			   ;; point unchanged.  Trigger an error if not.
 			   (unless (equal ibtype-point (point-marker))
 			     (hypb:error "(Hyperbole): ibtype %s improperly moved point from %s to %s"
 					 itype ibtype-point (point-marker)))
@@ -3191,14 +3189,14 @@ log entries.  The buttons use this format: [<text to match>].
 The following defines the button type called search-git-log which
 calls hypb:fgrep-git-log with the text of the button as an argument:
 
-  (defil search-git-log \"[<\" \">]\" \".*\" #\\='hypb:fgrep-git-log)
+  (defil search-git-log \"{<\" \">}\" \".*\" #\\='hypb:fgrep-git-log)
 
 Place point after one of the above expressions and evaluate it with
 \\[eval-last-sexp] to define the implicit button type.  Then if you
 have cloned the Hyperbole repo and are in a Hyperbole source buffer,
 an Action Key press on a button of the form:
 
-  ;; [<test release>]
+  ;; {<test release>}
 
 will display one line per commit whose change set matches \"test
 release\".  An Action Key press on any such line will then display the

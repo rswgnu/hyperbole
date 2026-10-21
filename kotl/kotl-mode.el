@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     17-Oct-26 at 17:22:03 by Bob Weiner
+;; Last-Mod:     21-Oct-26 at 18:57:40 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -55,7 +55,7 @@ Set it to `smart-scroll-down' if you want the old Koutliner behavior."
 
 ;; Derived from `org-cycle-emulate-tab'
 (defcustom kotl-mode:emulate-tab nil
-  "Where `kotl-mode:tab-command' should run `kotl-mode:indent-line'.
+  "Where `kotl-mode:tab-command' should run `kotl-mode:insert-tab'.
 Values are:
 nil         - Never
 white       - Only in completely white lines
@@ -280,7 +280,7 @@ It provides the following keys:
   ;;
   (hypb:add-to-invisibility-spec '(outline . t))
   (setq indent-line-function 'kotl-mode:indent-line
-	indent-region-function 'kotl-mode:indent-region
+	indent-region-function 'indent-region-line-by-line
 	outline-isearch-open-invisible-function 'kotl-mode:isearch-open-invisible
 	line-move-ignore-invisible 'keep-column
 	local-abbrev-table text-mode-abbrev-table
@@ -664,7 +664,7 @@ Do not delete across cell boundaries."
              del-count)))))
 
 (defun kotl-mode:delete-horizontal-space ()
-  "Delete all spaces and tabs around point."
+  "Delete all spaces and tabs around point (exluding Koutliner indent)."
   (interactive "*")
   (save-restriction
     (narrow-to-region
@@ -698,6 +698,33 @@ With prefix ARG non-nil, join this line to the following line."
 		 (delete-region (point) (+ (point) (length fill-prefix))))
 	     (fixup-whitespace))
 	 (goto-char opoint))))))
+
+;; Derived from Emacs `insert-tab' function
+(defun kotl-mode:insert-tab (&optional arg)
+  "Insert 1 or optional ARG tab chars or spaces based on `insert-tabs-mode'.
+If `insert-tabs-mode' is non-nil, insert tabs.
+If point is preceded by whitespace, expand any abbrev at point prior to
+inserting tab/spaces."
+  (let ((count (prefix-numeric-value arg)))
+    (when (and abbrev-mode
+	       (eq (char-syntax (preceding-char)) ?w))
+      (expand-abbrev))
+    ;; Koutline-specific part that prevents changing outline
+    ;; indentation from spaces to tabs
+    (if kotl-mode:indent-tabs-mode
+	(insert-char ?\t count)
+      (kotl-mode:indent-to
+       (* tab-width (+ count (/ (current-column) tab-width)))))))
+
+;; Derived from Emacs `indent-to' function
+(defun kotl-mode:indent-to (column &optional minimum)
+  "Indent from point with tabs and spaces until COLUMN is reached.
+Optional second argument MINIMUM says always do at least MINIMUM spaces
+even if that goes past COLUMN; by default, MINIMUM is zero.
+
+The return value is the column where the insertion ends."
+  (indent-to (max column (kcell-view:indent))
+	     minimum))
 
 (defun kotl-mode:skip-filling-p (interactive-flag)
   "Return t if filling is to be skipped, or nil.
@@ -1092,8 +1119,8 @@ With prefix arg TURN-OFF or at begin of line, turns fill prefix off."
 ;; Derived from and meant to emulate `org-cycle'
 (defun kotl-mode:tab-command (&optional arg)
   "Tab key demote, cycle visibility or insert tabs for Koutlines.
-Optional prefix ARG is used as a flag or a numeric argument depending on its
-value.
+Optional prefix ARG is used as a flag or a numeric argument depending on
+its value.
 
 When `kotl-mode:tab-flag' is:
   \\='cycle: cycle views of parts of the outline;
@@ -1102,15 +1129,18 @@ When `kotl-mode:tab-flag' is:
 Use {C-c [} to toggle its value between `cycle' and nil.
 
 See also the documentation strings for `kotl-mode:indent-line',
-`kotl-mode:demote-tree', and `kotl-mode:demote-siblings'.
+`kotl-mode:insert-tab', `kotl-mode:demote-tree', and
+`kotl-mode:demote-siblings'.
 
-If in `cycle' mode without a prefix argument, call `kotl-mode:cycle-locally'
-to rotate the tree at point through three different states (local cycling):
+If in `cycle' mode without a prefix argument, call
+`kotl-mode:cycle-locally' to rotate the tree at point through three
+different states (local cycling):
+
     1. FOLDED:   Hide all but the first line of the tree at point
-    2. CHILDREN: Hide all but the first line of the root cell at point and its
-                 children
-    3. SUBTREE:  Show the entire tree at point; if there is no subtree, switch
-                 directly from CHILDREN to FOLDED.
+    2. CHILDREN: Hide all but the first line of the root cell at point
+                 and its children
+    3. SUBTREE:  Show the entire tree at point; if there is no subtree,
+                 switch directly from CHILDREN to FOLDED.
 
 If in `cycle' mode with a single universal argument, C-u, call
 `kotl-mode:cycle-globally' to cycle the whole outline through
@@ -1119,18 +1149,19 @@ these three different states:
     2. CONTENTS: Show the first line of all cells at all levels
     3. SHOW ALL: Show the entire outline.
 
-With a prefix argument of 0 when not in `cycle' mode, demote the tree at
-point and refill all its cells regardless of any cell `no-fill' property.
+With a prefix argument of 0 when not in `cycle' mode, demote the tree
+at point and refill all its cells regardless of any cell `no-fill'
+property.
 
-Any numeric prefix argument other than 0 or 1 is available for use by any
-function this calls.
+Any numeric prefix argument other than 0 or 1 is available for use by
+any function this calls.
 
 The variable, `kotl-mode:emulate-tab', works just like
-`org-cycle-emulate-tab' does in Org mode, except that it is disabled, set to
-nil by default.  Use it if you haven't set `kotl-mode:tab-flag' to t.  It
-determines where the TAB key indents or inserts TAB characters rather than
-performing the functions detailed above.  See its documentation string for
-valid settings."
+`org-cycle-emulate-tab' does in Org mode, except that it is disabled,
+set to nil by default.  Use it if you haven't set `kotl-mode:tab-flag'
+to t.  It determines where the TAB key indents or inserts TAB characters
+rather than performing the functions detailed above.  See its
+documentation string for valid settings."
   (interactive "P")
   (unless (run-hook-with-args-until-success 'kotl-mode:tab-pre-hook)
     ;; Skip additional org-like code originally in the above `unless' clause
@@ -1141,7 +1172,7 @@ valid settings."
     (cond
      ((eq kotl-mode:tab-flag t)
       ;; Indent or insert <tab>s anywhere
-      (kotl-mode:indent-line arg))
+      (kotl-mode:insert-tab))
      ((equal arg '(4))
       ;; Single universal `arg'
       (if (eq kotl-mode:tab-flag 'cycle)
@@ -1190,7 +1221,7 @@ valid settings."
 	         'kotl-mode:before-tab-emulation-hook))
 	       ((and (eq kotl-mode:emulate-tab 'exc-hl-bol)
 		     (not (kotl-mode:bocp)))
-                (kotl-mode:indent-line arg))
+                (kotl-mode:insert-tab arg))
 	       ((or (eq kotl-mode:emulate-tab t)
 		    (and (memq kotl-mode:emulate-tab '(white whitestart))
 		         (save-excursion
@@ -1199,7 +1230,7 @@ valid settings."
 			          (= (match-end 0) (line-end-position)))
 			     (and (eq kotl-mode:emulate-tab 'whitestart)
 			          (>= (match-end 0) pos)))))
-                (kotl-mode:indent-line arg))
+                (kotl-mode:insert-tab arg))
 	       (t
 	        (save-excursion
                   (goto-char (kcell-view:start))
@@ -1393,8 +1424,8 @@ or after point and around or after mark are interchanged."
 
 (defun kotl-mode:untab-command (&optional arg)
   "Shift-tab key promote, cycle visibility or delete tabs for Koutlines.
-Optional prefix ARG is used as a flag or a numeric argument depending on its
-value.
+Optional prefix ARG is used as a flag or a numeric argument depending on
+its value.
 
 When `kotl-mode:tab-flag' is:
   \\='cycle: cycle views of the whole outline;
@@ -1406,25 +1437,26 @@ See also the documentation strings for `kotl-mode:delete-backward-char',
 `kotl-mode:promote-tree', and `kotl-mode:promote-siblings'.
 
 If in `cycle' mode and given either no prefix argument or a single
-unviversal argument, C-u, call `kotl-mode:cycle-globally' to cycle the whole
-outline through these three different states:
+unviversal argument, C-u, call `kotl-mode:cycle-globally' to cycle the
+whole outline through these three different states:
     1. OVERVIEW: Show only the first line of level 1 cells
     2. CONTENTS: Show the first line of all cells at all levels
     3. SHOW ALL: Show the entire outline.
 
-With a prefix argument of 0 when not in `cycle' mode, promote the tree at
-point and refill all its cells regardless of any cell `no-fill' property.
+With a prefix argument of 0 when not in `cycle' mode, promote the tree
+at point and refill all its cells regardless of any cell `no-fill'
+property.
 
-With a numeric prefix argument when in `cycle' mode, show cells across the
-whole outline down to prefix argument level, one line per cell.  Zero means
-show all cell levels.
+With a numeric prefix argument when in `cycle' mode, show cells across
+the whole outline down to prefix argument level, one line per cell.
+Zero means show all cell levels.
 
 The variable, `kotl-mode:emulate-tab', works just like
-`org-cycle-emulate-tab' does in Org mode, except that it is disabled, set to
-nil by default.  Use it if you haven't set `kotl-mode:tab-flag' to t.  It
-determines where the TAB key indents or inserts TAB characters rather than
-performing the functions detailed above.  See its documentation string for
-valid settings."
+`org-cycle-emulate-tab' does in Org mode, except that it is disabled,
+set to nil by default.  Use it if you haven't set `kotl-mode:tab-flag'
+to t.  It determines where the TAB key indents or inserts TAB characters
+rather than performing the functions detailed above.  See its
+documentation string for valid settings."
   (interactive "P")
   (unless (run-hook-with-args-until-success 'kotl-mode:tab-pre-hook)
     (cond
@@ -4187,21 +4219,20 @@ This is like `exchange-point-and-mark', but doesn't activate the mark."
   (goto-char (prog1 (mark t)
 	       (set-marker (mark-marker) (point) (current-buffer)))))
 
-(defun kotl-mode:indent-line (&optional arg)
-  "Indent line relative to the previous one.
-With optional prefix ARG greater than 1, tab forward ARG times.
-See the documentation string of `kotl-mode:indent-tabs-mode' for details
-on when tabs are used for indenting."
-  (interactive "*p")
-  (setq arg (prefix-numeric-value arg))
+(defun kotl-mode:indent-line ()
+  "Remove any indent from the line.
+Used by `kotl-mode:indent-region'.  See the documentation string of
+  `kotl-mode:indent-tabs-mode' for details on when tabs or spaces are
+  used for indenting."
+  (interactive "*")
   (let ((indent-tabs-mode kotl-mode:indent-tabs-mode))
-    (if (> arg 1)
-	(while (> arg 0)
-	  (tab-to-tab-stop)
-	  (setq arg (1- arg)))
-      (indent-relative))))
+    (save-excursion
+      (kotl-mode:beginning-of-line)
+      (kotl-mode:delete-horizontal-space))))
 
 (defun kotl-mode:indent-region (start end)
+  (interactive "r")
+  (kotl-mode:maintain-region-highlight)
   (kotl-mode:maybe-shrink-region-p)
   (indent-region start end nil))
 
@@ -4553,6 +4584,7 @@ Leave point at end of line now residing at START."
 	     forward-sentence
 	     goto-line
 	     goto-line-relative
+             indent-region
 	     just-one-space
 	     kill-word
 	     kill-line
