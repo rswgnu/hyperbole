@@ -4,7 +4,6 @@ DEMO                 - Interactive Demonstration of many GNU Hyperbole capabilit
 DEMO-ROLO.otl        - Sample Hyperbole Rolo file for use with DEMO
 hyrolo-demo.el       - Code to support DEMO introduction to HyRolo
 HY-ABOUT             - Introductory description of GNU Hyperbole
-HY-ANNOUNCE          - GNU Hyperbole release announcement
 HY-CONCEPTS.kotl     - Techncial introduction to Hyperbole concept interrelations
 HY-COPY              - GNU Hyperbole Copyright
 HY-NEWS              - What's new in each release of GNU Hyperbole

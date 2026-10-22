@@ -1,5 +1,10 @@
 2026-10-22  Bob Weiner  <rsw@gnu.org>
 
+* Makefile (HYPERBOLE_FILES, version):
+  MANIFEST:
+  hypb-release.el (hypb-release-version-file-list): Remove HY-ANNOUNCE
+    from git and release; write and use it separately.
+
 * test/demo-tests.el (demo-table-of-contents-test,
                       demo-smart-mouse-keys-ebut-test): Fix to match
     new TOC handling.
