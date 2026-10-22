@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:     5-Oct-26 at 21:58:13
-;; Last-Mod:     22-Oct-26 at 10:16:38 by Bob Weiner
+;; Last-Mod:     22-Oct-26 at 11:29:33 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -100,7 +100,7 @@ Files are saved normally by Emacs, so hooks are applied as if edited manually."
   "Update the version header in hyperbole.el to NEW-VERSION.
 This update needs to be in the last commit for a release and is run by a
 Makefile target."
-  (let ((hypb-release-version-file-list '("hyperbole.el" ";; Version:      {version}")))
+  (let ((hypb-release-version-file-list '(("hyperbole.el" ";; Version:      {version}"))))
     (hypb-release-update-version new-version)))
 
 (provide 'hypb-release)

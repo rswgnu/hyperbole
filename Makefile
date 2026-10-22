@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     22-Oct-26 at 11:01:11 by Bob Weiner
+# Last-Mod:     22-Oct-26 at 12:23:50 by Bob Weiner
 #
 # Copyright (C) 1994-2026  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -486,11 +486,17 @@ $(man_dir)/hyperbole.html: $(TEXINFO_SRC) $(man_dir)/hyperbole.css $(man_dir)/te
 #
 # `pandoc' is available from:
 #    https://github.com/jgm/pandoc
-README.md: README.in.md
+README.md README.md.html: README.in.md
+	# Generate README.md
 	cp -p README.in.md README.md && md_toc -p -m [TOC] github README.md \
-	  && sed -i -e "s+^\[TOC\]++g" -e "s+\`\`\`elisp+<pre><code>+g" -e "s+\`\`\`+</pre></code>+g" \
+	  && sed -i -e "s+^\[TOC\]++g" -e "s+\`\`\`elisp++g" -e "s+\`\`\`++g" \
                     -e "s+[ \t]*\[man/use-package\](man/use-package)+cat man/use-package+e" README.md
-	pandoc --from=gfm-tex_math_dollars --to=html+gfm_auto_identifiers -o README.md.html README.md
+	# Generate README.md.html
+	cp -p README.in.md README.in.html
+	sed -i -e "s+^\[TOC\]++g" -e "s+\`\`\`elisp+<pre><code>+g" -e "s+\`\`\`+</pre></code>+g" \
+               -e "s+[ \t]*\[man/use-package\](man/use-package)+cat man/use-package+e" README.in.html
+	pandoc --from=gfm-tex_math_dollars --to=html+gfm_auto_identifiers -o README.md.html README.in.html
+	rm README.in.html
 
 # website maintenance: "https://www.gnu.org/software/hyperbole/"
 define confirm
@@ -536,8 +542,8 @@ release-pre:
           --repo rswgnu/hyperbole \
           --base master \
           --head release_$(HYPB_VERSION) \
-          --title "Prepare release $(HYPB_VERSION)" \
-          --body "Prepare release $(HYPB_VERSION)"
+          --title "Hyperbole Release $(HYPB_VERSION)" \
+          --body ""
 
 # After PR has been merged: Sync the repos, tag the release, create
 # and upload the tarball to ftp.gnu.org and update the website.
