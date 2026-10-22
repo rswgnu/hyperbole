@@ -29,15 +29,21 @@
 
      3b. Advanced outline processing
 
-       3b1. NOTE: As of Hyperbole version 9.3.0, the Koutliner {C-c
-            <letter>} keys have moved to {C-c ; <letter>} so as not to
-            override keys reserved for global user-specific bindings.  If
-            you don't care about this and want the old bindings back,
-            uncomment the `kotl-mode:letter-prefix' setting in your
-            Hyperbole `use-package' initialization based on the reference
-            file "${hyperb:dir}/man/use-package".  You can also
-            interactively toggle between `C-c ;' and `C-c' prefixes with
-            {M-1 C-c C-l}.
+       3b1. NOTE: There are two major changes to the Koutliner as of
+            Hyperbole version 9.3.0:
+
+         3b1a. The {TAB} and {S-TAB} keys default to Org-style cycling
+               rather than tree demotion/promotion (use {M-<right> and
+               M-<left> arrow keys for tree demotion/promotion).  {C-c [}
+               toggles {TAB} and {S-TAB} from Org-style cycling to tree
+               demotion/promotion and back again, for this traditional
+               outliner operation.
+
+         3b1b. The Koutliner {C-c <letter>} keys have moved to {C-c ;
+               <letter>} so as not to override keys reserved for global
+               user-specific bindings.  {M-1 C-c C-l} will toggle between
+               restoring the original {C-c <letter>} bindings and removing
+               them; it does not affect the {C-c ; <letter>} bindings.
 
        3b2. Autonumbering: Full auto-numbering in Augment (1a2) or legal
             (1.1.2) formats.  Augment style is the default because it is
@@ -53,17 +59,17 @@
             least two characters long.
 
        3b4. Cell Creation: {C-j} adds a new cell as a sibling following the
-            current cell.  {C-u C-j} or {C-c ; a} adds the cell as a child of
-            the current cell.  Any other positive prefix arg to {C-j} adds
-            that many following cells at the same level as the current
-            one.  A negative prefix arg to {C-j} adds that many
-            preceding cells at the same level as the current one.  And
-            a zero prefix arg adds a new cell as the first one in the
-            outline at the top level.
+            current cell.  {C-u C-j} or {C-c ; a} adds the cell as the first
+            child of the current cell.  Any other positive prefix arg to
+            {C-j} adds that many following cells at the same level as the
+            current one.  A negative prefix arg to {C-j} adds that many
+            preceding cells at the same level as the current one.  And a
+            zero prefix arg adds a new cell as the first one in the outline
+            at level 1.
             
             {C-c ; p} adds the cell as the preceding sibling of the current
             cell, i.e. a new cell immediately prior to the current cell at
-            the same level; same as {C-u -1 C-j}.
+            the same level; same as {M--1 C-j}.
             
             {C-u C-c ; p} adds the cell as the sibling of the current cell's
             parent.
@@ -79,7 +85,7 @@
          3b6a. By default, TAB and S-TAB perform Org-style tree and outline
                visibility cycling respectively.  See <@ 3b7=071>.
 
-         3b6b. {C-c C-]} toggles the function of {TAB} and {S-TAB} between
+         3b6b. {C-c [} toggles the function of {TAB} and {S-TAB} between
                Org-like tree visibility cycling and demotion/promotion.  See
                <@ 3b8=013>.
 
@@ -138,7 +144,7 @@
                | nil         | Demote Tree            | Promote Tree            |
                | C-u         | Demote Siblings        | Promote Siblings        |
                | C-u C-u     | Reset View Spec        | Reset View Spec         |
-               | C-u C-u C-u | Show Whole Outline     | Show Whole Outlin       |
+               | C-u C-u C-u | Show Whole Outline     | Show Whole Outline      |
                | 0           | Demote and Refill Tree | Promote and Refill Tree |
                | 1           | Toggle tab-flag        |                         |
                | Other ARG   | Demote Tree ARG Levels | Promote Tree ARG Levels |
@@ -200,11 +206,11 @@
              {M-<down>}    - Move current tree past prefix arg same level trees.
              {M-<up>}      - Move current tree back prefix arg same level trees.
             
+             {C-c ; b}     - Copy <tree> to precede <cell>.
+             {C-u C-c ; b} - Copy <tree> as first child of the parent of <cell>.
+            
              {C-c ; c}     - Copy <tree> to follow as sibling of <cell>.
              {C-u C-c ; c} - Copy <tree> to follow as first child of <cell>.
-            
-             {C-c C-c}     - Copy <tree> to precede <cell>.
-             {C-u C-c C-c} - Copy <tree> as first child of the parent of <cell>.
             
              {C-c ; m}     - Move <tree> to follow as sibling of <cell>.
              {C-u C-c ; m} - Move <tree> to follow as first child of <cell>.
@@ -315,8 +321,8 @@
             
             {C-c C-i} sets an attribute of the cell at point.
             {C-u C-c C-i} removes an attribute of the cell at point.
-            {C-0 C-c C-i} sets an attribute of the invisible 0 root cell.
-            {C--1 C-c C-i} removes an attribute of the invisible 0 root cell.
+            {M-0 C-c C-i} sets an attribute of the invisible 0 root cell.
+            {M--1 C-c C-i} removes an attribute of the invisible 0 root cell.
 
       3b20. File Insertion: The elements of another buffer or file may be
             inserted into a koutline as a set of cells by using the {C-x i}
@@ -328,7 +334,7 @@
                the initial children of the current cell.
 
         3b20b. See {C-h v kimport:mode-alist RET} and {C-h v
-               kimport:suffix-alist RET}, for information on mode and 
+               kimport:suffix-alist RET}, for information on mode and
                suffix-specific conversions performed on files before they
                are inserted.  This same conversion process applies if you
                invoke {M-x kotl-mode RET} in a non-koutline buffer or if you
@@ -400,8 +406,8 @@
           3b23c1. a:  Show all cell levels and all lines in cells.
 
           3b23c2. b: Turn on blank lines between cells.  Without this code,
-                  blank lines will be turned off.  You can also use the {C-c
-                  ; b} key binding to toggle line numbers on and off
+                  blank lines will be turned off.  You can also use the
+                  {C-c ]} key binding to toggle blank lines on and off
                   independent of any other view settings.
 
           3b23c3. cN: Hide any lines greater than N in each cell.  0 means
@@ -475,7 +481,7 @@
             as tables require only blanks to the left of each row.
 
        3d2. Here are two table examples:
-               
+            
                |-----------------------------------------+----------------------------|
                | Demotion Inside Org Table               | Promotion Inside Org Table |
                |-----------------------------------------+----------------------------|
@@ -483,7 +489,7 @@
                | {C-c C->}                               | {C-c C-<}                  |
                | M-0 TAB  (kotl-mode:tab-flag /= 'cycle) | M-0 S-TAB                  |
                |-----------------------------------------+----------------------------|
-               
+            
                |------------------------------------+-----------------------------|
                | Demotion Outside Org Table         | Promotion Outside Org Table |
                |------------------------------------+-----------------------------|
@@ -493,7 +499,7 @@
                | {M-S-<right>}                      | {M-S-<left>}                |
                | {TAB}   (kotl-mode:tab-flag = nil) | {S-TAB}                     |
                |------------------------------------+-----------------------------|
-               
+            
                To toggle table editing mode on or off, press the Action Key on
                any of the table | delimiters and then edit as you would any Org
                table.  Note how the above tables show how {TAB} and {S-TAB}
@@ -503,25 +509,25 @@
          3d2a. The Koutliner code runs on any system that supports Emacs,
                whether under a window system or from a dumb terminal display.
 
-  3e. Major features left to be implemented:
+   4. Major features left to be implemented:
 
-    3e1. Branch handling commands (all cells at same level).
+     4a. Branch handling commands (all cells at same level).
 
-    3e2. Copying a single cell without its subtree.
+     4b. Copying a single cell without its subtree.
 
-    3e3. Replacing one cell or one tree with another.
+     4c. Replacing one cell or one tree with another.
 
-    3e4. Transposing two trees, rather than two cells.
+     4d. Transposing two trees, rather than two cells.
 
-    3e5. A small amount of work remains to enable setting different per
+     4e. A small amount of work remains to enable setting different per
          level fonts and colors, so that outline levels are visually easy to
          distinguish.
 
-    3e6. Flexible view handling has been only partially implemented.
+     4f. Flexible view handling has been only partially implemented.
 
 
 "ben" ;; kvspec:current
-90 ;; id-counter
+173 ;; id-counter
 alpha ;; label-type
 4 ;; label-min-width
 ". " ;; label-separator
@@ -529,7 +535,7 @@ alpha ;; label-type
 
 ;; depth-first kcell attributes
 [[0
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07" id-counter 90)]
+  (creator "rsw@gnu.org" create-time "20231105:21:29:07" id-counter 173)]
  [2
   (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
  [3
@@ -546,156 +552,160 @@ alpha ;; label-type
   (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
  [81
   (creator "rsw@gnu.org" create-time "20261007:21:15:24")]
- [9
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [10
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [11
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [12
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [82
-  (creator "rsw@gnu.org" create-time "20261007:22:18:48")]
- [73
-  (creator "rsw@gnu.org" create-time "20260929:05:48:56")]
- [83
-  (creator "rsw@gnu.org" create-time "20261007:22:21:39")]
- [71
-  (creator "rsw@gnu.org" create-time "20260928:21:33:05")]
- [74
-  (creator "rsw@gnu.org" create-time "20260929:05:49:02")]
- [75
-  (creator "rsw@gnu.org" create-time "20260929:05:49:09")]
- [76
-  (creator "rsw@gnu.org" create-time "20260929:05:49:14")]
- [78
-  (creator "rsw@gnu.org" create-time "20260929:05:50:44")]
- [13
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [85
-  (creator "rsw@gnu.org" create-time "20261007:23:56:26")]
- [77
-  (creator "rsw@gnu.org" create-time "20260929:05:49:25")]
- [86
-  (creator "rsw@gnu.org" create-time "20261008:00:02:09")]
- [88
-  (creator "rsw@gnu.org" create-time "20261008:00:02:30")]
- [89
-  (creator "rsw@gnu.org" create-time "20261008:00:02:56")]
- [90
-  (creator "rsw@gnu.org" create-time "20261008:00:03:52")]
- [14
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [15
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [16
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [17
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [18
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [19
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [20
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [21
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [22
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [23
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [24
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [79
-  (creator "rsw@gnu.org" create-time "20261006:04:24:06")]
- [25
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [26
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [27
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [28
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [29
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [30
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [31
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [32
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [33
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [34
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [35
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [36
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [37
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [38
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [39
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [40
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [41
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [42
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [43
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [44
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [45
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [46
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [47
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [48
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [49
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [50
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [51
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [52
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [53
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [54
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [55
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [56
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [57
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [58
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [59
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [60
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [61
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [62
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [63
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [64
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [65
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [66
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [67
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [68
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- [69
-  (creator "rsw@gnu.org" create-time "20231105:21:29:07")]
- nil nil nil nil nil nil]
+ [95
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [96
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [97
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [98
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [99
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [100
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [101
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [102
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [103
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [104
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [105
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [106
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [107
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [108
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [109
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [110
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [111
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [112
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [113
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [114
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [115
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [116
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [117
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [118
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [119
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [120
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [121
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [122
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [123
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [124
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [125
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [126
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [127
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [128
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [129
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [130
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [131
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [132
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [133
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [134
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [135
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [136
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [137
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [138
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [139
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [140
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [141
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [142
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [143
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [144
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [145
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [146
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [147
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [148
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [149
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [150
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [151
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [152
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [153
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [154
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [155
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [156
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [157
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [158
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [159
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [160
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [161
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [162
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [163
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [164
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [165
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [166
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [167
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [168
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [169
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [170
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [171
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ [172
+  (creator "rsw@gnu.org" create-time "20261019:05:18:03")]
+ nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil nil]

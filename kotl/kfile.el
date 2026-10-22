@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10/31/93
-;; Last-Mod:     23-Sep-26 at 11:27:18 by Bob Weiner
+;; Last-Mod:     17-Oct-26 at 00:10:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -264,7 +264,8 @@ If V3-FLAG is true, read as a version-3 buffer."
   "Update kfile internal structure so that view is ready for saving to a file.
 Leave outline file expanded with structure data showing unless optional
 VISIBLE-ONLY-P is non-nil.  Signal an error if kotl is not attached to a file."
-  (let* ((top (kview:top-cell kotl-kview))
+  (let* ((inhibit-redisplay t)  ;; Inhibits internal data display during saves
+         (top (kview:top-cell kotl-kview))
 	 (file (hypb:buffer-file-name))
 	 (label-type (kview:label-type kotl-kview))
 	 (label-min-width (kview:label-min-width kotl-kview))

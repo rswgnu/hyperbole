@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     16-Oct-26 at 18:42:29 by Mats Lidell
+;; Last-Mod:     20-Oct-26 at 00:06:53 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -43,7 +43,8 @@
 
 (defun hy-test-helpers:ensure-link-possible-type (type)
   "At point, ensure `hui:link-possible-types' returns a single TYPE."
-  (let* ((possible-types (hui:link-possible-types default-directory))
+  (let* ((possible-types (hui:link-possible-types default-directory
+                                                  (current-buffer)))
 	 (first-type (caar possible-types)))
     (should (= (length possible-types) 1))
     (should (equal first-type type))))
@@ -98,11 +99,11 @@ processing."
   "Verify the attribute of hbut at point.
 Checks ACTYPE, ARGS, LOC, LBL-KEY and NAME."
   (hbut:at-p)
-  (should (eq (hattr:get 'hbut:current 'actype) actype))
-  (should (equal (hattr:get 'hbut:current 'args) args))
-  (should (equal (hattr:get 'hbut:current 'loc) loc))
-  (should (equal (hattr:get 'hbut:current 'lbl-key) lbl-key))
-  (should (equal (hattr:get 'hbut:current 'name) name)))
+  (should (eq actype     (hattr:get 'hbut:current 'actype)))
+  (should (equal args    (hattr:get 'hbut:current 'args)))
+  (should (equal loc     (hattr:get 'hbut:current 'loc)))
+  (should (equal lbl-key (hattr:get 'hbut:current 'lbl-key)))
+  (should (equal name    (hattr:get 'hbut:current 'name))))
 
 (defun hy-delete-file-and-buffer (file)
   "Delete FILE and buffer visiting file."
@@ -125,6 +126,7 @@ Checks ACTYPE, ARGS, LOC, LBL-KEY and NAME."
 
 (defun hy-delete-files-and-buffers (files)
   "Delete all FILES and all buffers visiting those files."
+  (setq files (delq nil files))
   (dolist (f files)
     (hy-delete-file-and-buffer f)))
 

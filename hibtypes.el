@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     12-Oct-26 at 14:35:15 by Bob Weiner
+;; Last-Mod:     22-Oct-26 at 01:53:38 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -413,20 +413,16 @@ display options."
 			 (t nil)))
 		  (t (when (string-match "\\`file://" path)
                        (setq path (substring path (match-end 0))))
-                     (let (start-end
-                           start)
-		       (if (or (> (cl-count ?: orig-path) 2)
-			       (> (cl-count ?\; orig-path) 2))
-			   ;; PATH-like set of values; select just the one
-			   ;; point is on
-			   (apply #'ibut:label-set
-                                  path (setq start-end (hpath:start-end path)))
-		         ;; Otherwise, use the unchanged orig-path
-                         (apply #'ibut:label-set
-                                orig-path (setq start-end
-                                                (hpath:start-end orig-path))))
-                       (setq start (car start-end))
-                       (hact 'hpath:find-koutline-reference path start))))
+		     (if (or (> (cl-count ?: orig-path) 2)
+			     (> (cl-count ?\; orig-path) 2))
+			 ;; PATH-like set of values; select just the one
+			 ;; point is on
+			 (apply #'ibut:label-set
+                                path (hpath:start-end path))
+		       ;; Otherwise, use the unchanged orig-path
+                       (apply #'ibut:label-set
+                              orig-path (hpath:start-end orig-path)))
+                     (hact 'link-to-file path)))
           ;;
           ;; Match PATH-related Environment and Lisp variable names and
 	  ;; Emacs Lisp and Info files without any directory component.
@@ -816,14 +812,15 @@ anything."
 
 (defib text-toc ()
   "Jump to the text file section referenced by a table of contents entry at point.
-Buffer must be in a text mode or must contain DEMO, README or
-TUTORIAL and there must be a `Table of Contents' or `Contents'
-label on a line by itself (it optionally may begin with an
-asterisk), preceding the table of contents.  Each toc entry must
-begin with optional whitespace followed by one or more asterisks.
-Each section header linked to by the toc must start with optional
-whitespace and then one or more asterisks at the beginning of the
-line."
+Buffer must be in a text mode or must contain DEMO, README or TUTORIAL
+and there must be a `Table of Contents' or `Contents' label on a line by
+itself (it optionally may begin with an asterisk), preceding the table
+of contents.  Each toc entry must begin with optional whitespace
+followed by one or more asterisks, +, -, or the letter `o' (the leader
+character) followed by whitespace.  Each section header linked to by the
+toc must start with optional whitespace and then one or more asterisks
+at the beginning of the line matching the number of leader characters
+matched in the toc."
   (let (section)
     (when (and (or (derived-mode-p 'text-mode)
 		   (string-match "DEMO\\|README\\|TUTORIAL" (buffer-name)))
@@ -1009,7 +1006,7 @@ LINE-NUM may be an integer or string."
                             (hpath:is-p (expand-file-name file))
                             (hywiki-get-existing-page-file file)))))
     (when (file-exists-p (hpath:normalize file))
-      (actypes::link-to-file-line file line-num))))
+      (hact 'link-to-file-line file line-num))))
 
 (defib ipython-stack-frame ()
   "Jump to the line associated with an ipython stack frame line numbered msg.
@@ -1535,7 +1532,13 @@ if point is within the first line of the Info reference."
                                ;; Regular dual single quotes (Texinfo smart quotes)
                                (hbut:label-p t "``" "''" t t)
                                ;; Regular open and close quotes
-                               (hbut:label-p t "`" "'" t t)))
+                               (hbut:label-p t "`" "'" t t)
+			       ;; Info node references in Org links (Org
+                               ;; link already recognized and
+                               ;; `org-open-link-functions' running that
+                               ;; checks for Hyperbole button matches within
+                               ;; such links
+			       (hbut:label-p t "[[" "]" t t)))
          (ref (car node-ref-and-pos))
          (node-ref (and (stringp ref)
 			(setq ref (hpath:to-Info-ref ref))

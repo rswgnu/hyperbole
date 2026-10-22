@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     27-Sep-26 at 01:27:23 by Bob Weiner
+;; Last-Mod:     18-Oct-26 at 23:03:41 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -577,17 +577,21 @@ runs this command."
     ;; values left over from a prior drag or click.
     (action-key-clear-variables)
     (assist-key-clear-variables))
-  (let (but-lbl edit-flag link-types num-types type-and-args lbl-key but-loc but-dir)
-    (cl-multiple-value-bind (link-but-window referent-window)
-	(if (and depress-window release-window)
-	    (list depress-window release-window)
-	  (hmouse-choose-link-and-referent-windows))
-
+  (cl-multiple-value-bind (link-but-window referent-window)
+      (if (and depress-window release-window)
+	  (list depress-window release-window)
+	(hmouse-choose-link-and-referent-windows))
+    (let ((src-buffer (or (buffer-base-buffer (window-buffer link-but-window))
+                          (window-buffer link-but-window)))
+          but-lbl edit-flag link-types num-types type-and-args lbl-key but-loc
+          but-dir)
       (select-window referent-window)
       ;; This sets hbut:current to link-to button attributes.
-      (setq link-types (hui:link-possible-types (buffer-local-value
-                                                 'default-directory
-                                                 (window-buffer link-but-window)))
+      (setq link-types (hui:link-possible-types
+                        (buffer-local-value
+                         'default-directory
+                         src-buffer)
+                        src-buffer)
 	    num-types (length link-types))
 
       (select-window link-but-window)
@@ -1356,18 +1360,21 @@ runs this command."
     ;; values left over from a prior drag or click.
     (action-key-clear-variables)
     (assist-key-clear-variables))
-  (let (but-name edit-flag link-types num-types type-and-args name-key but-loc but-dir)
-    ;; edit-flag when set non-nil means are editing an existing ibut at point
-    (cl-multiple-value-bind (link-but-window referent-window)
-	(if (and depress-window release-window)
-	    (list depress-window release-window)
-	  (hmouse-choose-link-and-referent-windows))
-
+  (cl-multiple-value-bind (link-but-window referent-window)
+      (if (and depress-window release-window)
+	  (list depress-window release-window)
+	(hmouse-choose-link-and-referent-windows))
+    (let ((src-buffer (or (buffer-base-buffer (window-buffer link-but-window))
+                          (window-buffer link-but-window)))
+          but-name edit-flag link-types num-types type-and-args name-key
+          but-loc but-dir)
       (select-window referent-window)
       ;; This sets hbut:current to link-to button attributes.
-      (setq link-types (hui:link-possible-types (buffer-local-value
-                                                 'default-directory
-                                                 (window-buffer link-but-window)))
+      (setq link-types (hui:link-possible-types
+                        (buffer-local-value
+                         'default-directory
+                         src-buffer)
+                        src-buffer)
 	    num-types (length link-types))
 
       (select-window link-but-window)
@@ -1379,6 +1386,7 @@ runs this command."
 		 (buffer-live-p action-key-depress-buffer))
 	(switch-to-buffer action-key-depress-buffer))
       (hui:buf-writable-err (current-buffer) "ibut-link-directly")
+      ;; edit-flag when set non-nil means are editing an existing ibut at point
       (if (ibut:at-p)
 	  (setq edit-flag t
 		but-loc (hattr:get 'hbut:current 'loc)
@@ -1705,11 +1713,12 @@ from the button that point is within."
 (defun hui:ebut-message (but-edit-flag)
   "Display message about the ebut execution.
 With BUT-EDIT-FLAG non-nil message about ebut being edited."
-  (let ((actype (symbol-name (hattr:get 'hbut:current 'actype)))
+  (let ((actype (hattr:get 'hbut:current 'actype))
 	(args (hattr:get 'hbut:current 'args)))
     (setq actype (or (actype:def-symbol (actype:elisp-symbol actype))
-		     (when (symbolp actype)
-                       actype)))
+                     ;; This line prevents an Elisp function actype
+                     ;; registering as nil
+                     (actype:elisp-symbol actype)))
     (message "%s%s%s %s %S"
 	     ebut:label-start
 	     (hbut:key-to-label (hattr:get 'hbut:current 'lbl-key))
@@ -1958,11 +1967,12 @@ within."
 (defun hui:ibut-message (but-edit-flag)
   "Display message about the ibut execution.
 With BUT-EDIT-FLAG non-nil message about ibut being edited."
-  (let ((actype (symbol-name (hattr:get 'hbut:current 'actype)))
+  (let ((actype (hattr:get 'hbut:current 'actype))
 	(args (hattr:get 'hbut:current 'args)))
     (setq actype (or (actype:def-symbol (actype:elisp-symbol actype))
-		     (when (symbolp actype)
-                       actype)))
+                     ;; This line prevents an Elisp function actype
+                     ;; registering as nil
+                     (actype:elisp-symbol actype)))
     (message "%s%s%s %s %S"
 	     ibut:label-start
              (or (hattr:get 'hbut:current 'name)
@@ -2065,20 +2075,23 @@ which determines the region, ignoring BEG and END."
 	 (setq completion-to-accept nil))
 	(t (kill-region beg end region))))
 
-(defun hui:link-possible-types (src-dir)
-  "Return list of possible link action types during editing of a Hyperbole button.
+(defun hui:link-possible-types (src-dir src-buffer)
+  "Return possible link action types list during editing of a Hyperbole button.
 Point must be on the link referent, i.e. in the Action Key release buffer.
-SRC-DIR should be the `default-directory' of the source buffer where the link
-will be added.
+Takes two arguments:
+  SRC-DIR should be the `default-directory' of the source buffer where the
+  link will be added.
+  SRC-BUFFER is where the link will be added.
 
-Each list element is a list of the link type and any arguments it requires.
-
-The link types considered are fixed; this function must be changed to alter
-the contexts recognized.  Defining new link types will not alter the
-possible types.
+Each action type element returned is a list of the link type and any
+arguments it requires.  The link types considered are fixed; this function
+must be changed to alter the contexts recognized.  Defining new link types
+alone will not alter the possible types.
 
 Referent Context         Possible Link Type Returned
 ----------------------------------------------------
+Single-line Region       link-to-string-match
+Koutline Cell            link-to-kcell
 Denote Link              link-to-denote
 EWW Web Page Buffer      link-to-url
 Org Roam or Org Id       link-to-org-id
@@ -2093,8 +2106,6 @@ Texinfo Node             link-to-texinfo-node
 Mail Reader Message      link-to-mail
 Directory Name           link-to-directory
 File Name                link-to-file
-Koutline Cell            link-to-kcell
-Single-line Region       link-to-string-match
 HyWiki Page              link-to-wikiword
 Org Heading              link-to-file
 Outline Heading          link-to-file
@@ -2112,6 +2123,36 @@ Buffer without File      link-to-buffer-tmp"
         heading)
     (prog1 (delq nil
 		 (list (cond
+			;;
+			;; If region is active in the target
+			;; buffer and it is one line or less,
+			;; then do a link-to-string-match to
+			;; the region string.
+			((let ((region (and (use-region-p)
+					    (string-trim (buffer-substring-no-properties
+							  (region-beginning) (region-end)))))
+			       (instance-num 0))
+			   (when (and region
+				      (not (string-empty-p region))
+				      ;; single line
+				      (not (string-match "[\n\r\f]" region)))
+			     (save-excursion
+			       (end-of-line)
+			       (while (search-backward region nil t)
+				 (setq instance-num (1+ instance-num))))
+			     (list 'link-to-string-match region instance-num (hypb:buffer-file-name)))))
+                        ;; Koutline kcell link
+			((derived-mode-p #'kotl-mode)
+			 (list 'link-to-kcell
+                               (unless (and buffer-file-name
+                                            (equal buffer-file-name
+                                                   (buffer-local-value
+                                                    'buffer-file-name
+                                                    (or (buffer-base-buffer src-buffer)
+                                                        src-buffer))))
+                                 (hypb:buffer-file-name))
+                               (concat (kcell-view:label) "="
+                                       (kcell-view:idstamp))))
                         ;; Denote link (with Hyperbole additions)
                         ((setq link-start-end (hsys-denote-link-at-p))
                         (list 'link-to-denote (car link-start-end)))
@@ -2223,30 +2264,6 @@ Buffer without File      link-to-buffer-tmp"
 				     ((let ((hargs:reading-type 'file))
 					(setq val (hargs:at-p t)))
 				      (list 'link-to-file val))
-				     ((derived-mode-p #'kotl-mode)
-				      (list 'link-to-kcell
-                                            (unless (equal (hbut:get-key-src t) buffer-file-name)
-                                              (hypb:buffer-file-name))
-                                            (concat (kcell-view:label) "="
-                                                    (kcell-view:idstamp))))
-				     ;;
-				     ;; If region is active in the target
-				     ;; buffer and it is one line or less,
-				     ;; then do a link-to-string-match to
-				     ;; the region string.
-				     ((let ((region (and (use-region-p)
-							 (string-trim (buffer-substring-no-properties
-								       (region-beginning) (region-end)))))
-					    (instance-num 0))
-					(when (and region
-						   (not (string-empty-p region))
-						   ;; single line
-						   (not (string-match "[\n\r\f]" region)))
-					  (save-excursion
-					    (end-of-line)
-					    (while (search-backward region nil t)
-					      (setq instance-num (1+ instance-num))))
-					  (list 'link-to-string-match region instance-num (hypb:buffer-file-name)))))
                                      ;;
                                      ;; If on a HyWiki page when
                                      ;; `hywiki-mode' is enabled,

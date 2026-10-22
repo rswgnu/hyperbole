@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:      5-Oct-26 at 18:35:00 by Bob Weiner
+;; Last-Mod:     21-Oct-26 at 21:46:52 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -152,6 +152,7 @@
 (require 'hyrolo)
 (require 'outline)    ;; For `outline-mode-syntax-table'
 (require 'seq)        ;; For `seq-contains-p', `seq-difference' and `seq-intersection'
+(require 'set)        ;; For `set:create' and `set:difference'
 (require 'subr-x)     ;; For `string-remove-prefix'
 (require 'thingatpt)
 
@@ -250,8 +251,8 @@ in `hywiki-mode'.")
 (defvar hywiki--directory-checksum ""
   "String checksum for `hywiki-directory' page names.")
 
-(defvar hywiki--directory-mod-time nil
-  "Last mod time for `hywiki-directory' or nil if the value has not been read.
+(defvar hywiki--directory-mod-time 0
+  "Last mod time for `hywiki-directory' or 0 if the value has not been read.
 See `current-time' function for the mod time format.")
 
 (defvar hywiki--org-heading-regexp nil
@@ -367,9 +368,10 @@ See `hywiki-org-publishing-directory' for exported pages in html format."
 (defun hywiki-directory-changed (option set-to-value operation _where)
   "Watch function for variable `hywiki-directory'.
 Function is called with 4 arguments: (OPTION SET-TO-VALUE OPERATION WHERE)."
-  (if (memq operation '(let unlet)) ;; not setting global value
-      (hywiki-let-directory option set-to-value)
-    (hywiki-set-directory option set-to-value)))
+  (unless (hyperb:stack-frame '(hywiki-make-referent-hasht))
+    (if (memq operation '(let unlet)) ;; not setting global value
+        (hywiki-let-directory option set-to-value)
+      (hywiki-set-directory option set-to-value))))
 
 ;; This next line is needed to invoke `hywiki-set-directory' when
 ;; `hywiki-directory' is changed via `setq' or `let' rather than
@@ -534,7 +536,7 @@ Nil by default."
 (defvar hywiki-file-extension ".org"
   "File suffix string (including period) to use when creating HyWiki pages.")
 
-(defvar hywiki-word-create-exclude-action-key-modes '(org-mode)
+(defvar hywiki-word-create-exclude-action-key-modes '()
   "Suppress WikiWord creation from Action Key presses in this major mode list.
 Typically used in any modes where the Action Key shows/hides sections.")
 
@@ -1616,12 +1618,13 @@ from the documentation string for `hpath:find'.  PAGE-NAME must be the
 HyWikiWord reference that can link to the page (no pathname directory nor
 file extension).
 
-With optional FORCE-FLAG prefix arg non-nil, force an update to
-the page's modification time.  If PAGE-NAME is invalid, trigger a
-`user-error' if called interactively or return nil if not.
+With optional FORCE-FLAG prefix arg non-nil, force an update to the page's
+modification time and create it if needed without asking.  If PAGE-NAME is
+invalid, trigger a `user-error' if called interactively or return nil if
+not.
 
-By default, create any non-existent page.  When not in batch or
-ert test results mode, if this is the first HyWiki page in
+By default, create any non-existent page.  When not in batch or ert test
+results mode and FORCE-FLAG is nil, if this is the first HyWiki page in
 `hywiki-directory', prompt to create it.
 
 After successfully adding a page, run `hywiki-add-page-hook'.
@@ -1632,6 +1635,7 @@ Use `hywiki-get-referent' to determine whether a HyWiki page exists."
 		     current-prefix-arg))
   (if (hywiki-word-is-p page-name)
       (when (or noninteractive
+                force-flag
 		(hyperb:stack-frame '(ert-run-test))
 		(not (hash-empty-p (hywiki-get-referent-hasht)))
 		(y-or-n-p (concat "Create new HyWiki page `" page-name "'? ")))
@@ -1641,7 +1645,6 @@ Use `hywiki-get-referent' to determine whether a HyWiki page exists."
 	       (page-name-singular (hywiki-get-singular-wikiword page-name))
                (page-file (hywiki-get-page-file page-name-singular))
 	       (page-file-readable (file-readable-p page-file))
-	       (referent-hasht (hywiki-get-referent-hasht))
 	       (page-in-hasht (hywiki-page-exists-p page-name-singular))
                referent)
 	  (unless page-file-readable
@@ -1651,7 +1654,7 @@ Use `hywiki-get-referent' to determine whether a HyWiki page exists."
 	  (if (or force-flag (not page-in-hasht))
 	      (progn
 		(hash-add (cons 'page (file-name-nondirectory page-file))
-			  page-name-singular referent-hasht)
+			  page-name-singular (hywiki-get-referent-hasht))
 		(setq hywiki--any-wikiword-regexp-list nil)
 		(when (called-interactively-p 'interactive)
 		  (message "Added HyWikiWord page: \"%s\"" page-file)))
@@ -1792,7 +1795,7 @@ absolute path."
 	  buffer-read-only nil)))
 
 (defun hywiki-cache-save (&optional save-file)
-  "Save the modified Environment to a file.
+  "Save `hywiki-directory' lookup data to a file.
 The file is given by optional SAVE-FILE or `hywiki-cache-file'.  Also
 save and potentially set `hywiki--directory-mod-time' and
 `hywiki--directory-checksum'."
@@ -1806,36 +1809,50 @@ save and potentially set `hywiki--directory-mod-time' and
       (if (buffer-modified-p buf)
           (with-current-buffer buf
 	    (hypb:save-buffer-silently))
-	;; (error "(hywiki-cache-save): Attempt to kill modified Environment file failed to save, \"%s\"" save-file)
+	;; (error "(hywiki-cache-save): HyWiki cache file failed to save: \"%s\"" save-file)
 	(kill-buffer buf))))
   (let ((dir (or (file-name-directory save-file)
 		 default-directory)))
     (unless (file-writable-p dir)
       (error "(hywiki-cache-save): Non-writable Environment directory, \"%s\"" dir)))
   (save-excursion
-    (let ((standard-output (hywiki-cache-edit save-file)))
-      (with-current-buffer standard-output
-	(erase-buffer)
-	(princ ";; -*- mode:lisp-data; coding: utf-8-emacs; -*-\n")
+    (let ((output-buffer (hywiki-cache-edit save-file))
+          marker
+          standard-output)
+      (with-current-buffer output-buffer
+        ;; Need to use a marker here or point will not always advance
+        ;; after the print calls
+        (unwind-protect
+            (progn (setq marker (copy-marker (point) t)
+                         standard-output marker)
+                   (set-marker-insertion-type standard-output t)
+	           (erase-buffer)
+	           (princ ";; -*- mode:lisp-data; coding: utf-8-emacs; -*-\n")
 
-	(princ (format "\n(setq\nhyperb:version %S\n" hyperb:version))
+                   ;; Save these next two values only as comments for reference.
+                   ;; Otherwise, they would improperly override the current values.
+                   ;; -- RSW 2026-10-19
+                   (terpri)
+	           (princ (format ";; hyperb:version: %S\n" hyperb:version))
+	           (princ (format ";; hywiki-directory: %S\n" hywiki-directory))
 
-	(princ (format "\nhywiki-directory %S\n" hywiki-directory))
+	           ;; Save last `hywiki-directory' mod time and checksum, nil if none.
+	           (princ (format "\n(setq\nhywiki--directory-mod-time '%S\n"
+                                  (hywiki-directory-set-mod-time)))
 
-	;; Save last `hywiki-directory' mod time and checksum, nil if none.
-	(princ (format "\nhywiki--directory-mod-time '%S\n" (hywiki-directory-set-mod-time)))
+	           (princ (format "\nhywiki--directory-checksum %S\n"
+		                  (hywiki-directory-set-checksum)))
 
-	(princ (format "\nhywiki--directory-checksum %S\n"
-		       (hywiki-directory-set-checksum)))
+	           (princ "\nhywiki--referent-alist\n'")
+	           (hash-prin1 (hywiki-get-referent-hasht) nil t)
+	           (princ ")\n")
 
-	(princ "\nhywiki--referent-alist\n'")
-	(hash-prin1 (hywiki-get-referent-hasht) nil t)
-	(princ ")\n")
-
-	(hypb:save-buffer-silently)
-	(if (buffer-modified-p)
-	    (error "(hywiki-cache-save): Attempt to kill modified Environment file failed to save, \"%s\"" save-file)
-	  (kill-buffer standard-output))))))
+	           (hypb:save-buffer-silently))
+          (set-marker marker nil)
+	  (if (buffer-modified-p)
+	      (error "(hywiki-cache-save): HyWiki cache file failed to save: \"%s\"" save-file)
+	    (kill-buffer output-buffer))
+          save-file)))))
 
 (defun hywiki-completion-at-point ()
   "Complete a HyWiki reference at point.
@@ -2294,21 +2311,39 @@ Use `dired' unless `action-key-modeline-buffer-id-function' is set to
       (md5 (apply #'concat hywiki-page-files) nil nil nil t))))
 
 (defun hywiki-directory-get-mod-time ()
-  "Return the last mod time for `hywiki-directory' or nil."
-  (when (file-readable-p hywiki-directory)
-    (time-convert (file-attribute-modification-time
-		   (file-attributes hywiki-directory))
-		  'list)))
+  "Return the last page file mod time for `hywiki-directory' or 0.
+Page file deletion is handled by a checksum over the set of
+HyWiki pages, which is verified before this mod-time check."
+  (if (not (file-readable-p hywiki-directory))
+      0
+    (let* ((default-directory (expand-file-name (hpath:expand hywiki-directory)))
+	   (page-files (hywiki-get-page-files))
+	   (max-page-mod-time (if page-files
+				  (truncate
+				   (apply #'max (mapcar (lambda (f)
+						          (float-time (file-attribute-modification-time
+							               (file-attributes f))))
+						        page-files)))
+			        0)))
+      max-page-mod-time)))
 
 (defun hywiki-directory-modified-p ()
   "Return non-nil if any HyWiki page name change since last read."
-  (or (null hywiki--directory-mod-time)
-      ;; Both dir mod-time and filename checksum over HyWiki page
-      ;; files must have changed for this to be an update to report.
-      ;; Don't change this logic as many other dir changes can occur
-      ;; that should not be reported here.
-      (not (or (equal hywiki--directory-mod-time (hywiki-directory-get-mod-time))
-	       (string-equal hywiki--directory-checksum (hywiki-directory-get-checksum))))))
+  (when (listp hywiki--directory-mod-time)
+    ;; Prior to Hyperbole 9.3.1, mod-times were stored as lists of 4
+    ;; integers, so we need to read this old format and convert to the new
+    ;; single integer of Epoch seconds.
+    (setq hywiki--directory-mod-time (time-convert hywiki--directory-mod-time 'integer)))
+  (or (zerop hywiki--directory-mod-time)
+      ;; If checksum over HyWiki page files has changed, consider the
+      ;; directory modified
+      (not (string-equal hywiki--directory-checksum
+                         (or (hywiki-directory-get-checksum) "")))
+      ;; The checksum handles only page file changes; here we have to
+      ;; account for the .eld cache file being updated with changes to
+      ;; WikiWords with non-page referents.  Use the directory mod-time
+      ;; comparison for this.
+      (/= hywiki--directory-mod-time (hywiki-directory-get-mod-time))))
 
 (defun hywiki-directory-set-checksum ()
   "Store the last page name checksum for `hywiki-directory' as a string."
@@ -2428,11 +2463,14 @@ therein is invalid, trigger an error."
   ;; Org emphasis characters.
   (let ((str)
         (case-fold-search nil))
-    (format "[*/_=~]?\\(%s\\|%s\\|%s\\|%s\\)[*/_=~]?"
-            (regexp-quote term)
-            (regexp-quote (downcase term))
-            (regexp-quote (setq str (hywiki-wikiword-to-string term " ")))
-            (regexp-quote (capitalize str)))))
+    (format "[*/_=~]?\\(%s\\)[*/_=~]?"
+            (string-join
+             (set:create
+              (regexp-quote term)
+              (regexp-quote (downcase term))
+              (regexp-quote (setq str (hywiki-wikiword-to-string term " ")))
+              (regexp-quote (capitalize str)))
+             "\\|"))))
 
 ;;;###autoload
 (defun hywiki-get-definition (term &optional display-flag file)
@@ -2871,9 +2909,9 @@ regexps of wikiwords, if the hash table is out-of-date."
 	(hywiki-make-referent-hasht))
     (when (and (null hywiki--any-wikiword-regexp-list)
                (not (hash-empty-p hywiki--referent-hasht)))
-      ;; Compute these expensive regexps (matching 50
-      ;; HyWikiWords at a time) only if the set of
-      ;; HyWikiWords changed in `hywiki-directory'.
+      ;; Compute these expensive regexps (matching 50 HyWikiWords at a
+      ;; time in a batch) only if the set of HyWikiWords changed in
+      ;; `hywiki-directory'.
       (setq hywiki--any-wikiword-regexp-list
 	    (mapcar (lambda (wikiword-sublist)
 		      ;; Add plurals to the list
@@ -3720,28 +3758,39 @@ Use `hywiki-word-face' to highlight."
   (hywiki-maybe-directory-updated))
 
 (defun hywiki-make-referent-hasht ()
-  "Rebuld referent hasht from list of HyWiki page files and non-page entries."
+  "Rebuild referent hasht from list of HyWiki page files and non-page entries."
   (setq hywiki--any-wikiword-regexp-list nil
 	hywiki--pages-directory hywiki-directory)
   ;; Try to load from a .hywiki.eld cache file if up-to-date
   (let* ((cache-file (hywiki-cache-default-file))
 	 (cache-buffer (when (file-readable-p cache-file)
 			 (find-file-noselect cache-file)))
+         ;; Pre-9.3.1 versions of Hyperbole saved `hyperb:version' and
+         ;; `hywiki-directory' in this cache, improperly overwriting the
+         ;; current values.  To prevent this, we `let' bind these variables
+         ;; during the cache read so that any changes are discarded.
 	 (hywiki-loaded-flag (when cache-buffer
-			       (with-current-buffer cache-buffer
-				 (widen)
-				 (goto-char (point-min))
-				 ;; Skip past initial comments
-				 (when (re-search-forward "^(" nil t)
-				   (goto-char (1- (point)))
-				   (condition-case ()
-				       (progn (eval (read (buffer-string)))
-					      t)
-				     (error nil)))))))
+                               (let ((hyperb:version hyperb:version)
+                                     (hywiki-directory hywiki-directory))
+			         (with-current-buffer cache-buffer
+				   (widen)
+				   (goto-char (point-min))
+				   ;; Skip past initial comments
+				   (when (re-search-forward "^(" nil t)
+				     (goto-char (1- (point)))
+				     (condition-case ()
+				         (progn (eval (read (buffer-string)))
+					        t)
+				       (error nil))))))))
     (if (and hywiki-loaded-flag (not (hywiki-directory-modified-p)))
 	;; Rebuild from loaded data
         (prog1 (setq hywiki--referent-hasht (hash-make hywiki--referent-alist t))
 	  (setq hywiki--referent-alist nil))
+      (when hywiki-loaded-flag
+        ;; Rebuild from loaded data to get non-page-elts
+        ;; !! TODO FIX - Delete out-of-date page file entries
+        (setq hywiki--referent-hasht (hash-make hywiki--referent-alist t)
+              hywiki--referent-alist nil))
       ;; Read `hywiki-directory' for current page files and merge with
       ;; non-page referents
       (let* ((page-files (hywiki-get-page-files))
@@ -3749,19 +3798,21 @@ Use `hywiki-word-face' to highlight."
 			      (delq nil
 				    (hash-map 'hywiki-non-page-elt
 					      hywiki--referent-hasht))))
-	     (non-page-hasht (hash-make non-page-elts))
+	     (non-page-hasht (when non-page-elts (hash-make non-page-elts)))
 	     (key)
 	     (page-elts (delq nil (mapcar (lambda (file)
 					    (setq key (file-name-sans-extension file))
-					    (unless (hash-get key non-page-hasht)
+					    (unless (and non-page-hasht
+                                                         (hash-get key non-page-hasht))
 					      (cons (cons 'page file) key)))
 					  page-files)))
              (page-hasht (hash-make page-elts)))
 	(setq hywiki--referent-hasht
-	      (if non-page-elts
- 		  (hash-merge non-page-hasht page-hasht)
-		page-hasht))))))
-
+              (cond
+               ((and non-page-hasht page-hasht)
+                (hash-merge non-page-hasht page-hasht))
+               (non-page-hasht)
+               (t page-hasht)))))))
 
 (defun hywiki-non-page-elt (val-key)
   (unless (eq (caar val-key) 'page)
@@ -3943,7 +3994,7 @@ When NO-STATS is non-nil, don't include statistics in square brackets."
 (defun hywiki-org-get-heading-match-regexp (title)
   "Return a regexp that matches to the TITLE and start of an Org heading."
   ;; org-complex-heading-regexp + custom todo keywords + specific title
-  (format (concat "^\\(\\*+[ \t]+\\)"
+  (format (concat "^[ \t]*\\(\\*+[ \t]+\\)"
                   ;; optional todo keyword
 	          "\\(?:"
                   (if (hywiki-in-page-p)
@@ -4443,9 +4494,7 @@ non-nil or this will return nil."
 					   (looking-at hywiki-word-with-optional-suffix-exact-regexp))
 					 ;; WikiWord ref is the entirety of the string
 					 (= end (match-end 0))
-					 ;; Can't be followed by a # character
-					 (/= (or (char-after (match-end 0)) 0)
-					     ?#))
+                                         (hywiki-word-not-followed-by-p))
 				    (setq wikiword (match-string-no-properties 0)
 					  start (match-beginning 0)
 					  end   (match-end 0))
@@ -4487,9 +4536,7 @@ non-nil or this will return nil."
 						      hywiki-word-regexp
 						      "\\(#[^][#()<>{}\" \t\n\r\f]*\\)?"
 						      hywiki-word-line-and-column-numbers-regexp "?"))
-					 ;; Can't be followed by a # character
-					 (/= (or (char-after (match-end 0)) 0)
-					     ?#)
+                                         (hywiki-word-not-followed-by-p)
 					 (progn (goto-char (match-end 0))
 						(skip-syntax-forward "-")))
 				    (setq start (match-beginning 0)
@@ -4524,9 +4571,7 @@ non-nil or this will return nil."
 						      hywiki-word-regexp
 						      "\\(#[^][#()<>{}\" \t\n\r\f]+\\)?"
 						      hywiki-word-line-and-column-numbers-regexp "?"))
-					 ;; Can't be followed by a # character
-					 (/= (or (char-after (match-end 0)) 0)
-					     ?#)
+                                         (hywiki-word-not-followed-by-p)
 					 (goto-char (match-end 0)))
 				(setq start (match-beginning 0)
 				      end   (match-end 0)
@@ -4549,9 +4594,7 @@ non-nil or this will return nil."
 					       end (match-end 1)
 					       wikiword (string-trim (match-string-no-properties 1))))
 					((or (and (looking-at hywiki-word-with-optional-suffix-regexp)
-						  ;; Can't be followed by a # character
-						  (/= (or (char-after (match-end 0)) 0)
-						      ?#))
+                                                  (hywiki-word-not-followed-by-p))
 					     (and hash-sign-only-flag
 						  (looking-at (concat hywiki-word-regexp "#"))))
 					 (setq start (match-beginning 0)
@@ -4813,6 +4856,10 @@ these are handled by the Org mode link handler."
                 (if (string-match-p "#" word)
 		    (string-match "#[^][#()<>{}\"\n\r\f]+\\'" word)
 		  (length word)))))))
+
+(defun hywiki-word-not-followed-by-p ()
+  "Ensure prior buffer match is not followed by any char in [-_#]."
+  (not (memq (or (char-after (match-end 0)) 0) '(?# ?- ?_))))
 
 (defun hywiki-word-read (&optional prompt initial)
   "Prompt with completion for and return an existing HyWikiWord.

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     28-Sep-26 at 10:50:55 by Bob Weiner
+;; Last-Mod:     17-Oct-26 at 17:37:29 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -993,6 +993,27 @@ to next matching tag definition."
       (describe-symbol (intern identifier))
     (smart-tags-display (or identifier (hsys-xref-identifier-at-point)) next))
   t)
+
+;;;###autoload
+(defun smart-prog-to-definition (&optional tag)
+  "If a def for optional programming TAG can be found, jump to the def.
+If TAG is nil, use any tag around point instead."
+  (interactive)
+  (if tag
+      (progn (cond ((stringp tag))
+		   ((symbolp tag) (setq tag (symbol-name tag)))
+		   (t (error "")))
+	     (unless (and tag (smart-tags-find-p tag))
+	       (setq tag nil))
+	     ;; Flash if tag matches any tag at point
+	     (when (and tag (equal tag (smart-prog-at-tag-p t)))
+	       (setq tag (smart-flash-tag-at-point tag))))
+    (setq tag (smart-prog-at-tag-p t))
+    (unless (and tag (smart-tags-find-p tag)
+		 (setq tag (smart-flash-tag-at-point tag)))
+      (setq tag nil)))
+  (when tag
+    (ignore-errors (smart-prog-tag tag))))
 
 (defun smart-jedi-find-file (file line column other-window)
   "Function that read a source FILE for jedi navigation.

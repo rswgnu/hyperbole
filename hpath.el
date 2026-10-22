@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     14-Oct-26 at 11:16:08 by Bob Weiner
+;; Last-Mod:     18-Oct-26 at 23:37:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1176,7 +1176,13 @@ end-pos) or nil."
 			      (hargs:delimited "\"" "\"" nil nil include-positions "[`'’]")
 			      ;; Filenames in Info docs, Python files or 'ls' listing files in
 			      ;; single quotes
-			      (hargs:delimited "[`'‘]" "[`'’]" t t include-positions "\"")))))
+			      (hargs:delimited "[`'‘]" "[`'’]" t t include-positions "\"")))
+
+			;; Filenames in Org links (Org link already
+                        ;; recognized and `org-open-link-functions' running
+                        ;; that checks for Hyperbole button matches within
+                        ;; such links
+			(hargs:delimited "[[" "]" nil nil include-positions)))
 	   (p (if (listp triplet) (car triplet) triplet)))
       (if non-exist
 	  ;; This may be a triplet of (path start-pos end-pos) or just path
@@ -1541,18 +1547,6 @@ result is abbreviated relative to the caller's buffer directory."
 		  shortened-path
 		  (line-number-at-pos (point) t)
 		  (current-column)))))))
-
-(defun hpath:find-koutline-reference (path start)
-  "Find a potential koutline reference, PATH, with ref at START position."
-  ;; If is a koutline reference with an =idstamp, then update reference
-  ;; relative label if need be; this may be in a different buffer than the
-  ;; current one.  Otherwise, just find the path.
-  (let ((kotl-flag (string-match-p "\\.kotl\\([:#]\\|\\'\\)" path))
-        (obuf (current-buffer)))
-    (funcall (actype:elisp-symbol 'link-to-file) path)
-    (when kotl-flag
-      (save-excursion
-	(klink:update-label path start obuf)))))
 
 (defun hpath:find-noselect (filename)
   "Find but don't display FILENAME.
@@ -2268,10 +2262,9 @@ used.  Then abbreviate any remaining path."
       (setq relative-to (expand-file-name
 			 (hpath:substitute-value relative-to))
 	    path
-	    (cond ((hyperb:stack-frame '(gbut:act))
+	    (cond ((or (hyperb:stack-frame '(gbut:act))
+		       (string-equal path relative-to))
 		   path)
-		  ((string-equal path relative-to)
-		   "")
 		  ((string-equal (file-name-directory path) relative-to)
 		   (file-name-nondirectory path))
 		  (t (hpath:relative-to path relative-to)))))

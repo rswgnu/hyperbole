@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     14-Oct-26 at 13:17:41 by Bob Weiner
+;; Last-Mod:     20-Oct-26 at 00:09:10 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -949,12 +949,12 @@ the variable `hyrolo-file-list'."
 	(inserting (eq max-matches t))
 	(file-or-buf))
 
-    ;; If not called interactively when `consult' is available, then filter
-    ;; the list of files to search to only those with matches using a
-    ;; `consult-grep' call that finds just the first match in each file.
-    ;; (unless (or (not hsys-consult-flag) interactive-flag
-    ;;             (seq-filter #'bufferp files-or-bufs))
-    ;;   (setq files-or-bufs (cadr (hsys-consult--noninteractive-grep-paths files-or-bufs regexp max-matches))))
+    ;; If not called interactively and all of `files-or-bufs' have attached
+    ;; files, then filter the file list down to those files with matches
+    ;; using ripgrep or grep.
+    (unless (or interactive-flag (seq-filter #'bufferp files-or-bufs))
+      (setq files-or-bufs (cadr (hyrolo-noninteractive-grep-paths
+                                 files-or-bufs regexp))))
 
     (unless count-only
       (setq buffer-read-only nil)
@@ -3179,7 +3179,7 @@ unless `hyrolo-boolean-only-flag' is set to t (used for testing).
 This will install `markdown-mode' if any Markdown files are specified and the
 package is not installed."
   ;;  1. Ignore files without suffixes in step 2
-  (let ((file-suffixes
+  (let ((file-extensions
 	 (delq nil (mapcar (lambda (filename) (file-name-extension filename))
 			   (hyrolo-get-file-list))))
 	file-and-major-mode-list
@@ -3192,7 +3192,7 @@ package is not installed."
       (when (delq nil (mapcar (lambda (suffix)
 				(string-match-p (concat "\\(?:" hyrolo-markdown-suffix-regexp "\\)$")
 						suffix))
-			      file-suffixes))
+			      file-extensions))
 
 	;;  4. then install markdown-mode.
 	(hyrolo-install-markdown-mode)))
@@ -3414,6 +3414,45 @@ Any non-nil value returned is a list of (<entry-line> <entry-source>)."
 		(setq entry-line (buffer-substring-no-properties line-start line-end))
 		(put-text-property 0 1 :hyrolo-line-entry-column col-num entry-line)
 		(list entry-line entry-source)))))))))
+
+(defun hyrolo-noninteractive-grep-paths (paths regexp)
+  "Non-interactively search PATHS for any REGEXP match with consult grep.
+Return a list of (REGEXP (<paths-with-matches)).  PATHS may contain
+environment and Lisp variable references and wildcards when
+`file-expand-wildcards' is non-nil.
+
+Use ripgrep (rg) if available; otherwise, use plain grep."
+  (setq paths (seq-filter #'stringp paths))
+  (let* (
+         ;; Ensure any env or lisp variables in paths are replaced so
+         ;; grep does not ignore them.
+         (expanded-paths (mapcar #'expand-file-name
+				 (hpath:expand-list
+				  paths hyrolo-file-suffix-regexp)))
+	 ;; Get a list of the filenames from `expanded-paths' with any
+	 ;; `regexp' matches
+	 (newline-separated-files (ignore-errors
+				    (shell-command-to-string
+				     (concat (if (executable-find "rg")
+						 "rg" "grep")
+					     " -l \'" regexp "\' "
+					     (mapconcat (lambda (f)
+							  (concat "\"" f "\""))
+							;; Use
+							;; `copy-list' to
+							;; avoid sort
+							;; modifying
+							;;`expanded-paths'
+							(delete-dups (sort (cl-copy-list expanded-paths)
+									   #'string-lessp))
+							" ")))))
+         (matching-files (when newline-separated-files
+			   (split-string newline-separated-files "[\n\r]"))))
+
+    ;; Ensure return `matching-files' in the same order as `expanded-paths'
+    (list regexp (seq-filter (lambda (p)
+                               (member p matching-files))
+                             expanded-paths))))
 
 (define-derived-mode hyrolo-org-mode outline-mode "HyRoloOrg"
   "Basic Org mode for use in HyRolo display match searches."

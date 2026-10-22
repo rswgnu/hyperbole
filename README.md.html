@@ -1,16 +1,14 @@
 <h1
-id="gnu-hyperbole-930---the-everyday-hypertextual-information-manager">GNU
-Hyperbole 9.3.0 - The Everyday Hypertextual Information Manager</h1>
-<p>[ If you are looking for the documentation for the stable release
-look <a href="stable/hyperbole.html">here</a>.]</p>
+id="gnu-hyperbole-931---the-everyday-hypertextual-information-manager">GNU
+Hyperbole 9.3.1 - The Everyday Hypertextual Information Manager</h1>
 <p>[We work on Hyperbole as a gift to the Emacs community and request
 you send us a thank you or a testimonial describing your usage if you
 like Hyperbole to <a href="mailto:rsw@gnu.org"><a
 href="mailto:rsw@gnu.org">rsw@gnu.org</a></a>].</p>
 <ul>
 <li><a
-href="#gnu-hyperbole-930---the-everyday-hypertextual-information-manager">GNU
-Hyperbole 9.3.0 - The Everyday Hypertextual Information Manager</a>
+href="#gnu-hyperbole-931---the-everyday-hypertextual-information-manager">GNU
+Hyperbole 9.3.1 - The Everyday Hypertextual Information Manager</a>
 <ul>
 <li><a href="#reference-manual">Reference Manual</a></li>
 <li><a href="#videos">Videos</a></li>
@@ -63,16 +61,20 @@ timestamps: 00:48 to 32:42.</p></li>
 Introduction</a></p></li>
 <li><p><a href="https://emacsconf.org/2023/talks/hyperamp/">Top 10 ways
 Hyperbole amps up Emacs</a></p></li>
+<li><p><a href="https://youtu.be/o2KMvSCXwlU">Implicit Buttons: Build
+Your Hyperverse</a></p></li>
 <li><p><a href="https://youtu.be/3zG3lRmi3Zg">HyWiki: Zero Markup
 Hypertext</a></p></li>
+<li><p><a href="https://youtu.be/5Oo_KqVcLFM">HyRolo: Records are Trees,
+Not Lines</a></p></li>
 <li><p><a href="https://youtu.be/zoEht66N2PI">Introduction to
 Buttons</a></p></li>
 <li><p><a href="https://emacsconf.org/2022/talks/buttons/">Linking
 Personal Info with Implicit Buttons</a></p></li>
 <li><p><a href="https://emacsconf.org/2022/talks/hyperorg/">Powerful
 Productivity with Hyperbole and Org Mode</a></p></li>
-<li><p><a href="https://youtu.be/xdJGFdgKPFY">HyRolo, fast
-contact/hierarchical record viewer</a></p></li>
+<li><p><a href="https://youtu.be/xdJGFdgKPFY">HyRolo: Search, Retrieve
+and Insert Records, Not Lines</a></p></li>
 <li><p><a href="https://emacsconf.org/2023/talks/koutline/">Using
 Koutline for stream of thought journaling</a></p></li>
 <li><p><a href="https://emacsconf.org/2022/talks/rolodex/">Build a
@@ -92,6 +94,11 @@ implicit buttons</a></p></li>
 Emacs Hyperbole</a></p></li>
 <li><p><a href="https://www.chiply.dev/post-hyperbole-hywiki">HyWiki:
 Zero Markup Hypertext</a></p></li>
+<li><p><a
+href="https://www.chiply.dev/post-hyperbole-implicit-buttons">Implicit
+Buttons: Build Your Hyperverse</a></p></li>
+<li><p><a href="https://www.chiply.dev/post-hyperbole-hyrolo">HyRolo:
+Search, Retrieve and Insert Records, Not Lines</a></p></li>
 <li><p><a href="https://kirankp.com/blog/gnu-hyperbole/">HyWiki: My
 Favorite Part of Hyperbole</a></p></li>
 <li><p><a
@@ -283,6 +290,13 @@ Init File</a> for init file details:</p>
   ;; - nil    - no highlighting, the ‘hywiki-mode’ is disabled.
   (hywiki-mode :all)
 
+  ;; If you want to treat your Hyperbole link buttons like Org links,
+  ;; uncomment this next Lisp sexpression and then you can surround
+  ;; your Hyperbole buttons with double square brackets and get Org
+  ;; link highlighting, e.g. [[bug#8291]].
+  ;;
+  ;; (push #'hbut:activate-at-p org-open-link-functions)
+
   :bind
   (:map hyperbole-mode-map
     ;; Bind Smart Keys: {M-RET} executes `action-key' and {C-u M-RET}
@@ -303,17 +317,44 @@ Init File</a> for init file details:</p>
   ;;   nil      - In Org mode, Org controls the key.
   (hsys-org-enable-smart-keys t)
 
+  ;; HyRolo Customizations
+
+  ;; Uncomment and set `hyrolo-file-list' to a list of files,
+  ;; directories and file wildcard expressions you want to find notes,
+  ;; contacts or any hierarchical records in.  Directories are
+  ;; searched recursively and filtered to only Org, Markdown, Koutline
+  ;; and Emacs outline files.  The first entry is where HyRolo adds
+  ;; new records.  (default = '("~/.rolo.org"))
+  ;;
+  ;; (hyrolo-file-list '("~/.rolo.org" "~/org/" "~/org-roam/" "~/Documents/notes/"))
+
   ;; HyWiki Customizations
 
-  ;; Directory to store all HyWiki pages in (default = "~/hywiki/")
-  (hywiki-directory "~/hywiki/")
+  ;; Uncomment and set `hywiki-directory' to the directory to store
+  ;; all HyWiki pages in (default = "~/hywiki/").
+  ;;
+  ;; (hywiki-directory "~/hywiki/")
+
+  ;; If using these settings:
+  ;;   (hywiki-mode :all)
+  ;;   (hsys-org-enable-smart-keys t)
+  ;;
+  ;; then when Hyperbole's Action Key, {M-RET}, is pressed on any
+  ;; potential WikiWord, e.g. any capitalized word, in any text or
+  ;; programming buffer comment, it will display a page file of notes
+  ;; associated with that WikiWord, creating it if it doesn't exist.
+  ;;
+  ;; If there are major-modes where you want to disable this
+  ;; capability, uncomment the following line and add the mode names
+  ;; inside the empty list:
+  ;; (hywiki-word-create-exclude-action-key-modes '())
 
   ;; Koutliner Customizations
 
   ;; Inline image display can be toggled on/off with {C-c C-x C-v} but
   ;; if you want inline images to display all the time in Koutline
-  ;; buffers, uncomment the next line:
-  ;; (add-hook 'kotl-mode-hook 'iimage-mode)
+  ;; buffers, uncomment the next sexpression:
+  ;;   (add-hook 'kotl-mode-hook 'iimage-mode)
 
   ;; NOTE: As of Hyperbole version 9.3.0, the Koutliner uses `C-c ;'
   ;; as the prefix for mode-specific <letter> key bindings (prior
@@ -478,12 +519,15 @@ here</a> to clone the Hyperbole project tree.</p>
 <h2 id="hyperbole-components">Hyperbole Components</h2>
 <p>Hyperbole consists of six parts:</p>
 <ol type="1">
-<li><p><strong>Buttons and Smart Keys</strong>: A set of hyperbutton
-types which supply core hypertext and other behaviors. Buttons may be
-added to documents (explicit buttons) with a simple drag between
-windows, no markup language needed. Implicit buttons are patterns
-automatically recognized within text that perform actions, e.g.
-bug#24568 displays the bug status information for that bug number.</p>
+<li><p><a href="man/hyperbole.html#Buttons"><strong>Buttons</strong></a>
+<strong>and</strong> <a
+href="man/hyperbole.html#Smart-Keys"><strong>Smart Keys</strong></a></p>
+<p>Hyperbole offers a set of hyperbutton types which supply core
+hypertext and other behaviors. Buttons may be added to documents
+(explicit buttons) with a simple drag between windows, no markup
+language needed. Implicit buttons are patterns automatically recognized
+within text that perform actions, e.g. bug#24568 displays the bug status
+information for that bug number.</p>
 <p>These actions may be links or arbitrary Lisp expressions. So for
 example, you could create your own button type of Wikipedia searches
 that jumped to the named Wikipedia page whenever point was within text
@@ -502,39 +546,51 @@ Hyperbole buttons. In many popular Emacs modes, they allow you to
 perform common, sometimes complex operations without having to use a
 different key for each operation. Just press a Smart Key and the right
 thing happens;</p></li>
-<li><p><strong>Auto-Wiki Note Taker</strong>: HyWiki is a simple note
-taking system that uses Org mode and automatically highlights and turns
-each WikiWord into a hyperlink to its Wiki page or section without any
-markup.</p></li>
-<li><p><strong>Autonumbered Legal Outliner</strong>: The Koutliner is an
-advanced outliner with multi-level autonumbering and permanent ids
-attached to each outline node for use as hypertext link anchors, per
-node properties and flexible view specifications that can be embedded
-within links or used interactively;</p></li>
-<li><p><strong>Contact and Text Finder</strong>: HyRolo is a powerful,
-hierarchical contact manager and fast text record search interface with
-expand/collapse capabilities over search results for quick views. HyRolo
-is easy to learn to use since it introduces only a few new mechanisms
-and has a menu interface, which may be operated from the keyboard or the
+<li><p><a
+href="man/hyperbole.html#HyWiki"><strong>HyWiki</strong></a></p>
+<p>Hyperbole's markup-free, personal wiki system with automatic WikiWord
+highlighting and hyperlinking. It uses Org mode for note taking and adds
+automatic hyperlinking and highlighting of WikiWord references within
+wiki pages and can be set so WikiWord links appear in all text and
+programming files, WikiWords can also link to all different types of
+Emacs objects, if desired.</p></li>
+<li><p><a
+href="man/hyperbole.html#Koutliner"><strong>Koutliner</strong></a></p>
+<p>The Koutliner is an advanced outliner with multi-level autonumbering
+(alphanumeric or legal-style numbering) and permanent ids attached to
+each outline node for use as hypertext link anchors, per node properties
+and flexible view specifications that can be embedded within links or
+used interactively;</p></li>
+<li><p><a
+href="man/hyperbole.html#HyRolo"><strong>HyRolo</strong></a></p>
+<p>HyRolo is a fast, powerful, hierarchical record full-text search and
+edit interface with expand/collapse capabilities over search results for
+quick views. It can be used for contact or note management. It is easy
+to learn to use since it introduces only a few new mechanisms and has a
+menu interface, which may be operated from the keyboard or the
 mouse.</p>
 <p><img src="man/im/menu-rolo.png" alt="HyRolo Menubar Menu" /></p></li>
-<li><p><strong>Screen Control</strong>: HyControl is the fastest,
-easiest-to-use window and frame control available for GNU Emacs. With
-just a few keystrokes, you can shift from increasing a window's height
-by 5 lines to moving a frame by 220 pixels or immediately moving it to a
-screen corner. Text in each window or frame may be enlarged or shrunk
-(zoomed) for easy viewing, plus many other features;</p>
+<li><p><a
+href="man/hyperbole.html#HyControl"><strong>HyControl</strong></a></p>
+<p>HyControl is the fastest, easiest-to-use window and frame (screen)
+control available for GNU Emacs. With just a few keystrokes, you can
+shift from increasing a window's height by 5 lines to moving a frame by
+220 pixels or immediately moving it to a screen corner. Text in each
+window or frame may be enlarged or shrunk (zoomed) for easy viewing,
+plus many other features;</p>
 <p>The broader vision for HyControl is to support persistent window and
 frame configurations as link targets. Then a user will be able to create
 the views of information he wants and store them as links for rapid
 display. Work remains to implement this feature but it helps explain the
 connection of HyControl to the rest of Hyperbole;</p></li>
-<li><p><strong>Programming Library</strong>: a set of programming
-library classes for system developers who want to integrate Hyperbole
-with another user interface or as a back-end to a distinct system. (All
-of Hyperbole is written in Emacs Lisp for ease of modification.
-Hyperbole has been engineered for real-world usage and is well
-structured).</p></li>
+<li><p><a
+href="man/hyperbole.html#Embedding-Hyperbole"><strong>Programming
+Library</strong></a></p>
+<p>Hyperbole includes a set of programming library classes for system
+developers who want to integrate Hyperbole with another user interface
+or as a back-end to a distinct system. (All of Hyperbole is written in
+Emacs Lisp for ease of modification. Hyperbole has been engineered for
+real-world usage and is well structured).</p></li>
 </ol>
 <p>We find Hyperbole's parts are more powerful as one package, i.e. the
 sum is greater than the parts, so we don't offer them separately.
@@ -601,7 +657,10 @@ favorite documentation format.</p>
 documentation.</p>
 <p>Linkage of code and design documents. Jumping to the definition of an
 identifier from its use within code or its reference within
-documentation.</p></li>
+documentation.</p>
+<p><em>Note Taking</em> Use WikiWords to organize your notes and then
+have references (without delimiters) to them throughout your files
+automatically hyperlink back to notes or sections within notes.</p></li>
 <li><p><em>Brainstorming</em> Capture of ideas and then quick
 reorganization with the Hyperbole Koutliner. Link to related ideas,
 eliminating the need to copy and paste information into a single

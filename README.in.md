@@ -1,7 +1,4 @@
-# GNU Hyperbole 9.3.0 - The Everyday Hypertextual Information Manager
-
-[ If you are looking for the documentation for the stable release look
-[here](stable/hyperbole.html).]
+# GNU Hyperbole 9.3.1 - The Everyday Hypertextual Information Manager
 
 [We work on Hyperbole as a gift to the Emacs community and request you
  send us a thank you or a testimonial describing your usage if you like
@@ -13,8 +10,8 @@
 
 ## Reference Manual
 
-Hyperbole has many features you can explore interactively or by reading sections of
-the reference manual:
+Hyperbole has many features you can explore interactively or by reading
+sections of the reference manual:
 
    - [Browse Hyperbole Web Manual](man/hyperbole.html)
 
@@ -28,18 +25,23 @@ If you prefer video introductions, visit the videos linked to below;
 otherwise, skip to the next section.
 
    - [Overview and Demo](https://youtu.be/WKwZHSbHmPg)
-      Long video that covers most of Hyperbole;
-      Hyperlink timestamps to watch each section
+      Long video that covers most of Hyperbole; Hyperlink timestamps to
+      watch each section
 
    - [Unscripted Hyperbole Demo at EmacsATX](https://youtu.be/iuwn8GpRj7w)
-      On-the-fly demo of Hyperbole subsystems, showing broad capabilities and
-      how it differs from Org mode.  Watch demo from timestamps: 00:48 to 32:42.
+      On-the-fly demo of Hyperbole subsystems, showing broad
+      capabilities and how it differs from Org mode.  Watch demo from
+      timestamps: 00:48 to 32:42.
 
    - [Quick Introduction](https://youtu.be/K1MNUctggwI)
 
    - [Top 10 ways Hyperbole amps up Emacs](https://emacsconf.org/2023/talks/hyperamp/)
 
+   - [Implicit Buttons: Build Your Hyperverse](https://youtu.be/o2KMvSCXwlU)
+
    - [HyWiki: Zero Markup Hypertext](https://youtu.be/3zG3lRmi3Zg)
+
+   - [HyRolo: Records are Trees, Not Lines](https://youtu.be/5Oo_KqVcLFM)
 
    - [Introduction to Buttons](https://youtu.be/zoEht66N2PI)
 
@@ -47,7 +49,7 @@ otherwise, skip to the next section.
 
    - [Powerful Productivity with Hyperbole and Org Mode](https://emacsconf.org/2022/talks/hyperorg/)
 
-   - [HyRolo, fast contact/hierarchical record viewer](https://youtu.be/xdJGFdgKPFY)
+   - [HyRolo: Search, Retrieve and Insert Records, Not Lines](https://youtu.be/xdJGFdgKPFY)
 
    - [Using Koutline for stream of thought journaling](https://emacsconf.org/2023/talks/koutline/)
 
@@ -66,6 +68,9 @@ otherwise, skip to the next section.
    - [The Emacs Hyperbole](https://mike.hostetlerhome.com/emacs-hyperbole)
 
    - [HyWiki: Zero Markup Hypertext](https://www.chiply.dev/post-hyperbole-hywiki)
+   - [Implicit Buttons: Build Your Hyperverse](https://www.chiply.dev/post-hyperbole-implicit-buttons)
+
+   - [HyRolo: Search, Retrieve and Insert Records, Not Lines](https://www.chiply.dev/post-hyperbole-hyrolo)
 
    - [HyWiki: My Favorite Part of Hyperbole](https://kirankp.com/blog/gnu-hyperbole/)
 
@@ -91,73 +96,74 @@ otherwise, skip to the next section.
 
 ## Summary
 
-`GNU Hyperbole` (pronounced Ga-new Hi-per-bo-lee), or just `Hyperbole`, is
-like Markdown for hypertext.  Hyperbole automatically recognizes dozens of
-common, pre-existing patterns in any buffer regardless of mode and can
-instantly activate them as hyperbuttons with a single key: email addresses,
-URLs, grep -n outputs, programming backtraces, sequences of Emacs keys,
-programming identifiers, Texinfo and Info cross-references, Org links,
-Markdown links and on and on.  All you do is load Hyperbole and then your
-text comes to life with no extra effort or complex formatting.
+`GNU Hyperbole` (pronounced Ga-new Hi-per-bo-lee), or just `Hyperbole`,
+is like Markdown for hypertext.  Hyperbole automatically recognizes
+dozens of common, pre-existing patterns in any buffer regardless of mode
+and can instantly activate them as hyperbuttons with a single key: email
+addresses, URLs, grep -n outputs, programming backtraces, sequences of
+Emacs keys, programming identifiers, Texinfo and Info cross-references,
+Org links, Markdown links and on and on.  All you do is load Hyperbole
+and then your text comes to life with no extra effort or complex
+formatting.
 
-Hyperbole includes easy-to-use, powerful hypertextual button types without
-the need to learn a markup language.  Hyperbole's button types are written
-in Lisp and can be wholly independent of the web, i.e. web links are one
-type of Hyperbole link, not fundamental to its link architecture.  However,
-Hyperbole is a great assistant when editing HTML or Javascript or when
-browsing web pages and links.
+Hyperbole includes easy-to-use, powerful hypertextual button types
+without the need to learn a markup language.  Hyperbole's button types
+are written in Lisp and can be wholly independent of the web, i.e. web
+links are one type of Hyperbole link, not fundamental to its link
+architecture.  However, Hyperbole is a great assistant when editing HTML
+or Javascript or when browsing web pages and links.
 
-Hyperbole comes pre-built with most of the implicit button types you will
-need but with a little extra effort and a few lines of code (or even just a
-few words), you can define your own implicit button types to recognize your
-specific buttons and then activate them anywhere in Emacs.  You press a
-single key, {M-RET} by default, on any kind of Hyperbole button to activate
-it, so you can rely on your muscle memory and let the computer do the hard
-work of figuring out what to do.  {C-u M-RET} shows you what any button will
-do in any context before you activate it, so you can always be sure of what
-you are doing when needed or if some emails you a button (you can do that
-too).
+Hyperbole comes pre-built with most of the implicit button types you
+will need but with a little extra effort and a few lines of code (or
+even just a few words), you can define your own implicit button types to
+recognize your specific buttons and then activate them anywhere in
+Emacs.  You press a single key, {M-RET} by default, on any kind of
+Hyperbole button to activate it, so you can rely on your muscle memory
+and let the computer do the hard work of figuring out what to do.  {C-u
+M-RET} shows you what any button will do in any context before you
+activate it, so you can always be sure of what you are doing when needed
+or if some emails you a button (you can do that too).
 
-Hyperbole is something to be experienced and interacted with, not understood
-from reading alone.  It installs normally as a single Emacs package with no
-dependencies outside of standard Emacs libraries.  Most of Hyperbole is a
-single global minor mode that you can activate and deactivate at will.  And
-it can be uninstalled quickly as well if need be, so there is no risk to
-giving it a spin.
+Hyperbole is something to be experienced and interacted with, not
+understood from reading alone.  It installs normally as a single Emacs
+package with no dependencies outside of standard Emacs libraries.  Most
+of Hyperbole is a single global minor mode that you can activate and
+deactivate at will.  And it can be uninstalled quickly as well if need
+be, so there is no risk to giving it a spin.
 
-Once you have it installed and activated {C-u M-x hyperbole-mode RET}, try
-the interactive demo with {C-h h d d}.  In fact, if you have Hyperbole
-loaded, you can press {M-RET} inside any of the brace delimited series of
-keys you see in this document and it will execute them on-the-fly (easy
-keyboard-macro style buttons in any text).
+Once you have it installed and activated {C-u M-x hyperbole-mode RET},
+try the interactive demo with {C-h h d d}.  In fact, if you have
+Hyperbole loaded, you can press {M-RET} inside any of the brace
+delimited series of keys you see in this document and it will execute
+them on-the-fly (easy keyboard-macro style buttons in any text).
 
-Hyperbole can dramatically increase your productivity and greatly reduce the
-number of keyboard/mouse keys you'll need to work efficiently.
+Hyperbole can dramatically increase your productivity and greatly reduce
+the number of keyboard/mouse keys you'll need to work efficiently.
 
 In short, Hyperbole lets you:
 
-   1. Quickly create hyperlink buttons either from the keyboard or by dragging
-      between a source and destination window with a mouse button depressed.
-      Later, activate buttons by pressing/clicking on them or by giving the
-      name of the button.
+   1. Quickly create hyperlink buttons either from the keyboard or by
+      dragging between a source and destination window with a mouse
+      button depressed.  Later, activate buttons by pressing/clicking on
+      them or by giving the name of the button.
 
    2. Activate many kinds of `implicit buttons` recognized by context
-      within text buffers, e.g. URLs, grep output lines, and git commits.
-      A single key or mouse button automatically does the right thing in
-      dozens of contexts; just press and go.
+      within text buffers, e.g. URLs, grep output lines, and git
+      commits.  A single key or mouse button automatically does the
+      right thing in dozens of contexts; just press and go.
 
 <img src="man/im/action-key-animation.gif" alt="Hyperbole Animation of Action Key Contexts">
 
-   3. Build outlines with multi-level numbered outline nodes, e.g. 1.4.8.6,
-      that all renumber automatically as any node or tree is moved in the
-      outline.  Each node also has a permanent hyperlink anchor that you can
-      reference from any other node;
+   3. Build outlines with multi-level numbered outline nodes,
+      e.g. 1.4.8.6, that all renumber automatically as any node or tree
+      is moved in the outline.  Each node also has a permanent hyperlink
+      anchor that you can reference from any other node;
 
-   4. Manage all your contacts or record-based, unstructured nodes quickly
-      with hierarchical categories; each entry can have embedded
+   4. Manage all your contacts or record-based, unstructured nodes
+      quickly with hierarchical categories; each entry can have embedded
       hyperbuttons of any type.  Or create an archive of documents with
-      hierarchical entries and use the same search mechanism to quickly find
-      any matching entry;
+      hierarchical entries and use the same search mechanism to quickly
+      find any matching entry;
 
    5. Use single keys to easily manage your Emacs windows or frames and
       quickly retrieve saved window and frame configurations;
@@ -165,50 +171,49 @@ In short, Hyperbole lets you:
    6. Search for things in your current buffers, in a directory tree or
       across major web search engines with the touch of a few keys.
 
-The common thread in all these features is making retrieval,
-management and display of information fast and easy.  That is
-Hyperbole's purpose.  It may be broad but it works amazingly well.  If
-it is textual information, Hyperbole can work with it.  In contrast to
-Org mode, Hyperbole works across all Emacs modes and speeds your work
-by turning all kinds of references into clickable hyperlinks and
-allowing you to create new hyperlinks by dragging between two windows.
-The [Hyperbole wiki page](https://www.emacswiki.org/emacs/Hyperbole)
-explains the many ways it differs from and is complementary to Org
-mode.  Hyperbole is designed to work with Org mode, so use them both
-across your tasks.
+The common thread in all these features is making retrieval, management
+and display of information fast and easy.  That is Hyperbole's purpose.
+It may be broad but it works amazingly well.  If it is textual
+information, Hyperbole can work with it.  In contrast to Org mode,
+Hyperbole works across all Emacs modes and speeds your work by turning
+all kinds of references into clickable hyperlinks and allowing you to
+create new hyperlinks by dragging between two windows.  The [Hyperbole
+wiki page](https://www.emacswiki.org/emacs/Hyperbole) explains the many
+ways it differs from and is complementary to Org mode.  Hyperbole is
+designed to work with Org mode, so use them both across your tasks.
 
-Hyperbole allows hypertext buttons to be embedded within unstructured and
-structured files, mail messages and news articles.  It offers intuitive
-keyboard and mouse-based control of information display within multiple
-windows.  It also provides point-and-click access to World-Wide Web URLs,
-Info manuals, ftp archives, etc.
+Hyperbole allows hypertext buttons to be embedded within unstructured
+and structured files, mail messages and news articles.  It offers
+intuitive keyboard and mouse-based control of information display within
+multiple windows.  It also provides point-and-click access to World-Wide
+Web URLs, Info manuals, ftp archives, etc.
 
-Hyperbole works well on GNU Emacs 28 or above.  It is designed and written
-by Bob Weiner.  It is maintained by him and Mats Lidell.  Its main
-distribution site is: <https://www.gnu.org/software/hyperbole/>.  If any
-term in here is new or unfamiliar to you, you can look it up in the
-[Hyperbole Glossary](man/hyperbole.html#Glossary).
+Hyperbole works well on GNU Emacs 28 or above.  It is designed and
+written by Bob Weiner.  It is maintained by him and Mats Lidell.  Its
+main distribution site is: <https://www.gnu.org/software/hyperbole/>.
+If any term in here is new or unfamiliar to you, you can look it up in
+the [Hyperbole Glossary](man/hyperbole.html#Glossary).
 
 Hyperbole is available for [download and installation](#installation)
 through the GNU Emacs package manager.
 
 Unlock the power of GNU Hyperbole to make your information work for you.
-One system.  One language.  One manual.  One solution.  Learn Hyperbole and
-start moving further, faster.
+One system.  One language.  One manual.  One solution.  Learn Hyperbole
+and start moving further, faster.
 
 ## Upgrading
 
 To upgrade an existing Hyperbole installation, invoke the Emacs Package
-Manager with {M-x list-packages RET}, then use the {U} key followed by the
-{x} key to upgrade all out-of-date packages, Hyperbole among them.  Then
-skip to the [Invocation](#invocation) section.
+Manager with {M-x list-packages RET}, then use the {U} key followed by
+the {x} key to upgrade all out-of-date packages, Hyperbole among them.
+Then skip to the [Invocation](#invocation) section.
 
 ## Installation
 
-Once you have Emacs set up at your site, GNU Hyperbole may be
-installed by using the Emacs Package Manager.  If you are not
-familiar with it, see the Packages section of the GNU Emacs Manual,
-[Emacs Packages](https://www.gnu.org/software/emacs/manual/html_node/emacs/Packages.html).
+Once you have Emacs set up at your site, GNU Hyperbole may be installed
+by using the Emacs Package Manager.  If you are not familiar with it,
+see the Packages section of the GNU Emacs Manual, [Emacs
+Packages](https://www.gnu.org/software/emacs/manual/html_node/emacs/Packages.html).
 
 To download and install the Hyperbole package, you should add the
 following use-package expression into your personal Emacs initialization
@@ -218,18 +223,19 @@ file, see [Emacs Init File](https://www.gnu.org/software/emacs/manual/html_node/
     [man/use-package](man/use-package)
 ```
 
-Now save the init file and restart Emacs.  Hyperbole will be downloaded and
-compiled for use with your version of Emacs; give it a minute or two.  You
-may see a few compilation warnings but these can be safely ignored and
-have no impact on Hyperbole's performance.
+Now save the init file and restart Emacs.  Hyperbole will be downloaded
+and compiled for use with your version of Emacs; give it a minute or
+two.  You may see a few compilation warnings but these can be safely
+ignored and have no impact on Hyperbole's performance.
 
 
 ## Invocation
 
-Once Hyperbole has been installed for use at your site and loaded into your
-Emacs session, it is ready for use.  You will see a Hyperbole menu on your
-menubar and 'Hypb' in the minor-mode section of your modeline.  {C-h h} will
-display a Hyperbole menu in the minibuffer for quick keyboard-based selection.
+Once Hyperbole has been installed for use at your site and loaded into
+your Emacs session, it is ready for use.  You will see a Hyperbole menu
+on your menubar and 'Hypb' in the minor-mode section of your modeline.
+{C-h h} will display a Hyperbole menu in the minibuffer for quick
+keyboard-based selection.
 
 You can invoke Hyperbole commands in one of three ways:
 
@@ -237,13 +243,13 @@ You can invoke Hyperbole commands in one of three ways:
 
    ![Hyperbole Menubar Menu](man/im/menu-hyperbole.png)
 
-   type {C-h h} or {M-x hyperbole RET} to bring up the Hyperbole main menu
-   in the minibuffer window, for fast keyboard or mouse-based selection;
-   select an item from this menu by typing the item's first letter; use {q}
-   to quit from the menu.
+   type {C-h h} or {M-x hyperbole RET} to bring up the Hyperbole main
+   menu in the minibuffer window, for fast keyboard or mouse-based
+   selection; select an item from this menu by typing the item's first
+   letter; use {q} to quit from the menu.
 
-   use a specific Hyperbole command such as an Action Key click {M-RET} on
-   a pathname to display the associated file or directory.
+   use a specific Hyperbole command such as an Action Key click {M-RET}
+   on a pathname to display the associated file or directory.
 
 Use {C-h h d d} for an interactive demonstration of standard Hyperbole
 button capabilities.
@@ -260,26 +266,27 @@ system, use {C-h h s w} for window control or {C-h h s f} for frame
 control.  {t} switches between window and frame control once in one of
 them.  Hyperbole also binds {C-c \} for quick access to HyControl's
 window control menu if it was not already bound prior to Hyperbole's
-initialization.  A long video demonstrating many of HyControl's
-features is available at https://youtu.be/M3-aMh1ccJk.
+initialization.  A long video demonstrating many of HyControl's features
+is available at https://youtu.be/M3-aMh1ccJk.
 
 ## Hyperbole Manual
 
 The above are the best interactive ways to learn about Hyperbole.
 Hyperbole also includes the Hyperbole Manual, a full reference manual,
-not a simple introduction.  It is included in the "man/" subdirectory
-of the Hyperbole package directory in four forms:
+not a simple introduction.  It is included in the "man/" subdirectory of
+the Hyperbole package directory in four forms:
 
 [hyperbole.info](man/hyperbole.info)   - online Info browser version
 [hyperbole.html](man/hyperbole.html)   - web version
 [hyperbole.pdf](man/hyperbole.pdf)     - printable version
 [hyperbole.texi](man/hyperbole.texi)   - source version
 
-The Hyperbole package installation places the Info version of this manual
-where needed and adds an entry for Hyperbole into the Info directory under
-the Emacs category.  {C-h h d i} will let you browse the manual.  For web
-browsing, point your browser at "${hyperb:dir}/man/hyperbole.html",
-wherever the Hyperbole package directory is on your system; often this is:
+The Hyperbole package installation places the Info version of this
+manual where needed and adds an entry for Hyperbole into the Info
+directory under the Emacs category.  {C-h h d i} will let you browse the
+manual.  For web browsing, point your browser at
+"${hyperb:dir}/man/hyperbole.html", wherever the Hyperbole package
+directory is on your system; often this is:
 "~/.emacs.d/elpa/hyperbole-${hyperb:version}/".
 
 
@@ -297,8 +304,8 @@ wherever the Hyperbole package directory is on your system; often this is:
 
 ## Ftp and Git Repository Downloads
 
-To inspect the Hyperbole source code online rather than installing it for
-use (which will also give you the source code), open a web page to:
+To inspect the Hyperbole source code online rather than installing it
+for use (which will also give you the source code), open a web page to:
 
    - https://git.savannah.gnu.org/cgit/hyperbole.git/tree/
 
@@ -308,32 +315,34 @@ Alternatively, you may download a tar.gz source archive from either:
 
    - http://ftpmirror.gnu.org/hyperbole/
 
-which will find the closest mirror of the GNU ftp site and show it to you.
+which will find the closest mirror of the GNU ftp site and show it to
+you.
 
 If you want to follow along with Hyperbole development and maintain a
-copy/clone of the current version-controlled git tree, use a
-[command listed here](https://savannah.gnu.org/git/?group=hyperbole)
-to clone the Hyperbole project tree.
+copy/clone of the current version-controlled git tree, use a [command
+listed here](https://savannah.gnu.org/git/?group=hyperbole) to clone the
+Hyperbole project tree.
 
 ## Hyperbole Components
 
 Hyperbole consists of six parts:
 
-   1.  **Buttons and Smart Keys**: A set of hyperbutton types which supply
-       core hypertext and other behaviors.  Buttons may be added to
-       documents (explicit buttons) with a simple drag between windows,
-       no markup language needed.  Implicit buttons are patterns
-       automatically recognized within text that perform actions,
-       e.g. bug#24568 displays the bug status information for that bug
-       number.
+   1.  [**Buttons**](man/hyperbole.html#Buttons) **and** [**Smart Keys**](man/hyperbole.html#Smart-Keys)
 
-       These actions may be links or arbitrary Lisp expressions.  So
-       for example, you could create your own button type of
-       Wikipedia searches that jumped to the named Wikipedia page
-       whenever point was within text of the form [wp<search term>].
-       You define the pattern so {<search term>} might do the same
-       thing if you preferred.  And this works within any Emacs
-       buffer you want it to, regardless of major or minor mode.
+       Hyperbole offers a set of hyperbutton types which supply core
+       hypertext and other behaviors.  Buttons may be added to documents
+       (explicit buttons) with a simple drag between windows, no markup
+       language needed.  Implicit buttons are patterns automatically
+       recognized within text that perform actions, e.g. bug#24568
+       displays the bug status information for that bug number.
+
+       These actions may be links or arbitrary Lisp expressions.  So for
+       example, you could create your own button type of Wikipedia
+       searches that jumped to the named Wikipedia page whenever point
+       was within text of the form [wp<search term>].  You define the
+       pattern so {<search term>} might do the same thing if you
+       preferred.  And this works within any Emacs buffer you want it
+       to, regardless of major or minor mode.
 
        Buttons are accessed by clicking on them or referenced by name
        (global buttons), so they can be activated regardless of what is
@@ -341,41 +350,51 @@ Hyperbole consists of six parts:
        those familiar with Emacs Lisp can prototype and deliver new
        types quickly with just a few lines of code.
 
-       Hyperbole includes two special `Smart Keys', the Action Key
-       and the Assist Key, that perform an extensive array of
+       Hyperbole includes two special `Smart Keys', the Action Key and
+       the Assist Key, that perform an extensive array of
        context-sensitive operations across emacs usage, including
        activating and showing help for Hyperbole buttons.  In many
        popular Emacs modes, they allow you to perform common, sometimes
        complex operations without having to use a different key for each
        operation.  Just press a Smart Key and the right thing happens;
 
-   2.  **Auto-Wiki Note Taker**: HyWiki is a simple note taking system
-       that uses Org mode and automatically highlights and turns each
-       WikiWord into a hyperlink to its Wiki page or section without any
-       markup.
+   2.  [**HyWiki**](man/hyperbole.html#HyWiki)
 
-   3.  **Autonumbered Legal Outliner**: The Koutliner is an advanced
-       outliner with multi-level autonumbering and permanent ids
-       attached to each outline node for use as hypertext link
-       anchors, per node properties and flexible view specifications
-       that can be embedded within links or used interactively;
+       Hyperbole's markup-free, personal wiki system with automatic
+       WikiWord highlighting and hyperlinking.  It uses Org mode for
+       note taking and adds automatic hyperlinking and highlighting of
+       WikiWord references within wiki pages and can be set so WikiWord
+       links appear in all text and programming files, WikiWords can
+       also link to all different types of Emacs objects, if desired.
 
-   4.  **Contact and Text Finder**: HyRolo is a powerful, hierarchical
-       contact manager and fast text record search interface with
-       expand/collapse capabilities over search results for quick
-       views.  HyRolo is easy to learn to use since it introduces only
+   3.  [**Koutliner**](man/hyperbole.html#Koutliner)
+
+       The Koutliner is an advanced outliner with multi-level
+       autonumbering (alphanumeric or legal-style numbering) and
+       permanent ids attached to each outline node for use as hypertext
+       link anchors, per node properties and flexible view
+       specifications that can be embedded within links or used
+       interactively;
+
+   4.  [**HyRolo**](man/hyperbole.html#HyRolo)
+
+       HyRolo is a fast, powerful, hierarchical record full-text search
+       and edit interface with expand/collapse capabilities over search
+       results for quick views.  It can be used for contact or note
+       management.  It is easy to learn to use since it introduces only
        a few new mechanisms and has a menu interface, which may be
        operated from the keyboard or the mouse.
 
 	   ![HyRolo Menubar Menu](man/im/menu-rolo.png)
 
-   5.  **Screen Control**: HyControl is the fastest, easiest-to-use
-       window and frame control available for GNU Emacs.  With just a
-       few keystrokes, you can shift from increasing a window's height
-       by 5 lines to moving a frame by 220 pixels or immediately
-       moving it to a screen corner.  Text in each window or frame may
-       be enlarged or shrunk (zoomed) for easy viewing, plus many
-       other features;
+   5.  [**HyControl**](man/hyperbole.html#HyControl)
+
+       HyControl is the fastest, easiest-to-use window and frame
+       (screen) control available for GNU Emacs.  With just a few
+       keystrokes, you can shift from increasing a window's height by 5
+       lines to moving a frame by 220 pixels or immediately moving it to
+       a screen corner.  Text in each window or frame may be enlarged or
+       shrunk (zoomed) for easy viewing, plus many other features;
 
 	   The broader vision for HyControl is to support persistent
    	   window and frame configurations as link targets.  Then a user
@@ -384,29 +403,31 @@ Hyperbole consists of six parts:
    	   implement this feature but it helps explain the connection of
    	   HyControl to the rest of Hyperbole;
 
-   6.  **Programming Library**: a set of programming library classes for
+   6.  [**Programming Library**](man/hyperbole.html#Embedding-Hyperbole)
+
+       Hyperbole includes a set of programming library classes for
        system developers who want to integrate Hyperbole with another
        user interface or as a back-end to a distinct system.  (All of
        Hyperbole is written in Emacs Lisp for ease of modification.
        Hyperbole has been engineered for real-world usage and is well
        structured).
 
-We find Hyperbole's parts are more powerful as one package, i.e. the
-sum is greater than the parts, so we don't offer them separately.
-Hyperbole is free software, however, so you may modify it as you see
-fit.
+We find Hyperbole's parts are more powerful as one package, i.e. the sum
+is greater than the parts, so we don't offer them separately.  Hyperbole
+is free software, however, so you may modify it as you see fit.
 
 
 ## Hyperbole Buttons
 
-A Hyperbole hypertext user works with buttons; he may create, modify, move
-or delete buttons.  Each button performs a specific action, such as linking
-to a file or executing a shell command.
+A Hyperbole hypertext user works with buttons; he may create, modify,
+move or delete buttons.  Each button performs a specific action, such as
+linking to a file or executing a shell command.
 
 There are three categories of Hyperbole buttons:
 
    1.  *Explicit Buttons*
-          created by Hyperbole, accessible from within a single document;
+          created by Hyperbole, accessible from within a single
+          document;
 
    2.  *Global Buttons*
           created by Hyperbole, accessible anywhere within a user's
@@ -418,18 +439,18 @@ There are three categories of Hyperbole buttons:
           single document.  Hyperbole recognizes implicit buttons by
           contextual patterns given in their type specifications.
 
-Hyperbole buttons may be clicked upon with a mouse to activate them or to
-describe their actions.  Thus, a user can always check how a button will act
-before activating it.  Buttons may also be activated from a keyboard.  (In
-fact, virtually all Hyperbole operations, including menu usage, may be
-performed from any standard terminal interface, so one can use it on distant
-machines that provide limited display access).
+Hyperbole buttons may be clicked upon with a mouse to activate them or
+to describe their actions.  Thus, a user can always check how a button
+will act before activating it.  Buttons may also be activated from a
+keyboard.  (In fact, virtually all Hyperbole operations, including menu
+usage, may be performed from any standard terminal interface, so one can
+use it on distant machines that provide limited display access).
 
 Hyperbole does not enforce any particular hypertext or information
 management model, but instead allows you to organize your information in
-large or small chunks as you see fit, organizing each bit as time allows.
-The Hyperbole Koutliner and HyRolo tools organize textual hierarchies and
-may also contain links to external information sources.
+large or small chunks as you see fit, organizing each bit as time
+allows.  The Hyperbole Koutliner and HyRolo tools organize textual
+hierarchies and may also contain links to external information sources.
 
 ## Important Features
 
@@ -438,32 +459,31 @@ Some of Hyperbole's most important features include:
  - Buttons may link to information or may execute commands, such as
    computing a complex value or communicating with external programs;
 
- - Buttons are quick and easy to create with no programming nor
-   markup needed.  One simply drags between a button source location
-   and a link destination to create or to modify a link button.  The
-   same result can be achieved from the keyboard.
+ - Buttons are quick and easy to create with no programming nor markup
+   needed.  One simply drags between a button source location and a link
+   destination to create or to modify a link button.  The same result
+   can be achieved from the keyboard.
 
  - Buttons may be embedded within email messages and activated from
    Emacs mail readers; hyperlinks may include variables so that they
    work at different locations where the variable settings differ;
 
  - Koutlines allow rapid browsing, editing and movement of chunks of
-   information organized into trees (hierarchies) and offer links
-   that include viewspecs which determine how documents are to be
-   displayed, e.g. show just the first two lines of all levels in a
-   Koutline;
+   information organized into trees (hierarchies) and offer links that
+   include viewspecs which determine how documents are to be displayed,
+   e.g. show just the first two lines of all levels in a Koutline;
 
- - Other hypertext and information retrieval systems may be
-   encapsulated under a Hyperbole user interface very easily.
+ - Other hypertext and information retrieval systems may be encapsulated
+   under a Hyperbole user interface very easily.
 
 ## Hyperbole Uses
 
 Typical Hyperbole applications include:
 
  - *Personal Information Management*
-   Overlapping link paths provide a variety of views into an
-   information space.  A single key press activates buttons
-   regardless of their types, making navigation easy.
+   Overlapping link paths provide a variety of views into an information
+   space.  A single key press activates buttons regardless of their
+   types, making navigation easy.
 
    A search facility locates buttons in context and permits quick
    selection.
@@ -476,6 +496,11 @@ Typical Hyperbole applications include:
    Linkage of code and design documents.  Jumping to the definition
    of an identifier from its use within code or its reference within
    documentation.
+
+   *Note Taking*
+   Use WikiWords to organize your notes and then have references
+   (without delimiters) to them throughout your files automatically
+   hyperlink back to notes or sections within notes.
 
  - *Brainstorming*
    Capture of ideas and then quick reorganization with the Hyperbole
@@ -498,20 +523,22 @@ Typical Hyperbole applications include:
 
 See the [HY-ABOUT](HY-ABOUT) file for a description and overview of Hyperbole.
 
-See the [HY-NEWS](HY-NEWS.html) file for a summary of new features in this release.
+See the [HY-NEWS](HY-NEWS.html) file for a summary of new features in
+this release.
 
 See #Installation for installation and invocation instructions.
 
-See the [HY-COPY](HY-COPY) and [COPYING](COPYING) files for license information.
+See the [HY-COPY](HY-COPY) and [COPYING](COPYING) files for license
+information.
 
-See the [MANIFEST](MANIFEST) file for summaries of Hyperbole distribution files.
+See the [MANIFEST](MANIFEST) file for summaries of Hyperbole
+distribution files.
 
-See [FAST-DEMO](FAST-DEMO) for a demonstration of Hyperbole implicit button
-capabilities.  This is the best way to initially interactively learn about
-Hyperbole after installing it.
+See [FAST-DEMO](FAST-DEMO) for a demonstration of Hyperbole implicit
+button capabilities.  This is the best way to initially interactively
+learn about Hyperbole after installing it.
 
 Various forms of the Hyperbole are below the "man/" subdirectory.
-
 
 ## Programmer Quick Reference
 
@@ -524,7 +551,8 @@ The Hyperbole Manual is a reference manual, not a simple introduction.
 Naming conventions:
 
   - All Hyperbole-specific code files begin with an 'h', aside from the
-    Koutliner files which are in the kotl/ subdirectory and begin with a 'k'.
+    Koutliner files which are in the kotl/ subdirectory and begin with a
+    'k'.
 
   - Hyperbole user-interface files begin with 'hui-' or 'hmouse-'.
 
@@ -536,8 +564,8 @@ Most of the standard Emacs user interface for Hyperbole is located in
 [hui.el](hui.el).  Most of the Hyperbole application programming
 interface can be found in [hbut.el](hbut.el).  [hbdata.el](hbdata.el)
 encapsulates the button attribute storage implemented by Hyperbole.
-[hmail.el](hmail.el) provides a basic abstract interface for
-integrating mail readers other than Rmail into Hyperbole.
+[hmail.el](hmail.el) provides a basic abstract interface for integrating
+mail readers other than Rmail into Hyperbole.
 
 See the [Hyperbole Questions and Answers](man/hyperbole.html#Questions-and-Answers)
 appendix in the Hyperbole manual for information on how to alter the
@@ -569,55 +597,57 @@ default context-sensitive Hyperbole key bindings (Smart Keys).
 
   One of the nicest things about Hyperbole is that it's available
   everywhere. Org-mode is a mode and its features are only available in
-  Org files. For instance if you dropped into `eshell' or `ansi-term' and
-  did `ls', you can move point to any of the directory's contents, do M-RET
-  (or Shift-Button2) and jump to that file.  And that's just one example.
-  Note that this means that all Hyperbole functionality is available in
-  Org files as well.  To me, except for the Hyperbole outliner, that means
-  complementary not conflicting. It's Hyperbole *and* org-mode, not
-  Hyperbole vs. org-mode.
+  Org files. For instance if you dropped into `eshell' or `ansi-term'
+  and did `ls', you can move point to any of the directory's contents,
+  do M-RET (or Shift-Button2) and jump to that file.  And that's just
+  one example.  Note that this means that all Hyperbole functionality is
+  available in Org files as well.  To me, except for the Hyperbole
+  outliner, that means complementary not conflicting. It's Hyperbole
+  *and* org-mode, not Hyperbole vs. org-mode.
 
   Additionally, off the bat, I found it very well documented and for me
-  that's a proxy for the quality of a package.  The maintainers are quite
-  responsive.  There's plenty more functionality that I haven't uncovered yet
-  but due to the ease of installation and the quality of the documentation,
-  digging into it is actually fun.
+  that's a proxy for the quality of a package.  The maintainers are
+  quite responsive.  There's plenty more functionality that I haven't
+  uncovered yet but due to the ease of installation and the quality of
+  the documentation, digging into it is actually fun.
 
                         -- Aditya Siram
 
 -------
 
   GNU Hyperbole is a game-changer for your mental model of information
-  management and personal productivity.  Even if you don't use it you should
-  study one or two of the modules and compare them to how you solve the same
-  problem with your preferred tool of choice.  It is subtle, and subtle is one
-  of the hardest and post powerful things to reside in your mental landscape
-  these days.
+  management and personal productivity.  Even if you don't use it you
+  should study one or two of the modules and compare them to how you
+  solve the same problem with your preferred tool of choice.  It is
+  subtle, and subtle is one of the hardest and post powerful things to
+  reside in your mental landscape these days.
 
                         -- Grant Rettke__
                            Org2Blog Maintainer
 -------
 
-  For me, Emacs isn't Emacs without Hyperbole.  I have depended on Hyperbole
-  daily since 1992, when I first started using it to manage my development
-  environment.  It didn't take long before I could summon almost any
-  information I needed directly from within my editing environment with an
-  implicit button. Since I almost never have to slow down to look for
-  things--one context-dependent button usually produces exactly what I need
-  --I am able to maintain focus on the task I am working on and complete it
-  more quickly.  With its gestural interface, seamless integration with other
-  Emacs packages and incredibly useful set of core features.  I think that
-  Hyperbole is one of the best designed and most easily extensible software
-  products I have ever come across.  It is certainly the one which has made
-  the biggest improvement in my personal productivity.
+  For me, Emacs isn't Emacs without Hyperbole.  I have depended on
+  Hyperbole daily since 1992, when I first started using it to manage my
+  development environment.  It didn't take long before I could summon
+  almost any information I needed directly from within my editing
+  environment with an implicit button. Since I almost never have to slow
+  down to look for things--one context-dependent button usually produces
+  exactly what I need --I am able to maintain focus on the task I am
+  working on and complete it more quickly.  With its gestural interface,
+  seamless integration with other Emacs packages and incredibly useful
+  set of core features.  I think that Hyperbole is one of the best
+  designed and most easily extensible software products I have ever come
+  across.  It is certainly the one which has made the biggest
+  improvement in my personal productivity.
 
   My Hyperbole button file is my start page in Emacs.  It's a quickly
   searchable index with links to countless resources.  We also have a
-  library of implicit buttons that enable rapid navigation from references
-  in our code to our issue tracking system, so clicking a reference like
-  Client6502 opens the relevant conversation.  Hyperbole provides a really
-  useful set of power tools.  If Emacs is your preferred productivity
-  environment, it's definitely worth getting familiar with it.
+  library of implicit buttons that enable rapid navigation from
+  references in our code to our issue tracking system, so clicking a
+  reference like Client6502 opens the relevant conversation.  Hyperbole
+  provides a really useful set of power tools.  If Emacs is your
+  preferred productivity environment, it's definitely worth getting
+  familiar with it.
 
                         -- Chris Nuzum
                            Co-founder, Traction Softwarea, Inc.
@@ -627,24 +657,24 @@ default context-sensitive Hyperbole key bindings (Smart Keys).
   I've found Hyperbole (in conjunction with XEmacs) to be very useful
   for signal processing algorithm development.
 
-  For me, it has almost completely obsoleted the engineering notebook:
-  I keep a set of files with ideas, algorithms, and results, linked
+  For me, it has almost completely obsoleted the engineering notebook: I
+  keep a set of files with ideas, algorithms, and results, linked
   together and to the implementation in C++ files.  Using XEmacs'
-  support for embedding graphics, I've written a mode that accepts
-  image tags (formatted like HTML), and reads in GIF files to display
-  plots.  I have another program that converts the file to HTML (not
-  perfect, but adequate), so I can put any aspect of development on
-  our internal web for others to see.
+  support for embedding graphics, I've written a mode that accepts image
+  tags (formatted like HTML), and reads in GIF files to display plots.
+  I have another program that converts the file to HTML (not perfect,
+  but adequate), so I can put any aspect of development on our internal
+  web for others to see.
 
                         -- Farzin Guilak
                            Protocol Systems, Inc., Engineer
 
 -------
 
-  I am blind and have been using Hyperbole since 1992.  I used to use a PC as
-  a talking terminal attached to a UNIX system, but then I developed
-  Emacspeak which lets me use Emacs and Hyperbole from standard UNIX
-  workstations with an attached voice synthesizer.
+  I am blind and have been using Hyperbole since 1992.  I used to use a
+  PC as a talking terminal attached to a UNIX system, but then I
+  developed Emacspeak which lets me use Emacs and Hyperbole from
+  standard UNIX workstations with an attached voice synthesizer.
 
   My main uses are:
 
@@ -652,9 +682,9 @@ default context-sensitive Hyperbole key bindings (Smart Keys).
 
    2. The contact manager with Emacspeak support.
 
-   3. Explicit buttons as part of comments made about a structured document.
-      Each button jumps to the document section referred to by the comment.
-      This is very, very useful.
+   3. Explicit buttons as part of comments made about a structured
+      document.  Each button jumps to the document section referred to
+      by the comment.  This is very, very useful.
 
    4. The Hyperbole Koutliner, which I find a very useful tool.  I've
       implemented Emacspeak extensions to support it.
@@ -667,20 +697,21 @@ default context-sensitive Hyperbole key bindings (Smart Keys).
   I've been a grateful Hyperbole user for a few years now.  Hyperbole's
   flexibility and ease of use is a marvel.
 
-  Mainly, I write easy little implicit button types (and corresponding action
-  types) to make my life easier.  For example, I have an implicit button type
-  to bury certain buffers when I click at their bottoms, one that recognizes
-  a bug report record in various contexts and edits it, one that links pieces
-  of test output in a log file to the corresponding test case source code
-  (EXTREMELY helpful in interpreting test output), others that support our
-  homegrown test framework, one that handles tree dired mode the way I'd
-  like, one that completely handles wico menus (I've also overloaded the
-  wconfig actions triggered by diagonal mouse drags with wicos actions), and
-  a couple that support interaction with BBDB.
+  Mainly, I write easy little implicit button types (and corresponding
+  action types) to make my life easier.  For example, I have an implicit
+  button type to bury certain buffers when I click at their bottoms, one
+  that recognizes a bug report record in various contexts and edits it,
+  one that links pieces of test output in a log file to the
+  corresponding test case source code (EXTREMELY helpful in interpreting
+  test output), others that support our homegrown test framework, one
+  that handles tree dired mode the way I'd like, one that completely
+  handles wico menus (I've also overloaded the wconfig actions triggered
+  by diagonal mouse drags with wicos actions), and a couple that support
+  interaction with BBDB.
 
-  Other than that, I keep a global button file with 30 or so explicit buttons
-  that do various little things, and I index saved mail messages by putting
-  explicit link-to-mail buttons in an outline file.
+  Other than that, I keep a global button file with 30 or so explicit
+  buttons that do various little things, and I index saved mail messages
+  by putting explicit link-to-mail buttons in an outline file.
 
                         -- Ken Olstad
                            Cheyenne Software, Inc.
@@ -690,30 +721,33 @@ default context-sensitive Hyperbole key bindings (Smart Keys).
   In general, Hyperbole is an embeddable, highly extensible hypertext
   tool.  As such, I find it very useful. As it stands now, Hyperbole is
   particularly helpful for organizing ill-structured or loosely coupled
-  information, in part because there are few tools geared for this purpose.
-  Hyperbole also possesses a lot of potential in supporting a wider
-  spectrum of structuredness, ranging from unstructured to highly
+  information, in part because there are few tools geared for this
+  purpose.  Hyperbole also possesses a lot of potential in supporting a
+  wider spectrum of structuredness, ranging from unstructured to highly
   structured environments, as well as structural changes over time.
 
   Major Uses:
 
   * Menu interface to our own collaborative support environment called
     CoReView: This interface brings together all top-level user commands
-    into a single partitioned screen, and allows the end user to interact
-    with the system using simple mouse-clicking instead of the meta-x key.
+    into a single partitioned screen, and allows the end user to
+    interact with the system using simple mouse-clicking instead of the
+    meta-x key.
 
   * Gateway to internet resources: this includes links to major Internet
-    archive sites of various types of information. Links are made at both
-    directory and file levels.
+    archive sites of various types of information. Links are made at
+    both directory and file levels.
 
   * Alternative directory organizer: The hierarchical nature of the Unix
     file system sometimes makes it difficult to find things quickly and
     easily using directory navigational tools such as dired. Hyperbole
-    enables me to create various "profile" views of my directory tree, with
-    entries in these views referring to files anywhere in the hierarchy.
+    enables me to create various "profile" views of my directory tree,
+    with entries in these views referring to files anywhere in the
+    hierarchy.
 
-  * Organizing and viewing online documentation: using Hyperbole along with
-    Hyper-man and Info makes it truly easy to look up online documentation.
+  * Organizing and viewing online documentation: using Hyperbole along
+    with Hyper-man and Info makes it truly easy to look up online
+    documentation.
 
   * Other desktop organization tasks: including links to various mail
     folders, saved newsgroup conversation threads, online note-taker,
@@ -726,45 +760,47 @@ default context-sensitive Hyperbole key bindings (Smart Keys).
 
   Hyperbole is the first hyper-link system I've run across that is
   actually part of the environment I use regularly, namely Emacs. The
-  complete flexibility of the links is both impressive and expected -- the
-  idea of making the link itself programmable is clever, and given that one
-  assumes the full power of Emacs.  Being able to send email with buttons
-  in it is a very powerful capability.  Using ange-ftp mode, one can make
-  file references "across the world" as easily as normal file references.
+  complete flexibility of the links is both impressive and expected --
+  the idea of making the link itself programmable is clever, and given
+  that one assumes the full power of Emacs.  Being able to send email
+  with buttons in it is a very powerful capability.  Using ange-ftp
+  mode, one can make file references "across the world" as easily as
+  normal file references.
 
                         -- Mark Eichin
                            Cygnus Support
 -------
 
    I just wanted to say how much I enjoy using the Hyperbole Koutliner.
-   It is a great way to quickly construct very readable technical documents
-   that I can pass around to others.   Thanks for the great work.
+   It is a great way to quickly construct very readable technical
+   documents that I can pass around to others.  Thanks for the great
+   work.
 
                         -- Jeff Fried
                            Informix
 
 -------
 
-   The Hyperbole system provides a nice interface to exploring corners of
-   Unix that I didn't know existed before.
+   The Hyperbole system provides a nice interface to exploring corners
+   of Unix that I didn't know existed before.
 
                         -- Craig Smith
 
-
 ## Why was Hyperbole developed?
 
-Hyperbole was originally designed to aid in research aimed at Personalized
-Information production/retrieval Environments (PIEs).  Hyperbole was a
-PIE Manager that provided services to PIE Tools.  PIEmail, a mail reader was
-the only PIE Tool developed as part of this research but Hyperbole has
-greatly expanded since then and has long been a production quality toolset.
+Hyperbole was originally designed to aid in research aimed at
+Personalized Information production/retrieval Environments (PIEs).
+Hyperbole was a PIE Manager that provided services to PIE Tools.
+PIEmail, a mail reader was the only PIE Tool developed as part of this
+research but Hyperbole has greatly expanded since then and has long been
+a production quality toolset.
 
 An examination of many hypertext environments as background research did
 not turn up any that seemed suitable for the research envisioned, mainly
-due to the lack of rich, portable programmer and user environments.  We also
-tired of trying to manage our own distributed information pools with standard
-UNIX tools.  And so Hyperbole was conceived and raved about until it
-got its name.
+due to the lack of rich, portable programmer and user environments.  We
+also tired of trying to manage our own distributed information pools
+with standard UNIX tools.  And so Hyperbole was conceived and raved
+about until it got its name.
 
 Since then Hyperbole has proved indispensable at improving information
 access and organization in daily use over many years.  Why not start

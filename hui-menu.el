@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
-;; Last-Mod:     19-Jul-26 at 09:58:24 by Bob Weiner
+;; Last-Mod:     17-Oct-26 at 17:18:06 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -499,7 +499,7 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		   ["Create-File"    kfile:find t]
 		   ["View-File"      kfile:view t]
 		   "----"
-		   ["Collapse-Tree" (progn (kotl-mode:is-p)
+		   ["Collapse-Tree" (progn (kotl-mode:is)
 					   (kotl-mode:hide-tree
 					    (kcell-view:label)))
 		    (eq major-mode 'kotl-mode)]
@@ -507,7 +507,7 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		    (eq major-mode 'kotl-mode)]
 		   ["Expand-All-Trees" kotl-mode:show-all
 		    (eq major-mode 'kotl-mode)]
-		   ["Expand-Tree" (progn (kotl-mode:is-p)
+		   ["Expand-Tree" (progn (kotl-mode:is)
 					 (kotl-mode:show-tree
 					  (kcell-view:label)))
 		    (eq major-mode 'kotl-mode)]

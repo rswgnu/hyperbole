@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    22-Nov-91 at 01:37:57
-;; Last-Mod:     31-Aug-25 at 20:05:59 by Bob Weiner
+;; Last-Mod:     21-Oct-26 at 13:11:47 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -136,26 +136,31 @@ Any key sequence within the series must be a string of one of the following:
 	     ;; This excludes delimiters
 	     (key-series (car seq-and-pos))
 	     (start (cadr seq-and-pos))
+             (chr-before (char-before start))
 	     binding)
-	;; Match only when start delimiter is preceded by whitespace,
-	;; double quotes or is the 1st buffer character, so do not
-	;; match to things like ${variable}.
-	(when (or (memq (char-before start) '(nil ?\ ?\t ?\n ?\r ?\f ?\"))
-		  ;; In Texinfo, allow for @bkbd{} or @kbd{}, so an
-		  ;; alpha char preceding
-		  (and (derived-mode-p 'texinfo-mode)
-		       (= (if (char-before start)
-			      (char-syntax (char-before start))
-			    0)
-			  ?w)))
-	  (when (and (stringp key-series) (not (string-empty-p key-series)))
-	    ;; Replace any ${} internal or env vars; leave
-	    ;; $VAR untouched for the shell to evaluate.
-	    (let ((hpath:variable-regexp "\\${\\([^}]+\\)}"))
-	      (setq key-series (hpath:substitute-value key-series)))
+	;; Match only when start delimiter is preceded by whitespace, double
+	;; quotes, 2 square opening brackets (Org or MediaWiki link) or is
+	;; the 1st buffer character, so do not match to things like
+	;; ${variable}.
+	(when (and (stringp key-series) (not (string-empty-p key-series))
+                   (or (memq chr-before '(nil ?\ ?\t ?\n ?\r ?\f ?\"))
+                       ;; Within an Org or MediaWiki link
+                       (and (eq (char-before (1- start)) ?\[)
+                            (eq chr-before ?\[))
+		       ;; In Texinfo, allow for @bkbd{} or @kbd{}, so an
+		       ;; alpha char preceding
+		       (and (derived-mode-p 'texinfo-mode)
+		            (= (if chr-before
+			           (char-syntax chr-before)
+			         0)
+			       ?w))))
+	  ;; Replace any ${} internal or env vars; leave
+	  ;; $VAR untouched for the shell to evaluate.
+	  (let ((hpath:variable-regexp "\\${\\([^}]+\\)}"))
+	    (setq key-series (hpath:substitute-value key-series)))
 
-	    (setq key-series (kbd-key:normalize key-series)
-		  binding (kbd-key:binding key-series)))
+	  (setq key-series (kbd-key:normalize key-series)
+		binding (kbd-key:binding key-series))
 	  (and (stringp key-series)
 	       (or (and binding (not (integerp binding)))
 		   (kbd-key:special-sequence-p key-series))

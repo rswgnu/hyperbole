@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:     5-Oct-26 at 21:58:13
-;; Last-Mod:     16-Oct-26 at 22:03:31 by Mats Lidell
+;; Last-Mod:     22-Oct-26 at 10:16:38 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -23,7 +23,6 @@
 (defvar hypb-release-version-file-list
   '(("hversion.el" "(defconst hyperb:version \"{version}\"")
     ("HY-ABOUT" "Version {version}")
-    ("HY-ANNOUNCE" "Subject: GNU Hyperbole Major Release 9 (V{version})")
     ("hyperbole-pkg.el" "{version}" t)
     ("Makefile" "HYPB_VERSION = {version}")
     ("README.in.md" "# GNU Hyperbole {version} - The Everyday Hypertextual Information Manager")

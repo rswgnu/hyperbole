@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:      7-Oct-26 at 20:05:20 by Bob Weiner
+;; Last-Mod:     22-Oct-26 at 01:46:46 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -436,20 +436,29 @@ list item returned."
       (when (and path-buf (not existing-buf))
 	(kill-buffer path-buf)))))
 
-(defact link-to-file (path &optional point)
-  "Display a file given by PATH scrolled to optional POINT.
-If POINT is given, display the buffer with POINT at the top of
-the window or as close as possible."
+(defact link-to-file (path &optional referent-start)
+  "Display a file given by PATH scrolled to optional REFERENT-START.
+If REFERENT-START position is given, display the buffer with REFERENT-START
+at the top of the window or as close as possible."
   (interactive (hactypes:link-to-file-interactively))
-  (if path
-      (progn
+  (if (stringp path)
+      (let ((src-buf (current-buffer))
+            (src-start (point))
+            referent-buf)
 	;; Remove any double quotes and whitespace at the start and end of
 	;; the path that use within a key series may have introduced.
 	(setq path (hpath:trim path))
-	(and (hpath:find path)
-	     (integer-or-marker-p point)
-	     (progn (goto-char (min (point-max) point))
-		    (recenter 0))))
+	(when (and (setq referent-buf (hpath:find path))
+	           (integer-or-marker-p referent-start)
+                   (eq (current-buffer) referent-buf))
+	  (goto-char (min (point-max) referent-start))
+	  (recenter 0))
+        (when (string-match-p "\\.kotl\\([:#]\\|\\'\\)" path)
+          ;; If is a koutline reference with an =idstamp, then update
+          ;; reference relative label if need be; this may be in a different
+          ;; buffer than the current one.
+          (save-window-excursion
+	    (klink:update-label path src-start src-buf))))
     (hypb:error "(link-to-file): Invalid file name: \"%s\"" path)))
 
 (defact link-to-file-line (path line-num)
@@ -828,18 +837,27 @@ Optional SECTIONS-START limits toc entries to those after that point."
 SECTION is a string and can be just the leading part of a section heading."
   (interactive "sGo to section named: ")
   (when (stringp section)
-    (setq section (string-trim section))
-    (if (string-match "\\`\\(\\*+\\)[ \t]*" section)
-	(actypes::link-to-regexp-match
-	 (concat "^[ \t]*" (regexp-quote (match-string 1 section))
-		 "[ \t]*" (regexp-quote (substring section (match-end 0))))
-	 2 (current-buffer) t)
-      (actypes::link-to-regexp-match (concat "^[ \t]*" (regexp-quote section))
-				     2 (current-buffer) t))
-    (while (and (= (forward-line -1) 0)
-		(looking-at "[ \t]*[-=][-=]")))
-    (forward-line 1)
-    (recenter 0)))
+    (let (leader-chars)
+      ;; Move past the ibtype matched TOC entry so searches herein skip it
+      (forward-line 1)
+      (setq section (string-trim section))
+      (if (string-match "\\`\\([-+*o]+\\)[ \t]*" section)
+          (progn
+            (setq leader-chars (match-string 1 section))
+	    (actypes::link-to-regexp-match
+	     (concat "^[ \t]*\\("
+                     (regexp-quote (make-string (length leader-chars) ?*))
+                     "\\|"
+                     (regexp-quote (make-string (length leader-chars) ?#))
+		     "\\)[ \t]*"
+                     (regexp-quote (substring section (match-end 0))))
+	     1 (current-buffer) t))
+        (actypes::link-to-regexp-match (concat "^[ \t]*" (regexp-quote section))
+				       1 (current-buffer) t))
+      (while (and (= (forward-line -1) 0)
+		  (looking-at "[ \t]*[-=][-=]")))
+      (forward-line 1)
+      (recenter 0))))
 
 (defun hactypes:buffer-button-list ()
   "Return buttons available in current buffer."
@@ -848,13 +866,15 @@ SECTION is a string and can be just the leading part of a section heading."
      (append (ebut:list) (ibut:list)))
    (gbut:label-list)))
 
-(defact button-series (buts)
-  "Combine multiple buttons given by their labels into one series of buttons.
-Local buttons are preferred over global buttons."
+(defact button-series (but-names)
+  "Combine multiple buttons given by BUT-NAMES list into one series of buttons.
+If the button name is found in the current buffer, that button is used;
+otherwise, activate any global button with that name."
   (interactive
-   (list (completing-read-multiple "Button labels: " (hactypes:buffer-button-list)
+   (list (completing-read-multiple "Comma-separated Button labels: "
+                                   (hactypes:buffer-button-list)
                                    nil t)))
-  (dolist (b buts)
+  (dolist (b but-names)
     (let ((but (hbut:get (hbut:label-to-key b))))
       (if but
           (hbut:act but)

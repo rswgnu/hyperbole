@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     16-Oct-26 at 11:12:54 by Mats Lidell
+# Last-Mod:     22-Oct-26 at 11:01:11 by Bob Weiner
 #
 # Copyright (C) 1994-2026  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -72,6 +72,9 @@
 #
 #		Pre:
 #		    M-x hypb-release-update-version (Update all version strings except in Hyperbole.el)
+#                   make doc
+#                   make version
+#                   make pkg        # Eyeball that it looks right
 #		    -- Do all other preparations left for the release.
 #		    -- Commit and push all updates to master
 #		    make release-pre - Creates release branch, updates package version header,
@@ -135,7 +138,7 @@
 
 # This ver setup won't work under any make except GNU make, so set it manually.
 #HYPB_VERSION = "`head -3 hversion.el | tail -1 | sed -e 's/.*|\(.*\)|.*/\1/'`"
-HYPB_VERSION = 9.3.0
+HYPB_VERSION = 9.3.1
 
 # Emacs executable used to byte-compile .el files into .elc's.
 # To override which executable is used from the commandline, do something like this:
@@ -267,7 +270,7 @@ ELC_KOTL = $(EL_KOTL:.el=.elc)
 HY-TALK  = HY-TALK/.hypb HY-TALK/HYPB HY-TALK/HY-TALK.org HY-TALK/HYPERAMP.org HY-TALK/HYPERORG.org
 
 HYPERBOLE_FILES = dir info html $(EL_SRC) $(EL_KOTL) \
-	$(HY-TALK) .mailmap ChangeLog COPYING Makefile HY-ABOUT HY-ANNOUNCE \
+	$(HY-TALK) .mailmap ChangeLog COPYING Makefile HY-ABOUT \
         HY-CONCEPTS.kotl HY-NEWS HY-WHY.kotl $(wildcard hywiki/*.org) \
         DEMO DEMO-ROLO.otl FAST-DEMO MANIFEST README.in.md TAGS _hypb \
         .hypb hyrolo.py smart-clib-sym topwin.py hyperbole-banner.png \
@@ -435,7 +438,7 @@ clean:
 .PHONY: version
 version:
 	@echo ""
-	@fgrep -L $(HYPB_VERSION) Makefile HY-ABOUT HY-ANNOUNCE HY-NEWS README.in.md hversion.el man/hyperbole.texi > WRONG-VERSIONS
+	@fgrep -L $(HYPB_VERSION) Makefile HY-ABOUT HY-NEWS README.in.md hversion.el man/hyperbole.texi > WRONG-VERSIONS
 	@# If any file(s) have wrong version number, print them and exit with code 1
 	@if [ -s WRONG-VERSIONS ]; then \
 	  echo "The following files do not have the proper Hyperbole version number, $(HYPB_VERSION):"; \
@@ -577,13 +580,13 @@ kotl/kotl-autoloads.el: $(EL_KOTL)
 # Used for ftp uploads. Pick tagged release files, make autoloads and
 # put together as a compressed tarball.
 $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz:
+	$(RM) -fr $(pkg_hyperbole)
 	git archive --format=tar --prefix=hyperbole-$(HYPB_VERSION)/ hyperbole-$(HYPB_VERSION) \
 	  | (cd $(pkg_parent) && tar xf -)
 	cd $(pkg_hyperbole) && \
 	  $(MAKE) autoloads && \
 	  chmod 755 topwin.py && \
 	  COPYFILE_DISABLE=1 $(TAR) -C $(pkg_parent) -clzf $(pkg_hyperbole).tar.gz hyperbole-$(HYPB_VERSION)
-	$(RM) -fr $(pkg_hyperbole)
 
 # Create a tarball based on local files. Pick version controlled
 # files, make autoloads and put together as a compressed tarball.
@@ -591,13 +594,13 @@ $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz:
 pkg: $(pkg_parent)/hyperbole-local.tar.gz
 
 $(pkg_parent)/hyperbole-local.tar.gz:
+	$(RM) -fr $(pkg_parent)/hyperbole-local
 	mkdir -p $(pkg_parent)/hyperbole-local
 	git ls-files -z | xargs -0 cp --parents -t $(pkg_parent)/hyperbole-local
 	cd $(pkg_parent)/hyperbole-local && \
 	  $(MAKE) autoloads && \
 	  chmod 755 topwin.py && \
 	  COPYFILE_DISABLE=1 $(TAR) -C $(pkg_parent) -clzf $(pkg_parent)/hyperbole-local.tar.gz hyperbole-local
-	$(RM) -fr $(pkg_parent)/hyperbole-local
 
 .PHONY: pkgclean packageclean
 pkgclean: packageclean

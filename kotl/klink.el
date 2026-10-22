@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 12:15:16
-;; Last-Mod:     21-Sep-26 at 09:17:09 by Bob Weiner
+;; Last-Mod:     20-Oct-26 at 12:40:05 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -232,7 +232,7 @@ link-end-position, (positions include delimiters)."
 	   (stringp (setq referent (car label-and-pos)))
 	   (setq referent (string-trim referent))
 	   ;; Ensure it conforms to some klink specification.
-	   (or (string-match "\\`[ \t]*[-#@|!&]" referent)
+	   (or (string-match "\\`[ \t]*[#@|!&]" referent)
 	       (and (or (when (string-match "\\s-*,\\|#[0-9a-z.=]+\\'" referent)
 			  (setq path (substring referent 0 (match-beginning 0)))
 			  (hpath:is-p (expand-file-name path (hbut:get-key-src t t))))
@@ -364,13 +364,13 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
     (list nil (match-string 1 reference)))
    (t (error "(klink:parse): Invalid reference specifier, %s" reference))))
 
-(defun klink:replace-label (klink link-buf start new-label)
+(defun klink:replace-label (klink src-buf src-start new-label)
   "Replace out of date relative id in a link reference of the form, relid=idstamp."
-  (with-current-buffer link-buf
+  (with-current-buffer src-buf
     (if buffer-read-only
 	(message "Buffer <%s> is read-only; update relative koutline label to `%s' in ref \"%s\""
 		 (buffer-name) new-label klink)
-      (goto-char start)
+      (goto-char src-start)
       (cond ((or (looking-at "<\\s-*[#@]\\s-*")
 		 (looking-at "[^,]+?[#,]\\s-*"))
 	     (goto-char (match-end 0))
@@ -378,10 +378,10 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
 	     (insert new-label ?=))
 	    (t nil)))))
 
-(defun klink:update-label (klink start link-buf)
+(defun klink:update-label (klink src-start src-buf)
   "Update label of KLINK if its relative cell id has changed.
 Assume point is in klink referent buffer, where the klink points.
-START is the start of the KLINK reference in the source LINK-BUF."
+SRC-START is the start of the KLINK reference in the SRC-BUF."
   (and (stringp klink)
        (string-match "[#@,]\\s-*\\([*0-9][*.0-9a-zA-Z]*\\)\\s-*=\\s-*0[0-9]*"
 		     klink)
@@ -389,7 +389,7 @@ START is the start of the KLINK reference in the source LINK-BUF."
        (let* ((label (match-string 1 klink))
 	      (new-label (kcell-view:label)))
 	 (and new-label (not (equal label new-label))
-	      (klink:replace-label klink link-buf start new-label)))))
+	      (klink:replace-label klink src-buf src-start new-label)))))
 
 (defun klink:yank-handler (klink)
   "When yanking a KLINK, make its path relative to `default-directory'."

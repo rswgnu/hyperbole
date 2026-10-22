@@ -3,7 +3,7 @@
                    Designed and Written by Bob Weiner
                 Maintained by Mats Lidell and Bob Weiner
                  https://www.gnu.org/software/hyperbole/
-			    Version 9.3.0
+			    Version 9.3.1
 
          Say thanks or send a testimonial if you like Hyperbole:
                         Email: <rsw@gnu.org>
@@ -28,7 +28,7 @@ World-Wide Web URLs, Info manuals, ftp archives, etc.
 The Hyperbole wiki page, "https://www.emacswiki.org/emacs/Hyperbole",
 explains the many ways it differs from and is complementary to Org mode.
 
-* Hyperbole consists of five parts:
+* Hyperbole consists of six parts:
 
    1.  Buttons and Smart Keys: Hyperbole hyperlink and other kinds of
        buttons may be added to documents (explicit buttons) with a
@@ -51,28 +51,35 @@ explains the many ways it differs from and is complementary to Org mode.
        complex operations without having to use a different key for each
        operation.  Just press a Smart Key and the right thing happens;
 
-   2.  Contact and Text Finder: an interactive textual information
-       management interface, including fast, flexible file and text
-       finding commands.  A powerful, hierarchical contact manager,
-       HyRolo, which anyone can use is also included.  It is easy to
-       learn to use since it introduces only a few new mechanisms and
-       has a menu interface, which may be operated from the keyboard or
-       the mouse.
+   2.  HyWiki: Hyperbole's markup-free, personal wiki system with
+       automatic WikiWord highlighting and hyperlinking.  It uses Org
+       mode for note taking and adds automatic hyperlinking and
+       highlighting of WikiWord references within wiki pages and can be
+       set so WikiWord links appear in all text and programming files,
+       WikiWords can also link to all different types of Emacs objects,
+       if desired.
 
-   3.  Screen Control: the fastest, easiest-to-use window and frame
-       control available for GNU Emacs.  With just a few keystrokes,
-       you can shift from increasing a window's height by 5 lines
-       to moving a frame by 220 pixels or immediately moving it to a
-       screen corner.  Text in each window or frame may be enlarged
-       or shrunk (zoomed) for easy viewing, plus many other features;
-
-   4.  The Koutliner: an advanced outliner with multi-level
+   3.  The Koutliner: an advanced outliner with multi-level
        autonumbering and permanent ids attached to each outline node for
        use as hypertext link anchors, per node properties and flexible
        view specifications that can be embedded within links or used
        interactively;
 
-   5.  Programming Library: a set of programming library classes for
+   4.  HyRolo: an interactive textual information management interface,
+       including fast, flexible file and text finding commands.  A
+       powerful, hierarchical contact manager, HyRolo, which anyone can
+       use is also included.  It is easy to learn to use since it
+       introduces only a few new mechanisms and has a menu interface,
+       which may be operated from the keyboard or the mouse.
+
+   5.  HyControl: the fastest, easiest-to-use window and frame control
+       available for GNU Emacs.  With just a few keystrokes, you can
+       shift from increasing a window's height by 5 lines to moving a
+       frame by 220 pixels or immediately moving it to a screen corner.
+       Text in each window or frame may be enlarged or shrunk (zoomed)
+       for easy viewing, plus many other features;
+
+   6.  Programming Library: a set of programming library classes for
        system developers who want to integrate Hyperbole with another
        user interface or as a back-end to a distinct system.  (All of
        Hyperbole is written in Emacs Lisp for ease of modification.
@@ -154,6 +161,11 @@ may also contain links to external information sources.
        Linkage of code and design documents.  Jumping to the definition
        of an identifier from its use within code or its reference within
        documentation.
+
+**  Note Taking
+       Use WikiWords to organize your notes and then have references
+       (without delimiters) to them throughout your files automatically
+       hyperlink back to notes or sections within notes.
 
 **  Brainstorming
        Capture of ideas and then quick reorganization with the Hyperbole

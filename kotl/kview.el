@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     11-Oct-26 at 10:38:48 by Bob Weiner
+;; Last-Mod:     21-Oct-26 at 22:32:18 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -361,7 +361,7 @@ Excludes blank lines following cell contents."
     (outline-flag-region (point) (kcell-view:end-contents) hide-p)))
 
 (defun kcell-view:first-line ()
-  "Return the first line of the current cell as a string
+  "Return the first line of the current cell as a string.
 Visibility is ignored."
   (save-excursion
     (goto-char (kcell-view:start))

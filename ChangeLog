@@ -1,17 +1,296 @@
+2026-10-22  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el: Add these missing function declarations:
+    hui:hbut-act, smart-prog-to-definition
+
+* Makefile (HYPERBOLE_FILES, version):
+  MANIFEST:
+  hypb-release.el (hypb-release-version-file-list): Remove HY-ANNOUNCE
+    from git and release; write and use it separately.
+
+* test/demo-tests.el (demo-table-of-contents-test,
+                      demo-smart-mouse-keys-ebut-test): Fix to match
+    new TOC handling.
+
+* DEMO: Change TOC leader char from '*' to '-' to prevent interference
+    with section matches in tests.
+
+* hibtypes.el (text-toc): Update doc to reflect different leader
+    chars that can start a TOC entry.  The section an entry
+    matches to must start with the same number of * or # chars.
+  hactypes.el (text-toc): Add support for section entries using #
+    as their leading delimiter, i.e. Markdown files.  Fix to translate
+    leader char to either * or #.  Change so cannot have any leading
+    spaces, as mentioned in the ibtype doc string.
+
+* HY-NEWS (V9.3.1): Finish writeup on items back through 9.2.0.
+
+* HY-ANNOUNCE: In-progress.
+
+* HY-ABOUT, README.in.md: Add Note Taking as an application using HyWiki.
+    Explain HyWiki as 1/6th of Emacs.
+
+2026-10-21  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-org-get-heading-match-regexp): Allow for indented
+    Org headings.
+	    (require 'set): Add.
+            (hywiki-get-term-variant-regexp): Use 'set:create' to remove
+    duplicates of variants when regexp-quote does not change the
+    strings.
+
+* hactypes.el (button-series): Improve doc and var naming.
+
+* kotl/kotl-mode.el (kotl-mode:insert-tab, kotl-mode:indent-to): Add and
+    use in `kotl-mode:tab-command'.
+                    (kotl-mode:indent-line): Simplify and remove prefix
+    arg now that `kotl-mode:insert-tab' is handled separately.  This
+    fixes tab handling as specified by `kotl-mode:emulate-tab'.
+
+* hbut.el (ibut:create): Change 'condition-case' to
+   'condition-case-unless-debug' so get full stack trace showing where
+   ibtype error occurred regardless of `debug-on-error' setting.  If
+   continue from the debugger, a message with the error is logged to
+   *Messages*.
+
+* hib-kbd.el (kbd-key): Fix bug when 'start' was nil, (char-before
+    start) call would trigger an error.  Fix by first testing if
+    'key-series' is a valid string and move to next ibtype if not,
+    bypassing use of 'start'.
+
+* man/use-package (hyrolo-file-list): Add a commented out setting for
+    this for customization reference.
+
+2026-10-20  Bob Weiner  <rsw@gnu.org>
+
+* man/use-package (org-open-link-function): Document how to enable Org
+    link delimiters and highlighting of Hyperbole buttons via:
+    (push #'hbut:activate-at-p org-open-link-functions)
+
+* man/hyperbole.texi (Implicit Button Link Types):
+  hbut.el (defil search-git-log): Change to use curly braces instead of
+    square brackets so it can be embedded within Org [[links]] and
+    highlighted.
+
+* kotl/klink.el (klink:at-p): Remove `-' as first non-whitspace char
+    between angle brackets; can't think of any klink format that
+    conforms to and leads to matching to things like: <- 4 2>.
+
+* hib-kbd.el (kbd-key): Add support for Org/MediaWiki links around
+    curly brace-delimited key series, e.g.. [[{C-h h d d}]].
+
+* hywiki.el (hywiki-add-page): Fix referent htable not getting page
+    added because local variable 'referent-htable' was pointing to
+    a different htable.  Remove the local variable to resolve.  This
+    fixes test:
+    'hywiki--verify-get-buffer-text-with-point-and-highlight-compact'.
+            (hywiki-directory-get-mod-time): Stop returning a list of 4
+    ints for mod-time and use a single integer of Epoch seconds.  Return
+    0 instead of nil if no file to read dir mod-time from.
+            (hywiki--directory-mod-time): Set default to 0 instead of
+    nil.
+	    (hywiki-directory-modified-p): Handle both old-style list of
+    4 ints and new single integer mod-time formats.
+* test/hywiki-tests.el (hywiki-tests--directory-get-mod-time): Support
+    new mod-time format.
+                       (hywiki-tests--directory-modified-p): Change this
+    test so if either checksum or mod-time changes, then
+    'hywiki-directory-modified-p' returns t.
+
+2026-10-19  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-word-create-exclude-action-key-modes): Make the
+    default be nil, (previously was 'org-mode') so no text or
+    programming modes are excluded from Action Key HyWikiWord creation.
+  man/use-package (hywiki-word-create-exclude-action-key-modes): Add
+    description of the use and setting of the above variable (in a
+    comment).
+
+* hywiki.el (hywiki-directory-changed): Fix so don't recursively
+    call 'hywiki-make-referent-hasht' when loading from .eld
+    cache file.
+            (hywiki-make-referent-hasht): Fix that the cons action
+    of the unless clause was stuck in the predicate part and so was
+    not called, due to a missing paren in the unless predicate.
+    This fixes test: 'hywiki-tests--referent-cache-test'.
+            (hywiki-cache-save): Fix that print calls were not
+    advancing point in standard-output; required using a marker
+    with insertion-type t for advance.  This fixes test:
+    'hywiki-tests--referent-cache-test'.
+
+* Makefile ($(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz,
+            $(pkg_parent)/hyperbole-local.tar.gz): Start target by
+    removing any prior dir used to create the tar file and leave this
+    dir for inspection after creating the package tar file at rsw
+    request.
+
+* hywiki.el (hywiki-cache-save): Add back mistakenly removed '(setq' in
+    the .eld cache file so variables are saved properly.
+            (hywiki-make-referent-hasht): Fix to load non-page entries
+    when there are no page entries.
+            (hywiki-directory-modified-p): Change to test checksum and
+    dir mod-time separately to account for both page and non-page
+    WikiWords.
+            (hywiki-directory-get-mod-time): Change to base mod-time
+    only on changes to HyWiki page files in the directory, eliminating
+    race condition where mod-time stored in .eld cache file was always
+    earlier than latest dir mod-time since that included the dir
+    mod-time change from saving the cache file after the mod-time was
+    stored in that file.
+
+* test/demo-tests.el (fast-demo-outline-section-anchor-and-relative-line-number,
+                      fast-demo-elisp-or-env-vars): Enable all local
+    vars so are not prompted to do so.
+
+* hywiki.el (hywiki-word-not-followed-by-p): Add and use to check only
+    if a HyWikiWord is followed by a trailing # or not.
+
+2026-10-18  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-cache-save): Remove save of 'hyperb:version'
+    and 'hywiki-directory' so do not overwrite current values
+    when hywiki cache is read in.  Also ensure when reading the
+    cache file in that any setting of these variables is ignored.
+
+* hpath.el (hpath:shorten): Fix to return path unchanged if it
+    matches 'relative-to' (defaults to 'default-directory') rather
+    than return the empty string.  This fixes the last test in
+    'hbut-tests--ibut-operate--name-ignore-region.
+
+* man/hyperbole.texi (Keyboard Drags):
+  hui.el (hui:link-possible-types): Reprioritize single line region
+    and link to Koutline kcell as the first two highest priority types.
+
+* hui.el (hui:link-possible-types): Add second 'src-buffer' arg
+    needed to determine the source of a klink; first arg, 'src-dir'
+    is not enough.  Update code to compare current file name
+    to 'src-buffer' one, accounting for indirect buffers.
+  hui.el (hui:ebut-link-directly, hui:ibut-link-directly):
+  test/hy-test-helpers.el (hy-test-helpers:ensure-link-possible-type):
+    Add 2nd param to call of above functions.
+         (hui:ebut-message, hui:ibut-message): Fix problem that 'actype'
+    was getting set to nil when it was a regular function name, not a
+    symbol.
+
+* test/hui-tests.el (hui-gibut-create-link-to-file): Remove
+    referent-start pos as is no longer sent.
+
+* test/hy-test-helpers.el (hy-test-helpers-verify-hattr-at-p):
+     Reverse args so expected value comes first since most
+     tests are this way.
+
+* hibtypes.el (pathname): Fix when is a url local file:// path,
+    don't send pos arg to link-to-file since it is the referent
+    pos needed but were sending the src pos instead.
+
+* kotl/klink.el (klink:replace-label, klink:update-label): Rename
+   'start' to 'src-start' and 'link-buf' to 'src-buf' for clarity.
+
+2026-10-17  Bob Weiner  <rsw@gnu.org>
+
+* hactypes.el (link-to-file): Add support for updating Koutline
+    relative ids when activated and replace
+    'hpath:find-koutline-reference'.
+  hpath.el (hpath:find-koutline-reference): Delete.
+
+* hibtypes.el (Info-node): Allow for Org link square bracket delims
+    so can match within an `org-open-link-functions' call.
+
+* hbut.el (hbut:activate-at-p):
+  hmouse-tag.el (smart-prog-to-definition): Add for use in
+    'org-open-link-functions'.  Used in "README.md".
+
+* kotl/kotl-mode.el (is-p): Rename to 'kotl-mode:is' since is not a
+    predicate but triggers an error if not in 'kotl-mode' major mode.
+                    (kotl-mode:toggle-tree-expansion,
+                     kotl-mode:cycle-globally,
+                     kotl-mode:cycle-locally): Add initial call to
+    'kotl-mode:is'.
+
+* .githooks/pre-push - Add git push gate that ensures README.md is
+     up-to-date first.
+  README.md - Build for next release.
+
+* hyrolo.el (hyrolo-grep):
+  hsys-consult.el (hsys-consult--noninteractive-grep-paths): Remove and
+    replace with new 'hyrolo-noninteractive-grep-paths' that does not
+    require the 'consult' package.  Use in 'hyrolo-grep'.
+
+* set.el (set:intersection): Document the ordering of the result elements.
+
+* README.in.md: Remove reference to stable release as there is no stable
+    directory when looking at the README file in a source directory.
+    Fill paragraphs to a max of 72 to simpify side-by-side viewing.
+
+* kotl/EXAMPLE.kotl: Fix mistakenly deleted cell data.
+  test/demo-tests.el (fast-demo-display-kotl-starting-from-cell): Fix cell
+    reference to match updated EXAMPLE.kotl.
+
+* hsys-consult.el (hsys-consult--noninteractive-grep-paths): (require
+    'cl-lib) and call its 'cl-copy-list' to fix CI/CD failure.
+
+* hsys-consult.el (hsys-consult--noninteractive-grep-paths): Fix to
+    ensure eliminates any duplicate files and returns file list in
+    orgiinal order.
+  hyrolo.el (hyrolo-grep): Restore call to above function to filter file
+    list to just those with a match.
+  test/hyrolo-tests.el (hyrolo-tests--forward-same-level-all-file-types-level1):
+    Above changes now work with this test.
+
+* hsys-consult.el (hsys-consult-grep): Improve doc and fix arg order
+    in doc.
+                 (hsys-consult--grep-paths): Remove doc with wrong
+    return value.
+                 (hsys-consult--noninteractive-grep-paths): Remove
+    'max-matches' since finds just the first match per file.
+
+2026-10-16  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kfile.el (kfile:update): Temp bind 'inhibit-redisplay' to t
+    to prevent display of internal outline data during saves.
+
+* FAST-DEMO: Add a link to "README.md#Articles".
+  FAST-DEMO, README.in.md: Add Charlie's HyRolo and Implicit Button
+    video and article links.
+
+* man/hyperbole.texi (View Specs, Relocating and Copying, Koutliner Keys):
+  kotl/EXAMPLE.kotl:
+  kotl/kotl-mode.el (kotl-mode:setup-keymap): INCOMPATIBLE CHANGE:
+    Move {C-c ; b} (kotl-mode:toggle-blank-lines) to {C-c ]}.
+    Move {C-c C-c} (kotl-mode:copy-before) to {C-c ; b} to match with
+    {C-c ; c} (kotl-mode:copy-after) binding.  {C-c C-c} no longer worked
+    because Org-compatibility overrode its binding.
+
+* kotl/EXAMPLE.kotl:
+  man/hyperbole.texi (Promoting and Demoting):
+  kotl/kotl-mode.el (kotl-mode:setup-keymap): INCOMPATIBLE CHANGE:
+    Move {C-c C-]} binding to {C-c [} as is easier-to-type and is a
+    'left' opening brace like left 'TAB' key.
+
+* kotl/EXAMPLE.kotl:
+  man/hyperbole.texi (Cell Attributes): Update key binding
+    descriptions and move {C-c ; h} description into the key binding
+    table.  Also, change C-0 to M-0 and C--1 to M--1 since control
+    digits don't typically work on a terminal.
+
+* kotl/kotl-mode.el (kotl-mode:toggle-tab-flag): Add missing
+    (interactive) expression and fix mis-printing of TAB/S-TAB
+    keys due to bindings being wrapped in org-hijacker calls.
+
 2026-10-16  Mats Lidell  <matsl@gnu.org>
 
 * hypb-release.el (hypb-release-version-file-list): Rename variable as
-it is now a list of lists.
-(hypb-release--replace-version): Replaces the version number based on
-a given pattern
-(hypb-release-update-version): Use hypb-release-update-version.
-(hypb-release-update-hyperbole-version-header): Add pattern.
+    it is now a list of lists.
+    (hypb-release--replace-version): Replace the version number based
+    on a given pattern.
+    (hypb-release-update-version): Use hypb-release-update-version.
+    (hypb-release-update-hyperbole-version-header): Add pattern.
 
 * test/MANIFEST: Add hypb-release-tests.el.
 
 * test/hypb-release-tests.el: New test file for hypb-release.el.
-(hypb-release-tests--replace-version):
-(hypb-release-tests--update-version): Test cases.
+    (hypb-release-tests--replace-version):
+    (hypb-release-tests--update-version): Test cases.
 
 * man/hyperbole.texi: Use EDITION and VERSION variables.
 
@@ -20,9 +299,12 @@ a given pattern
 
 2026-10-15  Mats Lidell  <matsl@gnu.org>
 
-* man/hyperbole.texi (Top):
-    (Introduction): Updated version number to 9.3.0.
-* README.toc.md: Remove unused file.
+* man/hyperbole.texi (Top, Introduction): Updated version number to
+    9.3.0.
+
+========================================================================
+V9.3.1 changes ^^^^:
+========================================================================
 
 2026-10-14  Mats Lidell  <matsl@gnu.org>
 
@@ -43,41 +325,44 @@ a given pattern
     "README.md#Installation".
 
 * man/hyperbole.texi (Hyperbole Overview): Add HyWiki summary.
-                     (Installation and Configuration): Finish this section.
+                     (Installation and Configuration): Finish this
+    section.
 
 * Makefile (confirm): Fix typo that moved single quotes improperly.
            (README.md.html): Remove this target; build as part of README.md.
 
 2026-10-13  Bob Weiner  <rsw@gnu.org>
 
-* man/hyperbole.texi (Tarball Install, Package Installation): Simplified naming of
-    these two sections.
+* man/hyperbole.texi (Tarball Install, Package Installation): Simplified
+    naming of these two sections.
 
-* MANIFEST, Makefile: Move README.md to README.in.md.  Format it to produce README.md
-    as part of the 'doc' target.  Eliminate README.toc.md.
+* MANIFEST, Makefile: Move README.md to README.in.md.  Format it to
+    produce README.md as part of the 'doc' target.  Remove now unused
+    README.toc.md.
 
 * test/hyrolo-tests.el (hyrolo-tests--fgrep-and-goto-next-visible-kotl-heading,
                         hyrolo-tests--fgrep-and-goto-next-visible-kotl-heading-level-2,
                         hyrolo-tests--fgrep-and-goto-next-visible-kotl-heading-cell-2):
-    Now must save a HyRolo file before trying to do a HyRolo search on it due
-    to an optimization using grep, so add a 'save-buffer' call before testing.
+    Now must save a HyRolo file before trying to do a HyRolo search on
+    it due to an optimization using grep, so add a 'save-buffer' call
+    before testing.
 
 * hypb.el (hypb:require-package): Return t on success.
           (hypb:package-el-install): Trigger an error if package is not
     installable in the current Emacs version.
 
 * hsys-consult.el (hsys-consult--noninteractive-grep-paths): Add and use
-    in 'hyrolo-grep' to minimize the number of files that must be searched
-    for entry matches.
+    in 'hyrolo-grep' to minimize the number of files that must be
+    searched for entry matches.
                   (hsys-consult--grep-paths): Add doc of return value.
 
 * hpath.el (hpath:expand): Update doc to note that this does not expand
     tilde home directory references.  Call 'expand-file-name' for that.
 
 * hui-mouse.el (hkey-alist, smart-push-button): Fix Emacs push button
-    handling so 'smart-push-button' is not dependent on the return
-    value of any push-button activated from a text property, as that
-    can commonly return nil.
+    handling so 'smart-push-button' is not dependent on the return value
+    of any push-button activated from a text property, as that can
+    commonly return nil.
 
 2026-10-11  Mats Lidell  <matsl@gnu.org>
 
@@ -86,7 +371,8 @@ a given pattern
 * Makefile (release-pre):  Check current branch is egual to
     github_origin/master before creating the release branch.
 
-* Makefile (website, git-tag-release, ftp): Confirm to continue with YES.
+* Makefile (website, git-tag-release, ftp): Confirm to continue with
+    YES.
 
 * hibtypes.el (hbut-identifier, hbut-identifier:help):
 * kotl/kvspec.el (kvspec:default): Shorten first line in docstring.
@@ -129,55 +415,56 @@ a given pattern
 
 2026-10-10  Bob Weiner  <rsw@gnu.org>
 
-* kotl/kview.el (kcell-view:first-line): Add and use in kotl-download.el.
+* kotl/kview.el (kcell-view:first-line): Add.
 
-* kotl/kotl-mode.el (kotl-mode:setup-keymap): Bind {C-c C-x C-v} to toggling
-    inline image display for Org compatibility.
-  man/use-package (hyperbole): Add note on how to permanently enable inline
-    image display in Koutline buffers.
+* kotl/kotl-mode.el (kotl-mode:setup-keymap): Bind {C-c C-x C-v} to
+    toggling inline image display for Org compatibility.
+  man/use-package (hyperbole): Add note on how to permanently enable
+    inline image display in Koutline buffers.
 
 2026-10-09  Bob Weiner  <rsw@gnu.org>
 
-* kotl/kvspec.el (kvspec:update-modeline): Fix kvspec mod to mode-line without
-    explicitly copying the mode-line; make it buffer-local.
-* kotl/kotl-mode.el (kotl-mode): Fix removal of Narrowed indicator in mode-line
-    without copying the mode-line and losing updates to the minor modes.
+* kotl/kvspec.el (kvspec:update-modeline): Fix kvspec mod to mode-line
+    without explicitly copying the mode-line; make it buffer-local.
+  kotl/kotl-mode.el (kotl-mode): Fix removal of Narrowed indicator in
+    mode-line without copying the mode-line and losing updates to the
+    minor modes.
 
 12026-10-08  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kotl-mode.el (kotl-mode:toggle-letter-prefix,
-                     kotl-mode:set-letter-prefix-standard): Add support for
-    matching "\C-c" in addition to "C-c".
-                   (kotl-mode:set-letter-prefix-control-c): Trigger error
-    if 'kotl-mode:letter-prefix' is not a string.  Also, change so does
-    not disable any prior prefix so default letter bindings are always
-    available.
+                     kotl-mode:set-letter-prefix-standard): Add support
+    for matching "\C-c" in addition to "C-c".
+                   (kotl-mode:set-letter-prefix-control-c): Trigger
+    error if 'kotl-mode:letter-prefix' is not a string.  Also, change so
+    does not disable any prior prefix so default letter bindings are
+    always available.
                    (kotl-mode:set-letter-prefix-standard): Add optional
-    'letter-prefix' argument so user can specify own prefix to letter keys.
+    'letter-prefix' argument so user can specify own prefix to letter
+    keys.
   man/use-package (hyperbole): Offer commented out settings for the above.
 
-* test/demo-tests.el (demo-org-hide-header-test): Fix test for Org 9.5.5 or
-    earlier in Emacs 28.
+* test/demo-tests.el (demo-org-hide-header-test): Fix test for Org 9.5.5
+    or earlier in Emacs 28.
 
-* hmouse-drv.el (hkey-help): Fix error when 'actype' was nil because there
-    is no 'hbut:current' actype but there is a 'cmd-sym'.  In this case,
-    set 'actype' to 'cmd-sym' and use its doc string.
+* hmouse-drv.el (hkey-help): Fix error when 'actype' was nil because
+    there is no 'hbut:current' actype but there is a 'cmd-sym'.  In this
+    case, set 'actype' to 'cmd-sym' and use its doc string.
 
 * hsys-org.el (hsys-org-cycle-global): Trigger error to upgrade Org if
     'org-cycle-global' is not defined.
 
 * kotl/EXAMPLE.kotl:
-  man/hyperbole.texi (Promoting and Demoting): Remove {M-0 TAB} and {M-0 S-TAB}
-    for demoting and promoting within Org tables as M-0 is used as a flag to
-    these commands to also fill cells.  Additionally, these bindings worked only
-    when 'kotl-mode:tab-flag' /= 'cycle.
+  man/hyperbole.texi (Promoting and Demoting): Remove {M-0 TAB} and {M-0
+    S-TAB} for demoting and promoting within Org tables as M-0 is used
+    as a flag to these commands to also fill cells.  Additionally, these
+    bindings worked only when 'kotl-mode:tab-flag' /= 'cycle.
 
-* kotl/kotl-mode.el (kotl-mode:tab/untab-command): Remove {M-1 TAB} for toggling
-    TAB/S-TAB function for greater Org compatibility.  {M-0 TAB} still works
-    for tree demotion/promotion if not in Org-style cycle mode.  Use existing
-    bindings of {C-c C-.} and {C-c C-,} for tree demotion/promotion regardless
-    of TAB mode.
-                    (kotl-mode:setup-keymap): Add {C-c C-]} binding for
+* kotl/kotl-mode.el (kotl-mode:tab/untab-command): Remove {M-1 TAB} for
+    toggling TAB/S-TAB functions for greater Org compatibility.  Use
+    existing bindings of {C-c C-.} and {C-c C-,} for tree
+    demotion/promotion regardless of TAB mode.
+    (kotl-mode:setup-keymap): Add {C-c C-]} binding for
     'kotl-mode:toggle-tab-flag' to replace {M-1 TAB}.
 
 2026-10-08  Mats Lidell  <matsl@gnu.org>
@@ -199,57 +486,66 @@ a given pattern
     ($(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz): Create tarball
     from the release tagged files.
     (EL_COMPILE): Byte compile hypb-release.el
-    General update of the target documentation. Remove of unused targets.
+    General update of the target documentation. Remove of unused
+    targets.
 
 2026-10-07  Bob Weiner  <rsw@gnu.org>
 
-* kotl/EXAMPLE.kotl: Finish doc updates for various TAB key uses and settings of
-    'kotl-mode:tab-flag'.
+* kotl/EXAMPLE.kotl: Finish doc updates for various TAB key uses and
+    settings of 'kotl-mode:tab-flag'.
 
-* hactypes.el (link-to-kcell): Fix to handle when 'cell-ref' has an extra
-    trailing punctuation character that needs removal, like: "3b=071.".
+* hactypes.el (link-to-kcell): Fix to handle when 'cell-ref' has an
+    extra trailing punctuation character that needs removal, like:
+    "3b=071.".
 
-* kotl/kotl-mode.el (kotl-mode:tab-flag): Make 'cycle the default for Org-style
-    compatibility.
+* kotl/kotl-mode.el (kotl-mode:tab-flag): Make 'cycle the default for
+    Org-style compatibility.
 
-* man/use-package (kotl-mode:letter-prefix): Add comment to the :custom setting of how
-    to change the Koutliner {C-c ; <letter>} bindings back to {C-c <letter>} if desired.
-    Bindings were changed.
+* man/use-package (kotl-mode:letter-prefix): Add comment to the :custom
+    setting of how to change the Koutliner {C-c ; <letter>} bindings
+    back to {C-c <letter>} if desired.  Bindings were changed.
   man/hyperbole.texi (Koutliner, Koutliner Keys):
   kotl/EXAMPLE.kotl: Update these files with the above change.
 
 * kotl/kotl-mode.el (kotl-mode:set-letter-prefix-standard,
-                     kotl-mode:set-letter-prefix-control-c): Add these discrete commands
-    for interactive use and use them in 'kotl-mode:toggle-letter-prefix'.
-                    (kotl-mode:setup-keymap): Enable letter key bindings to handle prefix
-    remapping.
+                     kotl-mode:set-letter-prefix-control-c): Add these
+    discrete commands for interactive use and use them in
+    'kotl-mode:toggle-letter-prefix'.
+                    (kotl-mode:setup-keymap): Enable letter key bindings
+    to handle prefix remapping.
 
-* hsys-flymake.el (hsys-flymake-global-control-l-prefix-map): Create and fix global
-    {C-c C-l t} map and key for flymake toggling.
-  man/hyperbole.texi (Smart Key - Flymake Mode): Note that {C-c C-l t} is a global
-    binding made only if {C-c C-l} is unbound when Hyperbole is loaded.
+* hsys-flymake.el (hsys-flymake-global-control-l-prefix-map): Create and
+    fix global {C-c C-l t} map and key for flymake toggling.
+  man/hyperbole.texi (Smart Key - Flymake Mode): Note that {C-c C-l t}
+    is a global binding made only if {C-c C-l} is unbound when Hyperbole
+    is loaded.
 
 2026-10-06  Bob Weiner  <rsw@gnu.org>
 
-* kotl/kotl-mode.el (kotl-mode): Ensure `flymake-mode' is disabled or it will override
-    the {C-c C-l} in this mode.
+* kotl/kotl-mode.el (kotl-mode): Ensure `flymake-mode' is disabled or it
+    will override the {C-c C-l} in this mode.
 
 * hui-mini.el (hui:menu-mode-map):
-  hyrolo.el (hyrolo-mode-map): Adjust to bind same TAB/S-TAB keys as in Koutliner.
-    INCOMPATIBLE CHANGE: Remove M-TAB binding since often used to switch applications.
+  hyrolo.el (hyrolo-mode-map): Adjust to bind same TAB/S-TAB keys as in
+    Koutliner.
+    INCOMPATIBLE CHANGE: Remove {M-TAB} binding since often used to
+    switch applications.
 
-* kotl/kotl-mode.el (kotl-mode-letter-map, kotl-mode-letter-prefix): Add.
-                    (kotl-mode:setup-keymap): INCOMPATIBLE CHANGE: Use above
-    to move all {C-c <letter>} bindings to {C-c ; <letter>} so do not override what
-    should be left as user-bindable keys.  User can then change the C-c ; prefix as
-    desired by setting 'kotl-mode-letter-prefix'.
-                    (kotl-mode:toggle-letter-prefix): Add and bind to {M-1 C-c C-l}.
+* kotl/kotl-mode.el (kotl-mode-letter-map, kotl-mode:letter-prefix): Add.
+                    (kotl-mode:setup-keymap): INCOMPATIBLE CHANGE: Use
+    above to move all {C-c <letter>} bindings to {C-c ; <letter>} so do
+    not override what should be left as user-bindable keys.  User can
+    then change the C-c ; prefix as desired by setting
+    'kotl-mode:letter-prefix'.
+                    (kotl-mode:toggle-letter-prefix): Add and bind to
+    {M-1 C-c C-l}.
   kotl/kview.el (kview:set-label-type): Update to take a prefix arg and call the above
     function when sent an arg of 1.
 
 * test/demo-tests.el (demo-org-hide-header-test):
-  test/smart-org-tests.el (smart-org-mode-on-header-cycles-visibility): Bind Action
-    Key variable needed for the test to restore prior Hyperbole Org mode behavior.
+  test/smart-org-tests.el (smart-org-mode-on-header-cycles-visibility):
+    Bind Action   Key variable needed for the test to restore prior
+    Hyperbole Org mode behavior.
 
 2026-10-06  Mats Lidell  <matsl@gnu.org>
 
@@ -264,71 +560,85 @@ a given pattern
 2026-10-05  Bob Weiner  <rsw@gnu.org>
 
 * hui-mouse.el (smart-org-action-key-heading-function,
-                smart-org-assist-key-heading-function): Add to allow user-settable
-    behavior when point is anywhere within a heading line (not at the end).
-               (smart-org-cycle): Add as a possible setting for the above variables.
+                smart-org-assist-key-heading-function): Add to allow
+    user-settable behavior when point is anywhere within a heading line
+    (not at the end).  Default values are no-ops.
+               (smart-org-cycle): Add as a possible setting for the
+    above variables.
   man/hyperbole.texi (Smart Key - Org Mode):
                      (Implicit Button Types): smart-org update doc.
 
-* hsys-org.el (hsys-org-cycle-global): Change all 'org-global-cycle' references
-    to 'org-cycle-global' and set this command to 'org-cycle-global'.
+* hsys-org.el (hsys-org-cycle-global): Change all 'org-global-cycle'
+    references to 'org-cycle-global' and set this command to
+    'org-cycle-global'.
 
-* kotl/kotl-mode.el (kotl-mode:action-key-default-function): Add this defcustom.
-                    (kotl-mode:action-key): INCOMPATIBLE CHANGE: Replace default
-    action in a kcell of show/hide tree with a call to the function specified by
-    the new action defcustom above, which defaults to a no-op, since we have added
-    tree cycling on the TAB key.
-                    (kotl-mode:show-or-hide-tree): Encode prior Action Key
-    behavior in this function if user wants to set it as the defcustom value.
-  man/use-package (kotl-mode): Add comment on how to utilize the above function.
-  man/hyperbole.texi (Hiding and Showing): Update Action Key behavior doc.
-                    (kotl-mode:assist-key-default-function): Add this defcustom.
-                    (kotl-mode:assist-key): INCOMPATIBLE CHANGE: Replace default
-    action in a kcell of 'smart-scroll-down' with a call to the function specified
-    by the new assist defcustom above, which defaults to a no-op, for symmetry with
-    the Action Key.
-  test/kotl-mode-tests.el (kotl-mode-hide-cell): Add needed 'let' binding of
-    'kotl-mode:action-key-default-function'.
+* kotl/kotl-mode.el (kotl-mode:action-key-default-function): Add this
+    defcustom.
+                    (kotl-mode:action-key): INCOMPATIBLE CHANGE: Replace
+    default action in a kcell of show/hide tree with a call to the
+    function specified by the new action defcustom above, which defaults
+    to a no-op, since we have added tree cycling on the TAB key.
+                    (kotl-mode:show-or-hide-tree): Encode prior Action
+    Key behavior in this function if user wants to set it as the
+    defcustom value.
+  man/use-package (kotl-mode): Add comment on how to utilize the above
+    function.
+  man/hyperbole.texi (Hiding and Showing): Update Action Key behavior
+    doc.
+                    (kotl-mode:assist-key-default-function): Add this
+    defcustom.
+                    (kotl-mode:assist-key): INCOMPATIBLE CHANGE: Replace
+    default action in a kcell of 'smart-scroll-down' with a call to the
+    function specified by the new assist defcustom above, which defaults
+    to a no-op, for symmetry with the Action Key.
+  test/kotl-mode-tests.el (kotl-mode-hide-cell): Add needed 'let'
+    binding of 'kotl-mode:action-key-default-function'.
 
-* kotl/kcell.el (kcell-data:create): Signal an error if buffer-local 'kotl-kview'
-    is not a valid kview.
+* kotl/kcell.el (kcell-data:create): Signal an error if buffer-local
+    'kotl-kview' is not a valid kview.
 
-* hywiki.el (hywiki-init): Add to move HyWiki initializations from load-time
-    to after system and user init time.  This fixes bug gh#1023 where
-    a directory given by the default value of 'hywiki-directory' was created
-    though the value was changed prior to loading HyWiki.
+* hywiki.el (hywiki-init): Add to move HyWiki initializations from
+    load-time to after system and user init time.  This fixes bug
+    gh#1023 where a directory given by the default value of
+    'hywiki-directory' was created though the value was changed prior to
+    loading HyWiki.
 
 2026-10-04  Bob Weiner  <rsw@gnu.org>
 
 * hywiki.el (hywiki-word-action-key-creation-allowed-p,
              hywiki-word-create-exclude-action-key-modes): Add.
-  hibtypes.el (hywiki-word): Use the above in ibtype, 'hywiki-word, to control
-    which major modes disable Action Key WikiWord creation, by default, none.
+  hibtypes.el (hywiki-word): Use the above in ibtype, 'hywiki-word, to
+    control which major modes disable Action Key WikiWord creation, by
+    default, none.
   man/hyperbole.texi (Creating HyWikiWords): Doc above variable.
-                     (Implicit Button Types): Update doc for 'hywiki-word'
-    and 'hywiki-existing-word' ibtypes.
+                     (Implicit Button Types): Update doc for
+    'hywiki-word' and 'hywiki-existing-word' ibtypes.
 
-* man/use-package (hyperbole): Add 'hywiki-directory' to :custom section.
+* man/use-package (hywiki-directory): Add a commented out setting for
+    this for customization reference.
+
+* man/use-package (hyperbole): Add 'hywiki-directory' to :custom
+    section.
 
 2026-10-03  Bob Weiner  <rsw@gnu.org>
 
-* hyrolo.el (hyrolo-yank): INCOMPATIBLE CHANGE: Interactively, 'regexp-flag'
-    is set only if prefix arg is not C-u, as C-u now disables the 3rd arg,
-    'exclude-sub-entries'.  Interactively, indicate whether yanking an
-    entry or a tree (sub-entries).
-  man/hyperbole.texi (HyRolo Menu): Remove referent to 'helm' package no
-    longer supported by HyRolo.
-                     (HyRolo Menu): Add prefix arg handling details for the
-    Yank menu item (hyrolo-yank).
+* hyrolo.el (hyrolo-yank): INCOMPATIBLE CHANGE: Interactively,
+    'regexp-flag' is set only if prefix arg is not C-u, as C-u now
+    disables the 3rd arg, 'exclude-sub-entries'.  Interactively,
+    indicate whether yanking an entry or a tree (sub-entries).
+  man/hyperbole.texi (HyRolo Menu): Remove reference to 'helm' package
+    no longer supported by HyRolo.
+                     (HyRolo Menu): Add prefix arg handling details for
+    the Yank menu item (hyrolo-yank).
 
 * hpath.el (hpath:extension-in-list-p): Add and use in deciding whether
     to add the complex regexp needed to match Koutline cell relative ids
     to any 'hsys-consult--grep-paths' calls, for example, when calling
     'hyrolo-yank' interactively.
 
-==============================================================================
+========================================================================
 V9.3.0 changes ^^^^:
-==============================================================================
+========================================================================
 
 2026-10-02  Bob Weiner  <rsw@gnu.org>
 
@@ -398,7 +708,7 @@ V9.3.0 changes ^^^^:
     the 'hbut:is-p' programming tag clause above it.
     Also, in Hyperbole button recognition clause, add a call
     (not (smart-prog-at-tag-p t)) to prevent that from firing when
-    on a programming id since those are handled further down
+    on a programming id since those are handled further down.
 
 * test/hui-tests.el (hui-gibut-create-link-to-file): Fix to compare
     :args with second numeric argument.
@@ -462,7 +772,7 @@ V9.3.0 changes ^^^^:
     to flash tag only if the second call to 'smart-tags-find-p' is true.
     This prevents flashing words in text modes that aren't actually
     programming symbols.
-  hmouse-tag.el (smart-flag-tag-at-point): Add to do the flashing.
+  hmouse-tag.el (smart-flash-tag-at-point): Add to do the flashing.
 
 * kotl/kotl-orgtbl.el (orgtbl-tab): Fix to allow prefix arg of 1 to pass
     through rather than converting to nil.
@@ -537,7 +847,7 @@ V9.3.0 changes ^^^^:
 
 * kotl/kvspec.el (kvspec:default): Add this so view spec can be
     reset to its default value.
-  kotl/kfile.el  (kfile:read-v4-or-v3, kvspec:update): ): Set 'kvspec:default'.
+  kotl/kfile.el  (kfile:read-v4-or-v3, kvspec:update): Set 'kvspec:default'.
                  (kvspec:reset): Add to reset view spec to default.
 
 * man/hyperbole.texi: Remove trailing whitespace from lines.
@@ -557,7 +867,7 @@ V9.3.0 changes ^^^^:
 * kotl/klink.el (klink:update-label): Improve doc string.
 
 * hibtypes.el (pathname): Update first section to handle kotl
-    path's with an =idstamp referent where the relative label
+    paths with an =idstamp referent where the relative label
     needs updating upon activation.
 
 * kotl/kfile.el (kfile:read): Rewrite 'cond using pcase'
@@ -577,9 +887,9 @@ V9.3.0 changes ^^^^:
 * kotl/kotl-mode.el (kotl-mode:show-to-level,
                      kotl-mode:show-lines-per-cell): Add.
 
-==============================================================================
+========================================================================
 V9.2.0 changes ^^^^:
-==============================================================================
+========================================================================
 
 2026-09-16  Bob Weiner  <rsw@gnu.org>
 
@@ -8531,9 +8841,9 @@ value to be [[WikiWord]] not [[file:WikiWord.org][WikiWord]].
   test/hypb-ert-tests.el (hy-test-dependencies)
   test/demo-tests.el (hy-test-dependencies): Add to ensure el-mock is installed.
 
-==============================================================================
+========================================================================
 V9.1.0 changes ^^^^:
-==============================================================================
+========================================================================
 
 * hversion.el:
   hyperbole.el: Release version 9.0.1
@@ -8652,9 +8962,9 @@ V9.1.0 changes ^^^^:
     (website, release, git-tag-release, ftp): Add confirmation of
     successful operation.
 
-==============================================================================
+========================================================================
 V9.0.1 changes ^^^^:
-==============================================================================
+========================================================================
 
 2024-02-19  Mats Lidell  <matsl@gnu.org>
 
@@ -13434,9 +13744,9 @@ name with 'name' and 'name-key'.
 
 * Makefile (website-local): Add dependency on README.md.html.
 
-==============================================================================
+========================================================================
 V9.0.0 changes ^^^^:
-==============================================================================
+========================================================================
 
 * Update release number to 8.0.0.
 

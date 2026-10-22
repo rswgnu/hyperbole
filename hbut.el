@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     11-Oct-26 at 11:16:09 by Mats Lidell
+;; Last-Mod:     22-Oct-26 at 11:19:51 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -58,10 +58,12 @@ Use the function, (hbut:max-len), to read the proper value.")
 (declare-function hpath:substitute-var "hpath")
 (declare-function hpath:symlink-referent "hpath")
 (declare-function hpath:www-p "hpath")
+(declare-function hsys-org-at-read-only-p "hsys-org")
 (declare-function hsys-org-block-start-at-p "hsys-org")
 (declare-function hsys-org-src-block-start-at-p "hsys-org")
 (declare-function hui:buf-writable-err "hui")
 (declare-function hui:ebut-rename "hui")
+(declare-function hui:hbut-act "hui")
 (declare-function hui:ibut-rename "hui")
 (declare-function hui:key-dir "hui")
 (declare-function hui:key-src "hui")
@@ -72,7 +74,8 @@ Use the function, (hbut:max-len), to read the proper value.")
 (declare-function kbd-key:is-p "hib-kbd")
 (declare-function org-context "org")
 (declare-function smart-eolp "hui-mouse")
-(declare-function hsys-org-at-read-only-p "hsys-org")
+(declare-function smart-prog-to-definition "hmouse-tag")
+
 
 ;;; ************************************************************************
 ;;; Private variables
@@ -1148,6 +1151,15 @@ Default is the symbol hbut:current."
 	atype
       (or action (actype:action atype)))))
 
+(defun    hbut:activate-at-p (label)
+  "Activate programming id buttons and implicit/explicit buttons.
+Add to `org-open-link-functions' for activation of Hyperbole buttons
+embedded within Org links."
+  (cond ((smart-prog-to-definition label))
+	((hbut:at-p)
+	 (hui:hbut-act 'hbut:current)
+	 t)))
+
 (defun    hbut:actype (hbut)
   "Return action type for Hyperbole button symbol HBUT."
   (when (hbut:is-p hbut)
@@ -2059,14 +2071,12 @@ If a new button is created, store its attributes in the symbol,
 			 (setq ibtype-point (point-marker))
 			 (while (and (not is-type) types)
 			   (setq itype (car types))
-			   (when (condition-case err
+			   (when (condition-case-unless-debug err
 				     (and itype (setq args (funcall itype)))
-				   (error (progn (message "%S: %S" itype err)
-						 ;; Show full stack trace
-						 (debug))))
+				   (error (message "%S: %S" itype err)))
 			     (setq is-type itype))
-			   ;; Any implicit button type check should leave point
-			   ;; unchanged.  Trigger an error if not.
+			   ;; Any implicit button type check should leave
+			   ;; point unchanged.  Trigger an error if not.
 			   (unless (equal ibtype-point (point-marker))
 			     (hypb:error "(Hyperbole): ibtype %s improperly moved point from %s to %s"
 					 itype ibtype-point (point-marker)))
@@ -2730,8 +2740,9 @@ Summary of operations based on inputs (name arg from \\='hbut:current attrs):
   (let* ((orig-actype (or (hattr:get ibut 'actype)
 			  (hattr:get ibut 'categ)))
 	 (actype (or (actype:def-symbol (actype:elisp-symbol orig-actype))
-		     (and (symbolp orig-actype) (fboundp orig-actype)
-			  orig-actype)))
+                     ;; This line prevents an Elisp function actype
+                     ;; registering as nil
+                     (actype:elisp-symbol orig-actype)))
 	 (args   (hattr:get ibut 'args))
 	 (arg1   (nth 0 args))
 	 (arg2   (nth 1 args))
@@ -3181,14 +3192,14 @@ log entries.  The buttons use this format: [<text to match>].
 The following defines the button type called search-git-log which
 calls hypb:fgrep-git-log with the text of the button as an argument:
 
-  (defil search-git-log \"[<\" \">]\" \".*\" #\\='hypb:fgrep-git-log)
+  (defil search-git-log \"{<\" \">}\" \".*\" #\\='hypb:fgrep-git-log)
 
 Place point after one of the above expressions and evaluate it with
 \\[eval-last-sexp] to define the implicit button type.  Then if you
 have cloned the Hyperbole repo and are in a Hyperbole source buffer,
 an Action Key press on a button of the form:
 
-  ;; [<test release>]
+  ;; {<test release>}
 
 will display one line per commit whose change set matches \"test
 release\".  An Action Key press on any such line will then display the

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Oct-95 at 15:17:07
-;; Last-Mod:     12-Oct-26 at 14:33:11 by Bob Weiner
+;; Last-Mod:     17-Oct-26 at 17:18:07 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -79,7 +79,7 @@ means it has not been set yet.")
 
 (declare-function kfile:narrow-to-kcells "kfile")
 (declare-function kotl-mode:hide-subtree "kotl-mode")
-(declare-function kotl-mode:is-p "kotl-mode")
+(declare-function kotl-mode:is "kotl-mode")
 (declare-function kotl-mode:show-all "kotl-mode")
 (declare-function kotl-mode:show-tree "kotl-mode")
 
@@ -116,7 +116,7 @@ characters at run-time.")
 VIEW-SPEC is a string or t, which means recompute the current view spec.  See
 ${hyperb:dir}/kotl/EXAMPLE.kotl#3=039 for details on valid view specs."
   (interactive (list (read-string "Set view spec: " kvspec:current)))
-  (kotl-mode:is-p)
+  (kotl-mode:is)
   (kfile:narrow-to-kcells)
   (when (equal view-spec "")
     (setq view-spec nil))

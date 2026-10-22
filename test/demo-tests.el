@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     14-Oct-26 at 12:05:23 by Bob Weiner
+;; Last-Mod:     22-Oct-26 at 02:11:29 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -58,7 +58,7 @@
         (re-search-forward "<(Smart")
         (action-key)
         (should (bolp))
-        (should (looking-at "^ +\\* Smart")))
+        (should (looking-at "^\\* Smart")))
     (hy-test-helpers:kill-buffer "DEMO")))
 
 (ert-deftest demo-table-of-contents-test ()
@@ -66,10 +66,10 @@
       (let ((enable-local-variables nil))
         (hypb:display-file-with-logo "DEMO")
         (goto-char (point-min))
-        (re-search-forward " \\* Koutl")
+        (re-search-forward " \\- Koutl")
         (action-key)
         (should (bolp))
-        (should (looking-at "^[ \t]*\\* Koutliner")))
+        (should (looking-at "^\\* Koutliner")))
     (hy-test-helpers:kill-buffer "DEMO")))
 
 ;; Smart scrolling
@@ -430,15 +430,16 @@
   (dolist (m '(fundamental-mode text-mode))
     (ert-info ((format "With major-mode %s" m))
       (cl-letf (((default-value 'major-mode) m))
-        (dolist (link '("\"HY-NEWS#ORG MODE:3:6\"" "\"HY-NEWS#ORG MODE:L3:C6\""))
+        (dolist (link '("\"HY-NEWS#What:2:36\"" "\"HY-NEWS#What:L2:C36\""))
           (unwind-protect
-              (let ((default-directory hyperb:dir))
+              (let ((default-directory hyperb:dir)
+                    (enable-local-variables :all))
                 (with-temp-buffer
                   (insert link)
                   (goto-char 3)
                   (action-key)
                   (should (string= (buffer-name (current-buffer)) "HY-NEWS"))
-                  (should (looking-at-p "M-RET: Reworked"))))
+                  (should (looking-at-p "Bob"))))
             (hy-test-helpers:kill-buffer "HY-NEWS")))))))
 
 (ert-deftest fast-demo-markdown-anchor-with-spaces ()
@@ -457,10 +458,11 @@
   "Verify Elisp or env variables work in paths."
   (unwind-protect
       (with-temp-buffer
-        (insert "\"${hyperb:dir}/HY-NEWS\"")
-        (goto-char 4)
-        (action-key)
-        (should (string= (buffer-name (current-buffer)) "HY-NEWS")))
+        (let ((enable-local-variables :all))
+          (insert "\"${hyperb:dir}/HY-NEWS\"")
+          (goto-char 4)
+          (action-key)
+          (should (string= (buffer-name (current-buffer)) "HY-NEWS"))))
     (hy-test-helpers:kill-buffer "HY-NEWS")))
 
 (ert-deftest fast-demo-elisp-library-in-load-path ()
@@ -810,7 +812,7 @@ enough files with matching mode loaded."
 	(buf))
     (with-temp-buffer
       (setq default-directory hyperb:dir)
-      (insert (format "<%skotl/EXAMPLE.kotl#3b11=018|c2en>"
+      (insert (format "<%skotl/EXAMPLE.kotl#3b14=0120|c2en>"
 		      default-directory))
       (goto-char 5)
       (unwind-protect
