@@ -1,5 +1,9 @@
 2026-10-22  Bob Weiner  <rsw@gnu.org>
 
+* test/demo-tests.el (demo-table-of-contents-test,
+                      demo-smart-mouse-keys-ebut-test): Fix to match
+    new TOC handling.
+
 * DEMO: Change TOC leader char from '*' to '-' to prevent interference
     with section matches in tests.
 

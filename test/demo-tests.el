@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     19-Oct-26 at 01:43:13 by Bob Weiner
+;; Last-Mod:     22-Oct-26 at 02:11:29 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -58,7 +58,7 @@
         (re-search-forward "<(Smart")
         (action-key)
         (should (bolp))
-        (should (looking-at "^ +\\* Smart")))
+        (should (looking-at "^\\* Smart")))
     (hy-test-helpers:kill-buffer "DEMO")))
 
 (ert-deftest demo-table-of-contents-test ()
@@ -66,10 +66,10 @@
       (let ((enable-local-variables nil))
         (hypb:display-file-with-logo "DEMO")
         (goto-char (point-min))
-        (re-search-forward " \\* Koutl")
+        (re-search-forward " \\- Koutl")
         (action-key)
         (should (bolp))
-        (should (looking-at "^[ \t]*\\* Koutliner")))
+        (should (looking-at "^\\* Koutliner")))
     (hy-test-helpers:kill-buffer "DEMO")))
 
 ;; Smart scrolling
