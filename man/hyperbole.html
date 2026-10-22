@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <!-- This manual is for GNU Hyperbole
-(Edition 9.3.0, Published October 14, 2026).
+(Edition 9.3.1, Published October 22, 2026).
 
 Copyright © 1989-2026  Free Software Foundation, Inc.
 
@@ -385,8 +385,8 @@ WITHOUT ANY WARRANTY, without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
-Edition 9.1.0
-Printed October 14, 2026.
+Edition 9.3.1
+Printed October 22, 2026.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -737,7 +737,7 @@ Next: <a href="#Usage" accesskey="n" rel="next">Usage</a>, Previous: <a href="#T
 <h2 class="chapter" id="Introduction-1"><span>1 Introduction<a class="copiable-link" href="#Introduction-1"> &para;</a></span></h2>
 
 <p>This edition of the GNU Hyperbole Manual is for use with any version
-9.1.0 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs
+9.3.1 or greater of GNU Hyperbole.  Hyperbole runs atop GNU Emacs
 28 or higher.  It will trigger an error if your Emacs is older.
 </p>
 <p>This chapter summarizes the structure of the rest of the manual,
@@ -1045,7 +1045,8 @@ call these the Action Mouse and Action Assist keys or buttons.  See <a class="xr
 highlighting and hyperlinking.  It uses Org mode for note taking and
 adds automatic hyperlinking and highlighting of WikiWord references
 within wiki pages and can be set so WikiWord links appear in all text
-and programming files,  See <a class="xref" href="#HyWiki">HyWiki</a>.
+and programming files, WikiWords can also link to all different types
+of Emacs objects, if desired.  See <a class="xref" href="#HyWiki">HyWiki</a>.
 </p>
 </dd>
 <dt><b class="b">3. HyRolo</b></dt>
@@ -2381,6 +2382,8 @@ each one, in decreasing order of priority, as given by the
 <a class="anchor" id="possible-link-action-types"></a><div class="example">
 <div class="group"><pre class="example-preformatted">Referent Context         Link Action Type Returned
 ===================================================================
+Single-line Region       link-to-string-match
+Koutline Cell            link-to-kcell
 Denote Link              link-to-denote
 Org Roam or Org Id       link-to-org-id
 HyWikiWord Reference     link-to-wikiword
@@ -2394,8 +2397,6 @@ Texinfo Node             link-to-texinfo-node
 Mail Reader Message      link-to-mail
 Directory Name           link-to-directory
 File Name                link-to-file
-Koutline Cell            link-to-kcell
-Single-line Region       link-to-string-match
 HyWiki Page              link-to-wikiword
 Org Heading              link-to-file
 Outline Heading          link-to-file
@@ -6829,12 +6830,12 @@ shown in the table below.
 |--------------------+-------------------------------+--------------------------|
 </pre></div>
 
-<a class="index-entry-id" id="index-koutliner_002c-C_002dc-C_002d_005d"></a>
+<a class="index-entry-id" id="index-koutliner_002c-C_002dc-_005b"></a>
 <a class="index-entry-id" id="index-koutliner_002c-toggle-tab-behavior"></a>
 <p>Org-style cycling is now the default.  In Hyperbole versions earlier
 than 9.3.0, the default was &lsquo;<samp class="samp">nil</samp>&rsquo; for demotion and promotion.  You
 can toggle between using these keys for cycling or demotion/promotion
-by pressing <kbd class="kbd">{C-c C-]}</kbd>.  Or you can change the default by setting
+by pressing <kbd class="kbd">{C-c [}</kbd>.  Or you can change the default by setting
 <code class="code">kotl-mode:tab-flag</code> in your Hyperbole <code class="code">use-package</code>
 configuration.  See the following subsections for further details.
 </p>
@@ -6854,7 +6855,7 @@ Next: <a href="#Promoting-and-Demoting" accesskey="n" rel="next">Promoting and D
 
 <a class="index-entry-id" id="index-koutliner_002c-cycling"></a>
 <a class="index-entry-id" id="index-koutliner_002c-Org_002dstyle-cycling"></a>
-<p><kbd class="kbd">{C-c C-]}</kbd> toggles the function of <kbd class="key">TAB</kbd> and <kbd class="kbd">{S-<kbd class="key">TAB</kbd>}</kbd>
+<p><kbd class="kbd">{C-c [}</kbd> toggles the function of <kbd class="key">TAB</kbd> and <kbd class="kbd">{S-<kbd class="key">TAB</kbd>}</kbd>
 between promotion/demotion and Org-style tree visibility cycling.  The
 following table summarizes their behavior with Org-style view cycling
 enabled:
@@ -6966,9 +6967,9 @@ tree and <kbd class="kbd">{C-c C-,}</kbd> for promoting it.  Org-compatible keys
 </p>
 <a class="index-entry-id" id="index-koutliner_002c-TAB-1"></a>
 <a class="index-entry-id" id="index-koutliner_002c-Shift_002dTAB"></a>
-<a class="index-entry-id" id="index-koutliner_002c-C_002dc-C_002d_005d-1"></a>
+<a class="index-entry-id" id="index-koutliner_002c-C_002dc-_005b-1"></a>
 <a class="index-entry-id" id="index-koutliner_002c-no_002dfill-property"></a>
-<p>Use <kbd class="kbd">{C-c C-]}</kbd> to toggle the function of <kbd class="key">TAB</kbd> and
+<p>Use <kbd class="kbd">{C-c [}</kbd> to toggle the function of <kbd class="key">TAB</kbd> and
 <kbd class="kbd">{S-<kbd class="key">TAB</kbd>}</kbd> to demote and promote trees.  These also refill the
 text of each cell not marked with a <code class="code">no-fill</code> property.  To
 override the <code class="code">no-fill</code> property and refill all promoted/demoted
@@ -7143,20 +7144,20 @@ level to insertion at the child level.
 <dd><p>Move current tree back prefix arg same level trees.
 </p>
 </dd>
+<dt><a id="index-C_002dc-_003b-b"></a><span><kbd class="kbd">{C-c ; b}</kbd><a class="copiable-link" href="#index-C_002dc-_003b-b"> &para;</a></span></dt>
+<dd><p>Copy &lt;tree&gt; to be the predecessor of &lt;cell&gt;.
+<a class="index-entry-id" id="index-C_002du-C_002dc-_003b-b"></a>
+</p></dd>
+<dt><kbd class="kbd">{C-u C-c ; b}</kbd></dt>
+<dd><p>Copy &lt;tree&gt; to be the first child of the parent of &lt;cell&gt;.
+</p>
+</dd>
 <dt><a id="index-C_002dc-_003b-c"></a><span><kbd class="kbd">{C-c ; c}</kbd><a class="copiable-link" href="#index-C_002dc-_003b-c"> &para;</a></span></dt>
 <dd><p>Copy &lt;tree&gt; to be the successor of &lt;cell&gt;.
 <a class="index-entry-id" id="index-C_002du-C_002dc-_003b-c"></a>
 </p></dd>
 <dt><kbd class="kbd">{C-u C-c ; c}</kbd></dt>
 <dd><p>Copy &lt;tree&gt; to follow as the first child of &lt;cell&gt;.
-</p>
-</dd>
-<dt><a id="index-C_002dc-C_002dc-1"></a><span><kbd class="kbd">{C-c C-c}</kbd><a class="copiable-link" href="#index-C_002dc-C_002dc-1"> &para;</a></span></dt>
-<dd><p>Copy &lt;tree&gt; to be the predecessor of &lt;cell&gt;.
-<a class="index-entry-id" id="index-C_002du-C_002dc-C_002dc"></a>
-</p></dd>
-<dt><kbd class="kbd">{C-u C-c C-c}</kbd></dt>
-<dd><p>Copy &lt;tree&gt; to be the first child of the parent of &lt;cell&gt;.
 </p>
 </dd>
 <dt><a id="index-C_002dc-_003b-m"></a><span><kbd class="kbd">{C-c ; m}</kbd><a class="copiable-link" href="#index-C_002dc-_003b-m"> &para;</a></span></dt>
@@ -7641,7 +7642,7 @@ between cells.
 <a class="index-entry-id" id="index-koutliner_002c-M_002dRET"></a>
 <a class="index-entry-id" id="index-kotl_002dmode_003aaction_002dkey_002ddefault_002dfunction"></a>
 <p>A click or a press of the Action Key within a cell&rsquo;s body, but not on a
-Hyperbole button, runs the function stored in the variable, 
+Hyperbole button, runs the function stored in the variable,
 <code class="code">kotl-mode:action-key-default-function</code>, which by default does nothing.
 </p>
 <a class="index-entry-id" id="index-koutliner_002c-hide_002fshow-tree"></a>
@@ -7708,11 +7709,10 @@ view spec is &lt;|ben&gt;.
 </dd>
 <dt><a class="index-entry-id" id="index-blank-lines_002c-toggle"></a>
 <a class="index-entry-id" id="index-view-spec_002c-blank-lines"></a>
-<a class="index-entry-id" id="index-koutliner_002c-C_002dc-_003b-b-1"></a>
 <a class="index-entry-id" id="index-toggling-blank-lines"></a>
-<a id="index-koutliner_002c-C_002dc-_003b-b"></a><span><kbd class="kbd">b</kbd><a class="copiable-link" href="#index-koutliner_002c-C_002dc-_003b-b"> &para;</a></span></dt>
+<a id="index-koutliner_002c-C_002dc-_005d"></a><span><kbd class="kbd">b</kbd><a class="copiable-link" href="#index-koutliner_002c-C_002dc-_005d"> &para;</a></span></dt>
 <dd><p>Turn on blank lines between cells.  Without this character, blank lines
-will be turned off.  You may also use the <kbd class="kbd">{C-c ; b}</kbd> key binding to
+will be turned off.  You may also use the <kbd class="kbd">{C-c ]}</kbd> key binding to
 toggle blank lines on and off independently of any other view settings.
 </p>
 </dd>
@@ -7792,7 +7792,7 @@ current outline viewspecs.  This section discusses klinks.
 <dl class="table">
 <dt><a class="index-entry-id" id="index-klink_002c-internal"></a>
 <a class="index-entry-id" id="index-_003c_0023klink_003e"></a>
-<a id="index-internal-klink"></a><span><em class="emph">internal</em><a class="copiable-link" href="#index-internal-klink"> &para;</a></span></dt>
+<a id="index-internal-klink"></a><span>internal<a class="copiable-link" href="#index-internal-klink"> &para;</a></span></dt>
 <dd><p>&lsquo;<samp class="samp">&lt;#2b=06&gt;</samp>&rsquo; is an internal klink, since it refers to the koutline
 in which it is embedded.  When activated, it jumps to the cell within
 the current outline which has permanent id &lsquo;06&rsquo; and relative id &lsquo;2b&rsquo;.
@@ -7805,7 +7805,7 @@ outline visible.
 </p>
 </dd>
 <dt><a class="index-entry-id" id="index-klink_002c-external"></a>
-<a id="index-external-klink"></a><span><em class="emph">external</em><a class="copiable-link" href="#index-external-klink"> &para;</a></span></dt>
+<a id="index-external-klink"></a><span>external<a class="copiable-link" href="#index-external-klink"> &para;</a></span></dt>
 <dd><p>The second klink format is an external link to another koutline, such
 as, &lsquo;<samp class="samp">&lt;EXAMPLE.kotl#3=012|c1e&gt;</samp>&rsquo;, which displays the named file,
 starting at the cell 3 (whose permanent identifier is 012), with the
@@ -7814,7 +7814,7 @@ per cell, and showing ellipses for cells or trees which are collapsed.
 </p>
 </dd>
 <dt><a class="index-entry-id" id="index-view-spec_002c-klink"></a>
-<a id="index-klink_002c-view-spec"></a><span><em class="emph">view spec</em><a class="copiable-link" href="#index-klink_002c-view-spec"> &para;</a></span></dt>
+<a id="index-klink_002c-view-spec"></a><span>view spec<a class="copiable-link" href="#index-klink_002c-view-spec"> &para;</a></span></dt>
 <dd><p>The third format sets a view spec for the current koutline.  For
 example, &lsquo;<samp class="samp">&lt;|ben&gt;</samp>&rsquo;, when activated, sets the view in the current
 outline to display blank lines, to use ellipses after collapsed lines
@@ -7923,7 +7923,7 @@ outline cell.  Thus, each cell, including the invisible 0 root cell,
 has its own attribute list.  Every cell has three standard attributes:
 </p>
 <dl class="table">
-<dt><a id="index-idstamp-attribute"></a><span><em class="emph">idstamp</em><a class="copiable-link" href="#index-idstamp-attribute"> &para;</a></span></dt>
+<dt><a id="index-idstamp-attribute"></a><span>idstamp<a class="copiable-link" href="#index-idstamp-attribute"> &para;</a></span></dt>
 <dd><p>The permanent id of the cell, typically used in cross-file hyperlinks
 that reference the cell, this is a whole number that starts from 0, which
 is always the hidden root cell of the outline tree.
@@ -7931,42 +7931,55 @@ is always the hidden root cell of the outline tree.
 </dd>
 <dt><a class="index-entry-id" id="index-e_002dmail-address-1"></a>
 <a class="index-entry-id" id="index-mail-address"></a>
-<a id="index-creator-attribute"></a><span><em class="emph">creator</em><a class="copiable-link" href="#index-creator-attribute"> &para;</a></span></dt>
+<a id="index-creator-attribute"></a><span>creator<a class="copiable-link" href="#index-creator-attribute"> &para;</a></span></dt>
 <dd><p>The e-mail address of the person who created this cell.
 </p>
 </dd>
 <dt><a class="index-entry-id" id="index-cell-creation-time"></a>
-<a id="index-create_002dtime-attribute"></a><span><em class="emph">create-time</em><a class="copiable-link" href="#index-create_002dtime-attribute"> &para;</a></span></dt>
+<a id="index-create_002dtime-attribute"></a><span>create-time<a class="copiable-link" href="#index-create_002dtime-attribute"> &para;</a></span></dt>
 <dd><p>The time at which the cell was created.  This is stored in a form that
 allows for easy data comparisons but is displayed in a human readable
 format, such as &lsquo;<samp class="samp">Jan 28 18:27:59 CST 2021</samp>&rsquo;.
 </p></dd>
 </dl>
 
-<a class="index-entry-id" id="index-koutliner_002c-C_002dc-C_002di"></a>
 <a class="index-entry-id" id="index-attribute_002c-adding"></a>
 <a class="index-entry-id" id="index-attribute_002c-modifying"></a>
 <a class="index-entry-id" id="index-attribute_002c-removing"></a>
 <a class="index-entry-id" id="index-attribute_002c-setting"></a>
-<p><kbd class="kbd">{C-c C-i}</kbd> adds, modifies or removes an attribute from a cell.
-The prefix argument given to this command determines what it does.
+<p>The following keys edit and display outline attributes:
 </p>
+<a class="index-entry-id" id="index-koutliner_002c-Assist-Key_002c-listing-attributes"></a>
+<a class="index-entry-id" id="index-Assist-Key_002c-listing-attributes"></a>
+<a class="index-entry-id" id="index-attributes_002c-displaying"></a>
+<a class="index-entry-id" id="index-displaying-attributes"></a>
+<a class="index-entry-id" id="index-outline_002c-attribute-list"></a>
 <dl class="table">
-<dt><kbd class="kbd">{C-c C-i}</kbd></dt>
-<dd><p>sets an attribute of the cell at point; setting an attribute&rsquo;s value
-to &lsquo;<samp class="samp">nil</samp>&rsquo; is the same as removing it.
+<dd>
+<a class="index-entry-id" id="index-koutliner_002c-C_002dc-_003b-h"></a>
+<p>Prompt for a cell label and display the cell&rsquo;s attributes (show help
+for the cell).  <kbd class="kbd">{C-u C-c ; h}</kbd> wil prompt for a cell label and
+display the attributes for it and any of its visible subtree.  Use 0
+for the cell label to see attributes for the invisible outline 0 root
+cell and all of its visible subtree (the whole visible outline).
+</p>
+</dd>
+<dt><a id="index-koutliner_002c-C_002dc-C_002di"></a><span><kbd class="kbd">{C-c C-i}</kbd><a class="copiable-link" href="#index-koutliner_002c-C_002dc-C_002di"> &para;</a></span></dt>
+<dd><p>With no prefix arg or a prefix arg of 1, set a current cell attribute.
+Setting an attribute&rsquo;s value to &lsquo;<samp class="samp">nil</samp>&rsquo; is the same as removing it.
+See the following items for how the prefix argument affects this command.
 </p>
 </dd>
 <dt><kbd class="kbd">{C-u C-c C-i}</kbd></dt>
-<dd><p>removes an attribute of the cell at point
+<dd><p>Remove an attribute of the cell at point.
 </p>
 </dd>
-<dt><kbd class="kbd">{C-0 C-c C-i}</kbd></dt>
-<dd><p>sets an attribute of the invisible 0 root cell
+<dt><kbd class="kbd">{M-0 C-c C-i}</kbd></dt>
+<dd><p>Set an attribute of the invisible 0 root cell.
 </p>
 </dd>
-<dt><kbd class="kbd">{C--1 C-c C-i}</kbd></dt>
-<dd><p>removes an attribute of the invisible 0 root cell
+<dt><kbd class="kbd">{M--1 C-c C-i}</kbd></dt>
+<dd><p>Remove an attribute of the invisible 0 root cell.
 </p></dd>
 </dl>
 
@@ -7980,17 +7993,6 @@ commands from refilling the cell, even if the variable,
 <code class="code">kotl-mode:refill-flag</code>, is set to &lsquo;<samp class="samp">t</samp>&rsquo;.  It does not prevent
 you from invoking explicit commands that refill the cell.
 See <a class="xref" href="#Filling">Filling</a>.
-</p>
-<a class="index-entry-id" id="index-koutliner_002c-Assist-Key_002c-listing-attributes"></a>
-<a class="index-entry-id" id="index-Assist-Key_002c-listing-attributes"></a>
-<a class="index-entry-id" id="index-attributes_002c-displaying"></a>
-<a class="index-entry-id" id="index-displaying-attributes"></a>
-<a class="index-entry-id" id="index-outline_002c-attribute-list"></a>
-<a class="index-entry-id" id="index-koutliner_002c-C_002dc-_003b-h"></a>
-<p><kbd class="kbd">{C-c ; h}</kbd> prompts for a cell label and displays the cell&rsquo;s
-attributes.  <kbd class="kbd">{C-u C-c ; h}</kbd> prompts for a cell label and displays
-the attributes for it and its subtree; use 0 as the kcell id to see
-attributes for all visible cells in the outline.
 </p>
 <hr>
 </div>
@@ -9312,19 +9314,19 @@ entries.  The buttons use this format: [&lt;text to match&gt;].
 <p>The following defines the button type called <code class="code">search-git-log</code> with a
 a key series action surrounded by braces:
 </p>
-<p><code class="code">(defil search-git-log &quot;[&lt;&quot; &quot;&gt;]&quot; &quot;.*&quot; &quot;{M-: (hypb:fgrep-git-log \&quot;\\&amp;\&quot;) RET}&quot;)</code>
+<p><code class="code">(defil search-git-log &quot;{&lt;&quot; &quot;&gt;}&quot; &quot;.*&quot; &quot;{M-: (hypb:fgrep-git-log \&quot;\\&amp;\&quot;) RET}&quot;)</code>
 </p>
 <p>or this simpler version skips the explicit text substitution (\\\\&amp;)
 and instead uses the function that takes the button text as an argument:
 </p>
-<p><code class="code">(defil search-git-log &quot;[&lt;&quot; &quot;&gt;]&quot; &quot;.*&quot; #’hypb:fgrep-git-log)</code>
+<p><code class="code">(defil search-git-log &quot;{&lt;&quot; &quot;&gt;}&quot; &quot;.*&quot; #’hypb:fgrep-git-log)</code>
 </p>
 <p>Place point after one of the above expressions and evaluate it with
 <kbd class="kbd">{C-x C-e}</kbd> <code class="code">eval-last-sexp</code> to define the implicit button
 type.  Then if you have cloned the Hyperbole repo and are in a
 Hyperbole source buffer, an Action Key press on a button of the form:
 </p>
-<p><code class="code">;; [&lt;test release&gt;]</code>
+<p><code class="code">;; {&lt;test release&gt;}</code>
 </p>
 <p>will display one line per commit whose change set matches &rsquo;test
 release&rsquo;.  An Action Key press on any such line will then display the
@@ -10594,6 +10596,13 @@ modifications to the <samp class="file">use-package</samp> file.
   ;; - nil    - no highlighting, the ‘hywiki-mode’ is disabled.
   (hywiki-mode :all)
 
+  ;; If you want to treat your Hyperbole link buttons like Org links,
+  ;; uncomment this next Lisp sexpression and then you can surround
+  ;; your Hyperbole buttons with double square brackets and get Org
+  ;; link highlighting, e.g. [[bug#8291]].
+  ;;
+  ;; (push #'hbut:activate-at-p org-open-link-functions)
+
   :bind
   (:map hyperbole-mode-map
 	;; Bind Smart Keys: {M-RET} executes `action-key' and {C-u M-RET}
@@ -10614,17 +10623,44 @@ modifications to the <samp class="file">use-package</samp> file.
   ;;   nil      - In Org mode, Org controls the key.
   (hsys-org-enable-smart-keys t)
 
+  ;; HyRolo Customizations
+
+  ;; Uncomment and set `hyrolo-file-list' to a list of files,
+  ;; directories and file wildcard expressions you want to find notes,
+  ;; contacts or any hierarchical records in.  Directories are
+  ;; searched recursively and filtered to only Org, Markdown, Koutline
+  ;; and Emacs outline files.  The first entry is where HyRolo adds
+  ;; new records.  (default = '(&quot;~/.rolo.org&quot;))
+  ;;
+  ;; (hyrolo-file-list '(&quot;~/.rolo.org&quot; &quot;~/org/&quot; &quot;~/org-roam/&quot; &quot;~/Documents/notes/&quot;))
+
   ;; HyWiki Customizations
 
-  ;; Directory to store all HyWiki pages in (default = &quot;~/hywiki/&quot;)
-  (hywiki-directory &quot;~/hywiki/&quot;)
+  ;; Uncomment and set `hywiki-directory' to the directory to store
+  ;; all HyWiki pages in (default = &quot;~/hywiki/&quot;).
+  ;;
+  ;; (hywiki-directory &quot;~/hywiki/&quot;)
+
+  ;; If using these settings:
+  ;;   (hywiki-mode :all)
+  ;;   (hsys-org-enable-smart-keys t)
+  ;;
+  ;; then when Hyperbole's Action Key, {M-RET}, is pressed on any
+  ;; potential WikiWord, e.g. any capitalized word, in any text or
+  ;; programming buffer comment, it will display a page file of notes
+  ;; associated with that WikiWord, creating it if it doesn't exist.
+  ;;
+  ;; If there are major-modes where you want to disable this
+  ;; capability, uncomment the following line and add the mode names
+  ;; inside the empty list:
+  ;; (hywiki-word-create-exclude-action-key-modes '())
 
   ;; Koutliner Customizations
 
   ;; Inline image display can be toggled on/off with {C-c C-x C-v} but
   ;; if you want inline images to display all the time in Koutline
-  ;; buffers, uncomment the next line:
-  ;; (add-hook 'kotl-mode-hook 'iimage-mode)
+  ;; buffers, uncomment the next sexpression:
+  ;;   (add-hook 'kotl-mode-hook 'iimage-mode)
 
   ;; NOTE: As of Hyperbole version 9.3.0, the Koutliner uses `C-c ;'
   ;; as the prefix for mode-specific &lt;letter&gt; key bindings (prior
@@ -11557,7 +11593,7 @@ outlines.  An outliner command which overloads an emacs command named
 <em class="emph">cmd</em> is named <em class="emph">kotl-mode:cmd</em>.
 </p>
 <dl class="table">
-<dt><a id="index-kotl_002dmode_003atoggle_002dtab_002dflag"></a><span><code class="code">kotl-mode:toggle-tab-flag <kbd class="kbd">{C-c C-]}</kbd></code><a class="copiable-link" href="#index-kotl_002dmode_003atoggle_002dtab_002dflag"> &para;</a></span></dt>
+<dt><a id="index-kotl_002dmode_003atoggle_002dtab_002dflag"></a><span><code class="code">kotl-mode:toggle-tab-flag <kbd class="kbd">{C-c [}</kbd></code><a class="copiable-link" href="#index-kotl_002dmode_003atoggle_002dtab_002dflag"> &para;</a></span></dt>
 <dd><p>Toggle the value of <code class="code">kotl-mode:tab-flag</code> and explain its current
 usage.  This toggles TAB/S-TAB between the Org-compatible cycling
 commands and the traditional Koutliner demote/promote commands.&quot;
@@ -11682,7 +11718,7 @@ TO-CELL-REF, otherwise make it the sibling following TO-CELL-REF.
 <p>Leave point at the start of the root cell of the new tree.
 </p>
 </dd>
-<dt><a id="index-kotl_002dmode_003acopy_002dbefore"></a><span><code class="code">kotl-mode:copy-before  <kbd class="kbd">{C-c C-c}</kbd></code><a class="copiable-link" href="#index-kotl_002dmode_003acopy_002dbefore"> &para;</a></span></dt>
+<dt><a id="index-kotl_002dmode_003acopy_002dbefore"></a><span><code class="code">kotl-mode:copy-before  <kbd class="kbd">{C-c ; b}</kbd></code><a class="copiable-link" href="#index-kotl_002dmode_003acopy_002dbefore"> &para;</a></span></dt>
 <dd><p>Copy tree rooted at FROM-CELL-REF to precede tree rooted at TO-CELL-REF.
 If prefix arg PARENT-P is non-nil, make FROM-CELL-REF the first child of
 TO-CELL-REF&rsquo;s parent, otherwise make it the preceding sibling of TO-CELL-REF.
@@ -12136,7 +12172,7 @@ current koutline.  VIEW-SPEC must be a string.  See
 on valid view specs.
 </p>
 </dd>
-<dt><a id="index-kvspec_003atoggle_002dblank_002dlines-1"></a><span><code class="code">kvspec:toggle-blank-lines <kbd class="kbd">{C-c ; b}</kbd></code><a class="copiable-link" href="#index-kvspec_003atoggle_002dblank_002dlines-1"> &para;</a></span></dt>
+<dt><a id="index-kvspec_003atoggle_002dblank_002dlines-1"></a><span><code class="code">kvspec:toggle-blank-lines <kbd class="kbd">{C-c ]}</kbd></code><a class="copiable-link" href="#index-kvspec_003atoggle_002dblank_002dlines-1"> &para;</a></span></dt>
 <dd><p>Toggle blank lines between cells on or off.
 </p>
 </dd>
@@ -12667,8 +12703,8 @@ Next: <a href="#Smart-Key-_002d-Ivy" accesskey="n" rel="next">Smart Key - Ivy</a
          standard binding of <kbd class="kbd">{C-c C-c}</kbd>, <code class="code">org-ctrl-c-ctrl-c</code>.
 
      (10) With point on an Org mode heading but not a Hyperbole button, call
-         the function given by the <code class="code">smart-org-action-key-heading-function</code>
-         variable, which defaults to doing nothing.
+          the function given by the <code class="code">smart-org-action-key-heading-function</code>
+          variable, which defaults to doing nothing.
 
      (11) In any other context besides the end of a line, invoke the Org mode
           standard binding of <kbd class="kbd">{M-<kbd class="key">RET</kbd>}</kbd>, <code class="code">org-meta-return</code>.
@@ -14986,6 +15022,7 @@ Next: <a href="#Function-Index" accesskey="n" rel="next">Function, Variable and 
 <tr><th id="Key-Index_ky_letter-C">C</th></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-c"><code>c</code></a></td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dc-_002c"><code>C-c ,</code></a></td><td class="printindex-index-section"><a href="#Moving-Around">Moving Around</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dc-_003b-b"><code>C-c ; b</code></a></td><td class="printindex-index-section"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dc-_003b-c"><code>C-c ; c</code></a></td><td class="printindex-index-section"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dc-_003b-m"><code>C-c ; m</code></a></td><td class="printindex-index-section"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dc-_002e"><code>C-c .</code></a></td><td class="printindex-index-section"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
@@ -15006,7 +15043,6 @@ Next: <a href="#Function-Index" accesskey="n" rel="next">Function, Variable and 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dc-C_002da"><code>C-c C-a</code></a></td><td class="printindex-index-section"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dc-C_002db"><code>C-c C-b</code></a></td><td class="printindex-index-section"><a href="#Moving-Around">Moving Around</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dc-C_002dc"><code>C-c C-c</code></a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dc-C_002dc-1"><code>C-c C-c</code></a></td><td class="printindex-index-section"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dc-C_002dd"><code>C-c C-d</code></a></td><td class="printindex-index-section"><a href="#Moving-Around">Moving Around</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dc-C_002de-P-p"><code>C-c C-e P p</code></a></td><td class="printindex-index-section"><a href="#Publishing-a-HyWiki">Publishing a HyWiki</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dc-C_002df"><code>C-c C-f</code></a></td><td class="printindex-index-section"><a href="#Moving-Around">Moving Around</a></td></tr>
@@ -15105,9 +15141,9 @@ Next: <a href="#Function-Index" accesskey="n" rel="next">Function, Variable and 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002dmouse_002d3-1"><code>C-mouse-3</code></a></td><td class="printindex-index-section"><a href="#HyRolo-Menu">HyRolo Menu</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002du"><code>C-u</code></a></td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002du-1"><code>C-u</code></a></td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-C_002du-C_002dc-_003b-b"><code>C-u C-c ; b</code></a></td><td class="printindex-index-section"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002du-C_002dc-_003b-c"><code>C-u C-c ; c</code></a></td><td class="printindex-index-section"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002du-C_002dc-_003b-m"><code>C-u C-c ; m</code></a></td><td class="printindex-index-section"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-C_002du-C_002dc-C_002dc"><code>C-u C-c C-c</code></a></td><td class="printindex-index-section"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002du-C_002dc-C_002dm"><code>C-u C-c C-m</code></a></td><td class="printindex-index-section"><a href="#Relocating-and-Copying">Relocating and Copying</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002du-C_002dh-A"><code>C-u C-h A</code></a></td><td class="printindex-index-section"><a href="#Smart-Key-Operations">Smart Key Operations</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-C_002du-C_002dh-A-1"><code>C-u C-h A</code></a></td><td class="printindex-index-section"><a href="#Default-Hyperbole-Bindings">Default Hyperbole Bindings</a></td></tr>
@@ -15163,8 +15199,6 @@ Next: <a href="#Function-Index" accesskey="n" rel="next">Function, Variable and 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-Action-Key_002c-klink"><code>koutliner, Action Key, klink</code></a></td><td class="printindex-index-section"><a href="#Klinks">Klinks</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-Assist-Key_002c-listing-attributes"><code>koutliner, Assist Key, listing attributes</code></a></td><td class="printindex-index-section"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-C_002dc-_003b-a"><code>koutliner, C-c ; a</code></a></td><td class="printindex-index-section"><a href="#Adding-and-Killing">Adding and Killing</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-C_002dc-_003b-b"><code>koutliner, C-c ; b</code></a></td><td class="printindex-index-section"><a href="#View-Specs">View Specs</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-C_002dc-_003b-b-1"><code>koutliner, C-c ; b</code></a></td><td class="printindex-index-section"><a href="#View-Specs">View Specs</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-C_002dc-_003b-e"><code>koutliner, C-c ; e</code></a></td><td class="printindex-index-section"><a href="#Transposing">Transposing</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-C_002dc-_003b-h"><code>koutliner, C-c ; h</code></a></td><td class="printindex-index-section"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-C_002dc-_003b-k"><code>koutliner, C-c ; k</code></a></td><td class="printindex-index-section"><a href="#Adding-and-Killing">Adding and Killing</a></td></tr>
@@ -15172,11 +15206,12 @@ Next: <a href="#Function-Index" accesskey="n" rel="next">Function, Variable and 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-C_002dc-_003b-p"><code>koutliner, C-c ; p</code></a></td><td class="printindex-index-section"><a href="#Adding-and-Killing">Adding and Killing</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-C_002dc-_003b-s"><code>koutliner, C-c ; s</code></a></td><td class="printindex-index-section"><a href="#Splitting-and-Appending">Splitting and Appending</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-C_002dc-_003b-t"><code>koutliner, C-c ; t</code></a></td><td class="printindex-index-section"><a href="#Transposing">Transposing</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-C_002dc-_005b"><code>koutliner, C-c [</code></a></td><td class="printindex-index-section"><a href="#TAB-and-Shift_002dTAB">TAB and Shift-TAB</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-C_002dc-_005b-1"><code>koutliner, C-c [</code></a></td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-C_002dc-_005d"><code>koutliner, C-c ]</code></a></td><td class="printindex-index-section"><a href="#View-Specs">View Specs</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-C_002dc-_002b"><code>koutliner, C-c +</code></a></td><td class="printindex-index-section"><a href="#Splitting-and-Appending">Splitting and Appending</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-C_002dc-C_002d_002c"><code>koutliner, C-c C-,</code></a></td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-C_002dc-C_002d_002e"><code>koutliner, C-c C-.</code></a></td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-C_002dc-C_002d_005d"><code>koutliner, C-c C-]</code></a></td><td class="printindex-index-section"><a href="#TAB-and-Shift_002dTAB">TAB and Shift-TAB</a></td></tr>
-<tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-C_002dc-C_002d_005d-1"><code>koutliner, C-c C-]</code></a></td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-C_002dc-C_002d_003c"><code>koutliner, C-c C-&lt;</code></a></td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-C_002dc-C_002d_003e"><code>koutliner, C-c C-&gt;</code></a></td><td class="printindex-index-section"><a href="#Promoting-and-Demoting">Promoting and Demoting</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-koutliner_002c-C_002dc-C_002di"><code>koutliner, C-c C-i</code></a></td><td class="printindex-index-section"><a href="#Cell-Attributes">Cell Attributes</a></td></tr>

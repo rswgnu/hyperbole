@@ -1,4 +1,4 @@
-# GNU Hyperbole 9.3.0 - The Everyday Hypertextual Information Manager
+# GNU Hyperbole 9.3.1 - The Everyday Hypertextual Information Manager
 
 [We work on Hyperbole as a gift to the Emacs community and request you
  send us a thank you or a testimonial describing your usage if you like
@@ -6,7 +6,7 @@
 
 
 
-- [GNU Hyperbole 9.3.0 - The Everyday Hypertextual Information Manager](#gnu-hyperbole-930---the-everyday-hypertextual-information-manager)
+- [GNU Hyperbole 9.3.1 - The Everyday Hypertextual Information Manager](#gnu-hyperbole-931---the-everyday-hypertextual-information-manager)
   - [Reference Manual](#reference-manual)
   - [Videos](#videos)
   - [Articles](#articles)
@@ -286,6 +286,13 @@ file, see [Emacs Init File](https://www.gnu.org/software/emacs/manual/html_node/
   ;; - nil    - no highlighting, the ‘hywiki-mode’ is disabled.
   (hywiki-mode :all)
 
+  ;; If you want to treat your Hyperbole link buttons like Org links,
+  ;; uncomment this next Lisp sexpression and then you can surround
+  ;; your Hyperbole buttons with double square brackets and get Org
+  ;; link highlighting, e.g. [[bug#8291]].
+  ;;
+  ;; (push #'hbut:activate-at-p org-open-link-functions)
+
   :bind
   (:map hyperbole-mode-map
 	;; Bind Smart Keys: {M-RET} executes `action-key' and {C-u M-RET}
@@ -306,17 +313,44 @@ file, see [Emacs Init File](https://www.gnu.org/software/emacs/manual/html_node/
   ;;   nil      - In Org mode, Org controls the key.
   (hsys-org-enable-smart-keys t)
 
+  ;; HyRolo Customizations
+
+  ;; Uncomment and set `hyrolo-file-list' to a list of files,
+  ;; directories and file wildcard expressions you want to find notes,
+  ;; contacts or any hierarchical records in.  Directories are
+  ;; searched recursively and filtered to only Org, Markdown, Koutline
+  ;; and Emacs outline files.  The first entry is where HyRolo adds
+  ;; new records.  (default = '("~/.rolo.org"))
+  ;;
+  ;; (hyrolo-file-list '("~/.rolo.org" "~/org/" "~/org-roam/" "~/Documents/notes/"))
+
   ;; HyWiki Customizations
 
-  ;; Directory to store all HyWiki pages in (default = "~/hywiki/")
-  (hywiki-directory "~/hywiki/")
+  ;; Uncomment and set `hywiki-directory' to the directory to store
+  ;; all HyWiki pages in (default = "~/hywiki/").
+  ;;
+  ;; (hywiki-directory "~/hywiki/")
+
+  ;; If using these settings:
+  ;;   (hywiki-mode :all)
+  ;;   (hsys-org-enable-smart-keys t)
+  ;;
+  ;; then when Hyperbole's Action Key, {M-RET}, is pressed on any
+  ;; potential WikiWord, e.g. any capitalized word, in any text or
+  ;; programming buffer comment, it will display a page file of notes
+  ;; associated with that WikiWord, creating it if it doesn't exist.
+  ;;
+  ;; If there are major-modes where you want to disable this
+  ;; capability, uncomment the following line and add the mode names
+  ;; inside the empty list:
+  ;; (hywiki-word-create-exclude-action-key-modes '())
 
   ;; Koutliner Customizations
 
   ;; Inline image display can be toggled on/off with {C-c C-x C-v} but
   ;; if you want inline images to display all the time in Koutline
-  ;; buffers, uncomment the next line:
-  ;; (add-hook 'kotl-mode-hook 'iimage-mode)
+  ;; buffers, uncomment the next sexpression:
+  ;;   (add-hook 'kotl-mode-hook 'iimage-mode)
 
   ;; NOTE: As of Hyperbole version 9.3.0, the Koutliner uses `C-c ;'
   ;; as the prefix for mode-specific <letter> key bindings (prior
@@ -659,6 +693,11 @@ Typical Hyperbole applications include:
    Linkage of code and design documents.  Jumping to the definition
    of an identifier from its use within code or its reference within
    documentation.
+
+   *Note Taking*
+   Use WikiWords to organize your notes and then have references
+   (without delimiters) to them throughout your files automatically
+   hyperlink back to notes or sections within notes.
 
  - *Brainstorming*
    Capture of ideas and then quick reorganization with the Hyperbole

@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     22-Oct-26 at 10:18:07 by Bob Weiner
+# Last-Mod:     22-Oct-26 at 11:01:11 by Bob Weiner
 #
 # Copyright (C) 1994-2026  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -72,6 +72,9 @@
 #
 #		Pre:
 #		    M-x hypb-release-update-version (Update all version strings except in Hyperbole.el)
+#                   make doc
+#                   make version
+#                   make pkg        # Eyeball that it looks right
 #		    -- Do all other preparations left for the release.
 #		    -- Commit and push all updates to master
 #		    make release-pre - Creates release branch, updates package version header,
@@ -135,7 +138,7 @@
 
 # This ver setup won't work under any make except GNU make, so set it manually.
 #HYPB_VERSION = "`head -3 hversion.el | tail -1 | sed -e 's/.*|\(.*\)|.*/\1/'`"
-HYPB_VERSION = 9.3.0
+HYPB_VERSION = 9.3.1
 
 # Emacs executable used to byte-compile .el files into .elc's.
 # To override which executable is used from the commandline, do something like this:
