@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:45:00
-;; Last-Mod:     17-Oct-26 at 23:50:16 by Bob Weiner
+;; Last-Mod:     22-Oct-26 at 02:02:37 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -275,7 +275,7 @@
       (let ((enable-local-variables nil))
         (hypb:display-file-with-logo "DEMO")
         (goto-char (point-min))
-        (re-search-forward " \\* Koutl")
+        (re-search-forward " - Koutl")
         (ibtypes::text-toc)
         (should (bolp))
         (should (looking-at "^[ \t]*\\* Koutliner")))

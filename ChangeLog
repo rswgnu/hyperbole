@@ -1,5 +1,8 @@
 2026-10-22  Bob Weiner  <rsw@gnu.org>
 
+* DEMO: Change TOC leader char from '*' to '-' to prevent interference
+    with section matches in tests.
+
 * hibtypes.el (text-toc): Update doc to reflect different leader
     chars that can start a TOC entry.  The section an entry
     matches to must start with the same number of * or # chars.
