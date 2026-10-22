@@ -6,4 +6,299 @@ Subject: GNU Hyperbole Major Release 9 (V9.3.0)
 * Overview
 ========================================================================
 
-Still in development.
+
+===========================================================================
+*                                   V9.3.1
+===========================================================================
+
+** DOCUMENTATION
+
+  *** [[FAST-DEMO]]: Add a link to [[README.md#Articles]].
+      [[FAST-DEMO]] and [[README.md]] add two recent article and video links:
+        [[https://youtu.be/5Oo_KqVcLFM][HyRolo: Records are Trees, Not Lines]]
+        [[https://youtu.be/o2KMvSCXwlU][Implicit Buttons: Build Your Hyperverse]]
+
+  *** [[(hyperbole)Cell Attributes]] and [[kotl/EXAMPLE.kotl]]: Add {C-c ; h}
+      into the key binding table.  Also, change C-0 to M-0 and C--1 to
+      M--1 since control digits don't typically work on a terminal.
+
+  *** [[(hyperbole)Promoting and Demoting]] and [[kotl/EXAMPLE.kotl]]:
+      Move {C-c C-]} [[kotl-mode:toggle-tab-flag]] to {C-c [}.
+
+  *** [[(hyperbole)View Specs]] and [[kotl/EXAMPLE.kotl]]:
+      Move {C-c ; b} [[kotl-mode:toggle-blank-lines]] to {C-c ]}.
+
+  *** [[(hyperbole)Relocating and Copying]]:
+      Move {C-c C-c} [[kotl-mode:copy-before]] to {C-c ; b} to match with
+      {C-c ; c} [[kotl-mode:copy-after) binding]].
+
+  *** [[man/use-package]]: Add a commented out  [[hyrolo-file-list]] setting that
+      shows all of the note taking systems that can be quickly full-text
+      searched with HyRolo with no indexing.
+
+  *** [[man/use-package]]: Add [[hywiki-word-create-exclude-action-key-modes]]
+      description of the use and setting of this custom option.
+
+  *** [[man/use-package]]: Add optional [[org-open-link-function]] setting that
+      enables highlighting Hyperbole buttons as Org links when wrapped
+      in double square brackets.
+
+
+** HYROLO  (See [[(hyperbole)HyRolo]]).
+
+  *** Optimize [[hyrolo-grep]] by filtering files to search with ripgrep/grep
+      to only those with at least one match.
+
+
+** IMPLICIT BUTTONS  (See [[(hyperbole)Implicit Buttons]]).
+
+  *** [[kbd-key]]: Add support for Org/MediaWiki links around
+      curly brace-delimited key series, e.g.. [[{C-h h d d}]].
+
+  *** [[Info-node]]: Allow for Org link square bracket delimiters so can
+      match within an [[org-open-link-functions]] call.
+
+
+** KOUTLINER  (See [[(hyperbole)Koutliner]]).
+
+  *** INCOMPATIBLE CHANGE: Move {C-c C-]} [[kotl-mode:toggle-tab-flag]] to
+      {C-c [} for toggling the mode of the {TAB} key, as is
+      easier-to-type and is a 'left' opening brace like left 'TAB' key.
+
+  *** INCOMPATIBLE CHANGE: Move {C-c ; b} [[kotl-mode:toggle-blank-lines]]
+      to {C-c ]}.
+      Move {C-c C-c} [[kotl-mode:copy-before]] to {C-c ; b} to match with
+      {C-c ; c} [[kotl-mode:copy-after) binding]].  {C-c C-c} no longer
+      worked because Org-compatibility overrode its binding.
+
+
+** PROGRAMMING INTERFACE CHANGES  (See [[(hyperbole)Embedding Hyperbole]]).
+
+  *** [[hywiki-org-get-heading-match-regexp]]: Allow for indented Org
+      headings.
+
+  *** [[hywiki-word-create-exclude-action-key-modes]]: Add to support major
+      modes where an Action Key press on a potential HyWikiWord does not
+      create it or a blank page of notes for it.
+
+  *** Add [[smart-prog-to-definition]] for use in [[org-open-link-functions]].
+      Used in "README.md".
+
+===========================================================================
+*                                   V9.3.0
+===========================================================================
+
+** DOCUMENTATION
+
+  *** Document changes to Koutliner {C-c <letter>} key bindings in:
+        man/use-package (kotl-mode:letter-prefix)
+        man/hyperbole.texi (Koutliner, Koutliner Keys)
+        kotl/EXAMPLE.kotl
+
+  *** [[(hyperbole)Hiding and Showing]]: Remove Koutline tree visibility
+      cycling from the Action Key default context since it is now on
+      the {TAB} key.
+
+  *** Update [[smart-org]] documentation in [[(hyperbole)Smart-Key - Org Mode]]
+      and (hyperbole)Implicit Button Types]] to reflect:
+        1.  new Org-style visibility cycling on the {TAB} and {S-TAB} keys.
+
+        2.  new settings to control Action and Assist Key behavior when
+            within a heading (defaults are no-ops):
+            [[smart-org-action-key-heading-function]] and
+            [[smart-org-assist-key-heading-function]].  The new [[smart-org-cycle]]
+            command is one option for such as setting.
+
+  *** [[kotl/EXAMPLE.kotl]]:
+      [[(hyperbole)Promoting and Demoting]]: Remove {M-0 TAB} and {M-0 S-TAB}
+      for demoting and promoting within Org tables as M-0 is used as a flag to
+      these commands to also fill cells.  Additionally, these bindings worked
+      only when 'kotl-mode:tab-flag' /= 'cycle.
+
+  *** [[(hyperbole)Hyperbole Overview]]: Add HyWiki summary.
+      [[(hyperbole)Installation and Configuration]]: Update this section.
+
+  *** New names for these manual sections:
+     [[(hyperbole)Tarball Install]] and [[(hyperbole)Package Installation]].
+
+  *** Makefile (README.md): Now generated from [[README.in.md]] and includes
+      a copy of "man/use-package" in the Installation section (which
+      replaces the now deleted "INSTALL" file.
+
+  *** man/use-package (iimage-mode): Add note on how to permanently enable
+      inline image display in Koutline buffers.
+
+  *** man/use-package: Add commented out settings for customization of
+      [[hyrolo-file-list]] and  [[hywiki-directory]].
+
+
+** HYROLO  (See [[(hyperbole)HyRolo]]).
+
+  *** INCOMPATIBLE CHANGE: In [[hyrolo-yank]], interactively, `regexp-flag' is
+      set only if prefix arg is not C-u, as C-u now disables the 3rd arg,
+      `exclude-sub-entries'.  Interactively, indicate whether yanking an
+      entry or a tree (sub-entries).
+
+
+** IMPLICIT BUTTONS  (See [[(hyperbole)Implicit Buttons]]).
+
+  *** [[hywiki-word]] matching can now be customized to limit which major modes
+      allow HyWikiWord creaton via the {M-RET} Action Key.  Add any such
+      text or programming modes to [[hywiki-word-create-exclude-action-key-modes]].
+      Then this ibtype will use [[hywiki-word-action-key-creation-allowed-p]]
+      to check for a valid mode.  You can bypass this setting by creating
+      a HyWikiWord via the keyboard menu with {C-h h h c}.
+
+
+** KOUTLINER  (See [[(hyperbole)Koutliner]]).
+
+  *** Add {C-c C-x C-v} bound to [[iimage-mode]] for toggling inline image display
+      like in Org mode.
+
+  *** In [[kotl-mode:setup-keymap]] add {C-c C-]} key binding for
+      [[kotl-mode:toggle-tab-flag]] to toggle {TAB} and {S-TAB} between
+      Org-style visibility cycling and tree demotion/promotion.
+
+  *** Remove {M-1 TAB} for toggling TAB/S-TAB functions for greater Org
+      compatibility.  Remove {M-0 TAB} and {M-0 S-TAB} for tree
+      demotion/promotion when not in Org-style cycle mode.  Existing
+      bindings of {C-c C-.} or {M-right} and {C-c C-,} or {M-left} for tree
+      demotion/promotion always work regardless of TAB mode.
+
+  *** INCOMPATIBLE CHANGE: In [[kotl-mode:setup-keymap]], by default, move all
+      {C-c <letter>} key bindings to {C-c ; <letter>} so do not override keys
+      reserved for user-specific key bindings.  The new {M-1 C-c C-l} will
+      toggle the old {C-c <letter>} bindings back on/off when desired for
+      users who don't care about overriding global bindings.  Alternatively,
+      you can also modify the new [[kotl-mode:letter-prefix]] in your Hyperbole
+      `use-package' setup to use any prefix you prefer.
+
+  *** INCOMPATIBLE CHANGE: Previously in Koutlines, the {M-RET} Action Key
+      default action when no matching context was found was to run
+      [[kotl-mode:show-or-hide-tree]].  Now instead it calls the function
+      specified by the new [[kotl-mode:action-key-default-function]], which
+      defaults to a no-op, since Koutline tree visibility cycling is now
+      on the {TAB} key by default.
+
+  *** INCOMPATIBLE CHANGE: Previously in Koutlines, the {C-u M-RET} Assist
+      Key default action when no matching context was found was to run
+      [[smart-scroll-down]].  Now instead it calls the function specified
+      by the new [[kotl-mode:assist-key-default-function]], which defaults
+      to a no-op, for symmetry with the Action Key.
+
+  *** INCOMPATIBLE CHANGE: Remove {M-TAB} binding since often used to
+      switch applications.  Use {S-TAB} instead.
+
+
+** ORG MODE INTEGRATION (See [[(hyperbole)Smart Key - Org Mode]]).
+
+  *** New Action and Assist Key settings for the action to run when pressed
+      on an Org heading if [[hsys-org-enable-smart-keys]] is set to t:
+      [[smart-org-action-key-heading-function]] and
+      [[smart-org-assist-key-heading-function]].  Both of these default to
+      no-ops.  The new [[smart-org-cycle]] command is one possible command to
+      set them to, though {TAB} will do that by default now.
+
+===========================================================================
+*                                   V9.2.0
+===========================================================================
+
+** DOCUMENTATION
+
+  *** [[man/use-package]]: Add the reference version of the `use-package'
+      configuration for Hyperbole.
+
+  *** [[(hyperbole)Inserting Literal Tabs]]: Add this manual section
+      to the Koutliner chapter.
+
+  *** [[(hyperbole)Promoting and Demoting]]: Expand this Koutliner
+      section with latest key bindings and Org table support.
+
+  *** [[(hyperbole)mplicit Button Types]]: Add new [[hbut-identifier]]
+      type to control ibut type prioritization for jumping to
+      Hyperbole button symbols like [[hbut:current]].
+
+
+** HYROLO  (See [[(hyperbole)HyRolo]]).
+
+  *** When using the `consult' package in searches, use an entry
+      match regexp that supports the 'orderless' package.
+
+
+** HYWIKI  (See [[(hyperbole)HyWiki]]).
+
+  *** When using the `consult' package in searches, use an entry
+      match regexp that supports the 'orderless' package.
+
+
+** IMPLICIT BUTTONS  (See [[(hyperbole)Implicit Buttons]]).
+
+  *** Klink Pathnames: Handle #relative-id=idstamp syntax at the end of a
+      pathname to display the specified Koutline cell.  Also, update
+      relative-id if need be when the link is activated.
+
+      When Hyperbole is prompting to create a klink referring to a cell
+      in the current buffer, {M-RET} pressed twice on a cell will use
+      that cell as the referent and the link will be inserted now without
+      the file path, i.e. <@ relative-id=idstamp>.
+
+
+** KOUTLINER  (See [[(hyperbole)Koutliner]]).
+
+  *** Org-style Cycling: {TAB} and {S-TAB} emulate Org-style visibility
+      cycling, by default, when pressed in a context other than ones
+      covered by the `kotl-mode:emulate-tab' setting.  Remove {M-TAB}
+      as a binding for promoting trees outside of Org tables since often
+      used to switch applications under a window system.
+
+   .  {TAB} cycles the tree rooted at point and {S-TAB} cycles the whole
+      outline.  See [[(hyperbole)TAB and Shift-TAB]].
+
+      Numeric prefix arguments show a single line for each cell down to
+      the prefix argument level.  Zero shows one line of all levels.
+
+      See [[(hyperbole)Org-style Visibility Cycling]]
+      and [[(hyperbole)Promoting and Demoting]] for summary tables of {TAB}
+      and {S-TAB} behavior.
+
+  *** {C-c [} runs [[kotl-mode:toggle-tab-flag]] which sets the value of
+      [[kotl-mode:tab-flag]] and toggles {TAB} and {S-TAB} between Org-style
+      cycling and demoting and promoting outline trees.
+
+===========================================================================
+*                                   V9.1.0
+===========================================================================
+
+NOTE: News for this release is unfinished.
+
+**GNU Hyperbole 9.1.0 NEWS**
+
+**   **HyWiki**
+    *   **Global Minor Mode**: The new `hywiki-mode` is a global minor mode that enables the highlighting and hyperlinking of **HyWikiWords** in any non-special text buffer and within the comments of programming buffers.
+    *   **Section Linking**: HyWikiWord links now support internal section jumps using the **`#` character** (e.g., `WikiWord#Section-Name`), allowing direct navigation to specific Org headlines within a wiki page.
+    *   **Web Publishing**: Added the `hywiki-publish-to-html` command (bound to `{C-h h h p}`) which utilizes Org mode’s publishing framework to export an entire HyWiki directory to HTML for web use.
+    *   **Interactive Search**: Added `hywiki-consult-grep` (bound to `{C-h h h g}`) for interactive, live-narrowing searches across all HyWiki pages using the Consult package.
+    *   **Customizable Highlighting**: Added `hywiki-word-highlight-flag` and
+   `hypb:include-major-modes' to toggle auto-highlighting and `hypb:exclude-major-modes` to define a list of modes where HyWikiWord recognition should be disabled.
+    *   **Link Requirements**: New variable `hywiki-org-link-type-required` allows users to control whether the `hy:` prefix is required for HyWikiWords when used inside Org-style double square brackets outside of the wiki directory.
+
+**   **Smart Keys**
+    *   **Granular Org Integration**: The custom option `hsys-org-enable-smart-keys` now supports a new value, **`'buttons`**, which limits Hyperbole’s `M-RET` override to only apply when point is on a Hyperbole button, leaving other contexts to native Org mode behavior.
+    *   **Org Table Toggle**: In the Koutliner, pressing the Action Key on a `|` character now toggles **`orgtbl-mode`** for cell-based table editing.
+    *   **Modern Completion Support**: Smart Key argument selection is now fully integrated with the **Vertico and Consult** completion frameworks, allowing for modern interactive selection of buffers, files, and identifiers.
+    *   **Python Tracebacks**: The Action Key now recognizes and jumps to source lines referenced in **Python pdb, traceback, or pytype errors** within any buffer.
+
+**   **Implicit Button Types**
+    *   **Social Media References**: Added the `social-reference` type which automatically recognizes and links hashtags and usernames for platforms including **X (Twitter), Facebook, and Instagram**.
+    *   **Social Default Service**: New variable `hibtypes-social-default-service` sets the default platform (initially "x") used when a hashtag or username is referenced without a specific service prefix.
+    *   **Python Navigation**: Added `python-tb-previous-line` to handle instances where Python tracebacks place the source reference one line above the error description.
+    *   **YouTube Interaction**: Added new action types `yt-play`, `yt-info`, and `yt-search` for specialized interaction with **YouTube videos** and metadata.
+
+**   **HyRolo**
+    *   **Navigation Performance**: All movement commands within HyRolo match buffers (e.g., Next, Previous, Up) have been optimized to use **text properties** rather than overlays, ensuring instantaneous navigation even in buffers containing thousands of search results.
+    *   **Interactive Filtering**: Added `hyrolo-consult-grep` and `hyrolo-helm-org-rifle` to the Rolo menu, permitting interactive full-text search and narrowing over the `hyrolo-file-list`.
+    *   **Org Roam Integration**: HyRolo now includes convenience commands for searching **Org Roam nodes** via the Consult package, accessible through `hsys-org-roam-consult-grep`.
+
+**   **Miscellaneous**
+    *   **Emacs Version Requirements**: While Hyperbole remains compatible with GNU Emacs 27.1, this release is optimized for and recommended for use with **GNU Emacs 28 or above**.
+    *   **Path Variable Expansion**: The function `hpath:expand` has been enhanced to more robustly handle Hyperbole-specific suffixes like `#anchors` and `:line:col` in combination with environment and Lisp variables.

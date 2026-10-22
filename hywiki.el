@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     20-Oct-26 at 01:15:31 by Bob Weiner
+;; Last-Mod:     21-Oct-26 at 21:46:52 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -152,6 +152,7 @@
 (require 'hyrolo)
 (require 'outline)    ;; For `outline-mode-syntax-table'
 (require 'seq)        ;; For `seq-contains-p', `seq-difference' and `seq-intersection'
+(require 'set)        ;; For `set:create' and `set:difference'
 (require 'subr-x)     ;; For `string-remove-prefix'
 (require 'thingatpt)
 
@@ -2462,11 +2463,14 @@ therein is invalid, trigger an error."
   ;; Org emphasis characters.
   (let ((str)
         (case-fold-search nil))
-    (format "[*/_=~]?\\(%s\\|%s\\|%s\\|%s\\)[*/_=~]?"
-            (regexp-quote term)
-            (regexp-quote (downcase term))
-            (regexp-quote (setq str (hywiki-wikiword-to-string term " ")))
-            (regexp-quote (capitalize str)))))
+    (format "[*/_=~]?\\(%s\\)[*/_=~]?"
+            (string-join
+             (set:create
+              (regexp-quote term)
+              (regexp-quote (downcase term))
+              (regexp-quote (setq str (hywiki-wikiword-to-string term " ")))
+              (regexp-quote (capitalize str)))
+             "\\|"))))
 
 ;;;###autoload
 (defun hywiki-get-definition (term &optional display-flag file)
@@ -3990,7 +3994,7 @@ When NO-STATS is non-nil, don't include statistics in square brackets."
 (defun hywiki-org-get-heading-match-regexp (title)
   "Return a regexp that matches to the TITLE and start of an Org heading."
   ;; org-complex-heading-regexp + custom todo keywords + specific title
-  (format (concat "^\\(\\*+[ \t]+\\)"
+  (format (concat "^[ \t]*\\(\\*+[ \t]+\\)"
                   ;; optional todo keyword
 	          "\\(?:"
                   (if (hywiki-in-page-p)

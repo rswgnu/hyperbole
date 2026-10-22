@@ -497,6 +497,11 @@ Typical Hyperbole applications include:
    of an identifier from its use within code or its reference within
    documentation.
 
+   *Note Taking*
+   Use WikiWords to organize your notes and then have references
+   (without delimiters) to them throughout your files automatically
+   hyperlink back to notes or sections within notes.
+
  - *Brainstorming*
    Capture of ideas and then quick reorganization with the Hyperbole
    Koutliner.  Link to related ideas, eliminating the need to copy
