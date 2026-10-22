@@ -1,5 +1,8 @@
 2026-10-22  Bob Weiner  <rsw@gnu.org>
 
+* hbut.el: Add these missing function declarations:
+    hui:hbut-act, smart-prog-to-definition
+
 * Makefile (HYPERBOLE_FILES, version):
   MANIFEST:
   hypb-release.el (hypb-release-version-file-list): Remove HY-ANNOUNCE

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     21-Oct-26 at 13:22:41 by Bob Weiner
+;; Last-Mod:     22-Oct-26 at 11:19:51 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -58,10 +58,12 @@ Use the function, (hbut:max-len), to read the proper value.")
 (declare-function hpath:substitute-var "hpath")
 (declare-function hpath:symlink-referent "hpath")
 (declare-function hpath:www-p "hpath")
+(declare-function hsys-org-at-read-only-p "hsys-org")
 (declare-function hsys-org-block-start-at-p "hsys-org")
 (declare-function hsys-org-src-block-start-at-p "hsys-org")
 (declare-function hui:buf-writable-err "hui")
 (declare-function hui:ebut-rename "hui")
+(declare-function hui:hbut-act "hui")
 (declare-function hui:ibut-rename "hui")
 (declare-function hui:key-dir "hui")
 (declare-function hui:key-src "hui")
@@ -72,7 +74,8 @@ Use the function, (hbut:max-len), to read the proper value.")
 (declare-function kbd-key:is-p "hib-kbd")
 (declare-function org-context "org")
 (declare-function smart-eolp "hui-mouse")
-(declare-function hsys-org-at-read-only-p "hsys-org")
+(declare-function smart-prog-to-definition "hmouse-tag")
+
 
 ;;; ************************************************************************
 ;;; Private variables
