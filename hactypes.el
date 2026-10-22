@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    23-Sep-91 at 20:34:36
-;; Last-Mod:     21-Oct-26 at 10:58:06 by Bob Weiner
+;; Last-Mod:     22-Oct-26 at 01:46:46 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -837,18 +837,27 @@ Optional SECTIONS-START limits toc entries to those after that point."
 SECTION is a string and can be just the leading part of a section heading."
   (interactive "sGo to section named: ")
   (when (stringp section)
-    (setq section (string-trim section))
-    (if (string-match "\\`\\(\\*+\\)[ \t]*" section)
-	(actypes::link-to-regexp-match
-	 (concat "^[ \t]*" (regexp-quote (match-string 1 section))
-		 "[ \t]*" (regexp-quote (substring section (match-end 0))))
-	 2 (current-buffer) t)
-      (actypes::link-to-regexp-match (concat "^[ \t]*" (regexp-quote section))
-				     2 (current-buffer) t))
-    (while (and (= (forward-line -1) 0)
-		(looking-at "[ \t]*[-=][-=]")))
-    (forward-line 1)
-    (recenter 0)))
+    (let (leader-chars)
+      ;; Move past the ibtype matched TOC entry so searches herein skip it
+      (forward-line 1)
+      (setq section (string-trim section))
+      (if (string-match "\\`\\([-+*o]+\\)[ \t]*" section)
+          (progn
+            (setq leader-chars (match-string 1 section))
+	    (actypes::link-to-regexp-match
+	     (concat "^[ \t]*\\("
+                     (regexp-quote (make-string (length leader-chars) ?*))
+                     "\\|"
+                     (regexp-quote (make-string (length leader-chars) ?#))
+		     "\\)[ \t]*"
+                     (regexp-quote (substring section (match-end 0))))
+	     1 (current-buffer) t))
+        (actypes::link-to-regexp-match (concat "^[ \t]*" (regexp-quote section))
+				       1 (current-buffer) t))
+      (while (and (= (forward-line -1) 0)
+		  (looking-at "[ \t]*[-=][-=]")))
+      (forward-line 1)
+      (recenter 0))))
 
 (defun hactypes:buffer-button-list ()
   "Return buttons available in current buffer."

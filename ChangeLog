@@ -1,5 +1,13 @@
 2026-10-22  Bob Weiner  <rsw@gnu.org>
 
+* hibtypes.el (text-toc): Update doc to reflect different leader
+    chars that can start a TOC entry.  The section an entry
+    matches to must start with the same number of * or # chars.
+  hactypes.el (text-toc): Add support for section entries using #
+    as their leading delimiter, i.e. Markdown files.  Fix to translate
+    leader char to either * or #.  Change so cannot have any leading
+    spaces, as mentioned in the ibtype doc string.
+
 * HY-NEWS (V9.3.1): Finish writeup on items back through 9.2.0.
 
 * HY-ANNOUNCE: In-progress.

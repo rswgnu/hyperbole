@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     18-Oct-26 at 09:12:52 by Bob Weiner
+;; Last-Mod:     22-Oct-26 at 01:53:38 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -812,14 +812,15 @@ anything."
 
 (defib text-toc ()
   "Jump to the text file section referenced by a table of contents entry at point.
-Buffer must be in a text mode or must contain DEMO, README or
-TUTORIAL and there must be a `Table of Contents' or `Contents'
-label on a line by itself (it optionally may begin with an
-asterisk), preceding the table of contents.  Each toc entry must
-begin with optional whitespace followed by one or more asterisks.
-Each section header linked to by the toc must start with optional
-whitespace and then one or more asterisks at the beginning of the
-line."
+Buffer must be in a text mode or must contain DEMO, README or TUTORIAL
+and there must be a `Table of Contents' or `Contents' label on a line by
+itself (it optionally may begin with an asterisk), preceding the table
+of contents.  Each toc entry must begin with optional whitespace
+followed by one or more asterisks, +, -, or the letter `o' (the leader
+character) followed by whitespace.  Each section header linked to by the
+toc must start with optional whitespace and then one or more asterisks
+at the beginning of the line matching the number of leader characters
+matched in the toc."
   (let (section)
     (when (and (or (derived-mode-p 'text-mode)
 		   (string-match "DEMO\\|README\\|TUTORIAL" (buffer-name)))
