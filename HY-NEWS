@@ -33,11 +33,11 @@
       Move {C-c C-]} [[kotl-mode:toggle-tab-flag]] to {C-c [}.
 
   *** [[(hyperbole)View Specs]] and [[kotl/EXAMPLE.kotl]]:
-      Move {C-c ; b} [[kotl-mode:toggle-blank-lines]] to {C-c ]}.
+      Move {C-c ; b} [[kvspec:toggle-blank-lines]] to {C-c ]}.
 
   *** [[(hyperbole)Relocating and Copying]]:
       Move {C-c C-c} [[kotl-mode:copy-before]] to {C-c ; b} to match with
-      {C-c ; c} [[kotl-mode:copy-after) binding]].
+      {C-c ; c} [[kotl-mode:copy-after]] binding.
 
   *** [[(hyperbole)Implicit Button Link Types]]: In (defil search-git-log),
       change to use curly braces instead of square brackets so it can be
@@ -50,7 +50,7 @@
   *** [[man/use-package]]: Add [[hywiki-word-create-exclude-action-key-modes]]
       description of the use and setting of this custom option.
 
-  *** [[man/use-package]]: Add optional [[org-open-link-function]] setting that
+  *** [[man/use-package]]: Add optional [[org-open-link-functions]] setting that
       enables highlighting Hyperbole buttons as Org links when wrapped
       in double square brackets.
 
@@ -79,10 +79,10 @@
       {C-c [} for toggling the mode of the {TAB} key, as is
       easier-to-type and is a 'left' opening brace like left 'TAB' key.
 
-  *** INCOMPATIBLE CHANGE: Move {C-c ; b} [[kotl-mode:toggle-blank-lines]]
+  *** INCOMPATIBLE CHANGE: Move {C-c ; b} [[kvspec:toggle-blank-lines]]
       to {C-c ]}.
       Move {C-c C-c} [[kotl-mode:copy-before]] to {C-c ; b} to match with
-      {C-c ; c} [[kotl-mode:copy-after) binding]].  {C-c C-c} no longer
+      {C-c ; c} [[kotl-mode:copy-after]] binding.  {C-c C-c} no longer
       worked because Org-compatibility overrode its binding.
 
 
