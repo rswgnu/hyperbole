@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     22-Oct-26 at 12:23:50 by Bob Weiner
+# Last-Mod:     24-Oct-26 at 15:01:36 by Bob Weiner
 #
 # Copyright (C) 1994-2026  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -462,7 +462,7 @@ doc-regenerate: doc-clean doc
 
 # Build the Info, HTML and Postscript versions of the user manual
 .PHONY: manual
-manual: info html pdf
+manual: info html pdf man/use-package
 
 TEXINFO_SRC = $(man_dir)/hyperbole.texi $(man_dir)/hkey-help.txt $(man_dir)/im/*.png
 
@@ -486,7 +486,7 @@ $(man_dir)/hyperbole.html: $(TEXINFO_SRC) $(man_dir)/hyperbole.css $(man_dir)/te
 #
 # `pandoc' is available from:
 #    https://github.com/jgm/pandoc
-README.md README.md.html: README.in.md
+README.md README.md.html: README.in.md man/use-package
 	# Generate README.md
 	cp -p README.in.md README.md && md_toc -p -m [TOC] github README.md \
 	  && sed -i -e "s+^\[TOC\]++g" -e "s+\`\`\`elisp++g" -e "s+\`\`\`++g" \

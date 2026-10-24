@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     22-Oct-26 at 11:19:51 by Bob Weiner
+;; Last-Mod:     24-Oct-26 at 11:16:44 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1151,14 +1151,9 @@ Default is the symbol hbut:current."
 	atype
       (or action (actype:action atype)))))
 
-(defun    hbut:activate-at-p (label)
-  "Activate programming id buttons and implicit/explicit buttons.
-Add to `org-open-link-functions' for activation of Hyperbole buttons
-embedded within Org links."
-  (cond ((smart-prog-to-definition label))
-	((hbut:at-p)
-	 (hui:hbut-act 'hbut:current)
-	 t)))
+(make-obsolete 'hbut:activate-at-p 'hyperbole-activate-button "9.3.2")
+;;;###autoload
+(defalias 'hbut:activate-at-p #'hyperbole-activate-button)
 
 (defun    hbut:actype (hbut)
   "Return action type for Hyperbole button symbol HBUT."

@@ -291,7 +291,7 @@ file, see [Emacs Init File](https://www.gnu.org/software/emacs/manual/html_node/
   ;; your Hyperbole buttons with double square brackets and get Org
   ;; link highlighting, e.g. [[bug#8291]].
   ;;
-  ;; (push #'hbut:activate-at-p org-open-link-functions)
+  ;; (push #'hyperbole-activate-button org-open-link-functions)
 
   :bind
   (:map hyperbole-mode-map
