@@ -1,5 +1,3 @@
-# -*- mode: org; org-open-link-functions: (hbut:activate-at-p); org-cycle-global-at-bob: t; hsys-org-enable-smart-keys: t -*-
-
 *			  What's New in GNU Hyperbole
 				 by Bob Weiner
 
@@ -33,11 +31,11 @@
       Move {C-c C-]} [[kotl-mode:toggle-tab-flag]] to {C-c [}.
 
   *** [[(hyperbole)View Specs]] and [[kotl/EXAMPLE.kotl]]:
-      Move {C-c ; b} [[kotl-mode:toggle-blank-lines]] to {C-c ]}.
+      Move {C-c ; b} [[kvspec:toggle-blank-lines]] to {C-c ]}.
 
   *** [[(hyperbole)Relocating and Copying]]:
       Move {C-c C-c} [[kotl-mode:copy-before]] to {C-c ; b} to match with
-      {C-c ; c} [[kotl-mode:copy-after) binding]].
+      {C-c ; c} [[kotl-mode:copy-after]] binding.
 
   *** [[(hyperbole)Implicit Button Link Types]]: In (defil search-git-log),
       change to use curly braces instead of square brackets so it can be
@@ -50,7 +48,7 @@
   *** [[man/use-package]]: Add [[hywiki-word-create-exclude-action-key-modes]]
       description of the use and setting of this custom option.
 
-  *** [[man/use-package]]: Add optional [[org-open-link-function]] setting that
+  *** [[man/use-package]]: Add optional [[org-open-link-functions]] setting that
       enables highlighting Hyperbole buttons as Org links when wrapped
       in double square brackets.
 
@@ -79,10 +77,10 @@
       {C-c [} for toggling the mode of the {TAB} key, as is
       easier-to-type and is a 'left' opening brace like left 'TAB' key.
 
-  *** INCOMPATIBLE CHANGE: Move {C-c ; b} [[kotl-mode:toggle-blank-lines]]
+  *** INCOMPATIBLE CHANGE: Move {C-c ; b} [[kvspec:toggle-blank-lines]]
       to {C-c ]}.
       Move {C-c C-c} [[kotl-mode:copy-before]] to {C-c ; b} to match with
-      {C-c ; c} [[kotl-mode:copy-after) binding]].  {C-c C-c} no longer
+      {C-c ; c} [[kotl-mode:copy-after]] binding.  {C-c C-c} no longer
       worked because Org-compatibility overrode its binding.
 
 
@@ -4211,3 +4209,11 @@ are new in 2016 and you should look through them all.
       the Win menu after performing their actions.  This allows you to yank
       or pop window configurations repeatedly until you get to the one you
       want.
+
+# Local Variables:
+# mode: org
+# org-cycle-global-at-bob: t
+# hsys-org-enable-smart-keys: t
+# org-open-link-functions: (hyperbole-activate-button)
+# eval: (unless (fboundp 'hyperbole-activate-button) (setq-local load-path (cons "." load-path)) (load "./hyperbole-autoloads"))
+# End:

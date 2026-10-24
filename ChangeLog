@@ -1,3 +1,30 @@
+2026-10-24  Bob Weiner  <rsw@gnu.org>
+
+* hywiki/HyWikiMenus.org (HyWiki Menu): Add missing entries from the current
+    HyWiki menu.
+
+* man/hyperbole.texi Replace @ref with @pxref because @ref adds 'see'
+    in Info format but not others.
+                     (Setup appendix): Rename to Install for easier lookup.
+                     (Installation and Configuration): Rewrite.
+
+* Makefile (manual, README.md): Make both dependent on "man/use-package".
+
+* hyperbole.el (hyperbole-activate-button): Add this function and expand
+    its doc string to replace `hbut:activate-at-p' so it can be autoloaded
+    from "hyperbole.el" when Hyperbole has not been previously loaded
+    since activating an Org link may trigger this.
+  hbut (hbut:activate-at-p): Make obsolete and replace with the above.
+
+* hbut.el (hbut:activate-at-p):
+  kotl/kotl-mode.el (kotl-mode:toggle-tab-flag, kotl-mode:copy-after,
+                     kotl-mode:copy-before, kotl-mode:setup-keymap):
+  kotl/kvspec.el (kvspec:toggle-blank-lines): Add ;;;###autoload.
+
+========================================================================
+V9.3.2 changes ^^^^:
+========================================================================
+
 2026-10-22  Bob Weiner  <rsw@gnu.org>
 
 * hbut.el: Add these missing function declarations:
@@ -63,7 +90,7 @@
 
 2026-10-20  Bob Weiner  <rsw@gnu.org>
 
-* man/use-package (org-open-link-function): Document how to enable Org
+* man/use-package (org-open-link-functions): Document how to enable Org
     link delimiters and highlighting of Hyperbole buttons via:
     (push #'hbut:activate-at-p org-open-link-functions)
 

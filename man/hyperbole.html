@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <!-- This manual is for GNU Hyperbole
-(Edition 9.3.1, Published October 22, 2026).
+(Edition 9.3.1, Published October 24, 2026).
 
 Copyright © 1989-2026  Free Software Foundation, Inc.
 
@@ -386,7 +386,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition 9.3.1
-Printed October 22, 2026.
+Printed October 24, 2026.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -408,7 +408,7 @@ Printed October 22, 2026.
 <a class="index-entry-id" id="index-anonymous-ftp"></a>
 <p>GNU Hyperbole was designed and written by Bob Weiner.
 </p>
-<p>See <a class="xref" href="#Setup">Setup</a>, for information on how to obtain and to install
+<p>See <a class="xref" href="#Install">Install</a>, for information on how to obtain and to install
 Hyperbole.
 </p>
 <p>This manual explains user operation and summarizes basic developer
@@ -455,7 +455,7 @@ dedicated to my lovely wife, Kathy.
 <li><a id="stoc-Window-Configurations-1" href="#toc-Window-Configurations-1">11 Window Configurations</a></li>
 <li><a id="stoc-Developing-with-Hyperbole-1" href="#toc-Developing-with-Hyperbole-1">12 Developing with Hyperbole</a></li>
 <li><a id="stoc-Glossary-1" href="#toc-Glossary-1">Appendix A Glossary</a></li>
-<li><a id="stoc-Setup-1" href="#toc-Setup-1">Appendix B Setup</a></li>
+<li><a id="stoc-Install-1" href="#toc-Install-1">Appendix B Install</a></li>
 <li><a id="stoc-Hyperbole-Key-Bindings-1" href="#toc-Hyperbole-Key-Bindings-1">Appendix C Hyperbole Key Bindings</a></li>
 <li><a id="stoc-Koutliner-Keys-1" href="#toc-Koutliner-Keys-1">Appendix D Koutliner Keys</a></li>
 <li><a id="stoc-Smart-Key-Reference-1" href="#toc-Smart-Key-Reference-1">Appendix E Smart Key Reference</a></li>
@@ -620,7 +620,7 @@ dedicated to my lovely wife, Kathy.
     <li><a id="toc-Embedding-Hyperbole-1" href="#Embedding-Hyperbole">12.5 Embedding Hyperbole</a></li>
   </ul></li>
   <li><a id="toc-Glossary-1" href="#Glossary">Appendix A Glossary</a></li>
-  <li><a id="toc-Setup-1" href="#Setup">Appendix B Setup</a>
+  <li><a id="toc-Install-1" href="#Install">Appendix B Install</a>
   <ul class="toc-numbered-mark">
     <li><a id="toc-Installation-and-Configuration-1" href="#Installation-and-Configuration">B.1 Installation and Configuration</a>
     <ul class="toc-numbered-mark">
@@ -814,7 +814,7 @@ demonstrates many of Hyperbole&rsquo;s standard facilities without the need
 to read through this reference manual.  The <samp class="file">../FAST-DEMO</samp> is a
 good way to rapidly understand some of what Hyperbole can do for you.
 It includes many links to videos and articles about Hyperbole.  Once
-Hyperbole is installed, (see <a class="pxref" href="#Setup">Setup</a>), you can access the
+Hyperbole is installed, (see <a class="pxref" href="#Install">Install</a>), you can access the
 <samp class="file">../FAST-DEMO</samp> with the key sequence <kbd class="kbd">{C-h h d d}</kbd>.
 </p>
 <p>See <a class="xref" href="#Glossary">Glossary</a>, for definitions of Hyperbole terms.  In some cases,
@@ -824,7 +824,7 @@ term is unclear to you.  Although you need not have a keen understanding of
 all of these terms, a quick scan of the glossary helps throughout Hyperbole
 use.
 </p>
-<p>See <a class="xref" href="#Setup">Setup</a>, for explanations of how to obtain, install, configure and load
+<p>See <a class="xref" href="#Install">Install</a>, for explanations of how to obtain, install, configure and load
 Hyperbole for use.  This appendix includes information on user-level settings
 that you may want to modify after you understand Hyperbole&rsquo;s basic operation.
 </p>
@@ -1094,7 +1094,7 @@ pre-configured with Hyperbole buttons, in which case, you can safely
 ignore most of the information in this manual.  Jump right into the
 Hyperbole fast demonstration by typing <kbd class="kbd">{C-h h d d}</kbd>, assuming Hyperbole
 has been installed at your site.  If you need to install
-Hyperbole, see <a class="pxref" href="#Setup">Setup</a>, for Hyperbole installation and configuration
+Hyperbole, see <a class="pxref" href="#Install">Install</a>, for Hyperbole installation and configuration
 information.  The demo offers a much less technical introduction to
 Hyperbole by supplying good examples of use.
 </p>
@@ -1710,8 +1710,8 @@ direct selection technique.
 </p>
 <a class="index-entry-id" id="index-completion"></a>
 <a class="index-entry-id" id="index-Vertico-completion"></a>
-<p>Wherever possible, standard Emacs completion is offered, as described
-in <a data-manual="emacs" href="https://www.gnu.org/software/emacs/manual/html_mono/emacs.html#Completion">Completion</a> in <cite class="cite">the GNU Emacs Manual</cite>.  Remember to use
+<p>Wherever possible, standard Emacs completion is offered,
+see <a data-manual="emacs" href="https://www.gnu.org/software/emacs/manual/html_mono/emacs.html#Completion">Completion</a> in <cite class="cite">the GNU Emacs Manual</cite>.  Remember to use
 <kbd class="kbd">{?}</kbd>  to see what your possibilities for an argument are if
 completions are not automatically shown to you.  Once you have a list
 of possible completions on screen, press the Action Key twice on any
@@ -4392,11 +4392,11 @@ selected region), an action type, and the action&rsquo;s associated arguments.
 It then creates the button at point and surrounds the label with
 &lt;(explicit button delimiters)&gt; like so, to indicate success.
 </p>
-<p>You can use the direct selection techniques mentioned in <a class="ref" href="#Smart-Key-Argument-Selection">Smart Key Argument Selection</a>, to select any completion-based arguments.  If you do
-not mark a region before invoking the button create command, you will be
-prompted for both a label and a target buffer for the button and the
-delimited label text will be inserted into the target buffer after a
-successful button creation.
+<p>You can use direct selection techniques, see <a class="pxref" href="#Smart-Key-Argument-Selection">Smart Key Argument Selection</a>, to select any completion-based arguments.  If you do not mark
+a region before invoking the button create command, you will be prompted
+for both a label and a target buffer for the button and the delimited
+label text will be inserted into the target buffer after a successful
+button creation.
 </p>
 <a class="index-entry-id" id="index-button-instance"></a>
 <a class="index-entry-id" id="index-instance-number"></a>
@@ -4740,8 +4740,8 @@ this out of particular messages before you send them when need be.
 save a pointer to a received mail message by creating an explicit button
 with a <code class="code">link-to-mail</code> action type.  When prompted for the mail
 message to link to, if you press the Action Key within the message, the
-appropriate link parameters will be copied to the argument prompt, as
-described in <a class="ref" href="#Smart-Key-Argument-Selection">Smart Key Argument Selection</a>.
+appropriate link parameters will be copied to the argument prompt,
+see <a class="pxref" href="#Smart-Key-Argument-Selection">Smart Key Argument Selection</a>.
 </p>
 
 <hr>
@@ -5976,12 +5976,13 @@ the minimum size needed to display its text.
 <a id="index-C_002du"></a><span><kbd class="kbd">{C-u}</kbd><a class="copiable-link" href="#index-C_002du"> &para;</a></span></dt>
 <dd><p>Multiply the prefix argument by 4 each time this is pressed.
 </p>
-</dd>
-<dt><a class="index-entry-id" id="index-grid-of-windows"></a>
+<a class="index-entry-id" id="index-windows-grid"></a>
+<a class="index-entry-id" id="index-grid-of-windows"></a>
 <a class="index-entry-id" id="index-HyControl-windows-grid"></a>
 <a class="index-entry-id" id="index-screen_002c-_0040"></a>
-<a class="index-entry-id" id="index-_0040"></a>
-<a id="index-windows-grid"></a><span><kbd class="kbd">{@}</kbd><a class="copiable-link" href="#index-windows-grid"> &para;</a></span></dt>
+<a class="index-entry-id" id="index-HyControl_002c-_0040"></a>
+<a class="anchor" id="HyControl-_0040"></a></dd>
+<dt><a id="index-_0040"></a><span><kbd class="kbd">{@}</kbd><a class="copiable-link" href="#index-_0040"> &para;</a></span></dt>
 <dd>
 <p>Display a <em class="dfn">grid of windows</em> in the selected frame sized according to
 the prefix argument or via a prompted input.  Left digit of the argument is
@@ -7568,7 +7569,7 @@ system yet, so that you can get effective views of an outline without
 editing it.  Some of these commands affect the current view spec.
 See <a class="xref" href="#View-Specs">View Specs</a>.
 </p>
-
+<a class="anchor" id="indirect-buffers"></a>
 <p>Here are the major commands for showing and hiding Koutline cells.
 </p>
 <dl class="table">
@@ -9680,7 +9681,7 @@ You are welcome, however, to study its code, below the
 <div class="appendix-level-extent" id="Glossary">
 <div class="nav-panel">
 <p>
-Next: <a href="#Setup" accesskey="n" rel="next">Setup</a>, Previous: <a href="#Developing-with-Hyperbole" accesskey="p" rel="prev">Developing with Hyperbole</a>, Up: <a href="#Top" accesskey="u" rel="up">GNU Hyperbole</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Install" accesskey="n" rel="next">Install</a>, Previous: <a href="#Developing-with-Hyperbole" accesskey="p" rel="prev">Developing with Hyperbole</a>, Up: <a href="#Top" accesskey="u" rel="up">GNU Hyperbole</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <h2 class="appendix" id="Glossary-1"><span>Appendix A Glossary<a class="copiable-link" href="#Glossary-1"> &para;</a></span></h2>
 
@@ -10416,12 +10417,12 @@ specifiable filters or from a list.
 
 <hr>
 </div>
-<div class="appendix-level-extent" id="Setup">
+<div class="appendix-level-extent" id="Install">
 <div class="nav-panel">
 <p>
 Next: <a href="#Hyperbole-Key-Bindings" accesskey="n" rel="next">Hyperbole Key Bindings</a>, Previous: <a href="#Glossary" accesskey="p" rel="prev">Glossary</a>, Up: <a href="#Top" accesskey="u" rel="up">GNU Hyperbole</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
-<h2 class="appendix" id="Setup-1"><span>Appendix B Setup<a class="copiable-link" href="#Setup-1"> &para;</a></span></h2>
+<h2 class="appendix" id="Install-1"><span>Appendix B Install<a class="copiable-link" href="#Install-1"> &para;</a></span></h2>
 
 <p>Hyperbole must be obtained and setup at your site before you can
 use it.  Instructions are given below.
@@ -10435,17 +10436,26 @@ use it.  Instructions are given below.
 <div class="section-level-extent" id="Installation-and-Configuration">
 <div class="nav-panel">
 <p>
-Next: <a href="#Customization" accesskey="n" rel="next">Customization</a>, Previous: <a href="#Setup" accesskey="p" rel="prev">Setup</a>, Up: <a href="#Setup" accesskey="u" rel="up">Setup</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Customization" accesskey="n" rel="next">Customization</a>, Previous: <a href="#Install" accesskey="p" rel="prev">Install</a>, Up: <a href="#Install" accesskey="u" rel="up">Install</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <h3 class="section" id="Installation-and-Configuration-1"><span>B.1 Installation and Configuration<a class="copiable-link" href="#Installation-and-Configuration-1"> &para;</a></span></h3>
 
-<p>Hyperbole can be upgraded or installed using Emacs&rsquo; package manager
-from ELPA or MELPA archives, using Straight or Elpaca package managers
-from Hyperbole&rsquo;s git development repository or manually downloaded via
-sftp from a tarball archive.  The following sections explain these methods.
+<a class="index-entry-id" id="index-Install"></a>
+<a class="index-entry-id" id="index-Setup"></a>
+<a class="index-entry-id" id="index-Upgrade"></a>
+<p>Hyperbole can be upgraded or installed in a number of ways as
+documented in the following sections.  Choose the one easiest for you:
+</p><ul class="itemize mark-bullet">
+<li>Upgrading an existing Hyperbole installation
+</li><li>Installing from ELPA or MELPA archives via Emacs Package Manager
+</li><li>Installing from Git source via Elpaca, Straight or Quelpa
+</li><li>Installing from a tarball via sftp
+</li></ul>
+
+<p>The following sections explain these methods.
 </p>
 
-<p>After installing and configuring Hyperbole, read the next section, see <a class="pxref" href="#Invocation">Invocation</a>.
+<p>After installing and configuring Hyperbole, see <a class="pxref" href="#Invocation">Invocation</a>.
 </p>
 <ul class="mini-toc">
 <li><a href="#Package-Upgrades" accesskey="1">Package Upgrades</a></li>
@@ -10463,11 +10473,11 @@ Next: <a href="#Package-Installation" accesskey="n" rel="next">Package Installat
 
 <a class="index-entry-id" id="index-upgrading-Hyperbole"></a>
 <a class="index-entry-id" id="index-Hyperbole-upgrades"></a>
-<p>To upgrade an existing Hyperbole installation, invoke the Emacs
-Package Manager, see <a data-manual="emacs" href="https://www.gnu.org/software/emacs/manual/html_mono/emacs.html#Packages">Packages</a> in <cite class="cite">the GNU Emacs Manual</cite>, with
-<kbd class="kbd">{M-x list-packages <kbd class="key">RET</kbd>}</kbd>, then use the <kbd class="kbd">{U}</kbd> key followed
-by the <kbd class="kbd">{x}</kbd> key to upgrade all out-of-date packages, Hyperbole
-among them.  Then skip to the <a class="ref" href="#Invocation">Invocation</a> section.
+<p>To upgrade an existing Hyperbole installation, invoke the Emacs Package
+Manager, see <a data-manual="emacs" href="https://www.gnu.org/software/emacs/manual/html_mono/emacs.html#Packages">Packages</a> in <cite class="cite">the GNU Emacs Manual</cite>, with <kbd class="kbd">{M-x
+list-packages <kbd class="key">RET</kbd>}</kbd>, then use the <kbd class="kbd">{U}</kbd> key followed by the
+<kbd class="kbd">{x}</kbd> key to upgrade all out-of-date packages, Hyperbole among them.
+Then follow instructions for invoking Hyperbole. See <a class="xref" href="#Invocation">Invocation</a>.
 </p>
 <hr>
 </div>
@@ -10512,7 +10522,7 @@ is a mature package with regression testing, the latest snapshots are
 usually fine for everyday use.  Most users should choose a package
 archive site that tracks these latest updates (elpa-devel and
 melpa-snapshots).  If you need slow-moving stability, get the latest
-release from elpa or melpa.
+release from ELPA or MELPA.
 </p>
 <p>Here are the installation and configuration steps:
 </p>
@@ -10601,7 +10611,7 @@ modifications to the <samp class="file">use-package</samp> file.
   ;; your Hyperbole buttons with double square brackets and get Org
   ;; link highlighting, e.g. [[bug#8291]].
   ;;
-  ;; (push #'hbut:activate-at-p org-open-link-functions)
+  ;; (push #'hyperbole-activate-button org-open-link-functions)
 
   :bind
   (:map hyperbole-mode-map
@@ -10816,7 +10826,7 @@ lines to your personal init file:
 <div class="section-level-extent" id="Customization">
 <div class="nav-panel">
 <p>
-Previous: <a href="#Installation-and-Configuration" accesskey="p" rel="prev">Installation and Configuration</a>, Up: <a href="#Setup" accesskey="u" rel="up">Setup</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Previous: <a href="#Installation-and-Configuration" accesskey="p" rel="prev">Installation and Configuration</a>, Up: <a href="#Install" accesskey="u" rel="up">Install</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <h3 class="section" id="Customization-1"><span>B.2 Customization<a class="copiable-link" href="#Customization-1"> &para;</a></span></h3>
 
@@ -11295,7 +11305,7 @@ addition to any non-mouse-sensitive button highlighting.
 <div class="appendix-level-extent" id="Hyperbole-Key-Bindings">
 <div class="nav-panel">
 <p>
-Next: <a href="#Koutliner-Keys" accesskey="n" rel="next">Koutliner Keys</a>, Previous: <a href="#Setup" accesskey="p" rel="prev">Setup</a>, Up: <a href="#Top" accesskey="u" rel="up">GNU Hyperbole</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Koutliner-Keys" accesskey="n" rel="next">Koutliner Keys</a>, Previous: <a href="#Install" accesskey="p" rel="prev">Install</a>, Up: <a href="#Top" accesskey="u" rel="up">GNU Hyperbole</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Key-Index" title="Index" rel="index">Index</a>]</p>
 </div>
 <h2 class="appendix" id="Hyperbole-Key-Bindings-1"><span>Appendix C Hyperbole Key Bindings<a class="copiable-link" href="#Hyperbole-Key-Bindings-1"> &para;</a></span></h2>
 
@@ -11420,8 +11430,8 @@ grid.
 initializing Hyperbole; it also defers to any <code class="code">major-mode</code>
 binding and when <code class="code">outline-minor-mode</code> is active.
 </p>
-<p>For further details, see the <kbd class="kbd">{@}</kbd> key binding description
-in <a class="ref" href="#HyControl">HyControl</a>.
+<p>For further details, see <a class="pxref" href="#HyControl-_0040">HyControl @</a>, where the <kbd class="kbd">{@}</kbd> key
+binding is described.
 </p>
 </dd>
 <dt><a class="index-entry-id" id="index-M_002do-1"></a>
@@ -12219,7 +12229,7 @@ Next: <a href="#Smart-Keyboard-Keys" accesskey="n" rel="next">Smart Keyboard Key
 <a class="index-entry-id" id="index-Smart-Mouse-Keys"></a>
 <p>The contexts and actions in this section, like drags and modeline
 clicks, apply only if you have mouse support within Hyperbole.  The
-Smart Key operations in <a class="ref" href="#Smart-Keyboard-Keys">Smart Keyboard Keys</a>, apply to both mouse
+Smart Key operations, see <a class="pxref" href="#Smart-Keyboard-Keys">Smart Keyboard Keys</a>, apply to both mouse
 and keyboard Smart Key usage.
 </p>
 <p>The following section documents what the Smart Mouse Keys do in each
@@ -13044,7 +13054,7 @@ Next: <a href="#Smart-Key-_002d-Delimited-Things" accesskey="n" rel="next">Smart
      (2) at the end of a line, scroll up a windowful;
      (3) in a <code class="code">magit-status-mode</code> buffer on a merge conflict
          marker, keep either the upper, both or the lower version of
-         the conflict. See also <a class="ref" href="#smerge">smerge</a>.
+         the conflict. See <a class="xref" href="#smerge">smerge</a>.
      (4) on a line starting with a &lsquo;+&rsquo; char in &lsquo;magit-status-mode&rsquo; or
          &lsquo;magit-revision-mode&rsquo; go to the worktree file.
      (5) on an initial read-only header line, cycle visibility of diff sections;
@@ -15176,6 +15186,7 @@ Next: <a href="#Function-Index" accesskey="n" rel="next">Function, Variable and 
 <tr><th id="Key-Index_ky_letter-H">H</th></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-h"><code>h</code></a></td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-H"><code>H</code></a></td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-HyControl_002c-_0040"><code>HyControl, @</code></a></td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyControl_002c-see-screen"><code>HyControl, see screen</code></a></td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyControl_002c-see-screen-1"><code>HyControl, see screen</code></a></td><td class="printindex-index-section"><a href="#HyControl">HyControl</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-HyRolo_002c-see-rolo"><code>HyRolo, see rolo</code></a></td><td class="printindex-index-section"><a href="#HyRolo-Keys">HyRolo Keys</a></td></tr>
@@ -17036,6 +17047,7 @@ Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-insert-item">insert item</a></td><td class="printindex-index-section"><a href="#Keyboard-Drags">Keyboard Drags</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-inserting-tabs">inserting tabs</a></td><td class="printindex-index-section"><a href="#Inserting-Literal-Tabs">Inserting Literal Tabs</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-insertion">insertion</a></td><td class="printindex-index-section"><a href="#Inserting-and-Importing">Inserting and Importing</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-Install">Install</a></td><td class="printindex-index-section"><a href="#Installation-and-Configuration">Installation and Configuration</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-installation">installation</a></td><td class="printindex-index-section"><a href="#Package-Installation">Package Installation</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-installation_002c-from-git">installation, from git</a></td><td class="printindex-index-section"><a href="#Package-Installation">Package Installation</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-installation_002c-from-git-1">installation, from git</a></td><td class="printindex-index-section"><a href="#Git-Latest-Package-Installation">Git Latest Package Installation</a></td></tr>
@@ -17623,6 +17635,7 @@ Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-set">set</a></td><td class="printindex-index-section"><a href="#Thing-Selection">Thing Selection</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-set-1">set</a></td><td class="printindex-index-section"><a href="#Smart-Key-_002d-Delimited-Things">Smart Key - Delimited Things</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-setting-the-view-spec">setting the view spec</a></td><td class="printindex-index-section"><a href="#View-Specs">View Specs</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-Setup">Setup</a></td><td class="printindex-index-section"><a href="#Installation-and-Configuration">Installation and Configuration</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-sexp-selection">sexp selection</a></td><td class="printindex-index-section"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-SGML-tag-pair">SGML tag pair</a></td><td class="printindex-index-section"><a href="#Smart-Key-Thing-Selection">Smart Key Thing Selection</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-show-subtree">show subtree</a></td><td class="printindex-index-section"><a href="#Hiding-and-Showing">Hiding and Showing</a></td></tr>
@@ -17753,6 +17766,7 @@ Previous: <a href="#Function-Index" accesskey="p" rel="prev">Function, Variable 
 <tr><td></td><td class="printindex-index-entry"><a href="#index-UNIX-manual">UNIX manual</a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-unshifted-mouse-bindings">unshifted mouse bindings</a></td><td class="printindex-index-section"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-unshifted-mouse-keys">unshifted mouse keys</a></td><td class="printindex-index-section"><a href="#Smart-Key-Bindings">Smart Key Bindings</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-Upgrade">Upgrade</a></td><td class="printindex-index-section"><a href="#Installation-and-Configuration">Installation and Configuration</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-upgrading-Hyperbole">upgrading Hyperbole</a></td><td class="printindex-index-section"><a href="#Package-Upgrades">Package Upgrades</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-URL">URL</a></td><td class="printindex-index-section"><a href="#Implicit-Button-Types">Implicit Button Types</a></td></tr>
 <tr><td></td><td class="printindex-index-entry"><a href="#index-URL-1">URL</a></td><td class="printindex-index-section"><a href="#Action-Types">Action Types</a></td></tr>

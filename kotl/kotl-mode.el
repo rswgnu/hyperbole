@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     21-Oct-26 at 18:57:40 by Bob Weiner
+;; Last-Mod:     24-Oct-26 at 10:01:49 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1309,6 +1309,7 @@ Does not disable any other active prefix."
                   cmd))
               kotl-mode-letter-map))
 
+;;;###autoload
 (defun kotl-mode:toggle-tab-flag ()
   "Toggle the value of `kotl-mode:tab-flag' and explain its current usage.
 This now toggles TAB/S-TAB between the Org-compatible cycling commands and
@@ -1568,6 +1569,7 @@ APPEND-TO-CELL is refilled if neither cell has a no-fill property and
   (let ((select-enable-clipboard t))
     (kotl-mode:yank)))
 
+;;;###autoload
 (defun kotl-mode:copy-after (from-cell-ref to-cell-ref child-p)
   "Copy tree rooted at FROM-CELL-REF to follow tree rooted at TO-CELL-REF.
 If prefix arg CHILD-P is non-nil, make FROM-CELL-REF the first child of
@@ -1593,6 +1595,7 @@ Leave point at the start of the root cell of the new tree."
      (kcell-view:set-cell (kcell:create) (kview:id-increment view)))
    kotl-kview))
 
+;;;###autoload
 (defun kotl-mode:copy-before (from-cell-ref to-cell-ref parent-p)
   "Copy tree rooted at FROM-CELL-REF to precede tree rooted at TO-CELL-REF.
 If prefix arg PARENT-P is non-nil, make FROM-CELL-REF the first child of
@@ -4511,6 +4514,7 @@ Leave point at end of line now residing at START."
 
 ;;; ------------------------------------------------------------------------
 
+;;;###autoload
 (defun kotl-mode:setup-keymap ()
   (condition-case err
       (progn

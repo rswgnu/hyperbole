@@ -8,7 +8,7 @@
 ;; Maintainer:   Robert Weiner <rsw@gnu.org>
 ;;               Mats Lidell <matsl@gnu.org>
 ;; Created:      06-Oct-92 at 11:52:51
-;; Last-Mod:     14-Oct-26 at 11:15:22 by Bob Weiner
+;; Last-Mod:     24-Oct-26 at 11:17:40 by Bob Weiner
 ;; Released:     27-Jul-26
 ;; Version:      9.3.1
 ;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -439,6 +439,27 @@ frame, those functions by default still return the prior frame."
 ;;
 (var:append 'message-mode-hook   (list (lambda () (require 'hsmail))))
 (var:append 'mh-letter-mode-hook (list (lambda () (require 'hsmail))))
+
+;;; ************************************************************************
+;;; Activate Hyperbole Buttons embedded within Org Links
+;;; ************************************************************************
+
+;;;###autoload
+(defun hyperbole-activate-button (label)
+  "Activate a current buffer implicit/explicit button with LABEL.
+If LABEL is nil, find the label around point.  First try to match LABEL
+to a known programming identifier and jump to its definition.  If no
+such identifier is found, activate any implicit or explicit Hyperbole
+button at point.
+
+Return non-nil if a button was activated, else nil.
+
+Add this function to `org-open-link-functions' for activation of
+Hyperbole buttons embedded within Org links."
+  (cond ((smart-prog-to-definition label))
+	((hbut:at-p)
+	 (hui:hbut-act 'hbut:current)
+	 t)))
 
 ;;; ************************************************************************
 ;;; URL Browsing

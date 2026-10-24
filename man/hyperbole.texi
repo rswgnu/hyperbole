@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     22-Oct-26 at 10:42:40 by Bob Weiner
+@c Last-Mod:     24-Oct-26 at 14:30:38 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,7 +30,7 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED October 22, 2026
+@set UPDATED October 24, 2026
 @set UPDATED-MONTH October 2026
 @set EDITION 9.3.1
 @set VERSION 9.3.1
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition @value{EDITION}
-Printed October 22, 2026.
+Printed October 24, 2026.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -213,7 +213,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition @value{EDITION}
-October 22, 2026 @c AUTO-REPLACE-ON-SAVE
+October 24, 2026 @c AUTO-REPLACE-ON-SAVE
 
 
   Published by the Free Software Foundation, Inc.
@@ -236,7 +236,7 @@ October 22, 2026 @c AUTO-REPLACE-ON-SAVE
 @cindex anonymous ftp
 GNU Hyperbole was designed and written by Bob Weiner.
 
-@xref{Setup}, for information on how to obtain and to install
+@xref{Install}, for information on how to obtain and to install
 Hyperbole.
 
 This manual explains user operation and summarizes basic developer
@@ -278,7 +278,7 @@ dedicated to my lovely wife, Kathy.
 * Window Configurations::
 * Developing with Hyperbole::
 * Glossary::
-* Setup::
+* Install::
 * Hyperbole Key Bindings::
 * Koutliner Keys::
 * Smart Key Reference::
@@ -450,7 +450,7 @@ Explicit Button Technicalities
 * Operational and Storage Formats::
 * Programmatic Button Creation::
 
-Setup
+Install
 
 * Installation and Configuration::
 * Customization::
@@ -637,7 +637,7 @@ demonstrates many of Hyperbole's standard facilities without the need
 to read through this reference manual.  The @file{../FAST-DEMO} is a
 good way to rapidly understand some of what Hyperbole can do for you.
 It includes many links to videos and articles about Hyperbole.  Once
-Hyperbole is installed, (@pxref{Setup}), you can access the
+Hyperbole is installed, (@pxref{Install}), you can access the
 @file{../FAST-DEMO} with the key sequence @bkbd{C-h h d d}.
 
 @xref{Glossary}, for definitions of Hyperbole terms.  In some cases,
@@ -647,7 +647,7 @@ term is unclear to you.  Although you need not have a keen understanding of
 all of these terms, a quick scan of the glossary helps throughout Hyperbole
 use.
 
-@xref{Setup}, for explanations of how to obtain, install, configure and load
+@xref{Install}, for explanations of how to obtain, install, configure and load
 Hyperbole for use.  This appendix includes information on user-level settings
 that you may want to modify after you understand Hyperbole's basic operation.
 
@@ -904,7 +904,7 @@ pre-configured with Hyperbole buttons, in which case, you can safely
 ignore most of the information in this manual.  Jump right into the
 Hyperbole fast demonstration by typing @bkbd{C-h h d d}, assuming Hyperbole
 has been installed at your site.  If you need to install
-Hyperbole, @pxref{Setup}, for Hyperbole installation and configuration
+Hyperbole, @pxref{Install}, for Hyperbole installation and configuration
 information.  The demo offers a much less technical introduction to
 Hyperbole by supplying good examples of use.
 
@@ -1362,8 +1362,8 @@ direct selection technique.
 
 @cindex completion
 @cindex Vertico completion
-Wherever possible, standard Emacs completion is offered, as described
-in @ref{Completion,,,emacs,the GNU Emacs Manual}.  Remember to use
+Wherever possible, standard Emacs completion is offered,
+@pxref{Completion,,,emacs,the GNU Emacs Manual}.  Remember to use
 @bkbd{?}  to see what your possibilities for an argument are if
 completions are not automatically shown to you.  Once you have a list
 of possible completions on screen, press the Action Key twice on any
@@ -3939,12 +3939,12 @@ selected region), an action type, and the action's associated arguments.
 It then creates the button at point and surrounds the label with
 <(explicit button delimiters)> like so, to indicate success.
 
-You can use the direct selection techniques mentioned in @ref{Smart Key
-Argument Selection}, to select any completion-based arguments.  If you do
-not mark a region before invoking the button create command, you will be
-prompted for both a label and a target buffer for the button and the
-delimited label text will be inserted into the target buffer after a
-successful button creation.
+You can use direct selection techniques, @pxref{Smart Key Argument
+Selection}, to select any completion-based arguments.  If you do not mark
+a region before invoking the button create command, you will be prompted
+for both a label and a target buffer for the button and the delimited
+label text will be inserted into the target buffer after a successful
+button creation.
 
 @cindex button instance
 @cindex instance number
@@ -4249,8 +4249,8 @@ A final mail-related facility provided by Hyperbole is the ability to
 save a pointer to a received mail message by creating an explicit button
 with a @code{link-to-mail} action type.  When prompted for the mail
 message to link to, if you press the Action Key within the message, the
-appropriate link parameters will be copied to the argument prompt, as
-described in @ref{Smart Key Argument Selection}.
+appropriate link parameters will be copied to the argument prompt,
+@pxref{Smart Key Argument Selection}.
 
 
 @node Buttons in News,  , Buttons in Mail, Utilizing Explicit Buttons
@@ -5440,6 +5440,8 @@ Multiply the prefix argument by 4 each time this is pressed.
 @cindex grid of windows
 @cindex HyControl windows grid
 @kindex screen, @@
+@kindex HyControl, @@
+@anchor{HyControl @@}
 @kitem @@
 
 Display a @dfn{grid of windows} in the selected frame sized according to
@@ -6831,6 +6833,7 @@ system yet, so that you can get effective views of an outline without
 editing it.  Some of these commands affect the current view spec.
 @xref{View Specs}.
 
+@anchor{indirect buffers}
 @c Emacs (as of Emacs 26) will sometimes undo the narrowing of an indirect buffer
 @c when outline items are hidden or shown.  Don't mention or add this feature until
 @c this bug is fixed.
@@ -7777,7 +7780,7 @@ If you include file wildcards in paths for this variable and
 files matching the pattern (which can include square bracketed
 [character matches], optional characters followed by ?, or *
 wildcards) when the variable is set will be included in future HyRolo
-searches.  For more on wildcards, see @ref{Wildcards,,,emacs,the GNU
+searches.  For more on wildcards, @pxref{Wildcards,,,emacs,the GNU
 Emacs Manual}.
 
 If you include an Environment variable or Emacs Lisp variable with the
@@ -8786,7 +8789,7 @@ You are welcome, however, to study its code, below the
 @file{hyperbole-$@{hyperb:version@}/kotl/} directory.
 
 
-@node Glossary, Setup, Developing with Hyperbole, Top
+@node Glossary, Install, Developing with Hyperbole, Top
 @appendix Glossary
 
 @cindex glossary
@@ -9439,8 +9442,8 @@ by 3 columns, each displaying a different buffer chosen by a set of user
 specifiable filters or from a list.
 @end table
 
-@node Setup, Hyperbole Key Bindings, Glossary, Top
-@appendix Setup
+@node Install, Hyperbole Key Bindings, Glossary, Top
+@appendix Install
 
 Hyperbole must be obtained and setup at your site before you can
 use it.  Instructions are given below.
@@ -9450,13 +9453,23 @@ use it.  Instructions are given below.
 * Customization::
 @end menu
 
-@node Installation and Configuration, Customization, Setup, Setup
+@node Installation and Configuration, Customization, Install, Install
 @section   Installation and Configuration
 
-Hyperbole can be upgraded or installed using Emacs' package manager
-from ELPA or MELPA archives, using Straight or Elpaca package managers
-from Hyperbole's git development repository or manually downloaded via
-sftp from a tarball archive.  The following sections explain these methods.
+@cindex Install
+@cindex Setup
+@cindex Upgrade
+Hyperbole can be upgraded or installed in a number of ways as
+documented in the following sections.  Choose the one easiest for you:
+@itemize
+@item Upgrading an existing Hyperbole installation
+@item Installing from ELPA or MELPA archives via Emacs Package Manager
+@item Installing from Git source via Elpaca, Straight or Quelpa
+@item Installing from a tarball via sftp
+@end itemize
+
+@noindent
+The following sections explain these methods.
 
 @menu
 * Package Upgrades::
@@ -9466,18 +9479,18 @@ sftp from a tarball archive.  The following sections explain these methods.
 @end menu
 
 @noindent
-After installing and configuring Hyperbole, read the next section, @pxref{Invocation}.
+After installing and configuring Hyperbole, @pxref{Invocation}.
 
 @node Package Upgrades, Package Installation, Installation and Configuration, Installation and Configuration
 @subsection Package Upgrades
 
 @cindex upgrading Hyperbole
 @cindex Hyperbole upgrades
-To upgrade an existing Hyperbole installation, invoke the Emacs
-Package Manager, @pxref{Packages,,,emacs,the GNU Emacs Manual}, with
-@bkbd{M-x list-packages @key{RET}}, then use the @bkbd{U} key followed
-by the @bkbd{x} key to upgrade all out-of-date packages, Hyperbole
-among them.  Then skip to the @ref{Invocation} section.
+To upgrade an existing Hyperbole installation, invoke the Emacs Package
+Manager, @pxref{Packages,,,emacs,the GNU Emacs Manual}, with @bkbd{M-x
+list-packages @key{RET}}, then use the @bkbd{U} key followed by the
+@bkbd{x} key to upgrade all out-of-date packages, Hyperbole among them.
+Then follow instructions for invoking Hyperbole. @xref{Invocation}.
 
 @node Package Installation, Git Latest Package Installation, Package Upgrades, Installation and Configuration
 @subsection Package Installation (Emacs Package Manager)
@@ -9516,7 +9529,7 @@ is a mature package with regression testing, the latest snapshots are
 usually fine for everyday use.  Most users should choose a package
 archive site that tracks these latest updates (elpa-devel and
 melpa-snapshots).  If you need slow-moving stability, get the latest
-release from elpa or melpa.
+release from ELPA or MELPA.
 
 @noindent
 Here are the installation and configuration steps:
@@ -9631,7 +9644,7 @@ lines to your personal init file:
 @end lisp
 
 @page
-@node Customization,  , Installation and Configuration, Setup
+@node Customization,  , Installation and Configuration, Install
 @section   Customization
 
 @cindex menu, Cust
@@ -10060,7 +10073,7 @@ be emphasized in a different color or style.  This emphasis is in
 addition to any non-mouse-sensitive button highlighting.
 
 
-@node Hyperbole Key Bindings, Koutliner Keys, Setup, Top
+@node Hyperbole Key Bindings, Koutliner Keys, Install, Top
 @appendix Hyperbole Key Bindings
 
 @cindex key binding list
@@ -10171,8 +10184,8 @@ This binding is made only if the key is not bound prior to
 initializing Hyperbole; it also defers to any @code{major-mode}
 binding and when @code{outline-minor-mode} is active.
 
-For further details, see the @bkbd{@@} key binding description
-in @ref{HyControl}.
+For further details, @pxref{HyControl @@}, where the @bkbd{@@} key
+binding is described.
 
 @cindex key binding, M-o
 @kitem M-o
@@ -10939,7 +10952,7 @@ Keys are given.
 @cindex Smart Mouse Keys
 The contexts and actions in this section, like drags and modeline
 clicks, apply only if you have mouse support within Hyperbole.  The
-Smart Key operations in @ref{Smart Keyboard Keys}, apply to both mouse
+Smart Key operations, @pxref{Smart Keyboard Keys}, apply to both mouse
 and keyboard Smart Key usage.
 
 The following section documents what the Smart Mouse Keys do in each
@@ -11702,7 +11715,7 @@ If pressed within a Magit buffer and not on a button:
      (2) at the end of a line, scroll up a windowful;
      (3) in a @code{magit-status-mode} buffer on a merge conflict
          marker, keep either the upper, both or the lower version of
-         the conflict. See also @ref{smerge}.
+         the conflict. @xref{smerge}.
      (4) on a line starting with a `+' char in `magit-status-mode' or
          `magit-revision-mode' go to the worktree file.
      (5) on an initial read-only header line, cycle visibility of diff sections;

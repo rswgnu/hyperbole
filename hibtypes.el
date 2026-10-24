@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 20:45:31
-;; Last-Mod:     22-Oct-26 at 01:53:38 by Bob Weiner
+;; Last-Mod:     24-Oct-26 at 14:30:36 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1412,10 +1412,10 @@ Patch applies diffs to source code."
 Supported Texinfo constructs are node, menu item, @xref, @pxref,
 @ref, @code, @findex, @var or @vindex.
 
-If poin is on a reference to a node or anchor outside of the current Texinfo
-manual, then the associated Info node is shown.  Otherwise, if point is
-within the braces of a cross-reference, the associated Info node is shown.
-If point is to the left of the braces but after the @ symbol and the
+If point is on a reference to a node or anchor outside of the current
+Texinfo manual, then the associated Info node is shown.  Otherwise, if point
+is within the braces of a cross-reference, the associated Info node is
+shown.  If point is to the left of the braces but after the @ symbol and the
 reference is to a node or anchor within the current Texinfo file, then the
 Texinfo node or anchor is shown.
 
