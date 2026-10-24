@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Oct-95 at 15:17:07
-;; Last-Mod:     17-Oct-26 at 17:18:07 by Bob Weiner
+;; Last-Mod:     24-Oct-26 at 10:03:26 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -162,6 +162,7 @@ Applies to the entire outline."
 		    (kcell-view:expand (point))
 		    (kvspec:show-lines-this-cell num)) kotl-kview t t))
 
+;;;###autoload
 (defun kvspec:toggle-blank-lines ()
   "Toggle blank lines between cells on or off."
   (interactive)
