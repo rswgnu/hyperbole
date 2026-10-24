@@ -1,5 +1,13 @@
 2026-10-24  Bob Weiner  <rsw@gnu.org>
 
+* hywiki/HyWikiMenus.org (HyWiki Menu): Add missing entries from the current
+    HyWiki menu.
+
+* man/hyperbole.texi Replace @ref with @pxref because @ref adds 'see'
+    in Info format but not others.
+                     (Setup appendix): Rename to Install for easier lookup.
+                     (Installation and Configuration): Rewrite.
+
 * Makefile (manual, README.md): Make both dependent on "man/use-package".
 
 * hyperbole.el (hyperbole-activate-button): Add this function and expand

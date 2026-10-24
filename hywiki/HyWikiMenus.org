@@ -3,30 +3,67 @@
 The HyWiki minibuffer menu offers quick access to important HyWiki
 features.  It looks like this:
 
-     HyWiki>  Act  Create  Edit  Grep  Help  Info  Link  Publish  Search
+     HyWiki>  Act  BacklinkConsult  Create  DiredHyWiki  EditPage
+              FindReferent  GrepConsult  Help  Info  Link  ModeSet/
+              Org-M-RET/  Publish  TagFind  Yank
 
 Below are descriptions of each menu item.
 
 ** Act
      Activate HyWikiWord link at point.
+** BacklinkConsult
+     Use 'hywiki-consult-backlink' to prompt for a HyWikiWord and then
+     consult grep over its HyWiki backlink references, selecting one.
 ** Create
      Create and display a new HyWiki page.  Shows existing page names to
      aid in new naming.
-** Edit
-     Prompt with completion for and display a HyWiki page ready for
-     editing.
-** Grep
-     Grep over HyWiki pages with interactive 'hywiki-consult-grep'.
+** DiredHyWiki
+     Display and edit HyWiki pages in current 'hywiki-directory'.  Use
+     'dired' unless 'action-key-modeline-buffer-id-function' is set to
+     'smart-treemacs-modeline', then use the Treemacs package.
+** EditPage
+     Prompt with completion for and find a HyWiki page, typically
+     editable.  If the page is already in a buffer, point is left
+     unchanged.
+** FindReferent
+     Prompt with completion for and find any kind of HyWiki referent.
+** GrepConsult
+     Grep over HyWiki pages with interactive 'hywiki-consult-grep'.  Any
+     words may be used.
 ** Help
      Report on a HyWikiWord's attributes.
 ** Info
      Display Hyperbole manual section on HyWiki.
 ** Link
      Prompt for and add a link at point to a HyWiki page.
+** ModeSet/
+     Select from three states for the global minor mode, 'hywiki-mode'.
+     'All-Editable-Buffers'
+          This is the default setting.  Highlight HyWikiWord references
+          within HyWiki page buffers only.  The 'hywiki-mode' variable
+          is set to ':pages'.  Programatically, use: '(hywiki-mode
+          :pages)'.
+
+     'HyWiki-Pages-Only'
+          Highlight HyWikiWord references within all editable buffers
+          except those with major modes in 'hypb:exclude-major-modes'.
+          The 'hywiki-mode' variable is set to ':all'.  Programatically,
+          use: '(hywiki-mode :all)'.
+
+     'Nowhere'
+          Disable highlighting HyWikiWord references everywhere.  The
+          'hywiki-mode' variable is set to 'nil'.  Programatically, use:
+          '(hywiki-mode nil)'.
+** Org-M-RET/
+     Menu to customize contexts in which Hyperbole Action and Assist
+     Keys override Org's {M-<RET>} command.  The default is when on
+     'Hyperbole-Buttons-Only'.  Use 'All-Hyperbole-Contexts' to make the
+     Action Key create new HyWiki pages when pressed on as-yet undefined
+     HyWikiWords; otherwise, you must use {C-h h h c} to create a new
+     HyWiki page instead.  Use 'None' if you want to use Org's {M-<RET>}
+     command in every context within Org mode.
 ** Publish
      Publish modified pages in the HyWiki to HTML; prefix arg to publish
      all pages.
-** Search
-     Use 'hywiki-consult-grep' to show occurrences of a prompted for
-     HyWikiWord.
-
+** TagFind
+     Find a matching Org tag across all HyWiki pages.
