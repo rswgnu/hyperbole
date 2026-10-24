@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     26-Oct-26 at 10:46:44 by Bob Weiner
+@c Last-Mod:     28-Oct-26 at 22:32:40 by Mats Lidell
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,7 +30,7 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED October 26, 2026
+@set UPDATED October 28, 2026
 @set UPDATED-MONTH October 2026
 @set EDITION 9.3.2
 @set VERSION 9.3.2
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition @value{EDITION}
-Printed October 26, 2026.
+Printed October 28, 2026.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -213,7 +213,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition @value{EDITION}
-October 26, 2026 @c AUTO-REPLACE-ON-SAVE
+October 28, 2026 @c AUTO-REPLACE-ON-SAVE
 
 
   Published by the Free Software Foundation, Inc.
@@ -9570,7 +9570,9 @@ the comments therein, though everything will work fine without any
 modifications to the @file{use-package} file.
 
 @sp 1
+@lisp
 @verbatiminclude use-package
+@end lisp
 @sp 1
 
 @item Restart Emacs to Install, Configure and Activate Hyperbole
@@ -13409,6 +13411,10 @@ Austin, TX, ACM: NY,NY, 1989, pp. 37-42.
 @unnumbered Concept Index
 
 @printindex cp
+
+@html
+<script src="copy-btn.js" defer></script>
+@end html
 
 @bye
 

@@ -23,6 +23,10 @@ man/hyperbole.info   - The GNU Hyperbole Manual  (GNU Info version)
 man/hyperbole.pdf    - The GNU Hyperbole Manual  (printable version)
 man/hyperbole.texi   - The GNU Hyperbole Manual  (GNU Texinfo source form)
 man/hkey-help.txt    - Summarizes Smart Key behaviors in different contexts
+man/Lucide-LICENSE   - Licens for Lucide icons
+man/copy-btn.css     - CSS for the copy button
+man/copy-btn.html    - HTML for including the button in the
+man/copy-btn.js      - JavaScript for the copy button
 HY-TALK/HY-TALK.org  - EmacsNYC 2020 Talk: Make Your Text Come Alive slides
 HY-TALK/HYPERAMP.org - EmacsConf 2023 Talk: Top 10 Ways Hyperbole Amps Up Emacs slides
 HY-TALK/HYPERBOLEQA.kotl - EmacsConf 2025 Talk: Questions and answers to help you fly with Hyperbole

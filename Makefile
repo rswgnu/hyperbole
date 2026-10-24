@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     26-Oct-26 at 10:57:16 by Bob Weiner
+# Last-Mod:     29-Oct-26 at 23:23:03 by Mats Lidell
 #
 # Copyright (C) 1994-2026  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -169,7 +169,8 @@ TEXI2INFO = $(TEXICMD) --no-split -c ASCII_PUNCTUATION=1
 # TEXI2HTML = id-texi2html -html_only -number -split_chapter # InfoDock-specific command
 # TEXI2HTML = $(TEXICMD) --html --split=chapter # Chapter splitting doesn't seem to work in 6.0
 # TEXI2HTML = $(TEXICMD) --html --no-split --css-include="hyperbole.css"
-TEXI2HTML = $(TEXICMD) --html --no-split -c ASCII_PUNCTUATION=1 --css-include="texinfo-7.css"
+TEXI2HTML = $(TEXICMD) --html --no-split -c ASCII_PUNCTUATION=1 \
+	--css-include="texinfo-7.css" --css-include="copy-btn.css"
 
 # Command used to build the .pdf version of the user manual.
 TEXI2PDF = $(TEXICMD) --pdf --no-split -c ASCII_PUNCTUATION=1
@@ -494,9 +495,13 @@ README.md README.md.html: README.in.md man/use-package Makefile
                     -e "s+[ \t]*\[man/use-package\](man/use-package)+cat man/use-package+e" README.md
 	# Generate README.md.html
 	cp -p README.in.md README.in.html
-	sed -i -e "s+^\[TOC\]++g" -e "s+\`\`\`elisp+<pre><code>+g" -e "s+\`\`\`+</pre></code>+g" \
+	sed -i -e "s+^\[TOC\]++g" \
                -e "s+[ \t]*\[man/use-package\](man/use-package)+cat man/use-package+e" README.in.html
-	pandoc --from=gfm-tex_math_dollars --to=html+gfm_auto_identifiers -o README.md.html README.in.html
+	pandoc --standalone --embed-resources \
+	  -V pagetitle="README.md" \
+	  --from=gfm-tex_math_dollars --to=html+gfm_auto_identifiers \
+	  --css=man/copy-btn.css --include-after-body=man/copy-btn.html \
+	  -o README.md.html README.in.html
 	rm README.in.html
 
 # website maintenance: "https://www.gnu.org/software/hyperbole/"

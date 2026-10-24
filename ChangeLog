@@ -1,5 +1,24 @@
 2026-10-30  Mats Lidell  <matsl@gnu.org>
 
+* man/Lucide-LICENSE: Licens information for svg icons.
+
+* man/copy-btn.css:
+* man/copy-btn.html:
+* man/copy-btn.js: Copy button resources.
+
+* MANIFEST: Add man/Lucide-LICENSE, man/copy-btn.css, man/copy-btn.html,
+    man/copy-btn.js.
+
+* Makefile (TEXI2HTML): Use copy-btn.css.
+    (README.md.html): Use pandoc to add copy-btn to the generated html.
+
+* man/hyperbole.texi (Package Installation): Add @lisp command around
+    @verbatiminclude to get a unique code tags in the generated
+    HTML. Include at document end copy-btn.js.
+
+* man/hyperbole.html:
+* README.md.html: Generated HTML.
+
 * .github/workflows/docs.yml (jobs): Use actions/upload-artifact.
 
 2026-10-26  Bob Weiner  <rsw@gnu.org>
