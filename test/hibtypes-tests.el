@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:45:00
-;; Last-Mod:     25-Oct-26 at 14:38:29 by Mats Lidell
+;; Last-Mod:     25-Oct-26 at 16:12:30 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -362,7 +362,7 @@ Check different types of cell-refs."
               (should (looking-at-p "Second cell"))
               (should (buffer-modified-p))
               ;; A view spec changing the label type modifies the
-              ;; file. Ignore that for the this resource so its buffer
+              ;; file. Ignore that for the resource so its buffer
               ;; can be removed.
               (set-buffer-modified-p nil))))
       (hy-test-helpers:kill-buffer (get-file-buffer kfile)))))
