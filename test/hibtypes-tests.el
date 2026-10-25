@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:45:00
-;; Last-Mod:     22-Oct-26 at 02:02:37 by Bob Weiner
+;; Last-Mod:     25-Oct-26 at 16:12:30 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -320,9 +320,52 @@
      (mock (man "rm(1)") => t)
      (ibtypes::man-apropos))))
 
-;; klink !!FIXME: Add tests.
+;; klink
+(ert-deftest ibtypes::klink-test ()
+  "Verify `ibtypes::klink' follows links delimited by <> to a koutline cell.
+Check different types of cell-refs."
+  (let ((kfile (ert-resource-file "test.kotl")))
+    (unwind-protect
+        (with-temp-buffer
+          (ert-info ("Plain file")
+            (insert (format "<%s>" kfile))
+            (goto-char 4)
+            (save-excursion
+              (should (ibtypes::klink))
+              (kotl-mode:beginning-of-buffer)
+              (should (looking-at-p "First cell"))))
 
-;; hlink !!FIXME: Add tests.
+          (ert-info (", cell-ref")
+            (erase-buffer)
+            (insert (format "<%s, 1a=02>" kfile))
+            (goto-char 4)
+            (save-excursion
+              (should (ibtypes::klink))
+              (should (looking-at-p "Second cell"))))
+
+          (ert-info ("#cell-ref")
+            (erase-buffer)
+            (insert (format "<%s#1a=02>" kfile))
+            (goto-char 4)
+            (save-excursion
+              (should (ibtypes::klink))
+              (should (string= (kcell-view:label (point)) "1a"))
+              (should (looking-at-p "Second cell"))))
+
+          (ert-info ("#cell-ref|viewspec")
+            (erase-buffer)
+            (insert (format "<%s#1a=02|ben.>" kfile))
+            (goto-char 4)
+            (save-excursion
+              (should (ibtypes::klink))
+              (should (string= (kcell-view:label (point)) "1.1"))
+              (should (looking-at-p "Second cell"))
+              (should (buffer-modified-p))
+              ;; A view spec changing the label type modifies the
+              ;; file. Ignore that for the resource so its buffer
+              ;; can be removed.
+              (set-buffer-modified-p nil))))
+      (hy-test-helpers:kill-buffer (get-file-buffer kfile)))))
 
 ;; elink
 (ert-deftest ibtypes::elink-test ()
