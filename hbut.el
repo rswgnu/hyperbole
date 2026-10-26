@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     24-Oct-26 at 11:16:44 by Bob Weiner
+;; Last-Mod:     26-Oct-26 at 09:53:43 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -20,6 +20,7 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
+(require 'hyperbole-autoloads)
 (eval-and-compile (mapc #'require '(cl-lib elisp-mode help-mode hversion
 				    hmoccur hbmap htz hbdata hact
 				    hui-select view)))

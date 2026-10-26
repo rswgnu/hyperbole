@@ -1,5 +1,8 @@
 2026-10-26  Bob Weiner  <rsw@gnu.org>
 
+* hbut.el (reuqire 'hyperbole-autoloads): Add to quiet byte-compiler warning
+    about 'hyperbole-activate-button' being not yet defined.
+
 * HY-NEWS.org (eval): Update to require kotl-autoloads.el so Koutline links
     display properly when Hyperbole has not yet been loaded.
 
