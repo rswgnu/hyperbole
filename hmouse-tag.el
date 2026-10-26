@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     26-Oct-26 at 14:43:22 by Bob Weiner
+;; Last-Mod:     26-Oct-26 at 16:23:00 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1006,7 +1006,8 @@ If TAG is nil, use any tag around point instead."
       (progn (cond ((stringp tag))
 		   ((symbolp tag) (setq tag (symbol-name tag)))
 		   (t (error "")))
-	     (or (and tag (smart-tags-find-p tag))
+	     (or (and tag (smart-lisp-at-known-identifier-p))
+                 (and tag (smart-tags-find-p tag))
 	         ;; Flash if tag matches any tag at point
 	         (when (and tag (equal tag (smart-prog-at-tag-p t)))
 	           (setq tag (smart-flash-tag-at-point tag)))))
@@ -1290,8 +1291,8 @@ This indicates that TAG is serving as a hyperlink button."
 
 (defun smart-lisp-at-known-identifier-p ()
   "Return identifier if point is within a known Lisp identifier, else nil.
-The Lisp identifier is either listed in a tags table or is a
-known Emacs Lisp identifier."
+The Lisp identifier is either already loaded in memory (a known
+identifier) or listed in a tags table (which may be prompted for)."
   (interactive)
   (unless
       ;; Handle Emacs Lisp `require', `load', and `autoload' clauses.

@@ -1,5 +1,15 @@
 2026-10-26  Bob Weiner  <rsw@gnu.org>
 
+* hmouse-tag.el (smart-prog-to-definition): Add
+    'smart-lisp-at-known-identifier' call before potentially
+    calling 'smart-tags-find-p' so that in-memory identifiers
+    are looked up with 'find-func' before requiring visiting
+    of a TAGS file.
+
+* hyperbole.el (hyperbole-activate-button): To match 'hkey-alist'
+    check for implicit button types before trying
+    'smart-prog-to-definition'.
+
 * hmouse-tag.el (smart-emacs-lisp-mode-p): Support lookup of Elisp
     symbols in Org files with Org links, e.g. [[find-file]].
                 (smart-lisp-bound-symbol-def): Fix that

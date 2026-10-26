@@ -8,7 +8,7 @@
 ;; Maintainer:   Robert Weiner <rsw@gnu.org>
 ;;               Mats Lidell <matsl@gnu.org>
 ;; Created:      06-Oct-92 at 11:52:51
-;; Last-Mod:     24-Oct-26 at 11:17:40 by Bob Weiner
+;; Last-Mod:     26-Oct-26 at 16:12:52 by Bob Weiner
 ;; Released:     27-Jul-26
 ;; Version:      9.3.1
 ;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -456,10 +456,10 @@ Return non-nil if a button was activated, else nil.
 
 Add this function to `org-open-link-functions' for activation of
 Hyperbole buttons embedded within Org links."
-  (cond ((smart-prog-to-definition label))
-	((hbut:at-p)
+  (cond ((hbut:at-p)
 	 (hui:hbut-act 'hbut:current)
-	 t)))
+	 t)
+        ((smart-prog-to-definition label))))
 
 ;;; ************************************************************************
 ;;; URL Browsing
