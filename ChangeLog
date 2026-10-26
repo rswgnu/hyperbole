@@ -2,6 +2,10 @@
 
 * hmouse-tag.el (smart-emacs-lisp-mode-p): Support lookup of Elisp
     symbols in Org files with Org links, e.g. [[find-file]].
+                (smart-lisp-bound-symbol-def): Fix that
+    'find-function-library' call was signalling an error when given
+    a variable symbol.  Check that sym is 'fboundp' before calling
+    to fix this.
 
 * Makefile (pkg): Regenerate if any Hyperbole source files change.
            (HY-TALK): Add HY-TALK/HYPERBOLEQA.kotl.
