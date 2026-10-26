@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     26-Oct-26 at 09:53:43 by Bob Weiner
+;; Last-Mod:     26-Oct-26 at 10:10:47 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -20,7 +20,6 @@
 ;;; Other required Elisp libraries
 ;;; ************************************************************************
 
-(require 'hyperbole-autoloads)
 (eval-and-compile (mapc #'require '(cl-lib elisp-mode help-mode hversion
 				    hmoccur hbmap htz hbdata hact
 				    hui-select view)))
@@ -68,6 +67,7 @@ Use the function, (hbut:max-len), to read the proper value.")
 (declare-function hui:ibut-rename "hui")
 (declare-function hui:key-dir "hui")
 (declare-function hui:key-src "hui")
+(declare-function hyperbole-activate-button "hyperbole")
 (declare-function hyrolo-hdr-move-after-p "hyrolo")
 (declare-function hywiki-find-referent "hywiki")
 (declare-function hywiki-get-referent "hywiki")

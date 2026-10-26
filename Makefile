@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     26-Oct-26 at 10:04:02 by Bob Weiner
+# Last-Mod:     26-Oct-26 at 10:11:40 by Bob Weiner
 #
 # Copyright (C) 1994-2026  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -573,7 +573,7 @@ ftp: $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz
 
 # Autoloads
 .PHONY: autoloads
-autoloads: hyperbole-autoloads.el kotl/kotl-autoloads.el
+autoloads: kotl/kotl-autoloads.el hyperbole-autoloads.el
 
 hyperbole-autoloads.el: $(EL_COMPILE)
 	$(HYPB_GEN)$(EMACS_BATCH) --debug --eval "(let ((autoload-file (expand-file-name \"hyperbole-autoloads.el\")) (backup-inhibited t) (find-file-hooks)) (hload-path--make-directory-autoloads \".\" autoload-file)))"
