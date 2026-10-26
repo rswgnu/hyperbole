@@ -1,5 +1,11 @@
 2026-10-26  Bob Weiner  <rsw@gnu.org>
 
+* hmouse-tag.el (smart-emacs-lisp-mode-p): Support lookup of Elisp
+    symbols in Org files with Org links, e.g. [[find-file]].
+
+* Makefile (pkg): Regenerate if any Hyperbole source files change.
+           (HY-TALK): Add HY-TALK/HYPERBOLEQA.kotl.
+
 * hbut.el (hyperbole-activate-button): Declare this external function.
 
 * HY-NEWS.org (eval): Update to require kotl-autoloads.el so Koutline links

@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     17-Oct-26 at 17:37:29 by Bob Weiner
+;; Last-Mod:     26-Oct-26 at 12:15:12 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -431,7 +431,7 @@ When optional NO-FLASH, do not flash."
       ;; symbol that can be looked up, e.g. in a TAGS file or via a
       ;; previous symbol load.
       (and (or (apply #'derived-mode-p '(change-log-mode comint-mode
-                                         compilation-mode help-mode))
+                                         compilation-mode help-mode org-mode))
 	       (string-match-p "\\`\\*Help\\|Help\\*\\'" (buffer-name)))
 	   (or skip-existing-identifier-flag (smart-lisp-at-known-identifier-p)))))
 
