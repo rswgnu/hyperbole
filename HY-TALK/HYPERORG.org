@@ -172,7 +172,7 @@ variables, Markdown-like #section anchor references with spaces intact
 and relative line and column numbers.  Here we jump to a specific
 place in a headline and display that at the top of the buffer.
 
-    "${hyperb:dir}/HY-NEWS#Org Mode:2:6"
+    "${hyperb:dir}/HY-NEWS.org#Org Mode:2:6"
 
 But the #section syntax works in many modes with sections or single
 line programming comments:

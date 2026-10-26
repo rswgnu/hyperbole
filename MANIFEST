@@ -6,7 +6,7 @@ hyrolo-demo.el       - Code to support DEMO introduction to HyRolo
 HY-ABOUT             - Introductory description of GNU Hyperbole
 HY-CONCEPTS.kotl     - Techncial introduction to Hyperbole concept interrelations
 HY-COPY              - GNU Hyperbole Copyright
-HY-NEWS              - What's new in each release of GNU Hyperbole
+HY-NEWS.org          - What's new in each release of GNU Hyperbole
 HY-WHY.kotl          - Quick list of great reasons to use Hyperbole
 Makefile             - Build GNU Hyperbole directories and distributions
 README.in.md         - Markdown input that produces README.md with TOC, man/use_package and HY-ABOUT

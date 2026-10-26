@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     17-Oct-26 at 17:18:07 by Bob Weiner
+;; Last-Mod:     26-Oct-26 at 08:25:31 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -974,7 +974,7 @@ command instead.  Typically prevents clashes over {\\`C-c' /}."
 	   "Summarizes Hyperbole system files.  Click on an entry to view it.")
 	  ("Glossary"    (id-info "(hyperbole)Glossary")          "Glossary of Hyperbole terms.")
 	  ("Info"        (id-info "(hyperbole)Top")               "Online Info version of Hyperbole manual.")
-	  ("New"         (hypb:display-file-with-logo "HY-NEWS")  "Recent changes to Hyperbole.")
+	  ("New"         (hypb:display-file-with-logo "HY-NEWS.org")  "Recent changes to Hyperbole.")
 	  ("SmartKeys"   (hkey-summarize 'current-window)         "Summarize Smart Key mouse or keyboard handling.")
 	  ("Types/"      (menu . types)                           "Provide documentation on Hyperbole types.")
 	  ("WhyUse"      (find-file (expand-file-name "HY-WHY.kotl" hyperb:dir))

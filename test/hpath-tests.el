@@ -382,10 +382,10 @@
   (should-not (hpath:absolute-to nil))
   (should (= (hpath:absolute-to 1) 1))
   (let ((default-directory "/tmp"))
-    (should (string= (hpath:absolute-to "HY-NEWS" hyperb:dir)
-                     (expand-file-name "HY-NEWS" hyperb:dir)))
-    (should (string= (hpath:absolute-to "HY-NEWS" (list "/tmp" "/" hyperb:dir))
-                     (expand-file-name "HY-NEWS" hyperb:dir)))))
+    (should (string= (hpath:absolute-to "HY-NEWS.org" hyperb:dir)
+                     (expand-file-name "HY-NEWS.org" hyperb:dir)))
+    (should (string= (hpath:absolute-to "HY-NEWS.org" (list "/tmp" "/" hyperb:dir))
+                     (expand-file-name "HY-NEWS.org" hyperb:dir)))))
 
 (ert-deftest hpath:remote-at-p ()
   "Verify hpath:remote-at-p match a tramp remote file name."

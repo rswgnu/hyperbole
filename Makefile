@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     24-Oct-26 at 15:01:36 by Bob Weiner
+# Last-Mod:     26-Oct-26 at 08:25:31 by Bob Weiner
 #
 # Copyright (C) 1994-2026  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -271,7 +271,7 @@ HY-TALK  = HY-TALK/.hypb HY-TALK/HYPB HY-TALK/HY-TALK.org HY-TALK/HYPERAMP.org H
 
 HYPERBOLE_FILES = dir info html $(EL_SRC) $(EL_KOTL) \
 	$(HY-TALK) .mailmap ChangeLog COPYING Makefile HY-ABOUT \
-        HY-CONCEPTS.kotl HY-NEWS HY-WHY.kotl $(wildcard hywiki/*.org) \
+        HY-CONCEPTS.kotl HY-NEWS.org HY-WHY.kotl $(wildcard hywiki/*.org) \
         DEMO DEMO-ROLO.otl FAST-DEMO MANIFEST README.in.md TAGS _hypb \
         .hypb hyrolo.py smart-clib-sym topwin.py hyperbole-banner.png \
 	.dir-locals.el \
@@ -438,7 +438,7 @@ clean:
 .PHONY: version
 version:
 	@echo ""
-	@fgrep -L $(HYPB_VERSION) Makefile HY-ABOUT HY-NEWS README.in.md hversion.el man/hyperbole.texi > WRONG-VERSIONS
+	@fgrep -L $(HYPB_VERSION) Makefile HY-ABOUT HY-NEWS.org README.in.md hversion.el man/hyperbole.texi > WRONG-VERSIONS
 	@# If any file(s) have wrong version number, print them and exit with code 1
 	@if [ -s WRONG-VERSIONS ]; then \
 	  echo "The following files do not have the proper Hyperbole version number, $(HYPB_VERSION):"; \
@@ -486,10 +486,10 @@ $(man_dir)/hyperbole.html: $(TEXINFO_SRC) $(man_dir)/hyperbole.css $(man_dir)/te
 #
 # `pandoc' is available from:
 #    https://github.com/jgm/pandoc
-README.md README.md.html: README.in.md man/use-package
+README.md README.md.html: README.in.md man/use-package Makefile
 	# Generate README.md
 	cp -p README.in.md README.md && md_toc -p -m [TOC] github README.md \
-	  && sed -i -e "s+^\[TOC\]++g" -e "s+\`\`\`elisp++g" -e "s+\`\`\`++g" \
+	  && sed -i -e "s+^\[TOC\]++g" \
                     -e "s+[ \t]*\[man/use-package\](man/use-package)+cat man/use-package+e" README.md
 	# Generate README.md.html
 	cp -p README.in.md README.in.html

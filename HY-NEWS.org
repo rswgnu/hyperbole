@@ -2,6 +2,22 @@
 				 by Bob Weiner
 
 ===========================================================================
+*                                   V9.3.2
+===========================================================================
+
+** DOCUMENTATION
+
+  *** [[HY-NEWS.org]]: HY-NEWS has been renamed to HY-NEWS.org.
+
+      When an Org link with an embedded button is activated with {C-c
+      C-o} and Hyperbole has not yet been loaded but is installed, it
+      will autoload Hyperbole to run the action for the button.
+
+  *** [[hywiki/HyWikiMenus.org]]: Add missing entries from the current
+      HyWiki menu.
+
+
+===========================================================================
 *                                   V9.3.1
 ===========================================================================
 
@@ -530,7 +546,7 @@ NOTE: News for this release is unfinished.
       just the sections of interest.  View minor mode is also enabled so
       you can scroll forward and backward with SPC and DEL.
 
-      This includes DEMO, FAST-DEMO, HY-ABOUT, HY-NEWS and the Hyperbole
+      This includes DEMO, FAST-DEMO, HY-ABOUT, HY-NEWS.org and the Hyperbole
       Files MANIFEST.
 
   *** Emacs 2023 Talk Videos:
@@ -4211,9 +4227,8 @@ are new in 2016 and you should look through them all.
       want.
 
 # Local Variables:
-# mode: org
 # org-cycle-global-at-bob: t
 # hsys-org-enable-smart-keys: t
 # org-open-link-functions: (hyperbole-activate-button)
-# eval: (unless (fboundp 'hyperbole-activate-button) (setq-local load-path (cons "." load-path)) (load "./hyperbole-autoloads"))
+# eval: (unless (fboundp 'hyperbole-activate-button) (mapcar (lambda (dir) (add-to-list 'load-path dir)) '("." "kotl")) (mapcar #'require '(hyperbole-autoloads kotl-autoloads)))
 # End:

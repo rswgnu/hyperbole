@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    31-Mar-21 at 21:11:00
-;; Last-Mod:     14-Oct-26 at 11:13:10 by Bob Weiner
+;; Last-Mod:     26-Oct-26 at 08:53:01 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -50,12 +50,17 @@ Point `hypb:web-repo-location' to where the web repo is located."
   ;; HY_NEWS
   (with-temp-file (concat hypb:web-repo-location "HY-NEWS.html")
     (insert hypb:hy-news-header)
-    (insert-file-contents "HY-NEWS")
+    (insert-file-contents "HY-NEWS.org")
     (save-excursion
       (let ((beg (point)))
 	(search-forward "====")
 	(beginning-of-line)
 	(delete-region beg (point))))
+    ;; To use the following commented out code, would have to figure out how
+    ;; to make [[hyperbole-button]] not show up as an invalid link in the
+    ;; html. -- RSW, 2026-10-26
+    ;;  (mark-whole-buffer)
+    ;;  (org-html-convert-region-to-html)
     (indent-region (point) (point-max) 3)
     (goto-char (point-max))
     (insert hypb:hy-news-footer))

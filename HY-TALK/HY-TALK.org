@@ -189,7 +189,7 @@ A Few Common Examples:
 
     "README.md#Hyperbole Components" - Markdown anchor with spaces intact
 
-    "${hyperb:dir}/HY-NEWS"          - Elisp or environment variable
+    "${hyperb:dir}/HY-NEWS.org"      - Elisp or environment variable
 
     "subr.el"                        - edit any Elisp library in load-path
 
