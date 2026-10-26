@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    24-Aug-91
-;; Last-Mod:     17-Oct-26 at 17:37:29 by Bob Weiner
+;; Last-Mod:     26-Oct-26 at 16:23:00 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -431,7 +431,7 @@ When optional NO-FLASH, do not flash."
       ;; symbol that can be looked up, e.g. in a TAGS file or via a
       ;; previous symbol load.
       (and (or (apply #'derived-mode-p '(change-log-mode comint-mode
-                                         compilation-mode help-mode))
+                                         compilation-mode help-mode org-mode))
 	       (string-match-p "\\`\\*Help\\|Help\\*\\'" (buffer-name)))
 	   (or skip-existing-identifier-flag (smart-lisp-at-known-identifier-p)))))
 
@@ -989,9 +989,12 @@ Uses `xref' for identifier recognition."
 Optional second arg NEXT is used by the Assist Key.  If IDENTIFIER is
 an Elisp symbol, it displays the IDENTIFIER'S documention; otherwise, it jumps
 to next matching tag definition."
-  (if (and next (smart-emacs-lisp-mode-p))
-      (describe-symbol (intern identifier))
-    (smart-tags-display (or identifier (hsys-xref-identifier-at-point)) next))
+  (let ((elisp-flag (smart-emacs-lisp-mode-p)))
+    (cond ((and next elisp-flag)
+           (describe-symbol (intern identifier)))
+          (elisp-flag
+           (smart-lisp-find-tag identifier next))
+          (t (smart-tags-display (or identifier (hsys-xref-identifier-at-point)) next))))
   t)
 
 ;;;###autoload
@@ -1003,11 +1006,11 @@ If TAG is nil, use any tag around point instead."
       (progn (cond ((stringp tag))
 		   ((symbolp tag) (setq tag (symbol-name tag)))
 		   (t (error "")))
-	     (unless (and tag (smart-tags-find-p tag))
-	       (setq tag nil))
-	     ;; Flash if tag matches any tag at point
-	     (when (and tag (equal tag (smart-prog-at-tag-p t)))
-	       (setq tag (smart-flash-tag-at-point tag))))
+	     (or (and tag (smart-lisp-at-known-identifier-p))
+                 (and tag (smart-tags-find-p tag))
+	         ;; Flash if tag matches any tag at point
+	         (when (and tag (equal tag (smart-prog-at-tag-p t)))
+	           (setq tag (smart-flash-tag-at-point tag)))))
     (setq tag (smart-prog-at-tag-p t))
     (unless (and tag (smart-tags-find-p tag)
 		 (setq tag (smart-flash-tag-at-point tag)))
@@ -1288,8 +1291,8 @@ This indicates that TAG is serving as a hyperlink button."
 
 (defun smart-lisp-at-known-identifier-p ()
   "Return identifier if point is within a known Lisp identifier, else nil.
-The Lisp identifier is either listed in a tags table or is a
-known Emacs Lisp identifier."
+The Lisp identifier is either already loaded in memory (a known
+identifier) or listed in a tags table (which may be prompted for)."
   (interactive)
   (unless
       ;; Handle Emacs Lisp `require', `load', and `autoload' clauses.
@@ -1322,7 +1325,8 @@ The buffer may be attached to a .elc file.  TAG-SYM may be a function,
 variable or face."
   (save-excursion
     ;; Bound Emacs Lisp function, variable and face definition display.
-    (ignore-errors (or (let ((func-lib (find-function-library tag-sym nil t))
+    (ignore-errors (or (let ((func-lib (and (fboundp tag-sym)
+                                            (find-function-library tag-sym nil t)))
 			     tag-type ;; nil means regular Lisp function
 			     tag-name)
 			 (when func-lib

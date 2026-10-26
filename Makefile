@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     26-Oct-26 at 10:11:40 by Bob Weiner
+# Last-Mod:     26-Oct-26 at 10:57:16 by Bob Weiner
 #
 # Copyright (C) 1994-2026  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -138,7 +138,7 @@
 
 # This ver setup won't work under any make except GNU make, so set it manually.
 #HYPB_VERSION = "`head -3 hversion.el | tail -1 | sed -e 's/.*|\(.*\)|.*/\1/'`"
-HYPB_VERSION = 9.3.1
+HYPB_VERSION = 9.3.2
 
 # Emacs executable used to byte-compile .el files into .elc's.
 # To override which executable is used from the commandline, do something like this:
@@ -267,7 +267,8 @@ ELC_COMPILE = $(EL_COMPILE:.el=.elc)
 
 ELC_KOTL = $(EL_KOTL:.el=.elc)
 
-HY-TALK  = HY-TALK/.hypb HY-TALK/HYPB HY-TALK/HY-TALK.org HY-TALK/HYPERAMP.org HY-TALK/HYPERORG.org
+HY-TALK  = HY-TALK/.hypb HY-TALK/HYPB HY-TALK/HY-TALK.org HY-TALK/HYPERAMP.org \
+	   HY-TALK/HYPERORG.org HY-TALK/HYPERBOLEQA.kotl
 
 HYPERBOLE_FILES = dir info html $(EL_SRC) $(EL_KOTL) \
 	$(HY-TALK) .mailmap ChangeLog COPYING Makefile HY-ABOUT \
@@ -599,7 +600,7 @@ $(pkg_parent)/hyperbole-$(HYPB_VERSION).tar.gz:
 .PHONY: pkg
 pkg: $(pkg_parent)/hyperbole-local.tar.gz
 
-$(pkg_parent)/hyperbole-local.tar.gz:
+$(pkg_parent)/hyperbole-local.tar.gz: $(HYPERBOLE_FILES)
 	$(RM) -fr $(pkg_parent)/hyperbole-local
 	mkdir -p $(pkg_parent)/hyperbole-local
 	git ls-files -z | xargs -0 cp --parents -t $(pkg_parent)/hyperbole-local

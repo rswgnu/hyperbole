@@ -1,4 +1,4 @@
-# GNU Hyperbole 9.3.1 - The Everyday Hypertextual Information Manager
+# GNU Hyperbole 9.3.2 - The Everyday Hypertextual Information Manager
 
 [We work on Hyperbole as a gift to the Emacs community and request you
  send us a thank you or a testimonial describing your usage if you like
@@ -6,7 +6,7 @@
 
 
 
-- [GNU Hyperbole 9.3.1 - The Everyday Hypertextual Information Manager](#gnu-hyperbole-931---the-everyday-hypertextual-information-manager)
+- [GNU Hyperbole 9.3.2 - The Everyday Hypertextual Information Manager](#gnu-hyperbole-932---the-everyday-hypertextual-information-manager)
   - [Reference Manual](#reference-manual)
   - [Videos](#videos)
   - [Articles](#articles)
@@ -718,8 +718,7 @@ Typical Hyperbole applications include:
 
 ## Files
 
-See the [HY-ABOUT](HY-ABOUT) file for a description and overview of
-Hyperbole.
+See the [HY-ABOUT](HY-ABOUT) file for a description and overview of Hyperbole.
 
 See the [HY-NEWS.org](HY-NEWS.org) file for a summary of new features in
 this release.

@@ -1,4 +1,4 @@
-;; -*- Mode: kotl -*-
+;; -*- Mode: kotl -*- 
 "Kotl-4.0" ;; file-format
 
    1. Hyperbole hyperlinks all your information everywhere in Emacs with minimal effort and markup.
@@ -10,7 +10,7 @@
          
            (package-install 'hyperbole)
            (hyperbole-mode 1)
-
+         
          Then {M-RET}, the Action Key, will provide context-sensitive actions everywhere.
 
      1b. Implicit Buttons - typed text patterns Hyperbole recognizes as buttons
