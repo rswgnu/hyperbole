@@ -430,7 +430,7 @@
   (dolist (m '(fundamental-mode text-mode))
     (ert-info ((format "With major-mode %s" m))
       (cl-letf (((default-value 'major-mode) m))
-        (dolist (link '("\"HY-NEWS#What:2:36\"" "\"HY-NEWS#What:L2:C36\""))
+        (dolist (link '("\"HY-NEWS.org#What:2:36\"" "\"HY-NEWS.org#What:L2:C36\""))
           (unwind-protect
               (let ((default-directory hyperb:dir)
                     (enable-local-variables :all))
@@ -438,9 +438,9 @@
                   (insert link)
                   (goto-char 3)
                   (action-key)
-                  (should (string= (buffer-name (current-buffer)) "HY-NEWS"))
+                  (should (string= (buffer-name (current-buffer)) "HY-NEWS.org"))
                   (should (looking-at-p "Bob"))))
-            (hy-test-helpers:kill-buffer "HY-NEWS")))))))
+            (hy-test-helpers:kill-buffer "HY-NEWS.org")))))))
 
 (ert-deftest fast-demo-markdown-anchor-with-spaces ()
   "Verify anchor with spaces works."
@@ -459,11 +459,11 @@
   (unwind-protect
       (with-temp-buffer
         (let ((enable-local-variables :all))
-          (insert "\"${hyperb:dir}/HY-NEWS\"")
+          (insert "\"${hyperb:dir}/HY-NEWS.org\"")
           (goto-char 4)
           (action-key)
-          (should (string= (buffer-name (current-buffer)) "HY-NEWS"))))
-    (hy-test-helpers:kill-buffer "HY-NEWS")))
+          (should (string= (buffer-name (current-buffer)) "HY-NEWS.org"))))
+    (hy-test-helpers:kill-buffer "HY-NEWS.org")))
 
 (ert-deftest fast-demo-elisp-library-in-load-path ()
   "Verify ibut to Elisp library works."

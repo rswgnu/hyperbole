@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:      8-Oct-26 at 10:34:42 by Bob Weiner
+;; Last-Mod:     26-Oct-26 at 08:25:30 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -129,7 +129,7 @@ operate as it normally does within Org mode contexts.
 
 (defcustom hsys-org-cycle-bob-file-list
   '("${hyperb:dir}/DEMO" "${hyperb:dir}/FAST-DEMO" "${hyperb:dir}/MANIFEST"
-     "${hyperb:dir}/HY-ABOUT" "${hyperb:dir}/HY-NEWS")
+     "${hyperb:dir}/HY-ABOUT" "${hyperb:dir}/HY-NEWS.org")
   "List of files to globally `org-cycle' when at the beginning of the buffer."
   :type '(repeat file)
   :group 'hyperbole)

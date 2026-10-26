@@ -241,7 +241,7 @@ To download and install the Hyperbole package, you should add the
 following use-package expression into your personal Emacs initialization
 file, see [Emacs Init File](https://www.gnu.org/software/emacs/manual/html_node/emacs/Init-File.html) for init file details:
 
-
+```elisp
 ;;; use-package --- Reference configuration   -*- mode: emacs-lisp; lexical-binding: t; -*-
 
 ;; NOTE: If you use Emacs 28 or earlier, you'll need to install the
@@ -418,7 +418,7 @@ file, see [Emacs Init File](https://www.gnu.org/software/emacs/manual/html_node/
   ;;
   ;; (kotl-mode:action-key-default-function 'kotl-mode:show-or-hide-tree)
   )
-
+```
 
 Now save the init file and restart Emacs.  Hyperbole will be downloaded
 and compiled for use with your version of Emacs; give it a minute or
@@ -718,9 +718,10 @@ Typical Hyperbole applications include:
 
 ## Files
 
-See the [HY-ABOUT](HY-ABOUT) file for a description and overview of Hyperbole.
+See the [HY-ABOUT](HY-ABOUT) file for a description and overview of
+Hyperbole.
 
-See the [HY-NEWS](HY-NEWS.html) file for a summary of new features in
+See the [HY-NEWS.org](HY-NEWS.org) file for a summary of new features in
 this release.
 
 See #Installation for installation and invocation instructions.

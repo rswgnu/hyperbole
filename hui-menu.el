@@ -389,7 +389,7 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		 ;;     ["Manual"      (id-info "(infodock)Hyperbole Menu") t]
 		 ;;   ["Manual"      (id-info "(hyperbole)Top") t])
 		 ["Manual"         (id-info "(hyperbole)Top") t]
-		 ["What-is-New?"   (hypb:display-file-with-logo "HY-NEWS") t]
+		 ["What-is-New?"   (hypb:display-file-with-logo "HY-NEWS.org") t]
 		 ["Why-Use?"       (find-file
 				    (expand-file-name "HY-WHY.kotl" hyperb:dir)) t]
 		 "----"
@@ -422,7 +422,7 @@ REBUILD-FLAG is non-nil, in which case the menu is rebuilt."
 		   ["Demonstration"  hyperbole-demo t]
 		   ["Files"       (hypb:display-file-with-logo "MANIFEST") t]
 		   ["Glossary"    (id-info "(hyperbole)Glossary") t]
-		   ["New-Features" (hypb:display-file-with-logo "HY-NEWS") t]
+		   ["New-Features" (hypb:display-file-with-logo "HY-NEWS.org") t]
 		   ["Smart-Key-Summary" (id-browse-file (hypb:hkey-help-file)) t]
 		   ("Types"
 		    ["Action-Types-Manual"

@@ -523,7 +523,7 @@ Typical Hyperbole applications include:
 
 See the [HY-ABOUT](HY-ABOUT) file for a description and overview of Hyperbole.
 
-See the [HY-NEWS](HY-NEWS.html) file for a summary of new features in
+See the [HY-NEWS.org](HY-NEWS.org) file for a summary of new features in
 this release.
 
 See #Installation for installation and invocation instructions.

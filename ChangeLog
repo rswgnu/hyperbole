@@ -1,3 +1,17 @@
+2026-10-26  Bob Weiner  <rsw@gnu.org>
+
+* hbut.el (hyperbole-activate-button): Declare this external function.
+
+* HY-NEWS.org (eval): Update to require kotl-autoloads.el so Koutline links
+    display properly when Hyperbole has not yet been loaded.
+
+* HY-NEWS: Rename to HY-NEWS.org, so can maintain it as a regular Org file.
+  README.in.md: Fix HY-NEWS.html link to be HY-NEWS.org so it works when
+    browsing source code directory.
+
+* Makefile (README.md): Leave ```elisp``` markup in this generated file.
+    Also, add Makefile aa a dependency of this target.
+
 2026-10-25  Mats Lidell  <matsl@gnu.org>
 
 * test/hibtypes-tests.el (ibtypes::klink-test): New test.

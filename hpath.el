@@ -1817,7 +1817,7 @@ Trigger an error if the instance of the non-null anchor requested is not found."
 				    (referent-regexp (format
 						      (cond ((or (derived-mode-p 'outline-mode) ;; Includes Org mode
 								 ;; Treat all caps filenames without suffix like outlines,
-                                                                 ;; e.g. README, HY-NEWS, ...
+                                                                 ;; e.g. README, HY-NEWS.org, ...
 								 (and (hypb:buffer-file-name)
 								      (string-match-p "\\`[A-Z0-9][A-Z0-9_-]*\\'"
                                                                                       (file-name-nondirectory (hypb:buffer-file-name)))))
