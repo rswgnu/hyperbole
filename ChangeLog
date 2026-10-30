@@ -1,3 +1,7 @@
+2026-10-30  Mats Lidell  <matsl@gnu.org>
+
+* .github/workflows/docs.yml (jobs): Use actions/upload-artifact.
+
 2026-10-26  Bob Weiner  <rsw@gnu.org>
 
 * hmouse-tag.el (smart-prog-to-definition): Add
