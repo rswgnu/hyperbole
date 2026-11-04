@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:     13-Oct-26 at 17:51:03 by Bob Weiner
+;; Last-Mod:      4-Nov-26 at 17:26:40 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2145,8 +2145,12 @@ Dependencies on the consult package are mocked."
             (should (string-search "Your personal rolo file is now" cap)))
           (should (file-exists-p new-file-backup))
           (with-current-buffer (find-file new-file)
-            (should (looking-at-p "old-file"))))
-      (hy-delete-files-and-buffers (list old-file old-file-backup new-file new-file-backup)))))
+            (should (looking-at-p "old-file")))
+          (dolist (f (list old-file old-file-backup))
+            (should-not (file-exists-p f))))
+      (dolist (f (list old-file old-file-backup))
+        (delete-file f))
+      (hy-delete-files-and-buffers (list new-file new-file-backup)))))
 
 (ert-deftest hyrolo-tests--edit-entry-edits-the-selected-match ()
   "Verify `hyrolo-edit-entry' moves to the selected match and not a substring."

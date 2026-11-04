@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    20-Feb-21 at 23:24:00
-;; Last-Mod:      3-Mar-24 at 11:28:17 by Mats Lidell
+;; Last-Mod:      4-Nov-26 at 17:33:51 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -14,7 +14,7 @@
 
 ;;; Commentary:
 
-;; 
+;;
 
 ;;; Code:
 
@@ -63,8 +63,10 @@
   (let ((hibtypes-git-repos-cache "not-existing-file"))
     (unwind-protect
         (mocklet (((hibtypes-git-build-repos-cache t) => t))
-          (should (hibtypes-git-build-or-add-to-repos-cache "project")))
-      (hy-delete-file-and-buffer hibtypes-git-repos-cache))))
+          (should (hibtypes-git-build-or-add-to-repos-cache "project"))
+          (should-not (file-exists-p hibtypes-git-repos-cache)))
+      (when (file-exists-p hibtypes-git-repos-cache)
+        (delete-file hibtypes-git-repos-cache)))))
 
 (ert-deftest hibtypes-repo-cache-exist-test ()
   "Verify project is added if cache exist."
@@ -84,4 +86,3 @@
 ;; End:
 
 ;;; hib-social-tests.el ends here
-
