@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:      6-Nov-26 at 11:08:27 by Mats Lidell
+;; Last-Mod:      7-Nov-26 at 00:19:59 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1530,9 +1530,9 @@ marked with :ignore t")
 
 (ert-deftest kotl-mode--insert-initial-tab-in-cell-row ()
   "Verify that a TAB can be inserted first in a cell row and also deleted."
-  (let ((kotl-mode:emulate-tab t)
-        (kotl-mode:indent-tabs-mode t))
-    (with-temp-buffer
+  (with-temp-buffer
+    (let ((kotl-mode:emulate-tab t)
+          (kotl-mode:indent-tabs-mode t))
       (save-window-excursion
         (with-selected-window (display-buffer (current-buffer))
           (kotl-mode)
