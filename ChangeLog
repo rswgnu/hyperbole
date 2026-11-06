@@ -10,7 +10,7 @@
 
 * test/hib-social-tests.el (hibtypes-repo-cache-does-not-exist-test):
 * test/hyrolo-tests.el (hyrolo-tests--rename):
-* test/hywiki-tests.el (hywiki-tests--edit): Avoid deleting files that does
+* test/hywiki-tests.el (hywiki-tests--edit): Avoid deleting files that do
     not exist.
 
 * test/hywiki-tests.el (hywiki-tests--kill-empty-wiki-buffer): Helper for
