@@ -666,6 +666,15 @@ test-ert:
 	              (ert-batch-print-length nil) \
 	              $(HYPB_ERT_BATCH_BT) (ert-batch-backtrace-right-margin 2048)) \
 	           $(LOAD_TEST_ERT_FILES) $(HYPB_ERT_FAILURE) $(HYPB_ERT_BATCH))"
+	$(MAKE) verify-clean-test-run
+
+# Verify that temporary files and directories are cleaned after a test run.
+.PHONY: verify-clean-test-run
+verify-clean-test-run:
+	@if [ -n "$$(find /tmp -name 'hywiki*' -print -quit 2>/dev/null)" ]; then \
+	  echo "hywiki test folders not removed!"; \
+	  exit 1; \
+	fi
 
 # Run all tests by starting an Emacs that runs the tests interactively in windowed mode.
 .PHONY: all-tests test-all

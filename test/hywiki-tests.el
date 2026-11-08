@@ -164,9 +164,16 @@ Last two elements are optional.")
 					                     :test-num test-num
 					                     :before before :after after)))))
                   hywiki-tests--edit-string-pairs))
-        (let ((default-directory hywiki-directory))
-          (hy-delete-files-and-buffers
-           '("AI.org" "FAI.org" "Hi.org" "HiHo.org" "HyWiki.org" "HyWikiW.org" "HyWikiWord.org" "MyWikiWord.org" "Non.org" "Wiki.org")))))
+        (let ((files '("AI.org" "FAI.org" "Hi.org" "HiHo.org" "HyWiki.org" "HyWikiW.org" "HyWikiWord.org" "MyWikiWord.org" "Non.org" "Wiki.org")))
+          ;; Remove buffers for files. We remove empty HyWiki buffers so
+          ;; this will remove the file if it is empty.
+          (dolist (f files)
+            (let ((buf (get-file-buffer f)))
+              (when buf
+                (kill-buffer buf))))
+          ;; Go over and remove the files that still exists
+          (dolist (f files)
+            (delete-file f)))))
     (message "(hywiki-tests--edit): took %.2f seconds" test-time)))
 
 (defun hywiki-tests--get-brace-strings (s)
@@ -288,10 +295,23 @@ around the call.  This is for simulating the command loop."
 	(run-hooks 'post-self-insert-hook))
       (run-hooks 'post-command-hook))))
 
+(defun hywiki-tests--kill-empty-wiki-buffer (wikifile)
+  "Delete empty WIKIFILE by deleting its buffer.
+Verify that the file is deleted.  If it is still there raise a test error
+and remove it."
+  (should (file-exists-p wikifile))
+  (let ((buf (get-file-buffer wikifile)))
+    (kill-buffer buf))
+  (unwind-protect
+      (should-not (file-exists-p wikifile))
+    (when (file-exists-p wikifile)
+      (delete-file wikifile))))
+
 (defmacro hywiki-tests--preserve-hywiki-mode (&rest body)
   "Restore hywiki-mode after running BODY."
   (declare (indent 0) (debug t))
   `(let ((prior-hywiki-mode hywiki-mode)
+         (prior-hywiki-directory hywiki-directory)
          (hywiki-directory (file-name-as-directory (make-temp-file "hywiki" t)))
          wiki-page)
      (save-window-excursion
@@ -313,9 +333,14 @@ around the call.  This is for simulating the command loop."
                  ;; after `hywiki-mode' is enabled.
                  (setq wiki-page (cdr (hywiki-add-page "WikiWord" nil t)))
                  ,@body)
-             (hy-delete-files-and-buffers (list wiki-page (hywiki-cache-default-file)))
+             (let ((buf (get-file-buffer wiki-page)))
+               (when buf
+                 (kill-buffer buf))
+               (delete-file wiki-page))
+             (hy-delete-file-and-buffer (hywiki-cache-default-file))
              (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory)
              (unless (eq hywiki-mode prior-hywiki-mode)
+               (setq hywiki-directory prior-hywiki-directory)
                (hywiki-mode prior-hywiki-mode))))))))
 
 (ert-deftest hywiki-tests--verify-preserve-hywiki-mode ()
@@ -364,7 +389,8 @@ around the call.  This is for simulating the command loop."
             (action-key)
 	    (should (equal (cons 'page wikifile) (hywiki-get-referent "WikiPage"))))
         (sit-for 0.01)
-        (hy-delete-file-and-buffer (expand-file-name wikifile hywiki-directory))))))
+        (hywiki-tests--kill-empty-wiki-buffer
+         (expand-file-name wikifile hywiki-directory))))))
 
 (ert-deftest hywiki-tests--assist-key-on-hywikiword-displays-help ()
   "Verify `assist-key' on a prefixed WikiWord, outside of hywiki-directory, displays help for the WikiWord link."
@@ -2050,7 +2076,8 @@ expected result."
               (hywiki-add-path-link "HoRef" wikiHo 3)
               (should (string= (concat (file-name-nondirectory wikiHo) ":L1:C2")
 			       (cdr (hywiki-get-referent "HoRef"))))))
-        (hy-delete-files-and-buffers (list wikiHi wikiHo))))))
+        (hywiki-tests--kill-empty-wiki-buffer wikiHi)
+        (hy-delete-file-and-buffer wikiHo)))))
 
 (ert-deftest hywiki-test--hywiki-mode ()
   "Verify activating local and global `hywiki-mode'."

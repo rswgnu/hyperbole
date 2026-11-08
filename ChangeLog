@@ -1,3 +1,25 @@
+2026-11-04  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (verify-clean-test-run): Target that runs checks for left over
+    resources.
+    (test-ert): Use verify-clean-test-run.
+
+* test/hywiki-tests.el (hywiki-tests--preserve-hywiki-mode): Store and reset
+    prior hywiki-directory on test completion. Resetting hywiki-mode recreates
+    the temporary hywiki-directory otherwise.
+
+* test/hib-social-tests.el (hibtypes-repo-cache-does-not-exist-test):
+* test/hyrolo-tests.el (hyrolo-tests--rename):
+* test/hywiki-tests.el (hywiki-tests--edit): Avoid deleting files that do
+    not exist.
+
+* test/hywiki-tests.el (hywiki-tests--kill-empty-wiki-buffer): Helper for
+    removing empty hywiki files and trigger a test error if it is not removed
+    when buffer is killed.
+    (hywiki-tests--add-path-link-v2):
+    (hywiki-tests--action-key-on-hywikiword-displays-page): Use
+    hywiki-tests--kill-empty-wiki-buffer.
+
 2026-10-30  Mats Lidell  <matsl@gnu.org>
 
 * man/Lucide-LICENSE: Licens information for svg icons.
