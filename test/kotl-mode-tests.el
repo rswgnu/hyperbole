@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:     17-Oct-26 at 02:56:46 by Bob Weiner
+;; Last-Mod:      7-Nov-26 at 00:19:59 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1527,6 +1527,30 @@ marked with :ignore t")
               (should (string-match
                        "(kotl-mode:kill-region): Bad region or not within a single Koutline cell"
                        (cadr err))))))))))
+
+(ert-deftest kotl-mode--insert-initial-tab-in-cell-row ()
+  "Verify that a TAB can be inserted first in a cell row and also deleted."
+  (with-temp-buffer
+    (let ((kotl-mode:emulate-tab t)
+          (kotl-mode:indent-tabs-mode t))
+      (save-window-excursion
+        (with-selected-window (display-buffer (current-buffer))
+          (kotl-mode)
+          (insert "1")
+          (kotl-mode:newline 1)
+          (insert "2")
+          (kotl-mode:beginning-of-line)
+          (execute-kbd-macro (kbd "TAB"))
+          (kotl-mode:beginning-of-line)
+          (should (looking-at-p "\t2"))
+
+          ;; Delete the tab. Verify it deletes to the left column in
+          ;; the cell
+          (let ((p (point)))
+            (kotl-mode:forward-char 1)
+            (execute-kbd-macro (kbd "<backspace>"))
+            (should (= p (point)))
+            (should (looking-at-p "2"))))))))
 
 (provide 'kotl-mode-tests)
 
