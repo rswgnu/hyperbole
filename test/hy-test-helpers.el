@@ -19,6 +19,7 @@
 ;;; Code:
 
 (require 'ert)
+(require 'ert-x)
 (require 'hmouse-drv) ;; For `action-key'
 (require 'hywiki)     ;; For `hywiki-word-face-at-p' and (require 'hypb)
 (eval-when-compile (require 'cl-lib))
@@ -183,6 +184,38 @@ and the default WORD-LENGTH is 4."
   (with-temp-buffer
     (insert-file-contents file)
     (buffer-string)))
+
+(defun hy-test-get-resource-as-sexp (resource)
+  "Read RESOURCE and return as sexp."
+  (with-temp-buffer
+    (insert-file-contents resource)
+    (read (current-buffer))))
+
+(defun hy-test-outline-as-string (&optional begin end)
+  "Return buffer content as a string with hidden text replaced by ellipses.
+The string contains what the outline actually looks like.  This
+enables `string-match' tests for verifying text is hidden.  With
+optional BEGIN and END only return that part of the buffer."
+  (if (not begin) (setq begin (point-min)))
+  (if (not end) (setq end (point-max)))
+  (save-excursion
+    (let ((result "")
+          in-invisible-section)
+      (goto-char begin)
+      (while (< (point) end)
+        (setq result
+              (concat result
+                      (if (get-char-property (point) 'invisible)
+                          (cond ((not in-invisible-section)
+                                 (setq in-invisible-section t)
+                                 "...")
+                                (t nil))
+                        (progn
+                          (if in-invisible-section
+                              (setq in-invisible-section nil))
+                          (char-to-string (char-after))))))
+        (goto-char (1+ (point))))
+      result)))
 
 (provide 'hy-test-helpers)
 ;;; hy-test-helpers.el ends here

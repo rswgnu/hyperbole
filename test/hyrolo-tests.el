@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    19-Jun-21 at 22:42:00
-;; Last-Mod:      4-Nov-26 at 17:26:40 by Mats Lidell
+;; Last-Mod:     14-Nov-26 at 00:59:09 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1309,32 +1309,6 @@ Useful for creating outline and markdown test data from org examples."
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))
 
-(defun hyrolo-tests--outline-as-string (&optional begin end)
-  "Return buffer content as a string with hidden text replaced by ellipses.
-The string contains what the outline actually looks like.  This
-enables `string-match' tests for verifying text is hidden.  With
-optional BEGIN and END only return that part of the buffer."
-  (if (not begin) (setq begin (point-min)))
-  (if (not end) (setq end (point-max)))
-  (save-excursion
-    (let ((result "")
-          in-invisible-section)
-      (goto-char begin)
-      (while (< (point) end)
-        (setq result
-              (concat result
-                      (if (get-char-property (point) 'invisible)
-                          (cond ((not in-invisible-section)
-                                 (setq in-invisible-section t)
-                                 "...")
-                                (t nil))
-                        (progn
-                          (if in-invisible-section
-                              (setq in-invisible-section nil))
-                          (char-to-string (char-after))))))
-        (goto-char (1+ (point))))
-      result)))
-
 (ert-deftest hyrolo-tests--outline-hide-other ()
   "Verify `hyrolo-outline-hide-other' hides except current body, parent and top-level headings."
   (let* ((org-file1 (make-temp-file "hypb" nil ".org" hyrolo-tests--outline-content-org))
@@ -1353,7 +1327,7 @@ optional BEGIN and END only return that part of the buffer."
 * h-org 2...
 "
                                          ) "$")
-                   (hyrolo-tests--outline-as-string)))
+                   (hy-test-outline-as-string)))
 
           ;; On first header
           (goto-char (point-min))
@@ -1366,7 +1340,7 @@ optional BEGIN and END only return that part of the buffer."
 body...
 * h-org 2...
 "
-                           (hyrolo-tests--outline-as-string (point))))
+                           (hy-test-outline-as-string (point))))
 
           ;; On second header
           (goto-char (point-min))
@@ -1379,7 +1353,7 @@ body...
 body...
 * h-org 2...
 "
-                           (hyrolo-tests--outline-as-string (point)))))
+                           (hy-test-outline-as-string (point)))))
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))
 
@@ -1403,7 +1377,7 @@ body...
 * h-org 2...
 "
                                          ) "$")
-                   (hyrolo-tests--outline-as-string)))
+                   (hy-test-outline-as-string)))
 
           ;; On first header
           (goto-char (point-min))
@@ -1415,7 +1389,7 @@ body...
 * h-org 1...
 * h-org 2...
 "
-                           (hyrolo-tests--outline-as-string (point))))
+                           (hy-test-outline-as-string (point))))
 
           ;; On second header
           (goto-char (point-min))
@@ -1427,7 +1401,7 @@ body...
 1...
 * h-org 2...
 "
-                           (hyrolo-tests--outline-as-string (point))))
+                           (hy-test-outline-as-string (point))))
 
           ;; First line - 2 levels
           (goto-char (point-min))
@@ -1444,7 +1418,7 @@ body...
 ** h-org 2.1...
 "
                                          ) "$")
-                   (hyrolo-tests--outline-as-string)))
+                   (hy-test-outline-as-string)))
 
           ;; On first header - 2 levels
           (goto-char (point-min))
@@ -1459,7 +1433,7 @@ body...
 * h-org 2...
 ** h-org 2.1...
 "
-                           (hyrolo-tests--outline-as-string (point))))
+                           (hy-test-outline-as-string (point))))
 
           ;; On second header - 2 levels
           (goto-char (point-min))
@@ -1473,7 +1447,7 @@ body...
 * h-org 2...
 ** h-org 2.1...
 "
-                           (hyrolo-tests--outline-as-string (point)))))
+                           (hy-test-outline-as-string (point)))))
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))
 
@@ -1487,13 +1461,13 @@ body...
 
           ;; First line - show all
           (should (= (point) 1))
-          (let ((original-look (hyrolo-tests--outline-as-string)))
+          (let ((original-look (hy-test-outline-as-string)))
             (hyrolo-outline-hide-subtree)
             (should (string-match-p
                      (concat "^===+" (regexp-quote "...") "\n$")
-                     (hyrolo-tests--outline-as-string)))
+                     (hy-test-outline-as-string)))
             (hyrolo-outline-show-subtree)
-            (should (string= original-look (hyrolo-tests--outline-as-string))))
+            (should (string= original-look (hy-test-outline-as-string))))
 
           ;; On first header
           (goto-char (point-min))
@@ -1501,7 +1475,7 @@ body...
           (hyrolo-outline-hide-sublevels 1)
           (search-forward "* h-org 1")
           (beginning-of-line)
-          (let ((original-look (hyrolo-tests--outline-as-string)))
+          (let ((original-look (hy-test-outline-as-string)))
             (hyrolo-outline-show-subtree)
             (should (string= "\
 * h-org 1
@@ -1514,10 +1488,10 @@ body
 body
 * h-org 2...
 "
-                             (hyrolo-tests--outline-as-string (point))))
+                             (hy-test-outline-as-string (point))))
             ;; Hide it again
             (hyrolo-outline-hide-subtree)
-            (should (string= original-look (hyrolo-tests--outline-as-string))))
+            (should (string= original-look (hy-test-outline-as-string))))
 
           ;; On second level header
           (goto-char (point-min))
@@ -1525,7 +1499,7 @@ body
           (hyrolo-outline-hide-sublevels 2)
           (search-forward "** h-org 1.2")
           (beginning-of-line)
-          (let ((original-look (hyrolo-tests--outline-as-string)))
+          (let ((original-look (hy-test-outline-as-string)))
             (hyrolo-outline-show-subtree)
             (should (string= "\
 ** h-org 1.2
@@ -1535,10 +1509,10 @@ body
 * h-org 2...
 ** h-org 2.1...
 "
-                             (hyrolo-tests--outline-as-string (point))))
+                             (hy-test-outline-as-string (point))))
             ;; Hide it again
             (hyrolo-outline-hide-subtree)
-            (should (string= original-look (hyrolo-tests--outline-as-string)))))
+            (should (string= original-look (hy-test-outline-as-string)))))
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))
 
@@ -1562,19 +1536,19 @@ body
           (should (string=
                    (concat (hyrolo-tests--hyrolo-section-header org-file1)
                            "* h-org 1...\n* h-org 2...\n")
-                   (hyrolo-tests--outline-as-string)))
+                   (hy-test-outline-as-string)))
 
           (execute-kbd-macro (kbd "TAB"))
           (should (string=
                    (concat (hyrolo-tests--hyrolo-section-header org-file1)
                            "* h-org 1\nbody\n** h-org 1.1\nbody\n** h-org 1.2\nbody\n*** h-org 1.2.1\nbody\n* h-org 2...\n")
-                   (hyrolo-tests--outline-as-string)))
+                   (hy-test-outline-as-string)))
 
           (execute-kbd-macro (kbd "f TAB"))
           (should (string=
                    (concat (hyrolo-tests--hyrolo-section-header org-file1)
                            "* h-org 1\nbody\n** h-org 1.1\nbody\n** h-org 1.2\nbody\n*** h-org 1.2.1\nbody\n* h-org 2\nbody\n** h-org 2.1\nbody\n")
-                   (hyrolo-tests--outline-as-string))))
+                   (hy-test-outline-as-string))))
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))
 
@@ -1592,7 +1566,7 @@ body
                             "\
    1. h-kotl...
 ")
-                           (hyrolo-tests--outline-as-string)))
+                           (hy-test-outline-as-string)))
           (hyrolo-next-match)
           (should (string= (concat
                             (hyrolo-tests--hyrolo-section-header kotl-file1)
@@ -1602,7 +1576,7 @@ body
      1a. h-kotl 1
          body 1
 ")
-                           (hyrolo-tests--outline-as-string))))
+                           (hy-test-outline-as-string))))
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))
 
@@ -1636,7 +1610,7 @@ body
                            "\
    1. h-kotl...
 ")
-                   (hyrolo-tests--outline-as-string))))
+                   (hy-test-outline-as-string))))
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))
 
@@ -1676,7 +1650,7 @@ body
      1a. h-kotl 1...
        1a1. h-kotl 2...
 ")
-                   (hyrolo-tests--outline-as-string))))
+                   (hy-test-outline-as-string))))
       (kill-buffer hyrolo-display-buffer)
       (hy-delete-files-and-buffers hyrolo-file-list))))
 
