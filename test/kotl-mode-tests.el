@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:      7-Nov-26 at 00:19:59 by Mats Lidell
+;; Last-Mod:     14-Nov-26 at 00:36:03 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1551,6 +1551,29 @@ marked with :ignore t")
             (execute-kbd-macro (kbd "<backspace>"))
             (should (= p (point)))
             (should (looking-at-p "2"))))))))
+
+(ert-deftest kotl-mode--org-cycling ()
+  "Verify org style cycling works.
+Go through a sequence of cycle states.  Verify the visible outline for
+each state.  Sequence and expected states are defined in
+kotl-mode-org-cycling.eld resource file."
+  (let ((kotl-file (ert-resource-file "kotl-file.kotl"))
+        (resource (hy-test-get-resource-as-sexp
+                   (ert-resource-file "kotl-mode-org-cycling.eld"))))
+    (with-temp-buffer
+      (insert-file kotl-file)
+      (kotl-mode)
+      (let ((kotl-mode:tab-flag 'cycle)
+            (kotl-mode:emulate-tab nil)
+            (kotl-mode:indent-tabs-mode t))
+        (save-window-excursion
+          (with-selected-window (display-buffer (current-buffer))
+            (dolist (v resource)
+              (pcase-let ((`(,name ,key ,expected) v))
+                (when key
+                  (execute-kbd-macro (kbd key)))
+                (ert-info (name)
+                  (should (string= (hy-test-outline-as-string) expected)))))))))))
 
 (provide 'kotl-mode-tests)
 

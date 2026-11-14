@@ -1,0 +1,45 @@
+;; -*- Mode: kotl -*- 
+"Kotl-4.0" ;; file-format
+
+   1. A
+      a
+
+     1a. B
+         b
+
+       1a1. C
+            c
+
+   2. D
+      d
+
+     2a. E
+         e
+
+       2a1. F
+            f
+
+
+"ben" ;; kvspec:current
+11 ;; id-counter
+alpha ;; label-type
+4 ;; label-min-width
+". " ;; label-separator
+3 ;; level-indent
+
+;; depth-first kcell attributes
+[[0
+  (creator "mats.lidell@lidells.se" create-time "20261113:09:29:37" id-counter 11)]
+ [1
+  (creator "mats.lidell@lidells.se" create-time "20261113:09:29:37")]
+ [3
+  (creator "mats.lidell@lidells.se" create-time "20261113:09:29:46")]
+ [6
+  (creator "mats.lidell@lidells.se" create-time "20261113:09:29:58")]
+ [7
+  (creator "mats.lidell@lidells.se" create-time "20261113:22:27:06")]
+ [9
+  (creator "mats.lidell@lidells.se" create-time "20261113:22:27:10")]
+ [11
+  (creator "mats.lidell@lidells.se" create-time "20261113:22:27:14")]
+ nil nil nil nil nil]
