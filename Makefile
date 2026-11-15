@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     29-Oct-26 at 23:23:03 by Mats Lidell
+# Last-Mod:     12-Nov-26 at 00:03:19 by Mats Lidell
 #
 # Copyright (C) 1994-2026  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -563,6 +563,36 @@ git-tag-release: sync-repos
 	git push origin hyperbole-$(HYPB_VERSION)
 	git push github_origin hyperbole-$(HYPB_VERSION)
 	@echo "Hyperbole $(HYPB_VERSION) is tagged as hyperbole-$(HYPB_VERSION)."
+
+define RELEASE_PRE_CHECK
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!! Have you remembered to do all of this ???                           !!!
+!!!                                                                     !!!
+!!! M-x hypb-release-update-version                                     !!!
+!!! make doc                                                            !!!
+!!! make version                                                        !!!
+!!! make pkg        => !!! Eyeball that it looks right !!!              !!!
+!!! -- Done all other preparations you kan think of that is left        !!!
+!!!    relevant for this release?                                       !!!
+!!!                                                                     !!!
+!!! (AND FINALLY, MOST IMPORTANT)                                       !!!
+!!! Committed, pushed and merged all above updates to github_master ??? !!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+endef
+export RELEASE_PRE_CHECK
+
+.PHONY: release-pre-check
+release-pre-check:
+	@printf '%s\n' "$$RELEASE_PRE_CHECK"
+	$(call confirm,All preparations done?,YES)
+
+.PHONY: release
+release:
+	$(MAKE) release-pre-check
+	$(MAKE) release-pre
+	$(call confirm,...Wait for PR to be built and approved. Ready?,YES)
+	gh pr merge --squash
+	$(MAKE) release-post
 
 .PHONY: sync-repos
 sync-repos:
