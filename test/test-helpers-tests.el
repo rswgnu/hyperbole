@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    20-Jan-25 at 20:22:05
-;; Last-Mod:     21-Jan-25 at 17:02:12 by Mats Lidell
+;; Last-Mod:     14-Nov-26 at 00:36:03 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -39,6 +39,10 @@ then gives correct answers only for ASCII characters."
         (should (= wwl (length ww)))
         (should (char-uppercase-p (string-to-char (substring ww 0 1))))
         (should-not (char-uppercase-p (string-to-char (substring ww 1 2))))))))
+
+(ert-deftest test-helpers-test--read-resource-file ()
+  "Verify `hy-test-get-resource-as-sexp' can read the resource."
+  (should (equal '(a b) (hy-test-get-resource-as-sexp (ert-resource-file "test-helpers.eld")))))
 
 (provide 'test-helpers-tests)
 ;;; test-helpers-tests.el ends here
