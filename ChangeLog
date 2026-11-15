@@ -1,3 +1,23 @@
+2026-11-15  Mats Lidell  <matsl@gnu.org>
+
+* test/kotl-mode-tests.el (kotl-mode--org-cycling): Test for org style
+    cycling behavior.
+* test/kotl-mode-resources/kotl-file.kotl:
+* test/kotl-mode-resources/kotl-mode-org-cycling.eld: Resources for
+    the test.
+
+* test/hyrolo-tests.el (hyrolo-tests--outline-hide-other): Moved to
+    hy-test-helpers. Use function with new name: hy-test-outline-as-string.
+
+* test/hy-test-helpers.el (hy-test-get-resource-as-sexp): Read sexp
+    from a resource file.
+    (hy-test-outline-as-string): Return buffer string as it is shown with
+    ellipses for invisible text. Moved to hy-test from hyrolo-tests.
+
+* test/test-helpers-tests.el (test-helpers-test--read-resource-file):
+    Add test.
+* test/test-helpers-resources/test-helpers.eld: Resource used in test.
+
 2026-11-12  Mats Lidell  <matsl@gnu.org>
 
 * Makefile (release): Semi automated target for creating a release.
