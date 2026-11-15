@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     28-Oct-26 at 22:32:40 by Mats Lidell
+@c Last-Mod:     14-Nov-26 at 20:55:58 by Mats Lidell
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,8 +30,8 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED October 28, 2026
-@set UPDATED-MONTH October 2026
+@set UPDATED November 14, 2026
+@set UPDATED-MONTH November 2026
 @set EDITION 9.3.2
 @set VERSION 9.3.2
 
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition @value{EDITION}
-Printed October 28, 2026.
+Printed November 14, 2026.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -213,7 +213,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition @value{EDITION}
-October 28, 2026 @c AUTO-REPLACE-ON-SAVE
+November 14, 2026 @c AUTO-REPLACE-ON-SAVE
 
 
   Published by the Free Software Foundation, Inc.
@@ -6915,11 +6915,11 @@ Hyperbole button, runs the function stored in the variable,
 
 @cindex koutliner, hide/show tree
 In prior Koutliner versions, this would toggle between showing and
-hiding the tree at point; however,now you can use the Org-style tree
+hiding the tree at point; however, now you can use the Org-style tree
 visibility cycling on @bkbd{@key{TAB}} instead.  If you prefer the
 prior behavior, uncomment the setting for that variable near the
 bottom of the Hyperbole @file{man/use-package} reference file when you
-add it to your persnal init file.  Note, however, that if
+add it to your personal init file.  Note, however, that if
 @code{hywiki-mode} is set to @samp{:all} then when point is on a
 capitalized word in a Koutline, an Action Key press will create a new
 HyWiki page, as that has higher priority than this setting.

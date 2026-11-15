@@ -1,5 +1,7 @@
 2026-11-15  Mats Lidell  <matsl@gnu.org>
 
+* man/hyperbole.texi (Hiding and Showing): Fix typo.
+
 * test/kotl-mode-tests.el (kotl-mode--org-cycling): Test for org style
     cycling behavior.
 * test/kotl-mode-resources/kotl-file.kotl:
