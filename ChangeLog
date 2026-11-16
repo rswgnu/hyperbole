@@ -1,3 +1,8 @@
+2026-11-16  Mats Lidell  <matsl@gnu.org>
+
+* test/hy-test-coverage.el (hy-test-coverage-file): Use absolute
+    filename. Add keybinding for testcover-next-mark.
+
 2026-11-15  Mats Lidell  <matsl@gnu.org>
 
 * man/hyperbole.texi (Hiding and Showing): Fix typo.

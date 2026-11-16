@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    21-Mar-24 at 13:22:27
-;; Last-Mod:      7-Apr-24 at 10:43:42 by Bob Weiner
+;; Last-Mod:     14-Nov-26 at 23:06:15 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -40,18 +40,19 @@ With no TESTSPEC all tests are run."
   (interactive "fFilename: \nsTestspec: ")
   (unless (file-exists-p filename)
     (error "(hy-test-coverage-file): File %s does not exist" filename))
-  (unless testspec
-    (setq testspec t))
-  (let ((buff (find-file filename)))
-    (testcover-unmark-all buff)
-    (hypb-ert-require-libraries)
-    (testcover-start filename)
-    (bury-buffer)
-    (ert testspec)
-    (testcover-mark-all buff)
-    (message "Number of splotches %d." (hy-test--count-coverage))
-    (switch-to-buffer buff)
-    (point-min)))
+  (let ((absfn (expand-file-name filename)))
+    (unless testspec
+      (setq testspec t))
+    (let ((buff (find-file absfn)))
+      (testcover-unmark-all buff)
+      (hypb-ert-require-libraries)
+      (testcover-start absfn)
+      (bury-buffer)
+      (ert testspec)
+      (testcover-mark-all buff)
+      (message "Number of splotches %d." (hy-test--count-coverage))
+      (switch-to-buffer buff)
+      (local-set-key "\M-gn" #'testcover-next-mark))))
 
 (provide 'hy-test-coverage)
 ;;; hy-test-coverage.el ends here
