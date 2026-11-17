@@ -333,11 +333,7 @@ and remove it."
                  ;; after `hywiki-mode' is enabled.
                  (setq wiki-page (cdr (hywiki-add-page "WikiWord" nil t)))
                  ,@body)
-             (let ((buf (get-file-buffer wiki-page)))
-               (when buf
-                 (kill-buffer buf))
-               (delete-file wiki-page))
-             (hy-delete-file-and-buffer (hywiki-cache-default-file))
+             (hy-delete-files-and-buffers (list wiki-page hywiki-cache-default-file))
              (hywiki-tests--delete-hywiki-dir-and-buffer hywiki-directory)
              (unless (eq hywiki-mode prior-hywiki-mode)
                (setq hywiki-directory prior-hywiki-directory)
