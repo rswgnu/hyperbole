@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    22-Jul-26 at 23:41:29
-;; Last-Mod:      6-Sep-26 at 11:39:58 by Bob Weiner
+;; Last-Mod:     18-Nov-26 at 13:40:38 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -66,8 +66,7 @@ is enabled prior to testing the string."
                                 output-buf))
         (insert-output-string "\n\n" output-buf)
         (goto-char (point-min))
-        (let ((len (+ (length str) 2))
-              (i 1)
+        (let ((i 1)
               (result t)
               line
               mismatch-flag
@@ -85,24 +84,7 @@ is enabled prior to testing the string."
             (setq line (format "%s Pos %2d, char '%c', in-str hypb=%3S %3S=ppss, str-start=%3S, following-quote=%3S"
                                (if mismatch-flag "F" ".")
                                i (following-char)
-                               hypb-in-str ppss-in-str str-start foll-quote
-                               ;; Hyperbole in-string test
-                               (hypb:in-string-p)
-                               ;; Emacs in-string test; any non-nil value is the
-                               ;; character that will terminate the string, or t if the
-                               ;; string should be terminated by a generic string
-                               ;; delimiter
-                               (nth 3 (syntax-ppss))
-                               ;; Character address of start of comment or string;
-                               ;; nil if not in one
-                               (nth 8 (syntax-ppss))
-                               ;; t if following a quote char
-                               (nth 5 (syntax-ppss))
-                               ;; Sixth arg COMMENTSTOP non-nil means stop after the
-                               ;; start of a comment. If it is the symbol
-                               ;; ‘syntax-table’, stop after the start of a comment or a
-                               ;; string, or after end of a comment or a string.
-                               ))
+                               hypb-in-str ppss-in-str str-start foll-quote))
             (funcall (if mismatch-flag
                          #'insert-highlighted-string
                        #'insert-output-string)

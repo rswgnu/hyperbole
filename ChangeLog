@@ -1,3 +1,13 @@
+2026-11-18  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-yki-tests.el: Uses el-mock so should not be byte-compiled.
+
+* test/hy-string-tests.el (debug-in-string): Remove unused var len and
+extra values in format previously moved into vars.
+
+* test/hmouse-drv-resources/test-data.el:
+* test/hibtypes-resources/test-data.el: Enable lexical binding.
+g
 2026-11-17  Mats Lidell  <matsl@gnu.org>
 
 * test/hywiki-tests.el (hywiki-tests--preserve-hywiki-mode): Use
