@@ -1,9 +1,9 @@
-;;; test-data.el
+;;; test-data.el  -*- lexical-binding: t; -*-
 
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    24-Apr-25 at 22:20:39
-;; Last-Mod:     24-Apr-25 at 22:22:16 by Mats Lidell
+;; Last-Mod:     18-Nov-26 at 13:27:58 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
