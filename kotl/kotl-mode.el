@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     24-Oct-26 at 10:01:49 by Bob Weiner
+;; Last-Mod:     20-Nov-26 at 13:15:02 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -4541,7 +4541,7 @@ Leave point at end of line now residing at START."
 	       ;; Make local-cmd have the same property list as cmd,
 	       ;; e.g. so pending-delete property is the same, but delete
 	       ;; interactive-only property to suppress byte-compiler warnings.
-	       (setplist local-cmd (copy-sequence (symbol-plist cmd)))
+	       (setplist local-cmd (map-merge 'plist (symbol-plist cmd) (symbol-plist local-cmd)))
 	       (cl-remprop local-cmd 'interactive-only)
 	       ;; `(define-key ,kotl-mode-map [remap ,cmd] ',local-cmd)
 	       (substitute-key-definition cmd local-cmd kotl-mode-map global-map)))
