@@ -1,3 +1,7 @@
+2026-11-20  Mats Lidell  <matsl@gnu.org>
+
+* test/hsys-denote-tests.el: Do not byte compile. Uses el-mock.
+
 2026-11-20  Bob Weiner  <rsw@gnu.org>
 
 * hmouse-key.el (hmouse-update-smart-keys): Update HyRolo and
