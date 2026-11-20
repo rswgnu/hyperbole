@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     26-Oct-26 at 08:25:30 by Bob Weiner
+;; Last-Mod:     17-Nov-26 at 17:27:42 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -194,6 +194,91 @@ call."
 	   #'hsys-org-hywiki-agenda-tags)
 	  ((hyrolo-at-tags-p t)
 	   #'hsys-org-hyrolo-agenda-tags))))
+
+(if (version< org-version "9.6")
+;;; For Org less than 9.6; derived from `org-get-heading' in "org.el"
+;;;###autoload
+(defun hsys-org-format-heading (heading &optional no-tags no-todo
+                                        no-priority no-comment no-stats)
+  "Return HEADING, without the leading asterisks or a #+TITLE:.
+When NO-TAGS is non-nil, don't include tags.
+When NO-TODO is non-nil, don't include TODO keywords.
+When NO-PRIORITY is non-nil, don't include priority cookie.
+When NO-COMMENT is non-nil, don't include COMMENT string.
+When NO-STATS is non-nil, don't include statistics in square brackets."
+  (when (stringp heading)
+    (let ((case-fold-search nil))
+      (when (string-match hywiki--org-heading-regexp heading)
+        (let ((todo (and (not no-todo) (match-string 2 heading)))
+	      (priority (and (not no-priority) (match-string 3 heading)))
+	      (headline (pcase (match-string 4 heading)
+			  (`nil "")
+			  ((and (guard no-comment) h)
+			   (replace-regexp-in-string
+			    (eval-when-compile
+			      (format "\\`%s[ \t]+" org-comment-string))
+			    "" h))
+			  (h h)))
+	      (tags (and (not no-tags) (match-string 5 heading))))
+
+          (when no-stats
+            ;; Strip trailing statistics cookies [1/2] or [50%]
+            (setq headline
+                  (replace-regexp-in-string
+                   "\\(?: +\\[[0-9%+/]+\\]\\)+" "" headline)))
+
+	  (mapconcat #'identity
+		     (delq nil (list todo priority headline tags))
+		     " "))))))
+
+;;; Else
+;;; For Org 9.6 and greater; derived from `org-get-heading' in "org.el"
+;;;###autoload
+(defun hsys-org-format-heading (heading &optional no-tags no-todo
+                                        no-priority no-comment no-stats)
+  "Return HEADING, without the leading asterisks or a #+TITLE:.
+When NO-TAGS is non-nil, don't include tags.
+When NO-TODO is non-nil, don't include TODO keywords.
+When NO-PRIORITY is non-nil, don't include priority cookie.
+When NO-COMMENT is non-nil, don't include COMMENT string.
+When NO-STATS is non-nil, don't include statistics in square brackets."
+  (when (stringp heading)
+    (let ((case-fold-search nil))
+      (when (string-match hywiki--org-heading-regexp heading)
+        ;; When using `org-fold-core--optimise-for-huge-buffers',
+        ;; returned text will be invisible.  Clear it up.
+        (save-match-data
+          (if (fboundp 'org-fold-core-remove-optimization)
+              (org-fold-core-remove-optimization (match-beginning 0) (match-end 0))
+            (with-suppressed-warnings ((obsolete org-fold-core-remove-optimisation))
+              (org-fold-core-remove-optimisation (match-beginning 0) (match-end 0)))))
+        (let ((todo (and (not no-todo) (match-string 2 heading)))
+	      (priority (and (not no-priority) (match-string 3 heading)))
+	      (headline (pcase (match-string 4 heading)
+			  (`nil "")
+			  ((and (guard no-comment) h)
+			   (replace-regexp-in-string
+			    (eval-when-compile
+			      (format "\\`%s[ \t]+" org-comment-string))
+			    "" h))
+			  (h h)))
+	      (tags (and (not no-tags) (match-string 5 heading))))
+
+          (when no-stats
+            ;; Strip trailing statistics cookies [1/2] or [50%]
+            (setq headline
+                  (replace-regexp-in-string
+                   "\\(?: +\\[[0-9%+/]+\\]\\)+" "" headline)))
+
+          ;; Restore cleared optimization.
+          (if (fboundp 'org-fold-core-remove-optimization)
+              (org-fold-core-remove-optimization (match-beginning 0) (match-end 0))
+            (with-suppressed-warnings ((obsolete org-fold-core-remove-optimisation))
+              (org-fold-core-remove-optimisation (match-beginning 0) (match-end 0))))
+	  (mapconcat #'identity
+		     (delq nil (list todo priority headline tags))
+        	     " "))))))
+)
 
 (defun hsys-org-get-agenda-tags (agenda-tags-view-function)
   "When on an Org tag, call AGENDA-TAGS-VIEW-FUNCTION to find matches.

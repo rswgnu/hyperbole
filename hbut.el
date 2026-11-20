@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    18-Sep-91 at 02:57:09
-;; Last-Mod:     26-Oct-26 at 10:10:47 by Bob Weiner
+;; Last-Mod:     11-Nov-26 at 10:41:55 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -2772,7 +2772,7 @@ Summary of operations based on inputs (name arg from \\='hbut:current attrs):
                       (insert arg1 ", ")
                     (insert "@ "))
 		  (insert arg2 ">"))
-	 (insert "<@ ")
+	 (insert "<#")
 	 (when arg1 (insert arg1))
 	 (insert ">")))
       ((or 'link-to-kotl 'klink:act)

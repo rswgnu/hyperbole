@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     20-Nov-26 at 13:15:02 by Mats Lidell
+;; Last-Mod:     20-Nov-26 at 10:58:44 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -4538,10 +4538,14 @@ Leave point at end of line now residing at START."
 	     ;; Only bind key locally if kotl-mode local-cmd has already
 	     ;; been defined and cmd is a valid function.
 	     (when (and local-cmd (fboundp cmd))
-	       ;; Make local-cmd have the same property list as cmd,
-	       ;; e.g. so pending-delete property is the same, but delete
-	       ;; interactive-only property to suppress byte-compiler warnings.
-	       (setplist local-cmd (map-merge 'plist (symbol-plist cmd) (symbol-plist local-cmd)))
+	       ;; Add `cmd' properties to `local-cmd' for properties not
+               ;; already in `local-cmd' (which must be the last arg to
+               ;; `map-merge' since values are merged into the last plist).
+	       ;; For example, `delete-selection' property is the same, but
+               ;; delete `interactive-only' property to suppress
+               ;; byte-compiler warnings.
+	       (setplist local-cmd (map-merge 'plist (symbol-plist cmd)
+                                              (symbol-plist local-cmd)))
 	       (cl-remprop local-cmd 'interactive-only)
 	       ;; `(define-key ,kotl-mode-map [remap ,cmd] ',local-cmd)
 	       (substitute-key-definition cmd local-cmd kotl-mode-map global-map)))
@@ -4731,8 +4735,8 @@ Leave point at end of line now residing at START."
 	      (list (kbd "M-S-<right>") (kbd "M-<right>") (kbd "ESC S-<right>")
                     (kbd "ESC <right>") (kbd "C-c C->") (kbd "C-c C-.")))
 
-	;; When delete-selection-mode (pending-delete-mode) is enabled, make
-	;; these commands delete the region.
+	;; When `delete-selection-mode' is enabled, make these commands
+	;; delete the region.
 	(put 'kotl-mode:quoted-insert 'delete-selection t)
 
 	(put 'kotl-mode:yank 'delete-selection 'yank)

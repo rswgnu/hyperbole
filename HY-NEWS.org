@@ -1,9 +1,26 @@
 *			  What's New in GNU Hyperbole
 				 by Bob Weiner
 
-===========================================================================
+========================================================================
 *                                   V9.3.2
-===========================================================================
+========================================================================
+
+** BUTTONS  (See [[(hyperbole)Buttons]]).
+
+  *** Hyperbole buttons can now be wrapped in double square bracket org
+      link delimiters when in Org mode with the addition of a single
+      line to your Hyperbole use-package configuration:
+
+         (push #'hyperbole-activate-button org-open-link-functions)
+
+      Then you get all the Hyperbole button capabilities with the
+      highlighting and the activation of Org links via {C-c C-o}.  Of
+      course, the Action Key will activate these buttons as well.
+
+      Since Emacs Lisp sybmols are Hyperbole buttons, you can make
+      links to both function and variable definitons just by wrapping
+      their names in Org delimiters.  For example, [[find-file]] or
+      [[hsys-org-enable-smart-keys]].
 
 ** DOCUMENTATION
 
@@ -17,9 +34,14 @@
       HyWiki menu.
 
 
-===========================================================================
+** PROGRAMMING INTERFACE CHANGES  (See [[(hyperbole)Embedding Hyperbole]]).
+
+  *** Add [[hyperbole-activate-button]] for use in [[org-open-link-functions]].
+      Used in "README.md".
+
+========================================================================
 *                                   V9.3.1
-===========================================================================
+========================================================================
 
 ** ACTION TYPES  (See [[(hyperbole)Action Types]]).
 
@@ -57,7 +79,7 @@
       change to use curly braces instead of square brackets so it can be
       embedded within Org links.
 
-  *** [[man/use-package]]: Add a commented out  [[hyrolo-file-list]] setting that
+  *** [[man/use-package]]: Add a commented out [[hyrolo-file-list]] setting that
       shows all of the note taking systems that can be quickly full-text
       searched with HyRolo with no indexing.
 
@@ -143,12 +165,9 @@
   *** Rename `kotl-mode:is-p' to [[kotl-mode:is]] since is not a predicate
       but triggers an error if not in 'kotl-mode' major mode.
 
-  *** Add [[smart-prog-to-definition]] for use in [[org-open-link-functions]].
-      Used in "README.md".
-
-===========================================================================
+========================================================================
 *                                   V9.3.0
-===========================================================================
+========================================================================
 
 ** DOCUMENTATION
 
@@ -169,7 +188,7 @@
             within a heading (defaults are no-ops):
             [[smart-org-action-key-heading-function]] and
             [[smart-org-assist-key-heading-function]].  The new [[smart-org-cycle]]
-            command is one option for such as setting.
+            command is one option for such a setting.
 
   *** [[kotl/EXAMPLE.kotl]]:
       [[(hyperbole)Promoting and Demoting]]: Remove {M-0 TAB} and {M-0 S-TAB}
@@ -289,9 +308,9 @@
       no-ops.  The new [[smart-org-cycle]] command is one possible command to
       set them to, though {TAB} will do that by default now.
 
-===========================================================================
+========================================================================
 *                                   V9.2.0
-===========================================================================
+========================================================================
 
 ** DOCUMENTATION
 
@@ -406,9 +425,9 @@
        implicit links.
 
 
-===========================================================================
+========================================================================
 *                                   V9.1.0
-===========================================================================
+========================================================================
 
 NOTE: News for this release is unfinished.
 
@@ -444,9 +463,9 @@ NOTE: News for this release is unfinished.
     *   **Emacs Version Requirements**: While Hyperbole remains compatible with GNU Emacs 27.1, this release is optimized for and recommended for use with **GNU Emacs 28 or above**.
     *   **Path Variable Expansion**: The function `hpath:expand` has been enhanced to more robustly handle Hyperbole-specific suffixes like `#anchors` and `:line:col` in combination with environment and Lisp variables.
 
-===========================================================================
+========================================================================
 *                                   V9.0.1
-===========================================================================
+========================================================================
 
 ** ACE WINDOW PACKAGE INTEGRATION - fast window and buffer switching
 
@@ -1339,9 +1358,9 @@ NOTE: News for this release is unfinished.
       See [[(hyperbole)hycontrol-windows-grid-by-file-pattern]].
 
 
-===========================================================================
+========================================================================
 *                                   V8.0.0
-===========================================================================
+========================================================================
 
 
 ** HYPERBOLE SYSTEM
@@ -1789,9 +1808,9 @@ NOTE: News for this release is unfinished.
       when used with a selected region can now throw to the source buffer as
       long as point is outside the selected region in the target window.
 
-===========================================================================
+========================================================================
 *                                   V7.1.3
-===========================================================================
+========================================================================
 
   SMART (ACTION AND ASSIST) KEYS
 
@@ -1846,9 +1865,9 @@ NOTE: News for this release is unfinished.
       that expands/collapses/jumps to Magit items.  See "(hyperbole)Smart Key -
       Magit Mode".
 
-===========================================================================
+========================================================================
 *                                   V7.1.2
-===========================================================================
+========================================================================
 
   BUTTON TYPES
 
@@ -1897,9 +1916,9 @@ NOTE: News for this release is unfinished.
       left mouse button again to de-activate the dropped region before
       typing.
 
-===========================================================================
+========================================================================
 *                                   V7.1.1
-===========================================================================
+========================================================================
 
   DEMO
 
@@ -1934,9 +1953,9 @@ NOTE: News for this release is unfinished.
       will be no maximum limit.  Since Action Implicit Buttons can be
       a series of Lisp calls, they are now unlimited in length.
 
-===========================================================================
+========================================================================
 *                                   V7.1.0
-===========================================================================
+========================================================================
 
   BUTTON TYPES
 
@@ -1964,9 +1983,9 @@ NOTE: News for this release is unfinished.
     - Org-mode in Q&A Appendix: Rewrote this section to account for improved
       integration.
 
-===========================================================================
+========================================================================
 *                                   V7.0.9
-===========================================================================
+========================================================================
 
   Many issues were resolved in this test version as documented in "Changes".
   Only new features are documented here.
@@ -2107,9 +2126,9 @@ NOTE: News for this release is unfinished.
       running from a non-packaged source download of Hyperbole.
 
 
-===========================================================================
+========================================================================
 *                                   V7.0.8
-===========================================================================
+========================================================================
 
   BUTTONS
 
@@ -2129,7 +2148,7 @@ NOTE: News for this release is unfinished.
        on their categories and labels:
 
         In Buffer Syntax                                       Implicit Button Type
-        ===========================================================================
+        ========================================================================
         <elink: explicit button label to link to: optional ebut file>  link-to-ebut
         <glink: global button label to link to>                        link-to-gbut
         <ilink: implicit button label to link to: optional ibut file>  link-to-ibut
@@ -2264,9 +2283,9 @@ NOTE: News for this release is unfinished.
       used when internal viewers are also in effect.
 
 
-===========================================================================
+========================================================================
 *                                   V7.0.3
-===========================================================================
+========================================================================
 
   ACE WINDOW PACKAGE INTEGRATION - fast window and buffer switching
 
@@ -2419,9 +2438,9 @@ NOTE: News for this release is unfinished.
     - Updated Hyperbole Manual with new features.
 
 
-===========================================================================
+========================================================================
 *                                   V7.0.2
-===========================================================================
+========================================================================
 
   ACE WINDOW PACKAGE INTEGRATION
 
@@ -2432,9 +2451,9 @@ NOTE: News for this release is unfinished.
       quickly.  See "(hyperbole)Keyboard Drags" for setup and use
       instructions.
 
-===========================================================================
+========================================================================
 *                                   V7.0.1
-===========================================================================
+========================================================================
 
   SMART (ACTION AND ASSIST) KEYS
 
@@ -2460,9 +2479,9 @@ NOTE: News for this release is unfinished.
     - Fixed Google Contacts support to prompt only once for authorization.
 
 
-===========================================================================
+========================================================================
 *                                   V7.0.0
-===========================================================================
+========================================================================
 
         (See the "Changes" file for even more details of changes).
 
@@ -2807,9 +2826,9 @@ NOTE: News for this release is unfinished.
     - Key Bindings: The pulldown menu, Hyperbole/Options/Change-Key-Bindings
       now displays the current keys bound to each command for easy reference.
 
-===========================================================================
+========================================================================
 *				    V6.0.2
-===========================================================================
+========================================================================
 
   BUTTONS
 
@@ -2898,9 +2917,9 @@ NOTE: News for this release is unfinished.
       URL must have a %s format field indicating where to place the web search
       term when a search is performed.  See "(hyperbole)Web Search Engines".
 
-===========================================================================
+========================================================================
 *				    V6.0.1
-===========================================================================
+========================================================================
 
 NOTE: Version 6.0.1 is the first public release by the author since version
 4.18.  All version 5 releases were test releases, so all V5 and V6 features
@@ -2931,9 +2950,9 @@ are new in 2016 and you should look through them all.
       variables to change anything in there rather than editing the file
       manually as before.
 
-===========================================================================
+========================================================================
 *				    V6.0.0
-===========================================================================
+========================================================================
 
   HYROLO
 
@@ -2973,9 +2992,9 @@ are new in 2016 and you should look through them all.
       renamed to begin with hywconfig- and the library is now called
       hywconfig.el.
 
-===========================================================================
+========================================================================
 *				    V5.15
-===========================================================================
+========================================================================
 
   BUTTONS
 
@@ -3068,9 +3087,9 @@ are new in 2016 and you should look through them all.
       Clicks of the Action Mouse Key do the same thing, so now you can
       navigate and quit from menus with just the Action Mouse Key.
 
-===========================================================================
+========================================================================
 *  			        V5.13 and V5.14
-===========================================================================
+========================================================================
 
   BUTTONS
 
@@ -3205,9 +3224,9 @@ are new in 2016 and you should look through them all.
     - Fixed entry sorting to work with Emacs 25.
 
 
-===========================================================================
+========================================================================
 *				    V5.12
-===========================================================================
+========================================================================
 
   BUTTONS
 
@@ -3304,9 +3323,9 @@ are new in 2016 and you should look through them all.
       You can manually added this file to `hyrolo-file-list' as well and
       its format will automatically be handled by the rolo.
 
-===========================================================================
+========================================================================
 *				    V5.11
-===========================================================================
+========================================================================
 
   BUTTONS
 
@@ -3393,9 +3412,9 @@ are new in 2016 and you should look through them all.
       Action Key context to popup this menu in order to use Hyperbole
       commands.
 
-===========================================================================
+========================================================================
 *				    V5.10
-===========================================================================
+========================================================================
 
   EMACS SUPPORT
 
@@ -3471,9 +3490,9 @@ are new in 2016 and you should look through them all.
     - hyperb:init-hook renamed to hyperbole-init-hook, a more standard name.
       See the GNU Hyperbole Manual for its usage.
 
-===========================================================================
+========================================================================
 *				    V5.09
-===========================================================================
+========================================================================
 
   FRAMES
 
@@ -3558,9 +3577,9 @@ are new in 2016 and you should look through them all.
       {C-h h c d}).
 
 
-===========================================================================
+========================================================================
 *				    V5.08
-===========================================================================
+========================================================================
 
   DOCUMENTATION
 
@@ -3594,9 +3613,9 @@ are new in 2016 and you should look through them all.
       a buffer with each successive invocation.  Double clicks of the left
       mouse button do the same thing.  Try it, you'll like it.
 
-===========================================================================
+========================================================================
 *			            V5.07
-===========================================================================
+========================================================================
 
   EMACS VERSIONS
 
@@ -3655,9 +3674,9 @@ are new in 2016 and you should look through them all.
 
   	         ------- VERY OLD CHANGES BELOW HERE -------
 
-===========================================================================
+========================================================================
 *				    V4.18
-===========================================================================
+========================================================================
 
   ACTION AND ASSIST KEYS
 
@@ -3676,9 +3695,9 @@ are new in 2016 and you should look through them all.
 
     - Improved text file importation process.
 
-===========================================================================
+========================================================================
 *				    V4.17
-===========================================================================
+========================================================================
 
   IMPLICIT BUTTON TYPES
 
@@ -3718,9 +3737,9 @@ are new in 2016 and you should look through them all.
     - Fixed interaction problem with the standard editor autofilling
       functions.
 
-===========================================================================
+========================================================================
 *				    V4.16
-===========================================================================
+========================================================================
 
   This release fixes a number of small issues with tags table handling under
   GNU Emacs and Koutline export to HTML.
@@ -3730,9 +3749,9 @@ are new in 2016 and you should look through them all.
     - Added support for selection of function names from a buffer in
       fume-list-mode created by the func-menu.el package.
 
-===========================================================================
+========================================================================
 *				    V4.15
-===========================================================================
+========================================================================
 
   ACTION AND ASSIST KEYS
 
@@ -3755,9 +3774,9 @@ are new in 2016 and you should look through them all.
     - On case-insensitive OSes, automatically load OO-Browser Environment
       files named `oobr' instead of `OOBR'.
 
-===========================================================================
+========================================================================
 *				 V4.11-4.14
-===========================================================================
+========================================================================
 
   CONTACT MANAGER
 
@@ -3821,9 +3840,9 @@ are new in 2016 and you should look through them all.
 
     - Better support for 2-button mice.
 
-===========================================================================
+========================================================================
 *				    V4.10
-===========================================================================
+========================================================================
 
   ACTION AND ASSIST KEYS
 
@@ -3905,9 +3924,9 @@ are new in 2016 and you should look through them all.
       within the Hyperbole distribution without the need to install it
       separately within the editor.
 
-===========================================================================
+========================================================================
 *				V4.024-V4.027
-===========================================================================
+========================================================================
 
   DOCUMENTATION
 
@@ -3981,9 +4000,9 @@ are new in 2016 and you should look through them all.
     - Updated VM interface for version 6.19.
 
 
-===========================================================================
+========================================================================
 *				   V4.023
-===========================================================================
+========================================================================
 
   ACTION AND ASSIST KEYS
 
@@ -4000,9 +4019,9 @@ are new in 2016 and you should look through them all.
     - wrolo-add-hook is called after a new entry is added.
       wrolo-edit-hook is called after an entry is displayed for editing.
 
-===========================================================================
+========================================================================
 *				    V4.02
-===========================================================================
+========================================================================
 
   ACTION AND ASSIST KEYS
 
@@ -4069,9 +4088,9 @@ are new in 2016 and you should look through them all.
       if the rolo is loaded before the rest of the Hyperbole system.
 
 
-===========================================================================
+========================================================================
 *			      V4.00 and V4.01
-===========================================================================
+========================================================================
 
   ACTION AND ASSIST KEYS
 

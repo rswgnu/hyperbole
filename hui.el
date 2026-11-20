@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    19-Sep-91 at 21:42:03
-;; Last-Mod:     18-Oct-26 at 23:03:41 by Bob Weiner
+;; Last-Mod:     17-Nov-26 at 13:22:27 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -27,7 +27,7 @@
 (require 'hmail)
 (require 'hbut)
 (eval-when-compile (require 'hactypes))
-(require 'hsys-org)
+(require 'hsys-org) ;; For `hsys-org-uuid-is-p' and `hsys-org-format-heading'
 
 ;;; ************************************************************************
 ;;; Public declarations
@@ -50,7 +50,7 @@
 (declare-function hui:menu-choose "hui-mini")
 (declare-function hywiki-get-buffer-page-name "hywiki")
 (declare-function hywiki-in-page-p "hywiki")
-(declare-function hywiki-org-format-heading "hywiki")
+(declare-function hsys-org-format-heading "hywiki")
 (declare-function hywiki-org-get-heading-match-regexp "hywiki")
 (declare-function hywiki-referent-exists-p "hywiki")
 (declare-function kcell-view:absolute-reference "kotl/kview")
@@ -2201,7 +2201,7 @@ Buffer without File      link-to-buffer-tmp"
 				(list 'link-to-org-id id
                                       (when heading
                                         (hpath:org-normalize-title
-                                         (hywiki-org-format-heading heading t t t nil t)))))))
+                                         (hsys-org-format-heading heading t t t nil t)))))))
                         ;;
                         ;; HyWiki reference when
                         ;; `hywiki-active-in-current-buffer-p' is t
@@ -2277,7 +2277,7 @@ Buffer without File      link-to-buffer-tmp"
 					  (let ((instance-num 0)
                                                 (title
                                                  (hpath:org-normalize-title
-                                                  (hywiki-org-format-heading
+                                                  (hsys-org-format-heading
 						   (buffer-substring-no-properties
                                                     (line-beginning-position)
 						    (line-end-position))

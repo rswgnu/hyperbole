@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     18-Oct-26 at 23:37:26 by Bob Weiner
+;; Last-Mod:     20-Nov-26 at 12:44:47 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -994,17 +994,18 @@ or `~'."
 		    ;; Don't allow more than one set of grouping chars
 		    (not (string-match-p "\)\\s-*\(\\|\\]\\s-*\\[\\|\}\\s-*\{" path))
 		    ;; With point inside a path variable, return the path that point is on or to the right of.
-		    (setq subpath (or (and (setq subpath (hargs:delimited "[:\"\']\\|^\\s-*" "[:\"\']\\|\\s-*$" t t nil "[\t\n\r\f]\\|[;:] \\| [;:]"))
-					   (not (string-match-p "[:;\t\n\r\f]" subpath))
-					   subpath)
-				      (and (setq subpath (hargs:delimited "[;\"\']\\|^\\s-*" "[;\"\']\\|\\s-*$"  t t nil "[\t\n\r\f]\\|[;:] \\| [;:]"))
-					   (not (string-match-p "[;\t\n\r\f]\\|:[^:]*:" subpath))
-					   subpath)))
+		    (setq subpath (or (hargs:delimited ":"  "[:'\"]\\|\\s-*$"  t t nil "[\t\n\r\f]\\|[;:] \\| [;:]")
+                                      (hargs:delimited ";"  "[;'\"]\\|\\s-*$"  t t nil "[\t\n\r\f]\\|[;:] \\| [;:]")
+                                      (hargs:delimited "'\\|^\\s-*"  "[:;']\\|\\s-*$"  t t nil "[\t\n\r\f]\\|[;:] \\| [;:]")
+                                      (hargs:delimited "\"\\|^\\s-*" "[:;\"]\\|\\s-*$" t t nil "[\t\n\r\f]\\|[;:] \\| [;:]")))
+                    (setq subpath (string-trim subpath "['\" \t\n\r]+")
+                          subpath (when (not (string-match-p "[;\t\n\r\f]\\|:[^:]*:" subpath))
+                                    subpath))
 		    ;; Handle anchored or action prefix char paths in the
 		    ;; following clause; otherwise, might just be looking
 		    ;; at part of the path
-		    (and subpath (not (or (string-match-p "#" subpath)
-					  (string-match-p hpath:prefix-regexp subpath))))
+		    (not (or (string-match-p "[#:;\t\n\r\f]" subpath)
+			     (string-match-p hpath:prefix-regexp subpath)))
 		    (setq subpath
 			  (if subpath
 			      (cond ((and (string-match "\\`\\s-*\\([^; \t]+\\)" subpath)
@@ -1305,7 +1306,7 @@ original path."
 	         ((string-match-p "\\.el\\(\\.\\|\\'\\)" substituted-path)
 	          (or (locate-library substituted-path t) path))
 	         ((or (string-match-p "\\`\\(#[^#+.]\\|([^\)\\/]+)\\|[^.\\/].*\\.[^.\\/]\\)" substituted-path)
-		      (string-match-p "[\\/~]" substituted-path))
+		      (string-match-p "\\`[\\/~]" substituted-path))
 	          ;; Don't expand if an Info path, URL, #anchor or has a directory prefix
 	          substituted-path)
                  ((and (null (file-name-directory substituted-path))

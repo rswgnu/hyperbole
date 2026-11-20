@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     22-Oct-26 at 02:11:29 by Bob Weiner
+;; Last-Mod:     19-Nov-26 at 14:30:24 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -25,6 +25,7 @@
 (require 'hhist)
 (require 'hload-path)
 (require 'hypb)
+(require 'hywiki)
 (require 'hib-social)
 (require 'hyrolo)
 (require 'eww)
@@ -457,11 +458,12 @@
 (ert-deftest fast-demo-elisp-or-env-vars ()
   "Verify Elisp or env variables work in paths."
   (unwind-protect
-      (with-temp-buffer
+      (hy-test-helpers:with-temp-buffer
+        (hywiki-mode :all)
         (let ((enable-local-variables :all))
           (insert "\"${hyperb:dir}/HY-NEWS.org\"")
           (goto-char 4)
-          (action-key)
+          (execute-kbd-macro (kbd "M-RET"))
           (should (string= (buffer-name (current-buffer)) "HY-NEWS.org"))))
     (hy-test-helpers:kill-buffer "HY-NEWS.org")))
 

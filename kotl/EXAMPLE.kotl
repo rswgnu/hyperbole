@@ -83,11 +83,11 @@
        3b6. TAB and Shift-TAB: Org-style Cycling or Tree Demotion and Promotion
 
          3b6a. By default, TAB and S-TAB perform Org-style tree and outline
-               visibility cycling respectively.  See <@ 3b7=071>.
+               visibility cycling respectively.  See <#3b7=071>.
 
          3b6b. {C-c [} toggles the function of {TAB} and {S-TAB} between
                Org-like tree visibility cycling and demotion/promotion.  See
-               <@ 3b8=013>.
+               <#3b8=013>.
 
        3b7. Org-style Visibility Cycling  (kotl-mode:tab-flag = 'cycle) (default)
 
@@ -155,7 +155,7 @@
          3b9a. To insert a literal tab character, use {C-q TAB} or adjust the
                value of `kotl-mode:emulate-tab' to suit your needs.
 
-         3b9b. See also <@ 3d=059>, for how tab key bindings differ when Org
+         3b9b. See also <#3d=059>, for how tab key bindings differ when Org
                Table minor mode is enabled.
 
          3b9c. If you want the TAB key to always indent lines and insert
@@ -338,7 +338,7 @@
                suffix-specific conversions performed on files before they
                are inserted.  This same conversion process applies if you
                invoke {M-x kotl-mode RET} in a non-koutline buffer or if you
-               perform a generic file import as described in <@ 4=063>.
+               perform a generic file import as described in <#4=063>.
 
         3b20c. Use {M-x kimport:insert-file-contents RET} to insert the
                entire contents of a file into the current cell at the
@@ -437,10 +437,10 @@
 
        3c1. Here are three klink examples:
 
-         3c1a. <#3b=08> or <@ 3b=08> jumps to the cell within this outline
-               which has permanent id `08' and relative id `3b'.  <#08> does
-               the same thing, as does <#3b>, though this latter form will
-               not maintain the link properly if the cell is moved elsewhere
+         3c1a. <#3b=08> jumps to the cell within this outline which has
+               permanent id `08' and relative id `3b'.  <#08> does the same
+               thing, as does <#3b>, though this latter form will not
+               maintain the link properly if the cell is moved elsewhere
                within the outline.
 
          3c1b. <EXAMPLE.kotl#4=012|c1e> or <EXAMPLE.kotl, 4=012 |c1e> displays

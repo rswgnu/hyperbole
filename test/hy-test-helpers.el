@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    30-Jan-21 at 12:00:00
-;; Last-Mod:     20-Oct-26 at 00:06:53 by Bob Weiner
+;; Last-Mod:     19-Nov-26 at 14:29:30 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -23,6 +23,15 @@
 (require 'hmouse-drv) ;; For `action-key'
 (require 'hywiki)     ;; For `hywiki-word-face-at-p' and (require 'hypb)
 (eval-when-compile (require 'cl-lib))
+
+(defmacro hy-test-helpers:with-temp-buffer (&rest body)
+  "Log a message of DESCRIP; return the time in seconds to run rest, BODY."
+  (declare (indent 1) (debug (form body)))
+  `(with-temp-buffer
+     ;; Next line is necessary to ensure *ert* buffer is not
+     ;; the current buffer when `body' runs
+     (set-window-buffer (selected-window) (current-buffer))
+     ,@body))
 
 (defmacro hy-test-helpers:with-time (descrip &rest body)
   "Log a message of DESCRIP; return the time in seconds to run rest, BODY."

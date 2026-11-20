@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     7-Jun-89 at 22:08:29
-;; Last-Mod:     20-Oct-26 at 00:09:10 by Bob Weiner
+;; Last-Mod:     20-Nov-26 at 10:41:58 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -36,7 +36,7 @@
 (require 'hversion)
 (require 'hmail)
 (require 'hsys-consult)
-(require 'hsys-org) ;; For `hsys-org-cycle-bob-file-list'
+(require 'hsys-org) ;; For `hsys-org-cycle-bob-file-list' and 'hsys-org-format-headling'
 (require 'hypb)     ;; For `hypb:mail-address-regexp' and `hypb:add-to-invisibility-spec'
 (require 'outline)
 (require 'reveal)
@@ -83,7 +83,9 @@
 (declare-function hmouse-pulse-line "hui-window")
 (declare-function hpath:find "hpath")
 (declare-function hpath:expand-list "hpath")
+(declare-function hpath:org-normalize-title "hpath")
 (declare-function hbut:get-key-src "hbut")
+(declare-function hsys-org-format-heading "hywiki")
 (declare-function org-outline-level "org")
 
 (defvar consult-preview-key)            ; "ext:consult.el"
@@ -235,7 +237,7 @@ Used with one argument, the file name.")
 
 (defconst hyrolo-hdr-regexp "^==="
   "Regular expression to match the first and last lines of hyrolo file headers.
-This header is inserted into hyrolo-display-buffer before any entries from the
+This header is inserted into `hyrolo-display-buffer' before any entries from the
 file are added.")
 
 (defvar hyrolo-entry-group-number 1
@@ -518,7 +520,8 @@ entry which begins with the parent string."
 	(message "Edit entry at point.")))))
 
 (defun hyrolo-at-tags-p (&optional at-tag-flag)
-  "Return non-nil if point is in a HyRolo buffer and at Org tags."
+  "Return non-nil if point is in a HyRolo buffer and at Org tags.
+OPTIONAL AT-TAG-FLAG means point is known to be on a tag."
   (and (or at-tag-flag (hsys-org-at-tags-p)
 	   ;; Non-highlighted Org tags in `hyrolo-display-buffer'
 	   (and (save-excursion
@@ -749,13 +752,23 @@ searches only the first line of entries, not the full text.  Optional
 NO-DISPLAY non-nil retrieves entries but does not display them.  Optional
 INTERACTIVE-FLAG treats this as an interactive call.
 
-Nil value of MAX-MATCHES means find all entries that match, t value means find
-all matching entries but omit file headers, negative values mean find up to the
-inverse of that number of matching entries and omit file headers.
+MAX-MATCHES values are the following:
+  1. nil            - find all entries that match;
+  2. t              - find all matching entries, omit file headers,
+                      don't erase the match buffer before adding
+                      entries, and don't display the match buffer;
+  3. :link           - find up to one entry and return a list of its
+                      parts: (absolute-path-or-buffer-name-of-entry
+                              entry-headline) or nil when no entry
+                      is found;
+  4. positive value - find up to that number of matching entries;
+  5. negative value - find up to the inverse of that number of
+                      matching entries.
 
-Return number of entries matched.  See also documentation for the variable
-`hyrolo-file-list' and the function `hyrolo-fgrep-logical' for documentation
-on the logical sexpression matching."
+Return number of entries matched unless MAX-MATCHES is :link.  See also
+documentation for the variable `hyrolo-file-list' and the function
+`hyrolo-fgrep-logical' for documentation on the logical sexpression
+matching."
   (interactive (let ((input-and-matching-files
 		      (hyrolo-grep-input #'read-string "Find rolo string")))
 		 (list (car input-and-matching-files)
@@ -764,24 +777,28 @@ on the logical sexpression matching."
 			       (cadr input-and-matching-files))
                        nil nil nil t)))
   (setq string (string-trim string "\"" "\""))
-  (let ((total-matches 0))
+  (let ((total-matches 0)
+        result)
     (if (string-match-p hyrolo-logical-regexp string)
 	(progn
 	  ;; Search string contains embedded logic operators.
 	  ;; First try to match logical sexpression within a single
 	  ;; subentry to minimize entries displayed.  If no match,
 	  ;; then match across ancestors and descendants.
-	  (when (zerop (setq total-matches (hyrolo-fgrep-logical string count-only nil t)))
-	    (hyrolo-fgrep-logical string count-only t t)))
-      (setq total-matches (hyrolo-grep (regexp-quote string)
-				       max-matches hyrolo-files-or-bufs
-				       count-only headline-only no-display
-                                       interactive-flag)))
+	  (when (zerop (setq result (hyrolo-fgrep-logical string count-only nil t)))
+            (setq result (hyrolo-fgrep-logical string count-only t t))))
+      (setq result (hyrolo-grep (regexp-quote string)
+				max-matches hyrolo-files-or-bufs
+				count-only headline-only no-display
+                                interactive-flag)))
+    (setq total-matches (if (eq max-matches :link) (if result 1 0) result))
     (if interactive-flag
 	(message "%s matching entr%s found in HyRolo."
 		 (if (= total-matches 0) "No" total-matches)
 		 (if (= total-matches 1) "y" "ies")))
-    total-matches))
+    (if (eq max-matches :link)
+        result
+      total-matches)))
 
 ;;;###autoload
 (defun hyrolo-find-file (&optional file find-function &rest args)
@@ -919,11 +936,16 @@ MAX-MATCHES values are the following:
   2. t              - find all matching entries, omit file headers,
                       don't erase the match buffer before adding
                       entries, and don't display the match buffer;
-  3. negative value - find up to the inverse of that number of
+  3. :link           - find up to one entry and return a list of its
+                      parts: (absolute-path-or-buffer-name-of-entry
+                              entry-headline) or nil when no entry
+                      is found;
+  4. positive value - find up to that number of matching entries;
+  5. negative value - find up to the inverse of that number of
                       matching entries.
 
-Return the number of entries matched.  See also documentation for
-the variable `hyrolo-file-list'."
+Return number of entries matched unless MAX-MATCHES is :link.  See also
+documentation for the variable `hyrolo-file-list'."
   (interactive (let ((input-and-matching-files
 		      (hyrolo-grep-input #'read-regexp
 					 "Find rolo regular expression")))
@@ -932,8 +954,14 @@ the variable `hyrolo-file-list'."
 		       (mapcar #'expand-file-name
 			       (cadr input-and-matching-files))
                        nil nil nil t)))
-  (unless (or (integerp max-matches) (memq max-matches '(nil t)))
+  (unless (or (integerp max-matches) (memq max-matches '(nil t :link)))
     (setq max-matches (prefix-numeric-value max-matches)))
+
+  (when (eq max-matches :link)
+    (setq count-only t
+          headline-only t
+          no-display t
+          exclude-sub-entries t))
 
   (let ((files-or-bufs
 	 (cond ((null hyrolo-files-or-bufs) (hyrolo-get-file-list))
@@ -947,7 +975,8 @@ the variable `hyrolo-file-list'."
 	(total-matches 0)
 	(num-matched 0)
 	(inserting (eq max-matches t))
-	(file-or-buf))
+	(file-or-buf)
+        (result))
 
     ;; If not called interactively and all of `files-or-bufs' have attached
     ;; files, then filter the file list down to those files with matches
@@ -961,26 +990,23 @@ the variable `hyrolo-file-list'."
       (unless inserting
 	(erase-buffer))
       (hyrolo--cache-initialize))
-    (while (and (setq file-or-buf (car files-or-bufs))
-		(or (not (integerp max-matches))
-		    (< total-matches (max max-matches (- max-matches)))))
-      (setq files-or-bufs (cdr files-or-bufs)
-	    num-matched (cond ((and (featurep 'bbdb) (equal file-or-buf bbdb-file))
-			       (hyrolo-bbdb-grep-file file-or-buf regexp max-matches count-only))
-			      ((and (hyrolo-google-contacts-p) (equal file-or-buf google-contacts-buffer-name))
-			       (hyrolo-retrieve-google-contacts (regexp-quote regexp))
-			       (hyrolo-google-contacts-grep-file file-or-buf regexp max-matches count-only))
-			      (t (hyrolo-grep-file file-or-buf regexp
-                                                   max-matches count-only
-                                                   headline-only
-                                                   exclude-sub-entries)))
-	    total-matches (+ total-matches num-matched))
-      (when (integerp max-matches)
-	(setq max-matches
-	      (if (>= max-matches 0)
-		  (- max-matches num-matched)
-		(+ max-matches num-matched)))))
-    (unless (or count-only (= total-matches 0))
+    (save-excursion
+      (while (and (setq file-or-buf (car files-or-bufs))
+		  (or (not (integerp max-matches))
+		      (< total-matches (abs max-matches))))
+        (setq files-or-bufs (cdr files-or-bufs)
+	      result (cond ((and (featurep 'bbdb) (equal file-or-buf bbdb-file))
+			    (hyrolo-bbdb-grep-file file-or-buf regexp max-matches count-only))
+			   ((and (hyrolo-google-contacts-p) (equal file-or-buf google-contacts-buffer-name))
+			    (hyrolo-retrieve-google-contacts (regexp-quote regexp))
+			    (hyrolo-google-contacts-grep-file file-or-buf regexp max-matches count-only))
+			   (t (hyrolo-grep-file file-or-buf regexp
+                                                max-matches count-only
+                                                headline-only
+                                                exclude-sub-entries))))
+        (setq num-matched (if (eq max-matches :link) (if result 1 0) result)
+              total-matches (+ total-matches num-matched))))
+    (unless (or count-only (zerop total-matches))
       (hyrolo--post-display-buffer display-buf)
       (unless (or no-display inserting)
 	(hyrolo-display-matches display-buf)))
@@ -988,7 +1014,9 @@ the variable `hyrolo-file-list'."
       (message "%s matching entr%s found in HyRolo."
 	       (if (= total-matches 0) "No" total-matches)
 	       (if (= total-matches 1) "y" "ies")))
-    total-matches))
+    (if (eq max-matches :link)
+        result
+      total-matches)))
 
 ;;;###autoload
 (defun hyrolo-grep-or-fgrep (&optional arg)
@@ -1464,7 +1492,7 @@ Raise an error if a match is not found."
     (error "(HyRolo): Invalid files used in `hyrolo-file-list'; see the *HyRolo Errors* buffer")))
 
 (defun hyrolo-set-buffer (buf)
-  "Maintain current value of `hyrolo-display-buf' after `set-buffer'."
+  "Maintain current value of `hyrolo-display-buffer' after (set-buffer BUF)."
   ;; This `set-buffer' can change the value of
   ;; `hyrolo-display-buffer' improperly, so ensure it retains the
   ;; prior value.
@@ -1676,6 +1704,7 @@ matched entries."
 (defun hyrolo-word (string &optional max-matches hyrolo-files-or-bufs
 		    count-only headline-only no-display)
   "Display rolo entries with whole word match for STRING.
+
 To a maximum of optional prefix arg MAX-MATCHES, in file(s) from optional
 HYROLO-FILES-OR-BUFS or `hyrolo-file-list'.  Default is to find all matching
 entries.  Each entry is displayed with all of its sub-entries.  Optional
@@ -1683,9 +1712,18 @@ COUNT-ONLY non-nil skips retrieval of matching entries.  Optional
 HEADLINE-ONLY searches only the first line of entries, not the full text.
 Optional NO-DISPLAY non-nil retrieves entries but does not display them.
 
-Nil value of MAX-MATCHES means find all matches, t value means find all matches
-but omit file headers, negative values mean find up to the inverse of that
-number of entries and omit file headers.
+MAX-MATCHES values are the following:
+  1. nil            - find all entries that match;
+  2. t              - find all matching entries, omit file headers,
+                      don't erase the match buffer before adding
+                      entries, and don't display the match buffer;
+  3. :link           - find up to one entry and return a list of its
+                      parts: (absolute-path-or-buffer-name-of-entry
+                              entry-headline) or nil when no entry
+                      is found;
+  4. positive value - find up to that number of matching entries;
+  5. negative value - find up to the inverse of that number of
+                      matching entries.
 
 Return number of entries matched.  See also documentation for the variable
 `hyrolo-file-list'."
@@ -1695,14 +1733,18 @@ Return number of entries matched.  See also documentation for the variable
 		       current-prefix-arg
 		       (mapcar #'expand-file-name
 			       (cadr input-and-matching-files)))))
-  (let ((total-matches (hyrolo-grep (format "\\b%s\\b" (regexp-quote string))
-				    max-matches
-				    hyrolo-files-or-bufs count-only headline-only no-display)))
+  (let ((total-matches 0)
+        (result (hyrolo-grep (format "\\b%s\\b" (regexp-quote string))
+			     max-matches
+			     hyrolo-files-or-bufs count-only headline-only no-display)))
+    (setq total-matches (if (eq max-matches :link) (if result 1 0) result))
     (when (called-interactively-p 'interactive)
       (message "%s matching entr%s found in HyRolo."
 	       (if (= total-matches 0) "No" total-matches)
 	       (if (= total-matches 1) "y" "ies")))
-    total-matches))
+    (if (eq max-matches :link)
+        result
+      total-matches)))
 
 ;;;###autoload
 (defun hyrolo-yank (name &optional regexp-flag exclude-sub-entries)
@@ -1719,7 +1761,8 @@ below the yanked one (default when called interactively)."
   (interactive
    ;; Exclude-sub-entries if no prefix arg or any prefix arg
    ;; other than the universal argument
-   (let ((exclude-sub-entries (or (null current-prefix-arg) (not (equal '(4) current-prefix-arg)))))
+   (let ((exclude-sub-entries (or (null current-prefix-arg)
+                                  (not (equal '(4) current-prefix-arg)))))
      (list (hsys-consult-grep-headlines-read-regexp
             #'hyrolo-consult-grep
             (format "Yank HyRolo %s matching regexp"
@@ -1727,13 +1770,128 @@ below the yanked one (default when called interactively)."
            ;; Enable `regexp-flag' if any prefix arg other the universal argument
            (and current-prefix-arg (not (equal '(4) current-prefix-arg)))
            exclude-sub-entries)))
-  (push-mark)
   (let ((entry (hyrolo-get-entry name regexp-flag exclude-sub-entries)))
     (when entry
+      (push-mark)
       (insert entry)
       ;; Let user reformat the region just yanked.
       (funcall hyrolo-yank-reformat-function (mark) (point))
       (exchange-point-and-mark))))
+
+;;; ************************************************************************
+;;; Copying and inserting links to HyRolo matches
+;;; ************************************************************************
+
+(defvar hyrolo-copy-link-reformat-function #'identity
+  "*Function of one argument, a LINK string, run before `hyrolo-copy-link'.
+It should reformat the LINK to some preferred style.
+Default value is to perform no reformatting.")
+
+(defvar hyrolo-insert-link-reformat-function #'ignore
+  "*Function of two arguments, START and END, run after a `hyrolo-insert-link'.
+It should reformat the region given by the arguments to some preferred style.
+Default value is to perform no reformatting.")
+
+;;;###autoload
+(defun hyrolo-copy-link (expr &optional regexp-flag)
+  "Copy the first HyRolo entry with a first line containing EXPR.
+See the documentation for `kill-new' and `kill-append'.
+
+If the `consult' package is installed, interactively select and complete
+the entry to match.
+
+With optional REGEXP-FLAG (any prefix arg other than C-u, the
+`univeral-argument'), treat EXPR as a regular expression instead of a
+string."
+  (interactive
+   ;; Enable `regexp-flag' if any prefix arg other the universal argument
+   (let ((regexp-flag (and current-prefix-arg (not (equal '(4) current-prefix-arg)))))
+     (list (hsys-consult-grep-headlines-read-regexp
+            #'hyrolo-consult-grep
+            (format "Copy link to HyRolo entry matching %s"
+		    (if regexp-flag "regexp" "string")))
+	   regexp-flag)))
+  (let ((link (hyrolo-get-link expr regexp-flag)))
+    (when link
+      ;; Let user reformat the link before copying it
+      (setq link (funcall hyrolo-copy-link-reformat-function link))
+      (when (called-interactively-p 'interactive)
+        (message "Copied link to kill-ring: %s" link))
+      (if (eq last-command 'kill-region)
+          (kill-append link nil)
+        (kill-new link)))))
+
+(defun hyrolo-format-link (buf-or-file entry-first-line &optional shorten-flag)
+  "Return a link to a HyRolo entry given BUF-OR-FILE and ENTRY-FIRST-LINE.
+Add double quotes if the first line contains any whitespace after trimming.
+
+With optional SHORTEN-FLAG non-nil, assume point is in the buffer into which
+the link will be inserted.  If BUF-OR-FILE is a file path, shorten it
+relative to the current buffer's `default-directory'.
+
+Return the link if the inputs are valid, otherwise, display an
+error message and return nil."
+  (if (and buf-or-file (stringp entry-first-line))
+      (let* ((buffer-flag (or (bufferp buf-or-file) (get-buffer buf-or-file)))
+	     (src (cond (buffer-flag
+                         (buffer-name buf-or-file))
+                        (shorten-flag
+                         (hpath:shorten buf-or-file))
+                        (t buf-or-file)))
+             (line entry-first-line)
+             link)
+        (setq link (format "\"%s#%s\"" src line))
+        (if (string-match-p "\\s-" link)
+	    (concat "\"" link "\"")
+          link))
+    (message "(hyrolo-format-link): Invalid buf-or-file: `%s' or entry-first-line: `%s'"
+	     buf-or-file entry-first-line)
+    nil))
+
+(defun hyrolo-get-link (expr &optional regexp-flag shorten-flag)
+  "Return a link to the first HyRolo entry matched by EXPR.
+Add double quotes if the first line contains any whitespace after trimming.
+With optional REGEXP-FLAG, treat EXPR as a regular expression rather than a
+string.
+
+With optional SHORTEN-FLAG non-nil, assume point is in the buffer into which
+the link will be inserted.  If matched entry is in a file path (rather than
+a buffer), shorten it relative to the current buffer's `default-directory'.
+
+Return the link if the inputs are valid, otherwise, display an
+error message and return nil."
+  (let ((src-and-first-line (hyrolo-grep (if regexp-flag expr (regexp-quote expr))
+					 :link)))
+    (when src-and-first-line
+      (hyrolo-format-link (nth 0 src-and-first-line)
+                          (nth 1 src-and-first-line)
+                          shorten-flag))))
+
+;;;###autoload
+(defun hyrolo-insert-link (expr &optional regexp-flag)
+  "Insert at point the first HyRolo entry with a first line containing EXPR.
+If the `consult' package is installed, interactively select and complete
+the entry to match.
+
+With optional REGEXP-FLAG (any prefix arg other than C-u, the
+`univeral-argument'), treat EXPR as a regular expression instead of a
+string."
+  (interactive
+   ;; Enable `regexp-flag' if any prefix arg other the universal argument
+   (let ((regexp-flag (and current-prefix-arg (not (equal '(4) current-prefix-arg)))))
+     (list (hsys-consult-grep-headlines-read-regexp
+            #'hyrolo-consult-grep
+            (format "Insert link to HyRolo entry matching %s"
+		    (if regexp-flag "regexp" "string")))
+	   regexp-flag)))
+  (let ((link (hyrolo-get-link expr regexp-flag t))
+        start)
+    (when link
+      (setq start (point-marker))
+      (insert link)
+      (goto-char (- (point) 2))
+      ;; Let user reformat the link just inserted
+      (funcall hyrolo-insert-link-reformat-function start (point)))))
 
 ;;; ************************************************************************
 ;;; Big Brother Database (BBDB) Integration
@@ -1777,12 +1935,17 @@ Output looks like so:
 
 (defun hyrolo-bbdb-grep-file (hyrolo-file-or-buf regexp &optional max-matches count-only)
   "Retrieve entries in bbdb HYROLO-FILE-OR-BUF matching REGEXP.
-Find a maximum of optional MAX-MATCHES.
-Nil value of MAX-MATCHES means find all matches, t value means find all matches
-but omit file headers, negative values mean find up to the inverse of that
-number of entries and omit file headers.  Optional COUNT-ONLY non-nil
-means don't retrieve matching entries.
-Return number of matching entries found."
+
+Find a maximum of optional MAX-MATCHES.  Nil value of MAX-MATCHES means find
+all matches, t value means find all matches but omit file headers, :link
+value means return a list of the parts of the first entry that
+matches: (absolute-path-or-buffer-name-of-entry entry-headline) or nil when
+no matches, negative values mean find up to the inverse of that number of
+entries and omit file headers.  Optional COUNT-ONLY non-nil means don't
+retrieve matching entries.
+
+Return number of matching entries found unless MAX-MATCHES is nil, then
+see above."
   (let ((hyrolo-hdr-and-entry-regexp "^\\[")
 	(hyrolo-display-format-function #'hyrolo-bbdb-entry-format)
 	;; Kill the bbdb file after use if it is not already in a buffer.
@@ -1804,9 +1967,9 @@ Return number of matching entries found."
 ;;; ************************************************************************
 
 (defun hyrolo-google-contacts-p ()
-  "Non-nil means google contacts package is available and feature is enabled.
+  "Non-nil means `google-contacts' package is available and feature is enabled.
 Requires `hyrolo-google-contacts-flag' set as non-nil and
-google-contacts package and gpg executables to be available for
+`google-contacts' package and gpg executables to be available for
 use."
   (and hyrolo-google-contacts-flag
        (featurep 'google-contacts)
@@ -1848,20 +2011,25 @@ Output looks like so:
     (read-only-mode 1)))
 
 (defun hyrolo-google-contacts-grep-file (hyrolo-file-or-buf regexp &optional max-matches count-only)
-  "Retrieve entries in google-contacts HYROLO-FILE-OR-BUF matching REGEXP.
-Find a maximum of optional MAX-MATCHES.
-Nil value of MAX-MATCHES means find all matches, t value means find all matches
-but omit file headers, negative values mean find up to the inverse of that
-number of entries and omit file headers.  Optional COUNT-ONLY non-nil
-means don't retrieve matching entries.
-Return number of matching entries found."
+  "Retrieve entries in `google-contacts' HYROLO-FILE-OR-BUF matching REGEXP.
+
+Find a maximum of optional MAX-MATCHES.  Nil value of MAX-MATCHES means find
+all matches, t value means find all matches but omit file headers, :link
+value means return a list of the parts of the first entry that
+matches: (absolute-path-or-buffer-name-of-entry entry-headline) or nil when
+no matches, negative values mean find up to the inverse of that number of
+entries and omit file headers.  Optional COUNT-ONLY non-nil means don't
+retrieve matching entries.
+
+Return number of matching entries found unless MAX-MATCHES is nil, then
+see above."
   ;; Kill the google-contacts buffer after use if it is not already in use.
   (let ((hyrolo-kill-buffers-after-use (not (get-buffer google-contacts-buffer-name))))
     (hyrolo-grep-file hyrolo-file-or-buf regexp max-matches count-only)))
 
 ;; Derived from google-contacts.el.
 (defun hyrolo-google-contacts-insert-data (contacts _token contact-prefix-string)
-  "Insert google CONTACTS data."
+  "Insert google CONTACTS data with CONTACT-PREFIX-STRING in front."
   (if (not contacts)
       ;; No contacts, insert a string and return nil
       (insert "No result.")
@@ -1904,6 +2072,7 @@ Return number of matching entries found."
                                                                   (xml-node-get-attribute-type child 'protocol)
                                                                   (cdr (assoc 'address (xml-node-attributes child))))))
              (beg (point)))
+        child ;; Leave this to inhibit unused variable byte compiler warning
         (unless (and (string-equal familyname "") (string-equal givenname "") (string-equal nickname ""))
 	  (insert contact-prefix-string familyname (if (or (string-equal familyname "")
 							   (string-equal givenname "")) "" ", ")
@@ -2021,9 +2190,10 @@ Interactively, MAX-MATCHES is the prefix argument."
 
 ;;;###autoload
 (defun hyrolo-org-roam (string &optional max-matches org-roam-files)
-  "Search `org-roam-directory' files for STRING or logical sexpression.
+  "Search for STRING or logical sexpression.
 OPTIONAL prefix arg, MAX-MATCHES, limits the number of matches
-returned to the number given."
+returned to the number given.  Optional ORG-ROAM-FILES is the
+list of files to search which defaults to (list `org-roam-directory')."
   (interactive (let ((input-and-matching-files
 		      (hyrolo-grep-input
 		       #'read-string
@@ -2044,6 +2214,7 @@ returned to the number given."
 ;;; ************************************************************************
 
 (defun hyrolo-back-to-visible-point ()
+  "Move to the first preceding point that is followed by a visible character."
   (interactive)
   (while (and (not (bobp)) (invisible-p (point)))
     ;; Move back one character at a time here because using this fails
@@ -2058,16 +2229,18 @@ returned to the number given."
 
 (defun hyrolo-fgrep-file (hyrolo-file-or-buf string &optional max-matches count-only headline-only)
   "Retrieve entries in HYROLO-FILE-OR-BUF matching STRING.
-Retrieve a maximum of optional MAX-MATCHES.
 
-Nil value of MAX-MATCHES means find all matches, t value means
-find all matches but omit file headers, negative values mean find
-up to the inverse of that number of entries and omit file
-headers.  Optional COUNT-ONLY non-nil omits matching entry
-display.  Optional HEADLINE-ONLY non-nil searches headlines
+Retrieve a maximum of optional MAX-MATCHES.  Nil value of MAX-MATCHES means
+find all matches, t value means find all matches but omit file headers,
+:link value means return a list of the parts of the first entry that
+matches: (absolute-path-or-buffer-name-of-entry entry-headline) or nil when
+no matches, negative values mean find up to the inverse of that number of
+entries and omit file headers.  Optional COUNT-ONLY non-nil omits matching
+entry display.  Optional HEADLINE-ONLY non-nil searches headlines
 only (first line of entries), rather than entire entries.
 
-Return number of matching entries found."
+Return number of matching entries found unless MAX-MATCHES is nil, then
+see above."
   (hyrolo-grep-file hyrolo-file-or-buf (regexp-quote string) max-matches count-only headline-only))
 
 (defun hyrolo-hdr-in-p ()
@@ -2167,15 +2340,22 @@ example, rather than just a regexp matching buffer text.
 
 Retrieve a maximum of optional MAX-MATCHES.  Nil value of
 MAX-MATCHES means find all matches, t value means find all
-matches but omit file headers, negative values mean find up to
-the inverse of that number of entries and omit file headers.
+matches but omit file headers, :link value means return a list of
+the parts of the first entry that matches:
+\(absolute-path-or-buffer-name-of-entry entry-headline) or nil
+when no matches, negative values mean find up to the inverse of
+that number of entries and omit file headers.  Zero means return
+a list of parts of the first entry matched:
+\(absolute-path-or-buffer-name-of-entry entry-headline) or nil
+when no entry is found.
 
 Optional COUNT-ONLY non-nil skips display of matching entries.
 Optional HEADLINE-ONLY non-nil searches only the first line of
 entries, rather than the full text.  Optional EXCLUDE-SUB-ENTRIES
 non-nil excludes all sub-entry records below the matched one.
 
-Return number of matching entries found."
+Return number of matching entries found unless MAX-MATCHES is nil,
+then see above."
   ;;
   ;; Save pattern as last rolo search expression.
   (setq hyrolo-match-regexp pattern)
@@ -2187,7 +2367,7 @@ Return number of matching entries found."
 	;; buffers; not needed and can slow/hang file loading
 	(after-change-major-mode-hook
 	 (remove 'magit-auto-revert-mode-enable-in-buffers after-change-major-mode-hook)))
-    (if (and (or (null max-matches) (eq max-matches t) (integerp max-matches))
+    (if (and (or (memq max-matches '(nil t :link)) (integerp max-matches))
 	     (or (setq src-buf (hyrolo-buffer-exists-p hyrolo-file-or-buf))
 		 (when (file-exists-p hyrolo-file-or-buf)
 		   (setq src-buf (hyrolo-find-file-noselect hyrolo-file-or-buf)))))
@@ -2196,13 +2376,20 @@ Return number of matching entries found."
 	      (stuck-negative-point 0)
 	      (search-pattern pattern)
 	      entry-start
+              entry-end
+              entry-line-end
 	      hdr-pos)
 	  (when max-matches
 	    (cond ((eq max-matches t)
 		   (setq incl-hdr nil max-matches nil))
+                  ((eq max-matches :link)
+		   (setq incl-hdr nil
+                         count-only t
+                         headline-only t
+                         exclude-sub-entries t))
 		  ((< max-matches 0)
 		   (setq incl-hdr t
-			 max-matches (- max-matches)))))
+			 max-matches (abs max-matches)))))
 
 	  (hyrolo-set-buffer src-buf)
           (hyrolo-set-major-mode)
@@ -2234,7 +2421,10 @@ Return number of matching entries found."
 			(setq hdr-pos (cons (point-min) (point))))
 		      (let* ((case-fold-search t)
 			     match-end)
-			(while (and (or (null max-matches) (< num-found max-matches))
+			(while (and (or (memq max-matches '(nil t))
+                                        (if (eq max-matches :link)
+                                            (< num-found 1)
+                                          (< num-found max-matches)))
 				    (funcall hyrolo-next-match-function search-pattern))
 	                  (when (and (not count-only) (zerop num-found))
                             (hyrolo--pre-display-buffer src-buf))
@@ -2243,9 +2433,10 @@ Return number of matching entries found."
 			  ;; the single line of the match alone.
 			  (unless (re-search-backward hyrolo-hdr-and-entry-regexp nil t)
 			    (goto-char (line-beginning-position)))
-			  (setq entry-start (point))
+			  (setq entry-start (point)
+                                entry-line-end (line-end-position))
 			  (unless (re-search-forward hyrolo-hdr-and-entry-regexp nil t)
-			    (goto-char (line-end-position)))
+			    (goto-char entry-line-end))
 			  (unless (hyrolo-to-entry-end (not exclude-sub-entries))
 			    ;; If at the end of a line, move to the next line;
 			    ;; otherwise, move forward a character if possible.
@@ -2253,6 +2444,7 @@ Return number of matching entries found."
 				(when (not (eobp))
 				  (forward-line 1))
 			      (goto-char (1+ (point)))))
+                          (setq entry-end (point))
 
 			  (when (<= (point) match-end)
 			    ;; Stuck looping without moving to next entry,
@@ -2269,27 +2461,29 @@ Return number of matching entries found."
 						   "@loc> ")
 						 "%s")
 					 (prin1-to-string src))))
-                                  (hyrolo-set-display-buffer)
-				  (goto-char (point-max))
-                                  (let ((start (point)))
-				    (if hdr-pos
-				        (progn
-					  (insert-buffer-substring
-					   src-buf (car hdr-pos) (cdr hdr-pos))
-					  (insert src-line "\n\n"))
-				      (insert (format hyrolo-hdr-format src-line)))
-                                    ;; Add the `:hyrolo-level' property on
-                                    ;; the first char in the first line of
-                                    ;; the file header so outline movement
-                                    ;; commands stop there.
-                                    (add-text-properties start (1+ start)
-			                                 '(:hyrolo-hdr t :hyrolo-level t)))
-				  (hyrolo-set-buffer src-buf))))
+                                  (unwind-protect
+                                      (progn
+                                        (hyrolo-set-display-buffer)
+				        (goto-char (point-max))
+                                        (let ((start (point)))
+				          (if hdr-pos
+				              (progn
+					        (insert-buffer-substring
+					         src-buf (car hdr-pos) (cdr hdr-pos))
+					        (insert src-line "\n\n"))
+				            (insert (format hyrolo-hdr-format src-line)))
+                                          ;; Add the `:hyrolo-level' property on
+                                          ;; the first char in the first line of
+                                          ;; the file header so outline movement
+                                          ;; commands stop there.
+                                          (add-text-properties start (1+ start)
+			                                       '(:hyrolo-hdr t :hyrolo-level t))))
+				    (hyrolo-set-buffer src-buf)))))
 			  (setq num-found (1+ num-found))
 			  (or count-only
 			      ;; Highlight original pattern only here,
 			      ;; not the potentially bol-anchored 'search-pattern'.
-			      (hyrolo-add-match pattern entry-start (point) headline-only))))))
+			      (hyrolo-add-match pattern entry-start entry-end headline-only))))))
 		  num-found))
 	  (when (and (> num-found 0) (not count-only))
 	    (with-current-buffer (get-buffer-create hyrolo-display-buffer)
@@ -2304,12 +2498,23 @@ Return number of matching entries found."
             (hyrolo--cache-major-mode src-buf))
 	  (when (< stuck-negative-point 0)
 	    (pop-to-buffer src-buf)
-	    (goto-char (- stuck-negative-point))
+	    (goto-char (abs stuck-negative-point))
 	    (error "(hyrolo-grep-file): Stuck looping in buffer \"%s\" at position %d"
 		   (buffer-name) (point)))
-	  (hyrolo-kill-buffer src-buf)
-	  num-found)
-      0)))
+          (if (eq max-matches :link)
+              (prog1
+                  (when (and entry-start entry-line-end)
+                    (let ((line (string-trim (buffer-substring entry-start entry-line-end)
+                                             (format "\\s-*\\(%s\\)" outline-regexp))))
+                      (when (derived-mode-p 'org-mode)
+                        ;; Drop '* ' prefix and Org non-title fields
+                        (setq line (hpath:org-normalize-title
+                                    (hsys-org-format-heading line t t t nil t))))
+                      (list (or buffer-file-name src-buf) line)))
+	        (when buffer-file-name (hyrolo-kill-buffer src-buf)))
+            (hyrolo-kill-buffer src-buf)
+	    num-found))
+      (if (eq max-matches :link) nil 0))))
 
 (defun hyrolo-map-level (func level-regexp &optional max-groupings)
   "Perform FUNC in current buffer on groupings of entries at level LEVEL-REGEXP.
@@ -2420,7 +2625,12 @@ Calls the functions given by `hyrolo-mode-hook'.
 
   (unless (eq major-mode 'hyrolo-mode)
     ;; The mode controls the data in its buffers and it is non-editable
+
+    ;; Set hyrolo display match mode to 'special' in part so
+    ;; `hywiki-mode' never highlights/activates wikiwords there, for
+    ;; speed.
     (put 'hyrolo-mode 'mode-class 'special)
+
     (push (cons (substring hyrolo-hdr-regexp 1) 1) outline-heading-alist)
     (push (cons (if (boundp 'hbut:source-prefix)
 		    hbut:source-prefix
@@ -2483,6 +2693,7 @@ When found, return the match start position; otherwise, return nil."
 ;; searching.  This next function switches such buffers to their
 ;; normal modes whenever they are displayed.
 (defun hyrolo-normalize-mode-function (frame)
+  "Switch *HyRolo* match buffer in FRAME to per entry mode for its file type."
   (with-selected-frame frame
     (walk-windows
      (lambda (window)
@@ -3141,6 +3352,7 @@ Optionally, also set `hyrolo-file-list' to PATH-LIST when non-nil."
 
 (defun hyrolo-add-match (regexp start end headline-only)
   "Add a REGEXP match entry from START to END in curr buffer to display buffer.
+HEADLINE-ONLY non-nil means match only within the first line of entries.
 Then highlight the matches within the entry.  Point moves to the end of the
 inserted entry in the match display buffer, `hyrolo-display-buffer'."
   (let* ((display-buf (get-buffer-create hyrolo-display-buffer))
@@ -3289,10 +3501,10 @@ a default of MM/DD/YYYY."
 
 (defun hyrolo-grep-input (read-function prompt &optional path-list)
   "Use `consult-grep' if available or READ-FUNCTION with PROMPT.
-Grep over optional `path-list' or `hyrolo-file-list', which may contain
+Grep over optional PATH-LIST or `hyrolo-file-list', which may contain
 wildcards.  When using the `consult' package, return the input read which is
 a list of (string-or-regexp-to-match (files-to-search)) to be fed to a
-HyRolo grep call. When not using `consult', return a list of
+HyRolo grep call.  When not using `consult', return a list of
 \(string-or-regexp-to-match) and `hyrolo-file-list' provides the list of
 files to search."
   (if (and (hsys-consult-active-p)
@@ -3435,7 +3647,7 @@ Use ripgrep (rg) if available; otherwise, use plain grep."
 				    (shell-command-to-string
 				     (concat (if (executable-find "rg")
 						 "rg" "grep")
-					     " -l \'" regexp "\' "
+					     " -li \'" regexp "\' "
 					     (mapconcat (lambda (f)
 							  (concat "\"" f "\""))
 							;; Use
@@ -3446,13 +3658,15 @@ Use ripgrep (rg) if available; otherwise, use plain grep."
 							(delete-dups (sort (cl-copy-list expanded-paths)
 									   #'string-lessp))
 							" ")))))
-         (matching-files (when newline-separated-files
+         (matching-files (when (and (stringp newline-separated-files)
+                                    (not (string-empty-p newline-separated-files)))
 			   (split-string newline-separated-files "[\n\r]"))))
 
     ;; Ensure return `matching-files' in the same order as `expanded-paths'
-    (list regexp (seq-filter (lambda (p)
-                               (member p matching-files))
-                             expanded-paths))))
+    (list regexp (when matching-files
+                   (seq-filter (lambda (p)
+                                 (member p matching-files))
+                               expanded-paths)))))
 
 (define-derived-mode hyrolo-org-mode outline-mode "HyRoloOrg"
   "Basic Org mode for use in HyRolo display match searches."
@@ -3878,7 +4092,7 @@ Push (point-max) of `hyrolo-display-buffer' onto
 	(setq-local hyrolo--cache-major-mode-index (1+ hyrolo--cache-major-mode-index))))))
 
 (defun hyrolo--post-display-buffer (&optional buffer)
-  "Update the HyRolo display buffer after modifications are finished."
+  "Update optional BUFFER or `hyrolo-display-buffer' after mods are finished."
   (with-current-buffer (get-buffer-create (or buffer hyrolo-display-buffer))
     (when buffer (setq-local hyrolo-display-buffer buffer))
     (unless (or (derived-mode-p 'hyrolo-mode)
@@ -3893,7 +4107,7 @@ Push (point-max) of `hyrolo-display-buffer' onto
 Set its `major-mode' to be the same as optional SRC-BUF or if null, look up
 the `major-mode' from a cache.  Add `hyrolo-hdr-regexp' to
 `hyrolo-hdr-and-entry-regexp' and `outline-regexp'.  When `major-mode' is
-`markdown-mode', set `outline-level' and `hyrolo-entry-regexp'."
+`markdown-mode', set variables `outline-level' and `hyrolo-entry-regexp'."
   (with-current-buffer (get-buffer-create hyrolo-display-buffer)
     (let ((display-buf hyrolo-display-buffer))
       (unwind-protect

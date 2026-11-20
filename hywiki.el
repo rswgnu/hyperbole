@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    21-Apr-24 at 22:41:13
-;; Last-Mod:     21-Oct-26 at 21:46:52 by Bob Weiner
+;; Last-Mod:     20-Nov-26 at 10:38:53 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -145,6 +145,7 @@
 (require 'hproperty)
 (require 'hsys-consult)
 (eval-when-compile (require 'consult nil t))
+(require 'hsys-org)   ;; For `hsys-org-at-tags-p', `hsys-org-mode-p' and 'hsys-org-format-heading'
 (require 'hui)        ;; For `hui:actype'
 (require 'hui-mini)   ;; For `hui:menu-act'
 (require 'hypb)       ;; Requires `seq', hypb:exclude-major-modes,
@@ -193,9 +194,7 @@
 (declare-function denote-retrieve-filename-identifier "ext:denote")
 (declare-function hsys-denote-file-at-p "hsys-denote")
 (declare-function hsys-denote-link-at-p "hsys-denote")
-(declare-function hsys-org-at-tags-p "hsys-org")
 (declare-function hyperbole-mode "hyperbole")
-(declare-function hywiki-org-format-heading "hywiki")
 (declare-function ibtypes::pathname "hpath")
 (declare-function ibtypes::pathname-line-and-column "hpath")
 (declare-function org-fold-core-remove-optimisation "org-fold-core")
@@ -498,11 +497,11 @@ where PATH is the un-resolvable reference."
 		     "<link rel=\"stylesheet\" type=\"text/css\" href=\"%sman/hyperbole.css\"/>"
 		     hyperb:dir)
 	 :html-link-home "index.html"
-	 ;; :html-link-up "theindex.html"
-	 ;; !! TODO: The :makeindex property is disabled for now, until a process is
-	 ;; developed to force the Org publish process to regenerate the
-	 ;; index after index entries are inserted into the temporary Org
-	 ;; buffer prior to export to HTML.
+	 :html-link-up "index.html"
+	 ;; !! TODO: The :makeindex property is disabled for now, until a
+	 ;; process is developed to force the Org publish process to
+	 ;; regenerate the index after index entries are inserted into the
+	 ;; temporary Org buffer prior to export to HTML.
 	 :html-postamble t
 	 :html-postable-format '(("en" "<p class=\"author\">Author: %a (%e)</p>
                                   <p class=\"last-mod\">Last Modified: %C</p>
@@ -513,8 +512,7 @@ where PATH is the un-resolvable reference."
 	 :publishing-function hywiki-org-publishing-function
 	 :section-numbers t
 	 :shell "shell-command"
-	 :sitemap-filename "index.org"
-	 ;; sitemap (TOC) is stored in "sitemap.html"
+	 :sitemap-filename "index.org"  ;; TOC
 	 :sitemap-title hywiki-org-publishing-sitemap-title
 	 :with-date t
 	 :with-toc nil)))
@@ -985,33 +983,32 @@ See the Info documentation at \"(hyperbole)HyWiki\".
   ;; Prevent definition of a custom-variable since it makes no sense to
   ;; customize this variable.
   :variable hywiki-mode
-  (progn
-    ;; Set mode and highlighting
-    (pcase arg
-     (:all (progn
-             ;; Enable across all editable buffers
-             ;; Need `hyperbole-mode'
-             (unless hyperbole-mode
-	       (hyperbole-mode 1))
-             (hywiki-word-set-auto-highlighting hywiki--prior-mode arg)
-             (setq hywiki-mode arg)))
-     ('nil (progn
-             ;; Disable across all editable buffers.
-
-             ;; Dehighlight HyWikiWords in this buffer when
-             ;; 'hywiki-mode' is disabled and this is not a HyWiki page
-             ;; buffer. If this is a HyWiki page buffer, then
-             ;; dehighlight when `hywiki-mode' is nil.
+  ;; Set mode and highlighting
+  (pcase arg
+    (:all (progn
+            ;; Enable across all editable buffers
+            ;; Need `hyperbole-mode'
+            (unless hyperbole-mode
+	      (hyperbole-mode 1))
             (hywiki-word-set-auto-highlighting hywiki--prior-mode arg)
             (setq hywiki-mode arg)))
-     (:pages (progn
-               ;; Enable in HyWiki page buffers only
-               ;; Need `hyperbole-mode'
-               (unless hyperbole-mode
-	         (hyperbole-mode 1))
-               (hywiki-word-set-auto-highlighting
-                hywiki--prior-mode arg)
-               (setq hywiki-mode arg))))))
+    ('nil (progn
+            ;; Disable across all editable buffers.
+
+            ;; Dehighlight HyWikiWords in this buffer when
+            ;; 'hywiki-mode' is disabled and this is not a HyWiki page
+            ;; buffer. If this is a HyWiki page buffer, then
+            ;; dehighlight when `hywiki-mode' is nil.
+            (hywiki-word-set-auto-highlighting hywiki--prior-mode arg)
+            (setq hywiki-mode arg)))
+    (:pages (progn
+              ;; Enable in HyWiki page buffers only
+              ;; Need `hyperbole-mode'
+              (unless hyperbole-mode
+	        (hyperbole-mode 1))
+              (hywiki-word-set-auto-highlighting
+               hywiki--prior-mode arg)
+              (setq hywiki-mode arg)))))
 
 (defun hywiki-mode-around-advice (hywiki-mode-fn &optional to-mode)
   (setq to-mode (hywiki-mode-normalize to-mode))
@@ -1274,7 +1271,7 @@ calling this function."
 	  ((get-buffer loc)
 	   (hpath:display-buffer (get-buffer loc)))
 	  ((stringp loc)
-	   (hywiki-display-page loc)))
+	   (hpath:find loc)))
     (bookmark-jump bookmark)))
 
 (defun hywiki-add-command (wikiword)
@@ -2133,7 +2130,8 @@ omit any trailing colon and space in the prompt."
           (lambda (input)
             (let* (;; Define the regexp inside the builder so it is always in scope
                    (headline-regexp (concat "^\\* .*" input))
-                   (args (list "rg"
+                   (args (if (executable-find "rg")
+                             (list "rg"
                                "--null"
                                "--line-buffered"
                                "--color=never"
@@ -2143,7 +2141,15 @@ omit any trailing colon and space in the prompt."
                                "--search-zip"
                                "-g" "*.org"
                                "-e" headline-regexp
-                               dir)))
+                               dir)
+                           (list "grep"
+                               "--null"
+                               "--line-buffered"
+                               "--color=never"
+                               "--with-filename"
+                               "--line-number"
+                               headline-regexp
+                               (expand-file-name "*.org" dir)))))
               (cons args dir))))
          (selected (consult--read
                     (consult--async-command builder)
@@ -2311,13 +2317,15 @@ Use `dired' unless `action-key-modeline-buffer-id-function' is set to
       (md5 (apply #'concat hywiki-page-files) nil nil nil t))))
 
 (defun hywiki-directory-get-mod-time ()
-  "Return the last page file mod time for `hywiki-directory' or 0.
+  "Return the last page or cache file mod time for `hywiki-directory' or 0.
 Page file deletion is handled by a checksum over the set of
 HyWiki pages, which is verified before this mod-time check."
   (if (not (file-readable-p hywiki-directory))
       0
     (let* ((default-directory (expand-file-name (hpath:expand hywiki-directory)))
-	   (page-files (hywiki-get-page-files))
+	   (page-files (append (hywiki-get-page-files)
+                               (list (file-name-nondirectory
+                                      (or hywiki-cache-file hywiki-cache-default-file)))))
 	   (max-page-mod-time (if page-files
 				  (truncate
 				   (apply #'max (mapcar (lambda (f)
@@ -2334,16 +2342,18 @@ HyWiki pages, which is verified before this mod-time check."
     ;; integers, so we need to read this old format and convert to the new
     ;; single integer of Epoch seconds.
     (setq hywiki--directory-mod-time (time-convert hywiki--directory-mod-time 'integer)))
-  (or (zerop hywiki--directory-mod-time)
-      ;; If checksum over HyWiki page files has changed, consider the
-      ;; directory modified
-      (not (string-equal hywiki--directory-checksum
-                         (or (hywiki-directory-get-checksum) "")))
-      ;; The checksum handles only page file changes; here we have to
-      ;; account for the .eld cache file being updated with changes to
-      ;; WikiWords with non-page referents.  Use the directory mod-time
-      ;; comparison for this.
-      (/= hywiki--directory-mod-time (hywiki-directory-get-mod-time))))
+  (if (zerop hywiki--directory-mod-time)
+      nil
+    (or
+     ;; If checksum over HyWiki page files has changed, consider the
+     ;; directory modified
+     (not (string-equal hywiki--directory-checksum
+                        (or (hywiki-directory-get-checksum) "")))
+     ;; The checksum handles only page file changes; here we have to
+     ;; account for the .eld cache file being updated with changes to
+     ;; WikiWords with non-page referents.  Use the directory mod-time
+     ;; comparison for this.
+     (/= hywiki--directory-mod-time (hywiki-directory-get-mod-time)))))
 
 (defun hywiki-directory-set-checksum ()
   "Store the last page name checksum for `hywiki-directory' as a string."
@@ -2417,9 +2427,10 @@ After successfully finding any kind of referent, run
   "Return a HyWikiWord#section reference from PAGE-AND-HEADLINE.
 Add double quotes if the section contains any whitespace after trimming.
 
-Return t if PAGE-AND-HEADLINE is a valid string, else nil.  If the page name
-therein is invalid, trigger an error."
-  (when (and page-and-headline (stringp page-and-headline))
+Return the reference if PAGE-AND-HEADLINE is a valid string, else nil.
+If the page name therein is invalid, display an error message and return
+nil."
+  (when (stringp page-and-headline)
     (if (string-match "\\`\\([^\0]+\\)[\0:]\\([0-9]+\\):\\(.+\\)"
                       page-and-headline)
         (let ((page (file-name-base (match-string 1 page-and-headline)))
@@ -2427,7 +2438,7 @@ therein is invalid, trigger an error."
           (setq line (string-trim line))
           ;; Drop '* ' prefix
           (setq line (hpath:org-normalize-title
-                      (hywiki-org-format-heading line t t t nil t)))
+                      (hsys-org-format-heading line t t t nil t)))
           (format "%s#%s" page line))
       (message "(hwiki-format-grep-to-reference): Parse error on: %s"
                page-and-headline)
@@ -2908,7 +2919,8 @@ regexps of wikiwords, if the hash table is out-of-date."
 	;; Rebuild referent hash table
 	(hywiki-make-referent-hasht))
     (when (and (null hywiki--any-wikiword-regexp-list)
-               (not (hash-empty-p hywiki--referent-hasht)))
+               (not (hash-empty-p hywiki--referent-hasht))
+               (not (hyperb:stack-frame '(hywiki-make-referent-hasht))))
       ;; Compute these expensive regexps (matching 50 HyWikiWords at a
       ;; time in a batch) only if the set of HyWikiWords changed in
       ;; `hywiki-directory'.
@@ -3258,25 +3270,23 @@ Use `hywiki-word-face' to dehighlight."
 	    (skip-syntax-backward "^-$()<>._\"\'")
 	    (skip-chars-backward "-_*#:[:alnum:]")
 
-	    (setq hywiki--save-case-fold-search case-fold-search
-		  case-fold-search nil
-		  hywiki--save-org-link-type-required hywiki-org-link-type-required
-		  hywiki-org-link-type-required t)
-	    (unless (and (hywiki-maybe-at-wikiword-beginning)
-			 (looking-at hywiki--word-and-buttonize-character-regexp)
-			 (progn
-			   (setq hywiki--word-only (match-string-no-properties 2)
-				 hywiki--start (match-beginning 1)
-				 hywiki--end   (match-end 1))
-			   (hywiki-get-referent hywiki--word-only)))
-	      ;; Remove any potential earlier highlighting since the
-	      ;; previous word may have changed.
-	      (skip-syntax-backward "^-$()<>._\"\'"))
+	    (let ((case-fold-search nil)
+                  (hywiki-org-link-type-required t))
+	      (unless (and (hywiki-maybe-at-wikiword-beginning)
+			   (looking-at hywiki--word-and-buttonize-character-regexp)
+			   (progn
+			     (setq hywiki--word-only (match-string-no-properties 2)
+				   hywiki--start (match-beginning 1)
+				   hywiki--end   (match-end 1))
+			     (hywiki-get-referent hywiki--word-only)))
+	        ;; Remove any potential earlier highlighting since the
+	        ;; previous word may have changed.
+	        (skip-syntax-backward "^-$()<>._\"\'"))
 
-	    (hproperty:but-clear-all-in-list
-	     (hproperty:but-get-all-in-region (or hywiki--start (point))
-					      (or hywiki--end (1+ (point)))
-					      'face hywiki-word-face))))))))
+	      (hproperty:but-clear-all-in-list
+	       (hproperty:but-get-all-in-region (or hywiki--start (point))
+					        (or hywiki--end (1+ (point)))
+					        'face hywiki-word-face)))))))))
 
 ;;;###autoload
 (defun hywiki-maybe-dehighlight-references (&optional region-start region-end)
@@ -3519,58 +3529,56 @@ the current page unless they have sections attached."
 	    (skip-syntax-backward "^-$()<>._\"\'")
 	    (skip-chars-backward "-_*#:[:alnum:]")
 
-	    (setq hywiki--save-case-fold-search case-fold-search
-		  case-fold-search nil
-		  hywiki--save-org-link-type-required hywiki-org-link-type-required
-		  hywiki-org-link-type-required t
-		  hywiki--start nil
-		  hywiki--end   nil)
+	    (let ((case-fold-search nil)
+                  (hywiki-org-link-type-required t))
+	      (setq hywiki--start nil
+		    hywiki--end   nil)
 
-	    (if (and (cl-destructuring-bind (word start end)
-			 (hywiki-highlight-word-get-range)
-		       (setq hywiki--word-only word
-			     hywiki--start start
-			     hywiki--end end))
-		     hywiki--start
-		     (hywiki-get-referent hywiki--word-only)
-		     (goto-char hywiki--start))
-		(progn
-		  (setq hywiki--current-page (hywiki-get-buffer-page-name))
-		  ;; Don't highlight current-page matches unless they
-		  ;; include a #section.
-		  (unless (string-equal hywiki--current-page
-					(buffer-substring-no-properties
-					 hywiki--start hywiki--end))
-		    (if (setq hywiki--buts (hproperty:but-get-all-in-region
-					    hywiki--start hywiki--end
-					    'face hywiki-word-face))
-			(if (> (length hywiki--buts) 1)
-			    (progn (hproperty:but-clear-all-in-list hywiki--buts)
-				   (hywiki-maybe-highlight-references
-				    hywiki--start hywiki--end))
-			  ;; There is only one existing button
-			  (setq hywiki--buts (car hywiki--buts)
-				hywiki--but-start (hproperty:but-start hywiki--buts)
-				hywiki--but-end   (hproperty:but-end hywiki--buts))
-			  (unless (and (= hywiki--start hywiki--but-start)
-				       (= hywiki--end hywiki--but-end))
-			    (hproperty:but-delete hywiki--buts)
-			    (hywiki-maybe-highlight-references
-			     hywiki--start hywiki--end)))
-		      (hywiki-maybe-highlight-references
-		       hywiki--start hywiki--end))))
-	      ;; Remove any potential earlier highlighting since the
-	      ;; previous word may have changed.
-	      (skip-syntax-backward "^-$()<>._\"\'")
-	      (when (setq hywiki--buts (hproperty:but-get-all-in-region
-					(point) (1+ (point)) 'face hywiki-word-face))
-		(if (> (length hywiki--buts) 1)
-		    (hproperty:but-clear-all-in-list hywiki--buts)
-		  ;; There is only one existing button
-		  (setq hywiki--buts (car hywiki--buts)
-			hywiki--but-start (hproperty:but-start hywiki--buts)
-			hywiki--but-end   (hproperty:but-end hywiki--buts))
-		  (hproperty:but-delete hywiki--buts)))))))))
+	      (if (and (cl-destructuring-bind (word start end)
+			   (hywiki-highlight-word-get-range)
+		         (setq hywiki--word-only word
+			       hywiki--start start
+			       hywiki--end end))
+		       hywiki--start
+		       (hywiki-get-referent hywiki--word-only)
+		       (goto-char hywiki--start))
+		  (progn
+		    (setq hywiki--current-page (hywiki-get-buffer-page-name))
+		    ;; Don't highlight current-page matches unless they
+		    ;; include a #section.
+		    (unless (string-equal hywiki--current-page
+					  (buffer-substring-no-properties
+					   hywiki--start hywiki--end))
+		      (if (setq hywiki--buts (hproperty:but-get-all-in-region
+					      hywiki--start hywiki--end
+					      'face hywiki-word-face))
+			  (if (> (length hywiki--buts) 1)
+			      (progn (hproperty:but-clear-all-in-list hywiki--buts)
+				     (hywiki-maybe-highlight-references
+				      hywiki--start hywiki--end))
+			    ;; There is only one existing button
+			    (setq hywiki--buts (car hywiki--buts)
+				  hywiki--but-start (hproperty:but-start hywiki--buts)
+				  hywiki--but-end   (hproperty:but-end hywiki--buts))
+			    (unless (and (= hywiki--start hywiki--but-start)
+				         (= hywiki--end hywiki--but-end))
+			      (hproperty:but-delete hywiki--buts)
+			      (hywiki-maybe-highlight-references
+			       hywiki--start hywiki--end)))
+		        (hywiki-maybe-highlight-references
+		         hywiki--start hywiki--end))))
+	        ;; Remove any potential earlier highlighting since the
+	        ;; previous word may have changed.
+	        (skip-syntax-backward "^-$()<>._\"\'")
+	        (when (setq hywiki--buts (hproperty:but-get-all-in-region
+					  (point) (1+ (point)) 'face hywiki-word-face))
+		  (if (> (length hywiki--buts) 1)
+		      (hproperty:but-clear-all-in-list hywiki--buts)
+		    ;; There is only one existing button
+		    (setq hywiki--buts (car hywiki--buts)
+			  hywiki--but-start (hproperty:but-start hywiki--buts)
+			  hywiki--but-end   (hproperty:but-end hywiki--buts))
+		    (hproperty:but-delete hywiki--buts))))))))))
 
 (defun hywiki-maybe-highlight-references (&optional region-start region-end skip-lookups-update-flag)
   "Highlight each non-Org link HyWiki page#section in the current buffer/region.
@@ -3598,111 +3606,108 @@ whenever `hywiki-mode' is enabled/disabled."
 	(unless skip-lookups-update-flag
 	  ;; Rebuild lookup tables if any HyWiki page name has changed
 	  (hywiki-get-referent-hasht))
-	(unwind-protect
-	    (save-excursion
-	      (save-restriction
-		(setq hywiki--save-case-fold-search case-fold-search
-		      case-fold-search nil
-		      hywiki--save-org-link-type-required hywiki-org-link-type-required
-		      hywiki-org-link-type-required t
-		      hywiki--current-page (hywiki-get-buffer-page-name))
-		(cond ((and (markerp region-start) (markerp region-end))
-		       (when (and (marker-position region-start)
-				  (marker-position region-end))
-			 (narrow-to-region region-start region-end)))
-		      ((and region-start region-end)
+	(let ((case-fold-search nil)
+              (hywiki-org-link-type-required t))
+	  (save-excursion
+	    (save-restriction
+	      (setq hywiki--current-page (hywiki-get-buffer-page-name))
+	      (cond ((and (markerp region-start) (markerp region-end))
+		     (when (and (marker-position region-start)
+				(marker-position region-end))
 		       (narrow-to-region region-start region-end)))
-		;; Enable dehighlighting in HyWiki pages only when
-		;; whole buffer is being processed; this prevents an
-		;; error when called from `hywiki-maybe-highlight-sexp'.
-		(unless (and region-start region-end)
-		  (let ((hywiki-mode))
-		    (hywiki-maybe-dehighlight-references)))
-		(let ((highlight-in-comments-and-strings-only
-		       (and (derived-mode-p 'prog-mode)
-			    (not (apply #'derived-mode-p hywiki-highlight-all-in-prog-modes))))
-		      hywiki--start
-		      hywiki--end)
-		  (dolist (hywiki-words-regexp hywiki--any-wikiword-regexp-list)
-		    (goto-char (point-min))
-		    (while (re-search-forward hywiki-words-regexp nil t)
-		      (setq hywiki--start (match-beginning 1)
-			    hywiki--end   (match-end 1))
-		      (save-excursion
-			(goto-char hywiki--start)
-			(when (save-match-data
-				(if highlight-in-comments-and-strings-only
-				    ;; Non-nil if match is inside a comment or a string
-				    (or (nth 4 (syntax-ppss)) (hypb:in-string-p))
-				  t))
-			  ;; Otherwise, highlight any HyWikiWord found, including
-			  ;; any #section:Lnum:Cnum.
-			  (when (hywiki-maybe-at-wikiword-beginning)
-			    (or (unless (hyperb:stack-frame '(hywiki-maybe-highlight-balanced-pairs))
-				  (hywiki-maybe-highlight-balanced-pairs))
-				(progn (with-syntax-table hbut:syntax-table
-					 (skip-syntax-forward "^-\)$\>._\"\'"))
-				       (skip-chars-forward "-_*[:alnum:]")
-				       (unless (zerop (skip-chars-forward "#:"))
-					 (skip-chars-forward
-                                          (if (save-restriction
-						(widen)
-                                                (and (hywiki-delimited-p)
-                                                     ;; Only if delimiter is
-                                                     ;; the char preceding
-                                                     ;; the start of the
-                                                     ;; WikiWord do we skip
-                                                     ;; over spaces to find
-                                                     ;; the #section.
-                                                     (hash-get
-						      (char-to-string
-                                                       (or (char-before (or hywiki--start 0))
-                                                           0))
-                                                      hywiki--open-close-hasht)))
-					      "-_*: \t[:alnum:]"
-					    "-_*:[:alnum:]")))
-				       (setq hywiki--end (point))
-				       ;; Don't highlight current-page matches unless they
-				       ;; include a #section.
-				       (unless (string-equal hywiki--current-page
-							     (buffer-substring-no-properties hywiki--start hywiki--end))
-					 (hywiki-maybe-highlight-region-reference hywiki--start hywiki--end))))))))))
+		    ((and region-start region-end)
+		     (narrow-to-region region-start region-end)))
+	      ;; Enable dehighlighting in HyWiki pages only when
+	      ;; whole buffer is being processed; this prevents an
+	      ;; error when called from `hywiki-maybe-highlight-sexp'.
+	      (unless (and region-start region-end)
+		(let ((hywiki-mode))
+		  (hywiki-maybe-dehighlight-references)))
+	      (let ((highlight-in-comments-and-strings-only
+		     (and (derived-mode-p 'prog-mode)
+			  (not (apply #'derived-mode-p hywiki-highlight-all-in-prog-modes))))
+		    hywiki--start
+		    hywiki--end)
+		(dolist (hywiki-words-regexp hywiki--any-wikiword-regexp-list)
+		  (goto-char (point-min))
+		  (while (re-search-forward hywiki-words-regexp nil t)
+		    (setq hywiki--start (match-beginning 1)
+			  hywiki--end   (match-end 1))
+		    (save-excursion
+		      (goto-char hywiki--start)
+		      (when (save-match-data
+			      (if highlight-in-comments-and-strings-only
+				  ;; Non-nil if match is inside a comment or a string
+				  (or (nth 4 (syntax-ppss)) (hypb:in-string-p))
+				t))
+			;; Otherwise, highlight any HyWikiWord found, including
+			;; any #section:Lnum:Cnum.
+			(when (hywiki-maybe-at-wikiword-beginning)
+			  (or (unless (hyperb:stack-frame '(hywiki-maybe-highlight-balanced-pairs))
+				(hywiki-maybe-highlight-balanced-pairs))
+			      (progn (with-syntax-table hbut:syntax-table
+				       (skip-syntax-forward "^-$()<>._\"\'\\"))
+				     (skip-chars-forward "-_*[:alnum:]")
+				     (when (or (= (following-char) ?#)
+					       (looking-at hpath:line-and-column-numbers))
+				       (skip-chars-forward "#:")
+				       (skip-chars-forward
+                                        (if (save-restriction
+					      (widen)
+                                              (and (hywiki-delimited-p)
+                                                   ;; Only if delimiter is
+                                                   ;; the char preceding
+                                                   ;; the start of the
+                                                   ;; WikiWord do we skip
+                                                   ;; over spaces to find
+                                                   ;; the #section.
+                                                   (hash-get
+						    (char-to-string
+                                                     (or (char-before (or hywiki--start 0))
+                                                         0))
+                                                    hywiki--open-close-hasht)))
+					    "-_*: \t[:alnum:]"
+					  "-_*:[:alnum:]")))
+				     (setq hywiki--end (point))
+				     ;; Don't highlight current-page matches unless they
+				     ;; include a #section.
+				     (unless (string-equal hywiki--current-page
+							   (buffer-substring-no-properties hywiki--start hywiki--end))
+				       (hywiki-maybe-highlight-region-reference hywiki--start hywiki--end))))))))))
 
-		;; Disable dehighlighting of HyWikiWords between [] and <>.
-		;;
-		;; (let (str-start-end)
-		;;   (goto-char (point-min))
-		;;   (while (search-forward "[" nil t)
-		;;     (when (setq str-start-end (hargs:delimited-p "[" "]" nil nil t))
-		;;       (setq hywiki--start (nth 1 str-start-end)
-		;; 	    hywiki--end   (nth 2 str-start-end))
-		;;       ;; Clear any HyWikiWord highlighting that may
-		;;       ;; just be a part of a larger square brackets
-		;;       ;; delimited text with multiple words.
-		;;       (hproperty:but-clear-all-in-list
-		;;        (hproperty:but-get-all-in-region hywiki--start hywiki--end
-		;; 					'face hywiki-word-face))
-		;;       (goto-char (min (1+ hywiki--end) (point-max)))))
+	      ;; Disable dehighlighting of HyWikiWords between [] and <>.
+	      ;;
+	      ;; (let (str-start-end)
+	      ;;   (goto-char (point-min))
+	      ;;   (while (search-forward "[" nil t)
+	      ;;     (when (setq str-start-end (hargs:delimited-p "[" "]" nil nil t))
+	      ;;       (setq hywiki--start (nth 1 str-start-end)
+	      ;; 	    hywiki--end   (nth 2 str-start-end))
+	      ;;       ;; Clear any HyWikiWord highlighting that may
+	      ;;       ;; just be a part of a larger square brackets
+	      ;;       ;; delimited text with multiple words.
+	      ;;       (hproperty:but-clear-all-in-list
+	      ;;        (hproperty:but-get-all-in-region hywiki--start hywiki--end
+	      ;; 					'face hywiki-word-face))
+	      ;;       (goto-char (min (1+ hywiki--end) (point-max)))))
 
-		;;   (goto-char (point-min))
-		;;   (while (search-forward "<" nil t)
-		;;     (when (setq str-start-end (hargs:delimited-p "<" ">" nil nil t))
-		;;       (setq hywiki--start (nth 1 str-start-end)
-		;; 	    hywiki--end   (nth 2 str-start-end))
-		;;       ;; Clear any HyWikiWord highlighting that may
-		;;       ;; just be a part of a larger angle brackets
-		;;       ;; delimited text with multiple words.
-		;;       (hproperty:but-clear-all-in-list
-		;;        (hproperty:but-get-all-in-region hywiki--start hywiki--end
-		;; 					'face hywiki-word-face))
-		;;       (goto-char (min (1+ hywiki--end) (point-max))))))
+	      ;;   (goto-char (point-min))
+	      ;;   (while (search-forward "<" nil t)
+	      ;;     (when (setq str-start-end (hargs:delimited-p "<" ">" nil nil t))
+	      ;;       (setq hywiki--start (nth 1 str-start-end)
+	      ;; 	    hywiki--end   (nth 2 str-start-end))
+	      ;;       ;; Clear any HyWikiWord highlighting that may
+	      ;;       ;; just be a part of a larger angle brackets
+	      ;;       ;; delimited text with multiple words.
+	      ;;       (hproperty:but-clear-all-in-list
+	      ;;        (hproperty:but-get-all-in-region hywiki--start hywiki--end
+	      ;; 					'face hywiki-word-face))
+	      ;;       (goto-char (min (1+ hywiki--end) (point-max))))))
 
-		(unless (and region-start region-end
-			     (or (/= region-start (point-min))
-				 (/= region-end   (point-max))))
-		  (setq hywiki-buffer-highlighted-state 'h))))
-	  (setq case-fold-search hywiki--save-case-fold-search
-		hywiki-org-link-type-required hywiki--save-org-link-type-required)))
+	      (unless (and region-start region-end
+			   (or (/= region-start (point-min))
+			       (/= region-end   (point-max))))
+		(setq hywiki-buffer-highlighted-state 'h))))))
 
     ;; Otherwise, dehighlight HyWikiWords in this buffer when
     ;; 'hywiki-mode' is disabled or set to ':pages' and this is not a
@@ -3905,91 +3910,6 @@ Do not convert the index file."
              (not (string= (hywiki--sitemap-file) (buffer-file-name))))
     (hywiki-references-to-org-links)
     (hywiki-org-maybe-add-title)))
-
-(if (version< org-version "9.6")
-;;; For Org less than 9.6; derived from `org-get-heading' in "org.el"
-;;;###autoload
-(defun hywiki-org-format-heading (heading &optional no-tags no-todo
-                                          no-priority no-comment no-stats)
-  "Return HEADING, without the leading asterisks or a #+TITLE:.
-When NO-TAGS is non-nil, don't include tags.
-When NO-TODO is non-nil, don't include TODO keywords.
-When NO-PRIORITY is non-nil, don't include priority cookie.
-When NO-COMMENT is non-nil, don't include COMMENT string.
-When NO-STATS is non-nil, don't include statistics in square brackets."
-  (when (stringp heading)
-    (let ((case-fold-search nil))
-      (when (string-match hywiki--org-heading-regexp heading)
-        (let ((todo (and (not no-todo) (match-string 2 heading)))
-	      (priority (and (not no-priority) (match-string 3 heading)))
-	      (headline (pcase (match-string 4 heading)
-			  (`nil "")
-			  ((and (guard no-comment) h)
-			   (replace-regexp-in-string
-			    (eval-when-compile
-			      (format "\\`%s[ \t]+" org-comment-string))
-			    "" h))
-			  (h h)))
-	      (tags (and (not no-tags) (match-string 5 heading))))
-
-          (when no-stats
-            ;; Strip trailing statistics cookies [1/2] or [50%]
-            (setq headline
-                  (replace-regexp-in-string
-                   "\\(?: +\\[[0-9%+/]+\\]\\)+" "" headline)))
-
-	  (mapconcat #'identity
-		     (delq nil (list todo priority headline tags))
-		     " "))))))
-
-;;; Else
-;;; For Org 9.6 and greater; derived from `org-get-heading' in "org.el"
-;;;###autoload
-(defun hywiki-org-format-heading (heading &optional no-tags no-todo
-                                          no-priority no-comment no-stats)
-  "Return HEADING, without the leading asterisks or a #+TITLE:.
-When NO-TAGS is non-nil, don't include tags.
-When NO-TODO is non-nil, don't include TODO keywords.
-When NO-PRIORITY is non-nil, don't include priority cookie.
-When NO-COMMENT is non-nil, don't include COMMENT string.
-When NO-STATS is non-nil, don't include statistics in square brackets."
-  (when (stringp heading)
-    (let ((case-fold-search nil))
-      (when (string-match hywiki--org-heading-regexp heading)
-        ;; When using `org-fold-core--optimise-for-huge-buffers',
-        ;; returned text will be invisible.  Clear it up.
-        (save-match-data
-          (if (fboundp 'org-fold-core-remove-optimization)
-              (org-fold-core-remove-optimization (match-beginning 0) (match-end 0))
-            (with-suppressed-warnings ((obsolete org-fold-core-remove-optimisation))
-              (org-fold-core-remove-optimisation (match-beginning 0) (match-end 0)))))
-        (let ((todo (and (not no-todo) (match-string 2 heading)))
-	      (priority (and (not no-priority) (match-string 3 heading)))
-	      (headline (pcase (match-string 4 heading)
-			  (`nil "")
-			  ((and (guard no-comment) h)
-			   (replace-regexp-in-string
-			    (eval-when-compile
-			      (format "\\`%s[ \t]+" org-comment-string))
-			    "" h))
-			  (h h)))
-	      (tags (and (not no-tags) (match-string 5 heading))))
-
-          (when no-stats
-            ;; Strip trailing statistics cookies [1/2] or [50%]
-            (setq headline
-                  (replace-regexp-in-string
-                   "\\(?: +\\[[0-9%+/]+\\]\\)+" "" headline)))
-
-          ;; Restore cleared optimization.
-          (if (fboundp 'org-fold-core-remove-optimization)
-              (org-fold-core-remove-optimization (match-beginning 0) (match-end 0))
-            (with-suppressed-warnings ((obsolete org-fold-core-remove-optimisation))
-              (org-fold-core-remove-optimisation (match-beginning 0) (match-end 0))))
-	  (mapconcat #'identity
-		     (delq nil (list todo priority headline tags))
-        	     " "))))))
-)
 
 (defun hywiki-org-get-heading-match-regexp (title)
   "Return a regexp that matches to the TITLE and start of an Org heading."
@@ -5386,7 +5306,7 @@ Use (hywiki-mode hywiki-default-mode) for that."
   (unless hywiki--buttonize-character-regexp
     (setq hywiki--buttonize-character-regexp
 	  (concat "\\([]["
-		  (regexp-quote (concat "()<>{}\"' \t\r\n"
+		  (regexp-quote (concat "()<>{}\"' \t\r\n:"
 				        (hywiki-get-buttonize-characters)))
 		  "]\\|$\\)")
 	  hywiki--word-and-buttonize-character-regexp

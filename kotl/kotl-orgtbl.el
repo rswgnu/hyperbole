@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10/18/2020
-;; Last-Mod:     20-Nov-26 at 13:14:46 by Mats Lidell
+;; Last-Mod:     20-Nov-26 at 10:59:44 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -169,10 +169,14 @@ If no previous line, exchange current with next line."
 	     ;; Only bind key locally if kotl-mode local-cmd has already
 	     ;; been defined and cmd is a valid function.
 	     (when (and local-cmd (fboundp cmd))
-	       ;; Make local-cmd have the same property list as cmd,
-	       ;; e.g. so pending-delete property is the same, but delete
-	       ;; interactive-only property to suppress byte-compiler warnings.
-	       (setplist local-cmd (map-merge 'plist (symbol-plist cmd) (symbol-plist local-cmd)))
+	       ;; Add `cmd' properties to `local-cmd' for properties not
+               ;; already in `local-cmd' (which must be the last arg to
+               ;; `map-merge' since values are merged into the last plist).
+	       ;; For example, `delete-selection' property is the same, but
+               ;; delete `interactive-only' property to suppress
+               ;; byte-compiler warnings.
+	       (setplist local-cmd (map-merge 'plist (symbol-plist cmd)
+                                              (symbol-plist local-cmd)))
 	       (cl-remprop local-cmd 'interactive-only)
 	       (org-remap kotl-mode-overriding-orgtbl-mode-map cmd local-cmd)))
 	   (setq cmds
