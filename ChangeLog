@@ -1,5 +1,10 @@
 2026-11-20  Bob Weiner  <rsw@gnu.org>
 
+* hpath.el (hpath:at-p): Put double quote hargs:delimited match last
+    so that colon or semicolon separated paths in env variables
+    like MANPATH are recognized individually rather than matching
+    to the whole string.
+
 * hui-mini.el (hui:menu-rolo): Add "coPy" to prompt for and copy
     a HyRolo entry link to the 'kill-ring' and clipboard.
   hyrolo-menu.el (infodock-hyrolo-menu): Add "Choose-and-Copy-Entry-Link".

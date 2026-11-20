@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     1-Nov-91 at 00:44:23
-;; Last-Mod:     12-Nov-26 at 00:06:56 by Bob Weiner
+;; Last-Mod:     20-Nov-26 at 11:50:14 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -994,10 +994,10 @@ or `~'."
 		    ;; Don't allow more than one set of grouping chars
 		    (not (string-match-p "\)\\s-*\(\\|\\]\\s-*\\[\\|\}\\s-*\{" path))
 		    ;; With point inside a path variable, return the path that point is on or to the right of.
-		    (setq subpath (or (hargs:delimited "\"\\|^\\s-*" "\"\\|\\s-*$" t t nil "[\t\n\r\f]\\|[;:] \\| [;:]")
-                                      (hargs:delimited ":\\|^\\s-*"  ":\\|\\s-*$"  t t nil "[\t\n\r\f]\\|[;:] \\| [;:]")
+		    (setq subpath (or (hargs:delimited ":\\|^\\s-*"  ":\\|\\s-*$"  t t nil "[\t\n\r\f]\\|[;:] \\| [;:]")
                                       (hargs:delimited ";\\|^\\s-*"  ";\\|\\s-*$"  t t nil "[\t\n\r\f]\\|[;:] \\| [;:]")
-                                      (hargs:delimited "'\\|^\\s-*"  "'\\|\\s-*$"  t t nil "[\t\n\r\f]\\|[;:] \\| [;:]")))
+                                      (hargs:delimited "'\\|^\\s-*"  "'\\|\\s-*$"  t t nil "[\t\n\r\f]\\|[;:] \\| [;:]")
+                                      (hargs:delimited "\"\\|^\\s-*" "\"\\|\\s-*$" t t nil "[\t\n\r\f]\\|[;:] \\| [;:]")))
 		    ;; Handle anchored or action prefix char paths in the
 		    ;; following clause; otherwise, might just be looking
 		    ;; at part of the path
