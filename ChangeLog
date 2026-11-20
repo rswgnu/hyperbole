@@ -4,6 +4,7 @@
     so that colon or semicolon separated paths in env variables
     like MANPATH are recognized individually rather than matching
     to the whole string.
+           (hpath:at-p): Ensure no leading quotes are included.
 
 * hui-mini.el (hui:menu-rolo): Add "coPy" to prompt for and copy
     a HyRolo entry link to the 'kill-ring' and clipboard.
