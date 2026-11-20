@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    23-Apr-21 at 20:55:00
-;; Last-Mod:     10-Aug-26 at 09:57:28 by Mats Lidell
+;; Last-Mod:     20-Nov-26 at 23:42:47 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -173,4 +173,12 @@
                            (concat "<[h1]> denote:20260710T003252#" (cdr v)))))))))
 
 (provide 'hsys-denote-tests)
+
+;; This file can't be byte-compiled without the `el-mock' package
+;; which is not a dependency of Hyperbole.
+;;
+;; Local Variables:
+;; no-byte-compile: t
+;; End:
+
 ;;; hsys-denote-tests.el ends here
