@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    6/30/93
-;; Last-Mod:     20-Nov-26 at 10:58:44 by Bob Weiner
+;; Last-Mod:     20-Nov-26 at 22:40:43 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -616,51 +616,49 @@ Do not delete across cell boundaries."
 	         (indent (kcell-view:indent))
 	         count start end
                  kotl-mode:delete-char-acc)
-             (cl-flet ((delete-char (arg &optional kill-flag)
-                         (kotl-mode:delete-char-acc arg kill-flag)))
-               (cond ((> arg 0)
-	              (if (kotl-mode:eocp)
-		          (error "(kotl-mode:delete-char): End of cell")
-	                (setq end (kcell-view:end)
-		              arg (min arg (- end (point))))
-	                (while (and (> arg 0) (not (kotl-mode:eocp)))
-		          (if (kotl-mode:eolp)
-		              (if (not (eq ?\  (char-syntax (following-char))))
-			          (setq arg 0
-			                del-count (1- del-count))
-		                (delete-char 1 kill-flag)
-		                ;; There may be non-whitespace characters in the
-		                ;; indent area.  Don't delete them.
-		                (setq count indent)
-		                (while (and (> count 0)
-				            (eq ?\ (char-syntax (following-char))))
-			          (delete-char 1)
-			          (setq count (1- count))))
-		            (delete-char 1 kill-flag))
-		          (setq arg (1- arg)
-		                del-count (1+ del-count)))))
-	             ((< arg 0)
-	              (if (kotl-mode:bocp)
-		          (error "(kotl-mode:delete-char): Beginning of cell")
-	                (setq start (kcell-view:start)
-		              arg (max arg (- start (point))))
-	                (while (and (< arg 0) (not (kotl-mode:bocp)))
-		          (if (kotl-mode:bolp)
-		              (if (not (eq ?\  (char-syntax (preceding-char))))
-			          (setq arg 0
-			                del-count (1- del-count))
-		                ;; There may be non-whitespace characters in the
-		                ;; indent area.  Don't delete them.
-		                (setq count indent)
-		                (while (and (> count 0)
-				            (eq ?\ (char-syntax (preceding-char))))
-			          (delete-char -1)
-			          (setq count (1- count)))
-		                (if (zerop count)
-			            (delete-char -1 kill-flag)))
-		            (delete-char -1 kill-flag))
-		          (setq arg (1+ arg)
-		                del-count (1+ del-count)))))))
+             (cond ((> arg 0)
+	            (if (kotl-mode:eocp)
+		        (error "(kotl-mode:delete-char): End of cell")
+	              (setq end (kcell-view:end)
+		            arg (min arg (- end (point))))
+	              (while (and (> arg 0) (not (kotl-mode:eocp)))
+		        (if (kotl-mode:eolp)
+		            (if (not (eq ?\  (char-syntax (following-char))))
+			        (setq arg 0
+			              del-count (1- del-count))
+		              (kotl-mode:delete-char-acc 1 kill-flag)
+		              ;; There may be non-whitespace characters in the
+		              ;; indent area.  Don't delete them.
+		              (setq count indent)
+		              (while (and (> count 0)
+				          (eq ?\ (char-syntax (following-char))))
+			        (delete-char 1)
+			        (setq count (1- count))))
+		          (kotl-mode:delete-char-acc 1 kill-flag))
+		        (setq arg (1- arg)
+		              del-count (1+ del-count)))))
+	           ((< arg 0)
+	            (if (kotl-mode:bocp)
+		        (error "(kotl-mode:delete-char): Beginning of cell")
+	              (setq start (kcell-view:start)
+		            arg (max arg (- start (point))))
+	              (while (and (< arg 0) (not (kotl-mode:bocp)))
+		        (if (kotl-mode:bolp)
+		            (if (not (eq ?\  (char-syntax (preceding-char))))
+			        (setq arg 0
+			              del-count (1- del-count))
+		              ;; There may be non-whitespace characters in the
+		              ;; indent area.  Don't delete them.
+		              (setq count indent)
+		              (while (and (> count 0)
+				          (eq ?\ (char-syntax (preceding-char))))
+			        (delete-char -1)
+			        (setq count (1- count)))
+		              (if (zerop count)
+			          (kotl-mode:delete-char-acc -1 kill-flag)))
+		          (kotl-mode:delete-char-acc -1 kill-flag))
+		        (setq arg (1+ arg)
+		              del-count (1+ del-count))))))
              del-count)))))
 
 (defun kotl-mode:delete-horizontal-space ()
