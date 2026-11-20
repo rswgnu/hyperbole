@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    10/18/2020
-;; Last-Mod:     12-Oct-26 at 14:34:26 by Bob Weiner
+;; Last-Mod:     20-Nov-26 at 13:14:46 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -172,7 +172,7 @@ If no previous line, exchange current with next line."
 	       ;; Make local-cmd have the same property list as cmd,
 	       ;; e.g. so pending-delete property is the same, but delete
 	       ;; interactive-only property to suppress byte-compiler warnings.
-	       (setplist local-cmd (copy-sequence (symbol-plist cmd)))
+	       (setplist local-cmd (map-merge 'plist (symbol-plist cmd) (symbol-plist local-cmd)))
 	       (cl-remprop local-cmd 'interactive-only)
 	       (org-remap kotl-mode-overriding-orgtbl-mode-map cmd local-cmd)))
 	   (setq cmds
