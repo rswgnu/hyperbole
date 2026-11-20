@@ -16,6 +16,12 @@
     the page does not dehighlight it, nor does removing it
     from one location (others remain highlighted).
 
+2026-11-20  Mats Lidell  <matsl@gnu.org>
+
+* kotl/kotl-orgtbl.el (kotl-mode:setup-overriding-orgtbl-keymap):
+* kotl/kotl-mode.el (kotl-mode:setup-keymap): Set local command
+    properties by merging them with normal command properties.
+
 2026-11-19  Bob Weiner  <rsw@gnu.org>
 
 * kotl/kotl-orgtbl.el (kotl-mode:setup-overriding-orgtbl-keymap):
@@ -59,6 +65,16 @@
     were causing this to permanently change the values of these
     settings.
 
+2026-11-18  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-yki-tests.el: Uses el-mock so should not be byte-compiled.
+
+* test/hy-string-tests.el (debug-in-string): Remove unused var len and
+extra values in format previously moved into vars.
+
+* test/hmouse-drv-resources/test-data.el:
+* test/hibtypes-resources/test-data.el: Enable lexical binding.
+
 2026-11-17  Bob Weiner  <rsw@gnu.org>
 
 * hui-mini.el (hui:menu-rolo):
@@ -85,6 +101,12 @@
 * hyrolo.el (hyrolo-fgrep): Fix 2nd call to 'hyrolo-fgrep-logical'
     to capture 'total-matches'.
 
+2026-11-17  Mats Lidell  <matsl@gnu.org>
+
+* test/hywiki-tests.el (hywiki-tests--preserve-hywiki-mode): Use
+    hy-delete-files-and-buffers for removing the wiki-page. Reverts the
+    change in commit f5b3791c.
+
 2026-11-16  Bob Weiner  <rsw@gnu.org>
 
 * hyrolo.el (hyrolo-yank): Push mark only when an entry is found.
@@ -98,6 +120,39 @@
     with :link value.
    	    (hyrolo-grep): Remove reset of 'max-matches' based on
     'num-matched' as resulting value was never used.
+
+2026-11-16  Mats Lidell  <matsl@gnu.org>
+
+* test/hy-test-coverage.el (hy-test-coverage-file): Use absolute
+    filename. Add keybinding for testcover-next-mark.
+
+2026-11-15  Mats Lidell  <matsl@gnu.org>
+
+* man/hyperbole.texi (Hiding and Showing): Fix typo.
+
+* test/kotl-mode-tests.el (kotl-mode--org-cycling): Test for org style
+    cycling behavior.
+* test/kotl-mode-resources/kotl-file.kotl:
+* test/kotl-mode-resources/kotl-mode-org-cycling.eld: Resources for
+    the test.
+
+* test/hyrolo-tests.el (hyrolo-tests--outline-hide-other): Moved to
+    hy-test-helpers. Use function with new name: hy-test-outline-as-string.
+
+* test/hy-test-helpers.el (hy-test-get-resource-as-sexp): Read sexp
+    from a resource file.
+    (hy-test-outline-as-string): Return buffer string as it is shown with
+    ellipses for invisible text. Moved to hy-test from hyrolo-tests.
+
+* test/test-helpers-tests.el (test-helpers-test--read-resource-file):
+    Add test.
+* test/test-helpers-resources/test-helpers.eld: Resource used in test.
+
+2026-11-12  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (release): Semi automated target for creating a release.
+    (release-pre-check): Prompt user if relevant preparations have been
+    made.
 
 2026-11-11  Bob Weiner  <rsw@gnu.org>
 
@@ -117,6 +172,56 @@
     terminals with mouse support.  Assume the Emacs bug this setting
     was fixing has been fixed in newer versions and comment it out.
     The code for this function has also changed in newer Emacs versions.
+
+2026-11-06  Mats Lidell  <matsl@gnu.org>
+
+* test/kotl-mode-tests.el (kotl-mode--insert-initial-tab-in-cell-row): New
+    test.
+
+2026-11-04  Mats Lidell  <matsl@gnu.org>
+
+* Makefile (verify-clean-test-run): Target that runs checks for left over
+    resources.
+    (test-ert): Use verify-clean-test-run.
+
+* test/hywiki-tests.el (hywiki-tests--preserve-hywiki-mode): Store and reset
+    prior hywiki-directory on test completion. Resetting hywiki-mode recreates
+    the temporary hywiki-directory otherwise.
+
+* test/hib-social-tests.el (hibtypes-repo-cache-does-not-exist-test):
+* test/hyrolo-tests.el (hyrolo-tests--rename):
+* test/hywiki-tests.el (hywiki-tests--edit): Avoid deleting files that do
+    not exist.
+
+* test/hywiki-tests.el (hywiki-tests--kill-empty-wiki-buffer): Helper for
+    removing empty hywiki files and trigger a test error if it is not removed
+    when buffer is killed.
+    (hywiki-tests--add-path-link-v2):
+    (hywiki-tests--action-key-on-hywikiword-displays-page): Use
+    hywiki-tests--kill-empty-wiki-buffer.
+
+2026-10-30  Mats Lidell  <matsl@gnu.org>
+
+* man/Lucide-LICENSE: Licens information for svg icons.
+
+* man/copy-btn.css:
+* man/copy-btn.html:
+* man/copy-btn.js: Copy button resources.
+
+* MANIFEST: Add man/Lucide-LICENSE, man/copy-btn.css, man/copy-btn.html,
+    man/copy-btn.js.
+
+* Makefile (TEXI2HTML): Use copy-btn.css.
+    (README.md.html): Use pandoc to add copy-btn to the generated html.
+
+* man/hyperbole.texi (Package Installation): Add @lisp command around
+    @verbatiminclude to get a unique code tags in the generated
+    HTML. Include at document end copy-btn.js.
+
+* man/hyperbole.html:
+* README.md.html: Generated HTML.
+
+* .github/workflows/docs.yml (jobs): Use actions/upload-artifact.
 
 2026-10-27  Bob Weiner  <rsw@gnu.org>
 

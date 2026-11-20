@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell
 ;;
 ;; Orig-Date:    13-Jul-25 at 19:50:37
-;; Last-Mod:      4-Jul-26 at 20:20:06 by Bob Weiner
+;; Last-Mod:     18-Nov-26 at 00:36:52 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -273,5 +273,12 @@ Each test is constructed in three phases:
          (hy-delete-files-and-buffers (list wikiHi wikiHo)))))))
 
 (provide 'hywiki-yki-tests)
+
+;; This file can't be byte-compiled without the `el-mock' package
+;; which is not a dependency of Hyperbole.
+;;
+;; Local Variables:
+;; no-byte-compile: t
+;; End:
 
 ;;; hywiki-yki-tests.el ends here

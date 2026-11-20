@@ -32,3 +32,15 @@ jobs:
       - name: Build docs
         run: |
           make doc-regenerate
+
+      - name: Upload generated docs
+        uses: actions/upload-artifact@v6
+        with:
+          name: hyperbole-docs
+          path: |
+            man/hyperbole.info
+            man/hyperbole.pdf
+            man/hyperbole.html
+            README.md.html
+          if-no-files-found: error
+          retention-days: 14

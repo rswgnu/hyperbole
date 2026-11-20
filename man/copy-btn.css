@@ -1,0 +1,56 @@
+/*
+ * SUMMARY:      CSS for copy button
+ *
+ * AUTHOR:       Mats Lidell
+ *
+ * ORIG-DATE:    27-Oct-26 at 17:10:04
+ * LAST-MOD:     29-Oct-26 at 23:12:55 by Mats Lidell
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Copyright (C) 2026  Free Software Foundation, Inc.
+ * See the "HY-COPY" file for license information.
+ * This file is part of GNU Hyperbole.
+ */
+
+.code-wrapper {
+  position: relative;
+  margin: 1em 0;
+}
+
+.code-wrapper > pre {
+  margin: 0;
+}
+
+.code-wrapper > button {
+  position: absolute;
+  top: 0.5em;
+  right: 0.5em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.3em;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  background: #f6f8fa;
+  color: #333;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.code-wrapper > button:hover {
+  background: #e1e4e8;
+}
+
+.code-wrapper > button:focus-visible {
+  outline: 2px solid #0969da;
+  outline-offset: 2px;
+}
+
+.code-wrapper > button[data-copied="true"] {
+  color: #1a7f37;
+}
+
+.code-wrapper > button svg {
+  display: block;
+}

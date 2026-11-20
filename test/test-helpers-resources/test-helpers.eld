@@ -1,0 +1,3 @@
+;; Test resource
+
+(a b)
