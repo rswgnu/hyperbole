@@ -1,5 +1,8 @@
 2026-11-20  Bob Weiner  <rsw@gnu.org>
 
+* hmouse-key.el (hmouse-update-smart-keys): Update HyRolo and
+    HyWiki menus, minibuffer menu keymap and option menus.
+
 * hpath.el (hpath:at-p): Put double quote hargs:delimited match last
     so that colon or semicolon separated paths in env variables
     like MANPATH are recognized individually rather than matching
