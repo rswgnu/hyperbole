@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Oct-91 at 20:13:17
-;; Last-Mod:     26-Oct-26 at 08:25:31 by Bob Weiner
+;; Last-Mod:     20-Nov-26 at 10:00:27 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -1194,11 +1194,13 @@ With a prefix arg, insert a HyWikiWord instead.")
 	 '("Add"              hyrolo-add	            "Add a new rolo entry.")
 	 (when (fboundp 'consult-grep) ;; allow for autoloading
            '("ConsultFind"      hyrolo-consult-grep           "Interactively narrow HyRolo matches using Consult/Vertico."))
+	 '("coPy"             hyrolo-copy-link              "Prompt for and copy link to kill-ring and clipboard")
 	 '("Display"          hyrolo-display-matches        "Display last found rolo matches again.")
 	 '("Edit"             hyrolo-edit                   "Edit an existing rolo entry.")
 	 '("FileFind"         hyrolo-find-file              "Find an existing rolo file.")
 	 '("Info"             (id-info "(hyperbole)HyRolo") "Display manual section on HyRolo.")
 	 '("Kill"             hyrolo-kill                   "Kill an existing rolo entry.")
+	 '("Link"             hyrolo-insert-link  	    "Prompt for and insert at point a HyRolo file#entry-line link.")
 	 '("Mail"             hyrolo-mail-to                "Mail to address following point.")
 	 '("Order"            hyrolo-sort                   "Order rolo entries in a file.")
 	 '("RegexFind"        hyrolo-grep                   "Find entries containing a regexp.")

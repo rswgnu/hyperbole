@@ -3,7 +3,7 @@
 # Author:       Bob Weiner
 #
 # Orig-Date:    15-Jun-94 at 03:42:38
-# Last-Mod:     26-Oct-26 at 10:57:16 by Bob Weiner
+# Last-Mod:     27-Oct-26 at 09:17:17 by Bob Weiner
 #
 # Copyright (C) 1994-2026  Free Software Foundation, Inc.
 # See the file HY-COPY for license information.
@@ -62,15 +62,17 @@
 #
 #               * Developer targets
 #
-#		Note: Releasing to ELPA is automatic in that the
-#		master branch on savannah is automatically synced
-#		daily by ELPA. The ftp target is for making and
-#		uploading a tar ball to ftp.gnu.org.
+#		Note: Releasing to ELPA is automatic in that the master
+#		branch on savannah is automatically synced daily by
+#		ELPA. The ftp target is for making and uploading a tar
+#		ball to ftp.gnu.org.
 #
 #               To release a Hyperbole Emacs package. The release
-#               process uses a pre and a post step.
+#               process uses a pre and a post step as documented below.
 #
 #		Pre:
+#                   If any distribution file names have changed, email ELPA maintainer and update Hyperbole
+#                   Hyperbole melpa recipe before doing anything else.
 #		    M-x hypb-release-update-version (Update all version strings except in Hyperbole.el)
 #                   make doc
 #                   make version
@@ -81,8 +83,15 @@
 #			creates a PR with the changes for review.
 #
 #		Post:
-#		    Approve and merge the PR from the pre step.
-#		    make release-post	- tags the release commit, upload tarball to ftp.gnu.org, update website
+#                   Approve and merge the PR from the pre step.
+#		    make release-post	- CAUTION: When this prompts to merge the tagged commit,
+#                     first set it to a squash commit before merging
+#                     This target will tag the release commit, merge it after receiving a 'YES'
+#                     response, then upload tarball to ftp.gnu.org after receiving a 'YES' response,
+#                     and then update the Hyperbole web files at savannah and the Github website.
+#                   Create tagged release at Github: https://github.com/rswgnu/hyperbole/releases/
+#                   Wait for updates and verify versioned release available at ELPA and MELPA.
+#                   Write HY-ANNOUNCE and announce at standard sites.
 #
 #		Sub targets for the release:
 #		    make sync-repos	- Sync savannah and github/rswgnu repos.

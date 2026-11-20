@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    28-Oct-94 at 10:59:44
-;; Last-Mod:     15-Jun-25 at 22:37:19 by Bob Weiner
+;; Last-Mod:     20-Nov-26 at 10:05:57 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -39,6 +39,7 @@
 	 (when (fboundp 'consult-grep) ;; allow for autoloading
 	   ;; Interactively narrow HyRolo matches using Consult/Vertico.
            ["Consult-Find"          (id-tool-invoke 'hyrolo-consult-grep)    t])
+	 ["Choose-and-Copy-Entry-Link" (id-tool-invoke 'hyrolo-copy-link)    t]
 	 ["Delete-Entry"            (id-tool-invoke 'hyrolo-kill)            t]
 	 ["Display-Prior-Matches"   (id-tool-invoke 'hyrolo-display-matches) t]
 	 ["Edit-Entry"              (id-tool-invoke 'hyrolo-edit)            t]
@@ -48,6 +49,7 @@
 				       (hyrolo-find-file)))
 	  t]
 	 ["Insert-Entry-at-Point"   (id-tool-invoke 'hyrolo-yank)            t]
+	 ["Insert-Entry-Link-at-Point" (id-tool-invoke 'hyrolo-insert-link)     t]
 	 ["Mail-to-Address"         (id-tool-invoke 'hyrolo-mail-to)         t]
 	 ["Search-for-Regexp"       (id-tool-invoke 'hyrolo-grep)            t]
 	 ["Search-for-String"       (id-tool-invoke 'hyrolo-fgrep)           t]

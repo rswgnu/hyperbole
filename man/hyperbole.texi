@@ -7,7 +7,7 @@
 @c Author:       Bob Weiner
 @c
 @c Orig-Date:     6-Nov-91 at 11:18:03
-@c Last-Mod:     26-Oct-26 at 10:46:44 by Bob Weiner
+@c Last-Mod:     20-Nov-26 at 10:27:03 by Bob Weiner
 
 @c %**start of header (This is for running Texinfo on a region.)
 @setfilename hyperbole.info
@@ -30,8 +30,8 @@
 @set txicodequoteundirected
 @set txicodequotebacktick
 
-@set UPDATED October 26, 2026
-@set UPDATED-MONTH October 2026
+@set UPDATED November 20, 2026
+@set UPDATED-MONTH November 2026
 @set EDITION 9.3.2
 @set VERSION 9.3.2
 
@@ -171,7 +171,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</P>
 
 <PRE>
 Edition @value{EDITION}
-Printed October 26, 2026.
+Printed November 20, 2026.
 
   Published by the Free Software Foundation, Inc.
   Author:    Bob Weiner
@@ -213,7 +213,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 @example
 Edition @value{EDITION}
-October 26, 2026 @c AUTO-REPLACE-ON-SAVE
+November 20, 2026 @c AUTO-REPLACE-ON-SAVE
 
 
   Published by the Free Software Foundation, Inc.
@@ -5266,9 +5266,9 @@ Report on a HyWikiWord's attributes.
 @item Info
 Display Hyperbole manual section on HyWiki.
 
-@cindex HyWikiWord link
+@cindex HyWikiWord link, insert
 @item Link
-Prompt for and add a link at point to a HyWiki page.
+Prompt for and insert a link at point to a HyWiki page.
 
 @findex hywiki-mode
 @cindex hywiki-mode
@@ -7403,8 +7403,8 @@ so.
 
 @noindent
 @smallexample
-Rolo>  Add  ConsultFind  Display  Edit  FileFind  Info  Kill  Mail  Order
-       RegexFind  StringFind  TagFind  WordFind  Yank
+Rolo>  Add  ConsultFind  Display  Edit  FileFind  Info  Kill  Link  Mail
+       Order RegexFind  StringFind  TagFind  WordFind  Yank
 @end smallexample
 
 @cindex Rolo menu
@@ -7424,10 +7424,12 @@ set of commands as the menubar Rolo menu but with more concise labels.
 @cindex ConsultFind
 @findex hyrolo-add
 @findex hyrolo-consult-grep
+@findex hyrolo-copy-link
 @findex hyrolo-display-matches
 @findex hyrolo-edit
 @findex hyrolo-find-file
 @findex hyrolo-kill
+@findex hyrolo-insert-link
 @findex hyrolo-mail-to
 @findex hyrolo-sort
 @findex hyrolo-grep
@@ -7446,11 +7448,13 @@ Menu Item       Command                 Description
 =====================================================================
 Add             hyrolo-add              Add a hyrolo entry
 ConsultFind     hyrolo-consult-grep     Interactive grep matches
+coPy            hyrolo-copy-link        Copy chosen link to kill-ring
 Display         hyrolo-display-matches  Display last matches again
 Edit            hyrolo-edit             Edit an existing hyrolo entry
 FileFind        hyrolo-find-file        Edit a @code{hyrolo-file-list} file
 Info            id-info                 Display a hyrolo manual entry
 Kill            hyrolo-kill             Delete a hyrolo entry
+Link            hyrolo-insert-link      Insert a link to a HyRolo entry
 Mail            hyrolo-mail             Mail to an address at point
 Order           hyrolo-sort             Sort all hyrolo levels
 RegexFind       hyrolo-grep             Find all entries containing
@@ -7467,12 +7471,21 @@ Yank            hyrolo-yank             Insert at point the first
 @end group
 @end example
 
-@cindex FileFind
+@cindex HyRolo link, copy
+The @dfn{coPy} menu item prompts for an existing HyRolo entry and
+copies an implicit link to it to the @code{kill-ring} and to the
+clipboard, based on the setting of @code{interprogram-cut-function}.
+
+@cindex HyRolo edit files
 The @dfn{FileFind} menu item displays and edits the first file listed in
 @code{hyrolo-file-list}, unless given a prefix argument, in which case
 it prompts with completion for the file to edit.
 
-@cindex Yank
+@cindex HyRolo link, insert
+The @dfn{Link} menu item prompts for and inserts at point an implicit
+link to an existing HyRolo entry.
+
+@cindex HyRolo yank
 The @dfn{Yank} menu item inserts at point the first entry found that
 matches the given expression.  With any prefix argument other than
 C-u, the universal argument, the search expression is treated as a

@@ -1,3 +1,138 @@
+2026-11-20  Bob Weiner  <rsw@gnu.org>
+
+* hui-mini.el (hui:menu-rolo): Add "coPy" to prompt for and copy
+    a HyRolo entry link to the 'kill-ring' and clipboard.
+  hyrolo-menu.el (infodock-hyrolo-menu): Add "Choose-and-Copy-Entry-Link".
+  man/hyperbole.texi (HyRolo Menu): Doc "coPy" menu item.
+
+* hywiki.el (hywiki-org-make-publish-project-alist): Uncomment
+    :html-link-up line and point it to "index.html".  This
+    generates the UP link on pages.
+            (hywiki-get-referent-hasht): Add line:
+    (not (hyperb:stack-frame '(hywiki-make-referent-hasht)))
+    to fix a re-entrancy bug when retrieving the htable that
+    caused this bug: issue:  In Koutline mode, creating a
+    new WikiWord highlights it everywhere but then killing
+    the page does not dehighlight it, nor does removing it
+    from one location (others remain highlighted).
+
+2026-11-19  Bob Weiner  <rsw@gnu.org>
+
+* kotl/kotl-orgtbl.el (kotl-mode:setup-overriding-orgtbl-keymap):
+  kotl/kotl-mode.el (kotl-mode:setup-keymap): Change call from
+    'setplist' to 'map-merge' so add to rather than replacing
+    all symbol plist properties of kotl-specific commands.
+
+* hywiki.el (hywiki-maybe-highlight-references): Add these syntax
+    chars to skip in the call after 'with-syntax-table': '(', '<'
+    and '\\'.  Also, skip past colon characters only when part
+    of a line and column number char sequence.
+            (hywiki-init): Add colon as a hywiki buttonize char.
+
+* test/hy-test-helpers.el (hy-test-helpers:with-temp-buffer): Add.
+  test/demo-tests.el (fast-demo-elisp-or-env-vars): Use above macro
+    to prevent *ert* buffer switch failure after adding
+    (hyrolo-mode :all) call.
+
+* hyrolo.el (hyrolo-noninteractive-grep-paths): Add '-i' option to grep
+    to match case-insensitively like the rest of HyRolo.
+
+2026-11-18  Bob Weiner  <rsw@gnu.org>
+
+* hywiki.el (hywiki-directory-modified-p): Fix so if mod-time has not
+    changed since first initialization, return nil not t.
+            (hywiki-directory-get-mod-time): Fix bug where non-page
+    WikiWords were added, updating the cache file, but mod-time returned
+    stayed at 0.  Add ".hywiki.eld" mod time to the list to check.
+            (hywiki-consult-page-and-headline): Add support for 'grep'
+    when 'rg' is not found.  Previously, supported 'rg' only.
+
+* hywiki.el (hywiki-display-bookmark): Fix string-handling error to treat
+    as a pathname instead of a page name.
+
+* hywiki.el (hywiki-maybe-highlight-reference,
+             hywiki-maybe-dehighlight-reference,
+             hywiki-maybe-highlight-references): Replace 'setq' with
+    'let' to reset 'case-fold-search' and
+    'hywiki-org-link-type-required' to their original values before
+    return and remove any use of unwind-protect. Async calls on hooks
+    were causing this to permanently change the values of these
+    settings.
+
+2026-11-17  Bob Weiner  <rsw@gnu.org>
+
+* hui-mini.el (hui:menu-rolo):
+  hyrolo-menu.el (infodock-hyrolo-menu):
+  man/hyperbole.texi (HyRolo Menu): Add Link menu entry and doc
+    for choosing and inserting a link to a HyRolo entry.
+
+* hyrolo.el (hyrolo-copy-link-reformat-function,
+             hyrolo-insert-link-reformat-function, hyrolo-copy-link,
+             hyrolo-format-link, hyrolo-get-link, hyrolo-insert-link):
+    Add to copy and insert implicit links to matched HyRolo entries.
+            (hyrolo-grep): Add a 'save-excursion' call so current
+    buffer is not changed when 'no-display' is set.
+
+* hywiki.el, hyrolo.el, hui.el (hywiki-org-format-heading): Rename to
+    'hsys-org-format-heading' and move from hywiki.el to hsys-org.el
+    so can be used in hyrolo.el as well.
+
+* hywiki.el (hywiki-format-grep-to-reference): Fix docstring to show
+    that it never signals an error, only displays an error msg and
+    returns nil.
+            (require 'hsys-org): Add.
+
+* hyrolo.el (hyrolo-fgrep): Fix 2nd call to 'hyrolo-fgrep-logical'
+    to capture 'total-matches'.
+
+2026-11-16  Bob Weiner  <rsw@gnu.org>
+
+* hyrolo.el (hyrolo-yank): Push mark only when an entry is found.
+            (hyrolo-grep-file, hyrolo-grep-file, hyrolo-fgrep,
+             hyrolo-grep): Use 'max-matches' value of :link to return a
+    list of the first matching entry parts:
+    (absolute-path-or-buffer-name-of-entry entry-headline) or nil
+    when no entry is found.
+            (hyrolo-bbdb-grep-file, hyrolo-google-contacts-grep-file,
+             hyrolo-fgrep-file, hyrolo-grep-file): Update docstrings
+    with :link value.
+   	    (hyrolo-grep): Remove reset of 'max-matches' based on
+    'num-matched' as resulting value was never used.
+
+2026-11-11  Bob Weiner  <rsw@gnu.org>
+
+* hpath.el (hpath:at-p): Fix bug that allowed for a different
+    starting and ending delimiter, e.g. matching ':' at the
+    start and '"' at the end; this would miss valid paths.
+           (hpath:expand): Fix so all pattern matches are
+    anchored to the beginning of the path.
+
+* hbut.el (ibut:insert-text):
+  kotl/EXAMPLE.kotl: Remove use of @ in klinks and use only #.
+  kotl/klink.el (klink:parse): Disallow whitespace after # if no
+    angle bracket delimiters.
+
+* hyperbole.el (mouse-position-function): Fix Emacs bug#82209.
+    The override of this variable now breaks mouse line dragging on
+    terminals with mouse support.  Assume the Emacs bug this setting
+    was fixing has been fixed in newer versions and comment it out.
+    The code for this function has also changed in newer Emacs versions.
+
+2026-10-27  Bob Weiner  <rsw@gnu.org>
+
+* hmouse-key.el (hmouse-update-smart-keys): Reset the Hyperbole
+    version number in menus on Smart Key reset in case it has changed.
+
+2026-10-26  Bob Weiner  <rsw@gnu.org>
+
+* Makefile (release-post): Add initial CAUTION comment that the final
+    post-release merge to master must be a squash commit to prevent
+    an additional merge commit from becoming HEAD.
+
+========================================================================
+V9.3.3 changes ^^^^:
+========================================================================
+
 2026-10-26  Bob Weiner  <rsw@gnu.org>
 
 * hmouse-tag.el (smart-prog-to-definition): Add

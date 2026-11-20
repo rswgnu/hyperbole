@@ -8,7 +8,7 @@
 ;; Maintainer:   Robert Weiner <rsw@gnu.org>
 ;;               Mats Lidell <matsl@gnu.org>
 ;; Created:      06-Oct-92 at 11:52:51
-;; Last-Mod:     26-Oct-26 at 16:12:52 by Bob Weiner
+;; Last-Mod:     11-Nov-26 at 10:22:56 by Bob Weiner
 ;; Released:     27-Jul-26
 ;; Version:      9.3.2
 ;; Keywords:     comm, convenience, files, frames, hypermedia, languages, mail, matching, mouse, multimedia, outlines, tools, wp
@@ -350,6 +350,10 @@ of the commands."
 ;;; Load Hyperbole mouse bindings
 ;;; ************************************************************************
 
+;; Comment out the following override of `mouse-position-function' out
+;; due to it breaking terminal-based modeline drags in newer Emacs
+;; versions (bug#82209).  -- rsw, 2026-11-11
+;;
 ;; From mouse-position.c in Emacs:
 ;;    f = SELECTED_FRAME ();
 ;;    XSETFRAME (lispy_dummy, f);
@@ -361,14 +365,14 @@ of the commands."
 ;;  Hyperbole resolves this problem by setting the
 ;;  `mouse-position-function' variable below to properly set the
 ;;  newly selected frame.
-(when (boundp 'mouse-position-function)
-  (setq mouse-position-function
-	(lambda (frame-x-dot-y)
-	  "Make `mouse-position' and `mouse-pixel-position' return the selected frame.
-Under macOS and Windows 7 at least, upon initial selection of a new
-frame, those functions by default still return the prior frame."
-	  (if (consp frame-x-dot-y) (setcar frame-x-dot-y (selected-frame)))
-	  frame-x-dot-y)))
+;; (when (boundp 'mouse-position-function)
+;;   (setq mouse-position-function
+;; 	(lambda (frame-x-dot-y)
+;; 	  "Make `mouse-position' and `mouse-pixel-position' return the selected frame.
+;; Under macOS and Windows 7 at least, upon initial selection of a new
+;; frame, those functions by default still return the prior frame."
+;; 	  (if (consp frame-x-dot-y) (setcar frame-x-dot-y (selected-frame)))
+;; 	  frame-x-dot-y)))
 
 ;; hmouse-drv will load hui-mouse and hmouse-key
 (mapc #'require '(hsettings hmouse-drv hmouse-sh))

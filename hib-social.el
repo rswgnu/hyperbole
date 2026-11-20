@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    20-Jul-16 at 22:41:34
-;; Last-Mod:     16-Apr-24 at 22:10:55 by Bob Weiner
+;; Last-Mod:     18-Nov-26 at 18:17:20 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -52,10 +52,10 @@
 ;;     git#/hyperbole                            From any buffer, dired on the top
 ;;                                               directory of the local hyperbole
 ;;                                               project (notice no =)
-;; 
+;;
 ;;     git#/hyperbole/55a1f0 or                  From any buffer, display hyperbole
 ;;     git#hyperbole/55a1f0                      local git commit diff
-;;                                               
+;;
 ;;     git#55a1f0                                Based on current default-directory,
 ;;                                               display current repo's local git
 ;;                                               commit diff; works when default-directory
@@ -74,7 +74,7 @@
 ;;                                               for tag `hyperbole-7.0.0'
 ;;
 ;;     When you want to be more explicit, use:
-;;       
+;;
 ;;       git#commit/55a1f0
 ;;       git#branch/master
 ;;       git#tag/hyperbole-7.0.0
@@ -431,7 +431,7 @@ PROJECT value is provided, it defaults to the value of
 			      reference (substring reference (match-end 1) (match-end 0))))
 		       ((string-match "\\`\\(commit\\|issue\\|pull\\)[-/=]" reference)
 			;; Specific reference preceded by keyword branch, commit,
-			;; issue, or pull and followed by -, /, = or #.
+			;; issue, or pull plus one of the following characters: -, /, = or #.
 			(setq ref-type (substring reference 0 (match-end 1))
 			      reference (substring reference (match-end 0))
 			      ref-type (concat ref-type (if (string-equal ref-type "issue") "s/" "/"))))
@@ -921,4 +921,3 @@ is found."
 
 (provide 'hib-social)
 ;;; hib-social.el ends here
-

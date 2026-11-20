@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:    15-Nov-93 at 12:15:16
-;; Last-Mod:     20-Oct-26 at 12:40:05 by Bob Weiner
+;; Last-Mod:     11-Nov-26 at 10:50:30 by Bob Weiner
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -357,9 +357,16 @@ See documentation for `kcell:ref-to-id' for valid cell-ref formats."
      reference)
     ;; <pathname#cell-ref> or <pathname, cell-ref>
     (list (match-string 1 reference) (match-string 2 reference)))
-   ((string-match (format "\\`\\s-*<?[#@]?\\s-*\\(%s\\)\\s-*>?\\s-*\\'"
-			  klink:cell-ref-regexp)
-		  reference)
+   ((or
+     ;; With angle brackets, allow optional whitespace after the initial #
+     ;; or @ character
+     (string-match (format "\\`\\s-*<[#@]?\\s-*\\(%s\\)\\s-*>\\s-*\\'"
+			   klink:cell-ref-regexp)
+		   reference)
+     ;; Without angle brackets, no space is allowed after # or @ character
+     (string-match (format "\\`\\s-*[#@]?\\(%s\\)\\s-*\\'"
+			   klink:cell-ref-regexp)
+		   reference))
     ;; <#cell-ref> or <@ cell-ref> or cell-ref
     (list nil (match-string 1 reference)))
    (t (error "(klink:parse): Invalid reference specifier, %s" reference))))
