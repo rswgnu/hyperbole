@@ -3,7 +3,7 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:     8-Jan-22 at 23:40:00
-;; Last-Mod:     28-Aug-23 at 00:15:21 by Bob Weiner
+;; Last-Mod:     21-Nov-26 at 23:37:53 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -30,7 +30,8 @@
   (let ((hyperbole-mode-map (make-sparse-keymap))
         (hkey-init set))
     (cl-letf (((symbol-function 'where-is-internal) (lambda (_func &optional _map) nil))
-              ((symbol-function 'hyperb:window-system) (lambda () t)))
+              ((symbol-function 'hyperb:window-system) (lambda () t))
+              ((symbol-function 'key-binding) (lambda (_key &optional _a _n _p) nil)))
       (hkey-initialize)
       (cl-macrolet ((verify-keybinding (verify key binding)
                       `(if ,verify
@@ -55,6 +56,25 @@
 (ert-deftest hyperbole-hkey-init-controls-tests ()
   "Verify all key bindings are set."
   (hyperbole-key-bindings nil))
+
+(ert-deftest hyperbole-keymap-mo-tests ()
+  "Verify \\`M-o' is not bound if already bound by user."
+  (cl-letf (((symbol-function 'where-is-internal) (lambda (_func &optional _map) nil))
+            ((symbol-function 'hyperb:window-system) (lambda () t)))
+
+      (ert-info ("Verify it is not bound if already bound.")
+        (cl-letf (((symbol-function 'key-binding) (lambda (_key &optional _a _n _p) t)))
+          (let ((hyperbole-mode-map (make-sparse-keymap))
+                (hkey-init t))
+            (hkey-initialize)
+            (should-not (lookup-key hyperbole-mode-map "\M-o")))))
+
+      (ert-info ("Verify it is bound if not bound already.")
+        (cl-letf (((symbol-function 'key-binding) (lambda (_key &optional _a _n _p) nil)))
+          (let ((hyperbole-mode-map (make-sparse-keymap))
+                (hkey-init t))
+            (hkey-initialize)
+            (should (eq #'hkey-operate (lookup-key hyperbole-mode-map "\M-o"))))))))
 
 (ert-deftest hyperbole-global-key-binding-tests ()
   "Verify the global keys are bound."
