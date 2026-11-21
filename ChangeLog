@@ -1,5 +1,8 @@
 2026-11-21  Mats Lidell  <matsl@gnu.org>
 
+* hsys-org.el (hywiki--org-heading-regexp): Defvar.
+    (org-fold-core-remove-optimisation): Declare function.
+
 * kotl/kotl-mode.el (kotl-mode:delete-char): Refactor out a
     cl-flet. It is not needed and causes issues with coverage
     instrumentation.
