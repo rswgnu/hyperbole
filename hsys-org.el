@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     21-Nov-26 at 11:50:01 by Mats Lidell
+;; Last-Mod:     21-Nov-26 at 19:04:11 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -77,7 +77,6 @@
 (declare-function org-element--property "org-element-ast")
 (declare-function org-element-lineage "org-element-ast")
 (declare-function org-element-type "org-element-ast")
-(declare-function org-fold-core-remove-optimisation "org-fold-core")
 (declare-function org-fold-show-context "org-fold")
 (declare-function org-id-find "org-id")
 (declare-function org-link-open-from-string "ol")
@@ -234,6 +233,10 @@ When NO-STATS is non-nil, don't include statistics in square brackets."
 		     " "))))))
 
 ;;; Else
+;; Obsolete function, declared here to silence warnings for "might not
+;; be defined at runtime" when new function is defined.
+(declare-function org-fold-core-remove-optimisation "org-fold-core")
+
 ;;; For Org 9.6 and greater; derived from `org-get-heading' in "org.el"
 ;;;###autoload
 (defun hsys-org-format-heading (heading &optional no-tags no-todo
