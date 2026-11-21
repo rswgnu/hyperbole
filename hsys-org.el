@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     17-Nov-26 at 17:27:42 by Bob Weiner
+;; Last-Mod:     21-Nov-26 at 11:50:01 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -60,6 +60,7 @@
 (defvar org--inhibit-version-check)     ; "org-macs.el"
 (defvar hywiki-org-link-type)           ; "hywiki.el"
 (defvar hywiki-org-link-type-required)  ; "hywiki.el"
+(defvar hywiki--org-heading-regexp)     ; "hywiki.el"
 (defvar org-agenda-buffer-tmp-name)     ; "org-agenda.el"
 (defvar org-uuid-regexp)                ; "org-macs.el"
 
@@ -76,6 +77,7 @@
 (declare-function org-element--property "org-element-ast")
 (declare-function org-element-lineage "org-element-ast")
 (declare-function org-element-type "org-element-ast")
+(declare-function org-fold-core-remove-optimisation "org-fold-core")
 (declare-function org-fold-show-context "org-fold")
 (declare-function org-id-find "org-id")
 (declare-function org-link-open-from-string "ol")
