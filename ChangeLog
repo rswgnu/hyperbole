@@ -1,5 +1,18 @@
 2026-11-22  Mats Lidell  <matsl@gnu.org>
 
+* test/kotl-mode-tests.el: Use prefix kotl-mode-tests.
+    (setup-kotl-mode-example-test): Rename to
+    with-kotl-mode-tests--should-visit-example to follow the pattern with
+    macros starting with with. Add a declare declaration.
+    (kotl-mode-indent-cell-changes-level): Let bind kotl-mode:tab-flag to
+    not change its global state. Use execute-kbd-macro.
+    (kotl-mode-set-view-with-kbd): Use execute-kbd-macro.
+
+* test/kotl-orgtbl-tests.el: Use prefix kotl-orgtbl-tests.
+    (kotl-orgtbl-enabled-uses-kotl-mode-delete-char-outside-of-table)
+    (kotl-orgtbl-action-key-on-vertical-bar-toggles-orgtbl-mode): Use
+    execute-kbd-macro.
+
 * test/hyperbole-tests.el (hyperbole-keymap-mo-tests): Test for M-o
     binding.
     (hyperbole-key-bindings): Add mock of key-binding to deal with
