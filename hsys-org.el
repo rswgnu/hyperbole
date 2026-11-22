@@ -3,7 +3,7 @@
 ;; Author:       Bob Weiner
 ;;
 ;; Orig-Date:     2-Jul-16 at 14:54:14
-;; Last-Mod:     17-Nov-26 at 17:27:42 by Bob Weiner
+;; Last-Mod:     21-Nov-26 at 19:04:11 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
@@ -60,6 +60,7 @@
 (defvar org--inhibit-version-check)     ; "org-macs.el"
 (defvar hywiki-org-link-type)           ; "hywiki.el"
 (defvar hywiki-org-link-type-required)  ; "hywiki.el"
+(defvar hywiki--org-heading-regexp)     ; "hywiki.el"
 (defvar org-agenda-buffer-tmp-name)     ; "org-agenda.el"
 (defvar org-uuid-regexp)                ; "org-macs.el"
 
@@ -232,6 +233,10 @@ When NO-STATS is non-nil, don't include statistics in square brackets."
 		     " "))))))
 
 ;;; Else
+;; Obsolete function, declared here to silence warnings for "might not
+;; be defined at runtime" when new function is defined.
+(declare-function org-fold-core-remove-optimisation "org-fold-core")
+
 ;;; For Org 9.6 and greater; derived from `org-get-heading' in "org.el"
 ;;;###autoload
 (defun hsys-org-format-heading (heading &optional no-tags no-todo
