@@ -3,11 +3,11 @@
 ;; Author:       Mats Lidell <matsl@gnu.org>
 ;;
 ;; Orig-Date:    18-May-21 at 22:14:10
-;; Last-Mod:     14-Nov-26 at 00:36:03 by Mats Lidell
+;; Last-Mod:     22-Nov-26 at 22:33:22 by Mats Lidell
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;
-;; Copyright (C) 2021-2025  Free Software Foundation, Inc.
+;; Copyright (C) 2021-2026  Free Software Foundation, Inc.
 ;; See the "HY-COPY" file for license information.
 ;;
 ;; This file is part of GNU Hyperbole.
@@ -25,8 +25,9 @@
 
 (declare-function hy-test-helpers:consume-input-events "hy-test-helpers")
 
-(defmacro setup-kotl-mode-example-test (&rest body)
+(defmacro with-kotl-mode-tests--should-visit-example (&rest body)
   "Setup for test using kotl-mode:example and run BODY."
+  (declare (indent 0) (debug t))
   `(unwind-protect
        (progn
          ,@body
@@ -34,57 +35,55 @@
          (should (string-prefix-p "EXAMPLE.kotl" (buffer-name (current-buffer)))))
      (kill-buffer (current-buffer))))
 
-(ert-deftest smart-menu-loads-kotl-example ()
+(ert-deftest kotl-mode-tests--smart-menu-loads-kotl-example ()
   "Loading kotl-mode example file works."
   (skip-unless (not noninteractive))
-  (setup-kotl-mode-example-test
-   ;; The additional no op key C-a below avoids ert results window to
-   ;; be set as current
-   (should (hact 'kbd-key "C-h h k e C-a"))
-   (hy-test-helpers:consume-input-events)))
+  (with-kotl-mode-tests--should-visit-example
+    ;; The additional no op key C-a below avoids ert results window
+    ;; to be set as current
+    (should (hact 'kbd-key "C-h h k e C-a"))
+    (hy-test-helpers:consume-input-events)))
 
-(ert-deftest kotl-mode-example-loads-kotl-example ()
+(ert-deftest kotl-mode-tests--example-loads-kotl-example ()
   "Loading kotl-mode example file works."
-  (setup-kotl-mode-example-test
-   (kotl-mode:example nil t)))
+  (with-kotl-mode-tests--should-visit-example
+    (kotl-mode:example nil t)))
 
-(ert-deftest kotl-mode-move-between-cells ()
+(ert-deftest kotl-mode-tests--move-between-cells ()
   "Loading kotl-mode example file works."
-  (setup-kotl-mode-example-test
-   ;; Start in first cell
-   (kotl-mode:example temporary-file-directory t)
-   (kotl-mode:beginning-of-buffer)
-   (should (kotl-mode:first-cell-p))
+  (with-kotl-mode-tests--should-visit-example
+    ;; Start in first cell
+    (kotl-mode:example temporary-file-directory t)
+    (kotl-mode:beginning-of-buffer)
+    (should (kotl-mode:first-cell-p))
 
-   ;; Move to next cell
-   (kotl-mode:next-cell 1)
-   (should (not (kotl-mode:first-cell-p)))
-   (should (equal (kcell-view:level) 1))
-   (should (string= (kcell-view:visible-label) "2"))
+    ;; Move to next cell
+    (kotl-mode:next-cell 1)
+    (should (not (kotl-mode:first-cell-p)))
+    (should (equal (kcell-view:level) 1))
+    (should (string= (kcell-view:visible-label) "2"))
 
-   ;; Move to next cell
-   (kotl-mode:next-cell 1)
-   (should (not (kotl-mode:first-cell-p)))
-   (should (equal (kcell-view:level) 2))
-   (should (string= (kcell-view:visible-label) "2a")))
-  )
+    ;; Move to next cell
+    (kotl-mode:next-cell 1)
+    (should (not (kotl-mode:first-cell-p)))
+    (should (equal (kcell-view:level) 2))
+    (should (string= (kcell-view:visible-label) "2a"))))
 
-(ert-deftest kotl-mode-indent-cell-changes-level ()
+(ert-deftest kotl-mode-tests--indent-cell-changes-level ()
   "Loading kotl-mode example file works."
-  (setup-kotl-mode-example-test
-   (setq kotl-mode:tab-flag nil)
-   (kotl-mode:example temporary-file-directory t)
-   (kotl-mode:beginning-of-buffer)
-   (should (kotl-mode:first-cell-p))
-   (kotl-mode:next-cell 1)
-   (should (hact 'kbd-key "TAB"))
-   (hy-test-helpers:consume-input-events)
-   (should (equal (kcell-view:level) 2))
-   (should (string= (kcell-view:visible-label) "1a"))
-   ;; Cleanup
-   (set-buffer-modified-p nil)))
+  (with-kotl-mode-tests--should-visit-example
+    (let ((kotl-mode:tab-flag nil))
+      (kotl-mode:example temporary-file-directory t)
+      (kotl-mode:beginning-of-buffer)
+      (should (kotl-mode:first-cell-p))
+      (kotl-mode:next-cell 1)
+      (execute-kbd-macro (kbd "TAB"))
+      (should (equal (kcell-view:level) 2))
+      (should (string= (kcell-view:visible-label) "1a"))
+      ;; Cleanup
+      (set-buffer-modified-p nil))))
 
-(ert-deftest kotl-mode-extension-open-buffer-in-kotl-mode ()
+(ert-deftest kotl-mode-tests--extension-open-buffer-in-kotl-mode ()
   "When a file with kotl extension is created it enters kotl mode."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl" "hej")))
     (unwind-protect
@@ -93,20 +92,19 @@
           (should (equal major-mode 'kotl-mode)))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-set-view-with-kbd ()
+(ert-deftest kotl-mode-tests--set-view-with-kbd ()
   "When the view mode is changed the label is changed too."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
         (progn
           (find-file kotl-file)
           (should (string= (kcell-view:label (point)) "1"))
-          (should (hact 'kbd-key "C-c C-v 0 RET"))
-          (hy-test-helpers:consume-input-events)
+          (execute-kbd-macro (kbd "C-c C-v 0 RET"))
           (should (eq (kview:label-type kotl-kview) 'id))
           (should (string= (kcell-view:label (point)) "01")))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-idstamp-saved-with-file ()
+(ert-deftest kotl-mode-tests--idstamp-saved-with-file ()
   "The active view mode is saved with the buffer."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -132,7 +130,7 @@
           (should (string= (kcell-view:label (point)) "01")))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-kview-buffer-local ()
+(ert-deftest kotl-mode-tests--kview-buffer-local ()
   "Verify kotl-kview is buffer local."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -142,7 +140,7 @@
                                   (describe-variable 'kotl-kview))))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-kvspec-saved-with-file ()
+(ert-deftest kotl-mode-tests--kvspec-saved-with-file ()
   "The active view mode is saved with the file."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -163,7 +161,7 @@
           (should (equal (kview:label-type kotl-kview) 'legal)))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-kvspec-independent-between-files ()
+(ert-deftest kotl-mode-tests--kvspec-independent-between-files ()
   "Modifying kvspec in one file does not affect another."
   (let ((kotl-file-a (make-temp-file "hypb" nil ".kotl"))
         (kotl-file-b (make-temp-file "hypb" nil ".kotl")))
@@ -190,7 +188,7 @@
       (hy-delete-file-and-buffer kotl-file-a)
       (hy-delete-file-and-buffer kotl-file-b))))
 
-(ert-deftest kotl-mode-demote-keeps-idstamp ()
+(ert-deftest kotl-mode-tests--demote-keeps-idstamp ()
   "When tree is demoted the idstamp label is not changed."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -213,7 +211,7 @@
           (should (string= (kcell-view:label (point)) "02")))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-demote-change-label ()
+(ert-deftest kotl-mode-tests--demote-change-label ()
   "When tree is demoted the label is changed."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -229,7 +227,7 @@
           (should (string= (kcell-view:label (point)) "1a")))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-label-type-activation ()
+(ert-deftest kotl-mode-tests--label-type-activation ()
   "Kotl-mode test label type activation."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -247,7 +245,7 @@
           (should (string= (kcell-view:label (point)) "02")))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-move-cell-before-cell ()
+(ert-deftest kotl-mode-tests--move-cell-before-cell ()
   "Move cell before cell."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -264,7 +262,7 @@
           (should (looking-at-p "second")))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-move-cell-after-cell ()
+(ert-deftest kotl-mode-tests--move-cell-after-cell ()
   "Move cell after cell."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -281,7 +279,7 @@
           (should (looking-at-p "first")))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-copy-cell-after-cell ()
+(ert-deftest kotl-mode-tests--copy-cell-after-cell ()
   "Copy cell after cell."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -298,7 +296,7 @@
           (should (looking-at-p "first")))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-copy-cell-before-cell ()
+(ert-deftest kotl-mode-tests--copy-cell-before-cell ()
   "Copy cell after cell."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -314,7 +312,7 @@
           (should (looking-at-p "second")))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-jump-to-cell ()
+(ert-deftest kotl-mode-tests--jump-to-cell ()
   "Kotl-mode jump to cell."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -329,7 +327,7 @@
           (should (string= (kcell-view:label (point)) "2")))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-goto-child-and-parent ()
+(ert-deftest kotl-mode-tests--goto-child-and-parent ()
   "Kotl-mode goto child and goto parent."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -346,7 +344,7 @@
           (should (string= (kcell-view:label (point)) "1a")))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-kill-contents ()
+(ert-deftest kotl-mode-tests--kill-contents ()
   "Kotl-mode kill contents shall remove rest of a cell."
   (with-temp-buffer
     (kotl-mode)
@@ -360,7 +358,7 @@
     (kotl-mode:beginning-of-cell)
     (should (looking-at-p "first $"))))
 
-(ert-deftest kotl-mode-kill-contents-all ()
+(ert-deftest kotl-mode-tests--kill-contents-all ()
   "Kotl-mode kill contents with prefix argument shall remove the cell."
   (with-temp-buffer
     (kotl-mode)
@@ -374,7 +372,7 @@
     (kotl-mode:beginning-of-cell)
     (should (looking-at-p "$"))))
 
-(ert-deftest kotl-mode-kill-cell ()
+(ert-deftest kotl-mode-tests--kill-cell ()
   "Kotl-mode kill a cell test."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -397,7 +395,7 @@
           (should (looking-at-p "$")))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-kill-tree-and-reopen ()
+(ert-deftest kotl-mode-tests--kill-tree-and-reopen ()
   "Remove first cell, reopen file, verify idstamp of first cell."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -417,7 +415,7 @@
           (should (string= (kcell-view:idstamp) "02")))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-kill-tree-on-empty-file-creates-new-cell ()
+(ert-deftest kotl-mode-tests--kill-tree-on-empty-file-creates-new-cell ()
   "Kill tree on empty kotl file creates new cell."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -431,7 +429,7 @@
           (should (string= (kcell-view:idstamp) "03")))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode--kill-tree-first-and-only-tree ()
+(ert-deftest kotl-mode-tests--kill-tree-first-and-only-tree ()
   "Verify removing a one cell tree creates an initial empty first cell."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -444,7 +442,7 @@
           (should (string-empty-p (kcell-view:contents))))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode--kill-tree-erase-buffer ()
+(ert-deftest kotl-mode-tests--kill-tree-erase-buffer ()
   "Verify buffer is erased leaving just the initial empty first cell."
   (with-temp-buffer
     (kotl-mode)
@@ -460,7 +458,7 @@
     (should (kotl-mode:first-cell-p))
     (should (string-empty-p (kcell-view:contents)))))
 
-(ert-deftest kotl-mode-split-cell ()
+(ert-deftest kotl-mode-tests--split-cell ()
   "Kotl-mode split cell."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -506,7 +504,7 @@
                                        (line-beginning-position) (point))))))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-append-cell ()
+(ert-deftest kotl-mode-tests--append-cell ()
   "Kotl-mode append cell to cell."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -522,7 +520,7 @@
             (should (string= "21\n1" (substring-no-properties (kcell-view:contents))))))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-previous-cell-from-invalid-position ()
+(ert-deftest kotl-mode-tests--previous-cell-from-invalid-position ()
   "When in an invalid position previous cell should move back to first valid cell."
     (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -543,7 +541,7 @@
           (should (string= (kcell-view:label (point)) "2")))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-backward-cell-from-invalid-position ()
+(ert-deftest kotl-mode-tests--backward-cell-from-invalid-position ()
   "When in an invalid position backward cell should move back to first valid cell."
     (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -564,7 +562,7 @@
           (should (string= (kcell-view:label (point)) "1a")))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-backward-cell-from-invalid-pos-leave-point-in-valid-pos ()
+(ert-deftest kotl-mode-tests--backward-cell-from-invalid-pos-leave-point-in-valid-pos ()
   "From invalid pos backward cell leaves point in valid pos on error."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -591,7 +589,7 @@
           (should (string= (kcell-view:label (point)) "1a")))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-transpose-cell ()
+(ert-deftest kotl-mode-tests--transpose-cell ()
   "Transpose cells and leave point in cell."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -610,7 +608,7 @@
           (should (looking-at-p "first")))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-transpose-cell-with-mark ()
+(ert-deftest kotl-mode-tests--transpose-cell-with-mark ()
   "Transpose cell with cell with mark and change point to mark."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -633,7 +631,7 @@
           (should (kotl-mode:first-cell-p)))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-transpose-cell-past-multiple-cells ()
+(ert-deftest kotl-mode-tests--transpose-cell-past-multiple-cells ()
   "Transpose cell past multiple cells."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -661,7 +659,7 @@
           (should (looking-at-p "first")))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-copy-kotl-file-updates-root-id-attributes ()
+(ert-deftest kotl-mode-tests--copy-kotl-file-updates-root-id-attributes ()
   "Verify root id-attribute is updated when kotl mode is copied."
   (let* ((kotl-file (make-temp-file "hypb" nil ".kotl"))
          (indent (kcell:get-attr (kcell-view:cell-from-ref 0) 'level-indent))
@@ -679,7 +677,7 @@
       (hy-delete-file-and-buffer kotl-file)
       (hy-delete-file-and-buffer new-name))))
 
-(ert-deftest kotl-mode-hide-cell ()
+(ert-deftest kotl-mode-tests--hide-cell ()
   "Verify cell is hidden and unhidden on `action-key' press."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl"))
         (kotl-mode:action-key-default-function 'kotl-mode:show-or-hide-tree))
@@ -697,7 +695,7 @@
           (should-not (outline-invisible-p)))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-move-tree-forward ()
+(ert-deftest kotl-mode-tests--move-tree-forward ()
   "Should move tree forward."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -722,7 +720,7 @@
           (should (looking-at "2")))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-move-tree-backward ()
+(ert-deftest kotl-mode-tests--move-tree-backward ()
   "Should move tree backward."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -747,7 +745,7 @@
           (should (looking-at "1")))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode--add-cell-set-fill-attribute ()
+(ert-deftest kotl-mode-tests--add-cell-set-fill-attribute ()
   "Add cell shall set the fill attribute."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -759,7 +757,7 @@
           (should-not (kcell-view:get-attr 'no-fill)))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-cell-help-displays-help-in-temp-buffer ()
+(ert-deftest kotl-mode-tests--cell-help-displays-help-in-temp-buffer ()
   "Verify that kotl-mode:cell-help shows help in a temp buffer."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -776,7 +774,7 @@
             (should (looking-at-p (concat "\\W+1\\. " kotl-file)))))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-cell-help-displays-help-from-root ()
+(ert-deftest kotl-mode-tests--cell-help-displays-help-from-root ()
   "Verify that kotl-mode:cell-help shows help from root cell."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -794,7 +792,7 @@
             (should (= (count-matches "idstamp") 2))))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-cell-help-displays-help-for-all-cells ()
+(ert-deftest kotl-mode-tests--cell-help-displays-help-for-all-cells ()
   "Verify that kotl-mode:cell-help shows help for all cells."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -814,7 +812,7 @@
             (should (looking-at-p (concat "\\W+1\\. " kotl-file)))))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-move-between-lines ()
+(ert-deftest kotl-mode-tests--move-between-lines ()
   "Verify movements between lines and cells."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -847,7 +845,7 @@
           (should (looking-at-p "4")))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-move-up-from-first-line-shall-message-and-beep ()
+(ert-deftest kotl-mode-tests--move-up-from-first-line-shall-message-and-beep ()
   "Trying to move up from first line shall beep and output a message.
 In non interactive mode there shall be no beep (nor message)"
   (skip-unless (not noninteractive))
@@ -870,7 +868,7 @@ In non interactive mode there shall be no beep (nor message)"
              (kotl-mode:previous-line 1))))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-move-up-to-first-line ()
+(ert-deftest kotl-mode-tests--move-up-to-first-line ()
   "Move up to first line shall succeed with no beep nor message."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -892,7 +890,7 @@ In non interactive mode there shall be no beep (nor message)"
 	  (should (= (line-number-at-pos) 1)))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-trying-to-move-down-from-last-line-shall-message-and-beep ()
+(ert-deftest kotl-mode-tests--trying-to-move-down-from-last-line-shall-message-and-beep ()
   "Trying to move down from last line shall beep and output a message.
 In non-interactive mode there shall be no beep nor message."
   (skip-unless (not noninteractive))
@@ -915,7 +913,7 @@ In non-interactive mode there shall be no beep nor message."
              (kotl-mode:next-line 1))))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-move-down-to-last-line-shall-not-beep ()
+(ert-deftest kotl-mode-tests--move-down-to-last-line-shall-not-beep ()
   "Moving down to last line shall not beep."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -938,7 +936,7 @@ In non-interactive mode there shall be no beep nor message."
           (should (kotl-mode:last-line-p)))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-move-cursor-forward-over-ellipsis ()
+(ert-deftest kotl-mode-tests--move-cursor-forward-over-ellipsis ()
   "Moving cursor forward over hidden cell shall move passed ellipsis.
 There is no way in a test to move past the ellipsis like a user
 does when using the keyboard.  This is because the point movement
@@ -962,7 +960,7 @@ actually depends on the point adjustment heuristics."
           (should (looking-at-p "2")))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-move-cursor-backward-over-ellipsis ()
+(ert-deftest kotl-mode-tests--move-cursor-backward-over-ellipsis ()
   "Moving cursor over backwards hidden cell shall move passed ellipsis.
 There is no way in a test to move past the ellipsis like a user
 does when using the keyboard.  This is because the point movement
@@ -987,7 +985,7 @@ actually depends on the point adjustment heuristics."
           (should (looking-at-p "1")))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode-end-of-visible-portion ()
+(ert-deftest kotl-mode-tests--end-of-visible-portion ()
   "Return point if at end of visible kview cell."
   (let ((kotl-file (make-temp-file "hypb" nil ".kotl")))
     (unwind-protect
@@ -1152,7 +1150,7 @@ marked with :ignore t")
            (ert-fail (format "Function %s called with args %s fails due to %s" function args err))))
       (hy-delete-file-and-buffer kotl-file))))
 
-(ert-deftest kotl-mode--sanity-check-key-bound-commands ()
+(ert-deftest kotl-mode-tests--sanity-check-key-bound-commands ()
   "Verify that commands bound to keys in `kotl-mode' does not throw an error."
   (set-register ?a "text")
   (dolist (f kotl-mode-tests--sanity-check-function-list)
@@ -1160,7 +1158,7 @@ marked with :ignore t")
       (kotl-mode--sanity-check-function (kotl-mode-tests--func-func f)
                                         (kotl-mode-tests--func-args f)))))
 
-(ert-deftest kotl-mode--add-prior-cell ()
+(ert-deftest kotl-mode-tests--add-prior-cell ()
   "Verify `kotl-mode:add-prior-cell'."
   (with-temp-buffer
     (kotl-mode)
@@ -1181,7 +1179,7 @@ marked with :ignore t")
                   ((kotl-mode:add-below-parent 1 nil nil nil) => t))
                  (should (call-interactively #'kotl-mode:add-prior-cell)))))))
 
-(ert-deftest kotl-mode--add-cell ()
+(ert-deftest kotl-mode-tests--add-cell ()
   "Verify `kotl-mode:add-cell'."
   (cl-flet ((init ()
               (progn (erase-buffer)
@@ -1242,7 +1240,7 @@ marked with :ignore t")
         (kotl-mode:add-cell 1 "following siblings" nil t)
         (should (kcell-view:get-attr 'no-fill (point)))))))
 
-(ert-deftest kotl-mode--add-after-parent ()
+(ert-deftest kotl-mode-tests--add-after-parent ()
   "Verify `kotl-mode:add-after-parent'."
   (cl-flet ((init ()
               (progn (erase-buffer)
@@ -1274,7 +1272,7 @@ marked with :ignore t")
         (should (= (kcell-view:level) 1))
         (should (string= (kcell-view:label (point)) "3"))))))
 
-(ert-deftest kotl-mode--add-below-parent ()
+(ert-deftest kotl-mode-tests--add-below-parent ()
   "Verify `kotl-mode:add-below-parent'."
   (cl-flet ((init ()
               (progn (erase-buffer)
@@ -1306,7 +1304,7 @@ marked with :ignore t")
         (should (= (kcell-view:level) 2))
         (should (string= (kcell-view:label (point)) "1b"))))))
 
-(ert-deftest kotl-mode--add-before-parent ()
+(ert-deftest kotl-mode-tests--add-before-parent ()
   "Verify `kotl-mode:add-before-parent'."
   (cl-flet ((init ()
               (progn (erase-buffer)
@@ -1335,7 +1333,7 @@ marked with :ignore t")
         (should (= (kcell-view:level) 2))
         (should (string= (kcell-view:label (point)) "1a"))))))
 
-(ert-deftest kotl-mode--add-child ()
+(ert-deftest kotl-mode-tests--add-child ()
   "Verify `kotl-mode:add-child'."
   (cl-flet ((init ()
               (progn (erase-buffer)
@@ -1361,7 +1359,7 @@ marked with :ignore t")
         (should (= (kcell-view:level) 3))
         (should (string= (kcell-view:label (point)) "1a2"))))))
 
-(ert-deftest kotl-mode--delete-region ()
+(ert-deftest kotl-mode-tests--delete-region ()
   "Verify `kotl-mode:delete-region'does not save to `kill-ring."
   (with-temp-buffer
     (let (kill-ring)
@@ -1371,7 +1369,7 @@ marked with :ignore t")
       (should (string-empty-p (kcell-view:contents)))
       (should-not kill-ring))))
 
-(ert-deftest kotl-mode--delete-char ()
+(ert-deftest kotl-mode-tests--delete-char ()
   "Verify `kotl-mode:delete-char' and `kotl-mode:delete-backward-char'."
   (cl-flet ((init ()
               (progn (erase-buffer)
@@ -1528,7 +1526,7 @@ marked with :ignore t")
                        "(kotl-mode:kill-region): Bad region or not within a single Koutline cell"
                        (cadr err))))))))))
 
-(ert-deftest kotl-mode--insert-initial-tab-in-cell-row ()
+(ert-deftest kotl-mode-tests--insert-initial-tab-in-cell-row ()
   "Verify that a TAB can be inserted first in a cell row and also deleted."
   (with-temp-buffer
     (let ((kotl-mode:emulate-tab t)
@@ -1552,7 +1550,7 @@ marked with :ignore t")
             (should (= p (point)))
             (should (looking-at-p "2"))))))))
 
-(ert-deftest kotl-mode--org-cycling ()
+(ert-deftest kotl-mode-tests--org-cycling ()
   "Verify org style cycling works.
 Go through a sequence of cycle states.  Verify the visible outline for
 each state.  Sequence and expected states are defined in
